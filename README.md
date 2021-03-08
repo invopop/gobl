@@ -14,11 +14,18 @@ In our opinion, Go is an ideal language for this type of project due to its simp
 
 ## Serialization
 
-### Amounts
+### Amounts & Percentages
 
 Marshalling numbers can be problematic with JSON as the standard dictates that numbers should be represented as integers or floats, without any tailing 0s. This is fine for maths problems, but not useful when trying to convey monetary values or rates with a specific level of accuracy. GoBL will always serialise Amounts as strings to avoid any potential issues with number conversion.
 
+### ID vs UUID
 
+Traditionally when dealing with databases a sequencial ID is assigned to each touple (document, row, item, etc.) starting from 1 going up to whatever the integer limit is. Creating a scaleable and potentially global system however with regular numbers is not easy as you require a single point in the system responsible for ensuring that numbers are always provided in the correct order. Single points of failure are not good for scaleability.
 
+To get around the issues with sequencial numbers, the [UUID standard](https://tools.ietf.org/html/rfc4122) (Universally Unique IDentifier) was defined as a mecanism to create a very large number that can be potentially used to identify anything.
+
+The GoBL library forces you to use UUIDs instead of sequencial IDs for anything that could be referenced in the future. To enforce this fact, instead of naming fields `id`, we make an effort to call them `uuid`.
+
+Sometimes sequencial IDs are however required, usually for human consumption purposes such as ensuring order when generating invoices so that authorities can quickly check that dates and numbers are in order. Our recommendation for such codes is to use a dedicated service to generate sequencial IDs based on the UUIDs, such as [Invopop's Sequence Service](https://invopop.com).
 
 

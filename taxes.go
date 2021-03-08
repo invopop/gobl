@@ -1,47 +1,50 @@
 package gobl
 
-// TaxCategory defines a grouping of taxes whereby only one
-// definition inside a tax category can be applied to a given
-// invoice line.
-type TaxCategory string
+import (
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
+)
 
-// TaxCode defines a simple code used to describe the tax
-// for the given region.
-type TaxCode string
+// Taxes contains a list of taxes, usually applied to an
+// invoice line or item.
+type Taxes []Tax
 
-// TaxDef defines a tax combination of code and rate.
-type TaxDef struct {
-	Name     string      `json:"name" jsconschema:"title=Name"`
-	Category TaxCategory `json:"category"`
-	Code     TaxCode     `json:"code" jsonschema:"title=Code"`
-	Rates    []TaxRate   `json:"rates" jsonschema:"title=Rate"`
-	Included bool        `json:"included,omitempty"`
-}
-
-// TaxRate contains a percentage tax rate for a given date range.
-// Fiscal policy changes meen that rates are not fixed so we need to
-// be able to apply the correct rate for a given period.
-type TaxRate struct {
-	From     Date   `json:"from,omitempty"`
-	Upto     Date   `json:"upto,omitempty"`
-	Amount   Amount `json:"amount"`
-	Disabled bool   `json:"disabled,omitempty"`
-}
-
-// RateOn determines the tax rate for the provided date.
-func (td *TaxDef) RateOn(date Date) Amount {
-
-}
-
-// Tax represents a tax calculation for a given TaxDef and base.
+// Tax shows the type of tax, rate, and base that should be applied and
+// represented in the tax totals.
 type Tax struct {
-	Code   TaxCode `json:"code"`
-	Base   Amount  `json:"base"`
-	Rate   Amount  `json:"rate"`
-	Amount Amount  `json:"amount" jsonschema:"title=Amount,description=Result after applying rate to the base."`
+	Category tax.Category   `json:"cat" jsonschema:"title=Category"`
+	Code     tax.Code       `json:"code" jsonschema:"title=Code"`
+	Base     num.Amount     `json:"base" jsonschema:"title=Base"`
+	Rate     num.Percentage `json:"rate" jsonschema:"title=Rate"`
+	Retained bool           `json:"retained,omitempty" jsonschema:"title=Retained,description=True when this tax is retained by the client."`
 }
 
-// TaxTotal represents the total summary amounts of tax contained
-// in the document (usually an Invoice).
+// TaxCodeTotal contains a sum of all the taxes in the document with
+// a matching code. Rate is redundant, but serves as a copy of the
+// data used for calculations.
+type TaxCodeTotal struct {
+	Code  tax.Code       `json:"code"`
+	Base  num.Amount     `json:"base"`
+	Rate  num.Percentage `json:"rate"`
+	Value num.Amount     `json:"value"`
+}
+
+// TaxCategoryTotal contains the calculation of all the taxes
+// with a matching category.
+type TaxCategoryTotal struct {
+	Category tax.Category   `json:"category"`
+	Codes    []TaxCodeTotal `json:"codes"`
+	Base     num.Amount     `json:"base"`
+	Value    num.Amount     `json:"value"`
+	Retained bool           `json:"retained,omitempty"`
+}
+
+// TaxTotal contains the final calculations of all the tax categories
+// and sub-codes into a grand total. The sum of the tax total is
+// most likely to be the final amount payable.
 type TaxTotal struct {
+	Categories []TaxCategoryTotal `json:"categories"`
+	Base       num.Amount         `json:"base"`
+	Value      num.Amount         `json:"value"`
+	Sum        num.Amount         `json:"sum" jsonschema:"title=Sum,description=Total of Base plus Value"`
 }

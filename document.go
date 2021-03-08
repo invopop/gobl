@@ -3,15 +3,12 @@ package gobl
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/invopop/gobl/region"
 )
 
 // Header defines the meta data of the body.
 type Header struct {
-	Type   BodyType    `json:"type"`
-	Region region.Code `json:"region" jsonschema:"title=Region Code"`
-	Digest *Digest     `json:"digest"`
+	Type   BodyType `json:"type"`
+	Digest *Digest  `json:"digest"`
 }
 
 // Digest of the body

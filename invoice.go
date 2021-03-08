@@ -1,12 +1,18 @@
 package gobl
 
+import (
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
+)
+
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	ID       string        `json:"id" jsonschema:"title=ID"`
+	UUID     string        `json:"uuid" jsonschema:"title=UUID"`
 	Code     string        `json:"code" jsonschema:"title=Code"`
+	RegionID tax.RegionID  `json:"region_id" jsonschema:"title=Region ID,description=Region used for tax purposes."`
 	Currency string        `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
 	Rates    ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates,description=Simple array of values used to convert other currencies into the invoice's main currency."`
 
@@ -19,20 +25,9 @@ type Invoice struct {
 
 	Lines InvoiceLines `json:"lines,omitempty"`
 
-	Taxes  *InvoiceTaxes  `json:"taxes" jsonschema:"title=Taxes"`
 	Totals *InvoiceTotals `json:"totals" jsonschema:"title=Totals"`
 
 	Payment *InvoicePayment `json:"payment,omitempty" jsonschema:"title=Payment Details"`
-}
-
-// ExchangeRates represents an array of currency exchange rates
-type ExchangeRates []ExchangeRate
-
-// ExchangeRate contains data on the rate to be used when converting data.
-// The rate is always multipled by the
-type ExchangeRate struct {
-	Currency string `json:"currency"`
-	Rate     Amount `json:"rate"`
 }
 
 // InvoiceLines holds an array of InvoiceLine objects.
@@ -40,26 +35,27 @@ type InvoiceLines []*InvoiceLine
 
 // InvoiceLine represents a single row in an invoice.
 type InvoiceLine struct {
-	ID       string            `json:"id,omitempty"`
-	Quantity Amount            `json:"amount"`
-	Item     *Item             `json:"item"`
-	Taxes    []*InvoiceLineTax `json:"taxes,omitempty"`
+	UUID         string         `json:"uuid,omitempty"`
+	Quantity     num.Amount     `json:"quantity"`
+	Item         *Item          `json:"item"`
+	Sum          num.Amount     `json:"sum" jsonschema:"title=Sum,description=Result of quantity multiplied by item price"`
+	DiscountRate num.Percentage `json:"discount_rate,omitempty" jsonschema:"title=Discount Rate,description=Percentage discount applied to sum."`
+	Discount     num.Amount     `json:"discount,omitempty" jsonschema:"title=Discount,description=Total discount applied to the line."`
+	Taxes        []Tax          `json:"taxes,omitempty" jsonschema:"title=Taxes,description=List of taxes to be applied to the line in the invoice totals."`
+	Total        num.Amount     `json:"total" jsonschema:"title=Total,description=Total line amount after applying discounts to the sum."`
 }
 
-// InvoiceLineTax describes a single type of tax applied to the line,
-// including the rate that should be used.
-type InvoiceLineTax struct {
-	Code TaxCode `json:"code"`
-	Rate Amount  `json:"rate"`
-}
-
-type InvoiceTaxes struct {
-}
-
+// InvoiceTotals contains the summaries of all calculations for the invoice.
 type InvoiceTotals struct {
+	Sum      num.Amount `json:"sum" jsonschema:"title=Sum,description=Sum of all line item sums"`
+	Discount num.Amount `json:"discount,omitempty" jsonschema:"title=Discount,description=Sum of all discounts applied to each line."`
+	Total    num.Amount `json:"total,omitempty" jsonschema:"title=Total,description=Sum of all line sums minus the discounts."`
+	Tax      TaxTotal   `json:"tax,omitempty"`
+	Payable  num.Amount `json:"payable" jsonschema:"title=Payable,description=Total amount to be paid after applying taxes."`
 }
 
 type InvoicePayment struct {
+	Payer *Party `json:"payer,omitempty" jsconschema:"title=Payer,description=The party responsible for paying for the invoice."`
 }
 
 // Type provides the body type used for mapping.
