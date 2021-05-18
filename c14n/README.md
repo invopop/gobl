@@ -16,32 +16,32 @@ This `c14n` package, inspired by the works of others, thus aims to define a simp
 
 JSON text in canonical form:
 
- 1. MUST be encoded in VALID [UTF-8](https://tools.ietf.org/html/rfc3629). A document with invalid character encoding will be rejected.
- 2. MUST NOT include insignificant whitespace.
- 3. MUST order the attributes of objects lexicographically by the UCS (Unicode Character Set) code points of their names.
- 4. MUST represent integer numbers, those with a zero-valued fractional part, WITHOUT:
-  1. a leading minus sign when the value is zero,
-  2. a decimal point,
-  3. an exponent, thus limiting numbers to 64 bits, and
-  4. insignificant leading zeroes, as already required by JSON.
- 5. MUST represent floating point numbers in exponential notation, INCLUDING:
-  1. a nonzero single-digit part to the left of the decimal point,
-  2. a nonempty fractional part to the right of the decimal point,
-  3. no trailing zeroes to right of the decimal point except to comply with the previous point,
-  4. a capital `E` for the exponent indicator,
-  5. no plus sign in the [mantissa](https://en.wikipedia.org/wiki/Significand) nor exponent, and
-  6. no insignificant leading zeros in the exponent.
- 6. MUST represent all strings, including object attribute keys, in their minimal length UTF-8 encoding:
-  1. using two-character escape sequences where possible for characters that require escaping, specifically:
-   * `\"` U+0022 Quotation Mark
-   * `\\` U+005C Reverse Solidus (backslash)
-   * `\b` U+0008 Backspace
-   * `\t` U+0009 Character Tabulation (tab)
-   * `\n` U+000A Line Feed (newline)
-   * `\f` U+000C Form Feed
-   * `\r` U+000D Carriage Return
-  2. using six-character `\u00XX` uppercase hexadecimal escape sequences for control characters that require escaping but lack a two-character sequence described previously, and
-  3. reject any string containing invalid encoding.
+1. MUST be encoded in VALID [UTF-8](https://tools.ietf.org/html/rfc3629). A document with invalid character encoding will be rejected.
+2. MUST NOT include insignificant whitespace.
+3. MUST order the attributes of objects lexicographically by the UCS (Unicode Character Set) code points of their names.
+4. MUST represent integer numbers, those with a zero-valued fractional part, WITHOUT:
+    1. a leading minus sign when the value is zero,
+    2. a decimal point,
+    3. an exponent, thus limiting numbers to 64 bits, and
+    4. insignificant leading zeroes, as already required by JSON.
+5. MUST represent floating point numbers in exponential notation, INCLUDING:
+    1. a nonzero single-digit part to the left of the decimal point,
+    2. a nonempty fractional part to the right of the decimal point,
+    3. no trailing zeroes to right of the decimal point except to comply with the previous point,
+    4. a capital `E` for the exponent indicator,
+    5. no plus sign in the [mantissa](https://en.wikipedia.org/wiki/Significand) nor exponent, and
+    6. no insignificant leading zeros in the exponent.
+6. MUST represent all strings, including object attribute keys, in their minimal length UTF-8 encoding:
+    1. using two-character escape sequences where possible for characters that require escaping, specifically:
+        * `\"` U+0022 Quotation Mark
+        * `\\` U+005C Reverse Solidus (backslash)
+        * `\b` U+0008 Backspace
+        * `\t` U+0009 Character Tabulation (tab)
+        * `\n` U+000A Line Feed (newline)
+        * `\f` U+000C Form Feed
+        * `\r` U+000D Carriage Return
+    2. using six-character `\u00XX` uppercase hexadecimal escape sequences for control characters that require escaping but lack a two-character sequence described previously, and
+    3. reject any string containing invalid encoding.
 
 The GoBL JSON c14n package has been designed to operate using any raw JSON source and uses the Go [`encoding/json`](https://golang.org/pkg/encoding/json/) library's streaming methods to parse and recreate a document in memory. A simplified object model is used to map JSON structures ready to be again converted back into canonical JSON.
 
