@@ -57,17 +57,17 @@ func handleNextToken(dec *json.Decoder) (Canonicalable, error) {
 
 func handleObject(dec *json.Decoder) (*Object, error) {
 	obj := new(Object)
-	obj.Items = make([]*Item, 0)
+	obj.Attributes = make([]*Attribute, 0)
 	for {
-		i, err := handleItem(dec)
+		a, err := handleAttribute(dec)
 		if err != nil {
 			return nil, err
 		}
-		if i == nil {
+		if a == nil { // i.e., no more left
 			obj.Sort()
 			return obj, nil
 		}
-		obj.Items = append(obj.Items, i)
+		obj.Attributes = append(obj.Attributes, a)
 	}
 }
 
@@ -86,7 +86,7 @@ func handleArray(dec *json.Decoder) (*Array, error) {
 	}
 }
 
-func handleItem(dec *json.Decoder) (*Item, error) {
+func handleAttribute(dec *json.Decoder) (*Attribute, error) {
 	// handle item attempts to get the next two tokens as we
 	// know these must form a key-pair.
 	key, err := handleNextToken(dec)
@@ -100,13 +100,13 @@ func handleItem(dec *json.Decoder) (*Item, error) {
 	if !ok {
 		return nil, errors.New("item key must be a string")
 	}
-	item := new(Item)
-	item.Key = string(k)
-	item.Value, err = handleNextToken(dec)
+	a := new(Attribute)
+	a.Key = string(k)
+	a.Value, err = handleNextToken(dec)
 	if err != nil {
 		return nil, err
 	}
-	return item, nil
+	return a, nil
 }
 
 // tokenToValue does all the heavy lifting of ensuring we have a
@@ -126,5 +126,5 @@ func tokenToValue(t json.Token) (Canonicalable, error) {
 	if b, ok := t.(bool); ok {
 		return Bool(b), nil
 	}
-	return Nil{}, nil
+	return Null{}, nil
 }

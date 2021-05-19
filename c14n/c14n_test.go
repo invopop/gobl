@@ -64,7 +64,7 @@ func TestJSONToArray(t *testing.T) {
 		return
 	}
 	s := fmt.Sprintf("%x", sha256.Sum256(d))
-	if s != "ef76d001111628fa2e0c224008ea1b1438cc324cf0e2c8f670bb881503124b14" {
+	if s != "f35a55c7bba2df8438802603db442976a8238ceb0a610d1eea38cae1b9fd9013" {
 		t.Logf("marshaled data:\n%v\n", string(d))
 		t.Errorf("unexpected sum, please check marshaled data, got: %v", s)
 	}

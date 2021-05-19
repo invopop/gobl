@@ -14,24 +14,36 @@ This `c14n` package, inspired by the works of others, thus aims to define a simp
 
 ## GoBL JSON C14n
 
-JSON text in canonical form:
+GoBL considers the following JSON values as explicit types:
+
+* a string
+* a number, which extends the JSON spec and is split into:
+    * an integer
+    * a float
+* an object
+* an array
+* a boolean
+* null
+
+JSON in canonical form:
 
 1. MUST be encoded in VALID [UTF-8](https://tools.ietf.org/html/rfc3629). A document with invalid character encoding will be rejected.
 2. MUST NOT include insignificant whitespace.
 3. MUST order the attributes of objects lexicographically by the UCS (Unicode Character Set) code points of their names.
-4. MUST represent integer numbers, those with a zero-valued fractional part, WITHOUT:
+4. MUST remove attributes from objects whose value is `null`, but maintain them in arrays.
+5. MUST represent integer numbers, those with a zero-valued fractional part, WITHOUT:
     1. a leading minus sign when the value is zero,
     2. a decimal point,
     3. an exponent, thus limiting numbers to 64 bits, and
     4. insignificant leading zeroes, as already required by JSON.
-5. MUST represent floating point numbers in exponential notation, INCLUDING:
+6. MUST represent floating point numbers in exponential notation, INCLUDING:
     1. a nonzero single-digit part to the left of the decimal point,
     2. a nonempty fractional part to the right of the decimal point,
     3. no trailing zeroes to right of the decimal point except to comply with the previous point,
     4. a capital `E` for the exponent indicator,
     5. no plus sign in the [mantissa](https://en.wikipedia.org/wiki/Significand) nor exponent, and
     6. no insignificant leading zeros in the exponent.
-6. MUST represent all strings, including object attribute keys, in their minimal length UTF-8 encoding:
+7. MUST represent all strings, including object attribute keys, in their minimal length UTF-8 encoding:
     1. using two-character escape sequences where possible for characters that require escaping, specifically:
         * `\"` U+0022 Quotation Mark
         * `\\` U+005C Reverse Solidus (backslash)
@@ -55,12 +67,12 @@ if err != nil {
   panic(err.Error())
 }
 fmt.Printf("Result: %v\n", string(res))
-// Result: {"a":56,"b":0.0E0,"c":1.234E2,"foo":"bar","y":null}
+// Result: {"a":56,"b":0.0E0,"c":1.234E2,"foo":"bar"}
 ```
 
 ## Prior Art
 
-This specification and implementation is based on the [gibson042 canonicaljson specification](https://gibson042.github.io/canonicaljson-spec/) with simplifications concerning invalid UTF-8 characters and a reference implementation that is more explicit making it potentially easier to be recreate in other programming languages.
+This specification and implementation is based on the [gibson042 canonicaljson specification](https://gibson042.github.io/canonicaljson-spec/) with simplifications concerning invalid UTF-8 characters, null values in objects, and a reference implementation that is more explicit making it potentially easier to be recreate in other programming languages.
 
 The gibson042 specification is in turn based on the now expired [JSON Canonical Form internet draft](https://datatracker.ietf.org/doc/html/draft-staykov-hu-json-canonical-form-00) which lacks clarity on the handling of integer numbers, is missing details on escape sequences, and doesn't consider invalid UTF-8 characters.
 

@@ -21,7 +21,7 @@ type Canonicalable interface {
 // Object contains a simple list of items, which are in essence key-value pairs.
 // The item array means that attributes can be ordered by their key.
 type Object struct {
-	Items []*Item
+	Attributes []*Attribute
 }
 
 // Array contains a list of canonicable values, as opposed to the objects key-value
@@ -45,12 +45,12 @@ type Float float64
 // Bool handles binary true or false.
 type Bool bool
 
-// Nil wraps around a nil value
-type Nil struct{}
+// Null wraps around a null value
+type Null struct{}
 
-// Item represents a key-value pair used in objects. Using an array guarantees ordering
+// Attribute represents a key-value pair used in objects. Using an array guarantees ordering
 // of keys, which is one of the fundamental requirements for canonicalization.
-type Item struct {
+type Attribute struct {
 	Key   string
 	Value Canonicalable
 }
@@ -59,25 +59,30 @@ type Item struct {
 // not considered safe.
 var hex = "0123456789ABCDEF"
 
-// Sort ensures all the object's items are ordered according to the key.
+// Sort ensures all the object's attributes are ordered according to the key.
 func (o *Object) Sort() {
-	sort.SliceStable(o.Items, func(i, j int) bool { return o.Items[i].Key < o.Items[j].Key })
+	sort.SliceStable(o.Attributes, func(i, j int) bool {
+		return o.Attributes[i].Key < o.Attributes[j].Key
+	})
 }
 
 // MarshalJSON combines all the objects elements into an ordered
-// key-value list of marshalled items.
+// key-value list of marshalled attributes.
 func (o *Object) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
-	for i, v := range o.Items {
-		if i > 0 {
-			buf.WriteByte(',')
-		}
-		item, err := v.MarshalJSON()
+	for i, v := range o.Attributes {
+		a, err := v.MarshalJSON()
 		if err != nil {
 			return nil, err
 		}
-		buf.Write(item)
+		if len(a) == 0 { // as per spec, skip empty attributes
+			continue
+		}
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		buf.Write(a)
 	}
 	buf.WriteByte('}')
 	return buf.Bytes(), nil
@@ -161,7 +166,7 @@ func (f Float) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON provides the null string.
-func (n Nil) MarshalJSON() ([]byte, error) {
+func (n Null) MarshalJSON() ([]byte, error) {
 	return []byte(`null`), nil
 }
 
@@ -173,13 +178,17 @@ func (b Bool) MarshalJSON() ([]byte, error) {
 	return []byte(`false`), nil
 }
 
-// MarshalJSON creates a key-value pair in JSON format.
-func (i *Item) MarshalJSON() ([]byte, error) {
-	key, err := encodeString(i.Key)
+// MarshalJSON creates a key-value pair in JSON format. A null value
+// in an attribute will return an empty byte array.
+func (a *Attribute) MarshalJSON() ([]byte, error) {
+	if _, ok := a.Value.(Null); ok {
+		return nil, nil
+	}
+	key, err := encodeString(a.Key)
 	if err != nil {
 		return nil, err
 	}
-	val, err := i.Value.MarshalJSON()
+	val, err := a.Value.MarshalJSON()
 	if err != nil {
 		return nil, err
 	}
