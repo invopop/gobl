@@ -10,7 +10,7 @@ JSON conversely lacks clearly defined or active industrial standard around canon
 
 One of the objectives of GoBL is to create a document that could potentially be stored in any key-value format alternative to JSON, like [YAML](https://yaml.org/), [Protobuf](https://developers.google.com/protocol-buffers), or maybe even XML. Perhaps GoBL documents need to be persisted to a document database like [CouchDB](https://couchdb.apache.org/) or a [JSONB field in PostgreSQL](https://www.postgresql.org/docs/13/functions-json.html). It should not matter what the underlying format or persistence engine is, as long as the logical contents are exactly the same. Thus when signing documents it's essential we have a reliable canonical version of JSON, even if the data is stored somewhere else.
 
-This `c14n` package, inspired by the works of others, thus aims to define a simple standardized approach to canonical JSON that could potentially be implemented easily in other languages. More than just a definition, the code here is a reference implementation from which other implementations can be made in languages other than Go.
+This `c14n` package, inspired by the works of others, thus aims to define a simple standardized approach to canonical JSON that could potentially be implemented easily in other languages. More than just a definition, the code here is a reference implementation from which libraries can be made in languages other than Go.
 
 ## GoBL JSON C14n
 
@@ -56,30 +56,37 @@ JSON in canonical form:
     2. using six-character `\u00XX` uppercase hexadecimal escape sequences for control characters that require escaping but lack a two-character sequence described previously, and
     3. reject any string containing invalid encoding.
 
-The GoBL JSON c14n package has been designed to operate using any raw JSON source and uses the Go [`encoding/json`](https://golang.org/pkg/encoding/json/) library's streaming methods to parse and recreate a document in memory. A simplified object model is used to map JSON structures ready to be again converted back into canonical JSON.
+The GoBL JSON c14n package has been designed to operate using any raw JSON source and uses the Go [`encoding/json`](https://golang.org/pkg/encoding/json/) library's streaming methods to parse and recreate a document in memory. A simplified object model is used to map JSON structures ready to be converted into canonical JSON.
 
 ## Usage Example
 
 ```go
-d := `{ "foo":"bar", "c": 123.4, "a": 56, "b": 0.0, "y":null}`
-r := strings.NewReader(data)
-res, err := c14n.CanonicalJSON(r)
-if err != nil {
-  panic(err.Error())
+package main
+
+import (
+  "fmt"
+  "strings"
+
+  "github.com/invopop/gobl/c14n"
+)
+
+func main() {
+  d := `{ "foo":"bar", "c": 123.4, "a": 56, "b": 0.0, "y":null}`
+  r := strings.NewReader(data)
+  res, err := c14n.CanonicalJSON(r)
+  if err != nil {
+    panic(err.Error())
+  }
+  fmt.Printf("Result: %v\n", string(res))
+  // Result: {"a":56,"b":0.0E0,"c":1.234E2,"foo":"bar"}
 }
-fmt.Printf("Result: %v\n", string(res))
-// Result: {"a":56,"b":0.0E0,"c":1.234E2,"foo":"bar"}
 ```
 
 ## Prior Art
 
-This specification and implementation is based on the [gibson042 canonicaljson specification](https://gibson042.github.io/canonicaljson-spec/) with simplifications concerning invalid UTF-8 characters, null values in objects, and a reference implementation that is more explicit making it potentially easier to be recreate in other programming languages.
+This specification and implementation is based on the [gibson042 canonicaljson specification](https://gibson042.github.io/canonicaljson-spec/) with simplifications concerning invalid UTF-8 characters, null values in objects, and a reference implementation that is more explicit making it potentially easier to be recreated in other programming languages.
 
 The gibson042 specification is in turn based on the now expired [JSON Canonical Form internet draft](https://datatracker.ietf.org/doc/html/draft-staykov-hu-json-canonical-form-00) which lacks clarity on the handling of integer numbers, is missing details on escape sequences, and doesn't consider invalid UTF-8 characters.
 
 Canonical representation of floats is consistent with [XML Schema 2, section 3.2.4.2](https://www.w3.org/TR/xmlschema-2/#float-canonical-representation), and expects integer numbers without an exponential component as defined in [RFC 7638 - JSON Web Key Thumbprint](https://datatracker.ietf.org/doc/html/rfc7638#section-3.3).
-
-
-
-
 
