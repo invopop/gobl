@@ -30,20 +30,21 @@ JSON in canonical form:
 1. MUST be encoded in VALID [UTF-8](https://tools.ietf.org/html/rfc3629). A document with invalid character encoding will be rejected.
 2. MUST NOT include insignificant whitespace.
 3. MUST order the attributes of objects lexicographically by the UCS (Unicode Character Set) code points of their names.
-4. MUST remove attributes from objects whose value is `null`, but maintain them in arrays.
-5. MUST represent integer numbers, those with a zero-valued fractional part, WITHOUT:
+4. MUST remove attributes from objects whose value is `null`.
+5. MUST NOT remove null values from arrays.
+6. MUST represent integer numbers, those with a zero-valued fractional part, WITHOUT:
     1. a leading minus sign when the value is zero,
     2. a decimal point,
     3. an exponent, thus limiting numbers to 64 bits, and
     4. insignificant leading zeroes, as already required by JSON.
-6. MUST represent floating point numbers in exponential notation, INCLUDING:
+7. MUST represent floating point numbers in exponential notation, INCLUDING:
     1. a nonzero single-digit part to the left of the decimal point,
     2. a nonempty fractional part to the right of the decimal point,
     3. no trailing zeroes to right of the decimal point except to comply with the previous point,
     4. a capital `E` for the exponent indicator,
     5. no plus sign in the [mantissa](https://en.wikipedia.org/wiki/Significand) nor exponent, and
     6. no insignificant leading zeros in the exponent.
-7. MUST represent all strings, including object attribute keys, in their minimal length UTF-8 encoding:
+8. MUST represent all strings, including object attribute keys, in their minimal length UTF-8 encoding:
     1. using two-character escape sequences where possible for characters that require escaping, specifically:
         * `\"` U+0022 Quotation Mark
         * `\\` U+005C Reverse Solidus (backslash)
