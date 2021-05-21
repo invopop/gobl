@@ -69,7 +69,7 @@ func (k *Key) IsPublic() bool {
 	return k.jwk.IsPublic()
 }
 
-// Valid let's us know if the key was generate correctly.
+// Valid let's us know if the key was generated correctly.
 func (k *Key) Valid() bool {
 	if k.jwk == nil {
 		return false
