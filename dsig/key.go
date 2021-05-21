@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -87,8 +86,8 @@ func (k *Key) Public() *Key {
 		return nil
 	}
 	pk := new(Key)
-	jwkp := k.jwk.Public()
-	pk.jwk = &jwkp
+	jwk := k.jwk.Public()
+	pk.jwk = &jwk
 	return pk
 }
 
@@ -100,21 +99,6 @@ func (k *Key) Thumbprint() string {
 		return ""
 	}
 	return fmt.Sprintf("%x", d)
-}
-
-// String provides a JSON string of the Key to be used for debugging
-// purposes.
-func (k *Key) String() string {
-	d, err := json.Marshal(k)
-	if err != nil {
-		return ""
-	}
-	return string(d)
-}
-
-// JWK provides the underlying implementation's key object in case it is required.
-func (k *Key) JWK() *jose.JSONWebKey {
-	return k.jwk
 }
 
 // MarshalJSON provides the JSON version of the key.
