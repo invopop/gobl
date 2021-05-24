@@ -19,10 +19,16 @@ const (
 	curveAlgorithmP256 = "P-256"
 )
 
+// PrivateKey makes it easy to deal with private keys used to sign data
+// and created signatures.
+// These should obviously be kept secure and be used to generate the public
+// keys.
 type PrivateKey struct {
 	jwk *jose.JSONWebKey
 }
 
+// PublicKey is generated from the private key and can be shared freely as it
+// cannot be used to create signatures.
 type PublicKey struct {
 	jwk *jose.JSONWebKey
 }
@@ -104,8 +110,8 @@ func (k *PublicKey) Validate() error {
 	return nil
 }
 
-// Public provides the public counterpart of a private key. If this
-// key is already public, nil is provided.
+// Public provides the public counterpart of a private key, ready to be used
+// to be persisted in a key store and verify signatures.
 func (k *PrivateKey) Public() *PublicKey {
 	pk := new(PublicKey)
 	jwk := k.jwk.Public()
@@ -114,7 +120,7 @@ func (k *PrivateKey) Public() *PublicKey {
 }
 
 // Sign is a helper method that will generate a signature using the
-// key.
+// private key.
 func (k *PrivateKey) Sign(data interface{}) (*Signature, error) {
 	return NewSignature(k, data)
 }

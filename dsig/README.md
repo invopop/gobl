@@ -10,10 +10,11 @@ Signatures in GoBL use the [Javascript Object Signing and Encryption (JOSE)](htt
 
 Behind the scenes, GoBL uses the [go-jose](https://github.com/go-jose/go-jose) library to do all the heavy lifting and provides wrappers that make it easy to use sensible defaults. There should not be anything that cannot be implemented in another language, but helpers do make life easier and limit what is available to the use-cases of GoBL documents.
 
-There are three key components to the dsig implementation:
+There are four key components to the dsig implementation:
 
- * **Key** - These are JSON Web Keys, either private or public, that can be used to create and verify signatures. Currently, GoBL only supports ECDSA using a 256-bit curve, and a UUID is required for every key.
- * **Signature** - JSON Web Signature which is always serialized to JSON in compact form. The complexities around which algorithm was used to sign the data is left to the external libraries. The signature headers will always include the key ID.
+ * **Private Key** - Private JSON Web Keys (JWK), that can be used to create signatures. Currently, GoBL only supports ECDSA keys using a 256-bit curve. The private key is used to create a public counterpart and in addition to the JWK standards, every key *must* be identified with a UUID.
+ * **Public Key** -  Public JSON Web Keys used to verify signatures. These can be shared freely and persisted or cached wherever they are to be used. Like the private key, they *must* include the same UUID assigned to the private counterpart.
+ * **Signature** - A JSON Web Signature which (JWS) is always serialized to JSON in compact form. The signature headers will always include the key's UUID to make it easier to find the public key used for validation.
  * **Digest** - Defines the algorithm used to create a digest or hash of the GoBL document body and the resulting value in hexadecimal format. The digest is expected to be included in a document header and consequently in the signature payload. SHA256 digests are only supported at this time.
 
-This package aims to solve digital signatures for GoBL documents, but it should be just as easy to use this library with any software that could benefit from an easy to use approach to handling digital signatures.
+This package aims to make it easier to use digital signatures with GoBL documents, but it should be just as easy to use this library with any software, document, or message that could benefit from a simplified approach to dealing with JSON Web Signatures.
