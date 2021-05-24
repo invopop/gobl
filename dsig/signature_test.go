@@ -21,7 +21,7 @@ type structWithSig struct {
 func TestNewSignature(t *testing.T) {
 	data := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
 	kID := "3500bbee-966c-4b7a-8fbc-c763ae2aec62"
-	k := new(dsig.Key)
+	k := new(dsig.PrivateKey)
 	if err := json.Unmarshal(data, k); err != nil {
 		t.Errorf("failed to parse test key: %v", err.Error())
 		return // abort
@@ -66,7 +66,7 @@ func TestParseSignature(t *testing.T) {
 	data := "eyJhbGciOiJFUzI1NiIsImtpZCI6IjM1MDBiYmVlLTk2NmMtNGI3YS04ZmJjLWM3NjNhZTJhZWM2MiJ9.eyJmb28iOiJmb28iLCJiYXIiOjEyMzR9.96eDPg1RJ4EXMXnCYYTbC3mIGU_DaKnULUdx6LxDeLh6kp-7G8V1CEr1Lwc-tqZ29iq6fwi0Pte-bnkBO0xh9w"
 	pubData := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4"}`)
 
-	pub := new(dsig.Key)
+	pub := new(dsig.PublicKey)
 	if err := json.Unmarshal(pubData, pub); err != nil {
 		t.Errorf("expected to unmarshal pub key: %v", err.Error())
 		return
@@ -100,7 +100,7 @@ func TestParseSignature(t *testing.T) {
 
 func TestJSONSignatures(t *testing.T) {
 	pubData := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4"}`)
-	pub := new(dsig.Key)
+	pub := new(dsig.PublicKey)
 	if err := json.Unmarshal(pubData, pub); err != nil {
 		t.Errorf("expected to unmarshal pub key: %v", err.Error())
 		return

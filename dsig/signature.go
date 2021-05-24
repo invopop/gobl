@@ -16,11 +16,8 @@ type Signature struct {
 // NewSignature instantiates a new Signature object by signing the provided
 // data using the private key. The signature will use the same algorithm as
 // defined by the key.
-func NewSignature(key *Key, data interface{}) (*Signature, error) {
-	if key.IsPublic() {
-		return nil, ErrKeyPublic
-	}
-	if !key.Valid() {
+func NewSignature(key *PrivateKey, data interface{}) (*Signature, error) {
+	if err := key.Validate(); err != nil {
 		return nil, ErrKeyInvalid
 	}
 
@@ -94,7 +91,7 @@ func (s *Signature) String() string {
 
 // VerifyPayload verifies that the provided key was indeed used to
 // sign the original payload and will parse the data ready to use.
-func (s *Signature) VerifyPayload(key *Key, payload interface{}) error {
+func (s *Signature) VerifyPayload(key *PublicKey, payload interface{}) error {
 	data, err := s.jws.Verify(key.jwk)
 	if err != nil {
 		// at the risk of hiding useful errors, provide our own

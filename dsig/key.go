@@ -19,22 +19,24 @@ const (
 	curveAlgorithmP256 = "P-256"
 )
 
-// Key wraps around the underlying JSON Web Key to simplify and
-// standardise the experience.
-type Key struct {
+type PrivateKey struct {
 	jwk *jose.JSONWebKey
 }
 
-// NewES256Key provides a new ECDSA 256 bit private key and assign it
+type PublicKey struct {
+	jwk *jose.JSONWebKey
+}
+
+// NewES256Key provides a new ECDSA 256 bit private key and assigns it
 // an ID.
-func NewES256Key() *Key {
+func NewES256Key() *PrivateKey {
 	pubCurve := elliptic.P256()
 	pk, _ := ecdsa.GenerateKey(pubCurve, rand.Reader)
 	return newKey(pk, string(jose.ES256))
 }
 
-func newKey(pk interface{}, alg string) *Key {
-	k := new(Key)
+func newKey(pk interface{}, alg string) *PrivateKey {
+	k := new(PrivateKey)
 	k.jwk = new(jose.JSONWebKey)
 	k.jwk.Key = pk
 	k.jwk.Algorithm = alg
@@ -43,8 +45,13 @@ func newKey(pk interface{}, alg string) *Key {
 	return k
 }
 
-// ID provides the key's UUID
-func (k *Key) ID() string {
+// ID provides the private key's UUID
+func (k *PrivateKey) ID() string {
+	return k.jwk.KeyID
+}
+
+// ID provides the public key's UUID
+func (k *PublicKey) ID() string {
 	return k.jwk.KeyID
 }
 
@@ -53,7 +60,7 @@ func (k *Key) ID() string {
 // optional `alg` property. Algorithm names provided match those
 // required for signatures. Anything not defined here will not be supported
 // for the time being.
-func (k *Key) signatureAlgorithm() (jose.SignatureAlgorithm, error) {
+func (k *PrivateKey) signatureAlgorithm() (jose.SignatureAlgorithm, error) {
 	if pk, ok := k.jwk.Key.(*ecdsa.PrivateKey); ok {
 		switch pk.Params().Name {
 		case curveAlgorithmP256:
@@ -63,38 +70,76 @@ func (k *Key) signatureAlgorithm() (jose.SignatureAlgorithm, error) {
 	return "", errors.New("unrecognized key signature algorithm")
 }
 
-// IsPublic returns true if this key only contains the public part.
-func (k *Key) IsPublic() bool {
-	return k.jwk.IsPublic()
-}
-
-// Valid let's us know if the key was generated correctly.
-func (k *Key) Valid() bool {
+// Validate let's us know if the private key was generated or parsed correctly.
+func (k *PrivateKey) Validate() error {
 	if k.jwk == nil {
-		return false
+		return errors.New("key not set")
 	}
 	if k.ID() == "" {
-		return false
+		return errors.New("id required")
 	}
-	return k.jwk.Valid()
+	if !k.jwk.Valid() {
+		return errors.New("jose key is invalid")
+	}
+	if k.jwk.IsPublic() {
+		return errors.New("private key only contains public part")
+	}
+	return nil
+}
+
+// Validate let's us know if the public key was parsed correctly.
+func (k *PublicKey) Validate() error {
+	if k.jwk == nil {
+		return errors.New("key not set")
+	}
+	if k.ID() == "" {
+		return errors.New("id required")
+	}
+	if !k.jwk.Valid() {
+		return errors.New("jose key is invalid")
+	}
+	if !k.jwk.IsPublic() {
+		return errors.New("public key is private")
+	}
+	return nil
 }
 
 // Public provides the public counterpart of a private key. If this
 // key is already public, nil is provided.
-func (k *Key) Public() *Key {
-	if k.IsPublic() {
-		return nil
-	}
-	pk := new(Key)
+func (k *PrivateKey) Public() *PublicKey {
+	pk := new(PublicKey)
 	jwk := k.jwk.Public()
 	pk.jwk = &jwk
 	return pk
 }
 
-// Thumbprint returns teh SHA256 hex string of this key's thumbprint.
+// Sign is a helper method that will generate a signature using the
+// key.
+func (k *PrivateKey) Sign(data interface{}) (*Signature, error) {
+	return NewSignature(k, data)
+}
+
+// Verify is a wrapper around the signature's VerifyPayload method for
+// the sake of convenience.
+func (k *PublicKey) Verify(sig *Signature, payload interface{}) error {
+	return sig.VerifyPayload(k, payload)
+}
+
+// Thumbprint returns the SHA256 hex string of the private key's thumbprint.
+// Extremely useful for quickly checking that two keys, either public or private,
+// are the same.
+func (k *PrivateKey) Thumbprint() string {
+	return keyThumbprint(k.jwk)
+}
+
+// Thumbprint returns the SHA256 hex string of the public key's thumbprint.
 // Extremely useful for quickly checking that two keys are the same.
-func (k *Key) Thumbprint() string {
-	d, err := k.jwk.Thumbprint(crypto.SHA256)
+func (k *PublicKey) Thumbprint() string {
+	return keyThumbprint(k.jwk)
+}
+
+func keyThumbprint(jwk *jose.JSONWebKey) string {
+	d, err := jwk.Thumbprint(crypto.SHA256)
 	if err != nil {
 		return ""
 	}
@@ -102,28 +147,35 @@ func (k *Key) Thumbprint() string {
 }
 
 // MarshalJSON provides the JSON version of the key.
-func (k *Key) MarshalJSON() ([]byte, error) {
-	if !k.Valid() {
-		return []byte{}, errors.New("cannot marshal invalid key")
-	}
+func (k *PrivateKey) MarshalJSON() ([]byte, error) {
 	return k.jwk.MarshalJSON()
 }
 
-// UnmarshalJSON parses the provided key. If parsing the key is
-// successful but the key is still invalid, like for example if
-// it doesn't contain an ID, it will be rejected.
-func (k *Key) UnmarshalJSON(data []byte) error {
+// MarshalJSON provides the JSON version of the key.
+func (k *PublicKey) MarshalJSON() ([]byte, error) {
+	return k.jwk.MarshalJSON()
+}
+
+// UnmarshalJSON parses the JSON private key data. You should perform
+// validation on the key to ensure it was provided correctly.
+func (k *PrivateKey) UnmarshalJSON(data []byte) error {
 	if len(data) == 0 {
 		return nil
 	}
 	if k.jwk == nil {
 		k.jwk = new(jose.JSONWebKey)
 	}
-	if err := k.jwk.UnmarshalJSON(data); err != nil {
-		return err
+	return k.jwk.UnmarshalJSON(data)
+}
+
+// UnmarshalJSON parses the JSON public key data. You should perform
+// validation on the key to ensure it was provided correctly.
+func (k *PublicKey) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 {
+		return nil
 	}
-	if !k.Valid() {
-		return errors.New("invalid key")
+	if k.jwk == nil {
+		k.jwk = new(jose.JSONWebKey)
 	}
-	return nil
+	return k.jwk.UnmarshalJSON(data)
 }
