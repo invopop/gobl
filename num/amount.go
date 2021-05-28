@@ -1,9 +1,14 @@
 package num
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
+
+	"github.com/alecthomas/jsonschema"
 )
 
 // Amount represents a quantity with decimal places that will not suffer
@@ -13,24 +18,24 @@ import (
 // Implementation is inspired by https://github.com/shopspring/decimal, but
 // simplified to account for the expectations of GoBL.
 type Amount struct {
-	Value int64
-	Exp   uint32
+	value int64
+	exp   uint32
 }
 
 // MakeAmount is a helper to make it a little easier to build a new Amount
 // instance. We use "Make" instead of "New" as there are no pointers.
 func MakeAmount(val int64, exp uint32) Amount {
-	return Amount{Value: val, Exp: exp}
+	return Amount{value: val, exp: exp}
 }
 
 // AmountFromString takes the provided string and tries to convert it
 // into an amount object. Strings must be in a simplified format with no
-// commas and a single `.` to seperate the decimal places. Numbers are
+// commas and a single `.` to separate the decimal places. Numbers are
 // expected to have a fixed number of decimal places, so if your dealing
 // with a string like `"12.000"`, the accuracy will be assumed to be 3
 // decimal places.
 // If you're dealing with numbers from humans which may contain symbols,
-// commans, european style fullstops, undescores, etc. then you should use
+// commans, european style fullstops, underscores, etc. then you should use
 // the `AmountFromHumanString` method.
 func AmountFromString(val string) (Amount, error) {
 	a := Amount{}
@@ -60,38 +65,57 @@ func AmountFromString(val string) (Amount, error) {
 	}
 
 	// Prepare the result
-	a.Value = v
-	a.Exp = e
+	a.value = v
+	a.exp = e
 	return a, nil
+}
+
+// AmountFromHumanString removes an excess decimal places, commas, or
+// other symbols so that we end up with a simple string that can be parsed.
+func AmountFromHumanString(val string) (Amount, error) {
+	return Amount{}, errors.New("not yet implemented")
 }
 
 // Add will add the two amounts together using the base's exponential
 // value for the resulting new amount.
 func (a Amount) Add(a2 Amount) Amount {
-	a2 = a2.Rescale(a.Exp)
-	return Amount{a.Value + a2.Value, a.Exp}
+	a2 = a2.Rescale(a.exp)
+	return Amount{a.value + a2.value, a.exp}
 }
 
 // Subtract takes away the amount provided from the base.
 func (a Amount) Subtract(a2 Amount) Amount {
-	a2 = a2.Rescale(a.Exp)
-	return Amount{Value: a.Value - a2.Value, Exp: a.Exp}
+	a2 = a2.Rescale(a.exp)
+	return Amount{value: a.value - a2.value, exp: a.exp}
 }
 
 // Multiply our base amount by the provided amount.
 func (a Amount) Multiply(a2 Amount) Amount {
 	return Amount{
-		Value: (a.Value * a2.Value) / intPow(10, a2.Exp),
-		Exp:   a.Exp,
+		value: (a.value * a2.value) / intPow(10, a2.exp),
+		exp:   a.exp,
 	}
 }
 
-// Divide our base amount by the provided amount.
+// Divide our base amount by the provided amount. We use floating point to do the actual division
+// and then round again to get an int. This prevents rounding errors, but if you want true division
+// with a base and a remainder, use the Split method.
 func (a Amount) Divide(a2 Amount) Amount {
+	v := float64(a.value*intPow(10, a2.exp)) / float64(a2.value)
 	return Amount{
-		Value: (a.Value * intPow(10, a2.Exp)) / a2.Value,
-		Exp:   a.Exp,
+		value: int64(math.Round(v)),
+		exp:   a.exp,
 	}
+}
+
+// Split divides the amount by x, like Divide, but also provides an
+// additional amount with a remainder so that we avoid rounding
+// errors.
+func (a Amount) Split(x int) (Amount, Amount) {
+	a2 := a.Divide(MakeAmount(int64(x), 0))
+	a3 := a2.Multiply(MakeAmount(int64(x-1), 0))
+	a3 = a.Subtract(a3)
+	return a2, a3
 }
 
 // Compare two amounts and return an integer value according to the
@@ -103,10 +127,10 @@ func (a Amount) Divide(a2 Amount) Amount {
 //
 func (a Amount) Compare(a2 Amount) int {
 	a, a2 = rescaleAmountPair(a, a2)
-	if a.Value < a2.Value {
+	if a.value < a2.value {
 		return -1
 	}
-	if a.Value > a2.Value {
+	if a.value > a2.value {
 		return 1
 	}
 	return 0
@@ -122,30 +146,40 @@ func (a Amount) Equals(a2 Amount) bool {
 // provided exponential. This method will not round values, value
 // could be lost during conversion.
 func (a Amount) Rescale(exp uint32) Amount {
-	if a.Exp > exp {
+	if a.exp > exp {
 		// need to divide
-		e := a.Exp - exp
-		v := a.Value / intPow(10, e)
+		e := a.exp - exp
+		v := a.value / intPow(10, e)
 		return Amount{v, exp}
 	}
-	if a.Exp < exp {
+	if a.exp < exp {
 		// need to multiply
-		e := exp - a.Exp
-		v := a.Value * intPow(10, e)
+		e := exp - a.exp
+		v := a.value * intPow(10, e)
 		return Amount{v, exp}
 	}
 	return a
 }
 
+// Value provides the amount's value
+func (a Amount) Value() int64 {
+	return a.value
+}
+
+// Exp provides the amount's exponent value.
+func (a Amount) Exp() uint32 {
+	return a.exp
+}
+
 // String returns the simplified string amount.
 func (a Amount) String() string {
-	if a.Exp == 0 {
-		return fmt.Sprintf("%d", a.Value)
+	if a.exp == 0 {
+		return fmt.Sprintf("%d", a.value)
 	}
-	p := intPow(10, a.Exp)
-	v1 := a.Value / p
-	v2 := a.Value - (v1 * p)
-	return fmt.Sprintf("%d.%0*d", v1, a.Exp, v2)
+	p := intPow(10, a.exp)
+	v1 := a.value / p
+	v2 := a.value - (v1 * p)
+	return fmt.Sprintf("%d.%0*d", v1, a.exp, v2)
 }
 
 // MarshalText provides the byte value of the amount. See also the
@@ -161,8 +195,11 @@ func (a Amount) MarshalText() ([]byte, error) {
 // MarshalJSON takes string value of the text and adds quotes around
 // it ready to be used in a JSON object.
 func (a Amount) MarshalJSON() ([]byte, error) {
-	str := "\"" + a.String() + "\""
-	return []byte(str), nil
+	buf := new(bytes.Buffer)
+	buf.WriteByte('"')
+	buf.WriteString(a.String())
+	buf.WriteByte('"')
+	return buf.Bytes(), nil
 }
 
 // UnmarshalText will decode the amount value, even if it is quoted
@@ -173,11 +210,7 @@ func (a *Amount) UnmarshalText(value []byte) error {
 		return nil
 	}
 
-	str, err := unquote(value)
-	if err != nil {
-		return fmt.Errorf("decoding string `%s`: %w", value, err)
-	}
-
+	str := unquote(value)
 	amount, err := AmountFromString(string(str))
 	if err != nil {
 		return fmt.Errorf("decoding string `%s`: %w", str, err)
@@ -187,19 +220,19 @@ func (a *Amount) UnmarshalText(value []byte) error {
 	return nil
 }
 
-func unquote(value []byte) ([]byte, error) {
+func unquote(value []byte) []byte {
 	// If the amount is quoted, strip the quotes
 	if len(value) > 2 && value[0] == '"' && value[len(value)-1] == '"' {
 		value = value[1 : len(value)-1]
 	}
-	return value, nil
+	return value
 }
 
 func rescaleAmountPair(a, a2 Amount) (Amount, Amount) {
 	// Take the largest exp
-	exp := a.Exp
-	if a2.Exp > exp {
-		exp = a2.Exp
+	exp := a.exp
+	if a2.exp > exp {
+		exp = a2.exp
 	}
 	return a.Rescale(exp), a2.Rescale(exp)
 }
@@ -211,4 +244,13 @@ func intPow(base int, exp uint32) int64 {
 		exp--
 	}
 	return out
+}
+
+func (Amount) JSONSchemaType() *jsonschema.Type {
+	return &jsonschema.Type{
+		Type:        "string",
+		Pattern:     `^[0-9]+(\.[0-9]+)?$`,
+		Title:       "Amount",
+		Description: "Quantity with optional decimal places that determine accuracy.",
+	}
 }

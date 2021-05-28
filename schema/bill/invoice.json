@@ -1,0 +1,737 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/gobl/bill/Invoice",
+  "definitions": {
+    "gobl/bill/Delivery": {
+      "properties": {
+        "receiver": {
+          "$ref": "#/definitions/gobl/org/Party",
+          "title": "Receiver",
+          "description": "The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/bill/Invoice": {
+      "required": [
+        "uuid",
+        "code",
+        "region_code",
+        "currency",
+        "issue_date",
+        "value_date",
+        "supplier",
+        "customer",
+        "totals"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Sequential ID used to identify this invoice in tax declarations."
+        },
+        "region_code": {
+          "type": "string",
+          "title": "Region Code",
+          "description": "Region used for tax purposes."
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "Currency for all invoice totals."
+        },
+        "rates": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/currency/ExchangeRate"
+          },
+          "type": "array",
+          "title": "Exchange Rates",
+          "description": "Simple array of values used to convert other currencies into the invoice's main currency."
+        },
+        "issue_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/org/Date",
+          "title": "Issue Date"
+        },
+        "op_date": {
+          "$ref": "#/definitions/gobl/org/Date",
+          "title": "Operation Date"
+        },
+        "value_date": {
+          "$ref": "#/definitions/gobl/org/Date",
+          "title": "Value Date"
+        },
+        "supplier": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/org/Party",
+          "title": "Supplier",
+          "description": "The taxable entity supplying the goods or services."
+        },
+        "customer": {
+          "$ref": "#/definitions/gobl/org/Party",
+          "title": "Customer",
+          "description": "Legal entity who receives the goods or services."
+        },
+        "lines": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/bill/Line"
+          },
+          "type": "array"
+        },
+        "totals": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/bill/Totals",
+          "title": "Totals"
+        },
+        "ordering": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/bill/Ordering",
+          "title": "Ordering Details"
+        },
+        "payment": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/bill/Payment",
+          "title": "Payment Details"
+        },
+        "delivery": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/bill/Delivery",
+          "title": "Delivery Details"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/bill/Line": {
+      "required": [
+        "quantity",
+        "item",
+        "sum",
+        "total"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "quantity": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "item": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/org/Item"
+        },
+        "sum": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Sum",
+          "description": "Result of quantity multiplied by item price"
+        },
+        "discount_rate": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/num/Percentage",
+          "title": "Discount Rate",
+          "description": "Percentage discount applied to sum."
+        },
+        "discount": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Discount",
+          "description": "Total discount applied to the line."
+        },
+        "taxes": {
+          "items": {
+            "items": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "$ref": "#/definitions/gobl/tax/Rate"
+            },
+            "type": "array"
+          },
+          "type": "array",
+          "title": "Taxes",
+          "description": "List of taxes to be applied to the line in the invoice totals."
+        },
+        "total": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Total",
+          "description": "Total line amount after applying discounts to the sum."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/bill/Ordering": {
+      "properties": {
+        "seller": {
+          "$ref": "#/definitions/gobl/org/Party",
+          "title": "Seller",
+          "description": "Party who is selling the goods and is not responsible for taxes."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/bill/Payment": {
+      "properties": {
+        "payer": {
+          "$ref": "#/definitions/gobl/org/Party",
+          "title": "Payer",
+          "description": "The party responsible for paying for the invoice."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/bill/Totals": {
+      "required": [
+        "sum",
+        "payable"
+      ],
+      "properties": {
+        "sum": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Sum",
+          "description": "Sum of all line item sums"
+        },
+        "discount": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Discount",
+          "description": "Sum of all discounts applied to each line."
+        },
+        "total": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Total",
+          "description": "Sum of all line sums minus the discounts."
+        },
+        "taxes": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/tax/Totals"
+        },
+        "payable": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Payable",
+          "description": "Total amount to be paid after applying taxes."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/currency/ExchangeRate": {
+      "required": [
+        "currency",
+        "value"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "value": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/num/Amount"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/num/Amount": {
+      "pattern": "^[0-9]+(\\.[0-9]+)?$",
+      "type": "string",
+      "title": "Amount",
+      "description": "Quantity with optional decimal places that determine accuracy."
+    },
+    "gobl/num/Percentage": {
+      "pattern": "^[0-9]+(\\.[0-9]+)?%$",
+      "type": "string",
+      "title": "Percentage",
+      "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
+    },
+    "gobl/org/Address": {
+      "required": [
+        "uuid",
+        "locality",
+        "region"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Useful identifier"
+        },
+        "po_box": {
+          "type": "string",
+          "title": "Post Office Box",
+          "description": "Box number or code for the post office box located at the address."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "House or building number in the street."
+        },
+        "floor": {
+          "type": "string",
+          "title": "Floor",
+          "description": "Floor number within the building."
+        },
+        "block": {
+          "type": "string",
+          "title": "Block",
+          "description": "Block number within the building."
+        },
+        "door": {
+          "type": "string",
+          "title": "Door",
+          "description": "Door number within the building."
+        },
+        "street": {
+          "type": "string",
+          "title": "Street",
+          "description": "Fist line of street."
+        },
+        "street_extra": {
+          "type": "string",
+          "title": "Extended Street",
+          "description": "Additional street address details."
+        },
+        "locality": {
+          "type": "string",
+          "title": "Locality",
+          "description": "The village"
+        },
+        "region": {
+          "type": "string",
+          "title": "Region",
+          "description": "Province"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Post or ZIP code."
+        },
+        "country": {
+          "type": "string",
+          "title": "Country",
+          "description": "ISO country code."
+        },
+        "coords": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/org/Coordinates",
+          "title": "Coordinates",
+          "description": "For when the postal address is not sufficient"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/Coordinates": {
+      "properties": {
+        "lat": {
+          "type": "number",
+          "title": "Latitude",
+          "description": "Decimal latitude coordinate."
+        },
+        "lon": {
+          "type": "number",
+          "title": "Longitude",
+          "description": "Decimal longitude coordinate."
+        },
+        "w3w": {
+          "type": "string",
+          "title": "What 3 Words",
+          "description": "Text coordinates compose of three words."
+        },
+        "geohash": {
+          "type": "string",
+          "title": "Geohash",
+          "description": "Single string coordinate based on geohash standard."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/Date": {
+      "type": "string",
+      "title": "Date",
+      "description": "Civil date in simplified ISO format, like 2021-05-26",
+      "format": "date"
+    },
+    "gobl/org/Email": {
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for the email."
+        },
+        "addr": {
+          "type": "string",
+          "title": "Address",
+          "description": "Electronic mailing address."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/Item": {
+      "required": [
+        "name",
+        "price",
+        "supplier_ids"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identify of this item independent of the Supplier IDs"
+        },
+        "name": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "Only required if this line has a different currency from the rest."
+        },
+        "price": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "tax_included": {
+          "type": "boolean",
+          "title": "Tax Included",
+          "description": "When true"
+        },
+        "supplier_ids": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/org/ItemID"
+          },
+          "type": "array",
+          "title": "Supplier IDs"
+        },
+        "origin": {
+          "type": "string",
+          "title": "Country of Origin",
+          "description": "Country code of where this item was from originally."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/ItemID": {
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/Name": {
+      "required": [
+        "given",
+        "surname"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "description": "What the person would like to be called"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "given": {
+          "type": "string",
+          "title": "Given",
+          "description": "The person's given name"
+        },
+        "middle": {
+          "type": "string",
+          "title": "Middle",
+          "description": "Middle names or initials"
+        },
+        "surname": {
+          "type": "string"
+        },
+        "surname2": {
+          "type": "string"
+        },
+        "suffix": {
+          "type": "string"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/Party": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "tax_id": {
+          "type": "string",
+          "title": "Tax ID"
+        },
+        "tax_scheme": {
+          "type": "string",
+          "title": "Tax Scheme"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name"
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias"
+        },
+        "people": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/org/Person"
+          },
+          "type": "array"
+        },
+        "addresses": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/org/Address"
+          },
+          "type": "array",
+          "title": "Postal Addresses"
+        },
+        "emails": {
+          "items": {
+            "$ref": "#/definitions/gobl/org/Email"
+          },
+          "type": "array",
+          "title": "Email Addresses"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/org/Person": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "role": {
+          "type": "string",
+          "title": "Role",
+          "description": "Role within an organization"
+        },
+        "name": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/org/Name"
+        },
+        "emails": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/org/Email"
+          },
+          "type": "array"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/tax/CategoryTotal": {
+      "required": [
+        "category",
+        "rates",
+        "base",
+        "value"
+      ],
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "rates": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/tax/RateTotal"
+          },
+          "type": "array"
+        },
+        "base": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "value": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "retained": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/tax/Rate": {
+      "required": [
+        "cat_code",
+        "rate_code",
+        "base",
+        "percent"
+      ],
+      "properties": {
+        "cat_code": {
+          "type": "string",
+          "title": "Category Code"
+        },
+        "rate_code": {
+          "type": "string",
+          "title": "Rate Code"
+        },
+        "base": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Base"
+        },
+        "percent": {
+          "$ref": "#/definitions/gobl/num/Percentage",
+          "title": "Percentage"
+        },
+        "retained": {
+          "type": "boolean",
+          "title": "Retained",
+          "description": "True when this tax is retained by the client."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/tax/RateTotal": {
+      "required": [
+        "code",
+        "base",
+        "percent",
+        "value"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "base": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "percent": {
+          "$ref": "#/definitions/gobl/num/Percentage"
+        },
+        "value": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/tax/Totals": {
+      "required": [
+        "categories",
+        "base",
+        "value",
+        "sum"
+      ],
+      "properties": {
+        "categories": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/tax/CategoryTotal"
+          },
+          "type": "array"
+        },
+        "base": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "value": {
+          "$ref": "#/definitions/gobl/num/Amount"
+        },
+        "sum": {
+          "$ref": "#/definitions/gobl/num/Amount",
+          "title": "Sum",
+          "description": "Total of Base plus Value"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

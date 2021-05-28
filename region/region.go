@@ -1,28 +1,34 @@
 package region
 
 import (
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/region/es"
-	"github.com/invopop/gobl/region/pack"
 	"github.com/invopop/gobl/tax"
 )
 
-var packs = map[tax.RegionID]pack.Pack{
+var regions = map[tax.RegionID]Region{
 	"es": es.New(), // Spain
 }
 
-// TaxRegionIDs provides a list of regions that we know about.
-func TaxRegionIDs() []tax.RegionID {
-	codes := make([]tax.RegionID, len(packs))
+// Region represents the methods we expect to be available from a region.
+type Region interface {
+	TaxDefs() *tax.Defs
+	Validate(gobl.Document) error
+}
+
+// IDs provides a list of region IDs that we know about.
+func IDs() []tax.RegionID {
+	codes := make([]tax.RegionID, len(regions))
 	i := 0
-	for c := range packs {
+	for c := range regions {
 		codes[i] = c
 		i++
 	}
 	return codes
 }
 
-// PackFor returns the regional pack for the document or nil if the
+// For returns the region definition for the document or nil if the
 // region code is invalid.
-func PackFor(id tax.RegionID) pack.Pack {
-	return packs[id]
+func For(id tax.RegionID) Region {
+	return regions[id]
 }

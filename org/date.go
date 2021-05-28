@@ -1,9 +1,10 @@
-package gobl
+package org
 
 import (
 	"time"
 
 	"cloud.google.com/go/civil"
+	"github.com/alecthomas/jsonschema"
 )
 
 // Date represents a simple date without time used most frequently
@@ -20,5 +21,14 @@ func NewDate(year int, month time.Month, day int) Date {
 			Month: month,
 			Day:   day,
 		},
+	}
+}
+
+func (Date) JSONSchemaType() *jsonschema.Type {
+	return &jsonschema.Type{
+		Type:        "string",
+		Format:      "date",
+		Title:       "Date",
+		Description: "Civil date in simplified ISO format, like 2021-05-26",
 	}
 }

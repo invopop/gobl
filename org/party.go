@@ -1,4 +1,4 @@
-package gobl
+package org
 
 // Party represents a person or business entity.
 type Party struct {
@@ -19,17 +19,18 @@ type Person struct {
 	Role   string  `json:"role,omitempty" jsonschema:"title=Role,description=Role within an organization"`
 	Name   Name    `json:"name"`
 	Emails []Email `json:"emails,omitempty"`
+	Meta   Meta    `json:"meta,omitempty"`
 }
 
 // Name represents what a human is called. This is a complex subject, see this
 // w3 article for some insights:
 // https://www.w3.org/International/questions/qa-personal-names
 type Name struct {
-	UUID     string `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
-	Alias    string `json:"alias,omitempty" jsonschema:"title=Alias,description=What the person would like to be called."`
+	UUID     string `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
+	Alias    string `json:"alias,omitempty" jsonschema:"title=Alias,description=What the person would like to be called"`
 	Prefix   string `json:"prefix,omitempty"`
-	Given    string `json:"given"`
-	Middle   string `json:"middle,omitempty"`
+	Given    string `json:"given" jsonschema:"title=Given,description=The person's given name"`
+	Middle   string `json:"middle,omitempty" jsonschema:"title=Middle,description=Middle names or initials"`
 	Surname  string `json:"surname"`
 	Surname2 string `json:"surname2,omitempty"`
 	Suffix   string `json:"suffix,omitempty"`
@@ -41,4 +42,5 @@ type Email struct {
 	UUID    string `json:"uuid,omitempty"`
 	Label   string `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for the email."`
 	Address string `json:"addr,omitempty" jsonschema:"title=Address,description=Electronic mailing address."`
+	Meta    Meta   `json:"meta,omitempty"`
 }

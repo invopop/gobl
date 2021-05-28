@@ -1,4 +1,8 @@
-package gobl
+package org
+
+import (
+	"github.com/invopop/gobl/l10n"
+)
 
 // Address defines a globally acceptable set of attributes that describes
 // a postal or fiscal address.
@@ -16,7 +20,7 @@ type Address struct {
 	Locality      string       `json:"locality" jsonschema:"title=Locality,description=The village, town, district, or city."`
 	Region        string       `json:"region" jsonschema:"title=Region,description=Province, County, or State."`
 	Code          string       `json:"code,omitempty" jsonschema:"title=Code,description=Post or ZIP code."`
-	Country       Country      `json:"country,omitempty" jsonschema:"title=Country,description=ISO country code."`
+	Country       l10n.Country `json:"country,omitempty" jsonschema:"title=Country,description=ISO country code."`
 	Coordinates   *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates,description=For when the postal address is not sufficient, coordinates help locate the address more precisely."`
 	Meta          Meta         `json:"meta,omitempty" jsonschema:"title=Meta"`
 }

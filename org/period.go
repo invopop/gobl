@@ -1,4 +1,4 @@
-package gobl
+package org
 
 // Period represents two dates with a start and finish.
 type Period struct {

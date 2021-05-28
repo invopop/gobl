@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/gobl/Envelope",
+  "definitions": {
+    "gobl/Envelope": {
+      "required": [
+        "head",
+        "doc",
+        "sigs"
+      ],
+      "properties": {
+        "head": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/Header",
+          "title": "Header",
+          "description": "Details on what the contents are"
+        },
+        "doc": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/Payload",
+          "title": "Document",
+          "description": "The data being enveloped"
+        },
+        "sigs": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/dsig/Signature"
+          },
+          "type": "array",
+          "title": "Signatures",
+          "description": "JSON Web Signatures of the header"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/Header": {
+      "required": [
+        "typ",
+        "dig"
+      ],
+      "properties": {
+        "typ": {
+          "type": "string",
+          "title": "Type",
+          "description": "Body type of the document contents"
+        },
+        "dig": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/gobl/dsig/Digest",
+          "title": "Digest",
+          "description": "Digest of the canonical JSON body"
+        },
+        "stamps": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/gobl/Stamp"
+          },
+          "type": "array"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/Payload": {
+      "type": "object",
+      "title": "Payload",
+      "description": "Contents of the envelope"
+    },
+    "gobl/Stamp": {
+      "required": [
+        "prv",
+        "val"
+      ],
+      "properties": {
+        "prv": {
+          "type": "string",
+          "title": "Provider",
+          "description": "Identity of the agency used to create the stamp"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value",
+          "description": "The serialized stamp value generated for or by the external agency"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/dsig/Digest": {
+      "required": [
+        "alg",
+        "val"
+      ],
+      "properties": {
+        "alg": {
+          "type": "string",
+          "title": "Algorithm"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "gobl/dsig/Signature": {
+      "type": "string",
+      "title": "Signature",
+      "description": "JSON Web Signature in compact form."
+    }
+  }
+}

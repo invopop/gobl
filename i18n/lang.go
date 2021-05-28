@@ -199,190 +199,190 @@ const (
 )
 
 var iso639_1 = []Lang{
-	"ab", // Abkhazian
-	"aa", // Afar
-	"af", // Afrikaans
-	"ak", // Akan
-	"sq", // Albanian
-	"am", // Amharic
-	"ar", // Arabic
-	"an", // Aragonese
-	"hy", // Armenian
-	"as", // Assamese
-	"av", // Avaric
-	"ae", // Avestan
-	"ay", // Aymara
-	"az", // Azerbaijani
-	"bm", // Bambara
-	"ba", // Bashkir
-	"eu", // Basque
-	"be", // Belarusian
-	"bn", // Bengali
-	"bh", // Bihari Languages
-	"bi", // Bislama
-	"bs", // Bosnian
-	"br", // Breton
-	"bg", // Bulgarian
-	"my", // Burmese
-	"ca", // Catalan, Valencian
-	"ch", // Chamorro
-	"ce", // Chechen
-	"ny", // Chichewa, Chewa, Nyanja
-	"zh", // Chinese
-	"cv", // Chuvash
-	"kw", // Cornish
-	"co", // Corsican
-	"cr", // Cree
-	"hr", // Croation
-	"cs", // Czech
-	"da", // Danish
-	"dv", // Divehi, Dhivei, Maldivian
-	"nl", // Dutch, Flemish
-	"dz", // Dzongkha
-	"en", // English
-	"eo", // Esperanto
-	"et", // Estonian
-	"ee", // Ewe
-	"fo", // Faroese
-	"fj", // Fijian
-	"fi", // Finnish
-	"fr", // Frence
-	"ff", // Fulah
-	"gl", // Galician
-	"ka", // Georgian
-	"de", // German
-	"el", // Greek
-	"gn", // Guarani
-	"gu", // Gujarati
-	"ht", // Haitian
-	"ha", // Hausa
-	"he", // Hebrew
-	"hz", // Herero
-	"hi", // Hindi
-	"ho", // Hiri Motu
-	"hu", // Hungarian
-	"ia", // Interlingua
-	"id", // Indonesian
-	"ie", // Interligue
-	"ga", // Irish
-	"ig", // Igbo
-	"ik", // Inupiaq
-	"io", // Ido
-	"is", // Icelandic
-	"it", // Italian
-	"iu", // Inuktitut
-	"ja", // Japanese
-	"jv", // Javanese
-	"kl", // Kalaallisut, Greenlandic
-	"kn", // Kannada
-	"kr", // Kanuri
-	"ks", // Kashmiri
-	"kk", // Kazakh
-	"km", // Central Khmer
-	"ki", // Kikuyu, Gikuyu
-	"rw", // Kinyarwanda
-	"ky", // Kirighiz, Kyrgyz
-	"kv", // Komi
-	"kg", // Kongo
-	"ko", // Korean
-	"ku", // Kurdish
-	"kj", // Kuanyama, Kwanyama
-	"la", // Latin
-	"lb", // Luxemburgish, Letzeburgesch
-	"lg", // Ganda
-	"li", // Limburgan
-	"ln", // Lingala
-	"lo", // Lao
-	"lt", // Lithuanian
-	"lu", // Luba-Katanga
-	"lv", // Latvian
-	"gv", // Manx
-	"mk", // Macedonian
-	"mg", // Malagasy
-	"ms", // Malay
-	"ml", // Malayalam
-	"mt", // Maltese
-	"mi", // Mãori
-	"mr", // Marathi
-	"mh", // Marshallese
-	"mn", // Mongolian
-	"na", // Nauru
-	"nv", // Navajo
-	"nd", // North Ndebele
-	"ne", // Nepali
-	"ng", // Ndonga
-	"nb", // Norwegian Bokmål
-	"nn", // Norwegian Nynorsk
-	"no", // Norwegian
-	"ii", // Sichuan Yi, Nuosu
-	"nr", // South Ndebele
-	"oc", // Occitan
-	"oj", // Ojibwa
-	"cu", // Church Slavic
-	"om", // Oromo
-	"or", // Oriya
-	"os", // Ossetian, Ossetic
-	"pa", // Punjabi, Panjabi
-	"pi", // Pali
-	"fa", // Persian
-	"pl", // Polish
-	"ps", // Pashto, Pushto
-	"pt", // Portuguese
-	"qu", // Quechua
-	"rm", // Romansh
-	"rn", // Rundi
-	"ro", // Romanian, Moldavian, Moldovan
-	"ru", // Russian
-	"sa", // Sanskrit
-	"sc", // Sardinian
-	"sd", // Sindhi
-	"se", // Northen Sami
-	"sm", // Samoan
-	"sg", // Sango
-	"sr", // Serbian
-	"gd", // Gaelic, Scottish Gaelic
-	"sn", // Shona
-	"si", // Sinhala, Singalese
-	"sk", // Slovak
-	"sl", // Slovenian
-	"so", // Somali
-	"st", // Southern Sotho
-	"es", // Spanish, Castilian
-	"su", // Sundanese
-	"sw", // Swahili
-	"ss", // Swati
-	"sv", // Swedish
-	"ta", // Tamil
-	"te", // Teluga
-	"tg", // Tajik
-	"th", // Thai
-	"ti", // Tigrinya
-	"bo", // Tibetan
-	"tk", // Turkmen
-	"tl", // Tagalog
-	"tn", // Tswana
-	"to", // Tonga
-	"tr", // Turkish
-	"ts", // Tsonga
-	"tt", // Tatar
-	"tw", // Twi
-	"ty", // Tahitian
-	"ug", // Uighur Uyghur
-	"uk", // Ukranian
-	"ur", // Urdu
-	"uz", // Uzbek
-	"ve", // Venda
-	"vi", // Viatnamese
-	"vo", // Volapük
-	"wa", // Walloon
-	"cy", // Welsh
-	"wo", // Wolof
-	"fy", // Western Frisian
-	"xh", // Xhosa
-	"yi", // Yiddish
-	"yo", // Yoruba
-	"za", // Zhuang, Chuang
-	"zu", // Zulu
+	AB, // Abkhazian
+	AA, // Afar
+	AF, // Afrikaans
+	AK, // Akan
+	SQ, // Albanian
+	AM, // Amharic
+	AR, // Arabic
+	AN, // Aragonese
+	HY, // Armenian
+	AS, // Assamese
+	AV, // Avaric
+	AE, // Avestan
+	AY, // Aymara
+	AZ, // Azerbaijani
+	BM, // Bambara
+	BA, // Bashkir
+	EU, // Basque
+	BE, // Belarusian
+	BN, // Bengali
+	BH, // Bihari Languages
+	BI, // Bislama
+	BS, // Bosnian
+	BR, // Breton
+	BG, // Bulgarian
+	MY, // Burmese
+	CA, // Catalan, Valencian
+	CH, // Chamorro
+	CE, // Chechen
+	NY, // Chichewa, Chewa, Nyanja
+	ZH, // Chinese
+	CV, // Chuvash
+	KW, // Cornish
+	CO, // Corsican
+	CR, // Cree
+	HR, // Croation
+	CS, // Czech
+	DA, // Danish
+	DV, // Divehi, Dhivei, Maldivian
+	NL, // Dutch, Flemish
+	DZ, // Dzongkha
+	EN, // English
+	EO, // Esperanto
+	ET, // Estonian
+	EE, // Ewe
+	FO, // Faroese
+	FJ, // Fijian
+	FI, // Finnish
+	FR, // Frence
+	FF, // Fulah
+	GL, // Galician
+	KA, // Georgian
+	DE, // German
+	EL, // Greek
+	GN, // Guarani
+	GU, // Gujarati
+	HT, // Haitian
+	HA, // Hausa
+	HE, // Hebrew
+	HZ, // Herero
+	HI, // Hindi
+	HO, // Hiri Motu
+	HU, // Hungarian
+	IA, // Interlingua
+	ID, // Indonesian
+	IE, // Interligue
+	GA, // Irish
+	IG, // Igbo
+	IK, // Inupiaq
+	IO, // Ido
+	IS, // Icelandic
+	IT, // Italian
+	IU, // Inuktitut
+	JA, // Japanese
+	JV, // Javanese
+	KL, // Kalaallisut, Greenlandic
+	KN, // Kannada
+	KR, // Kanuri
+	KS, // Kashmiri
+	KK, // Kazakh
+	KM, // Central Khmer
+	KI, // Kikuyu, Gikuyu
+	RW, // Kinyarwanda
+	KY, // Kirighiz, Kyrgyz
+	KV, // Komi
+	KG, // Kongo
+	KO, // Korean
+	KU, // Kurdish
+	KJ, // Kuanyama, Kwanyama
+	LA, // Latin
+	LB, // Luxemburgish, Letzeburgesch
+	LG, // Ganda
+	LI, // Limburgan
+	LN, // Lingala
+	LO, // Lao
+	LT, // Lithuanian
+	LU, // Luba-Katanga
+	LV, // Latvian
+	GV, // Manx
+	MK, // Macedonian
+	MG, // Malagasy
+	MS, // Malay
+	ML, // Malayalam
+	MT, // Maltese
+	MI, // Mãori
+	MR, // Marathi
+	MH, // Marshallese
+	MN, // Mongolian
+	NA, // Nauru
+	NV, // Navajo
+	ND, // North Ndebele
+	NE, // Nepali
+	NG, // Ndonga
+	NB, // Norwegian Bokmål
+	NN, // Norwegian Nynorsk
+	NO, // Norwegian
+	II, // Sichuan Yi, Nuosu
+	NR, // South Ndebele
+	OC, // Occitan
+	OJ, // Ojibwa
+	CU, // Church Slavic
+	OM, // Oromo
+	OR, // Oriya
+	OS, // Ossetian, Ossetic
+	PA, // Punjabi, Panjabi
+	PI, // Pali
+	FA, // Persian
+	PL, // Polish
+	PS, // Pashto, Pushto
+	PT, // Portuguese
+	QU, // Quechua
+	RM, // Romansh
+	RN, // Rundi
+	RO, // Romanian, Moldavian, Moldovan
+	RU, // Russian
+	SA, // Sanskrit
+	SC, // Sardinian
+	SD, // Sindhi
+	SE, // Northen Sami
+	SM, // Samoan
+	SG, // Sango
+	SR, // Serbian
+	GD, // Gaelic, Scottish Gaelic
+	SN, // Shona
+	SI, // Sinhala, Singalese
+	SK, // Slovak
+	SL, // Slovenian
+	SO, // Somali
+	ST, // Southern Sotho
+	ES, // Spanish, Castilian
+	SU, // Sundanese
+	SW, // Swahili
+	SS, // Swati
+	SV, // Swedish
+	TA, // Tamil
+	TE, // Teluga
+	TG, // Tajik
+	TH, // Thai
+	TI, // Tigrinya
+	BO, // Tibetan
+	TK, // Turkmen
+	TL, // Tagalog
+	TN, // Tswana
+	TO, // Tonga
+	TR, // Turkish
+	TS, // Tsonga
+	TT, // Tatar
+	TW, // Twi
+	TY, // Tahitian
+	UG, // Uighur Uyghur
+	UK, // Ukranian
+	UR, // Urdu
+	UZ, // Uzbek
+	VE, // Venda
+	VI, // Viatnamese
+	VO, // Volapük
+	WA, // Walloon
+	CY, // Welsh
+	WO, // Wolof
+	FY, // Western Frisian
+	XH, // Xhosa
+	YI, // Yiddish
+	YO, // Yoruba
+	ZA, // Zhuang, Chuang
+	ZU, // Zulu
 }
 
 // Validate ensures the language code is valid according

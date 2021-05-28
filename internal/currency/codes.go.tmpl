@@ -1,0 +1,29 @@
+package currency
+
+// This file is auto-generated. Any manual changes will be overwritten.
+// Generated on {{ .Date }}
+
+// List of ISO4217 currency codes.
+const (
+  {{- range $key, $val := .Codes }}
+  {{ $val }} Code = "{{ $val }}"
+  {{- end }}
+)
+
+var iso4217Codes = []Code{
+  {{- range $key, $val := .Codes }}
+  {{ $val }},
+  {{- end }}
+}
+
+var iso4217Defs = []Def{
+  {{- range .Rows }}
+  {
+    Name:    "{{ .Name }}",
+    Country: "{{ .Country }}",
+    Code:    {{ .Code }},
+    Num:     "{{ .Num }}",
+    Units:   {{ .Units }},
+  },
+  {{- end }}
+}
