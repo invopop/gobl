@@ -10,7 +10,18 @@ Traditionally software business document standards consist of a set of definitio
 
 For GoBL a different approach is being tested. The code and library implementation is in itself the standard. Rather than trying to be super-flexible at the cost of complexity, GoBL includes everything needed for digital signatures, validation, and local implementations including tax definitions, all maintained under an open source license.
 
-In our opinion, Go is an ideal language for this type of project due to its simple and concise syntax, performance, testing capabilities, and portability. We understand however that Go won't be everyone's cup of tea, so the project is designed to offer a server component (you could call it a microserivce) to be launched in a docker container inside your own infrastructure. Using gPRC, a simplified API helps you build and validate your business documents in your language of choice.
+In our opinion, Go is an ideal language for this type of project due to its simple and concise syntax, performance, testing capabilities, and portability. We understand however that Go won't be everyone's cup of tea, so the project is designed to offer a server component (you could call it a microservice) to be launched in a docker container inside your own infrastructure, alongside a JSON Schema definition of all the key documents. Building your own documents and using the GoBL services to validate and sign them should be relatively straight forward.
+
+## GoBL Standard
+
+### Namespaces
+
+
+### Documents
+
+
+### Envelope
+
 
 ## Serialization
 
@@ -20,12 +31,12 @@ Marshalling numbers can be problematic with JSON as the standard dictates that n
 
 ### ID vs UUID
 
-Traditionally when dealing with databases a sequencial ID is assigned to each touple (document, row, item, etc.) starting from 1 going up to whatever the integer limit is. Creating a scaleable and potentially global system however with regular numbers is not easy as you require a single point in the system responsible for ensuring that numbers are always provided in the correct order. Single points of failure are not good for scaleability.
+Traditionally when dealing with databases a sequential ID is assigned to each tuple (document, row, item, etc.) starting from 1 going up to whatever the integer limit is. Creating a scalable and potentially global system however with regular numbers is not easy as you require a single point in the system responsible for ensuring that numbers are always provided in the correct order. Single points of failure are not good for scalability.
 
-To get around the issues with sequencial numbers, the [UUID standard](https://tools.ietf.org/html/rfc4122) (Universally Unique IDentifier) was defined as a mecanism to create a very large number that can be potentially used to identify anything.
+To get around the issues with sequential numbers, the [UUID standard](https://tools.ietf.org/html/rfc4122) (Universally Unique IDentifier) was defined as a mechanism to create a very large number that can be potentially used to identify anything.
 
-The GoBL library forces you to use UUIDs instead of sequencial IDs for anything that could be referenced in the future. To enforce this fact, instead of naming fields `id`, we make an effort to call them `uuid`.
+The GoBL library forces you to use UUIDs instead of sequential IDs for anything that could be referenced in the future. To enforce this fact, instead of naming fields `id`, we make an effort to call them `uuid`.
 
-Sometimes sequencial IDs are however required, usually for human consumption purposes such as ensuring order when generating invoices so that authorities can quickly check that dates and numbers are in order. Our recommendation for such codes is to use a dedicated service to generate sequencial IDs based on the UUIDs, such as [Invopop's Sequence Service](https://invopop.com).
+Sometimes sequential IDs are however required, usually for human consumption purposes such as ensuring order when generating invoices so that authorities can quickly check that dates and numbers are in order. Our recommendation for such codes is to use a dedicated service to generate sequential IDs based on the UUIDs, such as [Invopop's Sequence Service](https://invopop.com).
 
 

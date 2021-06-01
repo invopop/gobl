@@ -36,7 +36,7 @@ func typeNamer(t reflect.Type) string {
 	if len(p) > 2 {
 		p = p[2:]
 		p = append(p, t.Name())
-		return strings.Join(p, "/")
+		return strings.Join(p, ".")
 	}
 	return ""
 }
