@@ -34,7 +34,7 @@ func Schema() error {
 func typeNamer(t reflect.Type) string {
 	p := strings.Split(t.PkgPath(), "/")
 	if len(p) > 2 {
-		p = p[2:]
+		p = p[3:]
 		p = append(p, t.Name())
 		return strings.Join(p, ".")
 	}

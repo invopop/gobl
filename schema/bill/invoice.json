@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$ref": "#/definitions/gobl.bill.Invoice",
+  "$ref": "#/definitions/bill.Invoice",
   "definitions": {
-    "gobl.bill.Delivery": {
+    "bill.Delivery": {
       "properties": {
         "receiver": {
-          "$ref": "#/definitions/gobl.org.Party",
+          "$ref": "#/definitions/org.Party",
           "title": "Receiver",
           "description": "The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."
         }
@@ -13,7 +13,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.bill.Invoice": {
+    "bill.Invoice": {
       "required": [
         "uuid",
         "code",
@@ -48,7 +48,7 @@
         "rates": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.currency.ExchangeRate"
+            "$ref": "#/definitions/currency.ExchangeRate"
           },
           "type": "array",
           "title": "Exchange Rates",
@@ -56,60 +56,60 @@
         },
         "issue_date": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.org.Date",
+          "$ref": "#/definitions/org.Date",
           "title": "Issue Date"
         },
         "op_date": {
-          "$ref": "#/definitions/gobl.org.Date",
+          "$ref": "#/definitions/org.Date",
           "title": "Operation Date"
         },
         "value_date": {
-          "$ref": "#/definitions/gobl.org.Date",
+          "$ref": "#/definitions/org.Date",
           "title": "Value Date"
         },
         "supplier": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.org.Party",
+          "$ref": "#/definitions/org.Party",
           "title": "Supplier",
           "description": "The taxable entity supplying the goods or services."
         },
         "customer": {
-          "$ref": "#/definitions/gobl.org.Party",
+          "$ref": "#/definitions/org.Party",
           "title": "Customer",
           "description": "Legal entity who receives the goods or services."
         },
         "lines": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.bill.Line"
+            "$ref": "#/definitions/bill.Line"
           },
           "type": "array"
         },
         "totals": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.bill.Totals",
+          "$ref": "#/definitions/bill.Totals",
           "title": "Totals"
         },
         "ordering": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.bill.Ordering",
+          "$ref": "#/definitions/bill.Ordering",
           "title": "Ordering Details"
         },
         "payment": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.bill.Payment",
+          "$ref": "#/definitions/bill.Payment",
           "title": "Payment Details"
         },
         "delivery": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.bill.Delivery",
+          "$ref": "#/definitions/bill.Delivery",
           "title": "Delivery Details"
         }
       },
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.bill.Line": {
+    "bill.Line": {
       "required": [
         "quantity",
         "item",
@@ -121,25 +121,25 @@
           "type": "string"
         },
         "quantity": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "item": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.org.Item"
+          "$ref": "#/definitions/org.Item"
         },
         "sum": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Sum",
           "description": "Result of quantity multiplied by item price"
         },
         "discount_rate": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.num.Percentage",
+          "$ref": "#/definitions/num.Percentage",
           "title": "Discount Rate",
           "description": "Percentage discount applied to sum."
         },
         "discount": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Discount",
           "description": "Total discount applied to the line."
         },
@@ -147,7 +147,7 @@
           "items": {
             "items": {
               "$schema": "http://json-schema.org/draft-04/schema#",
-              "$ref": "#/definitions/gobl.tax.Rate"
+              "$ref": "#/definitions/tax.Rate"
             },
             "type": "array"
           },
@@ -156,7 +156,7 @@
           "description": "List of taxes to be applied to the line in the invoice totals."
         },
         "total": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Total",
           "description": "Total line amount after applying discounts to the sum."
         }
@@ -164,10 +164,10 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.bill.Ordering": {
+    "bill.Ordering": {
       "properties": {
         "seller": {
-          "$ref": "#/definitions/gobl.org.Party",
+          "$ref": "#/definitions/org.Party",
           "title": "Seller",
           "description": "Party who is selling the goods and is not responsible for taxes."
         }
@@ -175,10 +175,10 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.bill.Payment": {
+    "bill.Payment": {
       "properties": {
         "payer": {
-          "$ref": "#/definitions/gobl.org.Party",
+          "$ref": "#/definitions/org.Party",
           "title": "Payer",
           "description": "The party responsible for paying for the invoice."
         }
@@ -186,33 +186,33 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.bill.Totals": {
+    "bill.Totals": {
       "required": [
         "sum",
         "payable"
       ],
       "properties": {
         "sum": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Sum",
           "description": "Sum of all line item sums"
         },
         "discount": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Discount",
           "description": "Sum of all discounts applied to each line."
         },
         "total": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Total",
           "description": "Sum of all line sums minus the discounts."
         },
         "taxes": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.tax.Totals"
+          "$ref": "#/definitions/tax.Totals"
         },
         "payable": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Payable",
           "description": "Total amount to be paid after applying taxes."
         }
@@ -220,7 +220,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.currency.ExchangeRate": {
+    "currency.ExchangeRate": {
       "required": [
         "currency",
         "value"
@@ -231,25 +231,25 @@
         },
         "value": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         }
       },
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.num.Amount": {
+    "num.Amount": {
       "pattern": "^[0-9]+(\\.[0-9]+)?$",
       "type": "string",
       "title": "Amount",
       "description": "Quantity with optional decimal places that determine accuracy."
     },
-    "gobl.num.Percentage": {
+    "num.Percentage": {
       "pattern": "^[0-9]+(\\.[0-9]+)?%$",
       "type": "string",
       "title": "Percentage",
       "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
     },
-    "gobl.org.Address": {
+    "org.Address": {
       "required": [
         "uuid",
         "locality",
@@ -322,7 +322,7 @@
         },
         "coords": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.org.Coordinates",
+          "$ref": "#/definitions/org.Coordinates",
           "title": "Coordinates",
           "description": "For when the postal address is not sufficient"
         },
@@ -339,7 +339,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.Coordinates": {
+    "org.Coordinates": {
       "properties": {
         "lat": {
           "type": "number",
@@ -365,13 +365,13 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.Date": {
+    "org.Date": {
       "type": "string",
       "title": "Date",
       "description": "Civil date in simplified ISO format, like 2021-05-26",
       "format": "date"
     },
-    "gobl.org.Email": {
+    "org.Email": {
       "properties": {
         "uuid": {
           "type": "string"
@@ -398,7 +398,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.Item": {
+    "org.Item": {
       "required": [
         "name",
         "price",
@@ -422,7 +422,7 @@
           "description": "Only required if this line has a different currency from the rest."
         },
         "price": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "tax_included": {
           "type": "boolean",
@@ -432,7 +432,7 @@
         "supplier_ids": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.org.ItemID"
+            "$ref": "#/definitions/org.ItemID"
           },
           "type": "array",
           "title": "Supplier IDs"
@@ -455,7 +455,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.ItemID": {
+    "org.ItemID": {
       "required": [
         "value"
       ],
@@ -467,7 +467,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.Name": {
+    "org.Name": {
       "required": [
         "given",
         "surname"
@@ -517,7 +517,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.Party": {
+    "org.Party": {
       "required": [
         "name"
       ],
@@ -546,21 +546,21 @@
         "people": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.org.Person"
+            "$ref": "#/definitions/org.Person"
           },
           "type": "array"
         },
         "addresses": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.org.Address"
+            "$ref": "#/definitions/org.Address"
           },
           "type": "array",
           "title": "Postal Addresses"
         },
         "emails": {
           "items": {
-            "$ref": "#/definitions/gobl.org.Email"
+            "$ref": "#/definitions/org.Email"
           },
           "type": "array",
           "title": "Email Addresses"
@@ -577,7 +577,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.org.Person": {
+    "org.Person": {
       "required": [
         "name"
       ],
@@ -594,12 +594,12 @@
         },
         "name": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/gobl.org.Name"
+          "$ref": "#/definitions/org.Name"
         },
         "emails": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.org.Email"
+            "$ref": "#/definitions/org.Email"
           },
           "type": "array"
         },
@@ -615,7 +615,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.tax.CategoryTotal": {
+    "tax.CategoryTotal": {
       "required": [
         "category",
         "rates",
@@ -629,15 +629,15 @@
         "rates": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.tax.RateTotal"
+            "$ref": "#/definitions/tax.RateTotal"
           },
           "type": "array"
         },
         "base": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "value": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "retained": {
           "type": "boolean"
@@ -646,7 +646,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.tax.Rate": {
+    "tax.Rate": {
       "required": [
         "cat_code",
         "rate_code",
@@ -663,11 +663,11 @@
           "title": "Rate Code"
         },
         "base": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Base"
         },
         "percent": {
-          "$ref": "#/definitions/gobl.num.Percentage",
+          "$ref": "#/definitions/num.Percentage",
           "title": "Percentage"
         },
         "retained": {
@@ -679,7 +679,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.tax.RateTotal": {
+    "tax.RateTotal": {
       "required": [
         "code",
         "base",
@@ -691,19 +691,19 @@
           "type": "string"
         },
         "base": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "percent": {
-          "$ref": "#/definitions/gobl.num.Percentage"
+          "$ref": "#/definitions/num.Percentage"
         },
         "value": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         }
       },
       "additionalProperties": false,
       "type": "object"
     },
-    "gobl.tax.Totals": {
+    "tax.Totals": {
       "required": [
         "categories",
         "base",
@@ -714,18 +714,18 @@
         "categories": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/gobl.tax.CategoryTotal"
+            "$ref": "#/definitions/tax.CategoryTotal"
           },
           "type": "array"
         },
         "base": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "value": {
-          "$ref": "#/definitions/gobl.num.Amount"
+          "$ref": "#/definitions/num.Amount"
         },
         "sum": {
-          "$ref": "#/definitions/gobl.num.Amount",
+          "$ref": "#/definitions/num.Amount",
           "title": "Sum",
           "description": "Total of Base plus Value"
         }
