@@ -7,7 +7,10 @@ import (
 	"github.com/alecthomas/jsonschema"
 )
 
-var factor100 = MakeAmount(100, 0)
+var (
+	factor1   = MakeAmount(1, 0)
+	factor100 = MakeAmount(100, 0)
+)
 
 // Percentage wraps around the regular Amount handler to provide support
 // for percentage values, especially useful for tax rates.
@@ -57,8 +60,11 @@ func PercentageFromString(str string) (Percentage, error) {
 // String outputs the percentage value in a human readable way including
 // the percentage symbol.
 func (p Percentage) String() string {
-	e := p.Amount.exp
-	v := p.Amount.Multiply(factor100).Rescale(e - 2)
+	e := int64(p.Amount.exp) - 2
+	if e < 0 {
+		e = 0
+	}
+	v := p.Amount.Multiply(factor100).Rescale(uint32(e))
 	return v.String() + "%"
 }
 
@@ -71,6 +77,25 @@ func (p Percentage) StringWithoutSymbol() string {
 // provided amount is used.
 func (p Percentage) Of(a Amount) Amount {
 	return a.Multiply(p.Amount)
+}
+
+// From calculates what "percent from" the provided amount would result
+// assuming the rate has already been applied.
+func (p Percentage) From(a Amount) Amount {
+	x := a.Divide(p.Factor())
+	return a.Subtract(x)
+}
+
+// Factor returns the percentage amount as a factor, essentially
+// adding 1 to the rate.
+func (p Percentage) Factor() Amount {
+	return p.Amount.Add(factor1)
+}
+
+// Equals wraps around the amount comparison to see if the two percentages
+// have the same value.
+func (p Percentage) Equals(p2 Percentage) bool {
+	return p.Amount.Equals(p2.Amount)
 }
 
 // MarshalText provides the byte value of the amount. See also the

@@ -76,6 +76,11 @@ func AmountFromHumanString(val string) (Amount, error) {
 	return Amount{}, errors.New("not yet implemented")
 }
 
+// IsZero returns true if the value of the amount is 0.
+func (a Amount) IsZero() bool {
+	return a.value == 0
+}
+
 // Add will add the two amounts together using the base's exponential
 // value for the resulting new amount.
 func (a Amount) Add(a2 Amount) Amount {
@@ -175,6 +180,9 @@ func (a Amount) Exp() uint32 {
 func (a Amount) String() string {
 	if a.exp == 0 {
 		return fmt.Sprintf("%d", a.value)
+	}
+	if a.exp > 1000 {
+		return "NA"
 	}
 	p := intPow(10, a.exp)
 	v1 := a.value / p

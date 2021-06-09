@@ -1,18 +1,33 @@
 package es
 
 import (
-	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/tax"
 )
 
+// Spain holds everything related to spanish documents and taxes.
 type Spain struct{}
 
-// TaxRegion provides all of this regions tax definitions.
-func (Spain) TaxRegion() *tax.Region {
+// New provides the Spanish region definition
+func New() *Spain {
+	return new(Spain)
+}
+
+// Taxes provides all of this regions tax definitions.
+func (Spain) Taxes() *tax.Region {
 	return &taxRegion
 }
 
-func (Spain) Validate(doc gobl.Document) error {
+func (Spain) Currency() *currency.Def {
+	d, ok := currency.Get(currency.Code("EUR"))
+	if !ok {
+		return nil
+	}
+	return &d
+}
+
+// ValidateTaxCode
+func (Spain) ValidateTaxCode(code string) error {
 
 	return nil
 }

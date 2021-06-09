@@ -13,8 +13,8 @@ type Date struct {
 	civil.Date
 }
 
-// NewDate provides a new date instance.
-func NewDate(year int, month time.Month, day int) Date {
+// MakeDate provides a new date instance.
+func MakeDate(year int, month time.Month, day int) Date {
 	return Date{
 		civil.Date{
 			Year:  year,

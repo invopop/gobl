@@ -9,11 +9,8 @@ import (
 // implies just adding a name and price, more complete usage consists
 // of adding descriptions, supplier and client IDs, dimensions, etc.
 //
-// If taxes should be considered to be included in the price, set the
-// `TaxIncluded` property to true. This is especially important for consumer
-// goods that form part of a simplified invoice. When possible, we recommend
-// avoiding using this option as it can get confusing, especially when
-// dealing with exported goods and services.
+// All prices of items should be set as their "net" price, i.e. without
+// tax.
 //
 // The taxes themselves change according to the recipient, so they should
 // be defined in their usage context.
@@ -22,9 +19,9 @@ type Item struct {
 	Name        string       `json:"name"`
 	Description string       `json:"desc,omitempty"`
 	Currency    string       `json:"currency,omitempty" jsonschema:"title=Currency,description=Only required if this line has a different currency from the rest."`
-	Price       num.Amount   `json:"price"`
-	TaxIncluded bool         `json:"tax_included,omitempty" jsonschema:"title=Tax Included,description=When true, the price should be considered to include taxes."`
-	SupplierIDs []*ItemID    `json:"supplier_ids" jsonschema:"title=Supplier IDs"`
+	Price       num.Amount   `json:"price" jsonschema:"title=Price,description=Net price without tax of the item being sold"`
+	Unit        string       `json:"unit,omitempty" jsonschema:"title=Unit,description=Code for unit of the item being sold"`
+	SupplierIDs []*ItemID    `json:"supplier_ids,omitempty" jsonschema:"title=Supplier IDs"`
 	Origin      l10n.Country `json:"origin,omitempty" jsonschema:"title=Country of Origin,description=Country code of where this item was from originally."`
 	Meta        Meta         `json:"meta,omitempty" jsonschema:"title=Meta"`
 }

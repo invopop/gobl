@@ -10,18 +10,11 @@ const (
   {{- end }}
 )
 
-var iso4217Codes = []Code{
-  {{- range $key, $val := .Codes }}
-  {{ $val }},
-  {{- end }}
-}
-
-var iso4217Defs = []Def{
+var iso4217Defs = map[Code]Def{
   {{- range .Rows }}
-  {
-    Name:    "{{ .Name }}",
-    Country: "{{ .Country }}",
+  {{ .Code }}: {
     Code:    {{ .Code }},
+    Name:    "{{ .Name }}",
     Num:     "{{ .Num }}",
     Units:   {{ .Units }},
   },

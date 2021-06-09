@@ -9,8 +9,9 @@ const (
 
 // Standard VAT tax codes
 const (
-	TaxRateVATZero         tax.Code = "zro"
-	TaxRateVATStandard     tax.Code = "std"
-	TaxRateVATReduced      tax.Code = "red"
-	TaxRateVATSuperReduced tax.Code = "srd"
+	TaxRateVATStandard     tax.Code = "STD"
+	TaxRateVATExempt       tax.Code = "EXPT"
+	TaxRateVATZero         tax.Code = "ZERO"
+	TaxRateVATReduced      tax.Code = "RED"
+	TaxRateVATSuperReduced tax.Code = "SRED"
 )

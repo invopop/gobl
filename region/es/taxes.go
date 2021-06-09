@@ -1,19 +1,19 @@
 package es
 
 import (
-	"cloud.google.com/go/civil"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/region/eu"
 	"github.com/invopop/gobl/tax"
 )
 
 // Local tax category definitions which are not considered standard.
 const (
-	TaxCategoryVATEquivalenceSurcharge tax.Code = "VATES"
-	TaxCategoryIRPF                    tax.Code = "IRPF"
-	TaxCategoryIGIC                    tax.Code = "IGIC"
-	TaxCategoryIPSI                    tax.Code = "IPSI"
+	TaxCategoryVATEqualizationSurcharge tax.Code = "VATEQS"
+	TaxCategoryIRPF                     tax.Code = "IRPF"
+	TaxCategoryIGIC                     tax.Code = "IGIC"
+	TaxCategoryIPSI                     tax.Code = "IPSI"
 )
 
 // Specific tax rate codes.
@@ -22,11 +22,11 @@ const (
 	TaxRateVATTobacco tax.Code = "tobacco"
 
 	// IRPF "Autonomo" Rates
-	TaxRateIRPFGeneral      tax.Code = "gen" // Professional or artistic
-	TaxRateIRPFFirst        tax.Code = "fst" // First 2 years
-	TaxRateIRPFModules      tax.Code = "mod" // Module system
-	TaxRateIRPFAgriculture  tax.Code = "agr" // Agricultural
-	TaxRateIRPFAgriculture2 tax.Code = "ag2" // Agricultural special
+	TaxRateIRPFStandard     tax.Code = "STD"  // Professional or artistic
+	TaxRateIRPFFirst        tax.Code = "1ST"  // First 2 years
+	TaxRateIRPFModules      tax.Code = "MOD"  // Module system
+	TaxRateIRPFAgriculture  tax.Code = "AGR"  // Agricultural
+	TaxRateIRPFAgriculture2 tax.Code = "AGR2" // Agricultural special
 )
 
 var taxRegion = tax.Region{
@@ -71,19 +71,19 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2012, Month: 9, Day: 1},
+							Since:   org.MakeDate(2012, 9, 1),
 							Percent: num.MakePercentage(210, 3),
 						},
 						{
-							Since:   civil.Date{Year: 2010, Month: 7, Day: 1},
+							Since:   org.MakeDate(2010, 7, 1),
 							Percent: num.MakePercentage(180, 3),
 						},
 						{
-							Since:   civil.Date{Year: 1995, Month: 1, Day: 1},
+							Since:   org.MakeDate(1995, 1, 1),
 							Percent: num.MakePercentage(160, 3),
 						},
 						{
-							Since:   civil.Date{Year: 1993, Month: 1, Day: 1},
+							Since:   org.MakeDate(1993, 1, 1),
 							Percent: num.MakePercentage(150, 3),
 						},
 					},
@@ -96,19 +96,19 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2012, Month: 9, Day: 1},
+							Since:   org.MakeDate(2012, 9, 1),
 							Percent: num.MakePercentage(100, 3),
 						},
 						{
-							Since:   civil.Date{Year: 2010, Month: 7, Day: 1},
+							Since:   org.MakeDate(2010, 7, 1),
 							Percent: num.MakePercentage(80, 3),
 						},
 						{
-							Since:   civil.Date{Year: 1995, Month: 1, Day: 1},
+							Since:   org.MakeDate(1995, 1, 1),
 							Percent: num.MakePercentage(70, 3),
 						},
 						{
-							Since:   civil.Date{Year: 1993, Month: 1, Day: 1},
+							Since:   org.MakeDate(1993, 1, 1),
 							Percent: num.MakePercentage(60, 3),
 						},
 					},
@@ -121,11 +121,11 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 1995, Month: 1, Day: 1},
+							Since:   org.MakeDate(1995, 1, 1),
 							Percent: num.MakePercentage(40, 3),
 						},
 						{
-							Since:   civil.Date{Year: 1993, Month: 1, Day: 1},
+							Since:   org.MakeDate(1993, 1, 1),
 							Percent: num.MakePercentage(30, 3),
 						},
 					},
@@ -133,12 +133,12 @@ var taxRegion = tax.Region{
 			},
 		},
 		//
-		// VAT Equivalence Surcharge (Recargo de equivalencia)
+		// VAT Equalization Surcharge (Recargo de equivalencia)
 		//
 		{
-			Code: TaxCategoryVATEquivalenceSurcharge,
+			Code: TaxCategoryVATEqualizationSurcharge,
 			Name: i18n.String{
-				i18n.EN: "VAT Equivalence Surcharge",
+				i18n.EN: "VAT Equalization Surcharge",
 				i18n.ES: "IVA Recargo de Equivalencia",
 			},
 			Retained: false,
@@ -163,11 +163,11 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2012, Month: 9, Day: 1},
+							Since:   org.MakeDate(2012, 9, 1),
 							Percent: num.MakePercentage(520, 4),
 						},
 						{
-							Since:   civil.Date{Year: 1993, Month: 1, Day: 1},
+							Since:   org.MakeDate(1993, 1, 1),
 							Percent: num.MakePercentage(400, 4),
 						},
 					},
@@ -180,11 +180,11 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2012, Month: 9, Day: 1},
+							Since:   org.MakeDate(2012, 9, 1),
 							Percent: num.MakePercentage(140, 4),
 						},
 						{
-							Since:   civil.Date{Year: 1993, Month: 1, Day: 1},
+							Since:   org.MakeDate(1993, 1, 1),
 							Percent: num.MakePercentage(100, 4),
 						},
 					},
@@ -197,7 +197,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 1993, Month: 1, Day: 1},
+							Since:   org.MakeDate(1993, 1, 1),
 							Percent: num.MakePercentage(50, 4),
 						},
 					},
@@ -210,7 +210,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2007, Month: 1, Day: 1},
+							Since:   org.MakeDate(2007, 1, 1),
 							Percent: num.MakePercentage(75, 4),
 						},
 					},
@@ -225,26 +225,26 @@ var taxRegion = tax.Region{
 			Retained: true,
 			Defs: []tax.Def{
 				{
-					Code: TaxRateIRPFGeneral,
+					Code: TaxRateIRPFStandard,
 					Name: i18n.String{
-						i18n.EN: "IRPF General Rate",
+						i18n.EN: "IRPF Standard Rate",
 						i18n.ES: "IRPF Tipo General",
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2015, Month: 7, Day: 12},
+							Since:   org.MakeDate(2015, 7, 12),
 							Percent: num.MakePercentage(150, 3),
 						},
 						{
-							Since:   civil.Date{Year: 2015, Month: 1, Day: 1},
+							Since:   org.MakeDate(2015, 1, 1),
 							Percent: num.MakePercentage(190, 3),
 						},
 						{
-							Since:   civil.Date{Year: 2012, Month: 9, Day: 1},
+							Since:   org.MakeDate(2012, 9, 1),
 							Percent: num.MakePercentage(210, 3),
 						},
 						{
-							Since:   civil.Date{Year: 2007, Month: 1, Day: 1},
+							Since:   org.MakeDate(2007, 1, 1),
 							Percent: num.MakePercentage(150, 3),
 						},
 					},
@@ -257,7 +257,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2007, Month: 1, Day: 1},
+							Since:   org.MakeDate(2007, 1, 1),
 							Percent: num.MakePercentage(70, 3),
 						},
 					},
@@ -270,7 +270,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   civil.Date{Year: 2007, Month: 1, Day: 1},
+							Since:   org.MakeDate(2007, 1, 1),
 							Percent: num.MakePercentage(10, 3),
 						},
 					},

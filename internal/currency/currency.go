@@ -55,7 +55,7 @@ func GenerateCodes() error {
 	}
 
 	codeSet := make(map[string]int)
-	rows := make([]*currency.Def, 0)
+	rows := make(map[string]*currency.Def)
 	for _, r := range d.Table.Rows {
 		u, err := strconv.Atoi(r.Units)
 		if err != nil {
@@ -64,17 +64,16 @@ func GenerateCodes() error {
 		}
 		if _, ok := codeSet[r.Code]; ok {
 			codeSet[r.Code]++
-		} else {
-			codeSet[r.Code] = 1
+			continue
 		}
+		codeSet[r.Code] = 1
 		def := &currency.Def{
-			Name:    r.Name,
-			Country: r.Country,
-			Code:    currency.Code(r.Code),
-			Num:     r.Num,
-			Units:   u,
+			Name:  r.Name,
+			Code:  currency.Code(r.Code),
+			Num:   r.Num,
+			Units: uint32(u),
 		}
-		rows = append(rows, def)
+		rows[r.Code] = def
 	}
 
 	// Move codeSet to array and sort
