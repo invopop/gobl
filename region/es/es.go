@@ -2,6 +2,7 @@ package es
 
 import (
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -26,8 +27,8 @@ func (Spain) Currency() *currency.Def {
 	return &d
 }
 
-// ValidateTaxCode
-func (Spain) ValidateTaxCode(code string) error {
-
-	return nil
+// ValidateTaxID
+func (Spain) ValidateTaxID(id *org.TaxID) error {
+	code := id.Code
+	return VerifyTaxCode(code)
 }
