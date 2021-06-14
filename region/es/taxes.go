@@ -22,15 +22,15 @@ const (
 	TaxRateVATTobacco tax.Code = "tobacco"
 
 	// IRPF "Autonomo" Rates
-	TaxRateIRPFStandard     tax.Code = "STD"  // Professional or artistic
-	TaxRateIRPFFirst        tax.Code = "1ST"  // First 2 years
-	TaxRateIRPFModules      tax.Code = "MOD"  // Module system
-	TaxRateIRPFAgriculture  tax.Code = "AGR"  // Agricultural
-	TaxRateIRPFAgriculture2 tax.Code = "AGR2" // Agricultural special
+	TaxRateIRPFStandard     tax.Code = "STD" // Professional or artistic
+	TaxRateIRPFFirst        tax.Code = "1ST" // First 2 years
+	TaxRateIRPFModules      tax.Code = "MOD" // Module system
+	TaxRateIRPFAgriculture  tax.Code = "AGR" // Agricultural
+	TaxRateIRPFAgriculture2 tax.Code = "AG2" // Agricultural special
 )
 
 var taxRegion = tax.Region{
-	Code: "es",
+	Code: Code,
 	Name: i18n.String{
 		i18n.EN: "Spain",
 		i18n.ES: "España",
@@ -71,19 +71,19 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2012, 9, 1),
+							Since:   org.NewDate(2012, 9, 1),
 							Percent: num.MakePercentage(210, 3),
 						},
 						{
-							Since:   org.MakeDate(2010, 7, 1),
+							Since:   org.NewDate(2010, 7, 1),
 							Percent: num.MakePercentage(180, 3),
 						},
 						{
-							Since:   org.MakeDate(1995, 1, 1),
+							Since:   org.NewDate(1995, 1, 1),
 							Percent: num.MakePercentage(160, 3),
 						},
 						{
-							Since:   org.MakeDate(1993, 1, 1),
+							Since:   org.NewDate(1993, 1, 1),
 							Percent: num.MakePercentage(150, 3),
 						},
 					},
@@ -96,19 +96,19 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2012, 9, 1),
+							Since:   org.NewDate(2012, 9, 1),
 							Percent: num.MakePercentage(100, 3),
 						},
 						{
-							Since:   org.MakeDate(2010, 7, 1),
+							Since:   org.NewDate(2010, 7, 1),
 							Percent: num.MakePercentage(80, 3),
 						},
 						{
-							Since:   org.MakeDate(1995, 1, 1),
+							Since:   org.NewDate(1995, 1, 1),
 							Percent: num.MakePercentage(70, 3),
 						},
 						{
-							Since:   org.MakeDate(1993, 1, 1),
+							Since:   org.NewDate(1993, 1, 1),
 							Percent: num.MakePercentage(60, 3),
 						},
 					},
@@ -121,11 +121,11 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(1995, 1, 1),
+							Since:   org.NewDate(1995, 1, 1),
 							Percent: num.MakePercentage(40, 3),
 						},
 						{
-							Since:   org.MakeDate(1993, 1, 1),
+							Since:   org.NewDate(1993, 1, 1),
 							Percent: num.MakePercentage(30, 3),
 						},
 					},
@@ -163,11 +163,11 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2012, 9, 1),
+							Since:   org.NewDate(2012, 9, 1),
 							Percent: num.MakePercentage(520, 4),
 						},
 						{
-							Since:   org.MakeDate(1993, 1, 1),
+							Since:   org.NewDate(1993, 1, 1),
 							Percent: num.MakePercentage(400, 4),
 						},
 					},
@@ -180,11 +180,11 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2012, 9, 1),
+							Since:   org.NewDate(2012, 9, 1),
 							Percent: num.MakePercentage(140, 4),
 						},
 						{
-							Since:   org.MakeDate(1993, 1, 1),
+							Since:   org.NewDate(1993, 1, 1),
 							Percent: num.MakePercentage(100, 4),
 						},
 					},
@@ -197,7 +197,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(1993, 1, 1),
+							Since:   org.NewDate(1993, 1, 1),
 							Percent: num.MakePercentage(50, 4),
 						},
 					},
@@ -210,7 +210,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2007, 1, 1),
+							Since:   org.NewDate(2007, 1, 1),
 							Percent: num.MakePercentage(75, 4),
 						},
 					},
@@ -232,19 +232,19 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2015, 7, 12),
+							Since:   org.NewDate(2015, 7, 12),
 							Percent: num.MakePercentage(150, 3),
 						},
 						{
-							Since:   org.MakeDate(2015, 1, 1),
+							Since:   org.NewDate(2015, 1, 1),
 							Percent: num.MakePercentage(190, 3),
 						},
 						{
-							Since:   org.MakeDate(2012, 9, 1),
+							Since:   org.NewDate(2012, 9, 1),
 							Percent: num.MakePercentage(210, 3),
 						},
 						{
-							Since:   org.MakeDate(2007, 1, 1),
+							Since:   org.NewDate(2007, 1, 1),
 							Percent: num.MakePercentage(150, 3),
 						},
 					},
@@ -257,7 +257,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2007, 1, 1),
+							Since:   org.NewDate(2007, 1, 1),
 							Percent: num.MakePercentage(70, 3),
 						},
 					},
@@ -270,7 +270,7 @@ var taxRegion = tax.Region{
 					},
 					Values: []tax.Value{
 						{
-							Since:   org.MakeDate(2007, 1, 1),
+							Since:   org.NewDate(2007, 1, 1),
 							Percent: num.MakePercentage(10, 3),
 						},
 					},

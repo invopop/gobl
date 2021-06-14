@@ -13,6 +13,12 @@ type Date struct {
 	civil.Date
 }
 
+// NewDate provides a pointer to a new date instance.
+func NewDate(year int, month time.Month, day int) *Date {
+	d := MakeDate(year, month, day)
+	return &d
+}
+
 // MakeDate provides a new date instance.
 func MakeDate(year int, month time.Month, day int) Date {
 	return Date{

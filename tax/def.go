@@ -20,7 +20,7 @@ type Region struct {
 	Code Code        `json:"code" jsonschema:"title=Code"`
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
-	Categories []Category `json:"categories"`
+	Categories []Category `json:"categories" jsonschema:"title=Categories"`
 }
 
 // Category
@@ -32,10 +32,10 @@ type Category struct {
 	// Retained when true implies that the tax amount will be retained
 	// by the buyer on behalf of the supplier, and thus subtracted from
 	// the invoice taxable base total.
-	Retained bool `json:"retained,omitempty"`
+	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained,description=This tax should be retained, not added, from the sum."`
 
 	// Rates array
-	Defs []Def
+	Defs []Def `json:"defs" jsonschema:"title=Definitions,descriptions=Specific tax definitions inside this category."`
 }
 
 // Def defines a tax combination of category and rate.
@@ -50,16 +50,16 @@ type Def struct {
 	// current and historical percentage values for the rate.
 	// Order is important, newer values should come before
 	// older values.
-	Values []Value `json:"values" jsonschema:"title=Values"`
+	Values []Value `json:"values" jsonschema:"title=Values,description=Set of values ordered by date that determine what rates to apply since when."`
 }
 
 // Value contains a percentage rate or fixed amount for a given date range.
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
 type Value struct {
-	Since    org.Date       `json:"since,omitempty"`
-	Percent  num.Percentage `json:"percent"`
-	Disabled bool           `json:"disabled,omitempty"`
+	Since    *org.Date      `json:"since,omitempty" jsonschema:"title=Since,description=Date from which this value should be applied."`
+	Percent  num.Percentage `json:"percent" jsonschema:"title=Percent,description=Rate that should be applied."`
+	Disabled bool           `json:"disabled,omitempty" jsonschema:"title=Disabled,description=When true, this value should no longer be used."`
 }
 
 // Validate enures the basic region definition is valid.
@@ -93,11 +93,11 @@ func checkDefValuesOrder(list interface{}) error {
 	if !ok {
 		return errors.New("must be a tax rate value array")
 	}
-	var date org.Date
+	var date *org.Date
 	// loop through and check order of Since value
 	for i := range values {
 		v := &values[i]
-		if date.IsValid() {
+		if date != nil && date.IsValid() {
 			if v.Since.IsValid() && !v.Since.Before(date.Date) {
 				return errors.New("invalid date order")
 			}

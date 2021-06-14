@@ -12,7 +12,7 @@ type Code string
 
 // Defined region codes.
 const (
-	ES Code = "es" // Spain
+	ES Code = es.Code // Spain
 )
 
 var regions = map[Code]Region{
@@ -47,4 +47,10 @@ func Codes() []Code {
 // region code is invalid.
 func For(code Code) Region {
 	return regions[code]
+}
+
+// List provides the list of regions and their definitions. Only really meant
+// for exporting data.
+func List() map[Code]Region {
+	return regions
 }

@@ -1,6 +1,8 @@
 package i18n
 
-import "errors"
+import (
+	"errors"
+)
 
 // To simplify language management GoBL does not support full localization
 // and instead focusses on simple multi-language based on the ISO 639-1 set

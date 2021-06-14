@@ -11,26 +11,26 @@ import (
 // RateTotal contains a sum of all the tax rates in the document with
 // a matching category and definition.
 type RateTotal struct {
-	Code    Code           `json:"code"`
-	Base    num.Amount     `json:"base"`
-	Percent num.Percentage `json:"percent"`
-	Value   num.Amount     `json:"value"`
+	Code    Code           `json:"code" jsonschema:"title=Code"`
+	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
+	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
+	Value   num.Amount     `json:"value" jsonschema:"title=Value"`
 }
 
 // CategoryTotal groups together a
 type CategoryTotal struct {
-	Code     Code         `json:"code"`
-	Retained bool         `json:"retained,omitempty"`
-	Rates    []*RateTotal `json:"rates"`
-	Base     num.Amount   `json:"base"`
-	Value    num.Amount   `json:"value"`
+	Code     Code         `json:"code" jsonschema:"title=Code"`
+	Retained bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
+	Rates    []*RateTotal `json:"rates" jsonschema:"title=Rates"`
+	Base     num.Amount   `json:"base" jsonschema:"title=Base"`
+	Value    num.Amount   `json:"value" jsonschema:"title=Value"`
 }
 
 // Total contains a set of Category Totals which in turn
 // contain all the accumulated taxes contained in the document.
 type Total struct {
 	sync.Mutex
-	Categories []*CategoryTotal `json:"categories,omitempty"`
+	Categories []*CategoryTotal `json:"categories,omitempty" jsonschema:"title=Categories"`
 	Sum        num.Amount       `json:"sum" jsonschema:"title=Sum,description=Total value of all the taxes to be added or retained."`
 }
 

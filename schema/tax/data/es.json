@@ -1,0 +1,240 @@
+{
+  "code": "es",
+  "name": {
+    "en": "Spain",
+    "es": "España"
+  },
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "es": "Impuesto sobre el Valor Añadido"
+      },
+      "defs": [
+        {
+          "code": "ZRO",
+          "name": {
+            "en": "VAT Zero Rate",
+            "es": "IVA Tipo Zero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "code": "STD",
+          "name": {
+            "en": "VAT Standard Rate",
+            "es": "IVA Tipo General"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "16.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "code": "RED",
+          "name": {
+            "en": "VAT Reduced Rate",
+            "es": "IVA Tipo Reducido"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "10.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "7.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "code": "SRD",
+          "name": {
+            "en": "VAT Super-Reduced Rate",
+            "es": "IVA Tipo Superreducido"
+          },
+          "values": [
+            {
+              "since": "1995-01-01",
+              "percent": "4.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "VATEQS",
+      "name": {
+        "en": "VAT Equalization Surcharge",
+        "es": "IVA Recargo de Equivalencia"
+      },
+      "defs": [
+        {
+          "code": "ZRO",
+          "name": {
+            "en": "VAT Zero Rate",
+            "es": "IVA Tipo Exento"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "code": "STD",
+          "name": {
+            "en": "VAT Standard Rate",
+            "es": "IVA Tipo General"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "5.20%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "4.00%"
+            }
+          ]
+        },
+        {
+          "code": "RED",
+          "name": {
+            "en": "VAT Reduced Rate",
+            "es": "IVA Tipo Reducido"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "1.40%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "1.00%"
+            }
+          ]
+        },
+        {
+          "code": "SRD",
+          "name": {
+            "en": "VAT Super-Reduced Rate",
+            "es": "IVA Tipo Superreducido"
+          },
+          "values": [
+            {
+              "since": "1993-01-01",
+              "percent": "0.50%"
+            }
+          ]
+        },
+        {
+          "code": "tobacco",
+          "name": {
+            "en": "VAT Tobacco Rate",
+            "es": "IVA Tipo Tobaco"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "0.75%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IRPF",
+      "name": null,
+      "retained": true,
+      "defs": [
+        {
+          "code": "STD",
+          "name": {
+            "en": "IRPF Standard Rate",
+            "es": "IRPF Tipo General"
+          },
+          "values": [
+            {
+              "since": "2015-07-12",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2007-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "code": "1ST",
+          "name": {
+            "en": "IRPF Starting Rate",
+            "es": "IRPF Tipo Inicial"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "code": "MOD",
+          "name": {
+            "en": "IRPF Modules Rate",
+            "es": "IRPF Tipo Modulos"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "1.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

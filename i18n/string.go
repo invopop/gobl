@@ -1,5 +1,7 @@
 package i18n
 
+import "github.com/alecthomas/jsonschema"
+
 const (
 	defaultLanguage = EN
 )
@@ -20,4 +22,18 @@ func (s String) String(lang Lang) string {
 		return v // provide first entry
 	}
 	return ""
+}
+
+func (String) JSONSchemaType() *jsonschema.Type {
+	return &jsonschema.Type{
+		Type: "object",
+		PatternProperties: map[string]*jsonschema.Type{
+			`^[a-z]{2}$`: &jsonschema.Type{
+				Type:  "string",
+				Title: "Text in given language.",
+			},
+		},
+		Title:       "Multi-language String",
+		Description: "Map of 2-Letter language codes to their translations.",
+	}
 }

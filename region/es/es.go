@@ -9,12 +9,15 @@ import (
 // Spain holds everything related to spanish documents and taxes.
 type Spain struct{}
 
+// Code defines how we reference this region definition.
+const Code = "es"
+
 // New provides the Spanish region definition
 func New() *Spain {
 	return new(Spain)
 }
 
-// Taxes provides all of this regions tax definitions.
+// Taxes provides all of this region's tax definitions.
 func (Spain) Taxes() *tax.Region {
 	return &taxRegion
 }
@@ -27,7 +30,6 @@ func (Spain) Currency() *currency.Def {
 	return &d
 }
 
-// ValidateTaxID
 func (Spain) ValidateTaxID(id *org.TaxID) error {
 	code := id.Code
 	return VerifyTaxCode(code)

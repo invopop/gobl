@@ -2,6 +2,31 @@ package es
 
 import "testing"
 
+func TestCleanTaxCode(t *testing.T) {
+	tests := []struct {
+		Code     string
+		Expected string
+	}{
+		{
+			Code:     "93471790-C",
+			Expected: "93471790C",
+		},
+		{
+			Code:     " 4359 6386 R ",
+			Expected: "43596386R",
+		},
+		{
+			Code:     "Z-8327649-K",
+			Expected: "Z8327649K",
+		},
+	}
+	for i, ts := range tests {
+		if err := CleanTaxCode(ts.Code); err != ts.Expected {
+			t.Errorf("unexpected result: %d: got: %+v", i, err)
+		}
+	}
+}
+
 func TestVerifyNationalCode(t *testing.T) {
 	tests := []struct {
 		Code     string

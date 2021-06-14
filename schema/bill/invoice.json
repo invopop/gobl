@@ -38,7 +38,7 @@
         "region": {
           "type": "string",
           "title": "Region",
-          "description": "Region Code used for tax purposes."
+          "description": "GoBL region code used to determine taxes and validation rules."
         },
         "currency": {
           "type": "string",
@@ -52,7 +52,7 @@
           },
           "type": "array",
           "title": "Exchange Rates",
-          "description": "Simple array of values used to convert other currencies into the invoice's main currency."
+          "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
         },
         "issue_date": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -187,7 +187,7 @@
     "bill.Outlay": {
       "required": [
         "index",
-        "name",
+        "desc",
         "paid"
       ],
       "properties": {
@@ -197,11 +197,7 @@
         "index": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the invoice."
-        },
-        "name": {
-          "type": "string",
-          "title": "Name"
+          "description": "Line number inside the invoice"
         },
         "ref": {
           "type": "string",
@@ -475,7 +471,9 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional fields."
         }
       },
       "additionalProperties": false,
@@ -568,7 +566,8 @@
           "description": "What the person would like to be called"
         },
         "prefix": {
-          "type": "string"
+          "type": "string",
+          "title": "Prefix"
         },
         "given": {
           "type": "string",
@@ -581,13 +580,16 @@
           "description": "Middle names or initials"
         },
         "surname": {
-          "type": "string"
+          "type": "string",
+          "title": "Surname"
         },
         "surname2": {
-          "type": "string"
+          "type": "string",
+          "title": "Second Surname"
         },
         "suffix": {
-          "type": "string"
+          "type": "string",
+          "title": "Suffix"
         },
         "meta": {
           "patternProperties": {
@@ -595,7 +597,8 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "type": "object",
+          "title": "Meta"
         }
       },
       "additionalProperties": false,
@@ -607,32 +610,35 @@
       ],
       "properties": {
         "uuid": {
-          "type": "string",
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
-          "description": "Unique identity code"
+          "description": "Unique identity code."
         },
         "tax_id": {
-          "type": "string",
-          "title": "Tax ID"
-        },
-        "tax_scheme": {
-          "type": "string",
-          "title": "Tax Scheme"
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.TaxID",
+          "title": "Tax Identity",
+          "description": "The entity's legal ID code used for tax purposes. They may have other numbers"
         },
         "name": {
           "type": "string",
-          "title": "Name"
+          "title": "Name",
+          "description": "Legal name or representation of the organization."
         },
         "alias": {
           "type": "string",
-          "title": "Alias"
+          "title": "Alias",
+          "description": "Alternate short name."
         },
         "people": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "$ref": "#/definitions/org.Person"
           },
-          "type": "array"
+          "type": "array",
+          "title": "People",
+          "description": "Details of physical people who represent the party."
         },
         "addresses": {
           "items": {
@@ -640,7 +646,8 @@
             "$ref": "#/definitions/org.Address"
           },
           "type": "array",
-          "title": "Postal Addresses"
+          "title": "Postal Addresses",
+          "description": "Regular post addresses for where information should be sent if needed."
         },
         "emails": {
           "items": {
@@ -655,7 +662,9 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "type": "object",
+          "title": "Meta",
+          "description": "Any additional non-structure information that does not fit into the rest of the document."
         }
       },
       "additionalProperties": false,
@@ -667,25 +676,29 @@
       ],
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code"
+        },
+        "name": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Name",
+          "title": "Name",
+          "description": "Complete details on the name of the person"
         },
         "role": {
           "type": "string",
           "title": "Role",
-          "description": "Role within an organization"
-        },
-        "name": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/org.Name"
+          "description": "What they do within an organization"
         },
         "emails": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "$ref": "#/definitions/org.Email"
           },
-          "type": "array"
+          "type": "array",
+          "title": "Email Addresses",
+          "description": "Electronic mail addresses that belong to the person."
         },
         "meta": {
           "patternProperties": {
@@ -693,7 +706,39 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "type": "object",
+          "title": "Meta",
+          "description": "Data about the data."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "org.TaxID": {
+      "required": [
+        "ctry",
+        "code"
+      ],
+      "properties": {
+        "ctry": {
+          "type": "string",
+          "title": "Country",
+          "description": "ISO country code for Where the tax identity was issued."
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Identity code."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional details."
         }
       },
       "additionalProperties": false,
@@ -708,23 +753,28 @@
       ],
       "properties": {
         "code": {
-          "type": "string"
+          "type": "string",
+          "title": "Code"
         },
         "retained": {
-          "type": "boolean"
+          "type": "boolean",
+          "title": "Retained"
         },
         "rates": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "$ref": "#/definitions/tax.RateTotal"
           },
-          "type": "array"
+          "type": "array",
+          "title": "Rates"
         },
         "base": {
-          "$ref": "#/definitions/num.Amount"
+          "$ref": "#/definitions/num.Amount",
+          "title": "Base"
         },
         "value": {
-          "$ref": "#/definitions/num.Amount"
+          "$ref": "#/definitions/num.Amount",
+          "title": "Value"
         }
       },
       "additionalProperties": false,
@@ -779,16 +829,20 @@
       ],
       "properties": {
         "code": {
-          "type": "string"
+          "type": "string",
+          "title": "Code"
         },
         "base": {
-          "$ref": "#/definitions/num.Amount"
+          "$ref": "#/definitions/num.Amount",
+          "title": "Base"
         },
         "percent": {
-          "$ref": "#/definitions/num.Percentage"
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Percent"
         },
         "value": {
-          "$ref": "#/definitions/num.Amount"
+          "$ref": "#/definitions/num.Amount",
+          "title": "Value"
         }
       },
       "additionalProperties": false,
@@ -804,7 +858,8 @@
             "$schema": "http://json-schema.org/draft-04/schema#",
             "$ref": "#/definitions/tax.CategoryTotal"
           },
-          "type": "array"
+          "type": "array",
+          "title": "Categories"
         },
         "sum": {
           "$ref": "#/definitions/num.Amount",
@@ -814,6 +869,12 @@
       },
       "additionalProperties": false,
       "type": "object"
+    },
+    "uuid.UUID": {
+      "type": "string",
+      "title": "UUID",
+      "description": "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL.",
+      "format": "uuid"
     }
   }
 }

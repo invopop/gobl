@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/tax.Region",
+  "definitions": {
+    "i18n.String": {
+      "patternProperties": {
+        "^[a-z]{2}$": {
+          "type": "string",
+          "title": "Text in given language."
+        }
+      },
+      "type": "object",
+      "title": "Multi-language String",
+      "description": "Map of 2-Letter language codes to their translations."
+    },
+    "num.Percentage": {
+      "pattern": "^[0-9]+(\\.[0-9]+)?%$",
+      "type": "string",
+      "title": "Percentage",
+      "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
+    },
+    "org.Date": {
+      "type": "string",
+      "title": "Date",
+      "description": "Civil date in simplified ISO format, like 2021-05-26",
+      "format": "date"
+    },
+    "tax.Category": {
+      "required": [
+        "code",
+        "name",
+        "defs"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "name": {
+          "$ref": "#/definitions/i18n.String",
+          "title": "Name"
+        },
+        "desc": {
+          "$ref": "#/definitions/i18n.String",
+          "title": "Description"
+        },
+        "retained": {
+          "type": "boolean",
+          "title": "Retained",
+          "description": "This tax should be retained"
+        },
+        "defs": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/tax.Def"
+          },
+          "type": "array",
+          "title": "Definitions"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "tax.Def": {
+      "required": [
+        "code",
+        "name",
+        "values"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "name": {
+          "$ref": "#/definitions/i18n.String",
+          "title": "Name"
+        },
+        "desc": {
+          "$ref": "#/definitions/i18n.String",
+          "title": "Description"
+        },
+        "values": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/tax.Value"
+          },
+          "type": "array",
+          "title": "Values",
+          "description": "Set of values ordered by date that determine what rates to apply since when."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "tax.Region": {
+      "required": [
+        "code",
+        "name",
+        "categories"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "name": {
+          "$ref": "#/definitions/i18n.String",
+          "title": "Name"
+        },
+        "categories": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/tax.Category"
+          },
+          "type": "array",
+          "title": "Categories"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "tax.Value": {
+      "required": [
+        "percent"
+      ],
+      "properties": {
+        "since": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Date",
+          "title": "Since",
+          "description": "Date from which this value should be applied."
+        },
+        "percent": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Percent",
+          "description": "Rate that should be applied."
+        },
+        "disabled": {
+          "type": "boolean",
+          "title": "Disabled",
+          "description": "When true"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

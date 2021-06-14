@@ -44,6 +44,7 @@ var (
 
 // Known combinations of codes
 var (
+	taxCodeBadCharsRegexp = regexp.MustCompile("[^A-Z0-9]+")
 	taxCodeNationalRegexp = regexp.MustCompile(`^(?P<number>[0-9]{8})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeForeignRegexp  = regexp.MustCompile(`^(?P<type>[` + taxCodeForeignTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeOtherRegexp    = regexp.MustCompile(`^(?P<type>[` + taxCodeOtherTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)
@@ -57,6 +58,13 @@ var (
 func VerifyTaxCode(code string) error {
 	_, err := DetermineTaxCodeType(code)
 	return err
+}
+
+// CleanTaxCode removes any whitespace or separation characters and ensures all letters are
+// uppercase.
+func CleanTaxCode(code string) string {
+	code = strings.ToUpper(code)
+	return taxCodeBadCharsRegexp.ReplaceAllString(code, "")
 }
 
 // DetermineTaxCodeType takes a valid code and determines the type. If the code

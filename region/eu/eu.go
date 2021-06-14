@@ -7,11 +7,10 @@ const (
 	TaxCategoryVAT tax.Code = "VAT"
 )
 
-// Standard VAT tax codes
+// Most common VAT codes
 const (
 	TaxRateVATStandard     tax.Code = "STD"
-	TaxRateVATExempt       tax.Code = "EXPT"
-	TaxRateVATZero         tax.Code = "ZERO"
 	TaxRateVATReduced      tax.Code = "RED"
-	TaxRateVATSuperReduced tax.Code = "SRED"
+	TaxRateVATSuperReduced tax.Code = "SRD"
+	TaxRateVATZero         tax.Code = "ZRO"
 )
