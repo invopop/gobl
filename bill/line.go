@@ -3,6 +3,7 @@ package bill
 import (
 	"fmt"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -11,8 +12,7 @@ import (
 // Lines holds an array of Line objects.
 type Lines []*Line
 
-// Line is a single row in an invoice. For tax calculations, it
-// represents the base.
+// Line is a single row in an invoice.
 type Line struct {
 	UUID     string        `json:"uuid,omitempty"`
 	Index    int           `json:"index" jsonschema:"title=Index,description=Line number inside the invoice."`
@@ -22,6 +22,17 @@ type Line struct {
 	Discount *org.Discount `json:"discount,omitempty" jsonschema:"title=Discount,description=Discount applied to this line."`
 	Taxes    tax.Rates     `json:"taxes,omitempty" jsonschema:"title=Taxes,description=List of taxes to be applied to the line in the invoice totals."`
 	Total    num.Amount    `json:"total" jsonschema:"title=Total,description=Total line amount after applying discounts to the sum."`
+}
+
+// Validate ensures the line contains everything required.
+func (l *Line) Validate() error {
+	return validation.ValidateStruct(l,
+		validation.Field(&l.Index, validation.Required),
+		validation.Field(&l.Quantity, validation.Required),
+		validation.Field(&l.Item, validation.Required),
+		validation.Field(&l.Sum, validation.Required),
+		validation.Field(&l.Total, validation.Required),
+	)
 }
 
 // calculate takes the provided region and date to correctly

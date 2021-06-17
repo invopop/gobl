@@ -3,24 +3,18 @@ package tax
 import (
 	"errors"
 
-	validation "github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 )
 
-// Code represents a string used to uniquely identify the data we're looking
-// at. We use "code" instead of "id", to reenforce the fact that codes should
-// be more easily set and used by humans than IDs or UUIDs.
-type Code string
-
 // Region defines the holding structure for a regions categories and subsequent
 // Rates and Values.
 type Region struct {
-	Code Code        `json:"code" jsonschema:"title=Code"`
-	Name i18n.String `json:"name" jsonschema:"title=Name"`
-
-	Categories []Category `json:"categories" jsonschema:"title=Categories"`
+	Code       Code        `json:"code" jsonschema:"title=Code"`
+	Name       i18n.String `json:"name" jsonschema:"title=Name"`
+	Categories []Category  `json:"categories" jsonschema:"title=Categories"`
 }
 
 // Category
@@ -62,10 +56,23 @@ type Value struct {
 	Disabled bool           `json:"disabled,omitempty" jsonschema:"title=Disabled,description=When true, this value should no longer be used."`
 }
 
-// Validate enures the basic region definition is valid.
+// Validate enures the region definition is valid, including all
+// subsequent categories.
 func (r Region) Validate() error {
 	err := validation.ValidateStruct(&r,
+		validation.Field(&r.Code, validation.Required),
 		validation.Field(&r.Name, validation.Required),
+		validation.Field(&r.Categories, validation.Required),
+	)
+	return err
+}
+
+// Validate ensures the Category's contents are correct.
+func (c Category) Validate() error {
+	err := validation.ValidateStruct(&c,
+		validation.Field(&c.Code, validation.Required),
+		validation.Field(&c.Name, validation.Required),
+		validation.Field(&c.Defs, validation.Required),
 	)
 	return err
 }

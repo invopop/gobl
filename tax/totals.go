@@ -4,7 +4,6 @@ import (
 	"errors"
 	"sync"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/num"
 )
 
@@ -32,17 +31,6 @@ type Total struct {
 	sync.Mutex
 	Categories []*CategoryTotal `json:"categories,omitempty" jsonschema:"title=Categories"`
 	Sum        num.Amount       `json:"sum" jsonschema:"title=Sum,description=Total value of all the taxes to be added or retained."`
-}
-
-// Validate ensures the Rate contains all the details required.
-func (r *Rate) Validate() error {
-	return validation.ValidateStruct(r,
-		validation.Field(&r.Category, validation.Required),
-		validation.Field(&r.Code, validation.Required),
-		validation.Field(&r.Base, validation.Required),
-		validation.Field(&r.Percent, validation.Required),
-		validation.Field(&r.Value, validation.Required),
-	)
 }
 
 // NewTotal initiates a new total instance.
@@ -76,7 +64,7 @@ func NewRateTotal(code Code, percent num.Percentage, zero num.Amount) *RateTotal
 // AddRate makes it easier to add a new rate to the totals. It'll automatically
 // handle splitting by category. A zero value is required so we know what to base
 // calculations on.
-func (t *Total) AddRate(r Rate, zero num.Amount) error {
+func (t *Total) AddRate(r *Rate, zero num.Amount) error {
 	// Just in case we use this in multiple requests
 	t.Lock()
 	defer t.Unlock()

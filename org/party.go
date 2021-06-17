@@ -2,26 +2,29 @@ package org
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
 )
 
 // Party represents a person or business entity.
 type Party struct {
-	UUID      *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
-	TaxID     *TaxID     `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
-	Name      string     `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
-	Alias     string     `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
-	People    []*Person  `json:"people,omitempty" jsonschema:"title=People,description=Details of physical people who represent the party."`
-	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses,description=Regular post addresses for where information should be sent if needed."`
-	Emails    []*Email   `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
-	Meta      Meta       `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional non-structure information that does not fit into the rest of the document."`
+	UUID       *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
+	TaxID      *TaxID       `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
+	Name       string       `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
+	Alias      string       `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
+	People     []*Person    `json:"people,omitempty" jsonschema:"title=People,description=Details of physical people who represent the party."`
+	Addresses  []*Address   `json:"addresses,omitempty" jsonschema:"title=Postal Addresses,description=Regular post addresses for where information should be sent if needed."`
+	Emails     []*Email     `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
+	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
+	Meta       Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional non-structure information that does not fit into the rest of the document."`
 }
 
 // TaxID represents a party's tax identify number for a given
 // country.
 type TaxID struct {
-	Country l10n.Country `json:"ctry" jsonschema:"title=Country,description=ISO country code for Where the tax identity was issued."`
+	UUID    *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
+	Country l10n.Country `json:"country" jsonschema:"title=Country,description=ISO country code for Where the tax identity was issued."`
 	Code    string       `json:"code" jsonschema:"title=Code,description=Identity code."`
 	Meta    Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional details."`
 }
@@ -39,23 +42,30 @@ type Person struct {
 // w3 article for some insights:
 // https://www.w3.org/International/questions/qa-personal-names
 type Name struct {
-	UUID     string `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
-	Alias    string `json:"alias,omitempty" jsonschema:"title=Alias,description=What the person would like to be called"`
-	Prefix   string `json:"prefix,omitempty" jsonschema:"title=Prefix"`
-	Given    string `json:"given" jsonschema:"title=Given,description=The person's given name"`
-	Middle   string `json:"middle,omitempty" jsonschema:"title=Middle,description=Middle names or initials"`
-	Surname  string `json:"surname" jsonschema:"title=Surname"`
-	Surname2 string `json:"surname2,omitempty" jsonschema:"title=Second Surname"`
-	Suffix   string `json:"suffix,omitempty" jsonschema:"title=Suffix"`
-	Meta     Meta   `json:"meta,omitempty" jsonschema:"title=Meta"`
+	UUID     *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
+	Alias    string     `json:"alias,omitempty" jsonschema:"title=Alias,description=What the person would like to be called"`
+	Prefix   string     `json:"prefix,omitempty" jsonschema:"title=Prefix"`
+	Given    string     `json:"given" jsonschema:"title=Given,description=The person's given name"`
+	Middle   string     `json:"middle,omitempty" jsonschema:"title=Middle,description=Middle names or initials"`
+	Surname  string     `json:"surname" jsonschema:"title=Surname"`
+	Surname2 string     `json:"surname2,omitempty" jsonschema:"title=Second Surname"`
+	Suffix   string     `json:"suffix,omitempty" jsonschema:"title=Suffix"`
+	Meta     Meta       `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Email describes the electronic mailing details.
 type Email struct {
-	UUID    string `json:"uuid,omitempty"`
-	Label   string `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for the email."`
-	Address string `json:"addr,omitempty" jsonschema:"title=Address,description=Electronic mailing address."`
-	Meta    Meta   `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional fields."`
+	UUID    *uuid.UUID `json:"uuid,omitempty"`
+	Label   string     `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for the email."`
+	Address string     `json:"addr" jsonschema:"title=Address,description=Electronic mailing address."`
+	Meta    Meta       `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional fields."`
+}
+
+// Telephone describes what is expected for a telephone number.
+type Telephone struct {
+	UUID   *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	Label  string     `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for this number."`
+	Number string     `json:"number" jsonschema:"title=Number,description=The number to be dialed in ITU E.164 international format."`
 }
 
 // Validate is used to check the party's data meets minimum expectations.
@@ -71,5 +81,19 @@ func (tid *TaxID) Validate() error {
 	return validation.ValidateStruct(tid,
 		validation.Field(&tid.Country, validation.Required),
 		validation.Field(&tid.Code, validation.Required),
+	)
+}
+
+// Validate ensures email address looks valid.
+func (e *Email) Validate() error {
+	return validation.ValidateStruct(e,
+		validation.Field(&e.Address, validation.Required, is.Email),
+	)
+}
+
+// Validate checks the telephone objects number to ensure it looks correct.
+func (t *Telephone) Validate() error {
+	return validation.ValidateStruct(t,
+		validation.Field(&t.Number, validation.Required, is.E164),
 	)
 }

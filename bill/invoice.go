@@ -7,18 +7,22 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
+
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-const invoiceBodyType = "bill.Invoice"
+const invoiceType = "bill.Invoice"
 
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	UUID          string                 `json:"uuid" jsonschema:"title=UUID"`
+	UUID          uuid.UUID              `json:"uuid" jsonschema:"title=UUID"`
 	Code          string                 `json:"code" jsonschema:"title=Code,description=Sequential ID used to identify this invoice in tax declarations."`
 	Region        region.Code            `json:"region" jsonschema:"title=Region,description=GoBL region code used to determine taxes and validation rules."`
 	Currency      currency.Code          `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
@@ -59,7 +63,9 @@ type Ordering struct {
 // Payment contains details as to how the invoice should be paid.
 // TODO: Add terms here.
 type Payment struct {
-	Payer *org.Party `json:"payer,omitempty" jsonschema:"title=Payer,description=The party responsible for paying for the invoice."`
+	Terms   *pay.Terms    `json:"terms,omitempty" jsonschema:"title=Terms,description=Payment terms or conditions."`
+	Methods []*pay.Method `json:"methods,omitempty" jsonschema:"title=Methods,description=Array of payment options that can be used to pay for this invoice."`
+	Payer   *org.Party    `json:"payer,omitempty" jsonschema:"title=Payer,description=The party responsible for paying for the invoice, if not the customer."`
 }
 
 // InvoiceDelivery covers the details of the destination for the products described
@@ -68,9 +74,27 @@ type Delivery struct {
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver,description=The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."`
 }
 
-// BodyType provides the body type used for mapping.
-func (Invoice) BodyType() string {
-	return invoiceBodyType
+// Type provides the body type used for mapping.
+func (Invoice) Type() string {
+	return invoiceType
+}
+
+// Validate checks to ensure the invoice is valid and contains all the information we need.
+func (inv *Invoice) Validate() error {
+	return validation.ValidateStruct(inv,
+		validation.Field(&inv.UUID, validation.Required, uuid.IsV1),
+		validation.Field(&inv.Code, validation.Required),
+		validation.Field(&inv.Region, validation.Required),
+		validation.Field(&inv.Currency, validation.Required),
+		validation.Field(&inv.IssueDate, validation.Required),
+		validation.Field(&inv.ValueDate, validation.Required),
+
+		validation.Field(&inv.Supplier, validation.Required),
+		validation.Field(&inv.Customer, validation.Required),
+
+		validation.Field(&inv.Lines, validation.Required),
+		validation.Field(&inv.Totals, validation.Required),
+	)
 }
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
@@ -78,7 +102,7 @@ func (Invoice) BodyType() string {
 func (inv *Invoice) Calculate() error {
 	r := region.For(inv.Region)
 	if r == nil {
-		return errors.New("invalid invoice region code")
+		return errors.New("unknown invoice region code")
 	}
 
 	if inv.ValueDate == nil {
@@ -117,11 +141,13 @@ func (inv *Invoice) Calculate() error {
 	t.Total = t.Sum.Add(t.Discount)
 
 	// Outlays
-	for _, o := range inv.Outlays {
+	for i, o := range inv.Outlays {
+		o.Index = i + 1
 		t.Outlays = t.Outlays.Add(o.Paid)
 	}
 
 	t.Payable = t.Total.Add(t.Taxes.Sum).Add(t.Outlays)
+	inv.Totals = t
 	return nil
 }
 

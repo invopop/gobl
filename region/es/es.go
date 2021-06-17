@@ -10,7 +10,7 @@ import (
 type Spain struct{}
 
 // Code defines how we reference this region definition.
-const Code = "es"
+const Code = "ES"
 
 // New provides the Spanish region definition
 func New() *Spain {

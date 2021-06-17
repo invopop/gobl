@@ -8,10 +8,10 @@ import (
 // Header defines the meta data of the body. The header is used as the payload
 // for the JSON Web Signatures, so we want this to be as compact as possible.
 type Header struct {
-	Type   string       `json:"typ" jsonschema:"title=Type,description=Body type of the document contents"`
-	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest,description=Digest of the canonical JSON body"`
-	Stamps []*Stamp     `json:"stamps,omitempty"`
-	Meta   org.Meta     `json:"meta,omitempty"`
+	Type   string       `json:"typ" jsonschema:"title=Type,description=Body type of the document contents."`
+	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest,description=Digest of the canonical JSON body."`
+	Stamps []*Stamp     `json:"stamps,omitempty" jsonschema:"title=Stamps,description=Seals of approval from other organisations."`
+	Meta   org.Meta     `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional information about this envelope."`
 }
 
 // Stamp defines an official seal of approval from a third party like a governmental agency

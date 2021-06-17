@@ -19,6 +19,14 @@ func TestCleanTaxCode(t *testing.T) {
 			Code:     "Z-8327649-K",
 			Expected: "Z8327649K",
 		},
+		{
+			Code:     "ES93471790C",
+			Expected: "93471790C",
+		},
+		{
+			Code:     " ES-93 471 790-C ",
+			Expected: "93471790C",
+		},
 	}
 	for i, ts := range tests {
 		if err := CleanTaxCode(ts.Code); err != ts.Expected {

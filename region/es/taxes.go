@@ -19,7 +19,7 @@ const (
 // Specific tax rate codes.
 const (
 	// VAT non-standard Rates
-	TaxRateVATTobacco tax.Code = "tobacco"
+	TaxRateVATTobacco tax.Code = "TOB"
 
 	// IRPF "Autonomo" Rates
 	TaxRateIRPFStandard     tax.Code = "STD" // Professional or artistic
@@ -223,6 +223,14 @@ var taxRegion = tax.Region{
 		{
 			Code:     TaxCategoryIRPF,
 			Retained: true,
+			Name: i18n.String{
+				i18n.EN: "IRPF",
+				i18n.ES: "IRPF",
+			},
+			Desc: i18n.String{
+				i18n.EN: "Personal income tax.",
+				i18n.ES: "Impuesto sobre la renta de las personas físicas.",
+			},
 			Defs: []tax.Def{
 				{
 					Code: TaxRateIRPFStandard,

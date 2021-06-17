@@ -22,6 +22,13 @@ type Amount struct {
 	exp   uint32
 }
 
+// NewAmount provides a pointer to an Amount instance. Normally we'd recommend
+// using the `MakeAmount` method.
+func NewAmount(val int64, exp uint32) *Amount {
+	a := MakeAmount(val, exp)
+	return &a
+}
+
 // MakeAmount is a helper to make it a little easier to build a new Amount
 // instance. We use "Make" instead of "New" as there are no pointers.
 func MakeAmount(val int64, exp uint32) Amount {
@@ -226,6 +233,12 @@ func (a *Amount) UnmarshalText(value []byte) error {
 	*a = amount
 
 	return nil
+}
+
+// UnmarshalJSON ensures amounts will be parsed even if defined as
+// numbers in the source JSON.
+func (a *Amount) UnmarshalJSON(value []byte) error {
+	return a.UnmarshalText(value)
 }
 
 func unquote(value []byte) []byte {

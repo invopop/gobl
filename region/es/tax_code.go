@@ -44,7 +44,8 @@ var (
 
 // Known combinations of codes
 var (
-	taxCodeBadCharsRegexp = regexp.MustCompile("[^A-Z0-9]+")
+	taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
+	taxCodeCountryRegexp  = regexp.MustCompile(`^ES`)
 	taxCodeNationalRegexp = regexp.MustCompile(`^(?P<number>[0-9]{8})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeForeignRegexp  = regexp.MustCompile(`^(?P<type>[` + taxCodeForeignTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeOtherRegexp    = regexp.MustCompile(`^(?P<type>[` + taxCodeOtherTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)
@@ -61,10 +62,13 @@ func VerifyTaxCode(code string) error {
 }
 
 // CleanTaxCode removes any whitespace or separation characters and ensures all letters are
-// uppercase.
+// uppercase. It'll also remove the "ES" part at beginning if present such as required
+// for EU VIES system which is redudant and not used in the validation process.
 func CleanTaxCode(code string) string {
 	code = strings.ToUpper(code)
-	return taxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = taxCodeCountryRegexp.ReplaceAllString(code, "")
+	return code
 }
 
 // DetermineTaxCodeType takes a valid code and determines the type. If the code

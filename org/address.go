@@ -2,13 +2,14 @@ package org
 
 import (
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/uuid"
 )
 
 // Address defines a globally acceptable set of attributes that describes
 // a postal or fiscal address.
 // Attribute names loosly based on the xCard file format.
 type Address struct {
-	UUID          string       `json:"uuid" jsonschema:"title=UUID"`
+	UUID          *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	Label         string       `json:"label,omitempty" jsonschema:"title=Label,description=Useful identifier, such as home, work, etc."`
 	PostOfficeBox string       `json:"po_box,omitempty" jsonschema:"title=Post Office Box,description=Box number or code for the post office box located at the address."`
 	Number        string       `json:"num,omitempty" jsonschema:"title=Number,description=House or building number in the street."`

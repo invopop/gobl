@@ -18,8 +18,16 @@ type Percentage struct {
 	Amount
 }
 
-// MakePercentage is a convenience method that will make a new
-// Percentage instance with the provided value and exponent.
+// NewPercentage provides a new pointer to a Percentage value.
+// Using MakePercentage is recommend, but this is useful for handling
+// nil values.
+func NewPercentage(value int64, exp uint32) *Percentage {
+	p := MakePercentage(value, exp)
+	return &p
+}
+
+// MakePercentage will make a new Percentage instance with the provided
+// value and exponent.
 func MakePercentage(value int64, exp uint32) Percentage {
 	return Percentage{Amount{value: value, exp: exp}}
 }

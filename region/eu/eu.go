@@ -7,7 +7,7 @@ const (
 	TaxCategoryVAT tax.Code = "VAT"
 )
 
-// Most common VAT codes
+// Most common VAT codes used througout the European Union.
 const (
 	TaxRateVATStandard     tax.Code = "STD"
 	TaxRateVATReduced      tax.Code = "RED"
