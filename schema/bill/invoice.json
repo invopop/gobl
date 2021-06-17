@@ -27,7 +27,8 @@
       ],
       "properties": {
         "uuid": {
-          "type": "string",
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/uuid.UUID",
           "title": "UUID"
         },
         "code": {
@@ -220,10 +221,25 @@
     },
     "bill.Payment": {
       "properties": {
+        "terms": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/pay.Terms",
+          "title": "Terms",
+          "description": "Payment terms or conditions."
+        },
+        "methods": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/pay.Method"
+          },
+          "type": "array",
+          "title": "Methods",
+          "description": "Array of payment options that can be used to pay for this invoice."
+        },
         "payer": {
           "$ref": "#/definitions/org.Party",
           "title": "Payer",
-          "description": "The party responsible for paying for the invoice."
+          "description": "The party responsible for paying for the invoice"
         }
       },
       "additionalProperties": false,
@@ -301,13 +317,12 @@
     },
     "org.Address": {
       "required": [
-        "uuid",
         "locality",
         "region"
       ],
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "#/definitions/uuid.UUID",
           "title": "UUID"
         },
         "label": {
@@ -451,9 +466,12 @@
       "type": "object"
     },
     "org.Email": {
+      "required": [
+        "addr"
+      ],
       "properties": {
         "uuid": {
-          "type": "string"
+          "$ref": "#/definitions/uuid.UUID"
         },
         "label": {
           "type": "string",
@@ -556,7 +574,7 @@
       ],
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code"
         },
@@ -610,7 +628,6 @@
       ],
       "properties": {
         "uuid": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code."
@@ -655,6 +672,14 @@
           },
           "type": "array",
           "title": "Email Addresses"
+        },
+        "telephones": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/org.Telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers"
         },
         "meta": {
           "patternProperties": {
@@ -716,11 +741,16 @@
     },
     "org.TaxID": {
       "required": [
-        "ctry",
+        "country",
         "code"
       ],
       "properties": {
-        "ctry": {
+        "uuid": {
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "country": {
           "type": "string",
           "title": "Country",
           "description": "ISO country code for Where the tax identity was issued."
@@ -739,6 +769,77 @@
           "type": "object",
           "title": "Meta",
           "description": "Additional details."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "org.Telephone": {
+      "required": [
+        "number"
+      ],
+      "properties": {
+        "uuid": {
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for this number."
+        },
+        "number": {
+          "type": "string",
+          "title": "Number",
+          "description": "The number to be dialed in ITU E.164 international format."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.Method": {
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Code for the method type that can be used."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Additional details related to this payment method."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional non-structure data."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.Terms": {
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Type of terms to be applied."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Description of the conditions for payment."
         }
       },
       "additionalProperties": false,

@@ -43,20 +43,22 @@
         "typ": {
           "type": "string",
           "title": "Type",
-          "description": "Body type of the document contents"
+          "description": "Body type of the document contents."
         },
         "dig": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/dsig.Digest",
           "title": "Digest",
-          "description": "Digest of the canonical JSON body"
+          "description": "Digest of the canonical JSON body."
         },
         "stamps": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
             "$ref": "#/definitions/Stamp"
           },
-          "type": "array"
+          "type": "array",
+          "title": "Stamps",
+          "description": "Seals of approval from other organisations."
         },
         "meta": {
           "patternProperties": {
@@ -64,7 +66,9 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional information about this envelope."
         }
       },
       "additionalProperties": false,
