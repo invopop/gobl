@@ -1,9 +1,14 @@
 package pay
 
-//
+import (
+	"github.com/invopop/gobl/i18n"
+)
+
+// Terms defines when we expect the customer to pay, or have paid, for
+// the contents of the document.
 type Terms struct {
-	Code  TermCode `json:"code" jsonschema:"title=Code,description=Type of terms to be applied."`
-	Notes string   `json:"notes,omitempty" jsonschema:"title=Notes,description=Description of the conditions for payment."`
+	Code  TermCode     `json:"code" jsonschema:"title=Code,description=Type of terms to be applied."`
+	Notes *i18n.String `json:"notes,omitempty" jsonschema:"title=Notes,description=Description of the conditions for payment."`
 }
 
 type TermCode string

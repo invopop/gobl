@@ -22,11 +22,12 @@ const invoiceType = "bill.Invoice"
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	UUID          uuid.UUID              `json:"uuid" jsonschema:"title=UUID"`
-	Code          string                 `json:"code" jsonschema:"title=Code,description=Sequential ID used to identify this invoice in tax declarations."`
-	Region        region.Code            `json:"region" jsonschema:"title=Region,description=GoBL region code used to determine taxes and validation rules."`
-	Currency      currency.Code          `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
-	ExchangeRates currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates,description=Exchange rates to be used when converting the invoices monetary values into other currencies."`
+	UUID             uuid.UUID              `json:"uuid" jsonschema:"title=UUID"`
+	Code             string                 `json:"code" jsonschema:"title=Code,description=Sequential ID used to identify this invoice in tax declarations."`
+	Region           region.Code            `json:"region" jsonschema:"title=Region,description=GoBL region code used to determine taxes and validation rules."`
+	Currency         currency.Code          `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
+	ExchangeRates    currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates,description=Exchange rates to be used when converting the invoices monetary values into other currencies."`
+	PricesIncludeTax bool                   `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax,description=When true, implies that all item prices already include non-retained taxes. This is especially useful for retailers where prices are often displayed including tax."`
 
 	IssueDate     *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
 	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
@@ -81,6 +82,10 @@ func (Invoice) Type() string {
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.
 func (inv *Invoice) Validate() error {
+	r := region.For(inv.Region)
+	if r == nil {
+		return errors.New("unknown invoice region code")
+	}
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.UUID, validation.Required, uuid.IsV1),
 		validation.Field(&inv.Code, validation.Required),
@@ -89,8 +94,8 @@ func (inv *Invoice) Validate() error {
 		validation.Field(&inv.IssueDate, validation.Required),
 		validation.Field(&inv.ValueDate, validation.Required),
 
-		validation.Field(&inv.Supplier, validation.Required),
-		validation.Field(&inv.Customer, validation.Required),
+		validation.Field(&inv.Supplier, validation.Required, region.ValidatePartyTaxID(r)),
+		validation.Field(&inv.Customer, validation.Required, region.ValidatePartyTaxID(r)),
 
 		validation.Field(&inv.Lines, validation.Required),
 		validation.Field(&inv.Totals, validation.Required),
@@ -121,7 +126,7 @@ func (inv *Invoice) Calculate() error {
 	tr := r.Taxes()
 	for i, l := range inv.Lines {
 		l.Index = i + 1
-		if err := l.calculate(tr, *inv.ValueDate); err != nil {
+		if err := l.calculate(tr, *inv.ValueDate, inv.PricesIncludeTax); err != nil {
 			return fmt.Errorf("line %d: %w", l.Index, err)
 		}
 
@@ -133,12 +138,12 @@ func (inv *Invoice) Calculate() error {
 
 		// Taxes
 		for _, r := range l.Taxes {
-			if err := t.Taxes.AddRate(r, zero); err != nil {
+			if err := t.Taxes.AddRate(r, inv.PricesIncludeTax, zero); err != nil {
 				return fmt.Errorf("line %d: %w", l.Index, err)
 			}
 		}
 	}
-	t.Total = t.Sum.Add(t.Discount)
+	t.Total = t.Sum.Subtract(t.Discount)
 
 	// Outlays
 	for i, o := range inv.Outlays {

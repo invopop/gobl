@@ -194,6 +194,9 @@ func (a Amount) String() string {
 	p := intPow(10, a.exp)
 	v1 := a.value / p
 	v2 := a.value - (v1 * p)
+	if v2 < 0 {
+		v2 = -v2
+	}
 	return fmt.Sprintf("%d.%0*d", v1, a.exp, v2)
 }
 

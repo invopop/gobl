@@ -1,10 +1,15 @@
 package region
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/region/es"
 	"github.com/invopop/gobl/tax"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Code defines the code used to identify a region.
@@ -53,4 +58,32 @@ func For(code Code) Region {
 // for exporting data.
 func List() map[Code]Region {
 	return regions
+}
+
+type partyTaxIDRule struct {
+	region Region
+}
+
+// ValidatePartyTaxID allows us to confirm the Party's TaxID object is valid
+// according to the requirements of the region.
+func ValidatePartyTaxID(r Region) validation.Rule {
+	return partyTaxIDRule{
+		region: r,
+	}
+}
+
+// Validate allows us to check if the tax ID conforms to the expectations
+// of the region.
+func (r partyTaxIDRule) Validate(value interface{}) error {
+	p, ok := value.(*org.Party)
+	if !ok {
+		return errors.New("not a Party")
+	}
+	if p.TaxID == nil {
+		return errors.New("no tax id present")
+	}
+	if err := r.region.ValidateTaxID(p.TaxID); err != nil {
+		return fmt.Errorf("tax_id: %w", err)
+	}
+	return nil
 }

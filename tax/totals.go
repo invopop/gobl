@@ -64,7 +64,7 @@ func NewRateTotal(code Code, percent num.Percentage, zero num.Amount) *RateTotal
 // AddRate makes it easier to add a new rate to the totals. It'll automatically
 // handle splitting by category. A zero value is required so we know what to base
 // calculations on.
-func (t *Total) AddRate(r *Rate, zero num.Amount) error {
+func (t *Total) AddRate(r *Rate, taxIncluded bool, zero num.Amount) error {
 	// Just in case we use this in multiple requests
 	t.Lock()
 	defer t.Unlock()
@@ -107,7 +107,7 @@ func (t *Total) AddRate(r *Rate, zero num.Amount) error {
 
 	// Let's recalculate again
 	cat.Calculate(zero)
-	t.Calculate(zero)
+	t.Calculate(taxIncluded, zero)
 
 	return nil
 }
@@ -125,12 +125,14 @@ func (ct *CategoryTotal) Calculate(zero num.Amount) {
 // Calculate figures out how much total tax needs to be added or taken
 // away from the resulting document. The resulting sum should be added to
 // the invoice totals to reflect the final payment amount.
-func (t *Total) Calculate(zero num.Amount) {
+// If the invoice is configured so that prices already include taxes,
+// any non-retained taxes will not be added to the total.
+func (t *Total) Calculate(taxIncluded bool, zero num.Amount) {
 	t.Sum = zero
 	for _, ct := range t.Categories {
 		if ct.Retained {
 			t.Sum = t.Sum.Subtract(ct.Value)
-		} else {
+		} else if !taxIncluded {
 			t.Sum = t.Sum.Add(ct.Value)
 		}
 	}

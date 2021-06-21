@@ -161,6 +161,10 @@ func TestAmountString(t *testing.T) {
 	if a.String() != "50" {
 		t.Errorf("unexpected string result, got: %v", a.String())
 	}
+	a = num.MakeAmount(-5025, 2)
+	if a.String() != "-50.25" {
+		t.Errorf("unexpected string result, got: %v", a.String())
+	}
 }
 
 func TestAmountRescale(t *testing.T) {

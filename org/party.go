@@ -1,10 +1,10 @@
 package org
 
 import (
+	"github.com/invopop/gobl/uuid"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/uuid"
 )
 
 // Party represents a person or business entity.
@@ -18,15 +18,6 @@ type Party struct {
 	Emails     []*Email     `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
 	Meta       Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional non-structure information that does not fit into the rest of the document."`
-}
-
-// TaxID represents a party's tax identify number for a given
-// country.
-type TaxID struct {
-	UUID    *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
-	Country l10n.Country `json:"country" jsonschema:"title=Country,description=ISO country code for Where the tax identity was issued."`
-	Code    string       `json:"code" jsonschema:"title=Code,description=Identity code."`
-	Meta    Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional details."`
 }
 
 // Person represents a human, and how to contact them.
@@ -65,22 +56,17 @@ type Email struct {
 type Telephone struct {
 	UUID   *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	Label  string     `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for this number."`
-	Number string     `json:"number" jsonschema:"title=Number,description=The number to be dialed in ITU E.164 international format."`
+	Number string     `json:"num" jsonschema:"title=Number,description=The number to be dialed in ITU E.164 international format."`
 }
 
 // Validate is used to check the party's data meets minimum expectations.
 func (p *Party) Validate() error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Name, validation.Required),
-	)
-}
-
-// Validate checks to ensure the tax ID contains all the required
-// fields.
-func (tid *TaxID) Validate() error {
-	return validation.ValidateStruct(tid,
-		validation.Field(&tid.Country, validation.Required),
-		validation.Field(&tid.Code, validation.Required),
+		validation.Field(&p.TaxID),
+		validation.Field(&p.People),
+		validation.Field(&p.Emails),
+		validation.Field(&p.Telephones),
 	)
 }
 

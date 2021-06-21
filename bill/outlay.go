@@ -13,7 +13,7 @@ type Outlays []*Outlay
 // customer.
 type Outlay struct {
 	UUID        string     `json:"uuid,omitempty"`
-	Index       int        `json:"index" jsonschema:"title=Index,description=Line number inside the invoice, starting from 0."`
+	Index       int        `json:"i" jsonschema:"title=Index,description=Line number inside the invoice, starting from 0."`
 	Ref         string     `json:"ref,omitempty" jsonschema:"title=Reference,description=A code, invoice number, or other reference detail used to identify the outlay."`
 	Description string     `json:"desc" jsonschema:"title=Description,description=Details on what the outlay was."`
 	Paid        num.Amount `json:"paid" jsonschema:"title=Paid,description=Amount paid by the supplier."`

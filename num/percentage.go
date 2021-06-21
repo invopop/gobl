@@ -139,6 +139,12 @@ func (p *Percentage) UnmarshalText(value []byte) error {
 	return nil
 }
 
+// UnmarshalJSON ensures we parse percentage numbers correctly from a JSON
+// source.
+func (p *Percentage) UnmarshalJSON(value []byte) error {
+	return p.UnmarshalText(value)
+}
+
 func (Percentage) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",
