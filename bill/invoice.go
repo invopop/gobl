@@ -126,7 +126,7 @@ func (inv *Invoice) Calculate() error {
 	tr := r.Taxes()
 	for i, l := range inv.Lines {
 		l.Index = i + 1
-		if err := l.calculate(tr, *inv.ValueDate, inv.PricesIncludeTax); err != nil {
+		if err := l.calculate(); err != nil {
 			return fmt.Errorf("line %d: %w", l.Index, err)
 		}
 
@@ -135,15 +135,17 @@ func (inv *Invoice) Calculate() error {
 		if l.Discount != nil {
 			t.Discount = t.Discount.Add(l.Discount.Value)
 		}
-
-		// Taxes
-		for _, r := range l.Taxes {
-			if err := t.Taxes.AddRate(r, inv.PricesIncludeTax, zero); err != nil {
-				return fmt.Errorf("line %d: %w", l.Index, err)
-			}
-		}
 	}
 	t.Total = t.Sum.Subtract(t.Discount)
+
+	// Now figure out the tax totals (with some interface conversion)
+	tls := make([]tax.TaxableLine, len(inv.Lines))
+	for i, l := range inv.Lines {
+		tls[i] = l
+	}
+	if err := t.Taxes.Calculate(tr, tls, inv.PricesIncludeTax, *inv.ValueDate, zero); err != nil {
+		return err
+	}
 
 	// Outlays
 	for i, o := range inv.Outlays {

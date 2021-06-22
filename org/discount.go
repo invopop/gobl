@@ -8,8 +8,8 @@ import "github.com/invopop/gobl/num"
 // TODO: use the UNTDID 5189 code list for Discount Reason Code.
 //
 type Discount struct {
-	Rate   num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
-	Value  num.Amount     `json:"val" jsonschema:"title=Value,description=How much to deduct"`
-	Reason string         `json:"reason,omitempty" jsonschema:"title=Reason,description=Description as to why this discount was applied."`
-	Code   string         `json:"code,omitempty" jsonschema:"title=Code,description=Reason Code"`
+	Rate   *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
+	Value  num.Amount      `json:"value" jsonschema:"title=Value,description=How much to deduct"`
+	Reason string          `json:"reason,omitempty" jsonschema:"title=Reason,description=Description as to why this discount was applied."`
+	Code   string          `json:"code,omitempty" jsonschema:"title=Code,description=Reason Code"`
 }
