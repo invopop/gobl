@@ -273,7 +273,7 @@ func intPow(base int, exp uint32) int64 {
 func (Amount) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",
-		Pattern:     `^[0-9]+(\.[0-9]+)?$`,
+		Pattern:     `^\-?[0-9]+(\.[0-9]+)?$`,
 		Title:       "Amount",
 		Description: "Quantity with optional decimal places that determine accuracy.",
 	}

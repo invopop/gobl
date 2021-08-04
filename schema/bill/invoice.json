@@ -320,13 +320,13 @@
       "description": "Map of 2-Letter language codes to their translations."
     },
     "num.Amount": {
-      "pattern": "^[0-9]+(\\.[0-9]+)?$",
+      "pattern": "^\\-?[0-9]+(\\.[0-9]+)?$",
       "type": "string",
       "title": "Amount",
       "description": "Quantity with optional decimal places that determine accuracy."
     },
     "num.Percentage": {
-      "pattern": "^[0-9]+(\\.[0-9]+)?%$",
+      "pattern": "^\\-?[0-9]+(\\.[0-9]+)?%$",
       "type": "string",
       "title": "Percentage",
       "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."

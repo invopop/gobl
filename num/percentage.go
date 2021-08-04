@@ -148,7 +148,7 @@ func (p *Percentage) UnmarshalJSON(value []byte) error {
 func (Percentage) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",
-		Pattern:     `^[0-9]+(\.[0-9]+)?%$`,
+		Pattern:     `^\-?[0-9]+(\.[0-9]+)?%$`,
 		Title:       "Percentage",
 		Description: "Similar to an Amount, but designed for percentages and includes % symbol in JSON output.",
 	}
