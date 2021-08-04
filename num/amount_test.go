@@ -68,6 +68,13 @@ func TestAmountNewFromString(t *testing.T) {
 	if !a.Equals(e) {
 		t.Errorf("unexpected parsed value, got: %v", a)
 	}
+	a, err = num.AmountFromString("-245.00")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if a.Value() != -24500 {
+		t.Errorf("unexpected parsed amount, got: %v", a.Value())
+	}
 	a, err = num.AmountFromString("23.433.00")
 	if err == nil {
 		t.Errorf("expected error, got: %v", a)
