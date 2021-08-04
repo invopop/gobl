@@ -55,6 +55,11 @@
           "title": "Exchange Rates",
           "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
         },
+        "prices_include_tax": {
+          "type": "boolean",
+          "title": "Prices Include Tax",
+          "description": "When true"
+        },
         "issue_date": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
@@ -123,7 +128,7 @@
     },
     "bill.Line": {
       "required": [
-        "index",
+        "i",
         "quantity",
         "item",
         "sum",
@@ -133,7 +138,7 @@
         "uuid": {
           "type": "string"
         },
-        "index": {
+        "i": {
           "type": "integer",
           "title": "Index",
           "description": "Line number inside the invoice."
@@ -187,7 +192,7 @@
     },
     "bill.Outlay": {
       "required": [
-        "index",
+        "i",
         "desc",
         "paid"
       ],
@@ -195,7 +200,7 @@
         "uuid": {
           "type": "string"
         },
-        "index": {
+        "i": {
           "type": "integer",
           "title": "Index",
           "description": "Line number inside the invoice"
@@ -302,6 +307,17 @@
       },
       "additionalProperties": false,
       "type": "object"
+    },
+    "i18n.String": {
+      "patternProperties": {
+        "^[a-z]{2}$": {
+          "type": "string",
+          "title": "Text in given language."
+        }
+      },
+      "type": "object",
+      "title": "Multi-language String",
+      "description": "Map of 2-Letter language codes to their translations."
     },
     "num.Amount": {
       "pattern": "^[0-9]+(\\.[0-9]+)?$",
@@ -438,7 +454,7 @@
     },
     "org.Discount": {
       "required": [
-        "val"
+        "value"
       ],
       "properties": {
         "rate": {
@@ -446,7 +462,7 @@
           "$ref": "#/definitions/num.Percentage",
           "title": "Rate"
         },
-        "val": {
+        "value": {
           "$ref": "#/definitions/num.Amount",
           "title": "Value",
           "description": "How much to deduct"
@@ -522,7 +538,7 @@
         "price": {
           "$ref": "#/definitions/num.Amount",
           "title": "Price",
-          "description": "Net price without tax of the item being sold"
+          "description": "Price of item being sold."
         },
         "unit": {
           "type": "string",
@@ -776,7 +792,7 @@
     },
     "org.Telephone": {
       "required": [
-        "number"
+        "num"
       ],
       "properties": {
         "uuid": {
@@ -788,10 +804,56 @@
           "title": "Label",
           "description": "Identifier for this number."
         },
-        "number": {
+        "num": {
           "type": "string",
           "title": "Number",
           "description": "The number to be dialed in ITU E.164 international format."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.BankTransfer": {
+      "properties": {
+        "iban": {
+          "type": "string",
+          "title": "IBAN",
+          "description": "International Bank Account Number"
+        },
+        "bic": {
+          "type": "string",
+          "title": "BIC",
+          "description": "Bank Identifier Code used for international transfers."
+        },
+        "number": {
+          "type": "string",
+          "title": "Number",
+          "description": "Account number"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name of the bank."
+        },
+        "branch": {
+          "$ref": "#/definitions/org.Address",
+          "title": "Branch",
+          "description": "Bank office branch address"
+        },
+        "notes": {
+          "$ref": "#/definitions/i18n.String",
+          "title": "Notes",
+          "description": "Any additional instructions that may be required to make the transfer."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Non-structured additional data that may be useful."
         }
       },
       "additionalProperties": false,
@@ -806,6 +868,18 @@
           "type": "string",
           "title": "Code",
           "description": "Code for the method type that can be used."
+        },
+        "bank_transfer": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/pay.BankTransfer",
+          "title": "Bank Transfer",
+          "description": "Details on how to pay using a bank transfer or wire."
+        },
+        "url": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/pay.URL",
+          "title": "URL",
+          "description": "Web address that can be used for making the payment. Likely to be custom for each document."
         },
         "notes": {
           "type": "string",
@@ -837,9 +911,42 @@
           "description": "Type of terms to be applied."
         },
         "notes": {
-          "type": "string",
+          "$ref": "#/definitions/i18n.String",
           "title": "Notes",
           "description": "Description of the conditions for payment."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.URL": {
+      "required": [
+        "addr"
+      ],
+      "properties": {
+        "uuid": {
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID"
+        },
+        "addr": {
+          "type": "string",
+          "title": "Address",
+          "description": "Full URL to be used for payment."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Additional details which may be useful to the end-user."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Semi-structured additional data."
         }
       },
       "additionalProperties": false,
@@ -884,38 +991,18 @@
     "tax.Rate": {
       "required": [
         "cat",
-        "code",
-        "base",
-        "percent",
-        "value"
+        "code"
       ],
       "properties": {
         "cat": {
           "type": "string",
-          "title": "Category Code"
+          "title": "Category Code",
+          "description": "From the available options for the region."
         },
         "code": {
           "type": "string",
-          "title": "Code"
-        },
-        "base": {
-          "$ref": "#/definitions/num.Amount",
-          "title": "Base",
-          "description": "Base value to which taxes are added"
-        },
-        "percent": {
-          "$ref": "#/definitions/num.Percentage",
-          "title": "Percentage"
-        },
-        "value": {
-          "$ref": "#/definitions/num.Amount",
-          "title": "Value",
-          "description": "The amount of tax applied"
-        },
-        "retained": {
-          "type": "boolean",
-          "title": "Retained",
-          "description": "True when this tax is retained by the client."
+          "title": "Code",
+          "description": "As defined for the region and category."
         }
       },
       "additionalProperties": false,
