@@ -60,6 +60,14 @@
           "title": "Stamps",
           "description": "Seals of approval from other organisations."
         },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Set of labels that describe but have no influence on the data."
+        },
         "meta": {
           "patternProperties": {
             ".*": {

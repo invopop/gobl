@@ -11,6 +11,7 @@ type Header struct {
 	Type   string       `json:"typ" jsonschema:"title=Type,description=Body type of the document contents."`
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest,description=Digest of the canonical JSON body."`
 	Stamps []*Stamp     `json:"stamps,omitempty" jsonschema:"title=Stamps,description=Seals of approval from other organisations."`
+	Tags   []string     `json:"tags,omitempty" jsonschema:"title=Tags,description=Set of labels that describe but have no influence on the data."`
 	Meta   org.Meta     `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional information about this envelope."`
 }
 
