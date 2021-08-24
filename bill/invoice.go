@@ -22,8 +22,8 @@ const invoiceType = "bill.Invoice"
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	UUID             uuid.UUID              `json:"uuid" jsonschema:"title=UUID"`
-	Code             string                 `json:"code" jsonschema:"title=Code,description=Sequential ID used to identify this invoice in tax declarations."`
+	UUID             uuid.UUID              `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	Code             string                 `json:"code" jsonschema:"title=Code,description=Sequential code used to identify this invoice in tax declarations."`
 	Region           region.Code            `json:"region" jsonschema:"title=Region,description=GoBL region code used to determine taxes and validation rules."`
 	Currency         currency.Code          `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
 	ExchangeRates    currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates,description=Exchange rates to be used when converting the invoices monetary values into other currencies."`
@@ -87,7 +87,7 @@ func (inv *Invoice) Validate() error {
 		return errors.New("unknown invoice region code")
 	}
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.UUID, validation.Required, uuid.IsV1),
+		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
 		validation.Field(&inv.Region, validation.Required),
 		validation.Field(&inv.Currency, validation.Required),

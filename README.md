@@ -4,9 +4,9 @@ Go Business Language.
 
 ## Introduction
 
-GoBL (pronounced "gobble") is a hybrid solution between a document standard, a software library, and a database. On one side it defines a language for business documents in JSON, while at the same time providing a library and server written in Go to help build, validate, sign, and localise.
+GoBL (pronounced "gobble") is a hybrid solution between a document standard, a software library, and a database. On one side it defines a language for business documents in JSON, while at the same time providing a library and services written in Go to help build, validate, sign, and localise.
 
-Traditionally software business document standards consist of a set of definitions layered into different namespaces, followed by an independent set of implementations. The theory is that a well written standard can be implemented anywhere and be compatible with any existing library, in practice however, and especially for XML-base standards, dealing with multiple namespaces adds a lot of complexity. This tends to be reflected in lower quality libraries.
+Traditional software business document standards consist of a set of definitions layered into different namespaces, followed by an independent set of implementations. The theory is that a well written standard can be implemented anywhere and be compatible with any existing library. In practice however, and especially for XML-base standards, dealing with multiple namespaces adds a lot of complexity. This tends to be reflected in lower quality libraries.
 
 For GoBL a different approach is being tested. The code and library implementation is in itself the standard. Rather than trying to be super-flexible at the cost of complexity, GoBL includes everything needed for digital signatures, validation, and local implementations including tax definitions, all maintained under an open source license.
 
@@ -38,5 +38,4 @@ To get around the issues with sequential numbers, the [UUID standard](https://to
 The GoBL library forces you to use UUIDs instead of sequential IDs for anything that could be referenced in the future. To enforce this fact, instead of naming fields `id`, we make an effort to call them `uuid`.
 
 Sometimes sequential IDs are however required, usually for human consumption purposes such as ensuring order when generating invoices so that authorities can quickly check that dates and numbers are in order. Our recommendation for such codes is to use a dedicated service to generate sequential IDs based on the UUIDs, such as [Invopop's Sequence Service](https://invopop.com).
-
 

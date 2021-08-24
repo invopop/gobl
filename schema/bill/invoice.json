@@ -15,7 +15,6 @@
     },
     "bill.Invoice": {
       "required": [
-        "uuid",
         "code",
         "region",
         "currency",
@@ -34,7 +33,7 @@
         "code": {
           "type": "string",
           "title": "Code",
-          "description": "Sequential ID used to identify this invoice in tax declarations."
+          "description": "Sequential code used to identify this invoice in tax declarations."
         },
         "region": {
           "type": "string",

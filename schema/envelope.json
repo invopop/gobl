@@ -36,10 +36,17 @@
     },
     "Header": {
       "required": [
+        "uuid",
         "typ",
         "dig"
       ],
       "properties": {
+        "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID",
+          "description": "Unique UUIDv1 identifier for the envelope."
+        },
         "typ": {
           "type": "string",
           "title": "Type",
@@ -129,6 +136,12 @@
       "type": "string",
       "title": "Signature",
       "description": "JSON Web Signature in compact form."
+    },
+    "uuid.UUID": {
+      "type": "string",
+      "title": "UUID",
+      "description": "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL.",
+      "format": "uuid"
     }
   }
 }

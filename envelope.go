@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/alecthomas/jsonschema"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
 )
@@ -21,6 +22,15 @@ type Envelope struct {
 // Document defines what we expect from a document to be able to be included in an envelope.
 type Document interface {
 	Type() string
+}
+
+// Validate ensures that the envelope contains everything it should to be considered valid GoBL.
+func (e *Envelope) Validate() error {
+	return validation.ValidateStruct(e,
+		validation.Field(&e.Head, validation.Required),
+		validation.Field(&e.Document, validation.Required),
+		validation.Field(&e.Signatures, validation.Required),
+	)
 }
 
 // Verify ensures the digest headers still match the document contents.
