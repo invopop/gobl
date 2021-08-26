@@ -1,8 +1,8 @@
 package uuid
 
 import (
+	"crypto/rand"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
