@@ -55,6 +55,9 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 
 // Insert takes the provided document an serializes it ready for use.
 func (e *Envelope) Insert(doc Document) error {
+	if e.Document == nil {
+		e.Document = new(Payload)
+	}
 	err := e.Document.insert(doc)
 	if err != nil {
 		return err

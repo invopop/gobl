@@ -15,6 +15,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/internal/currency"
+	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/tax"
 )
@@ -27,6 +28,7 @@ func Schema() error {
 		"schema/envelope.json":     &gobl.Envelope{},
 		"schema/bill/invoice.json": &bill.Invoice{},
 		"schema/tax/region.json":   &tax.Region{},
+		"schema/note/message.json": &note.Message{},
 	}
 	ref := new(jsonschema.Reflector)
 	// ref.FullyQualifyTypeNames = true
