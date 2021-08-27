@@ -18,6 +18,13 @@ type Header struct {
 	Meta   org.Meta     `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional information about this envelope."`
 }
 
+// NewHeader creates a new header and automatically assigns a UUIDv1.
+func NewHeader() *Header {
+	h := new(Header)
+	h.UUID = uuid.NewV1()
+	return h
+}
+
 // Stamp defines an official seal of approval from a third party like a governmental agency
 // or intermediary and should thus be included in any official envelopes.
 type Stamp struct {

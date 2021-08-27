@@ -24,6 +24,17 @@ type Document interface {
 	Type() string
 }
 
+// NewEnvelope builds a new envelope object ready for data to be inserted
+// and signed. If you are loading data from json, you can safely use a regular
+// `new(Envelope)` call directly.
+func NewEnvelope() *Envelope {
+	e := new(Envelope)
+	e.Head = NewHeader()
+	e.Document = new(Payload)
+	e.Signatures = make([]*dsig.Signature, 0)
+	return e
+}
+
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) Validate() error {
 	return validation.ValidateStruct(e,
@@ -64,7 +75,7 @@ func (e *Envelope) Insert(doc Document) error {
 	}
 
 	if e.Head == nil {
-		e.Head = new(Header)
+		e.Head = NewHeader()
 	}
 	e.Head.Type = doc.Type()
 
