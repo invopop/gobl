@@ -22,6 +22,7 @@ type Header struct {
 func NewHeader() *Header {
 	h := new(Header)
 	h.UUID = uuid.NewV1()
+	h.Meta = make(org.Meta)
 	return h
 }
 
