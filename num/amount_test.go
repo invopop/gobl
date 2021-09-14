@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/num"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAmountAdd(t *testing.T) {
@@ -121,26 +122,32 @@ func TestDivide(t *testing.T) {
 	x := num.MakeAmount(22, 1)
 	e := num.MakeAmount(4550, 2)
 	r := a.Divide(x)
-	if !r.Equals(e) {
-		t.Errorf("failed to divide, expected: %v, got: %v", e, r)
-	}
-	if a.String() != "100.10" {
-		t.Errorf("base was modified")
-	}
+	assert.Equal(t, e.String(), r.String(), "unexpected division result")
+	assert.Equal(t, "100.10", a.String(), "base was modified")
+
 	a = num.MakeAmount(200, 0)
 	x = num.MakeAmount(21, 2)
 	e = num.MakeAmount(952, 0)
 	r = a.Divide(x)
-	if !r.Equals(e) {
-		t.Errorf("failed to divide, expected: %v, got: %v", e, r)
-	}
+	assert.Equal(t, e.String(), r.String(), "unexpected division result")
+
 	a = num.MakeAmount(1000, 2)
 	x = num.MakeAmount(11, 0)
 	e = num.MakeAmount(91, 2)
 	r = a.Divide(x)
-	if !r.Equals(e) {
-		t.Errorf("unexpected division result, expected: %v, got %v", e, r)
-	}
+	assert.Equal(t, e.String(), r.String(), "unexpected division result")
+
+	a = num.MakeAmount(1000, 0)
+	x = num.MakeAmount(15, 0)
+	e = num.MakeAmount(67, 0) // 66.666
+	r = a.Divide(x)
+	assert.Equal(t, e.String(), r.String(), "unexpected division rounding")
+
+	a = num.MakeAmount(1000, 0)
+	x = num.MakeAmount(14, 0)
+	e = num.MakeAmount(71, 0) // 71.4286
+	r = a.Divide(x)
+	assert.Equal(t, e.String(), r.String(), "unexpected division rounding")
 }
 
 func TestSplit(t *testing.T) {
