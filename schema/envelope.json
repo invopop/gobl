@@ -83,7 +83,12 @@
           },
           "type": "object",
           "title": "Meta",
-          "description": "Additional information about this envelope."
+          "description": "Additional semi-structured information about this envelope."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Any information that may be relevant to other humans about this envelope."
         }
       },
       "additionalProperties": false,
