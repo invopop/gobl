@@ -15,7 +15,8 @@ type Header struct {
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest,description=Digest of the canonical JSON body."`
 	Stamps []*Stamp     `json:"stamps,omitempty" jsonschema:"title=Stamps,description=Seals of approval from other organisations."`
 	Tags   []string     `json:"tags,omitempty" jsonschema:"title=Tags,description=Set of labels that describe but have no influence on the data."`
-	Meta   org.Meta     `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional information about this envelope."`
+	Meta   org.Meta     `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional semi-structured information about this envelope."`
+	Notes  string       `json:"notes,omitempty" jsonschema:"title=Notes,description=Any information that may be relevant to other humans about this envelope."`
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.

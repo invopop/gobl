@@ -5,8 +5,6 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-const messageType = "note.Message"
-
 // Message represents the minimum possible contents for a GoBL document type. This is
 // mainly meant to be used for testing purposes.
 type Message struct {
@@ -17,7 +15,7 @@ type Message struct {
 
 // Type provides the document type used for mapping.
 func (Message) Type() string {
-	return messageType
+	return MessageType
 }
 
 // Validate ensures the message contains everything it should.

@@ -15,8 +15,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-const invoiceType = "bill.Invoice"
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -77,7 +75,7 @@ type Delivery struct {
 
 // Type provides the body type used for mapping.
 func (Invoice) Type() string {
-	return invoiceType
+	return InvoiceType
 }
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.

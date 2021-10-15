@@ -138,8 +138,8 @@ func TestDivide(t *testing.T) {
 	assert.Equal(t, e.String(), r.String(), "unexpected division result")
 
 	a = num.MakeAmount(1000, 0)
-	x = num.MakeAmount(15, 0)
-	e = num.MakeAmount(67, 0) // 66.666
+	x = num.MakeAmount(16, 0)
+	e = num.MakeAmount(63, 0) // 62.5
 	r = a.Divide(x)
 	assert.Equal(t, e.String(), r.String(), "unexpected division rounding")
 
