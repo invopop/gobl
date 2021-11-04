@@ -1,6 +1,9 @@
 package dsig
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // DigestAlgorithm determines the name of the algorithm used to generate the digest's
 // value.
@@ -32,4 +35,10 @@ func (d *Digest) Equals(d2 *Digest) error {
 		return errors.New("digest mismatch")
 	}
 	return nil
+}
+
+// String provides a compact string representation of the digest which may be useful
+// for comparisons.
+func (d *Digest) String() string {
+	return fmt.Sprintf("%s;%s", string(d.Algorithm), d.Value)
 }
