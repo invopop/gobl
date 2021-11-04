@@ -38,6 +38,7 @@
       "required": [
         "uuid",
         "typ",
+        "rgn",
         "dig"
       ],
       "properties": {
@@ -51,6 +52,11 @@
           "type": "string",
           "title": "Type",
           "description": "Body type of the document contents."
+        },
+        "rgn": {
+          "type": "string",
+          "title": "Region",
+          "description": "Code for the region the document should be validated with."
         },
         "dig": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -89,6 +95,11 @@
           "type": "string",
           "title": "Notes",
           "description": "Any information that may be relevant to other humans about this envelope."
+        },
+        "draft": {
+          "type": "boolean",
+          "title": "Draft",
+          "description": "When true"
         }
       },
       "additionalProperties": false,

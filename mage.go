@@ -1,3 +1,4 @@
+//go:build mage
 // +build mage
 
 package main
@@ -16,7 +17,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/internal/currency"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -51,7 +51,7 @@ func Schema() error {
 }
 
 func RegionData() error {
-	for c, r := range region.List() {
+	for c, r := range gobl.Regions().List() {
 		data, err := json.MarshalIndent(r.Taxes(), "", "  ")
 		if err != nil {
 			return err

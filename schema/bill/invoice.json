@@ -16,29 +16,27 @@
     "bill.Invoice": {
       "required": [
         "code",
-        "region",
         "currency",
         "issue_date",
-        "value_date",
         "supplier",
-        "customer",
         "totals"
       ],
       "properties": {
         "uuid": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
-          "title": "UUID"
+          "title": "UUID",
+          "description": "Unique document ID. Not required"
         },
         "code": {
           "type": "string",
           "title": "Code",
           "description": "Sequential code used to identify this invoice in tax declarations."
         },
-        "region": {
+        "type_code": {
           "type": "string",
-          "title": "Region",
-          "description": "GoBL region code used to determine taxes and validation rules."
+          "title": "Type Code",
+          "description": "Functional type of the invoice"
         },
         "currency": {
           "type": "string",
@@ -59,18 +57,26 @@
           "title": "Prices Include Tax",
           "description": "When true"
         },
-        "issue_date": {
+        "preceding": {
           "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/bill.Preceding",
+          "title": "Preceding Reference",
+          "description": "Key information regarding a previous invoice."
+        },
+        "issue_date": {
           "$ref": "#/definitions/org.Date",
-          "title": "Issue Date"
+          "title": "Issue Date",
+          "description": "When the invoice was created."
         },
         "op_date": {
           "$ref": "#/definitions/org.Date",
-          "title": "Operation Date"
+          "title": "Operation Date",
+          "description": "Date when the operation defined by the invoice became effective."
         },
         "value_date": {
           "$ref": "#/definitions/org.Date",
-          "title": "Value Date"
+          "title": "Value Date",
+          "description": "When the taxes of this invoice become accountable"
         },
         "supplier": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -81,7 +87,7 @@
         "customer": {
           "$ref": "#/definitions/org.Party",
           "title": "Customer",
-          "description": "Legal entity who receives the goods or services."
+          "description": "Legal entity who receives the goods or services. May be empty in certain circumstances such as simplified invoices."
         },
         "lines": {
           "items": {
@@ -120,6 +126,21 @@
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/bill.Delivery",
           "title": "Delivery Details"
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Unstructured information that is relevant to the invoice"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional semi-structured data that doesn't fit into the body of the invoice."
         }
       },
       "additionalProperties": false,
@@ -244,6 +265,42 @@
           "$ref": "#/definitions/org.Party",
           "title": "Payer",
           "description": "The party responsible for paying for the invoice"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "bill.Preceding": {
+      "required": [
+        "code",
+        "issue_date"
+      ],
+      "properties": {
+        "uuid": {
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID",
+          "description": "Preceding document's UUID if available can be useful for tracing."
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Identity code of the previous invoice."
+        },
+        "issue_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Date",
+          "title": "Issue Date",
+          "description": "When the preceding invoices was issued."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional semi-structured data that may be useful in specific regions."
         }
       },
       "additionalProperties": false,
