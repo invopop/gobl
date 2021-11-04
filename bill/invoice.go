@@ -20,19 +20,21 @@ import (
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	UUID             uuid.UUID              `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID             *uuid.UUID             `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique document ID. Not required, but always recommended in addition to the Code."`
 	Code             string                 `json:"code" jsonschema:"title=Code,description=Sequential code used to identify this invoice in tax declarations."`
-	Region           region.Code            `json:"region" jsonschema:"title=Region,description=GoBL region code used to determine taxes and validation rules."`
+	TypeCode         TypeCode               `json:"type_code,omitempty" jsonschema:"title=Type Code,description=Functional type of the invoice, default is always 'Commercial'"`
 	Currency         currency.Code          `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
 	ExchangeRates    currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates,description=Exchange rates to be used when converting the invoices monetary values into other currencies."`
 	PricesIncludeTax bool                   `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax,description=When true, implies that all item prices already include non-retained taxes. This is especially useful for retailers where prices are often displayed including tax."`
 
-	IssueDate     *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
-	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
-	ValueDate     *org.Date `json:"value_date" jsonschema:"title=Value Date"`
+	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Reference,description=Key information regarding a previous invoice."`
+
+	IssueDate     *org.Date `json:"issue_date" jsonschema:"title=Issue Date,description=When the invoice was created."`
+	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date,description=Date when the operation defined by the invoice became effective."`
+	ValueDate     *org.Date `json:"value_date,omitempty" jsonschema:"title=Value Date,description=When the taxes of this invoice become accountable, if none set, the issue date is used."`
 
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier,description=The taxable entity supplying the goods or services."`
-	Customer *org.Party `json:"customer" jsonschema:"title=Customer,description=Legal entity who receives the goods or services."`
+	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer,description=Legal entity who receives the goods or services. May be empty in certain circumstances such as simplified invoices."`
 
 	Lines   Lines   `json:"lines,omitempty" jsonschema:"title=Lines,description=The items sold to the customer."`
 	Outlays Outlays `json:"outlays,omitempty" jsonschema:"title=Outlays,description=Expenses paid for by the supplier but invoiced directly to the customer."`
@@ -42,6 +44,9 @@ type Invoice struct {
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
 	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
+
+	Notes string   `json:"notes,omitempty" jsonschema:"title=Notes,description=Unstructured information that is relevant to the invoice, such as correction details."`
+	Meta  org.Meta `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional semi-structured data that doesn't fit into the body of the invoice."`
 }
 
 // Totals contains the summaries of all calculations for the invoice.
@@ -73,46 +78,51 @@ type Delivery struct {
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver,description=The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."`
 }
 
+// Preceding allows for information to be provided about a previous invoice that this one
+// will replace or subtract from. If this is used, the invoice type code will most likely need
+// to be set to `corrected` or `credit-note`.
+type Preceding struct {
+	UUID      *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID,description=Preceding document's UUID if available can be useful for tracing."`
+	Code      string     `json:"code" jsonschema:"title=Code,description=Identity code of the previous invoice."`
+	IssueDate *org.Date  `json:"issue_date" jsonschema:"title=Issue Date,description=When the preceding invoices was issued."`
+	Meta      org.Meta   `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional semi-structured data that may be useful in specific regions."`
+}
+
 // Type provides the body type used for mapping.
 func (Invoice) Type() string {
 	return InvoiceType
 }
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.
-func (inv *Invoice) Validate() error {
-	r := region.For(inv.Region)
-	if r == nil {
-		return errors.New("unknown invoice region code")
-	}
-	return validation.ValidateStruct(inv,
+func (inv *Invoice) Validate(r region.Region) error {
+	err := validation.ValidateStruct(inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
-		validation.Field(&inv.Region, validation.Required),
+		validation.Field(&inv.TypeCode), // either empty (Commercial) or one of those supported
 		validation.Field(&inv.Currency, validation.Required),
 		validation.Field(&inv.IssueDate, validation.Required),
-		validation.Field(&inv.ValueDate, validation.Required),
 
-		validation.Field(&inv.Supplier, validation.Required, region.ValidatePartyTaxID(r)),
-		validation.Field(&inv.Customer, validation.Required, region.ValidatePartyTaxID(r)),
+		validation.Field(&inv.Supplier, validation.Required),
+		validation.Field(&inv.Customer),
 
 		validation.Field(&inv.Lines, validation.Required),
 		validation.Field(&inv.Totals, validation.Required),
 	)
+	if err == nil {
+		err = r.Validate(inv)
+	}
+	return err
 }
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
-func (inv *Invoice) Calculate() error {
-	r := region.For(inv.Region)
-	if r == nil {
-		return errors.New("unknown invoice region code")
+func (inv *Invoice) Calculate(r region.Region) error {
+	date := inv.ValueDate
+	if date == nil {
+		date = inv.IssueDate
 	}
-
-	if inv.ValueDate == nil {
-		inv.ValueDate = inv.IssueDate
-	}
-	if inv.ValueDate == nil {
-		return errors.New("value or issue date cannot be empty")
+	if date == nil {
+		return errors.New("issue date cannot be empty")
 	}
 
 	// Prepare the totals we'll need with amounts based on currency
@@ -141,7 +151,7 @@ func (inv *Invoice) Calculate() error {
 	for i, l := range inv.Lines {
 		tls[i] = l
 	}
-	if err := t.Taxes.Calculate(tr, tls, inv.PricesIncludeTax, *inv.ValueDate, zero); err != nil {
+	if err := t.Taxes.Calculate(tr, tls, inv.PricesIncludeTax, *date, zero); err != nil {
 		return err
 	}
 

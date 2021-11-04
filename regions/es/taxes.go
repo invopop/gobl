@@ -4,7 +4,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/region/eu"
+	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -30,7 +30,7 @@ const (
 )
 
 var taxRegion = tax.Region{
-	Code: Code,
+	Code: "ES",
 	Name: i18n.String{
 		i18n.EN: "Spain",
 		i18n.ES: "España",
@@ -40,7 +40,7 @@ var taxRegion = tax.Region{
 		// VAT
 		//
 		{
-			Code: eu.TaxCategoryVAT,
+			Code: common.TaxCategoryVAT,
 			Name: i18n.String{
 				i18n.EN: "VAT",
 				i18n.ES: "IVA",
@@ -52,7 +52,7 @@ var taxRegion = tax.Region{
 			Retained: false,
 			Defs: []tax.Def{
 				{
-					Code: eu.TaxRateVATZero,
+					Code: common.TaxRateVATZero,
 					Name: i18n.String{
 						i18n.EN: "VAT Zero Rate",
 						i18n.ES: "IVA Tipo Zero",
@@ -64,7 +64,7 @@ var taxRegion = tax.Region{
 					},
 				},
 				{
-					Code: eu.TaxRateVATStandard,
+					Code: common.TaxRateVATStandard,
 					Name: i18n.String{
 						i18n.EN: "VAT Standard Rate",
 						i18n.ES: "IVA Tipo General",
@@ -89,7 +89,7 @@ var taxRegion = tax.Region{
 					},
 				},
 				{
-					Code: eu.TaxRateVATReduced,
+					Code: common.TaxRateVATReduced,
 					Name: i18n.String{
 						i18n.EN: "VAT Reduced Rate",
 						i18n.ES: "IVA Tipo Reducido",
@@ -114,7 +114,7 @@ var taxRegion = tax.Region{
 					},
 				},
 				{
-					Code: eu.TaxRateVATSuperReduced,
+					Code: common.TaxRateVATSuperReduced,
 					Name: i18n.String{
 						i18n.EN: "VAT Super-Reduced Rate",
 						i18n.ES: "IVA Tipo Superreducido",
@@ -144,7 +144,7 @@ var taxRegion = tax.Region{
 			Retained: false,
 			Defs: []tax.Def{
 				{
-					Code: eu.TaxRateVATZero,
+					Code: common.TaxRateVATZero,
 					Name: i18n.String{
 						i18n.EN: "VAT Zero Rate",
 						i18n.ES: "IVA Tipo Exento",
@@ -156,7 +156,7 @@ var taxRegion = tax.Region{
 					},
 				},
 				{
-					Code: eu.TaxRateVATStandard,
+					Code: common.TaxRateVATStandard,
 					Name: i18n.String{
 						i18n.EN: "VAT Standard Rate",
 						i18n.ES: "IVA Tipo General",
@@ -173,7 +173,7 @@ var taxRegion = tax.Region{
 					},
 				},
 				{
-					Code: eu.TaxRateVATReduced,
+					Code: common.TaxRateVATReduced,
 					Name: i18n.String{
 						i18n.EN: "VAT Reduced Rate",
 						i18n.ES: "IVA Tipo Reducido",
@@ -190,7 +190,7 @@ var taxRegion = tax.Region{
 					},
 				},
 				{
-					Code: eu.TaxRateVATSuperReduced,
+					Code: common.TaxRateVATSuperReduced,
 					Name: i18n.String{
 						i18n.EN: "VAT Super-Reduced Rate",
 						i18n.ES: "IVA Tipo Superreducido",

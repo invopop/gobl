@@ -1,15 +1,8 @@
 package region
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/region/es"
 	"github.com/invopop/gobl/tax"
-
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Code defines the code used to identify a region.
@@ -17,12 +10,9 @@ type Code string
 
 // Defined region codes.
 const (
-	ES Code = es.Code // Spain
+	ES Code = "ES" // Spain
+	GB Code = "GB" // Great Britain (not nothern ireland)
 )
-
-var regions = map[Code]Region{
-	ES: es.New(), // Spain
-}
 
 // Region represents the methods we expect to be available from a region.
 type Region interface {
@@ -32,17 +22,35 @@ type Region interface {
 	// Currency provides the regions default currency definition.
 	Currency() *currency.Def
 
-	// ValidateTaxID checks the tax ID objects contents to see if they
-	// are considered valid for the region.
-	ValidateTaxID(id *org.TaxID) error
+	// Code provides this regions official code.
+	Code() Code
+
+	// Validate determines the type of GOBL document provided and attempts
+	// to check the contents for errors.
+	Validate(obj interface{}) error
 }
 
-// Codes provides a list of region IDs that we know about.
-func Codes() []Code {
-	codes := make([]Code, len(regions))
+// Collection holds a set of regions.
+type Collection struct {
+	regions map[Code]Region
+}
+
+// NewCollection expects an array of regions, from which
+func NewCollection(regions ...Region) *Collection {
+	c := new(Collection)
+	c.regions = make(map[Code]Region)
+	for _, r := range regions {
+		c.regions[r.Code()] = r
+	}
+	return c
+}
+
+// Codes provides a list of region codes contained in the collection.
+func (c *Collection) Codes() []Code {
+	codes := make([]Code, len(c.regions))
 	i := 0
-	for c := range regions {
-		codes[i] = c
+	for code := range c.regions {
+		codes[i] = code
 		i++
 	}
 	return codes
@@ -50,40 +58,12 @@ func Codes() []Code {
 
 // For returns the region definition for the document or nil if the
 // region code is invalid.
-func For(code Code) Region {
-	return regions[code]
+func (c *Collection) For(code Code) Region {
+	return c.regions[code]
 }
 
 // List provides the list of regions and their definitions. Only really meant
 // for exporting data.
-func List() map[Code]Region {
-	return regions
-}
-
-type partyTaxIDRule struct {
-	region Region
-}
-
-// ValidatePartyTaxID allows us to confirm the Party's TaxID object is valid
-// according to the requirements of the region.
-func ValidatePartyTaxID(r Region) validation.Rule {
-	return partyTaxIDRule{
-		region: r,
-	}
-}
-
-// Validate allows us to check if the tax ID conforms to the expectations
-// of the region.
-func (r partyTaxIDRule) Validate(value interface{}) error {
-	p, ok := value.(*org.Party)
-	if !ok {
-		return errors.New("not a Party")
-	}
-	if p.TaxID == nil {
-		return errors.New("no tax id present")
-	}
-	if err := r.region.ValidateTaxID(p.TaxID); err != nil {
-		return fmt.Errorf("tax_id: %w", err)
-	}
-	return nil
+func (c *Collection) List() map[Code]Region {
+	return c.regions
 }

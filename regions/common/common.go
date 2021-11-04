@@ -1,4 +1,4 @@
-package eu
+package common
 
 import "github.com/invopop/gobl/tax"
 

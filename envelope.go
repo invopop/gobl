@@ -3,12 +3,12 @@ package gobl
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 
 	"github.com/alecthomas/jsonschema"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/region"
 )
 
 // Envelope wraps around a gobl document and provides support for digest creation
@@ -24,15 +24,36 @@ type Document interface {
 	Type() string
 }
 
+// Calculable defines the methods expected of a document payload that contains a `Calculate`
+// method to be used to perform any additional calculations.
+type Calculable interface {
+	Calculate(r region.Region) error
+}
+
+// Validatable describes a document that can be validated.
+type Validatable interface {
+	Validate(r region.Region) error
+}
+
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
 // `new(Envelope)` call directly.
-func NewEnvelope() *Envelope {
+// A known region code is required as this will be used for any calculations and
+// validations that need to be performed on the document to be inserted.
+func NewEnvelope(rc region.Code) *Envelope {
 	e := new(Envelope)
-	e.Head = NewHeader()
+	e.Head = NewHeader(rc)
 	e.Document = new(Payload)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
+}
+
+// Region extracts the region from the header and provides a complete region object.
+func (e *Envelope) Region() region.Region {
+	if e.Head == nil || e.Head.Region == "" {
+		return nil
+	}
+	return Regions().For(e.Head.Region)
 }
 
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
@@ -40,7 +61,7 @@ func (e *Envelope) Validate() error {
 	return validation.ValidateStruct(e,
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required),
-		validation.Field(&e.Signatures, validation.Required),
+		validation.Field(&e.Signatures, validation.When(!e.Head.Draft, validation.Required)),
 	)
 }
 
@@ -58,27 +79,44 @@ func (e *Envelope) Verify() error {
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	sig, err := key.Sign(e.Head)
 	if err != nil {
-		return err
+		return ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
 	return nil
 }
 
-// Insert takes the provided document an serializes it ready for use.
+// Insert takes the provided document, performs any calculations, validates, then
+// serializes it ready for use.
 func (e *Envelope) Insert(doc Document) error {
+	if e.Head == nil {
+		return ErrInternal.WithErrorf("missing head")
+	}
+
+	// arm doors and cross check
+	r := e.Region()
+	if r == nil {
+		return ErrNoRegion
+	}
+	if obj, ok := doc.(Calculable); ok {
+		if err := obj.Calculate(r); err != nil {
+			return ErrCalculation.WithCause(err)
+		}
+	}
+	if obj, ok := doc.(Validatable); ok {
+		if err := obj.Validate(r); err != nil {
+			return ErrValidation.WithCause(err)
+		}
+	}
+
 	if e.Document == nil {
 		e.Document = new(Payload)
 	}
-	err := e.Document.insert(doc)
-	if err != nil {
+	if err := e.Document.insert(doc); err != nil {
 		return err
-	}
-
-	if e.Head == nil {
-		e.Head = NewHeader()
 	}
 	e.Head.Type = doc.Type()
 
+	var err error
 	e.Head.Digest, err = e.Document.digest()
 	if err != nil {
 		return err
@@ -101,7 +139,10 @@ type Payload struct {
 func (p *Payload) insert(doc Document) error {
 	var err error
 	p.data, err = json.Marshal(doc)
-	return err
+	if err != nil {
+		return ErrMarshal.WithCause(err)
+	}
+	return nil
 }
 
 func (p *Payload) extract(doc Document) error {
@@ -112,7 +153,7 @@ func (p *Payload) digest() (*dsig.Digest, error) {
 	r := bytes.NewReader(p.data)
 	cd, err := c14n.CanonicalJSON(r)
 	if err != nil {
-		return nil, fmt.Errorf("canonical JSON error: %w", err)
+		return nil, ErrInternal.WithErrorf("canonical JSON error: %w", err)
 	}
 	return dsig.NewSHA256Digest(cd), nil
 }

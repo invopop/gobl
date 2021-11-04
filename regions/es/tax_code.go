@@ -5,12 +5,22 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
 )
 
 // TaxCodeType represents the types of tax code which are issued
 // in Spain. The same general format with variations is used for
 // national individuals, foreigners, and legal organizations.
 type TaxCodeType string
+
+// validTaxID complies with the ozzo validation Rule definition to be able
+// to confirm that the Tax ID is indeed spanish and valid.
+var ValidTaxID = new(validTaxID)
+
+type validTaxID struct{}
 
 const (
 	NationalTaxCode     TaxCodeType = "N"
@@ -63,7 +73,7 @@ func VerifyTaxCode(code string) error {
 
 // CleanTaxCode removes any whitespace or separation characters and ensures all letters are
 // uppercase. It'll also remove the "ES" part at beginning if present such as required
-// for EU VIES system which is redudant and not used in the validation process.
+// for EU VIES system which is redundant and not used in the validation process.
 func CleanTaxCode(code string) string {
 	code = strings.ToUpper(code)
 	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
@@ -201,4 +211,25 @@ func extractMatches(regex *regexp.Regexp, code string) (map[string]string, error
 	}
 
 	return r, nil
+}
+
+// Validate ensures the tax ID contains a matching country and
+// valid code.
+func (*validTaxID) Validate(value interface{}) error {
+	id, ok := value.(*org.TaxID)
+	if !ok {
+		return nil
+	}
+	return validation.ValidateStruct(id,
+		validation.Field(&id.Country, validation.Required, validation.In(l10n.ES)),
+		validation.Field(&id.Code, validation.Required, validation.By(validateTaxCode)),
+	)
+}
+
+func validateTaxCode(value interface{}) error {
+	code, ok := value.(string)
+	if !ok {
+		return nil
+	}
+	return VerifyTaxCode(code)
 }

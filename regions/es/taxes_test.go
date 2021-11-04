@@ -3,7 +3,7 @@ package es_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/region/es"
+	"github.com/invopop/gobl/regions/es"
 )
 
 func TestTaxRegion(t *testing.T) {

@@ -231,7 +231,7 @@ func TestAmountMarshalJSON(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 	de := []byte(`{"amount":"12.67"}`)
-	if bytes.Compare(d, de) != 0 {
+	if !bytes.Equal(d, de) {
 		t.Errorf("results don't match, got: %s", d)
 	}
 }

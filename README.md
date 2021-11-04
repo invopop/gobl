@@ -1,20 +1,23 @@
-# GoBL
+# GOBL
+
+![GOBL Logo](https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg?raw=true)
 
 Go Business Language. 
 
 ## Introduction
 
-GoBL (pronounced "gobble") is a hybrid solution between a document standard, a software library, and a database. On one side it defines a language for business documents in JSON, while at the same time providing a library and services written in Go to help build, validate, sign, and localise.
+GOBL (pronounced "gobble") is a hybrid solution between a document standard and a software library. On one side it defines a language for business documents in JSON, while at the same time providing a library and services written in Go to help build, validate, sign, and localise.
 
-Traditional software business document standards consist of a set of definitions layered into different namespaces, followed by an independent set of implementations. The theory is that a well written standard can be implemented anywhere and be compatible with any existing library. In practice however, and especially for XML-base standards, dealing with multiple namespaces adds a lot of complexity. This tends to be reflected in lower quality libraries.
+Traditional software business document standards consist of a set of definitions layered into different namespaces, followed by an independent set of implementations. A well written standard can be implemented anywhere and be compatible with any existing library. In practice however, and especially for XML-base standards, dealing with multiple namespaces adds a lot of complexity.
 
-For GoBL a different approach is being tested. The code and library implementation is in itself the standard. Rather than trying to be super-flexible at the cost of complexity, GoBL includes everything needed for digital signatures, validation, and local implementations including tax definitions, all maintained under an open source license.
+For GoBL a different approach is being taken. The code and library implementation is in itself the standard. Rather than trying to be flexible at the cost of complexity, GoBL includes everything needed for digital signatures, validation, and local implementations including tax definitions, all maintained under an open source license.
 
 In our opinion, Go is an ideal language for this type of project due to its simple and concise syntax, performance, testing capabilities, and portability. We understand however that Go won't be everyone's cup of tea, so the project is designed to offer a server component (you could call it a microservice) to be launched in a docker container inside your own infrastructure, alongside a JSON Schema definition of all the key documents. Building your own documents and using the GoBL services to validate and sign them should be relatively straight forward.
 
 ## GoBL Standard
 
-### Namespaces
+### Packages
+
 
 
 ### Documents

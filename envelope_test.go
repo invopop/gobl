@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/region"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,11 +16,14 @@ func TestEnvelopePayload(t *testing.T) {
 	m := &note.Message{
 		Content: "This is test content.",
 	}
-	e := gobl.NewEnvelope()
+	e := gobl.NewEnvelope(region.ES)
 	if assert.NotNil(t, e.Head) {
 		assert.NotEmpty(t, e.Head.UUID, "empty header uuid")
 	}
 	assert.NotNil(t, e.Document)
+	if assert.NotNil(t, e.Region()) {
+		assert.Equal(t, region.ES, e.Region().Code())
+	}
 
 	if err := e.Insert(m); err != nil {
 		t.Errorf("failed to insert payload: %v", err)

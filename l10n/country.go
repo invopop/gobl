@@ -241,8 +241,8 @@ const (
 	UG Country = "UG"
 	UA Country = "UA"
 	AE Country = "AE"
-	GB Country = "GB"
-	US Country = "US"
+	GB Country = "GB" // Great Britain
+	US Country = "US" // United States
 	UM Country = "UM"
 	UY Country = "UY"
 	UZ Country = "UZ"
