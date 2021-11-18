@@ -580,6 +580,11 @@
           "title": "UUID",
           "description": "Unique identify of this item independent of the Supplier IDs"
         },
+        "ref": {
+          "type": "string",
+          "title": "Ref",
+          "description": "Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field."
+        },
         "name": {
           "type": "string"
         },
@@ -601,13 +606,14 @@
           "title": "Unit",
           "description": "Code for unit of the item being sold"
         },
-        "supplier_ids": {
+        "codes": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/org.ItemID"
+            "$ref": "#/definitions/org.ItemCode"
           },
           "type": "array",
-          "title": "Supplier IDs"
+          "title": "Codes",
+          "description": "List of additional codes"
         },
         "origin": {
           "type": "string",
@@ -627,13 +633,18 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "org.ItemID": {
+    "org.ItemCode": {
       "required": [
-        "value"
+        "val"
       ],
       "properties": {
-        "value": {
-          "type": "string"
+        "typ": {
+          "type": "string",
+          "title": "Type"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value"
         }
       },
       "additionalProperties": false,
@@ -704,6 +715,11 @@
           "title": "UUID",
           "description": "Unique identity code."
         },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Internal ID code for the party."
+        },
         "tax_id": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.TaxID",
@@ -753,6 +769,12 @@
           "type": "array",
           "title": "Telephone Numbers"
         },
+        "registration": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Registration",
+          "title": "Registration",
+          "description": "Additional registration details about the company that may need to be included in a document."
+        },
         "meta": {
           "patternProperties": {
             ".*": {
@@ -761,7 +783,7 @@
           },
           "type": "object",
           "title": "Meta",
-          "description": "Any additional non-structure information that does not fit into the rest of the document."
+          "description": "Any additional semi-structured information that does not fit into the rest of the party."
         }
       },
       "additionalProperties": false,
@@ -806,6 +828,41 @@
           "type": "object",
           "title": "Meta",
           "description": "Data about the data."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "org.Registration": {
+      "properties": {
+        "uuid": {
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID"
+        },
+        "office": {
+          "type": "string",
+          "title": "Office",
+          "description": "The place where the company is registered."
+        },
+        "book": {
+          "type": "string",
+          "title": "Book",
+          "description": "Book at the registry office."
+        },
+        "volume": {
+          "type": "string",
+          "title": "Volume",
+          "description": "Volume inside a book or office."
+        },
+        "section": {
+          "type": "string",
+          "title": "Section",
+          "description": "Section inside a volume or book."
+        },
+        "page": {
+          "type": "string",
+          "title": "Page",
+          "description": "Page inside a section."
         }
       },
       "additionalProperties": false,

@@ -9,15 +9,17 @@ import (
 
 // Party represents a person or business entity.
 type Party struct {
-	UUID       *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
-	TaxID      *TaxID       `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
-	Name       string       `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
-	Alias      string       `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
-	People     []*Person    `json:"people,omitempty" jsonschema:"title=People,description=Details of physical people who represent the party."`
-	Addresses  []*Address   `json:"addresses,omitempty" jsonschema:"title=Postal Addresses,description=Regular post addresses for where information should be sent if needed."`
-	Emails     []*Email     `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
-	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
-	Meta       Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional non-structure information that does not fit into the rest of the document."`
+	UUID         *uuid.UUID    `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
+	Code         string        `json:"code,omitempty" jsonschema:"title=Code,description=Internal ID code for the party."`
+	TaxID        *TaxID        `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
+	Name         string        `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
+	Alias        string        `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
+	People       []*Person     `json:"people,omitempty" jsonschema:"title=People,description=Details of physical people who represent the party."`
+	Addresses    []*Address    `json:"addresses,omitempty" jsonschema:"title=Postal Addresses,description=Regular post addresses for where information should be sent if needed."`
+	Emails       []*Email      `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
+	Telephones   []*Telephone  `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
+	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration,description=Additional registration details about the company that may need to be included in a document."`
+	Meta         Meta          `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional semi-structured information that does not fit into the rest of the party."`
 }
 
 // Person represents a human, and how to contact them.
@@ -57,6 +59,19 @@ type Telephone struct {
 	UUID   *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	Label  string     `json:"label,omitempty" jsonschema:"title=Label,description=Identifier for this number."`
 	Number string     `json:"num" jsonschema:"title=Number,description=The number to be dialed in ITU E.164 international format."`
+}
+
+// Registration is used in countries that require additional information to be associated
+// with a company usually related to a specific registration office.
+// The definition found here is based on the details required for spain.
+// If your country requires additional fields, please let us know.
+type Registration struct {
+	UUID    *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	Office  string     `json:"office,omitempty" jsonschema:"title=Office,description=The place where the company is registered."`
+	Book    string     `json:"book,omitempty" jsonschema:"title=Book,description=Book at the registry office."`
+	Volume  string     `json:"volume,omitempty" jsonschema:"title=Volume,description=Volume inside a book or office."`
+	Section string     `json:"section,omitempty" jsonschema:"title=Section,description=Section inside a volume or book."`
+	Page    string     `json:"page,omitempty" jsonschema:"title=Page,description=Page inside a section."`
 }
 
 // Validate is used to check the party's data meets minimum expectations.

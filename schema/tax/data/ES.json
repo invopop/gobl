@@ -1,5 +1,5 @@
 {
-  "code": "es",
+  "code": "ES",
   "name": {
     "en": "Spain",
     "es": "España"
@@ -164,7 +164,7 @@
           ]
         },
         {
-          "code": "tobacco",
+          "code": "TOB",
           "name": {
             "en": "VAT Tobacco Rate",
             "es": "IVA Tipo Tobaco"
@@ -180,7 +180,14 @@
     },
     {
       "code": "IRPF",
-      "name": null,
+      "name": {
+        "en": "IRPF",
+        "es": "IRPF"
+      },
+      "desc": {
+        "en": "Personal income tax.",
+        "es": "Impuesto sobre la renta de las personas físicas."
+      },
       "retained": true,
       "defs": [
         {
