@@ -842,27 +842,31 @@
         "office": {
           "type": "string",
           "title": "Office",
-          "description": "The place where the company is registered."
+          "description": "Office where the company is registered."
         },
         "book": {
           "type": "string",
-          "title": "Book",
-          "description": "Book at the registry office."
+          "title": "Book"
         },
         "volume": {
           "type": "string",
-          "title": "Volume",
-          "description": "Volume inside a book or office."
+          "title": "Volume"
+        },
+        "sheet": {
+          "type": "string",
+          "title": "Sheet"
         },
         "section": {
           "type": "string",
-          "title": "Section",
-          "description": "Section inside a volume or book."
+          "title": "Section"
         },
         "page": {
           "type": "string",
-          "title": "Page",
-          "description": "Page inside a section."
+          "title": "Page"
+        },
+        "entry": {
+          "type": "string",
+          "title": "Entry"
         }
       },
       "additionalProperties": false,
