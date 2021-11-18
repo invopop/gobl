@@ -67,11 +67,13 @@ type Telephone struct {
 // If your country requires additional fields, please let us know.
 type Registration struct {
 	UUID    *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	Office  string     `json:"office,omitempty" jsonschema:"title=Office,description=The place where the company is registered."`
-	Book    string     `json:"book,omitempty" jsonschema:"title=Book,description=Book at the registry office."`
-	Volume  string     `json:"volume,omitempty" jsonschema:"title=Volume,description=Volume inside a book or office."`
-	Section string     `json:"section,omitempty" jsonschema:"title=Section,description=Section inside a volume or book."`
-	Page    string     `json:"page,omitempty" jsonschema:"title=Page,description=Page inside a section."`
+	Office  string     `json:"office,omitempty" jsonschema:"title=Office,description=Office where the company is registered."`
+	Book    string     `json:"book,omitempty" jsonschema:"title=Book"`
+	Volume  string     `json:"volume,omitempty" jsonschema:"title=Volume"`
+	Sheet   string     `json:"sheet,omitempty" jsonschema:"title=Sheet"`
+	Section string     `json:"section,omitempty" jsonschema:"title=Section"`
+	Page    string     `json:"page,omitempty" jsonschema:"title=Page"`
+	Entry   string     `json:"entry,omitempty" jsonschema:"title=Entry"`
 }
 
 // Validate is used to check the party's data meets minimum expectations.
