@@ -246,25 +246,31 @@
     },
     "bill.Payment": {
       "properties": {
+        "payer": {
+          "$ref": "#/definitions/org.Party",
+          "title": "Payer",
+          "description": "The party responsible for paying for the invoice"
+        },
         "terms": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/pay.Terms",
           "title": "Terms",
           "description": "Payment terms or conditions."
         },
-        "methods": {
+        "advances": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/pay.Method"
+            "$ref": "#/definitions/pay.Advance"
           },
           "type": "array",
-          "title": "Methods",
-          "description": "Array of payment options that can be used to pay for this invoice."
+          "title": "Advances",
+          "description": "Any amounts that have been paid in advance and should be deducted from the amount due."
         },
-        "payer": {
-          "$ref": "#/definitions/org.Party",
-          "title": "Payer",
-          "description": "The party responsible for paying for the invoice"
+        "instructions": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/pay.Instructions",
+          "title": "Instructions",
+          "description": "Details on how payment should be made."
         }
       },
       "additionalProperties": false,
@@ -309,6 +315,8 @@
     "bill.Totals": {
       "required": [
         "sum",
+        "discount",
+        "total",
         "payable"
       ],
       "properties": {
@@ -342,6 +350,16 @@
           "$ref": "#/definitions/num.Amount",
           "title": "Payable",
           "description": "Total amount to be paid after applying taxes."
+        },
+        "advance": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Advance",
+          "description": "Total amount paid in advance."
+        },
+        "due": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Due",
+          "description": "How much actually needs to be paid now."
         }
       },
       "additionalProperties": false,
@@ -363,17 +381,6 @@
       },
       "additionalProperties": false,
       "type": "object"
-    },
-    "i18n.String": {
-      "patternProperties": {
-        "^[a-z]{2}$": {
-          "type": "string",
-          "title": "Text in given language."
-        }
-      },
-      "type": "object",
-      "title": "Multi-language String",
-      "description": "Map of 2-Letter language codes to their translations."
     },
     "num.Amount": {
       "pattern": "^\\-?[0-9]+(\\.[0-9]+)?$",
@@ -930,7 +937,67 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "pay.BankTransfer": {
+    "pay.Advance": {
+      "required": [
+        "desc",
+        "amount"
+      ],
+      "properties": {
+        "uuid": {
+          "$ref": "#/definitions/uuid.UUID",
+          "title": "UUID",
+          "description": "Unique identifier for this advance."
+        },
+        "date": {
+          "$ref": "#/definitions/org.Date",
+          "title": "Date",
+          "description": "When the advance was made."
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Reference for the advance."
+        },
+        "desc": {
+          "type": "string",
+          "title": "Description",
+          "description": "Details about the advance."
+        },
+        "amount": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Amount",
+          "description": "How much was paid."
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.Card": {
+      "required": [
+        "last4",
+        "holder"
+      ],
+      "properties": {
+        "last4": {
+          "type": "string",
+          "title": "Last 4",
+          "description": "Last 4 digits of the card's Primary Account Number (PAN)."
+        },
+        "holder": {
+          "type": "string",
+          "title": "Holder Name",
+          "description": "Name of the person whom the card belongs to."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.CreditTransfer": {
       "properties": {
         "iban": {
           "type": "string",
@@ -956,11 +1023,121 @@
           "$ref": "#/definitions/org.Address",
           "title": "Branch",
           "description": "Bank office branch address"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.DirectDebit": {
+      "properties": {
+        "ref": {
+          "type": "string",
+          "title": "Mandate Reference",
+          "description": "Unique identifier assigned by the payee for referencing the direct debit."
+        },
+        "creditor": {
+          "type": "string",
+          "title": "Creditor ID",
+          "description": "Unique banking reference that identifies the payee or seller assigned by the bank."
+        },
+        "account": {
+          "type": "string",
+          "title": "Account",
+          "description": "Account identifier to be debited by the direct debit."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.DueDate": {
+      "required": [
+        "date",
+        "amount"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/definitions/org.Date",
+          "title": "Date",
+          "description": "When the payment is due."
         },
         "notes": {
-          "$ref": "#/definitions/i18n.String",
+          "type": "string",
           "title": "Notes",
-          "description": "Any additional instructions that may be required to make the transfer."
+          "description": "Other details to take into account for the due date."
+        },
+        "amount": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Amount",
+          "description": "How much needs to be paid by the date."
+        },
+        "percent": {
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Percent",
+          "description": "Percentage of the total that should be paid by the date."
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "pay.Instructions": {
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "How payment is expected or has been arranged to be collected."
+        },
+        "detail": {
+          "type": "string",
+          "title": "Detail",
+          "description": "Optional text description of the payment method."
+        },
+        "ref": {
+          "type": "string",
+          "title": "Ref",
+          "description": "Remittance information"
+        },
+        "credit_transfer": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/pay.CreditTransfer"
+          },
+          "type": "array",
+          "title": "Credit Transfer",
+          "description": "Instructions for sending payment via a bank transfer."
+        },
+        "card": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/pay.Card",
+          "title": "Card",
+          "description": "Details of the payment that will be made via a credit or debit card."
+        },
+        "direct_debit": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/pay.DirectDebit",
+          "title": "Direct Debit",
+          "description": "A group of terms that can be used by the customer or payer to consolidate direct debit payments."
+        },
+        "online": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/pay.Online"
+          },
+          "type": "array",
+          "title": "Online",
+          "description": "Array of online payment options."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Any additional instructions that may be required to make the payment."
         },
         "meta": {
           "patternProperties": {
@@ -976,42 +1153,20 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "pay.Method": {
+    "pay.Online": {
       "required": [
-        "code"
+        "addr"
       ],
       "properties": {
-        "code": {
+        "name": {
           "type": "string",
-          "title": "Code",
-          "description": "Code for the method type that can be used."
+          "title": "Name",
+          "description": "Descriptive name given to the online provider."
         },
-        "bank_transfer": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/pay.BankTransfer",
-          "title": "Bank Transfer",
-          "description": "Details on how to pay using a bank transfer or wire."
-        },
-        "url": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/pay.URL",
-          "title": "URL",
-          "description": "Web address that can be used for making the payment. Likely to be custom for each document."
-        },
-        "notes": {
+        "addr": {
           "type": "string",
-          "title": "Notes",
-          "description": "Additional details related to this payment method."
-        },
-        "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
-          "title": "Meta",
-          "description": "Additional non-structure data."
+          "title": "Address",
+          "description": "Full URL to be used for payment."
         }
       },
       "additionalProperties": false,
@@ -1027,43 +1182,24 @@
           "title": "Code",
           "description": "Type of terms to be applied."
         },
+        "detail": {
+          "type": "string",
+          "title": "Detail",
+          "description": "Text detail of the chosen payment terms."
+        },
+        "due_dates": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/pay.DueDate"
+          },
+          "type": "array",
+          "title": "Due Dates",
+          "description": "Set of dates for agreed payments."
+        },
         "notes": {
-          "$ref": "#/definitions/i18n.String",
+          "type": "string",
           "title": "Notes",
           "description": "Description of the conditions for payment."
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "pay.URL": {
-      "required": [
-        "addr"
-      ],
-      "properties": {
-        "uuid": {
-          "$ref": "#/definitions/uuid.UUID",
-          "title": "UUID"
-        },
-        "addr": {
-          "type": "string",
-          "title": "Address",
-          "description": "Full URL to be used for payment."
-        },
-        "notes": {
-          "type": "string",
-          "title": "Notes",
-          "description": "Additional details which may be useful to the end-user."
-        },
-        "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
-          "title": "Meta",
-          "description": "Semi-structured additional data."
         }
       },
       "additionalProperties": false,

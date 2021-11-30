@@ -15,6 +15,7 @@ type TypeCode string
 // Predefined list of the invoice type codes officially supported.
 const (
 	CommercialTypeCode TypeCode = ""            // Commercial Invoice, default
+	ProformaTypeCode   TypeCode = "proforma"    // Proforma invoice
 	SimplifiedTypeCode TypeCode = "simplified"  // Simplified Invoice
 	PartialTypeCode    TypeCode = "partial"     // Partial Invoice
 	CorrectedTypeCode  TypeCode = "corrected"   // Corrected Invoice
@@ -25,6 +26,7 @@ const (
 // UNTDID1001CodeMap offers a way to convert the GOBL invoice type code into
 // one supported by our subset of the UNTDID 1001 official list.
 var UNTDID1001TypeCodeMap = map[TypeCode]string{
+	ProformaTypeCode:   "325",
 	PartialTypeCode:    "326",
 	CommercialTypeCode: "380",
 	SimplifiedTypeCode: "380", // same as commercial

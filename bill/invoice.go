@@ -51,12 +51,14 @@ type Invoice struct {
 
 // Totals contains the summaries of all calculations for the invoice.
 type Totals struct {
-	Sum      num.Amount `json:"sum" jsonschema:"title=Sum,description=Sum of all line item sums"`
-	Discount num.Amount `json:"discount,omitempty" jsonschema:"title=Discount,description=Sum of all discounts applied to each line."`
-	Total    num.Amount `json:"total,omitempty" jsonschema:"title=Total,description=Sum of all line sums minus the discounts."`
-	Taxes    *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals,description=Summary of all taxes with a final sum to add or deduct from the amount payable."`
-	Outlays  num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals,description=Total paid in outlays that need to be reimbursed."`
-	Payable  num.Amount `json:"payable" jsonschema:"title=Payable,description=Total amount to be paid after applying taxes."`
+	Sum      num.Amount  `json:"sum" jsonschema:"title=Sum,description=Sum of all line item sums"`
+	Discount num.Amount  `json:"discount" jsonschema:"title=Discount,description=Sum of all discounts applied to each line."`
+	Total    num.Amount  `json:"total" jsonschema:"title=Total,description=Sum of all line sums minus the discounts."`
+	Taxes    *tax.Total  `json:"taxes,omitempty" jsonschema:"title=Tax Totals,description=Summary of all taxes with a final sum to add or deduct from the amount payable."`
+	Outlays  *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals,description=Total paid in outlays that need to be reimbursed."`
+	Payable  num.Amount  `json:"payable" jsonschema:"title=Payable,description=Total amount to be paid after applying taxes."`
+	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance,description=Total amount paid in advance."`
+	Due      *num.Amount `json:"due,omitempty" jsonschema:"title=Due,description=How much actually needs to be paid now."`
 }
 
 // Ordering allows additional order details to be appended
@@ -65,11 +67,11 @@ type Ordering struct {
 }
 
 // Payment contains details as to how the invoice should be paid.
-// TODO: Add terms here.
 type Payment struct {
-	Terms   *pay.Terms    `json:"terms,omitempty" jsonschema:"title=Terms,description=Payment terms or conditions."`
-	Methods []*pay.Method `json:"methods,omitempty" jsonschema:"title=Methods,description=Array of payment options that can be used to pay for this invoice."`
-	Payer   *org.Party    `json:"payer,omitempty" jsonschema:"title=Payer,description=The party responsible for paying for the invoice, if not the customer."`
+	Payer        *org.Party        `json:"payer,omitempty" jsonschema:"title=Payer,description=The party responsible for paying for the invoice, if not the customer."`
+	Terms        *pay.Terms        `json:"terms,omitempty" jsonschema:"title=Terms,description=Payment terms or conditions."`
+	Advances     []*pay.Advance    `json:"advances,omitempty" jsonschema:"title=Advances,description=Any amounts that have been paid in advance and should be deducted from the amount due."`
+	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions,description=Details on how payment should be made."`
 }
 
 // InvoiceDelivery covers the details of the destination for the products described
@@ -155,15 +157,43 @@ func (inv *Invoice) Calculate(r region.Region) error {
 		return err
 	}
 
+	t.Payable = t.Total.Add(t.Taxes.Sum)
+
 	// Outlays
-	for i, o := range inv.Outlays {
-		o.Index = i + 1
-		t.Outlays = t.Outlays.Add(o.Paid)
+	if len(inv.Outlays) > 0 {
+		t.Outlays = &zero
+		for i, o := range inv.Outlays {
+			o.Index = i + 1
+			v := t.Outlays.Add(o.Paid)
+			t.Outlays = &v
+		}
+		t.Payable = t.Payable.Add(*t.Outlays)
 	}
 
-	t.Payable = t.Total.Add(t.Taxes.Sum).Add(t.Outlays)
+	if inv.Payment != nil {
+		// Deal with advances, if any
+		if t.Advances = inv.Payment.totalAdvance(zero); t.Advances != nil {
+			v := t.Payable.Subtract(*t.Advances)
+			t.Due = &v
+		}
+
+		// Calculate any due date amounts
+		inv.Payment.Terms.CalculateDues(t.Payable)
+	}
+
 	inv.Totals = t
 	return nil
+}
+
+func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
+	if p == nil || len(p.Advances) == 0 {
+		return nil
+	}
+	sum := zero
+	for _, a := range p.Advances {
+		sum = sum.Add(a.Amount)
+	}
+	return &sum
 }
 
 // Reset sets all the totals to the provided zero amount with the correct
@@ -173,6 +203,8 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Discount = zero
 	t.Taxes = tax.NewTotal(zero)
 	t.Total = zero
-	t.Outlays = zero
+	t.Outlays = nil
 	t.Payable = zero
+	t.Advances = nil
+	t.Due = nil
 }
