@@ -13,7 +13,7 @@ func TestTermsValidation(t *testing.T) {
 	tm.Code = TermCode("foo")
 	err := tm.Validate()
 	assert.Error(t, err, "expected validation error")
-	tm.Code = TermBasic
+	tm.Code = TermNA
 	err = tm.Validate()
 	assert.NoError(t, err)
 }
