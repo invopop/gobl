@@ -9,8 +9,8 @@ import (
 
 // Party represents a person or business entity.
 type Party struct {
+	ID           string        `json:"id,omitempty" jsonschema:"title=ID,description=Internal ID used to identify the party inside a document."`
 	UUID         *uuid.UUID    `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
-	Code         string        `json:"code,omitempty" jsonschema:"title=Code,description=Internal ID code for the party."`
 	TaxID        *TaxID        `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
 	Name         string        `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
 	Alias        string        `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
@@ -22,13 +22,15 @@ type Party struct {
 	Meta         Meta          `json:"meta,omitempty" jsonschema:"title=Meta,description=Any additional semi-structured information that does not fit into the rest of the party."`
 }
 
-// Person represents a human, and how to contact them.
+// Person represents a human, and how to contact them electronically.
 type Person struct {
-	UUID   *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
-	Name   Name       `json:"name" jsonschema:"title=Name,description=Complete details on the name of the person"`
-	Role   string     `json:"role,omitempty" jsonschema:"title=Role,description=What they do within an organization"`
-	Emails []Email    `json:"emails,omitempty" jsonschema:"title=Email Addresses,description=Electronic mail addresses that belong to the person."`
-	Meta   Meta       `json:"meta,omitempty" jsonschema:"title=Meta,description=Data about the data."`
+	ID         string       `json:"id,omitempty" jsonschema:"title=ID,description=Internal ID used to identify the person inside a document."`
+	UUID       *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
+	Name       Name         `json:"name" jsonschema:"title=Name,description=Complete details on the name of the person"`
+	Role       string       `json:"role,omitempty" jsonschema:"title=Role,description=What they do within an organization"`
+	Emails     []*Email     `json:"emails,omitempty" jsonschema:"title=Email Addresses,description=Electronic mail addresses that belong to the person."`
+	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
+	Meta       Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Data about the data."`
 }
 
 // Name represents what a human is called. This is a complex subject, see this
