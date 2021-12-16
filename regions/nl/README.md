@@ -1,2 +1,2 @@
-# Spanish GOBL Tax Definitions
+# Dutch GOBL Tax Definitions
 

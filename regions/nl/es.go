@@ -7,17 +7,17 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// regionDef holds everything related to spanish documents and taxes.
+// regionDef holds everything related to Dutch documents and taxes.
 type regionDef struct{}
 
-// New provides the Spanish region definition
+// New provides the Dutch region definition
 func New() region.Region {
 	return new(regionDef)
 }
 
 // Code provides this region's code
 func (regionDef) Code() region.Code {
-	return region.ES
+	return region.NL
 }
 
 // Taxes provides all of this region's tax definitions.
