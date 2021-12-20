@@ -3,50 +3,63 @@ package nl
 import (
 	"testing"
 
-	"gitlab.com/flimzy/testy"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestVerifyTaxCode(t *testing.T) {
-	type tt struct {
-		code, err string
+	tests := []struct {
+		name string
+		code string
+		err  string
+	}{
+		{
+			name: "empty",
+			code: "",
+			err:  "invalid VAT number",
+		},
+		{
+			name: "too long",
+			code: "a really really long string that's way too long",
+			err:  "invalid VAT number",
+		},
+		{
+			name: "too short",
+			code: "shorty",
+			err:  "invalid VAT number",
+		},
+		{
+			name: "valid",
+			code: "NL000099995B57",
+		},
+		{
+			name: "lowercase",
+			code: "nl000099995b57",
+		},
+		{
+			name: "no B",
+			code: "NL000099998X57",
+			err:  "invalid VAT number",
+		},
+		{
+			name: "non numbers",
+			code: "NL000099998B5a",
+			err:  "invalid VAT number",
+		},
+		{
+			name: "invalid checksum",
+			code: "NL123456789B12",
+			err:  "checkusum mismatch",
+		},
 	}
 
-	tests := testy.NewTable()
-	tests.Add("empty", tt{
-		code: "",
-		err:  "invalid VAT number",
-	})
-	tests.Add("too long", tt{
-		code: "a really really long string that's way too long",
-		err:  "invalid VAT number",
-	})
-	tests.Add("too short", tt{
-		code: "shorty",
-		err:  "invalid VAT number",
-	})
-	tests.Add("valid", tt{
-		code: "NL000099995B57",
-	})
-	tests.Add("lowercase", tt{
-		code: "nl000099995b57",
-	})
-	tests.Add("no B", tt{
-		code: "NL000099998X57",
-		err:  "invalid VAT number",
-	})
-	tests.Add("non numbers", tt{
-		code: "NL000099998B5a",
-		err:  "invalid VAT number",
-	})
-	tests.Add("invalid checksum", tt{
-		code: "NL123456789B12",
-		err:  "checkusum mismatch",
-	})
-
-	tests.Run(t, func(t *testing.T, tt tt) {
-		err := VerifyTaxCode(tt.code)
-		if !testy.ErrorMatches(tt.err, err) {
-			t.Errorf("Unexpected error: %s", err)
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := VerifyTaxCode(tt.code)
+			if tt.err == "" {
+				assert.Nil(t, err)
+			} else {
+				assert.EqualError(t, err, tt.err)
+			}
+		})
+	}
 }
