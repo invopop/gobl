@@ -5,6 +5,7 @@ go 1.14
 require (
 	cloud.google.com/go v0.65.0
 	github.com/alecthomas/jsonschema v0.0.0-20210413112511-5c9c23bdc720
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.1.2
