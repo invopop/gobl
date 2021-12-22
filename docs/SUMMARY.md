@@ -8,6 +8,7 @@
 * [Headers](introduction/headers.md)
 * [Documents](introduction/documents.md)
 * [Signatures](introduction/signatures.md)
+* [Numbers](introduction/numbers.md)
 
 ## Regions
 
