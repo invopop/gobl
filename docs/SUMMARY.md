@@ -1,13 +1,19 @@
-# Summary
+# Table of contents
 
 ## Introduction
 
-- [Overview](intro/README.md)
+* [Overview](README.md)
+* [What is GOBL?](introduction/what-is-gobl.md)
+* [Envelopes](introduction/envelopes.md)
+* [Headers](introduction/headers.md)
+* [Documents](introduction/documents.md)
+* [Signatures](introduction/signatures.md)
+* [Numbers](introduction/numbers.md)
 
 ## Regions
 
-- Details
+* [Details](regions/details.md)
 
 ## Bill
 
-- Invoices
+* [Invoices](bill/invoices.md)

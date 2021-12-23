@@ -11,6 +11,7 @@ type Code string
 // Defined region codes.
 const (
 	ES Code = "ES" // Spain
+	NL Code = "NL" // Netherlands
 	GB Code = "GB" // Great Britain (not nothern ireland)
 )
 
@@ -22,7 +23,7 @@ type Region interface {
 	// Currency provides the regions default currency definition.
 	Currency() *currency.Def
 
-	// Code provides this regions official code.
+	// Code provides this region's official code.
 	Code() Code
 
 	// Validate determines the type of GOBL document provided and attempts
