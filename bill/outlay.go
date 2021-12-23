@@ -1,6 +1,9 @@
 package bill
 
-import "github.com/invopop/gobl/num"
+import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/num"
+)
 
 // Outlays holds an array of Outlay objects used inside a billing document.
 type Outlays []*Outlay
@@ -12,9 +15,23 @@ type Outlays []*Outlay
 // when an accountant or lawyer will pay for notary fees, but forward the invoice to the
 // customer.
 type Outlay struct {
-	UUID        string     `json:"uuid,omitempty"`
-	Index       int        `json:"i" jsonschema:"title=Index,description=Line number inside the invoice, starting from 0."`
-	Ref         string     `json:"ref,omitempty" jsonschema:"title=Reference,description=A code, invoice number, or other reference detail used to identify the outlay."`
-	Description string     `json:"desc" jsonschema:"title=Description,description=Details on what the outlay was."`
-	Paid        num.Amount `json:"paid" jsonschema:"title=Paid,description=Amount paid by the supplier."`
+	// Unique identity for this outlay.
+	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Outlay number index inside the invoice for ordering.
+	Index int `json:"i" jsonschema:"title=Index"`
+	// A code, invoice number, or other reference detail used to identify the outlay.
+	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
+	// Details on what the outlay was.
+	Description string `json:"desc" jsonschema:"title=Description"`
+	// Amount paid by the supplier.
+	Paid num.Amount `json:"paid" jsonschema:"title=Paid"`
+}
+
+// Validate ensures the outlay contains everything required.
+func (o *Outlay) Validate() error {
+	return validation.ValidateStruct(o,
+		validation.Field(&o.Index, validation.Required),
+		validation.Field(&o.Description, validation.Required),
+		validation.Field(&o.Paid, validation.Required),
+	)
 }

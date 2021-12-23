@@ -34,6 +34,9 @@ func Schema() error {
 	// ref.FullyQualifyTypeNames = true
 	ref.TypeMapper = typeMapper
 	ref.TypeNamer = typeNamer
+	if err := ref.AddGoComments("github.com/invopop/gobl", "./"); err != nil {
+		return err
+	}
 	var ls i18n.String
 	for f, t := range types {
 		i18nStringUsed = false

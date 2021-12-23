@@ -145,6 +145,7 @@ func (p *Percentage) UnmarshalJSON(value []byte) error {
 	return p.UnmarshalText(value)
 }
 
+// JSONSchemaType provides a representation of the struct for usage in Schema.
 func (Percentage) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",

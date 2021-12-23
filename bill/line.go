@@ -12,14 +12,22 @@ type Lines []*Line
 
 // Line is a single row in an invoice.
 type Line struct {
-	UUID     string        `json:"uuid,omitempty"`
-	Index    int           `json:"i" jsonschema:"title=Index,description=Line number inside the invoice."`
-	Quantity num.Amount    `json:"quantity"`
-	Item     *org.Item     `json:"item"`
-	Sum      num.Amount    `json:"sum" jsonschema:"title=Sum,description=Result of quantity multiplied by item price"`
-	Discount *org.Discount `json:"discount,omitempty" jsonschema:"title=Discount,description=Discount applied to this line."`
-	Taxes    tax.Rates     `json:"taxes,omitempty" jsonschema:"title=Taxes,description=List of taxes to be applied to the line in the invoice totals."`
-	Total    num.Amount    `json:"total" jsonschema:"title=Total,description=Total line amount after applying discounts to the sum."`
+	// Unique identifier for this line
+	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Line number inside the parent
+	Index int `json:"i" jsonschema:"title=Index"`
+	// Number of items
+	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
+	// Details about what is being sold
+	Item *org.Item `json:"item" jsonschema:"title=Item"`
+	// Result of quantity multiplied by the item's price
+	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
+	// Discount applied to this line
+	Discount *org.Discount `json:"discount,omitempty" jsonschema:"title=Discount"`
+	// List of taxes to be applied and used in the invoice totals
+	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
+	// Total line amount after applying discounts to the sum
+	Total num.Amount `json:"total" jsonschema:"title=Total"`
 }
 
 // GetTaxRates responds with the array of tax rates applied to this line.

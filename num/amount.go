@@ -13,7 +13,7 @@ import (
 
 // Amount represents a quantity with decimal places that will not suffer
 // rounding errors like traditional floats.
-// Use cases are assumed to be within the "human managable domain", i.e.
+// Use cases are assumed to be within the "human manageable domain", i.e.
 // for dealing with counts, money, rates, short distances, etc.
 // Implementation is inspired by https://github.com/shopspring/decimal, but
 // simplified to account for the expectations of GoBL.
@@ -42,7 +42,7 @@ func MakeAmount(val int64, exp uint32) Amount {
 // with a string like `"12.000"`, the accuracy will be assumed to be 3
 // decimal places.
 // If you're dealing with numbers from humans which may contain symbols,
-// commans, european style fullstops, underscores, etc. then you should use
+// commas, european style fullstops, underscores, etc. then you should use
 // the `AmountFromHumanString` method.
 func AmountFromString(val string) (Amount, error) {
 	a := Amount{}
@@ -270,6 +270,7 @@ func intPow(base int, exp uint32) int64 {
 	return out
 }
 
+// JSONSchemaType provides a representation of the struct for usage in Schema.
 func (Amount) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",

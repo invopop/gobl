@@ -20,50 +20,77 @@ import (
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	UUID             *uuid.UUID             `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique document ID. Not required, but always recommended in addition to the Code."`
-	Code             string                 `json:"code" jsonschema:"title=Code,description=Sequential code used to identify this invoice in tax declarations."`
-	TypeCode         TypeCode               `json:"type_code,omitempty" jsonschema:"title=Type Code,description=Functional type of the invoice, default is always 'Commercial'"`
-	Currency         currency.Code          `json:"currency" jsonschema:"title=Currency,description=Currency for all invoice totals."`
-	ExchangeRates    currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates,description=Exchange rates to be used when converting the invoices monetary values into other currencies."`
-	PricesIncludeTax bool                   `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax,description=When true, implies that all item prices already include non-retained taxes. This is especially useful for retailers where prices are often displayed including tax."`
+	// Unique document ID. Not required, but always recommended in addition to the Code.
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Sequential code used to identify this invoice in tax declarations.
+	Code string `json:"code" jsonschema:"title=Code"`
+	// Functional type of the invoice, default is always 'commercial'.
+	TypeCode TypeCode `json:"type_code,omitempty" jsonschema:"title=Type Code"`
+	// Currency for all invoice totals.
+	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
+	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	ExchangeRates currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates"`
+	// When true, implies that all item prices already include non-retained taxes. This is especially
+	// useful for retailers where prices are often displayed including tax.
+	PricesIncludeTax bool `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax"`
 
-	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Reference,description=Key information regarding a previous invoice."`
+	// Key information regarding a previous invoice.
+	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Reference"`
 
-	IssueDate     *org.Date `json:"issue_date" jsonschema:"title=Issue Date,description=When the invoice was created."`
-	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date,description=Date when the operation defined by the invoice became effective."`
-	ValueDate     *org.Date `json:"value_date,omitempty" jsonschema:"title=Value Date,description=When the taxes of this invoice become accountable, if none set, the issue date is used."`
+	// When the invoice was created.
+	IssueDate *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	// Date when the operation defined by the invoice became effective.
+	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
+	// When the taxes of this invoice become accountable, if none set, the issue date is used.
+	ValueDate *org.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 
-	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier,description=The taxable entity supplying the goods or services."`
-	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer,description=Legal entity who receives the goods or services. May be empty in certain circumstances such as simplified invoices."`
+	// The taxable entity supplying the goods or services.
+	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
+	// Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices.
+	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
-	Lines   Lines   `json:"lines,omitempty" jsonschema:"title=Lines,description=The items sold to the customer."`
-	Outlays Outlays `json:"outlays,omitempty" jsonschema:"title=Outlays,description=Expenses paid for by the supplier but invoiced directly to the customer."`
+	// List of invoice lines representing each of the items sold to the customer.
+	Lines Lines `json:"lines,omitempty" jsonschema:"title=Lines"`
+	// Expenses paid for by the supplier but invoiced directly to the customer.
+	Outlays Outlays `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
+	// Summary of all the invoice totals, including taxes.
 	Totals *Totals `json:"totals" jsonschema:"title=Totals"`
 
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
 	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
 
-	Notes string   `json:"notes,omitempty" jsonschema:"title=Notes,description=Unstructured information that is relevant to the invoice, such as correction details."`
-	Meta  org.Meta `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional semi-structured data that doesn't fit into the body of the invoice."`
+	// Unstructured information that is relevant to the invoice, such as correction details.
+	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+	// Additional semi-structured data that doesn't fit into the body of the invoice.
+	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Totals contains the summaries of all calculations for the invoice.
 type Totals struct {
-	Sum      num.Amount  `json:"sum" jsonschema:"title=Sum,description=Sum of all line item sums"`
-	Discount num.Amount  `json:"discount" jsonschema:"title=Discount,description=Sum of all discounts applied to each line."`
-	Total    num.Amount  `json:"total" jsonschema:"title=Total,description=Sum of all line sums minus the discounts."`
-	Taxes    *tax.Total  `json:"taxes,omitempty" jsonschema:"title=Tax Totals,description=Summary of all taxes with a final sum to add or deduct from the amount payable."`
-	Outlays  *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals,description=Total paid in outlays that need to be reimbursed."`
-	Payable  num.Amount  `json:"payable" jsonschema:"title=Payable,description=Total amount to be paid after applying taxes."`
-	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance,description=Total amount paid in advance."`
-	Due      *num.Amount `json:"due,omitempty" jsonschema:"title=Due,description=How much actually needs to be paid now."`
+	// Sum of all line item sums
+	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
+	// Sum of all discounts applied to each line
+	Discount num.Amount `json:"discount" jsonschema:"title=Discount"`
+	// Sum of all line sums minus the discounts
+	Total num.Amount `json:"total" jsonschema:"title=Total"`
+	// Summary of all the taxes with a final sum to add or deduct from the amount payable
+	Taxes *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals"`
+	// Total paid in outlays that need to be reimbursed
+	Outlays *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals"`
+	// Total amount to be paid after applying taxes
+	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
+	// Total amount paid in advance
+	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance"`
+	// How much actually needs to be paid now
+	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
 // Ordering allows additional order details to be appended
 type Ordering struct {
-	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller,description=Party who is selling the goods and is not responsible for taxes."`
+	// Party who is selling the goods and is not responsible for taxes
+	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
 }
 
 // Payment contains details as to how the invoice should be paid.
@@ -74,20 +101,25 @@ type Payment struct {
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions,description=Details on how payment should be made."`
 }
 
-// InvoiceDelivery covers the details of the destination for the products described
+// Delivery covers the details of the destination for the products described
 // in the invoice body.
 type Delivery struct {
-	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver,description=The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."`
+	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
+	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
 }
 
 // Preceding allows for information to be provided about a previous invoice that this one
 // will replace or subtract from. If this is used, the invoice type code will most likely need
 // to be set to `corrected` or `credit-note`.
 type Preceding struct {
-	UUID      *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID,description=Preceding document's UUID if available can be useful for tracing."`
-	Code      string     `json:"code" jsonschema:"title=Code,description=Identity code of the previous invoice."`
-	IssueDate *org.Date  `json:"issue_date" jsonschema:"title=Issue Date,description=When the preceding invoices was issued."`
-	Meta      org.Meta   `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional semi-structured data that may be useful in specific regions."`
+	// Preceding document's UUID if available can be useful for tracing.
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Identity code fo the previous invoice.
+	Code string `json:"code" jsonschema:"title=Code"`
+	// When the preceding invoice was issued.
+	IssueDate *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	// Additional semi-structured data that may be useful in specific regions
+	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Type provides the body type used for mapping.

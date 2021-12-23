@@ -29,7 +29,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Message represents the minimum possible contents for a GoBL document type."
     }
   }
 }

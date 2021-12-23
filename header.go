@@ -11,15 +11,32 @@ import (
 // Header defines the meta data of the body. The header is used as the payload
 // for the JSON Web Signatures, so we want this to be as compact as possible.
 type Header struct {
-	UUID   uuid.UUID    `json:"uuid" jsonschema:"title=UUID,description=Unique UUIDv1 identifier for the envelope."`
-	Type   string       `json:"typ" jsonschema:"title=Type,description=Body type of the document contents."`
-	Region region.Code  `json:"rgn" jsonschema:"title=Region,description=Code for the region the document should be validated with."`
-	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest,description=Digest of the canonical JSON body."`
-	Stamps []*Stamp     `json:"stamps,omitempty" jsonschema:"title=Stamps,description=Seals of approval from other organisations."`
-	Tags   []string     `json:"tags,omitempty" jsonschema:"title=Tags,description=Set of labels that describe but have no influence on the data."`
-	Meta   org.Meta     `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional semi-structured information about this envelope."`
-	Notes  string       `json:"notes,omitempty" jsonschema:"title=Notes,description=Any information that may be relevant to other humans about this envelope."`
-	Draft  bool         `json:"draft,omitempty" jsonschema:"title=Draft,description=When true, implies that this document should not be considered final. Digital signatures are optional."`
+	// Unique UUIDv1 identifier for the envelope.
+	UUID uuid.UUID `json:"uuid" jsonschema:"title=UUID"`
+
+	// Body type of the document contents.
+	Type string `json:"typ" jsonschema:"title=Type"`
+
+	// Code for the region the document should be validated with.
+	Region region.Code `json:"rgn" jsonschema:"title=Region"`
+
+	// Digest of the canonical JSON body.
+	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest"`
+
+	// Seals of approval from other organisations.
+	Stamps []*Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+
+	// Set of labels that describe but have no influence on the data.
+	Tags []string `json:"tags,omitempty" jsonschema:"title=Tags"`
+
+	// Additional semi-structured information about this envelope.
+	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	// Any information that may be relevant to other humans about this envelope
+	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// When true, implies that this document should not be considered final. Digital signatures are optional.
+	Draft bool `json:"draft,omitempty" jsonschema:"title=Draft"`
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.

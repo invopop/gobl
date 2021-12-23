@@ -28,7 +28,7 @@ func (String) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type: "object",
 		PatternProperties: map[string]*jsonschema.Type{
-			`^[a-z]{2}$`: &jsonschema.Type{
+			`^[a-z]{2}$`: {
 				Type:  "string",
 				Title: "Text in given language.",
 			},

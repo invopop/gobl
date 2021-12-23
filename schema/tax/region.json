@@ -55,11 +55,13 @@
             "$ref": "#/definitions/tax.Def"
           },
           "type": "array",
-          "title": "Definitions"
+          "title": "Definitions",
+          "description": "Rates array"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Category"
     },
     "tax.Def": {
       "required": [
@@ -70,7 +72,8 @@
       "properties": {
         "code": {
           "type": "string",
-          "title": "Code"
+          "title": "Code",
+          "description": "Code identifies this rate within the system"
         },
         "name": {
           "$ref": "#/definitions/i18n.String",
@@ -91,7 +94,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Def defines a tax combination of category and rate."
     },
     "tax.Region": {
       "required": [
@@ -118,7 +122,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Region defines the holding structure for a regions categories and subsequent Rates and Values."
     },
     "tax.Value": {
       "required": [
@@ -144,7 +149,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Value contains a percentage rate or fixed amount for a given date range."
     }
   }
 }

@@ -11,7 +11,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Delivery covers the details of the destination for the products described in the invoice body."
     },
     "bill.Invoice": {
       "required": [
@@ -26,7 +27,7 @@
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
-          "description": "Unique document ID. Not required"
+          "description": "Unique document ID. Not required, but always recommended in addition to the Code."
         },
         "code": {
           "type": "string",
@@ -36,7 +37,7 @@
         "type_code": {
           "type": "string",
           "title": "Type Code",
-          "description": "Functional type of the invoice"
+          "description": "Functional type of the invoice, default is always 'commercial'."
         },
         "currency": {
           "type": "string",
@@ -55,7 +56,7 @@
         "prices_include_tax": {
           "type": "boolean",
           "title": "Prices Include Tax",
-          "description": "When true"
+          "description": "When true, implies that all item prices already include non-retained taxes. This is especially\nuseful for retailers where prices are often displayed including tax."
         },
         "preceding": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -76,7 +77,7 @@
         "value_date": {
           "$ref": "#/definitions/org.Date",
           "title": "Value Date",
-          "description": "When the taxes of this invoice become accountable"
+          "description": "When the taxes of this invoice become accountable, if none set, the issue date is used."
         },
         "supplier": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -87,7 +88,7 @@
         "customer": {
           "$ref": "#/definitions/org.Party",
           "title": "Customer",
-          "description": "Legal entity who receives the goods or services. May be empty in certain circumstances such as simplified invoices."
+          "description": "Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices."
         },
         "lines": {
           "items": {
@@ -96,7 +97,7 @@
           },
           "type": "array",
           "title": "Lines",
-          "description": "The items sold to the customer."
+          "description": "List of invoice lines representing each of the items sold to the customer."
         },
         "outlays": {
           "items": {
@@ -110,7 +111,8 @@
         "totals": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/bill.Totals",
-          "title": "Totals"
+          "title": "Totals",
+          "description": "Summary of all the invoice totals, including taxes."
         },
         "ordering": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -130,7 +132,7 @@
         "notes": {
           "type": "string",
           "title": "Notes",
-          "description": "Unstructured information that is relevant to the invoice"
+          "description": "Unstructured information that is relevant to the invoice, such as correction details."
         },
         "meta": {
           "patternProperties": {
@@ -144,7 +146,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Invoice represents a payment claim for goods or services supplied under conditions agreed between the supplier and the customer."
     },
     "bill.Line": {
       "required": [
@@ -156,30 +159,36 @@
       ],
       "properties": {
         "uuid": {
-          "type": "string"
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identifier for this line"
         },
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the invoice."
+          "description": "Line number inside the parent"
         },
         "quantity": {
-          "$ref": "#/definitions/num.Amount"
+          "$ref": "#/definitions/num.Amount",
+          "title": "Quantity",
+          "description": "Number of items"
         },
         "item": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/org.Item"
+          "$ref": "#/definitions/org.Item",
+          "title": "Item",
+          "description": "Details about what is being sold"
         },
         "sum": {
           "$ref": "#/definitions/num.Amount",
           "title": "Sum",
-          "description": "Result of quantity multiplied by item price"
+          "description": "Result of quantity multiplied by the item's price"
         },
         "discount": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Discount",
           "title": "Discount",
-          "description": "Discount applied to this line."
+          "description": "Discount applied to this line"
         },
         "taxes": {
           "items": {
@@ -188,27 +197,29 @@
           },
           "type": "array",
           "title": "Taxes",
-          "description": "List of taxes to be applied to the line in the invoice totals."
+          "description": "List of taxes to be applied and used in the invoice totals"
         },
         "total": {
           "$ref": "#/definitions/num.Amount",
           "title": "Total",
-          "description": "Total line amount after applying discounts to the sum."
+          "description": "Total line amount after applying discounts to the sum"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Line is a single row in an invoice."
     },
     "bill.Ordering": {
       "properties": {
         "seller": {
           "$ref": "#/definitions/org.Party",
           "title": "Seller",
-          "description": "Party who is selling the goods and is not responsible for taxes."
+          "description": "Party who is selling the goods and is not responsible for taxes"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Ordering allows additional order details to be appended"
     },
     "bill.Outlay": {
       "required": [
@@ -218,17 +229,19 @@
       ],
       "properties": {
         "uuid": {
-          "type": "string"
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identity for this outlay."
         },
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the invoice"
+          "description": "Outlay number index inside the invoice for ordering."
         },
         "ref": {
           "type": "string",
           "title": "Reference",
-          "description": "A code"
+          "description": "A code, invoice number, or other reference detail used to identify the outlay."
         },
         "desc": {
           "type": "string",
@@ -242,7 +255,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Outlay represents a expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."
     },
     "bill.Payment": {
       "properties": {
@@ -274,7 +288,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Payment contains details as to how the invoice should be paid."
     },
     "bill.Preceding": {
       "required": [
@@ -290,13 +305,13 @@
         "code": {
           "type": "string",
           "title": "Code",
-          "description": "Identity code of the previous invoice."
+          "description": "Identity code fo the previous invoice."
         },
         "issue_date": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
           "title": "Issue Date",
-          "description": "When the preceding invoices was issued."
+          "description": "When the preceding invoice was issued."
         },
         "meta": {
           "patternProperties": {
@@ -306,11 +321,12 @@
           },
           "type": "object",
           "title": "Meta",
-          "description": "Additional semi-structured data that may be useful in specific regions."
+          "description": "Additional semi-structured data that may be useful in specific regions"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Preceding allows for information to be provided about a previous invoice that this one will replace or subtract from."
     },
     "bill.Totals": {
       "required": [
@@ -328,42 +344,43 @@
         "discount": {
           "$ref": "#/definitions/num.Amount",
           "title": "Discount",
-          "description": "Sum of all discounts applied to each line."
+          "description": "Sum of all discounts applied to each line"
         },
         "total": {
           "$ref": "#/definitions/num.Amount",
           "title": "Total",
-          "description": "Sum of all line sums minus the discounts."
+          "description": "Sum of all line sums minus the discounts"
         },
         "taxes": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/tax.Total",
           "title": "Tax Totals",
-          "description": "Summary of all taxes with a final sum to add or deduct from the amount payable."
+          "description": "Summary of all the taxes with a final sum to add or deduct from the amount payable"
         },
         "outlays": {
           "$ref": "#/definitions/num.Amount",
           "title": "Outlay Totals",
-          "description": "Total paid in outlays that need to be reimbursed."
+          "description": "Total paid in outlays that need to be reimbursed"
         },
         "payable": {
           "$ref": "#/definitions/num.Amount",
           "title": "Payable",
-          "description": "Total amount to be paid after applying taxes."
+          "description": "Total amount to be paid after applying taxes"
         },
         "advance": {
           "$ref": "#/definitions/num.Amount",
           "title": "Advance",
-          "description": "Total amount paid in advance."
+          "description": "Total amount paid in advance"
         },
         "due": {
           "$ref": "#/definitions/num.Amount",
           "title": "Due",
-          "description": "How much actually needs to be paid now."
+          "description": "How much actually needs to be paid now"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Totals contains the summaries of all calculations for the invoice."
     },
     "currency.ExchangeRate": {
       "required": [
@@ -372,15 +389,20 @@
       ],
       "properties": {
         "currency": {
-          "type": "string"
+          "type": "string",
+          "title": "Currency",
+          "description": "ISO currency code this rate represents."
         },
         "value": {
           "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/num.Amount"
+          "$ref": "#/definitions/num.Amount",
+          "title": "Value",
+          "description": "Rate to apply when converting the document's currency to this one."
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "ExchangeRate contains data on the rate to be used when converting amounts from the document's base currency to whatever is defined."
     },
     "num.Amount": {
       "pattern": "^\\-?[0-9]+(\\.[0-9]+)?$",
@@ -481,7 +503,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address."
     },
     "org.Coordinates": {
       "properties": {
@@ -507,7 +530,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Coordinates describes an exact geographical location in the world."
     },
     "org.Date": {
       "type": "string",
@@ -542,7 +566,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Discount represents an amount and/or percentage that can be applied to a given price."
     },
     "org.Email": {
       "required": [
@@ -574,7 +599,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Email describes the electronic mailing details."
     },
     "org.Item": {
       "required": [
@@ -638,7 +664,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Item is used to describe a single product or service."
     },
     "org.ItemCode": {
       "required": [
@@ -655,7 +682,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "ItemCode contains a value and optional type property that means additional codes can be added to an item."
     },
     "org.Name": {
       "required": [
@@ -710,22 +738,23 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Name represents what a human is called."
     },
     "org.Party": {
       "required": [
         "name"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "title": "ID",
+          "description": "Internal ID used to identify the party inside a document."
+        },
         "uuid": {
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code."
-        },
-        "code": {
-          "type": "string",
-          "title": "Code",
-          "description": "Internal ID code for the party."
         },
         "tax_id": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -770,7 +799,6 @@
         },
         "telephones": {
           "items": {
-            "$schema": "http://json-schema.org/draft-04/schema#",
             "$ref": "#/definitions/org.Telephone"
           },
           "type": "array",
@@ -794,13 +822,19 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Party represents a person or business entity."
     },
     "org.Person": {
       "required": [
         "name"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "title": "ID",
+          "description": "Internal ID used to identify the person inside a document."
+        },
         "uuid": {
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
@@ -826,6 +860,14 @@
           "title": "Email Addresses",
           "description": "Electronic mail addresses that belong to the person."
         },
+        "telephones": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/org.Telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers"
+        },
         "meta": {
           "patternProperties": {
             ".*": {
@@ -838,7 +880,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Person represents a human, and how to contact them electronically."
     },
     "org.Registration": {
       "properties": {
@@ -877,7 +920,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Registration is used in countries that require additional information to be associated with a company usually related to a specific registration office."
     },
     "org.TaxID": {
       "required": [
@@ -912,7 +956,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "TaxID represents a party's tax identify number for a given country."
     },
     "org.Telephone": {
       "required": [
@@ -935,7 +980,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Telephone describes what is expected for a telephone number."
     },
     "pay.Advance": {
       "required": [
@@ -975,7 +1021,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
     },
     "pay.Card": {
       "required": [
@@ -995,7 +1042,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Card contains simplified card holder data as a reference for the customer."
     },
     "pay.CreditTransfer": {
       "properties": {
@@ -1026,7 +1074,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
     },
     "pay.DirectDebit": {
       "properties": {
@@ -1047,7 +1096,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "DirectDebit defines the data that will be used to make the direct debit."
     },
     "pay.DueDate": {
       "required": [
@@ -1082,7 +1132,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "DueDate contains an amount that should be paid by the given date."
     },
     "pay.Instructions": {
       "required": [
@@ -1151,7 +1202,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Instructions holds a set of instructions that determine how the payment has or should be made."
     },
     "pay.Online": {
       "required": [
@@ -1170,7 +1222,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Online provides the details required to make a payment online using a website"
     },
     "pay.Terms": {
       "required": [
@@ -1203,7 +1256,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     },
     "tax.CategoryTotal": {
       "required": [
@@ -1239,7 +1293,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "CategoryTotal groups together all rates inside a given category."
     },
     "tax.Rate": {
       "required": [
@@ -1259,7 +1314,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Rate references the tax category and rate code that should be applied to this line item when calculating the final taxes."
     },
     "tax.RateTotal": {
       "required": [
@@ -1287,7 +1343,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and definition."
     },
     "tax.Total": {
       "required": [
@@ -1309,7 +1366,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     },
     "uuid.UUID": {
       "type": "string",
