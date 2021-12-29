@@ -61,7 +61,7 @@ func (e *Envelope) Validate() error {
 	return validation.ValidateStruct(e,
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required),
-		validation.Field(&e.Signatures, validation.When(!e.Head.Draft, validation.Required)),
+		validation.Field(&e.Signatures, validation.When(e.Head != nil && !e.Head.Draft, validation.Required)),
 	)
 }
 
