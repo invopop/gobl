@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/region"
+	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,4 +46,54 @@ func TestEnvelopePayload(t *testing.T) {
 	nm := new(note.Message)
 	assert.NoError(t, e.Extract(nm))
 	assert.Equal(t, m.Content, nm.Content, "content mismatch")
+}
+
+func TestEnvelopeValidate(t *testing.T) {
+	tests := []struct {
+		name string
+		env  *gobl.Envelope
+		want string
+	}{
+		{
+			name: "no head",
+			env:  &gobl.Envelope{},
+			want: "doc: cannot be blank; head: cannot be blank.",
+		},
+		{
+			name: "missing sig, draft",
+			env: &gobl.Envelope{
+				Head: &gobl.Header{
+					Type:   "foo",
+					Digest: &dsig.Digest{},
+					Region: "ES",
+					Draft:  true,
+					UUID:   uuid.NewV1(),
+				},
+				Document: &gobl.Payload{},
+			},
+		},
+		{
+			name: "missing sig, draft",
+			env: &gobl.Envelope{
+				Head: &gobl.Header{
+					Type:   "foo",
+					Digest: &dsig.Digest{},
+					Region: "ES",
+					UUID:   uuid.NewV1(),
+				},
+				Document: &gobl.Payload{},
+			},
+			want: "sigs: cannot be blank.",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.env.Validate()
+			if tt.want == "" && err == nil {
+				return
+			}
+			assert.EqualError(t, err, tt.want)
+		})
+	}
 }
