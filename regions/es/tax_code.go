@@ -16,12 +16,13 @@ import (
 // national individuals, foreigners, and legal organizations.
 type TaxCodeType string
 
-// validTaxID complies with the ozzo validation Rule definition to be able
+// ValidTaxID complies with the ozzo validation Rule definition to be able
 // to confirm that the Tax ID is indeed spanish and valid.
 var ValidTaxID = new(validTaxID)
 
 type validTaxID struct{}
 
+// Supported tax code types.
 const (
 	NationalTaxCode     TaxCodeType = "N"
 	ForeignTaxCode      TaxCodeType = "X"
@@ -142,7 +143,7 @@ func verifyOrgCode(code string) error {
 	if err != nil {
 		return err
 	}
-	return verifyOrgCodeMatches(code, m)
+	return verifyOrgCodeMatches(m)
 }
 
 func verifyOtherCode(code string) error {
@@ -150,10 +151,10 @@ func verifyOtherCode(code string) error {
 	if err != nil {
 		return err
 	}
-	return verifyOrgCodeMatches(code, m)
+	return verifyOrgCodeMatches(m)
 }
 
-func verifyOrgCodeMatches(code string, m map[string]string) error {
+func verifyOrgCodeMatches(m map[string]string) error {
 	num := []rune(m[taxCodeMatchNumber])
 	p := make([]int, len(num))
 	for i, v := range num {

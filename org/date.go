@@ -30,6 +30,7 @@ func MakeDate(year int, month time.Month, day int) Date {
 	}
 }
 
+// JSONSchemaType returns the jscon schema type.
 func (Date) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",

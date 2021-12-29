@@ -12,7 +12,7 @@ type Code string
 const (
 	ES Code = "ES" // Spain
 	NL Code = "NL" // Netherlands
-	GB Code = "GB" // Great Britain (not nothern ireland)
+	GB Code = "GB" // Great Britain (not Northern Ireland)
 )
 
 // Region represents the methods we expect to be available from a region.

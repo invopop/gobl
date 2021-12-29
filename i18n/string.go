@@ -24,6 +24,7 @@ func (s String) String(lang Lang) string {
 	return ""
 }
 
+// JSONSchemaType returns the jscon schema type.
 func (String) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type: "object",

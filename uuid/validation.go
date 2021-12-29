@@ -59,6 +59,7 @@ func (r versionRule) Validate(value interface{}) error {
 	return nil
 }
 
+// JSONSchemaType returns the jsonschema type object.
 func (UUID) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",
