@@ -158,15 +158,18 @@ func (p *Payload) digest() (*dsig.Digest, error) {
 	return dsig.NewSHA256Digest(cd), nil
 }
 
+// UnmarshalJSON satisfies the json.Unmarshaler interface.
 func (p *Payload) UnmarshalJSON(data []byte) error {
 	p.data = json.RawMessage(data)
 	return nil
 }
 
+// MarshalJSON satisfies the json.Marshaler interface.
 func (p *Payload) MarshalJSON() ([]byte, error) {
 	return p.data, nil
 }
 
+// JSONSchemaType returns a jsonschema.Type object.
 func (Payload) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "object",

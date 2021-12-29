@@ -53,7 +53,7 @@ func (l *Line) Validate() error {
 }
 
 // calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate() error {
+func (l *Line) calculate() {
 	// First we figure out how much the item costs, and get the total
 	l.Sum = l.Item.Price.Multiply(l.Quantity)
 
@@ -67,6 +67,4 @@ func (l *Line) calculate() error {
 	} else {
 		l.Total = l.Sum
 	}
-
-	return nil
 }

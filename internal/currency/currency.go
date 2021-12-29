@@ -13,16 +13,19 @@ import (
 	"github.com/invopop/gobl/currency"
 )
 
-type CurrencyDoc struct {
+// CurrencyDoc is a currency document
+type CurrencyDoc struct { // nolint:revive
 	XMLName xml.Name       `xml:"ISO_4217"`
 	Table   *CurrencyTable `xml:"CcyTbl"`
 }
 
-type CurrencyTable struct {
+// CurrencyTable ...
+type CurrencyTable struct { // nolint:revive
 	Rows []*CurrencyDef `xml:"CcyNtry"`
 }
 
-type CurrencyDef struct {
+// CurrencyDef ...
+type CurrencyDef struct { // nolint:revive
 	Name    string `xml:"CcyNm"`      // name of the currency
 	Country string `xml:"CtryNm"`     // name of the country it belongs to
 	Code    string `xml:"Ccy"`        // three-letter currency code
@@ -47,7 +50,7 @@ func GenerateCodes() error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer f.Close() // nolint:errcheck
 
 	tmpl, err := template.ParseFiles("./internal/currency/codes.go.tmpl")
 	if err != nil {

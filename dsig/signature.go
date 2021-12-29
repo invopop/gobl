@@ -145,6 +145,7 @@ func (s *Signature) UnmarshalJSON(data []byte) error {
 	return s.parse(str)
 }
 
+// JSONSchemaType returns the json schema type.
 func (Signature) JSONSchemaType() *jsonschema.Type {
 	return &jsonschema.Type{
 		Type:        "string",

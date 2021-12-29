@@ -17,7 +17,7 @@ type Region struct {
 	Categories []Category  `json:"categories" jsonschema:"title=Categories"`
 }
 
-// Category
+// Category ...
 type Category struct {
 	Code Code        `json:"code" jsonschema:"title=Code"`
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
