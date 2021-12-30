@@ -60,6 +60,7 @@ func NewCategoryTotal(code Code, retained bool, zero num.Amount) *CategoryTotal 
 	return ct
 }
 
+// NewRateTotal returns a rate total.
 func NewRateTotal(code Code, percent num.Percentage, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
 	rt.Code = code

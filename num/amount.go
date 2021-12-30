@@ -261,7 +261,7 @@ func rescaleAmountPair(a, a2 Amount) (Amount, Amount) {
 	return a.Rescale(exp), a2.Rescale(exp)
 }
 
-func intPow(base int, exp uint32) int64 {
+func intPow(base int, exp uint32) int64 { // nolint:unparam
 	out := int64(1)
 	for exp != 0 {
 		out *= int64(base)

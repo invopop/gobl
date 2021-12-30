@@ -242,7 +242,7 @@ func encodeString(s string) ([]byte, error) {
 		c, size := utf8.DecodeRuneInString(s[i:])
 		if c == utf8.RuneError {
 			// don't accept anything that isn't valid UTF-8, no exceptions.
-			return nil, &json.UnsupportedValueError{Value: reflect.ValueOf(s), Str: fmt.Sprintf("%q", string(s))}
+			return nil, &json.UnsupportedValueError{Value: reflect.ValueOf(s), Str: fmt.Sprintf("%q", s)}
 		}
 		i += size
 	}

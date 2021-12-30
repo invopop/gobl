@@ -23,7 +23,7 @@ const (
 	SelfBilledTypeCode TypeCode = "self-billed" // Self Billed Invoice
 )
 
-// UNTDID1001CodeMap offers a way to convert the GOBL invoice type code into
+// UNTDID1001TypeCodeMap offers a way to convert the GOBL invoice type code into
 // one supported by our subset of the UNTDID 1001 official list.
 var UNTDID1001TypeCodeMap = map[TypeCode]string{
 	ProformaTypeCode:   "325",

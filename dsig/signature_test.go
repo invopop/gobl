@@ -20,18 +20,18 @@ type structWithSig struct {
 
 func TestNewSignature(t *testing.T) {
 	data := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
-	kID := "3500bbee-966c-4b7a-8fbc-c763ae2aec62"
+	wantID := "3500bbee-966c-4b7a-8fbc-c763ae2aec62"
 	k := new(dsig.PrivateKey)
 	if err := json.Unmarshal(data, k); err != nil {
 		t.Errorf("failed to parse test key: %v", err.Error())
 		return // abort
 	}
 
-	//jo, _ := json.Marshal(k.Public())
-	//t.Logf("PUB KEY: %v", string(jo))
+	// jo, _ := json.Marshal(k.Public())
+	// t.Logf("PUB KEY: %v", string(jo))
 
 	p := new(payload)
-	p.Foo = "foo"
+	p.Foo = "foo" // nolint:goconst
 	p.Bar = 1234
 	s, err := dsig.NewSignature(k, p)
 	if err != nil {
@@ -40,7 +40,7 @@ func TestNewSignature(t *testing.T) {
 	}
 
 	t.Logf("signature: %v", s.String())
-	if s.KeyID() != kID {
+	if s.KeyID() != wantID {
 		t.Errorf("execpted key IDs to be the same, got: %v", s.KeyID())
 	}
 

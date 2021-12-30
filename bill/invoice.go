@@ -2,7 +2,6 @@ package bill
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
@@ -168,9 +167,7 @@ func (inv *Invoice) Calculate(r region.Region) error {
 	tr := r.Taxes()
 	for i, l := range inv.Lines {
 		l.Index = i + 1
-		if err := l.calculate(); err != nil {
-			return fmt.Errorf("line %d: %w", l.Index, err)
-		}
+		l.calculate()
 
 		// Basic sum
 		t.Sum = t.Sum.Add(l.Sum)

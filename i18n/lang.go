@@ -151,7 +151,7 @@ const (
 	SA Lang = "sa" // Sanskrit
 	SC Lang = "sc" // Sardinian
 	SD Lang = "sd" // Sindhi
-	SE Lang = "se" // Northen Sami
+	SE Lang = "se" // Northern Sami
 	SM Lang = "sm" // Samoan
 	SG Lang = "sg" // Sango
 	SR Lang = "sr" // Serbian
@@ -183,7 +183,7 @@ const (
 	TW Lang = "tw" // Twi
 	TY Lang = "ty" // Tahitian
 	UG Lang = "ug" // Uighur Uyghur
-	UK Lang = "uk" // Ukranian
+	UK Lang = "uk" // Ukrainian
 	UR Lang = "ur" // Urdu
 	UZ Lang = "uz" // Uzbek
 	VE Lang = "ve" // Venda
@@ -338,7 +338,7 @@ var iso639_1 = []Lang{
 	SA, // Sanskrit
 	SC, // Sardinian
 	SD, // Sindhi
-	SE, // Northen Sami
+	SE, // Northern Sami
 	SM, // Samoan
 	SG, // Sango
 	SR, // Serbian
@@ -370,7 +370,7 @@ var iso639_1 = []Lang{
 	TW, // Twi
 	TY, // Tahitian
 	UG, // Uighur Uyghur
-	UK, // Ukranian
+	UK, // Ukrainian
 	UR, // Urdu
 	UZ, // Uzbek
 	VE, // Venda

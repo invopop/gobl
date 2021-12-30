@@ -11,7 +11,7 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// validTaxID complies with the ozzo validation Rule definition to be able
+// ValidTaxID complies with the ozzo validation Rule definition to be able
 // to confirm that the Tax ID is indeed spanish and valid.
 var ValidTaxID = new(validTaxID)
 
