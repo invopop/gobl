@@ -65,16 +65,19 @@
           "description": "Key information regarding a previous invoice."
         },
         "issue_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
           "title": "Issue Date",
           "description": "When the invoice was created."
         },
         "op_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
           "title": "Operation Date",
           "description": "Date when the operation defined by the invoice became effective."
         },
         "value_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
           "title": "Value Date",
           "description": "When the taxes of this invoice become accountable, if none set, the issue date is used."
@@ -298,6 +301,7 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Preceding document's UUID if available can be useful for tracing."
@@ -358,6 +362,7 @@
           "description": "Summary of all the taxes with a final sum to add or deduct from the amount payable"
         },
         "outlays": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
           "title": "Outlay Totals",
           "description": "Total paid in outlays that need to be reimbursed"
@@ -368,11 +373,13 @@
           "description": "Total amount to be paid after applying taxes"
         },
         "advance": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
           "title": "Advance",
           "description": "Total amount paid in advance"
         },
         "due": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
           "title": "Due",
           "description": "How much actually needs to be paid now"
@@ -423,6 +430,7 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID"
         },
@@ -575,6 +583,7 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID"
         },
         "label": {
@@ -692,6 +701,7 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code"
@@ -752,6 +762,7 @@
           "description": "Internal ID used to identify the party inside a document."
         },
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code."
@@ -836,6 +847,7 @@
           "description": "Internal ID used to identify the person inside a document."
         },
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code"
@@ -886,6 +898,7 @@
     "org.Registration": {
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID"
         },
@@ -930,6 +943,7 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identity code"
@@ -965,6 +979,7 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID"
         },
@@ -990,11 +1005,13 @@
       ],
       "properties": {
         "uuid": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
           "description": "Unique identifier for this advance."
         },
         "date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
           "title": "Date",
           "description": "When the advance was made."
@@ -1106,6 +1123,7 @@
       ],
       "properties": {
         "date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
           "title": "Date",
           "description": "When the payment is due."
@@ -1121,6 +1139,7 @@
           "description": "How much needs to be paid by the date."
         },
         "percent": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Percentage",
           "title": "Percent",
           "description": "Percentage of the total that should be paid by the date."
