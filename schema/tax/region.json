@@ -61,7 +61,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Category"
+      "description": "Category ..."
     },
     "tax.Def": {
       "required": [
