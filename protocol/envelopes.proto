@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package gobl.envelopes.v1;
+option go_package = "github.com/invopop/gobl/protocol";
+
+service EnvelopesResource {
+    rpc Build(BuildEnvelope) returns (Envelope);
+    rpc Verify(Envelope) returns (VerifyResult);
+}
+
+message Envelope {
+    bytes data = 1;
+}
+
+message BuildEnvelope {
+    string id = 1;
+    string type = 2;
+    string region = 3;
+    bool draft = 4;
+    repeated string tags = 5;
+    map<string, string> meta = 6;
+    string content_type = 7;
+    bytes document = 8;
+    string key_id = 9;
+    string template_id = 10;
+}
+
+message VerifyResult {
+    bool ok = 1;
+    string error = 2;
+}
