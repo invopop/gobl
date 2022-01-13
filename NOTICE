@@ -1,0 +1,35 @@
+GOBL (Go Business Language) (https://gobl.org)
+Copyright 2021-2022 Invopop Ltd.
+
+This product includes software developed by Invopop Ltd. (UK)
+(https://invopop.com).
+
+This product also includes the following third party components:
+
+- Go JSON Schema Reflection (https://github.com/alecthomas/jsonschema)
+  The MIT License
+  Copyright (C) 2014 Alec Thomas
+
+- ozzo-validation (https://github.com/go-ozzo/ozzo-validation)
+  The MIT License
+  Copyright (c) 2016, Qiang Xue
+
+- Google UUID (https://github.com/google/uuid)
+  BSD 3-Clause "New" or "Revised" License
+  Copyright (c) 2009,2014 Google Inc. All rights reserved.
+
+- Google Cloud Go (https://github.com/googleapis/google-cloud-go)
+  Apache Licnese 2.0
+  Copyright (c) 2014 Google LLC
+
+- Go JOSE (https://github.com/go-jose/go-jose)
+  Apache Licnese 2.0
+  Copyright 2014 Square Inc.
+
+- Testify (https://github.com/stretchr/testify)
+  The MIT License
+  Copyright (c) 2012-2020 Mat Ryer, Tyler Bunnell and contributors.
+
+- Go Cryptography (golang.org/x/crypto)
+  License: https://github.com/golang/go/blob/master/LICENSE
+  Copyright (c) 2009 The Go Authors. All rights reserved.

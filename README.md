@@ -1,8 +1,10 @@
 # GOBL
 
-![GOBL Logo](https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg?raw=true)
+<img src="https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg?raw=true" width="181" height="219" alt="GOBL Logo">
 
-Go Business Language. 
+Go Business Language.
+
+Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/main/LICENSE), Copyright 2021,2022 [Invopop Ltd.](https://invopop.com).
 
 ## Introduction
 
@@ -18,13 +20,9 @@ In our opinion, Go is an ideal language for this type of project due to its simp
 
 ### Packages
 
-
-
 ### Documents
 
-
 ### Envelope
-
 
 ## Serialization
 
@@ -41,4 +39,3 @@ To get around the issues with sequential numbers, the [UUID standard](https://to
 The GoBL library forces you to use UUIDs instead of sequential IDs for anything that could be referenced in the future. To enforce this fact, instead of naming fields `id`, we make an effort to call them `uuid`.
 
 Sometimes sequential IDs are however required, usually for human consumption purposes such as ensuring order when generating invoices so that authorities can quickly check that dates and numbers are in order. Our recommendation for such codes is to use a dedicated service to generate sequential IDs based on the UUIDs, such as [Invopop's Sequence Service](https://invopop.com).
-
