@@ -482,6 +482,11 @@
           "title": "Description",
           "description": "Details on what the outlay was."
         },
+        "party": {
+          "$ref": "#/definitions/org.Party",
+          "title": "Party",
+          "description": "Who made the outlay"
+        },
         "paid": {
           "$ref": "#/definitions/num.Amount",
           "title": "Paid",

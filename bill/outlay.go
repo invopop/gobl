@@ -3,6 +3,7 @@ package bill
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 )
 
 // Outlays holds an array of Outlay objects used inside a billing document.
@@ -23,6 +24,8 @@ type Outlay struct {
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Details on what the outlay was.
 	Description string `json:"desc" jsonschema:"title=Description"`
+	// Who made the outlay
+	Party *org.Party `json:"party,omitempty" jsonschema:"title=Party"`
 	// Amount paid by the supplier.
 	Paid num.Amount `json:"paid" jsonschema:"title=Paid"`
 }
