@@ -10,12 +10,19 @@
       "properties": {
         "uuid": {
           "type": "string",
+          "title": "UUID",
           "description": "Unique identifying for the discount entry"
         },
         "i": {
           "type": "integer",
           "title": "Index",
           "description": "Line number inside the list of discounts"
+        },
+        "base": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Amount",
+          "title": "Base",
+          "description": "Base represents the value used as a base for rate calculations.\nIf not already provided, we'll take the invoices sum before\ndiscounts."
         },
         "rate": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -34,17 +41,17 @@
           },
           "type": "array",
           "title": "Taxes",
-          "description": "List of taxes to apply to the discount"
+          "description": "List of taxes to apply to the charge"
         },
         "code": {
           "type": "string",
           "title": "Reason Code",
-          "description": "Why was this discount applied?"
+          "description": "Why was this charge applied?"
         },
         "reason": {
           "type": "string",
           "title": "Reason",
-          "description": "Text description as to why the discount was applied"
+          "description": "Text description as to why the charge was applied"
         }
       },
       "additionalProperties": false,
@@ -89,12 +96,19 @@
       "properties": {
         "uuid": {
           "type": "string",
+          "title": "UUID",
           "description": "Unique identifying for the discount entry"
         },
         "i": {
           "type": "integer",
           "title": "Index",
           "description": "Line number inside the list of discounts"
+        },
+        "base": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Amount",
+          "title": "Base",
+          "description": "Base represents the value used as a base for rate calculations.\nIf not already provided, we'll take the invoices sum."
         },
         "rate": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -369,7 +383,7 @@
     },
     "bill.LineCharge": {
       "required": [
-        "value"
+        "amount"
       ],
       "properties": {
         "rate": {
@@ -378,9 +392,9 @@
           "title": "Rate",
           "description": "Percentage rate if fixed amount not applied"
         },
-        "value": {
+        "amount": {
           "$ref": "#/definitions/num.Amount",
-          "title": "Value",
+          "title": "Amount",
           "description": "Fixed or resulting charge amount to apply"
         },
         "code": {
@@ -400,7 +414,7 @@
     },
     "bill.LineDiscount": {
       "required": [
-        "value"
+        "amount"
       ],
       "properties": {
         "rate": {
@@ -409,7 +423,7 @@
           "title": "Rate",
           "description": "Percentage rate if fixed amount not applied"
         },
-        "value": {
+        "amount": {
           "$ref": "#/definitions/num.Amount",
           "title": "Value",
           "description": "Fixed discount amount to apply"
@@ -528,6 +542,11 @@
           "title": "Code",
           "description": "Identity code fo the previous invoice."
         },
+        "series": {
+          "type": "string",
+          "title": "Series",
+          "description": "Additional identification details"
+        },
         "issue_date": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
@@ -615,7 +634,7 @@
     "currency.ExchangeRate": {
       "required": [
         "currency",
-        "value"
+        "amount"
       ],
       "properties": {
         "currency": {
@@ -623,11 +642,11 @@
           "title": "Currency",
           "description": "ISO currency code this rate represents."
         },
-        "value": {
+        "amount": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
-          "title": "Value",
-          "description": "Rate to apply when converting the document's currency to this one."
+          "title": "Amount",
+          "description": "How much is 1.00 of the document's currency worth for this exchange rate."
         }
       },
       "additionalProperties": false,
@@ -821,20 +840,22 @@
           "description": "Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Brief name of the item"
         },
         "desc": {
-          "type": "string"
+          "type": "string",
+          "description": "Detailed description"
         },
         "currency": {
           "type": "string",
           "title": "Currency",
-          "description": "Only required if this line has a different currency from the rest."
+          "description": "Currency used for the item's price."
         },
         "price": {
           "$ref": "#/definitions/num.Amount",
           "title": "Price",
-          "description": "Price of item being sold."
+          "description": "Base price of a single unit to be sold."
         },
         "unit": {
           "type": "string",
@@ -848,7 +869,7 @@
           },
           "type": "array",
           "title": "Codes",
-          "description": "List of additional codes"
+          "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer."
         },
         "origin": {
           "type": "string",
@@ -862,7 +883,8 @@
             }
           },
           "type": "object",
-          "title": "Meta"
+          "title": "Meta",
+          "description": "Additional meta information that may be useful"
         }
       },
       "additionalProperties": false,
