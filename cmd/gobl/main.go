@@ -28,5 +28,23 @@ func run() error {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
+	root.AddCommand(&cobra.Command{
+		Use:  "build",
+		Args: cobra.ExactArgs(1),
+		RunE: build,
+	})
+	root.AddCommand(&cobra.Command{
+		Use:  "verify",
+		Args: cobra.ExactArgs(1),
+		RunE: verify,
+	})
 	return root.ExecuteContext(ctx)
+}
+
+func build(*cobra.Command, []string) error {
+	return nil
+}
+
+func verify(*cobra.Command, []string) error {
+	return nil
 }
