@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"io"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -16,7 +17,13 @@ func Test_verify(t *testing.T) {
 		in   io.Reader
 		args []string
 		err  string
-	}{}
+	}{
+		{
+			name: "invalid stdin",
+			in:   strings.NewReader("this isn't JSON"),
+			err:  "error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+		},
+	}
 
 	for _, tt := range tests {
 		tt := tt
@@ -28,9 +35,9 @@ func Test_verify(t *testing.T) {
 			}
 			buf := &bytes.Buffer{}
 			c.SetOut(buf)
-			err := verify(nil, tt.args)
+			err := verify(c, tt.args)
 			assert.EqualError(t, err, tt.err)
-			if t := testy.DiffText(tt.Snapshot(t), buf.String()); d != nil {
+			if d := testy.DiffText(testy.Snapshot(t), buf.String()); d != nil {
 				t.Error(d)
 			}
 		})

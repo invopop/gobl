@@ -5,10 +5,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/ghodss/yaml"
+	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 )
 
@@ -43,6 +46,14 @@ func build(*cobra.Command, []string) error {
 	return nil
 }
 
-func verify(*cobra.Command, []string) error {
+func verify(cmd *cobra.Command, _ []string) error {
+	in, err := ioutil.ReadAll(cmd.InOrStdin())
+	if err != nil {
+		return err
+	}
+	env := new(gobl.Envelope)
+	if err := yaml.Unmarshal(in, env); err != nil {
+		return err
+	}
 	return nil
 }
