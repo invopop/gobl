@@ -34,18 +34,22 @@ type Charges []*Charge
 // independent from the individual lines.
 type Charge struct {
 	// Unique identifying for the discount entry
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID`
+	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts
 	Index int `json:"i" jsonschema:"title=Index"`
+	// Base represents the value used as a base for rate calculations.
+	// If not already provided, we'll take the invoices sum before
+	// discounts.
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
 	// Percentage rate to apply to the invoice's Sum
 	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Amount to apply
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
-	// List of taxes to apply to the discount
+	// List of taxes to apply to the charge
 	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
-	// Why was this discount applied?
+	// Why was this charge applied?
 	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
-	// Text description as to why the discount was applied
+	// Text description as to why the charge was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 }
 
@@ -57,11 +61,11 @@ func (m *Charge) Validate() error {
 }
 
 // GetTaxRates responds with the array of tax rates applied to this line.
-func (l *Charge) GetTaxRates() tax.Rates {
-	return l.Taxes
+func (m *Charge) GetTaxRates() tax.Rates {
+	return m.Taxes
 }
 
 // GetTotal provides the final total for this line, excluding any tax calculations.
-func (l *Charge) GetTotal() num.Amount {
-	return l.Amount
+func (m *Charge) GetTotal() num.Amount {
+	return m.Amount
 }

@@ -36,9 +36,12 @@ type Discounts []*Discount
 // correct taxes defined.
 type Discount struct {
 	// Unique identifying for the discount entry
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID`
+	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts
 	Index int `json:"i" jsonschema:"title=Index"`
+	// Base represents the value used as a base for rate calculations.
+	// If not already provided, we'll take the invoices sum.
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
 	// Percentage rate to apply to the invoice's Sum
 	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Amount to apply
@@ -52,18 +55,18 @@ type Discount struct {
 }
 
 // Validate checks the discount's fields.
-func (d *Discount) Validate() error {
-	return validation.ValidateStruct(d,
-		validation.Field(&d.Amount, validation.Required),
+func (m *Discount) Validate() error {
+	return validation.ValidateStruct(m,
+		validation.Field(&m.Amount, validation.Required),
 	)
 }
 
 // GetTaxRates responds with the array of tax rates applied to this line.
-func (l *Discount) GetTaxRates() tax.Rates {
-	return l.Taxes
+func (m *Discount) GetTaxRates() tax.Rates {
+	return m.Taxes
 }
 
 // GetTotal provides the final total for this line, excluding any tax calculations.
-func (l *Discount) GetTotal() num.Amount {
-	return l.Amount
+func (m *Discount) GetTotal() num.Amount {
+	return m.Amount
 }
