@@ -23,6 +23,8 @@ type Invoice struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
+	// Used in addition to the Code in some regions.
+	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Functional type of the invoice, default is always 'commercial'.
 	TypeCode TypeCode `json:"type_code,omitempty" jsonschema:"title=Type Code"`
 	// Currency for all invoice totals.
@@ -50,6 +52,10 @@ type Invoice struct {
 
 	// List of invoice lines representing each of the items sold to the customer.
 	Lines Lines `json:"lines,omitempty" jsonschema:"title=Lines"`
+	// Discounts or allowances applied to the complete invoice
+	Discounts Discounts `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	// Charges or surcharges applied to the complete invoice
+	Charges Charges `json:"charges,omitempty" jsonschema:"title=Charges"`
 	// Expenses paid for by the supplier but invoiced directly to the customer.
 	Outlays Outlays `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
@@ -60,8 +66,13 @@ type Invoice struct {
 	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
 
+	// The EN 16931-1:2017 standard recognises a need to be able to attach additional
+	// documents to an invoice. We don't support this yet, but this is where
+	// it could go.
+	//Attachments Attachments `json:"attachments,omitempty" jsonschema:"title=Attachments"`
+
 	// Unstructured information that is relevant to the invoice, such as correction details.
-	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes org.Notes `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -70,8 +81,10 @@ type Invoice struct {
 type Totals struct {
 	// Sum of all line item sums
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
-	// Sum of all discounts applied to each line
-	Discount num.Amount `json:"discount" jsonschema:"title=Discount"`
+	// Sum of all document level discounts
+	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Discount"`
+	// Sum of all document level charges
+	Charge *num.Amount `json:"charge,omitempty" jsonschema:"title=Charge"`
 	// Sum of all line sums minus the discounts
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
 	// Summary of all the taxes with a final sum to add or deduct from the amount payable
@@ -105,6 +118,12 @@ type Payment struct {
 type Delivery struct {
 	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
+	// When the goods should be expected
+	Date *org.Date `json:"date,omitempty" jsonschema:"title=Date"`
+	// Start of a n invoicing or delivery period
+	StartDate *org.Date `json:"start_date,omitempty" jsonschema:"title=Start Date"`
+	// End of a n invoicing or delivery period
+	EndDate *org.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
 }
 
 // Preceding allows for information to be provided about a previous invoice that this one
@@ -139,6 +158,9 @@ func (inv *Invoice) Validate(r region.Region) error {
 		validation.Field(&inv.Customer),
 
 		validation.Field(&inv.Lines, validation.Required),
+		validation.Field(&inv.Discounts),
+		validation.Field(&inv.Charges),
+		validation.Field(&inv.Outlays),
 		validation.Field(&inv.Totals, validation.Required),
 	)
 	if err == nil {
@@ -163,25 +185,51 @@ func (inv *Invoice) Calculate(r region.Region) error {
 	zero := r.Currency().BaseAmount()
 	t.reset(zero)
 
-	// Ensure all the lines are up to date first
 	tr := r.Taxes()
+	tls := make([]tax.TaxableLine, 0)
+
+	// Ensure all the lines are up to date first
 	for i, l := range inv.Lines {
 		l.Index = i + 1
 		l.calculate()
 
 		// Basic sum
-		t.Sum = t.Sum.Add(l.Sum)
-		if l.Discount != nil {
-			t.Discount = t.Discount.Add(l.Discount.Value)
-		}
+		t.Sum = t.Sum.Add(l.Total)
+		tls = append(tls, l)
 	}
-	t.Total = t.Sum.Subtract(t.Discount)
+	t.Total = t.Sum
+
+	// Subtract discounts
+	discounts := zero
+	for i, l := range inv.Discounts {
+		l.Index = i + 1
+		if l.Rate != nil && !l.Rate.IsZero() {
+			l.Amount = l.Rate.Of(t.Sum)
+		}
+		discounts = discounts.Add(l.Amount)
+		tls = append(tls, l)
+	}
+	if !discounts.IsZero() {
+		t.Discount = &discounts
+		t.Total = t.Total.Subtract(discounts)
+	}
+
+	// Add charges
+	charges := zero
+	for i, l := range inv.Charges {
+		l.Index = i + 1
+		if l.Rate != nil && !l.Rate.IsZero() {
+			l.Amount = l.Rate.Of(t.Sum)
+		}
+		charges = charges.Add(l.Amount)
+		tls = append(tls, l)
+	}
+	if !charges.IsZero() {
+		t.Charge = &charges
+		t.Total = t.Total.Add(charges)
+	}
 
 	// Now figure out the tax totals (with some interface conversion)
-	tls := make([]tax.TaxableLine, len(inv.Lines))
-	for i, l := range inv.Lines {
-		tls[i] = l
-	}
 	if err := t.Taxes.Calculate(tr, tls, inv.PricesIncludeTax, *date, zero); err != nil {
 		return err
 	}
@@ -229,9 +277,10 @@ func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
 // decimal places.
 func (t *Totals) reset(zero num.Amount) {
 	t.Sum = zero
-	t.Discount = zero
-	t.Taxes = tax.NewTotal(zero)
+	t.Discount = nil
+	t.Charge = nil
 	t.Total = zero
+	t.Taxes = tax.NewTotal(zero)
 	t.Outlays = nil
 	t.Payable = zero
 	t.Advances = nil
