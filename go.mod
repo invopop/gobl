@@ -10,6 +10,7 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693
 	github.com/stretchr/testify v1.7.0
+	gitlab.com/flimzy/testy v0.9.1
 )
 
 replace github.com/alecthomas/jsonschema => github.com/invopop/jsonschema v0.0.0-20211230180634-99ed368317c4
