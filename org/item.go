@@ -19,16 +19,26 @@ import (
 // unless the document you're building supports the `price_includes_tax`
 // option included in the `bill.Invoice` definition for example.
 type Item struct {
-	UUID        string       `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identify of this item independent of the Supplier IDs"`
-	Ref         string       `json:"ref,omitempty" jsonschema:"title=Ref,description=Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field."`
-	Name        string       `json:"name"`
-	Description string       `json:"desc,omitempty"`
-	Currency    string       `json:"currency,omitempty" jsonschema:"title=Currency,description=Only required if this line has a different currency from the rest."`
-	Price       num.Amount   `json:"price" jsonschema:"title=Price,description=Price of item being sold."`
-	Unit        string       `json:"unit,omitempty" jsonschema:"title=Unit,description=Code for unit of the item being sold"`
-	Codes       []*ItemCode  `json:"codes,omitempty" jsonschema:"title=Codes,description=List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer."`
-	Origin      l10n.Country `json:"origin,omitempty" jsonschema:"title=Country of Origin,description=Country code of where this item was from originally."`
-	Meta        Meta         `json:"meta,omitempty" jsonschema:"title=Meta"`
+	// Unique identify of this item independent of the Supplier IDs
+	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field.
+	Ref string `json:"ref,omitempty" jsonschema:"title=Ref"`
+	// Brief name of the item
+	Name string `json:"name"`
+	// Detailed description
+	Description string `json:"desc,omitempty"`
+	// Currency used for the item's price.
+	Currency string `json:"currency,omitempty" jsonschema:"title=Currency"`
+	// Base price of a single unit to be sold.
+	Price num.Amount `json:"price" jsonschema:"title=Price"`
+	// Free-text unit of measure.
+	Unit string `json:"unit,omitempty" jsonschema:"title=Unit,description=Code for unit of the item being sold"`
+	//	List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer.
+	Codes []*ItemCode `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Country code of where this item was from originally.
+	Origin l10n.Country `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
+	// Additional meta information that may be useful
+	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // ItemCode contains a value and optional type property that means additional

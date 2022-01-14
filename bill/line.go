@@ -64,15 +64,15 @@ func (l *Line) calculate() {
 
 	for _, d := range l.Discounts {
 		if d.Rate != nil && !d.Rate.IsZero() {
-			d.Value = d.Rate.Of(l.Sum) // always override
+			d.Amount = d.Rate.Of(l.Sum) // always override
 		}
-		l.Total = l.Total.Subtract(d.Value)
+		l.Total = l.Total.Subtract(d.Amount)
 	}
 
 	for _, c := range l.Charges {
 		if c.Rate != nil && !c.Rate.IsZero() {
-			c.Value = c.Rate.Of(l.Sum) // always override
+			c.Amount = c.Rate.Of(l.Sum) // always override
 		}
-		l.Total = l.Total.Add(c.Value)
+		l.Total = l.Total.Add(c.Amount)
 	}
 }

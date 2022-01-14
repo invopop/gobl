@@ -13,7 +13,7 @@ type LineCharge struct {
 	// Percentage rate if fixed amount not applied
 	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Fixed or resulting charge amount to apply
-	Value num.Amount `json:"value" jsonschema:"title=Value"`
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// Reference code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the charge was applied
@@ -23,7 +23,7 @@ type LineCharge struct {
 // Validate checks the line charge's fields.
 func (lc *LineCharge) Validate() error {
 	return validation.ValidateStruct(lc,
-		validation.Field(&lc.Value, validation.Required),
+		validation.Field(&lc.Amount, validation.Required),
 	)
 }
 

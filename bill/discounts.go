@@ -13,7 +13,7 @@ type LineDiscount struct {
 	// Percentage rate if fixed amount not applied
 	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Fixed discount amount to apply
-	Value num.Amount `json:"value" jsonschema:"title=Value"`
+	Amount num.Amount `json:"amount" jsonschema:"title=Value"`
 	// Reason code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the discount was applied
@@ -23,7 +23,7 @@ type LineDiscount struct {
 // Validate checks the line discount's fields.
 func (ld *LineDiscount) Validate() error {
 	return validation.ValidateStruct(ld,
-		validation.Field(&ld.Value, validation.Required),
+		validation.Field(&ld.Amount, validation.Required),
 	)
 }
 

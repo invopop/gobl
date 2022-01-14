@@ -134,6 +134,8 @@ type Preceding struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Identity code fo the previous invoice.
 	Code string `json:"code" jsonschema:"title=Code"`
+	// Additional identification details
+	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// When the preceding invoice was issued.
 	IssueDate *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
 	// Additional semi-structured data that may be useful in specific regions

@@ -11,6 +11,6 @@ type ExchangeRates []*ExchangeRate
 type ExchangeRate struct {
 	// ISO currency code this rate represents.
 	Currency Code `json:"currency" jsonschema:"title=Currency"`
-	// Rate to apply when converting the document's currency to this one.
-	Value num.Amount `json:"value" jsonschema:"title=Value"`
+	// How much is 1.00 of the document's currency worth for this exchange rate.
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 }
