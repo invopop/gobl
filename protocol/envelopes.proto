@@ -5,7 +5,7 @@ option go_package = "github.com/invopop/gobl/protocol";
 
 service EnvelopesResource {
     rpc Build(BuildEnvelope) returns (Envelope);
-    rpc Verify(Envelope) returns (VerifyResult);
+    rpc Verify(Envelope) returns (EnvelopeVerification);
 }
 
 message Envelope {
@@ -25,7 +25,7 @@ message BuildEnvelope {
     string template_id = 10;
 }
 
-message VerifyResult {
+message EnvelopeVerification {
     bool ok = 1;
     string error = 2;
 }
