@@ -98,7 +98,7 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 
 func build(cmd *cobra.Command, args []string) error {
 	out := cmd.OutOrStdout()
-	if len(args) >= 2 {
+	if len(args) >= 2 && args[1] != "-" {
 		f, err := os.Create(args[1])
 		if err != nil {
 			return err

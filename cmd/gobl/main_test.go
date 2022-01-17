@@ -222,6 +222,10 @@ func Test_build(t *testing.T) {
 			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
 			target: filepath.Join(tmpdir, "output-file.json"),
 		},
+		{
+			name: "explicit stdout",
+			args: []string{"testdata/success.json", "-"},
+		},
 	}
 
 	for _, tt := range tests {
