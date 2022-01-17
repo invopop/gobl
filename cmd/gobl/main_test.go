@@ -38,7 +38,7 @@ func Test_verify(t *testing.T) {
 		{
 			name: "success",
 			in: func() io.Reader {
-				f, err := os.Open("testdata/2021-06-16-invoice.json")
+				f, err := os.Open("testdata/success.json")
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -47,6 +47,20 @@ func Test_verify(t *testing.T) {
 				})
 				return f
 			}(),
+		},
+		{
+			name: "digest mismatch",
+			in: func() io.Reader {
+				f, err := os.Open("testdata/digest-mismatch.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				t.Cleanup(func() {
+					_ = f.Close()
+				})
+				return f
+			}(),
+			err: "digest mismatch",
 		},
 	}
 

@@ -55,5 +55,8 @@ func verify(cmd *cobra.Command, _ []string) error {
 	if err := yaml.Unmarshal(in, env); err != nil {
 		return err
 	}
-	return env.Validate()
+	if err := env.Validate(); err != nil {
+		return err
+	}
+	return env.Verify()
 }
