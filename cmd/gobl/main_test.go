@@ -234,7 +234,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "output file exists",
 			args: []string{"testdata/success.json", filepath.Join(tmpdir, "exists.json")},
-			err:  "open /tmp/Test_build-2640852577/exists.json: file exists",
+			err:  "open " + tmpdir + "/exists.json: file exists",
 		},
 	}
 
