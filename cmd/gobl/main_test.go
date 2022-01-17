@@ -171,6 +171,38 @@ func Test_build(t *testing.T) {
 				}
 			}`),
 		},
+		{
+			name: "invalid doc",
+			in: strings.NewReader(`{
+				"head": {
+					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+					"typ": "bill.Invoice",
+					"rgn": "ES",
+					"dig": {
+						"alg": "sha256",
+						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+					}
+				},
+				doc: "foo bar baz"
+			}`),
+			err: "json: cannot unmarshal string into Go value of type bill.Invoice",
+		},
+		{
+			name: "incomplete",
+			in: strings.NewReader(`{
+				"head": {
+					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+					"typ": "bill.Invoice",
+					"rgn": "ES",
+					"dig": {
+						"alg": "sha256",
+						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+					}
+				},
+				doc: {}
+			}`),
+			err: "calculation: issue date cannot be empty",
+		},
 	}
 
 	for _, tt := range tests {
