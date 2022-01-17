@@ -62,6 +62,11 @@ func Test_verify(t *testing.T) {
 			}(),
 			err: "digest mismatch",
 		},
+		{
+			name: "read from file",
+			args: []string{"testdata/digest-mismatch.json"},
+			err:  "digest mismatch",
+		},
 	}
 
 	for _, tt := range tests {

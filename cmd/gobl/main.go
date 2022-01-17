@@ -46,8 +46,17 @@ func build(*cobra.Command, []string) error {
 	return nil
 }
 
-func verify(cmd *cobra.Command, _ []string) error {
-	in, err := ioutil.ReadAll(cmd.InOrStdin())
+func verify(cmd *cobra.Command, args []string) error {
+	input := cmd.InOrStdin()
+	if len(args) > 0 {
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		defer f.Close() // nolint:errcheck
+		input = f
+	}
+	in, err := ioutil.ReadAll(input)
 	if err != nil {
 		return err
 	}
