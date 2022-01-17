@@ -126,12 +126,12 @@ var _ gobl.Document = &genericDoc{}
 func (d *genericDoc) Type() string { return d.typ }
 
 // MarshalJSON satisfies the json.Marshaler interface.
-func (d *genericDoc) MarshalJSON() ([]byte, error) {
+func (d *genericDoc) MarshalJSON() ([]byte, error) { // nolint:unparam
 	return d.payload, nil
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
-func (d *genericDoc) UnmarshalJSON(p []byte) error {
+func (d *genericDoc) UnmarshalJSON(p []byte) error { // nolint:unparam
 	d.payload = p
 	return nil
 }
