@@ -117,6 +117,11 @@ func Test_verify(t *testing.T) {
 func Test_build(t *testing.T) {
 	var tmpdir string
 	t.Cleanup(testy.TempDir(t, &tmpdir))
+	if f, err := os.Create(filepath.Join(tmpdir, "exists.json")); err != nil {
+		t.Fatal(err)
+	} else {
+		_ = f.Close()
+	}
 
 	tests := []struct {
 		name   string
@@ -225,6 +230,11 @@ func Test_build(t *testing.T) {
 		{
 			name: "explicit stdout",
 			args: []string{"testdata/success.json", "-"},
+		},
+		{
+			name: "output file exists",
+			args: []string{"testdata/success.json", filepath.Join(tmpdir, "exists.json")},
+			err:  "open /tmp/Test_build-2640852577/exists.json: file exists",
 		},
 	}
 
