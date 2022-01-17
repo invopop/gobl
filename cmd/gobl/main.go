@@ -81,6 +81,21 @@ func verify(cmd *cobra.Command, args []string) error {
 	return env.Verify()
 }
 
+func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
+	switch env.Head.Type {
+	case bill.InvoiceType:
+		doc := new(bill.Invoice)
+		err := env.Extract(doc)
+		return doc, err
+	default:
+		doc := &genericDoc{
+			typ: env.Head.Type,
+		}
+		err := env.Extract(doc)
+		return doc, err
+	}
+}
+
 func build(cmd *cobra.Command, args []string) error {
 	env, err := readEnv(cmd, args)
 	if err != nil {
@@ -89,24 +104,12 @@ func build(cmd *cobra.Command, args []string) error {
 	if env.Document == nil {
 		return errors.New("no document included")
 	}
-	switch env.Head.Type {
-	case bill.InvoiceType:
-		doc := new(bill.Invoice)
-		if err = env.Extract(doc); err != nil {
-			return err
-		}
-		if err := env.Insert(doc); err != nil {
-			return err
-		}
-	default:
-		doc := new(genericDoc)
-		if err = env.Extract(doc); err != nil {
-			return err
-		}
-		doc.typ = env.Head.Type
-		if err := env.Insert(doc); err != nil {
-			return err
-		}
+	doc, err := extractDoc(env)
+	if err != nil {
+		return err
+	}
+	if err := env.Insert(doc); err != nil {
+		return err
 	}
 	enc := json.NewEncoder(cmd.OutOrStdout())
 	enc.SetIndent("", "\t")
