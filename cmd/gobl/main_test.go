@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"io"
+	"os"
 	"strings"
 	"testing"
 
@@ -23,6 +25,29 @@ func Test_verify(t *testing.T) {
 			in:   strings.NewReader("this isn't JSON"),
 			err:  "error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
+		{
+			name: "read error",
+			in:   testy.ErrorReader(`{"foo":`, errors.New("read error")),
+			err:  "read error",
+		},
+		{
+			name: "empty envelope",
+			in:   strings.NewReader(`{}`),
+			err:  "doc: cannot be blank; head: cannot be blank.",
+		},
+		{
+			name: "success",
+			in: func() io.Reader {
+				f, err := os.Open("testdata/2021-06-16-invoice.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				t.Cleanup(func() {
+					_ = f.Close()
+				})
+				return f
+			}(),
+		},
 	}
 
 	for _, tt := range tests {
@@ -36,7 +61,11 @@ func Test_verify(t *testing.T) {
 			buf := &bytes.Buffer{}
 			c.SetOut(buf)
 			err := verify(c, tt.args)
-			assert.EqualError(t, err, tt.err)
+			if tt.err != "" {
+				assert.EqualError(t, err, tt.err)
+			} else {
+				assert.Nil(t, err)
+			}
 			if d := testy.DiffText(testy.Snapshot(t), buf.String()); d != nil {
 				t.Error(d)
 			}
