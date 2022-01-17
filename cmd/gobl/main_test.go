@@ -203,6 +203,14 @@ func Test_build(t *testing.T) {
 			}`),
 			err: "calculation: issue date cannot be empty",
 		},
+		{
+			name: "input file",
+			args: []string{"testdata/success.json"},
+		},
+		{
+			name: "recalculate",
+			args: []string{"testdata/nototals.json"},
+		},
 	}
 
 	for _, tt := range tests {
