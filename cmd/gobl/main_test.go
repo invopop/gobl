@@ -137,45 +137,40 @@ func Test_build(t *testing.T) {
 				return f
 			}(),
 		},
-		// {
-		// 	name: "digest mismatch",
-		// 	in: func() io.Reader {
-		// 		f, err := os.Open("testdata/digest-mismatch.json")
-		// 		if err != nil {
-		// 			t.Fatal(err)
-		// 		}
-		// 		t.Cleanup(func() {
-		// 			_ = f.Close()
-		// 		})
-		// 		return f
-		// 	}(),
-		// 	err: "digest mismatch",
-		// },
-		// {
-		// 	name: "read from file",
-		// 	args: []string{"testdata/digest-mismatch.json"},
-		// 	err:  "digest mismatch",
-		// },
-		// {
-		// 	name: "file missing",
-		// 	args: []string{"asdf"},
-		// 	err:  "open asdf: no such file or directory",
-		// },
-		// {
-		// 	name: "explicit stdin",
-		// 	args: []string{"-"},
-		// 	in: func() io.Reader {
-		// 		f, err := os.Open("testdata/digest-mismatch.json")
-		// 		if err != nil {
-		// 			t.Fatal(err)
-		// 		}
-		// 		t.Cleanup(func() {
-		// 			_ = f.Close()
-		// 		})
-		// 		return f
-		// 	}(),
-		// 	err: "digest mismatch",
-		// },
+		{
+			name: "no document",
+			in: strings.NewReader(`{
+				"head": {
+					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+					"typ": "duck",
+					"rgn": "ES",
+					"dig": {
+						"alg": "sha256",
+						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+					}
+				},
+			}`),
+			err: "no document included",
+		},
+		{
+			name: "invalid type",
+			in: strings.NewReader(`{
+				"head": {
+					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+					"typ": "duck",
+					"rgn": "ES",
+					"dig": {
+						"alg": "sha256",
+						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+					}
+				},
+				doc: {
+					"walk": "like a duck",
+					"talk": "like a duck",
+					"look": "like a duck"
+				}
+			}`),
+		},
 	}
 
 	for _, tt := range tests {

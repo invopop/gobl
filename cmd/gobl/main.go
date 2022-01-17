@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -65,15 +66,15 @@ func readEnv(cmd *cobra.Command, args []string) (*gobl.Envelope, error) {
 	if err := yaml.Unmarshal(in, env); err != nil {
 		return nil, err
 	}
-	if err := env.Validate(); err != nil {
-		return nil, err
-	}
 	return env, nil
 }
 
 func verify(cmd *cobra.Command, args []string) error {
 	env, err := readEnv(cmd, args)
 	if err != nil {
+		return err
+	}
+	if err := env.Validate(); err != nil {
 		return err
 	}
 
@@ -85,6 +86,9 @@ func build(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	if env.Document == nil {
+		return errors.New("no document included")
+	}
 	switch env.Head.Type {
 	case bill.InvoiceType:
 		doc := new(bill.Invoice)
@@ -95,9 +99,34 @@ func build(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	default:
-		panic("unf")
+		doc := new(genericDoc)
+		if err = env.Extract(doc); err != nil {
+			return err
+		}
+		doc.typ = env.Head.Type
+		if err := env.Insert(doc); err != nil {
+			return err
+		}
 	}
 	enc := json.NewEncoder(cmd.OutOrStdout())
 	enc.SetIndent("", "\t")
 	return enc.Encode(env)
+}
+
+type genericDoc struct {
+	typ     string
+	payload json.RawMessage
+}
+
+var _ gobl.Document = &genericDoc{}
+
+func (d *genericDoc) Type() string { return d.typ }
+
+func (d *genericDoc) MarshalJSON() ([]byte, error) {
+	return d.payload, nil
+}
+
+func (d *genericDoc) UnmarshalJSON(p []byte) error {
+	d.payload = p
+	return nil
 }
