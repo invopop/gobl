@@ -67,6 +67,26 @@ func Test_verify(t *testing.T) {
 			args: []string{"testdata/digest-mismatch.json"},
 			err:  "digest mismatch",
 		},
+		{
+			name: "file missing",
+			args: []string{"asdf"},
+			err:  "open asdf: no such file or directory",
+		},
+		{
+			name: "explicit stdin",
+			args: []string{"-"},
+			in: func() io.Reader {
+				f, err := os.Open("testdata/digest-mismatch.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				t.Cleanup(func() {
+					_ = f.Close()
+				})
+				return f
+			}(),
+			err: "digest mismatch",
+		},
 	}
 
 	for _, tt := range tests {

@@ -48,7 +48,7 @@ func build(*cobra.Command, []string) error {
 
 func verify(cmd *cobra.Command, args []string) error {
 	input := cmd.InOrStdin()
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != "-" {
 		f, err := os.Open(args[0])
 		if err != nil {
 			return err
