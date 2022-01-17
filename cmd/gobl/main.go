@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,8 +12,10 @@ import (
 	"syscall"
 
 	"github.com/ghodss/yaml"
-	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
+
+	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/bill"
 )
 
 func main() {
@@ -82,9 +85,19 @@ func build(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	doc := new(gobl.Document)
-	if err := env.Extract(doc); err != nil {
-		return err
+	switch env.Head.Type {
+	case bill.InvoiceType:
+		doc := new(bill.Invoice)
+		if err = env.Extract(doc); err != nil {
+			return err
+		}
+		if err := env.Insert(doc); err != nil {
+			return err
+		}
+	default:
+		panic("unf")
 	}
-	return nil
+	enc := json.NewEncoder(cmd.OutOrStdout())
+	enc.SetIndent("", "\t")
+	return enc.Encode(env)
 }
