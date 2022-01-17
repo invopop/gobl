@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -113,11 +115,15 @@ func Test_verify(t *testing.T) {
 }
 
 func Test_build(t *testing.T) {
+	var tmpdir string
+	t.Cleanup(testy.TempDir(t, &tmpdir))
+
 	tests := []struct {
-		name string
-		in   io.Reader
-		args []string
-		err  string
+		name   string
+		in     io.Reader
+		args   []string
+		err    string
+		target string
 	}{
 		{
 			name: "invalid stdin",
@@ -211,6 +217,11 @@ func Test_build(t *testing.T) {
 			name: "recalculate",
 			args: []string{"testdata/nototals.json"},
 		},
+		{
+			name:   "output file",
+			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "output-file.json")},
+			target: filepath.Join(tmpdir, "output-file.json"),
+		},
 	}
 
 	for _, tt := range tests {
@@ -231,6 +242,15 @@ func Test_build(t *testing.T) {
 			}
 			if d := testy.DiffText(testy.Snapshot(t), buf.String()); d != nil {
 				t.Error(d)
+			}
+			if tt.target != "" {
+				result, err := ioutil.ReadFile(tt.target)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if d := testy.DiffText(testy.Snapshot(t, "outfile"), result); d != nil {
+					t.Error(d)
+				}
 			}
 		})
 	}

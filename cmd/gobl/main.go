@@ -97,6 +97,15 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 }
 
 func build(cmd *cobra.Command, args []string) error {
+	out := cmd.OutOrStdout()
+	if len(args) >= 2 {
+		f, err := os.Create(args[1])
+		if err != nil {
+			return err
+		}
+		defer f.Close() // nolint:errcheck
+		out = f
+	}
 	env, err := readEnv(cmd, args)
 	if err != nil {
 		return err
@@ -111,7 +120,7 @@ func build(cmd *cobra.Command, args []string) error {
 	if err := env.Insert(doc); err != nil {
 		return err
 	}
-	enc := json.NewEncoder(cmd.OutOrStdout())
+	enc := json.NewEncoder(out)
 	enc.SetIndent("", "\t")
 	return enc.Encode(env)
 }
