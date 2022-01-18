@@ -287,7 +287,8 @@ func Test_build(t *testing.T) {
 			}
 			buf := &bytes.Buffer{}
 			c.SetOut(buf)
-			err := buildRunE(c, tt.args)
+			opts := build()
+			err := opts.RunE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
 			} else {

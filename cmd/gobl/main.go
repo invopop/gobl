@@ -96,15 +96,20 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 	}
 }
 
+type buildOpts struct{}
+
 func build() *cobra.Command {
-	return &cobra.Command{
+	opts := &buildOpts{}
+	cmd := &cobra.Command{
 		Use:  "build [infile] [outfile]",
 		Args: cobra.MaximumNArgs(2),
-		RunE: buildRunE,
+		RunE: opts.RunE,
 	}
+
+	return cmd
 }
 
-func buildRunE(cmd *cobra.Command, args []string) error {
+func (b *buildOpts) RunE(cmd *cobra.Command, args []string) error {
 	out := cmd.OutOrStdout()
 	if len(args) >= 2 && args[1] != "-" {
 		f, err := os.OpenFile(args[1], os.O_CREATE|os.O_EXCL|os.O_WRONLY, os.ModePerm)
