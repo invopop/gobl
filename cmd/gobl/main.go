@@ -30,6 +30,10 @@ func run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
+	return root().ExecuteContext(ctx)
+}
+
+func root() *cobra.Command {
 	root := &cobra.Command{
 		Use:           "gobl",
 		SilenceUsage:  true,
@@ -40,12 +44,8 @@ func run() error {
 		Args: cobra.MaximumNArgs(1),
 		RunE: verify,
 	})
-	root.AddCommand(&cobra.Command{
-		Use:  "build [infile] [outfile]",
-		Args: cobra.MaximumNArgs(2),
-		RunE: build,
-	})
-	return root.ExecuteContext(ctx)
+	root.AddCommand(build())
+	return root
 }
 
 func readEnv(cmd *cobra.Command, args []string) (*gobl.Envelope, error) {
@@ -96,7 +96,15 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 	}
 }
 
-func build(cmd *cobra.Command, args []string) error {
+func build() *cobra.Command {
+	return &cobra.Command{
+		Use:  "build [infile] [outfile]",
+		Args: cobra.MaximumNArgs(2),
+		RunE: buildRunE,
+	}
+}
+
+func buildRunE(cmd *cobra.Command, args []string) error {
 	out := cmd.OutOrStdout()
 	if len(args) >= 2 && args[1] != "-" {
 		f, err := os.OpenFile(args[1], os.O_CREATE|os.O_EXCL|os.O_WRONLY, os.ModePerm)

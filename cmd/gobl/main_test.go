@@ -15,6 +15,45 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
+func Test_root(t *testing.T) {
+	tests := []struct {
+		name  string
+		args  []string
+		stdin io.Reader
+		err   string
+	}{
+		{
+			name: "unsupported command",
+			args: []string{"foo"},
+			err:  `unknown command "foo" for "gobl"`,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			cmd := root()
+			cmd.SetArgs(tt.args)
+			var err error
+			stdout, stderr := testy.RedirIO(tt.stdin, func() {
+				err = cmd.Execute()
+			})
+			if d := testy.DiffText(testy.Snapshot(t, "_stdout"), stdout); d != nil {
+				t.Errorf("STDOUT: %s", d)
+			}
+			if d := testy.DiffText(testy.Snapshot(t, "_stderr"), stderr); d != nil {
+				t.Errorf("STDERR: %s", d)
+			}
+			if tt.err == "" {
+				assert.Nil(t, err)
+			} else {
+				assert.EqualError(t, err, tt.err)
+			}
+		})
+	}
+}
+
 func Test_verify(t *testing.T) {
 	tests := []struct {
 		name string
@@ -248,7 +287,7 @@ func Test_build(t *testing.T) {
 			}
 			buf := &bytes.Buffer{}
 			c.SetOut(buf)
-			err := build(c, tt.args)
+			err := buildRunE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
 			} else {
