@@ -289,6 +289,13 @@ func Test_build(t *testing.T) {
 			args:   []string{filepath.Join(tmpdir, "input.json")},
 			target: filepath.Join(tmpdir, "input.json"),
 		},
+		{
+			name: "overwrite stdin",
+			opts: &buildOpts{
+				inPlace: true,
+			},
+			err: "cannot overwrite STDIN",
+		},
 	}
 
 	for _, tt := range tests {

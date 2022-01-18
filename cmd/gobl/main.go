@@ -151,6 +151,8 @@ func (b *buildOpts) RunE(cmd *cobra.Command, args []string) error {
 		}
 		defer f.Close() // nolint:errcheck
 		out = f
+	} else if b.inPlace {
+		return errors.New("cannot overwrite STDIN")
 	}
 	if env.Document == nil {
 		return errors.New("no document included")
