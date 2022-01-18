@@ -218,6 +218,7 @@ func Test_build(t *testing.T) {
 					"look": "like a duck"
 				}
 			}`),
+			err: "unrecognized document type: duck",
 		},
 		{
 			name: "invalid doc",

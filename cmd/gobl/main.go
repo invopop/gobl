@@ -95,11 +95,7 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 		err := env.Extract(doc)
 		return doc, err
 	default:
-		doc := &genericDoc{
-			typ: env.Head.Type,
-		}
-		err := env.Extract(doc)
-		return doc, err
+		return nil, fmt.Errorf("unrecognized document type: %s", env.Head.Type)
 	}
 }
 
