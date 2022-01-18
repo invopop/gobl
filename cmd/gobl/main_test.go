@@ -154,18 +154,10 @@ func Test_verify(t *testing.T) {
 }
 
 func Test_build(t *testing.T) {
-	var tmpdir string
-	t.Cleanup(testy.TempDir(t, &tmpdir))
-	if f, err := os.Create(filepath.Join(tmpdir, "exists.json")); err != nil {
-		t.Fatal(err)
-	} else {
-		_ = f.Close()
-	}
-	if f, err := os.Create(filepath.Join(tmpdir, "overwrite.json")); err != nil {
-		t.Fatal(err)
-	} else {
-		_ = f.Close()
-	}
+	tmpdir := testy.CopyTempDir(t, "testdata", 0)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(tmpdir)
+	})
 
 	tests := []struct {
 		name   string
@@ -288,6 +280,14 @@ func Test_build(t *testing.T) {
 			},
 			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "overwrite.json")},
 			target: filepath.Join(tmpdir, "overwrite.json"),
+		},
+		{
+			name: "overwrite input file",
+			opts: &buildOpts{
+				inPlace: true,
+			},
+			args:   []string{filepath.Join(tmpdir, "input.json")},
+			target: filepath.Join(tmpdir, "input.json"),
 		},
 	}
 
