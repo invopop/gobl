@@ -96,7 +96,9 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 	}
 }
 
-type buildOpts struct{}
+type buildOpts struct {
+	overwriteOutputFile bool
+}
 
 func build() *cobra.Command {
 	opts := &buildOpts{}
@@ -106,13 +108,21 @@ func build() *cobra.Command {
 		RunE: opts.RunE,
 	}
 
+	f := cmd.Flags()
+
+	f.BoolVarP(&opts.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
+
 	return cmd
 }
 
 func (b *buildOpts) RunE(cmd *cobra.Command, args []string) error {
 	out := cmd.OutOrStdout()
 	if len(args) >= 2 && args[1] != "-" {
-		f, err := os.OpenFile(args[1], os.O_CREATE|os.O_EXCL|os.O_WRONLY, os.ModePerm)
+		flags := os.O_CREATE | os.O_WRONLY
+		if !b.overwriteOutputFile {
+			flags |= os.O_EXCL
+		}
+		f, err := os.OpenFile(args[1], flags, os.ModePerm)
 		if err != nil {
 			return err
 		}

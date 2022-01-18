@@ -161,9 +161,15 @@ func Test_build(t *testing.T) {
 	} else {
 		_ = f.Close()
 	}
+	if f, err := os.Create(filepath.Join(tmpdir, "overwrite.json")); err != nil {
+		t.Fatal(err)
+	} else {
+		_ = f.Close()
+	}
 
 	tests := []struct {
 		name   string
+		opts   *buildOpts
 		in     io.Reader
 		args   []string
 		err    string
@@ -275,6 +281,14 @@ func Test_build(t *testing.T) {
 			args: []string{"testdata/success.json", filepath.Join(tmpdir, "exists.json")},
 			err:  "open " + tmpdir + "/exists.json: file exists",
 		},
+		{
+			name: "overwrite output file",
+			opts: &buildOpts{
+				overwriteOutputFile: true,
+			},
+			args:   []string{"testdata/success.json", filepath.Join(tmpdir, "overwrite.json")},
+			target: filepath.Join(tmpdir, "overwrite.json"),
+		},
 	}
 
 	for _, tt := range tests {
@@ -287,7 +301,10 @@ func Test_build(t *testing.T) {
 			}
 			buf := &bytes.Buffer{}
 			c.SetOut(buf)
-			opts := build()
+			opts := tt.opts
+			if opts == nil {
+				opts = &buildOpts{}
+			}
 			err := opts.RunE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
