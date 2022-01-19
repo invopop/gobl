@@ -10,10 +10,14 @@ import (
 // TaxID represents a party's tax identify number for a given
 // country.
 type TaxID struct {
-	UUID    *uuid.UUID   `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code"`
-	Country l10n.Country `json:"country" jsonschema:"title=Country,description=ISO country code for Where the tax identity was issued."`
-	Code    string       `json:"code" jsonschema:"title=Code,description=Identity code."`
-	Meta    Meta         `json:"meta,omitempty" jsonschema:"title=Meta,description=Additional details."`
+	// Unique universal identity code
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID`
+	// ISO country code for Where the tax identity was issued
+	Country l10n.Country `json:"country" jsonschema:"title=Country Code"`
+	// Identity Code
+	Code string `json:"code" jsonschema:"title=Code"`
+	// Additional details.
+	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks to ensure the tax ID contains all the required

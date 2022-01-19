@@ -3,6 +3,7 @@ package bill
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -39,6 +40,8 @@ type Discount struct {
 	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts
 	Index int `json:"i" jsonschema:"title=Index"`
+	// Reference or ID for this Discount
+	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Base represents the value used as a base for rate calculations.
 	// If not already provided, we'll take the invoices sum.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
@@ -48,10 +51,12 @@ type Discount struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// List of taxes to apply to the discount
 	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
-	// Why was this discount applied?
+	// Code for the reason this discount applied
 	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
 	// Text description as to why the discount was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Additional semi-structured information.
+	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks the discount's fields.
@@ -67,6 +72,7 @@ func (m *Discount) GetTaxRates() tax.Rates {
 }
 
 // GetTotal provides the final total for this line, excluding any tax calculations.
+// We return a negative value so that discounts will be applied correctly.
 func (m *Discount) GetTotal() num.Amount {
-	return m.Amount
+	return m.Amount.Invert()
 }

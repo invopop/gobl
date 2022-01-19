@@ -19,6 +19,7 @@ on:
 
 jobs:
   tag-build-publish:
+    if: ${{ false }} # disable until we can figure out how to use gobl.VERSION
     name: Tag
     runs-on: ubuntu-latest
     steps:

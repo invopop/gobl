@@ -31,9 +31,13 @@ type Invoice struct {
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
 	ExchangeRates currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates"`
-	// When true, implies that all item prices already include non-retained taxes. This is especially
-	// useful for retailers where prices are often displayed including tax.
-	PricesIncludeTax bool `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax"`
+
+	// Implies that all item prices already include the specified tax, especially
+	// useful for retailers or B2C companies where prices are often displayed including tax.
+	//
+	// We only only one tax category to be defined as it is overly complex to work-out what the base
+	// price should be from multiple rates.
+	PricesIncludeTax tax.Code `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax"`
 
 	// Key information regarding a previous invoice.
 	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Reference"`
@@ -85,17 +89,21 @@ type Totals struct {
 	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Discount"`
 	// Sum of all document level charges
 	Charge *num.Amount `json:"charge,omitempty" jsonschema:"title=Charge"`
-	// Sum of all line sums minus the discounts
+	// If prices include tax, this is the total tax included in the price.
+	TaxIncluded *num.Amount `json:"tax_included,omitempty" jsonschema:"title=Tax Included"`
+	// Sum of all line sums minus the discounts, plus the charges, without tax.
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
-	// Summary of all the taxes with a final sum to add or deduct from the amount payable
+	// Summary of all the taxes with a final sum to add or deduct from the amount payable.
 	Taxes *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals"`
+	// Grand total after all taxes have been applied.
+	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
 	// Total paid in outlays that need to be reimbursed
 	Outlays *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals"`
-	// Total amount to be paid after applying taxes
+	// Total amount to be paid after applying taxes and outlays.
 	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
-	// Total amount paid in advance
+	// Total amount already paid in advance.
 	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance"`
-	// How much actually needs to be paid now
+	// How much actually needs to be paid now.
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
@@ -109,7 +117,7 @@ type Ordering struct {
 type Payment struct {
 	Payer        *org.Party        `json:"payer,omitempty" jsonschema:"title=Payer,description=The party responsible for paying for the invoice, if not the customer."`
 	Terms        *pay.Terms        `json:"terms,omitempty" jsonschema:"title=Terms,description=Payment terms or conditions."`
-	Advances     []*pay.Advance    `json:"advances,omitempty" jsonschema:"title=Advances,description=Any amounts that have been paid in advance and should be deducted from the amount due."`
+	Advances     pay.Advances      `json:"advances,omitempty" jsonschema:"title=Advances,description=Any amounts that have been paid in advance and should be deducted from the amount due."`
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions,description=Details on how payment should be made."`
 }
 
@@ -242,14 +250,23 @@ func (inv *Invoice) Calculate(r region.Region) error {
 		return err
 	}
 
-	t.Payable = t.Total.Add(t.Taxes.Sum)
+	// Remove any included taxes from the total.
+	ct := t.Taxes.Category(inv.PricesIncludeTax)
+	if ct != nil {
+		t.TaxIncluded = &ct.Amount
+		t.Total = t.Total.Subtract(ct.Amount)
+	}
+
+	// Finally calculate the total with *all* the taxes.
+	t.TotalWithTax = t.Total.Add(t.Taxes.Sum)
+	t.Payable = t.TotalWithTax
 
 	// Outlays
 	if len(inv.Outlays) > 0 {
 		t.Outlays = &zero
 		for i, o := range inv.Outlays {
 			o.Index = i + 1
-			v := t.Outlays.Add(o.Paid)
+			v := t.Outlays.Add(o.Amount)
 			t.Outlays = &v
 		}
 		t.Payable = t.Payable.Add(*t.Outlays)
@@ -287,6 +304,7 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Sum = zero
 	t.Discount = nil
 	t.Charge = nil
+	t.TaxIncluded = nil
 	t.Total = zero
 	t.Taxes = tax.NewTotal(zero)
 	t.Outlays = nil

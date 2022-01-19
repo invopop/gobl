@@ -3,6 +3,7 @@ package bill
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -37,6 +38,8 @@ type Charge struct {
 	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts
 	Index int `json:"i" jsonschema:"title=Index"`
+	// Code to used to refer to the this charge
+	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Base represents the value used as a base for rate calculations.
 	// If not already provided, we'll take the invoices sum before
 	// discounts.
@@ -47,10 +50,12 @@ type Charge struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// List of taxes to apply to the charge
 	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
-	// Why was this charge applied?
+	// Code for why was this charge applied?
 	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
 	// Text description as to why the charge was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Additional semi-structured information.
+	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks the discount's fields.

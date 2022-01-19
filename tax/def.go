@@ -2,6 +2,7 @@ package tax
 
 import (
 	"errors"
+	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/i18n"
@@ -25,11 +26,12 @@ type Category struct {
 
 	// Retained when true implies that the tax amount will be retained
 	// by the buyer on behalf of the supplier, and thus subtracted from
-	// the invoice taxable base total.
-	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained,description=This tax should be retained, not added, from the sum."`
+	// the invoice taxable base total. Typically used for taxes related to
+	// income.
+	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
-	// Rates array
-	Defs []Def `json:"defs" jsonschema:"title=Definitions,descriptions=Specific tax definitions inside this category."`
+	// Specific tax definitions inside this category.
+	Defs []Def `json:"defs" jsonschema:"title=Definitions"`
 }
 
 // Def defines a tax combination of category and rate.
@@ -51,9 +53,20 @@ type Def struct {
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
 type Value struct {
-	Since    *org.Date      `json:"since,omitempty" jsonschema:"title=Since,description=Date from which this value should be applied."`
-	Percent  num.Percentage `json:"percent" jsonschema:"title=Percent,description=Rate that should be applied."`
-	Disabled bool           `json:"disabled,omitempty" jsonschema:"title=Disabled,description=When true, this value should no longer be used."`
+	// Date from which this value should be applied.
+	Since *org.Date `json:"since,omitempty" jsonschema:"title=Since"`
+	// Rate that should be applied
+	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
+	// When true, this value should no longer be used.
+	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
+}
+
+// combo is used internally to make it easier to return a final value including
+// all the preciding objects.
+type combo struct {
+	category Category
+	def      Def
+	value    Value
 }
 
 // Validate enures the region definition is valid, including all
@@ -143,4 +156,24 @@ func (d Def) On(date org.Date) (Value, bool) {
 		}
 	}
 	return Value{}, false
+}
+
+// comboOn provides the Value object for the provided rate on a given day
+// or an error if no match is found.
+func (r Region) comboOn(rate *Rate, date org.Date) (*combo, error) {
+	c := new(combo)
+	var ok bool
+	c.category, ok = r.Category(rate.Category)
+	if !ok {
+		return nil, fmt.Errorf("failed to find category, invalid code: %v", rate.Category)
+	}
+	c.def, ok = c.category.Def(rate.Code)
+	if !ok {
+		return nil, fmt.Errorf("failed to find rate definition, invalid code: %v", rate.Code)
+	}
+	c.value, ok = c.def.On(date)
+	if !ok {
+		return nil, fmt.Errorf("tax rate cannot be provided for date")
+	}
+	return c, nil
 }
