@@ -4,11 +4,17 @@
   "definitions": {
     "Envelope": {
       "required": [
+        "ver",
         "head",
         "doc",
         "sigs"
       ],
       "properties": {
+        "ver": {
+          "type": "string",
+          "title": "Version",
+          "description": "The GOBL document version used to generate the envelope"
+        },
         "head": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/Header",
@@ -19,7 +25,7 @@
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/Payload",
           "title": "Document",
-          "description": "The data being enveloped"
+          "description": "The data inside the envelope"
         },
         "sigs": {
           "items": {
