@@ -11,7 +11,7 @@ import (
 // country.
 type TaxID struct {
 	// Unique universal identity code
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID`
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// ISO country code for Where the tax identity was issued
 	Country l10n.Country `json:"country" jsonschema:"title=Country Code"`
 	// Identity Code

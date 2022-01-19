@@ -2,9 +2,8 @@ package gobl
 
 import "strings"
 
-const (
-	VERSION Version = "gobl.org/0.10.0"
-)
+// VERSION identifies which version of GOBL is in use.
+const VERSION Version = "gobl.org/0.10.0"
 
 // Version string
 type Version string
