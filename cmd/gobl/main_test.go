@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
@@ -333,4 +334,23 @@ func Test_build(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_version(t *testing.T) {
+	cmd := version()
+	stdout, stderr := testy.RedirIO(nil, func() {
+		err := cmd.Execute()
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+	wantOut := "GOBL version " + string(gobl.VERSION)
+	wantErr := ""
+	if sout, _ := ioutil.ReadAll(stdout); string(sout) != wantOut {
+		t.Errorf("Unexpected STDOUT: %s", sout)
+	}
+	if serr, _ := ioutil.ReadAll(stderr); string(serr) != wantErr {
+		t.Errorf("Unexpected STDERR: %s", serr)
+	}
+
 }
