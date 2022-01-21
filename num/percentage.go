@@ -68,17 +68,17 @@ func PercentageFromString(str string) (Percentage, error) {
 // String outputs the percentage value in a human readable way including
 // the percentage symbol.
 func (p Percentage) String() string {
+	return p.StringWithoutSymbol() + "%"
+}
+
+// StringWithoutSymbol provides the percent value without a percent symbol.
+func (p Percentage) StringWithoutSymbol() string {
 	e := int64(p.Amount.exp) - 2
 	if e < 0 {
 		e = 0
 	}
 	v := p.Amount.Multiply(factor100).Rescale(uint32(e))
-	return v.String() + "%"
-}
-
-// StringWithoutSymbol provides the raw underlying percentage value.
-func (p Percentage) StringWithoutSymbol() string {
-	return p.Amount.String()
+	return v.String()
 }
 
 // Of calculates the "percent of" the provided amount. The exponent of the

@@ -149,7 +149,11 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 	t.Sum = zero
 	for _, ct := range t.Categories {
 		ct.calculate(zero)
-		t.Sum = t.Sum.Add(ct.Amount)
+		if ct.Retained {
+			t.Sum = t.Sum.Subtract(ct.Amount)
+		} else {
+			t.Sum = t.Sum.Add(ct.Amount)
+		}
 	}
 
 	return nil

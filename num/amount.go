@@ -215,6 +215,17 @@ func (a Amount) String() string {
 	return fmt.Sprintf("%d.%0*d", v1, a.exp, v2)
 }
 
+// MinimalString provides the amount without any tailing 0s or '.'
+// if one is left over.
+func (a Amount) MinimalString() string {
+	s := a.String()
+	if !strings.Contains(s, ".") {
+		return s
+	}
+	s = strings.TrimRight(s, "0")
+	return strings.TrimSuffix(s, ".")
+}
+
 // MarshalText provides the byte value of the amount. See also the
 // String() method.
 // We always add quotes around values as number representations do not

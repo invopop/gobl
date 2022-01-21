@@ -181,6 +181,15 @@ func TestAmountString(t *testing.T) {
 	}
 }
 
+func TestAmountMinimalString(t *testing.T) {
+	a := num.MakeAmount(123000, 3)
+	assert.Equal(t, "123", a.MinimalString())
+	a = num.MakeAmount(123000, 5)
+	assert.Equal(t, "1.23", a.MinimalString())
+	a = num.MakeAmount(123000, 0)
+	assert.Equal(t, "123000", a.MinimalString())
+}
+
 func TestAmountRescale(t *testing.T) {
 	a := num.MakeAmount(123456, 2)
 	r := a.Rescale(2)

@@ -38,7 +38,7 @@ func TestPercentageString(t *testing.T) {
 	if p.String() != "16.00%" {
 		t.Errorf("unexpected string result from percentage, got: %v", p.String())
 	}
-	if p.StringWithoutSymbol() != "0.1600" {
+	if p.StringWithoutSymbol() != "16.00" {
 		t.Errorf("unexpected raw percentage, got: %v", p.StringWithoutSymbol())
 	}
 	p2 := num.MakePercentage(2000, 2000) // silly number
