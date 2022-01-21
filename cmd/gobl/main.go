@@ -45,6 +45,7 @@ func root() *cobra.Command {
 		RunE: verify,
 	})
 	root.AddCommand(build())
+	root.AddCommand(version())
 	return root
 }
 
@@ -183,4 +184,13 @@ func (d *genericDoc) MarshalJSON() ([]byte, error) { // nolint:unparam
 func (d *genericDoc) UnmarshalJSON(p []byte) error { // nolint:unparam
 	d.payload = p
 	return nil
+}
+
+func version() *cobra.Command {
+	return &cobra.Command{
+		Use: "version",
+		Run: func(cmd *cobra.Command, _ []string) {
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "GOBL version %s", gobl.VERSION)
+		},
+	}
 }
