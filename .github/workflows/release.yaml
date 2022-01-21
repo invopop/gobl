@@ -26,10 +26,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: "0" # make sure we get all commits!
+      - name: Read current version
+        run: |
+          grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "gobl.org\//GOBL_VERSION="/' >> $GITHUB_ENV
 
       - name: Bump version and push tag
         id: bump
         uses: anothrNick/github-tag-action@1.26.0
+        with:
+          custom_tag: ${{ env.GOBL_VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_BRANCHES: main
