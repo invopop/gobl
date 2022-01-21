@@ -1,0 +1,102 @@
+head:
+  typ: "bill.Invoice"
+  region: "ES"
+
+doc:
+  uuid: "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
+  currency: "EUR"
+  code: "INV2021-001"
+  issue_date: "2021-06-16"
+
+  supplier:
+    tax_id:
+      country: "ES"
+      code: "B91983379"
+    name: "A Company Name S.L."
+    people:
+      - name:
+          alias: Paco
+          given: Francisco
+          surname: Smith
+    addresses:
+      - num: "10"
+        street: "Calle Mayor"
+        locality: "Madrid"
+        region: "Madrid"
+        code: "28003"
+        country: "ES"
+    emails:
+      - addr: "contact@company.com"
+    telephones:
+      - label: mobile
+        num: "+34644123123"
+
+  customer:
+    tax_id:
+      country: "ES"
+      code: "B85905495"
+    name: "Autofiscal S.L."
+    emails:
+      - addr: "sam.lown@invopop.com"
+    addresses:
+      - num: "16"
+        street: "Calle Diseminado"
+        locality: "Miraflores de la Sierra"
+        region: "Madrid"
+        code: "28792"
+        country: "ES"
+
+  lines:
+    - quantity: 20
+      item:
+        name: "Development services day rate"
+        price: "200.00"
+      discounts:
+        - amount: "200.00"
+          reason: "just because"
+      taxes:
+        - cat: "VAT"
+          code: "STD"
+        - cat: "VATEQS"
+          code: "STD"
+        - cat: "IRPF"
+          code: "STD"
+    - quantity: 10
+      item:
+        name: "Something random"
+        price: "100.00"
+      taxes:
+        - cat: "VAT"
+          code: "RED"
+        - cat: "VATEQS"
+          code: "RED"
+        - cat: "IRPF"
+          code: "STD"
+
+  discounts:
+    - reason: "Early payment"
+      rate: "2.0%"
+      taxes:
+        - cat: "VAT"
+          code: "STD"
+        - cat: "VATEQS"
+          code: "STD"
+        - cat: "IRPF"
+          code: "STD"
+
+  charges:
+    - reason: "Impuesto local"
+      amount: "5.00"
+
+  outlays:
+    - desc: "Something paid for by us"
+      paid: "200.00"
+
+  payment:
+    terms:
+      code: "instant"
+    instructions:
+      code: "credit_transfer"
+      credit_transfer:
+        - name: "Bankinter"
+          iban: "ES06 0128 0011 3901 0008 1391"

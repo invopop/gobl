@@ -8,6 +8,7 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	var v gobl.Version = "gobl.org/0.10.0"
-	assert.Equal(t, "0.10.0", v.Semver())
+	var v gobl.Version = "gobl.org/v0.10.0"
+	assert.Equal(t, "v0.10.0", v.Semver())
+	assert.Equal(t, "gobl.org", v.Domain())
 }

@@ -2,25 +2,20 @@ package gobl
 
 import "strings"
 
-// VERSION identifies which version of GOBL is in use.
-const VERSION Version = "gobl.org/0.10.0"
-
-// Version string
+// Version contains a domain and semver for this version of GOBL.
 type Version string
 
-// Domain provides the version domain
+// VERSION is the version of the GOBL library.
+const VERSION Version = "gobl.org/v0.10.0"
+
+// Domain returns the domain portion of the version.
 func (v Version) Domain() string {
-	res := v.Split()
-	return res[0]
+	parts := strings.SplitN(string(v), "/", 2)
+	return parts[0]
 }
 
-// Semver extracts the semversion component of the version string
+// Semver returns the semver portion of the version.
 func (v Version) Semver() string {
-	res := v.Split()
-	return res[1]
-}
-
-// Split divides version into a host and semver
-func (v Version) Split() []string {
-	return strings.SplitN(string(v), "/", 2)
+	parts := strings.SplitN(string(v), "/", 2)
+	return parts[1]
 }
