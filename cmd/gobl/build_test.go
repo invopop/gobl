@@ -44,6 +44,18 @@ func Test_build_args(t *testing.T) {
 			name: "in-place short",
 			args: []string{"-w"},
 		},
+		{
+			name: "set values",
+			args: []string{"--set", "foo=bar", "--set", "bar=baz", "--set", "foo=qux"},
+		},
+		{
+			name: "set files",
+			args: []string{"--set-file", "foo=foo.json"},
+		},
+		{
+			name: "set string values",
+			args: []string{"--set-string", "foo=foo", "--set-string", "bar=1234"},
+		},
 	}
 
 	for _, tt := range tests {
