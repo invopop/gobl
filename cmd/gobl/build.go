@@ -13,20 +13,27 @@ type buildOpts struct {
 	inPlace             bool
 }
 
-func build() *cobra.Command {
-	opts := &buildOpts{}
+func build() *buildOpts {
+	return &buildOpts{}
+}
+func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "build [infile] [outfile]",
 		Args: cobra.MaximumNArgs(2),
-		RunE: opts.RunE,
+		RunE: b.RunE,
 	}
 
 	f := cmd.Flags()
 
-	f.BoolVarP(&opts.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
-	f.BoolVarP(&opts.inPlace, "in-place", "w", false, "overwrite the input file in place")
+	f.BoolVarP(&b.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
+	f.BoolVarP(&b.inPlace, "in-place", "w", false, "overwrite the input file in place")
 
 	return cmd
+
+}
+
+func buildCmd() *cobra.Command {
+	return build().cmd()
 }
 
 func (b *buildOpts) outputFilename(args []string) string {

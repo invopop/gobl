@@ -14,6 +14,62 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
+func Test_build_args(t *testing.T) {
+	tests := []struct {
+		name string
+		args []string
+		err  string
+	}{
+		{
+			name: "no args",
+		},
+		{
+			name: "invalid flag",
+			args: []string{"--foo"},
+			err:  `unknown flag: --foo`,
+		},
+		{
+			name: "force long",
+			args: []string{"--force"},
+		},
+		{
+			name: "force short",
+			args: []string{"-f"},
+		},
+		{
+			name: "in-place long",
+			args: []string{"--in-place"},
+		},
+		{
+			name: "in-place short",
+			args: []string{"-w"},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			opts := build()
+
+			cmd := opts.cmd()
+			err := cmd.ParseFlags(tt.args)
+			if tt.err == "" {
+				assert.Nil(t, err)
+			} else {
+				assert.EqualError(t, err, tt.err)
+			}
+			if err != nil {
+				return
+			}
+			if d := testy.DiffInterface(testy.Snapshot(t), opts); d != nil {
+				t.Error(d)
+			}
+		})
+	}
+}
+
 func Test_build(t *testing.T) {
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
 	t.Cleanup(func() {

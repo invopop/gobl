@@ -1,0 +1,4 @@
+(*main.buildOpts)({
+  overwriteOutputFile: (bool) true,
+  inPlace: (bool) false
+})

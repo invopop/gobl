@@ -43,7 +43,7 @@ func root() *cobra.Command {
 		Args: cobra.MaximumNArgs(1),
 		RunE: verify,
 	})
-	root.AddCommand(build())
+	root.AddCommand(buildCmd())
 	root.AddCommand(version())
 	return root
 }
