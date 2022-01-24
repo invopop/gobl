@@ -14,8 +14,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "version.go"
+    #paths:
+    #  - "version.go"
     #paths-ignore:
     #  - "docs/**"
 
@@ -38,5 +38,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CUSTOM_TAG: ${{ env.GOBL_VERSION }}
+          VERBOSE: true
           RELEASE_BRANCHES: main
           WITH_V: true
