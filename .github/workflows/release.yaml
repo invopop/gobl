@@ -14,8 +14,10 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "docs/**"
+    paths:
+      - "version.go"
+    #paths-ignore:
+    #  - "docs/**"
 
 jobs:
   tag-build-publish:
