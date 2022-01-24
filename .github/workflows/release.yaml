@@ -32,12 +32,15 @@ jobs:
         run: |
           grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "gobl.org\//GOBL_VERSION="/' >> $GITHUB_ENV
 
-      - name: Bump version and push tag
-        id: bump
-        uses: anothrNick/github-tag-action@1.36.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CUSTOM_TAG: ${{ env.GOBL_VERSION }}
-          VERBOSE: true
-          RELEASE_BRANCHES: main
-          WITH_V: true
+      - name: "Release tag"
+      - uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ env.GOBL_VERSION }}
+
+      # - name: Bump version and push tag
+      #   id: bump
+      #   uses: anothrNick/github-tag-action@1.36.0
+      #  env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     RELEASE_BRANCHES: main
+      #     WITH_V: true
