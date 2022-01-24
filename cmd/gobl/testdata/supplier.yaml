@@ -1,0 +1,21 @@
+tax_id:
+  country: "ES"
+  code: "B91983379"
+name: "A Company Name S.L."
+people:
+  - name:
+      alias: Paco
+      given: Francisco
+      surname: Smith
+addresses:
+  - num: "10"
+    street: "Calle Mayor"
+    locality: "Madrid"
+    region: "Madrid"
+    code: "28003"
+    country: "ES"
+emails:
+  - addr: "contact@company.com"
+telephones:
+  - label: mobile
+    num: "+34644123123"

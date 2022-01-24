@@ -6,5 +6,6 @@
     (string) (len=3) "foo": (string) (len=3) "qux"
   },
   setFiles: (map[string]string) <nil>,
-  setStrings: (map[string]string) <nil>
+  setStrings: (map[string]string) <nil>,
+  setValues: (map[string]interface {}) <nil>
 })

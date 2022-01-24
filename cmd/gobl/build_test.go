@@ -82,6 +82,79 @@ func Test_build_args(t *testing.T) {
 	}
 }
 
+func Test_build_preRun(t *testing.T) {
+	tests := []struct {
+		name string
+		opts *buildOpts
+		err  string
+	}{
+		{
+			name: "invalid yaml value on command line",
+			opts: &buildOpts{
+				set: map[string]string{"foo": ":"},
+			},
+			err: `yaml: did not find expected key`,
+		},
+		{
+			name: "valid yaml on command line",
+			opts: &buildOpts{
+				set: map[string]string{
+					"string":  "one two three",
+					"number":  "123",
+					"boolean": "false",
+					"array":   "[one,two,three]",
+				},
+			},
+		},
+		{
+			name: "valid string",
+			opts: &buildOpts{
+				setStrings: map[string]string{
+					"string":  "one two three",
+					"number":  "123",
+					"boolean": "false",
+					"array":   "[one,two,three]",
+				},
+			},
+		},
+		{
+			name: "missing file",
+			opts: &buildOpts{
+				setFiles: map[string]string{
+					"foo": "missing.yaml",
+				},
+			},
+			err: `open missing.yaml: no such file or directory`,
+		},
+		{
+			name: "valid file",
+			opts: &buildOpts{
+				setFiles: map[string]string{
+					"foo": "testdata/supplier.yaml",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.opts.preRunE(nil, nil)
+			if tt.err == "" {
+				assert.Nil(t, err)
+			} else {
+				assert.EqualError(t, err, tt.err)
+			}
+			if err != nil {
+				return
+			}
+			if d := testy.DiffInterface(testy.Snapshot(t), tt.opts); d != nil {
+				t.Error(d)
+			}
+		})
+	}
+}
+
 func Test_build(t *testing.T) {
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
 	t.Cleanup(func() {
@@ -242,7 +315,7 @@ func Test_build(t *testing.T) {
 			if opts == nil {
 				opts = &buildOpts{}
 			}
-			err := opts.RunE(c, tt.args)
+			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
 			} else {

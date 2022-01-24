@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 type buildOpts struct {
@@ -14,16 +16,45 @@ type buildOpts struct {
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
+	setValues           map[string]interface{}
 }
 
 func build() *buildOpts {
 	return &buildOpts{}
 }
+
+func (b *buildOpts) preRunE(*cobra.Command, []string) error {
+	b.setValues = make(map[string]interface{}, len(b.set)+len(b.setFiles)+len(b.setStrings))
+	for k, v := range b.setStrings {
+		b.setValues[k] = v
+	}
+	for k, v := range b.set {
+		var val interface{}
+		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
+			return err
+		}
+		b.setValues[k] = val
+	}
+	for k, v := range b.setFiles {
+		content, err := ioutil.ReadFile(v)
+		if err != nil {
+			return err
+		}
+		var val interface{}
+		if err := yaml.Unmarshal(content, &val); err != nil {
+			return err
+		}
+		b.setValues[k] = val
+	}
+	return nil
+}
+
 func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "build [infile] [outfile]",
-		Args: cobra.MaximumNArgs(2),
-		RunE: b.RunE,
+		Use:     "build [infile] [outfile]",
+		Args:    cobra.MaximumNArgs(2),
+		PreRunE: b.preRunE,
+		RunE:    b.runE,
 	}
 
 	f := cmd.Flags()
@@ -51,7 +82,7 @@ func (b *buildOpts) outputFilename(args []string) string {
 	return ""
 }
 
-func (b *buildOpts) RunE(cmd *cobra.Command, args []string) error {
+func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	env, err := readEnv(cmd, args)
 	if err != nil {
 		return err
