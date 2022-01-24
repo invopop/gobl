@@ -31,7 +31,7 @@ jobs:
 
       - name: Read current version
         run: |
-          grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "gobl.org\//GOBL_VERSION="/' >> $GITHUB_ENV
+          grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "gobl.org\/\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
 
       - name: "Release tag"
         uses: actions-ecosystem/action-push-tag@v1
