@@ -138,6 +138,9 @@ func (e *Envelope) Insert(doc Document) error {
 
 // Extract the contents of the envelope into the provided document type.
 func (e *Envelope) Extract(doc Document) error {
+	if e.Document == nil {
+		return ErrNoDocument.WithErrorf("cannot extract document from empty envelope")
+	}
 	return e.Document.extract(doc)
 }
 
