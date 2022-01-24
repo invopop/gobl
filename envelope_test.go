@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/region"
@@ -46,6 +47,13 @@ func TestEnvelopePayload(t *testing.T) {
 	nm := new(note.Message)
 	assert.NoError(t, e.Extract(nm))
 	assert.Equal(t, m.Content, nm.Content, "content mismatch")
+}
+
+func TestEnvelopeExtract(t *testing.T) {
+	e := &gobl.Envelope{}
+	inv := new(bill.Invoice)
+	err := e.Extract(inv)
+	assert.ErrorIs(t, err, gobl.ErrNoDocument)
 }
 
 func TestEnvelopeValidate(t *testing.T) {

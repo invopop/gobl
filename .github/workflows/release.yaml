@@ -14,8 +14,8 @@ on:
   push:
     branches:
       - main
-    #paths:
-    #  - "version.go"
+    paths:
+      - "version.go"
     #paths-ignore:
     #  - "docs/**"
 
