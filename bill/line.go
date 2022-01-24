@@ -22,8 +22,10 @@ type Line struct {
 	Item *org.Item `json:"item" jsonschema:"title=Item"`
 	// Result of quantity multiplied by the item's price
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
-	// Discount applied to this line
-	Discount *org.Discount `json:"discount,omitempty" jsonschema:"title=Discount"`
+	// Discounts applied to this line
+	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	// Charges applied to this line
+	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
 	// List of taxes to be applied and used in the invoice totals
 	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Total line amount after applying discounts to the sum
@@ -46,6 +48,8 @@ func (l *Line) Validate() error {
 		validation.Field(&l.Index, validation.Required),
 		validation.Field(&l.Quantity, validation.Required),
 		validation.Field(&l.Item, validation.Required),
+		validation.Field(&l.Discounts),
+		validation.Field(&l.Charges),
 		validation.Field(&l.Taxes),
 		validation.Field(&l.Sum, validation.Required),
 		validation.Field(&l.Total, validation.Required),
@@ -56,15 +60,19 @@ func (l *Line) Validate() error {
 func (l *Line) calculate() {
 	// First we figure out how much the item costs, and get the total
 	l.Sum = l.Item.Price.Multiply(l.Quantity)
+	l.Total = l.Sum
 
-	if l.Discount != nil {
-		d := l.Discount
+	for _, d := range l.Discounts {
 		if d.Rate != nil && !d.Rate.IsZero() {
-			// always override value with calculated rate
-			d.Value = d.Rate.Of(l.Sum)
+			d.Amount = d.Rate.Of(l.Sum) // always override
 		}
-		l.Total = l.Sum.Subtract(d.Value)
-	} else {
-		l.Total = l.Sum
+		l.Total = l.Total.Subtract(d.Amount)
+	}
+
+	for _, c := range l.Charges {
+		if c.Rate != nil && !c.Rate.IsZero() {
+			c.Amount = c.Rate.Of(l.Sum) // always override
+		}
+		l.Total = l.Total.Add(c.Amount)
 	}
 }

@@ -10,10 +10,10 @@ import (
 
 // Local tax category definitions which are not considered standard.
 const (
-	TaxCategoryVATEqualizationSurcharge tax.Code = "VATEQS"
-	TaxCategoryIRPF                     tax.Code = "IRPF"
-	TaxCategoryIGIC                     tax.Code = "IGIC"
-	TaxCategoryIPSI                     tax.Code = "IPSI"
+	TaxCategoryVATSurcharge tax.Code = "VATEQS"
+	TaxCategoryIRPF         tax.Code = "IRPF"
+	TaxCategoryIGIC         tax.Code = "IGIC"
+	TaxCategoryIPSI         tax.Code = "IPSI"
 )
 
 // Specific tax rate codes.
@@ -136,25 +136,13 @@ var taxRegion = tax.Region{
 		// VAT Equalization Surcharge (Recargo de equivalencia)
 		//
 		{
-			Code: TaxCategoryVATEqualizationSurcharge,
+			Code: TaxCategoryVATSurcharge,
 			Name: i18n.String{
 				i18n.EN: "VAT Equalization Surcharge",
 				i18n.ES: "IVA Recargo de Equivalencia",
 			},
 			Retained: false,
 			Defs: []tax.Def{
-				{
-					Code: common.TaxRateVATZero,
-					Name: i18n.String{
-						i18n.EN: "VAT Zero Rate",
-						i18n.ES: "IVA Tipo Exento",
-					},
-					Values: []tax.Value{
-						{
-							Percent: num.MakePercentage(0, 3),
-						},
-					},
-				},
 				{
 					Code: common.TaxRateVATStandard,
 					Name: i18n.String{
@@ -164,11 +152,11 @@ var taxRegion = tax.Region{
 					Values: []tax.Value{
 						{
 							Since:   org.NewDate(2012, 9, 1),
-							Percent: num.MakePercentage(520, 4),
+							Percent: num.MakePercentage(52, 3),
 						},
 						{
 							Since:   org.NewDate(1993, 1, 1),
-							Percent: num.MakePercentage(400, 4),
+							Percent: num.MakePercentage(40, 3),
 						},
 					},
 				},
@@ -181,11 +169,11 @@ var taxRegion = tax.Region{
 					Values: []tax.Value{
 						{
 							Since:   org.NewDate(2012, 9, 1),
-							Percent: num.MakePercentage(140, 4),
+							Percent: num.MakePercentage(14, 3),
 						},
 						{
 							Since:   org.NewDate(1993, 1, 1),
-							Percent: num.MakePercentage(100, 4),
+							Percent: num.MakePercentage(10, 3),
 						},
 					},
 				},
@@ -198,7 +186,7 @@ var taxRegion = tax.Region{
 					Values: []tax.Value{
 						{
 							Since:   org.NewDate(1993, 1, 1),
-							Percent: num.MakePercentage(50, 4),
+							Percent: num.MakePercentage(5, 3),
 						},
 					},
 				},
@@ -211,7 +199,7 @@ var taxRegion = tax.Region{
 					Values: []tax.Value{
 						{
 							Since:   org.NewDate(2007, 1, 1),
-							Percent: num.MakePercentage(75, 4),
+							Percent: num.MakePercentage(175, 4),
 						},
 					},
 				},

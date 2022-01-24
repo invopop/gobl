@@ -55,13 +55,14 @@ func TestEnvelopeValidate(t *testing.T) {
 		want string
 	}{
 		{
-			name: "no head",
+			name: "no head nor version",
 			env:  &gobl.Envelope{},
-			want: "doc: cannot be blank; head: cannot be blank.",
+			want: "doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
 		},
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
+				Version: gobl.VERSION,
 				Head: &gobl.Header{
 					Type:   "foo",
 					Digest: &dsig.Digest{},
@@ -75,6 +76,7 @@ func TestEnvelopeValidate(t *testing.T) {
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
+				Version: gobl.VERSION,
 				Head: &gobl.Header{
 					Type:   "foo",
 					Digest: &dsig.Digest{},

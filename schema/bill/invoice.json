@@ -2,17 +2,177 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "$ref": "#/definitions/bill.Invoice",
   "definitions": {
+    "bill.Charge": {
+      "required": [
+        "i",
+        "amount"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identifying for the discount entry"
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number inside the list of discounts"
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference",
+          "description": "Code to used to refer to the this charge"
+        },
+        "base": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Amount",
+          "title": "Base",
+          "description": "Base represents the value used as a base for rate calculations.\nIf not already provided, we'll take the invoices sum before\ndiscounts."
+        },
+        "rate": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Rate",
+          "description": "Percentage rate to apply to the invoice's Sum"
+        },
+        "amount": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Amount",
+          "description": "Amount to apply"
+        },
+        "taxes": {
+          "items": {
+            "$ref": "#/definitions/tax.Rate"
+          },
+          "type": "array",
+          "title": "Taxes",
+          "description": "List of taxes to apply to the charge"
+        },
+        "code": {
+          "type": "string",
+          "title": "Reason Code",
+          "description": "Code for why was this charge applied?"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "Text description as to why the charge was applied"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional semi-structured information."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Charge represents a surchange applied to the complete document independent from the individual lines."
+    },
     "bill.Delivery": {
       "properties": {
         "receiver": {
           "$ref": "#/definitions/org.Party",
           "title": "Receiver",
           "description": "The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."
+        },
+        "date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Date",
+          "title": "Date",
+          "description": "When the goods should be expected"
+        },
+        "start_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Date",
+          "title": "Start Date",
+          "description": "Start of a n invoicing or delivery period"
+        },
+        "end_date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Date",
+          "title": "End Date",
+          "description": "End of a n invoicing or delivery period"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "description": "Delivery covers the details of the destination for the products described in the invoice body."
+    },
+    "bill.Discount": {
+      "required": [
+        "i",
+        "amount"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID",
+          "description": "Unique identifying for the discount entry"
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number inside the list of discounts"
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference",
+          "description": "Reference or ID for this Discount"
+        },
+        "base": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Amount",
+          "title": "Base",
+          "description": "Base represents the value used as a base for rate calculations.\nIf not already provided, we'll take the invoices sum."
+        },
+        "rate": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Rate",
+          "description": "Percentage rate to apply to the invoice's Sum"
+        },
+        "amount": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Amount",
+          "description": "Amount to apply"
+        },
+        "taxes": {
+          "items": {
+            "$ref": "#/definitions/tax.Rate"
+          },
+          "type": "array",
+          "title": "Taxes",
+          "description": "List of taxes to apply to the discount"
+        },
+        "code": {
+          "type": "string",
+          "title": "Reason Code",
+          "description": "Code for the reason this discount applied"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "Text description as to why the discount was applied"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional semi-structured information."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
     },
     "bill.Invoice": {
       "required": [
@@ -34,6 +194,11 @@
           "title": "Code",
           "description": "Sequential code used to identify this invoice in tax declarations."
         },
+        "series": {
+          "type": "string",
+          "title": "Series",
+          "description": "Used in addition to the Code in some regions."
+        },
         "type_code": {
           "type": "string",
           "title": "Type Code",
@@ -54,9 +219,9 @@
           "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
         },
         "prices_include_tax": {
-          "type": "boolean",
+          "type": "string",
           "title": "Prices Include Tax",
-          "description": "When true, implies that all item prices already include non-retained taxes. This is especially\nuseful for retailers where prices are often displayed including tax."
+          "description": "Implies that all item prices already include the specified tax, especially\nuseful for retailers or B2C companies where prices are often displayed including tax.\n\nWe only only one tax category to be defined as it is overly complex to work-out what the base\nprice should be from multiple rates."
         },
         "preceding": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -102,6 +267,24 @@
           "title": "Lines",
           "description": "List of invoice lines representing each of the items sold to the customer."
         },
+        "discounts": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/bill.Discount"
+          },
+          "type": "array",
+          "title": "Discounts",
+          "description": "Discounts or allowances applied to the complete invoice"
+        },
+        "charges": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/bill.Charge"
+          },
+          "type": "array",
+          "title": "Charges",
+          "description": "Charges or surcharges applied to the complete invoice"
+        },
         "outlays": {
           "items": {
             "$schema": "http://json-schema.org/draft-04/schema#",
@@ -133,7 +316,11 @@
           "title": "Delivery Details"
         },
         "notes": {
-          "type": "string",
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/org.Note"
+          },
+          "type": "array",
           "title": "Notes",
           "description": "Unstructured information that is relevant to the invoice, such as correction details."
         },
@@ -187,11 +374,23 @@
           "title": "Sum",
           "description": "Result of quantity multiplied by the item's price"
         },
-        "discount": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/org.Discount",
-          "title": "Discount",
-          "description": "Discount applied to this line"
+        "discounts": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/bill.LineDiscount"
+          },
+          "type": "array",
+          "title": "Discounts",
+          "description": "Discounts applied to this line"
+        },
+        "charges": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/bill.LineCharge"
+          },
+          "type": "array",
+          "title": "Charges",
+          "description": "Charges applied to this line"
         },
         "taxes": {
           "items": {
@@ -212,6 +411,68 @@
       "type": "object",
       "description": "Line is a single row in an invoice."
     },
+    "bill.LineCharge": {
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "rate": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Rate",
+          "description": "Percentage rate if fixed amount not applied"
+        },
+        "amount": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Amount",
+          "description": "Fixed or resulting charge amount to apply"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Reference code."
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "Text description as to why the charge was applied"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "LineCharge represents an amount added to the line, and will be applied before taxes."
+    },
+    "bill.LineDiscount": {
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "rate": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Rate",
+          "description": "Percentage rate if fixed amount not applied"
+        },
+        "amount": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Value",
+          "description": "Fixed discount amount to apply"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Reason code."
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "Text description as to why the discount was applied"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "LineDiscount represents an amount deducted from the line, and will be applied before taxes."
+    },
     "bill.Ordering": {
       "properties": {
         "seller": {
@@ -228,7 +489,7 @@
       "required": [
         "i",
         "desc",
-        "paid"
+        "amount"
       ],
       "properties": {
         "uuid": {
@@ -241,25 +502,41 @@
           "title": "Index",
           "description": "Outlay number index inside the invoice for ordering."
         },
-        "ref": {
+        "date": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/org.Date",
+          "title": "Date",
+          "description": "When was the outlay made."
+        },
+        "code": {
           "type": "string",
-          "title": "Reference",
-          "description": "A code, invoice number, or other reference detail used to identify the outlay."
+          "title": "Code",
+          "description": "Invoice number or other reference detail used to identify the outlay."
+        },
+        "series": {
+          "type": "string",
+          "title": "Series",
+          "description": "Series of the outlay invoice."
         },
         "desc": {
           "type": "string",
           "title": "Description",
           "description": "Details on what the outlay was."
         },
-        "paid": {
+        "supplier": {
+          "$ref": "#/definitions/org.Party",
+          "title": "Supplier",
+          "description": "Who was the supplier of the outlay"
+        },
+        "amount": {
           "$ref": "#/definitions/num.Amount",
-          "title": "Paid",
+          "title": "Amount",
           "description": "Amount paid by the supplier."
         }
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Outlay represents a expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."
+      "description": "Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."
     },
     "bill.Payment": {
       "properties": {
@@ -311,6 +588,11 @@
           "title": "Code",
           "description": "Identity code fo the previous invoice."
         },
+        "series": {
+          "type": "string",
+          "title": "Series",
+          "description": "Additional identification details"
+        },
         "issue_date": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/org.Date",
@@ -335,8 +617,8 @@
     "bill.Totals": {
       "required": [
         "sum",
-        "discount",
         "total",
+        "total_with_tax",
         "payable"
       ],
       "properties": {
@@ -346,20 +628,38 @@
           "description": "Sum of all line item sums"
         },
         "discount": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
           "title": "Discount",
-          "description": "Sum of all discounts applied to each line"
+          "description": "Sum of all document level discounts"
+        },
+        "charge": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Amount",
+          "title": "Charge",
+          "description": "Sum of all document level charges"
+        },
+        "tax_included": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Amount",
+          "title": "Tax Included",
+          "description": "If prices include tax, this is the total tax included in the price."
         },
         "total": {
           "$ref": "#/definitions/num.Amount",
           "title": "Total",
-          "description": "Sum of all line sums minus the discounts"
+          "description": "Sum of all line sums minus the discounts, plus the charges, without tax."
         },
         "taxes": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/tax.Total",
           "title": "Tax Totals",
-          "description": "Summary of all the taxes with a final sum to add or deduct from the amount payable"
+          "description": "Summary of all the taxes with a final sum to add or deduct from the amount payable."
+        },
+        "total_with_tax": {
+          "$ref": "#/definitions/num.Amount",
+          "title": "Total with Tax",
+          "description": "Grand total after all taxes have been applied."
         },
         "outlays": {
           "$schema": "http://json-schema.org/draft-04/schema#",
@@ -370,19 +670,19 @@
         "payable": {
           "$ref": "#/definitions/num.Amount",
           "title": "Payable",
-          "description": "Total amount to be paid after applying taxes"
+          "description": "Total amount to be paid after applying taxes and outlays."
         },
         "advance": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
           "title": "Advance",
-          "description": "Total amount paid in advance"
+          "description": "Total amount already paid in advance."
         },
         "due": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
           "title": "Due",
-          "description": "How much actually needs to be paid now"
+          "description": "How much actually needs to be paid now."
         }
       },
       "additionalProperties": false,
@@ -392,7 +692,7 @@
     "currency.ExchangeRate": {
       "required": [
         "currency",
-        "value"
+        "amount"
       ],
       "properties": {
         "currency": {
@@ -400,11 +700,11 @@
           "title": "Currency",
           "description": "ISO currency code this rate represents."
         },
-        "value": {
+        "amount": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/num.Amount",
-          "title": "Value",
-          "description": "Rate to apply when converting the document's currency to this one."
+          "title": "Amount",
+          "description": "How much is 1.00 of this currency worth in the documents currency."
         }
       },
       "additionalProperties": false,
@@ -547,36 +847,6 @@
       "description": "Civil date in simplified ISO format, like 2021-05-26",
       "format": "date"
     },
-    "org.Discount": {
-      "required": [
-        "value"
-      ],
-      "properties": {
-        "rate": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/num.Percentage",
-          "title": "Rate"
-        },
-        "value": {
-          "$ref": "#/definitions/num.Amount",
-          "title": "Value",
-          "description": "How much to deduct"
-        },
-        "reason": {
-          "type": "string",
-          "title": "Reason",
-          "description": "Description as to why this discount was applied."
-        },
-        "code": {
-          "type": "string",
-          "title": "Code",
-          "description": "Reason Code"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "Discount represents an amount and/or percentage that can be applied to a given price."
-    },
     "org.Email": {
       "required": [
         "addr"
@@ -628,20 +898,22 @@
           "description": "Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Brief name of the item"
         },
         "desc": {
-          "type": "string"
+          "type": "string",
+          "description": "Detailed description"
         },
         "currency": {
           "type": "string",
           "title": "Currency",
-          "description": "Only required if this line has a different currency from the rest."
+          "description": "Currency used for the item's price."
         },
         "price": {
           "$ref": "#/definitions/num.Amount",
           "title": "Price",
-          "description": "Price of item being sold."
+          "description": "Base price of a single unit to be sold."
         },
         "unit": {
           "type": "string",
@@ -655,7 +927,7 @@
           },
           "type": "array",
           "title": "Codes",
-          "description": "List of additional codes"
+          "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer."
         },
         "origin": {
           "type": "string",
@@ -669,7 +941,8 @@
             }
           },
           "type": "object",
-          "title": "Meta"
+          "title": "Meta",
+          "description": "Additional meta information that may be useful"
         }
       },
       "additionalProperties": false,
@@ -750,6 +1023,26 @@
       "additionalProperties": false,
       "type": "object",
       "description": "Name represents what a human is called."
+    },
+    "org.Note": {
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Code specifying subject of the text"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The contents of the note"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Note represents a free text of additional information that may be added to a document."
     },
     "org.Party": {
       "required": [
@@ -946,17 +1239,17 @@
           "$schema": "http://json-schema.org/draft-04/schema#",
           "$ref": "#/definitions/uuid.UUID",
           "title": "UUID",
-          "description": "Unique identity code"
+          "description": "Unique universal identity code"
         },
         "country": {
           "type": "string",
-          "title": "Country",
-          "description": "ISO country code for Where the tax identity was issued."
+          "title": "Country Code",
+          "description": "ISO country code for Where the tax identity was issued"
         },
         "code": {
           "type": "string",
           "title": "Code",
-          "description": "Identity code."
+          "description": "Identity Code"
         },
         "meta": {
           "patternProperties": {
@@ -1016,15 +1309,26 @@
           "title": "Date",
           "description": "When the advance was made."
         },
-        "code": {
+        "ref": {
           "type": "string",
-          "title": "Code",
-          "description": "Reference for the advance."
+          "title": "Reference",
+          "description": "ID or reference for the advance."
+        },
+        "grant": {
+          "type": "boolean",
+          "title": "Grant",
+          "description": "If this \"advance\" payment has come from a public grant or subsidy, set this to true."
         },
         "desc": {
           "type": "string",
           "title": "Description",
           "description": "Details about the advance."
+        },
+        "rate": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/num.Percentage",
+          "title": "Rate",
+          "description": "How much as a percentage of the total with tax was paid"
         },
         "amount": {
           "$ref": "#/definitions/num.Amount",
@@ -1283,7 +1587,7 @@
         "code",
         "rates",
         "base",
-        "value"
+        "amount"
       ],
       "properties": {
         "code": {
@@ -1306,9 +1610,9 @@
           "$ref": "#/definitions/num.Amount",
           "title": "Base"
         },
-        "value": {
+        "amount": {
           "$ref": "#/definitions/num.Amount",
-          "title": "Value"
+          "title": "Amount"
         }
       },
       "additionalProperties": false,
@@ -1341,7 +1645,7 @@
         "code",
         "base",
         "percent",
-        "value"
+        "amount"
       ],
       "properties": {
         "code": {
@@ -1356,9 +1660,9 @@
           "$ref": "#/definitions/num.Percentage",
           "title": "Percent"
         },
-        "value": {
+        "amount": {
           "$ref": "#/definitions/num.Amount",
-          "title": "Value"
+          "title": "Amount"
         }
       },
       "additionalProperties": false,
@@ -1376,12 +1680,13 @@
             "$ref": "#/definitions/tax.CategoryTotal"
           },
           "type": "array",
-          "title": "Categories"
+          "title": "Categories",
+          "description": "Grouping of all the taxes by their category"
         },
         "sum": {
           "$ref": "#/definitions/num.Amount",
           "title": "Sum",
-          "description": "Total value of all the taxes to be added or retained."
+          "description": "Total value of all the taxes applied."
         }
       },
       "additionalProperties": false,

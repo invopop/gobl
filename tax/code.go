@@ -9,7 +9,7 @@ import (
 // Code represents a string used to uniquely identify the data we're looking
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
-// Codes are standardised so that when validated they must contain between
+// Tax codes are standardised so that when validated they must contain between
 // 2 and 6 inclusive upper-case letters or numbers.
 type Code string
 
@@ -23,4 +23,9 @@ func (c Code) Validate() error {
 		validation.Length(2, 6),
 		validation.Match(codeValidationRegexp),
 	)
+}
+
+// IsEmpty returns true if no code is specified.
+func (c Code) IsEmpty() bool {
+	return c == ""
 }

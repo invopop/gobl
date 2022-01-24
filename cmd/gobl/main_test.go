@@ -75,7 +75,7 @@ func Test_verify(t *testing.T) {
 		{
 			name: "empty envelope",
 			in:   strings.NewReader(`{}`),
-			err:  "doc: cannot be blank; head: cannot be blank.",
+			err:  "doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
 		},
 		{
 			name: "success",

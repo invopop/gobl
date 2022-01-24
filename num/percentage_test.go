@@ -38,7 +38,7 @@ func TestPercentageString(t *testing.T) {
 	if p.String() != "16.00%" {
 		t.Errorf("unexpected string result from percentage, got: %v", p.String())
 	}
-	if p.StringWithoutSymbol() != "0.1600" {
+	if p.StringWithoutSymbol() != "16.00" {
 		t.Errorf("unexpected raw percentage, got: %v", p.StringWithoutSymbol())
 	}
 	p2 := num.MakePercentage(2000, 2000) // silly number
@@ -52,10 +52,10 @@ func TestPercentageString(t *testing.T) {
 }
 
 func TestPercentageOf(t *testing.T) {
-	p := num.MakePercentage(160, 3)
+	p := num.MakePercentage(170, 3)
 	a := num.MakeAmount(10000, 2)
 	r := p.Of(a)
-	if r.String() != "16.00" {
+	if r.String() != "17.00" {
 		t.Errorf("unexpected percentage of result, got: %v", r.String())
 	}
 }

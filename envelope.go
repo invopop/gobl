@@ -14,9 +14,14 @@ import (
 // Envelope wraps around a gobl document and provides support for digest creation
 // and digital signatures.
 type Envelope struct {
-	Head       *Header           `json:"head" jsonschema:"title=Header,description=Details on what the contents are"`
-	Document   *Payload          `json:"doc" jsonschema:"title=Document,description=The data being enveloped"`
-	Signatures []*dsig.Signature `json:"sigs" jsonschema:"title=Signatures,description=JSON Web Signatures of the header"`
+	// The GOBL document version used to generate the envelope
+	Version Version `json:"ver" jsonschema:"title=Version"`
+	// Details on what the contents are
+	Head *Header `json:"head" jsonschema:"title=Header"`
+	// The data inside the envelope
+	Document *Payload `json:"doc" jsonschema:"title=Document,description="`
+	// JSON Web Signatures of the header
+	Signatures []*dsig.Signature `json:"sigs" jsonschema:"title=Signatures"`
 }
 
 // Document defines what we expect from a document to be able to be included in an envelope.
@@ -38,10 +43,12 @@ type Validatable interface {
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
 // `new(Envelope)` call directly.
+//
 // A known region code is required as this will be used for any calculations and
 // validations that need to be performed on the document to be inserted.
 func NewEnvelope(rc region.Code) *Envelope {
 	e := new(Envelope)
+	e.Version = VERSION
 	e.Head = NewHeader(rc)
 	e.Document = new(Payload)
 	e.Signatures = make([]*dsig.Signature, 0)
@@ -59,6 +66,7 @@ func (e *Envelope) Region() region.Region {
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) Validate() error {
 	return validation.ValidateStruct(e,
+		validation.Field(&e.Version, validation.Required),
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required),
 		validation.Field(&e.Signatures, validation.When(e.Head != nil && !e.Head.Draft, validation.Required)),
@@ -90,6 +98,9 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 func (e *Envelope) Insert(doc Document) error {
 	if e.Head == nil {
 		return ErrInternal.WithErrorf("missing head")
+	}
+	if e.Version == "" {
+		e.Version = VERSION
 	}
 
 	// arm doors and cross check

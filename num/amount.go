@@ -16,7 +16,7 @@ import (
 // Use cases are assumed to be within the "human manageable domain", i.e.
 // for dealing with counts, money, rates, short distances, etc.
 // Implementation is inspired by https://github.com/shopspring/decimal, but
-// simplified to account for the expectations of GoBL.
+// simplified to account for the expectations of GOBL.
 type Amount struct {
 	value int64
 	exp   uint32
@@ -41,6 +41,7 @@ func MakeAmount(val int64, exp uint32) Amount {
 // expected to have a fixed number of decimal places, so if your dealing
 // with a string like `"12.000"`, the accuracy will be assumed to be 3
 // decimal places.
+//
 // If you're dealing with numbers from humans which may contain symbols,
 // commas, european style fullstops, underscores, etc. then you should use
 // the `AmountFromHumanString` method.
@@ -155,14 +156,14 @@ func (a Amount) Equals(a2 Amount) bool {
 }
 
 // Rescale will multiply or divide the amount's value to match the
-// provided exponential. This method will not round values, value
-// could be lost during conversion.
+// provided exponential. This method will round values in the case of
+// reducing the exponent.
 func (a Amount) Rescale(exp uint32) Amount {
 	if a.exp > exp {
 		// need to divide
 		e := a.exp - exp
-		v := a.value / intPow(10, e)
-		return Amount{v, exp}
+		v := float64(a.value) / float64(intPow(10, e))
+		return Amount{int64(math.Round(v)), exp}
 	}
 	if a.exp < exp {
 		// need to multiply
@@ -171,6 +172,20 @@ func (a Amount) Rescale(exp uint32) Amount {
 		return Amount{v, exp}
 	}
 	return a
+}
+
+// MatchPrecision will rescale the exponent value of the amount so that it
+// matches the scale of the provided amount, but *only* if it is higher.
+func (a Amount) MatchPrecision(a2 Amount) Amount {
+	if a2.exp > a.exp {
+		return a.Rescale(a2.exp)
+	}
+	return a
+}
+
+// Invert the value.
+func (a Amount) Invert() Amount {
+	return Amount{value: -a.value, exp: a.exp}
 }
 
 // Value provides the amount's value
@@ -198,6 +213,17 @@ func (a Amount) String() string {
 		v2 = -v2
 	}
 	return fmt.Sprintf("%d.%0*d", v1, a.exp, v2)
+}
+
+// MinimalString provides the amount without any tailing 0s or '.'
+// if one is left over.
+func (a Amount) MinimalString() string {
+	s := a.String()
+	if !strings.Contains(s, ".") {
+		return s
+	}
+	s = strings.TrimRight(s, "0")
+	return strings.TrimSuffix(s, ".")
 }
 
 // MarshalText provides the byte value of the amount. See also the

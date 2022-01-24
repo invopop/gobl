@@ -13,8 +13,7 @@ type RateTotal struct {
 	Code    Code           `json:"code" jsonschema:"title=Code"`
 	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
-	Value   num.Amount     `json:"value" jsonschema:"title=Value"`
-	sum     num.Amount     `json:"-"` // used for internal calculations when tax included
+	Amount  num.Amount     `json:"amount" jsonschema:"title=Amount"`
 }
 
 // CategoryTotal groups together all rates inside a given category.
@@ -23,15 +22,17 @@ type CategoryTotal struct {
 	Retained bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
 	Rates    []*RateTotal `json:"rates" jsonschema:"title=Rates"`
 	Base     num.Amount   `json:"base" jsonschema:"title=Base"`
-	Value    num.Amount   `json:"value" jsonschema:"title=Value"`
+	Amount   num.Amount   `json:"amount" jsonschema:"title=Amount"`
 }
 
 // Total contains a set of Category Totals which in turn
 // contain all the accumulated taxes contained in the document. The resulting
 // `sum` is that value that should be added to the payable total.
 type Total struct {
+	// Grouping of all the taxes by their category
 	Categories []*CategoryTotal `json:"categories,omitempty" jsonschema:"title=Categories"`
-	Sum        num.Amount       `json:"sum" jsonschema:"title=Sum,description=Total value of all the taxes to be added or retained."`
+	// Total value of all the taxes applied.
+	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
 }
 
 // TaxableLine defines what we expect from a line in order to subsequently calculate
@@ -55,7 +56,7 @@ func NewCategoryTotal(code Code, retained bool, zero num.Amount) *CategoryTotal 
 	ct.Code = code
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Base = zero
-	ct.Value = zero
+	ct.Amount = zero
 	ct.Retained = retained
 	return ct
 }
@@ -66,99 +67,114 @@ func NewRateTotal(code Code, percent num.Percentage, zero num.Amount) *RateTotal
 	rt.Code = code
 	rt.Percent = percent
 	rt.Base = zero
-	rt.Value = zero
-	rt.sum = zero
+	rt.Amount = zero
 	return rt
 }
 
-// calculate goes through each rate defined inside the category
-func (ct *CategoryTotal) calculate(zero num.Amount) {
-	ct.Base = zero
-	ct.Value = zero
-	for _, rt := range ct.Rates {
-		ct.Base = ct.Base.Add(rt.Base)
-		ct.Value = ct.Value.Add(rt.Value)
+// Category provides the category total for the matching code.
+func (t *Total) Category(code Code) *CategoryTotal {
+	for _, ct := range t.Categories {
+		if ct.Code == code {
+			return ct
+		}
 	}
+	return nil
+}
+
+// Rate grabs the matching rate from the category total, or nil.
+func (ct *CategoryTotal) Rate(code Code) *RateTotal {
+	for _, rt := range ct.Rates {
+		if rt.Code == code {
+			return rt
+		}
+	}
+	return nil
 }
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
-func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded bool, date org.Date, zero num.Amount) error {
+func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, date org.Date, zero num.Amount) error {
 	// NOTE: This method looks more complex than it could be as we're providing
-	// additional logic that will deal with situations whereby taxes are included
-	// in line prices potentially alongside retained taxes. Retained taxes cannot be
-	// included under the "price includes tax" umbrella, so we need to use the base
-	// calculated after removing regular VAT or Sales taxes.
+	// additional logic that will deal with situations whereby a tax is included
+	// in line prices potentially with other taxes.
+	//
 	// A typical use case for this is in Spain whereby regular VAT needs to be applied
 	// alongside IRPF (income tax) which is retained by the client.
+	//
+	// Tax surcharges (another very rare addition) are also not included in prices that
+	// include tax.
+	//
 	// As a general rule, invoice taxes must always be calculated at the last possible
-	// moment to avoid accumulating rounding errors
+	// moment to avoid accumulating rounding errors.
 
-	// Group all the line tax combinations together
-	groups := groupLines(lines, zero)
+	// get a simplified list of lines we can manipulate if needed
+	taxLines := mapTaxLines(lines)
 
-	// For each group, figure out the categories and then bases, first for the regular
-	// taxes, then for the retained taxes so that if taxes are included in prices, we
-	// have a base price that retained taxes can be applied to.
-	for _, g := range groups {
-		base := zero
-		// determine base from non-retained taxes
-		for _, r := range g.rates {
-			ct, rt, err := t.categoryAndRateTotals(reg, r, date, zero)
-			if err != nil {
-				return err
+	// If prices include a tax, perform a pre-loop to update all the line prices with
+	// the price minus the defined tax. To help reduce the risk of rounding errors,
+	// we'll add an extra couple of 0s.
+	if !taxIncluded.IsEmpty() {
+		for _, tl := range taxLines {
+			if rate := tl.rateForCategory(taxIncluded); rate != nil {
+				c, err := reg.comboOn(rate, date)
+				if err != nil {
+					return err
+				}
+				if c.category.Retained {
+					return fmt.Errorf("cannot include retained tax category '%v' in price", taxIncluded)
+				}
+
+				// update the price scale, add two 0s, this will be removed later.
+				tl.price = tl.price.Rescale(tl.price.Exp() + 2)
+				tl.price = tl.price.Subtract(c.value.Percent.From(tl.price))
 			}
-			if ct.Retained {
-				continue
-			}
-			if taxIncluded {
-				rt.sum = rt.sum.Add(g.sum)
-				rt.Value = rt.Percent.From(rt.sum)
-				rt.Base = rt.sum.Subtract(rt.Value)
-			} else {
-				rt.Base = rt.Base.Add(g.sum)
-				rt.Value = rt.Percent.Of(rt.Base)
-			}
-			base = base.Add(rt.Base)
-		}
-		// use base for retained taxes
-		for _, r := range g.rates {
-			ct, rt, err := t.categoryAndRateTotals(reg, r, date, zero)
-			if err != nil {
-				return err
-			}
-			if !ct.Retained {
-				continue
-			}
-			rt.Base = rt.Base.Add(base)
-			rt.Value = rt.Percent.Of(rt.Base)
 		}
 	}
 
+	// Go through each line and add the price to the base of each tax
+	for _, tl := range taxLines {
+		for _, r := range tl.rates {
+			rt, err := t.rateTotalFor(reg, r, date, zero)
+			if err != nil {
+				return err
+			}
+
+			rt.Base = rt.Base.MatchPrecision(tl.price)
+			rt.Base = rt.Base.Add(tl.price)
+		}
+	}
+
+	// Now go through each category to apply the percentage and calculate the final sums
 	t.Sum = zero
 	for _, ct := range t.Categories {
 		ct.calculate(zero)
 		if ct.Retained {
-			t.Sum = t.Sum.Subtract(ct.Value)
-		} else if !taxIncluded {
-			t.Sum = t.Sum.Add(ct.Value)
+			t.Sum = t.Sum.Subtract(ct.Amount)
+		} else {
+			t.Sum = t.Sum.Add(ct.Amount)
 		}
 	}
 
 	return nil
 }
 
-func (t *Total) categoryAndRateTotals(reg *Region, r *Rate, date org.Date, zero num.Amount) (*CategoryTotal, *RateTotal, error) {
-	cat, ok := reg.Category(r.Category)
-	if !ok {
-		return nil, nil, fmt.Errorf("failed to find category, invalid code: %v", r.Category)
+// calculate goes through each rate defined inside the category, ensures
+// the amounts are correct, and adds each to the category base.
+func (ct *CategoryTotal) calculate(zero num.Amount) {
+	ct.Base = zero
+	ct.Amount = zero
+	for _, rt := range ct.Rates {
+		rt.Amount = rt.Percent.Of(rt.Base).Rescale(zero.Exp())
+		rt.Base = rt.Base.Rescale(zero.Exp())
+		ct.Base = ct.Base.Add(rt.Base)
+		ct.Amount = ct.Amount.Add(rt.Amount)
 	}
-	def, ok := cat.Def(r.Code)
-	if !ok {
-		return nil, nil, fmt.Errorf("failed to find rate definition, invalid code: %v", r.Code)
-	}
-	val, ok := def.On(date)
-	if !ok {
-		return nil, nil, fmt.Errorf("tax rate cannot be provided for date")
+}
+
+// rateTotalFor either finds of creates total objects for the category and rate.
+func (t *Total) rateTotalFor(reg *Region, r *Rate, date org.Date, zero num.Amount) (*RateTotal, error) {
+	c, err := reg.comboOn(r, date)
+	if err != nil {
+		return nil, err
 	}
 
 	var catTotal *CategoryTotal
@@ -169,7 +185,7 @@ func (t *Total) categoryAndRateTotals(reg *Region, r *Rate, date org.Date, zero 
 		}
 	}
 	if catTotal == nil {
-		catTotal = NewCategoryTotal(r.Category, cat.Retained, zero)
+		catTotal = NewCategoryTotal(r.Category, c.category.Retained, zero)
 		t.Categories = append(t.Categories, catTotal)
 	}
 
@@ -182,43 +198,35 @@ func (t *Total) categoryAndRateTotals(reg *Region, r *Rate, date org.Date, zero 
 		}
 	}
 	if rateTotal == nil {
-		rateTotal = NewRateTotal(r.Code, val.Percent, zero)
+		rateTotal = NewRateTotal(r.Code, c.value.Percent, zero)
 		catTotal.Rates = append(catTotal.Rates, rateTotal)
 	}
 
-	return catTotal, rateTotal, nil
+	return rateTotal, nil
 }
 
-type lineGroups []*lineGroup
-
-type lineGroup struct {
+// taxLine is used to replace
+type taxLine struct {
+	price num.Amount
 	rates Rates
-	sum   num.Amount
 }
 
-func (lgs lineGroups) find(trs Rates) *lineGroup {
-	// find an existing tax combo
-	for _, lg := range lgs {
-		if lg.rates.Equals(trs) {
-			return lg
+func (tl *taxLine) rateForCategory(code Code) *Rate {
+	for _, r := range tl.rates {
+		if r.Category == code {
+			return r
 		}
 	}
 	return nil
 }
 
-func groupLines(lines []TaxableLine, zero num.Amount) lineGroups {
-	// group all the rates together to form a set of rate
-	// combinations and totals
-	lgs := make(lineGroups, 0)
-	for _, l := range lines {
-		lg := lgs.find(l.GetTaxRates())
-		if lg == nil {
-			lg = new(lineGroup)
-			lg.rates = l.GetTaxRates()
-			lg.sum = zero
-			lgs = append(lgs, lg)
+func mapTaxLines(lines []TaxableLine) []*taxLine {
+	tls := make([]*taxLine, len(lines))
+	for i, v := range lines {
+		tls[i] = &taxLine{
+			price: v.GetTotal(),
+			rates: v.GetTaxRates(),
 		}
-		lg.sum = lg.sum.Add(l.GetTotal())
 	}
-	return lgs
+	return tls
 }

@@ -181,6 +181,15 @@ func TestAmountString(t *testing.T) {
 	}
 }
 
+func TestAmountMinimalString(t *testing.T) {
+	a := num.MakeAmount(123000, 3)
+	assert.Equal(t, "123", a.MinimalString())
+	a = num.MakeAmount(123000, 5)
+	assert.Equal(t, "1.23", a.MinimalString())
+	a = num.MakeAmount(123000, 0)
+	assert.Equal(t, "123000", a.MinimalString())
+}
+
 func TestAmountRescale(t *testing.T) {
 	a := num.MakeAmount(123456, 2)
 	r := a.Rescale(2)
@@ -192,7 +201,7 @@ func TestAmountRescale(t *testing.T) {
 		t.Errorf("unexpected rescale result: %v", r.String())
 	}
 	r = a.Rescale(0)
-	if r.String() != "1234" {
+	if r.String() != "1235" {
 		t.Errorf("unexpected rescale result: %v", r.String())
 	}
 	a = num.MakeAmount(21, 1)
@@ -205,6 +214,31 @@ func TestAmountRescale(t *testing.T) {
 	if r.String() != "5.6000" {
 		t.Errorf("unexpected rescale result, got: %v", r.String())
 	}
+	a = num.MakeAmount(12345678, 4)
+	r = a.Rescale(2)
+	assert.Equal(t, "1234.57", r.String(), "rounded number")
+}
+
+func TestAmountMatchPrecision(t *testing.T) {
+	a := num.MakeAmount(123456, 2)
+	a2 := num.MakeAmount(12345678, 4)
+	a3 := num.MakeAmount(1234, 0)
+	a4 := num.MakeAmount(456789, 2)
+	r := a.MatchPrecision(a2)
+	assert.Equal(t, a2.Exp(), r.Exp(), "expected precision match")
+	r = a.MatchPrecision(a3)
+	assert.Equal(t, a.Exp(), r.Exp(), "expected no precision change")
+	r = a.MatchPrecision(a4)
+	assert.Equal(t, a.Exp(), r.Exp(), "expected no precision change")
+}
+
+func TestAmountInvert(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	a = a.Invert()
+	assert.Equal(t, "-12.34", a.String())
+	a = num.MakeAmount(-1234, 2)
+	a = a.Invert()
+	assert.Equal(t, "12.34", a.String())
 }
 
 func TestAmountUnmarshalJSON(t *testing.T) {

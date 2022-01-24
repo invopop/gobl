@@ -1,4 +1,5 @@
 {
+	"ver": "gobl.org/v0.10.0",
 	"head": {
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"typ": "bill.Invoice",

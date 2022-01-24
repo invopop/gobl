@@ -1,11 +1,12 @@
 {
+	"ver": "gobl.org/v0.10.0",
 	"head": {
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"typ": "bill.Invoice",
 		"rgn": "ES",
 		"dig": {
 			"alg": "sha256",
-			"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+			"val": "a73b16980fa7cd45afd3a29aabf12369384f53766b4b6087c301b9563e3764ae"
 		}
 	},
 	"doc": {
@@ -81,10 +82,6 @@
 					"price": "200.00"
 				},
 				"sum": "4000.00",
-				"discount": {
-					"value": "200.00",
-					"reason": "just because"
-				},
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -95,7 +92,7 @@
 						"code": "STD"
 					}
 				],
-				"total": "3800.00"
+				"total": "4000.00"
 			},
 			{
 				"i": 2,
@@ -144,13 +141,12 @@
 			{
 				"i": 1,
 				"desc": "Something paid for by us",
-				"paid": "200.00"
+				"amount": "0"
 			}
 		],
 		"totals": {
 			"sum": "5187.50",
-			"discount": "200.00",
-			"total": "4987.50",
+			"total": "5187.50",
 			"taxes": {
 				"categories": [
 					{
@@ -158,19 +154,19 @@
 						"rates": [
 							{
 								"code": "STD",
-								"base": "4800.00",
+								"base": "5000.00",
 								"percent": "21.0%",
-								"value": "1008.00"
+								"amount": "1050.00"
 							},
 							{
 								"code": "RED",
 								"base": "172.50",
 								"percent": "10.0%",
-								"value": "17.25"
+								"amount": "17.25"
 							}
 						],
-						"base": "4972.50",
-						"value": "1025.25"
+						"base": "5172.50",
+						"amount": "1067.25"
 					},
 					{
 						"code": "IRPF",
@@ -178,19 +174,20 @@
 						"rates": [
 							{
 								"code": "STD",
-								"base": "3800.00",
+								"base": "4000.00",
 								"percent": "15.0%",
-								"value": "570.00"
+								"amount": "600.00"
 							}
 						],
-						"base": "3800.00",
-						"value": "570.00"
+						"base": "4000.00",
+						"amount": "600.00"
 					}
 				],
-				"sum": "455.25"
+				"sum": "467.25"
 			},
-			"outlays": "200.00",
-			"payable": "5642.75"
+			"total_with_tax": "5654.75",
+			"outlays": "0.00",
+			"payable": "5654.75"
 		},
 		"payment": {
 			"terms": {

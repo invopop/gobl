@@ -12,9 +12,14 @@ type Rates []*Rate
 
 // Rate references the tax category and rate code that should be applied to
 // this line item when calculating the final taxes.
+//
+// Surcharges are very rarely used, but some countries require them to be able
+// to apply an additional tax rate.
 type Rate struct {
-	Category Code `json:"cat" jsonschema:"title=Category Code,description=From the available options for the region."`
-	Code     Code `json:"code" jsonschema:"title=Code,description=As defined for the region and category."`
+	// From the available options for the region.
+	Category Code `json:"cat" jsonschema:"title=Category Code"`
+	// As defined for the region and category.
+	Code Code `json:"code" jsonschema:"title=Code"`
 }
 
 // Validate ensures the Rate contains all the details required.
@@ -56,4 +61,14 @@ func (rs Rates) Equals(rs2 Rates) bool {
 		}
 	}
 	return true
+}
+
+// Get the rate for the given category
+func (rs Rates) Get(category Code) *Rate {
+	for _, v := range rs {
+		if v.Category == category {
+			return v
+		}
+	}
+	return nil
 }

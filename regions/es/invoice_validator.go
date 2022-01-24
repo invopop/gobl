@@ -21,6 +21,12 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
+		// Only commercial and simplified supported at this time for spain.
+		// Rectification state determined by Preceding value.
+		validation.Field(&inv.TypeCode, validation.In(
+			bill.CommercialTypeCode,
+			bill.SimplifiedTypeCode,
+		)),
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
 			inv.TypeCode != bill.SimplifiedTypeCode,
