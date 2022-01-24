@@ -6,7 +6,7 @@ import "strings"
 type Version string
 
 // VERSION is the version of the GOBL library.
-const VERSION Version = "gobl.org/v0.14.0"
+const VERSION Version = "gobl.org/v0.15.0"
 
 // Domain returns the domain portion of the version.
 func (v Version) Domain() string {
