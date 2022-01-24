@@ -14,7 +14,6 @@ type RateTotal struct {
 	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	Amount  num.Amount     `json:"amount" jsonschema:"title=Amount"`
-	sum     num.Amount     `json:"-"` // used for internal calculations when tax included
 }
 
 // CategoryTotal groups together all rates inside a given category.
@@ -69,7 +68,6 @@ func NewRateTotal(code Code, percent num.Percentage, zero num.Amount) *RateTotal
 	rt.Percent = percent
 	rt.Base = zero
 	rt.Amount = zero
-	rt.sum = zero
 	return rt
 }
 
