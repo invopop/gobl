@@ -28,12 +28,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: "0" # make sure we get all commits!
+
       - name: Read current version
         run: |
           grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "gobl.org\//GOBL_VERSION="/' >> $GITHUB_ENV
 
       - name: "Release tag"
-      - uses: actions-ecosystem/action-push-tag@v1
+        uses: actions-ecosystem/action-push-tag@v1
         with:
           tag: ${{ env.GOBL_VERSION }}
 
