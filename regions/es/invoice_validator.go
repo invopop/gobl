@@ -38,8 +38,8 @@ func (v *invoiceValidator) validate() error {
 }
 
 func (v *invoiceValidator) supplier(value interface{}) error {
-	obj, ok := value.(*org.Party)
-	if !ok {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
@@ -48,8 +48,8 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 }
 
 func (v *invoiceValidator) customer(value interface{}) error {
-	obj, ok := value.(*org.Party)
-	if !ok {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
 		return nil
 	}
 	if obj.TaxID == nil || obj.TaxID.Country != l10n.ES {
@@ -61,10 +61,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 }
 
 func (v *invoiceValidator) preceding(value interface{}) error {
-	obj, ok := value.(*bill.Preceding)
-	if !ok {
-		return nil
-	}
+	obj, _ := value.(*bill.Preceding)
 	if obj == nil {
 		return nil
 	}

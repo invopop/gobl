@@ -14,7 +14,7 @@ import (
 type Preceding struct {
 	// Preceding document's UUID if available can be useful for tracing.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Identity code fo the previous invoice.
+	// Identity code of the previous invoice.
 	Code string `json:"code" jsonschema:"title=Code"`
 	// Additional identification details
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
