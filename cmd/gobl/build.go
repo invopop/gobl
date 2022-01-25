@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/divideandconquer/go-merge/merge"
+	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -18,7 +19,9 @@ type buildOpts struct {
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
-	setValues           map[string]interface{}
+	// setValues contains the parsed values from `set`, `setFiles`, and
+	// `setStrings`, ready to be merged into the GOBL document in RunE.
+	setValues map[string]interface{}
 }
 
 func build() *buildOpts {
@@ -101,7 +104,7 @@ func (b *buildOpts) outputFilename(args []string) string {
 }
 
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
-	env, err := readEnv(cmd, args)
+	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
 	}
@@ -120,6 +123,21 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	} else if b.inPlace {
 		return errors.New("cannot overwrite STDIN")
 	}
+	defer input.Close() // nolint:errcheck
+	var intermediate map[string]interface{}
+	if err := yaml.NewDecoder(input).Decode(&intermediate); err != nil {
+		return err
+	}
+	intermediate = merge.Merge(intermediate, b.setValues).(map[string]interface{})
+	encoded, err := json.Marshal(intermediate)
+	if err != nil {
+		return err
+	}
+	env := new(gobl.Envelope)
+	if err := json.Unmarshal(encoded, &env); err != nil {
+		return err
+	}
+
 	if env.Document == nil {
 		return errors.New("no document included")
 	}

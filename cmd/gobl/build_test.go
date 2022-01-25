@@ -189,7 +189,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			err:  "error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			err:  "yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "success",
@@ -315,6 +315,17 @@ func Test_build(t *testing.T) {
 				inPlace: true,
 			},
 			err: "cannot overwrite STDIN",
+		},
+		{
+			name: "merge values",
+			opts: &buildOpts{
+				setValues: map[string]interface{}{
+					"doc": map[string]interface{}{
+						"currency": "MXN",
+					},
+				},
+			},
+			args: []string{"testdata/success.json"},
 		},
 	}
 

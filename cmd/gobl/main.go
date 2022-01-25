@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/signal"
@@ -55,16 +56,19 @@ func inputFilename(args []string) string {
 	return ""
 }
 
-func readEnv(cmd *cobra.Command, args []string) (*gobl.Envelope, error) {
-	input := cmd.InOrStdin()
+func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
 	if inFile := inputFilename(args); inFile != "" {
-		f, err := os.Open(inFile)
-		if err != nil {
-			return nil, err
-		}
-		defer f.Close() // nolint:errcheck
-		input = f
+		return os.Open(inFile)
 	}
+	return ioutil.NopCloser(cmd.InOrStdin()), nil
+}
+
+func readEnv(cmd *cobra.Command, args []string) (*gobl.Envelope, error) {
+	input, err := openInput(cmd, args)
+	if err != nil {
+		return nil, err
+	}
+	defer input.Close() // nolint:errcheck
 	in, err := ioutil.ReadAll(input)
 	if err != nil {
 		return nil, err
