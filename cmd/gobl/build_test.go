@@ -134,6 +134,23 @@ func Test_build_preRun(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "nested key",
+			opts: &buildOpts{
+				set: map[string]string{
+					"one.two.three": "123",
+				},
+			},
+		},
+		{
+			name: "merge",
+			opts: &buildOpts{
+				set: map[string]string{
+					"one.two.three": "123",
+					"one.two.four":  "124",
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {

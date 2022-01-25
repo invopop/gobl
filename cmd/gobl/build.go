@@ -5,7 +5,9 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
+	"strings"
 
+	"github.com/divideandconquer/go-merge/merge"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -26,14 +28,14 @@ func build() *buildOpts {
 func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 	b.setValues = make(map[string]interface{}, len(b.set)+len(b.setFiles)+len(b.setStrings))
 	for k, v := range b.setStrings {
-		b.setValues[k] = v
+		b.setValue(k, v)
 	}
 	for k, v := range b.set {
 		var val interface{}
 		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
 			return err
 		}
-		b.setValues[k] = val
+		b.setValue(k, val)
 	}
 	for k, v := range b.setFiles {
 		content, err := ioutil.ReadFile(v)
@@ -44,9 +46,25 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 		if err := yaml.Unmarshal(content, &val); err != nil {
 			return err
 		}
-		b.setValues[k] = val
+		b.setValue(k, val)
 	}
 	return nil
+}
+
+func (b *buildOpts) setValue(key string, value interface{}) {
+	for {
+		i := strings.LastIndex(key, ".")
+		if i == -1 {
+			break
+		}
+		value = map[string]interface{}{
+			key[i+1:]: value,
+		}
+		key = key[:i]
+	}
+	b.setValues = merge.Merge(b.setValues, map[string]interface{}{
+		key: value,
+	}).(map[string]interface{})
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
