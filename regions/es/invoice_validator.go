@@ -27,6 +27,7 @@ func (v *invoiceValidator) validate() error {
 			bill.CommercialTypeCode,
 			bill.SimplifiedTypeCode,
 		)),
+		validation.Field(&inv.Preceding, validation.By(v.preceding)),
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
 			inv.TypeCode != bill.SimplifiedTypeCode,
@@ -56,5 +57,17 @@ func (v *invoiceValidator) customer(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID, ValidTaxID),
+	)
+}
+
+func (v *invoiceValidator) preceding(value interface{}) error {
+	obj, ok := value.(*bill.Preceding)
+	if !ok {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Period, validation.Required),
+		validation.Field(&obj.Corrections, validation.Required, validation.In(correctionReasonKeys()...)),
+		validation.Field(&obj.CorrectionMethod, validation.Required, validation.In(correctionMethodKeys()...)),
 	)
 }
