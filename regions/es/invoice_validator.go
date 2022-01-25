@@ -65,6 +65,9 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	if !ok {
 		return nil
 	}
+	if obj == nil {
+		return nil
+	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Period, validation.Required),
 		validation.Field(&obj.Corrections, validation.Required, validation.In(correctionReasonKeys()...)),

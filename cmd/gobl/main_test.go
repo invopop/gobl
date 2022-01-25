@@ -251,7 +251,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "calculation: issue date cannot be empty",
+			err: "validation: code: cannot be blank; currency: cannot be blank; issue_date: required; lines: cannot be blank; supplier: cannot be blank.",
 		},
 		{
 			name: "input file",
