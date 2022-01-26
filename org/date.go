@@ -1,10 +1,12 @@
 package org
 
 import (
+	"errors"
 	"time"
 
 	"cloud.google.com/go/civil"
 	"github.com/alecthomas/jsonschema"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Date represents a simple date without time used most frequently
@@ -37,5 +39,62 @@ func (Date) JSONSchemaType() *jsonschema.Type {
 		Format:      "date",
 		Title:       "Date",
 		Description: "Civil date in simplified ISO format, like 2021-05-26",
+	}
+}
+
+type dateValidationRule struct {
+	notZero bool
+	after   *Date
+	before  *Date
+}
+
+// Validate is used to check a dates value.
+func (d *dateValidationRule) Validate(value interface{}) error {
+	in, ok := value.(Date)
+	if !ok {
+		inp, ok := value.(*Date)
+		if !ok {
+			return nil
+		}
+		in = *inp
+	}
+	if d.notZero {
+		if in.IsZero() {
+			return errors.New("required")
+		}
+	}
+	if d.after != nil {
+		if in.DaysSince(d.after.Date) < 0 {
+			return errors.New("too early")
+		}
+	}
+	if d.before != nil {
+		if in.DaysSince(d.before.Date) > 0 {
+			return errors.New("too late")
+		}
+	}
+	return nil
+}
+
+// DateNotZero ensures the date is not a zero value.
+func DateNotZero() validation.Rule {
+	return &dateValidationRule{
+		notZero: true,
+	}
+}
+
+// DateAfter returns a validation rule which checks to ensure the date
+// is *after* the provided date.
+func DateAfter(date Date) validation.Rule {
+	return &dateValidationRule{
+		after: &date,
+	}
+}
+
+// DateBefore is used during validation to ensure the date is before
+// the value passed in.
+func DateBefore(date Date) validation.Rule {
+	return &dateValidationRule{
+		before: &date,
 	}
 }

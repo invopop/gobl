@@ -39,11 +39,12 @@ type Invoice struct {
 	// price should be from multiple rates.
 	PricesIncludeTax tax.Code `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax"`
 
-	// Key information regarding a previous invoice.
-	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Reference"`
+	// Key information regarding a previous invoice and potentially details as to why it
+	// was corrected.
+	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
 	// When the invoice was created.
-	IssueDate *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	IssueDate org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
@@ -75,7 +76,8 @@ type Invoice struct {
 	// it could go.
 	//Attachments Attachments `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 
-	// Unstructured information that is relevant to the invoice, such as correction details.
+	// Unstructured information that is relevant to the invoice, such as correction or additional
+	// legal details.
 	Notes org.Notes `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -134,22 +136,6 @@ type Delivery struct {
 	EndDate *org.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
 }
 
-// Preceding allows for information to be provided about a previous invoice that this one
-// will replace or subtract from. If this is used, the invoice type code will most likely need
-// to be set to `corrected` or `credit-note`.
-type Preceding struct {
-	// Preceding document's UUID if available can be useful for tracing.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Identity code fo the previous invoice.
-	Code string `json:"code" jsonschema:"title=Code"`
-	// Additional identification details
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
-	// When the preceding invoice was issued.
-	IssueDate *org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
-	// Additional semi-structured data that may be useful in specific regions
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
 // Type provides the body type used for mapping.
 func (Invoice) Type() string {
 	return InvoiceType
@@ -162,7 +148,8 @@ func (inv *Invoice) Validate(r region.Region) error {
 		validation.Field(&inv.Code, validation.Required),
 		validation.Field(&inv.TypeCode), // either empty (Commercial) or one of those supported
 		validation.Field(&inv.Currency, validation.Required),
-		validation.Field(&inv.IssueDate, validation.Required),
+		validation.Field(&inv.IssueDate, org.DateNotZero()),
+		validation.Field(&inv.Preceding),
 
 		validation.Field(&inv.Supplier, validation.Required),
 		validation.Field(&inv.Customer),
@@ -184,7 +171,7 @@ func (inv *Invoice) Validate(r region.Region) error {
 func (inv *Invoice) Calculate(r region.Region) error {
 	date := inv.ValueDate
 	if date == nil {
-		date = inv.IssueDate
+		date = &inv.IssueDate
 	}
 	if date == nil {
 		return errors.New("issue date cannot be empty")

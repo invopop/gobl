@@ -19,6 +19,7 @@ type NoteCode string
 const (
 	GoodsNoteCode          NoteCode = "goods"           // Goods Description
 	PaymentNoteCode        NoteCode = "payment"         // Terms of Payment
+	LegalNoteCode          NoteCode = "legal"           // Legal or regulatory information
 	DangerousGoodsNoteCode NoteCode = "dangerous-goods" // Dangerous goods additional information
 	AckNoteCode            NoteCode = "ack"             // Acknowledgement Description
 	RateNoteCode           NoteCode = "rate"            // Rate additional information
@@ -47,6 +48,7 @@ var UNTDID4451NoteCodeMap = map[NoteCode]string{
 	DangerousGoodsNoteCode: "AAC",
 	AckNoteCode:            "AAE",
 	RateNoteCode:           "AAF",
+	LegalNoteCode:          "ABY", // Regulatory information
 	ReasonNoteCode:         "ACD",
 	DisputeNoteCode:        "ACE",
 	CustomerNoteCode:       "CUR",
