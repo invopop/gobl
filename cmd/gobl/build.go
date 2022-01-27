@@ -8,9 +8,10 @@ import (
 	"strings"
 
 	"github.com/divideandconquer/go-merge/merge"
-	"github.com/invopop/gobl"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
+
+	"github.com/invopop/gobl"
 )
 
 type buildOpts struct {
@@ -80,7 +81,7 @@ func (b *buildOpts) cmd() *cobra.Command {
 
 	f := cmd.Flags()
 
-	f.BoolVarP(&b.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists")
+	f.BoolVarP(&b.overwriteOutputFile, "force", "f", false, "force writing output file, even if it exists (only outputs JSON)")
 	f.BoolVarP(&b.inPlace, "in-place", "w", false, "overwrite the input file in place")
 	f.StringToStringVar(&b.set, "set", nil, "set value from the command line")
 	f.StringToStringVar(&b.setFiles, "set-file", nil, "set value from the specified YAML or JSON file")
