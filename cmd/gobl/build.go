@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/divideandconquer/go-merge/merge"
+	"github.com/imdario/mergo"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
@@ -32,14 +32,18 @@ func build() *buildOpts {
 func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 	b.setValues = make(map[string]interface{}, len(b.set)+len(b.setFiles)+len(b.setStrings))
 	for k, v := range b.setStrings {
-		b.setValue(k, v)
+		if err := b.setValue(k, v); err != nil {
+			return err
+		}
 	}
 	for k, v := range b.set {
 		var val interface{}
 		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
 			return err
 		}
-		b.setValue(k, val)
+		if err := b.setValue(k, val); err != nil {
+			return err
+		}
 	}
 	for k, v := range b.setFiles {
 		content, err := ioutil.ReadFile(v)
@@ -50,12 +54,14 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 		if err := yaml.Unmarshal(content, &val); err != nil {
 			return err
 		}
-		b.setValue(k, val)
+		if err := b.setValue(k, val); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (b *buildOpts) setValue(key string, value interface{}) {
+func (b *buildOpts) setValue(key string, value interface{}) error {
 	for {
 		i := strings.LastIndex(key, ".")
 		if i == -1 {
@@ -66,9 +72,9 @@ func (b *buildOpts) setValue(key string, value interface{}) {
 		}
 		key = key[:i]
 	}
-	b.setValues = merge.Merge(b.setValues, map[string]interface{}{
+	return mergo.Merge(&b.setValues, map[string]interface{}{
 		key: value,
-	}).(map[string]interface{})
+	}, mergo.WithOverride)
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
@@ -129,7 +135,9 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	if err := yaml.NewDecoder(input).Decode(&intermediate); err != nil {
 		return err
 	}
-	intermediate = merge.Merge(intermediate, b.setValues).(map[string]interface{})
+	if err := mergo.Merge(&intermediate, b.setValues, mergo.WithOverride); err != nil {
+		return err
+	}
 	encoded, err := json.Marshal(intermediate)
 	if err != nil {
 		return err
