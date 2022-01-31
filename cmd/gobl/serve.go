@@ -87,10 +87,13 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		if ct != "application/json" {
 			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
 		}
-		var env gobl.Envelope
-		if err := c.Bind(&env); err != nil {
+		env := new(gobl.Envelope)
+		if err := c.Bind(env); err != nil {
 			return err
 		}
-		return nil
+		if err := reInsertDoc(env); err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+		return c.JSON(http.StatusOK, env)
 	}
 }

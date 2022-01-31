@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/labstack/echo/v4"
@@ -24,6 +27,36 @@ func Test_serve_build(t *testing.T) {
 				return req
 			}(),
 			err: "code=415, message=Unsupported Media Type",
+		},
+		{
+			name: "invalid json payload",
+			req: func() *http.Request {
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`invalid`))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: `code=400, message=Syntax error: offset=1, error=invalid character 'i' looking for beginning of value, internal=invalid character 'i' looking for beginning of value`,
+		},
+		{
+			name: "missing doc",
+			req: func() *http.Request {
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{}`))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: `code=422, message=no document included`,
+		},
+		{
+			name: "success",
+			req: func() *http.Request {
+				body, err := ioutil.ReadFile("testdata/success.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
 		},
 	}
 
