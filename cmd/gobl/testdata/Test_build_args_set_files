@@ -1,0 +1,10 @@
+(*main.buildOpts)({
+  overwriteOutputFile: (bool) false,
+  inPlace: (bool) false,
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) (len=1) {
+    (string) (len=3) "foo": (string) (len=8) "foo.json"
+  },
+  setStrings: (map[string]string) <nil>,
+  setValues: (map[string]interface {}) <nil>
+})
