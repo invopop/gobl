@@ -9,6 +9,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
+
+	"github.com/invopop/gobl"
 )
 
 const defaultRESTPort = 80
@@ -38,6 +40,9 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	defer cancel()
 
 	e := echo.New()
+
+	e.GET("/", s.version())
+
 	var startErr error
 	go func() {
 		err := e.Start(":" + strconv.Itoa(s.restPort))
@@ -55,4 +60,13 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 	return startErr
+}
+
+func (s *serveOpts) version() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"gobl":    "Welcome",
+			"version": gobl.VERSION,
+		})
+	}
 }
