@@ -13,7 +13,12 @@ import (
 	"github.com/invopop/gobl"
 )
 
-const defaultRESTPort = 80
+const (
+	defaultRESTPort = 80
+
+	// If you customize this server, you should change this.
+	vendorName = "Invopop Ltd."
+)
 
 type serveOpts struct {
 	restPort int
@@ -67,6 +72,9 @@ func (s *serveOpts) version() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"gobl":    "Welcome",
 			"version": gobl.VERSION,
+			"vendor": map[string]interface{}{
+				"name": vendorName,
+			},
 		})
 	}
 }
