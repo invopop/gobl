@@ -44,8 +44,9 @@ func root() *cobra.Command {
 		Args: cobra.MaximumNArgs(1),
 		RunE: verify,
 	})
-	root.AddCommand(buildCmd())
+	root.AddCommand(build().cmd())
 	root.AddCommand(version())
+	root.AddCommand(serve().cmd())
 	return root
 }
 

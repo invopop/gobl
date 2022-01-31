@@ -96,10 +96,6 @@ func (b *buildOpts) cmd() *cobra.Command {
 	return cmd
 }
 
-func buildCmd() *cobra.Command {
-	return build().cmd()
-}
-
 func (b *buildOpts) outputFilename(args []string) string {
 	if b.inPlace {
 		return inputFilename(args)
