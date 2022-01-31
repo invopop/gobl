@@ -14,14 +14,14 @@ import (
 )
 
 const (
-	defaultRESTPort = 80
+	defaultHTTPPort = 80
 
 	// If you customize this server, you should change this.
 	vendorName = "Invopop Ltd."
 )
 
 type serveOpts struct {
-	restPort int
+	httpPort int
 }
 
 func serve() *serveOpts {
@@ -35,7 +35,7 @@ func (s *serveOpts) cmd() *cobra.Command {
 	}
 	f := cmd.Flags()
 
-	f.IntVarP(&s.restPort, "port", "p", defaultRESTPort, "HTTP port to listen for REST requests")
+	f.IntVarP(&s.httpPort, "port", "p", defaultHTTPPort, "HTTP port to listen on")
 
 	return cmd
 }
@@ -50,7 +50,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 
 	var startErr error
 	go func() {
-		err := e.Start(":" + strconv.Itoa(s.restPort))
+		err := e.Start(":" + strconv.Itoa(s.httpPort))
 		if !errors.Is(err, http.ErrServerClosed) {
 			startErr = err
 		}
