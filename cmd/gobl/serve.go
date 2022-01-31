@@ -47,6 +47,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e := echo.New()
 
 	e.GET("/", s.version())
+	e.POST("/build", s.build())
 
 	var startErr error
 	go func() {
@@ -76,5 +77,11 @@ func (s *serveOpts) version() echo.HandlerFunc {
 				"name": vendorName,
 			},
 		})
+	}
+}
+
+func (s *serveOpts) build() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return nil
 	}
 }
