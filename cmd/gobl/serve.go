@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"mime"
 	"net/http"
 	"strconv"
 	"time"
@@ -82,6 +83,14 @@ func (s *serveOpts) version() echo.HandlerFunc {
 
 func (s *serveOpts) build() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
+		if ct != "application/json" {
+			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
+		}
+		var env gobl.Envelope
+		if err := c.Bind(&env); err != nil {
+			return err
+		}
 		return nil
 	}
 }
