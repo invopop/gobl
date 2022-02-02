@@ -161,7 +161,7 @@ func Test_version(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	wantOut := "GOBL version " + string(gobl.VERSION)
+	wantOut := "GOBL version " + string(gobl.VERSION) + "\n"
 	wantErr := ""
 	if sout, _ := ioutil.ReadAll(stdout); string(sout) != wantOut {
 		t.Errorf("Unexpected STDOUT: %s", sout)
