@@ -96,10 +96,6 @@ func (b *buildOpts) cmd() *cobra.Command {
 	return cmd
 }
 
-func buildCmd() *cobra.Command {
-	return build().cmd()
-}
-
 func (b *buildOpts) outputFilename(args []string) string {
 	if b.inPlace {
 		return inputFilename(args)
@@ -147,6 +143,15 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	if err := reInsertDoc(env); err != nil {
+		return err
+	}
+	enc := json.NewEncoder(out)
+	enc.SetIndent("", "\t")
+	return enc.Encode(env)
+}
+
+func reInsertDoc(env *gobl.Envelope) error {
 	if env.Document == nil {
 		return errors.New("no document included")
 	}
@@ -157,7 +162,5 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	if err := env.Insert(doc); err != nil {
 		return err
 	}
-	enc := json.NewEncoder(out)
-	enc.SetIndent("", "\t")
-	return enc.Encode(env)
+	return nil
 }
