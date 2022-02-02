@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/internal/iotools"
 )
 
 type buildOpts struct {
@@ -108,27 +108,6 @@ func (b *buildOpts) outputFilename(args []string) string {
 	return ""
 }
 
-type ctxReader struct {
-	context.Context
-	io.Reader
-}
-
-func (r *ctxReader) Read(p []byte) (int, error) {
-	var c int
-	var err error
-	wait := make(chan struct{}, 1)
-	go func() {
-		c, err = r.Reader.Read(p)
-		close(wait)
-	}()
-	select {
-	case <-r.Context.Done():
-		return 0, r.Context.Err()
-	case <-wait:
-		return c, err
-	}
-}
-
 func cmdContext(cmd *cobra.Command) context.Context {
 	if ctx := cmd.Context(); ctx != nil {
 		return ctx
@@ -158,12 +137,8 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
-	in := &ctxReader{
-		Context: cmdContext(cmd),
-		Reader:  input,
-	}
 	var intermediate map[string]interface{}
-	if err := yaml.NewDecoder(in).Decode(&intermediate); err != nil {
+	if err := yaml.NewDecoder(iotools.CancelableReader(cmdContext(cmd), input)).Decode(&intermediate); err != nil {
 		return err
 	}
 	if err := mergo.Merge(&intermediate, b.setValues, mergo.WithOverride); err != nil {
