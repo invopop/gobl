@@ -50,6 +50,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 
 	e.GET("/", s.version())
 	e.POST("/build", s.build())
+	e.POST("/verify", s.verify())
 
 	var startErr error
 	go func() {
@@ -104,5 +105,22 @@ func (s *serveOpts) build() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 		return c.JSON(http.StatusOK, env)
+	}
+}
+
+func (s *serveOpts) verify() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
+		if ct != "application/json" {
+			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
+		}
+		env := new(gobl.Envelope)
+		if err := c.Bind(env); err != nil {
+			return err
+		}
+		if err := env.Validate(); err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+		return c.JSON(http.StatusOK, map[string]bool{"ok": true})
 	}
 }
