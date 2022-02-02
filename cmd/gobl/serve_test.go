@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -49,7 +50,13 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "success",
 			req: func() *http.Request {
-				body, err := ioutil.ReadFile("testdata/success.json")
+				data, err := ioutil.ReadFile("testdata/success.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, err := json.Marshal(map[string]interface{}{
+					"data": data,
+				})
 				if err != nil {
 					t.Fatal(err)
 				}

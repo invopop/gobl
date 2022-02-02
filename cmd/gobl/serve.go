@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ghodss/yaml"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 
@@ -81,14 +82,22 @@ func (s *serveOpts) version() echo.HandlerFunc {
 	}
 }
 
+type buildRequest struct {
+	Data []byte `json:"data"`
+}
+
 func (s *serveOpts) build() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 		if ct != "application/json" {
 			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
 		}
+		req := new(buildRequest)
+		if err := c.Bind(req); err != nil {
+			return err
+		}
 		env := new(gobl.Envelope)
-		if err := c.Bind(env); err != nil {
+		if err := yaml.Unmarshal(req.Data, env); err != nil {
 			return err
 		}
 		if err := reInsertDoc(env); err != nil {
