@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -12,6 +13,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/internal/iotools"
 )
 
 type buildOpts struct {
@@ -106,6 +108,13 @@ func (b *buildOpts) outputFilename(args []string) string {
 	return ""
 }
 
+func cmdContext(cmd *cobra.Command) context.Context {
+	if ctx := cmd.Context(); ctx != nil {
+		return ctx
+	}
+	return context.Background()
+}
+
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	input, err := openInput(cmd, args)
 	if err != nil {
@@ -127,8 +136,9 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		return errors.New("cannot overwrite STDIN")
 	}
 	defer input.Close() // nolint:errcheck
+
 	var intermediate map[string]interface{}
-	if err := yaml.NewDecoder(input).Decode(&intermediate); err != nil {
+	if err := yaml.NewDecoder(iotools.CancelableReader(cmdContext(cmd), input)).Decode(&intermediate); err != nil {
 		return err
 	}
 	if err := mergo.Merge(&intermediate, b.setValues, mergo.WithOverride); err != nil {

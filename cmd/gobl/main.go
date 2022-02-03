@@ -17,6 +17,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/internal/iotools"
 )
 
 func main() {
@@ -70,7 +71,7 @@ func readEnv(cmd *cobra.Command, args []string) (*gobl.Envelope, error) {
 		return nil, err
 	}
 	defer input.Close() // nolint:errcheck
-	in, err := ioutil.ReadAll(input)
+	in, err := ioutil.ReadAll(iotools.CancelableReader(cmdContext(cmd), input))
 	if err != nil {
 		return nil, err
 	}
