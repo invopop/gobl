@@ -66,4 +66,8 @@ gobl build invoice.yaml \
 gobl build invoice.yaml \
     --set-string doc.foo.baz=1234 \
     --set-string doc.foo.quz=true
+
+# Set the top-level object:
+gobl build invoice.yaml \
+    --set-file .=envelope.yaml
 ```

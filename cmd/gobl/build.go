@@ -64,9 +64,15 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 }
 
 func (b *buildOpts) setValue(key string, value interface{}) error {
+	// If the key starts with '.', we treat that as the root of the
+	// target object
 	if key == "." {
 		return mergo.Merge(&b.setValues, value, mergo.WithOverride)
 	}
+	if len(key) > 1 && key[0] == '.' {
+		key = key[1:]
+	}
+
 	for {
 		i := strings.LastIndex(key, ".")
 		if i == -1 {

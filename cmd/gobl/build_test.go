@@ -157,6 +157,12 @@ func Test_build_preRun(t *testing.T) {
 				setFiles: map[string]string{".": "testdata/exists.json"},
 			},
 		},
+		{
+			name: "blank subkeys",
+			opts: &buildOpts{
+				setFiles: map[string]string{"..": "testdata/exists.json"},
+			},
+		},
 	}
 
 	for _, tt := range tests {
