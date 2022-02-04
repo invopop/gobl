@@ -64,6 +64,9 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 }
 
 func (b *buildOpts) setValue(key string, value interface{}) error {
+	if key == "." {
+		return mergo.Merge(&b.setValues, value, mergo.WithOverride)
+	}
 	for {
 		i := strings.LastIndex(key, ".")
 		if i == -1 {
