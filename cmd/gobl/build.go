@@ -64,6 +64,8 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 }
 
 func (b *buildOpts) setValue(key string, value interface{}) error {
+	key = strings.ReplaceAll(key, `\.`, "\x00")
+
 	// If the key starts with '.', we treat that as the root of the
 	// target object
 	if key == "." {
@@ -79,12 +81,12 @@ func (b *buildOpts) setValue(key string, value interface{}) error {
 			break
 		}
 		value = map[string]interface{}{
-			key[i+1:]: value,
+			strings.ReplaceAll(key[i+1:], "\x00", "."): value,
 		}
 		key = key[:i]
 	}
 	return mergo.Merge(&b.setValues, map[string]interface{}{
-		key: value,
+		strings.ReplaceAll(key, "\x00", "."): value,
 	}, mergo.WithOverride)
 }
 

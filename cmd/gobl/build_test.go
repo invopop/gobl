@@ -158,9 +158,9 @@ func Test_build_preRun(t *testing.T) {
 			},
 		},
 		{
-			name: "blank subkeys",
+			name: "literal period",
 			opts: &buildOpts{
-				setFiles: map[string]string{"..": "testdata/exists.json"},
+				setFiles: map[string]string{`\.`: "testdata/exists.json"},
 			},
 		},
 	}
