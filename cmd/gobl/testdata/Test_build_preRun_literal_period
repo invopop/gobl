@@ -1,0 +1,14 @@
+(*main.buildOpts)({
+  overwriteOutputFile: (bool) false,
+  inPlace: (bool) false,
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) (len=1) {
+    (string) (len=2) "\\.": (string) (len=20) "testdata/exists.json"
+  },
+  setStrings: (map[string]string) <nil>,
+  setValues: (map[string]interface {}) (len=1) {
+    (string) (len=1) ".": (map[string]interface {}) (len=1) {
+      (string) (len=6) "exists": (bool) true
+    }
+  }
+})
