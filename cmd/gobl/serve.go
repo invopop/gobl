@@ -112,6 +112,10 @@ type verifyRequest struct {
 	Data []byte `json:"data"`
 }
 
+type verifyResponse struct {
+	OK bool `json:"ok"`
+}
+
 func (s *serveOpts) verify() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
@@ -129,6 +133,6 @@ func (s *serveOpts) verify() echo.HandlerFunc {
 		if err := env.Validate(); err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
-		return c.JSON(http.StatusOK, map[string]bool{"ok": true})
+		return c.JSON(http.StatusOK, &verifyResponse{OK: true})
 	}
 }
