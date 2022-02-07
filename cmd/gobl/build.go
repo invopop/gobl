@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/imdario/mergo"
@@ -34,12 +35,25 @@ func build() *buildOpts {
 
 func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 	b.setValues = make(map[string]interface{}, len(b.set)+len(b.setFiles)+len(b.setStrings))
-	for k, v := range b.setStrings {
+	keys := make([]string, 0, len(b.setStrings))
+	for k := range b.setStrings {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := b.setStrings[k]
 		if err := b.setValue(k, v); err != nil {
 			return err
 		}
 	}
-	for k, v := range b.set {
+
+	keys = make([]string, 0, len(b.set))
+	for k := range b.set {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := b.set[k]
 		var val interface{}
 		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
 			return err
@@ -48,7 +62,14 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 			return err
 		}
 	}
-	for k, v := range b.setFiles {
+
+	keys = make([]string, 0, len(b.setFiles))
+	for k := range b.setFiles {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := b.setFiles[k]
 		content, err := ioutil.ReadFile(v)
 		if err != nil {
 			return err
