@@ -163,6 +163,16 @@ func Test_build_preRun(t *testing.T) {
 				setFiles: map[string]string{`\.`: "testdata/exists.json"},
 			},
 		},
+		{
+			name: "conflicting versions",
+			opts: &buildOpts{
+				set: map[string]string{
+					"env.ver": `"123"`,
+					"env":     `{"ver":"124"}`,
+				},
+			},
+			err: `schema versions must be identical or omitted ("123" != "124")`,
+		},
 	}
 
 	for _, tt := range tests {

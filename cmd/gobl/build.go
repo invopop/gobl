@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -85,9 +86,38 @@ func (b *buildOpts) setValue(key string, value interface{}) error {
 		}
 		key = key[:i]
 	}
-	return mergo.Merge(&b.setValues, map[string]interface{}{
+	newValues := map[string]interface{}{
 		strings.ReplaceAll(key, "\x00", "."): value,
-	}, mergo.WithOverride)
+	}
+	if err := compareVers(b.setValues, newValues); err != nil {
+		return err
+	}
+	return mergo.Merge(&b.setValues, newValues, mergo.WithOverride)
+}
+
+// compareVers returns an error if the declared schema versions differ
+func compareVers(dstValues, srcValues map[string]interface{}) error {
+	srcVer, srcOK := extractVer(srcValues)
+	if !srcOK {
+		return nil
+	}
+	dstVer, dstOK := extractVer(dstValues)
+	if !dstOK {
+		return nil
+	}
+	if srcVer == dstVer {
+		return nil
+	}
+	return fmt.Errorf("schema versions must be identical or omitted (%q != %q)", srcVer, dstVer)
+}
+
+func extractVer(values map[string]interface{}) (string, bool) {
+	env, ok := values["env"].(map[string]interface{})
+	if !ok {
+		return "", false
+	}
+	ver, ok := env["ver"].(string)
+	return ver, ok
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
