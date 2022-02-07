@@ -99,7 +99,7 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		}
 		env := new(gobl.Envelope)
 		if err := yaml.Unmarshal(req.Data, env); err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 		if err := reInsertDoc(env); err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
@@ -108,15 +108,23 @@ func (s *serveOpts) build() echo.HandlerFunc {
 	}
 }
 
+type verifyRequest struct {
+	Data []byte `json:"data"`
+}
+
 func (s *serveOpts) verify() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 		if ct != "application/json" {
 			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
 		}
-		env := new(gobl.Envelope)
-		if err := c.Bind(env); err != nil {
+		req := new(verifyRequest)
+		if err := c.Bind(req); err != nil {
 			return err
+		}
+		env := new(gobl.Envelope)
+		if err := yaml.Unmarshal(req.Data, env); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 		if err := env.Validate(); err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())

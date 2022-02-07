@@ -65,6 +65,15 @@ func Test_serve_build(t *testing.T) {
 				return req
 			}(),
 		},
+		{
+			name: "invalid data",
+			req: func() *http.Request {
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"bm90IGFuIG9iamVjdAo="}`))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: `code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -128,7 +137,13 @@ func Test_serve_verify(t *testing.T) {
 		{
 			name: "validation pass",
 			req: func() *http.Request {
-				body, err := ioutil.ReadFile("testdata/success.json")
+				data, err := ioutil.ReadFile("testdata/success.json")
+				if err != nil {
+					t.Fatal(err)
+				}
+				body, err := json.Marshal(map[string]interface{}{
+					"data": data,
+				})
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -136,6 +151,15 @@ func Test_serve_verify(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
+		},
+		{
+			name: "invalid data",
+			req: func() *http.Request {
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"bm90IGFuIG9iamVjdAo="}`))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: `code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope`,
 		},
 	}
 
