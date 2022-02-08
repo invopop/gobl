@@ -55,7 +55,7 @@ func Test_serve_build(t *testing.T) {
 					t.Fatal(err)
 				}
 				body, err := json.Marshal(map[string]interface{}{
-					"data": data,
+					"data": json.RawMessage(data),
 				})
 				if err != nil {
 					t.Fatal(err)
@@ -68,7 +68,7 @@ func Test_serve_build(t *testing.T) {
 		{
 			name: "invalid data",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"bm90IGFuIG9iamVjdAo="}`))
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"not an object"}`))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -142,7 +142,7 @@ func Test_serve_verify(t *testing.T) {
 					t.Fatal(err)
 				}
 				body, err := json.Marshal(map[string]interface{}{
-					"data": data,
+					"data": json.RawMessage(data),
 				})
 				if err != nil {
 					t.Fatal(err)
@@ -155,7 +155,7 @@ func Test_serve_verify(t *testing.T) {
 		{
 			name: "invalid data",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"bm90IGFuIG9iamVjdAo="}`))
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":"not an object"}`))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),

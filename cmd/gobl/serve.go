@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"mime"
 	"net/http"
@@ -84,7 +85,7 @@ func (s *serveOpts) version() echo.HandlerFunc {
 }
 
 type buildRequest struct {
-	Data []byte `json:"data"`
+	Data json.RawMessage `json:"data"`
 }
 
 func (s *serveOpts) build() echo.HandlerFunc {
@@ -109,7 +110,7 @@ func (s *serveOpts) build() echo.HandlerFunc {
 }
 
 type verifyRequest struct {
-	Data []byte `json:"data"`
+	Data json.RawMessage `json:"data"`
 }
 
 type verifyResponse struct {
