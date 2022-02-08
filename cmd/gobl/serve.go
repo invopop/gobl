@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"mime"
 	"net/http"
@@ -50,6 +51,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 
 	e.GET("/", s.version())
 	e.POST("/build", s.build())
+	e.POST("/verify", s.verify())
 
 	var startErr error
 	go func() {
@@ -83,7 +85,7 @@ func (s *serveOpts) version() echo.HandlerFunc {
 }
 
 type buildRequest struct {
-	Data []byte `json:"data"`
+	Data json.RawMessage `json:"data"`
 }
 
 func (s *serveOpts) build() echo.HandlerFunc {
@@ -98,11 +100,40 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		}
 		env := new(gobl.Envelope)
 		if err := yaml.Unmarshal(req.Data, env); err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 		if err := reInsertDoc(env); err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 		return c.JSON(http.StatusOK, env)
+	}
+}
+
+type verifyRequest struct {
+	Data json.RawMessage `json:"data"`
+}
+
+type verifyResponse struct {
+	OK bool `json:"ok"`
+}
+
+func (s *serveOpts) verify() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
+		if ct != "application/json" {
+			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
+		}
+		req := new(verifyRequest)
+		if err := c.Bind(req); err != nil {
+			return err
+		}
+		env := new(gobl.Envelope)
+		if err := yaml.Unmarshal(req.Data, env); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+		if err := env.Validate(); err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+		return c.JSON(http.StatusOK, &verifyResponse{OK: true})
 	}
 }
