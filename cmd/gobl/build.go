@@ -128,6 +128,7 @@ func cmdContext(cmd *cobra.Command) context.Context {
 }
 
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
+	ctx := cmdContext(cmd)
 	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
@@ -150,7 +151,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	defer input.Close() // nolint:errcheck
 
 	var intermediate map[string]interface{}
-	if err := yaml.NewDecoder(iotools.CancelableReader(cmdContext(cmd), input)).Decode(&intermediate); err != nil {
+	if err := yaml.NewDecoder(iotools.CancelableReader(ctx, input)).Decode(&intermediate); err != nil {
 		return err
 	}
 	if err := mergo.Merge(&intermediate, b.setValues, mergo.WithOverride); err != nil {
@@ -160,7 +161,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	env, err := internal.Build(cmdContext(cmd), internal.BuildOptions{
+	env, err := internal.Build(ctx, internal.BuildOptions{
 		Data: bytes.NewReader(encoded),
 	})
 	if err != nil {
