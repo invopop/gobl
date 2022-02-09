@@ -147,6 +147,19 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
+	for k, v := range b.setFiles {
+		content, err := ioutil.ReadFile(v)
+		if err != nil {
+			return err
+		}
+		var val interface{}
+		if err := yaml.Unmarshal(content, &val); err != nil {
+			return err
+		}
+		if err := b.setValue(k, val); err != nil {
+			return err
+		}
+	}
 
 	input, err := openInput(cmd, args)
 	if err != nil {
