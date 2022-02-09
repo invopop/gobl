@@ -2,14 +2,14 @@ package internal
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
-	"github.com/ghodss/yaml"
 	"github.com/labstack/echo/v4"
+	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
@@ -23,12 +23,17 @@ type BuildOptions struct {
 
 // Build builds and validates a GOBL document from opts.
 func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
-	body, err := ioutil.ReadAll(iotools.CancelableReader(ctx, opts.Data))
-	if err != nil {
+	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, opts.Data))
+	var intermediate map[string]interface{}
+	if err := dec.Decode(&intermediate); err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	encoded, err := json.Marshal(intermediate)
+	if err != nil {
+		return nil, err
+	}
 	env := new(gobl.Envelope)
-	if err := yaml.Unmarshal(body, env); err != nil {
+	if err := json.Unmarshal(encoded, env); err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	err = reInsertDoc(env)

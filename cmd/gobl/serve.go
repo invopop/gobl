@@ -101,6 +101,9 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		if err := c.Bind(req); err != nil {
 			return err
 		}
+		if len(req.Data) == 0 {
+			return echo.NewHTTPError(http.StatusBadRequest, "no payload")
+		}
 		env, err := internal.Build(ctx, internal.BuildOptions{
 			Data: bytes.NewReader(req.Data),
 		})
