@@ -30,43 +30,6 @@ func build() *buildOpts {
 	return &buildOpts{}
 }
 
-func (b *buildOpts) preRunE(*cobra.Command, []string) error {
-	b.setValues = make(map[string]interface{}, len(b.set)+len(b.setFiles)+len(b.setStrings))
-	for k, v := range b.setStrings {
-		if err := b.setValue(k, v); err != nil {
-			return err
-		}
-	}
-	for k, v := range b.set {
-		var val interface{}
-		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
-			return err
-		}
-		if err := b.setValue(k, val); err != nil {
-			return err
-		}
-	}
-	for k, v := range b.setFiles {
-		content, err := ioutil.ReadFile(v)
-		if err != nil {
-			return err
-		}
-		var val interface{}
-		if err := yaml.Unmarshal(content, &val); err != nil {
-			return err
-		}
-		if err := b.setValue(k, val); err != nil {
-			return err
-		}
-	}
-
-	// Temporary measure, while I duplicate the above logic into RunE
-	b.setStrings = nil
-	b.set = nil
-	b.setFiles = nil
-	return nil
-}
-
 func (b *buildOpts) setValue(key string, value interface{}) error {
 	key = strings.ReplaceAll(key, `\.`, "\x00")
 
@@ -96,10 +59,9 @@ func (b *buildOpts) setValue(key string, value interface{}) error {
 
 func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "build [infile] [outfile]",
-		Args:    cobra.MaximumNArgs(2),
-		PreRunE: b.preRunE,
-		RunE:    b.runE,
+		Use:  "build [infile] [outfile]",
+		Args: cobra.MaximumNArgs(2),
+		RunE: b.runE,
 	}
 
 	f := cmd.Flags()
