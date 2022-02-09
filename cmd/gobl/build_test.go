@@ -199,6 +199,13 @@ func Test_build(t *testing.T) {
 		target string
 	}{
 		{
+			name: "invalid yaml value on command line",
+			opts: &buildOpts{
+				set: map[string]string{"foo": ":"},
+			},
+			err: `yaml: did not find expected key`,
+		},
+		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
 			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",

@@ -132,6 +132,17 @@ func cmdContext(cmd *cobra.Command) context.Context {
 
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	ctx := cmdContext(cmd)
+
+	for k, v := range b.set {
+		var val interface{}
+		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
+			return err
+		}
+		if err := b.setValue(k, val); err != nil {
+			return err
+		}
+	}
+
 	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
