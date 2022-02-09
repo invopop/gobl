@@ -185,6 +185,18 @@ func Test_build_preRun(t *testing.T) {
 }
 
 func Test_build(t *testing.T) {
+	noTotals := func(t *testing.T) io.Reader {
+		t.Helper()
+		f, err := os.Open("testdata/nototals.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = f.Close()
+		})
+		return f
+	}
+
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
 	t.Cleanup(func() {
 		_ = os.RemoveAll(tmpdir)
@@ -212,16 +224,7 @@ func Test_build(t *testing.T) {
 		},
 		{
 			name: "success",
-			in: func() io.Reader {
-				f, err := os.Open("testdata/nototals.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() {
-					_ = f.Close()
-				})
-				return f
-			}(),
+			in:   noTotals(t),
 		},
 		{
 			name: "no document",
