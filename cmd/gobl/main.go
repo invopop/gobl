@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,15 +14,28 @@ import (
 	"syscall"
 
 	"github.com/ghodss/yaml"
+	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/internal/iotools"
 )
 
 func main() {
 	if err := run(); err != nil {
+		echoErr := new(echo.HTTPError)
+		if errors.As(err, &echoErr) {
+			msg := echoErr.Message
+			int := echoErr.Internal
+			switch {
+			case msg != "" && int != nil:
+				err = fmt.Errorf("%v: %w", msg, int)
+			case int != nil:
+				err = int
+			default:
+				err = fmt.Errorf("%v", msg)
+			}
+		}
 		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
@@ -92,17 +106,6 @@ func verify(cmd *cobra.Command, args []string) error {
 	}
 
 	return env.Verify()
-}
-
-func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
-	switch env.Head.Type {
-	case bill.InvoiceType:
-		doc := new(bill.Invoice)
-		err := env.Extract(doc)
-		return doc, err
-	default:
-		return nil, fmt.Errorf("unrecognized document type: %s", env.Head.Type)
-	}
 }
 
 type genericDoc struct {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -12,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cmd/gobl/internal"
 	"github.com/invopop/gobl/internal/iotools"
 )
 
@@ -159,29 +160,14 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(encoded, &env); err != nil {
-		return err
-	}
-
-	if err := reInsertDoc(env); err != nil {
-		return err
-	}
-	enc := json.NewEncoder(out)
-	enc.SetIndent("", "\t")
-	return enc.Encode(env)
-}
-
-func reInsertDoc(env *gobl.Envelope) error {
-	if env.Document == nil {
-		return errors.New("no document included")
-	}
-	doc, err := extractDoc(env)
+	env, err := internal.Build(cmdContext(cmd), internal.BuildOptions{
+		Data: bytes.NewReader(encoded),
+	})
 	if err != nil {
 		return err
 	}
-	if err := env.Insert(doc); err != nil {
-		return err
-	}
-	return nil
+
+	enc := json.NewEncoder(out)
+	enc.SetIndent("", "\t")
+	return enc.Encode(env)
 }

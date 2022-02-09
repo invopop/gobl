@@ -229,7 +229,7 @@ func Test_build(t *testing.T) {
 					}
 				},
 			}`),
-			err: "no document included",
+			err: "code=422, message=no document included",
 		},
 		{
 			name: "invalid type",
@@ -249,7 +249,7 @@ func Test_build(t *testing.T) {
 					"look": "like a duck"
 				}
 			}`),
-			err: "unrecognized document type: duck",
+			err: "code=422, message=unrecognized document type: duck",
 		},
 		{
 			name: "invalid doc",
@@ -265,7 +265,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			err: "json: cannot unmarshal string into Go value of type bill.Invoice",
+			err: "code=422, message=json: cannot unmarshal string into Go value of type bill.Invoice",
 		},
 		{
 			name: "incomplete",
@@ -281,7 +281,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "validation: code: cannot be blank; currency: cannot be blank; issue_date: required; lines: cannot be blank; supplier: cannot be blank.",
+			err: "code=422, message=validation: code: cannot be blank; currency: cannot be blank; issue_date: required; lines: cannot be blank; supplier: cannot be blank.",
 		},
 		{
 			name: "input file",

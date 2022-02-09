@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -14,6 +15,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cmd/gobl/internal"
 )
 
 const (
@@ -90,6 +92,7 @@ type buildRequest struct {
 
 func (s *serveOpts) build() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := c.Request().Context()
 		ct, _, _ := mime.ParseMediaType(c.Request().Header.Get("Content-Type"))
 		if ct != "application/json" {
 			return echo.NewHTTPError(http.StatusUnsupportedMediaType)
@@ -98,12 +101,11 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		if err := c.Bind(req); err != nil {
 			return err
 		}
-		env := new(gobl.Envelope)
-		if err := yaml.Unmarshal(req.Data, env); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-		}
-		if err := reInsertDoc(env); err != nil {
-			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		env, err := internal.Build(ctx, internal.BuildOptions{
+			Data: bytes.NewReader(req.Data),
+		})
+		if err != nil {
+			return err
 		}
 		return c.JSON(http.StatusOK, env)
 	}
