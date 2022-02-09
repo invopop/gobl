@@ -201,7 +201,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			err:  "yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
+			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "success",

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -14,7 +13,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl/cmd/gobl/internal"
-	"github.com/invopop/gobl/internal/iotools"
 )
 
 type buildOpts struct {
@@ -150,19 +148,9 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
-	var intermediate map[string]interface{}
-	if err := yaml.NewDecoder(iotools.CancelableReader(ctx, input)).Decode(&intermediate); err != nil {
-		return err
-	}
-	if err := mergo.Merge(&intermediate, b.setValues, mergo.WithOverride); err != nil {
-		return err
-	}
-	encoded, err := json.Marshal(intermediate)
-	if err != nil {
-		return err
-	}
 	env, err := internal.Build(ctx, internal.BuildOptions{
-		Data: bytes.NewReader(encoded),
+		Data: input,
+		Set:  b.setValues,
 	})
 	if err != nil {
 		return err

@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/imdario/mergo"
 	"github.com/labstack/echo/v4"
 	"gopkg.in/yaml.v3"
 
@@ -19,6 +20,7 @@ import (
 // BuildOptions are the options to pass to the Build function.
 type BuildOptions struct {
 	Data io.Reader
+	Set  map[string]interface{}
 }
 
 // Build builds and validates a GOBL document from opts.
@@ -27,6 +29,9 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	var intermediate map[string]interface{}
 	if err := dec.Decode(&intermediate); err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := mergo.Merge(&intermediate, opts.Set, mergo.WithOverride); err != nil {
+		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
 	encoded, err := json.Marshal(intermediate)
 	if err != nil {
