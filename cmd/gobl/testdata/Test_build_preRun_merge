@@ -1,10 +1,7 @@
 (*main.buildOpts)({
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
-  set: (map[string]string) (len=2) {
-    (string) (len=12) "one.two.four": (string) (len=3) "124",
-    (string) (len=13) "one.two.three": (string) (len=3) "123"
-  },
+  set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   setValues: (map[string]interface {}) (len=1) {

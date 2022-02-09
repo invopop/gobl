@@ -59,6 +59,11 @@ func (b *buildOpts) preRunE(*cobra.Command, []string) error {
 			return err
 		}
 	}
+
+	// Temporary measure, while I duplicate the above logic into RunE
+	b.setStrings = nil
+	b.set = nil
+	b.setFiles = nil
 	return nil
 }
 

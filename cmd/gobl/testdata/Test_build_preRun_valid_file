@@ -2,9 +2,7 @@
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
   set: (map[string]string) <nil>,
-  setFiles: (map[string]string) (len=1) {
-    (string) (len=3) "foo": (string) (len=22) "testdata/supplier.yaml"
-  },
+  setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   setValues: (map[string]interface {}) (len=1) {
     (string) (len=3) "foo": (map[string]interface {}) (len=6) {

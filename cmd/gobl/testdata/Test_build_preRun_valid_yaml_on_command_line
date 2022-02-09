@@ -1,12 +1,7 @@
 (*main.buildOpts)({
   overwriteOutputFile: (bool) false,
   inPlace: (bool) false,
-  set: (map[string]string) (len=4) {
-    (string) (len=5) "array": (string) (len=15) "[one,two,three]",
-    (string) (len=7) "boolean": (string) (len=5) "false",
-    (string) (len=6) "number": (string) (len=3) "123",
-    (string) (len=6) "string": (string) (len=13) "one two three"
-  },
+  set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
   setStrings: (map[string]string) <nil>,
   setValues: (map[string]interface {}) (len=4) {
