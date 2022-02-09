@@ -142,6 +142,11 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
+	for k, v := range b.setStrings {
+		if err := b.setValue(k, v); err != nil {
+			return err
+		}
+	}
 
 	input, err := openInput(cmd, args)
 	if err != nil {
