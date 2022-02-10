@@ -30,13 +30,13 @@ func build() *buildOpts {
 	return &buildOpts{}
 }
 
-func (b *buildOpts) setValue(key string, value interface{}) error {
+func setValue(values *map[string]interface{}, key string, value interface{}) error {
 	key = strings.ReplaceAll(key, `\.`, "\x00")
 
 	// If the key starts with '.', we treat that as the root of the
 	// target object
 	if key == "." {
-		return mergo.Merge(&b.setValues, value, mergo.WithOverride)
+		return mergo.Merge(values, value, mergo.WithOverride)
 	}
 	if len(key) > 1 && key[0] == '.' {
 		key = key[1:]
@@ -52,7 +52,7 @@ func (b *buildOpts) setValue(key string, value interface{}) error {
 		}
 		key = key[:i]
 	}
-	return mergo.Merge(&b.setValues, map[string]interface{}{
+	return mergo.Merge(values, map[string]interface{}{
 		strings.ReplaceAll(key, "\x00", "."): value,
 	}, mergo.WithOverride)
 }
@@ -100,12 +100,12 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
 			return err
 		}
-		if err := b.setValue(k, val); err != nil {
+		if err := setValue(&b.setValues, k, val); err != nil {
 			return err
 		}
 	}
 	for k, v := range b.setStrings {
-		if err := b.setValue(k, v); err != nil {
+		if err := setValue(&b.setValues, k, v); err != nil {
 			return err
 		}
 	}
@@ -118,7 +118,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		if err := yaml.Unmarshal(content, &val); err != nil {
 			return err
 		}
-		if err := b.setValue(k, val); err != nil {
+		if err := setValue(&b.setValues, k, val); err != nil {
 			return err
 		}
 	}
