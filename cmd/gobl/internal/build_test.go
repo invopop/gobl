@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -147,4 +149,58 @@ func Test_parseSets(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestBuild(t *testing.T) {
+	type tt struct {
+		opts BuildOptions
+		err  string
+	}
+
+	tests := testy.NewTable()
+	tests.Add("success", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/nototals.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Data: f,
+			},
+		}
+	})
+	tests.Add("merge YAML", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/nototals.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Data: f,
+				SetYAML: map[string]string{
+					"doc.supplier.name": "Other Company",
+				},
+			},
+		}
+	})
+
+	tests.Run(t, func(t *testing.T, tt tt) {
+		t.Parallel()
+		got, err := Build(context.Background(), tt.opts)
+		if tt.err == "" {
+			assert.Nil(t, err)
+		} else {
+			assert.EqualError(t, err, tt.err)
+		}
+		if err != nil {
+			return
+		}
+		if d := testy.DiffAsJSON(testy.Snapshot(t), got); d != nil {
+			t.Error(d)
+		}
+	})
 }

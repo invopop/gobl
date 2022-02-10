@@ -31,12 +31,20 @@ type BuildOptions struct {
 
 // Build builds and validates a GOBL document from opts.
 func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
+	values, err := parseSets(opts)
+	if err != nil {
+		return nil, err
+	}
+	// Temporary: Allow setting Set in the caller, or here.
+	if err := mergo.Merge(&values, opts.Set, mergo.WithOverride); err != nil {
+		return nil, err
+	}
 	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, opts.Data))
 	var intermediate map[string]interface{}
 	if err := dec.Decode(&intermediate); err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if err := mergo.Merge(&intermediate, opts.Set, mergo.WithOverride); err != nil {
+	if err := mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
 	encoded, err := json.Marshal(intermediate)
@@ -132,6 +140,7 @@ func parseSets(opts BuildOptions) (map[string]interface{}, error) {
 	}
 	return values, nil
 }
+
 func setValue(values *map[string]interface{}, key string, value interface{}) error {
 	key = strings.ReplaceAll(key, `\.`, "\x00")
 
