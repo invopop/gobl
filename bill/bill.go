@@ -1,11 +1,15 @@
 package bill
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/invopop/gobl/schema"
+)
 
 // Standard billing model types that can be incorporated into an
 // envelope.
 const (
-	InvoiceType = "bill.Invoice"
+	InvoiceType schema.Type = "bill/invoice"
 )
 
 // TypeCode defines the "Invoice Type Code" according to a subset of the UNTDID 1001

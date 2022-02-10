@@ -15,9 +15,9 @@ import (
 var testKey = dsig.NewES256Key()
 
 func TestEnvelopePayload(t *testing.T) {
-	m := &note.Message{
-		Content: "This is test content.",
-	}
+	m := note.NewMessage()
+	m.Content = "This is test content."
+
 	e := gobl.NewEnvelope(region.ES)
 	if assert.NotNil(t, e.Head) {
 		assert.NotEmpty(t, e.Head.UUID, "empty header uuid")
@@ -32,10 +32,9 @@ func TestEnvelopePayload(t *testing.T) {
 		return
 	}
 
-	assert.Equal(t, e.Head.Type, "note.Message", "type should match")
 	if assert.NotNil(t, e.Head.Digest) {
 		assert.Equal(t, e.Head.Digest.Algorithm, dsig.DigestSHA256, "unexpected digest algorithm")
-		assert.Equal(t, e.Head.Digest.Value, "2c24a95a0141a3e74c7a910fecda9ed69d67396f4e3000999a9e3acc722208ef", "digest should be the same")
+		assert.Equal(t, e.Head.Digest.Value, "94ba910f5f4baf7caf245c1ba15442272a02162b62321d50967243e51b4e73d9", "digest should be the same")
 	}
 
 	assert.Empty(t, e.Signatures)
@@ -65,33 +64,31 @@ func TestEnvelopeValidate(t *testing.T) {
 		{
 			name: "no head nor version",
 			env:  &gobl.Envelope{},
-			want: "doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
+			want: "$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
 		},
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
-				Version: gobl.VERSION,
+				Def: gobl.EnvelopeType.Def(),
 				Head: &gobl.Header{
-					Type:   "foo",
 					Digest: &dsig.Digest{},
 					Region: "ES",
 					Draft:  true,
 					UUID:   uuid.NewV1(),
 				},
-				Document: &gobl.Payload{},
+				Document: new(gobl.Document),
 			},
 		},
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
-				Version: gobl.VERSION,
+				Def: gobl.EnvelopeType.Def(),
 				Head: &gobl.Header{
-					Type:   "foo",
 					Digest: &dsig.Digest{},
 					Region: "ES",
 					UUID:   uuid.NewV1(),
 				},
-				Document: &gobl.Payload{},
+				Document: new(gobl.Document),
 			},
 			want: "sigs: cannot be blank.",
 		},
