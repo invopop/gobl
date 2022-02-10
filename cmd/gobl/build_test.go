@@ -125,36 +125,6 @@ func Test_build(t *testing.T) {
 			},
 		},
 		{
-			name: "yaml number",
-			in:   noTotals(t),
-			opts: &buildOpts{
-				set: map[string]string{
-					"doc.supplier.name": "1234",
-				},
-			},
-			err: "code=422, message=json: cannot unmarshal number into Go struct field Party.supplier.name of type string",
-		},
-		{
-			name: "yaml boolean",
-			in:   noTotals(t),
-			opts: &buildOpts{
-				set: map[string]string{
-					"doc.supplier.name": "true",
-				},
-			},
-			err: "code=422, message=json: cannot unmarshal bool into Go struct field Party.supplier.name of type string",
-		},
-		{
-			name: "yaml array",
-			in:   noTotals(t),
-			opts: &buildOpts{
-				set: map[string]string{
-					"doc.supplier.name": `["foo","bar","baz"]`,
-				},
-			},
-			err: "code=422, message=json: cannot unmarshal array into Go struct field Party.supplier.name of type string",
-		},
-		{
 			name: "valid string",
 			in:   noTotals(t),
 			opts: &buildOpts{
