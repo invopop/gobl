@@ -4,13 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/imdario/mergo"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl/cmd/gobl/internal"
 )
@@ -92,36 +90,6 @@ func cmdContext(cmd *cobra.Command) context.Context {
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	ctx := cmdContext(cmd)
 
-	var values map[string]interface{}
-
-	for k, v := range b.set {
-		var val interface{}
-		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
-			return err
-		}
-		if err := setValue(&values, k, val); err != nil {
-			return err
-		}
-	}
-	for k, v := range b.setStrings {
-		if err := setValue(&values, k, v); err != nil {
-			return err
-		}
-	}
-	for k, v := range b.setFiles {
-		content, err := ioutil.ReadFile(v)
-		if err != nil {
-			return err
-		}
-		var val interface{}
-		if err := yaml.Unmarshal(content, &val); err != nil {
-			return err
-		}
-		if err := setValue(&values, k, val); err != nil {
-			return err
-		}
-	}
-
 	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
@@ -144,8 +112,10 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	defer input.Close() // nolint:errcheck
 
 	env, err := internal.Build(ctx, internal.BuildOptions{
-		Data: input,
-		Set:  values,
+		Data:      input,
+		SetFile:   b.setFiles,
+		SetYAML:   b.set,
+		SetString: b.setStrings,
 	})
 	if err != nil {
 		return err
