@@ -21,9 +21,6 @@ type buildOpts struct {
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
-	// setValues contains the parsed values from `set`, `setFiles`, and
-	// `setStrings`, ready to be merged into the GOBL document in RunE.
-	setValues map[string]interface{}
 }
 
 func build() *buildOpts {
@@ -95,17 +92,19 @@ func cmdContext(cmd *cobra.Command) context.Context {
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	ctx := cmdContext(cmd)
 
+	var values map[string]interface{}
+
 	for k, v := range b.set {
 		var val interface{}
 		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
 			return err
 		}
-		if err := setValue(&b.setValues, k, val); err != nil {
+		if err := setValue(&values, k, val); err != nil {
 			return err
 		}
 	}
 	for k, v := range b.setStrings {
-		if err := setValue(&b.setValues, k, v); err != nil {
+		if err := setValue(&values, k, v); err != nil {
 			return err
 		}
 	}
@@ -118,7 +117,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 		if err := yaml.Unmarshal(content, &val); err != nil {
 			return err
 		}
-		if err := setValue(&b.setValues, k, val); err != nil {
+		if err := setValue(&values, k, val); err != nil {
 			return err
 		}
 	}
@@ -146,7 +145,7 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 
 	env, err := internal.Build(ctx, internal.BuildOptions{
 		Data: input,
-		Set:  b.setValues,
+		Set:  values,
 	})
 	if err != nil {
 		return err
