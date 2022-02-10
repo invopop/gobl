@@ -26,17 +26,12 @@ type BuildOptions struct {
 	SetYAML   map[string]string
 	SetString map[string]string
 	SetFile   map[string]string
-	Set       map[string]interface{}
 }
 
 // Build builds and validates a GOBL document from opts.
 func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	values, err := parseSets(opts)
 	if err != nil {
-		return nil, err
-	}
-	// Temporary: Allow setting Set in the caller, or here.
-	if err := mergo.Merge(&values, opts.Set, mergo.WithOverride); err != nil {
 		return nil, err
 	}
 	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, opts.Data))
