@@ -1,0 +1,5 @@
+(map[string]interface {}) (len=1) {
+  (string) (len=3) "foo": (map[string]interface {}) (len=1) {
+    (string) (len=3) "bar": (string) (len=3) "baz"
+  }
+}

@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"sort"
+	"strings"
 
 	"github.com/imdario/mergo"
 	"github.com/labstack/echo/v4"
@@ -19,8 +22,11 @@ import (
 
 // BuildOptions are the options to pass to the Build function.
 type BuildOptions struct {
-	Data io.Reader
-	Set  map[string]interface{}
+	Data      io.Reader
+	SetYAML   map[string]string
+	SetString map[string]string
+	SetFile   map[string]string
+	Set       map[string]interface{}
 }
 
 // Build builds and validates a GOBL document from opts.
@@ -71,4 +77,84 @@ func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
 	default:
 		return nil, fmt.Errorf("unrecognized document type: %s", env.Head.Type)
 	}
+}
+
+func parseSets(opts BuildOptions) (map[string]interface{}, error) {
+	values := map[string]interface{}{}
+	keys := make([]string, 0, len(opts.SetYAML))
+	for k := range opts.SetYAML {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := opts.SetYAML[k]
+		var parsed interface{}
+		if err := yaml.Unmarshal([]byte(v), &parsed); err != nil {
+			return nil, err
+		}
+		if err := setValue(&values, k, parsed); err != nil {
+			return nil, err
+		}
+	}
+
+	keys = make([]string, 0, len(opts.SetString))
+	for k := range opts.SetString {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := opts.SetString[k]
+		if err := setValue(&values, k, v); err != nil {
+			return nil, err
+		}
+	}
+
+	keys = make([]string, 0, len(opts.SetFile))
+	for k := range opts.SetFile {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := opts.SetFile[k]
+		f, err := os.Open(v)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close() // nolint:errcheck
+		dec := yaml.NewDecoder(f)
+		var val interface{}
+		if err := dec.Decode(&val); err != nil {
+			return nil, err
+		}
+		if err := setValue(&values, k, val); err != nil {
+			return nil, err
+		}
+	}
+	return values, nil
+}
+func setValue(values *map[string]interface{}, key string, value interface{}) error {
+	key = strings.ReplaceAll(key, `\.`, "\x00")
+
+	// If the key starts with '.', we treat that as the root of the
+	// target object
+	if key == "." {
+		return mergo.Merge(values, value, mergo.WithOverride)
+	}
+	if len(key) > 1 && key[0] == '.' {
+		key = key[1:]
+	}
+
+	for {
+		i := strings.LastIndex(key, ".")
+		if i == -1 {
+			break
+		}
+		value = map[string]interface{}{
+			strings.ReplaceAll(key[i+1:], "\x00", "."): value,
+		}
+		key = key[:i]
+	}
+	return mergo.Merge(values, map[string]interface{}{
+		strings.ReplaceAll(key, "\x00", "."): value,
+	}, mergo.WithOverride)
 }
