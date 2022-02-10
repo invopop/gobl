@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
-	"strings"
 
-	"github.com/imdario/mergo"
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl/cmd/gobl/internal"
@@ -23,33 +21,6 @@ type buildOpts struct {
 
 func build() *buildOpts {
 	return &buildOpts{}
-}
-
-func setValue(values *map[string]interface{}, key string, value interface{}) error {
-	key = strings.ReplaceAll(key, `\.`, "\x00")
-
-	// If the key starts with '.', we treat that as the root of the
-	// target object
-	if key == "." {
-		return mergo.Merge(values, value, mergo.WithOverride)
-	}
-	if len(key) > 1 && key[0] == '.' {
-		key = key[1:]
-	}
-
-	for {
-		i := strings.LastIndex(key, ".")
-		if i == -1 {
-			break
-		}
-		value = map[string]interface{}{
-			strings.ReplaceAll(key[i+1:], "\x00", "."): value,
-		}
-		key = key[:i]
-	}
-	return mergo.Merge(values, map[string]interface{}{
-		strings.ReplaceAll(key, "\x00", "."): value,
-	}, mergo.WithOverride)
 }
 
 func (b *buildOpts) cmd() *cobra.Command {
