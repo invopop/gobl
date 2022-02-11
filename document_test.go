@@ -1,22 +1,25 @@
-package gobl_test
+package gobl
 
 import (
-	"encoding/json"
 	"testing"
 
-	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/schema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestDocument(t *testing.T) {
-	data := []byte(`{"$schema":"https://gobl.org/draft0/note/message","content":"test message"}`)
+	msg := &note.Message{
+		Content: "test message",
+	}
 
-	doc := new(gobl.Document)
-	err := json.Unmarshal(data, doc)
+	doc := new(Document)
+
+	err := doc.insert(msg)
 	require.NoError(t, err)
 
-	typ, err := doc.Type()
-	assert.NoError(t, err)
-	assert.EqualValues(t, "note/message", typ)
+	id := schema.Lookup(&note.Message{})
+	assert.Contains(t, id.String(), "https://gobl.org/")
+	assert.Contains(t, id.String(), "/note#Message")
 }

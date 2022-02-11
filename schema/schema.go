@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -10,12 +9,13 @@ import (
 
 const (
 	// VERSION for the current version of the schema
-	VERSION = "draft0"
+	VERSION    = "draft0"
+	GOBL    ID = "https://gobl.org/" + VERSION
 )
 
 const (
-	// UnknownType is provided when the type cannot be extracted
-	UnknownType Type = ""
+	// UnknownID is provided when the schema has not been registered
+	UnknownID ID = ""
 )
 
 const (
@@ -23,13 +23,8 @@ const (
 	idURLTemplate = "https://gobl.org/%s/%s"
 )
 
-// Type represents an internal name
-type Type string
-
-// Def defines the base to use inside documents that require a schema definition.
-type Def struct {
-	// The GOBL Schema and version used to generate the envelope.
-	Schema ID `json:"$schema" jsonschema:"title=Schema"`
+func init() {
+	schemas = newRegistry()
 }
 
 // ID contains the official schema URL.
@@ -40,47 +35,34 @@ func (id ID) Validate() error {
 	return validation.Validate(string(id), is.URL)
 }
 
-// IsGOBL returns true, if the schema ID looks like it belongs to
-// GOBL.
-func (id ID) IsGOBL() bool {
-	return strings.HasPrefix(string(id), "https://gobl.org/")
+// Anchor either adds or replaces the anchor part of the schema URI.
+func (id ID) Anchor(name string) ID {
+	b := id.Base()
+	return ID(b.String() + "#" + name)
 }
 
-// Version provides the GOBL version or empty string it isn't GOBL
-func (id ID) Version() string {
-	if !id.IsGOBL() {
-		return ""
+// Add appends the provided path to the id, and removes any
+// anchor data that might be there.
+func (id ID) Add(path string) ID {
+	b := id.Base()
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
 	}
-	s := id.split()
-	return s[2]
+	return ID(b.String() + path)
 }
 
-// Type extracts the schema type from the ID.
-func (id ID) Type() Type {
-	if !id.IsGOBL() {
-		return UnknownType
+// Base removes any anchor information from the schema
+func (id ID) Base() ID {
+	s := id.String()
+	i := strings.LastIndex(s, "#")
+	if i != -1 {
+		s = s[0:i]
 	}
-	s := id.split()
-	return Type(s[4])
-}
-
-func (id ID) split() []string {
-	return strings.SplitN(string(id), "/", 5)
-}
-
-func For(typ Type) ID {
-	s := fmt.Sprintf(idURLTemplate, VERSION, string(typ))
+	s = strings.TrimRight(s, "/")
 	return ID(s)
 }
 
-// ID returns the complete schema ID for the provided type
-func (t Type) ID() ID {
-	return For(t)
-}
-
-// Def returns a schema definition model for the type
-func (t Type) Def() Def {
-	return Def{
-		Schema: t.ID(),
-	}
+// String provides string version of ID
+func (id ID) String() string {
+	return string(id)
 }

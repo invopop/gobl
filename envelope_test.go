@@ -34,7 +34,7 @@ func TestEnvelopePayload(t *testing.T) {
 
 	if assert.NotNil(t, e.Head.Digest) {
 		assert.Equal(t, e.Head.Digest.Algorithm, dsig.DigestSHA256, "unexpected digest algorithm")
-		assert.Equal(t, e.Head.Digest.Value, "94ba910f5f4baf7caf245c1ba15442272a02162b62321d50967243e51b4e73d9", "digest should be the same")
+		assert.Equal(t, "795bebe1e78204416d4421d71e80b3936ee3865142f660ae95da036cbb6f65c3", e.Head.Digest.Value, "digest should be the same")
 	}
 
 	assert.Empty(t, e.Signatures)
@@ -69,7 +69,7 @@ func TestEnvelopeValidate(t *testing.T) {
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
-				Def: gobl.EnvelopeType.Def(),
+				Schema: gobl.EnvelopeSchema,
 				Head: &gobl.Header{
 					Digest: &dsig.Digest{},
 					Region: "ES",
@@ -82,7 +82,7 @@ func TestEnvelopeValidate(t *testing.T) {
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
-				Def: gobl.EnvelopeType.Def(),
+				Schema: gobl.EnvelopeSchema,
 				Head: &gobl.Header{
 					Digest: &dsig.Digest{},
 					Region: "ES",

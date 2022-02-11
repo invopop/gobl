@@ -7,15 +7,11 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
-const (
-	// EnvelopeType sets the type of schema expected for envelopes
-	EnvelopeType schema.Type = "envelope"
-)
-
 // Envelope wraps around a gobl document and provides support for digest creation
 // and digital signatures.
 type Envelope struct {
-	schema.Def
+	// Schema identifies the schema that should be used to understand this document
+	Schema schema.ID `json:"$schema" jsonschema:"-"`
 	// Details on what the contents are
 	Head *Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
@@ -23,6 +19,10 @@ type Envelope struct {
 	// JSON Web Signatures of the header
 	Signatures []*dsig.Signature `json:"sigs" jsonschema:"title=Signatures"`
 }
+
+// EnvelopeSchema sets the general definition of the schema ID for this version of the
+// envelope.
+var EnvelopeSchema = schema.GOBL.Add("envelope")
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
@@ -32,7 +32,7 @@ type Envelope struct {
 // validations that need to be performed on the document to be inserted.
 func NewEnvelope(rc region.Code) *Envelope {
 	e := new(Envelope)
-	e.Schema = EnvelopeType.ID()
+	e.Schema = EnvelopeSchema
 	e.Head = NewHeader(rc)
 	e.Document = new(Document)
 	e.Signatures = make([]*dsig.Signature, 0)
@@ -82,9 +82,6 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
 		return ErrInternal.WithErrorf("missing head")
-	}
-	if e.Schema == "" {
-		e.Schema = EnvelopeType.ID()
 	}
 
 	// arm doors and cross check

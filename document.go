@@ -14,7 +14,12 @@ import (
 // Document helps us handle the document's contents by essentially wrapping around
 // the json RawMessage.
 type Document struct {
-	data json.RawMessage
+	Schema schema.ID
+	data   json.RawMessage
+}
+
+type schemaDoc struct {
+	Schema schema.ID `json:"$schema,omitempty"`
 }
 
 // Calculable defines the methods expected of a document payload that contains a `Calculate`
@@ -28,29 +33,27 @@ type Validatable interface {
 	Validate(r region.Region) error
 }
 
-// Type provides the payload documents schema type
-func (p *Document) Type() (schema.Type, error) {
-	def, err := p.Def()
-	if err != nil {
-		return schema.UnknownType, err
-	}
-	return def.Schema.Type(), nil
-}
-
-// Def extracts the schema def from the document
-func (p *Document) Def() (schema.Def, error) {
-	def := schema.Def{}
-	err := json.Unmarshal(p.data, &def)
-	return def, err
-}
-
 func (p *Document) insert(doc interface{}) error {
-	var err error
+	p.Schema = schema.Lookup(doc)
+	if p.Schema == schema.UnknownID {
+		return ErrMarshal.WithErrorf("unregistered schema")
+	}
 
-	p.data, err = json.Marshal(doc)
+	data, err := json.Marshal(doc)
 	if err != nil {
 		return ErrMarshal.WithCause(err)
 	}
+
+	// Combine the base data with the JSON schema information.
+	// We manually create and add the JSON as this is just simply the quickest
+	// way to do it.
+	buf := bytes.NewBufferString(`{"$schema":"` + p.Schema.String() + `",`)
+	_, err = buf.Write(bytes.TrimLeft(data, "{"))
+	if err != nil {
+		return ErrMarshal.WithErrorf("append doc data: %w", err)
+	}
+	p.data = buf.Bytes()
+
 	return nil
 }
 
@@ -69,6 +72,11 @@ func (p *Document) digest() (*dsig.Digest, error) {
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 func (p *Document) UnmarshalJSON(data []byte) error {
+	def := new(schemaDoc)
+	if err := json.Unmarshal(data, def); err != nil {
+		return err
+	}
+	p.Schema = def.Schema
 	p.data = json.RawMessage(data)
 	return nil
 }

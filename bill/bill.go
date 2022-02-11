@@ -6,11 +6,23 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
-// Standard billing model types that can be incorporated into an
-// envelope.
-const (
-	InvoiceType schema.Type = "bill/invoice"
-)
+func init() {
+	objects := []interface{}{
+		LineCharge{}, // charges.go
+		Charges{},
+		Charge{},
+		LineDiscount{}, // discounts.go
+		Discounts{},
+		Discount{},
+		Invoice{}, // invoice.go
+		Lines{},   // line.go
+		Line{},
+		Outlays{}, // outlay.go
+		Outlay{},
+		Preceding{}, // preceding.go
+	}
+	schema.RegisterAllIn(schema.GOBL.Add("bill"), objects)
+}
 
 // TypeCode defines the "Invoice Type Code" according to a subset of the UNTDID 1001
 // standard list.

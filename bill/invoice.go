@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/region"
-	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
@@ -20,8 +19,6 @@ import (
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	schema.Def
-
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Sequential code used to identify this invoice in tax declarations.
@@ -139,18 +136,9 @@ type Delivery struct {
 	EndDate *org.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
 }
 
-// NewInvoice prepares a new invoice instance. This is not required if loading
-// existing data.
-func NewInvoice() *Invoice {
-	inv := new(Invoice)
-	inv.Schema = InvoiceType.ID()
-	return inv
-}
-
 // Validate checks to ensure the invoice is valid and contains all the information we need.
 func (inv *Invoice) Validate(r region.Region) error {
 	err := validation.ValidateStruct(inv,
-		validation.Field(&inv.Schema, validation.Required),
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
 		validation.Field(&inv.TypeCode), // either empty (Commercial) or one of those supported
