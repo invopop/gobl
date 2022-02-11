@@ -17,11 +17,6 @@ type Message struct {
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta Data"`
 }
 
-// NewMessage instantiates a new message with the correct base data.
-func NewMessage() *Message {
-	return new(Message)
-}
-
 // Validate ensures the message contains everything it should.
 func (m *Message) Validate(r region.Region) error {
 	return validation.ValidateStruct(m,

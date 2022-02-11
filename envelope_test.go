@@ -15,7 +15,7 @@ import (
 var testKey = dsig.NewES256Key()
 
 func TestEnvelopePayload(t *testing.T) {
-	m := note.NewMessage()
+	m := new(note.Message)
 	m.Content = "This is test content."
 
 	e := gobl.NewEnvelope(region.ES)
