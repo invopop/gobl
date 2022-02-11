@@ -4,16 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
-	"strings"
 
-	"github.com/imdario/mergo"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 
-	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/iotools"
+	"github.com/invopop/gobl/cmd/gobl/internal"
 )
 
 type buildOpts struct {
@@ -22,80 +17,17 @@ type buildOpts struct {
 	set                 map[string]string
 	setFiles            map[string]string
 	setStrings          map[string]string
-	// setValues contains the parsed values from `set`, `setFiles`, and
-	// `setStrings`, ready to be merged into the GOBL document in RunE.
-	setValues map[string]interface{}
 }
 
 func build() *buildOpts {
 	return &buildOpts{}
 }
 
-func (b *buildOpts) preRunE(*cobra.Command, []string) error {
-	b.setValues = make(map[string]interface{}, len(b.set)+len(b.setFiles)+len(b.setStrings))
-	for k, v := range b.setStrings {
-		if err := b.setValue(k, v); err != nil {
-			return err
-		}
-	}
-	for k, v := range b.set {
-		var val interface{}
-		if err := yaml.Unmarshal([]byte(v), &val); err != nil {
-			return err
-		}
-		if err := b.setValue(k, val); err != nil {
-			return err
-		}
-	}
-	for k, v := range b.setFiles {
-		content, err := ioutil.ReadFile(v)
-		if err != nil {
-			return err
-		}
-		var val interface{}
-		if err := yaml.Unmarshal(content, &val); err != nil {
-			return err
-		}
-		if err := b.setValue(k, val); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (b *buildOpts) setValue(key string, value interface{}) error {
-	key = strings.ReplaceAll(key, `\.`, "\x00")
-
-	// If the key starts with '.', we treat that as the root of the
-	// target object
-	if key == "." {
-		return mergo.Merge(&b.setValues, value, mergo.WithOverride)
-	}
-	if len(key) > 1 && key[0] == '.' {
-		key = key[1:]
-	}
-
-	for {
-		i := strings.LastIndex(key, ".")
-		if i == -1 {
-			break
-		}
-		value = map[string]interface{}{
-			strings.ReplaceAll(key[i+1:], "\x00", "."): value,
-		}
-		key = key[:i]
-	}
-	return mergo.Merge(&b.setValues, map[string]interface{}{
-		strings.ReplaceAll(key, "\x00", "."): value,
-	}, mergo.WithOverride)
-}
-
 func (b *buildOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "build [infile] [outfile]",
-		Args:    cobra.MaximumNArgs(2),
-		PreRunE: b.preRunE,
-		RunE:    b.runE,
+		Use:  "build [infile] [outfile]",
+		Args: cobra.MaximumNArgs(2),
+		RunE: b.runE,
 	}
 
 	f := cmd.Flags()
@@ -127,6 +59,8 @@ func cmdContext(cmd *cobra.Command) context.Context {
 }
 
 func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
+	ctx := cmdContext(cmd)
+
 	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
@@ -148,40 +82,17 @@ func (b *buildOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
-	var intermediate map[string]interface{}
-	if err := yaml.NewDecoder(iotools.CancelableReader(cmdContext(cmd), input)).Decode(&intermediate); err != nil {
-		return err
-	}
-	if err := mergo.Merge(&intermediate, b.setValues, mergo.WithOverride); err != nil {
-		return err
-	}
-	encoded, err := json.Marshal(intermediate)
+	env, err := internal.Build(ctx, internal.BuildOptions{
+		Data:      input,
+		SetFile:   b.setFiles,
+		SetYAML:   b.set,
+		SetString: b.setStrings,
+	})
 	if err != nil {
 		return err
 	}
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(encoded, &env); err != nil {
-		return err
-	}
 
-	if err := reInsertDoc(env); err != nil {
-		return err
-	}
 	enc := json.NewEncoder(out)
 	enc.SetIndent("", "\t")
 	return enc.Encode(env)
-}
-
-func reInsertDoc(env *gobl.Envelope) error {
-	if env.Document == nil {
-		return errors.New("no document included")
-	}
-	doc, err := extractDoc(env)
-	if err != nil {
-		return err
-	}
-	if err := env.Insert(doc); err != nil {
-		return err
-	}
-	return nil
 }

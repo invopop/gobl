@@ -82,109 +82,19 @@ func Test_build_args(t *testing.T) {
 	}
 }
 
-func Test_build_preRun(t *testing.T) {
-	tests := []struct {
-		name string
-		opts *buildOpts
-		err  string
-	}{
-		{
-			name: "invalid yaml value on command line",
-			opts: &buildOpts{
-				set: map[string]string{"foo": ":"},
-			},
-			err: `yaml: did not find expected key`,
-		},
-		{
-			name: "valid yaml on command line",
-			opts: &buildOpts{
-				set: map[string]string{
-					"string":  "one two three",
-					"number":  "123",
-					"boolean": "false",
-					"array":   "[one,two,three]",
-				},
-			},
-		},
-		{
-			name: "valid string",
-			opts: &buildOpts{
-				setStrings: map[string]string{
-					"string":  "one two three",
-					"number":  "123",
-					"boolean": "false",
-					"array":   "[one,two,three]",
-				},
-			},
-		},
-		{
-			name: "missing file",
-			opts: &buildOpts{
-				setFiles: map[string]string{
-					"foo": "missing.yaml",
-				},
-			},
-			err: `open missing.yaml: no such file or directory`,
-		},
-		{
-			name: "valid file",
-			opts: &buildOpts{
-				setFiles: map[string]string{
-					"foo": "testdata/supplier.yaml",
-				},
-			},
-		},
-		{
-			name: "nested key",
-			opts: &buildOpts{
-				set: map[string]string{
-					"one.two.three": "123",
-				},
-			},
-		},
-		{
-			name: "merge",
-			opts: &buildOpts{
-				set: map[string]string{
-					"one.two.three": "123",
-					"one.two.four":  "124",
-				},
-			},
-		},
-		{
-			name: "root key",
-			opts: &buildOpts{
-				setFiles: map[string]string{".": "testdata/exists.json"},
-			},
-		},
-		{
-			name: "literal period",
-			opts: &buildOpts{
-				setFiles: map[string]string{`\.`: "testdata/exists.json"},
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.opts.preRunE(nil, nil)
-			if tt.err == "" {
-				assert.Nil(t, err)
-			} else {
-				assert.EqualError(t, err, tt.err)
-			}
-			if err != nil {
-				return
-			}
-			if d := testy.DiffInterface(testy.Snapshot(t), tt.opts); d != nil {
-				t.Error(d)
-			}
-		})
-	}
-}
-
 func Test_build(t *testing.T) {
+	noTotals := func(t *testing.T) io.Reader {
+		t.Helper()
+		f, err := os.Open("testdata/nototals.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = f.Close()
+		})
+		return f
+	}
+
 	tmpdir := testy.CopyTempDir(t, "testdata", 0)
 	t.Cleanup(func() {
 		_ = os.RemoveAll(tmpdir)
@@ -199,22 +109,56 @@ func Test_build(t *testing.T) {
 		target string
 	}{
 		{
+			name: "invalid yaml value on command line",
+			opts: &buildOpts{
+				set: map[string]string{"foo": ":"},
+			},
+			err: `yaml: did not find expected key`,
+		},
+		{
+			name: "valid yaml on command line",
+			in:   noTotals(t),
+			opts: &buildOpts{
+				set: map[string]string{
+					"doc.supplier.name": "one two three",
+				},
+			},
+		},
+		{
+			name: "valid string",
+			in:   noTotals(t),
+			opts: &buildOpts{
+				setStrings: map[string]string{
+					"doc.supplier.name": "123",
+				},
+			},
+		},
+		{
+			name: "missing file",
+			opts: &buildOpts{
+				setFiles: map[string]string{
+					"foo": "missing.yaml",
+				},
+			},
+			err: `open missing.yaml: no such file or directory`,
+		},
+		{
+			name: "valid file",
+			in:   noTotals(t),
+			opts: &buildOpts{
+				setFiles: map[string]string{
+					"doc.supplier": "testdata/supplier.yaml",
+				},
+			},
+		},
+		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			err:  "yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
+			err:  "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into map[string]interface {}",
 		},
 		{
 			name: "success",
-			in: func() io.Reader {
-				f, err := os.Open("testdata/nototals.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				t.Cleanup(func() {
-					_ = f.Close()
-				})
-				return f
-			}(),
+			in:   noTotals(t),
 		},
 		{
 			name: "no document",
@@ -229,7 +173,7 @@ func Test_build(t *testing.T) {
 					}
 				},
 			}`),
-			err: "no document included",
+			err: "code=422, message=no document included",
 		},
 		{
 			name: "invalid type",
@@ -249,7 +193,7 @@ func Test_build(t *testing.T) {
 					"look": "like a duck"
 				}
 			}`),
-			err: "unrecognized document type: duck",
+			err: "code=422, message=unrecognized document type: duck",
 		},
 		{
 			name: "invalid doc",
@@ -265,7 +209,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			err: "json: cannot unmarshal string into Go value of type bill.Invoice",
+			err: "code=422, message=json: cannot unmarshal string into Go value of type bill.Invoice",
 		},
 		{
 			name: "incomplete",
@@ -281,7 +225,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "validation: code: cannot be blank; currency: cannot be blank; issue_date: required; lines: cannot be blank; supplier: cannot be blank.",
+			err: "code=422, message=validation: code: cannot be blank; currency: cannot be blank; issue_date: required; lines: cannot be blank; supplier: cannot be blank.",
 		},
 		{
 			name: "input file",
@@ -331,11 +275,7 @@ func Test_build(t *testing.T) {
 		{
 			name: "merge values",
 			opts: &buildOpts{
-				setValues: map[string]interface{}{
-					"doc": map[string]interface{}{
-						"currency": "MXN",
-					},
-				},
+				set: map[string]string{"doc.currency": "MXN"},
 			},
 			args: []string{"testdata/success.json"},
 		},

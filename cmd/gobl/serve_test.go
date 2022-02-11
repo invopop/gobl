@@ -39,9 +39,18 @@ func Test_serve_build(t *testing.T) {
 			err: `code=400, message=Syntax error: offset=1, error=invalid character 'i' looking for beginning of value, internal=invalid character 'i' looking for beginning of value`,
 		},
 		{
-			name: "missing doc",
+			name: "missing payload",
 			req: func() *http.Request {
 				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{}`))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: `code=400, message=no payload`,
+		},
+		{
+			name: "missing doc",
+			req: func() *http.Request {
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"data":{}}`))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -72,7 +81,7 @@ func Test_serve_build(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
-			err: `code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope`,
+			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `not an ...` into map[string]interface {}",
 		},
 	}
 
