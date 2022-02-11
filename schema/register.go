@@ -50,6 +50,15 @@ func (r *registry) lookup(obj interface{}) ID {
 	return UnknownID
 }
 
+func (r *registry) typeFor(id ID) reflect.Type {
+	for _, e := range r.entries {
+		if id == e.id {
+			return e.typ
+		}
+	}
+	return nil
+}
+
 func (r *registry) ids() []ID {
 	ids := make([]ID, len(r.entries))
 	for i, e := range r.entries {
@@ -92,6 +101,12 @@ func RegisterAllIn(base ID, objs []interface{}) error {
 	return nil
 }
 
+// Lookup finds the objects schema ID, if set
 func Lookup(obj interface{}) ID {
 	return schemas.lookup(obj)
+}
+
+// Type provides the type from a matching registered schema.
+func Type(id ID) reflect.Type {
+	return schemas.typeFor(id)
 }

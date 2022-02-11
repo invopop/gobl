@@ -1,6 +1,8 @@
 package gobl
 
 import (
+	"reflect"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/region"
@@ -23,6 +25,17 @@ type Envelope struct {
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
 // envelope.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
+
+// Calculable defines the methods expected of a document payload that contains a `Calculate`
+// method to be used to perform any additional calculations.
+type Calculable interface {
+	Calculate(r region.Region) error
+}
+
+// Validatable describes a document that can be validated.
+type Validatable interface {
+	Validate(r region.Region) error
+}
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
@@ -84,20 +97,8 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return ErrInternal.WithErrorf("missing head")
 	}
 
-	// arm doors and cross check
-	r := e.Region()
-	if r == nil {
-		return ErrNoRegion
-	}
-	if obj, ok := doc.(Calculable); ok {
-		if err := obj.Calculate(r); err != nil {
-			return ErrCalculation.WithCause(err)
-		}
-	}
-	if obj, ok := doc.(Validatable); ok {
-		if err := obj.Validate(r); err != nil {
-			return ErrValidation.WithCause(err)
-		}
+	if err := e.complete(doc); err != nil {
+		return err
 	}
 
 	if e.Document == nil {
@@ -113,6 +114,55 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return err
 	}
 
+	return nil
+}
+
+// Complete is used to perform calculations and validations on the envelopes document
+// if it responds to the Calculable and Validatable interfaces. Behind the scenes,
+// this method will determine the document type, extract, calculate, validate,
+// and then re-insert the potentially updated contents.
+func (e *Envelope) Complete() error {
+	if e.Document == nil {
+		return ErrNoDocument
+	}
+	// determine document type
+	typ := schema.Type(e.Document.Schema)
+	if typ == nil {
+		return ErrUnknownSchema
+	}
+
+	obj := reflect.New(typ).Interface()
+	if err := e.Document.extract(obj); err != nil {
+		return err
+	}
+
+	if err := e.complete(obj); err != nil {
+		return err
+	}
+
+	if err := e.Document.insert(obj); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *Envelope) complete(doc interface{}) error {
+	// arm doors and cross check
+	r := e.Region()
+	if r == nil {
+		return ErrNoRegion
+	}
+	if obj, ok := doc.(Calculable); ok {
+		if err := obj.Calculate(r); err != nil {
+			return ErrCalculation.WithCause(err)
+		}
+	}
+	if obj, ok := doc.(Validatable); ok {
+		if err := obj.Validate(r); err != nil {
+			return ErrValidation.WithCause(err)
+		}
+	}
 	return nil
 }
 

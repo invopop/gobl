@@ -1,8 +1,10 @@
 package gobl_test
 
 import (
+	"io/ioutil"
 	"testing"
 
+	"github.com/ghodss/yaml"
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
@@ -10,11 +12,12 @@ import (
 	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var testKey = dsig.NewES256Key()
 
-func TestEnvelopePayload(t *testing.T) {
+func TestEnvelopeDocument(t *testing.T) {
 	m := new(note.Message)
 	m.Content = "This is test content."
 
@@ -53,6 +56,24 @@ func TestEnvelopeExtract(t *testing.T) {
 	inv := new(bill.Invoice)
 	err := e.Extract(inv)
 	assert.ErrorIs(t, err, gobl.ErrNoDocument)
+}
+
+func TestEnvelopeComplete(t *testing.T) {
+	e := new(gobl.Envelope)
+
+	data, err := ioutil.ReadFile("./samples/envelope-invoice-es.yaml")
+	require.NoError(t, err)
+	err = yaml.Unmarshal(data, e)
+	require.NoError(t, err)
+
+	err = e.Complete()
+	require.NoError(t, err)
+
+	inv := new(bill.Invoice)
+	err = e.Extract(inv)
+	require.NoError(t, err)
+
+	assert.Equal(t, "1210.00", inv.Totals.Payable.String())
 }
 
 func TestEnvelopeValidate(t *testing.T) {

@@ -37,6 +37,10 @@ var (
 
 	// ErrInternal is a "catch-all" for errors that are not expected.
 	ErrInternal = NewError("internal")
+
+	// ErrUnknownSchema is provided when we attempt to determine the schema for an object
+	// or from an ID and cannot find a match.
+	ErrUnknownSchema = NewError("unknown-schema")
 )
 
 // NewError provides a new error with a code that is meant to provide

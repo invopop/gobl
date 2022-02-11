@@ -7,7 +7,6 @@ import (
 	"github.com/alecthomas/jsonschema"
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -20,17 +19,6 @@ type Document struct {
 
 type schemaDoc struct {
 	Schema schema.ID `json:"$schema,omitempty"`
-}
-
-// Calculable defines the methods expected of a document payload that contains a `Calculate`
-// method to be used to perform any additional calculations.
-type Calculable interface {
-	Calculate(r region.Region) error
-}
-
-// Validatable describes a document that can be validated.
-type Validatable interface {
-	Validate(r region.Region) error
 }
 
 func (p *Document) insert(doc interface{}) error {
@@ -58,7 +46,10 @@ func (p *Document) insert(doc interface{}) error {
 }
 
 func (p *Document) extract(doc interface{}) error {
-	return json.Unmarshal(p.data, doc)
+	if err := json.Unmarshal(p.data, doc); err != nil {
+		return ErrMarshal.WithCause(err)
+	}
+	return nil
 }
 
 func (p *Document) digest() (*dsig.Digest, error) {
