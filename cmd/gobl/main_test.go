@@ -64,7 +64,7 @@ func Test_verify(t *testing.T) {
 		{
 			name: "invalid stdin",
 			in:   strings.NewReader("this isn't JSON"),
-			err:  "error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
+			err:  "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 		{
 			name: "read error",
@@ -74,7 +74,7 @@ func Test_verify(t *testing.T) {
 		{
 			name: "empty envelope",
 			in:   strings.NewReader(`{}`),
-			err:  "doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
+			err:  "code=422, message=doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
 		},
 		{
 			name: "success",

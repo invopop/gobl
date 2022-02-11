@@ -168,7 +168,7 @@ func Test_serve_verify(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
-			err: `code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope`,
+			err: "code=400, message=error unmarshaling JSON: json: cannot unmarshal string into Go value of type gobl.Envelope",
 		},
 	}
 
