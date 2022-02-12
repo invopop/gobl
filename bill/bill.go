@@ -8,18 +8,18 @@ import (
 
 func init() {
 	objects := []interface{}{
-		LineCharge{}, // charges.go
-		Charges{},
 		Charge{},
-		LineDiscount{}, // discounts.go
-		Discounts{},
+		Charges{},
 		Discount{},
-		Invoice{}, // invoice.go
-		Lines{},   // line.go
+		Discounts{},
+		Invoice{},
 		Line{},
-		Outlays{}, // outlay.go
+		LineCharge{},
+		LineDiscount{},
+		Lines{},
 		Outlay{},
-		Preceding{}, // preceding.go
+		Outlays{},
+		Preceding{},
 	}
 	schema.RegisterAllIn(schema.GOBL.Add("bill"), objects)
 }

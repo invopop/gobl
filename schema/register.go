@@ -77,28 +77,26 @@ func baseTypeOf(obj interface{}) reflect.Type {
 }
 
 // Register
-func Register(id ID, obj interface{}) error {
-	return schemas.add(id, obj)
+func Register(id ID, obj interface{}) {
+	if err := schemas.add(id, obj); err != nil {
+		panic(err)
+	}
 }
 
 // RegisterIn will determine the anchor and add it to the base schema before
 // adding to the global registry.
-func RegisterIn(base ID, obj interface{}) error {
+func RegisterIn(base ID, obj interface{}) {
 	if err := schemas.addWithAnchor(base, obj); err != nil {
-		return err
+		panic(err)
 	}
-	return nil
 }
 
 // RegisterAllIn takes the base schema ID and adds all the provided objects as
 // anchored entries in the base.
-func RegisterAllIn(base ID, objs []interface{}) error {
+func RegisterAllIn(base ID, objs []interface{}) {
 	for _, obj := range objs {
-		if err := RegisterIn(base, obj); err != nil {
-			return err
-		}
+		RegisterIn(base, obj)
 	}
-	return nil
 }
 
 // Lookup finds the objects schema ID, if set

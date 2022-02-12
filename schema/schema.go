@@ -18,11 +18,6 @@ const (
 	UnknownID ID = ""
 )
 
-const (
-	// idURLTemplate defines the base for how GOBL Schema definitions should be named.
-	idURLTemplate = "https://gobl.org/%s/%s"
-)
-
 func init() {
 	schemas = newRegistry()
 }
