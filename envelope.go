@@ -5,7 +5,6 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -29,35 +28,24 @@ var EnvelopeSchema = schema.GOBL.Add("envelope")
 // Calculable defines the methods expected of a document payload that contains a `Calculate`
 // method to be used to perform any additional calculations.
 type Calculable interface {
-	Calculate(r region.Region) error
+	Calculate() error
 }
 
 // Validatable describes a document that can be validated.
 type Validatable interface {
-	Validate(r region.Region) error
+	Validate() error
 }
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
 // `new(Envelope)` call directly.
-//
-// A known region code is required as this will be used for any calculations and
-// validations that need to be performed on the document to be inserted.
-func NewEnvelope(rc region.Code) *Envelope {
+func NewEnvelope() *Envelope {
 	e := new(Envelope)
 	e.Schema = EnvelopeSchema
-	e.Head = NewHeader(rc)
+	e.Head = NewHeader()
 	e.Document = new(Document)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
-}
-
-// Region extracts the region from the header and provides a complete region object.
-func (e *Envelope) Region() region.Region {
-	if e.Head == nil || e.Head.Region == "" {
-		return nil
-	}
-	return Regions().For(e.Head.Region)
 }
 
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
@@ -149,17 +137,13 @@ func (e *Envelope) Complete() error {
 
 func (e *Envelope) complete(doc interface{}) error {
 	// arm doors and cross check
-	r := e.Region()
-	if r == nil {
-		return ErrNoRegion
-	}
 	if obj, ok := doc.(Calculable); ok {
-		if err := obj.Calculate(r); err != nil {
+		if err := obj.Calculate(); err != nil {
 			return ErrCalculation.WithCause(err)
 		}
 	}
 	if obj, ok := doc.(Validatable); ok {
-		if err := obj.Validate(r); err != nil {
+		if err := obj.Validate(); err != nil {
 			return ErrValidation.WithCause(err)
 		}
 	}

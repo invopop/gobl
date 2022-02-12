@@ -4,7 +4,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -13,9 +12,6 @@ import (
 type Header struct {
 	// Unique UUIDv1 identifier for the envelope.
 	UUID uuid.UUID `json:"uuid" jsonschema:"title=UUID"`
-
-	// Code for the region the document should be validated with.
-	Region region.Code `json:"rgn" jsonschema:"title=Region"`
 
 	// Digest of the canonical JSON body.
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest"`
@@ -37,10 +33,9 @@ type Header struct {
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.
-func NewHeader(rc region.Code) *Header {
+func NewHeader() *Header {
 	h := new(Header)
 	h.UUID = uuid.NewV1()
-	h.Region = rc
 	h.Meta = make(org.Meta)
 	return h
 }
@@ -58,7 +53,6 @@ type Stamp struct {
 func (h *Header) Validate() error {
 	return validation.ValidateStruct(h,
 		validation.Field(&h.UUID, validation.Required, uuid.IsV1),
-		validation.Field(&h.Region, validation.Required),
 		validation.Field(&h.Digest, validation.Required),
 	)
 }

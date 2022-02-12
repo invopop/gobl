@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,14 +20,11 @@ func TestEnvelopeDocument(t *testing.T) {
 	m := new(note.Message)
 	m.Content = "This is test content."
 
-	e := gobl.NewEnvelope(region.ES)
+	e := gobl.NewEnvelope()
 	if assert.NotNil(t, e.Head) {
 		assert.NotEmpty(t, e.Head.UUID, "empty header uuid")
 	}
 	assert.NotNil(t, e.Document)
-	if assert.NotNil(t, e.Region()) {
-		assert.Equal(t, region.ES, e.Region().Code())
-	}
 
 	if err := e.Insert(m); err != nil {
 		t.Errorf("failed to insert payload: %v", err)
@@ -93,7 +89,6 @@ func TestEnvelopeValidate(t *testing.T) {
 				Schema: gobl.EnvelopeSchema,
 				Head: &gobl.Header{
 					Digest: &dsig.Digest{},
-					Region: "ES",
 					Draft:  true,
 					UUID:   uuid.NewV1(),
 				},
@@ -106,7 +101,6 @@ func TestEnvelopeValidate(t *testing.T) {
 				Schema: gobl.EnvelopeSchema,
 				Head: &gobl.Header{
 					Digest: &dsig.Digest{},
-					Region: "ES",
 					UUID:   uuid.NewV1(),
 				},
 				Document: new(gobl.Document),
