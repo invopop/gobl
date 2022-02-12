@@ -9,8 +9,9 @@ import (
 
 const (
 	// VERSION for the current version of the schema
-	VERSION    = "draft0"
-	GOBL    ID = "https://gobl.org/" + VERSION
+	VERSION = "draft0"
+	// GOBL stores the base schema ID for GOBL, including current schema version.
+	GOBL ID = "https://gobl.org/" + VERSION
 )
 
 const (

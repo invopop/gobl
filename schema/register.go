@@ -76,7 +76,9 @@ func baseTypeOf(obj interface{}) reflect.Type {
 	return typ
 }
 
-// Register
+// Register adds a new link between a schema ID and object to the global schema
+// registry. This should be called for all GOBL models that will be included
+// inside schema documents or included in an envelope document payload.
 func Register(id ID, obj interface{}) {
 	if err := schemas.add(id, obj); err != nil {
 		panic(err)
