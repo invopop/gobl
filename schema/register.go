@@ -110,3 +110,12 @@ func Lookup(obj interface{}) ID {
 func Type(id ID) reflect.Type {
 	return schemas.typeFor(id)
 }
+
+// List of known schema IDs. Mainly used for debugging.
+func List() []ID {
+	l := make([]ID, len(schemas.entries))
+	for i, e := range schemas.entries {
+		l[i] = e.id
+	}
+	return l
+}

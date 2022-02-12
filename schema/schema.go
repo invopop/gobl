@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"reflect"
 	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -61,4 +62,14 @@ func (id ID) Base() ID {
 // String provides string version of ID
 func (id ID) String() string {
 	return string(id)
+}
+
+// Interface attempts to determine the type by looking up the ID in the
+// registered list of schemas, and providing an empty instance.
+func (id ID) Interface() interface{} {
+	typ := Type(id)
+	if typ == nil {
+		return nil
+	}
+	return reflect.New(typ).Interface()
 }

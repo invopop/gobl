@@ -6,8 +6,7 @@ import (
 	"github.com/invopop/gobl/regions/gb"
 )
 
-// Init is used to ensure all the regions have been prepared
-func Init() {
+func init() {
 	region.Register(es.New())
 	region.Register(gb.New())
 	// region.Register(nl.New()) // pending
