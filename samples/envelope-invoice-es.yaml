@@ -1,0 +1,36 @@
+doc:
+  $schema: "https://gobl.org/draft0/bill#Invoice"
+  region: "ES"
+  currency: "EUR"
+  issue_date: "2022-02-01"
+  code: "SAMPLE-001"
+
+  supplier:
+    tax_id:
+      country: "ES"
+      code: "B98602642" # random
+    name: "Provide One S.L."
+    emails:
+      - addr: "billing@example.com"
+    addresses:
+      - num: "42"
+        street: "Calle Pradillo"
+        locality: "Madrid"
+        region: "Madrid"
+        code: "28002"
+        country: "ES"
+
+  customer:
+    tax_id:
+      country: "ES"
+      code: "54387763P"
+    name: "Sample Consumer"
+
+  lines:
+    - quantity: 10
+      item:
+        name: "Item being purchased"
+        price: "100.00"
+      taxes:
+        - cat: "VAT"
+          code: "STD"

@@ -1,6 +1,9 @@
 package note
 
-// Standard types provided by the note package.
-const (
-	MessageType = "note.Message"
+import (
+	"github.com/invopop/gobl/schema"
 )
+
+func init() {
+	schema.RegisterIn(schema.GOBL.Add("note"), &Message{})
+}

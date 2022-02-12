@@ -25,10 +25,10 @@ var i18nStringUsed = false
 // Schema generates the JSON Schema from the base models
 func Schema() error {
 	types := map[string]interface{}{
-		"schema/envelope.json":     &gobl.Envelope{},
-		"schema/bill/invoice.json": &bill.Invoice{},
-		"schema/tax/region.json":   &tax.Region{},
-		"schema/note/message.json": &note.Message{},
+		"build/schema/envelope.json":     &gobl.Envelope{},
+		"build/schema/bill/invoice.json": &bill.Invoice{},
+		"build/schema/tax/region.json":   &tax.Region{},
+		"build/schema/note/message.json": &note.Message{},
 	}
 	ref := new(jsonschema.Reflector)
 	// ref.FullyQualifyTypeNames = true

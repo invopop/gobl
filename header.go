@@ -4,7 +4,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -13,12 +12,6 @@ import (
 type Header struct {
 	// Unique UUIDv1 identifier for the envelope.
 	UUID uuid.UUID `json:"uuid" jsonschema:"title=UUID"`
-
-	// Body type of the document contents.
-	Type string `json:"typ" jsonschema:"title=Type"`
-
-	// Code for the region the document should be validated with.
-	Region region.Code `json:"rgn" jsonschema:"title=Region"`
 
 	// Digest of the canonical JSON body.
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest"`
@@ -40,10 +33,9 @@ type Header struct {
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.
-func NewHeader(rc region.Code) *Header {
+func NewHeader() *Header {
 	h := new(Header)
 	h.UUID = uuid.NewV1()
-	h.Region = rc
 	h.Meta = make(org.Meta)
 	return h
 }
@@ -51,16 +43,16 @@ func NewHeader(rc region.Code) *Header {
 // Stamp defines an official seal of approval from a third party like a governmental agency
 // or intermediary and should thus be included in any official envelopes.
 type Stamp struct {
-	Provider string `json:"prv" jsonschema:"title=Provider,description=Identity of the agency used to create the stamp"`
-	Value    string `json:"val" jsonschema:"title=Value,description=The serialized stamp value generated for or by the external agency"`
+	// Identity of the agency used to create the stamp
+	Provider string `json:"prv" jsonschema:"title=Provider"`
+	// The serialized stamp value generated for or by the external agency
+	Value string `json:"val" jsonschema:"title=Value"`
 }
 
 // Validate checks that the header contains the basic information we need to function.
 func (h *Header) Validate() error {
 	return validation.ValidateStruct(h,
 		validation.Field(&h.UUID, validation.Required, uuid.IsV1),
-		validation.Field(&h.Type, validation.Required),
-		validation.Field(&h.Region, validation.Required),
 		validation.Field(&h.Digest, validation.Required),
 	)
 }

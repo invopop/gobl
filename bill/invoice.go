@@ -21,6 +21,10 @@ import (
 type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+
+	// Code for the region the invoice should be validated with.
+	Region region.Code `json:"region" jsonschema:"title=Region"`
+
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
 	// Used in addition to the Code in some regions.
@@ -136,15 +140,11 @@ type Delivery struct {
 	EndDate *org.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
 }
 
-// Type provides the body type used for mapping.
-func (Invoice) Type() string {
-	return InvoiceType
-}
-
 // Validate checks to ensure the invoice is valid and contains all the information we need.
-func (inv *Invoice) Validate(r region.Region) error {
+func (inv *Invoice) Validate() error {
 	err := validation.ValidateStruct(inv,
 		validation.Field(&inv.UUID),
+		validation.Field(&inv.Region, validation.Required),
 		validation.Field(&inv.Code, validation.Required),
 		validation.Field(&inv.TypeCode), // either empty (Commercial) or one of those supported
 		validation.Field(&inv.Currency, validation.Required),
@@ -161,6 +161,7 @@ func (inv *Invoice) Validate(r region.Region) error {
 		validation.Field(&inv.Totals, validation.Required),
 	)
 	if err == nil {
+		r := region.For(inv.Region)
 		err = r.Validate(inv)
 	}
 	return err
@@ -168,7 +169,11 @@ func (inv *Invoice) Validate(r region.Region) error {
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
-func (inv *Invoice) Calculate(r region.Region) error {
+func (inv *Invoice) Calculate() error {
+	r := region.For(inv.Region)
+	if r == nil {
+		return errors.New("region is missing")
+	}
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate

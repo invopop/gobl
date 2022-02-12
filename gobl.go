@@ -1,15 +1,9 @@
 package gobl
 
+// import all the dependencies to ensure all init() methods are called.
 import (
-	"github.com/invopop/gobl/region"
-	"github.com/invopop/gobl/regions/es"
+	_ "github.com/invopop/gobl/bill"
+	_ "github.com/invopop/gobl/note"
+	_ "github.com/invopop/gobl/org"
+	_ "github.com/invopop/gobl/regions"
 )
-
-var regions = region.NewCollection(
-	es.New(), // Spain
-)
-
-// Regions provides a region collection containing all the known region definitions.
-func Regions() *region.Collection {
-	return regions
-}

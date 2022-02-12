@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/regions/es"
 	"github.com/invopop/gobl/tax"
@@ -29,7 +27,7 @@ func (tl *taxableLine) GetTotal() num.Amount {
 }
 
 func TestTotalCalculate(t *testing.T) {
-	spain := gobl.Regions().For(region.ES)
+	spain := es.New()
 	date := org.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {

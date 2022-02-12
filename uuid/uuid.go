@@ -49,6 +49,15 @@ func Parse(s string) (UUID, error) {
 	return UUID{id}, err
 }
 
+// MustParse will panic if the UUID does not look good.
+func MustParse(s string) UUID {
+	id, err := Parse(s)
+	if err != nil {
+		panic(err.Error())
+	}
+	return id
+}
+
 // SetRandomNodeID is used to generate a random host ID to be used in V1 UUIDs
 // instead of the MAC address. This is stored in the uuid library as a global
 // constant, so should be called just once when starting the application if you're

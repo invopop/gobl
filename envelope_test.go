@@ -1,41 +1,39 @@
 package gobl_test
 
 import (
+	"io/ioutil"
 	"testing"
 
+	"github.com/ghodss/yaml"
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/region"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var testKey = dsig.NewES256Key()
 
-func TestEnvelopePayload(t *testing.T) {
-	m := &note.Message{
-		Content: "This is test content.",
-	}
-	e := gobl.NewEnvelope(region.ES)
+func TestEnvelopeDocument(t *testing.T) {
+	m := new(note.Message)
+	m.Content = "This is test content."
+
+	e := gobl.NewEnvelope()
 	if assert.NotNil(t, e.Head) {
 		assert.NotEmpty(t, e.Head.UUID, "empty header uuid")
 	}
 	assert.NotNil(t, e.Document)
-	if assert.NotNil(t, e.Region()) {
-		assert.Equal(t, region.ES, e.Region().Code())
-	}
 
 	if err := e.Insert(m); err != nil {
 		t.Errorf("failed to insert payload: %v", err)
 		return
 	}
 
-	assert.Equal(t, e.Head.Type, "note.Message", "type should match")
 	if assert.NotNil(t, e.Head.Digest) {
 		assert.Equal(t, e.Head.Digest.Algorithm, dsig.DigestSHA256, "unexpected digest algorithm")
-		assert.Equal(t, e.Head.Digest.Value, "2c24a95a0141a3e74c7a910fecda9ed69d67396f4e3000999a9e3acc722208ef", "digest should be the same")
+		assert.Equal(t, "795bebe1e78204416d4421d71e80b3936ee3865142f660ae95da036cbb6f65c3", e.Head.Digest.Value, "digest should be the same")
 	}
 
 	assert.Empty(t, e.Signatures)
@@ -56,6 +54,24 @@ func TestEnvelopeExtract(t *testing.T) {
 	assert.ErrorIs(t, err, gobl.ErrNoDocument)
 }
 
+func TestEnvelopeComplete(t *testing.T) {
+	e := new(gobl.Envelope)
+
+	data, err := ioutil.ReadFile("./samples/envelope-invoice-es.yaml")
+	require.NoError(t, err)
+	err = yaml.Unmarshal(data, e)
+	require.NoError(t, err)
+
+	err = e.Complete()
+	require.NoError(t, err)
+
+	inv := new(bill.Invoice)
+	err = e.Extract(inv)
+	require.NoError(t, err)
+
+	assert.Equal(t, "1210.00", inv.Totals.Payable.String())
+}
+
 func TestEnvelopeValidate(t *testing.T) {
 	tests := []struct {
 		name string
@@ -65,33 +81,29 @@ func TestEnvelopeValidate(t *testing.T) {
 		{
 			name: "no head nor version",
 			env:  &gobl.Envelope{},
-			want: "doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
+			want: "$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
 		},
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
-				Version: gobl.VERSION,
+				Schema: gobl.EnvelopeSchema,
 				Head: &gobl.Header{
-					Type:   "foo",
 					Digest: &dsig.Digest{},
-					Region: "ES",
 					Draft:  true,
 					UUID:   uuid.NewV1(),
 				},
-				Document: &gobl.Payload{},
+				Document: new(gobl.Document),
 			},
 		},
 		{
 			name: "missing sig, draft",
 			env: &gobl.Envelope{
-				Version: gobl.VERSION,
+				Schema: gobl.EnvelopeSchema,
 				Head: &gobl.Header{
-					Type:   "foo",
 					Digest: &dsig.Digest{},
-					Region: "ES",
 					UUID:   uuid.NewV1(),
 				},
-				Document: &gobl.Payload{},
+				Document: new(gobl.Document),
 			},
 			want: "sigs: cannot be blank.",
 		},

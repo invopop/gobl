@@ -31,23 +31,25 @@ type Region interface {
 	Validate(obj interface{}) error
 }
 
-// Collection holds a set of regions.
-type Collection struct {
+var regions = newCollection()
+
+// collection holds a set of regions.
+type collection struct {
 	regions map[Code]Region
 }
 
-// NewCollection expects an array of regions, from which
-func NewCollection(regions ...Region) *Collection {
-	c := new(Collection)
+// newCollection expects an array of regions, from which
+func newCollection() *collection {
+	c := new(collection)
 	c.regions = make(map[Code]Region)
-	for _, r := range regions {
-		c.regions[r.Code()] = r
-	}
 	return c
 }
 
-// Codes provides a list of region codes contained in the collection.
-func (c *Collection) Codes() []Code {
+func (c *collection) add(r Region) {
+	c.regions[r.Code()] = r
+}
+
+func (c *collection) codes() []Code {
 	codes := make([]Code, len(c.regions))
 	i := 0
 	for code := range c.regions {
@@ -57,14 +59,23 @@ func (c *Collection) Codes() []Code {
 	return codes
 }
 
-// For returns the region definition for the document or nil if the
-// region code is invalid.
-func (c *Collection) For(code Code) Region {
+func (c *collection) forCode(code Code) Region {
 	return c.regions[code]
 }
 
-// List provides the list of regions and their definitions. Only really meant
-// for exporting data.
-func (c *Collection) List() map[Code]Region {
-	return c.regions
+// Register adds a new region to the shared global list of regions.
+func Register(region Region) {
+	regions.add(region)
+}
+
+// For returns the region definition for the document or nil if the
+// region code is invalid or has not been registered.
+func For(code Code) Region {
+	return regions.forCode(code)
+}
+
+// Codes provides a list of region codes contained in the collection
+// of registered regions.
+func Codes() []Code {
+	return regions.codes()
 }
