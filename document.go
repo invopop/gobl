@@ -36,10 +36,7 @@ func (p *Document) insert(doc interface{}) error {
 	// We manually create and add the JSON as this is just simply the quickest
 	// way to do it.
 	buf := bytes.NewBufferString(`{"$schema":"` + p.Schema.String() + `",`)
-	_, err = buf.Write(bytes.TrimLeft(data, "{"))
-	if err != nil {
-		return ErrMarshal.WithErrorf("append doc data: %w", err)
-	}
+	_, _ = buf.Write(bytes.TrimLeft(data, "{")) //nolint:errcheck
 	p.data = buf.Bytes()
 
 	return nil
