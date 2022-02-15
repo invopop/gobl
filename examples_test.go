@@ -29,16 +29,16 @@ func ExampleNewEnvelope_complete() {
 	fmt.Printf("%v\n", string(data))
 	// Output:
 	// {
-	// 	"$schema": "https://gobl.org/draft0/envelope",
+	// 	"$schema": "https://gobl.org/draft-0/envelope",
 	// 	"head": {
 	// 		"uuid": "871c1e6a-8b5c-11ec-af5f-3e7e00ce5635",
 	// 		"dig": {
 	// 			"alg": "sha256",
-	// 			"val": "d1310846172b493492c5aa1bee607d461a1878b5e535e9fb39e819d5a4125554"
+	// 			"val": "7d539c46ca03a4ecb1fcc4cb00d2ada34275708ee326caafee04d9dcfed862ee"
 	// 		}
 	// 	},
 	// 	"doc": {
-	// 		"$schema": "https://gobl.org/draft0/note#Message",
+	// 		"$schema": "https://gobl.org/draft-0/note/message",
 	// 		"content": "sample message content"
 	// 	},
 	// 	"sigs": []
