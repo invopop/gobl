@@ -61,7 +61,7 @@ func (e *Envelope) Validate() error {
 // Verify ensures the digest headers still match the document contents.
 func (e *Envelope) Verify() error {
 	d1 := e.Head.Digest
-	d2, err := e.Document.digest()
+	d2, err := e.Document.Digest()
 	if err != nil {
 		return err
 	}
@@ -92,12 +92,12 @@ func (e *Envelope) Insert(doc interface{}) error {
 	if e.Document == nil {
 		e.Document = new(Document)
 	}
-	if err := e.Document.insert(doc); err != nil {
+	if err := e.Document.Insert(doc); err != nil {
 		return err
 	}
 
 	var err error
-	e.Head.Digest, err = e.Document.digest()
+	e.Head.Digest, err = e.Document.Digest()
 	if err != nil {
 		return err
 	}
@@ -128,7 +128,7 @@ func (e *Envelope) Complete() error {
 		return err
 	}
 
-	if err := e.Document.insert(obj); err != nil {
+	if err := e.Document.Insert(obj); err != nil {
 		return err
 	}
 

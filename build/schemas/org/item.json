@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/item",
+  "$ref": "#/$defs/Item",
+  "$defs": {
+    "Item": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "ref": {
+          "type": "string",
+          "title": "Ref"
+        },
+        "name": {
+          "type": "string"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency"
+        },
+        "price": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Price"
+        },
+        "unit": {
+          "type": "string",
+          "title": "Unit",
+          "description": "Code for unit of the item being sold"
+        },
+        "codes": {
+          "items": {
+            "$ref": "#/$defs/ItemCode"
+          },
+          "type": "array",
+          "title": "Codes"
+        },
+        "origin": {
+          "type": "string",
+          "title": "Country of Origin"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name",
+        "price"
+      ]
+    },
+    "ItemCode": {
+      "properties": {
+        "typ": {
+          "type": "string",
+          "title": "Type"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "val"
+      ]
+    }
+  }
+}

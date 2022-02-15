@@ -1,4 +1,5 @@
 {
+  "$schema": "https://gobl.org/draft-0/tax/region",
   "code": "ES",
   "name": {
     "en": "Spain",
@@ -105,18 +106,6 @@
       },
       "defs": [
         {
-          "code": "ZRO",
-          "name": {
-            "en": "VAT Zero Rate",
-            "es": "IVA Tipo Exento"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
-        {
           "code": "STD",
           "name": {
             "en": "VAT Standard Rate",
@@ -125,11 +114,11 @@
           "values": [
             {
               "since": "2012-09-01",
-              "percent": "5.20%"
+              "percent": "5.2%"
             },
             {
               "since": "1993-01-01",
-              "percent": "4.00%"
+              "percent": "4.0%"
             }
           ]
         },
@@ -142,11 +131,11 @@
           "values": [
             {
               "since": "2012-09-01",
-              "percent": "1.40%"
+              "percent": "1.4%"
             },
             {
               "since": "1993-01-01",
-              "percent": "1.00%"
+              "percent": "1.0%"
             }
           ]
         },
@@ -159,7 +148,7 @@
           "values": [
             {
               "since": "1993-01-01",
-              "percent": "0.50%"
+              "percent": "0.5%"
             }
           ]
         },
@@ -172,7 +161,7 @@
           "values": [
             {
               "since": "2007-01-01",
-              "percent": "0.75%"
+              "percent": "1.75%"
             }
           ]
         }

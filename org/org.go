@@ -8,8 +8,7 @@ func init() {
 		Coordinates{},
 		Date{},
 		Item{},
-		ItemCode{},
-		Notes{},
+		Note{},
 		Party{},
 		Person{},
 		Name{},
@@ -19,5 +18,5 @@ func init() {
 		Period{},
 		TaxID{},
 	}
-	schema.RegisterAllIn(schema.GOBL.Add("org"), objs)
+	schema.RegisterAll(schema.GOBL.Add("org"), objs)
 }

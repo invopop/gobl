@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/party",
+  "$ref": "#/$defs/Party",
+  "$defs": {
+    "Party": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "ID",
+          "description": "Internal ID used to identify the party inside a document."
+        },
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique identity code."
+        },
+        "tax_id": {
+          "$ref": "https://gobl.org/draft-0/org/tax-id",
+          "title": "Tax Identity",
+          "description": "The entity's legal ID code used for tax purposes. They may have other numbers"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Legal name or representation of the organization."
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "description": "Alternate short name."
+        },
+        "people": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/person"
+          },
+          "type": "array",
+          "title": "People",
+          "description": "Details of physical people who represent the party."
+        },
+        "addresses": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/address"
+          },
+          "type": "array",
+          "title": "Postal Addresses",
+          "description": "Regular post addresses for where information should be sent if needed."
+        },
+        "emails": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/email"
+          },
+          "type": "array",
+          "title": "Email Addresses"
+        },
+        "telephones": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers"
+        },
+        "registration": {
+          "$ref": "https://gobl.org/draft-0/org/registration",
+          "title": "Registration",
+          "description": "Additional registration details about the company that may need to be included in a document."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Any additional semi-structured information that does not fit into the rest of the party."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name"
+      ]
+    }
+  }
+}

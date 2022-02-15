@@ -7,22 +7,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"path"
-	"reflect"
-	"strings"
+	"path/filepath"
 
-	"github.com/alecthomas/jsonschema"
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/internal/currency"
-	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/internal/schemas"
+	"github.com/invopop/gobl/region"
 )
 
 var i18nStringUsed = false
 
 // Schema generates the JSON Schema from the base models
+func Schema() error {
+	return schemas.Generate()
+}
+
+/*
 func Schema() error {
 	types := map[string]interface{}{
 		"build/schema/envelope.json":     &gobl.Envelope{},
@@ -53,20 +53,6 @@ func Schema() error {
 	return nil
 }
 
-func RegionData() error {
-	for c, r := range gobl.Regions().List() {
-		data, err := json.MarshalIndent(r.Taxes(), "", "  ")
-		if err != nil {
-			return err
-		}
-		f := path.Join("schema", "tax", "data", string(c)+".json")
-		if err := ioutil.WriteFile(f, data, 0644); err != nil {
-			return err
-		}
-		fmt.Printf("Processed %v\n", f)
-	}
-	return nil
-}
 
 func typeNamer(t reflect.Type) string {
 	p := strings.Split(t.PkgPath(), "/")
@@ -85,6 +71,26 @@ func typeMapper(t reflect.Type) *jsonschema.Type {
 		return &jsonschema.Type{
 			Ref: "#/definitions/i18n.String",
 		}
+	}
+	return nil
+}
+*/
+
+func RegionData() error {
+	for c, r := range region.All() {
+		doc := new(gobl.Document)
+		if err := doc.Insert(r.Taxes()); err != nil {
+			return err
+		}
+		data, err := json.MarshalIndent(doc, "", "  ")
+		if err != nil {
+			return err
+		}
+		f := filepath.Join("build", "data", "tax", string(c)+".json")
+		if err := ioutil.WriteFile(f, data, 0644); err != nil {
+			return err
+		}
+		fmt.Printf("Processed %v\n", f)
 	}
 	return nil
 }

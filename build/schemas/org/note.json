@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/note",
+  "$ref": "#/$defs/Note",
+  "$defs": {
+    "Note": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "text"
+      ]
+    }
+  }
+}

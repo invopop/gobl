@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/advance",
+  "$ref": "#/$defs/Advance",
+  "$defs": {
+    "Advance": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Date"
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference"
+        },
+        "grant": {
+          "type": "boolean",
+          "title": "Grant"
+        },
+        "desc": {
+          "type": "string",
+          "title": "Description"
+        },
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Rate"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "desc",
+        "amount"
+      ]
+    }
+  }
+}

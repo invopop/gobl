@@ -7,21 +7,8 @@ import (
 )
 
 func init() {
-	objects := []interface{}{
-		Charge{},
-		Charges{},
-		Discount{},
-		Discounts{},
-		Invoice{},
-		Line{},
-		LineCharge{},
-		LineDiscount{},
-		Lines{},
-		Outlay{},
-		Outlays{},
-		Preceding{},
-	}
-	schema.RegisterAllIn(schema.GOBL.Add("bill"), objects)
+	// None of Invoice's sub-models are meant to be used outside an invoice.
+	schema.Register(schema.GOBL.Add("bill"), Invoice{})
 }
 
 // TypeCode defines the "Invoice Type Code" according to a subset of the UNTDID 1001

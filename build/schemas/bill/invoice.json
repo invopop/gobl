@@ -1,0 +1,578 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/invoice",
+  "$ref": "#/$defs/Invoice",
+  "$defs": {
+    "Charge": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index"
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference"
+        },
+        "base": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Base"
+        },
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Rate"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        },
+        "taxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/rate"
+          },
+          "type": "array",
+          "title": "Taxes"
+        },
+        "code": {
+          "type": "string",
+          "title": "Reason Code"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "i",
+        "amount"
+      ]
+    },
+    "Delivery": {
+      "properties": {
+        "receiver": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Receiver"
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Date"
+        },
+        "start_date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "End Date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Discount": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index"
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference"
+        },
+        "base": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Base"
+        },
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Rate"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        },
+        "taxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/rate"
+          },
+          "type": "array",
+          "title": "Taxes"
+        },
+        "code": {
+          "type": "string",
+          "title": "Reason Code"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "i",
+        "amount"
+      ]
+    },
+    "Invoice": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "region": {
+          "type": "string",
+          "title": "Region"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "series": {
+          "type": "string",
+          "title": "Series"
+        },
+        "type_code": {
+          "type": "string",
+          "title": "Type Code"
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency"
+        },
+        "rates": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
+          },
+          "type": "array",
+          "title": "Exchange Rates"
+        },
+        "prices_include_tax": {
+          "type": "string",
+          "title": "Prices Include Tax"
+        },
+        "preceding": {
+          "$ref": "#/$defs/Preceding",
+          "title": "Preceding Details"
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Issue Date"
+        },
+        "op_date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Operation Date"
+        },
+        "value_date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Value Date"
+        },
+        "supplier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Supplier"
+        },
+        "customer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Customer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/Line"
+          },
+          "type": "array",
+          "title": "Lines"
+        },
+        "discounts": {
+          "items": {
+            "$ref": "#/$defs/Discount"
+          },
+          "type": "array",
+          "title": "Discounts"
+        },
+        "charges": {
+          "items": {
+            "$ref": "#/$defs/Charge"
+          },
+          "type": "array",
+          "title": "Charges"
+        },
+        "outlays": {
+          "items": {
+            "$ref": "#/$defs/Outlay"
+          },
+          "type": "array",
+          "title": "Outlays"
+        },
+        "totals": {
+          "$ref": "#/$defs/Totals",
+          "title": "Totals"
+        },
+        "ordering": {
+          "$ref": "#/$defs/Ordering",
+          "title": "Ordering Details"
+        },
+        "payment": {
+          "$ref": "#/$defs/Payment",
+          "title": "Payment Details"
+        },
+        "delivery": {
+          "$ref": "#/$defs/Delivery",
+          "title": "Delivery Details"
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "region",
+        "code",
+        "currency",
+        "issue_date",
+        "supplier",
+        "totals"
+      ]
+    },
+    "Line": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index"
+        },
+        "quantity": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Quantity"
+        },
+        "item": {
+          "$ref": "https://gobl.org/draft-0/org/item",
+          "title": "Item"
+        },
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum"
+        },
+        "discounts": {
+          "items": {
+            "$ref": "#/$defs/LineDiscount"
+          },
+          "type": "array",
+          "title": "Discounts"
+        },
+        "charges": {
+          "items": {
+            "$ref": "#/$defs/LineCharge"
+          },
+          "type": "array",
+          "title": "Charges"
+        },
+        "taxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/tax/rate"
+          },
+          "type": "array",
+          "title": "Taxes"
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "i",
+        "quantity",
+        "item",
+        "sum",
+        "total"
+      ]
+    },
+    "LineCharge": {
+      "properties": {
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Rate"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "amount"
+      ]
+    },
+    "LineDiscount": {
+      "properties": {
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Rate"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Value"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "amount"
+      ]
+    },
+    "Ordering": {
+      "properties": {
+        "seller": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Seller"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Outlay": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID"
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index"
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Date"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "series": {
+          "type": "string",
+          "title": "Series"
+        },
+        "desc": {
+          "type": "string",
+          "title": "Description"
+        },
+        "supplier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Supplier"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "i",
+        "desc",
+        "amount"
+      ]
+    },
+    "Payment": {
+      "properties": {
+        "payer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Payer",
+          "description": "The party responsible for paying for the invoice"
+        },
+        "terms": {
+          "$ref": "https://gobl.org/draft-0/pay/terms",
+          "title": "Terms",
+          "description": "Payment terms or conditions."
+        },
+        "advances": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/pay/advance"
+          },
+          "type": "array",
+          "title": "Advances",
+          "description": "Any amounts that have been paid in advance and should be deducted from the amount due."
+        },
+        "instructions": {
+          "$ref": "https://gobl.org/draft-0/pay/instructions",
+          "title": "Instructions",
+          "description": "Details on how payment should be made."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Preceding": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "series": {
+          "type": "string",
+          "title": "Series"
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Issue Date"
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/org/period",
+          "title": "Period"
+        },
+        "corrections": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Corrections"
+        },
+        "correction_method": {
+          "type": "string",
+          "title": "Correction Method"
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "code",
+        "issue_date"
+      ]
+    },
+    "Totals": {
+      "properties": {
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum"
+        },
+        "discount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Discount"
+        },
+        "charge": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Charge"
+        },
+        "tax_included": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax Included"
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total"
+        },
+        "taxes": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax Totals"
+        },
+        "total_with_tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total with Tax"
+        },
+        "outlays": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Outlay Totals"
+        },
+        "payable": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Payable"
+        },
+        "advance": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Advance"
+        },
+        "due": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Due"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "sum",
+        "total",
+        "total_with_tax",
+        "payable"
+      ]
+    }
+  }
+}

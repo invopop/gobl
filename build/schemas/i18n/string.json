@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/i18n/string",
+  "$ref": "#/$defs/String",
+  "$defs": {
+    "String": {
+      "patternProperties": {
+        "^[a-z]{2}$": {
+          "type": "string",
+          "title": "Text in given language."
+        }
+      },
+      "type": "object",
+      "title": "Multi-language String",
+      "description": "Map of 2-Letter language codes to their translations."
+    }
+  }
+}

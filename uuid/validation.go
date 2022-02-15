@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/alecthomas/jsonschema"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
@@ -57,14 +56,4 @@ func (r versionRule) Validate(value interface{}) error {
 	}
 
 	return nil
-}
-
-// JSONSchemaType returns the jsonschema type object.
-func (UUID) JSONSchemaType() *jsonschema.Type {
-	return &jsonschema.Type{
-		Type:        "string",
-		Format:      "uuid",
-		Title:       "UUID",
-		Description: "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL.",
-	}
 }

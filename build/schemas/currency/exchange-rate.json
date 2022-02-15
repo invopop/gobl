@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/currency/exchange-rate",
+  "$ref": "#/$defs/ExchangeRate",
+  "$defs": {
+    "ExchangeRate": {
+      "properties": {
+        "currency": {
+          "type": "string",
+          "title": "Currency"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "currency",
+        "amount"
+      ]
+    }
+  }
+}

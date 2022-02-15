@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/alecthomas/jsonschema"
+	"github.com/invopop/jsonschema"
 )
 
 var (
@@ -145,9 +145,9 @@ func (p *Percentage) UnmarshalJSON(value []byte) error {
 	return p.UnmarshalText(value)
 }
 
-// JSONSchemaType provides a representation of the struct for usage in Schema.
-func (Percentage) JSONSchemaType() *jsonschema.Type {
-	return &jsonschema.Type{
+// JSONSchema provides a representation of the struct for usage in Schema.
+func (Percentage) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
 		Type:        "string",
 		Pattern:     `^\-?[0-9]+(\.[0-9]+)?%$`,
 		Title:       "Percentage",

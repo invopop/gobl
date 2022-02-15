@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/uuid/uuid",
+  "$ref": "#/$defs/UUID",
+  "$defs": {
+    "UUID": {
+      "type": "string",
+      "format": "uuid",
+      "title": "UUID"
+    }
+  }
+}

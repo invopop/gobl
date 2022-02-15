@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
-	"github.com/alecthomas/jsonschema"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/jsonschema"
 )
 
 // Date represents a simple date without time used most frequently
@@ -32,9 +32,9 @@ func MakeDate(year int, month time.Month, day int) Date {
 	}
 }
 
-// JSONSchemaType returns the jscon schema type.
-func (Date) JSONSchemaType() *jsonschema.Type {
-	return &jsonschema.Type{
+// JSONSchema returns a custom json schema for the date.
+func (Date) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
 		Type:        "string",
 		Format:      "date",
 		Title:       "Date",

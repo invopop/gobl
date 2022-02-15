@@ -10,7 +10,7 @@ import (
 
 const (
 	// VERSION for the current version of the schema
-	VERSION = "draft0"
+	VERSION = "draft-0"
 	// GOBL stores the base schema ID for GOBL, including current schema version.
 	GOBL ID = "https://gobl.org/" + VERSION
 )
@@ -42,10 +42,8 @@ func (id ID) Anchor(name string) ID {
 // anchor data that might be there.
 func (id ID) Add(path string) ID {
 	b := id.Base()
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-	return ID(b.String() + path)
+	path = strings.TrimLeft(path, "/")
+	return ID(b.String() + "/" + ToSnakeCase(path))
 }
 
 // Base removes any anchor information from the schema

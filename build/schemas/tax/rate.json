@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/rate",
+  "$ref": "#/$defs/Rate",
+  "$defs": {
+    "Rate": {
+      "properties": {
+        "cat": {
+          "type": "string",
+          "title": "Category Code"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "cat",
+        "code"
+      ]
+    }
+  }
+}

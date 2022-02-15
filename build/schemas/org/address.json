@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/address",
+  "$ref": "#/$defs/Address",
+  "$defs": {
+    "Address": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Useful identifier"
+        },
+        "po_box": {
+          "type": "string",
+          "title": "Post Office Box",
+          "description": "Box number or code for the post office box located at the address."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "House or building number in the street."
+        },
+        "floor": {
+          "type": "string",
+          "title": "Floor",
+          "description": "Floor number within the building."
+        },
+        "block": {
+          "type": "string",
+          "title": "Block",
+          "description": "Block number within the building."
+        },
+        "door": {
+          "type": "string",
+          "title": "Door",
+          "description": "Door number within the building."
+        },
+        "street": {
+          "type": "string",
+          "title": "Street",
+          "description": "Fist line of street."
+        },
+        "street_extra": {
+          "type": "string",
+          "title": "Extended Street",
+          "description": "Additional street address details."
+        },
+        "locality": {
+          "type": "string",
+          "title": "Locality",
+          "description": "The village"
+        },
+        "region": {
+          "type": "string",
+          "title": "Region",
+          "description": "Province"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Post or ZIP code."
+        },
+        "country": {
+          "type": "string",
+          "title": "Country",
+          "description": "ISO country code."
+        },
+        "coords": {
+          "$ref": "https://gobl.org/draft-0/org/coordinates",
+          "title": "Coordinates",
+          "description": "For when the postal address is not sufficient"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "locality",
+        "region"
+      ]
+    }
+  }
+}

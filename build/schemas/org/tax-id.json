@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/tax-id",
+  "$ref": "#/$defs/TaxID",
+  "$defs": {
+    "TaxID": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "country": {
+          "type": "string",
+          "title": "Country Code"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "country",
+        "code"
+      ]
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/envelope",
+  "$ref": "#/$defs/Envelope",
+  "$defs": {
+    "Digest": {
+      "properties": {
+        "alg": {
+          "type": "string",
+          "title": "Algorithm"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "alg",
+        "val"
+      ]
+    },
+    "Document": {
+      "type": "object",
+      "title": "Document",
+      "description": "Contents of the envelope"
+    },
+    "Envelope": {
+      "properties": {
+        "head": {
+          "$ref": "#/$defs/Header",
+          "title": "Header"
+        },
+        "doc": {
+          "$ref": "#/$defs/Document",
+          "title": "Document"
+        },
+        "sigs": {
+          "items": {
+            "$ref": "#/$defs/Signature"
+          },
+          "type": "array",
+          "title": "Signatures"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "head",
+        "doc",
+        "sigs"
+      ]
+    },
+    "Header": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "dig": {
+          "$ref": "#/$defs/Digest",
+          "title": "Digest"
+        },
+        "stamps": {
+          "items": {
+            "$ref": "#/$defs/Stamp"
+          },
+          "type": "array",
+          "title": "Stamps"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Tags"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes"
+        },
+        "draft": {
+          "type": "boolean",
+          "title": "Draft"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "uuid",
+        "dig"
+      ]
+    },
+    "Signature": {
+      "type": "string",
+      "title": "Signature",
+      "description": "JSON Web Signature in compact form."
+    },
+    "Stamp": {
+      "properties": {
+        "prv": {
+          "type": "string",
+          "title": "Provider"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "prv",
+        "val"
+      ]
+    }
+  }
+}

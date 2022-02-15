@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/alecthomas/jsonschema"
+	"github.com/invopop/jsonschema"
 	"github.com/square/go-jose/v3"
 )
 
@@ -145,9 +145,9 @@ func (s *Signature) UnmarshalJSON(data []byte) error {
 	return s.parse(str)
 }
 
-// JSONSchemaType returns the json schema type.
-func (Signature) JSONSchemaType() *jsonschema.Type {
-	return &jsonschema.Type{
+// JSONSchema returns the json schema type.
+func (Signature) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
 		Type:        "string",
 		Title:       "Signature",
 		Description: "JSON Web Signature in compact form.",
