@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ghodss/yaml"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 
@@ -132,12 +131,8 @@ func (s *serveOpts) verify() echo.HandlerFunc {
 		if err := c.Bind(req); err != nil {
 			return err
 		}
-		env := new(gobl.Envelope)
-		if err := yaml.Unmarshal(req.Data, env); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-		}
-		if err := env.Validate(); err != nil {
-			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		if err := internal.Verify(c.Request().Context(), bytes.NewReader(req.Data)); err != nil {
+			return err
 		}
 		return c.JSON(http.StatusOK, &verifyResponse{OK: true})
 	}

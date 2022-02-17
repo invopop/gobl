@@ -13,12 +13,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ghodss/yaml"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/cobra"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/internal/iotools"
+	"github.com/invopop/gobl/cmd/gobl/internal"
 )
 
 func main() {
@@ -79,33 +78,14 @@ func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
 	return ioutil.NopCloser(cmd.InOrStdin()), nil
 }
 
-func readEnv(cmd *cobra.Command, args []string) (*gobl.Envelope, error) {
+func verify(cmd *cobra.Command, args []string) error {
 	input, err := openInput(cmd, args)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer input.Close() // nolint:errcheck
-	in, err := ioutil.ReadAll(iotools.CancelableReader(cmdContext(cmd), input))
-	if err != nil {
-		return nil, err
-	}
-	env := new(gobl.Envelope)
-	if err := yaml.Unmarshal(in, env); err != nil {
-		return nil, err
-	}
-	return env, nil
-}
 
-func verify(cmd *cobra.Command, args []string) error {
-	env, err := readEnv(cmd, args)
-	if err != nil {
-		return err
-	}
-	if err := env.Validate(); err != nil {
-		return err
-	}
-
-	return env.Verify()
+	return internal.Verify(cmdContext(cmd), input)
 }
 
 type genericDoc struct {
