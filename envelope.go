@@ -12,7 +12,7 @@ import (
 // and digital signatures.
 type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
-	Schema schema.ID `json:"$schema" jsonschema:"-"`
+	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
 	// Details on what the contents are
 	Head *Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope

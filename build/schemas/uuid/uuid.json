@@ -6,7 +6,8 @@
     "UUID": {
       "type": "string",
       "format": "uuid",
-      "title": "UUID"
+      "title": "UUID",
+      "description": "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL."
     }
   }
 }

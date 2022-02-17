@@ -24,7 +24,8 @@
       "type": "object",
       "required": [
         "num"
-      ]
+      ],
+      "description": "Telephone describes what is expected for a telephone number."
     }
   }
 }

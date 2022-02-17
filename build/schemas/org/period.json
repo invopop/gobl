@@ -17,7 +17,8 @@
       "required": [
         "start",
         "end"
-      ]
+      ],
+      "description": "Period represents two dates with a start and finish."
     }
   }
 }

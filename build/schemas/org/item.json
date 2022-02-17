@@ -7,25 +7,31 @@
       "properties": {
         "uuid": {
           "type": "string",
-          "title": "UUID"
+          "title": "UUID",
+          "description": "Unique identify of this item independent of the Supplier IDs"
         },
         "ref": {
           "type": "string",
-          "title": "Ref"
+          "title": "Ref",
+          "description": "Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Brief name of the item"
         },
         "desc": {
-          "type": "string"
+          "type": "string",
+          "description": "Detailed description"
         },
         "currency": {
           "type": "string",
-          "title": "Currency"
+          "title": "Currency",
+          "description": "Currency used for the item's price."
         },
         "price": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Price"
+          "title": "Price",
+          "description": "Base price of a single unit to be sold."
         },
         "unit": {
           "type": "string",
@@ -37,11 +43,13 @@
             "$ref": "#/$defs/ItemCode"
           },
           "type": "array",
-          "title": "Codes"
+          "title": "Codes",
+          "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer."
         },
         "origin": {
           "type": "string",
-          "title": "Country of Origin"
+          "title": "Country of Origin",
+          "description": "Country code of where this item was from originally."
         },
         "meta": {
           "patternProperties": {
@@ -50,7 +58,8 @@
             }
           },
           "type": "object",
-          "title": "Meta"
+          "title": "Meta",
+          "description": "Additional meta information that may be useful"
         }
       },
       "additionalProperties": false,
@@ -58,7 +67,8 @@
       "required": [
         "name",
         "price"
-      ]
+      ],
+      "description": "Item is used to describe a single product or service."
     },
     "ItemCode": {
       "properties": {
@@ -75,7 +85,8 @@
       "type": "object",
       "required": [
         "val"
-      ]
+      ],
+      "description": "ItemCode contains a value and optional type property that means additional codes can be added to an item."
     }
   }
 }

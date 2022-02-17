@@ -7,11 +7,13 @@
       "properties": {
         "currency": {
           "type": "string",
-          "title": "Currency"
+          "title": "Currency",
+          "description": "ISO currency code this rate represents."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Amount"
+          "title": "Amount",
+          "description": "How much is 1.00 of this currency worth in the documents currency."
         }
       },
       "additionalProperties": false,
@@ -19,7 +21,8 @@
       "required": [
         "currency",
         "amount"
-      ]
+      ],
+      "description": "ExchangeRate contains data on the rate to be used when converting amounts from the document's base currency to whatever is defined."
     }
   }
 }

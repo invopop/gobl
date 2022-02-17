@@ -21,7 +21,8 @@
       "required": [
         "last4",
         "holder"
-      ]
+      ],
+      "description": "Card contains simplified card holder data as a reference for the customer."
     },
     "CreditTransfer": {
       "properties": {
@@ -52,7 +53,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
     },
     "DirectDebit": {
       "properties": {
@@ -73,7 +75,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "DirectDebit defines the data that will be used to make the direct debit."
     },
     "Instructions": {
       "properties": {
@@ -138,7 +141,8 @@
       "type": "object",
       "required": [
         "code"
-      ]
+      ],
+      "description": "Instructions holds a set of instructions that determine how the payment has or should be made."
     },
     "Online": {
       "properties": {
@@ -157,7 +161,8 @@
       "type": "object",
       "required": [
         "addr"
-      ]
+      ],
+      "description": "Online provides the details required to make a payment online using a website"
     }
   }
 }

@@ -7,11 +7,13 @@
       "properties": {
         "title": {
           "type": "string",
-          "title": "Title"
+          "title": "Title",
+          "description": "Summary of the message content"
         },
         "content": {
           "type": "string",
-          "title": "Content"
+          "title": "Content",
+          "description": "Details of what exactly this message wants to communicate"
         },
         "meta": {
           "patternProperties": {
@@ -20,14 +22,16 @@
             }
           },
           "type": "object",
-          "title": "Meta Data"
+          "title": "Meta Data",
+          "description": "Any additional semi-structured data that might be useful."
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
         "content"
-      ]
+      ],
+      "description": "Message represents the minimum possible contents for a GoBL document type."
     }
   }
 }

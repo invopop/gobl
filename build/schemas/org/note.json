@@ -7,18 +7,21 @@
       "properties": {
         "code": {
           "type": "string",
-          "title": "Code"
+          "title": "Code",
+          "description": "Code specifying subject of the text"
         },
         "text": {
           "type": "string",
-          "title": "Text"
+          "title": "Text",
+          "description": "The contents of the note"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
         "text"
-      ]
+      ],
+      "description": "Note represents a free text of additional information that may be added to a document."
     }
   }
 }

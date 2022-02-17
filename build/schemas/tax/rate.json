@@ -7,11 +7,13 @@
       "properties": {
         "cat": {
           "type": "string",
-          "title": "Category Code"
+          "title": "Category Code",
+          "description": "From the available options for the region."
         },
         "code": {
           "type": "string",
-          "title": "Code"
+          "title": "Code",
+          "description": "As defined for the region and category."
         }
       },
       "additionalProperties": false,
@@ -19,7 +21,8 @@
       "required": [
         "cat",
         "code"
-      ]
+      ],
+      "description": "Rate references the tax category and rate code that should be applied to this line item when calculating the final taxes."
     }
   }
 }

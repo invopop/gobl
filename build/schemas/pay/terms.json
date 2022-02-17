@@ -36,7 +36,8 @@
       "required": [
         "date",
         "amount"
-      ]
+      ],
+      "description": "DueDate contains an amount that should be paid by the given date."
     },
     "Terms": {
       "properties": {
@@ -68,7 +69,8 @@
       "type": "object",
       "required": [
         "code"
-      ]
+      ],
+      "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   }
 }

@@ -89,7 +89,8 @@
       "required": [
         "locality",
         "region"
-      ]
+      ],
+      "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address."
     }
   }
 }

@@ -7,15 +7,18 @@
       "properties": {
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
-          "title": "UUID"
+          "title": "UUID",
+          "description": "Unique universal identity code"
         },
         "country": {
           "type": "string",
-          "title": "Country Code"
+          "title": "Country Code",
+          "description": "ISO country code for Where the tax identity was issued"
         },
         "code": {
           "type": "string",
-          "title": "Code"
+          "title": "Code",
+          "description": "Identity Code"
         },
         "meta": {
           "patternProperties": {
@@ -24,7 +27,8 @@
             }
           },
           "type": "object",
-          "title": "Meta"
+          "title": "Meta",
+          "description": "Additional details."
         }
       },
       "additionalProperties": false,
@@ -32,7 +36,8 @@
       "required": [
         "country",
         "code"
-      ]
+      ],
+      "description": "TaxID represents a party's tax identify number for a given country."
     }
   }
 }

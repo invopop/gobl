@@ -33,7 +33,8 @@
       "type": "object",
       "required": [
         "addr"
-      ]
+      ],
+      "description": "Email describes the electronic mailing details."
     }
   }
 }

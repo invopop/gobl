@@ -19,14 +19,16 @@
         },
         "retained": {
           "type": "boolean",
-          "title": "Retained"
+          "title": "Retained",
+          "description": "Retained when true implies that the tax amount will be retained\nby the buyer on behalf of the supplier, and thus subtracted from\nthe invoice taxable base total. Typically used for taxes related to\nincome."
         },
         "defs": {
           "items": {
             "$ref": "#/$defs/Def"
           },
           "type": "array",
-          "title": "Definitions"
+          "title": "Definitions",
+          "description": "Specific tax definitions inside this category."
         }
       },
       "additionalProperties": false,
@@ -35,13 +37,15 @@
         "code",
         "name",
         "defs"
-      ]
+      ],
+      "description": "Category ..."
     },
     "Def": {
       "properties": {
         "code": {
           "type": "string",
-          "title": "Code"
+          "title": "Code",
+          "description": "Code identifies this rate within the system"
         },
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
@@ -66,7 +70,8 @@
         "code",
         "name",
         "values"
-      ]
+      ],
+      "description": "Def defines a tax combination of category and rate."
     },
     "Region": {
       "properties": {
@@ -92,28 +97,33 @@
         "code",
         "name",
         "categories"
-      ]
+      ],
+      "description": "Region defines the holding structure for a regions categories and subsequent Rates and Values."
     },
     "Value": {
       "properties": {
         "since": {
           "$ref": "https://gobl.org/draft-0/org/date",
-          "title": "Since"
+          "title": "Since",
+          "description": "Date from which this value should be applied."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
-          "title": "Percent"
+          "title": "Percent",
+          "description": "Rate that should be applied"
         },
         "disabled": {
           "type": "boolean",
-          "title": "Disabled"
+          "title": "Disabled",
+          "description": "When true, this value should no longer be used."
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
         "percent"
-      ]
+      ],
+      "description": "Value contains a percentage rate or fixed amount for a given date range."
     }
   }
 }

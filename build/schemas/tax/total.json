@@ -36,7 +36,8 @@
         "rates",
         "base",
         "amount"
-      ]
+      ],
+      "description": "CategoryTotal groups together all rates inside a given category."
     },
     "RateTotal": {
       "properties": {
@@ -64,7 +65,8 @@
         "base",
         "percent",
         "amount"
-      ]
+      ],
+      "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and definition."
     },
     "Total": {
       "properties": {
@@ -73,18 +75,21 @@
             "$ref": "#/$defs/CategoryTotal"
           },
           "type": "array",
-          "title": "Categories"
+          "title": "Categories",
+          "description": "Grouping of all the taxes by their category"
         },
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Sum"
+          "title": "Sum",
+          "description": "Total value of all the taxes applied."
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
         "sum"
-      ]
+      ],
+      "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
   }
 }

@@ -80,7 +80,8 @@
       "type": "object",
       "required": [
         "name"
-      ]
+      ],
+      "description": "Party represents a person or business entity."
     }
   }
 }

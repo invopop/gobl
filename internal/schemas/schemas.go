@@ -19,6 +19,10 @@ const outPath = "./build/schemas"
 func Generate() error {
 	r := new(jsonschema.Reflector)
 
+	if err := r.AddGoComments("github.com/invopop/gobl", "./"); err != nil {
+		return fmt.Errorf("reading comments: %w", err)
+	}
+
 	typs := schema.Types()
 	r.Lookup = func(t reflect.Type) jsonschema.ID {
 		id, ok := typs[t]

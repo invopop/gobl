@@ -27,7 +27,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Coordinates describes an exact geographical location in the world."
     }
   }
 }

@@ -56,7 +56,8 @@
       "required": [
         "given",
         "surname"
-      ]
+      ],
+      "description": "Name represents what a human is called."
     }
   }
 }

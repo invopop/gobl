@@ -55,7 +55,8 @@
       "type": "object",
       "required": [
         "name"
-      ]
+      ],
+      "description": "Person represents a human, and how to contact them electronically."
     }
   }
 }
