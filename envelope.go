@@ -89,19 +89,6 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return err
 	}
 
-	if e.Document == nil {
-		e.Document = new(Document)
-	}
-	if err := e.Document.Insert(doc); err != nil {
-		return err
-	}
-
-	var err error
-	e.Head.Digest, err = e.Document.Digest()
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -128,10 +115,6 @@ func (e *Envelope) Complete() error {
 		return err
 	}
 
-	if err := e.Document.Insert(obj); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -147,6 +130,17 @@ func (e *Envelope) complete(doc interface{}) error {
 			return ErrValidation.WithCause(err)
 		}
 	}
+
+	if err := e.Document.Insert(doc); err != nil {
+		return err
+	}
+
+	var err error
+	e.Head.Digest, err = e.Document.Digest()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
