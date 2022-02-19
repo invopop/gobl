@@ -296,7 +296,7 @@ func intPow(base int, exp uint32) int64 { // nolint:unparam
 	return out
 }
 
-// JSONSchemaType provides a representation of the struct for usage in Schema.
+// JSONSchema provides a representation of the struct for usage in Schema.
 func (Amount) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:        "string",

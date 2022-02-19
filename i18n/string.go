@@ -24,7 +24,7 @@ func (s String) String(lang Lang) string {
 	return ""
 }
 
-// JSONSchema returns the json schema defintion
+// JSONSchema returns the json schema definition
 func (String) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type: "object",

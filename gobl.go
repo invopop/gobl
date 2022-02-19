@@ -1,7 +1,7 @@
 package gobl
 
-// import all the dependencies to ensure all init() methods are called.
 import (
+	// import all the dependencies to ensure all init() methods are called.
 	_ "github.com/invopop/gobl/bill"
 	_ "github.com/invopop/gobl/currency"
 	_ "github.com/invopop/gobl/dsig"
@@ -10,8 +10,9 @@ import (
 	_ "github.com/invopop/gobl/num"
 	_ "github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regions"
-	"github.com/invopop/gobl/schema"
 	_ "github.com/invopop/gobl/uuid"
+
+	"github.com/invopop/gobl/schema"
 )
 
 func init() {
