@@ -44,9 +44,9 @@ func (p *Document) Insert(doc interface{}) error {
 	return nil
 }
 
-// Extract will unmarshal the documents contents into the provide object. You'll
+// Extract will unmarshal the documents contents into the provided object. You'll
 // need have checked the type proviously to ensure this works.
-func (p *Document) extract(doc interface{}) error {
+func (p *Document) Extract(doc interface{}) error {
 	if err := json.Unmarshal(p.data, doc); err != nil {
 		return ErrMarshal.WithCause(err)
 	}

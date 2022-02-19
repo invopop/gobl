@@ -107,7 +107,7 @@ func (e *Envelope) Complete() error {
 	}
 
 	obj := reflect.New(typ).Interface()
-	if err := e.Document.extract(obj); err != nil {
+	if err := e.Document.Extract(obj); err != nil {
 		return err
 	}
 
@@ -149,5 +149,5 @@ func (e *Envelope) Extract(doc interface{}) error {
 	if e.Document == nil {
 		return ErrNoDocument.WithErrorf("cannot extract document from empty envelope")
 	}
-	return e.Document.extract(doc)
+	return e.Document.Extract(doc)
 }
