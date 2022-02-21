@@ -22,7 +22,7 @@ type Envelope struct {
 }
 
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
-// envelope.
+// envelope. The actual version is determined by the `schema` package.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
 
 // Calculable defines the methods expected of a document payload that contains a `Calculate`

@@ -13,9 +13,7 @@ name: Release
 on:
   push:
     branches:
-      - main
-    paths:
-      - "version.go"
+      - release
     #paths-ignore:
     #  - "docs/**"
 
@@ -29,19 +27,10 @@ jobs:
         with:
           fetch-depth: "0" # make sure we get all commits!
 
-      - name: Read current version
-        run: |
-          grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
-
-      - name: "Release tag"
-        uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ env.GOBL_VERSION }}
-
-      # - name: Bump version and push tag
-      #   id: bump
-      #   uses: anothrNick/github-tag-action@1.36.0
-      #  env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_BRANCHES: main
-      #     WITH_V: true
+      - name: Bump version and push tag
+        id: bump
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_BRANCHES: release
+          WITH_V: true
