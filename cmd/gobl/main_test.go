@@ -74,7 +74,7 @@ func Test_verify(t *testing.T) {
 		{
 			name: "empty envelope",
 			in:   strings.NewReader(`{}`),
-			err:  "code=422, message=doc: cannot be blank; head: cannot be blank; ver: cannot be blank.",
+			err:  "code=422, message=$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
 		},
 		{
 			name: "success",

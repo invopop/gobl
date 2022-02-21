@@ -176,32 +176,10 @@ func Test_build(t *testing.T) {
 			err: "code=422, message=no document included",
 		},
 		{
-			name: "invalid type",
-			in: strings.NewReader(`{
-				"head": {
-					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
-					"typ": "duck",
-					"rgn": "ES",
-					"dig": {
-						"alg": "sha256",
-						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
-					}
-				},
-				doc: {
-					"walk": "like a duck",
-					"talk": "like a duck",
-					"look": "like a duck"
-				}
-			}`),
-			err: "code=422, message=unrecognized document type: duck",
-		},
-		{
 			name: "invalid doc",
 			in: strings.NewReader(`{
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
-					"typ": "bill.Invoice",
-					"rgn": "ES",
 					"dig": {
 						"alg": "sha256",
 						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
@@ -209,15 +187,13 @@ func Test_build(t *testing.T) {
 				},
 				doc: "foo bar baz"
 			}`),
-			err: "code=422, message=json: cannot unmarshal string into Go value of type bill.Invoice",
+			err: "code=400, message=json: cannot unmarshal string into Go struct field Envelope.doc of type gobl.schemaDoc",
 		},
 		{
 			name: "incomplete",
 			in: strings.NewReader(`{
 				"head": {
 					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
-					"typ": "bill.Invoice",
-					"rgn": "ES",
 					"dig": {
 						"alg": "sha256",
 						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
@@ -225,7 +201,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "code=422, message=validation: code: cannot be blank; currency: cannot be blank; issue_date: required; lines: cannot be blank; supplier: cannot be blank.",
+			err: "code=422, message=missing document schema",
 		},
 		{
 			name: "input file",

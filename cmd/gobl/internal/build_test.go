@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -186,6 +187,27 @@ func TestBuild(t *testing.T) {
 				},
 			},
 		}
+	})
+	tests.Add("invalid type", tt{
+		opts: BuildOptions{
+			Data: strings.NewReader(`{
+				"$schema": "https://gobl.org/draft-0/envelope",
+				"head": {
+					"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+					"dig": {
+						"alg": "sha256",
+						"val": "dce3bc3c8bf28f3d209f783917b3082ddc0339a66e9ba3aa63849e4357db1422"
+					}
+				},
+				doc: {
+					"$schema": "https://example.com/duck",
+					"walk": "like a duck",
+					"talk": "like a duck",
+					"look": "like a duck"
+				}
+			}`),
+		},
+		err: `code=422, message=unrecognized document schema "https://example.com/duck"`,
 	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {

@@ -16,7 +16,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/internal/iotools"
 )
 
@@ -65,21 +64,22 @@ func reInsertDoc(env *gobl.Envelope) error {
 	if err != nil {
 		return err
 	}
-	if err := env.Insert(doc); err != nil {
-		return err
-	}
-	return nil
+	return env.Insert(doc)
 }
 
-func extractDoc(env *gobl.Envelope) (gobl.Document, error) {
-	switch env.Head.Type {
-	case bill.InvoiceType:
-		doc := new(bill.Invoice)
-		err := env.Extract(doc)
-		return doc, err
-	default:
-		return nil, fmt.Errorf("unrecognized document type: %s", env.Head.Type)
+func extractDoc(env *gobl.Envelope) (interface{}, error) {
+	if env.Document == nil {
+		return nil, errors.New("no document found")
 	}
+	if env.Document.Schema == "" {
+		return nil, errors.New("missing document schema")
+	}
+	doc := env.Document.Schema.Interface()
+	if doc == nil {
+		return nil, fmt.Errorf("unrecognized document schema %q", env.Document.Schema)
+	}
+	err := env.Document.Extract(doc)
+	return doc, err
 }
 
 func parseSets(opts BuildOptions) (map[string]interface{}, error) {

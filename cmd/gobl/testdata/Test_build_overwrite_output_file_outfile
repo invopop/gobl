@@ -1,16 +1,16 @@
 {
-	"ver": "gobl.org/v0.10.0",
+	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
-		"typ": "bill.Invoice",
-		"rgn": "ES",
 		"dig": {
 			"alg": "sha256",
-			"val": "a73b16980fa7cd45afd3a29aabf12369384f53766b4b6087c301b9563e3764ae"
+			"val": "00a1c7bb485818ec361c2ae243c78bdc9ce90ec638eced71c97df04325d84e09"
 		}
 	},
 	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
+		"region": "ES",
 		"code": "INV2021-001",
 		"currency": "EUR",
 		"issue_date": "2021-06-16",
