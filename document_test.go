@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/schema"
 	"github.com/stretchr/testify/assert"
@@ -33,6 +34,9 @@ func TestDocument(t *testing.T) {
 
 	data, err := json.Marshal(doc)
 	require.NoError(t, err)
+	assert.Equal(t, `{"$schema":"`+id.String()+`","content":"test message"}`, string(data))
+	digest := dsig.NewSHA256Digest(data) // this works as the JSON is very simple!
+	assert.Equal(t, dig, digest.Value)
 
 	doc = new(Document)
 	err = json.Unmarshal(data, doc)
