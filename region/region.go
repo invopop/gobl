@@ -79,3 +79,8 @@ func For(code Code) Region {
 func Codes() []Code {
 	return regions.codes()
 }
+
+// All provides a map of all the codes to regions.
+func All() map[Code]Region {
+	return regions.regions
+}

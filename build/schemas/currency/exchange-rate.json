@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/currency/exchange-rate",
+  "$ref": "#/$defs/ExchangeRate",
+  "$defs": {
+    "ExchangeRate": {
+      "properties": {
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "ISO currency code this rate represents."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "How much is 1.00 of this currency worth in the documents currency."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "currency",
+        "amount"
+      ],
+      "description": "ExchangeRate contains data on the rate to be used when converting amounts from the document's base currency to whatever is defined."
+    }
+  }
+}

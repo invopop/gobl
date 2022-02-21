@@ -5,5 +5,5 @@ import (
 )
 
 func init() {
-	schema.RegisterIn(schema.GOBL.Add("note"), &Message{})
+	schema.Register(schema.GOBL.Add("note"), &Message{})
 }

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/email",
+  "$ref": "#/$defs/Email",
+  "$defs": {
+    "Email": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for the email."
+        },
+        "addr": {
+          "type": "string",
+          "title": "Address",
+          "description": "Electronic mailing address."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional fields."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "addr"
+      ],
+      "description": "Email describes the electronic mailing details."
+    }
+  }
+}

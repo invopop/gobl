@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/advance",
+  "$ref": "#/$defs/Advance",
+  "$defs": {
+    "Advance": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique identifier for this advance."
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Date",
+          "description": "When the advance was made."
+        },
+        "ref": {
+          "type": "string",
+          "title": "Reference",
+          "description": "ID or reference for the advance."
+        },
+        "grant": {
+          "type": "boolean",
+          "title": "Grant",
+          "description": "If this \"advance\" payment has come from a public grant or subsidy, set this to true."
+        },
+        "desc": {
+          "type": "string",
+          "title": "Description",
+          "description": "Details about the advance."
+        },
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Rate",
+          "description": "How much as a percentage of the total with tax was paid"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "How much was paid."
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "desc",
+        "amount"
+      ],
+      "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
+    }
+  }
+}

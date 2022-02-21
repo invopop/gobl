@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/note",
+  "$ref": "#/$defs/Note",
+  "$defs": {
+    "Note": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Code specifying subject of the text"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The contents of the note"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "description": "Note represents a free text of additional information that may be added to a document."
+    }
+  }
+}

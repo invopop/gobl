@@ -30,8 +30,10 @@ func (r *registry) addType(id ID, typ reflect.Type) error {
 	return nil
 }
 
-func (r *registry) add(id ID, obj interface{}) error {
-	return r.addType(id, baseTypeOf(obj))
+func (r *registry) add(base ID, obj interface{}) error {
+	typ := baseTypeOf(obj)
+	id := base.Add(typ.Name())
+	return r.addType(id, typ)
 }
 
 func (r *registry) addWithAnchor(base ID, obj interface{}) error {
@@ -78,9 +80,10 @@ func baseTypeOf(obj interface{}) reflect.Type {
 
 // Register adds a new link between a schema ID and object to the global schema
 // registry. This should be called for all GOBL models that will be included
-// inside schema documents or included in an envelope document payload.
-func Register(id ID, obj interface{}) {
-	if err := schemas.add(id, obj); err != nil {
+// inside schema documents or included in an envelope document payload. The name
+// of the object will be determined from the type of the object provided.
+func Register(base ID, obj interface{}) {
+	if err := schemas.add(base, obj); err != nil {
 		panic(err)
 	}
 }
@@ -90,6 +93,14 @@ func Register(id ID, obj interface{}) {
 func RegisterIn(base ID, obj interface{}) {
 	if err := schemas.addWithAnchor(base, obj); err != nil {
 		panic(err)
+	}
+}
+
+// RegisterAll takes an array of objects to register as additional schema using the
+// ID#Add method. Se `RegistereAllIn` for registering schema using anchors.
+func RegisterAll(base ID, objs []interface{}) {
+	for _, obj := range objs {
+		Register(base, obj)
 	}
 }
 
@@ -109,6 +120,15 @@ func Lookup(obj interface{}) ID {
 // Type provides the type from a matching registered schema.
 func Type(id ID) reflect.Type {
 	return schemas.typeFor(id)
+}
+
+// Types provides a complete map of types to schema IDs that have been registered.
+func Types() map[reflect.Type]ID {
+	l := make(map[reflect.Type]ID)
+	for _, e := range schemas.entries {
+		l[e.typ] = e.id
+	}
+	return l
 }
 
 // List of known schema IDs. Mainly used for debugging.

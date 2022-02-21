@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/instructions",
+  "$ref": "#/$defs/Instructions",
+  "$defs": {
+    "Card": {
+      "properties": {
+        "last4": {
+          "type": "string",
+          "title": "Last 4",
+          "description": "Last 4 digits of the card's Primary Account Number (PAN)."
+        },
+        "holder": {
+          "type": "string",
+          "title": "Holder Name",
+          "description": "Name of the person whom the card belongs to."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "last4",
+        "holder"
+      ],
+      "description": "Card contains simplified card holder data as a reference for the customer."
+    },
+    "CreditTransfer": {
+      "properties": {
+        "iban": {
+          "type": "string",
+          "title": "IBAN",
+          "description": "International Bank Account Number"
+        },
+        "bic": {
+          "type": "string",
+          "title": "BIC",
+          "description": "Bank Identifier Code used for international transfers."
+        },
+        "number": {
+          "type": "string",
+          "title": "Number",
+          "description": "Account number"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name of the bank."
+        },
+        "branch": {
+          "$ref": "https://gobl.org/draft-0/org/address",
+          "title": "Branch",
+          "description": "Bank office branch address"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
+    },
+    "DirectDebit": {
+      "properties": {
+        "ref": {
+          "type": "string",
+          "title": "Mandate Reference",
+          "description": "Unique identifier assigned by the payee for referencing the direct debit."
+        },
+        "creditor": {
+          "type": "string",
+          "title": "Creditor ID",
+          "description": "Unique banking reference that identifies the payee or seller assigned by the bank."
+        },
+        "account": {
+          "type": "string",
+          "title": "Account",
+          "description": "Account identifier to be debited by the direct debit."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "DirectDebit defines the data that will be used to make the direct debit."
+    },
+    "Instructions": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "How payment is expected or has been arranged to be collected."
+        },
+        "detail": {
+          "type": "string",
+          "title": "Detail",
+          "description": "Optional text description of the payment method."
+        },
+        "ref": {
+          "type": "string",
+          "title": "Ref",
+          "description": "Remittance information"
+        },
+        "credit_transfer": {
+          "items": {
+            "$ref": "#/$defs/CreditTransfer"
+          },
+          "type": "array",
+          "title": "Credit Transfer",
+          "description": "Instructions for sending payment via a bank transfer."
+        },
+        "card": {
+          "$ref": "#/$defs/Card",
+          "title": "Card",
+          "description": "Details of the payment that will be made via a credit or debit card."
+        },
+        "direct_debit": {
+          "$ref": "#/$defs/DirectDebit",
+          "title": "Direct Debit",
+          "description": "A group of terms that can be used by the customer or payer to consolidate direct debit payments."
+        },
+        "online": {
+          "items": {
+            "$ref": "#/$defs/Online"
+          },
+          "type": "array",
+          "title": "Online",
+          "description": "Array of online payment options."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Any additional instructions that may be required to make the payment."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Non-structured additional data that may be useful."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "description": "Instructions holds a set of instructions that determine how the payment has or should be made."
+    },
+    "Online": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Descriptive name given to the online provider."
+        },
+        "addr": {
+          "type": "string",
+          "title": "Address",
+          "description": "Full URL to be used for payment."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "addr"
+      ],
+      "description": "Online provides the details required to make a payment online using a website"
+    }
+  }
+}

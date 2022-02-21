@@ -6,7 +6,13 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/jsonschema"
 )
+
+func init() {
+	schema.Register(schema.GOBL.Add("uuid"), UUID{})
+}
 
 // UUID defines our wrapper for dealing with UUIDs
 type UUID struct {
@@ -74,4 +80,14 @@ func SetRandomNodeID() {
 // NodeID returns the hex representation of the current host bytes
 func NodeID() string {
 	return fmt.Sprintf("%x", uuid.NodeID())
+}
+
+// JSONSchema returns the jsonschema schema object for the UUID.
+func (UUID) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type:        "string",
+		Format:      "uuid",
+		Title:       "UUID",
+		Description: "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL.",
+	}
 }

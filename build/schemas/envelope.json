@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/envelope",
+  "$ref": "#/$defs/Envelope",
+  "$defs": {
+    "Document": {
+      "type": "object",
+      "title": "Document",
+      "description": "Contents of the envelope"
+    },
+    "Envelope": {
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "title": "JSON Schema ID",
+          "description": "Schema identifies the schema that should be used to understand this document"
+        },
+        "head": {
+          "$ref": "#/$defs/Header",
+          "title": "Header",
+          "description": "Details on what the contents are"
+        },
+        "doc": {
+          "$ref": "#/$defs/Document",
+          "title": "Document",
+          "description": "The data inside the envelope"
+        },
+        "sigs": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/dsig/signature"
+          },
+          "type": "array",
+          "title": "Signatures",
+          "description": "JSON Web Signatures of the header"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "$schema",
+        "head",
+        "doc",
+        "sigs"
+      ],
+      "description": "Envelope wraps around a gobl document and provides support for digest creation and digital signatures."
+    },
+    "Header": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique UUIDv1 identifier for the envelope."
+        },
+        "dig": {
+          "$ref": "https://gobl.org/draft-0/dsig/digest",
+          "title": "Digest",
+          "description": "Digest of the canonical JSON body."
+        },
+        "stamps": {
+          "items": {
+            "$ref": "#/$defs/Stamp"
+          },
+          "type": "array",
+          "title": "Stamps",
+          "description": "Seals of approval from other organisations."
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Set of labels that describe but have no influence on the data."
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional semi-structured information about this envelope."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Any information that may be relevant to other humans about this envelope"
+        },
+        "draft": {
+          "type": "boolean",
+          "title": "Draft",
+          "description": "When true, implies that this document should not be considered final. Digital signatures are optional."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "uuid",
+        "dig"
+      ],
+      "description": "Header defines the meta data of the body."
+    },
+    "Stamp": {
+      "properties": {
+        "prv": {
+          "type": "string",
+          "title": "Provider",
+          "description": "Identity of the agency used to create the stamp"
+        },
+        "val": {
+          "type": "string",
+          "title": "Value",
+          "description": "The serialized stamp value generated for or by the external agency"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "prv",
+        "val"
+      ],
+      "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
+    }
+  }
+}

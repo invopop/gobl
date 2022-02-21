@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/pay/terms",
+  "$ref": "#/$defs/Terms",
+  "$defs": {
+    "DueDate": {
+      "properties": {
+        "date": {
+          "$ref": "https://gobl.org/draft-0/org/date",
+          "title": "Date",
+          "description": "When the payment is due."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Other details to take into account for the due date."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "How much needs to be paid by the date."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percentage of the total that should be paid by the date."
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "If different from the parent document's base currency."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "date",
+        "amount"
+      ],
+      "description": "DueDate contains an amount that should be paid by the given date."
+    },
+    "Terms": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Type of terms to be applied."
+        },
+        "detail": {
+          "type": "string",
+          "title": "Detail",
+          "description": "Text detail of the chosen payment terms."
+        },
+        "due_dates": {
+          "items": {
+            "$ref": "#/$defs/DueDate"
+          },
+          "type": "array",
+          "title": "Due Dates",
+          "description": "Set of dates for agreed payments."
+        },
+        "notes": {
+          "type": "string",
+          "title": "Notes",
+          "description": "Description of the conditions for payment."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
+    }
+  }
+}

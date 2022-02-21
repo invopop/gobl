@@ -1,47 +1,20 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "$ref": "#/definitions/tax.Region",
-  "definitions": {
-    "i18n.String": {
-      "patternProperties": {
-        "^[a-z]{2}$": {
-          "type": "string",
-          "title": "Text in given language."
-        }
-      },
-      "type": "object",
-      "title": "Multi-language String",
-      "description": "Map of 2-Letter language codes to their translations."
-    },
-    "num.Percentage": {
-      "pattern": "^\\-?[0-9]+(\\.[0-9]+)?%$",
-      "type": "string",
-      "title": "Percentage",
-      "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
-    },
-    "org.Date": {
-      "type": "string",
-      "title": "Date",
-      "description": "Civil date in simplified ISO format, like 2021-05-26",
-      "format": "date"
-    },
-    "tax.Category": {
-      "required": [
-        "code",
-        "name",
-        "defs"
-      ],
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/region",
+  "$ref": "#/$defs/Region",
+  "$defs": {
+    "Category": {
       "properties": {
         "code": {
           "type": "string",
           "title": "Code"
         },
         "name": {
-          "$ref": "#/definitions/i18n.String",
+          "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name"
         },
         "desc": {
-          "$ref": "#/definitions/i18n.String",
+          "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Description"
         },
         "retained": {
@@ -51,8 +24,7 @@
         },
         "defs": {
           "items": {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/tax.Def"
+            "$ref": "#/$defs/Def"
           },
           "type": "array",
           "title": "Definitions",
@@ -61,14 +33,14 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Category ..."
-    },
-    "tax.Def": {
       "required": [
         "code",
         "name",
-        "values"
+        "defs"
       ],
+      "description": "Category ..."
+    },
+    "Def": {
       "properties": {
         "code": {
           "type": "string",
@@ -76,17 +48,16 @@
           "description": "Code identifies this rate within the system"
         },
         "name": {
-          "$ref": "#/definitions/i18n.String",
+          "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name"
         },
         "desc": {
-          "$ref": "#/definitions/i18n.String",
+          "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Description"
         },
         "values": {
           "items": {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/tax.Value"
+            "$ref": "#/$defs/Value"
           },
           "type": "array",
           "title": "Values",
@@ -95,27 +66,26 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "Def defines a tax combination of category and rate."
-    },
-    "tax.Region": {
       "required": [
         "code",
         "name",
-        "categories"
+        "values"
       ],
+      "description": "Def defines a tax combination of category and rate."
+    },
+    "Region": {
       "properties": {
         "code": {
           "type": "string",
           "title": "Code"
         },
         "name": {
-          "$ref": "#/definitions/i18n.String",
+          "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name"
         },
         "categories": {
           "items": {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "$ref": "#/definitions/tax.Category"
+            "$ref": "#/$defs/Category"
           },
           "type": "array",
           "title": "Categories"
@@ -123,22 +93,22 @@
       },
       "additionalProperties": false,
       "type": "object",
+      "required": [
+        "code",
+        "name",
+        "categories"
+      ],
       "description": "Region defines the holding structure for a regions categories and subsequent Rates and Values."
     },
-    "tax.Value": {
-      "required": [
-        "percent"
-      ],
+    "Value": {
       "properties": {
         "since": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/org.Date",
+          "$ref": "https://gobl.org/draft-0/org/date",
           "title": "Since",
           "description": "Date from which this value should be applied."
         },
         "percent": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "$ref": "#/definitions/num.Percentage",
+          "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
           "description": "Rate that should be applied"
         },
@@ -150,6 +120,9 @@
       },
       "additionalProperties": false,
       "type": "object",
+      "required": [
+        "percent"
+      ],
       "description": "Value contains a percentage rate or fixed amount for a given date range."
     }
   }

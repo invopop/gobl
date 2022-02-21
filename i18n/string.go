@@ -1,6 +1,6 @@
 package i18n
 
-import "github.com/alecthomas/jsonschema"
+import "github.com/invopop/jsonschema"
 
 const (
 	defaultLanguage = EN
@@ -24,11 +24,11 @@ func (s String) String(lang Lang) string {
 	return ""
 }
 
-// JSONSchemaType returns the jscon schema type.
-func (String) JSONSchemaType() *jsonschema.Type {
-	return &jsonschema.Type{
+// JSONSchema returns the json schema definition
+func (String) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
 		Type: "object",
-		PatternProperties: map[string]*jsonschema.Type{
+		PatternProperties: map[string]*jsonschema.Schema{
 			`^[a-z]{2}$`: {
 				Type:  "string",
 				Title: "Text in given language.",

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alecthomas/jsonschema"
+	"github.com/invopop/jsonschema"
 )
 
 // Amount represents a quantity with decimal places that will not suffer
@@ -296,9 +296,9 @@ func intPow(base int, exp uint32) int64 { // nolint:unparam
 	return out
 }
 
-// JSONSchemaType provides a representation of the struct for usage in Schema.
-func (Amount) JSONSchemaType() *jsonschema.Type {
-	return &jsonschema.Type{
+// JSONSchema provides a representation of the struct for usage in Schema.
+func (Amount) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
 		Type:        "string",
 		Pattern:     `^\-?[0-9]+(\.[0-9]+)?$`,
 		Title:       "Amount",

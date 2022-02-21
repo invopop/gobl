@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/total",
+  "$ref": "#/$defs/Total",
+  "$defs": {
+    "CategoryTotal": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "retained": {
+          "type": "boolean",
+          "title": "Retained"
+        },
+        "rates": {
+          "items": {
+            "$ref": "#/$defs/RateTotal"
+          },
+          "type": "array",
+          "title": "Rates"
+        },
+        "base": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Base"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "code",
+        "rates",
+        "base",
+        "amount"
+      ],
+      "description": "CategoryTotal groups together all rates inside a given category."
+    },
+    "RateTotal": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "base": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Base"
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent"
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "code",
+        "base",
+        "percent",
+        "amount"
+      ],
+      "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and definition."
+    },
+    "Total": {
+      "properties": {
+        "categories": {
+          "items": {
+            "$ref": "#/$defs/CategoryTotal"
+          },
+          "type": "array",
+          "title": "Categories",
+          "description": "Grouping of all the taxes by their category"
+        },
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum",
+          "description": "Total value of all the taxes applied."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "sum"
+      ],
+      "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
+    }
+  }
+}

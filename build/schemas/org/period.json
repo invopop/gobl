@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/period",
+  "$ref": "#/$defs/Period",
+  "$defs": {
+    "Period": {
+      "properties": {
+        "start": {
+          "$ref": "https://gobl.org/draft-0/org/date"
+        },
+        "end": {
+          "$ref": "https://gobl.org/draft-0/org/date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "description": "Period represents two dates with a start and finish."
+    }
+  }
+}

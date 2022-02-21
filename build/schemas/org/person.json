@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/person",
+  "$ref": "#/$defs/Person",
+  "$defs": {
+    "Person": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "ID",
+          "description": "Internal ID used to identify the person inside a document."
+        },
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/org/name",
+          "title": "Name",
+          "description": "Complete details on the name of the person"
+        },
+        "role": {
+          "type": "string",
+          "title": "Role",
+          "description": "What they do within an organization"
+        },
+        "emails": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/email"
+          },
+          "type": "array",
+          "title": "Email Addresses",
+          "description": "Electronic mail addresses that belong to the person."
+        },
+        "telephones": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/telephone"
+          },
+          "type": "array",
+          "title": "Telephone Numbers"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta",
+          "description": "Data about the data."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "description": "Person represents a human, and how to contact them electronically."
+    }
+  }
+}

@@ -16,7 +16,7 @@ func TestDocument(t *testing.T) {
 
 	doc := new(Document)
 
-	err := doc.insert(msg)
+	err := doc.Insert(msg)
 	require.NoError(t, err)
 
 	id := schema.Lookup(&note.Message{})

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/telephone",
+  "$ref": "#/$defs/Telephone",
+  "$defs": {
+    "Telephone": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for this number."
+        },
+        "num": {
+          "type": "string",
+          "title": "Number",
+          "description": "The number to be dialed in ITU E.164 international format."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "num"
+      ],
+      "description": "Telephone describes what is expected for a telephone number."
+    }
+  }
+}

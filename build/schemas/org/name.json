@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/name",
+  "$ref": "#/$defs/Name",
+  "$defs": {
+    "Name": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "description": "What the person would like to be called"
+        },
+        "prefix": {
+          "type": "string",
+          "title": "Prefix"
+        },
+        "given": {
+          "type": "string",
+          "title": "Given",
+          "description": "The person's given name"
+        },
+        "middle": {
+          "type": "string",
+          "title": "Middle",
+          "description": "Middle names or initials"
+        },
+        "surname": {
+          "type": "string",
+          "title": "Surname"
+        },
+        "surname2": {
+          "type": "string",
+          "title": "Second Surname"
+        },
+        "suffix": {
+          "type": "string",
+          "title": "Suffix"
+        },
+        "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "title": "Meta"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "given",
+        "surname"
+      ],
+      "description": "Name represents what a human is called."
+    }
+  }
+}

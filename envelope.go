@@ -12,7 +12,7 @@ import (
 // and digital signatures.
 type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
-	Schema schema.ID `json:"$schema" jsonschema:"-"`
+	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
 	// Details on what the contents are
 	Head *Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
@@ -61,7 +61,7 @@ func (e *Envelope) Validate() error {
 // Verify ensures the digest headers still match the document contents.
 func (e *Envelope) Verify() error {
 	d1 := e.Head.Digest
-	d2, err := e.Document.digest()
+	d2, err := e.Document.Digest()
 	if err != nil {
 		return err
 	}
@@ -89,19 +89,6 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return err
 	}
 
-	if e.Document == nil {
-		e.Document = new(Document)
-	}
-	if err := e.Document.insert(doc); err != nil {
-		return err
-	}
-
-	var err error
-	e.Head.Digest, err = e.Document.digest()
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -120,15 +107,11 @@ func (e *Envelope) Complete() error {
 	}
 
 	obj := reflect.New(typ).Interface()
-	if err := e.Document.extract(obj); err != nil {
+	if err := e.Document.Extract(obj); err != nil {
 		return err
 	}
 
 	if err := e.complete(obj); err != nil {
-		return err
-	}
-
-	if err := e.Document.insert(obj); err != nil {
 		return err
 	}
 
@@ -147,6 +130,17 @@ func (e *Envelope) complete(doc interface{}) error {
 			return ErrValidation.WithCause(err)
 		}
 	}
+
+	if err := e.Document.Insert(doc); err != nil {
+		return err
+	}
+
+	var err error
+	e.Head.Digest, err = e.Document.Digest()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -155,5 +149,5 @@ func (e *Envelope) Extract(doc interface{}) error {
 	if e.Document == nil {
 		return ErrNoDocument.WithErrorf("cannot extract document from empty envelope")
 	}
-	return e.Document.extract(doc)
+	return e.Document.Extract(doc)
 }

@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/registration",
+  "$ref": "#/$defs/Registration",
+  "$defs": {
+    "Registration": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID"
+        },
+        "office": {
+          "type": "string",
+          "title": "Office",
+          "description": "Office where the company is registered."
+        },
+        "book": {
+          "type": "string",
+          "title": "Book"
+        },
+        "volume": {
+          "type": "string",
+          "title": "Volume"
+        },
+        "sheet": {
+          "type": "string",
+          "title": "Sheet"
+        },
+        "section": {
+          "type": "string",
+          "title": "Section"
+        },
+        "page": {
+          "type": "string",
+          "title": "Page"
+        },
+        "entry": {
+          "type": "string",
+          "title": "Entry"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Registration is used in countries that require additional information to be associated with a company usually related to a specific registration office."
+    }
+  }
+}
