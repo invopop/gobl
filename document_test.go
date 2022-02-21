@@ -1,6 +1,7 @@
 package gobl
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/note"
@@ -16,10 +17,33 @@ func TestDocument(t *testing.T) {
 
 	doc := new(Document)
 
-	err := doc.Insert(msg)
+	err := doc.insert(msg)
 	require.NoError(t, err)
 
 	id := schema.Lookup(&note.Message{})
 	assert.Contains(t, id.String(), "https://gobl.org/")
-	assert.Contains(t, id.String(), "/note#Message")
+	assert.Contains(t, id.String(), "/note/message")
+
+	dig := "82a5cddc56f069ff17705f310161dd17cd8b00d94728e6be3fafdad980522a27"
+	assert.Equal(t, id, doc.Schema())
+	sha, err := doc.Digest()
+	require.NoError(t, err)
+	assert.Equal(t, dig, sha.Value)
+	assert.Equal(t, doc.Instance(), msg)
+
+	data, err := json.Marshal(doc)
+	require.NoError(t, err)
+
+	doc = new(Document)
+	err = json.Unmarshal(data, doc)
+	require.NoError(t, err)
+
+	assert.Equal(t, doc.Schema(), id)
+	sha, err = doc.Digest()
+	require.NoError(t, err)
+	assert.Equal(t, dig, sha.Value)
+
+	obj, ok := doc.Instance().(*note.Message)
+	assert.True(t, ok)
+	assert.Equal(t, msg.Content, obj.Content)
 }

@@ -1,5 +1,5 @@
 doc:
-  $schema: "https://gobl.org/draft0/bill#Invoice"
+  $schema: "https://gobl.org/draft-0/bill/invoice"
   region: "ES"
   currency: "EUR"
   issue_date: "2022-02-01"
