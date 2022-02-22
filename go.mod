@@ -18,6 +18,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
-// replace github.com/alecthomas/jsonschema => github.com/invopop/jsonschema v0.0.0-20211230180634-99ed368317c4
-
 // replace github.com/invopop/jsonschema => ../jsonschema

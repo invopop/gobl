@@ -1,8 +1,8 @@
 name: Test Go
 on: [push]
 jobs:
-  lint-test-build:
-    name: Lint, Test
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
     steps:

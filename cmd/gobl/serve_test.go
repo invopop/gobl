@@ -141,25 +141,7 @@ func Test_serve_verify(t *testing.T) {
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
-			err: `code=422, message=doc: cannot be blank; head: cannot be blank; ver: cannot be blank.`,
-		},
-		{
-			name: "validation pass",
-			req: func() *http.Request {
-				data, err := ioutil.ReadFile("testdata/success.json")
-				if err != nil {
-					t.Fatal(err)
-				}
-				body, err := json.Marshal(map[string]interface{}{
-					"data": json.RawMessage(data),
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				req, _ := http.NewRequest(http.MethodPost, "/build", bytes.NewReader(body))
-				req.Header.Set("Content-Type", "application/json")
-				return req
-			}(),
+			err: `code=422, message=$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.`,
 		},
 		{
 			name: "invalid data",
