@@ -207,7 +207,7 @@ func TestBuild(t *testing.T) {
 				}
 			}`),
 		},
-		err: `code=422, message=unrecognized document schema "https://example.com/duck"`,
+		err: `code=400, message=marshal: unregistered schema: https://example.com/duck`,
 	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {

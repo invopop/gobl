@@ -71,15 +71,14 @@ func extractDoc(env *gobl.Envelope) (interface{}, error) {
 	if env.Document == nil {
 		return nil, errors.New("no document found")
 	}
-	if env.Document.Schema == "" {
+	if env.Document.Schema() == "" {
 		return nil, errors.New("missing document schema")
 	}
-	doc := env.Document.Schema.Interface()
+	doc := env.Extract()
 	if doc == nil {
-		return nil, fmt.Errorf("unrecognized document schema %q", env.Document.Schema)
+		return nil, fmt.Errorf("unrecognized document schema %q", env.Document.Schema())
 	}
-	err := env.Document.Extract(doc)
-	return doc, err
+	return doc, nil
 }
 
 func parseSets(opts BuildOptions) (map[string]interface{}, error) {

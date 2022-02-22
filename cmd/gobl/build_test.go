@@ -201,7 +201,7 @@ func Test_build(t *testing.T) {
 				},
 				doc: {}
 			}`),
-			err: "code=422, message=missing document schema",
+			err: "code=400, message=marshal: unregistered schema: ",
 		},
 		{
 			name: "input file",
