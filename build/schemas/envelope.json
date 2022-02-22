@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/envelope",
+  "$id": "https://github.com/invopop/gobl/envelope",
   "$ref": "#/$defs/Envelope",
   "$defs": {
     "Document": {
@@ -34,7 +34,6 @@
           "description": "JSON Web Signatures of the header"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "$schema",
@@ -93,7 +92,6 @@
           "description": "When true, implies that this document should not be considered final. Digital signatures are optional."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "uuid",
@@ -114,7 +112,6 @@
           "description": "The serialized stamp value generated for or by the external agency"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "prv",
@@ -122,5 +119,6 @@
       ],
       "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

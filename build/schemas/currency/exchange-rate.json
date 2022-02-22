@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/currency/exchange-rate",
+  "$id": "https://github.com/invopop/gobl/currency/exchange-rate",
   "$ref": "#/$defs/ExchangeRate",
   "$defs": {
     "ExchangeRate": {
@@ -16,7 +16,6 @@
           "description": "How much is 1.00 of this currency worth in the documents currency."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "currency",
@@ -24,5 +23,6 @@
       ],
       "description": "ExchangeRate contains data on the rate to be used when converting amounts from the document's base currency to whatever is defined."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

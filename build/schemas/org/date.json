@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/date",
+  "$id": "https://github.com/invopop/gobl/org/date",
   "$ref": "#/$defs/Date",
   "$defs": {
     "Date": {
@@ -9,5 +9,6 @@
       "title": "Date",
       "description": "Civil date in simplified ISO format, like 2021-05-26"
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

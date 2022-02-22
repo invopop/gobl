@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/note/message",
+  "$id": "https://github.com/invopop/gobl/note/message",
   "$ref": "#/$defs/Message",
   "$defs": {
     "Message": {
@@ -26,12 +26,12 @@
           "description": "Any additional semi-structured data that might be useful."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "content"
       ],
       "description": "Message represents the minimum possible contents for a GoBL document type."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

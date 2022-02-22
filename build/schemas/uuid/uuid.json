@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/uuid/uuid",
+  "$id": "https://github.com/invopop/gobl/uuid/uuid",
   "$ref": "#/$defs/UUID",
   "$defs": {
     "UUID": {
@@ -9,5 +9,6 @@
       "title": "UUID",
       "description": "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

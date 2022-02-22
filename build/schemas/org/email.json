@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/email",
+  "$id": "https://github.com/invopop/gobl/org/email",
   "$ref": "#/$defs/Email",
   "$defs": {
     "Email": {
@@ -29,12 +29,12 @@
           "description": "Additional fields."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "addr"
       ],
       "description": "Email describes the electronic mailing details."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

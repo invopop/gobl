@@ -83,8 +83,9 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return ErrInternal.WithErrorf("missing head")
 	}
 
-	e.Document = new(Document)
-	if err := e.Document.insert(doc); err != nil {
+	var err error
+	e.Document, err = NewDocument(doc)
+	if err != nil {
 		return err
 	}
 

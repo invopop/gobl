@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/name",
+  "$id": "https://github.com/invopop/gobl/org/name",
   "$ref": "#/$defs/Name",
   "$defs": {
     "Name": {
@@ -51,7 +51,6 @@
           "title": "Meta"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "given",
@@ -59,5 +58,6 @@
       ],
       "description": "Name represents what a human is called."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

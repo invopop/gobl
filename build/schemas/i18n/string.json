@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/i18n/string",
+  "$id": "https://github.com/invopop/gobl/i18n/string",
   "$ref": "#/$defs/String",
   "$defs": {
     "String": {
@@ -14,5 +14,6 @@
       "title": "Multi-language String",
       "description": "Map of 2-Letter language codes to their translations."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

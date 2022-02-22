@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/coordinates",
+  "$id": "https://github.com/invopop/gobl/org/coordinates",
   "$ref": "#/$defs/Coordinates",
   "$defs": {
     "Coordinates": {
@@ -26,9 +26,9 @@
           "description": "Single string coordinate based on geohash standard."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "Coordinates describes an exact geographical location in the world."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

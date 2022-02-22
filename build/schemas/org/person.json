@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/person",
+  "$id": "https://github.com/invopop/gobl/org/person",
   "$ref": "#/$defs/Person",
   "$defs": {
     "Person": {
@@ -51,12 +51,12 @@
           "description": "Data about the data."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "name"
       ],
       "description": "Person represents a human, and how to contact them electronically."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

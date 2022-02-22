@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/num/amount",
+  "$id": "https://github.com/invopop/gobl/num/amount",
   "$ref": "#/$defs/Amount",
   "$defs": {
     "Amount": {
@@ -9,5 +9,6 @@
       "title": "Amount",
       "description": "Quantity with optional decimal places that determine accuracy."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

@@ -1,9 +1,10 @@
-package gobl
+package gobl_test
 
 import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/schema"
@@ -16,9 +17,7 @@ func TestDocument(t *testing.T) {
 		Content: "test message",
 	}
 
-	doc := new(Document)
-
-	err := doc.insert(msg)
+	doc, err := gobl.NewDocument(msg)
 	require.NoError(t, err)
 
 	id := schema.Lookup(&note.Message{})
@@ -38,7 +37,7 @@ func TestDocument(t *testing.T) {
 	digest := dsig.NewSHA256Digest(data) // this works as the JSON is very simple!
 	assert.Equal(t, dig, digest.Value)
 
-	doc = new(Document)
+	doc = new(gobl.Document)
 	err = json.Unmarshal(data, doc)
 	require.NoError(t, err)
 

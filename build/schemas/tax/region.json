@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/tax/region",
+  "$id": "https://github.com/invopop/gobl/tax/region",
   "$ref": "#/$defs/Region",
   "$defs": {
     "Category": {
@@ -31,7 +31,6 @@
           "description": "Specific tax definitions inside this category."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code",
@@ -64,7 +63,6 @@
           "description": "Set of values ordered by date that determine what rates to apply since when."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code",
@@ -91,7 +89,6 @@
           "title": "Categories"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code",
@@ -118,12 +115,12 @@
           "description": "When true, this value should no longer be used."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "percent"
       ],
       "description": "Value contains a percentage rate or fixed amount for a given date range."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

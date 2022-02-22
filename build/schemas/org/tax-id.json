@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/tax-id",
+  "$id": "https://github.com/invopop/gobl/org/tax-id",
   "$ref": "#/$defs/TaxID",
   "$defs": {
     "TaxID": {
@@ -31,7 +31,6 @@
           "description": "Additional details."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "country",
@@ -39,5 +38,6 @@
       ],
       "description": "TaxID represents a party's tax identify number for a given country."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

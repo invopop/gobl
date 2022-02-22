@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/telephone",
+  "$id": "https://github.com/invopop/gobl/org/telephone",
   "$ref": "#/$defs/Telephone",
   "$defs": {
     "Telephone": {
@@ -20,12 +20,12 @@
           "description": "The number to be dialed in ITU E.164 international format."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "num"
       ],
       "description": "Telephone describes what is expected for a telephone number."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

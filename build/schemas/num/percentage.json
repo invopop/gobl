@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/num/percentage",
+  "$id": "https://github.com/invopop/gobl/num/percentage",
   "$ref": "#/$defs/Percentage",
   "$defs": {
     "Percentage": {
@@ -9,5 +9,6 @@
       "title": "Percentage",
       "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

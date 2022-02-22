@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/address",
+  "$id": "https://github.com/invopop/gobl/org/address",
   "$ref": "#/$defs/Address",
   "$defs": {
     "Address": {
@@ -84,7 +84,6 @@
           "title": "Meta"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "locality",
@@ -92,5 +91,6 @@
       ],
       "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

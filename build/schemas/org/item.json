@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/item",
+  "$id": "https://github.com/invopop/gobl/org/item",
   "$ref": "#/$defs/Item",
   "$defs": {
     "Item": {
@@ -62,7 +62,6 @@
           "description": "Additional meta information that may be useful"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "name",
@@ -81,12 +80,12 @@
           "title": "Value"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "val"
       ],
       "description": "ItemCode contains a value and optional type property that means additional codes can be added to an item."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }
