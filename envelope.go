@@ -2,6 +2,7 @@ package gobl
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/schema"
 )
@@ -109,15 +110,14 @@ func (e *Envelope) Complete() error {
 	if obj == nil {
 		return ErrUnknownSchema.WithErrorf("schema: %v", e.Document.Schema().String())
 	}
-	if err := e.complete(obj); err != nil {
-		return err
-	}
 
-	return nil
+	return e.complete(obj)
 }
 
 func (e *Envelope) complete(doc interface{}) error {
-	// arm doors and cross check
+	if e.Head == nil {
+		e.Head = &Header{}
+	}
 	if obj, ok := doc.(Calculable); ok {
 		if err := obj.Calculate(); err != nil {
 			return ErrCalculation.WithCause(err)
@@ -134,11 +134,7 @@ func (e *Envelope) complete(doc interface{}) error {
 		e.Head = NewHeader()
 	}
 	e.Head.Digest, err = e.Document.Digest()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // Extract the contents of the envelope into the provided document type.

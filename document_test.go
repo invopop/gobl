@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/schema"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestDocument(t *testing.T) {
