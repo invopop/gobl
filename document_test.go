@@ -51,3 +51,15 @@ func TestDocument(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, msg.Content, obj.Content)
 }
+
+func TestDocumentValidation(t *testing.T) {
+	msg := &note.Message{}
+
+	doc, err := gobl.NewDocument(msg)
+	require.NoError(t, err)
+
+	err = doc.Validate()
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "content: cannot be blank")
+	}
+}
