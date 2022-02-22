@@ -125,6 +125,18 @@ func TestEnvelopeValidate(t *testing.T) {
 				return env
 			},
 		},
+		{
+			name: "with sig, not draft, modified",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				env.Insert(&note.Message{Content: "foo"})
+				assert.NoError(t, env.Sign(key))
+				msg := env.Extract().(*note.Message)
+				msg.Content = "bar"
+				return env
+			},
+			want: "digest mismatch",
+		},
 	}
 
 	for _, tt := range tests {
