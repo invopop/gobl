@@ -20,10 +20,11 @@ func Schema() error {
 	return schemas.Generate()
 }
 
+// RegionData generates JSON version of each region's data.
 func RegionData() error {
 	for c, r := range region.All() {
-		doc := new(gobl.Document)
-		if err := doc.Insert(r.Taxes()); err != nil {
+		doc, err := gobl.NewDocument(r.Taxes())
+		if err != nil {
 			return err
 		}
 		data, err := json.MarshalIndent(doc, "", "  ")

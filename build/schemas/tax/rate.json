@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/tax/rate",
+  "$id": "https://github.com/invopop/gobl/tax/rate",
   "$ref": "#/$defs/Rate",
   "$defs": {
     "Rate": {
@@ -16,7 +16,6 @@
           "description": "As defined for the region and category."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "cat",
@@ -24,5 +23,6 @@
       ],
       "description": "Rate references the tax category and rate code that should be applied to this line item when calculating the final taxes."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

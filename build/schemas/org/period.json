@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/period",
+  "$id": "https://github.com/invopop/gobl/org/period",
   "$ref": "#/$defs/Period",
   "$defs": {
     "Period": {
@@ -12,7 +12,6 @@
           "$ref": "https://gobl.org/draft-0/org/date"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "start",
@@ -20,5 +19,6 @@
       ],
       "description": "Period represents two dates with a start and finish."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

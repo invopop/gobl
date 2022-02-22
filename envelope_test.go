@@ -33,7 +33,7 @@ func TestEnvelopeDocument(t *testing.T) {
 
 	if assert.NotNil(t, e.Head.Digest) {
 		assert.Equal(t, e.Head.Digest.Algorithm, dsig.DigestSHA256, "unexpected digest algorithm")
-		assert.Equal(t, "795bebe1e78204416d4421d71e80b3936ee3865142f660ae95da036cbb6f65c3", e.Head.Digest.Value, "digest should be the same")
+		assert.Equal(t, "c6a5148ce90f70c24ebfe6de1abed0d0aafde4323a9bcf47cc4a5d544af9ea19", e.Head.Digest.Value, "digest should be the same")
 	}
 
 	assert.Empty(t, e.Signatures)
@@ -42,16 +42,15 @@ func TestEnvelopeDocument(t *testing.T) {
 
 	assert.NoError(t, e.Verify(), "did not expect verify error")
 
-	nm := new(note.Message)
-	assert.NoError(t, e.Extract(nm))
+	nm, ok := e.Extract().(*note.Message)
+	require.True(t, ok, "unrecognized content")
 	assert.Equal(t, m.Content, nm.Content, "content mismatch")
 }
 
 func TestEnvelopeExtract(t *testing.T) {
 	e := &gobl.Envelope{}
-	inv := new(bill.Invoice)
-	err := e.Extract(inv)
-	assert.ErrorIs(t, err, gobl.ErrNoDocument)
+	obj := e.Extract()
+	assert.Nil(t, obj)
 }
 
 func TestEnvelopeComplete(t *testing.T) {
@@ -65,8 +64,8 @@ func TestEnvelopeComplete(t *testing.T) {
 	err = e.Complete()
 	require.NoError(t, err)
 
-	inv := new(bill.Invoice)
-	err = e.Extract(inv)
+	inv, ok := e.Extract().(*bill.Invoice)
+	require.True(t, ok)
 	require.NoError(t, err)
 
 	assert.Equal(t, "1210.00", inv.Totals.Payable.String())

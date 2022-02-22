@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/party",
+  "$id": "https://github.com/invopop/gobl/org/party",
   "$ref": "#/$defs/Party",
   "$defs": {
     "Party": {
@@ -76,12 +76,12 @@
           "description": "Any additional semi-structured information that does not fit into the rest of the party."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "name"
       ],
       "description": "Party represents a person or business entity."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

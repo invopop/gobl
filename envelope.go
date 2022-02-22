@@ -1,8 +1,6 @@
 package gobl
 
 import (
-	"reflect"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/schema"
@@ -85,6 +83,12 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return ErrInternal.WithErrorf("missing head")
 	}
 
+	var err error
+	e.Document, err = NewDocument(doc)
+	if err != nil {
+		return err
+	}
+
 	if err := e.complete(doc); err != nil {
 		return err
 	}
@@ -100,17 +104,11 @@ func (e *Envelope) Complete() error {
 	if e.Document == nil {
 		return ErrNoDocument
 	}
-	// determine document type
-	typ := schema.Type(e.Document.Schema)
-	if typ == nil {
-		return ErrUnknownSchema
-	}
 
-	obj := reflect.New(typ).Interface()
-	if err := e.Document.Extract(obj); err != nil {
-		return err
+	obj := e.Document.Instance()
+	if obj == nil {
+		return ErrUnknownSchema.WithErrorf("schema: %v", e.Document.Schema().String())
 	}
-
 	if err := e.complete(obj); err != nil {
 		return err
 	}
@@ -131,11 +129,10 @@ func (e *Envelope) complete(doc interface{}) error {
 		}
 	}
 
-	if err := e.Document.Insert(doc); err != nil {
-		return err
-	}
-
 	var err error
+	if e.Head == nil {
+		e.Head = NewHeader()
+	}
 	e.Head.Digest, err = e.Document.Digest()
 	if err != nil {
 		return err
@@ -145,9 +142,9 @@ func (e *Envelope) complete(doc interface{}) error {
 }
 
 // Extract the contents of the envelope into the provided document type.
-func (e *Envelope) Extract(doc interface{}) error {
+func (e *Envelope) Extract() interface{} {
 	if e.Document == nil {
-		return ErrNoDocument.WithErrorf("cannot extract document from empty envelope")
+		return nil
 	}
-	return e.Document.Extract(doc)
+	return e.Document.Instance()
 }

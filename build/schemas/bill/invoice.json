@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/bill/invoice",
+  "$id": "https://github.com/invopop/gobl/bill/invoice",
   "$ref": "#/$defs/Invoice",
   "$defs": {
     "Charge": {
@@ -64,7 +64,6 @@
           "description": "Additional semi-structured information."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "i",
@@ -95,7 +94,6 @@
           "description": "End of a n invoicing or delivery period"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "Delivery covers the details of the destination for the products described in the invoice body."
     },
@@ -160,7 +158,6 @@
           "description": "Additional semi-structured information."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "i",
@@ -311,7 +308,6 @@
           "description": "Additional semi-structured data that doesn't fit into the body of the invoice."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "region",
@@ -380,7 +376,6 @@
           "description": "Total line amount after applying discounts to the sum"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "i",
@@ -414,7 +409,6 @@
           "description": "Text description as to why the charge was applied"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "amount"
@@ -444,7 +438,6 @@
           "description": "Text description as to why the discount was applied"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "amount"
@@ -459,7 +452,6 @@
           "description": "Party who is selling the goods and is not responsible for taxes"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "Ordering allows additional order details to be appended"
     },
@@ -506,7 +498,6 @@
           "description": "Amount paid by the supplier."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "i",
@@ -541,7 +532,6 @@
           "description": "Details on how payment should be made."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "Payment contains details as to how the invoice should be paid."
     },
@@ -601,7 +591,6 @@
           "description": "Additional semi-structured data that may be useful in specific regions"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code",
@@ -667,7 +656,6 @@
           "description": "How much actually needs to be paid now."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "sum",
@@ -677,5 +665,6 @@
       ],
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

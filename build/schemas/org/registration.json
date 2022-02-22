@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/registration",
+  "$id": "https://github.com/invopop/gobl/org/registration",
   "$ref": "#/$defs/Registration",
   "$defs": {
     "Registration": {
@@ -39,9 +39,9 @@
           "title": "Entry"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "Registration is used in countries that require additional information to be associated with a company usually related to a specific registration office."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/pay/terms",
+  "$id": "https://github.com/invopop/gobl/pay/terms",
   "$ref": "#/$defs/Terms",
   "$defs": {
     "DueDate": {
@@ -31,7 +31,6 @@
           "description": "If different from the parent document's base currency."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "date",
@@ -65,12 +64,12 @@
           "description": "Description of the conditions for payment."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code"
       ],
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

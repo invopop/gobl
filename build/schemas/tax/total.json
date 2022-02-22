@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/tax/total",
+  "$id": "https://github.com/invopop/gobl/tax/total",
   "$ref": "#/$defs/Total",
   "$defs": {
     "CategoryTotal": {
@@ -29,7 +29,6 @@
           "title": "Amount"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code",
@@ -58,7 +57,6 @@
           "title": "Amount"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code",
@@ -84,12 +82,12 @@
           "description": "Total value of all the taxes applied."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "sum"
       ],
       "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

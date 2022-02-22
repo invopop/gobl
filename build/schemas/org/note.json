@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/note",
+  "$id": "https://github.com/invopop/gobl/org/note",
   "$ref": "#/$defs/Note",
   "$defs": {
     "Note": {
@@ -16,12 +16,12 @@
           "description": "The contents of the note"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "text"
       ],
       "description": "Note represents a free text of additional information that may be added to a document."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 )
@@ -18,6 +19,7 @@ const outPath = "./build/schemas"
 // Generate is used to generate a set of schema files from the GOBL bases.
 func Generate() error {
 	r := new(jsonschema.Reflector)
+	r.AllowAdditionalProperties = true
 
 	if err := r.AddGoComments("github.com/invopop/gobl", "./"); err != nil {
 		return fmt.Errorf("reading comments: %w", err)
@@ -32,6 +34,8 @@ func Generate() error {
 		return jsonschema.EmptyID
 	}
 
+	comment := fmt.Sprintf("Generated with GOBL %v", gobl.VERSION)
+
 	// Cleanup the old
 	if err := os.RemoveAll(outPath); err != nil {
 		return fmt.Errorf("unable to remove old data: %w", err)
@@ -40,6 +44,7 @@ func Generate() error {
 	for t, id := range schema.Types() {
 		fmt.Printf("processing %v... ", id)
 		s := r.ReflectFromType(t)
+		s.Comments = comment
 
 		f := strings.TrimPrefix(id.String(), schema.GOBL.String()) + ".json"
 		f = filepath.Join(outPath, f)

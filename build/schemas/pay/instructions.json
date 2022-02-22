@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/pay/instructions",
+  "$id": "https://github.com/invopop/gobl/pay/instructions",
   "$ref": "#/$defs/Instructions",
   "$defs": {
     "Card": {
@@ -16,7 +16,6 @@
           "description": "Name of the person whom the card belongs to."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "last4",
@@ -52,7 +51,6 @@
           "description": "Bank office branch address"
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
     },
@@ -74,7 +72,6 @@
           "description": "Account identifier to be debited by the direct debit."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "description": "DirectDebit defines the data that will be used to make the direct debit."
     },
@@ -137,7 +134,6 @@
           "description": "Non-structured additional data that may be useful."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "code"
@@ -157,12 +153,12 @@
           "description": "Full URL to be used for payment."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "addr"
       ],
       "description": "Online provides the details required to make a payment online using a website"
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

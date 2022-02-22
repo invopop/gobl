@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/pay/advance",
+  "$id": "https://github.com/invopop/gobl/pay/advance",
   "$ref": "#/$defs/Advance",
   "$defs": {
     "Advance": {
@@ -46,7 +46,6 @@
           "description": "If different from the parent document's base currency."
         }
       },
-      "additionalProperties": false,
       "type": "object",
       "required": [
         "desc",
@@ -54,5 +53,6 @@
       ],
       "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
     }
-  }
+  },
+  "$comment": "Generated with GOBL v0.17.0"
 }

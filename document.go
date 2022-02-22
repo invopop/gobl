@@ -11,52 +11,30 @@ import (
 )
 
 // Document helps us handle the document's contents by essentially wrapping around
-// the json RawMessage.
+// the contents and ensuring that a `$schema` property is added automatically when
+// marshalling into JSON.
 type Document struct {
-	Schema schema.ID
-	data   json.RawMessage
+	schema schema.ID
+	obj    interface{}
 }
 
 type schemaDoc struct {
 	Schema schema.ID `json:"$schema,omitempty"`
 }
 
-// Insert places the provided object inside the document and looks up the schema
-// information to ensure it is known.
-func (p *Document) Insert(doc interface{}) error {
-	p.Schema = schema.Lookup(doc)
-	if p.Schema == schema.UnknownID {
-		return ErrMarshal.WithErrorf("unregistered schema")
-	}
+// NewDocument instantiates a Document wrapper around the provided object.
+func NewDocument(obj interface{}) (*Document, error) {
+	d := new(Document)
+	return d, d.insert(obj)
+}
 
-	data, err := json.Marshal(doc)
+// Digest calculates a digital digest using the canonical JSON of the document.
+func (d *Document) Digest() (*dsig.Digest, error) {
+	data, err := json.Marshal(d)
 	if err != nil {
-		return ErrMarshal.WithCause(err)
+		return nil, ErrMarshal.WithCause(err)
 	}
-
-	// Combine the base data with the JSON schema information.
-	// We manually create and add the JSON as this is just simply the quickest
-	// way to do it.
-	buf := bytes.NewBufferString(`{"$schema":"` + p.Schema.String() + `",`)
-	_, _ = buf.Write(bytes.TrimLeft(data, "{")) //nolint:errcheck
-	p.data = buf.Bytes()
-
-	return nil
-}
-
-// Extract will unmarshal the documents contents into the provided object. You'll
-// need have checked the type proviously to ensure this works.
-func (p *Document) Extract(doc interface{}) error {
-	if err := json.Unmarshal(p.data, doc); err != nil {
-		return ErrMarshal.WithCause(err)
-	}
-	return nil
-}
-
-// Digest calculates a digital digest using the canonical JSON of the embedded
-// data.
-func (p *Document) Digest() (*dsig.Digest, error) {
-	r := bytes.NewReader(p.data)
+	r := bytes.NewReader(data)
 	cd, err := c14n.CanonicalJSON(r)
 	if err != nil {
 		return nil, ErrInternal.WithErrorf("canonical JSON error: %w", err)
@@ -64,20 +42,73 @@ func (p *Document) Digest() (*dsig.Digest, error) {
 	return dsig.NewSHA256Digest(cd), nil
 }
 
+// Schema provides the document's schema.
+func (d *Document) Schema() schema.ID {
+	return d.schema
+}
+
+// Instance returns a prepared version of the document's content.
+func (d *Document) Instance() interface{} {
+	return d.obj
+}
+
+// Insert places the provided object inside the document and looks up the schema
+// information to ensure it is known.
+func (d *Document) insert(doc interface{}) error {
+	d.schema = schema.Lookup(doc)
+	if d.schema == schema.UnknownID {
+		return ErrMarshal.WithErrorf("unregistered schema")
+	}
+	d.obj = doc
+	return nil
+}
+
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
-func (p *Document) UnmarshalJSON(data []byte) error {
+func (d *Document) UnmarshalJSON(data []byte) error {
 	def := new(schemaDoc)
 	if err := json.Unmarshal(data, def); err != nil {
 		return err
 	}
-	p.Schema = def.Schema
-	p.data = json.RawMessage(data)
+	d.schema = def.Schema
+
+	// Map the schema to an instance of the object, or fail if we don't know what it is
+	d.obj = d.schema.Interface()
+	if d.obj == nil {
+		return ErrMarshal.WithErrorf("unregistered schema: %v", d.schema.String())
+	}
+	if err := json.Unmarshal(data, d.obj); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // MarshalJSON satisfies the json.Marshaler interface.
-func (p *Document) MarshalJSON() ([]byte, error) {
-	return p.data, nil
+func (d *Document) MarshalJSON() ([]byte, error) {
+	data, err := json.Marshal(d.obj)
+	if err != nil {
+		return nil, ErrMarshal.WithCause(err)
+	}
+
+	sdata, err := json.Marshal(d.schemaDoc())
+	if err != nil {
+		return nil, ErrMarshal.WithCause(err)
+	}
+
+	// Combine the base data with the JSON schema information.
+	// We manually create and add the JSON as this is just simply the quickest
+	// way to do it.
+	data = bytes.TrimLeft(data, "{")
+	sdata = append(bytes.TrimRight(sdata, "}"), byte(','))
+	data = append(sdata, data...)
+
+	return data, nil
+}
+
+func (d *Document) schemaDoc() *schemaDoc {
+	return &schemaDoc{
+		Schema: d.schema,
+	}
 }
 
 // JSONSchema returns a jsonschema.Schema instance.
