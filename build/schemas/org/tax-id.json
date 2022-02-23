@@ -39,5 +39,5 @@
       "description": "TaxID represents a party's tax identify number for a given country."
     }
   },
-  "$comment": "Generated with GOBL v0.17.0"
+  "$comment": "Generated with GOBL v0.18.0"
 }

@@ -23,5 +23,5 @@
       "description": "Note represents a free text of additional information that may be added to a document."
     }
   },
-  "$comment": "Generated with GOBL v0.17.0"
+  "$comment": "Generated with GOBL v0.18.0"
 }

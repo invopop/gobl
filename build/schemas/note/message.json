@@ -33,5 +33,5 @@
       "description": "Message represents the minimum possible contents for a GoBL document type."
     }
   },
-  "$comment": "Generated with GOBL v0.17.0"
+  "$comment": "Generated with GOBL v0.18.0"
 }

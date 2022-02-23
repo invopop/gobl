@@ -87,5 +87,5 @@
       "description": "ItemCode contains a value and optional type property that means additional codes can be added to an item."
     }
   },
-  "$comment": "Generated with GOBL v0.17.0"
+  "$comment": "Generated with GOBL v0.18.0"
 }

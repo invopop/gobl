@@ -122,5 +122,5 @@
       "description": "Value contains a percentage rate or fixed amount for a given date range."
     }
   },
-  "$comment": "Generated with GOBL v0.17.0"
+  "$comment": "Generated with GOBL v0.18.0"
 }

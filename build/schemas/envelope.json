@@ -6,7 +6,7 @@
     "Document": {
       "type": "object",
       "title": "Document",
-      "description": "Contents of the envelope"
+      "description": "Contents of the envelope that must contain a $schema."
     },
     "Envelope": {
       "properties": {
@@ -120,5 +120,5 @@
       "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
     }
   },
-  "$comment": "Generated with GOBL v0.17.0"
+  "$comment": "Generated with GOBL v0.18.0"
 }
