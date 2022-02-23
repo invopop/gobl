@@ -90,7 +90,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
 				env.Head.Draft = true
-				env.Insert(&note.Message{})
+				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
 			want: "doc: (content: cannot be blank.).",
@@ -100,7 +100,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
 				env.Head.Draft = true
-				env.Insert(&note.Message{Content: "foo"})
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
 				return env
 			},
 		},
@@ -108,7 +108,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			name: "missing sig, not draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Insert(&note.Message{Content: "foo"})
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
 				return env
 			},
 			want: "sigs: cannot be blank.",
@@ -117,7 +117,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			name: "with sig, not draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Insert(&note.Message{Content: "foo"})
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
 				assert.NoError(t, env.Sign(key))
 				return env
 			},
@@ -126,7 +126,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			name: "with sig, not draft, modified",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Insert(&note.Message{Content: "foo"})
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
 				assert.NoError(t, env.Sign(key))
 				msg := env.Extract().(*note.Message)
 				msg.Content = "bar"
