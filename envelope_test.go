@@ -12,7 +12,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/uuid"
 )
 
 var testKey = dsig.NewES256Key()
@@ -41,7 +40,7 @@ func TestEnvelopeDocument(t *testing.T) {
 	assert.NoError(t, e.Sign(testKey), "signing envelope")
 	assert.NotEmpty(t, e.Signatures, "expected a signature")
 
-	assert.NoError(t, e.Verify(), "did not expect verify error")
+	assert.NoError(t, e.Validate(), "did not expect validation error")
 
 	nm, ok := e.Extract().(*note.Message)
 	require.True(t, ok, "unrecognized content")
@@ -73,45 +72,74 @@ func TestEnvelopeComplete(t *testing.T) {
 }
 
 func TestEnvelopeValidate(t *testing.T) {
+	key := dsig.NewES256Key()
 	tests := []struct {
 		name string
-		env  *gobl.Envelope
+		env  func() *gobl.Envelope
 		want string
 	}{
 		{
-			name: "no head nor version",
-			env:  &gobl.Envelope{},
+			name: "empty envelope",
+			env: func() *gobl.Envelope {
+				return &gobl.Envelope{}
+			},
 			want: "$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
 		},
 		{
-			name: "missing sig, draft",
-			env: &gobl.Envelope{
-				Schema: gobl.EnvelopeSchema,
-				Head: &gobl.Header{
-					Digest: &dsig.Digest{},
-					Draft:  true,
-					UUID:   uuid.NewV1(),
-				},
-				Document: new(gobl.Document),
+			name: "missing message body, draft",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				env.Head.Draft = true
+				require.NoError(t, env.Insert(&note.Message{}))
+				return env
 			},
+			want: "doc: (content: cannot be blank.).",
 		},
 		{
 			name: "missing sig, draft",
-			env: &gobl.Envelope{
-				Schema: gobl.EnvelopeSchema,
-				Head: &gobl.Header{
-					Digest: &dsig.Digest{},
-					UUID:   uuid.NewV1(),
-				},
-				Document: new(gobl.Document),
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				env.Head.Draft = true
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
+				return env
+			},
+		},
+		{
+			name: "missing sig, not draft",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
+				return env
 			},
 			want: "sigs: cannot be blank.",
+		},
+		{
+			name: "with sig, not draft",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
+				assert.NoError(t, env.Sign(key))
+				return env
+			},
+		},
+		{
+			name: "with sig, not draft, modified",
+			env: func() *gobl.Envelope {
+				env := gobl.NewEnvelope()
+				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
+				assert.NoError(t, env.Sign(key))
+				msg := env.Extract().(*note.Message)
+				msg.Content = "bar"
+				return env
+			},
+			want: "digest mismatch",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.env.Validate()
+			env := tt.env()
+			err := env.Validate()
 			if tt.want == "" && err == nil {
 				return
 			}

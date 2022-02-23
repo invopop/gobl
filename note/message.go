@@ -3,7 +3,6 @@ package note
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/region"
 )
 
 // Message represents the minimum possible contents for a GoBL document type. This is
@@ -18,7 +17,7 @@ type Message struct {
 }
 
 // Validate ensures the message contains everything it should.
-func (m *Message) Validate(r region.Region) error {
+func (m *Message) Validate() error {
 	return validation.ValidateStruct(m,
 		validation.Field(&m.Content, validation.Required),
 	)

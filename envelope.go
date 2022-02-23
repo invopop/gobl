@@ -30,11 +30,6 @@ type Calculable interface {
 	Calculate() error
 }
 
-// Validatable describes a document that can be validated.
-type Validatable interface {
-	Validate() error
-}
-
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
 // `new(Envelope)` call directly.
@@ -49,16 +44,19 @@ func NewEnvelope() *Envelope {
 
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) Validate() error {
-	return validation.ValidateStruct(e,
+	err := validation.ValidateStruct(e,
 		validation.Field(&e.Schema, validation.Required),
 		validation.Field(&e.Head, validation.Required),
-		validation.Field(&e.Document, validation.Required),
+		validation.Field(&e.Document, validation.Required), // this will also check payload
 		validation.Field(&e.Signatures, validation.When(e.Head != nil && !e.Head.Draft, validation.Required)),
 	)
+	if err != nil {
+		return err
+	}
+	return e.verifyDigest()
 }
 
-// Verify ensures the digest headers still match the document contents.
-func (e *Envelope) Verify() error {
+func (e *Envelope) verifyDigest() error {
 	d1 := e.Head.Digest
 	d2, err := e.Document.Digest()
 	if err != nil {
@@ -115,17 +113,13 @@ func (e *Envelope) Complete() error {
 }
 
 func (e *Envelope) complete(doc interface{}) error {
-	if e.Head == nil {
-		e.Head = &Header{}
-	}
+	// Always set our schema version
+	e.Schema = EnvelopeSchema
+
+	// arm doors and cross check
 	if obj, ok := doc.(Calculable); ok {
 		if err := obj.Calculate(); err != nil {
 			return ErrCalculation.WithCause(err)
-		}
-	}
-	if obj, ok := doc.(Validatable); ok {
-		if err := obj.Validate(); err != nil {
-			return ErrValidation.WithCause(err)
 		}
 	}
 

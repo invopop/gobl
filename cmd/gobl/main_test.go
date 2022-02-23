@@ -101,12 +101,12 @@ func Test_verify(t *testing.T) {
 				})
 				return f
 			}(),
-			err: "digest mismatch",
+			err: "code=422, message=digest mismatch",
 		},
 		{
 			name: "read from file",
 			args: []string{"testdata/digest-mismatch.json"},
-			err:  "digest mismatch",
+			err:  "code=422, message=digest mismatch",
 		},
 		{
 			name: "file missing",
@@ -126,7 +126,7 @@ func Test_verify(t *testing.T) {
 				})
 				return f
 			}(),
-			err: "digest mismatch",
+			err: "code=422, message=digest mismatch",
 		},
 	}
 
