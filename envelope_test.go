@@ -12,9 +12,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/uuid"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 var testKey = dsig.NewES256Key()

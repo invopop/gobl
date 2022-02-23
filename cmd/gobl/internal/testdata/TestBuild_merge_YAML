@@ -1,5 +1,5 @@
 {
-    "$schema": "",
+    "$schema": "https://gobl.org/draft-0/envelope",
     "head": {
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
         "dig": {
