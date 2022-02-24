@@ -86,7 +86,8 @@ func (s *serveOpts) version() echo.HandlerFunc {
 }
 
 type buildRequest struct {
-	Data json.RawMessage `json:"data"`
+	Template json.RawMessage `json:"template"`
+	Data     json.RawMessage `json:"data"`
 }
 
 func (s *serveOpts) build() echo.HandlerFunc {
@@ -103,9 +104,13 @@ func (s *serveOpts) build() echo.HandlerFunc {
 		if len(req.Data) == 0 {
 			return echo.NewHTTPError(http.StatusBadRequest, "no payload")
 		}
-		env, err := internal.Build(ctx, internal.BuildOptions{
+		opts := internal.BuildOptions{
 			Data: bytes.NewReader(req.Data),
-		})
+		}
+		if len(req.Template) != 0 {
+			opts.Template = bytes.NewReader(req.Template)
+		}
+		env, err := internal.Build(ctx, opts)
 		if err != nil {
 			return err
 		}
