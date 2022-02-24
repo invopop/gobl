@@ -21,6 +21,7 @@ import (
 
 // BuildOptions are the options to pass to the Build function.
 type BuildOptions struct {
+	Template  io.Reader
 	Data      io.Reader
 	SetYAML   map[string]string
 	SetString map[string]string
@@ -47,6 +48,12 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 		return nil, err
 	}
 	var intermediate map[string]interface{}
+
+	if opts.Template != nil {
+		if err := decodeInto(ctx, &intermediate, opts.Template); err != nil {
+			return nil, err
+		}
+	}
 	if err := decodeInto(ctx, &intermediate, opts.Data); err != nil {
 		return nil, err
 	}
