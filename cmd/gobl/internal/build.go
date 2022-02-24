@@ -61,6 +61,7 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	if err := mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
+
 	encoded, err := json.Marshal(intermediate)
 	if err != nil {
 		return nil, err
