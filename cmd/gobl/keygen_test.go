@@ -92,5 +92,14 @@ func Test_keygen(t *testing.T) {
 		if stat.Mode() != 0o600 {
 			t.Errorf("Unexpected file mode on private key file: %v", stat.Mode())
 		}
+
+		pub, err := os.Open(outfile + ".pub")
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = pub.Stat()
+		if err != nil {
+			t.Fatal(err)
+		}
 	})
 }

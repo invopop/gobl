@@ -46,6 +46,10 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	pub, err := json.Marshal(key.Public())
+	if err != nil {
+		return err
+	}
 	outfile := outputKeyfile(args)
 	if outfile == "-" {
 		fmt.Fprintln(cmd.OutOrStdout(), string(priv))
@@ -61,13 +65,23 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 		_ = tmppriv.Close()
 		_ = os.Remove(tmppriv.Name())
 	}()
+	tmppub, err := os.CreateTemp(dir, "."+base+".pub-*")
+	if err != nil {
+		return err
+	}
 	if err := tmppriv.Chmod(0o600); err != nil {
 		return err
 	}
 	if _, err := tmppriv.Write(priv); err != nil {
 		return err
 	}
+	if _, err := tmppub.Write(pub); err != nil {
+		return err
+	}
 	if err := os.Rename(tmppriv.Name(), outfile); err != nil {
+		return err
+	}
+	if err := os.Rename(tmppub.Name(), outfile+".pub"); err != nil {
 		return err
 	}
 	return nil
