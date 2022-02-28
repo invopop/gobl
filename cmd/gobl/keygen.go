@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -10,7 +12,6 @@ import (
 )
 
 type keygenOpts struct {
-	filename  string
 	overwrite bool
 }
 
@@ -49,6 +50,12 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 	if outfile == "-" {
 		fmt.Fprintln(cmd.OutOrStdout(), string(priv))
 		return nil
+	}
+	dir, base := filepath.Dir(outfile), filepath.Base(outfile)
+
+	_, err = os.CreateTemp(dir, "."+base+"-*")
+	if err != nil {
+		return err
 	}
 	return nil
 }

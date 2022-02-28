@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
-	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
 )
 
@@ -21,6 +20,10 @@ func Test_keygen(t *testing.T) {
 	tests.Add("stdout", tt{
 		args: []string{"-"},
 	})
+	tests.Add("target does not exist", tt{
+		args: []string{"/some/path/that/does/not/exist"},
+		err:  "open /some/path/that/does/not/.exist-.*: no such file or directory",
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
@@ -33,10 +36,8 @@ func Test_keygen(t *testing.T) {
 			opts = &keygenOpts{}
 		}
 		err := opts.runE(c, tt.args)
-		if tt.err != "" {
-			assert.EqualError(t, err, tt.err)
-		} else {
-			assert.Nil(t, err)
+		if !testy.ErrorMatchesRE(tt.err, err) {
+			t.Errorf("Unexpected error: %s", err)
 		}
 
 		res := []testy.Replacement{
