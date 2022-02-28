@@ -56,6 +56,10 @@ func Test_build_args(t *testing.T) {
 			name: "set string values",
 			args: []string{"--set-string", "foo=foo", "--set-string", "bar=1234"},
 		},
+		{
+			name: "template",
+			args: []string{"--template", "foo.yaml"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -254,6 +258,20 @@ func Test_build(t *testing.T) {
 				set: map[string]string{"doc.currency": "MXN"},
 			},
 			args: []string{"testdata/success.json"},
+		},
+		{
+			name: "template missing",
+			opts: &buildOpts{
+				template: "missing.yaml",
+			},
+			err: "open missing.yaml: no such file or directory",
+		},
+		{
+			name: "template",
+			in:   strings.NewReader("{}"),
+			opts: &buildOpts{
+				template: "testdata/success.yaml",
+			},
 		},
 	}
 

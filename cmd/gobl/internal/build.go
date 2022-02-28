@@ -21,10 +21,24 @@ import (
 
 // BuildOptions are the options to pass to the Build function.
 type BuildOptions struct {
+	Template  io.Reader
 	Data      io.Reader
 	SetYAML   map[string]string
 	SetString map[string]string
 	SetFile   map[string]string
+}
+
+// decodeInto unmarshals in as YAML, then merges it into dest.
+func decodeInto(ctx context.Context, dest *map[string]interface{}, in io.Reader) error {
+	var intermediate map[string]interface{}
+	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, in))
+	if err := dec.Decode(&intermediate); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := mergo.Merge(dest, intermediate, mergo.WithOverride); err != nil {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+	return nil
 }
 
 // Build builds and validates a GOBL document from opts.
@@ -33,14 +47,21 @@ func Build(ctx context.Context, opts BuildOptions) (*gobl.Envelope, error) {
 	if err != nil {
 		return nil, err
 	}
-	dec := yaml.NewDecoder(iotools.CancelableReader(ctx, opts.Data))
 	var intermediate map[string]interface{}
-	if err := dec.Decode(&intermediate); err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+
+	if opts.Template != nil {
+		if err := decodeInto(ctx, &intermediate, opts.Template); err != nil {
+			return nil, err
+		}
 	}
+	if err := decodeInto(ctx, &intermediate, opts.Data); err != nil {
+		return nil, err
+	}
+
 	if err := mergo.Merge(&intermediate, values, mergo.WithOverride); err != nil {
 		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
+
 	encoded, err := json.Marshal(intermediate)
 	if err != nil {
 		return nil, err

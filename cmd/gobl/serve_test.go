@@ -83,6 +83,15 @@ func Test_serve_build(t *testing.T) {
 			}(),
 			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `not an ...` into map[string]interface {}",
 		},
+		{
+			name: "template",
+			req: func() *http.Request {
+				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{"template":"not an object","data":{}}`))
+				req.Header.Set("Content-Type", "application/json")
+				return req
+			}(),
+			err: "code=400, message=yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `not an ...` into map[string]interface {}",
+		},
 	}
 
 	for _, tt := range tests {
@@ -119,7 +128,7 @@ func Test_serve_verify(t *testing.T) {
 		{
 			name: "wrong content type",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", nil)
+				req, _ := http.NewRequest(http.MethodPost, "/verify", nil)
 				req.Header.Set("Content-Type", "text/plain")
 				return req
 			}(),
@@ -128,7 +137,7 @@ func Test_serve_verify(t *testing.T) {
 		{
 			name: "invalid json payload",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`invalid`))
+				req, _ := http.NewRequest(http.MethodPost, "/verify", strings.NewReader(`invalid`))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),
@@ -137,7 +146,7 @@ func Test_serve_verify(t *testing.T) {
 		{
 			name: "validation failure",
 			req: func() *http.Request {
-				req, _ := http.NewRequest(http.MethodPost, "/build", strings.NewReader(`{}`))
+				req, _ := http.NewRequest(http.MethodPost, "/verify", strings.NewReader(`{}`))
 				req.Header.Set("Content-Type", "application/json")
 				return req
 			}(),

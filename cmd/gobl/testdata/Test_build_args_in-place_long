@@ -3,5 +3,6 @@
   inPlace: (bool) true,
   set: (map[string]string) <nil>,
   setFiles: (map[string]string) <nil>,
-  setStrings: (map[string]string) <nil>
+  setStrings: (map[string]string) <nil>,
+  template: (string) ""
 })

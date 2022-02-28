@@ -209,6 +209,34 @@ func TestBuild(t *testing.T) {
 		},
 		err: `code=400, message=marshal: unregistered schema: https://example.com/duck`,
 	})
+	tests.Add("with template", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/noname.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Template: strings.NewReader(`{"doc":{"supplier":{"name": "Other Company"}}}`),
+				Data:     f,
+			},
+		}
+	})
+	tests.Add("template with empty input", func(t *testing.T) interface{} {
+		f, err := os.Open("testdata/noname.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = f.Close() })
+
+		return tt{
+			opts: BuildOptions{
+				Template: f,
+				Data:     strings.NewReader("{}"),
+			},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
