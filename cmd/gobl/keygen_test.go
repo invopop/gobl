@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"os"
+	"path/filepath"
 	"regexp"
 	"testing"
 
@@ -24,6 +26,13 @@ func Test_keygen(t *testing.T) {
 		args: []string{"/some/path/that/does/not/exist"},
 		err:  "open /some/path/that/does/not/.exist-.*: no such file or directory",
 	})
+	tests.Add("success", func(t *testing.T) interface{} {
+		dir := t.TempDir()
+
+		return tt{
+			args: []string{filepath.Join(dir, "id_test")},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()
@@ -38,6 +47,9 @@ func Test_keygen(t *testing.T) {
 		err := opts.runE(c, tt.args)
 		if !testy.ErrorMatchesRE(tt.err, err) {
 			t.Errorf("Unexpected error: %s", err)
+		}
+		if err != nil {
+			return
 		}
 
 		res := []testy.Replacement{
@@ -61,6 +73,24 @@ func Test_keygen(t *testing.T) {
 
 		if d := testy.DiffText(testy.Snapshot(t), buf.String(), res...); d != nil {
 			t.Error(d)
+		}
+
+		outfile := outputKeyfile(tt.args)
+
+		if outfile == "-" {
+			return
+		}
+
+		priv, err := os.Open(outfile)
+		if err != nil {
+			t.Fatal(err)
+		}
+		stat, err := priv.Stat()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if stat.Mode() != 0o600 {
+			t.Errorf("Unexpected file mode on private key file: %v", stat.Mode())
 		}
 	})
 }

@@ -53,8 +53,21 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	dir, base := filepath.Dir(outfile), filepath.Base(outfile)
 
-	_, err = os.CreateTemp(dir, "."+base+"-*")
+	tmppriv, err := os.CreateTemp(dir, "."+base+"-*")
 	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = tmppriv.Close()
+		_ = os.Remove(tmppriv.Name())
+	}()
+	if err := tmppriv.Chmod(0o600); err != nil {
+		return err
+	}
+	if _, err := tmppriv.Write(priv); err != nil {
+		return err
+	}
+	if err := os.Rename(tmppriv.Name(), outfile); err != nil {
 		return err
 	}
 	return nil
