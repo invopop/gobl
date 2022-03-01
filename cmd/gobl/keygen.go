@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -33,11 +34,30 @@ func (k *keygenOpts) cmd() *cobra.Command {
 	return cmd
 }
 
-func outputKeyfile(args []string) string {
-	if len(args) == 0 {
-		return "~/.gobl/id_es256"
+func homedir() (string, error) {
+	if home := os.Getenv("HOME"); home != "" {
+		return home, nil
 	}
-	return args[0]
+	user, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	return user.HomeDir, nil
+}
+func defaultKeyfile() (string, error) {
+	const defaultFilename = ".gobl/id_es256"
+	home, err := homedir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, defaultFilename), nil
+}
+
+func outputKeyfile(args []string) (string, error) {
+	if len(args) == 0 {
+		return defaultKeyfile()
+	}
+	return args[0], nil
 }
 
 func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
@@ -50,7 +70,10 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	outfile := outputKeyfile(args)
+	outfile, err := outputKeyfile(args)
+	if err != nil {
+		return err
+	}
 	if outfile == "-" {
 		fmt.Fprintln(cmd.OutOrStdout(), string(priv))
 		return nil
@@ -66,6 +89,12 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 
 func writeKey(filename string, key []byte, mode os.FileMode, force bool) error {
 	dir, base := filepath.Dir(filename), filepath.Base(filename)
+	def, _ := defaultKeyfile()
+	if dir == filepath.Dir(def) {
+		if err := os.MkdirAll(dir, 0o700); err != nil {
+			return err
+		}
+	}
 	tmp, err := os.CreateTemp(dir, "."+base+"-*")
 	if err != nil {
 		return err

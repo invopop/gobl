@@ -13,6 +13,7 @@ import (
 
 func Test_keygen(t *testing.T) {
 	type tt struct {
+		env  map[string]string
 		opts *keygenOpts
 		args []string
 		err  string
@@ -52,10 +53,22 @@ func Test_keygen(t *testing.T) {
 			args: []string{f.Name()},
 		}
 	})
+	tests.Add("Create .gobl dir", func(t *testing.T) interface{} {
+		tmp := t.TempDir()
+
+		return tt{
+			env: map[string]string{
+				"HOME": tmp,
+			},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
-		t.Parallel()
-
+		if len(tt.env) > 0 {
+			for k, v := range tt.env {
+				t.Setenv(k, v)
+			}
+		}
 		c := &cobra.Command{}
 		buf := &bytes.Buffer{}
 		c.SetOut(buf)
@@ -94,7 +107,10 @@ func Test_keygen(t *testing.T) {
 			t.Error(d)
 		}
 
-		outfile := outputKeyfile(tt.args)
+		outfile, err := outputKeyfile(tt.args)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		if outfile == "-" {
 			return
