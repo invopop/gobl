@@ -60,6 +60,7 @@ func root() *cobra.Command {
 	root.AddCommand(build().cmd())
 	root.AddCommand(version())
 	root.AddCommand(serve().cmd())
+	root.AddCommand(keygen().cmd())
 	return root
 }
 
