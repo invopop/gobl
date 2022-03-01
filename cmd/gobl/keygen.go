@@ -55,34 +55,31 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 		fmt.Fprintln(cmd.OutOrStdout(), string(priv))
 		return nil
 	}
-	dir, base := filepath.Dir(outfile), filepath.Base(outfile)
+	if err = writeKey(outfile, priv, 0o600); err != nil {
+		return err
+	}
+	if err = writeKey(outfile+".pub", pub, 0o666); err != nil {
+		return err
+	}
+	return nil
+}
 
-	tmppriv, err := os.CreateTemp(dir, "."+base+"-*")
+func writeKey(filename string, key []byte, mode os.FileMode) error {
+	dir, base := filepath.Dir(filename), filepath.Base(filename)
+	tmp, err := os.CreateTemp(dir, "."+base+"-*")
 	if err != nil {
 		return err
 	}
 	defer func() {
-		_ = tmppriv.Close()
-		_ = os.Remove(tmppriv.Name())
+		_ = tmp.Close()
+		_ = os.Remove(tmp.Name())
 	}()
-	tmppub, err := os.CreateTemp(dir, "."+base+".pub-*")
-	if err != nil {
+
+	if err = tmp.Chmod(mode); err != nil {
 		return err
 	}
-	if err := tmppriv.Chmod(0o600); err != nil {
+	if _, err = tmp.Write(key); err != nil {
 		return err
 	}
-	if _, err := tmppriv.Write(priv); err != nil {
-		return err
-	}
-	if _, err := tmppub.Write(pub); err != nil {
-		return err
-	}
-	if err := os.Rename(tmppriv.Name(), outfile); err != nil {
-		return err
-	}
-	if err := os.Rename(tmppub.Name(), outfile+".pub"); err != nil {
-		return err
-	}
-	return nil
+	return os.Rename(tmp.Name(), filename)
 }
