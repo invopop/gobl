@@ -33,6 +33,25 @@ func Test_keygen(t *testing.T) {
 			args: []string{filepath.Join(dir, "id_test")},
 		}
 	})
+	tests.Add("target exists", tt{
+		args: []string{"testdata/id_es256"},
+		err:  `target "testdata/id_es256" exists`,
+	})
+	tests.Add("force overwrite", func(t *testing.T) interface{} {
+		tmp := t.TempDir()
+		f, err := os.Create(filepath.Join(tmp, "id_test"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = f.Close(); err != nil {
+			t.Fatal(err)
+		}
+
+		return tt{
+			opts: &keygenOpts{overwrite: true},
+			args: []string{f.Name()},
+		}
+	})
 
 	tests.Run(t, func(t *testing.T, tt tt) {
 		t.Parallel()

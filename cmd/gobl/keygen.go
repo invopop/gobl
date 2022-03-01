@@ -55,16 +55,16 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 		fmt.Fprintln(cmd.OutOrStdout(), string(priv))
 		return nil
 	}
-	if err = writeKey(outfile, priv, 0o600); err != nil {
+	if err = writeKey(outfile, priv, 0o600, k.overwrite); err != nil {
 		return err
 	}
-	if err = writeKey(outfile+".pub", pub, 0o666); err != nil {
+	if err = writeKey(outfile+".pub", pub, 0o666, k.overwrite); err != nil {
 		return err
 	}
 	return nil
 }
 
-func writeKey(filename string, key []byte, mode os.FileMode) error {
+func writeKey(filename string, key []byte, mode os.FileMode, force bool) error {
 	dir, base := filepath.Dir(filename), filepath.Base(filename)
 	tmp, err := os.CreateTemp(dir, "."+base+"-*")
 	if err != nil {
@@ -81,5 +81,16 @@ func writeKey(filename string, key []byte, mode os.FileMode) error {
 	if _, err = tmp.Write(key); err != nil {
 		return err
 	}
-	return os.Rename(tmp.Name(), filename)
+	return safeRename(tmp.Name(), filename, force)
+}
+
+func safeRename(old, new string, force bool) error {
+	if force {
+		return os.Rename(old, new)
+	}
+	err := os.Link(old, new)
+	if err != nil {
+		return fmt.Errorf("target %q exists", new)
+	}
+	return os.Remove(old)
 }
