@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/currency/exchange-rate",
+  "$id": "https://gobl.org/draft-0/currency/exchange-rate",
   "$ref": "#/$defs/ExchangeRate",
   "$defs": {
     "ExchangeRate": {

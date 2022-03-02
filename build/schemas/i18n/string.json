@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/i18n/string",
+  "$id": "https://gobl.org/draft-0/i18n/string",
   "$ref": "#/$defs/String",
   "$defs": {
     "String": {

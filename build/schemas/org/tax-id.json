@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/org/tax-id",
+  "$id": "https://gobl.org/draft-0/org/tax-id",
   "$ref": "#/$defs/TaxID",
   "$defs": {
     "TaxID": {

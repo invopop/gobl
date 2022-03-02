@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/pay/terms",
+  "$id": "https://gobl.org/draft-0/pay/terms",
   "$ref": "#/$defs/Terms",
   "$defs": {
     "DueDate": {

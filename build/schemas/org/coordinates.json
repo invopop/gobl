@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/org/coordinates",
+  "$id": "https://gobl.org/draft-0/org/coordinates",
   "$ref": "#/$defs/Coordinates",
   "$defs": {
     "Coordinates": {

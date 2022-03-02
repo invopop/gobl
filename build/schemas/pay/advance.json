@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/pay/advance",
+  "$id": "https://gobl.org/draft-0/pay/advance",
   "$ref": "#/$defs/Advance",
   "$defs": {
     "Advance": {

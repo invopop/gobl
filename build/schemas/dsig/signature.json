@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/invopop/gobl/dsig/signature",
+  "$id": "https://gobl.org/draft-0/dsig/signature",
   "$ref": "#/$defs/Signature",
   "$defs": {
     "Signature": {
