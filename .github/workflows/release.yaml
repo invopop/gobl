@@ -16,8 +16,6 @@ on:
       - main
     paths:
       - "version.go"
-    #paths-ignore:
-    #  - "docs/**"
 
 jobs:
   tag-build-publish:
