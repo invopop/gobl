@@ -1,8 +1,0 @@
-(*main.buildOpts)({
-  overwriteOutputFile: (bool) true,
-  inPlace: (bool) false,
-  set: (map[string]string) <nil>,
-  setFiles: (map[string]string) <nil>,
-  setStrings: (map[string]string) <nil>,
-  template: (string) ""
-})
