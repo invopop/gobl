@@ -187,3 +187,23 @@ func Test_serve_verify(t *testing.T) {
 		})
 	}
 }
+
+func Test_serve_keygen(t *testing.T) {
+	req, err := http.NewRequest(http.MethodGet, "/keygen", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	e := echo.New()
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	err = serve().keygen()(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if d := testy.DiffHTTPResponse(testy.Snapshot(t), rec.Result(), jwkREs...); d != nil {
+		t.Error(d)
+	}
+}

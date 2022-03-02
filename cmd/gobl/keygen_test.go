@@ -11,6 +11,25 @@ import (
 	"gitlab.com/flimzy/testy"
 )
 
+var jwkREs = []testy.Replacement{
+	{
+		Regexp:      regexp.MustCompile(`"kid":"[^"]*"`),
+		Replacement: `"kid":"..."`,
+	},
+	{
+		Regexp:      regexp.MustCompile(`"x":"[^"]*"`),
+		Replacement: `"x":"..."`,
+	},
+	{
+		Regexp:      regexp.MustCompile(`"y":"[^"]*"`),
+		Replacement: `"y":"..."`,
+	},
+	{
+		Regexp:      regexp.MustCompile(`"d":"[^"]*"`),
+		Replacement: `"d":"..."`,
+	},
+}
+
 func Test_keygen(t *testing.T) {
 	type tt struct {
 		env  map[string]string
@@ -84,26 +103,7 @@ func Test_keygen(t *testing.T) {
 			return
 		}
 
-		res := []testy.Replacement{
-			{
-				Regexp:      regexp.MustCompile(`"kid":"[^"]*"`),
-				Replacement: `"kid":"..."`,
-			},
-			{
-				Regexp:      regexp.MustCompile(`"x":"[^"]*"`),
-				Replacement: `"x":"..."`,
-			},
-			{
-				Regexp:      regexp.MustCompile(`"y":"[^"]*"`),
-				Replacement: `"y":"..."`,
-			},
-			{
-				Regexp:      regexp.MustCompile(`"d":"[^"]*"`),
-				Replacement: `"d":"..."`,
-			},
-		}
-
-		if d := testy.DiffText(testy.Snapshot(t), buf.String(), res...); d != nil {
+		if d := testy.DiffText(testy.Snapshot(t), buf.String(), jwkREs...); d != nil {
 			t.Error(d)
 		}
 

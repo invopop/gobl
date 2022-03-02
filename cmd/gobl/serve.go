@@ -15,6 +15,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/cmd/gobl/internal"
+	"github.com/invopop/gobl/dsig"
 )
 
 const (
@@ -53,6 +54,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e.GET("/", s.version())
 	e.POST("/build", s.build())
 	e.POST("/verify", s.verify())
+	e.GET("/keygen", s.keygen())
 
 	var startErr error
 	go func() {
@@ -140,5 +142,21 @@ func (s *serveOpts) verify() echo.HandlerFunc {
 			return err
 		}
 		return c.JSON(http.StatusOK, &verifyResponse{OK: true})
+	}
+}
+
+type keygenResponse struct {
+	Private *dsig.PrivateKey `json:"private"`
+	Public  *dsig.PublicKey  `json:"public"`
+}
+
+func (s *serveOpts) keygen() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		key := dsig.NewES256Key()
+
+		return c.JSON(http.StatusOK, keygenResponse{
+			Private: key,
+			Public:  key.Public(),
+		})
 	}
 }
