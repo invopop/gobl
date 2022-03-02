@@ -54,7 +54,7 @@ func (s *serveOpts) runE(cmd *cobra.Command, _ []string) error {
 	e.GET("/", s.version())
 	e.POST("/build", s.build())
 	e.POST("/verify", s.verify())
-	e.GET("/keygen", s.keygen())
+	e.POST("/key", s.keygen())
 
 	var startErr error
 	go func() {
@@ -153,8 +153,6 @@ type keygenResponse struct {
 func (s *serveOpts) keygen() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		key := dsig.NewES256Key()
-
-		c.Response().Header().Set("Cache-Control", "no-cache")
 
 		return c.JSON(http.StatusOK, keygenResponse{
 			Private: key,

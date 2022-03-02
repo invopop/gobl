@@ -189,7 +189,7 @@ func Test_serve_verify(t *testing.T) {
 }
 
 func Test_serve_keygen(t *testing.T) {
-	req, err := http.NewRequest(http.MethodGet, "/keygen", nil)
+	req, err := http.NewRequest(http.MethodPost, "/key", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
