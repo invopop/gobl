@@ -154,6 +154,8 @@ func (s *serveOpts) keygen() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		key := dsig.NewES256Key()
 
+		c.Response().Header().Set("Cache-Control", "no-cache")
+
 		return c.JSON(http.StatusOK, keygenResponse{
 			Private: key,
 			Public:  key.Public(),
