@@ -14,12 +14,39 @@ type Signature struct {
 	jws *jose.JSONWebSignature
 }
 
+// signerOptions are used to define additional parameters to use when creating
+// signatures.
+type signerOptions struct {
+	jku string
+}
+
+// SignerOption defines the callback to be used to define one of the signer options.
+type SignerOption func(*signerOptions)
+
+// WithJKU adds the "jku" header field to the signature, useful for identifying
+// a URL that can be used to lookup and validate the public key that was used
+// during signing.
+func WithJKU(jku string) SignerOption {
+	return func(so *signerOptions) {
+		so.jku = jku
+	}
+}
+
+const (
+	headerJKU jose.HeaderKey = "jku"
+)
+
 // NewSignature instantiates a new Signature object by signing the provided
 // data using the private key. The signature will use the same algorithm as
 // defined by the key.
-func NewSignature(key *PrivateKey, data interface{}) (*Signature, error) {
+func NewSignature(key *PrivateKey, data interface{}, opts ...SignerOption) (*Signature, error) {
 	if err := key.Validate(); err != nil {
 		return nil, ErrKeyInvalid
+	}
+
+	so := new(signerOptions)
+	for _, opt := range opts {
+		opt(so)
 	}
 
 	alg, err := key.signatureAlgorithm()
@@ -30,7 +57,11 @@ func NewSignature(key *PrivateKey, data interface{}) (*Signature, error) {
 		Algorithm: alg,
 		Key:       key.jwk,
 	}
-	signer, err := jose.NewSigner(sk, nil)
+	joseOpts := new(jose.SignerOptions)
+	if so.jku != "" {
+		joseOpts.WithHeader(headerJKU, so.jku)
+	}
+	signer, err := jose.NewSigner(sk, joseOpts)
 	if err != nil {
 		return nil, fmt.Errorf("dsig: %w", err)
 	}
@@ -76,6 +107,18 @@ func (s *Signature) KeyID() string {
 		return ""
 	}
 	return s.jws.Signatures[0].Header.KeyID
+}
+
+// JKU returns the signatures JKU header property value.
+func (s *Signature) JKU() string {
+	if s.jws == nil || len(s.jws.Signatures) == 0 {
+		return ""
+	}
+	jku, ok := s.jws.Signatures[0].Header.ExtraHeaders[headerJKU].(string)
+	if !ok {
+		return ""
+	}
+	return jku
 }
 
 // String provides the compact form signature.

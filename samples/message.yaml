@@ -1,0 +1,5 @@
+doc:
+  $schema: "https://gobl.org/draft-0/note/message"
+  title: "Test Message"
+  content: |-
+    We hope you like this test message!
