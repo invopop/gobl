@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/dsig"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type payload struct {
@@ -96,6 +98,26 @@ func TestParseSignature(t *testing.T) {
 	if p2.Foo != "foo" || p2.Bar != 1234 {
 		t.Errorf("failed to extract payload, got: %+v", p2)
 	}
+}
+
+func TestSignaturesWithJKU(t *testing.T) {
+	kdata := []byte(`{"use":"sig","kty":"EC","kid":"3500bbee-966c-4b7a-8fbc-c763ae2aec62","crv":"P-256","x":"Fd4a9pj2gtDLnW3GX30S06qXHrkBrAsmg3aHb4kOCL4","y":"_I4ZuddZtZ86kDBvGKcsOPbU0gWh13Kt6R2m6bfWAK4","d":"oJM3Ogl9uYUpSbc4oHV25DpFs_gOGP5nHJcLAtQxL6U"}`)
+	k := new(dsig.PrivateKey)
+	require.NoError(t, json.Unmarshal(kdata, k))
+
+	p := new(payload)
+	p.Foo = "foo"
+	p.Bar = 1234
+	jku := "https://ks.invopop.dev/NKFs8SbnEeykMgJCrBUACQ"
+	s, err := dsig.NewSignature(k, p, dsig.WithJKU(jku))
+	require.NoError(t, err)
+
+	out := s.String()
+
+	sig, err := dsig.ParseSignature(out)
+	require.NoError(t, err)
+
+	assert.Equal(t, jku, sig.JKU(), "should be included in signature output")
 }
 
 func TestJSONSignatures(t *testing.T) {
