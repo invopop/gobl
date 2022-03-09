@@ -1,6 +1,9 @@
 package schema
 
-import "reflect"
+import (
+	"path/filepath"
+	"reflect"
+)
 
 // registry contains all the schemas that we can possibly know about from either
 // inside or outside GOBL.
@@ -138,4 +141,25 @@ func List() []ID {
 		l[i] = e.id
 	}
 	return l
+}
+
+// Find searches the registered schemas for a match against term, and returns
+// the best match along with a confidence value (1.0 = perfect match).
+func Find(term string) (float32, ID) {
+	return schemas.find(term)
+}
+
+func (r *registry) find(term string) (float32, ID) {
+	for _, entry := range r.entries {
+		if term == string(entry.id) {
+			return 1, entry.id
+		}
+		if term == entry.typ.Name() {
+			return 1, entry.id
+		}
+		if term == filepath.Base(entry.typ.PkgPath())+"."+entry.typ.Name() {
+			return 1, entry.id
+		}
+	}
+	return 0, ""
 }

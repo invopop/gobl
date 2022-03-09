@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,4 +29,47 @@ func TestRegistry(t *testing.T) {
 	for _, id := range r.ids() {
 		t.Logf("schema: %v", id)
 	}
+}
+
+func TestFind(t *testing.T) {
+	const (
+		idInvoice = "https://gobl.org/draft-0/bill/invoice"
+	)
+	type Invoice struct{}
+	r := &registry{
+		entries: []*entry{
+			{
+				id:  idInvoice,
+				typ: reflect.TypeOf(Invoice{}),
+			},
+		},
+	}
+
+	t.Run("exact schema match", func(t *testing.T) {
+		conf, got := r.find(idInvoice)
+		if conf != 1 {
+			t.Errorf("Unexpected confidence: %v", conf)
+		}
+		if got != idInvoice {
+			t.Errorf("Unexpected result: %v", got)
+		}
+	})
+	t.Run("exact type match", func(t *testing.T) {
+		conf, got := r.find("Invoice")
+		if conf != 1 {
+			t.Errorf("Unexpected confidence: %v", conf)
+		}
+		if got != idInvoice {
+			t.Errorf("Unexpected result: %v", got)
+		}
+	})
+	t.Run("exact type match with package", func(t *testing.T) {
+		conf, got := r.find("schema.Invoice")
+		if conf != 1 {
+			t.Errorf("Unexpected confidence: %v", conf)
+		}
+		if got != idInvoice {
+			t.Errorf("Unexpected result: %v", got)
+		}
+	})
 }
