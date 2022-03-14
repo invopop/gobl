@@ -72,7 +72,7 @@ func (d *Document) Validate() error {
 func (d *Document) insert(payload interface{}) error {
 	d.schema = schema.Lookup(payload)
 	if d.schema == schema.UnknownID {
-		return ErrMarshal.WithErrorf("unregistered schema")
+		return ErrMarshal.WithErrorf("unregistered or invalid schema")
 	}
 	d.payload = payload
 	return nil
@@ -89,7 +89,7 @@ func (d *Document) UnmarshalJSON(data []byte) error {
 	// Map the schema to an instance of the payload, or fail if we don't know what it is
 	d.payload = d.schema.Interface()
 	if d.payload == nil {
-		return ErrMarshal.WithErrorf("unregistered schema: %v", d.schema.String())
+		return ErrMarshal.WithErrorf("unregistered or invalid schema")
 	}
 	if err := json.Unmarshal(data, d.payload); err != nil {
 		return err
