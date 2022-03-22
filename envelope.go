@@ -42,6 +42,17 @@ func NewEnvelope() *Envelope {
 	return e
 }
 
+// Envelop is a convenience method that will build a new envelope and insert
+// the contents document provided in a single swoop. The resulting envelope
+// will still need to be signed afterwards.
+func Envelop(doc interface{}) (*Envelope, error) {
+	e := NewEnvelope()
+	if err := e.Insert(doc); err != nil {
+		return nil, err
+	}
+	return e, nil
+}
+
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) Validate() error {
 	err := validation.ValidateStruct(e,

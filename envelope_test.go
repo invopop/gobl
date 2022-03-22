@@ -16,6 +16,15 @@ import (
 
 var testKey = dsig.NewES256Key()
 
+func TestEnvelop(t *testing.T) {
+	msg := &note.Message{Content: "This is test content."}
+	e, err := gobl.Envelop(msg)
+	require.NoError(t, err)
+	if assert.NotNil(t, e) {
+		assert.Equal(t, "c6a5148ce90f70c24ebfe6de1abed0d0aafde4323a9bcf47cc4a5d544af9ea19", e.Head.Digest.Value)
+	}
+}
+
 func TestEnvelopeDocument(t *testing.T) {
 	m := new(note.Message)
 	m.Content = "This is test content."
