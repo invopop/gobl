@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-playground/validator/v10"
+
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -13,9 +15,9 @@ import (
 // Region defines the holding structure for a regions categories and subsequent
 // Rates and Values.
 type Region struct {
-	Code       Code        `json:"code" jsonschema:"title=Code"`
-	Name       i18n.String `json:"name" jsonschema:"title=Name"`
-	Categories []Category  `json:"categories" jsonschema:"title=Categories"`
+	Code       Code        `json:"code" jsonschema:"title=Code" validate:"required"`
+	Name       i18n.String `json:"name" jsonschema:"title=Name" validate:"required"`
+	Categories []Category  `json:"categories" jsonschema:"title=Categories" validate:"required"`
 }
 
 // Category ...
@@ -72,12 +74,7 @@ type combo struct {
 // Validate enures the region definition is valid, including all
 // subsequent categories.
 func (r Region) Validate() error {
-	err := validation.ValidateStruct(&r,
-		validation.Field(&r.Code, validation.Required),
-		validation.Field(&r.Name, validation.Required),
-		validation.Field(&r.Categories, validation.Required),
-	)
-	return err
+	return validator.New().Struct(r)
 }
 
 // Validate ensures the Category's contents are correct.
