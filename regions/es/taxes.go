@@ -54,8 +54,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATZero,
 					Name: i18n.String{
-						i18n.EN: "VAT Zero Rate",
-						i18n.ES: "IVA Tipo Zero",
+						i18n.EN: "Zero Rate",
+						i18n.ES: "Tipo Zero",
 					},
 					Values: []tax.Value{
 						{
@@ -66,8 +66,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATStandard,
 					Name: i18n.String{
-						i18n.EN: "VAT Standard Rate",
-						i18n.ES: "IVA Tipo General",
+						i18n.EN: "Standard Rate",
+						i18n.ES: "Tipo General",
 					},
 					Values: []tax.Value{
 						{
@@ -91,8 +91,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATReduced,
 					Name: i18n.String{
-						i18n.EN: "VAT Reduced Rate",
-						i18n.ES: "IVA Tipo Reducido",
+						i18n.EN: "Reduced Rate",
+						i18n.ES: "Tipo Reducido",
 					},
 					Values: []tax.Value{
 						{
@@ -116,8 +116,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATSuperReduced,
 					Name: i18n.String{
-						i18n.EN: "VAT Super-Reduced Rate",
-						i18n.ES: "IVA Tipo Superreducido",
+						i18n.EN: "Super-Reduced Rate",
+						i18n.ES: "Tipo Superreducido",
 					},
 					Values: []tax.Value{
 						{
@@ -146,8 +146,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATStandard,
 					Name: i18n.String{
-						i18n.EN: "VAT Standard Rate",
-						i18n.ES: "IVA Tipo General",
+						i18n.EN: "Standard Rate",
+						i18n.ES: "Tipo General",
 					},
 					Values: []tax.Value{
 						{
@@ -163,8 +163,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATReduced,
 					Name: i18n.String{
-						i18n.EN: "VAT Reduced Rate",
-						i18n.ES: "IVA Tipo Reducido",
+						i18n.EN: "Reduced Rate",
+						i18n.ES: "Tipo Reducido",
 					},
 					Values: []tax.Value{
 						{
@@ -180,8 +180,8 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATSuperReduced,
 					Name: i18n.String{
-						i18n.EN: "VAT Super-Reduced Rate",
-						i18n.ES: "IVA Tipo Superreducido",
+						i18n.EN: "Super-Reduced Rate",
+						i18n.ES: "Tipo Superreducido",
 					},
 					Values: []tax.Value{
 						{
@@ -193,8 +193,8 @@ var taxRegion = tax.Region{
 				{
 					Code: TaxRateVATTobacco,
 					Name: i18n.String{
-						i18n.EN: "VAT Tobacco Rate",
-						i18n.ES: "IVA Tipo Tobaco",
+						i18n.EN: "Tobacco Rate",
+						i18n.ES: "Tipo Tobaco",
 					},
 					Values: []tax.Value{
 						{
@@ -223,8 +223,8 @@ var taxRegion = tax.Region{
 				{
 					Code: TaxRateIRPFStandard,
 					Name: i18n.String{
-						i18n.EN: "IRPF Standard Rate",
-						i18n.ES: "IRPF Tipo General",
+						i18n.EN: "Standard Rate",
+						i18n.ES: "Tipo General",
 					},
 					Values: []tax.Value{
 						{
@@ -248,8 +248,8 @@ var taxRegion = tax.Region{
 				{
 					Code: TaxRateIRPFFirst,
 					Name: i18n.String{
-						i18n.EN: "IRPF Starting Rate",
-						i18n.ES: "IRPF Tipo Inicial",
+						i18n.EN: "Starting Rate",
+						i18n.ES: "Tipo Inicial",
 					},
 					Values: []tax.Value{
 						{
@@ -261,8 +261,8 @@ var taxRegion = tax.Region{
 				{
 					Code: TaxRateIRPFModules,
 					Name: i18n.String{
-						i18n.EN: "IRPF Modules Rate",
-						i18n.ES: "IRPF Tipo Modulos",
+						i18n.EN: "Modules Rate",
+						i18n.ES: "Tipo Modulos",
 					},
 					Values: []tax.Value{
 						{

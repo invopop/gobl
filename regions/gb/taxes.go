@@ -30,7 +30,7 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATZero,
 					Name: i18n.String{
-						i18n.EN: "VAT Zero Rate",
+						i18n.EN: "Zero Rate",
 					},
 					Values: []tax.Value{
 						{
@@ -41,7 +41,7 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATStandard,
 					Name: i18n.String{
-						i18n.EN: "VAT Standard Rate",
+						i18n.EN: "Standard Rate",
 					},
 					Values: []tax.Value{
 						{
@@ -53,7 +53,7 @@ var taxRegion = tax.Region{
 				{
 					Code: common.TaxRateVATReduced,
 					Name: i18n.String{
-						i18n.EN: "VAT Reduced Rate",
+						i18n.EN: "Reduced Rate",
 					},
 					Values: []tax.Value{
 						{
