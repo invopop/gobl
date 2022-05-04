@@ -36,7 +36,7 @@
         "unit": {
           "type": "string",
           "title": "Unit",
-          "description": "Code for unit of the item being sold"
+          "description": "Free-text unit of measure."
         },
         "codes": {
           "items": {
@@ -52,11 +52,6 @@
           "description": "Country code of where this item was from originally."
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
           "type": "object",
           "title": "Meta",
           "description": "Additional meta information that may be useful"
@@ -71,21 +66,23 @@
     },
     "ItemCode": {
       "properties": {
-        "typ": {
+        "label": {
           "type": "string",
-          "title": "Type"
+          "title": "Label",
+          "description": "Local or human reference for the type of code the value\nrepresents."
         },
-        "val": {
+        "value": {
           "type": "string",
-          "title": "Value"
+          "title": "Value",
+          "description": "The item code's value."
         }
       },
       "type": "object",
       "required": [
-        "val"
+        "value"
       ],
-      "description": "ItemCode contains a value and optional type property that means additional codes can be added to an item."
+      "description": "ItemCode contains a value and optional label property that means additional codes can be added to an item."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.18.1"
 }

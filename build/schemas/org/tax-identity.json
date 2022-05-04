@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/tax-identity",
+  "$ref": "#/$defs/TaxIdentity",
+  "$defs": {
+    "TaxIdentity": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique universal identity code."
+        },
+        "country": {
+          "type": "string",
+          "title": "Country Code",
+          "description": "ISO country code for Where the tax identity was issued."
+        },
+        "locality": {
+          "type": "string",
+          "title": "Locality Code",
+          "description": "Where inside a country the Tax ID was issued, if required."
+        },
+        "document": {
+          "type": "string",
+          "title": "Document Code",
+          "description": "What is the source document of this tax identity."
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Tax identity Code"
+        },
+        "meta": {
+          "type": "object",
+          "title": "Meta",
+          "description": "Additional details that may be required."
+        }
+      },
+      "type": "object",
+      "required": [
+        "country"
+      ],
+      "description": "TaxIdentity stores the details required to identify an entity for tax purposes."
+    }
+  },
+  "$comment": "Generated with GOBL v0.18.1"
+}

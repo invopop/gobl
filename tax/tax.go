@@ -4,7 +4,7 @@ import "github.com/invopop/gobl/schema"
 
 func init() {
 	objs := []interface{}{
-		Rate{},
+		// Rates{},
 		Total{},
 		Region{},
 	}

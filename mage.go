@@ -12,7 +12,7 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/internal/currency"
 	"github.com/invopop/gobl/internal/schemas"
-	"github.com/invopop/gobl/region"
+	"github.com/invopop/gobl/tax"
 )
 
 // Schema generates the JSON Schema from the base models
@@ -22,8 +22,8 @@ func Schema() error {
 
 // RegionData generates JSON version of each region's data.
 func RegionData() error {
-	for c, r := range region.All() {
-		doc, err := gobl.NewDocument(r.Taxes())
+	for _, r := range tax.AllRegions() {
+		doc, err := gobl.NewDocument(r)
 		if err != nil {
 			return err
 		}
@@ -31,7 +31,7 @@ func RegionData() error {
 		if err != nil {
 			return err
 		}
-		f := filepath.Join("build", "data", "tax", string(c)+".json")
+		f := filepath.Join("build", "data", "tax", string(r.Country)+".json")
 		if err := ioutil.WriteFile(f, data, 0644); err != nil {
 			return err
 		}
@@ -44,4 +44,11 @@ func RegionData() error {
 // XML ISO data.
 func Currencies() error {
 	return currency.GenerateCodes()
+}
+
+// Samples runs through all the `.yaml` samples and generates complete GOBL
+// Envelopes of each in `.json` files.
+func Samples() error {
+
+	return nil
 }

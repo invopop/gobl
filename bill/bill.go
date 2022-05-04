@@ -7,41 +7,41 @@ import (
 )
 
 func init() {
-	// None of Invoice's sub-models are meant to be used outside an invoice.
+	// None of TypeKey's sub-models are meant to be used outside an invoice.
 	schema.Register(schema.GOBL.Add("bill"), Invoice{})
 }
 
-// TypeCode defines the "Invoice Type Code" according to a subset of the UNTDID 1001
+// TypeKey defines the type of invoice document according to a subset of the UNTDID 1001
 // standard list.
-type TypeCode string
+type TypeKey string
 
 // Predefined list of the invoice type codes officially supported.
 const (
-	CommercialTypeCode TypeCode = ""            // Commercial Invoice, default
-	ProformaTypeCode   TypeCode = "proforma"    // Proforma invoice
-	SimplifiedTypeCode TypeCode = "simplified"  // Simplified Invoice
-	PartialTypeCode    TypeCode = "partial"     // Partial Invoice
-	CorrectedTypeCode  TypeCode = "corrected"   // Corrected Invoice
-	CreditNoteTypeCode TypeCode = "credit-note" // Credit Note
-	SelfBilledTypeCode TypeCode = "self-billed" // Self Billed Invoice
+	TypeKeyCommercial TypeKey = ""            // Commercial Invoice, default
+	TypeKeyProforma   TypeKey = "proforma"    // Proforma invoice
+	TypeKeySimplified TypeKey = "simplified"  // Simplified Invoice
+	TypeKeyPartial    TypeKey = "partial"     // Partial Invoice
+	TypeKeyCorrected  TypeKey = "corrected"   // Corrected Invoice
+	TypeKeyCreditNote TypeKey = "credit-note" // Credit Note
+	TypeKeySelfBilled TypeKey = "self-billed" // Self Billed Invoice
 )
 
-// UNTDID1001TypeCodeMap offers a way to convert the GOBL invoice type code into
+// UNTDID1001TypeKeyMap offers a way to convert the GOBL invoice type code into
 // one supported by our subset of the UNTDID 1001 official list.
-var UNTDID1001TypeCodeMap = map[TypeCode]string{
-	ProformaTypeCode:   "325",
-	PartialTypeCode:    "326",
-	CommercialTypeCode: "380",
-	SimplifiedTypeCode: "380", // same as commercial
-	CorrectedTypeCode:  "384",
-	CreditNoteTypeCode: "381",
-	SelfBilledTypeCode: "389",
+var UNTDID1001TypeKeyMap = map[TypeKey]string{
+	TypeKeyProforma:   "325",
+	TypeKeyPartial:    "326",
+	TypeKeyCommercial: "380",
+	TypeKeySimplified: "380", // same as commercial
+	TypeKeyCorrected:  "384",
+	TypeKeyCreditNote: "381",
+	TypeKeySelfBilled: "389",
 }
 
 // Validate is used to ensure the code provided is one of those we know
 // about.
-func (c TypeCode) Validate() error {
-	_, ok := UNTDID1001TypeCodeMap[c]
+func (c TypeKey) Validate() error {
+	_, ok := UNTDID1001TypeKeyMap[c]
 	if !ok {
 		return errors.New("not found")
 	}
@@ -49,8 +49,8 @@ func (c TypeCode) Validate() error {
 }
 
 // UNTDID1001 provides the official code number assigned to the type.
-func (c TypeCode) UNTDID1001() string {
-	s, ok := UNTDID1001TypeCodeMap[c]
+func (c TypeKey) UNTDID1001() string {
+	s, ok := UNTDID1001TypeKeyMap[c]
 	if !ok {
 		return "na"
 	}

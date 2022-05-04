@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/period",
+  "$id": "https://gobl.org/draft-0/cal/period",
   "$ref": "#/$defs/Period",
   "$defs": {
     "Period": {
       "properties": {
         "start": {
-          "$ref": "https://gobl.org/draft-0/org/date"
+          "$ref": "https://gobl.org/draft-0/cal/date"
         },
         "end": {
-          "$ref": "https://gobl.org/draft-0/org/date"
+          "$ref": "https://gobl.org/draft-0/cal/date"
         }
       },
       "type": "object",
@@ -20,5 +20,5 @@
       "description": "Period represents two dates with a start and finish."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.18.1"
 }

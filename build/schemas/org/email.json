@@ -19,11 +19,6 @@
           "description": "Electronic mailing address."
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
           "type": "object",
           "title": "Meta",
           "description": "Additional fields."
@@ -36,5 +31,5 @@
       "description": "Email describes the electronic mailing details."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.18.1"
 }

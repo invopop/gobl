@@ -1,9 +1,10 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/region",
-  "code": "GB",
   "name": {
-    "en": "Great Britain"
+    "en": "United Kingdom"
   },
+  "country": "GB",
+  "currency": "EUR",
   "categories": [
     {
       "code": "VAT",
@@ -13,11 +14,11 @@
       "desc": {
         "en": "Value Added Tax"
       },
-      "defs": [
+      "rates": [
         {
-          "code": "ZRO",
+          "key": "zero",
           "name": {
-            "en": "VAT Zero Rate"
+            "en": "Zero Rate"
           },
           "values": [
             {
@@ -26,9 +27,9 @@
           ]
         },
         {
-          "code": "STD",
+          "key": "standard",
           "name": {
-            "en": "VAT Standard Rate"
+            "en": "Standard Rate"
           },
           "values": [
             {
@@ -38,9 +39,9 @@
           ]
         },
         {
-          "code": "RED",
+          "key": "reduced",
           "name": {
-            "en": "VAT Reduced Rate"
+            "en": "Reduced Rate"
           },
           "values": [
             {

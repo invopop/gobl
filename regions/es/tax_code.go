@@ -217,7 +217,7 @@ func extractMatches(regex *regexp.Regexp, code string) (map[string]string, error
 // Validate ensures the tax ID contains a matching country and
 // valid code.
 func (*validTaxID) Validate(value interface{}) error {
-	id, ok := value.(*org.TaxID)
+	id, ok := value.(*org.TaxIdentity)
 	if !ok {
 		return nil
 	}

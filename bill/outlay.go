@@ -2,6 +2,7 @@ package bill
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 )
@@ -21,7 +22,7 @@ type Outlay struct {
 	// Outlay number index inside the invoice for ordering.
 	Index int `json:"i" jsonschema:"title=Index"`
 	// When was the outlay made.
-	Date *org.Date `json:"date,omitempty" jsonschema:"title=Date"`
+	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// Invoice number or other reference detail used to identify the outlay.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Series of the outlay invoice.

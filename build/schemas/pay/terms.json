@@ -6,7 +6,7 @@
     "DueDate": {
       "properties": {
         "date": {
-          "$ref": "https://gobl.org/draft-0/org/date",
+          "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Date",
           "description": "When the payment is due."
         },
@@ -71,5 +71,5 @@
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.18.1"
 }

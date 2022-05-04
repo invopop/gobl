@@ -1,0 +1,41 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "EUR"
+issue_date: "2022-02-01"
+code: "SAMPLE-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+    tags: ["retailer"] # minorista
+  name: "Simple Goods Store"
+  addresses:
+    - num: "43"
+      street: "Calle Mayor"
+      region: "Madrid"
+      code: "28003"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Mugs from provider"
+      price: "50.00"
+    tags: ["goods"] # bienes
+    taxes:
+      VAT: "standard"
+      VATEQS: "standard"

@@ -2,40 +2,84 @@ package nl
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/region"
+	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/tax"
 )
 
-// regionDef holds everything related to Dutch documents and taxes.
-type regionDef struct{}
-
 // New provides the Dutch region definition
-func New() region.Region {
-	return new(regionDef)
-}
-
-// Code provides this region's code
-func (regionDef) Code() region.Code {
-	return region.NL
-}
-
-// Taxes provides all of this region's tax definitions.
-func (regionDef) Taxes() *tax.Region {
-	return &taxRegion
-}
-
-// Currency provides this region's main currency.
-func (regionDef) Currency() *currency.Def {
-	d, ok := currency.Get(currency.Code("EUR"))
-	if !ok {
-		return nil
+func New() *tax.Region {
+	return &tax.Region{
+		Country:  l10n.NL,
+		Currency: "EUR",
+		Name: i18n.String{
+			i18n.EN: "The Netherlands",
+			i18n.NL: "Nederland",
+		},
+		ValidateDocument: Validate,
+		Categories: []tax.Category{
+			//
+			// VAT
+			//
+			{
+				Code: common.TaxCategoryVAT,
+				Name: i18n.String{
+					i18n.EN: "VAT",
+					i18n.NL: "BTW",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Value Added Tax",
+					i18n.NL: "Belasting Toegevoegde Waarde",
+				},
+				Retained: false,
+				Rates: []tax.Rate{
+					{
+						Key: common.TaxRateZero,
+						Name: i18n.String{
+							i18n.EN: "Zero Rate",
+							i18n.NL: `0%-tarief`,
+						},
+						Values: []tax.RateValue{
+							{
+								Percent: num.MakePercentage(0, 3),
+							},
+						},
+					},
+					{
+						Key: common.TaxRateStandard,
+						Name: i18n.String{
+							i18n.EN: "Standard Rate",
+							i18n.NL: "Standaardtarief",
+						},
+						Values: []tax.RateValue{
+							{
+								Percent: num.MakePercentage(210, 3),
+							},
+						},
+					},
+					{
+						Key: common.TaxRateReduced,
+						Name: i18n.String{
+							i18n.EN: "Reduced Rate",
+							i18n.NL: "Gereduceerd Tarief",
+						},
+						Values: []tax.RateValue{
+							{
+								Percent: num.MakePercentage(90, 3),
+							},
+						},
+					},
+				},
+			},
+		},
 	}
-	return &d
+
 }
 
 // Validate checks the document type and determines if it can be validated.
-func (r regionDef) Validate(doc interface{}) error {
+func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)

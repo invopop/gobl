@@ -5,20 +5,38 @@ import (
 	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 )
 
 // Region defines the holding structure for a regions categories and subsequent
 // Rates and Values.
 type Region struct {
-	Code       Code        `json:"code" jsonschema:"title=Code"`
-	Name       i18n.String `json:"name" jsonschema:"title=Name"`
-	Categories []Category  `json:"categories" jsonschema:"title=Categories"`
+	// Name of the region
+	Name i18n.String `json:"name" jsonschema:"title=Name"`
+
+	// Country code for the region
+	Country l10n.Code `json:"country" jsonschema:"title=Code"`
+	// Locality, city, region, or similar code inside the country, if needed.
+	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality"`
+
+	// Currency used by the region for tax purposes.
+	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
+
+	// Set of specific scheme definitions inside the region.
+	Schemes Schemes `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+
+	// List of tax categories.
+	Categories []Category `json:"categories" jsonschema:"title=Categories"`
+
+	// ValidateDocument is a method to use to validate a document in a given region.
+	ValidateDocument func(doc interface{}) error `json:"-"`
 }
 
-// Category ...
+// Category contains the definition of a general type of tax inside a region.
 type Category struct {
 	Code Code        `json:"code" jsonschema:"title=Code"`
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
@@ -31,30 +49,30 @@ type Category struct {
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
 	// Specific tax definitions inside this category.
-	Defs []Def `json:"defs" jsonschema:"title=Definitions"`
+	Rates []Rate `json:"rates" jsonschema:"title=Rates"`
 }
 
-// Def defines a tax combination of category and rate.
-type Def struct {
-	// Code identifies this rate within the system
-	Code Code `json:"code" jsonschema:"title=Code"`
+// Rate defines a single rate inside a category
+type Rate struct {
+	// Key identifies this rate within the system
+	Key Key `json:"key" jsonschema:"title=Key"`
 
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
 	// Values contains a list of Value objects that contain the
-	// current and historical percentage values for the rate.
-	// Order is important, newer values should come before
+	// current and historical percentage values for the rate;
+	// order is important, newer values should come before
 	// older values.
-	Values []Value `json:"values" jsonschema:"title=Values,description=Set of values ordered by date that determine what rates to apply since when."`
+	Values []RateValue `json:"values" jsonschema:"title=Values"`
 }
 
-// Value contains a percentage rate or fixed amount for a given date range.
+// RateValue contains a percentage rate or fixed amount for a given date range.
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
-type Value struct {
+type RateValue struct {
 	// Date from which this value should be applied.
-	Since *org.Date `json:"since,omitempty" jsonschema:"title=Since"`
+	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
 	// Rate that should be applied
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	// When true, this value should no longer be used.
@@ -65,15 +83,24 @@ type Value struct {
 // all the preciding objects.
 type combo struct {
 	category Category
-	def      Def
-	value    Value
+	rate     Rate
+	value    RateValue
+}
+
+// CurrencyDef provides the currency definition object for the region.
+func (r *Region) CurrencyDef() *currency.Def {
+	d, ok := currency.Get(r.Currency)
+	if !ok {
+		return nil
+	}
+	return &d
 }
 
 // Validate enures the region definition is valid, including all
 // subsequent categories.
-func (r Region) Validate() error {
+func (r *Region) Validate() error {
 	err := validation.ValidateStruct(&r,
-		validation.Field(&r.Code, validation.Required),
+		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Categories, validation.Required),
 	)
@@ -85,35 +112,35 @@ func (c Category) Validate() error {
 	err := validation.ValidateStruct(&c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
-		validation.Field(&c.Defs, validation.Required),
+		validation.Field(&c.Rates, validation.Required),
 	)
 	return err
 }
 
 // Validate checks that our tax definition is valid. This is only really
 // meant to be used when testing new regional tax definitions.
-func (d Def) Validate() error {
-	err := validation.ValidateStruct(&d,
-		validation.Field(&d.Code, validation.Required),
-		validation.Field(&d.Name, validation.Required),
-		validation.Field(&d.Values, validation.Required, validation.By(checkDefValuesOrder)),
+func (r Rate) Validate() error {
+	err := validation.ValidateStruct(&r,
+		validation.Field(&r.Key, validation.Required),
+		validation.Field(&r.Name, validation.Required),
+		validation.Field(&r.Values, validation.Required, validation.By(checkRateValuesOrder)),
 	)
 	return err
 }
 
 // Validate ensures the tax rate contains all the required fields.
-func (v Value) Validate() error {
+func (v RateValue) Validate() error {
 	return validation.ValidateStruct(&v,
 		validation.Field(&v.Percent, validation.Required),
 	)
 }
 
-func checkDefValuesOrder(list interface{}) error {
-	values, ok := list.([]Value)
+func checkRateValuesOrder(list interface{}) error {
+	values, ok := list.([]RateValue)
 	if !ok {
 		return errors.New("must be a tax rate value array")
 	}
-	var date *org.Date
+	var date *cal.Date
 	// loop through and check order of Since value
 	for i := range values {
 		v := &values[i]
@@ -137,41 +164,41 @@ func (r Region) Category(code Code) (Category, bool) {
 	return Category{}, false
 }
 
-// Def provides the rate definition with a matching code for
+// Rate provides the rate definition with a matching key for
 // the category.
-func (c Category) Def(code Code) (Def, bool) {
-	for _, d := range c.Defs {
-		if d.Code == code {
+func (c Category) Rate(key Key) (Rate, bool) {
+	for _, d := range c.Rates {
+		if d.Key == key {
 			return d, true
 		}
 	}
-	return Def{}, false
+	return Rate{}, false
 }
 
 // On determines the tax rate value for the provided date.
-func (d Def) On(date org.Date) (Value, bool) {
+func (d Rate) On(date cal.Date) (RateValue, bool) {
 	for _, v := range d.Values {
-		if !v.Since.IsValid() || v.Since.Before(date.Date) {
+		if v.Since == nil || !v.Since.IsValid() || v.Since.Before(date.Date) {
 			return v, true
 		}
 	}
-	return Value{}, false
+	return RateValue{}, false
 }
 
 // comboOn provides the Value object for the provided rate on a given day
 // or an error if no match is found.
-func (r Region) comboOn(rate *Rate, date org.Date) (*combo, error) {
+func (r Region) comboOn(cat Code, rate Key, date cal.Date) (*combo, error) {
 	c := new(combo)
 	var ok bool
-	c.category, ok = r.Category(rate.Category)
+	c.category, ok = r.Category(cat)
 	if !ok {
-		return nil, fmt.Errorf("failed to find category, invalid code: %v", rate.Category)
+		return nil, fmt.Errorf("failed to find category, invalid code: %v", cat)
 	}
-	c.def, ok = c.category.Def(rate.Code)
+	c.rate, ok = c.category.Rate(rate)
 	if !ok {
-		return nil, fmt.Errorf("failed to find rate definition, invalid code: %v", rate.Code)
+		return nil, fmt.Errorf("failed to find rate definition, invalid code: %v", rate)
 	}
-	c.value, ok = c.def.On(date)
+	c.value, ok = c.rate.On(date)
 	if !ok {
 		return nil, fmt.Errorf("tax rate cannot be provided for date")
 	}
