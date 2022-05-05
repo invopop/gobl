@@ -1,6 +1,7 @@
 package org
 
 import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
 )
@@ -21,7 +22,7 @@ type Address struct {
 	Locality      string       `json:"locality" jsonschema:"title=Locality,description=The village, town, district, or city."`
 	Region        string       `json:"region" jsonschema:"title=Region,description=Province, County, or State."`
 	Code          string       `json:"code,omitempty" jsonschema:"title=Code,description=Post or ZIP code."`
-	Country       l10n.Country `json:"country,omitempty" jsonschema:"title=Country,description=ISO country code."`
+	Country       l10n.Code    `json:"country,omitempty" jsonschema:"title=Country,description=ISO country code."`
 	Coordinates   *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates,description=For when the postal address is not sufficient, coordinates help locate the address more precisely."`
 	Meta          Meta         `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -33,4 +34,11 @@ type Coordinates struct {
 	Longitude float64 `json:"lon,omitempty" jsonschema:"title=Longitude,description=Decimal longitude coordinate."`
 	W3W       string  `json:"w3w,omitempty" jsonschema:"title=What 3 Words,description=Text coordinates compose of three words."`
 	Geohash   string  `json:"geohash,omitempty" jsonschema:"title=Geohash,description=Single string coordinate based on geohash standard."`
+}
+
+// Validate checks that an address looks okay.
+func (a *Address) Validate() error {
+	return validation.ValidateStruct(a,
+		validation.Field(&a.Country, l10n.IsCountry),
+	)
 }

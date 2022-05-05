@@ -2,9 +2,9 @@ package pay
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -18,7 +18,7 @@ type Advance struct {
 	// Unique identifier for this advance.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// When the advance was made.
-	Date *org.Date `json:"date,omitempty" jsonschema:"title=Date"`
+	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// ID or reference for the advance.
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// If this "advance" payment has come from a public grant or subsidy, set this to true.

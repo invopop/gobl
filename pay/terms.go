@@ -4,9 +4,9 @@ import (
 	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 )
 
 // Terms defines when we expect the customer to pay, or have paid, for
@@ -64,7 +64,7 @@ func (c TermCode) Validate() error {
 
 // DueDate contains an amount that should be paid by the given date.
 type DueDate struct {
-	Date     *org.Date       `json:"date" jsonschema:"title=Date,description=When the payment is due."`
+	Date     *cal.Date       `json:"date" jsonschema:"title=Date,description=When the payment is due."`
 	Notes    string          `json:"notes,omitempty" jsonschema:"title=Notes,description=Other details to take into account for the due date."`
 	Amount   num.Amount      `json:"amount" jsonschema:"title=Amount,description=How much needs to be paid by the date."`
 	Percent  *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent,description=Percentage of the total that should be paid by the date."`

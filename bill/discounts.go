@@ -50,7 +50,7 @@ type Discount struct {
 	// Amount to apply
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// List of taxes to apply to the discount
-	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
+	Taxes tax.Map `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Code for the reason this discount applied
 	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
 	// Text description as to why the discount was applied
@@ -66,8 +66,8 @@ func (m *Discount) Validate() error {
 	)
 }
 
-// GetTaxRates responds with the array of tax rates applied to this line.
-func (m *Discount) GetTaxRates() tax.Rates {
+// GetTaxes responds with the array of tax rates applied to this line.
+func (m *Discount) GetTaxes() tax.Map {
 	return m.Taxes
 }
 

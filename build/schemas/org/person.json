@@ -41,11 +41,6 @@
           "title": "Telephone Numbers"
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
           "type": "object",
           "title": "Meta",
           "description": "Data about the data."
@@ -58,5 +53,5 @@
       "description": "Person represents a human, and how to contact them electronically."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.20.0"
 }

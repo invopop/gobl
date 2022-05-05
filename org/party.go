@@ -11,7 +11,7 @@ import (
 type Party struct {
 	ID           string        `json:"id,omitempty" jsonschema:"title=ID,description=Internal ID used to identify the party inside a document."`
 	UUID         *uuid.UUID    `json:"uuid,omitempty" jsonschema:"title=UUID,description=Unique identity code."`
-	TaxID        *TaxID        `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
+	TaxID        *TaxIdentity  `json:"tax_id,omitempty" jsonschema:"title=Tax Identity,description=The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax pruposes."`
 	Name         string        `json:"name" jsonschema:"title=Name,description=Legal name or representation of the organization."`
 	Alias        string        `json:"alias,omitempty" jsonschema:"title=Alias,description=Alternate short name."`
 	People       []*Person     `json:"people,omitempty" jsonschema:"title=People,description=Details of physical people who represent the party."`

@@ -3,6 +3,8 @@ package org
 import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Item is used to describe a single product or service. Minimal usage
@@ -32,18 +34,31 @@ type Item struct {
 	// Base price of a single unit to be sold.
 	Price num.Amount `json:"price" jsonschema:"title=Price"`
 	// Free-text unit of measure.
-	Unit string `json:"unit,omitempty" jsonschema:"title=Unit,description=Code for unit of the item being sold"`
+	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	//	List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer.
 	Codes []*ItemCode `json:"codes,omitempty" jsonschema:"title=Codes"`
 	// Country code of where this item was from originally.
-	Origin l10n.Country `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
+	Origin l10n.Code `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Additional meta information that may be useful
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// ItemCode contains a value and optional type property that means additional
+// ItemCode contains a value and optional label property that means additional
 // codes can be added to an item.
 type ItemCode struct {
-	Type  string `json:"typ,omitempty" jsonschema:"title=Type"`
-	Value string `json:"val" jsonschema:"title=Value"`
+	// Local or human reference for the type of code the value
+	// represents.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// The item code's value.
+	Value string `json:"value" jsonschema:"title=Value"`
+}
+
+// Validate checks that an address looks okay.
+func (i *Item) Validate() error {
+	return validation.ValidateStruct(i,
+		validation.Field(&i.Name, validation.Required),
+		validation.Field(&i.Price, validation.Required),
+		validation.Field(&i.Origin, l10n.IsCountry),
+		validation.Field(&i.Unit),
+	)
 }

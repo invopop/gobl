@@ -49,7 +49,7 @@ type Charge struct {
 	// Amount to apply
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// List of taxes to apply to the charge
-	Taxes tax.Rates `json:"taxes,omitempty" jsonschema:"title=Taxes"`
+	Taxes tax.Map `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Code for why was this charge applied?
 	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
 	// Text description as to why the charge was applied
@@ -65,8 +65,8 @@ func (m *Charge) Validate() error {
 	)
 }
 
-// GetTaxRates responds with the array of tax rates applied to this line.
-func (m *Charge) GetTaxRates() tax.Rates {
+// GetTaxes responds with the array of tax rates applied to this line.
+func (m *Charge) GetTaxes() tax.Map {
 	return m.Taxes
 }
 

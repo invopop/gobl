@@ -23,7 +23,7 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.TypeCode != bill.SimplifiedTypeCode,
+			inv.TypeKey != bill.TypeKeySimplified,
 			validation.Required,
 			validation.By(v.customer),
 		)),
@@ -45,7 +45,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 	if !ok {
 		return nil
 	}
-	if obj.TaxID == nil || obj.TaxID.Country != l10n.ES {
+	if obj.TaxID == nil || obj.TaxID.Country != l10n.NL {
 		return nil
 	}
 	return validation.ValidateStruct(obj,

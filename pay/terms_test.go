@@ -3,8 +3,8 @@ package pay
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,11 +25,11 @@ func TestTermsCalculateDues(t *testing.T) {
 	terms = new(Terms)
 	terms.DueDates = []*DueDate{
 		{
-			Date:    org.NewDate(2021, 11, 10),
+			Date:    cal.NewDate(2021, 11, 10),
 			Percent: num.NewPercentage(40, 2),
 		},
 		{
-			Date:    org.NewDate(2021, 12, 10),
+			Date:    cal.NewDate(2021, 12, 10),
 			Percent: num.NewPercentage(60, 2),
 		},
 	}

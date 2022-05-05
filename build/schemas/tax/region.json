@@ -22,12 +22,12 @@
           "title": "Retained",
           "description": "Retained when true implies that the tax amount will be retained\nby the buyer on behalf of the supplier, and thus subtracted from\nthe invoice taxable base total. Typically used for taxes related to\nincome."
         },
-        "defs": {
+        "rates": {
           "items": {
-            "$ref": "#/$defs/Def"
+            "$ref": "#/$defs/Rate"
           },
           "type": "array",
-          "title": "Definitions",
+          "title": "Rates",
           "description": "Specific tax definitions inside this category."
         }
       },
@@ -35,16 +35,16 @@
       "required": [
         "code",
         "name",
-        "defs"
+        "rates"
       ],
-      "description": "Category ..."
+      "description": "Category contains the definition of a general type of tax inside a region."
     },
-    "Def": {
+    "Rate": {
       "properties": {
-        "code": {
+        "key": {
           "type": "string",
-          "title": "Code",
-          "description": "Code identifies this rate within the system"
+          "title": "Key",
+          "description": "Key identifies this rate within the system"
         },
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
@@ -56,51 +56,25 @@
         },
         "values": {
           "items": {
-            "$ref": "#/$defs/Value"
+            "$ref": "#/$defs/RateValue"
           },
           "type": "array",
           "title": "Values",
-          "description": "Set of values ordered by date that determine what rates to apply since when."
+          "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate;\norder is important, newer values should come before\nolder values."
         }
       },
       "type": "object",
       "required": [
-        "code",
+        "key",
         "name",
         "values"
       ],
-      "description": "Def defines a tax combination of category and rate."
+      "description": "Rate defines a single rate inside a category"
     },
-    "Region": {
-      "properties": {
-        "code": {
-          "type": "string",
-          "title": "Code"
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name"
-        },
-        "categories": {
-          "items": {
-            "$ref": "#/$defs/Category"
-          },
-          "type": "array",
-          "title": "Categories"
-        }
-      },
-      "type": "object",
-      "required": [
-        "code",
-        "name",
-        "categories"
-      ],
-      "description": "Region defines the holding structure for a regions categories and subsequent Rates and Values."
-    },
-    "Value": {
+    "RateValue": {
       "properties": {
         "since": {
-          "$ref": "https://gobl.org/draft-0/org/date",
+          "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Since",
           "description": "Date from which this value should be applied."
         },
@@ -119,8 +93,94 @@
       "required": [
         "percent"
       ],
-      "description": "Value contains a percentage rate or fixed amount for a given date range."
+      "description": "RateValue contains a percentage rate or fixed amount for a given date range."
+    },
+    "Region": {
+      "properties": {
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the region"
+        },
+        "country": {
+          "type": "string",
+          "title": "Code",
+          "description": "Country code for the region"
+        },
+        "locality": {
+          "type": "string",
+          "title": "Locality",
+          "description": "Locality, city, region, or similar code inside the country, if needed."
+        },
+        "currency": {
+          "type": "string",
+          "title": "Currency",
+          "description": "Currency used by the region for tax purposes."
+        },
+        "schemes": {
+          "items": {
+            "$ref": "#/$defs/Scheme"
+          },
+          "type": "array",
+          "title": "Schemes",
+          "description": "Set of specific scheme definitions inside the region."
+        },
+        "categories": {
+          "items": {
+            "$ref": "#/$defs/Category"
+          },
+          "type": "array",
+          "title": "Categories",
+          "description": "List of tax categories."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name",
+        "country",
+        "currency",
+        "categories"
+      ],
+      "description": "Region defines the holding structure for a regions categories and subsequent Rates and Values."
+    },
+    "Scheme": {
+      "properties": {
+        "key": {
+          "type": "string",
+          "title": "Key",
+          "description": "Key used to identify this scheme"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of this scheme."
+        },
+        "description": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Human details describing what this scheme is used for."
+        },
+        "categories": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Category Codes",
+          "description": "List of tax category codes that can be used when this scheme is\napplied."
+        },
+        "note": {
+          "$ref": "https://gobl.org/draft-0/org/note",
+          "title": "Note",
+          "description": "Notes defines messages that should be added to a document\nwhen this scheme is used."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "name"
+      ],
+      "description": "Scheme contains the definition of a scheme that belongs to a region and can be used to simplify validation processes for document contents."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.20.0"
 }

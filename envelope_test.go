@@ -65,7 +65,7 @@ func TestEnvelopeExtract(t *testing.T) {
 func TestEnvelopeComplete(t *testing.T) {
 	e := new(gobl.Envelope)
 
-	data, err := ioutil.ReadFile("./samples/envelope-invoice-es.yaml")
+	data, err := ioutil.ReadFile("./samples/es/invoice-es-es.env.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)

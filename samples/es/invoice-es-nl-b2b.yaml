@@ -1,0 +1,48 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "EUR"
+issue_date: "2022-02-01"
+code: "SAMPLE-X-002"
+tax:
+  # this is a bit random, but demos that prices may include tax
+  # that will be deducted from final price correctly.
+  prices_include: "VAT"
+  schemes:
+    - reverse-charge
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "NL"
+    code: "NL000099995B57"
+  name: "Sample Consumer"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Services exported"
+      price: "20.00"
+      unit: "day"
+    taxes:
+      VAT: standard
+  - quantity: 50
+    item:
+      name: "Branded Mugs"
+      price: "7.50"
+    taxes:
+      VAT: standard
+    meta:
+      goods: true

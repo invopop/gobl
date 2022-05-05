@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
 )
@@ -19,13 +20,13 @@ type Preceding struct {
 	// Additional identification details
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// When the preceding invoice was issued.
-	IssueDate org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
 	// Tax period in which the previous invoice has an effect.
-	Period *org.Period `json:"period,omitempty" jsonschema:"title=Period"`
+	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Specific codes for the corrections made.
-	Corrections []CorrectionCode `json:"corrections,omitempty" jsonschema:"title=Corrections"`
+	Corrections []CorrectionKey `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 	// How has the previous invoice been corrected?
-	CorrectionMethod CorrectionMethodCode `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
+	CorrectionMethod CorrectionMethodKey `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
 	// Additional details regarding preceding invoice
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that may be useful in specific regions
@@ -36,81 +37,81 @@ type Preceding struct {
 func (p *Preceding) Validate() error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Code, validation.Required),
-		validation.Field(&p.IssueDate, org.DateNotZero()),
+		validation.Field(&p.IssueDate, cal.DateNotZero()),
 		validation.Field(&p.Period),
 		validation.Field(&p.Corrections),
 		validation.Field(&p.CorrectionMethod),
 	)
 }
 
-// CorrectionCode helps identify from a set of reasons why this correction
+// CorrectionKey helps identify from a set of reasons why this correction
 // is happening
-type CorrectionCode string
+type CorrectionKey string
 
-// CorrectionMethodCode identifies that type of correction being applied.
-type CorrectionMethodCode string
+// CorrectionMethodKey identifies that type of correction being applied.
+type CorrectionMethodKey string
 
 // List of currently supported correction codes. These are determined by local needs
 // and could be increased as new regions are added with local requirements.
 const (
-	CodeCorrectionCode            CorrectionCode = "code"       // Invoice Code
-	SeriesCorrectionCode          CorrectionCode = "series"     // Invoice series number
-	IssueDateCorrectionCode       CorrectionCode = "issue-date" // Issue Date
-	SupplierCorrectionCode        CorrectionCode = "supplier"   // General supplier details
-	CustomerCorrectionCode        CorrectionCode = "customer"   // General customer details
-	SupplierNameCorrectionCode    CorrectionCode = "supplier-name"
-	CustomerNameCorrectionCode    CorrectionCode = "customer-name"
-	SupplierTaxIDCorrectionCode   CorrectionCode = "supplier-tax-id"
-	CustomerTaxIDCorrectionCode   CorrectionCode = "customer-tax-id"
-	SupplierAddressCorrectionCode CorrectionCode = "supplier-addr"
-	CustomerAddressCorrectionCode CorrectionCode = "customer-addr"
-	LineCorrectionCode            CorrectionCode = "line"
-	PeriodCorrectionCode          CorrectionCode = "period"
-	TypeCorrectionCode            CorrectionCode = "type"
-	LegalDetailsCorrectionCode    CorrectionCode = "legal-details"
-	TaxRateCorrectionCode         CorrectionCode = "tax-rate"
-	TaxAmountCorrectionCode       CorrectionCode = "tax-amount"
-	TaxBaseCorrectionCode         CorrectionCode = "tax-base"
-	TaxCorrectionCode             CorrectionCode = "tax"          // General issue with tax calculations
-	TaxRetainedCorrectionCode     CorrectionCode = "tax-retained" // Error in retained tax calculations
-	RefundCorrectionCode          CorrectionCode = "refund"       // Goods or materials have been returned to supplier
-	DiscountCorrectionCode        CorrectionCode = "discount"     // New discounts or rebates added
-	JudicialCorrectionCode        CorrectionCode = "judicial"     // Court ruling or administrative decision
-	InsolvencyCorrectionCode      CorrectionCode = "insolvency"   // the customer is insolvent and cannot pay
+	CodeCorrectionKey            CorrectionKey = "code"       // Invoice Code
+	SeriesCorrectionKey          CorrectionKey = "series"     // Invoice series number
+	IssueDateCorrectionKey       CorrectionKey = "issue-date" // Issue Date
+	SupplierCorrectionKey        CorrectionKey = "supplier"   // General supplier details
+	CustomerCorrectionKey        CorrectionKey = "customer"   // General customer details
+	SupplierNameCorrectionKey    CorrectionKey = "supplier-name"
+	CustomerNameCorrectionKey    CorrectionKey = "customer-name"
+	SupplierTaxIDCorrectionKey   CorrectionKey = "supplier-tax-id"
+	CustomerTaxIDCorrectionKey   CorrectionKey = "customer-tax-id"
+	SupplierAddressCorrectionKey CorrectionKey = "supplier-addr"
+	CustomerAddressCorrectionKey CorrectionKey = "customer-addr"
+	LineCorrectionKey            CorrectionKey = "line"
+	PeriodCorrectionKey          CorrectionKey = "period"
+	TypeCorrectionKey            CorrectionKey = "type"
+	LegalDetailsCorrectionKey    CorrectionKey = "legal-details"
+	TaxRateCorrectionKey         CorrectionKey = "tax-rate"
+	TaxAmountCorrectionKey       CorrectionKey = "tax-amount"
+	TaxBaseCorrectionKey         CorrectionKey = "tax-base"
+	TaxCorrectionKey             CorrectionKey = "tax"          // General issue with tax calculations
+	TaxRetainedCorrectionKey     CorrectionKey = "tax-retained" // Error in retained tax calculations
+	RefundCorrectionKey          CorrectionKey = "refund"       // Goods or materials have been returned to supplier
+	DiscountCorrectionKey        CorrectionKey = "discount"     // New discounts or rebates added
+	JudicialCorrectionKey        CorrectionKey = "judicial"     // Court ruling or administrative decision
+	InsolvencyCorrectionKey      CorrectionKey = "insolvency"   // the customer is insolvent and cannot pay
 )
 
-// CorrectionCodeList provides a fixed list of all the correction
+// CorrectionKeyList provides a fixed list of all the correction
 // codes that are currently supported by GOBL.
-var CorrectionCodeList = []CorrectionCode{
-	CodeCorrectionCode,
-	SeriesCorrectionCode,
-	IssueDateCorrectionCode,
-	SupplierCorrectionCode,
-	CustomerCorrectionCode,
-	SupplierNameCorrectionCode,
-	CustomerNameCorrectionCode,
-	SupplierTaxIDCorrectionCode,
-	CustomerTaxIDCorrectionCode,
-	SupplierAddressCorrectionCode,
-	CustomerAddressCorrectionCode,
-	LineCorrectionCode,
-	PeriodCorrectionCode,
-	TypeCorrectionCode,
-	LegalDetailsCorrectionCode,
-	TaxRateCorrectionCode,
-	TaxAmountCorrectionCode,
-	TaxBaseCorrectionCode,
-	TaxCorrectionCode,
-	TaxRetainedCorrectionCode,
-	RefundCorrectionCode,
-	DiscountCorrectionCode,
-	JudicialCorrectionCode,
-	InsolvencyCorrectionCode,
+var CorrectionKeyList = []CorrectionKey{
+	CodeCorrectionKey,
+	SeriesCorrectionKey,
+	IssueDateCorrectionKey,
+	SupplierCorrectionKey,
+	CustomerCorrectionKey,
+	SupplierNameCorrectionKey,
+	CustomerNameCorrectionKey,
+	SupplierTaxIDCorrectionKey,
+	CustomerTaxIDCorrectionKey,
+	SupplierAddressCorrectionKey,
+	CustomerAddressCorrectionKey,
+	LineCorrectionKey,
+	PeriodCorrectionKey,
+	TypeCorrectionKey,
+	LegalDetailsCorrectionKey,
+	TaxRateCorrectionKey,
+	TaxAmountCorrectionKey,
+	TaxBaseCorrectionKey,
+	TaxCorrectionKey,
+	TaxRetainedCorrectionKey,
+	RefundCorrectionKey,
+	DiscountCorrectionKey,
+	JudicialCorrectionKey,
+	InsolvencyCorrectionKey,
 }
 
 // Validate ensures the correction code is part of the accepted list
-func (cc CorrectionCode) Validate() error {
-	for _, code := range CorrectionCodeList {
+func (cc CorrectionKey) Validate() error {
+	for _, code := range CorrectionKeyList {
 		if code == cc {
 			return nil
 		}
@@ -120,24 +121,24 @@ func (cc CorrectionCode) Validate() error {
 
 // Defined list of correction methods
 const (
-	CompleteCorrectionMethodCode   CorrectionMethodCode = "complete"   // everything has changed
-	PartialCorrectionMethodCode    CorrectionMethodCode = "partial"    // only differences corrected
-	DiscountCorrectionMethodCode   CorrectionMethodCode = "discount"   // deducted from future invoices
-	AuthorizedCorrectionMethodCode CorrectionMethodCode = "authorized" // Permitted by tax agency
+	CompleteCorrectionMethodKey   CorrectionMethodKey = "complete"   // everything has changed
+	PartialCorrectionMethodKey    CorrectionMethodKey = "partial"    // only differences corrected
+	DiscountCorrectionMethodKey   CorrectionMethodKey = "discount"   // deducted from future invoices
+	AuthorizedCorrectionMethodKey CorrectionMethodKey = "authorized" // Permitted by tax agency
 )
 
-// CorrectionMethodCodeList provides a fixed list of codes for validation
+// CorrectionMethodKeyList provides a fixed list of codes for validation
 // purposes.
-var CorrectionMethodCodeList = []CorrectionMethodCode{
-	CompleteCorrectionMethodCode,
-	PartialCorrectionMethodCode,
-	DiscountCorrectionMethodCode,
-	AuthorizedCorrectionMethodCode,
+var CorrectionMethodKeyList = []CorrectionMethodKey{
+	CompleteCorrectionMethodKey,
+	PartialCorrectionMethodKey,
+	DiscountCorrectionMethodKey,
+	AuthorizedCorrectionMethodKey,
 }
 
 // Validate ensures the correction code is part of the accepted list
-func (cc CorrectionMethodCode) Validate() error {
-	for _, code := range CorrectionMethodCodeList {
+func (cc CorrectionMethodKey) Validate() error {
+	for _, code := range CorrectionMethodKeyList {
 		if code == cc {
 			return nil
 		}

@@ -33,10 +33,10 @@ func NewV4() UUID {
 // Anything other than a v1 UUID will provide zero time without an error,
 // so ensure your error checks are performed previously.
 func (u UUID) Timestamp() time.Time {
-	if u.Version() != 1 {
+	if u.UUID.Version() != 1 {
 		return time.Time{}
 	}
-	return time.Unix(u.Time().UnixTime())
+	return time.Unix(u.UUID.Time().UnixTime())
 }
 
 // IsZero returns true if the UUID is all zeros.

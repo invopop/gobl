@@ -2,12 +2,14 @@ package bill
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/region"
+	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
@@ -22,37 +24,29 @@ type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
-	// Code for the region the invoice should be validated with.
-	Region region.Code `json:"region" jsonschema:"title=Region"`
-
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
 	// Used in addition to the Code in some regions.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Functional type of the invoice, default is always 'commercial'.
-	TypeCode TypeCode `json:"type_code,omitempty" jsonschema:"title=Type Code"`
+	TypeKey TypeKey `json:"type_key,omitempty" jsonschema:"title=Type Key"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
-	ExchangeRates currency.ExchangeRates `json:"rates,omitempty" jsonschema:"title=Exchange Rates"`
-
-	// Implies that all item prices already include the specified tax, especially
-	// useful for retailers or B2C companies where prices are often displayed including tax.
-	//
-	// We only only one tax category to be defined as it is overly complex to work-out what the base
-	// price should be from multiple rates.
-	PricesIncludeTax tax.Code `json:"prices_include_tax,omitempty" jsonschema:"title=Prices Include Tax"`
+	ExchangeRates currency.ExchangeRates `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
+	// Special tax configuration for billing.
+	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
 	// Key information regarding a previous invoice and potentially details as to why it
 	// was corrected.
 	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
 	// When the invoice was created.
-	IssueDate org.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
 	// Date when the operation defined by the invoice became effective.
-	OperationDate *org.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
+	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
-	ValueDate *org.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
+	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 
 	// The taxable entity supplying the goods or services.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
@@ -68,12 +62,12 @@ type Invoice struct {
 	// Expenses paid for by the supplier but invoiced directly to the customer.
 	Outlays Outlays `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
-	// Summary of all the invoice totals, including taxes.
-	Totals *Totals `json:"totals" jsonschema:"title=Totals"`
-
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
 	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
+
+	// Summary of all the invoice totals, including taxes.
+	Totals *Totals `json:"totals" jsonschema:"title=Totals"`
 
 	// The EN 16931-1:2017 standard recognises a need to be able to attach additional
 	// documents to an invoice. We don't support this yet, but this is where
@@ -85,6 +79,37 @@ type Invoice struct {
 	Notes org.Notes `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// Ordering allows additional order details to be appended
+type Ordering struct {
+	// Party who is selling the goods and is not responsible for taxes
+	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
+}
+
+// Payment contains details as to how the invoice should be paid.
+type Payment struct {
+	// The party responsible for paying for the invoice, if not the customer.
+	Payer *org.Party `json:"payer,omitempty" jsonschema:"title=Payer"`
+	// Payment terms or conditions.
+	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
+	// Any amounts that have been paid in advance and should be deducted from the amount due.
+	Advances pay.Advances `json:"advances,omitempty" jsonschema:"title=Advances"`
+	// Details on how payment should be made.
+	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
+}
+
+// Delivery covers the details of the destination for the products described
+// in the invoice body.
+type Delivery struct {
+	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
+	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
+	// When the goods should be expected
+	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
+	// Start of a n invoicing or delivery period
+	StartDate *cal.Date `json:"start_date,omitempty" jsonschema:"title=Start Date"`
+	// End of a n invoicing or delivery period
+	EndDate *cal.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
 }
 
 // Totals contains the summaries of all calculations for the invoice.
@@ -99,8 +124,10 @@ type Totals struct {
 	TaxIncluded *num.Amount `json:"tax_included,omitempty" jsonschema:"title=Tax Included"`
 	// Sum of all line sums minus the discounts, plus the charges, without tax.
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
-	// Summary of all the taxes with a final sum to add or deduct from the amount payable.
+	// Summary of all the taxes included in the invoice.
 	Taxes *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals"`
+	// Total amount of tax to apply to the invoice.
+	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Grand total after all taxes have been applied.
 	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
 	// Total paid in outlays that need to be reimbursed
@@ -113,42 +140,15 @@ type Totals struct {
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
-// Ordering allows additional order details to be appended
-type Ordering struct {
-	// Party who is selling the goods and is not responsible for taxes
-	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
-}
-
-// Payment contains details as to how the invoice should be paid.
-type Payment struct {
-	Payer        *org.Party        `json:"payer,omitempty" jsonschema:"title=Payer,description=The party responsible for paying for the invoice, if not the customer."`
-	Terms        *pay.Terms        `json:"terms,omitempty" jsonschema:"title=Terms,description=Payment terms or conditions."`
-	Advances     pay.Advances      `json:"advances,omitempty" jsonschema:"title=Advances,description=Any amounts that have been paid in advance and should be deducted from the amount due."`
-	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions,description=Details on how payment should be made."`
-}
-
-// Delivery covers the details of the destination for the products described
-// in the invoice body.
-type Delivery struct {
-	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
-	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
-	// When the goods should be expected
-	Date *org.Date `json:"date,omitempty" jsonschema:"title=Date"`
-	// Start of a n invoicing or delivery period
-	StartDate *org.Date `json:"start_date,omitempty" jsonschema:"title=Start Date"`
-	// End of a n invoicing or delivery period
-	EndDate *org.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
-}
-
 // Validate checks to ensure the invoice is valid and contains all the information we need.
 func (inv *Invoice) Validate() error {
 	err := validation.ValidateStruct(inv,
 		validation.Field(&inv.UUID),
-		validation.Field(&inv.Region, validation.Required),
 		validation.Field(&inv.Code, validation.Required),
-		validation.Field(&inv.TypeCode), // either empty (Commercial) or one of those supported
+		validation.Field(&inv.TypeKey), // either empty (Commercial) or one of those supported
 		validation.Field(&inv.Currency, validation.Required),
-		validation.Field(&inv.IssueDate, org.DateNotZero()),
+		validation.Field(&inv.IssueDate, cal.DateNotZero()),
+		validation.Field(&inv.Tax),
 		validation.Field(&inv.Preceding),
 
 		validation.Field(&inv.Supplier, validation.Required),
@@ -161,8 +161,12 @@ func (inv *Invoice) Validate() error {
 		validation.Field(&inv.Totals, validation.Required),
 	)
 	if err == nil {
-		r := region.For(inv.Region)
-		err = r.Validate(inv)
+		tID := inv.determineTaxIdentity()
+		if tID == nil {
+			return errors.New("unable to determine tax identity")
+		}
+		r := tax.RegionFor(tID.Country, tID.Locality)
+		err = r.ValidateDocument(inv)
 	}
 	return err
 }
@@ -170,10 +174,60 @@ func (inv *Invoice) Validate() error {
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
 func (inv *Invoice) Calculate() error {
-	r := region.For(inv.Region)
+	if inv.Supplier == nil {
+		return errors.New("missing or invalid supplier tax identity")
+	}
+	tID := inv.Supplier.TaxID
+	r := tax.RegionFor(tID.Country, tID.Locality)
 	if r == nil {
 		return errors.New("region is missing")
 	}
+
+	if err := inv.prepareSchemes(r); err != nil {
+		return err
+	}
+
+	// Should we use the customers identity for calcuations?
+	tID = inv.determineTaxIdentity()
+	if tID == nil {
+		return errors.New("unable to determine tax identity")
+	}
+	r = tax.RegionFor(tID.Country, tID.Locality)
+	if r == nil {
+		return errors.New("region is missing")
+	}
+
+	return inv.calculate(r)
+}
+
+func (inv *Invoice) prepareSchemes(r *tax.Region) error {
+	if inv.Tax == nil {
+		return nil
+	}
+	for _, k := range inv.Tax.Schemes {
+		s := r.Schemes.ForKey(k)
+		if s == nil {
+			return fmt.Errorf("invalid scheme: %v", k)
+		}
+
+		// apply the scheme's note, but ensure it's not a duplicate by checking the Src.
+		if s.Note != nil {
+			var en *org.Note
+			for _, n := range inv.Notes {
+				if n.Src == string(k) {
+					en = n
+					break
+				}
+			}
+			if en == nil {
+				inv.Notes = append(inv.Notes, s.Note)
+			}
+		}
+	}
+	return nil
+}
+
+func (inv *Invoice) calculate(r *tax.Region) error {
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate
@@ -184,10 +238,9 @@ func (inv *Invoice) Calculate() error {
 
 	// Prepare the totals we'll need with amounts based on currency
 	t := new(Totals)
-	zero := r.Currency().BaseAmount()
+	zero := r.CurrencyDef().BaseAmount()
 	t.reset(zero)
 
-	tr := r.Taxes()
 	tls := make([]tax.TaxableLine, 0)
 
 	// Ensure all the lines are up to date first
@@ -238,19 +291,28 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	// Now figure out the tax totals (with some interface conversion)
-	if err := t.Taxes.Calculate(tr, tls, inv.PricesIncludeTax, *date, zero); err != nil {
+	var pit tax.Code
+	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
+		pit = inv.Tax.PricesInclude
+	}
+	if err := t.Taxes.Calculate(r, tls, pit, *date, zero); err != nil {
 		return err
 	}
 
 	// Remove any included taxes from the total.
-	ct := t.Taxes.Category(inv.PricesIncludeTax)
+	ct := t.Taxes.Category(pit)
 	if ct != nil {
 		t.TaxIncluded = &ct.Amount
 		t.Total = t.Total.Subtract(ct.Amount)
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	t.TotalWithTax = t.Total.Add(t.Taxes.Sum)
+	if inv.Tax != nil && inv.Tax.Schemes.Contains(common.SchemeReverseCharge) {
+		t.Tax = zero
+	} else {
+		t.Tax = t.Taxes.Sum
+	}
+	t.TotalWithTax = t.Total.Add(t.Tax)
 	t.Payable = t.TotalWithTax
 
 	// Outlays
@@ -279,6 +341,21 @@ func (inv *Invoice) Calculate() error {
 	return nil
 }
 
+func (inv *Invoice) determineTaxIdentity() *org.TaxIdentity {
+	if inv.Tax != nil {
+		if inv.Tax.Schemes.Contains(common.SchemeCustomerRates) {
+			if inv.Customer == nil {
+				return nil
+			}
+			return inv.Customer.TaxID
+		}
+	}
+	if inv.Supplier == nil {
+		return nil
+	}
+	return inv.Supplier.TaxID
+}
+
 func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
 	if p == nil || len(p.Advances) == 0 {
 		return nil
@@ -299,6 +376,8 @@ func (t *Totals) reset(zero num.Amount) {
 	t.TaxIncluded = nil
 	t.Total = zero
 	t.Taxes = tax.NewTotal(zero)
+	t.Tax = zero
+	t.TotalWithTax = zero
 	t.Outlays = nil
 	t.Payable = zero
 	t.Advances = nil

@@ -6,7 +6,6 @@ func init() {
 	objs := []interface{}{
 		Address{},
 		Coordinates{},
-		Date{},
 		Item{},
 		Note{},
 		Party{},
@@ -15,8 +14,7 @@ func init() {
 		Email{},
 		Telephone{},
 		Registration{},
-		Period{},
-		TaxID{},
+		TaxIdentity{},
 	}
 	schema.RegisterAll(schema.GOBL.Add("org"), objs)
 }

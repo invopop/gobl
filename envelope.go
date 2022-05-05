@@ -93,13 +93,17 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return ErrInternal.WithErrorf("missing head")
 	}
 
-	var err error
-	e.Document, err = NewDocument(doc)
-	if err != nil {
-		return err
+	if d, ok := doc.(*Document); ok {
+		e.Document = d
+	} else {
+		var err error
+		e.Document, err = NewDocument(doc)
+		if err != nil {
+			return err
+		}
 	}
 
-	if err := e.complete(doc); err != nil {
+	if err := e.complete(); err != nil {
 		return err
 	}
 
@@ -115,17 +119,17 @@ func (e *Envelope) Complete() error {
 		return ErrNoDocument
 	}
 
-	obj := e.Document.Instance()
-	if obj == nil {
-		return ErrUnknownSchema.WithErrorf("schema: %v", e.Document.Schema().String())
-	}
-
-	return e.complete(obj)
+	return e.complete()
 }
 
-func (e *Envelope) complete(doc interface{}) error {
+func (e *Envelope) complete() error {
 	// Always set our schema version
 	e.Schema = EnvelopeSchema
+
+	doc := e.Document.Instance()
+	if doc == nil {
+		return ErrUnknownSchema.WithErrorf("schema: %v", e.Document.Schema().String())
+	}
 
 	// arm doors and cross check
 	if obj, ok := doc.(Calculable); ok {

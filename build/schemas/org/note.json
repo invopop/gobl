@@ -5,10 +5,20 @@
   "$defs": {
     "Note": {
       "properties": {
+        "key": {
+          "type": "string",
+          "title": "Key",
+          "description": "Key specifying subject of the text"
+        },
         "code": {
           "type": "string",
           "title": "Code",
-          "description": "Code specifying subject of the text"
+          "description": "Code used for additional data that may be required to identify the note."
+        },
+        "src": {
+          "type": "string",
+          "title": "Source",
+          "description": "Source of this note, especially useful when auto-generated."
         },
         "text": {
           "type": "string",
@@ -23,5 +33,5 @@
       "description": "Note represents a free text of additional information that may be added to a document."
     }
   },
-  "$comment": "Generated with GOBL v0.18.0"
+  "$comment": "Generated with GOBL v0.20.0"
 }

@@ -3,14 +3,14 @@ package tax
 import (
 	"fmt"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 )
 
 // RateTotal contains a sum of all the tax rates in the document with
 // a matching category and definition.
 type RateTotal struct {
-	Code    Code           `json:"code" jsonschema:"title=Code"`
+	Key     Key            `json:"key" jsonschema:"title=Key"`
 	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	Amount  num.Amount     `json:"amount" jsonschema:"title=Amount"`
@@ -38,7 +38,7 @@ type Total struct {
 // TaxableLine defines what we expect from a line in order to subsequently calculate
 // the taxes that need to be added or retained.
 type TaxableLine interface {
-	GetTaxRates() Rates
+	GetTaxes() Map
 	GetTotal() num.Amount
 }
 
@@ -62,9 +62,9 @@ func NewCategoryTotal(code Code, retained bool, zero num.Amount) *CategoryTotal 
 }
 
 // NewRateTotal returns a rate total.
-func NewRateTotal(code Code, percent num.Percentage, zero num.Amount) *RateTotal {
+func NewRateTotal(key Key, percent num.Percentage, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
-	rt.Code = code
+	rt.Key = key
 	rt.Percent = percent
 	rt.Base = zero
 	rt.Amount = zero
@@ -82,9 +82,9 @@ func (t *Total) Category(code Code) *CategoryTotal {
 }
 
 // Rate grabs the matching rate from the category total, or nil.
-func (ct *CategoryTotal) Rate(code Code) *RateTotal {
+func (ct *CategoryTotal) Rate(key Key) *RateTotal {
 	for _, rt := range ct.Rates {
-		if rt.Code == code {
+		if rt.Key == key {
 			return rt
 		}
 	}
@@ -92,7 +92,7 @@ func (ct *CategoryTotal) Rate(code Code) *RateTotal {
 }
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
-func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, date org.Date, zero num.Amount) error {
+func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, date cal.Date, zero num.Amount) error {
 	// NOTE: This method looks more complex than it could be as we're providing
 	// additional logic that will deal with situations whereby a tax is included
 	// in line prices potentially with other taxes.
@@ -114,8 +114,8 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 	// we'll add an extra couple of 0s.
 	if !taxIncluded.IsEmpty() {
 		for _, tl := range taxLines {
-			if rate := tl.rateForCategory(taxIncluded); rate != nil {
-				c, err := reg.comboOn(rate, date)
+			if rate := tl.rateForCategory(taxIncluded); rate != "" {
+				c, err := reg.comboOn(taxIncluded, rate, date)
 				if err != nil {
 					return err
 				}
@@ -132,8 +132,8 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 
 	// Go through each line and add the price to the base of each tax
 	for _, tl := range taxLines {
-		for _, r := range tl.rates {
-			rt, err := t.rateTotalFor(reg, r, date, zero)
+		for c, r := range tl.rates {
+			rt, err := t.rateTotalFor(reg, c, r, date, zero)
 			if err != nil {
 				return err
 			}
@@ -171,34 +171,34 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 }
 
 // rateTotalFor either finds of creates total objects for the category and rate.
-func (t *Total) rateTotalFor(reg *Region, r *Rate, date org.Date, zero num.Amount) (*RateTotal, error) {
-	c, err := reg.comboOn(r, date)
+func (t *Total) rateTotalFor(reg *Region, cat Code, rate Key, date cal.Date, zero num.Amount) (*RateTotal, error) {
+	c, err := reg.comboOn(cat, rate, date)
 	if err != nil {
 		return nil, err
 	}
 
 	var catTotal *CategoryTotal
 	for _, ct := range t.Categories {
-		if ct.Code == r.Category {
+		if ct.Code == cat {
 			catTotal = ct
 			break
 		}
 	}
 	if catTotal == nil {
-		catTotal = NewCategoryTotal(r.Category, c.category.Retained, zero)
+		catTotal = NewCategoryTotal(cat, c.category.Retained, zero)
 		t.Categories = append(t.Categories, catTotal)
 	}
 
 	// Prepare the Rate
 	var rateTotal *RateTotal
 	for _, rt := range catTotal.Rates {
-		if rt.Code == r.Code {
+		if rt.Key == rate {
 			rateTotal = rt
 			break
 		}
 	}
 	if rateTotal == nil {
-		rateTotal = NewRateTotal(r.Code, c.value.Percent, zero)
+		rateTotal = NewRateTotal(rate, c.value.Percent, zero)
 		catTotal.Rates = append(catTotal.Rates, rateTotal)
 	}
 
@@ -208,16 +208,11 @@ func (t *Total) rateTotalFor(reg *Region, r *Rate, date org.Date, zero num.Amoun
 // taxLine is used to replace
 type taxLine struct {
 	price num.Amount
-	rates Rates
+	rates Map
 }
 
-func (tl *taxLine) rateForCategory(code Code) *Rate {
-	for _, r := range tl.rates {
-		if r.Category == code {
-			return r
-		}
-	}
-	return nil
+func (tl *taxLine) rateForCategory(code Code) Key {
+	return tl.rates[code]
 }
 
 func mapTaxLines(lines []TaxableLine) []*taxLine {
@@ -225,7 +220,7 @@ func mapTaxLines(lines []TaxableLine) []*taxLine {
 	for i, v := range lines {
 		tls[i] = &taxLine{
 			price: v.GetTotal(),
-			rates: v.GetTaxRates(),
+			rates: v.GetTaxes(),
 		}
 	}
 	return tls

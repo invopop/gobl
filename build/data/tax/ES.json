@@ -1,10 +1,122 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/region",
-  "code": "ES",
   "name": {
     "en": "Spain",
     "es": "España"
   },
+  "country": "ES",
+  "currency": "EUR",
+  "schemes": [
+    {
+      "key": "reverse-charge",
+      "name": {
+        "en": "Reverse Charge",
+        "es": "Inversión del sujeto pasivo"
+      },
+      "categories": [
+        "VAT"
+      ],
+      "note": {
+        "key": "legal",
+        "src": "reverse-charge",
+        "text": "Reverse Charge / Inversión del sujeto pasivo."
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "en": "Customer Country Rates",
+        "es": "Tasas del País del Cliente"
+      },
+      "description": {
+        "en": "Use the customers country to determine tax rates."
+      }
+    },
+    {
+      "key": "simplified",
+      "name": {
+        "en": "Simplified tax scheme",
+        "es": "Contribuyente en régimen simplificado"
+      },
+      "note": {
+        "key": "legal",
+        "src": "simplified",
+        "text": "Factura expedida por contibuyente en régimen simplificado."
+      }
+    },
+    {
+      "key": "customer-issued",
+      "name": {
+        "en": "Customer issued invoice",
+        "es": "Facturación por el destinatario"
+      },
+      "note": {
+        "key": "legal",
+        "src": "customer-issued",
+        "text": "Facturación por el destinatario."
+      }
+    },
+    {
+      "key": "travel-agency",
+      "name": {
+        "en": "Special scheme for travel agencies",
+        "es": "Régimen especial de las agencias de viajes"
+      },
+      "note": {
+        "key": "legal",
+        "src": "travel-agency",
+        "text": "Régimen especial de las agencias de viajes."
+      }
+    },
+    {
+      "key": "second-hand-goods",
+      "name": {
+        "en": "Special scheme for second-hand goods",
+        "es": "Régimen especial de los bienes usados"
+      },
+      "note": {
+        "key": "legal",
+        "src": "second-hand-goods",
+        "text": "Régimen especial de los bienes usados."
+      }
+    },
+    {
+      "key": "art",
+      "name": {
+        "en": "Special scheme of works of art",
+        "es": "Régimen especial de los objetos de arte"
+      },
+      "note": {
+        "key": "legal",
+        "src": "art",
+        "text": "Régimen especial de los objetos de arte."
+      }
+    },
+    {
+      "key": "antiques",
+      "name": {
+        "en": "Special scheme of antiques and collectables",
+        "es": "Régimen especial de las antigüedades y objetos de colección"
+      },
+      "note": {
+        "key": "legal",
+        "src": "antiques",
+        "text": "Régimen especial de las antigüedades y objetos de colección."
+      }
+    },
+    {
+      "key": "cash-basis",
+      "name": {
+        "en": "Special scheme on cash basis",
+        "es": "Régimen especial del criterio de caja"
+      },
+      "note": {
+        "key": "legal",
+        "src": "cash-basis",
+        "text": "Régimen especial del criterio de caja."
+      }
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
@@ -16,12 +128,12 @@
         "en": "Value Added Tax",
         "es": "Impuesto sobre el Valor Añadido"
       },
-      "defs": [
+      "rates": [
         {
-          "code": "ZRO",
+          "key": "zero",
           "name": {
-            "en": "VAT Zero Rate",
-            "es": "IVA Tipo Zero"
+            "en": "Zero Rate",
+            "es": "Tipo Zero"
           },
           "values": [
             {
@@ -30,10 +142,10 @@
           ]
         },
         {
-          "code": "STD",
+          "key": "standard",
           "name": {
-            "en": "VAT Standard Rate",
-            "es": "IVA Tipo General"
+            "en": "Standard Rate",
+            "es": "Tipo General"
           },
           "values": [
             {
@@ -55,10 +167,10 @@
           ]
         },
         {
-          "code": "RED",
+          "key": "reduced",
           "name": {
-            "en": "VAT Reduced Rate",
-            "es": "IVA Tipo Reducido"
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido"
           },
           "values": [
             {
@@ -80,10 +192,10 @@
           ]
         },
         {
-          "code": "SRD",
+          "key": "super-reduced",
           "name": {
-            "en": "VAT Super-Reduced Rate",
-            "es": "IVA Tipo Superreducido"
+            "en": "Super-Reduced Rate",
+            "es": "Tipo Superreducido"
           },
           "values": [
             {
@@ -104,12 +216,12 @@
         "en": "VAT Equalization Surcharge",
         "es": "IVA Recargo de Equivalencia"
       },
-      "defs": [
+      "rates": [
         {
-          "code": "STD",
+          "key": "standard",
           "name": {
-            "en": "VAT Standard Rate",
-            "es": "IVA Tipo General"
+            "en": "Standard Rate",
+            "es": "Tipo General"
           },
           "values": [
             {
@@ -123,10 +235,10 @@
           ]
         },
         {
-          "code": "RED",
+          "key": "reduced",
           "name": {
-            "en": "VAT Reduced Rate",
-            "es": "IVA Tipo Reducido"
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido"
           },
           "values": [
             {
@@ -140,10 +252,10 @@
           ]
         },
         {
-          "code": "SRD",
+          "key": "super-reduced",
           "name": {
-            "en": "VAT Super-Reduced Rate",
-            "es": "IVA Tipo Superreducido"
+            "en": "Super-Reduced Rate",
+            "es": "Tipo Superreducido"
           },
           "values": [
             {
@@ -153,10 +265,10 @@
           ]
         },
         {
-          "code": "TOB",
+          "key": "tobacco",
           "name": {
-            "en": "VAT Tobacco Rate",
-            "es": "IVA Tipo Tobaco"
+            "en": "Tobacco Rate",
+            "es": "Tipo Tobaco"
           },
           "values": [
             {
@@ -178,12 +290,12 @@
         "es": "Impuesto sobre la renta de las personas físicas."
       },
       "retained": true,
-      "defs": [
+      "rates": [
         {
-          "code": "STD",
+          "key": "pro",
           "name": {
-            "en": "IRPF Standard Rate",
-            "es": "IRPF Tipo General"
+            "en": "Professional Rate",
+            "es": "Professionales"
           },
           "values": [
             {
@@ -205,10 +317,10 @@
           ]
         },
         {
-          "code": "1ST",
+          "key": "pro-start",
           "name": {
-            "en": "IRPF Starting Rate",
-            "es": "IRPF Tipo Inicial"
+            "en": "Professional Starting Rate",
+            "es": "Professionales Inicio"
           },
           "values": [
             {
@@ -218,10 +330,23 @@
           ]
         },
         {
-          "code": "MOD",
+          "key": "capital",
           "name": {
-            "en": "IRPF Modules Rate",
-            "es": "IRPF Tipo Modulos"
+            "en": "Rental or Interest Capital",
+            "es": "Alquileres o Intereses de Capital"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "19.0%"
+            }
+          ]
+        },
+        {
+          "key": "modules",
+          "name": {
+            "en": "Modules Rate",
+            "es": "Tipo Modulos"
           },
           "values": [
             {
