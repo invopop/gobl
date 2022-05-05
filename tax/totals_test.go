@@ -208,7 +208,7 @@ func TestTotalCalculate(t *testing.T) {
 				&taxableLine{
 					taxes: map[tax.Code]tax.Key{
 						common.TaxCategoryVAT: common.TaxRateStandard,
-						es.TaxCategoryIRPF:    common.TaxRateStandard,
+						es.TaxCategoryIRPF:    es.TaxRatePro,
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
@@ -247,7 +247,7 @@ func TestTotalCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     common.TaxRateStandard,
+								Key:     es.TaxRatePro,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.MakePercentage(150, 3),
 								Amount:  num.MakeAmount(1500, 2),
@@ -267,7 +267,7 @@ func TestTotalCalculate(t *testing.T) {
 				&taxableLine{
 					taxes: map[tax.Code]tax.Key{
 						common.TaxCategoryVAT: common.TaxRateStandard,
-						es.TaxCategoryIRPF:    common.TaxRateStandard,
+						es.TaxCategoryIRPF:    es.TaxRatePro,
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
@@ -306,7 +306,7 @@ func TestTotalCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     common.TaxRateStandard,
+								Key:     es.TaxRatePro,
 								Base:    num.MakeAmount(8264, 2),
 								Percent: num.MakePercentage(150, 3),
 								Amount:  num.MakeAmount(1240, 2),

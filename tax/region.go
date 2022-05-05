@@ -99,7 +99,7 @@ func (r *Region) CurrencyDef() *currency.Def {
 // Validate enures the region definition is valid, including all
 // subsequent categories.
 func (r *Region) Validate() error {
-	err := validation.ValidateStruct(&r,
+	err := validation.ValidateStruct(r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Categories, validation.Required),

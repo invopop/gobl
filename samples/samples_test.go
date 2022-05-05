@@ -35,6 +35,7 @@ func TestConvertSamplesToJSON(t *testing.T) {
 }
 
 func processFile(t *testing.T, path string) error {
+	t.Helper()
 	t.Logf("processing file: %v", path)
 
 	// attempt to load and convert
@@ -43,14 +44,26 @@ func processFile(t *testing.T, path string) error {
 		return fmt.Errorf("reading file: %w", err)
 	}
 
-	doc := new(gobl.Document)
-	if err := yaml.Unmarshal(data, doc); err != nil {
-		return fmt.Errorf("invalid contents: %w", err)
-	}
-
-	env, err := gobl.Envelop(doc)
-	if err != nil {
-		return fmt.Errorf("failed to envelop: %w", err)
+	var env *gobl.Envelope
+	if strings.Contains(path, ".env.yaml") {
+		// Handle Envelopes
+		env = new(gobl.Envelope)
+		if err := yaml.Unmarshal(data, env); err != nil {
+			return fmt.Errorf("invalid contents: %w", err)
+		}
+		if err := env.Complete(); err != nil {
+			return fmt.Errorf("failed to complete: %w", err)
+		}
+	} else {
+		// Handle documents
+		doc := new(gobl.Document)
+		if err := yaml.Unmarshal(data, doc); err != nil {
+			return fmt.Errorf("invalid contents: %w", err)
+		}
+		env, err = gobl.Envelop(doc)
+		if err != nil {
+			return fmt.Errorf("failed to envelop: %w", err)
+		}
 	}
 
 	if err := env.Sign(signingKey); err != nil {

@@ -8,7 +8,6 @@ supplier:
   tax_id:
     country: "ES"
     code: "54387763P"
-    tags: ["retailer"] # minorista
   name: "Simple Goods Store"
   addresses:
     - num: "43"
@@ -23,6 +22,7 @@ lines:
     item:
       name: "Mugs from provider"
       price: "100.00"
-    tags: ["goods", "surcharged"]
     taxes:
       VAT: standard
+    meta:
+      retail: true
