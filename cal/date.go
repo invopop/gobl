@@ -59,17 +59,17 @@ func (d *dateValidationRule) Validate(value interface{}) error {
 		in = *inp
 	}
 	if d.notZero {
-		if in.IsZero() {
+		if in.Date.IsZero() {
 			return errors.New("required")
 		}
 	}
 	if d.after != nil {
-		if in.DaysSince(d.after.Date) < 0 {
+		if in.Date.DaysSince(d.after.Date) < 0 {
 			return errors.New("too early")
 		}
 	}
 	if d.before != nil {
-		if in.DaysSince(d.before.Date) > 0 {
+		if in.Date.DaysSince(d.before.Date) > 0 {
 			return errors.New("too late")
 		}
 	}

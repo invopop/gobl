@@ -31,6 +31,15 @@ lines:
   - quantity: 10
     item:
       name: "Services exported"
-      price: "100.00"
+      price: "20.00"
+      unit: "day"
     taxes:
       VAT: standard
+  - quantity: 50
+    item:
+      name: "Branded Mugs"
+      price: "7.50"
+    taxes:
+      VAT: standard
+    meta:
+      goods: true

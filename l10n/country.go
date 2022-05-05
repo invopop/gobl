@@ -240,7 +240,7 @@ const (
 	UG Code = "UG"
 	UA Code = "UA"
 	AE Code = "AE"
-	GB Code = "GB" // Great Britain and Nothern Ireland
+	GB Code = "GB" // Great Britain and Northern Ireland
 	US Code = "US" // United States
 	UM Code = "UM"
 	UY Code = "UY"

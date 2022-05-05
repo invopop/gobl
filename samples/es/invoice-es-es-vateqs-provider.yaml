@@ -22,7 +22,6 @@ customer:
   tax_id:
     country: "ES"
     code: "54387763P"
-    tags: ["retailer"] # minorista
   name: "Simple Goods Store"
   addresses:
     - num: "43"
@@ -35,7 +34,6 @@ lines:
     item:
       name: "Mugs from provider"
       price: "50.00"
-    tags: ["goods"] # bienes
     taxes:
       VAT: "standard"
       VATEQS: "standard"

@@ -35,7 +35,7 @@ type Line struct {
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
-// GetTaxRates responds with the array of tax rates applied to this line.
+// GetTaxes responds with the array of tax rates applied to this line.
 func (l *Line) GetTaxes() tax.Map {
 	return l.Taxes
 }

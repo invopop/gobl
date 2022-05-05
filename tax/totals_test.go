@@ -329,7 +329,7 @@ func TestTotalCalculate(t *testing.T) {
 				assert.ErrorIs(t, err, test.err)
 			}
 			if test.want != nil {
-				if !assert.Equal(t, test.want, tot) {
+				if !assert.EqualValues(t, test.want, tot) {
 					data, _ := json.MarshalIndent(tot, "", "  ")
 					t.Logf("data output: %v", string(data))
 				}

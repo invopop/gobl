@@ -19,7 +19,7 @@ func New() *tax.Region {
 			i18n.EN: "United Kingdom",
 		},
 		ValidateDocument: Validate,
-		Categories: []tax.Category{
+		Categories: []*tax.Category{
 			//
 			// VAT
 			//
@@ -32,13 +32,13 @@ func New() *tax.Region {
 					i18n.EN: "Value Added Tax",
 				},
 				Retained: false,
-				Rates: []tax.Rate{
+				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(0, 3),
 							},
@@ -49,7 +49,7 @@ func New() *tax.Region {
 						Name: i18n.String{
 							i18n.EN: "Standard Rate",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2011, 1, 4),
 								Percent: num.MakePercentage(200, 3),
@@ -61,7 +61,7 @@ func New() *tax.Region {
 						Name: i18n.String{
 							i18n.EN: "Reduced Rate",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2011, 1, 4),
 								Percent: num.MakePercentage(50, 3),

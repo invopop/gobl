@@ -65,7 +65,7 @@ func (m *Charge) Validate() error {
 	)
 }
 
-// GetTaxRates responds with the array of tax rates applied to this line.
+// GetTaxes responds with the array of tax rates applied to this line.
 func (m *Charge) GetTaxes() tax.Map {
 	return m.Taxes
 }

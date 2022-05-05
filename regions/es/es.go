@@ -25,7 +25,7 @@ const (
 	TaxRateTobacco tax.Key = "tobacco"
 
 	// IRPF non-standard Rates (usually for self-employed)
-	TaxRatePro                tax.Key = "pro"                 // Professioanl Services
+	TaxRatePro                tax.Key = "pro"                 // Professional Services
 	TaxRateProStart           tax.Key = "pro-start"           // Professionals, first 2 years
 	TaxRateModules            tax.Key = "modules"             // Module system
 	TaxRateAgriculture        tax.Key = "agriculture"         // Agricultural
@@ -174,7 +174,7 @@ func New() *tax.Region {
 				},
 			},
 		},
-		Categories: []tax.Category{
+		Categories: []*tax.Category{
 			//
 			// VAT
 			//
@@ -189,14 +189,14 @@ func New() *tax.Region {
 					i18n.ES: "Impuesto sobre el Valor Añadido",
 				},
 				Retained: false,
-				Rates: []tax.Rate{
+				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 							i18n.ES: "Tipo Zero",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(0, 3),
 							},
@@ -208,7 +208,7 @@ func New() *tax.Region {
 							i18n.EN: "Standard Rate",
 							i18n.ES: "Tipo General",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
 								Percent: num.MakePercentage(210, 3),
@@ -233,7 +233,7 @@ func New() *tax.Region {
 							i18n.EN: "Reduced Rate",
 							i18n.ES: "Tipo Reducido",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
 								Percent: num.MakePercentage(100, 3),
@@ -258,7 +258,7 @@ func New() *tax.Region {
 							i18n.EN: "Super-Reduced Rate",
 							i18n.ES: "Tipo Superreducido",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(1995, 1, 1),
 								Percent: num.MakePercentage(40, 3),
@@ -281,14 +281,14 @@ func New() *tax.Region {
 					i18n.ES: "IVA Recargo de Equivalencia",
 				},
 				Retained: false,
-				Rates: []tax.Rate{
+				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateStandard,
 						Name: i18n.String{
 							i18n.EN: "Standard Rate",
 							i18n.ES: "Tipo General",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
 								Percent: num.MakePercentage(52, 3),
@@ -305,7 +305,7 @@ func New() *tax.Region {
 							i18n.EN: "Reduced Rate",
 							i18n.ES: "Tipo Reducido",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
 								Percent: num.MakePercentage(14, 3),
@@ -322,7 +322,7 @@ func New() *tax.Region {
 							i18n.EN: "Super-Reduced Rate",
 							i18n.ES: "Tipo Superreducido",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(1993, 1, 1),
 								Percent: num.MakePercentage(5, 3),
@@ -335,7 +335,7 @@ func New() *tax.Region {
 							i18n.EN: "Tobacco Rate",
 							i18n.ES: "Tipo Tobaco",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2007, 1, 1),
 								Percent: num.MakePercentage(175, 4),
@@ -359,14 +359,14 @@ func New() *tax.Region {
 					i18n.EN: "Personal income tax.",
 					i18n.ES: "Impuesto sobre la renta de las personas físicas.",
 				},
-				Rates: []tax.Rate{
+				Rates: []*tax.Rate{
 					{
 						Key: TaxRatePro,
 						Name: i18n.String{
 							i18n.EN: "Professional Rate",
 							i18n.ES: "Professionales",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2015, 7, 12),
 								Percent: num.MakePercentage(150, 3),
@@ -391,7 +391,7 @@ func New() *tax.Region {
 							i18n.EN: "Professional Starting Rate",
 							i18n.ES: "Professionales Inicio",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2007, 1, 1),
 								Percent: num.MakePercentage(70, 3),
@@ -404,7 +404,7 @@ func New() *tax.Region {
 							i18n.EN: "Rental or Interest Capital",
 							i18n.ES: "Alquileres o Intereses de Capital",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2007, 1, 1),
 								Percent: num.MakePercentage(190, 3),
@@ -417,7 +417,7 @@ func New() *tax.Region {
 							i18n.EN: "Modules Rate",
 							i18n.ES: "Tipo Modulos",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2007, 1, 1),
 								Percent: num.MakePercentage(10, 3),

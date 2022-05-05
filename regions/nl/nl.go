@@ -19,7 +19,7 @@ func New() *tax.Region {
 			i18n.NL: "Nederland",
 		},
 		ValidateDocument: Validate,
-		Categories: []tax.Category{
+		Categories: []*tax.Category{
 			//
 			// VAT
 			//
@@ -34,14 +34,14 @@ func New() *tax.Region {
 					i18n.NL: "Belasting Toegevoegde Waarde",
 				},
 				Retained: false,
-				Rates: []tax.Rate{
+				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 							i18n.NL: `0%-tarief`,
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(0, 3),
 							},
@@ -53,7 +53,7 @@ func New() *tax.Region {
 							i18n.EN: "Standard Rate",
 							i18n.NL: "Standaardtarief",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(210, 3),
 							},
@@ -65,7 +65,7 @@ func New() *tax.Region {
 							i18n.EN: "Reduced Rate",
 							i18n.NL: "Gereduceerd Tarief",
 						},
-						Values: []tax.RateValue{
+						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(90, 3),
 							},

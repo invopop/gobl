@@ -30,7 +30,7 @@ type Region struct {
 	Schemes Schemes `json:"schemes,omitempty" jsonschema:"title=Schemes"`
 
 	// List of tax categories.
-	Categories []Category `json:"categories" jsonschema:"title=Categories"`
+	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
 	// ValidateDocument is a method to use to validate a document in a given region.
 	ValidateDocument func(doc interface{}) error `json:"-"`
@@ -49,7 +49,7 @@ type Category struct {
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
 	// Specific tax definitions inside this category.
-	Rates []Rate `json:"rates" jsonschema:"title=Rates"`
+	Rates []*Rate `json:"rates" jsonschema:"title=Rates"`
 }
 
 // Rate defines a single rate inside a category
@@ -64,7 +64,7 @@ type Rate struct {
 	// current and historical percentage values for the rate;
 	// order is important, newer values should come before
 	// older values.
-	Values []RateValue `json:"values" jsonschema:"title=Values"`
+	Values []*RateValue `json:"values" jsonschema:"title=Values"`
 }
 
 // RateValue contains a percentage rate or fixed amount for a given date range.
@@ -82,9 +82,9 @@ type RateValue struct {
 // combo is used internally to make it easier to return a final value including
 // all the preciding objects.
 type combo struct {
-	category Category
-	rate     Rate
-	value    RateValue
+	category *Category
+	rate     *Rate
+	value    *RateValue
 }
 
 // CurrencyDef provides the currency definition object for the region.
@@ -108,8 +108,8 @@ func (r *Region) Validate() error {
 }
 
 // Validate ensures the Category's contents are correct.
-func (c Category) Validate() error {
-	err := validation.ValidateStruct(&c,
+func (c *Category) Validate() error {
+	err := validation.ValidateStruct(c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
 		validation.Field(&c.Rates, validation.Required),
@@ -119,8 +119,8 @@ func (c Category) Validate() error {
 
 // Validate checks that our tax definition is valid. This is only really
 // meant to be used when testing new regional tax definitions.
-func (r Rate) Validate() error {
-	err := validation.ValidateStruct(&r,
+func (r *Rate) Validate() error {
+	err := validation.ValidateStruct(r,
 		validation.Field(&r.Key, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Values, validation.Required, validation.By(checkRateValuesOrder)),
@@ -129,21 +129,21 @@ func (r Rate) Validate() error {
 }
 
 // Validate ensures the tax rate contains all the required fields.
-func (v RateValue) Validate() error {
-	return validation.ValidateStruct(&v,
+func (v *RateValue) Validate() error {
+	return validation.ValidateStruct(v,
 		validation.Field(&v.Percent, validation.Required),
 	)
 }
 
 func checkRateValuesOrder(list interface{}) error {
-	values, ok := list.([]RateValue)
+	values, ok := list.([]*RateValue)
 	if !ok {
 		return errors.New("must be a tax rate value array")
 	}
 	var date *cal.Date
 	// loop through and check order of Since value
 	for i := range values {
-		v := &values[i]
+		v := values[i]
 		if date != nil && date.IsValid() {
 			if v.Since.IsValid() && !v.Since.Before(date.Date) {
 				return errors.New("invalid date order")
@@ -155,51 +155,50 @@ func checkRateValuesOrder(list interface{}) error {
 }
 
 // Category provides the requested category by its code.
-func (r Region) Category(code Code) (Category, bool) {
+func (r *Region) Category(code Code) *Category {
 	for _, c := range r.Categories {
 		if c.Code == code {
-			return c, true
+			return c
 		}
 	}
-	return Category{}, false
+	return nil
 }
 
 // Rate provides the rate definition with a matching key for
 // the category.
-func (c Category) Rate(key Key) (Rate, bool) {
-	for _, d := range c.Rates {
-		if d.Key == key {
-			return d, true
+func (c *Category) Rate(key Key) *Rate {
+	for _, r := range c.Rates {
+		if r.Key == key {
+			return r
 		}
 	}
-	return Rate{}, false
+	return nil
 }
 
 // On determines the tax rate value for the provided date.
-func (d Rate) On(date cal.Date) (RateValue, bool) {
-	for _, v := range d.Values {
+func (r *Rate) On(date cal.Date) *RateValue {
+	for _, v := range r.Values {
 		if v.Since == nil || !v.Since.IsValid() || v.Since.Before(date.Date) {
-			return v, true
+			return v
 		}
 	}
-	return RateValue{}, false
+	return nil
 }
 
 // comboOn provides the Value object for the provided rate on a given day
 // or an error if no match is found.
-func (r Region) comboOn(cat Code, rate Key, date cal.Date) (*combo, error) {
+func (r *Region) comboOn(cat Code, rate Key, date cal.Date) (*combo, error) {
 	c := new(combo)
-	var ok bool
-	c.category, ok = r.Category(cat)
-	if !ok {
+	c.category = r.Category(cat)
+	if c.category == nil {
 		return nil, fmt.Errorf("failed to find category, invalid code: %v", cat)
 	}
-	c.rate, ok = c.category.Rate(rate)
-	if !ok {
+	c.rate = c.category.Rate(rate)
+	if c.rate == nil {
 		return nil, fmt.Errorf("failed to find rate definition, invalid code: %v", rate)
 	}
-	c.value, ok = c.rate.On(date)
-	if !ok {
+	c.value = c.rate.On(date)
+	if c.value == nil {
 		return nil, fmt.Errorf("tax rate cannot be provided for date")
 	}
 	return c, nil
