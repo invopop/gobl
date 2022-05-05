@@ -3,6 +3,9 @@ currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-X-002"
 tax:
+  # this is a bit random, but demos that prices may include tax
+  # that will be deducted from final price correctly.
+  prices_include: "VAT"
   schemes:
     - reverse-charge
 

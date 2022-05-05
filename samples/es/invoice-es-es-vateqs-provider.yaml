@@ -33,7 +33,7 @@ lines:
   - quantity: 10
     item:
       name: "Mugs from provider"
-      price: "50.00"
+      price: "10.00"
     taxes:
       VAT: "standard"
       VATEQS: "standard"

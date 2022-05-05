@@ -3,6 +3,8 @@ currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-001"
 type_code: "simplified"
+tax:
+  prices_include: "VAT"
 
 supplier:
   tax_id:
@@ -21,7 +23,7 @@ lines:
   - quantity: 10
     item:
       name: "Mugs from provider"
-      price: "100.00"
+      price: "16.00"
     taxes:
       VAT: standard
     meta:
