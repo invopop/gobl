@@ -7,4 +7,7 @@ package org
 // GOBL is focussed on ensuring the recipient has everything they need,
 // as such, meta should only be used for data that may be used by intermediary
 // conversion processes that should not be needed by the end-user.
-type Meta map[string]interface{}
+//
+// We need to always use strings for values so that meta-data is easy to convert
+// into other formats, such as protobuf which has strict type requirements.
+type Meta map[string]string

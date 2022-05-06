@@ -42,7 +42,7 @@ lines:
     item:
       name: "Branded Mugs"
       price: "7.50"
+      meta:
+        product: "goods"
     taxes:
       VAT: standard
-    meta:
-      goods: true

@@ -24,7 +24,7 @@ lines:
     item:
       name: "Mugs from provider"
       price: "16.00"
+      meta:
+        source: "provider"
     taxes:
       VAT: standard
-    meta:
-      retail: true
