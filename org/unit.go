@@ -124,5 +124,5 @@ var unitCodeRegexp = regexp.MustCompile(`^[a-z0-9]+$`)
 
 // Validate ensures the unit looks correct
 func (u Unit) Validate() error {
-	return validation.Validate(u, validation.Match(unitCodeRegexp))
+	return validation.Validate(string(u), validation.Match(unitCodeRegexp))
 }
