@@ -182,5 +182,5 @@
       "description": "Scheme contains the definition of a scheme that belongs to a region and can be used to simplify validation processes for document contents."
     }
   },
-  "$comment": "Generated with GOBL v0.20.0"
+  "$comment": "Generated with GOBL v0.21.0"
 }

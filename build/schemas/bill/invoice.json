@@ -36,12 +36,7 @@
           "description": "Amount to apply"
         },
         "taxes": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
           "description": "List of taxes to apply to the charge"
         },
@@ -56,6 +51,11 @@
           "description": "Text description as to why the charge was applied"
         },
         "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
           "type": "object",
           "title": "Meta",
           "description": "Additional semi-structured information."
@@ -127,12 +127,7 @@
           "description": "Amount to apply"
         },
         "taxes": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
           "description": "List of taxes to apply to the discount"
         },
@@ -147,6 +142,11 @@
           "description": "Text description as to why the discount was applied"
         },
         "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
           "type": "object",
           "title": "Meta",
           "description": "Additional semi-structured information."
@@ -287,6 +287,11 @@
           "description": "Unstructured information that is relevant to the invoice, such as correction or additional\nlegal details."
         },
         "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
           "type": "object",
           "title": "Meta",
           "description": "Additional semi-structured data that doesn't fit into the body of the invoice."
@@ -346,12 +351,7 @@
           "description": "Charges applied to this line"
         },
         "taxes": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/tax/set",
           "title": "Taxes",
           "description": "Map of taxes to be applied and used in the invoice totals"
         },
@@ -574,6 +574,11 @@
           "description": "Additional details regarding preceding invoice"
         },
         "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
           "type": "object",
           "title": "Meta",
           "description": "Additional semi-structured data that may be useful in specific regions"
@@ -602,6 +607,11 @@
           "description": "Special tax schemes that apply to this invoice according to local requirements."
         },
         "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
           "type": "object",
           "title": "Meta",
           "description": "Any additional data that may be required for processing, but should never\nbe relied upon by recipients."
@@ -683,5 +693,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.20.0"
+  "$comment": "Generated with GOBL v0.21.0"
 }
