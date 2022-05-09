@@ -31,10 +31,12 @@ lines:
       price: "90.00"
       unit: "h"
     taxes:
-      VAT: standard
+      - cat: VAT
+        rate: standard
   - quantity: 1
     item:
       name: "Financial service"
       price: "10.00"
     taxes:
-      VAT: zero
+      - cat: VAT
+        rate: zero

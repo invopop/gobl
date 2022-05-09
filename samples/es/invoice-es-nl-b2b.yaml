@@ -37,7 +37,8 @@ lines:
       price: "20.00"
       unit: "day"
     taxes:
-      VAT: standard
+      - cat: VAT
+        rate: standard
   - quantity: 50
     item:
       name: "Branded Mugs"
@@ -45,4 +46,5 @@ lines:
       meta:
         product: "goods"
     taxes:
-      VAT: standard
+      - cat: VAT
+        rate: standard

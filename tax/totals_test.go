@@ -14,11 +14,11 @@ import (
 
 // taxableLine is a very simple implementation of what the totals calculator requires.
 type taxableLine struct {
-	taxes  tax.Map
+	taxes  tax.Set
 	amount num.Amount
 }
 
-func (tl *taxableLine) GetTaxes() tax.Map {
+func (tl *taxableLine) GetTaxes() tax.Set {
 	return tl.taxes
 }
 
@@ -52,8 +52,11 @@ func TestTotalCalculate(t *testing.T) {
 			desc: "with VAT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
@@ -83,14 +86,20 @@ func TestTotalCalculate(t *testing.T) {
 			desc: "with multiline VAT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
 					},
 					amount: num.MakeAmount(15000, 2),
 				},
@@ -120,14 +129,20 @@ func TestTotalCalculate(t *testing.T) {
 			desc: "with multirate VAT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateReduced,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateReduced,
+						},
 					},
 					amount: num.MakeAmount(15000, 2),
 				},
@@ -163,14 +178,20 @@ func TestTotalCalculate(t *testing.T) {
 			desc: "with multirate VAT included in price",
 			lines: []tax.TaxableLine{
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateReduced,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateReduced,
+						},
 					},
 					amount: num.MakeAmount(15000, 2),
 				},
@@ -206,15 +227,24 @@ func TestTotalCalculate(t *testing.T) {
 			desc: "with multirate VAT and retained tax",
 			lines: []tax.TaxableLine{
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
-						es.TaxCategoryIRPF:    es.TaxRatePro,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
+						{
+							Category: es.TaxCategoryIRPF,
+							Rate:     es.TaxRatePro,
+						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateReduced,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateReduced,
+						},
 					},
 					amount: num.MakeAmount(15000, 2),
 				},
@@ -265,15 +295,24 @@ func TestTotalCalculate(t *testing.T) {
 			desc: "with multirate VAT included in price plus retained tax",
 			lines: []tax.TaxableLine{
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateStandard,
-						es.TaxCategoryIRPF:    es.TaxRatePro,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
+						{
+							Category: es.TaxCategoryIRPF,
+							Rate:     es.TaxRatePro,
+						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 				&taxableLine{
-					taxes: map[tax.Code]tax.Key{
-						common.TaxCategoryVAT: common.TaxRateReduced,
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateReduced,
+						},
 					},
 					amount: num.MakeAmount(15000, 2),
 				},
