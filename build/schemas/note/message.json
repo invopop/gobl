@@ -16,6 +16,11 @@
           "description": "Details of what exactly this message wants to communicate"
         },
         "meta": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
           "type": "object",
           "title": "Meta Data",
           "description": "Any additional semi-structured data that might be useful."
@@ -28,5 +33,5 @@
       "description": "Message represents the minimum possible contents for a GoBL document type."
     }
   },
-  "$comment": "Generated with GOBL v0.20.0"
+  "$comment": "Generated with GOBL v0.21.0"
 }

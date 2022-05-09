@@ -35,5 +35,7 @@ lines:
       name: "Mugs from provider"
       price: "10.00"
     taxes:
-      VAT: "standard"
-      VATEQS: "standard"
+      - cat: VAT
+        rate: "standard"
+      - cat: VATEQS
+        rate: standard

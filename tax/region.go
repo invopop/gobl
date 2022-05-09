@@ -79,14 +79,6 @@ type RateValue struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
-// combo is used internally to make it easier to return a final value including
-// all the preciding objects.
-type combo struct {
-	category *Category
-	rate     *Rate
-	value    *RateValue
-}
-
 // CurrencyDef provides the currency definition object for the region.
 func (r *Region) CurrencyDef() *currency.Def {
 	d, ok := currency.Get(r.Currency)
@@ -185,21 +177,20 @@ func (r *Rate) On(date cal.Date) *RateValue {
 	return nil
 }
 
-// comboOn provides the Value object for the provided rate on a given day
-// or an error if no match is found.
-func (r *Region) comboOn(cat Code, rate Key, date cal.Date) (*combo, error) {
-	c := new(combo)
-	c.category = r.Category(cat)
+// prepareCombo updates the Combo object's internal properties to include the objects
+// for the region on a given date.
+func (r *Region) prepareCombo(c *Combo, date cal.Date) error {
+	c.category = r.Category(c.Category)
 	if c.category == nil {
-		return nil, fmt.Errorf("failed to find category, invalid code: %v", cat)
+		return fmt.Errorf("failed to find category, invalid code: %v", c.Category)
 	}
-	c.rate = c.category.Rate(rate)
+	c.rate = c.category.Rate(c.Rate)
 	if c.rate == nil {
-		return nil, fmt.Errorf("failed to find rate definition, invalid code: %v", rate)
+		return fmt.Errorf("failed to find rate definition, invalid code: %v", c.Rate)
 	}
 	c.value = c.rate.On(date)
 	if c.value == nil {
-		return nil, fmt.Errorf("tax rate cannot be provided for date")
+		return fmt.Errorf("tax rate cannot be provided for date")
 	}
-	return c, nil
+	return nil
 }

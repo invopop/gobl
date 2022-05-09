@@ -27,4 +27,5 @@ lines:
       meta:
         source: "provider"
     taxes:
-      VAT: standard
+      - cat: VAT
+        rate: standard

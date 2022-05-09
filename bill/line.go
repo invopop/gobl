@@ -27,7 +27,7 @@ type Line struct {
 	// Charges applied to this line
 	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
 	// Map of taxes to be applied and used in the invoice totals
-	Taxes tax.Map `json:"taxes,omitempty" jsonschema:"title=Taxes"`
+	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Total line amount after applying discounts to the sum.
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
 	// Set of specific notes for this line that may be required for
@@ -36,7 +36,7 @@ type Line struct {
 }
 
 // GetTaxes responds with the array of tax rates applied to this line.
-func (l *Line) GetTaxes() tax.Map {
+func (l *Line) GetTaxes() tax.Set {
 	return l.Taxes
 }
 

@@ -32,4 +32,5 @@ lines:
       name: "Services exported"
       price: "100.00"
     taxes:
-      VAT: standard
+      - cat: VAT
+        rate: standard

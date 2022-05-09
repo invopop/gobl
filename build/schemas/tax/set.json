@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/set",
+  "$defs": {
+    "Combo": {
+      "properties": {
+        "cat": {
+          "type": "string",
+          "title": "Category",
+          "description": "Tax category code from those available inside a region."
+        },
+        "rate": {
+          "type": "string",
+          "title": "Rate",
+          "description": "Rate within a category to apply."
+        }
+      },
+      "type": "object",
+      "required": [
+        "cat",
+        "rate"
+      ],
+      "description": "Combo represents the tax combination of a category code and rate key."
+    }
+  },
+  "$comment": "Generated with GOBL v0.21.0",
+  "items": {
+    "$ref": "#/$defs/Combo"
+  },
+  "type": "array"
+}

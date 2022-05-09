@@ -38,7 +38,7 @@ type Total struct {
 // TaxableLine defines what we expect from a line in order to subsequently calculate
 // the taxes that need to be added or retained.
 type TaxableLine interface {
-	GetTaxes() Map
+	GetTaxes() Set
 	GetTotal() num.Amount
 }
 
@@ -109,16 +109,22 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 	// get a simplified list of lines we can manipulate if needed
 	taxLines := mapTaxLines(lines)
 
+	// First, prepare all tax combos with the region and date details
+	for _, tl := range taxLines {
+		for _, c := range tl.taxes {
+			if err := reg.prepareCombo(c, date); err != nil {
+				return err
+			}
+		}
+	}
+
 	// If prices include a tax, perform a pre-loop to update all the line prices with
 	// the price minus the defined tax. To help reduce the risk of rounding errors,
 	// we'll add an extra couple of 0s.
 	if !taxIncluded.IsEmpty() {
 		for _, tl := range taxLines {
 			if rate := tl.rateForCategory(taxIncluded); rate != "" {
-				c, err := reg.comboOn(taxIncluded, rate, date)
-				if err != nil {
-					return err
-				}
+				c := tl.taxes.Get(taxIncluded)
 				if c.category.Retained {
 					return fmt.Errorf("cannot include retained tax category '%v' in price", taxIncluded)
 				}
@@ -132,12 +138,8 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 
 	// Go through each line and add the price to the base of each tax
 	for _, tl := range taxLines {
-		for c, r := range tl.rates {
-			rt, err := t.rateTotalFor(reg, c, r, date, zero)
-			if err != nil {
-				return err
-			}
-
+		for _, c := range tl.taxes {
+			rt := t.rateTotalFor(c, zero)
 			rt.Base = rt.Base.MatchPrecision(tl.price)
 			rt.Base = rt.Base.Add(tl.price)
 		}
@@ -171,48 +173,43 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 }
 
 // rateTotalFor either finds of creates total objects for the category and rate.
-func (t *Total) rateTotalFor(reg *Region, cat Code, rate Key, date cal.Date, zero num.Amount) (*RateTotal, error) {
-	c, err := reg.comboOn(cat, rate, date)
-	if err != nil {
-		return nil, err
-	}
-
+func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 	var catTotal *CategoryTotal
 	for _, ct := range t.Categories {
-		if ct.Code == cat {
+		if ct.Code == c.Category {
 			catTotal = ct
 			break
 		}
 	}
 	if catTotal == nil {
-		catTotal = NewCategoryTotal(cat, c.category.Retained, zero)
+		catTotal = NewCategoryTotal(c.Category, c.category.Retained, zero)
 		t.Categories = append(t.Categories, catTotal)
 	}
 
 	// Prepare the Rate
 	var rateTotal *RateTotal
 	for _, rt := range catTotal.Rates {
-		if rt.Key == rate {
+		if rt.Key == c.Rate {
 			rateTotal = rt
 			break
 		}
 	}
 	if rateTotal == nil {
-		rateTotal = NewRateTotal(rate, c.value.Percent, zero)
+		rateTotal = NewRateTotal(c.Rate, c.value.Percent, zero)
 		catTotal.Rates = append(catTotal.Rates, rateTotal)
 	}
 
-	return rateTotal, nil
+	return rateTotal
 }
 
 // taxLine is used to replace
 type taxLine struct {
 	price num.Amount
-	rates Map
+	taxes Set
 }
 
 func (tl *taxLine) rateForCategory(code Code) Key {
-	return tl.rates[code]
+	return tl.taxes.Rate(code)
 }
 
 func mapTaxLines(lines []TaxableLine) []*taxLine {
@@ -220,7 +217,7 @@ func mapTaxLines(lines []TaxableLine) []*taxLine {
 	for i, v := range lines {
 		tls[i] = &taxLine{
 			price: v.GetTotal(),
-			rates: v.GetTaxes(),
+			taxes: v.GetTaxes(),
 		}
 	}
 	return tls
