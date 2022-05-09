@@ -14,4 +14,3 @@ const VERSION Version = "v0.20.2"
 func (v Version) Semver() *semver.Version {
 	return semver.MustParse(string(v))
 }
-
