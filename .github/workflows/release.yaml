@@ -31,15 +31,17 @@ jobs:
         run: |
           grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
 
-      - name: "Release tag"
-        uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ env.GOBL_VERSION }}
+      # This stopped working as it couldn't find the git repo:
+      #- name: "Release tag"
+      #  uses: actions-ecosystem/action-push-tag@v1
+      #  with:
+      #    tag: ${{ env.GOBL_VERSION }}
 
-      # - name: Bump version and push tag
-      #   id: bump
-      #   uses: anothrNick/github-tag-action@1.36.0
-      #  env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_BRANCHES: main
+      - name: Bump version and push tag
+        id: bump
+        uses: anothrNick/github-tag-action@1.39.0
+        env:
+          CUSTOM_TAG: ${{ env.GOBL_VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_BRANCHES: main
       #     WITH_V: true
