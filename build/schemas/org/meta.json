@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/meta",
+  "$ref": "#/$defs/Meta",
+  "$defs": {
+    "Meta": {
+      "patternProperties": {
+        ".*": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "description": "Meta defines a structure for data about the data being defined."
+    }
+  },
+  "$comment": "Generated with GOBL v0.21.1"
+}

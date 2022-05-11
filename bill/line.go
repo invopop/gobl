@@ -32,7 +32,7 @@ type Line struct {
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
 	// Set of specific notes for this line that may be required for
 	// clarification.
-	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes org.Notes `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
 // GetTaxes responds with the array of tax rates applied to this line.

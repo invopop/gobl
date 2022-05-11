@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/set",
+  "$ref": "#/$defs/Set",
   "$defs": {
     "Combo": {
       "properties": {
@@ -21,11 +22,14 @@
         "rate"
       ],
       "description": "Combo represents the tax combination of a category code and rate key."
+    },
+    "Set": {
+      "items": {
+        "$ref": "#/$defs/Combo"
+      },
+      "type": "array",
+      "description": "Set defines a list of tax categories and their rates to be used alongside taxable items."
     }
   },
-  "$comment": "Generated with GOBL v0.21.0",
-  "items": {
-    "$ref": "#/$defs/Combo"
-  },
-  "type": "array"
+  "$comment": "Generated with GOBL v0.21.1"
 }

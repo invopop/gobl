@@ -3,6 +3,13 @@
   "$id": "https://gobl.org/draft-0/bill/invoice",
   "$ref": "#/$defs/Invoice",
   "$defs": {
+    "Advances": {
+      "items": {
+        "$ref": "https://gobl.org/draft-0/pay/advance"
+      },
+      "type": "array",
+      "description": "Advances contains an array of advance objects."
+    },
     "Charge": {
       "properties": {
         "uuid": {
@@ -51,12 +58,7 @@
           "description": "Text description as to why the charge was applied"
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Additional semi-structured information."
         }
@@ -67,6 +69,13 @@
         "amount"
       ],
       "description": "Charge represents a surchange applied to the complete document independent from the individual lines."
+    },
+    "Charges": {
+      "items": {
+        "$ref": "#/$defs/Charge"
+      },
+      "type": "array",
+      "description": "Charges represents an array of charge objects"
     },
     "Delivery": {
       "properties": {
@@ -142,12 +151,7 @@
           "description": "Text description as to why the discount was applied"
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Additional semi-structured information."
         }
@@ -158,6 +162,20 @@
         "amount"
       ],
       "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
+    },
+    "Discounts": {
+      "items": {
+        "$ref": "#/$defs/Discount"
+      },
+      "type": "array",
+      "description": "Discounts represents an array of discounts."
+    },
+    "ExchangeRates": {
+      "items": {
+        "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
+      },
+      "type": "array",
+      "description": "ExchangeRates represents an array of currency exchange rates."
     },
     "Invoice": {
       "properties": {
@@ -187,10 +205,7 @@
           "description": "Currency for all invoice totals."
         },
         "exchange_rates": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
-          },
-          "type": "array",
+          "$ref": "#/$defs/ExchangeRates",
           "title": "Exchange Rates",
           "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
         },
@@ -230,34 +245,22 @@
           "description": "Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices."
         },
         "lines": {
-          "items": {
-            "$ref": "#/$defs/Line"
-          },
-          "type": "array",
+          "$ref": "#/$defs/Lines",
           "title": "Lines",
           "description": "List of invoice lines representing each of the items sold to the customer."
         },
         "discounts": {
-          "items": {
-            "$ref": "#/$defs/Discount"
-          },
-          "type": "array",
+          "$ref": "#/$defs/Discounts",
           "title": "Discounts",
           "description": "Discounts or allowances applied to the complete invoice"
         },
         "charges": {
-          "items": {
-            "$ref": "#/$defs/Charge"
-          },
-          "type": "array",
+          "$ref": "#/$defs/Charges",
           "title": "Charges",
           "description": "Charges or surcharges applied to the complete invoice"
         },
         "outlays": {
-          "items": {
-            "$ref": "#/$defs/Outlay"
-          },
-          "type": "array",
+          "$ref": "#/$defs/Outlays",
           "title": "Outlays",
           "description": "Expenses paid for by the supplier but invoiced directly to the customer."
         },
@@ -279,20 +282,12 @@
           "description": "Summary of all the invoice totals, including taxes."
         },
         "notes": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/note"
-          },
-          "type": "array",
+          "$ref": "https://gobl.org/draft-0/org/notes",
           "title": "Notes",
           "description": "Unstructured information that is relevant to the invoice, such as correction or additional\nlegal details."
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Additional semi-structured data that doesn't fit into the body of the invoice."
         }
@@ -361,10 +356,7 @@
           "description": "Total line amount after applying discounts to the sum."
         },
         "notes": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/note"
-          },
-          "type": "array",
+          "$ref": "https://gobl.org/draft-0/org/notes",
           "title": "Notes",
           "description": "Set of specific notes for this line that may be required for\nclarification."
         }
@@ -437,6 +429,13 @@
       ],
       "description": "LineDiscount represents an amount deducted from the line, and will be applied before taxes."
     },
+    "Lines": {
+      "items": {
+        "$ref": "#/$defs/Line"
+      },
+      "type": "array",
+      "description": "Lines holds an array of Line objects."
+    },
     "Ordering": {
       "properties": {
         "seller": {
@@ -499,6 +498,13 @@
       ],
       "description": "Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."
     },
+    "Outlays": {
+      "items": {
+        "$ref": "#/$defs/Outlay"
+      },
+      "type": "array",
+      "description": "Outlays holds an array of Outlay objects used inside a billing document."
+    },
     "Payment": {
       "properties": {
         "payer": {
@@ -512,10 +518,7 @@
           "description": "Payment terms or conditions."
         },
         "advances": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/pay/advance"
-          },
-          "type": "array",
+          "$ref": "#/$defs/Advances",
           "title": "Advances",
           "description": "Any amounts that have been paid in advance and should be deducted from the amount due."
         },
@@ -574,12 +577,7 @@
           "description": "Additional details regarding preceding invoice"
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Additional semi-structured data that may be useful in specific regions"
         }
@@ -591,6 +589,13 @@
       ],
       "description": "Preceding allows for information to be provided about a previous invoice that this one will replace or subtract from."
     },
+    "SchemeKeys": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "SchemeKeys stores a list of keys that makes it easier to perform matches."
+    },
     "Tax": {
       "properties": {
         "prices_include": {
@@ -599,20 +604,12 @@
           "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
         },
         "schemes": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
+          "$ref": "#/$defs/SchemeKeys",
           "title": "Schemes",
           "description": "Special tax schemes that apply to this invoice according to local requirements."
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Any additional data that may be required for processing, but should never\nbe relied upon by recipients."
         }
@@ -693,5 +690,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.21.0"
+  "$comment": "Generated with GOBL v0.21.1"
 }

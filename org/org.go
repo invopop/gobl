@@ -7,7 +7,6 @@ func init() {
 		Address{},
 		Coordinates{},
 		Item{},
-		Note{},
 		Party{},
 		Person{},
 		Name{},
@@ -15,6 +14,8 @@ func init() {
 		Telephone{},
 		Registration{},
 		TaxIdentity{},
+		Meta{},
+		Notes{},
 	}
 	schema.RegisterAll(schema.GOBL.Add("org"), objs)
 }

@@ -66,12 +66,7 @@
           "description": "Additional registration details about the company that may need to be included in a document."
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Any additional semi-structured information that does not fit into the rest of the party."
         }
@@ -83,5 +78,5 @@
       "description": "Party represents a person or business entity."
     }
   },
-  "$comment": "Generated with GOBL v0.21.0"
+  "$comment": "Generated with GOBL v0.21.1"
 }

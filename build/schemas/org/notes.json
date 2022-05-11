@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/note",
-  "$ref": "#/$defs/Note",
+  "$id": "https://gobl.org/draft-0/org/notes",
+  "$ref": "#/$defs/Notes",
   "$defs": {
     "Note": {
       "properties": {
@@ -31,7 +31,14 @@
         "text"
       ],
       "description": "Note represents a free text of additional information that may be added to a document."
+    },
+    "Notes": {
+      "items": {
+        "$ref": "#/$defs/Note"
+      },
+      "type": "array",
+      "description": "Notes holds an array of Note objects"
     }
   },
-  "$comment": "Generated with GOBL v0.21.0"
+  "$comment": "Generated with GOBL v0.21.1"
 }

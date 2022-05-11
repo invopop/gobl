@@ -9,7 +9,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.1.2
-	github.com/invopop/jsonschema v0.2.0
+	github.com/invopop/jsonschema v0.4.1-0.20220509222051-9cef489f4cb7
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693
 	github.com/stretchr/testify v1.7.0

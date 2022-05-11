@@ -31,12 +31,7 @@
           "description": "Tax identity Code"
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Additional details that may be required."
         }
@@ -48,5 +43,5 @@
       "description": "TaxIdentity stores the details required to identify an entity for tax purposes."
     }
   },
-  "$comment": "Generated with GOBL v0.21.0"
+  "$comment": "Generated with GOBL v0.21.1"
 }
