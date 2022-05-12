@@ -258,11 +258,11 @@ func (inv *Invoice) calculate(r *tax.Region) error {
 	discounts := zero
 	for i, l := range inv.Discounts {
 		l.Index = i + 1
-		if l.Rate != nil && !l.Rate.IsZero() {
+		if l.Percent != nil && !l.Percent.IsZero() {
 			if l.Base == nil {
 				l.Base = &t.Sum
 			}
-			l.Amount = l.Rate.Of(*l.Base)
+			l.Amount = l.Percent.Of(*l.Base)
 		}
 		discounts = discounts.Add(l.Amount)
 		tls = append(tls, l)
@@ -276,11 +276,11 @@ func (inv *Invoice) calculate(r *tax.Region) error {
 	charges := zero
 	for i, l := range inv.Charges {
 		l.Index = i + 1
-		if l.Rate != nil && !l.Rate.IsZero() {
+		if l.Percent != nil && !l.Percent.IsZero() {
 			if l.Base == nil {
 				l.Base = &t.Sum
 			}
-			l.Amount = l.Rate.Of(*l.Base)
+			l.Amount = l.Percent.Of(*l.Base)
 		}
 		charges = charges.Add(l.Amount)
 		tls = append(tls, l)

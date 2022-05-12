@@ -11,8 +11,8 @@ import (
 // applied before taxes.
 // TODO: use UNTDID 7161 code list
 type LineCharge struct {
-	// Percentage rate if fixed amount not applied
-	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
+	// Percentage if fixed amount not applied
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Fixed or resulting charge amount to apply
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// Reference code.
@@ -40,12 +40,12 @@ type Charge struct {
 	Index int `json:"i" jsonschema:"title=Index"`
 	// Code to used to refer to the this charge
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
-	// Base represents the value used as a base for rate calculations.
+	// Base represents the value used as a base for percent calculations.
 	// If not already provided, we'll take the invoices sum before
 	// discounts.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage rate to apply to the invoice's Sum
-	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
+	// Percentage to apply to the invoice's Sum
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Amount to apply
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// List of taxes to apply to the charge

@@ -30,9 +30,9 @@
           "title": "Description",
           "description": "Details about the advance."
         },
-        "rate": {
+        "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
-          "title": "Rate",
+          "title": "Percent",
           "description": "How much as a percentage of the total with tax was paid"
         },
         "amount": {
@@ -54,5 +54,5 @@
       "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
     }
   },
-  "$comment": "Generated with GOBL v0.21.1"
+  "$comment": "Generated with GOBL v0.22.0"
 }
