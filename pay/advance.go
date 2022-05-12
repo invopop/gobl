@@ -26,7 +26,7 @@ type Advance struct {
 	// Details about the advance.
 	Description string `json:"desc" jsonschema:"title=Description"`
 	// How much as a percentage of the total with tax was paid
-	Rate *num.Percentage `json:"rate,omitempty" jsonschema:"title=Rate"`
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// How much was paid.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// If different from the parent document's base currency.
@@ -44,7 +44,7 @@ func (a *Advance) Validate() error {
 // Calculate will update the amount using the rate of the provided
 // total, if defined.
 func (a *Advance) Calculate(totalWithTax num.Amount) {
-	if a.Rate != nil {
-		a.Amount = a.Rate.Of(totalWithTax)
+	if a.Percent != nil {
+		a.Amount = a.Percent.Of(totalWithTax)
 	}
 }

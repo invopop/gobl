@@ -66,15 +66,15 @@ func (l *Line) calculate() {
 	l.Total = l.Sum
 
 	for _, d := range l.Discounts {
-		if d.Rate != nil && !d.Rate.IsZero() {
-			d.Amount = d.Rate.Of(l.Sum) // always override
+		if d.Percent != nil && !d.Percent.IsZero() {
+			d.Amount = d.Percent.Of(l.Sum) // always override
 		}
 		l.Total = l.Total.Subtract(d.Amount)
 	}
 
 	for _, c := range l.Charges {
-		if c.Rate != nil && !c.Rate.IsZero() {
-			c.Amount = c.Rate.Of(l.Sum) // always override
+		if c.Percent != nil && !c.Percent.IsZero() {
+			c.Amount = c.Percent.Of(l.Sum) // always override
 		}
 		l.Total = l.Total.Add(c.Amount)
 	}
