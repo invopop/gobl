@@ -21,3 +21,8 @@ func (k Key) Validate() error {
 		validation.Match(keyValidationRegexp),
 	)
 }
+
+// String provides string representation of key
+func (k Key) String() string {
+	return string(k)
+}

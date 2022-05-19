@@ -29,3 +29,8 @@ func (c Code) Validate() error {
 func (c Code) IsEmpty() bool {
 	return c == ""
 }
+
+// String returns string representation of code.
+func (c Code) String() string {
+	return string(c)
+}

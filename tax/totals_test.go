@@ -33,9 +33,11 @@ func TestTotalCalculate(t *testing.T) {
 	var tests = []struct {
 		desc        string
 		lines       []tax.TaxableLine
+		date        *cal.Date
 		taxIncluded tax.Code
 		want        *tax.Total
 		err         error
+		errContent  string
 	}{
 		{
 			desc: "basic no tax",
@@ -358,14 +360,87 @@ func TestTotalCalculate(t *testing.T) {
 				Sum: num.MakeAmount(1860, 2),
 			},
 		},
+		{
+			desc: "with invalid category",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.Code("FOO"),
+							Rate:     common.TaxRateStandard,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			err:        tax.ErrInvalidCategory,
+			errContent: "invalid-category: 'FOO'",
+		},
+		{
+			desc: "with invalid rate",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: es.TaxCategoryIRPF,
+							Rate:     common.TaxRateStandard,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			err:        tax.ErrInvalidRate,
+			errContent: "invalid-rate: 'standard' not in category 'IRPF'",
+		},
+		{
+			desc: "with invalid rate on date",
+			date: cal.NewDate(2005, 1, 1),
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: es.TaxCategoryIRPF,
+							Rate:     es.TaxRatePro,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			err:        tax.ErrInvalidDate,
+			errContent: "invalid-date: data unavailable for 'pro' in 'IRPF' on '2005-01-01'",
+		},
+		{
+			desc: "with invalid tax included",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: es.TaxCategoryIRPF,
+							Rate:     es.TaxRatePro,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: es.TaxCategoryIRPF,
+			err:         tax.ErrInvalidPricesInclude,
+			errContent:  "cannot include retained",
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
+			d := date
+			if test.date != nil {
+				d = *test.date
+			}
 			tot := tax.NewTotal(zero)
-			err := tot.Calculate(spain, test.lines, test.taxIncluded, date, zero)
+			err := tot.Calculate(spain, test.lines, test.taxIncluded, d, zero)
 			if test.err != nil {
 				assert.ErrorIs(t, err, test.err)
+			}
+			if test.errContent != "" {
+				assert.Contains(t, err.Error(), test.errContent)
 			}
 			if test.want != nil {
 				if !assert.EqualValues(t, test.want, tot) {
