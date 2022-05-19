@@ -2,7 +2,6 @@ package tax
 
 import (
 	"errors"
-	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
@@ -182,15 +181,15 @@ func (r *Rate) On(date cal.Date) *RateValue {
 func (r *Region) prepareCombo(c *Combo, date cal.Date) error {
 	c.category = r.Category(c.Category)
 	if c.category == nil {
-		return fmt.Errorf("failed to find category, invalid code: %v", c.Category)
+		return ErrInvalidCategory.WithMessage("'%s'", c.Category.String())
 	}
 	c.rate = c.category.Rate(c.Rate)
 	if c.rate == nil {
-		return fmt.Errorf("failed to find rate definition, invalid code: %v", c.Rate)
+		return ErrInvalidRate.WithMessage("'%s' in category '%s'", c.Rate.String(), c.Category.String())
 	}
 	c.value = c.rate.On(date)
 	if c.value == nil {
-		return fmt.Errorf("tax rate cannot be provided for date")
+		return ErrInvalidDate.WithMessage("data unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 	}
 	return nil
 }

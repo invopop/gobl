@@ -1,8 +1,6 @@
 package tax
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 )
@@ -126,7 +124,7 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 			if rate := tl.rateForCategory(taxIncluded); rate != "" {
 				c := tl.taxes.Get(taxIncluded)
 				if c.category.Retained {
-					return fmt.Errorf("cannot include retained tax category '%v' in price", taxIncluded)
+					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", taxIncluded.String())
 				}
 
 				// update the price scale, add two 0s, this will be removed later.
