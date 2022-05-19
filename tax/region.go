@@ -185,7 +185,7 @@ func (r *Region) prepareCombo(c *Combo, date cal.Date) error {
 	}
 	c.rate = c.category.Rate(c.Rate)
 	if c.rate == nil {
-		return ErrInvalidRate.WithMessage("'%s' in category '%s'", c.Rate.String(), c.Category.String())
+		return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
 	}
 	c.value = c.rate.On(date)
 	if c.value == nil {
