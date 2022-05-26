@@ -43,6 +43,11 @@ func (d *Document) Digest() (*dsig.Digest, error) {
 	return dsig.NewSHA256Digest(cd), nil
 }
 
+// IsEmpty returns true if no payload has been set yet.
+func (d *Document) IsEmpty() bool {
+	return d.payload == nil
+}
+
 // Schema provides the document's schema.
 func (d *Document) Schema() schema.ID {
 	return d.schema

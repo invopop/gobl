@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/uuid"
 )
 
 // Envelope wraps around a gobl document and provides support for digest creation
@@ -92,6 +93,9 @@ func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
 		return ErrInternal.WithErrorf("missing head")
 	}
+	if doc == nil {
+		return ErrNoDocument
+	}
 
 	if d, ok := doc.(*Document); ok {
 		e.Document = d
@@ -118,6 +122,9 @@ func (e *Envelope) Complete() error {
 	if e.Document == nil {
 		return ErrNoDocument
 	}
+	if e.Document.IsEmpty() {
+		return ErrNoDocument
+	}
 
 	return e.complete()
 }
@@ -138,11 +145,16 @@ func (e *Envelope) complete() error {
 		}
 	}
 
-	var err error
+	// Double check the header looks okay
 	if e.Head == nil {
 		e.Head = NewHeader()
 	}
+	if e.Head.UUID.IsZero() {
+		e.Head.UUID = uuid.NewV1()
+	}
+	var err error
 	e.Head.Digest, err = e.Document.Digest()
+
 	return err
 }
 
