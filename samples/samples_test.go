@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ghodss/yaml"
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/yaml"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
