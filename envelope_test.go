@@ -62,6 +62,26 @@ func TestEnvelopeExtract(t *testing.T) {
 	assert.Nil(t, obj)
 }
 
+func TestEnvelopeInsert(t *testing.T) {
+	m := new(note.Message)
+	m.Content = "This is test content."
+
+	t.Run("missing head", func(t *testing.T) {
+		e := new(gobl.Envelope)
+		err := e.Insert(m)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "missing head")
+	})
+
+	t.Run("no document", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		err := e.Insert(nil)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "no-document")
+	})
+
+}
+
 func TestEnvelopeComplete(t *testing.T) {
 	e := new(gobl.Envelope)
 
@@ -78,6 +98,21 @@ func TestEnvelopeComplete(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "1210.00", inv.Totals.Payable.String())
+}
+
+func TestEnvelopeCompleteErrors(t *testing.T) {
+	t.Run("missing document", func(t *testing.T) {
+		e := new(gobl.Envelope)
+		err := e.Complete()
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrNoDocument)
+	})
+	t.Run("missing document payload", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		err := e.Complete()
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrNoDocument)
+	})
 }
 
 func TestEnvelopeValidate(t *testing.T) {
