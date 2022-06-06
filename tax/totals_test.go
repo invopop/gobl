@@ -553,6 +553,32 @@ func TestTotalCalculate(t *testing.T) {
 			errContent: "invalid-rate: 'standard' not in category 'IRPF'",
 		},
 		{
+			desc: "with multirate VAT as percentages",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+							Retained: true,
+						},
+					},
+					amount: num.MakeAmount(15000, 2),
+				},
+			},
+			err:        tax.ErrInvalidRate,
+			errContent: "invalid-rate: 'VAT' cannot mix retained values",
+		},
+		{
 			desc: "with invalid rate on date",
 			date: cal.NewDate(2005, 1, 1),
 			lines: []tax.TaxableLine{
@@ -596,10 +622,10 @@ func TestTotalCalculate(t *testing.T) {
 			}
 			tot := tax.NewTotal(zero)
 			err := tot.Calculate(spain, test.lines, test.taxIncluded, d, zero)
-			if test.err != nil {
+			if test.err != nil && assert.Error(t, err) {
 				assert.ErrorIs(t, err, test.err)
 			}
-			if test.errContent != "" {
+			if test.errContent != "" && assert.Error(t, err) {
 				assert.Contains(t, err.Error(), test.errContent)
 			}
 			if test.want != nil {
