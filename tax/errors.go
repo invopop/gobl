@@ -9,6 +9,7 @@ type Error Key
 
 // Standard list of tax errors
 const (
+	ErrMissingRegion        Error = "missing-region"
 	ErrInvalidCategory      Error = "invalid-category"
 	ErrInvalidRate          Error = "invalid-rate"
 	ErrInvalidDate          Error = "invalid-date"
