@@ -39,7 +39,6 @@ lines:
         percent: 21.0%
       - cat: IRPF
         percent: 15.0%
-        retained: true
 
   - quantity: 1
     item:

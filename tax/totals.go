@@ -129,10 +129,7 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 	// Go through each line and add the price to the base of each tax
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
-			rt, err := t.rateTotalFor(c, zero)
-			if err != nil {
-				return err
-			}
+			rt := t.rateTotalFor(c, zero)
 			rt.Base = rt.Base.MatchPrecision(tl.price)
 			rt.Base = rt.Base.Add(tl.price)
 		}
@@ -167,7 +164,7 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 
 // rateTotalFor either finds of creates total objects for the category and rate.
 // May error if we detect and incorrect combination.
-func (t *Total) rateTotalFor(c *Combo, zero num.Amount) (*RateTotal, error) {
+func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 	var catTotal *CategoryTotal
 	for _, ct := range t.Categories {
 		if ct.Code == c.Category {
@@ -184,9 +181,6 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) (*RateTotal, error) {
 	var rateTotal *RateTotal
 	for _, rt := range catTotal.Rates {
 		if rt.Percent.Equals(c.Percent) {
-			if catTotal.Retained != c.Retained {
-				return nil, ErrInvalidRate.WithMessage("'%s' cannot mix retained values", c.Category)
-			}
 			rateTotal = rt
 			break
 		}
@@ -196,7 +190,7 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) (*RateTotal, error) {
 		catTotal.Rates = append(catTotal.Rates, rateTotal)
 	}
 
-	return rateTotal, nil
+	return rateTotal
 }
 
 // taxLine is used to replace

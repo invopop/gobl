@@ -42,6 +42,8 @@ func (c *Combo) prepare(r *Region, date cal.Date) error {
 	if category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
 	}
+	// always override retained value as this comes from category
+	c.Retained = category.Retained
 
 	if c.Rate != KeyEmpty {
 		rate := category.Rate(c.Rate)
@@ -53,7 +55,6 @@ func (c *Combo) prepare(r *Region, date cal.Date) error {
 			return ErrInvalidDate.WithMessage("data unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 		}
 		c.Percent = value.Percent
-		c.Retained = category.Retained
 	}
 
 	return nil
