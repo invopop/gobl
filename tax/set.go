@@ -40,7 +40,7 @@ func (c *Combo) Validate() error {
 func (c *Combo) prepare(r *Region, date cal.Date) error {
 	category := r.Category(c.Category)
 	if category == nil {
-		return ErrInvalidCategory.WithMessage("'%s' is not defined in region", c.Category.String())
+		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
 	}
 
 	if c.Rate != KeyEmpty {

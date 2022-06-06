@@ -92,18 +92,9 @@ func (ct *CategoryTotal) Rate(key Key) *RateTotal {
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
 func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, date cal.Date, zero num.Amount) error {
-	// NOTE: This method looks more complex than it could be as we're providing
-	// additional logic that will deal with situations whereby a tax is included
-	// in line prices potentially with other taxes.
-	//
-	// A typical use case for this is in Spain whereby regular VAT needs to be applied
-	// alongside IRPF (income tax) which is retained by the client.
-	//
-	// Tax surcharges (another very rare addition) are also not included in prices that
-	// include tax.
-	//
-	// As a general rule, invoice taxes must always be calculated at the last possible
-	// moment to avoid accumulating rounding errors.
+	if reg == nil {
+		return ErrMissingRegion
+	}
 
 	// get a simplified list of lines we can manipulate if needed
 	taxLines := mapTaxLines(lines)
