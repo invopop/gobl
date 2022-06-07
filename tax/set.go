@@ -4,31 +4,60 @@ import (
 	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/num"
 )
 
 // Set defines a list of tax categories and their rates to be used alongside taxable items.
 type Set []*Combo
 
-// Combo represents the tax combination of a category code and rate key.
+// Combo represents the tax combination of a category code and rate key. The percent
+// and retained attributes will be determined automatically from the Rate key if set
+// during calculation.
 type Combo struct {
 	// Tax category code from those available inside a region.
 	Category Code `json:"cat" jsonschema:"title=Category"`
 	// Rate within a category to apply.
-	Rate Key `json:"rate" jsonschema:"title=Rate"`
-
-	// Objects used internally for making calculations on specific dates
-	// see the Region#prepareCombo method for usage.
-	category *Category
-	rate     *Rate
-	value    *RateValue
+	Rate Key `json:"rate,omitempty" jsonschema:"title=Rate"`
+	// Percent defines the percentage set manually or determined from the rate key.
+	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
+	// Retained when true indicates the percent is retained from the totals
+	// instead of added.
+	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 }
 
-// Validate ensures the Combo contains all the details required.
+// Validate ensures the Combo has the correct details.
 func (c *Combo) Validate() error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Category, validation.Required),
-		validation.Field(&c.Rate, validation.Required),
+		validation.Field(&c.Rate), // optional, but should be checked if present
+		validation.Field(&c.Percent, validation.Required),
 	)
+}
+
+// prepare updates the Combo object's Percent and Retained properties according
+// to the region and date provided.
+func (c *Combo) prepare(r *Region, date cal.Date) error {
+	category := r.Category(c.Category)
+	if category == nil {
+		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
+	}
+	// always override retained value as this comes from category
+	c.Retained = category.Retained
+
+	if c.Rate != KeyEmpty {
+		rate := category.Rate(c.Rate)
+		if rate == nil {
+			return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
+		}
+		value := rate.On(date)
+		if value == nil {
+			return ErrInvalidDate.WithMessage("data unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
+		}
+		c.Percent = value.Percent
+	}
+
+	return nil
 }
 
 // Validate ensures the set of tax combos looks correct

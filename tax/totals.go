@@ -5,15 +5,6 @@ import (
 	"github.com/invopop/gobl/num"
 )
 
-// RateTotal contains a sum of all the tax rates in the document with
-// a matching category and definition.
-type RateTotal struct {
-	Key     Key            `json:"key" jsonschema:"title=Key"`
-	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
-	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
-	Amount  num.Amount     `json:"amount" jsonschema:"title=Amount"`
-}
-
 // CategoryTotal groups together all rates inside a given category.
 type CategoryTotal struct {
 	Code     Code         `json:"code" jsonschema:"title=Code"`
@@ -21,6 +12,16 @@ type CategoryTotal struct {
 	Rates    []*RateTotal `json:"rates" jsonschema:"title=Rates"`
 	Base     num.Amount   `json:"base" jsonschema:"title=Base"`
 	Amount   num.Amount   `json:"amount" jsonschema:"title=Amount"`
+}
+
+// RateTotal contains a sum of all the tax rates in the document with
+// a matching category and rate. The Key is optional as we may be using
+// the percentage to group rates.
+type RateTotal struct {
+	Key     Key            `json:"key,omitempty" jsonschema:"title=Key"`
+	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
+	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
+	Amount  num.Amount     `json:"amount" jsonschema:"title=Amount"`
 }
 
 // Total contains a set of Category Totals which in turn
@@ -48,22 +49,22 @@ func NewTotal(zero num.Amount) *Total {
 	return t
 }
 
-// NewCategoryTotal prepares a category total calculation.
-func NewCategoryTotal(code Code, retained bool, zero num.Amount) *CategoryTotal {
+// newCategoryTotal prepares a category total calculation.
+func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct := new(CategoryTotal)
-	ct.Code = code
+	ct.Code = c.Category
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Base = zero
 	ct.Amount = zero
-	ct.Retained = retained
+	ct.Retained = c.Retained
 	return ct
 }
 
-// NewRateTotal returns a rate total.
-func NewRateTotal(key Key, percent num.Percentage, zero num.Amount) *RateTotal {
+// newRateTotal returns a rate total.
+func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
-	rt.Key = key
-	rt.Percent = percent
+	rt.Key = c.Rate // may be empty!
+	rt.Percent = c.Percent
 	rt.Base = zero
 	rt.Amount = zero
 	return rt
@@ -91,18 +92,9 @@ func (ct *CategoryTotal) Rate(key Key) *RateTotal {
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
 func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, date cal.Date, zero num.Amount) error {
-	// NOTE: This method looks more complex than it could be as we're providing
-	// additional logic that will deal with situations whereby a tax is included
-	// in line prices potentially with other taxes.
-	//
-	// A typical use case for this is in Spain whereby regular VAT needs to be applied
-	// alongside IRPF (income tax) which is retained by the client.
-	//
-	// Tax surcharges (another very rare addition) are also not included in prices that
-	// include tax.
-	//
-	// As a general rule, invoice taxes must always be calculated at the last possible
-	// moment to avoid accumulating rounding errors.
+	if reg == nil {
+		return ErrMissingRegion
+	}
 
 	// get a simplified list of lines we can manipulate if needed
 	taxLines := mapTaxLines(lines)
@@ -110,7 +102,7 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 	// First, prepare all tax combos with the region and date details
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
-			if err := reg.prepareCombo(c, date); err != nil {
+			if err := c.prepare(reg, date); err != nil {
 				return err
 			}
 		}
@@ -123,13 +115,13 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 		for _, tl := range taxLines {
 			if rate := tl.rateForCategory(taxIncluded); rate != "" {
 				c := tl.taxes.Get(taxIncluded)
-				if c.category.Retained {
+				if c.Retained {
 					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", taxIncluded.String())
 				}
 
 				// update the price scale, add two 0s, this will be removed later.
 				tl.price = tl.price.Rescale(tl.price.Exp() + 2)
-				tl.price = tl.price.Subtract(c.value.Percent.From(tl.price))
+				tl.price = tl.price.Subtract(c.Percent.From(tl.price))
 			}
 		}
 	}
@@ -171,6 +163,7 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 }
 
 // rateTotalFor either finds of creates total objects for the category and rate.
+// May error if we detect and incorrect combination.
 func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 	var catTotal *CategoryTotal
 	for _, ct := range t.Categories {
@@ -180,20 +173,20 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 		}
 	}
 	if catTotal == nil {
-		catTotal = NewCategoryTotal(c.Category, c.category.Retained, zero)
+		catTotal = newCategoryTotal(c, zero)
 		t.Categories = append(t.Categories, catTotal)
 	}
 
-	// Prepare the Rate
+	// Prepare the Rate, match using percent value
 	var rateTotal *RateTotal
 	for _, rt := range catTotal.Rates {
-		if rt.Key == c.Rate {
+		if rt.Percent.Equals(c.Percent) {
 			rateTotal = rt
 			break
 		}
 	}
 	if rateTotal == nil {
-		rateTotal = NewRateTotal(c.Rate, c.value.Percent, zero)
+		rateTotal = newRateTotal(c, zero)
 		catTotal.Rates = append(catTotal.Rates, rateTotal)
 	}
 

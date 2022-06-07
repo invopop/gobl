@@ -85,6 +85,75 @@ func TestTotalCalculate(t *testing.T) {
 			},
 		},
 		{
+			desc: "with VAT percents defined",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								// Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(2100, 2),
+							},
+						},
+						Base:   num.MakeAmount(10000, 2),
+						Amount: num.MakeAmount(2100, 2),
+					},
+				},
+				Sum: num.MakeAmount(2100, 2),
+			},
+		},
+		{
+			desc: "with VAT percents defined, rate override",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+							Percent:  num.MakePercentage(200, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(2100, 2),
+							},
+						},
+						Base:   num.MakeAmount(10000, 2),
+						Amount: num.MakeAmount(2100, 2),
+					},
+				},
+				Sum: num.MakeAmount(2100, 2),
+			},
+		},
+		{
 			desc: "with multiline VAT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
@@ -115,6 +184,91 @@ func TestTotalCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(25000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(5250, 2),
+							},
+						},
+						Base:   num.MakeAmount(25000, 2),
+						Amount: num.MakeAmount(5250, 2),
+					},
+				},
+				Sum: num.MakeAmount(5250, 2),
+			},
+		},
+		{
+			desc: "with multiline VAT as percentages",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(2100, 4), // different exp.
+						},
+					},
+					amount: num.MakeAmount(15000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Base:    num.MakeAmount(25000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(5250, 2),
+							},
+						},
+						Base:   num.MakeAmount(25000, 2),
+						Amount: num.MakeAmount(5250, 2),
+					},
+				},
+				Sum: num.MakeAmount(5250, 2),
+			},
+		},
+		{
+			desc: "with multiline VAT as percentages correcting invalid rectified property",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+							Retained: true, // this will be ignored
+						},
+					},
+					amount: num.MakeAmount(15000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
 								Base:    num.MakeAmount(25000, 2),
 								Percent: num.MakePercentage(210, 3),
 								Amount:  num.MakeAmount(5250, 2),
@@ -164,6 +318,55 @@ func TestTotalCalculate(t *testing.T) {
 							},
 							{
 								Key:     common.TaxRateReduced,
+								Base:    num.MakeAmount(15000, 2),
+								Percent: num.MakePercentage(100, 3),
+								Amount:  num.MakeAmount(1500, 2),
+							},
+						},
+						Base:   num.MakeAmount(25000, 2),
+						Amount: num.MakeAmount(3600, 2),
+					},
+				},
+				Sum: num.MakeAmount(3600, 2),
+			},
+		},
+		{
+			desc: "with multirate VAT as percentages",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(100, 3),
+						},
+					},
+					amount: num.MakeAmount(15000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								// Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(2100, 2),
+							},
+							{
+								// Key:     common.TaxRateReduced,
 								Base:    num.MakeAmount(15000, 2),
 								Percent: num.MakePercentage(100, 3),
 								Amount:  num.MakeAmount(1500, 2),
@@ -392,6 +595,7 @@ func TestTotalCalculate(t *testing.T) {
 			err:        tax.ErrInvalidRate,
 			errContent: "invalid-rate: 'standard' not in category 'IRPF'",
 		},
+
 		{
 			desc: "with invalid rate on date",
 			date: cal.NewDate(2005, 1, 1),
@@ -436,10 +640,10 @@ func TestTotalCalculate(t *testing.T) {
 			}
 			tot := tax.NewTotal(zero)
 			err := tot.Calculate(spain, test.lines, test.taxIncluded, d, zero)
-			if test.err != nil {
+			if test.err != nil && assert.Error(t, err) {
 				assert.ErrorIs(t, err, test.err)
 			}
-			if test.errContent != "" {
+			if test.errContent != "" && assert.Error(t, err) {
 				assert.Contains(t, err.Error(), test.errContent)
 			}
 			if test.want != nil {

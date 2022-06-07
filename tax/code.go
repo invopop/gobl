@@ -34,3 +34,14 @@ func (c Code) IsEmpty() bool {
 func (c Code) String() string {
 	return string(c)
 }
+
+// In returns true if the code's value matches one of those
+// in the provided array.
+func (c Code) In(ary []Code) bool {
+	for _, v := range ary {
+		if v == c {
+			return true
+		}
+	}
+	return false
+}

@@ -14,6 +14,9 @@ var (
 	keyValidationRegexp = regexp.MustCompile(`^[a-z][a-z0-9-]+$`)
 )
 
+// KeyEmpty is used when no key is available.
+const KeyEmpty Key = ""
+
 // Validate ensures the key complies with the basic syntax
 // requirements.
 func (k Key) Validate() error {

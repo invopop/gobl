@@ -175,21 +175,3 @@ func (r *Rate) On(date cal.Date) *RateValue {
 	}
 	return nil
 }
-
-// prepareCombo updates the Combo object's internal properties to include the objects
-// for the region on a given date.
-func (r *Region) prepareCombo(c *Combo, date cal.Date) error {
-	c.category = r.Category(c.Category)
-	if c.category == nil {
-		return ErrInvalidCategory.WithMessage("'%s'", c.Category.String())
-	}
-	c.rate = c.category.Rate(c.Rate)
-	if c.rate == nil {
-		return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
-	}
-	c.value = c.rate.On(date)
-	if c.value == nil {
-		return ErrInvalidDate.WithMessage("data unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
-	}
-	return nil
-}
