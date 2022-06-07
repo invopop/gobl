@@ -59,12 +59,11 @@
       },
       "type": "object",
       "required": [
-        "key",
         "base",
         "percent",
         "amount"
       ],
-      "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and definition."
+      "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and rate."
     },
     "Total": {
       "properties": {
@@ -89,5 +88,5 @@
       "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
   },
-  "$comment": "Generated with GOBL v0.22.0"
+  "$comment": "Generated with GOBL v0.23.0"
 }

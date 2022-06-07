@@ -14,12 +14,22 @@
           "type": "string",
           "title": "Rate",
           "description": "Rate within a category to apply."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percent defines the percentage set manually or determined from the rate key."
+        },
+        "retained": {
+          "type": "boolean",
+          "title": "Retained",
+          "description": "Retained when true indicates the percent is retained from the totals\ninstead of added."
         }
       },
       "type": "object",
       "required": [
         "cat",
-        "rate"
+        "percent"
       ],
       "description": "Combo represents the tax combination of a category code and rate key."
     },
@@ -31,5 +41,5 @@
       "description": "Set defines a list of tax categories and their rates to be used alongside taxable items."
     }
   },
-  "$comment": "Generated with GOBL v0.22.0"
+  "$comment": "Generated with GOBL v0.23.0"
 }
