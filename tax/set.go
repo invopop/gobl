@@ -26,11 +26,11 @@ type Combo struct {
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 }
 
-// Validate ensures the Combo contains all the details required.
+// Validate ensures the Combo has the correct details.
 func (c *Combo) Validate() error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Category, validation.Required),
-		validation.Field(&c.Rate),
+		validation.Field(&c.Rate), // optional, but should be checked if present
 		validation.Field(&c.Percent, validation.Required),
 	)
 }
