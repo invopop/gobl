@@ -1,10 +1,10 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "8178f4eb-e80e-11ec-bfe8-e2c0624703d9",
+		"uuid": "6040f3bb-e81f-11ec-9865-e2c0624703d9",
 		"dig": {
 			"alg": "sha256",
-			"val": "5edd66a7cabe0bbdc618f98c17324154ece9bd58e0975c98870d164629287c08"
+			"val": "1779c452e2aa474b40577ca817d7c72f13f33da06a51af7c267421084fa1b86b"
 		}
 	},
 	"doc": {
@@ -15,16 +15,25 @@
 		"supplier": {
 			"tax_id": {
 				"country": "ES",
-				"code": "B98602642"
+				"code": "58384285G"
 			},
-			"name": "Provide One S.L.",
+			"name": "MªF. Services",
+			"people": [
+				{
+					"name": {
+						"given": "MARIA FRANCISCA",
+						"surname": "MONTERO",
+						"surname2": "ESTEBAN"
+					}
+				}
+			],
 			"addresses": [
 				{
-					"num": "42",
-					"street": "Calle Pradillo",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "28002",
+					"num": "9",
+					"street": "CAMÍ MADRID",
+					"locality": "CANENA",
+					"region": "JAÉN",
+					"code": "23480",
 					"country": "ES"
 				}
 			],
@@ -70,27 +79,11 @@
 					}
 				],
 				"total": "1620.00"
-			},
-			{
-				"i": 2,
-				"quantity": "1",
-				"item": {
-					"name": "Financial service",
-					"price": "10.00"
-				},
-				"sum": "10.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"percent": "0%"
-					}
-				],
-				"total": "10.00"
 			}
 		],
 		"totals": {
-			"sum": "1630.00",
-			"total": "1630.00",
+			"sum": "1620.00",
+			"total": "1620.00",
 			"taxes": {
 				"categories": [
 					{
@@ -101,14 +94,9 @@
 								"base": "1620.00",
 								"percent": "21.0%",
 								"amount": "340.20"
-							},
-							{
-								"base": "10.00",
-								"percent": "0%",
-								"amount": "0.00"
 							}
 						],
-						"base": "1630.00",
+						"base": "1620.00",
 						"amount": "340.20"
 					},
 					{
@@ -128,11 +116,11 @@
 				"sum": "97.20"
 			},
 			"tax": "97.20",
-			"total_with_tax": "1727.20",
-			"payable": "1727.20"
+			"total_with_tax": "1717.20",
+			"payable": "1717.20"
 		}
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImNkYzMwMTM1LWI1OGItNDNkOC1iMGY2LTg0ZDBiM2VmYjAzMCJ9.eyJ1dWlkIjoiODE3OGY0ZWItZTgwZS0xMWVjLWJmZTgtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjVlZGQ2NmE3Y2FiZTBiYmRjNjE4Zjk4YzE3MzI0MTU0ZWNlOWJkNThlMDk3NWM5ODg3MGQxNjQ2MjkyODdjMDgifX0.pgpzrCj3ro_tDQOtxRgwH1Zff_4-Y5vQQDX7qOFx-W_xjZh-7XGx-qeBV0C9bimGcKT2LZXiuuHVmbrMIdKUSw"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImNiN2QzMDRiLWZlNjUtNDQ1MC1hNGU1LTViNTUyZGMyNmQ5OSJ9.eyJ1dWlkIjoiNjA0MGYzYmItZTgxZi0xMWVjLTk4NjUtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjE3NzljNDUyZTJhYTQ3NGI0MDU3N2NhODE3ZDdjNzJmMTNmMzNkYTA2YTUxYWY3YzI2NzQyMTA4NGZhMWI4NmIifX0.TwPY4vJF2xO2eyyv4PwT7ybiAqZAkXjaAgDHSQm1maDFCBMUdhYt6dsLvQW_dBJq3-cUB4AHtoO1flJ66BXPuQ"
 	]
 }

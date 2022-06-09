@@ -4,18 +4,24 @@ issue_date: "2022-02-01"
 code: "SAMPLE-001"
 
 supplier:
+  # sample data from https://generadordni.es/#profiles
   tax_id:
     country: "ES"
-    code: "B98602642" # random
-  name: "Provide One S.L."
+    code: "58384285G" # random
+  name: "MªF. Services"
   emails:
     - addr: "billing@example.com"
+  people:
+    - name:
+        given: "MARIA FRANCISCA"
+        surname: "MONTERO"
+        surname2: "ESTEBAN"
   addresses:
-    - num: "42"
-      street: "Calle Pradillo"
-      locality: "Madrid"
-      region: "Madrid"
-      code: "28002"
+    - num: "9"
+      street: "CAMÍ MADRID"
+      locality: "CANENA"
+      region: "JAÉN"
+      code: "23480"
       country: "ES"
 
 customer:
@@ -39,11 +45,3 @@ lines:
         percent: 21.0%
       - cat: IRPF
         percent: 15.0%
-
-  - quantity: 1
-    item:
-      name: "Financial service"
-      price: "10.00"
-    taxes:
-      - cat: VAT
-        percent: "0%"
