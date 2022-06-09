@@ -30,5 +30,5 @@
       "description": "Coordinates describes an exact geographical location in the world."
     }
   },
-  "$comment": "Generated with GOBL v0.23.1"
+  "$comment": "Generated with GOBL v0.24.0"
 }

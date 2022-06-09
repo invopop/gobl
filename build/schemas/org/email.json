@@ -31,5 +31,5 @@
       "description": "Email describes the electronic mailing details."
     }
   },
-  "$comment": "Generated with GOBL v0.23.1"
+  "$comment": "Generated with GOBL v0.24.0"
 }
