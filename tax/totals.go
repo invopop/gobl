@@ -56,7 +56,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Base = zero
 	ct.Amount = zero
-	ct.Retained = c.Retained
+	ct.Retained = c.category.Retained
 	return ct
 }
 
@@ -115,7 +115,7 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 		for _, tl := range taxLines {
 			if rate := tl.rateForCategory(taxIncluded); rate != "" {
 				c := tl.taxes.Get(taxIncluded)
-				if c.Retained {
+				if c.category.Retained {
 					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", taxIncluded.String())
 				}
 

@@ -21,9 +21,9 @@ type Combo struct {
 	Rate Key `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Percent defines the percentage set manually or determined from the rate key.
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
-	// Retained when true indicates the percent is retained from the totals
-	// instead of added.
-	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
+
+	// Internal link back to the category object
+	category *Category
 }
 
 // Validate ensures the Combo has the correct details.
@@ -38,15 +38,13 @@ func (c *Combo) Validate() error {
 // prepare updates the Combo object's Percent and Retained properties according
 // to the region and date provided.
 func (c *Combo) prepare(r *Region, date cal.Date) error {
-	category := r.Category(c.Category)
-	if category == nil {
+	c.category = r.Category(c.Category)
+	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
 	}
-	// always override retained value as this comes from category
-	c.Retained = category.Retained
 
 	if c.Rate != KeyEmpty {
-		rate := category.Rate(c.Rate)
+		rate := c.category.Rate(c.Rate)
 		if rate == nil {
 			return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
 		}
