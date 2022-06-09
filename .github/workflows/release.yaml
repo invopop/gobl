@@ -39,7 +39,7 @@ jobs:
 
       - name: Bump version and push tag
         id: bump
-        uses: anothrNick/github-tag-action@1.39.0
+        uses: anothrNick/github-tag-action@1.36.0
         env:
           CUSTOM_TAG: ${{ env.GOBL_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

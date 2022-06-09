@@ -239,49 +239,6 @@ func TestTotalCalculate(t *testing.T) {
 			},
 		},
 		{
-			desc: "with multiline VAT as percentages correcting invalid rectified property",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					taxes: tax.Set{
-						{
-							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(210, 3),
-						},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					taxes: tax.Set{
-						{
-							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(210, 3),
-							Retained: true, // this will be ignored
-						},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: "",
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Base:    num.MakeAmount(25000, 2),
-								Percent: num.MakePercentage(210, 3),
-								Amount:  num.MakeAmount(5250, 2),
-							},
-						},
-						Base:   num.MakeAmount(25000, 2),
-						Amount: num.MakeAmount(5250, 2),
-					},
-				},
-				Sum: num.MakeAmount(5250, 2),
-			},
-		},
-		{
 			desc: "with multirate VAT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
