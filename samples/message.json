@@ -1,0 +1,18 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "817ac94a-e80e-11ec-bfe8-e2c0624703d9",
+		"dig": {
+			"alg": "sha256",
+			"val": "45ac3115c8569a1789e58af8d0dc91ef3baa1fb71daaf38f5aef94f82b4d0033"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/note/message",
+		"title": "Test Message",
+		"content": "We hope you like this test message!"
+	},
+	"sigs": [
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImNkYzMwMTM1LWI1OGItNDNkOC1iMGY2LTg0ZDBiM2VmYjAzMCJ9.eyJ1dWlkIjoiODE3YWM5NGEtZTgwZS0xMWVjLWJmZTgtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjQ1YWMzMTE1Yzg1NjlhMTc4OWU1OGFmOGQwZGM5MWVmM2JhYTFmYjcxZGFhZjM4ZjVhZWY5NGY4MmI0ZDAwMzMifX0.UZmb55tQ4Ij8rk7W_VnKywJ3ZOZEsS-rXc0EcIEt5ccPzJWVgXQKYB4eG8myMRDYjlgsmWs1rqt88XCz_sSeiw"
+	]
+}

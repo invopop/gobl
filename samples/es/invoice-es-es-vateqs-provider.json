@@ -1,0 +1,119 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "817994f7-e80e-11ec-bfe8-e2c0624703d9",
+		"dig": {
+			"alg": "sha256",
+			"val": "ce0c9f27e23823e3ead1626869eb3b27622d11835a0ac5feddfc9e9d185fc36d"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"code": "SAMPLE-001",
+		"currency": "EUR",
+		"issue_date": "2022-02-01",
+		"supplier": {
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"name": "Provide One S.L.",
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"name": "Simple Goods Store",
+			"addresses": [
+				{
+					"num": "43",
+					"street": "Calle Mayor",
+					"locality": "",
+					"region": "Madrid",
+					"code": "28003"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Mugs from provider",
+					"price": "10.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "VATEQS",
+						"rate": "standard",
+						"percent": "5.2%"
+					}
+				],
+				"total": "100.00"
+			}
+		],
+		"totals": {
+			"sum": "100.00",
+			"total": "100.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "100.00",
+								"percent": "21.0%",
+								"amount": "21.00"
+							}
+						],
+						"base": "100.00",
+						"amount": "21.00"
+					},
+					{
+						"code": "VATEQS",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "100.00",
+								"percent": "5.2%",
+								"amount": "5.20"
+							}
+						],
+						"base": "100.00",
+						"amount": "5.20"
+					}
+				],
+				"sum": "26.20"
+			},
+			"tax": "26.20",
+			"total_with_tax": "126.20",
+			"payable": "126.20"
+		}
+	},
+	"sigs": [
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImNkYzMwMTM1LWI1OGItNDNkOC1iMGY2LTg0ZDBiM2VmYjAzMCJ9.eyJ1dWlkIjoiODE3OTk0ZjctZTgwZS0xMWVjLWJmZTgtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImNlMGM5ZjI3ZTIzODIzZTNlYWQxNjI2ODY5ZWIzYjI3NjIyZDExODM1YTBhYzVmZWRkZmM5ZTlkMTg1ZmMzNmQifX0.yIQDvSqXE5m7uUrveWZAOSDAuvQ55uvhNMUE0M-I-0V72cc3yErbtMYYeEDStnEtCfa8IiLUHuCeyJoeLgpFgA"
+	]
+}

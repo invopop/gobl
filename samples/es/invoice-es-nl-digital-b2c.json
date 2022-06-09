@@ -1,0 +1,96 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "817a9cb8-e80e-11ec-bfe8-e2c0624703d9",
+		"dig": {
+			"alg": "sha256",
+			"val": "60ae9185a5ab4aec18f25fbb8eb24176fef09850f0f0fe3aaee8399944d0878e"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"code": "SAMPLE-X-002",
+		"currency": "EUR",
+		"tax": {
+			"schemes": [
+				"customer-rates"
+			]
+		},
+		"issue_date": "2022-02-01",
+		"supplier": {
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"name": "Provide One S.L.",
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"tax_id": {
+				"country": "NL"
+			},
+			"name": "Sample Consumer"
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Services exported",
+					"price": "100.00"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000.00",
+								"percent": "21.0%",
+								"amount": "210.00"
+							}
+						],
+						"base": "1000.00",
+						"amount": "210.00"
+					}
+				],
+				"sum": "210.00"
+			},
+			"tax": "210.00",
+			"total_with_tax": "1210.00",
+			"payable": "1210.00"
+		}
+	},
+	"sigs": [
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImNkYzMwMTM1LWI1OGItNDNkOC1iMGY2LTg0ZDBiM2VmYjAzMCJ9.eyJ1dWlkIjoiODE3YTljYjgtZTgwZS0xMWVjLWJmZTgtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjYwYWU5MTg1YTVhYjRhZWMxOGYyNWZiYjhlYjI0MTc2ZmVmMDk4NTBmMGYwZmUzYWFlZTgzOTk5NDRkMDg3OGUifX0.-HN2prjperppsrlQqDYEXFnzqp9K-xaBkhSdonHUj0jaXpfEc-KFR1gwM3bpvyPCr84r5fY7oaAUc_7B0gfFdg"
+	]
+}
