@@ -72,8 +72,10 @@ type Rate struct {
 type RateValue struct {
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
-	// Rate that should be applied
+	// Percent rate that should be applied
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
+	// An additional surcharge to apply.
+	Surcharge *num.Percentage `json:"surcharge" jsonschema:"title=Surcharge"`
 	// When true, this value should no longer be used.
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }

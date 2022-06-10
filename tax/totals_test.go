@@ -197,6 +197,69 @@ func TestTotalCalculate(t *testing.T) {
 			},
 		},
 		{
+			desc: "with multiline VAT and Surcharge",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard.With(es.TaxRateEquivalence),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard.With(es.TaxRateEquivalence),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
+					},
+					amount: num.MakeAmount(15000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     common.TaxRateStandard.With(es.TaxRateEquivalence),
+								Base:    num.MakeAmount(20000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(4200, 2),
+								Surcharge: &tax.RateTotalSurcharge{
+									Percent: num.MakePercentage(52, 3),
+									Amount:  num.MakeAmount(1040, 2),
+								},
+							},
+							{
+								Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(15000, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(3150, 2),
+							},
+						},
+						Base:      num.MakeAmount(35000, 2),
+						Amount:    num.MakeAmount(7350, 2),
+						Surcharge: num.NewAmount(1040, 2),
+					},
+				},
+				Sum: num.MakeAmount(8390, 2),
+			},
+		},
+		{
 			desc: "with multiline VAT as percentages",
 			lines: []tax.TaxableLine{
 				&taxableLine{

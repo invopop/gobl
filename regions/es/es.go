@@ -13,17 +13,13 @@ import (
 
 // Local tax category definitions which are not considered standard.
 const (
-	TaxCategoryVATSurcharge tax.Code = "VATEQS"
-	TaxCategoryIRPF         tax.Code = "IRPF"
-	TaxCategoryIGIC         tax.Code = "IGIC"
-	TaxCategoryIPSI         tax.Code = "IPSI"
+	TaxCategoryIRPF tax.Code = "IRPF"
+	TaxCategoryIGIC tax.Code = "IGIC"
+	TaxCategoryIPSI tax.Code = "IPSI"
 )
 
 // Specific tax rate codes.
 const (
-	// VAT non-standard Rates
-	TaxRateTobacco tax.Key = "tobacco"
-
 	// IRPF non-standard Rates (usually for self-employed)
 	TaxRatePro                tax.Key = "pro"                 // Professional Services
 	TaxRateProStart           tax.Key = "pro-start"           // Professionals, first 2 years
@@ -31,6 +27,9 @@ const (
 	TaxRateAgriculture        tax.Key = "agriculture"         // Agricultural
 	TaxRateAgricultureSpecial tax.Key = "agriculture-special" // Agricultural special
 	TaxRateCapital            tax.Key = "capital"             // Rental or Interest
+
+	// Special tax rate surcharge extension
+	TaxRateEquivalence tax.Key = "eqs"
 )
 
 // Scheme key definitions
@@ -228,6 +227,25 @@ func New() *tax.Region {
 						},
 					},
 					{
+						Key: common.TaxRateStandard.With(TaxRateEquivalence),
+						Name: i18n.String{
+							i18n.EN: "Standard Rate + Equivalence",
+							i18n.ES: "Tipo General + Recargo de Equivalencia",
+						},
+						Values: []*tax.RateValue{
+							{
+								Since:     cal.NewDate(2012, 9, 1),
+								Percent:   num.MakePercentage(210, 3),
+								Surcharge: num.NewPercentage(52, 3),
+							},
+							{
+								Since:     cal.NewDate(2010, 7, 1),
+								Percent:   num.MakePercentage(180, 3),
+								Surcharge: num.NewPercentage(40, 3),
+							},
+						},
+					},
+					{
 						Key: common.TaxRateReduced,
 						Name: i18n.String{
 							i18n.EN: "Reduced Rate",
@@ -253,6 +271,25 @@ func New() *tax.Region {
 						},
 					},
 					{
+						Key: common.TaxRateReduced.With(TaxRateEquivalence),
+						Name: i18n.String{
+							i18n.EN: "Reduced Rate + Surcharge",
+							i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
+						},
+						Values: []*tax.RateValue{
+							{
+								Since:     cal.NewDate(2012, 9, 1),
+								Percent:   num.MakePercentage(100, 3),
+								Surcharge: num.NewPercentage(14, 3),
+							},
+							{
+								Since:     cal.NewDate(2010, 7, 1),
+								Percent:   num.MakePercentage(80, 3),
+								Surcharge: num.NewPercentage(10, 3),
+							},
+						},
+					},
+					{
 						Key: common.TaxRateSuperReduced,
 						Name: i18n.String{
 							i18n.EN: "Super-Reduced Rate",
@@ -269,76 +306,17 @@ func New() *tax.Region {
 							},
 						},
 					},
-				},
-			},
-			//
-			// VAT Equalization Surcharge (Recargo de equivalencia)
-			//
-			{
-				Code: TaxCategoryVATSurcharge,
-				Name: i18n.String{
-					i18n.EN: "VAT Equalization Surcharge",
-					i18n.ES: "IVA Recargo de Equivalencia",
-				},
-				Retained: false,
-				Rates: []*tax.Rate{
 					{
-						Key: common.TaxRateStandard,
+						Key: common.TaxRateSuperReduced.With(TaxRateEquivalence),
 						Name: i18n.String{
-							i18n.EN: "Standard Rate",
-							i18n.ES: "Tipo General",
+							i18n.EN: "Super-Reduced Rate + Equivalence",
+							i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
 						},
 						Values: []*tax.RateValue{
 							{
-								Since:   cal.NewDate(2012, 9, 1),
-								Percent: num.MakePercentage(52, 3),
-							},
-							{
-								Since:   cal.NewDate(1993, 1, 1),
-								Percent: num.MakePercentage(40, 3),
-							},
-						},
-					},
-					{
-						Key: common.TaxRateReduced,
-						Name: i18n.String{
-							i18n.EN: "Reduced Rate",
-							i18n.ES: "Tipo Reducido",
-						},
-						Values: []*tax.RateValue{
-							{
-								Since:   cal.NewDate(2012, 9, 1),
-								Percent: num.MakePercentage(14, 3),
-							},
-							{
-								Since:   cal.NewDate(1993, 1, 1),
-								Percent: num.MakePercentage(10, 3),
-							},
-						},
-					},
-					{
-						Key: common.TaxRateSuperReduced,
-						Name: i18n.String{
-							i18n.EN: "Super-Reduced Rate",
-							i18n.ES: "Tipo Superreducido",
-						},
-						Values: []*tax.RateValue{
-							{
-								Since:   cal.NewDate(1993, 1, 1),
-								Percent: num.MakePercentage(5, 3),
-							},
-						},
-					},
-					{
-						Key: TaxRateTobacco,
-						Name: i18n.String{
-							i18n.EN: "Tobacco Rate",
-							i18n.ES: "Tipo Tobaco",
-						},
-						Values: []*tax.RateValue{
-							{
-								Since:   cal.NewDate(2007, 1, 1),
-								Percent: num.MakePercentage(175, 4),
+								Since:     cal.NewDate(1995, 1, 1),
+								Percent:   num.MakePercentage(40, 3),
+								Surcharge: num.NewPercentage(5, 3),
 							},
 						},
 					},

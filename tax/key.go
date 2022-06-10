@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"fmt"
 	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -11,7 +12,7 @@ import (
 type Key string
 
 var (
-	keyValidationRegexp = regexp.MustCompile(`^[a-z][a-z0-9-]+$`)
+	keyValidationRegexp = regexp.MustCompile(`^[a-z][a-z0-9-+]*[a-z0-9]$`)
 )
 
 // KeyEmpty is used when no key is available.
@@ -28,4 +29,10 @@ func (k Key) Validate() error {
 // String provides string representation of key
 func (k Key) String() string {
 	return string(k)
+}
+
+// With provides a new key that combines another joining them together
+// with a `+` symbol.
+func (k Key) With(ke Key) Key {
+	return Key(fmt.Sprintf("%s+%s", k, ke))
 }

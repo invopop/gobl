@@ -1,16 +1,19 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "6041614e-e81f-11ec-9865-e2c0624703d9",
+		"uuid": "8cb98e91-e8c7-11ec-96bb-e2c0624703d9",
 		"dig": {
 			"alg": "sha256",
-			"val": "ce0c9f27e23823e3ead1626869eb3b27622d11835a0ac5feddfc9e9d185fc36d"
+			"val": "9f77160ae8757ede845eaa3bcf7a4fa9aafbb05c2bfac22929c08a04399ce274"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"code": "SAMPLE-001",
 		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT"
+		},
 		"issue_date": "2022-02-01",
 		"supplier": {
 			"tax_id": {
@@ -62,58 +65,70 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
-						"percent": "21.0%"
-					},
-					{
-						"cat": "VATEQS",
-						"rate": "standard",
-						"percent": "5.2%"
+						"rate": "standard+eqs",
+						"percent": "21.0%",
+						"surcharge": "5.2%"
 					}
 				],
 				"total": "100.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Delivery Costs",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "10.00"
 			}
 		],
 		"totals": {
-			"sum": "100.00",
-			"total": "100.00",
+			"sum": "110.00",
+			"tax_included": "19.10",
+			"total": "90.90",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
-								"base": "100.00",
+								"key": "standard+eqs",
+								"base": "82.64",
 								"percent": "21.0%",
-								"amount": "21.00"
-							}
-						],
-						"base": "100.00",
-						"amount": "21.00"
-					},
-					{
-						"code": "VATEQS",
-						"rates": [
+								"amount": "17.36",
+								"surcharge": {
+									"percent": "5.2%",
+									"amount": "4.29"
+								}
+							},
 							{
 								"key": "standard",
-								"base": "100.00",
-								"percent": "5.2%",
-								"amount": "5.20"
+								"base": "8.26",
+								"percent": "21.0%",
+								"amount": "1.74"
 							}
 						],
-						"base": "100.00",
-						"amount": "5.20"
+						"base": "90.90",
+						"amount": "19.10",
+						"surcharge": "4.29"
 					}
 				],
-				"sum": "26.20"
+				"sum": "23.39"
 			},
-			"tax": "26.20",
-			"total_with_tax": "126.20",
-			"payable": "126.20"
+			"tax": "23.39",
+			"total_with_tax": "114.29",
+			"payable": "114.29"
 		}
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImNiN2QzMDRiLWZlNjUtNDQ1MC1hNGU1LTViNTUyZGMyNmQ5OSJ9.eyJ1dWlkIjoiNjA0MTYxNGUtZTgxZi0xMWVjLTk4NjUtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImNlMGM5ZjI3ZTIzODIzZTNlYWQxNjI2ODY5ZWIzYjI3NjIyZDExODM1YTBhYzVmZWRkZmM5ZTlkMTg1ZmMzNmQifX0.IwOABo1KLjEreoP3FVEuHbQ0VDlu9CDA-H7qatLKAMX9NdRwuX8wLEYJrhszHdsXgC7marxMSj_0SOU2DT-NuQ"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjNiMzEzZDAyLWMxY2ItNDY3Ni05YzVmLWEzNDJlMmRjOWEwMCJ9.eyJ1dWlkIjoiOGNiOThlOTEtZThjNy0xMWVjLTk2YmItZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjlmNzcxNjBhZTg3NTdlZGU4NDVlYWEzYmNmN2E0ZmE5YWFmYmIwNWMyYmZhYzIyOTI5YzA4YTA0Mzk5Y2UyNzQifX0.Fm0lmJYx94yaKmGMAQ3Tj6UmztBa5mxZj3Qc_ch_sK4us2ShZKFkiXrB_rGK4BE9aH5jldpQa6S6U8wXq_MdEw"
 	]
 }

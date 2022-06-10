@@ -2,6 +2,8 @@ $schema: "https://gobl.org/draft-0/bill/invoice"
 currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-001"
+tax:
+  prices_include: "VAT"
 
 supplier:
   tax_id:
@@ -36,6 +38,11 @@ lines:
       price: "10.00"
     taxes:
       - cat: VAT
+        rate: "standard+eqs"
+  - quantity: 1
+    item:
+      name: "Delivery Costs"
+      price: "10.00"
+    taxes:
+      - cat: VAT
         rate: "standard"
-      - cat: VATEQS
-        rate: standard

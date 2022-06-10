@@ -1,7 +1,6 @@
 package gb
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -13,10 +12,11 @@ import (
 // New provides the tax region definition
 func New() *tax.Region {
 	return &tax.Region{
-		Country:  l10n.GB,
-		Currency: "GBP",
+		Country:  l10n.FR,
+		Currency: "EUR",
 		Name: i18n.String{
-			i18n.EN: "United Kingdom",
+			i18n.EN: "France",
+			i18n.FR: "La France",
 		},
 		ValidateDocument: Validate,
 		Categories: []*tax.Category{
@@ -27,9 +27,11 @@ func New() *tax.Region {
 				Code: common.TaxCategoryVAT,
 				Name: i18n.String{
 					i18n.EN: "VAT",
+					i18n.FR: "TVA",
 				},
 				Desc: i18n.String{
 					i18n.EN: "Value Added Tax",
+					i18n.FR: "Taxe sur la Valeur Ajoutée",
 				},
 				Retained: false,
 				Rates: []*tax.Rate{
@@ -56,18 +58,6 @@ func New() *tax.Region {
 							},
 						},
 					},
-					{
-						Key: common.TaxRateReduced,
-						Name: i18n.String{
-							i18n.EN: "Reduced Rate",
-						},
-						Values: []*tax.RateValue{
-							{
-								Since:   cal.NewDate(2011, 1, 4),
-								Percent: num.MakePercentage(50, 3),
-							},
-						},
-					},
 				},
 			},
 		},
@@ -76,9 +66,5 @@ func New() *tax.Region {
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
 	return nil
 }

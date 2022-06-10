@@ -7,11 +7,12 @@ import (
 
 // CategoryTotal groups together all rates inside a given category.
 type CategoryTotal struct {
-	Code     Code         `json:"code" jsonschema:"title=Code"`
-	Retained bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
-	Rates    []*RateTotal `json:"rates" jsonschema:"title=Rates"`
-	Base     num.Amount   `json:"base" jsonschema:"title=Base"`
-	Amount   num.Amount   `json:"amount" jsonschema:"title=Amount"`
+	Code      Code         `json:"code" jsonschema:"title=Code"`
+	Retained  bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
+	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
+	Base      num.Amount   `json:"base" jsonschema:"title=Base"`
+	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
+	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 }
 
 // RateTotal contains a sum of all the tax rates in the document with
@@ -20,6 +21,14 @@ type CategoryTotal struct {
 type RateTotal struct {
 	Key     Key            `json:"key,omitempty" jsonschema:"title=Key"`
 	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
+	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
+	// Total amount of rate, excluding surcharges
+	Amount    num.Amount          `json:"amount" jsonschema:"title=Amount"`
+	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+}
+
+// RateTotalSurcharge reflects the sum surcharges inside the rate.
+type RateTotalSurcharge struct {
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	Amount  num.Amount     `json:"amount" jsonschema:"title=Amount"`
 }
@@ -67,6 +76,12 @@ func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt.Percent = c.Percent
 	rt.Base = zero
 	rt.Amount = zero
+	if c.Surcharge != nil {
+		rt.Surcharge = &RateTotalSurcharge{
+			Percent: *c.Surcharge,
+			Amount:  zero,
+		}
+	}
 	return rt
 }
 
@@ -141,8 +156,14 @@ func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, da
 		ct.calculate(zero)
 		if ct.Retained {
 			t.Sum = t.Sum.Subtract(ct.Amount)
+			if ct.Surcharge != nil {
+				t.Sum = t.Sum.Subtract(*ct.Surcharge)
+			}
 		} else {
 			t.Sum = t.Sum.Add(ct.Amount)
+			if ct.Surcharge != nil {
+				t.Sum = t.Sum.Add(*ct.Surcharge)
+			}
 		}
 	}
 
@@ -159,7 +180,29 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 		rt.Base = rt.Base.Rescale(zero.Exp())
 		ct.Base = ct.Base.Add(rt.Base)
 		ct.Amount = ct.Amount.Add(rt.Amount)
+		if rt.Surcharge != nil {
+			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base).Rescale(zero.Exp())
+			if ct.Surcharge == nil {
+				ct.Surcharge = &zero
+			}
+			x := ct.Surcharge.Add(rt.Surcharge.Amount)
+			ct.Surcharge = &x
+		}
 	}
+}
+
+func (rt *RateTotal) matches(c *Combo) bool {
+	if c.Surcharge != nil {
+		if rt.Surcharge == nil {
+			return false
+		}
+		if !rt.Surcharge.Percent.Equals(*c.Surcharge) {
+			return false
+		}
+	} else if rt.Surcharge != nil {
+		return false
+	}
+	return rt.Percent.Equals(c.Percent)
 }
 
 // rateTotalFor either finds of creates total objects for the category and rate.
@@ -180,7 +223,7 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 	// Prepare the Rate, match using percent value
 	var rateTotal *RateTotal
 	for _, rt := range catTotal.Rates {
-		if rt.Percent.Equals(c.Percent) {
+		if rt.matches(c) {
 			rateTotal = rt
 			break
 		}
