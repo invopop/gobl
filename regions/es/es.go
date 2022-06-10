@@ -229,7 +229,7 @@ func New() *tax.Region {
 					{
 						Key: common.TaxRateStandard.With(TaxRateEquivalence),
 						Name: i18n.String{
-							i18n.EN: "Standard Rate + Equivalence",
+							i18n.EN: "Standard Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo General + Recargo de Equivalencia",
 						},
 						Values: []*tax.RateValue{
@@ -273,7 +273,7 @@ func New() *tax.Region {
 					{
 						Key: common.TaxRateReduced.With(TaxRateEquivalence),
 						Name: i18n.String{
-							i18n.EN: "Reduced Rate + Surcharge",
+							i18n.EN: "Reduced Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
 						},
 						Values: []*tax.RateValue{
@@ -309,7 +309,7 @@ func New() *tax.Region {
 					{
 						Key: common.TaxRateSuperReduced.With(TaxRateEquivalence),
 						Name: i18n.String{
-							i18n.EN: "Super-Reduced Rate + Equivalence",
+							i18n.EN: "Super-Reduced Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
 						},
 						Values: []*tax.RateValue{

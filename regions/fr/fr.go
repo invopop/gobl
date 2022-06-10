@@ -1,4 +1,4 @@
-package gb
+package fr
 
 import (
 	"github.com/invopop/gobl/cal"
