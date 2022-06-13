@@ -21,7 +21,8 @@ type Combo struct {
 	Rate Key `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Percent defines the percentage set manually or determined from the rate key.
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
-
+	// Some countries require an additional surcharge.
+	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -32,6 +33,7 @@ func (c *Combo) Validate() error {
 		validation.Field(&c.Category, validation.Required),
 		validation.Field(&c.Rate), // optional, but should be checked if present
 		validation.Field(&c.Percent, validation.Required),
+		validation.Field(&c.Surcharge), // not required, but should be valid number
 	)
 }
 
@@ -53,6 +55,12 @@ func (c *Combo) prepare(r *Region, date cal.Date) error {
 			return ErrInvalidDate.WithMessage("data unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 		}
 		c.Percent = value.Percent
+		if value.Surcharge != nil {
+			s := *value.Surcharge // copy
+			c.Surcharge = &s
+		} else {
+			c.Surcharge = nil
+		}
 	}
 
 	return nil
