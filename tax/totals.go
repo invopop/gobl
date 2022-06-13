@@ -95,16 +95,6 @@ func (t *Total) Category(code Code) *CategoryTotal {
 	return nil
 }
 
-// Rate grabs the matching rate from the category total, or nil.
-func (ct *CategoryTotal) Rate(key Key) *RateTotal {
-	for _, rt := range ct.Rates {
-		if rt.Key == key {
-			return rt
-		}
-	}
-	return nil
-}
-
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
 func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded Code, date cal.Date, zero num.Amount) error {
 	if reg == nil {
