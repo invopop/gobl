@@ -1,18 +1,21 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/region",
   "name": {
-    "en": "United Kingdom"
+    "en": "France",
+    "fr": "La France"
   },
-  "country": "GB",
-  "currency": "GBP",
+  "country": "FR",
+  "currency": "EUR",
   "categories": [
     {
       "code": "VAT",
       "name": {
-        "en": "VAT"
+        "en": "VAT",
+        "fr": "TVA"
       },
       "desc": {
-        "en": "Value Added Tax"
+        "en": "Value Added Tax",
+        "fr": "Taxe sur la Valeur Ajoutée"
       },
       "rates": [
         {
@@ -35,18 +38,6 @@
             {
               "since": "2011-01-04",
               "percent": "20.0%"
-            }
-          ]
-        },
-        {
-          "key": "reduced",
-          "name": {
-            "en": "Reduced Rate"
-          },
-          "values": [
-            {
-              "since": "2011-01-04",
-              "percent": "5.0%"
             }
           ]
         }

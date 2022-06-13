@@ -75,7 +75,7 @@ type RateValue struct {
 	// Percent rate that should be applied
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	// An additional surcharge to apply.
-	Surcharge *num.Percentage `json:"surcharge" jsonschema:"title=Surcharge"`
+	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// When true, this value should no longer be used.
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }

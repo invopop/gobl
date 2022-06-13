@@ -167,6 +167,25 @@
           ]
         },
         {
+          "key": "standard+eqs",
+          "name": {
+            "en": "Standard Rate + Equivalence Surcharge",
+            "es": "Tipo General + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%",
+              "surcharge": "5.2%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "18.0%",
+              "surcharge": "4.0%"
+            }
+          ]
+        },
+        {
           "key": "reduced",
           "name": {
             "en": "Reduced Rate",
@@ -192,6 +211,25 @@
           ]
         },
         {
+          "key": "reduced+eqs",
+          "name": {
+            "en": "Reduced Rate + Equivalence Surcharge",
+            "es": "Tipo Reducido + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "10.0%",
+              "surcharge": "1.4%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "8.0%",
+              "surcharge": "1.0%"
+            }
+          ]
+        },
+        {
           "key": "super-reduced",
           "name": {
             "en": "Super-Reduced Rate",
@@ -207,73 +245,18 @@
               "percent": "3.0%"
             }
           ]
-        }
-      ]
-    },
-    {
-      "code": "VATEQS",
-      "name": {
-        "en": "VAT Equalization Surcharge",
-        "es": "IVA Recargo de Equivalencia"
-      },
-      "rates": [
-        {
-          "key": "standard",
-          "name": {
-            "en": "Standard Rate",
-            "es": "Tipo General"
-          },
-          "values": [
-            {
-              "since": "2012-09-01",
-              "percent": "5.2%"
-            },
-            {
-              "since": "1993-01-01",
-              "percent": "4.0%"
-            }
-          ]
         },
         {
-          "key": "reduced",
+          "key": "super-reduced+eqs",
           "name": {
-            "en": "Reduced Rate",
-            "es": "Tipo Reducido"
+            "en": "Super-Reduced Rate + Equivalence Surcharge",
+            "es": "Tipo Superreducido + Recargo de Equivalencia"
           },
           "values": [
             {
-              "since": "2012-09-01",
-              "percent": "1.4%"
-            },
-            {
-              "since": "1993-01-01",
-              "percent": "1.0%"
-            }
-          ]
-        },
-        {
-          "key": "super-reduced",
-          "name": {
-            "en": "Super-Reduced Rate",
-            "es": "Tipo Superreducido"
-          },
-          "values": [
-            {
-              "since": "1993-01-01",
-              "percent": "0.5%"
-            }
-          ]
-        },
-        {
-          "key": "tobacco",
-          "name": {
-            "en": "Tobacco Rate",
-            "es": "Tipo Tobaco"
-          },
-          "values": [
-            {
-              "since": "2007-01-01",
-              "percent": "1.75%"
+              "since": "1995-01-01",
+              "percent": "4.0%",
+              "surcharge": "0.5%"
             }
           ]
         }
