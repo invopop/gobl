@@ -19,6 +19,11 @@
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
           "description": "Percent defines the percentage set manually or determined from the rate key."
+        },
+        "surcharge": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Surcharge",
+          "description": "Some countries require an additional surcharge."
         }
       },
       "type": "object",

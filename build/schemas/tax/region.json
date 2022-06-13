@@ -110,7 +110,12 @@
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Rate that should be applied"
+          "description": "Percent rate that should be applied"
+        },
+        "surcharge": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Surcharge",
+          "description": "An additional surcharge to apply."
         },
         "disabled": {
           "type": "boolean",
