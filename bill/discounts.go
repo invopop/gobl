@@ -76,3 +76,18 @@ func (m *Discount) GetTaxes() tax.Set {
 func (m *Discount) GetTotal() num.Amount {
 	return m.Amount.Invert()
 }
+
+func (m *Discount) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Discount {
+	rate := m.Taxes.Get(cat)
+	if rate == nil {
+		return m
+	}
+
+	m2 := *m
+
+	m2.Amount = m2.Amount.Rescale(m2.Amount.Exp() + accuracy)
+	d := rate.Percent.From(m2.Amount)
+	m2.Amount = m2.Amount.Subtract(d)
+
+	return &m2
+}

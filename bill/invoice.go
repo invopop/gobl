@@ -200,6 +200,43 @@ func (inv *Invoice) Calculate() error {
 	return inv.calculate(r)
 }
 
+// RemoveIncludedTaxes is a special function that will go through all prices which may include
+// the tax included in the invoice, and remove them. The accuracy parameter is used to determine
+// the additional exponent that will be added to prices before calculation with the aim of reducing
+// rounding errors. An accuracy value of 2 is recommended.
+//
+// A new invoice object is returned, leaving the original objects untouched.
+func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
+	if inv.Tax == nil || inv.Tax.PricesInclude.IsEmpty() {
+		return inv // nothing to do!
+	}
+
+	i2 := *inv
+	i2.Lines = make(Lines, len(inv.Lines))
+	for i, l := range inv.Lines {
+		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+	}
+
+	if len(inv.Discounts) > 0 {
+		i2.Discounts = make(Discounts, len(inv.Discounts))
+		for i, l := range inv.Discounts {
+			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+		}
+	}
+	if len(i2.Charges) > 0 {
+		i2.Charges = make(Charges, len(inv.Charges))
+		for i, l := range inv.Charges {
+			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+		}
+	}
+
+	tx := *i2.Tax
+	tx.PricesInclude = ""
+	i2.Tax = &tx
+
+	return &i2
+}
+
 func (inv *Invoice) prepareSchemes(r *tax.Region) error {
 	if inv.Tax == nil {
 		return nil
