@@ -236,6 +236,8 @@ func TestAmountDownscale(t *testing.T) {
 	a := num.MakeAmount(2183, 2)
 	b := a.Downscale(2)
 	assert.Equal(t, "22", b.String())
+	b = a.Downscale(5)
+	assert.Equal(t, "22", b.String())
 }
 
 func TestAmountMatchPrecision(t *testing.T) {

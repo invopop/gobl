@@ -191,9 +191,11 @@ func (a Amount) Upscale(accuracy uint32) Amount {
 
 // Downscale decreases the amount's exponent by the provided accuracy.
 func (a Amount) Downscale(accuracy uint32) Amount {
-	x := a.Exp() - accuracy
-	if x < 0 {
+	var x uint32
+	if accuracy > a.Exp() {
 		x = 0
+	} else {
+		x = a.Exp() - accuracy
 	}
 	return a.Rescale(x)
 }
