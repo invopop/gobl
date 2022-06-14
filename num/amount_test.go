@@ -219,6 +219,27 @@ func TestAmountRescale(t *testing.T) {
 	assert.Equal(t, "1234.57", r.String(), "rounded number")
 }
 
+func TestAmountRemove(t *testing.T) {
+	a := num.MakeAmount(20000, 2)
+	p := num.MakePercentage(10, 2)
+	b := a.Remove(p)
+	assert.Equal(t, "181.82", b.String())
+}
+
+func TestAmountUpscale(t *testing.T) {
+	a := num.MakeAmount(2123, 2)
+	b := a.Upscale(2)
+	assert.Equal(t, "21.2300", b.String())
+}
+
+func TestAmountDownscale(t *testing.T) {
+	a := num.MakeAmount(2183, 2)
+	b := a.Downscale(2)
+	assert.Equal(t, "22", b.String())
+	b = a.Downscale(5)
+	assert.Equal(t, "22", b.String())
+}
+
 func TestAmountMatchPrecision(t *testing.T) {
 	a := num.MakeAmount(123456, 2)
 	a2 := num.MakeAmount(12345678, 4)

@@ -79,3 +79,40 @@ func (l *Line) calculate() {
 		l.Total = l.Total.Add(c.Amount)
 	}
 }
+
+func (l *Line) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Line {
+	rate := l.Taxes.Get(cat)
+	if rate == nil {
+		return l
+	}
+
+	l2 := *l
+	l2i := *l.Item
+
+	l2i.Price = l2i.Price.Upscale(accuracy).Remove(rate.Percent)
+	l2.Sum = l2.Sum.Upscale(accuracy).Remove(rate.Percent)
+	l2.Total = l2.Total.Upscale(accuracy).Remove(rate.Percent)
+
+	if len(l2.Discounts) > 0 {
+		rows := make([]*LineDiscount, len(l2.Discounts))
+		for i, v := range l.Discounts {
+			d := *v
+			d.Amount = d.Amount.Upscale(accuracy).Remove(rate.Percent)
+			rows[i] = &d
+		}
+		l2.Discounts = rows
+	}
+
+	if len(l2.Charges) > 0 {
+		rows := make([]*LineCharge, len(l2.Charges))
+		for i, v := range l.Charges {
+			d := *v
+			d.Amount = d.Amount.Upscale(accuracy).Remove(rate.Percent)
+			rows[i] = &d
+		}
+		l2.Charges = rows
+	}
+
+	l2.Item = &l2i
+	return &l2
+}

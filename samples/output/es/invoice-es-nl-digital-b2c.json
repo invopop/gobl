@@ -1,16 +1,21 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "8cb9c3d6-e8c7-11ec-96bb-e2c0624703d9",
+		"uuid": "252165e0-ebc7-11ec-9155-e2c0624703d9",
 		"dig": {
 			"alg": "sha256",
-			"val": "8e9ddd2abcc870e0a080a511c8c4796a674633dbb534687f8d2f3f7351530348"
+			"val": "60ae9185a5ab4aec18f25fbb8eb24176fef09850f0f0fe3aaee8399944d0878e"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "SAMPLE-001",
+		"code": "SAMPLE-X-002",
 		"currency": "EUR",
+		"tax": {
+			"schemes": [
+				"customer-rates"
+			]
+		},
 		"issue_date": "2022-02-01",
 		"supplier": {
 			"tax_id": {
@@ -36,8 +41,7 @@
 		},
 		"customer": {
 			"tax_id": {
-				"country": "ES",
-				"code": "54387763P"
+				"country": "NL"
 			},
 			"name": "Sample Consumer"
 		},
@@ -46,7 +50,7 @@
 				"i": 1,
 				"quantity": "10",
 				"item": {
-					"name": "Item being purchased",
+					"name": "Services exported",
 					"price": "100.00"
 				},
 				"sum": "1000.00",
@@ -87,6 +91,6 @@
 		}
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjNiMzEzZDAyLWMxY2ItNDY3Ni05YzVmLWEzNDJlMmRjOWEwMCJ9.eyJ1dWlkIjoiOGNiOWMzZDYtZThjNy0xMWVjLTk2YmItZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjhlOWRkZDJhYmNjODcwZTBhMDgwYTUxMWM4YzQ3OTZhNjc0NjMzZGJiNTM0Njg3ZjhkMmYzZjczNTE1MzAzNDgifX0.YSkpjUQIOQDaYbAhtiayzMx4HEs6GyPNrNRRd9VhnjnmH0w7HkZ3lefDNsde4jgS_lB0k2XoIYGSIsDb6KQ3yQ"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjgzNDdjNGQwLTdjZDQtNGMyMi05OWY2LTg5MWI1NDRlMWMxZCJ9.eyJ1dWlkIjoiMjUyMTY1ZTAtZWJjNy0xMWVjLTkxNTUtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjYwYWU5MTg1YTVhYjRhZWMxOGYyNWZiYjhlYjI0MTc2ZmVmMDk4NTBmMGYwZmUzYWFlZTgzOTk5NDRkMDg3OGUifX0.XSaPh3oOuO01bZmaWJQAKkpEKFgfRgeboe-y3hNtaT1SY38-ONTs0cq-x_5KkIfVIxSSVCDFUsXI7Y-68lQcCA"
 	]
 }

@@ -183,6 +183,30 @@ func (a Amount) MatchPrecision(a2 Amount) Amount {
 	return a
 }
 
+// Upscale increases the accuracy of the amount by rescaling the exponent
+// by the provided amount.
+func (a Amount) Upscale(accuracy uint32) Amount {
+	return a.Rescale(a.Exp() + accuracy)
+}
+
+// Downscale decreases the amount's exponent by the provided accuracy.
+func (a Amount) Downscale(accuracy uint32) Amount {
+	var x uint32
+	if accuracy > a.Exp() {
+		x = 0
+	} else {
+		x = a.Exp() - accuracy
+	}
+	return a.Rescale(x)
+}
+
+// Remove takes the provided percentage away from the amount assuming it was
+// already applied previously.
+func (a Amount) Remove(percent Percentage) Amount {
+	p := percent.From(a)
+	return a.Subtract(p)
+}
+
 // Invert the value.
 func (a Amount) Invert() Amount {
 	return Amount{value: -a.value, exp: a.exp}
