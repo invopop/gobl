@@ -82,12 +82,7 @@ func (m *Discount) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Discount 
 	if rate == nil {
 		return m
 	}
-
 	m2 := *m
-
-	m2.Amount = m2.Amount.Rescale(m2.Amount.Exp() + accuracy)
-	d := rate.Percent.From(m2.Amount)
-	m2.Amount = m2.Amount.Subtract(d)
-
+	m2.Amount = m2.Amount.Upscale(accuracy).Remove(rate.Percent)
 	return &m2
 }

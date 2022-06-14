@@ -1,7 +1,7 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "c68c1565-eb63-11ec-9fd9-e2c0624703d9",
+		"uuid": "25217ddc-ebc7-11ec-9155-e2c0624703d9",
 		"dig": {
 			"alg": "sha256",
 			"val": "45ac3115c8569a1789e58af8d0dc91ef3baa1fb71daaf38f5aef94f82b4d0033"
@@ -13,6 +13,6 @@
 		"content": "We hope you like this test message!"
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjE0ZTFmNDY3LWY3OWUtNGUxYS1iM2MwLWNhMzhiZmFjMzUxNiJ9.eyJ1dWlkIjoiYzY4YzE1NjUtZWI2My0xMWVjLTlmZDktZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjQ1YWMzMTE1Yzg1NjlhMTc4OWU1OGFmOGQwZGM5MWVmM2JhYTFmYjcxZGFhZjM4ZjVhZWY5NGY4MmI0ZDAwMzMifX0.sXlfoHHBxla5xcX_fAMKTmCsbLrGCQlcSF1YvnzW3hn9ypeB56caRxw3Q1Kh12VmBU8E3Vfi9hApBkqIwLDJ_Q"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjgzNDdjNGQwLTdjZDQtNGMyMi05OWY2LTg5MWI1NDRlMWMxZCJ9.eyJ1dWlkIjoiMjUyMTdkZGMtZWJjNy0xMWVjLTkxNTUtZTJjMDYyNDcwM2Q5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjQ1YWMzMTE1Yzg1NjlhMTc4OWU1OGFmOGQwZGM5MWVmM2JhYTFmYjcxZGFhZjM4ZjVhZWY5NGY4MmI0ZDAwMzMifX0.a1d_KE3biZSIzq07SE8By0unERhPIk61fBQGwOW8D7DuQRPr7adok3eNBWgjLqdRiAqC09erPCkiIO-s-zUvKw"
 	]
 }

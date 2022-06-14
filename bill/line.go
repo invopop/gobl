@@ -89,25 +89,15 @@ func (l *Line) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Line {
 	l2 := *l
 	l2i := *l.Item
 
-	l2i.Price = l2i.Price.Rescale(l2i.Price.Exp() + accuracy)
-	ip := rate.Percent.From(l2i.Price)
-	l2i.Price = l2i.Price.Subtract(ip)
-
-	l2.Sum = l2.Sum.Rescale(l2.Sum.Exp() + accuracy)
-	sp := rate.Percent.From(l2.Sum)
-	l2.Sum = l2.Sum.Subtract(sp)
-
-	l2.Total = l2.Total.Rescale(l2.Total.Exp() + accuracy)
-	lp := rate.Percent.From(l2.Total)
-	l2.Total = l2.Total.Subtract(lp)
+	l2i.Price = l2i.Price.Upscale(accuracy).Remove(rate.Percent)
+	l2.Sum = l2.Sum.Upscale(accuracy).Remove(rate.Percent)
+	l2.Total = l2.Total.Upscale(accuracy).Remove(rate.Percent)
 
 	if len(l2.Discounts) > 0 {
 		rows := make([]*LineDiscount, len(l2.Discounts))
 		for i, v := range l.Discounts {
 			d := *v
-			d.Amount = d.Amount.Rescale(d.Amount.Exp() + accuracy)
-			x := rate.Percent.From(d.Amount)
-			d.Amount = d.Amount.Subtract(x)
+			d.Amount = d.Amount.Upscale(accuracy).Remove(rate.Percent)
 			rows[i] = &d
 		}
 		l2.Discounts = rows
@@ -117,9 +107,7 @@ func (l *Line) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Line {
 		rows := make([]*LineCharge, len(l2.Charges))
 		for i, v := range l.Charges {
 			d := *v
-			d.Amount = d.Amount.Rescale(d.Amount.Exp() + accuracy)
-			x := rate.Percent.From(d.Amount)
-			d.Amount = d.Amount.Subtract(x)
+			d.Amount = d.Amount.Upscale(accuracy).Remove(rate.Percent)
 			rows[i] = &d
 		}
 		l2.Charges = rows
