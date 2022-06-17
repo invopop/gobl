@@ -43,6 +43,18 @@ const (
 	SchemeCashBasis       tax.Key = "cash-basis"
 )
 
+// Inbox key and role definitions
+const (
+	InboxKeyFACE org.InboxKey = "face"
+
+	// Main roles defined in FACE
+	InboxRoleFiscal    org.InboxKey = "fiscal"    // Fiscal / 01
+	InboxRoleRecipient org.InboxKey = "recipient" // Receptor / 02
+	InboxRolePayer     org.InboxKey = "payer"     // Pagador / 03
+	InboxRoleCustomer  org.InboxKey = "customer"  // Comprador / 04
+
+)
+
 // New provides the Spanish region definition
 func New() *tax.Region {
 	return &tax.Region{

@@ -16,6 +16,7 @@ func init() {
 		TaxIdentity{},
 		Meta{},
 		Notes{},
+		Inbox{},
 	}
 	schema.RegisterAll(schema.GOBL.Add("org"), objs)
 }

@@ -1,6 +1,8 @@
 package gobl
 
 import (
+	"fmt"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 
 	"github.com/invopop/gobl/dsig"
@@ -74,7 +76,7 @@ func (e *Envelope) verifyDigest() error {
 	if err != nil {
 		return err
 	}
-	return d1.Equals(d2)
+	return fmt.Errorf("document: %w", d1.Equals(d2))
 }
 
 // Sign uses the private key to the envelope headers.
