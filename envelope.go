@@ -76,7 +76,10 @@ func (e *Envelope) verifyDigest() error {
 	if err != nil {
 		return err
 	}
-	return fmt.Errorf("document: %w", d1.Equals(d2))
+	if err := d1.Equals(d2); err != nil {
+		return fmt.Errorf("document: %w", err)
+	}
+	return nil
 }
 
 // Sign uses the private key to the envelope headers.
