@@ -220,5 +220,5 @@
       "description": "Schemes defines an array of scheme objects with helper functions."
     }
   },
-  "$comment": "Generated with GOBL v0.25.0"
+  "$comment": "Generated with GOBL v0.26.0"
 }

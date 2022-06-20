@@ -7,7 +7,8 @@
       "properties": {
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
-          "title": "UUID"
+          "title": "UUID",
+          "description": "Unique identity code"
         },
         "label": {
           "type": "string",
@@ -27,5 +28,5 @@
       "description": "Telephone describes what is expected for a telephone number."
     }
   },
-  "$comment": "Generated with GOBL v0.25.0"
+  "$comment": "Generated with GOBL v0.26.0"
 }

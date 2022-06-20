@@ -13,12 +13,12 @@
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
-          "description": "Unique identity code."
+          "description": "Unique identity code"
         },
         "tax_id": {
           "$ref": "https://gobl.org/draft-0/org/tax-identity",
           "title": "Tax Identity",
-          "description": "The entity's legal ID code used for tax purposes. They may have other numbers"
+          "description": "The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes."
         },
         "name": {
           "type": "string",
@@ -38,6 +38,14 @@
           "title": "People",
           "description": "Details of physical people who represent the party."
         },
+        "inboxes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/inbox"
+          },
+          "type": "array",
+          "title": "Inboxes",
+          "description": "Digital inboxes used for forwarding electronic versions of documents"
+        },
         "addresses": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/address"
@@ -51,14 +59,16 @@
             "$ref": "https://gobl.org/draft-0/org/email"
           },
           "type": "array",
-          "title": "Email Addresses"
+          "title": "Email Addresses",
+          "description": "Electronic mail addresses"
         },
         "telephones": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/telephone"
           },
           "type": "array",
-          "title": "Telephone Numbers"
+          "title": "Telephone Numbers",
+          "description": "Regular telephone numbers"
         },
         "registration": {
           "$ref": "https://gobl.org/draft-0/org/registration",
@@ -78,5 +88,5 @@
       "description": "Party represents a person or business entity."
     }
   },
-  "$comment": "Generated with GOBL v0.25.0"
+  "$comment": "Generated with GOBL v0.26.0"
 }

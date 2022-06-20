@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/inbox",
+  "$ref": "#/$defs/Inbox",
+  "$defs": {
+    "Inbox": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique ID. Useful if inbox is stored in a database."
+        },
+        "key": {
+          "type": "string",
+          "title": "Key",
+          "description": "Type of inbox being defined."
+        },
+        "role": {
+          "type": "string",
+          "title": "Role",
+          "description": "Role assigned to this inbox that may be relevant for the consumer."
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Human name for the inbox."
+        },
+        "code": {
+          "type": "string",
+          "description": "Actual Code or ID that identifies the Inbox."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "code"
+      ],
+      "description": "Inbox is used to store data about a connection with a service that is responsible for potentially receiving copies of GOBL envelopes or other document formats defined locally."
+    }
+  },
+  "$comment": "Generated with GOBL v0.26.0"
+}

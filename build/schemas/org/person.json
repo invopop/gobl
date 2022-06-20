@@ -38,7 +38,8 @@
             "$ref": "https://gobl.org/draft-0/org/telephone"
           },
           "type": "array",
-          "title": "Telephone Numbers"
+          "title": "Telephone Numbers",
+          "description": "Regular phone or mobile numbers"
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/org/meta",
@@ -53,5 +54,5 @@
       "description": "Person represents a human, and how to contact them electronically."
     }
   },
-  "$comment": "Generated with GOBL v0.25.0"
+  "$comment": "Generated with GOBL v0.26.0"
 }
