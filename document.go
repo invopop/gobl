@@ -19,10 +19,6 @@ type Document struct {
 	payload interface{}
 }
 
-type schemaDoc struct {
-	Schema schema.ID `json:"$schema,omitempty"`
-}
-
 // NewDocument instantiates a Document wrapper around the provided object.
 func NewDocument(payload interface{}) (*Document, error) {
 	d := new(Document)
@@ -85,11 +81,10 @@ func (d *Document) insert(payload interface{}) error {
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 func (d *Document) UnmarshalJSON(data []byte) error {
-	def := new(schemaDoc)
-	if err := json.Unmarshal(data, def); err != nil {
-		return err
+	var err error
+	if d.schema, err = schema.Extract(data); err != nil {
+		return ErrUnknownSchema.WithCause(err)
 	}
-	d.schema = def.Schema
 
 	// Map the schema to an instance of the payload, or fail if we don't know what it is
 	d.payload = d.schema.Interface()
@@ -110,25 +105,12 @@ func (d *Document) MarshalJSON() ([]byte, error) {
 		return nil, ErrMarshal.WithCause(err)
 	}
 
-	sdata, err := json.Marshal(d.schemaDoc())
+	data, err = schema.Insert(d.schema, data)
 	if err != nil {
 		return nil, ErrMarshal.WithCause(err)
 	}
 
-	// Combine the base data with the JSON schema information.
-	// We manually create and add the JSON as this is just simply the quickest
-	// way to do it.
-	data = bytes.TrimLeft(data, "{")
-	sdata = append(bytes.TrimRight(sdata, "}"), byte(','))
-	data = append(sdata, data...)
-
 	return data, nil
-}
-
-func (d *Document) schemaDoc() *schemaDoc {
-	return &schemaDoc{
-		Schema: d.schema,
-	}
 }
 
 // JSONSchema returns a jsonschema.Schema instance.

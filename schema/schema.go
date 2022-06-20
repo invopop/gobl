@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"bytes"
+	"encoding/json"
 	"reflect"
 	"strings"
 
@@ -26,6 +28,38 @@ func init() {
 
 // ID contains the official schema URL.
 type ID string
+
+type document struct {
+	Schema ID `json:"$schema,omitempty"`
+}
+
+// Extract attempts to Unmarshal the provided JSON document in order to extract
+// the payload's Schema ID.
+func Extract(data []byte) (ID, error) {
+	def := new(document)
+	if err := json.Unmarshal(data, def); err != nil {
+		return UnknownID, err
+	}
+	return def.Schema, nil
+}
+
+// Insert adds the provided schema ID to the JSON data provided.
+func Insert(id ID, data []byte) ([]byte, error) {
+	doc := &document{Schema: id}
+	sdata, err := json.Marshal(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	// Combine the base data with the JSON schema information.
+	// We manually create and add the JSON as this is just simply the quickest
+	// way to do it.
+	data = bytes.TrimLeft(data, "{")
+	sdata = append(bytes.TrimRight(sdata, "}"), byte(','))
+	data = append(sdata, data...)
+
+	return data, nil
+}
 
 // Validate ensures the schema ID looks good.
 func (id ID) Validate() error {
