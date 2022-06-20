@@ -176,7 +176,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "digest mismatch",
+			want: "document: digest mismatch",
 		},
 	}
 

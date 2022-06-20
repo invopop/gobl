@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -21,4 +22,9 @@ const (
 const (
 	SchemeReverseCharge tax.Key = "reverse-charge"
 	SchemeCustomerRates tax.Key = "customer-rates"
+)
+
+// Common inbox keys
+const (
+	InboxKeyPEPPOL org.InboxKey = "peppol-id"
 )
