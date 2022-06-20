@@ -22,7 +22,7 @@ type Party struct {
 	// Details of physical people who represent the party.
 	People []*Person `json:"people,omitempty" jsonschema:"title=People"`
 	// Digital inboxes used for forwarding electronic versions of documents
-	Inboxes Inboxes `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
+	Inboxes []*Inbox `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 	// Regular post addresses for where information should be sent if needed.
 	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
 	// Electronic mail addresses

@@ -7,9 +7,6 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// Inboxes defines an array of inboxes.
-type Inboxes []*Inbox
-
 // InboxKey determines the type of inbox data being provided. Pre-defined
 // keys are available in the regions package.
 type InboxKey string
