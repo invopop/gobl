@@ -9,7 +9,7 @@ import (
 // The contents can also be serialised as JSON ready to send to a client
 // if needed.
 type Error struct {
-	Code  string `json:"code"`
+	Key   string `json:"key"`
 	Cause error  `json:"cause"`
 }
 
@@ -32,6 +32,10 @@ var (
 	// or marshal an object, usually into JSON.
 	ErrMarshal = NewError("marshal")
 
+	// ErrUnmarshal is used when that has been a problem attempting to read the
+	// source data.
+	ErrUnmarshal = NewError("unmarshal")
+
 	// ErrSignature identifies an issue related to signatures.
 	ErrSignature = NewError("signature")
 
@@ -45,16 +49,16 @@ var (
 
 // NewError provides a new error with a code that is meant to provide
 // a context.
-func NewError(code string) *Error {
-	return &Error{Code: code}
+func NewError(key string) *Error {
+	return &Error{Key: key}
 }
 
 // Error provides a string representation of the error.
 func (e *Error) Error() string {
 	if e.Cause != nil {
-		return fmt.Sprintf("%s: %s", e.Code, e.Cause.Error())
+		return fmt.Sprintf("%s: %s", e.Key, e.Cause.Error())
 	}
-	return e.Code
+	return e.Key
 }
 
 // WithCause is used to copy and add an underlying error to this one.
@@ -85,5 +89,5 @@ func (e *Error) Is(target error) bool {
 	if !ok {
 		return errors.Is(e.Cause, target)
 	}
-	return e.Code == t.Code
+	return e.Key == t.Key
 }
