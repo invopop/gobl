@@ -5,6 +5,503 @@
     "es": "España"
   },
   "country": "ES",
+  "localities": [
+    {
+      "code": "VI",
+      "name": {
+        "es": "Ávila"
+      },
+      "meta": {
+        "post": "01"
+      }
+    },
+    {
+      "code": "AB",
+      "name": {
+        "es": "Albacete"
+      },
+      "meta": {
+        "post": "02"
+      }
+    },
+    {
+      "code": "A",
+      "name": {
+        "es": "Alicante"
+      },
+      "meta": {
+        "post": "03"
+      }
+    },
+    {
+      "code": "AL",
+      "name": {
+        "es": "Almería"
+      },
+      "meta": {
+        "post": "04"
+      }
+    },
+    {
+      "code": "AV",
+      "name": {
+        "es": "Ávila"
+      },
+      "meta": {
+        "post": "05"
+      }
+    },
+    {
+      "code": "BA",
+      "name": {
+        "es": "Badajoz"
+      },
+      "meta": {
+        "post": "06"
+      }
+    },
+    {
+      "code": "PM",
+      "name": {
+        "es": "Baleares"
+      },
+      "meta": {
+        "post": "07"
+      }
+    },
+    {
+      "code": "IB",
+      "name": {
+        "es": "Baleares"
+      },
+      "meta": {
+        "post": "07"
+      }
+    },
+    {
+      "code": "B",
+      "name": {
+        "es": "Barcelona"
+      },
+      "meta": {
+        "post": "08"
+      }
+    },
+    {
+      "code": "BU",
+      "name": {
+        "es": "Burgos"
+      },
+      "meta": {
+        "post": "09"
+      }
+    },
+    {
+      "code": "CC",
+      "name": {
+        "es": "Cáceres"
+      },
+      "meta": {
+        "post": "10"
+      }
+    },
+    {
+      "code": "CA",
+      "name": {
+        "es": "Cadiz"
+      },
+      "meta": {
+        "post": "11"
+      }
+    },
+    {
+      "code": "CS",
+      "name": {
+        "es": "Castellón"
+      },
+      "meta": {
+        "post": "12"
+      }
+    },
+    {
+      "code": "CR",
+      "name": {
+        "es": "Ciudad Real"
+      },
+      "meta": {
+        "post": "13"
+      }
+    },
+    {
+      "code": "CO",
+      "name": {
+        "es": "Cordoba"
+      },
+      "meta": {
+        "post": "14"
+      }
+    },
+    {
+      "code": "C",
+      "name": {
+        "es": "La Coruña"
+      },
+      "meta": {
+        "post": "15"
+      }
+    },
+    {
+      "code": "CU",
+      "name": {
+        "es": "Cuenca"
+      },
+      "meta": {
+        "post": "16"
+      }
+    },
+    {
+      "code": "GE",
+      "name": {
+        "es": "Gerona"
+      },
+      "meta": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "GI",
+      "name": {
+        "es": "Girona"
+      },
+      "meta": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "GR",
+      "name": {
+        "es": "Granada"
+      },
+      "meta": {
+        "post": "18"
+      }
+    },
+    {
+      "code": "GU",
+      "name": {
+        "es": "Guadalajara"
+      },
+      "meta": {
+        "post": "19"
+      }
+    },
+    {
+      "code": "SS",
+      "name": {
+        "es": "Guipúzcoa"
+      },
+      "meta": {
+        "post": "20"
+      }
+    },
+    {
+      "code": "H",
+      "name": {
+        "es": "Huelva"
+      },
+      "meta": {
+        "post": "21"
+      }
+    },
+    {
+      "code": "HU",
+      "name": {
+        "es": "Huesca"
+      },
+      "meta": {
+        "post": "22"
+      }
+    },
+    {
+      "code": "J",
+      "name": {
+        "es": "Jaén"
+      },
+      "meta": {
+        "post": "23"
+      }
+    },
+    {
+      "code": "LE",
+      "name": {
+        "es": "León"
+      },
+      "meta": {
+        "post": "24"
+      }
+    },
+    {
+      "code": "L",
+      "name": {
+        "es": "Lérida / Lleida"
+      },
+      "meta": {
+        "post": "25"
+      }
+    },
+    {
+      "code": "LO",
+      "name": {
+        "es": "La Rioja"
+      },
+      "meta": {
+        "post": "26"
+      }
+    },
+    {
+      "code": "LU",
+      "name": {
+        "es": "Lugo"
+      },
+      "meta": {
+        "post": "27"
+      }
+    },
+    {
+      "code": "M",
+      "name": {
+        "es": "Madrid"
+      },
+      "meta": {
+        "post": "28"
+      }
+    },
+    {
+      "code": "MA",
+      "name": {
+        "es": "Málaga"
+      },
+      "meta": {
+        "post": "29"
+      }
+    },
+    {
+      "code": "MU",
+      "name": {
+        "es": "Murcia"
+      },
+      "meta": {
+        "post": "30"
+      }
+    },
+    {
+      "code": "NA",
+      "name": {
+        "es": "Navarra"
+      },
+      "meta": {
+        "post": "31"
+      }
+    },
+    {
+      "code": "OR",
+      "name": {
+        "es": "Orense"
+      },
+      "meta": {
+        "post": "32"
+      }
+    },
+    {
+      "code": "OU",
+      "name": {
+        "es": "Orense"
+      },
+      "meta": {
+        "post": "32"
+      }
+    },
+    {
+      "code": "O",
+      "name": {
+        "es": "Asturias"
+      },
+      "meta": {
+        "post": "33"
+      }
+    },
+    {
+      "code": "P",
+      "name": {
+        "es": "Palencia"
+      },
+      "meta": {
+        "post": "34"
+      }
+    },
+    {
+      "code": "GC",
+      "name": {
+        "es": "Las Palmas"
+      },
+      "meta": {
+        "post": "35"
+      }
+    },
+    {
+      "code": "PO",
+      "name": {
+        "es": "Pontevedra"
+      },
+      "meta": {
+        "post": "36"
+      }
+    },
+    {
+      "code": "SA",
+      "name": {
+        "es": "Salamanca"
+      },
+      "meta": {
+        "post": "37"
+      }
+    },
+    {
+      "code": "TF",
+      "name": {
+        "es": "Santa Cruz de Tenerife"
+      },
+      "meta": {
+        "post": "38"
+      }
+    },
+    {
+      "code": "S",
+      "name": {
+        "es": "Cantabria"
+      },
+      "meta": {
+        "post": "39"
+      }
+    },
+    {
+      "code": "SG",
+      "name": {
+        "es": "Segovia"
+      },
+      "meta": {
+        "post": "40"
+      }
+    },
+    {
+      "code": "SE",
+      "name": {
+        "es": "Sevilla"
+      },
+      "meta": {
+        "post": "41"
+      }
+    },
+    {
+      "code": "SO",
+      "name": {
+        "es": "Soria"
+      },
+      "meta": {
+        "post": "42"
+      }
+    },
+    {
+      "code": "T",
+      "name": {
+        "es": "Tarragona"
+      },
+      "meta": {
+        "post": "43"
+      }
+    },
+    {
+      "code": "TE",
+      "name": {
+        "es": "Teruel"
+      },
+      "meta": {
+        "post": "44"
+      }
+    },
+    {
+      "code": "TO",
+      "name": {
+        "es": "Toledo"
+      },
+      "meta": {
+        "post": "45"
+      }
+    },
+    {
+      "code": "V",
+      "name": {
+        "es": "Valencia"
+      },
+      "meta": {
+        "post": "46"
+      }
+    },
+    {
+      "code": "VA",
+      "name": {
+        "es": "Valladolid"
+      },
+      "meta": {
+        "post": "47"
+      }
+    },
+    {
+      "code": "BI",
+      "name": {
+        "es": "Vizcaya"
+      },
+      "meta": {
+        "post": "48"
+      }
+    },
+    {
+      "code": "ZA",
+      "name": {
+        "es": "Zamora"
+      },
+      "meta": {
+        "post": "49"
+      }
+    },
+    {
+      "code": "Z",
+      "name": {
+        "es": "Zaragoza"
+      },
+      "meta": {
+        "post": "50"
+      }
+    },
+    {
+      "code": "CE",
+      "name": {
+        "es": "Ceuta"
+      },
+      "meta": {
+        "post": "51"
+      }
+    },
+    {
+      "code": "ML",
+      "name": {
+        "es": "Melilla"
+      },
+      "meta": {
+        "post": "52"
+      }
+    }
+  ],
   "currency": "EUR",
   "schemes": [
     {

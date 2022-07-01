@@ -80,7 +80,7 @@ func (l *Line) calculate() {
 	}
 }
 
-func (l *Line) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Line {
+func (l *Line) removeIncludedTaxes(cat org.Code, accuracy uint32) *Line {
 	rate := l.Taxes.Get(cat)
 	if rate == nil {
 		return l

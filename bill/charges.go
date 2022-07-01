@@ -75,7 +75,7 @@ func (m *Charge) GetTotal() num.Amount {
 	return m.Amount
 }
 
-func (m *Charge) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Charge {
+func (m *Charge) removeIncludedTaxes(cat org.Code, accuracy uint32) *Charge {
 	rate := m.Taxes.Get(cat)
 	if rate == nil {
 		return m

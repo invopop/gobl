@@ -6,12 +6,12 @@
     "Combo": {
       "properties": {
         "cat": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/code",
           "title": "Category",
           "description": "Tax category code from those available inside a region."
         },
         "rate": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/key",
           "title": "Rate",
           "description": "Rate within a category to apply."
         },
@@ -41,5 +41,5 @@
       "description": "Set defines a list of tax categories and their rates to be used alongside taxable items."
     }
   },
-  "$comment": "Generated with GOBL v0.26.0"
+  "$comment": "Generated with GOBL v0.27.0"
 }

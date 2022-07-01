@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/regions/es"
 	"github.com/invopop/gobl/tax"
@@ -27,14 +28,14 @@ func (tl *taxableLine) GetTotal() num.Amount {
 }
 
 func TestTotalCalculate(t *testing.T) {
-	spain := es.New()
+	spain := es.Region
 	date := cal.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {
 		desc        string
 		lines       []tax.TaxableLine
 		date        *cal.Date
-		taxIncluded tax.Code
+		taxIncluded org.Code
 		want        *tax.Total
 		err         error
 		errContent  string
@@ -589,7 +590,7 @@ func TestTotalCalculate(t *testing.T) {
 				&taxableLine{
 					taxes: tax.Set{
 						{
-							Category: tax.Code("FOO"),
+							Category: org.Code("FOO"),
 							Rate:     common.TaxRateStandard,
 						},
 					},

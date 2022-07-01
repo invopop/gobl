@@ -11,12 +11,12 @@
           "description": "Unique ID. Useful if inbox is stored in a database."
         },
         "key": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/key",
           "title": "Key",
           "description": "Type of inbox being defined."
         },
         "role": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/key",
           "title": "Role",
           "description": "Role assigned to this inbox that may be relevant for the consumer."
         },
@@ -38,5 +38,5 @@
       "description": "Inbox is used to store data about a connection with a service that is responsible for potentially receiving copies of GOBL envelopes or other document formats defined locally."
     }
   },
-  "$comment": "Generated with GOBL v0.26.0"
+  "$comment": "Generated with GOBL v0.27.0"
 }

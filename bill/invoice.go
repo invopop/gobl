@@ -328,7 +328,7 @@ func (inv *Invoice) calculate(r *tax.Region) error {
 	}
 
 	// Now figure out the tax totals (with some interface conversion)
-	var pit tax.Code
+	var pit org.Code
 	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
 		pit = inv.Tax.PricesInclude
 	}

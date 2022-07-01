@@ -6,7 +6,7 @@
     "CategoryTotal": {
       "properties": {
         "code": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/code",
           "title": "Code"
         },
         "retained": {
@@ -45,7 +45,7 @@
     "RateTotal": {
       "properties": {
         "key": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/key",
           "title": "Key"
         },
         "base": {
@@ -115,5 +115,5 @@
       "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
   },
-  "$comment": "Generated with GOBL v0.26.0"
+  "$comment": "Generated with GOBL v0.27.0"
 }

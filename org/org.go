@@ -4,6 +4,8 @@ import "github.com/invopop/gobl/schema"
 
 func init() {
 	objs := []interface{}{
+		Code(""),
+		Key(""),
 		Address{},
 		Coordinates{},
 		Item{},
