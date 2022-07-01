@@ -128,7 +128,7 @@ func (p *Party) Validate() error {
 // Validate ensures email address looks valid.
 func (e *Email) Validate() error {
 	return validation.ValidateStruct(e,
-		validation.Field(&e.Address, validation.Required, is.Email),
+		validation.Field(&e.Address, validation.Required, is.EmailFormat),
 	)
 }
 
