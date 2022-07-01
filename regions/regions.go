@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	tax.RegisterRegion(es.Region)
+	tax.RegisterRegion(es.New())
 	tax.RegisterRegion(fr.New())
 	tax.RegisterRegion(gb.New())
 	tax.RegisterRegion(nl.New())
