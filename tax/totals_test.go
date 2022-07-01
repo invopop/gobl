@@ -28,7 +28,7 @@ func (tl *taxableLine) GetTotal() num.Amount {
 }
 
 func TestTotalCalculate(t *testing.T) {
-	spain := es.New()
+	spain := es.Region()
 	date := cal.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {

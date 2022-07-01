@@ -9,8 +9,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// New provides the tax region definition
-func New() *tax.Region {
+// Region provides the tax region definition
+func Region() *tax.Region {
 	return &tax.Region{
 		Country:  l10n.FR,
 		Currency: "EUR",

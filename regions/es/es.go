@@ -55,6 +55,7 @@ const (
 
 )
 
+// Locality code definitions for Spain
 const (
 	LocalityVI l10n.Code = "VI" // (01) Álava
 	LocalityAB l10n.Code = "AB" // (02) Albacete
@@ -113,12 +114,13 @@ const (
 	LocalityML l10n.Code = "ML" // (52) Melilla
 )
 
+// Custom keys used typically in meta information.
 const (
 	KeyPost org.Key = "post"
 )
 
-// TaxRegion provides the Spanish region definition
-func New() *tax.Region {
+// Region provides the Spanish region definition
+func Region() *tax.Region {
 	return &tax.Region{
 		Country:  l10n.ES,
 		Currency: "EUR",
