@@ -77,7 +77,7 @@ func (m *Discount) GetTotal() num.Amount {
 	return m.Amount.Invert()
 }
 
-func (m *Discount) removeIncludedTaxes(cat tax.Code, accuracy uint32) *Discount {
+func (m *Discount) removeIncludedTaxes(cat org.Code, accuracy uint32) *Discount {
 	rate := m.Taxes.Get(cat)
 	if rate == nil {
 		return m

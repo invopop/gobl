@@ -591,7 +591,7 @@
     },
     "SchemeKeys": {
       "items": {
-        "type": "string"
+        "$ref": "https://gobl.org/draft-0/org/key"
       },
       "type": "array",
       "description": "SchemeKeys stores a list of keys that makes it easier to perform matches."
@@ -599,7 +599,7 @@
     "Tax": {
       "properties": {
         "prices_include": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/code",
           "title": "Prices Include",
           "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
         },
@@ -690,5 +690,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.26.0"
+  "$comment": "Generated with GOBL v0.27.0"
 }

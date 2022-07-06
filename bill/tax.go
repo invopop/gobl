@@ -14,7 +14,7 @@ type Tax struct {
 	// Category of the tax already included in the line item prices, especially
 	// useful for B2C retailers with customers who prefer final prices inclusive of
 	// tax.
-	PricesInclude tax.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
+	PricesInclude org.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
 
 	// Special tax schemes that apply to this invoice according to local requirements.
 	Schemes tax.SchemeKeys `json:"schemes,omitempty" jsonschema:"title=Schemes"`

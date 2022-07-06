@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 )
 
 // Region defines the holding structure for a regions categories and subsequent
@@ -19,8 +20,11 @@ type Region struct {
 
 	// Country code for the region
 	Country l10n.Code `json:"country" jsonschema:"title=Code"`
-	// Locality, city, region, or similar code inside the country, if needed.
+	// Locality, city, province, county, or similar code inside the country, if needed.
 	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality"`
+
+	// List of sub-localities inside a region.
+	Localities Localities `json:"localities,omitempty" jsonschema:"title=Localities"`
 
 	// Currency used by the region for tax purposes.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
@@ -35,9 +39,26 @@ type Region struct {
 	ValidateDocument func(doc interface{}) error `json:"-"`
 }
 
+// Localities stores an array of locality objects used to describe areas
+// sub-divisions inside a region.
+type Localities []Locality
+
+// Locality represents an area inside a region, like a province
+// or a state, which shares the basic definitions of the region, but
+// may vary in some validation rules.
+type Locality struct {
+	// Code
+	Code l10n.Code `json:"code" jsonschema:"title=Code"`
+	// Name of the locality with local and hopefully international
+	// translations.
+	Name i18n.String `json:"name" jsonschema:"title=Name"`
+	// Any additional information
+	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
 // Category contains the definition of a general type of tax inside a region.
 type Category struct {
-	Code Code        `json:"code" jsonschema:"title=Code"`
+	Code org.Code    `json:"code" jsonschema:"title=Code"`
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
@@ -54,7 +75,7 @@ type Category struct {
 // Rate defines a single rate inside a category
 type Rate struct {
 	// Key identifies this rate within the system
-	Key Key `json:"key" jsonschema:"title=Key"`
+	Key org.Key `json:"key" jsonschema:"title=Key"`
 
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
@@ -148,7 +169,7 @@ func checkRateValuesOrder(list interface{}) error {
 }
 
 // Category provides the requested category by its code.
-func (r *Region) Category(code Code) *Category {
+func (r *Region) Category(code org.Code) *Category {
 	for _, c := range r.Categories {
 		if c.Code == code {
 			return c
@@ -159,7 +180,7 @@ func (r *Region) Category(code Code) *Category {
 
 // Rate provides the rate definition with a matching key for
 // the category.
-func (c *Category) Rate(key Key) *Rate {
+func (c *Category) Rate(key org.Key) *Rate {
 	for _, r := range c.Rates {
 		if r.Key == key {
 			return r

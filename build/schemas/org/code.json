@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/code",
+  "$ref": "#/$defs/Code",
+  "$defs": {
+    "Code": {
+      "type": "string",
+      "maxLength": 6,
+      "minLength": 1,
+      "pattern": "^[A-Z0-9]{1,6}$",
+      "title": "Code",
+      "description": "Short upper-case identifier."
+    }
+  },
+  "$comment": "Generated with GOBL v0.27.0"
+}

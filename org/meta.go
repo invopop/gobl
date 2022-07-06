@@ -10,4 +10,4 @@ package org
 //
 // We need to always use strings for values so that meta-data is easy to convert
 // into other formats, such as protobuf which has strict type requirements.
-type Meta map[string]string
+type Meta map[Key]string

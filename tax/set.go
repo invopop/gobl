@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 )
 
 // Set defines a list of tax categories and their rates to be used alongside taxable items.
@@ -16,9 +17,9 @@ type Set []*Combo
 // during calculation.
 type Combo struct {
 	// Tax category code from those available inside a region.
-	Category Code `json:"cat" jsonschema:"title=Category"`
+	Category org.Code `json:"cat" jsonschema:"title=Category"`
 	// Rate within a category to apply.
-	Rate Key `json:"rate,omitempty" jsonschema:"title=Rate"`
+	Rate org.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Percent defines the percentage set manually or determined from the rate key.
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	// Some countries require an additional surcharge.
@@ -45,7 +46,7 @@ func (c *Combo) prepare(r *Region, date cal.Date) error {
 		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
 	}
 
-	if c.Rate != KeyEmpty {
+	if c.Rate != org.KeyEmpty {
 		rate := c.category.Rate(c.Rate)
 		if rate == nil {
 			return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
@@ -68,7 +69,7 @@ func (c *Combo) prepare(r *Region, date cal.Date) error {
 
 // Validate ensures the set of tax combos looks correct
 func (s Set) Validate() error {
-	combos := make(map[Code]Key)
+	combos := make(map[org.Code]org.Key)
 	for i, c := range s {
 		if _, ok := combos[c.Category]; ok {
 			return fmt.Errorf("%d: category %v is duplicated", i, c.Category)
@@ -100,7 +101,7 @@ func (s Set) Equals(s2 Set) bool {
 }
 
 // Get the Rate key for the given category
-func (s Set) Get(cat Code) *Combo {
+func (s Set) Get(cat org.Code) *Combo {
 	for _, c := range s {
 		if c.Category == cat {
 			return c
@@ -110,7 +111,7 @@ func (s Set) Get(cat Code) *Combo {
 }
 
 // Rate returns the rate from the matching category, if set.
-func (s Set) Rate(cat Code) Key {
+func (s Set) Rate(cat org.Code) org.Key {
 	for _, c := range s {
 		if c.Category == cat {
 			return c.Rate

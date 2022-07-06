@@ -9,8 +9,8 @@ import (
 )
 
 func init() {
-	tax.RegisterRegion(es.New())
-	tax.RegisterRegion(fr.New())
-	tax.RegisterRegion(gb.New())
-	tax.RegisterRegion(nl.New())
+	tax.RegisterRegion(es.Region())
+	tax.RegisterRegion(fr.Region())
+	tax.RegisterRegion(gb.Region())
+	tax.RegisterRegion(nl.Region())
 }

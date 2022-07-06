@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/key",
+  "$ref": "#/$defs/Key",
+  "$defs": {
+    "Key": {
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-+]*[a-z0-9]$",
+      "title": "Key",
+      "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
+    }
+  },
+  "$comment": "Generated with GOBL v0.27.0"
+}

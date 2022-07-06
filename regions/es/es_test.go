@@ -7,8 +7,7 @@ import (
 )
 
 func TestTaxRegion(t *testing.T) {
-	tr := es.New()
-	if err := tr.Validate(); err != nil {
+	if err := es.Region().Validate(); err != nil {
 		t.Errorf("Validation on tax def failed: %v", err.Error())
 	}
 }
