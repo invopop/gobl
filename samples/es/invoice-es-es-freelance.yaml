@@ -45,3 +45,12 @@ lines:
         percent: 21.0%
       - cat: IRPF
         percent: 15.0%
+
+payment:
+  terms:
+    key: instant
+  instructions:
+    key: credit-transfer
+    credit_transfer:
+      - name: "Bankinter"
+        iban: "ES06 0128 0011 3901 0008 1391"
