@@ -155,7 +155,7 @@ func (e *Envelope) complete() error {
 		e.Head = NewHeader()
 	}
 	if e.Head.UUID.IsZero() {
-		e.Head.UUID = uuid.NewV1()
+		e.Head.UUID = uuid.MakeV1()
 	}
 	var err error
 	e.Head.Digest, err = e.Document.Digest()

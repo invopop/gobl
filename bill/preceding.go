@@ -36,11 +36,13 @@ type Preceding struct {
 // Validate ensures the preceding details look okay
 func (p *Preceding) Validate() error {
 	return validation.ValidateStruct(p,
+		validation.Field(&p.UUID),
 		validation.Field(&p.Code, validation.Required),
 		validation.Field(&p.IssueDate, cal.DateNotZero()),
 		validation.Field(&p.Period),
 		validation.Field(&p.Corrections),
 		validation.Field(&p.CorrectionMethod),
+		validation.Field(&p.Meta),
 	)
 }
 

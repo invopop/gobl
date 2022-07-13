@@ -20,5 +20,6 @@ type Message struct {
 func (m *Message) Validate() error {
 	return validation.ValidateStruct(m,
 		validation.Field(&m.Content, validation.Required),
+		validation.Field(&m.Meta),
 	)
 }

@@ -34,7 +34,11 @@ func Within(ttl time.Duration) validation.Rule {
 func (r versionRule) Validate(value interface{}) error {
 	id, ok := value.(UUID)
 	if !ok {
-		return errors.New("not a UUID")
+		pid, ok := value.(*UUID)
+		if !ok {
+			return errors.New("not a UUID")
+		}
+		id = *pid
 	}
 	if id.Version() != r.version {
 		return errors.New("invalid version")

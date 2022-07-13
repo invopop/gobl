@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
 )
 
 // LineDiscount represents an amount deducted from the line, and will be
@@ -24,6 +25,7 @@ type LineDiscount struct {
 // Validate checks the line discount's fields.
 func (ld *LineDiscount) Validate() error {
 	return validation.ValidateStruct(ld,
+		validation.Field(&ld.Percent),
 		validation.Field(&ld.Amount, validation.Required),
 	)
 }
@@ -37,7 +39,7 @@ type Discounts []*Discount
 // correct taxes defined.
 type Discount struct {
 	// Unique identifying for the discount entry
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts
 	Index int `json:"i" jsonschema:"title=Index"`
 	// Reference or ID for this Discount
@@ -62,7 +64,12 @@ type Discount struct {
 // Validate checks the discount's fields.
 func (m *Discount) Validate() error {
 	return validation.ValidateStruct(m,
+		validation.Field(&m.UUID),
+		validation.Field(&m.Base),
+		validation.Field(&m.Percent),
 		validation.Field(&m.Amount, validation.Required),
+		validation.Field(&m.Taxes),
+		validation.Field(&m.Meta),
 	)
 }
 

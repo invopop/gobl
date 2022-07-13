@@ -6,7 +6,7 @@
     "Item": {
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
           "description": "Unique identify of this item independent of the Supplier IDs"
         },
