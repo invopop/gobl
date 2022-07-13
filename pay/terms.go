@@ -1,65 +1,52 @@
 package pay
 
 import (
-	"errors"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 )
 
 // Terms defines when we expect the customer to pay, or have paid, for
 // the contents of the document.
 type Terms struct {
-	Code     TermCode   `json:"code" jsonschema:"title=Code,description=Type of terms to be applied."`
-	Detail   string     `json:"detail,omitempty" jsonschema:"title=Detail,description=Text detail of the chosen payment terms."`
-	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates,description=Set of dates for agreed payments."`
-	Notes    string     `json:"notes,omitempty" jsonschema:"title=Notes,description=Description of the conditions for payment."`
+	// Type of terms to be applied.
+	Key org.Key `json:"key" jsonschema:"title=Key"`
+	// Text detail of the chosen payment terms.
+	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
+	// Set of dates for agreed payments.
+	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates"`
+	// Description of the conditions for payment.
+	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
-
-// TermCode is used to define a code that identifies the payment terms.
-type TermCode string
 
 // Pre-defined Payment Terms based on UNTDID 4279
 const (
-	TermNA         TermCode = "na"           // None defined
-	TermEndOfMonth TermCode = "end_of_month" // End of Month
-	TermDueDate    TermCode = "due_date"     // Due on a specific date
-	TermDeferred   TermCode = "deferred"     // Deferred until after the due dates
-	TermProximo    TermCode = "proximo"      // Month after the present
-	TermInstant    TermCode = "instant"      // on receipt of invoice
-	TermElective   TermCode = "elective"     // chosen by buyer
-	TermPending    TermCode = "pending"      // Seller to advise buyer in separate transaction
-	TermAdvance    TermCode = "advance"      // Payment made in advance
-	TermDelivery   TermCode = "delivery"     // Payment on Delivery
+	TermKeyNA         org.Key = ""             // None defined
+	TermKeyEndOfMonth org.Key = "end-of-month" // End of Month
+	TermKeyDueDate    org.Key = "due-date"     // Due on a specific date
+	TermKeyDeferred   org.Key = "deferred"     // Deferred until after the due dates
+	TermKeyProximo    org.Key = "proximo"      // Month after the present
+	TermKeyInstant    org.Key = "instant"      // on receipt of invoice
+	TermKeyElective   org.Key = "elective"     // chosen by buyer
+	TermKeyPending    org.Key = "pending"      // Seller to advise buyer in separate transaction
+	TermKeyAdvance    org.Key = "advance"      // Payment made in advance
+	TermKeyDelivery   org.Key = "delivery"     // Payment on Delivery
 )
 
 // Source: https://service.unece.org/trade/untdid/d15b/tred/tred4279.htm
-var untdid4279Terms = map[TermCode]string{
-	TermNA:         "16", // Not Yet Defined
-	TermEndOfMonth: "2",  // End of month
-	TermDueDate:    "3",  // Fixed date
-	TermDeferred:   "4",  // Deferred
-	TermProximo:    "9",  // Proximo
-	TermInstant:    "10", // Instant
-	TermElective:   "11", // Elective
-	TermPending:    "13", // Seller to advise buyer
-	TermAdvance:    "32", // Advanced payment
-	TermDelivery:   "52", // Cash on Delivery (COD)
-}
-
-// Validate checks to ensure the typecode is part of a known list.
-func (c TermCode) Validate() error {
-	if string(c) == "" {
-		return nil
-	}
-	for k := range untdid4279Terms {
-		if k == c {
-			return nil
-		}
-	}
-	return errors.New("invalid term code")
+var untdid4279Terms = map[org.Key]string{
+	TermKeyNA:         "16", // Not Yet Defined
+	TermKeyEndOfMonth: "2",  // End of month
+	TermKeyDueDate:    "3",  // Fixed date
+	TermKeyDeferred:   "4",  // Deferred
+	TermKeyProximo:    "9",  // Proximo
+	TermKeyInstant:    "10", // Instant
+	TermKeyElective:   "11", // Elective
+	TermKeyPending:    "13", // Seller to advise buyer
+	TermKeyAdvance:    "32", // Advanced payment
+	TermKeyDelivery:   "52", // Cash on Delivery (COD)
 }
 
 // DueDate contains an amount that should be paid by the given date.
@@ -69,6 +56,11 @@ type DueDate struct {
 	Amount   num.Amount      `json:"amount" jsonschema:"title=Amount,description=How much needs to be paid by the date."`
 	Percent  *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent,description=Percentage of the total that should be paid by the date."`
 	Currency currency.Code   `json:"currency,omitempty" jsonschema:"title=Currency,description=If different from the parent document's base currency."`
+}
+
+// UNTDID4279 returns the UNTDID 4270 code associated with the terms key.
+func (t *Terms) UNTDID4279() string {
+	return untdid4279Terms[t.Key]
 }
 
 // CalculateDues goes through each DueDate. If it has a percentage
@@ -86,8 +78,14 @@ func (t *Terms) CalculateDues(sum num.Amount) {
 
 // Validate ensures that the terms contain everything required.
 func (t *Terms) Validate() error {
+	validTermKeys := make([]interface{}, len(untdid4279Terms))
+	i := 0
+	for v := range untdid4279Terms {
+		validTermKeys[i] = v
+		i++
+	}
 	return validation.ValidateStruct(t,
-		validation.Field(&t.Code, validation.Required),
+		validation.Field(&t.Key, validation.In(validTermKeys...)),
 	)
 }
 
