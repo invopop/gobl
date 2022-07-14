@@ -38,8 +38,7 @@
       "required": [
         "$schema",
         "head",
-        "doc",
-        "sigs"
+        "doc"
       ],
       "description": "Envelope wraps around a gobl document and provides support for digest creation and digital signatures."
     },
