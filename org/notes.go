@@ -1,52 +1,45 @@
 package org
 
 import (
-	"errors"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Notes holds an array of Note objects
 type Notes []*Note
 
-// NoteKey contains a code for the type of note.
-type NoteKey string
-
 // Predefined list of supported note keys based on the
 // UNTDID 4451 list of text subject qualifiers. We've picked the ones
 // which we think are most useful, but if you require an additional
 // code, please send a pull request.
 const (
-	NoteKeyGoods          NoteKey = "goods"           // Goods Description
-	NoteKeyPayment        NoteKey = "payment"         // Terms of Payment
-	NoteKeyLegal          NoteKey = "legal"           // Legal or regulatory information
-	NoteKeyDangerousGoods NoteKey = "dangerous-goods" // Dangerous goods additional information
-	NoteKeyAck            NoteKey = "ack"             // Acknowledgement Description
-	NoteKeyRate           NoteKey = "rate"            // Rate additional information
-	NoteKeyReason         NoteKey = "reason"          // Reason
-	NoteKeyDispute        NoteKey = "dispute"         // Dispute
-	NoteKeyCustomer       NoteKey = "customer"        // Customer remarks
-	NoteKeyGlossary       NoteKey = "glossary"        // Glossary
-	NoteKeyCustoms        NoteKey = "customs"         // Customs declaration information
-	NoteKeyGeneral        NoteKey = "general"         // General information
-	NoteKeyHandling       NoteKey = "handling"        // Handling instructions
-	NoteKeyPackaging      NoteKey = "packaging"       // Packaging information
-	NoteKeyLoading        NoteKey = "loading"         // Loading instructions
-	NoteKeyPrice          NoteKey = "price"           // Price conditions
-	NoteKeyPriority       NoteKey = "priority"        // Priority information
-	NoteKeyRegulatory     NoteKey = "regulatory"      // Regulatory information
-	NoteKeySafety         NoteKey = "safety"          // Safety Instructions
-	NoteKeyShipLine       NoteKey = "ship-line"       // Ship Line
-	NoteKeySupplier       NoteKey = "supplier"        // Supplier remarks
-	NoteKeyTransport      NoteKey = "transport"       // Transportation information
-	NoteKeyDelivery       NoteKey = "delivery"        // Delivery Information
-	NoteKeyQuarantine     NoteKey = "quarantine"      // Quarantine Information
-	NoteKeyTax            NoteKey = "tax"             // Tax declaration
+	NoteKeyGoods          Key = "goods"           // Goods Description
+	NoteKeyPayment        Key = "payment"         // Terms of Payment
+	NoteKeyLegal          Key = "legal"           // Legal or regulatory information
+	NoteKeyDangerousGoods Key = "dangerous-goods" // Dangerous goods additional information
+	NoteKeyAck            Key = "ack"             // Acknowledgement Description
+	NoteKeyRate           Key = "rate"            // Rate additional information
+	NoteKeyReason         Key = "reason"          // Reason
+	NoteKeyDispute        Key = "dispute"         // Dispute
+	NoteKeyCustomer       Key = "customer"        // Customer remarks
+	NoteKeyGlossary       Key = "glossary"        // Glossary
+	NoteKeyCustoms        Key = "customs"         // Customs declaration information
+	NoteKeyGeneral        Key = "general"         // General information
+	NoteKeyHandling       Key = "handling"        // Handling instructions
+	NoteKeyPackaging      Key = "packaging"       // Packaging information
+	NoteKeyLoading        Key = "loading"         // Loading instructions
+	NoteKeyPrice          Key = "price"           // Price conditions
+	NoteKeyPriority       Key = "priority"        // Priority information
+	NoteKeyRegulatory     Key = "regulatory"      // Regulatory information
+	NoteKeySafety         Key = "safety"          // Safety Instructions
+	NoteKeyShipLine       Key = "ship-line"       // Ship Line
+	NoteKeySupplier       Key = "supplier"        // Supplier remarks
+	NoteKeyTransport      Key = "transport"       // Transportation information
+	NoteKeyDelivery       Key = "delivery"        // Delivery Information
+	NoteKeyQuarantine     Key = "quarantine"      // Quarantine Information
+	NoteKeyTax            Key = "tax"             // Tax declaration
 )
 
-// UNTDID4451NoteKeyMap used to convert note codes into their official
-// representation.
-var UNTDID4451NoteKeyMap = map[NoteKey]string{
+var untdid4451NoteKeyMap = map[Key]string{
 	NoteKeyGoods:          "AAA",
 	NoteKeyDangerousGoods: "AAC",
 	NoteKeyAck:            "AAE",
@@ -78,7 +71,7 @@ var UNTDID4451NoteKeyMap = map[NoteKey]string{
 // added to a document.
 type Note struct {
 	// Key specifying subject of the text
-	Key NoteKey `json:"key,omitempty" jsonschema:"title=Key"`
+	Key Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Code used for additional data that may be required to identify the note.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Source of this note, especially useful when auto-generated.
@@ -90,19 +83,29 @@ type Note struct {
 // Validate checks that the note looks okay.
 func (n *Note) Validate() error {
 	return validation.ValidateStruct(n,
-		validation.Field(&n.Key),
+		validation.Field(&n.Key, validation.In(validUNTDID4451Keys()...)),
 		validation.Field(&n.Text, validation.Required),
 	)
 }
 
-// Validate checks to ensure the note code is part of the list of
-// accepted values.
-func (c NoteKey) Validate() error {
-	_, ok := UNTDID4451NoteKeyMap[c]
-	if !ok {
-		return errors.New("invalid")
+func validUNTDID4451Keys() []interface{} {
+	ks := make([]interface{}, len(untdid4451NoteKeyMap))
+	i := 0
+	for v := range untdid4451NoteKeyMap {
+		ks[i] = v
+		i++
 	}
-	return nil
+	return ks
+}
+
+// UNTDID4451 provides the note's UNTDID 4451 equivalent
+// value. If not available, returns "NA".
+func (n *Note) UNTDID4451() string {
+	s, ok := untdid4451NoteKeyMap[n.Key]
+	if !ok {
+		return "NA"
+	}
+	return s
 }
 
 // WithSrc instantiates a new source instance with the provided
@@ -112,14 +115,4 @@ func (n *Note) WithSrc(src string) *Note {
 	nw := *n // copy
 	nw.Src = src
 	return &nw
-}
-
-// UNTDID4451 returns the official type code, or "NA" if none
-// is set.
-func (c NoteKey) UNTDID4451() string {
-	s, ok := UNTDID4451NoteKeyMap[c]
-	if !ok {
-		return "NA"
-	}
-	return s
 }
