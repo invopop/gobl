@@ -39,6 +39,9 @@ type Coordinates struct {
 // Validate checks that an address looks okay.
 func (a *Address) Validate() error {
 	return validation.ValidateStruct(a,
+		validation.Field(&a.UUID),
 		validation.Field(&a.Country, l10n.IsCountry),
+		validation.Field(&a.Coordinates),
+		validation.Field(&a.Meta),
 	)
 }

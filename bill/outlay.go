@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/uuid"
 )
 
 // Outlays holds an array of Outlay objects used inside a billing document.
@@ -18,7 +19,7 @@ type Outlays []*Outlay
 // customer.
 type Outlay struct {
 	// Unique identity for this outlay.
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Outlay number index inside the invoice for ordering.
 	Index int `json:"i" jsonschema:"title=Index"`
 	// When was the outlay made.
@@ -38,8 +39,11 @@ type Outlay struct {
 // Validate ensures the outlay contains everything required.
 func (o *Outlay) Validate() error {
 	return validation.ValidateStruct(o,
+		validation.Field(&o.UUID),
 		validation.Field(&o.Index, validation.Required),
+		validation.Field(&o.Date),
 		validation.Field(&o.Description, validation.Required),
+		validation.Field(&o.Supplier),
 		validation.Field(&o.Amount, validation.Required),
 	)
 }

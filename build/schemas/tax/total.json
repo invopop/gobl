@@ -115,5 +115,5 @@
       "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
   },
-  "$comment": "Generated with GOBL v0.27.0"
+  "$comment": "Generated with GOBL v0.28.0"
 }

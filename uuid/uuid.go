@@ -19,14 +19,26 @@ type UUID struct {
 	uuid.UUID
 }
 
-// NewV1 generates a version 1 UUID.
-func NewV1() UUID {
+// MakeV1 generates a version 1 UUID.
+func MakeV1() UUID {
 	return UUID{uuid.Must(uuid.NewUUID())}
 }
 
-// NewV4 generates a new completely random UUIDv4.
-func NewV4() UUID {
+// MakeV4 generates a new completely random UUIDv4.
+func MakeV4() UUID {
 	return UUID{uuid.Must(uuid.NewRandom())}
+}
+
+// NewV1 generates a version 1 UUID.
+func NewV1() *UUID {
+	u := MakeV1()
+	return &u
+}
+
+// NewV4 creates a pointer a new completely random UUIDv4.
+func NewV4() *UUID {
+	u := MakeV4()
+	return &u
 }
 
 // Timestamp extracts the time.
@@ -40,7 +52,10 @@ func (u UUID) Timestamp() time.Time {
 }
 
 // IsZero returns true if the UUID is all zeros.
-func (u UUID) IsZero() bool {
+func (u *UUID) IsZero() bool {
+	if u == nil {
+		return true
+	}
 	for _, v := range u.UUID {
 		if v != 0 {
 			return false
@@ -88,6 +103,6 @@ func (UUID) JSONSchema() *jsonschema.Schema {
 		Type:        "string",
 		Format:      "uuid",
 		Title:       "UUID",
-		Description: "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL.",
+		Description: "Universally Unique Identifier. We only recommend using versions 1 and 4 within GOBL.",
 	}
 }

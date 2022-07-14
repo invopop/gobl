@@ -3,6 +3,7 @@ package org
 import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/uuid"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
@@ -22,7 +23,7 @@ import (
 // option included in the `bill.Invoice` definition for example.
 type Item struct {
 	// Unique identify of this item independent of the Supplier IDs
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field.
 	Ref string `json:"ref,omitempty" jsonschema:"title=Ref"`
 	// Brief name of the item
@@ -56,9 +57,12 @@ type ItemCode struct {
 // Validate checks that an address looks okay.
 func (i *Item) Validate() error {
 	return validation.ValidateStruct(i,
+		validation.Field(&i.UUID),
 		validation.Field(&i.Name, validation.Required),
 		validation.Field(&i.Price, validation.Required),
-		validation.Field(&i.Origin, l10n.IsCountry),
 		validation.Field(&i.Unit),
+		validation.Field(&i.Codes),
+		validation.Field(&i.Origin, l10n.IsCountry),
+		validation.Field(&i.Meta),
 	)
 }

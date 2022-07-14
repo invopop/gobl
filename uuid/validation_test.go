@@ -6,11 +6,22 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
+type uuidTestStruct struct {
+	UUID *uuid.UUID
+}
+
+func (ut *uuidTestStruct) Validate() error {
+	return validation.ValidateStruct(ut,
+		validation.Field(&ut.UUID, uuid.IsV1),
+	)
+}
+
 func TestUUIDValidation(t *testing.T) {
-	u1 := uuid.NewV1()
-	u4 := uuid.NewV4()
+	u1 := uuid.MakeV1()
+	u4 := uuid.MakeV4()
 	if err := validation.Validate(u1, uuid.IsV1); err != nil {
 		t.Errorf("did not expect an error: %v", err)
 	}
@@ -30,4 +41,13 @@ func TestUUIDValidation(t *testing.T) {
 	if err := validation.Validate(u1, uuid.Within(10*time.Millisecond)); err == nil {
 		t.Errorf("expected an error")
 	}
+
+	pu1 := uuid.NewV1()
+	err := validation.Validate(pu1, uuid.IsV1)
+	assert.NoError(t, err, "failed to validate pointer")
+
+	sample := new(uuidTestStruct)
+	sample.UUID = uuid.NewV1()
+	err = sample.Validate()
+	assert.NoError(t, err)
 }

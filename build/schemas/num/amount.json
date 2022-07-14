@@ -10,5 +10,5 @@
       "description": "Quantity with optional decimal places that determine accuracy."
     }
   },
-  "$comment": "Generated with GOBL v0.27.0"
+  "$comment": "Generated with GOBL v0.28.0"
 }

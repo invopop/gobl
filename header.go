@@ -35,7 +35,7 @@ type Header struct {
 // NewHeader creates a new header and automatically assigns a UUIDv1.
 func NewHeader() *Header {
 	h := new(Header)
-	h.UUID = uuid.NewV1()
+	h.UUID = uuid.MakeV1()
 	h.Meta = make(org.Meta)
 	return h
 }

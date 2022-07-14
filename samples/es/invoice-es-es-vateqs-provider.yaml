@@ -46,3 +46,22 @@ lines:
     taxes:
       - cat: VAT
         rate: "standard"
+
+payment:
+  terms:
+    key: due-date
+    due_dates:
+      - date: "2021-10-30"
+        percent: "40%"
+      - date: "2021-11-30"
+        percent: "60%"
+  advances:
+    - date: "2021-09-01"
+      desc: "Deposit paid upfront"
+      amount: "250.00"
+  instructions:
+    key: credit-transfer
+    credit_transfer:
+      - name: "Bankinter"
+        iban: "ES06 0128 0011 3901 0008 1391"
+        bic: "BKBKESMMXXX"

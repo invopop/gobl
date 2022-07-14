@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
 )
 
 // LineCharge represents an amount added to the line, and will be
@@ -24,6 +25,7 @@ type LineCharge struct {
 // Validate checks the line charge's fields.
 func (lc *LineCharge) Validate() error {
 	return validation.ValidateStruct(lc,
+		validation.Field(&lc.Percent),
 		validation.Field(&lc.Amount, validation.Required),
 	)
 }
@@ -35,7 +37,7 @@ type Charges []*Charge
 // independent from the individual lines.
 type Charge struct {
 	// Unique identifying for the discount entry
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts
 	Index int `json:"i" jsonschema:"title=Index"`
 	// Code to used to refer to the this charge
@@ -61,7 +63,12 @@ type Charge struct {
 // Validate checks the discount's fields.
 func (m *Charge) Validate() error {
 	return validation.ValidateStruct(m,
+		validation.Field(&m.UUID),
+		validation.Field(&m.Base),
+		validation.Field(&m.Percent),
 		validation.Field(&m.Amount, validation.Required),
+		validation.Field(&m.Taxes),
+		validation.Field(&m.Meta),
 	)
 }
 

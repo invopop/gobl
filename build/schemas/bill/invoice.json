@@ -13,7 +13,7 @@
     "Charge": {
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
           "description": "Unique identifying for the discount entry"
         },
@@ -106,7 +106,7 @@
     "Discount": {
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
           "description": "Unique identifying for the discount entry"
         },
@@ -305,7 +305,7 @@
     "Line": {
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
           "description": "Unique identifier for this line"
         },
@@ -450,7 +450,7 @@
     "Outlay": {
       "properties": {
         "uuid": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
           "description": "Unique identity for this outlay."
         },
@@ -690,5 +690,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.27.0"
+  "$comment": "Generated with GOBL v0.28.0"
 }

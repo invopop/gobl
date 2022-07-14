@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -81,35 +80,50 @@ type Invoice struct {
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Ordering allows additional order details to be appended
-type Ordering struct {
-	// Party who is selling the goods and is not responsible for taxes
-	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
-}
+// Validate checks to ensure the invoice is valid and contains all the information we need.
+func (inv *Invoice) Validate() error {
+	err := validation.ValidateStruct(inv,
+		validation.Field(&inv.UUID),
+		validation.Field(&inv.Code, validation.Required),
+		validation.Field(&inv.TypeKey), // either empty (Commercial) or one of those supported
+		validation.Field(&inv.Currency, validation.Required),
+		validation.Field(&inv.ExchangeRates),
+		validation.Field(&inv.Tax),
 
-// Payment contains details as to how the invoice should be paid.
-type Payment struct {
-	// The party responsible for paying for the invoice, if not the customer.
-	Payer *org.Party `json:"payer,omitempty" jsonschema:"title=Payer"`
-	// Payment terms or conditions.
-	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
-	// Any amounts that have been paid in advance and should be deducted from the amount due.
-	Advances pay.Advances `json:"advances,omitempty" jsonschema:"title=Advances"`
-	// Details on how payment should be made.
-	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
-}
+		validation.Field(&inv.Preceding),
 
-// Delivery covers the details of the destination for the products described
-// in the invoice body.
-type Delivery struct {
-	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
-	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
-	// When the goods should be expected
-	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
-	// Start of a n invoicing or delivery period
-	StartDate *cal.Date `json:"start_date,omitempty" jsonschema:"title=Start Date"`
-	// End of a n invoicing or delivery period
-	EndDate *cal.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
+		validation.Field(&inv.IssueDate, cal.DateNotZero()),
+		validation.Field(&inv.OperationDate),
+		validation.Field(&inv.ValueDate),
+
+		validation.Field(&inv.Supplier, validation.Required),
+		validation.Field(&inv.Customer),
+
+		validation.Field(&inv.Lines, validation.Required),
+		validation.Field(&inv.Discounts),
+		validation.Field(&inv.Charges),
+		validation.Field(&inv.Outlays),
+
+		validation.Field(&inv.Ordering),
+		validation.Field(&inv.Payment),
+		validation.Field(&inv.Delivery),
+
+		validation.Field(&inv.Totals, validation.Required),
+
+		validation.Field(&inv.Notes),
+		validation.Field(&inv.Meta),
+	)
+	if err == nil && inv.Supplier != nil {
+		// Always validate contents using supplier's tax
+		// identity.
+		tID := inv.Supplier.TaxID
+		if tID == nil {
+			return errors.New("missing supplier tax identity")
+		}
+		r := tax.RegionFor(tID.Country, tID.Locality)
+		err = r.ValidateDocument(inv)
+	}
+	return err
 }
 
 // Totals contains the summaries of all calculations for the invoice.
@@ -140,35 +154,22 @@ type Totals struct {
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
-// Validate checks to ensure the invoice is valid and contains all the information we need.
-func (inv *Invoice) Validate() error {
-	err := validation.ValidateStruct(inv,
-		validation.Field(&inv.UUID),
-		validation.Field(&inv.Code, validation.Required),
-		validation.Field(&inv.TypeKey), // either empty (Commercial) or one of those supported
-		validation.Field(&inv.Currency, validation.Required),
-		validation.Field(&inv.IssueDate, cal.DateNotZero()),
-		validation.Field(&inv.Tax),
-		validation.Field(&inv.Preceding),
-
-		validation.Field(&inv.Supplier, validation.Required),
-		validation.Field(&inv.Customer),
-
-		validation.Field(&inv.Lines, validation.Required),
-		validation.Field(&inv.Discounts),
-		validation.Field(&inv.Charges),
-		validation.Field(&inv.Outlays),
-		validation.Field(&inv.Totals, validation.Required),
+// Validate the totals used in invoice.
+func (t *Totals) Validate() error {
+	return validation.ValidateStruct(t,
+		validation.Field(&t.Sum, validation.Required),
+		validation.Field(&t.Discount),
+		validation.Field(&t.Charge),
+		validation.Field(&t.TaxIncluded),
+		validation.Field(&t.Total, validation.Required),
+		validation.Field(&t.Taxes),
+		validation.Field(&t.Tax),
+		validation.Field(&t.TotalWithTax),
+		validation.Field(&t.Outlays),
+		validation.Field(&t.Payable),
+		validation.Field(&t.Advances),
+		validation.Field(&t.Due),
 	)
-	if err == nil {
-		tID := inv.determineTaxIdentity()
-		if tID == nil {
-			return errors.New("unable to determine tax identity")
-		}
-		r := tax.RegionFor(tID.Country, tID.Locality)
-		err = r.ValidateDocument(inv)
-	}
-	return err
 }
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
@@ -391,17 +392,6 @@ func (inv *Invoice) determineTaxIdentity() *org.TaxIdentity {
 		return nil
 	}
 	return inv.Supplier.TaxID
-}
-
-func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
-	if p == nil || len(p.Advances) == 0 {
-		return nil
-	}
-	sum := zero
-	for _, a := range p.Advances {
-		sum = sum.Add(a.Amount)
-	}
-	return &sum
 }
 
 // Reset sets all the totals to the provided zero amount with the correct

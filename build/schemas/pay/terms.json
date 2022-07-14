@@ -40,9 +40,9 @@
     },
     "Terms": {
       "properties": {
-        "code": {
-          "type": "string",
-          "title": "Code",
+        "key": {
+          "$ref": "https://gobl.org/draft-0/org/key",
+          "title": "Key",
           "description": "Type of terms to be applied."
         },
         "detail": {
@@ -66,10 +66,10 @@
       },
       "type": "object",
       "required": [
-        "code"
+        "key"
       ],
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   },
-  "$comment": "Generated with GOBL v0.27.0"
+  "$comment": "Generated with GOBL v0.28.0"
 }

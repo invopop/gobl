@@ -38,8 +38,7 @@
       "required": [
         "$schema",
         "head",
-        "doc",
-        "sigs"
+        "doc"
       ],
       "description": "Envelope wraps around a gobl document and provides support for digest creation and digital signatures."
     },
@@ -115,5 +114,5 @@
       "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
     }
   },
-  "$comment": "Generated with GOBL v0.27.0"
+  "$comment": "Generated with GOBL v0.28.0"
 }

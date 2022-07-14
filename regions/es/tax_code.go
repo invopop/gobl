@@ -18,9 +18,16 @@ type TaxCodeType string
 
 // ValidTaxID complies with the ozzo validation Rule definition to be able
 // to confirm that the Tax ID is indeed spanish and valid.
-var ValidTaxID = new(validTaxID)
+var ValidTaxID = validTaxID{}
 
-type validTaxID struct{}
+type validTaxID struct {
+	requireCode bool
+}
+
+// RequireCode allows for additional checks for the ID code
+func (v validTaxID) RequireCode() validTaxID {
+	return validTaxID{requireCode: true}
+}
 
 // Supported tax code types.
 const (
@@ -216,20 +223,26 @@ func extractMatches(regex *regexp.Regexp, code string) (map[string]string, error
 
 // Validate ensures the tax ID contains a matching country and
 // valid code.
-func (*validTaxID) Validate(value interface{}) error {
+func (v validTaxID) Validate(value interface{}) error {
 	id, ok := value.(*org.TaxIdentity)
 	if !ok {
 		return nil
 	}
 	return validation.ValidateStruct(id,
 		validation.Field(&id.Country, validation.Required, validation.In(l10n.ES)),
-		validation.Field(&id.Code, validation.Required, validation.By(validateTaxCode)),
+		validation.Field(&id.Code,
+			validation.When(v.requireCode, validation.Required),
+			validation.By(validateTaxCode),
+		),
 	)
 }
 
 func validateTaxCode(value interface{}) error {
 	code, ok := value.(string)
 	if !ok {
+		return nil
+	}
+	if code == "" {
 		return nil
 	}
 	return VerifyTaxCode(code)

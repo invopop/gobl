@@ -51,7 +51,7 @@ func processFile(t *testing.T, path string) error {
 		if err := yaml.Unmarshal(data, env); err != nil {
 			return fmt.Errorf("invalid contents: %w", err)
 		}
-		if err := env.Complete(); err != nil {
+		if err := env.Calculate(); err != nil {
 			return fmt.Errorf("failed to complete: %w", err)
 		}
 	} else {

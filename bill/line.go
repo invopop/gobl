@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
 )
 
 // Lines holds an array of Line objects.
@@ -13,7 +14,7 @@ type Lines []*Line
 // Line is a single row in an invoice.
 type Line struct {
 	// Unique identifier for this line
-	UUID string `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the parent
 	Index int `json:"i" jsonschema:"title=Index"`
 	// Number of items
@@ -48,14 +49,16 @@ func (l *Line) GetTotal() num.Amount {
 // Validate ensures the line contains everything required.
 func (l *Line) Validate() error {
 	return validation.ValidateStruct(l,
+		validation.Field(&l.UUID),
 		validation.Field(&l.Index, validation.Required),
 		validation.Field(&l.Quantity, validation.Required),
 		validation.Field(&l.Item, validation.Required),
+		validation.Field(&l.Sum, validation.Required),
 		validation.Field(&l.Discounts),
 		validation.Field(&l.Charges),
 		validation.Field(&l.Taxes),
-		validation.Field(&l.Sum, validation.Required),
 		validation.Field(&l.Total, validation.Required),
+		validation.Field(&l.Notes),
 	)
 }
 

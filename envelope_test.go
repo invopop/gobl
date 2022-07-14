@@ -90,7 +90,7 @@ func TestEnvelopeComplete(t *testing.T) {
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
 
-	err = e.Complete()
+	err = e.Calculate()
 	require.NoError(t, err)
 
 	inv, ok := e.Extract().(*bill.Invoice)
@@ -103,13 +103,13 @@ func TestEnvelopeComplete(t *testing.T) {
 func TestEnvelopeCompleteErrors(t *testing.T) {
 	t.Run("missing document", func(t *testing.T) {
 		e := new(gobl.Envelope)
-		err := e.Complete()
+		err := e.Calculate()
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
 	t.Run("missing document payload", func(t *testing.T) {
 		e := gobl.NewEnvelope()
-		err := e.Complete()
+		err := e.Calculate()
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
@@ -149,15 +149,6 @@ func TestEnvelopeValidate(t *testing.T) {
 			},
 		},
 		{
-			name: "missing sig, not draft",
-			env: func() *gobl.Envelope {
-				env := gobl.NewEnvelope()
-				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
-				return env
-			},
-			want: "sigs: cannot be blank.",
-		},
-		{
 			name: "with sig, not draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
@@ -190,4 +181,29 @@ func TestEnvelopeValidate(t *testing.T) {
 			assert.EqualError(t, err, tt.want)
 		})
 	}
+}
+
+func TestEnvelopeSign(t *testing.T) {
+	t.Run("cannot sign draft", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		env.Head.Draft = true
+		require.NoError(t, env.Insert(&note.Message{}))
+		err := env.Sign(testKey)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "draft: cannot sign draft envelope")
+	})
+	t.Run("cannot sign invalid document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
+		err := env.Sign(testKey)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "validation: doc: (content: cannot be blank.).")
+	})
+	t.Run("sign valid document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		assert.NoError(t, err)
+		assert.Len(t, env.Signatures, 1)
+	})
 }

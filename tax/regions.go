@@ -1,6 +1,9 @@
 package tax
 
-import "github.com/invopop/gobl/l10n"
+import (
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
+)
 
 var regions = newRegionCollection()
 
@@ -65,4 +68,20 @@ func RegionFor(country, locality l10n.Code) *Region {
 // AllRegions provides an array of all the region codes to definitions.
 func AllRegions() []*Region {
 	return regions.all()
+}
+
+// ValidateTaxIdentity attempts to find a matching region definition (if available)
+// and runs tax identity validation.
+func ValidateTaxIdentity(tID *org.TaxIdentity) error {
+	if tID == nil {
+		return nil
+	}
+	r := RegionFor(tID.Country, tID.Locality)
+	if r == nil {
+		return nil
+	}
+	if r.ValidateTaxIdentity == nil {
+		return nil
+	}
+	return r.ValidateTaxIdentity(tID)
 }

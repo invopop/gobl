@@ -1,6 +1,7 @@
 package bill
 
 import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
@@ -22,4 +23,13 @@ type Tax struct {
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// Validate ensures the tax details look valid.
+func (t *Tax) Validate() error {
+	return validation.ValidateStruct(t,
+		validation.Field(&t.PricesInclude),
+		validation.Field(&t.Schemes),
+		validation.Field(&t.Meta),
+	)
 }

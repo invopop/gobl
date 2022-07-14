@@ -38,7 +38,7 @@
         "number": {
           "type": "string",
           "title": "Number",
-          "description": "Account number"
+          "description": "Account number, if IBAN not available."
         },
         "name": {
           "type": "string",
@@ -48,7 +48,7 @@
         "branch": {
           "$ref": "https://gobl.org/draft-0/org/address",
           "title": "Branch",
-          "description": "Bank office branch address"
+          "description": "Bank office branch address, not normally required."
         }
       },
       "type": "object",
@@ -77,20 +77,20 @@
     },
     "Instructions": {
       "properties": {
-        "code": {
-          "type": "string",
-          "title": "Code",
-          "description": "How payment is expected or has been arranged to be collected."
+        "key": {
+          "$ref": "https://gobl.org/draft-0/org/key",
+          "title": "Key",
+          "description": "How payment is expected or has been arranged to be collected"
         },
         "detail": {
           "type": "string",
           "title": "Detail",
-          "description": "Optional text description of the payment method."
+          "description": "Optional text description of the payment method"
         },
         "ref": {
           "type": "string",
           "title": "Ref",
-          "description": "Remittance information"
+          "description": "Remittance information, a text value used to link the payment with the invoice."
         },
         "credit_transfer": {
           "items": {
@@ -116,7 +116,7 @@
           },
           "type": "array",
           "title": "Online",
-          "description": "Array of online payment options."
+          "description": "Array of online payment options"
         },
         "notes": {
           "type": "string",
@@ -124,19 +124,14 @@
           "description": "Any additional instructions that may be required to make the payment."
         },
         "meta": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object",
+          "$ref": "https://gobl.org/draft-0/org/meta",
           "title": "Meta",
           "description": "Non-structured additional data that may be useful."
         }
       },
       "type": "object",
       "required": [
-        "code"
+        "key"
       ],
       "description": "Instructions holds a set of instructions that determine how the payment has or should be made."
     },
@@ -160,5 +155,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.27.0"
+  "$comment": "Generated with GOBL v0.28.0"
 }

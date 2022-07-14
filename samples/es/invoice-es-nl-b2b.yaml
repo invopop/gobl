@@ -27,7 +27,7 @@ supplier:
 customer:
   tax_id:
     country: "NL"
-    code: "NL000099995B57"
+    code: "000099995B57"
   name: "Sample Consumer"
 
 lines:

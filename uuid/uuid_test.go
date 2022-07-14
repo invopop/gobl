@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUUIDParsing(t *testing.T) {
@@ -12,10 +13,8 @@ func TestUUIDParsing(t *testing.T) {
 	v4s := "0def554c-54fd-4b3b-9ea0-4f2d288d4435"
 
 	u1, err := uuid.Parse(v1s)
-	if err != nil {
-		t.Errorf("did not expect error, got: %v", err.Error())
-		return
-	}
+	assert.NoError(t, err)
+
 	if u1.Version() != 1 {
 		t.Errorf("did not parse a v1 UUID")
 	}
@@ -29,6 +28,18 @@ func TestUUIDParsing(t *testing.T) {
 	}
 }
 
+func TestUUIDIsZero(t *testing.T) {
+	var up1 *uuid.UUID
+	assert.True(t, up1.IsZero())
+	var u1 uuid.UUID
+	assert.True(t, u1.IsZero())
+
+	up1 = uuid.NewV1()
+	assert.False(t, up1.IsZero())
+	u1 = uuid.MakeV1()
+	assert.False(t, u1.IsZero())
+}
+
 func TestUUIDJSON(t *testing.T) {
 	v1s := "03907310-8daa-11eb-8dcd-0242ac130003"
 	type testJSON struct {
@@ -36,7 +47,7 @@ func TestUUIDJSON(t *testing.T) {
 		OptID *uuid.UUID `json:"opt_id,omitempty"`
 	}
 
-	v := testJSON{ID: uuid.NewV1()}
+	v := testJSON{ID: uuid.MakeV1()}
 	if v.ID.IsZero() {
 		t.Errorf("did not expect UUID to be zero valued")
 	}
