@@ -120,18 +120,18 @@ func (e *Envelope) Insert(doc interface{}) error {
 		}
 	}
 
-	if err := e.complete(); err != nil {
+	if err := e.calculate(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// Complete is used to perform calculations on the envelope's
+// Calculate is used to perform calculations on the envelope's
 // document contents to ensure everything looks correct.
 // Headers will be refreshed to ensure they have the latest valid
 // digest.
-func (e *Envelope) Complete() error {
+func (e *Envelope) Calculate() error {
 	if e.Document == nil {
 		return ErrNoDocument
 	}
@@ -139,10 +139,10 @@ func (e *Envelope) Complete() error {
 		return ErrNoDocument
 	}
 
-	return e.complete()
+	return e.calculate()
 }
 
-func (e *Envelope) complete() error {
+func (e *Envelope) calculate() error {
 	// Always set our schema version
 	e.Schema = EnvelopeSchema
 

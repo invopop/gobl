@@ -90,7 +90,7 @@ func TestEnvelopeComplete(t *testing.T) {
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
 
-	err = e.Complete()
+	err = e.Calculate()
 	require.NoError(t, err)
 
 	inv, ok := e.Extract().(*bill.Invoice)
@@ -103,13 +103,13 @@ func TestEnvelopeComplete(t *testing.T) {
 func TestEnvelopeCompleteErrors(t *testing.T) {
 	t.Run("missing document", func(t *testing.T) {
 		e := new(gobl.Envelope)
-		err := e.Complete()
+		err := e.Calculate()
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
 	t.Run("missing document payload", func(t *testing.T) {
 		e := gobl.NewEnvelope()
-		err := e.Complete()
+		err := e.Calculate()
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
