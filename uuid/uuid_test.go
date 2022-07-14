@@ -28,6 +28,18 @@ func TestUUIDParsing(t *testing.T) {
 	}
 }
 
+func TestUUIDIsZero(t *testing.T) {
+	var up1 *uuid.UUID
+	assert.True(t, up1.IsZero())
+	var u1 uuid.UUID
+	assert.True(t, u1.IsZero())
+
+	up1 = uuid.NewV1()
+	assert.False(t, up1.IsZero())
+	u1 = uuid.MakeV1()
+	assert.False(t, u1.IsZero())
+}
+
 func TestUUIDJSON(t *testing.T) {
 	v1s := "03907310-8daa-11eb-8dcd-0242ac130003"
 	type testJSON struct {

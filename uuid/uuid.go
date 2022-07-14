@@ -52,7 +52,10 @@ func (u UUID) Timestamp() time.Time {
 }
 
 // IsZero returns true if the UUID is all zeros.
-func (u UUID) IsZero() bool {
+func (u *UUID) IsZero() bool {
+	if u == nil {
+		return true
+	}
 	for _, v := range u.UUID {
 		if v != 0 {
 			return false
@@ -100,6 +103,6 @@ func (UUID) JSONSchema() *jsonschema.Schema {
 		Type:        "string",
 		Format:      "uuid",
 		Title:       "UUID",
-		Description: "Universally Unique Identifier. We only recommend using versions 1 and 4 within GoBL.",
+		Description: "Universally Unique Identifier. We only recommend using versions 1 and 4 within GOBL.",
 	}
 }
