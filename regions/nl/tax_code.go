@@ -13,13 +13,19 @@ import (
 
 // ValidTaxID complies with the ozzo validation Rule definition to be able
 // to confirm that the Tax ID is indeed spanish and valid.
-var ValidTaxID = new(validTaxID)
+var ValidTaxID = validTaxID{}
 
-type validTaxID struct{}
+type validTaxID struct {
+	requireCode bool
+}
+
+// RequireCode allows for additional checks for the ID code
+func (v validTaxID) RequireCode() validTaxID {
+	return validTaxID{requireCode: true}
+}
 
 const (
-	countryCode = string(l10n.NL)
-	vatLen      = 14
+	vatLen = 12
 )
 
 var errInvalidVAT = errors.New("invalid VAT number")
@@ -33,31 +39,34 @@ func VerifyTaxCode(code string) error {
 	if len(code) != vatLen {
 		return errInvalidVAT
 	}
-	if !strings.HasPrefix(code, countryCode) {
+	if code[9] != 'B' {
 		return errInvalidVAT
 	}
-	if code[11] != 'B' {
-		return errInvalidVAT
-	}
-	return validateDigits(code[2:11], code[12:14])
+	return validateDigits(code[0:9], code[10:12])
 }
 
 // Validate ensures the tax ID contains a matching country and
 // valid code.
-func (*validTaxID) Validate(value interface{}) error {
+func (v validTaxID) Validate(value interface{}) error {
 	id, ok := value.(*org.TaxIdentity)
 	if !ok {
 		return nil
 	}
 	return validation.ValidateStruct(id,
 		validation.Field(&id.Country, validation.Required, validation.In(l10n.NL)),
-		validation.Field(&id.Code, validation.Required, validation.By(validateTaxCode)),
+		validation.Field(&id.Code,
+			validation.When(v.requireCode, validation.Required),
+			validation.By(validateTaxCode),
+		),
 	)
 }
 
 func validateTaxCode(value interface{}) error {
 	code, ok := value.(string)
 	if !ok {
+		return nil
+	}
+	if code == "" {
 		return nil
 	}
 	return VerifyTaxCode(code)
@@ -84,7 +93,7 @@ func validateDigits(code, check string) error {
 		sum = 0
 	}
 	if sum != ck {
-		return errors.New("checkusum mismatch")
+		return errors.New("checksum mismatch")
 	}
 
 	return nil

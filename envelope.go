@@ -92,8 +92,9 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	return nil
 }
 
-// Insert takes the provided document, performs any calculations, validates, then
-// serializes it ready for use.
+// Insert takes the provided document, performs any calculations,
+// will validate if not a draft, then serializes
+// ready for signing.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
 		return ErrInternal.WithErrorf("missing head")
@@ -119,10 +120,14 @@ func (e *Envelope) Insert(doc interface{}) error {
 	return nil
 }
 
-// Complete is used to perform calculations and validations on the envelopes document
-// if it responds to the Calculable and Validatable interfaces. Behind the scenes,
-// this method will determine the document type, extract, calculate, validate,
-// and then re-insert the potentially updated contents.
+// Complete is used to perform calculations on the envelope's
+// document contents to ensure everything looks correct.
+// If the envelope is not a draft, validation will also be performed
+// on the document's contents.
+// Headers will be refreshed to ensure they have the latest valid
+// digest.
+// After completing a non-draft envelope, you should sign and validate
+// the complete envelope.
 func (e *Envelope) Complete() error {
 	if e.Document == nil {
 		return ErrNoDocument
@@ -159,8 +164,17 @@ func (e *Envelope) complete() error {
 	}
 	var err error
 	e.Head.Digest, err = e.Document.Digest()
+	if err != nil {
+		return err
+	}
 
-	return err
+	if !e.Head.Draft {
+		if err := e.Document.Validate(); err != nil {
+			return &validation.Errors{"doc": err}
+		}
+	}
+
+	return nil
 }
 
 // Extract the contents of the envelope into the provided document type.

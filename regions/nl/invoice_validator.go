@@ -3,8 +3,8 @@ package nl
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant
@@ -36,7 +36,7 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID, validation.Required, ValidTaxID),
+		validation.Field(&obj.TaxID, validation.Required, ValidTaxID.RequireCode()),
 	)
 }
 
@@ -45,10 +45,5 @@ func (v *invoiceValidator) customer(value interface{}) error {
 	if !ok {
 		return nil
 	}
-	if obj.TaxID == nil || obj.TaxID.Country != l10n.NL {
-		return nil
-	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID, ValidTaxID),
-	)
+	return tax.ValidateTaxIdentity(obj.TaxID)
 }

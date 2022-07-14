@@ -48,7 +48,7 @@ lines:
 
 payment:
   terms:
-    key: instant-foo
+    key: instant
   instructions:
     key: credit-transfer
     credit_transfer:

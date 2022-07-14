@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regions/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -19,6 +20,9 @@ func Region() *tax.Region {
 			i18n.NL: "Nederland",
 		},
 		ValidateDocument: Validate,
+		ValidateTaxIdentity: func(tID *org.TaxIdentity) error {
+			return ValidTaxID.Validate(tID)
+		},
 		Categories: []*tax.Category{
 			//
 			// VAT

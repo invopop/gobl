@@ -113,10 +113,12 @@ func (inv *Invoice) Validate() error {
 		validation.Field(&inv.Notes),
 		validation.Field(&inv.Meta),
 	)
-	if err == nil {
-		tID := inv.determineTaxIdentity()
+	if err == nil && inv.Supplier != nil {
+		// Always validate contents using supplier's tax
+		// identity.
+		tID := inv.Supplier.TaxID
 		if tID == nil {
-			return errors.New("unable to determine tax identity")
+			return errors.New("missing supplier tax identity")
 		}
 		r := tax.RegionFor(tID.Country, tID.Locality)
 		err = r.ValidateDocument(inv)

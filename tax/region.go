@@ -37,6 +37,10 @@ type Region struct {
 
 	// ValidateDocument is a method to use to validate a document in a given region.
 	ValidateDocument func(doc interface{}) error `json:"-"`
+
+	// ValidateTaxIdentity is a method used to check tax codes for the given
+	// region.
+	ValidateTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
 }
 
 // Localities stores an array of locality objects used to describe areas

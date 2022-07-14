@@ -29,26 +29,26 @@ func TestVerifyTaxCode(t *testing.T) {
 		},
 		{
 			name: "valid",
-			code: "NL000099995B57",
+			code: "000099995B57",
 		},
 		{
 			name: "lowercase",
-			code: "nl000099995b57",
+			code: "000099995b57",
 		},
 		{
 			name: "no B",
-			code: "NL000099998X57",
+			code: "000099998X57",
 			err:  "invalid VAT number",
 		},
 		{
 			name: "non numbers",
-			code: "NL000099998B5a",
+			code: "000099998B5a",
 			err:  "invalid VAT number",
 		},
 		{
 			name: "invalid checksum",
-			code: "NL123456789B12",
-			err:  "checkusum mismatch",
+			code: "123456789B12",
+			err:  "checksum mismatch",
 		},
 	}
 

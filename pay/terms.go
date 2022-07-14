@@ -86,6 +86,7 @@ func (t *Terms) Validate() error {
 	}
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Key, validation.In(validTermKeys...)),
+		validation.Field(&t.DueDates),
 	)
 }
 
@@ -94,5 +95,7 @@ func (dd *DueDate) Validate() error {
 	return validation.ValidateStruct(dd,
 		validation.Field(&dd.Date, validation.Required),
 		validation.Field(&dd.Amount, validation.Required),
+		validation.Field(&dd.Percent),
+		validation.Field(&dd.Currency),
 	)
 }

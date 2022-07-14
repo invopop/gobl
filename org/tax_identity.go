@@ -7,17 +7,13 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
-// DocumentCode is used to identify the source of the tax identification
-// document.
-type DocumentCode string
-
 // Main DocumentCode definitions.
 const (
-	CompanyDocumentCode  DocumentCode = ""         // Tax Authority
-	PassportDocumentCode DocumentCode = "passport" // A passport document
-	NationalDocumentCode DocumentCode = "national" // National ID Card or similar
-	PermitDocumentCode   DocumentCode = "permit"   // Residential permit
-	OtherDocumentCode    DocumentCode = "other"    // Something else
+	DocumentKeyCompany  Key = ""         // Tax Authority
+	DocumentKeyPassport Key = "passport" // A passport document
+	DocumentKeyNational Key = "national" // National ID Card or similar
+	DocumentKeyPermit   Key = "permit"   // Residential permit
+	DocumentKeyOther    Key = "other"    // Something else
 )
 
 // TaxIdentity stores the details required to identify an entity for tax
@@ -33,7 +29,7 @@ type TaxIdentity struct {
 	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality Code"`
 
 	// What is the source document of this tax identity.
-	Document DocumentCode `json:"document,omitempty" jsonschema:"title=Document Code"`
+	Document Key `json:"document,omitempty" jsonschema:"title=Document Type Key"`
 
 	// Tax identity Code
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
@@ -48,6 +44,10 @@ type TaxIdentity struct {
 // the region `ValidateTaxID` method.
 func (id *TaxIdentity) Validate() error {
 	return validation.ValidateStruct(id,
+		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required, l10n.IsCountry),
+		validation.Field(&id.Locality),
+		validation.Field(&id.Document),
+		validation.Field(&id.Meta),
 	)
 }
