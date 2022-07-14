@@ -20,7 +20,7 @@ type Envelope struct {
 	// The data inside the envelope
 	Document *Document `json:"doc" jsonschema:"title=Document"`
 	// JSON Web Signatures of the header
-	Signatures []*dsig.Signature `json:"sigs" jsonschema:"title=Signatures"`
+	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
 
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
@@ -62,7 +62,7 @@ func (e *Envelope) Validate() error {
 		validation.Field(&e.Schema, validation.Required),
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures, validation.When(e.Head != nil && !e.Head.Draft, validation.Required)),
+		validation.Field(&e.Signatures, validation.When(e.Head == nil || e.Head.Draft, validation.Empty)),
 	)
 	if err != nil {
 		return err
@@ -82,8 +82,16 @@ func (e *Envelope) verifyDigest() error {
 	return nil
 }
 
-// Sign uses the private key to the envelope headers.
+// Sign uses the private key to sign the envelope headers. Validation
+// is performed automatically, and an error will be raised if still
+// in draft mode.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
+	if e.Head == nil || e.Head.Draft {
+		return ErrDraft.WithErrorf("cannot sign draft envelope")
+	}
+	if err := e.Validate(); err != nil {
+		return ErrValidation.WithCause(err)
+	}
 	sig, err := key.Sign(e.Head)
 	if err != nil {
 		return ErrSignature.WithCause(err)
@@ -92,9 +100,8 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	return nil
 }
 
-// Insert takes the provided document, performs any calculations,
-// will validate if not a draft, then serializes
-// ready for signing.
+// Insert takes the provided document and inserts it into this
+// envelope. Calculate will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
 		return ErrInternal.WithErrorf("missing head")
@@ -122,12 +129,8 @@ func (e *Envelope) Insert(doc interface{}) error {
 
 // Complete is used to perform calculations on the envelope's
 // document contents to ensure everything looks correct.
-// If the envelope is not a draft, validation will also be performed
-// on the document's contents.
 // Headers will be refreshed to ensure they have the latest valid
 // digest.
-// After completing a non-draft envelope, you should sign and validate
-// the complete envelope.
 func (e *Envelope) Complete() error {
 	if e.Document == nil {
 		return ErrNoDocument
@@ -166,12 +169,6 @@ func (e *Envelope) complete() error {
 	e.Head.Digest, err = e.Document.Digest()
 	if err != nil {
 		return err
-	}
-
-	if !e.Head.Draft {
-		if err := e.Document.Validate(); err != nil {
-			return &validation.Errors{"doc": err}
-		}
 	}
 
 	return nil

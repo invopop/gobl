@@ -21,6 +21,9 @@ func ExampleNewEnvelope_complete() {
 	if err := env.Insert(msg); err != nil {
 		panic(err.Error())
 	}
+	if err := env.Validate(); err != nil {
+		panic(err.Error())
+	}
 
 	data, err := json.MarshalIndent(env, "", "\t")
 	if err != nil {
@@ -40,7 +43,6 @@ func ExampleNewEnvelope_complete() {
 	// 	"doc": {
 	// 		"$schema": "https://gobl.org/draft-0/note/message",
 	// 		"content": "sample message content"
-	// 	},
-	// 	"sigs": []
+	// 	}
 	// }
 }
