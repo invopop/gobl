@@ -74,7 +74,7 @@
     "Note": {
       "properties": {
         "key": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/key",
           "title": "Key",
           "description": "Key specifying subject of the text"
         },
@@ -257,5 +257,5 @@
       "description": "Schemes defines an array of scheme objects with helper functions."
     }
   },
-  "$comment": "Generated with GOBL v0.28.0"
+  "$comment": "Generated with GOBL v0.28.1"
 }
