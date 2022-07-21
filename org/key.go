@@ -41,6 +41,17 @@ func (k Key) With(ke Key) Key {
 	return Key(fmt.Sprintf("%s+%s", k, ke))
 }
 
+// In returns true if the key's value matches one of those
+// in the provided list.
+func (k Key) In(set ...Key) bool {
+	for _, v := range set {
+		if v == k {
+			return true
+		}
+	}
+	return false
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Key) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
