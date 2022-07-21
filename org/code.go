@@ -38,8 +38,8 @@ func (c Code) String() string {
 }
 
 // In returns true if the code's value matches one of those
-// in the provided array.
-func (c Code) In(ary []Code) bool {
+// in the provided list.
+func (c Code) In(ary ...Code) bool {
 	for _, v := range ary {
 		if v == c {
 			return true

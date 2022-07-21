@@ -25,6 +25,16 @@ func (c Code) Validate() error {
 	)
 }
 
+// In returns true if the code is contained inside the provided set
+func (c Code) In(set ...Code) bool {
+	for _, x := range set {
+		if c == x {
+			return true
+		}
+	}
+	return false
+}
+
 // String provides string representation of code
 func (c Code) String() string {
 	return string(c)
