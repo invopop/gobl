@@ -7,12 +7,13 @@
       "properties": {
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
-          "title": "UUID"
+          "title": "UUID",
+          "description": "Internal ID used to identify the party inside a document."
         },
         "label": {
           "type": "string",
           "title": "Label",
-          "description": "Useful identifier"
+          "description": "Useful identifier, such as home, work, etc."
         },
         "po_box": {
           "type": "string",
@@ -42,7 +43,7 @@
         "street": {
           "type": "string",
           "title": "Street",
-          "description": "Fist line of street."
+          "description": "First line of street."
         },
         "street_extra": {
           "type": "string",
@@ -52,12 +53,12 @@
         "locality": {
           "type": "string",
           "title": "Locality",
-          "description": "The village"
+          "description": "The village, town, district, or city."
         },
         "region": {
           "type": "string",
           "title": "Region",
-          "description": "Province"
+          "description": "Province, County, or State."
         },
         "code": {
           "type": "string",
@@ -72,11 +73,12 @@
         "coords": {
           "$ref": "https://gobl.org/draft-0/org/coordinates",
           "title": "Coordinates",
-          "description": "For when the postal address is not sufficient"
+          "description": "When the postal address is not sufficient, coordinates help locate the address more precisely."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/org/meta",
-          "title": "Meta"
+          "title": "Meta",
+          "description": "Any additional semi-structure details about the address."
         }
       },
       "type": "object",
@@ -87,5 +89,5 @@
       "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address."
     }
   },
-  "$comment": "Generated with GOBL v0.28.1"
+  "$comment": "Generated with GOBL v0.28.2"
 }

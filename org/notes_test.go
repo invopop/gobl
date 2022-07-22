@@ -18,7 +18,7 @@ func TestNotesValidation(t *testing.T) {
 	err = n.Validate()
 	assert.NoError(t, err)
 
-	n.Key = org.Key("fooo")
+	n.Key = org.NoteKey("fooo")
 	err = n.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "key: must be a valid value")
