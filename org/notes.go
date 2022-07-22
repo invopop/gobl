@@ -225,15 +225,15 @@ type Note struct {
 // Validate checks that the note looks okay.
 func (n *Note) Validate() error {
 	return validation.ValidateStruct(n,
-		validation.Field(&n.Key, validation.In(validUNTDID4451Keys()...)),
+		validation.Field(&n.Key, validation.In(validNoteKeys()...)),
 		validation.Field(&n.Text, validation.Required),
 	)
 }
 
-func validUNTDID4451Keys() []interface{} {
+func validNoteKeys() []interface{} {
 	ks := make([]interface{}, len(NoteKeyDefinitions))
 	for i, v := range NoteKeyDefinitions {
-		ks[i] = v.UNTDID4451
+		ks[i] = v.Key
 	}
 	return ks
 }
