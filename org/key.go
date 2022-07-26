@@ -14,9 +14,9 @@ import (
 type Key string
 
 var (
-	// What should keys look like
+	// KeyPattern describes what should keys look like
 	KeyPattern = `^[a-z0-9][a-z0-9-+]*[a-z0-9]$`
-	// Regexp for key validation
+	// KeyValidationRegexp is used for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
 )
 

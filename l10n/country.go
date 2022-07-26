@@ -261,7 +261,8 @@ const (
 	ZW CountryCode = "ZW"
 )
 
-// Country
+// CountryDef provides the structure use to define a Country Code
+// definition.
 type CountryDef struct {
 	// ISO 3166-2 Country code
 	Code CountryCode `json:"code" jsonschema:"ISO Country Code"`
@@ -271,6 +272,9 @@ type CountryDef struct {
 	TLD string `json:"tld" jsonschema:"Top level domain"`
 }
 
+// CountryDefinitions provides and array of country definitions including
+// the official ISO country code, the name in English, and the countries
+// top-level-domain name.
 var CountryDefinitions = []CountryDef{
 	{AF, "Afghanistan", "af"},
 	{AX, "Åland Islands", "ax"},

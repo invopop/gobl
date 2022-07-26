@@ -35,8 +35,9 @@ type TypeKeyDef struct {
 	UNTDID1001  org.Code `json:"untdid1001" jsonschema:"title=UNTDID 1001 Code"`
 }
 
-// UNTDID1001TypeKeyMap offers a way to convert the GOBL invoice type code into
-// one supported by our subset of the UNTDID 1001 official list.
+// TypeKeyDefinitions describes each of the TypeKeys supported by
+// GOBL invoices, and includes a reference to the matching
+// UNTDID 1001 code.
 var TypeKeyDefinitions = []TypeKeyDef{
 	{TypeKeyCommercial, "Commercial invoice", "380"},
 	{TypeKeyProforma, "Proforma invoice", "325"},
