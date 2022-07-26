@@ -34,9 +34,9 @@
           "description": "Base price of a single unit to be sold."
         },
         "unit": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/org/unit",
           "title": "Unit",
-          "description": "Free-text unit of measure."
+          "description": "Unit of measure."
         },
         "codes": {
           "items": {
@@ -47,7 +47,7 @@
           "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer."
         },
         "origin": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Country of Origin",
           "description": "Country code of where this item was from originally."
         },

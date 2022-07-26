@@ -15,7 +15,7 @@ type Key string
 
 var (
 	// What should keys look like
-	KeyPattern = `^[a-z][a-z0-9-+]*[a-z0-9]$`
+	KeyPattern = `^[a-z0-9][a-z0-9-+]*[a-z0-9]$`
 	// Regexp for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
 )

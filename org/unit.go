@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/jsonschema"
 )
 
 // Unit is used to represent standard unit types.
@@ -21,14 +22,15 @@ const (
 	UnitGram         Unit = `g`
 	UnitKilogram     Unit = `kg`
 	UnitMetricTon    Unit = `t`
-	UnitMetre        Unit = `m`
-	UnitCentimetre   Unit = `cm`
 	UnitMillimetre   Unit = `mm`
+	UnitCentimetre   Unit = `cm`
+	UnitMetre        Unit = `m`
 	UnitKilometre    Unit = `km`
 	UnitInch         Unit = `in`
+	UnitFoot         Unit = `ft`
 	UnitSquareMetre  Unit = `m2`
 	UnitCubicMetre   Unit = `m3`
-	UnitCentilitres  Unit = `cl`
+	UnitCentilitre   Unit = `cl`
 	UnitLitre        Unit = `l`
 	UnitWatt         Unit = `w`
 	UnitKilowatt     Unit = `kw`
@@ -68,61 +70,111 @@ const (
 	UnitEnvelope  Unit = `envelope`
 )
 
-// UNECEUnitMap defines the conversion of GOBL Unit Codes into
-// UN/ECE recommended units.
-var UNECEUnitMap = map[Unit]string{
+// DefUnit serves to define unit keys.
+type DefUnit struct {
+	// Key for the Unit
+	Unit Unit `json:"unit" jsonschema:"title=Unit"`
+	// Description of the unit
+	Description string `json:"description" jsonschema:"title=Description"`
+	// Standard UN/ECE code
+	UNECE Code `json:"unece" jsonschema:"title=UN/ECE Unit Code"`
+}
+
+// UnitDefinitions describes each of the unit constants.
+// Order is important.
+var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
-	UnitPiece:        "H87",
-	UnitGram:         "GRM",
-	UnitKilogram:     "KGM",
-	UnitMetricTon:    "TNE",
-	UnitMetre:        "MTR",
-	UnitCentimetre:   "CMT",
-	UnitMillimetre:   "MMT",
-	UnitCentilitres:  "CLT",
-	UnitLitre:        "LTR",
-	UnitSquareMetre:  "MTK",
-	UnitCubicMetre:   "MTQ",
-	UnitKilometre:    "KMT", // "KTM" is no longer used
-	UnitWatt:         "WTT",
-	UnitKilowatt:     "KWT",
-	UnitKilowattHour: "KWH",
-	UnitDay:          "DAY",
-	UnitHour:         "HUR",
-	UnitMinute:       "MIN",
-	UnitSecond:       "SEC",
+	{UnitPiece, "Pieces (default)", "H87"},
+	{UnitGram, "Metric grams", "GRM"},
+	{UnitKilogram, "Metric kilograms", "KGM"},
+	{UnitMetricTon, "Metric tons", "TNE"},
+	{UnitMillimetre, "Milimetres", "MMT"},
+	{UnitCentimetre, "Centimetres", "CMT"},
+	{UnitMetre, "Metres", "MTR"},
+	{UnitKilometre, "Kilometers", "KMT"},
+	{UnitInch, "Inches", "INH"},
+	{UnitFoot, "Feet", "FOT"},
+	{UnitSquareMetre, "Square metres", "MTK"},
+	{UnitCubicMetre, "Cubic metres", "MTQ"},
+	{UnitCentilitre, "Centilitres", "CLT"},
+	{UnitLitre, "Litres", "LTR"},
+	{UnitWatt, "Watts", "WTT"},
+	{UnitKilowatt, "Kilowatts", "KWT"},
+	{UnitKilowattHour, "Kilowatt Hours", "KWH"},
+	{UnitDay, "Days", "DAY"},
+	{UnitSecond, "Seconds", "SEC"},
+	{UnitHour, "Hours", "HUR"},
+	{UnitMinute, "Minutes", "MIN"},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21
-	UnitBag:      "XBG",
-	UnitBox:      "XBX",
-	UnitBin:      "XBI",
-	UnitCase:     "XCS",
-	UnitTub:      "XTB",
-	UnitRoll:     "XRO",
-	UnitCan:      `XCA`,
-	UnitTray:     "XDS", // plastic
-	UnitCarton:   "XCT",
-	UnitCylinder: "XCY",
-	UnitBarrel:   "XBA",
-	UnitJerrican: "XJY", // cylindrical
-	UnitBottle:   "XBO", // non-protected, cylindrical
-	UnitCarboy:   "XCO", // non-protected
-	UnitDemijohn: "XDJ", // non-protected
-	UnitCanister: "XCI",
-	UnitPackage:  "XPK",
-	UnitBunch:    "XBH",
-	UnitPallet:   "XPX",
-	UnitReel:     "XRL",
-	UnitSack:     "XSA",
-	UnitSheet:    "XST",
-	UnitEnvelope: "XEN",
+	{UnitBag, "Bags", "XBG"},
+	{UnitBox, "Boxes", "XBX"},
+	{UnitBin, "Bins", "XBI"},
+	{UnitCan, "Cans", "XCA"},
+	{UnitTub, "Tubs", "XTB"},
+	{UnitCase, "Cases", "XCS"},
+	{UnitTray, "Trays", "XDS"},    // plastic
+	{UnitPortion, "Portions", ""}, // non-standard (src: ES)
+	{UnitDozen, "Dozens", ""},     // non-standard (src: ES)
+	{UnitRoll, "Rolls", "XRO"},
+	{UnitCarton, "Cartons", "XCT"},
+	{UnitCylinder, "Cylinders", "XCY"},
+	{UnitBarrel, "Barrels", "XBA"},
+	{UnitJerrican, "Jerricans", "XJY"}, // cylindrical
+	{UnitCarboy, "Carboys", "XCO"},     // non-protected
+	{UnitDemijohn, "Demijohn", "XDJ"},  // non-protected
+	{UnitBottle, "Bottles", "XBO"},     // non-protected, cylindrical
+	{UnitSixPack, "Six Packs", ""},     // non-standard (src: ES)
+	{UnitCanister, "Canisters", "XCI"},
+	{UnitPackage, "Packages", "XPK"},
+	{UnitBunch, "Bunches", "XBH"},
+	{UnitTetraBrik, "Tetra-Briks", ""}, // non-standard (src: ES)
+	{UnitPallet, "Pallets", "XPX"},
+	{UnitReel, "Reels", "XRL"},
+	{UnitSack, "Sacks", "XSA"},
+	{UnitSheet, "Sheets", "XST"},
+	{UnitEnvelope, "Envelopes", "XEN"},
 }
 
-var unitCodeRegexp = regexp.MustCompile(`^[a-z0-9]+$`)
+const unitPattern = `^[a-z0-9]+$`
+
+var unitCodeRegexp = regexp.MustCompile(unitPattern)
 
 // Validate ensures the unit looks correct
 func (u Unit) Validate() error {
 	return validation.Validate(string(u), validation.Match(unitCodeRegexp))
+}
+
+// UNECE provides the unit's UN/ECE equivalent
+// value. If not available, returns CodeEmpty.
+func (u Unit) UNECE() Code {
+	for _, def := range UnitDefinitions {
+		if def.Unit == u {
+			return def.UNECE
+		}
+	}
+	return CodeEmpty
+}
+
+// JSONSchema provides a representation of the struct for usage in Schema.
+func (u Unit) JSONSchema() *jsonschema.Schema {
+	s := &jsonschema.Schema{
+		Title:       "Unit",
+		OneOf:       make([]*jsonschema.Schema, len(UnitDefinitions)),
+		Description: "Unit describes how the quantity of the product should be interpreted.",
+	}
+	for i, v := range UnitDefinitions {
+		s.OneOf[i] = &jsonschema.Schema{
+			Const:       v.Unit,
+			Description: v.Description,
+		}
+	}
+	// overwrite default "pieces" unit
+	s.OneOf[0] = &jsonschema.Schema{
+		Pattern:     unitPattern,
+		Description: "Custom unit definition",
+	}
+	return s
 }

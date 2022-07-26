@@ -35,7 +35,7 @@ type Address struct {
 	// Post or ZIP code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// ISO country code.
-	Country l10n.Code `json:"country,omitempty" jsonschema:"title=Country"`
+	Country l10n.CountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// When the postal address is not sufficient, coordinates help locate the address more precisely.
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
 	// Any additional semi-structure details about the address.
@@ -59,7 +59,7 @@ type Coordinates struct {
 func (a *Address) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.UUID),
-		validation.Field(&a.Country, l10n.IsCountry),
+		validation.Field(&a.Country),
 		validation.Field(&a.Coordinates),
 		validation.Field(&a.Meta),
 	)

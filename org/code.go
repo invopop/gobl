@@ -20,7 +20,7 @@ var (
 )
 
 // CodeEmpty is used when no code is defined.
-const CodeEmpty = ""
+const CodeEmpty Code = ""
 
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {

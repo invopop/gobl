@@ -26,7 +26,7 @@
           "description": "Percentage of the total that should be paid by the date."
         },
         "currency": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "If different from the parent document's base currency."
         }
@@ -38,10 +38,56 @@
       ],
       "description": "DueDate contains an amount that should be paid by the given date."
     },
+    "TermKey": {
+      "oneOf": [
+        {
+          "const": "",
+          "description": "Not yet defined"
+        },
+        {
+          "const": "end-of-month",
+          "description": "End of month"
+        },
+        {
+          "const": "due-date",
+          "description": "Due on a specific date"
+        },
+        {
+          "const": "deferred",
+          "description": "Deferred until after the due date"
+        },
+        {
+          "const": "proximo",
+          "description": "Month after the present"
+        },
+        {
+          "const": "instant",
+          "description": "On receipt of invoice"
+        },
+        {
+          "const": "elective",
+          "description": "Chosen by the buyer"
+        },
+        {
+          "const": "pending",
+          "description": "Seller to advise buyer in separate transaction"
+        },
+        {
+          "const": "advance",
+          "description": "Payment made in advance"
+        },
+        {
+          "const": "delivery",
+          "description": "Payment on Delivery"
+        }
+      ],
+      "title": "Term Key",
+      "description": "Payment terms key"
+    },
     "Terms": {
       "properties": {
         "key": {
-          "$ref": "https://gobl.org/draft-0/org/key",
+          "$ref": "#/$defs/TermKey",
           "title": "Key",
           "description": "Type of terms to be applied."
         },

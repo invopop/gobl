@@ -78,7 +78,7 @@
     "Instructions": {
       "properties": {
         "key": {
-          "$ref": "https://gobl.org/draft-0/org/key",
+          "$ref": "#/$defs/MethodKey",
           "title": "Key",
           "description": "How payment is expected or has been arranged to be collected"
         },
@@ -134,6 +134,40 @@
         "key"
       ],
       "description": "Instructions holds a set of instructions that determine how the payment has or should be made."
+    },
+    "MethodKey": {
+      "oneOf": [
+        {
+          "const": "any",
+          "description": "Any method available, no preference"
+        },
+        {
+          "const": "card",
+          "description": "Credit or debit card"
+        },
+        {
+          "const": "credit-transfer",
+          "description": "Send initiated bank or wire transfer"
+        },
+        {
+          "const": "debit-transfer",
+          "description": "Receive initiated bank or wire transfer"
+        },
+        {
+          "const": "cash",
+          "description": "Cash"
+        },
+        {
+          "const": "direct-debit",
+          "description": "Direct debit"
+        },
+        {
+          "const": "online",
+          "description": "Online or web payment"
+        }
+      ],
+      "title": "Method Key",
+      "description": "Method Key describes how a payment should be made"
     },
     "Online": {
       "properties": {

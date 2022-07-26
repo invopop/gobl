@@ -6,7 +6,7 @@
     "ExchangeRate": {
       "properties": {
         "currency": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "ISO currency code this rate represents."
         },

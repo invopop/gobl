@@ -5,17 +5,16 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTermsValidation(t *testing.T) {
 	tm := new(Terms)
-	tm.Key = org.Key("foo")
+	tm.Key = TermKey("foo")
 	err := tm.Validate()
 	assert.Error(t, err, "expected validation error")
 
-	tm.Key = org.Key("due_date")
+	tm.Key = TermKey("due_date")
 	err = tm.Validate()
 	assert.Error(t, err, "expected validation error")
 	assert.Contains(t, err.Error(), "key: must be a valid value")

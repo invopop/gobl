@@ -3,9 +3,8 @@ package cal
 import "github.com/invopop/gobl/schema"
 
 func init() {
-	objs := []interface{}{
+	schema.Register(schema.GOBL.Add("cal"),
 		Date{},
 		Period{},
-	}
-	schema.RegisterAll(schema.GOBL.Add("cal"), objs)
+	)
 }

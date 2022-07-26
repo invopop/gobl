@@ -200,7 +200,7 @@
           "description": "Functional type of the invoice, default is always 'commercial'."
         },
         "currency": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "Currency for all invoice totals."
         },

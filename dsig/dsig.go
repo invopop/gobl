@@ -5,9 +5,8 @@ import (
 )
 
 func init() {
-	objs := []interface{}{
+	schema.Register(schema.GOBL.Add("dsig"),
 		&Digest{},
 		&Signature{},
-	}
-	schema.RegisterAll(schema.GOBL.Add("dsig"), objs)
+	)
 }

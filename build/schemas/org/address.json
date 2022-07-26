@@ -66,7 +66,7 @@
           "description": "Post or ZIP code."
         },
         "country": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Country",
           "description": "ISO country code."
         },

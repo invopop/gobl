@@ -1,7 +1,8 @@
 package i18n
 
 import (
-	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/jsonschema"
 )
 
 // To simplify language management GoBL does not support full localization
@@ -200,203 +201,231 @@ const (
 	ZU Lang = "zu" // Zulu
 )
 
-var iso639_1 = []Lang{
-	AB, // Abkhazian
-	AA, // Afar
-	AF, // Afrikaans
-	AK, // Akan
-	SQ, // Albanian
-	AM, // Amharic
-	AR, // Arabic
-	AN, // Aragonese
-	HY, // Armenian
-	AS, // Assamese
-	AV, // Avaric
-	AE, // Avestan
-	AY, // Aymara
-	AZ, // Azerbaijani
-	BM, // Bambara
-	BA, // Bashkir
-	EU, // Basque
-	BE, // Belarusian
-	BN, // Bengali
-	BH, // Bihari Languages
-	BI, // Bislama
-	BS, // Bosnian
-	BR, // Breton
-	BG, // Bulgarian
-	MY, // Burmese
-	CA, // Catalan, Valencian
-	CH, // Chamorro
-	CE, // Chechen
-	NY, // Chichewa, Chewa, Nyanja
-	ZH, // Chinese
-	CV, // Chuvash
-	KW, // Cornish
-	CO, // Corsican
-	CR, // Cree
-	HR, // Croation
-	CS, // Czech
-	DA, // Danish
-	DV, // Divehi, Dhivei, Maldivian
-	NL, // Dutch, Flemish
-	DZ, // Dzongkha
-	EN, // English
-	EO, // Esperanto
-	ET, // Estonian
-	EE, // Ewe
-	FO, // Faroese
-	FJ, // Fijian
-	FI, // Finnish
-	FR, // Frence
-	FF, // Fulah
-	GL, // Galician
-	KA, // Georgian
-	DE, // German
-	EL, // Greek
-	GN, // Guarani
-	GU, // Gujarati
-	HT, // Haitian
-	HA, // Hausa
-	HE, // Hebrew
-	HZ, // Herero
-	HI, // Hindi
-	HO, // Hiri Motu
-	HU, // Hungarian
-	IA, // Interlingua
-	ID, // Indonesian
-	IE, // Interligue
-	GA, // Irish
-	IG, // Igbo
-	IK, // Inupiaq
-	IO, // Ido
-	IS, // Icelandic
-	IT, // Italian
-	IU, // Inuktitut
-	JA, // Japanese
-	JV, // Javanese
-	KL, // Kalaallisut, Greenlandic
-	KN, // Kannada
-	KR, // Kanuri
-	KS, // Kashmiri
-	KK, // Kazakh
-	KM, // Central Khmer
-	KI, // Kikuyu, Gikuyu
-	RW, // Kinyarwanda
-	KY, // Kirighiz, Kyrgyz
-	KV, // Komi
-	KG, // Kongo
-	KO, // Korean
-	KU, // Kurdish
-	KJ, // Kuanyama, Kwanyama
-	LA, // Latin
-	LB, // Luxemburgish, Letzeburgesch
-	LG, // Ganda
-	LI, // Limburgan
-	LN, // Lingala
-	LO, // Lao
-	LT, // Lithuanian
-	LU, // Luba-Katanga
-	LV, // Latvian
-	GV, // Manx
-	MK, // Macedonian
-	MG, // Malagasy
-	MS, // Malay
-	ML, // Malayalam
-	MT, // Maltese
-	MI, // Mãori
-	MR, // Marathi
-	MH, // Marshallese
-	MN, // Mongolian
-	NA, // Nauru
-	NV, // Navajo
-	ND, // North Ndebele
-	NE, // Nepali
-	NG, // Ndonga
-	NB, // Norwegian Bokmål
-	NN, // Norwegian Nynorsk
-	NO, // Norwegian
-	II, // Sichuan Yi, Nuosu
-	NR, // South Ndebele
-	OC, // Occitan
-	OJ, // Ojibwa
-	CU, // Church Slavic
-	OM, // Oromo
-	OR, // Oriya
-	OS, // Ossetian, Ossetic
-	PA, // Punjabi, Panjabi
-	PI, // Pali
-	FA, // Persian
-	PL, // Polish
-	PS, // Pashto, Pushto
-	PT, // Portuguese
-	QU, // Quechua
-	RM, // Romansh
-	RN, // Rundi
-	RO, // Romanian, Moldavian, Moldovan
-	RU, // Russian
-	SA, // Sanskrit
-	SC, // Sardinian
-	SD, // Sindhi
-	SE, // Northern Sami
-	SM, // Samoan
-	SG, // Sango
-	SR, // Serbian
-	GD, // Gaelic, Scottish Gaelic
-	SN, // Shona
-	SI, // Sinhala, Singalese
-	SK, // Slovak
-	SL, // Slovenian
-	SO, // Somali
-	ST, // Southern Sotho
-	ES, // Spanish, Castilian
-	SU, // Sundanese
-	SW, // Swahili
-	SS, // Swati
-	SV, // Swedish
-	TA, // Tamil
-	TE, // Teluga
-	TG, // Tajik
-	TH, // Thai
-	TI, // Tigrinya
-	BO, // Tibetan
-	TK, // Turkmen
-	TL, // Tagalog
-	TN, // Tswana
-	TO, // Tonga
-	TR, // Turkish
-	TS, // Tsonga
-	TT, // Tatar
-	TW, // Twi
-	TY, // Tahitian
-	UG, // Uighur Uyghur
-	UK, // Ukrainian
-	UR, // Urdu
-	UZ, // Uzbek
-	VE, // Venda
-	VI, // Viatnamese
-	VO, // Volapük
-	WA, // Walloon
-	CY, // Welsh
-	WO, // Wolof
-	FY, // Western Frisian
-	XH, // Xhosa
-	YI, // Yiddish
-	YO, // Yoruba
-	ZA, // Zhuang, Chuang
-	ZU, // Zulu
+// LangDef serves to handle language definitions
+type LangDef struct {
+	// Language Code
+	Code Lang `json:"code" jsonschema:"title=Code"`
+	// English name of the language
+	Name string `json:"name" jsonschema:"title=Name"`
+}
+
+// LangDefinitions contains all the languages we currently know about
+// including their ISO code and english name.
+var LangDefinitions = []LangDef{
+	{AB, "Abkhazian"},
+	{AA, "Afar"},
+	{AF, "Afrikaans"},
+	{AK, "Akan"},
+	{SQ, "Albanian"},
+	{AM, "Amharic"},
+	{AR, "Arabic"},
+	{AN, "Aragonese"},
+	{HY, "Armenian"},
+	{AS, "Assamese"},
+	{AV, "Avaric"},
+	{AE, "Avestan"},
+	{AY, "Aymara"},
+	{AZ, "Azerbaijani"},
+	{BM, "Bambara"},
+	{BA, "Bashkir"},
+	{EU, "Basque"},
+	{BE, "Belarusian"},
+	{BN, "Bengali"},
+	{BH, "Bihari Languages"},
+	{BI, "Bislama"},
+	{BS, "Bosnian"},
+	{BR, "Breton"},
+	{BG, "Bulgarian"},
+	{MY, "Burmese"},
+	{CA, "Catalan, Valencian"},
+	{CH, "Chamorro"},
+	{CE, "Chechen"},
+	{NY, "Chichewa, Chewa, Nyanja"},
+	{ZH, "Chinese"},
+	{CV, "Chuvash"},
+	{KW, "Cornish"},
+	{CO, "Corsican"},
+	{CR, "Cree"},
+	{HR, "Croation"},
+	{CS, "Czech"},
+	{DA, "Danish"},
+	{DV, "Divehi, Dhivei, Maldivian"},
+	{NL, "Dutch, Flemish"},
+	{DZ, "Dzongkha"},
+	{EN, "English"},
+	{EO, "Esperanto"},
+	{ET, "Estonian"},
+	{EE, "Ewe"},
+	{FO, "Faroese"},
+	{FJ, "Fijian"},
+	{FI, "Finnish"},
+	{FR, "Frence"},
+	{FF, "Fulah"},
+	{GL, "Galician"},
+	{KA, "Georgian"},
+	{DE, "German"},
+	{EL, "Greek"},
+	{GN, "Guarani"},
+	{GU, "Gujarati"},
+	{HT, "Haitian"},
+	{HA, "Hausa"},
+	{HE, "Hebrew"},
+	{HZ, "Herero"},
+	{HI, "Hindi"},
+	{HO, "Hiri Motu"},
+	{HU, "Hungarian"},
+	{IA, "Interlingua"},
+	{ID, "Indonesian"},
+	{IE, "Interligue"},
+	{GA, "Irish"},
+	{IG, "Igbo"},
+	{IK, "Inupiaq"},
+	{IO, "Ido"},
+	{IS, "Icelandic"},
+	{IT, "Italian"},
+	{IU, "Inuktitut"},
+	{JA, "Japanese"},
+	{JV, "Javanese"},
+	{KL, "Kalaallisut, Greenlandic"},
+	{KN, "Kannada"},
+	{KR, "Kanuri"},
+	{KS, "Kashmiri"},
+	{KK, "Kazakh"},
+	{KM, "Central Khmer"},
+	{KI, "Kikuyu, Gikuyu"},
+	{RW, "Kinyarwanda"},
+	{KY, "Kirighiz, Kyrgyz"},
+	{KV, "Komi"},
+	{KG, "Kongo"},
+	{KO, "Korean"},
+	{KU, "Kurdish"},
+	{KJ, "Kuanyama, Kwanyama"},
+	{LA, "Latin"},
+	{LB, "Luxemburgish, Letzeburgesch"},
+	{LG, "Ganda"},
+	{LI, "Limburgan"},
+	{LN, "Lingala"},
+	{LO, "Lao"},
+	{LT, "Lithuanian"},
+	{LU, "Luba-Katanga"},
+	{LV, "Latvian"},
+	{GV, "Manx"},
+	{MK, "Macedonian"},
+	{MG, "Malagasy"},
+	{MS, "Malay"},
+	{ML, "Malayalam"},
+	{MT, "Maltese"},
+	{MI, "Mãori"},
+	{MR, "Marathi"},
+	{MH, "Marshallese"},
+	{MN, "Mongolian"},
+	{NA, "Nauru"},
+	{NV, "Navajo"},
+	{ND, "North Ndebele"},
+	{NE, "Nepali"},
+	{NG, "Ndonga"},
+	{NB, "Norwegian Bokmål"},
+	{NN, "Norwegian Nynorsk"},
+	{NO, "Norwegian"},
+	{II, "Sichuan Yi, Nuosu"},
+	{NR, "South Ndebele"},
+	{OC, "Occitan"},
+	{OJ, "Ojibwa"},
+	{CU, "Church Slavic"},
+	{OM, "Oromo"},
+	{OR, "Oriya"},
+	{OS, "Ossetian, Ossetic"},
+	{PA, "Punjabi, Panjabi"},
+	{PI, "Pali"},
+	{FA, "Persian"},
+	{PL, "Polish"},
+	{PS, "Pashto, Pushto"},
+	{PT, "Portuguese"},
+	{QU, "Quechua"},
+	{RM, "Romansh"},
+	{RN, "Rundi"},
+	{RO, "Romanian, Moldavian, Moldovan"},
+	{RU, "Russian"},
+	{SA, "Sanskrit"},
+	{SC, "Sardinian"},
+	{SD, "Sindhi"},
+	{SE, "Northern Sami"},
+	{SM, "Samoan"},
+	{SG, "Sango"},
+	{SR, "Serbian"},
+	{GD, "Gaelic, Scottish Gaelic"},
+	{SN, "Shona"},
+	{SI, "Sinhala, Singalese"},
+	{SK, "Slovak"},
+	{SL, "Slovenian"},
+	{SO, "Somali"},
+	{ST, "Southern Sotho"},
+	{ES, "Spanish, Castilian"},
+	{SU, "Sundanese"},
+	{SW, "Swahili"},
+	{SS, "Swati"},
+	{SV, "Swedish"},
+	{TA, "Tamil"},
+	{TE, "Teluga"},
+	{TG, "Tajik"},
+	{TH, "Thai"},
+	{TI, "Tigrinya"},
+	{BO, "Tibetan"},
+	{TK, "Turkmen"},
+	{TL, "Tagalog"},
+	{TN, "Tswana"},
+	{TO, "Tonga"},
+	{TR, "Turkish"},
+	{TS, "Tsonga"},
+	{TT, "Tatar"},
+	{TW, "Twi"},
+	{TY, "Tahitian"},
+	{UG, "Uighur Uyghur"},
+	{UK, "Ukrainian"},
+	{UR, "Urdu"},
+	{UZ, "Uzbek"},
+	{VE, "Venda"},
+	{VI, "Viatnamese"},
+	{VO, "Volapük"},
+	{WA, "Walloon"},
+	{CY, "Welsh"},
+	{WO, "Wolof"},
+	{FY, "Western Frisian"},
+	{XH, "Xhosa"},
+	{YI, "Yiddish"},
+	{YO, "Yoruba"},
+	{ZA, "Zhuang, Chuang"},
+	{ZU, "Zulu"},
+}
+
+var isLang = validation.In(validLang()...)
+
+func validLang() []interface{} {
+	list := make([]interface{}, len(LangDefinitions))
+	for i, d := range LangDefinitions {
+		list[i] = string(d.Code)
+	}
+	return list
 }
 
 // Validate ensures the language code is valid according
 // to the ISO 639-1 two-letter list.
 func (l Lang) Validate() error {
-	if string(l) == "" {
-		return nil
+	return validation.Validate(string(l), isLang)
+}
+
+// JSONSchema provides a representation of the struct for usage in Schema.
+func (Lang) JSONSchema() *jsonschema.Schema {
+	s := &jsonschema.Schema{
+		Title:       "Language Code",
+		OneOf:       make([]*jsonschema.Schema, len(LangDefinitions)),
+		Description: "Identifies the ISO639-1 language code",
 	}
-	for _, lc := range iso639_1 {
-		if l == lc {
-			return nil
+	for i, v := range LangDefinitions {
+		s.OneOf[i] = &jsonschema.Schema{
+			Const:       v.Code,
+			Description: v.Name,
 		}
 	}
-	return errors.New("invalid language code")
+	return s
 }

@@ -3,10 +3,9 @@ package tax
 import "github.com/invopop/gobl/schema"
 
 func init() {
-	objs := []interface{}{
+	schema.Register(schema.GOBL.Add("tax"),
 		Set{},
 		Total{},
 		Region{},
-	}
-	schema.RegisterAll(schema.GOBL.Add("tax"), objs)
+	)
 }

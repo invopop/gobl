@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/l10n/code",
+  "$ref": "#/$defs/Code",
+  "$defs": {
+    "Code": {
+      "type": "string",
+      "pattern": "\\A[A-Z0-9]+\\z",
+      "title": "Code",
+      "description": "Code is used for short identifies like country or state codes."
+    }
+  },
+  "$comment": "Generated with GOBL v0.28.2"
+}

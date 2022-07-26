@@ -8,8 +8,8 @@ import (
 )
 
 func TestCodeIn(t *testing.T) {
-	c := l10n.ES
+	c := l10n.Code("MAD")
 
-	assert.True(t, c.In(l10n.PT, l10n.ES))
-	assert.False(t, c.In(l10n.GB, l10n.PT))
+	assert.True(t, c.In("A", "MAD"))
+	assert.False(t, c.In("A", "V"))
 }

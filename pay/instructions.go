@@ -4,30 +4,46 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/jsonschema"
 )
+
+// MethodKey represents a type of payment instruction
+type MethodKey org.Key
 
 // Standard payment method codes. This is a heavily reduced list of practical
 // codes which can be linked to UNTDID 4461 counterparts.
 // If you require more payment method options, please send your pull requests.
 const (
-	MethodKeyAny            org.Key = "any" // Use any method available.
-	MethodKeyCard           org.Key = "card"
-	MethodKeyCreditTransfer org.Key = "credit-transfer"
-	MethodKeyDebitTransfer  org.Key = "debit-transfer"
-	MethodKeyCash           org.Key = "cash"
-	MethodKeyDirectDebit    org.Key = "direct-debit" // aka. Mandate
-	MethodKeyOnline         org.Key = "online"       // Website from which payment can be made
+	MethodKeyAny            MethodKey = "any" // Use any method available.
+	MethodKeyCard           MethodKey = "card"
+	MethodKeyCreditTransfer MethodKey = "credit-transfer"
+	MethodKeyDebitTransfer  MethodKey = "debit-transfer"
+	MethodKeyCash           MethodKey = "cash"
+	MethodKeyDirectDebit    MethodKey = "direct-debit" // aka. Mandate
+	MethodKeyOnline         MethodKey = "online"       // Website from which payment can be made
 )
 
-// https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred4461.htm
-var untdid4461Keys = map[org.Key]string{
-	MethodKeyAny:            "1",  // Instrument not defined
-	MethodKeyCard:           "48", // bank card
-	MethodKeyCreditTransfer: "30", // credit transfer
-	MethodKeyDebitTransfer:  "31", // debit transfer
-	MethodKeyCash:           "10", // in cash
-	MethodKeyDirectDebit:    "49", // direct debit
-	MethodKeyOnline:         "68", // online payment service
+// MethodKeyDef is used to define each of the Method Keys
+// that can be accepted by GOBL.
+type MethodKeyDef struct {
+	// Key being described
+	Key MethodKey `json:"key" jsonschema:"Key"`
+	// Details about the meaning of the key
+	Description string `json:"description" jsonschema:"Description"`
+	// UNTDID 4461 Equivalent Code
+	UNTDID4461 org.Code `json:"untdid4461" jsonschema:"UNTDID 4461 Code"`
+}
+
+// MethodKeyDefinitions includes all the payment method keys that
+// are accepted by GOBL.
+var MethodKeyDefinitions = []MethodKeyDef{
+	{MethodKeyAny, "Any method available, no preference", "1"},                // Instrument not defined
+	{MethodKeyCard, "Credit or debit card", "48"},                             // Bank card
+	{MethodKeyCreditTransfer, "Send initiated bank or wire transfer", "30"},   // credit transfer
+	{MethodKeyDebitTransfer, "Receive initiated bank or wire transfer", "31"}, // debit transfer
+	{MethodKeyCash, "Cash", "10"},                                             // in cash
+	{MethodKeyDirectDebit, "Direct debit", "49"},                              // direct debit
+	{MethodKeyOnline, "Online or web payment", "68"},                          // online payment service
 }
 
 // Instructions holds a set of instructions that determine how the payment has
@@ -35,7 +51,7 @@ var untdid4461Keys = map[org.Key]string{
 // should be provided. All other details serve as a reference.
 type Instructions struct {
 	// How payment is expected or has been arranged to be collected
-	Key org.Key `json:"key" jsonschema:"title=Key"`
+	Key MethodKey `json:"key" jsonschema:"title=Key"`
 	// Optional text description of the payment method
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Remittance information, a text value used to link the payment with the invoice.
@@ -96,8 +112,13 @@ type Online struct {
 }
 
 // UNTDID4461 provides the standard UNTDID 4461 code for the instruction's key.
-func (i *Instructions) UNTDID4461() string {
-	return untdid4461Keys[i.Key]
+func (i *Instructions) UNTDID4461() org.Code {
+	for _, v := range MethodKeyDefinitions {
+		if v.Key == i.Key {
+			return v.UNTDID4461
+		}
+	}
+	return org.CodeEmpty
 }
 
 // Validate ensures the Online method details look correct.
@@ -110,19 +131,35 @@ func (u *Online) Validate() error {
 // Validate ensures the fields provided in the instructions are valid.
 func (i *Instructions) Validate() error {
 	return validation.ValidateStruct(i,
-		validation.Field(&i.Key, validation.Required, validation.In(untdid4461KeyList()...)),
+		validation.Field(&i.Key, validation.Required, isValidMethodKey),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),
 		validation.Field(&i.Online),
 	)
 }
 
-func untdid4461KeyList() []interface{} {
-	list := make([]interface{}, len(untdid4461Keys))
-	i := 0
-	for v := range untdid4461Keys {
-		list[i] = v
-		i++
+var isValidMethodKey = validation.In(validMethodKeys()...)
+
+func validMethodKeys() []interface{} {
+	list := make([]interface{}, len(MethodKeyDefinitions))
+	for i, v := range MethodKeyDefinitions {
+		list[i] = v.Key
 	}
 	return list
+}
+
+// JSONSchema provides a representation of the struct for usage in Schema.
+func (k MethodKey) JSONSchema() *jsonschema.Schema {
+	s := &jsonschema.Schema{
+		Title:       "Method Key",
+		OneOf:       make([]*jsonschema.Schema, len(MethodKeyDefinitions)),
+		Description: "Method Key describes how a payment should be made",
+	}
+	for i, v := range MethodKeyDefinitions {
+		s.OneOf[i] = &jsonschema.Schema{
+			Const:       v.Key,
+			Description: v.Description,
+		}
+	}
+	return s
 }

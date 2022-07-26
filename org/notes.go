@@ -225,10 +225,12 @@ type Note struct {
 // Validate checks that the note looks okay.
 func (n *Note) Validate() error {
 	return validation.ValidateStruct(n,
-		validation.Field(&n.Key, validation.In(validNoteKeys()...)),
+		validation.Field(&n.Key, isValidNoteKey),
 		validation.Field(&n.Text, validation.Required),
 	)
 }
+
+var isValidNoteKey = validation.In(validNoteKeys()...)
 
 func validNoteKeys() []interface{} {
 	ks := make([]interface{}, len(NoteKeyDefinitions))

@@ -1,19 +1,21 @@
 package bill
 
 import (
-	"errors"
-
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 )
 
 func init() {
-	// None of TypeKey's sub-models are meant to be used outside an invoice.
-	schema.Register(schema.GOBL.Add("bill"), Invoice{})
+	schema.Register(schema.GOBL.Add("bill"),
+		// None of bill's sub-models are meant to be used outside an invoice.
+		Invoice{},
+	)
 }
 
 // TypeKey defines the type of invoice document according to a subset of the UNTDID 1001
 // standard list.
-type TypeKey string
+type TypeKey org.Key
 
 // Predefined list of the invoice type codes officially supported.
 const (
@@ -26,33 +28,47 @@ const (
 	TypeKeySelfBilled TypeKey = "self-billed" // Self Billed Invoice
 )
 
+// TypeKeyDef is used to describe a type definition.
+type TypeKeyDef struct {
+	Key         TypeKey  `json:"key" jsonschema:"title=Type Key"`
+	Description string   `json:"description" jsonschema:"title=Description"`
+	UNTDID1001  org.Code `json:"untdid1001" jsonschema:"title=UNTDID 1001 Code"`
+}
+
 // UNTDID1001TypeKeyMap offers a way to convert the GOBL invoice type code into
 // one supported by our subset of the UNTDID 1001 official list.
-var UNTDID1001TypeKeyMap = map[TypeKey]string{
-	TypeKeyProforma:   "325",
-	TypeKeyPartial:    "326",
-	TypeKeyCommercial: "380",
-	TypeKeySimplified: "380", // same as commercial
-	TypeKeyCorrected:  "384",
-	TypeKeyCreditNote: "381",
-	TypeKeySelfBilled: "389",
+var TypeKeyDefinitions = []TypeKeyDef{
+	{TypeKeyCommercial, "Commercial invoice", "380"},
+	{TypeKeyProforma, "Proforma invoice", "325"},
+	{TypeKeySimplified, "Simplified invoice or receipt", "380"}, // same UNTDID as commercial
+	{TypeKeyPartial, "Partial invoice", "326"},
+	{TypeKeyCorrected, "Corrected invoice", "384"},
+	{TypeKeyCreditNote, "Credit note", "381"},
+	{TypeKeySelfBilled, "Self billed invoice", "389"},
+}
+
+var isValidTypeKey = validation.In(validTypeKeys()...)
+
+func validTypeKeys() []interface{} {
+	list := make([]interface{}, len(TypeKeyDefinitions))
+	for i, d := range TypeKeyDefinitions {
+		list[i] = string(d.Key)
+	}
+	return list
 }
 
 // Validate is used to ensure the code provided is one of those we know
 // about.
 func (c TypeKey) Validate() error {
-	_, ok := UNTDID1001TypeKeyMap[c]
-	if !ok {
-		return errors.New("not found")
-	}
-	return nil
+	return validation.Validate(string(c), isValidTypeKey)
 }
 
 // UNTDID1001 provides the official code number assigned to the type.
-func (c TypeKey) UNTDID1001() string {
-	s, ok := UNTDID1001TypeKeyMap[c]
-	if !ok {
-		return "na"
+func (c TypeKey) UNTDID1001() org.Code {
+	for _, d := range TypeKeyDefinitions {
+		if d.Key == c {
+			return d.UNTDID1001
+		}
 	}
-	return s
+	return org.CodeEmpty
 }
