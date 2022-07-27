@@ -202,5 +202,5 @@
       "description": "Unit describes how the quantity of the product should be interpreted."
     }
   },
-  "$comment": "Generated with GOBL v0.28.2"
+  "$comment": "Generated with GOBL v0.29.0"
 }

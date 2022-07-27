@@ -69,5 +69,5 @@
       "description": "TaxIdentity stores the details required to identify an entity for tax purposes."
     }
   },
-  "$comment": "Generated with GOBL v0.28.2"
+  "$comment": "Generated with GOBL v0.29.0"
 }

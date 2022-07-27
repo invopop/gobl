@@ -41,5 +41,5 @@
       "description": "Set defines a list of tax categories and their rates to be used alongside taxable items."
     }
   },
-  "$comment": "Generated with GOBL v0.28.2"
+  "$comment": "Generated with GOBL v0.29.0"
 }

@@ -11,8 +11,8 @@ type Code string
 
 // Def provides a structure for the currencies
 type Def struct {
-	Name  string `json:"name"`  // name of the currency
 	Code  Code   `json:"code"`  // three-letter currency code
+	Name  string `json:"name"`  // name of the currency
 	Num   string `json:"num"`   // three-digit currency code
 	Units uint32 `json:"units"` // how many cents are used for the currency
 }
