@@ -34,12 +34,12 @@ type Item struct {
 	Currency string `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.
 	Price num.Amount `json:"price" jsonschema:"title=Price"`
-	// Free-text unit of measure.
+	// Unit of measure.
 	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	//	List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer.
 	Codes []*ItemCode `json:"codes,omitempty" jsonschema:"title=Codes"`
 	// Country code of where this item was from originally.
-	Origin l10n.Code `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
+	Origin l10n.CountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Additional meta information that may be useful
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -62,7 +62,7 @@ func (i *Item) Validate() error {
 		validation.Field(&i.Price, validation.Required),
 		validation.Field(&i.Unit),
 		validation.Field(&i.Codes),
-		validation.Field(&i.Origin, l10n.IsCountry),
+		validation.Field(&i.Origin),
 		validation.Field(&i.Meta),
 	)
 }

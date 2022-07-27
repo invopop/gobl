@@ -19,7 +19,7 @@ type Region struct {
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
 	// Country code for the region
-	Country l10n.Code `json:"country" jsonschema:"title=Code"`
+	Country l10n.CountryCode `json:"country" jsonschema:"title=Code"`
 	// Locality, city, province, county, or similar code inside the country, if needed.
 	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality"`
 

@@ -3,6 +3,32 @@
   "$id": "https://gobl.org/draft-0/org/tax-identity",
   "$ref": "#/$defs/TaxIdentity",
   "$defs": {
+    "SourceKey": {
+      "oneOf": [
+        {
+          "const": "tax-agency",
+          "description": "Sourced directly from a tax agency"
+        },
+        {
+          "const": "passport",
+          "description": "A passport document"
+        },
+        {
+          "const": "national",
+          "description": "National ID Card or similar"
+        },
+        {
+          "const": "permit",
+          "description": "Residential or similar permit"
+        },
+        {
+          "const": "other",
+          "description": "An other type of source not listed"
+        }
+      ],
+      "title": "Source Key",
+      "description": "SourceKey identifies the source of a tax identity"
+    },
     "TaxIdentity": {
       "properties": {
         "uuid": {
@@ -11,18 +37,18 @@
           "description": "Unique universal identity code."
         },
         "country": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Country Code",
           "description": "ISO country code for Where the tax identity was issued."
         },
         "locality": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/code",
           "title": "Locality Code",
           "description": "Where inside a country the Tax ID was issued, if required."
         },
-        "document": {
-          "$ref": "https://gobl.org/draft-0/org/key",
-          "title": "Document Type Key",
+        "source": {
+          "$ref": "#/$defs/SourceKey",
+          "title": "Source Key",
           "description": "What is the source document of this tax identity."
         },
         "code": {
@@ -43,5 +69,5 @@
       "description": "TaxIdentity stores the details required to identify an entity for tax purposes."
     }
   },
-  "$comment": "Generated with GOBL v0.28.1"
+  "$comment": "Generated with GOBL v0.29.0"
 }

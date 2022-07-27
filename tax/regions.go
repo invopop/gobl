@@ -8,12 +8,12 @@ import (
 var regions = newRegionCollection()
 
 type regionCollection struct {
-	list map[l10n.Code][]*Region
+	list map[l10n.CountryCode][]*Region
 }
 
 func newRegionCollection() *regionCollection {
 	c := new(regionCollection)
-	c.list = make(map[l10n.Code][]*Region)
+	c.list = make(map[l10n.CountryCode][]*Region)
 	return c
 }
 
@@ -24,7 +24,7 @@ func (c *regionCollection) add(r *Region) {
 	c.list[r.Country] = append(c.list[r.Country], r)
 }
 
-func (c *regionCollection) forIdentity(country, locality l10n.Code) *Region {
+func (c *regionCollection) forIdentity(country l10n.CountryCode, locality l10n.Code) *Region {
 	set, ok := c.list[country]
 	if !ok {
 		return nil
@@ -61,7 +61,7 @@ func RegisterRegion(region *Region) {
 
 // RegionFor returns the region definition for country and locality combination
 // or nil if no match was found.
-func RegionFor(country, locality l10n.Code) *Region {
+func RegionFor(country l10n.CountryCode, locality l10n.Code) *Region {
 	return regions.forIdentity(country, locality)
 }
 

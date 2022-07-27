@@ -14,8 +14,10 @@ import (
 type Key string
 
 var (
-	keyPattern          = `^[a-z][a-z0-9-+]*[a-z0-9]$`
-	keyValidationRegexp = regexp.MustCompile(keyPattern)
+	// KeyPattern describes what should keys look like
+	KeyPattern = `^[a-z0-9][a-z0-9-+]*[a-z0-9]$`
+	// KeyValidationRegexp is used for key validation
+	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
 )
 
 // KeyEmpty is used when no key is available.
@@ -25,7 +27,7 @@ const KeyEmpty Key = ""
 // requirements.
 func (k Key) Validate() error {
 	return validation.Validate(string(k),
-		validation.Match(keyValidationRegexp),
+		validation.Match(KeyValidationRegexp),
 		validation.Length(2, 64),
 	)
 }
@@ -56,7 +58,7 @@ func (k Key) In(set ...Key) bool {
 func (Key) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:        "string",
-		Pattern:     keyPattern,
+		Pattern:     KeyPattern,
 		Title:       "Key",
 		MinLength:   2,
 		MaxLength:   64,

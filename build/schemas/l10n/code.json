@@ -1,15 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/code",
+  "$id": "https://gobl.org/draft-0/l10n/code",
   "$ref": "#/$defs/Code",
   "$defs": {
     "Code": {
       "type": "string",
-      "maxLength": 6,
-      "minLength": 1,
-      "pattern": "^[A-Z0-9]{1,6}$",
+      "pattern": "\\A[A-Z0-9]+\\z",
       "title": "Code",
-      "description": "Short upper-case identifier."
+      "description": "Code is used for short identifies like country or state codes."
     }
   },
   "$comment": "Generated with GOBL v0.29.0"

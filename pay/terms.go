@@ -6,13 +6,17 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/jsonschema"
 )
+
+// TermKey defines the type of terms being handled
+type TermKey org.Key
 
 // Terms defines when we expect the customer to pay, or have paid, for
 // the contents of the document.
 type Terms struct {
 	// Type of terms to be applied.
-	Key org.Key `json:"key" jsonschema:"title=Key"`
+	Key TermKey `json:"key" jsonschema:"title=Key"`
 	// Text detail of the chosen payment terms.
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Set of dates for agreed payments.
@@ -23,30 +27,51 @@ type Terms struct {
 
 // Pre-defined Payment Terms based on UNTDID 4279
 const (
-	TermKeyNA         org.Key = ""             // None defined
-	TermKeyEndOfMonth org.Key = "end-of-month" // End of Month
-	TermKeyDueDate    org.Key = "due-date"     // Due on a specific date
-	TermKeyDeferred   org.Key = "deferred"     // Deferred until after the due dates
-	TermKeyProximo    org.Key = "proximo"      // Month after the present
-	TermKeyInstant    org.Key = "instant"      // on receipt of invoice
-	TermKeyElective   org.Key = "elective"     // chosen by buyer
-	TermKeyPending    org.Key = "pending"      // Seller to advise buyer in separate transaction
-	TermKeyAdvance    org.Key = "advance"      // Payment made in advance
-	TermKeyDelivery   org.Key = "delivery"     // Payment on Delivery
+	// None defined
+	TermKeyNA TermKey = ""
+	// End of Month
+	TermKeyEndOfMonth TermKey = "end-of-month"
+	// Due on a specific date
+	TermKeyDueDate TermKey = "due-date"
+	// Deferred until after the due dates
+	TermKeyDeferred TermKey = "deferred"
+	// Month after the present
+	TermKeyProximo TermKey = "proximo"
+	// on receipt of invoice
+	TermKeyInstant TermKey = "instant"
+	// chosen by buyer
+	TermKeyElective TermKey = "elective"
+	// Seller to advise buyer in separate transaction
+	TermKeyPending TermKey = "pending"
+	// Payment made in advance
+	TermKeyAdvance TermKey = "advance"
+	// Payment on Delivery
+	TermKeyDelivery TermKey = "delivery"
 )
 
-// Source: https://service.unece.org/trade/untdid/d15b/tred/tred4279.htm
-var untdid4279Terms = map[org.Key]string{
-	TermKeyNA:         "16", // Not Yet Defined
-	TermKeyEndOfMonth: "2",  // End of month
-	TermKeyDueDate:    "3",  // Fixed date
-	TermKeyDeferred:   "4",  // Deferred
-	TermKeyProximo:    "9",  // Proximo
-	TermKeyInstant:    "10", // Instant
-	TermKeyElective:   "11", // Elective
-	TermKeyPending:    "13", // Seller to advise buyer
-	TermKeyAdvance:    "32", // Advanced payment
-	TermKeyDelivery:   "52", // Cash on Delivery (COD)
+// TermKeyDef holds a definition of a single payment term key
+type TermKeyDef struct {
+	// The key being defined
+	Key TermKey `json:"key" jsonschema:"Key"`
+	// Human text for the key
+	Description string `json:"description" jsonschema:"Description"`
+	// The equivalent UNTDID 4279 Code
+	UNTDID4279 org.Code `json:"untdid4279" jsonschema:"UNTDID 4279 Code"`
+}
+
+// TermKeyDefinitions includes all the currently accepted
+// GOBL Payment Term definitions.
+var TermKeyDefinitions = []TermKeyDef{
+	{TermKeyNA, "Not yet defined", "16"},
+	{TermKeyEndOfMonth, "End of month", "2"},
+	{TermKeyDueDate, "Due on a specific date", "3"},
+	{TermKeyDeferred, "Deferred until after the due date", "4"},
+	{TermKeyProximo, "Month after the present", "9"},
+	{TermKeyInstant, "On receipt of invoice", "10"},
+	{TermKeyElective, "Chosen by the buyer", "11"},
+	{TermKeyPending, "Seller to advise buyer in separate transaction", "13"},
+	{TermKeyAdvance, "Payment made in advance", "32"},
+	{TermKeyDelivery, "Payment on Delivery", "52"}, // Cash on Delivery (COD)
 }
 
 // DueDate contains an amount that should be paid by the given date.
@@ -59,8 +84,13 @@ type DueDate struct {
 }
 
 // UNTDID4279 returns the UNTDID 4270 code associated with the terms key.
-func (t *Terms) UNTDID4279() string {
-	return untdid4279Terms[t.Key]
+func (t *Terms) UNTDID4279() org.Code {
+	for _, v := range TermKeyDefinitions {
+		if t.Key == v.Key {
+			return v.UNTDID4279
+		}
+	}
+	return org.CodeEmpty
 }
 
 // CalculateDues goes through each DueDate. If it has a percentage
@@ -78,16 +108,20 @@ func (t *Terms) CalculateDues(sum num.Amount) {
 
 // Validate ensures that the terms contain everything required.
 func (t *Terms) Validate() error {
-	validTermKeys := make([]interface{}, len(untdid4279Terms))
-	i := 0
-	for v := range untdid4279Terms {
-		validTermKeys[i] = v
-		i++
-	}
 	return validation.ValidateStruct(t,
-		validation.Field(&t.Key, validation.In(validTermKeys...)),
+		validation.Field(&t.Key, isValidTermKey),
 		validation.Field(&t.DueDates),
 	)
+}
+
+var isValidTermKey = validation.In(validTermKeys()...)
+
+func validTermKeys() []interface{} {
+	list := make([]interface{}, len(TermKeyDefinitions))
+	for i, v := range TermKeyDefinitions {
+		list[i] = v.Key
+	}
+	return list
 }
 
 // Validate checks the DueDate has the required fields.
@@ -98,4 +132,20 @@ func (dd *DueDate) Validate() error {
 		validation.Field(&dd.Percent),
 		validation.Field(&dd.Currency),
 	)
+}
+
+// JSONSchema provides a representation of the struct for usage in Schema.
+func (TermKey) JSONSchema() *jsonschema.Schema {
+	s := &jsonschema.Schema{
+		Title:       "Term Key",
+		OneOf:       make([]*jsonschema.Schema, len(TermKeyDefinitions)),
+		Description: "Payment terms key",
+	}
+	for i, v := range TermKeyDefinitions {
+		s.OneOf[i] = &jsonschema.Schema{
+			Const:       v.Key,
+			Description: v.Description,
+		}
+	}
+	return s
 }

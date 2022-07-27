@@ -49,7 +49,7 @@
     "Locality": {
       "properties": {
         "code": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/code",
           "title": "Code",
           "description": "Code"
         },
@@ -74,7 +74,7 @@
     "Note": {
       "properties": {
         "key": {
-          "$ref": "https://gobl.org/draft-0/org/key",
+          "$ref": "#/$defs/NoteKey",
           "title": "Key",
           "description": "Key specifying subject of the text"
         },
@@ -99,6 +99,112 @@
         "text"
       ],
       "description": "Note represents a free text of additional information that may be added to a document."
+    },
+    "NoteKey": {
+      "oneOf": [
+        {
+          "const": "goods",
+          "description": "Goods Description"
+        },
+        {
+          "const": "payment",
+          "description": "Terms of Payment"
+        },
+        {
+          "const": "legal",
+          "description": "Legal or regulatory information"
+        },
+        {
+          "const": "dangerous-goods",
+          "description": "Dangerous goods additional information"
+        },
+        {
+          "const": "ack",
+          "description": "Acknowledgement Description"
+        },
+        {
+          "const": "rate",
+          "description": "Rate additional information"
+        },
+        {
+          "const": "reason",
+          "description": "Reason"
+        },
+        {
+          "const": "dispute",
+          "description": "Dispute"
+        },
+        {
+          "const": "customer",
+          "description": "Customer remarks"
+        },
+        {
+          "const": "glossary",
+          "description": "Glossary"
+        },
+        {
+          "const": "customs",
+          "description": "Customs declaration information"
+        },
+        {
+          "const": "general",
+          "description": "General information"
+        },
+        {
+          "const": "handling",
+          "description": "Handling instructions"
+        },
+        {
+          "const": "packaging",
+          "description": "Packaging information"
+        },
+        {
+          "const": "loading",
+          "description": "Loading instructions"
+        },
+        {
+          "const": "price",
+          "description": "Price conditions"
+        },
+        {
+          "const": "priority",
+          "description": "Priority information"
+        },
+        {
+          "const": "regulatory",
+          "description": "Regulatory information"
+        },
+        {
+          "const": "safety",
+          "description": "Safety instructions"
+        },
+        {
+          "const": "ship-line",
+          "description": "Ship line"
+        },
+        {
+          "const": "supplier",
+          "description": "Supplier remarks"
+        },
+        {
+          "const": "transport",
+          "description": "Transportation information"
+        },
+        {
+          "const": "delivery",
+          "description": "Delivery information"
+        },
+        {
+          "const": "quarantine",
+          "description": "Quarantine information"
+        },
+        {
+          "const": "tax",
+          "description": "Tax declaration"
+        }
+      ],
+      "title": "Note Key",
+      "description": "NoteKey identifies the type of note being edited"
     },
     "Rate": {
       "properties": {
@@ -169,12 +275,12 @@
           "description": "Name of the region"
         },
         "country": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Code",
           "description": "Country code for the region"
         },
         "locality": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/l10n/code",
           "title": "Locality",
           "description": "Locality, city, province, county, or similar code inside the country, if needed."
         },
@@ -184,7 +290,7 @@
           "description": "List of sub-localities inside a region."
         },
         "currency": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "Currency used by the region for tax purposes."
         },
@@ -257,5 +363,5 @@
       "description": "Schemes defines an array of scheme objects with helper functions."
     }
   },
-  "$comment": "Generated with GOBL v0.28.1"
+  "$comment": "Generated with GOBL v0.29.0"
 }

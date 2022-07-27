@@ -3,9 +3,10 @@ package org
 import "github.com/invopop/gobl/schema"
 
 func init() {
-	objs := []interface{}{
+	schema.Register(schema.GOBL.Add("org"),
 		Code(""),
 		Key(""),
+		Unit(""),
 		Address{},
 		Coordinates{},
 		Item{},
@@ -19,6 +20,5 @@ func init() {
 		Meta{},
 		Notes{},
 		Inbox{},
-	}
-	schema.RegisterAll(schema.GOBL.Add("org"), objs)
+	)
 }

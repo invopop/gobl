@@ -17,3 +17,14 @@ func TestUnitValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "valid format")
 	}
 }
+
+func TestUnitUNECE(t *testing.T) {
+	u := org.Unit("h")
+	assert.Equal(t, u.UNECE(), org.Code("HUR"))
+
+	u = org.UnitTetraBrik
+	assert.Equal(t, u.UNECE(), org.CodeEmpty, "valid but no code")
+
+	u = org.Unit("FOO")
+	assert.Equal(t, u.UNECE(), org.CodeEmpty)
+}

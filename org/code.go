@@ -19,6 +19,9 @@ var (
 	codeValidationRegexp = regexp.MustCompile(codePattern)
 )
 
+// CodeEmpty is used when no code is defined.
+const CodeEmpty Code = ""
+
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
 	return validation.Validate(string(c),
@@ -29,7 +32,7 @@ func (c Code) Validate() error {
 
 // IsEmpty returns true if no code is specified.
 func (c Code) IsEmpty() bool {
-	return c == ""
+	return c == CodeEmpty
 }
 
 // String returns string representation of code.

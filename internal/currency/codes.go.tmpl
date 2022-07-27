@@ -1,7 +1,9 @@
 package currency
 
+// **** NOTICE! ****
 // This file is auto-generated. Any manual changes will be overwritten.
 // Generated on {{ .Date }}
+// *****************
 
 // List of ISO4217 currency codes.
 const (
@@ -10,9 +12,11 @@ const (
   {{- end }}
 )
 
-var iso4217Defs = map[Code]Def{
+// CodeDefinitions lists all the currencies we know about
+// with extra data.
+var CodeDefinitions = []Def{
   {{- range .Rows }}
-  {{ .Code }}: {
+  {
     Code:    {{ .Code }},
     Name:    "{{ .Name }}",
     Num:     "{{ .Num }}",
