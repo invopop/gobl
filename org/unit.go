@@ -162,17 +162,17 @@ func (u Unit) UNECE() Code {
 func (u Unit) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Unit",
-		OneOf:       make([]*jsonschema.Schema, len(UnitDefinitions)),
+		AnyOf:       make([]*jsonschema.Schema, len(UnitDefinitions)),
 		Description: "Unit describes how the quantity of the product should be interpreted.",
 	}
 	for i, v := range UnitDefinitions {
-		s.OneOf[i] = &jsonschema.Schema{
+		s.AnyOf[i] = &jsonschema.Schema{
 			Const:       v.Unit,
 			Description: v.Description,
 		}
 	}
 	// overwrite default "pieces" unit
-	s.OneOf[0] = &jsonschema.Schema{
+	s.AnyOf[0] = &jsonschema.Schema{
 		Pattern:     unitPattern,
 		Description: "Custom unit definition",
 	}

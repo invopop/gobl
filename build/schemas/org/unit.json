@@ -4,7 +4,7 @@
   "$ref": "#/$defs/Unit",
   "$defs": {
     "Unit": {
-      "oneOf": [
+      "anyOf": [
         {
           "pattern": "^[a-z0-9]+$",
           "description": "Custom unit definition"
