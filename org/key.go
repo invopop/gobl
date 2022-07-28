@@ -15,7 +15,7 @@ type Key string
 
 var (
 	// KeyPattern describes what should keys look like
-	KeyPattern = `^[a-z0-9][a-z0-9-+]*[a-z0-9]$`
+	KeyPattern = `^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$`
 	// KeyValidationRegexp is used for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
 )
@@ -28,7 +28,7 @@ const KeyEmpty Key = ""
 func (k Key) Validate() error {
 	return validation.Validate(string(k),
 		validation.Match(KeyValidationRegexp),
-		validation.Length(2, 64),
+		validation.Length(1, 64),
 	)
 }
 

@@ -1,8 +1,6 @@
 package org
 
 import (
-	"regexp"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
 )
@@ -15,8 +13,7 @@ type Unit string
 // many different unit codes in the world, that it's impractical to try and define them
 // all, this is thus a selection of which we think are the most useful.
 const (
-	// Default empty value is a "piece"
-	UnitPiece Unit = ``
+	UnitEmpty Unit = `` // No unit defined
 
 	// Measurement units
 	UnitGram         Unit = `g`
@@ -39,6 +36,7 @@ const (
 	UnitSecond       Unit = `s`
 	UnitHour         Unit = `h`
 	UnitMinute       Unit = `min`
+	UnitPiece        Unit = `piece`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -85,7 +83,6 @@ type DefUnit struct {
 var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
-	{UnitPiece, "Pieces (default)", "H87"},
 	{UnitGram, "Metric grams", "GRM"},
 	{UnitKilogram, "Metric kilograms", "KGM"},
 	{UnitMetricTon, "Metric tons", "TNE"},
@@ -106,6 +103,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitSecond, "Seconds", "SEC"},
 	{UnitHour, "Hours", "HUR"},
 	{UnitMinute, "Minutes", "MIN"},
+	{UnitPiece, "Pieces", "H87"},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21
@@ -138,13 +136,9 @@ var UnitDefinitions = []DefUnit{
 	{UnitEnvelope, "Envelopes", "XEN"},
 }
 
-const unitPattern = `^[a-z0-9]+$`
-
-var unitCodeRegexp = regexp.MustCompile(unitPattern)
-
 // Validate ensures the unit looks correct
 func (u Unit) Validate() error {
-	return validation.Validate(string(u), validation.Match(unitCodeRegexp))
+	return validation.Validate(string(u), validation.Match(KeyValidationRegexp))
 }
 
 // UNECE provides the unit's UN/ECE equivalent
@@ -171,10 +165,10 @@ func (u Unit) JSONSchema() *jsonschema.Schema {
 			Description: v.Description,
 		}
 	}
-	// overwrite default "pieces" unit
-	s.AnyOf[0] = &jsonschema.Schema{
-		Pattern:     unitPattern,
+	// Add the custom unit to the end
+	s.AnyOf = append(s.AnyOf, &jsonschema.Schema{
+		Pattern:     KeyPattern,
 		Description: "Custom unit definition",
-	}
+	})
 	return s
 }
