@@ -6,10 +6,6 @@
     "Unit": {
       "anyOf": [
         {
-          "pattern": "^[a-z0-9]+$",
-          "description": "Custom unit definition"
-        },
-        {
           "const": "g",
           "description": "Metric grams"
         },
@@ -88,6 +84,10 @@
         {
           "const": "min",
           "description": "Minutes"
+        },
+        {
+          "const": "piece",
+          "description": "Pieces"
         },
         {
           "const": "bag",
@@ -196,6 +196,10 @@
         {
           "const": "envelope",
           "description": "Envelopes"
+        },
+        {
+          "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+          "description": "Custom unit definition"
         }
       ],
       "title": "Unit",
