@@ -114,6 +114,15 @@ type Registration struct {
 	Entry   string     `json:"entry,omitempty" jsonschema:"title=Entry"`
 }
 
+// Calculate performs and calcuations required on the Party or
+// it's properties, like the tax identity.
+func (p *Party) Calculate() error {
+	if p.TaxID != nil {
+		return p.TaxID.Calculate()
+	}
+	return nil
+}
+
 // Validate is used to check the party's data meets minimum expectations.
 func (p *Party) Validate() error {
 	return validation.ValidateStruct(p,

@@ -4,7 +4,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant
@@ -43,16 +42,12 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID, validation.Required, ValidTaxID.RequireCode()),
+		validation.Field(&obj.TaxID, validation.Required, org.RequireTaxIdentityCode),
 	)
 }
 
 func (v *invoiceValidator) customer(value interface{}) error {
-	obj, _ := value.(*org.Party)
-	if obj == nil {
-		return nil
-	}
-	return tax.ValidateTaxIdentity(obj.TaxID)
+	return nil
 }
 
 func (v *invoiceValidator) preceding(value interface{}) error {

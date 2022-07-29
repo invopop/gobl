@@ -19,6 +19,38 @@ type DefSourceKey struct {
 	Description string    `json:"description" jsonschema:"title=Description"`
 }
 
+// RequireTaxIdentityCode is an additional check to use alongside
+// regular validation that will ensure the tax ID has a code
+// value set.
+var RequireTaxIdentityCode = validateTaxID{requireCode: true}
+
+type validateTaxID struct {
+	requireCode bool
+}
+
+var (
+	regionTaxIDValidation func(tID *TaxIdentity) error
+	regionTaxIDNormalizer func(tID *TaxIdentity) error
+)
+
+// SetTaxIdentityValidation will prepare a reference to the tax ID regional
+// validator. This is an internal method and will panic if called more than once.
+func SetTaxIdentityValidation(cb func(tID *TaxIdentity) error) {
+	if regionTaxIDValidation != nil {
+		panic("tax identity regional validation function already set")
+	}
+	regionTaxIDValidation = cb
+}
+
+// SetTaxIdentityNormalizer will prepare a reference to the tax ID regional
+// cleaner. This is an internal method and will panic if called more than once.
+func SetTaxIdentityNormalizer(cb func(tID *TaxIdentity) error) {
+	if regionTaxIDNormalizer != nil {
+		panic("tax identity regional cleaner function already set")
+	}
+	regionTaxIDNormalizer = cb
+}
+
 // Main Source Key definitions.
 const (
 	// Directly from tax Agency
@@ -79,17 +111,42 @@ type TaxIdentity struct {
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Calculate will attempt to perform a regional tax normalization
+// on the tax identity.
+func (id *TaxIdentity) Calculate() error {
+	return regionTaxIDNormalizer(id)
+}
+
 // Validate checks to ensure the tax ID contains all the required
 // fields. The check the value itself is in the expected format according
 // to the country, you'll need to use the region packages directly. See also
 // the region `ValidateTaxID` method.
 func (id *TaxIdentity) Validate() error {
-	return validation.ValidateStruct(id,
+	err := validation.ValidateStruct(id,
 		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required),
 		validation.Field(&id.Locality),
 		validation.Field(&id.Source, validation.In(validSourceKeys()...)),
 		validation.Field(&id.Meta),
+	)
+	if err != nil {
+		return err
+	}
+	if regionTaxIDValidation != nil {
+		return regionTaxIDValidation(id)
+	}
+	return nil
+}
+
+func (v validateTaxID) Validate(value interface{}) error {
+	id, ok := value.(*TaxIdentity)
+	if !ok {
+		return nil
+	}
+	return validation.ValidateStruct(id,
+		validation.Field(&id.Code,
+			validation.When(v.requireCode, validation.Required),
+		),
 	)
 }
 

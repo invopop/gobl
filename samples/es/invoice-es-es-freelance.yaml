@@ -7,7 +7,7 @@ supplier:
   # sample data from https://generadordni.es/#profiles
   tax_id:
     country: "ES"
-    code: "58384285G" # random
+    code: "583.84.285-G" # random
   name: "MªF. Services"
   emails:
     - addr: "billing@example.com"

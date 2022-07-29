@@ -7,27 +7,14 @@ import (
 	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regions/common"
 )
 
 // TaxCodeType represents the types of tax code which are issued
 // in Spain. The same general format with variations is used for
 // national individuals, foreigners, and legal organizations.
 type TaxCodeType string
-
-// ValidTaxID complies with the ozzo validation Rule definition to be able
-// to confirm that the Tax ID is indeed spanish and valid.
-var ValidTaxID = validTaxID{}
-
-type validTaxID struct {
-	requireCode bool
-}
-
-// RequireCode allows for additional checks for the ID code
-func (v validTaxID) RequireCode() validTaxID {
-	return validTaxID{requireCode: true}
-}
 
 // Supported tax code types.
 const (
@@ -62,7 +49,6 @@ var (
 
 // Known combinations of codes
 var (
-	taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
 	taxCodeCountryRegexp  = regexp.MustCompile(`^ES`)
 	taxCodeNationalRegexp = regexp.MustCompile(`^(?P<number>[0-9]{8})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeForeignRegexp  = regexp.MustCompile(`^(?P<type>[` + taxCodeForeignTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[` + taxCodeCheckLetters + `])$`)
@@ -70,23 +56,39 @@ var (
 	taxCodeOrgRegexp      = regexp.MustCompile(`^(?P<type>[` + taxCodeOrgTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)
 )
 
-// VerifyTaxCode looks at the provided code, determines the type, and performs
-// the calculations required to determine if it is valid.
-// These methods assume the code has already been cleaned and only
-// contains upper-case letters and numbers.
-func VerifyTaxCode(code string) error {
-	_, err := DetermineTaxCodeType(code)
+// ValidateTaxIdentity looks at the provided identity's code,
+// determines the type, and performs the calculations
+// required to determine if it is valid.
+// These methods assume the code has already been normalized
+// and thus only contains upper-case letters and numbers with
+// no white space.
+func ValidateTaxIdentity(tID *org.TaxIdentity) error {
+	return validation.ValidateStruct(tID,
+		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+	)
+}
+
+func validateTaxCode(value interface{}) error {
+	code, ok := value.(string)
+	if !ok {
+		return nil
+	}
+	typ, err := DetermineTaxCodeType(code)
+	if typ == UnknownTaxCode {
+		return ErrTaxCodeUnknownType
+	}
 	return err
 }
 
-// CleanTaxCode removes any whitespace or separation characters and ensures all letters are
+// NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase. It'll also remove the "ES" part at beginning if present such as required
 // for EU VIES system which is redundant and not used in the validation process.
-func CleanTaxCode(code string) string {
-	code = strings.ToUpper(code)
-	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
-	code = taxCodeCountryRegexp.ReplaceAllString(code, "")
-	return code
+func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+	if err := common.NormalizeTaxIdentity(tID); err != nil {
+		return err
+	}
+	tID.Code = taxCodeCountryRegexp.ReplaceAllString(tID.Code, "")
+	return nil
 }
 
 // DetermineTaxCodeType takes a valid code and determines the type. If the code
@@ -219,31 +221,4 @@ func extractMatches(regex *regexp.Regexp, code string) (map[string]string, error
 	}
 
 	return r, nil
-}
-
-// Validate ensures the tax ID contains a matching country and
-// valid code.
-func (v validTaxID) Validate(value interface{}) error {
-	id, ok := value.(*org.TaxIdentity)
-	if !ok {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Country, validation.Required, validation.In(l10n.ES)),
-		validation.Field(&id.Code,
-			validation.When(v.requireCode, validation.Required),
-			validation.By(validateTaxCode),
-		),
-	)
-}
-
-func validateTaxCode(value interface{}) error {
-	code, ok := value.(string)
-	if !ok {
-		return nil
-	}
-	if code == "" {
-		return nil
-	}
-	return VerifyTaxCode(code)
 }
