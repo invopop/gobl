@@ -73,6 +73,9 @@ func validateTaxCode(value interface{}) error {
 	if !ok {
 		return nil
 	}
+	if code == "" {
+		return nil
+	}
 	typ, err := DetermineTaxCodeType(code)
 	if typ == UnknownTaxCode {
 		return ErrTaxCodeUnknownType

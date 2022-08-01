@@ -48,6 +48,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 		Code     string
 		Expected error
 	}{
+		// *** EMPTY ***
+		{
+			Code:     "",
+			Expected: nil,
+		},
 		// *** NATIONAL ***
 		{
 			Code:     "93471790C",

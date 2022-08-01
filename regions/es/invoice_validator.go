@@ -3,6 +3,7 @@ package es
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 )
 
@@ -31,7 +32,7 @@ func (v *invoiceValidator) validate() error {
 		validation.Field(&inv.Customer, validation.When(
 			inv.TypeKey != bill.TypeKeySimplified,
 			validation.Required,
-			validation.By(v.customer),
+			validation.By(v.commercialCustomer),
 		)),
 	)
 }
@@ -46,8 +47,24 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 	)
 }
 
-func (v *invoiceValidator) customer(value interface{}) error {
-	return nil
+func (v *invoiceValidator) commercialCustomer(value interface{}) error {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+	if obj.TaxID == nil {
+		return nil // validation already handled, this prevents panics
+	}
+	// Customers must have a tax ID if a Spanish entity
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.TaxID,
+			validation.Required,
+			validation.When(
+				obj.TaxID.Country.In(l10n.ES),
+				org.RequireTaxIdentityCode,
+			),
+		),
+	)
 }
 
 func (v *invoiceValidator) preceding(value interface{}) error {
