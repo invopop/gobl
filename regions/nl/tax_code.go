@@ -2,62 +2,32 @@ package nl
 
 import (
 	"errors"
+	"regexp"
 	"strconv"
-	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regions/common"
 )
-
-// ValidTaxID complies with the ozzo validation Rule definition to be able
-// to confirm that the Tax ID is indeed spanish and valid.
-var ValidTaxID = validTaxID{}
-
-type validTaxID struct {
-	requireCode bool
-}
-
-// RequireCode allows for additional checks for the ID code
-func (v validTaxID) RequireCode() validTaxID {
-	return validTaxID{requireCode: true}
-}
 
 const (
 	vatLen = 12
 )
 
+var (
+	taxCodeCountryRegexp = regexp.MustCompile(`^NL`)
+)
+
 var errInvalidVAT = errors.New("invalid VAT number")
 
-// VerifyTaxCode looks at the provided code, determines the type, and performs
+// ValidateTaxIdentity looks at the provided code, determines the type, and performs
 // the calculations required to determine if it is valid.
 // These methods assume the code has already been cleaned and only
 // contains upper-case letters and numbers.
-func VerifyTaxCode(code string) error {
-	code = strings.ToUpper(code)
-	if len(code) != vatLen {
-		return errInvalidVAT
-	}
-	if code[9] != 'B' {
-		return errInvalidVAT
-	}
-	return validateDigits(code[0:9], code[10:12])
-}
-
-// Validate ensures the tax ID contains a matching country and
-// valid code.
-func (v validTaxID) Validate(value interface{}) error {
-	id, ok := value.(*org.TaxIdentity)
-	if !ok {
-		return nil
-	}
-	return validation.ValidateStruct(id,
-		validation.Field(&id.Country, validation.Required, validation.In(l10n.NL)),
-		validation.Field(&id.Code,
-			validation.When(v.requireCode, validation.Required),
-			validation.By(validateTaxCode),
-		),
+func ValidateTaxIdentity(tID *org.TaxIdentity) error {
+	return validation.ValidateStruct(tID,
+		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
 }
 
@@ -69,7 +39,24 @@ func validateTaxCode(value interface{}) error {
 	if code == "" {
 		return nil
 	}
-	return VerifyTaxCode(code)
+	if len(code) != vatLen {
+		return errors.New("invalid length")
+	}
+	if code[9] != 'B' {
+		return errors.New("invalid company code")
+	}
+	return validateDigits(code[0:9], code[10:12])
+}
+
+// NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
+// uppercase. It'll also remove the "NL" part at beginning if present such as required
+// for EU VIES system which is redundant and not used in the validation process.
+func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+	if err := common.NormalizeTaxIdentity(tID); err != nil {
+		return err
+	}
+	tID.Code = taxCodeCountryRegexp.ReplaceAllString(tID.Code, "")
+	return nil
 }
 
 func validateDigits(code, check string) error {

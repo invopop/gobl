@@ -118,7 +118,7 @@ func (inv *Invoice) Validate() error {
 		// identity.
 		tID := inv.Supplier.TaxID
 		if tID == nil {
-			return errors.New("missing supplier tax identity")
+			return errors.New("supplier: missing tax identity")
 		}
 		r := tax.RegionFor(tID.Country, tID.Locality)
 		err = r.ValidateDocument(inv)
@@ -178,6 +178,15 @@ func (inv *Invoice) Calculate() error {
 	if inv.Supplier == nil {
 		return errors.New("missing or invalid supplier tax identity")
 	}
+	if err := inv.Supplier.Calculate(); err != nil {
+		return fmt.Errorf("supplier: %w", err)
+	}
+	if inv.Customer != nil {
+		if err := inv.Customer.Calculate(); err != nil {
+			return fmt.Errorf("customer: %w", err)
+		}
+	}
+
 	tID := inv.Supplier.TaxID
 	r := tax.RegionFor(tID.Country, tID.Locality)
 	if r == nil {
@@ -188,7 +197,7 @@ func (inv *Invoice) Calculate() error {
 		return err
 	}
 
-	// Should we use the customers identity for calcuations?
+	// Should we use the customers identity for calculations?
 	tID = inv.determineTaxIdentity()
 	if tID == nil {
 		return errors.New("unable to determine tax identity")

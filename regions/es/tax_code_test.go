@@ -1,8 +1,15 @@
-package es
+package es_test
 
-import "testing"
+import (
+	"testing"
 
-func TestCleanTaxCode(t *testing.T) {
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regions/es"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNormalizeTaxIdentity(t *testing.T) {
 	tests := []struct {
 		Code     string
 		Expected string
@@ -28,19 +35,25 @@ func TestCleanTaxCode(t *testing.T) {
 			Expected: "93471790C",
 		},
 	}
-	for i, ts := range tests {
-		if err := CleanTaxCode(ts.Code); err != ts.Expected {
-			t.Errorf("unexpected result: %d: got: %+v", i, err)
-		}
+	for _, ts := range tests {
+		tID := &org.TaxIdentity{Country: l10n.ES, Code: ts.Code}
+		err := es.NormalizeTaxIdentity(tID)
+		assert.NoError(t, err)
+		assert.Equal(t, ts.Expected, tID.Code)
 	}
 }
 
-func TestVerifyNationalCode(t *testing.T) {
+func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		Code     string
-		Expected interface{}
-		Message  string
+		Expected error
 	}{
+		// *** EMPTY ***
+		{
+			Code:     "",
+			Expected: nil,
+		},
+		// *** NATIONAL ***
 		{
 			Code:     "93471790C",
 			Expected: nil,
@@ -55,30 +68,17 @@ func TestVerifyNationalCode(t *testing.T) {
 		},
 		{
 			Code:     "93471790A",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "00000000A",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "0111111C",
-			Expected: ErrTaxCodeNoMatch,
+			Expected: es.ErrTaxCodeUnknownType,
 		},
-	}
-	for i, ts := range tests {
-		if err := verifyNationalCode(ts.Code); err != ts.Expected {
-			t.Errorf("unexpected result: %d: got: %+v", i, err)
-		}
-	}
-}
-
-func TestVerifyForeignCode(t *testing.T) {
-	tests := []struct {
-		Code     string
-		Expected interface{}
-		Message  string
-	}{
+		// *** FOREIGN ***
 		{
 			Code:     "X5102754C",
 			Expected: nil,
@@ -93,26 +93,13 @@ func TestVerifyForeignCode(t *testing.T) {
 		},
 		{
 			Code:     "X5102755C",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "X111111C",
-			Expected: ErrTaxCodeNoMatch,
+			Expected: es.ErrTaxCodeUnknownType,
 		},
-	}
-	for i, ts := range tests {
-		if err := verifyForeignCode(ts.Code); err != ts.Expected {
-			t.Errorf("unexpected result: %d: got: %+v", i, err)
-		}
-	}
-}
-
-func TestVerifyOrgCode(t *testing.T) {
-	tests := []struct {
-		Code     string
-		Expected interface{}
-		Message  string
-	}{
+		// **** Org ****
 		{
 			Code:     "A58818501",
 			Expected: nil,
@@ -143,69 +130,65 @@ func TestVerifyOrgCode(t *testing.T) {
 		},
 		{
 			Code:     "A5881850B",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "B65410010",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "V75659382",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "V7565938B",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "F06053787",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "Q22388770",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "D4002295J",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "00000000A",
-			Expected: ErrTaxCodeNoMatch,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "B0111111",
-			Expected: ErrTaxCodeNoMatch,
+			Expected: es.ErrTaxCodeUnknownType,
 		},
-	}
-	for i, ts := range tests {
-		if err := verifyOrgCode(ts.Code); err != ts.Expected {
-			t.Errorf("unexpected result: %d: got: %+v", i, err)
-		}
-	}
-}
-
-func TestVerifyOtherCode(t *testing.T) {
-	tests := []struct {
-		Code     string
-		Expected interface{}
-	}{
+		// *** Other ***
 		{
 			Code:     "K9514336H",
 			Expected: nil,
 		},
 		{
 			Code:     "K95143363",
-			Expected: ErrTaxCodeInvalidCheck,
+			Expected: es.ErrTaxCodeInvalidCheck,
 		},
 		{
 			Code:     "X111111C",
-			Expected: ErrTaxCodeNoMatch,
+			Expected: es.ErrTaxCodeUnknownType,
 		},
 	}
-	for i, ts := range tests {
-		if err := verifyOtherCode(ts.Code); err != ts.Expected {
-			t.Errorf("unexpected result: %d: got: %+v", i, err)
-		}
+	for _, ts := range tests {
+		t.Run(ts.Code, func(t *testing.T) {
+			tID := &org.TaxIdentity{Country: l10n.ES, Code: ts.Code}
+			err := es.ValidateTaxIdentity(tID)
+			if ts.Expected == nil {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), ts.Expected.Error())
+				}
+			}
+		})
 	}
 }

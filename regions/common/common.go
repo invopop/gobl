@@ -1,6 +1,9 @@
 package common
 
 import (
+	"regexp"
+	"strings"
+
 	"github.com/invopop/gobl/org"
 )
 
@@ -27,3 +30,16 @@ const (
 const (
 	InboxKeyPEPPOL org.Key = "peppol-id"
 )
+
+var (
+	taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
+)
+
+// NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
+// uppercase.
+func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+	code := strings.ToUpper(tID.Code)
+	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	tID.Code = code
+	return nil
+}

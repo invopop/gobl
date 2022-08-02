@@ -85,3 +85,19 @@ func ValidateTaxIdentity(tID *org.TaxIdentity) error {
 	}
 	return r.ValidateTaxIdentity(tID)
 }
+
+// NormalizeTaxIdentity attempts to find a matching region definition (if available)
+// and runs tax identity normalization.
+func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+	if tID == nil {
+		return nil
+	}
+	r := RegionFor(tID.Country, tID.Locality)
+	if r == nil {
+		return nil
+	}
+	if r.NormalizeTaxIdentity == nil {
+		return nil
+	}
+	return r.NormalizeTaxIdentity(tID)
+}

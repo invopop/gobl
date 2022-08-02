@@ -41,6 +41,11 @@ type Region struct {
 	// ValidateTaxIdentity is a method used to check tax codes for the given
 	// region.
 	ValidateTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
+
+	// NormalizeTaxIdentity is a special method used to normalize the contents
+	// or a local tax identity. Typically this is used as part of the
+	// "Calculate" processes.
+	NormalizeTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
 }
 
 // Localities stores an array of locality objects used to describe areas

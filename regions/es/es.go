@@ -128,10 +128,9 @@ func Region() *tax.Region {
 			i18n.EN: "Spain",
 			i18n.ES: "España",
 		},
-		ValidateDocument: Validate,
-		ValidateTaxIdentity: func(tID *org.TaxIdentity) error {
-			return ValidTaxID.Validate(tID)
-		},
+		ValidateDocument:     Validate,
+		ValidateTaxIdentity:  ValidateTaxIdentity,
+		NormalizeTaxIdentity: NormalizeTaxIdentity,
 		Localities: tax.Localities{
 			{
 				Code: LocalityVI,
