@@ -68,8 +68,21 @@ func validateDigits(code, check string) error {
 	if err != nil {
 		return errInvalidVAT
 	}
+
+	ck := num % 10 // last part of code
+	sum := mod11(num)
+
+	// changes in 2020 mean that NL VAT numbers have a different check
+	// digit and should be checked with Mod 97 (like IBAN).
+	if sum != ck && !checkMod97("NL"+code+"B"+check) {
+		return errors.New("checksum mismatch")
+	}
+
+	return nil
+}
+
+func mod11(num int64) int64 {
 	var sum int64
-	ck := num % 10
 	for i := 0; i < 8; i++ {
 		num /= 10
 		mul := int64(i) + 2
@@ -79,9 +92,31 @@ func validateDigits(code, check string) error {
 	if sum > 9 {
 		sum = 0
 	}
-	if sum != ck {
-		return errors.New("checksum mismatch")
+	return sum
+}
+
+func checkMod97(code string) bool {
+	// Convert any ASCII letters to numbers
+	set := make([]int, len(code))
+	for i, v := range code {
+		char := rune(v)
+		if char >= 48 && char <= 57 { // 0 -- 9
+			set[i] = int(char - 48)
+		} else { // assume letters
+			set[i] = int(char - 55)
+		}
 	}
 
-	return nil
+	// Add up all the numbers
+	var r int
+	for _, c := range set {
+		r = r * 10
+		if c > 9 { // only support up to 2 digits!
+			r = r * 10
+		}
+		r = r + c
+	}
+
+	// Now check modulus to see if 1
+	return (r % 97) == 1
 }
