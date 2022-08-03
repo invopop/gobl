@@ -27,7 +27,7 @@ type Invoice struct {
 	Code string `json:"code" jsonschema:"title=Code"`
 	// Used in addition to the Code in some regions.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
-	// Functional type of the invoice, default is always 'commercial'.
+	// Functional type of the invoice. Generally not required.
 	TypeKey TypeKey `json:"type_key,omitempty" jsonschema:"title=Type Key"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/note/message",
   "$ref": "#/$defs/Message",
   "$defs": {
@@ -28,5 +28,5 @@
       "description": "Message represents the minimum possible contents for a GoBL document type."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }

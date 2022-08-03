@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/region",
   "$ref": "#/$defs/Region",
   "$defs": {
@@ -203,6 +203,7 @@
           "description": "Tax declaration"
         }
       ],
+      "type": "string",
       "title": "Note Key",
       "description": "NoteKey identifies the type of note being edited"
     },
@@ -363,5 +364,5 @@
       "description": "Schemes defines an array of scheme objects with helper functions."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }

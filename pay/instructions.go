@@ -152,6 +152,7 @@ func validMethodKeys() []interface{} {
 func (k MethodKey) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Method Key",
+		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(MethodKeyDefinitions)),
 		Description: "Method Key describes how a payment should be made",
 	}

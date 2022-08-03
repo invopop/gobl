@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/terms",
   "$ref": "#/$defs/Terms",
   "$defs": {
@@ -81,6 +81,7 @@
           "description": "Payment on Delivery"
         }
       ],
+      "type": "string",
       "title": "Term Key",
       "description": "Payment terms key"
     },
@@ -117,5 +118,5 @@
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }

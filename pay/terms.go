@@ -138,6 +138,7 @@ func (dd *DueDate) Validate() error {
 func (TermKey) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Term Key",
+		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(TermKeyDefinitions)),
 		Description: "Payment terms key",
 	}

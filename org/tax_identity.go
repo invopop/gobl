@@ -162,6 +162,7 @@ func validSourceKeys() []interface{} {
 func (k SourceKey) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Source Key",
+		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(SourceKeyDefinitions)),
 		Description: "SourceKey identifies the source of a tax identity",
 	}

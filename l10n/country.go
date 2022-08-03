@@ -41,6 +41,7 @@ func (c CountryCode) Validate() error {
 func (CountryCode) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Country Code",
+		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(CountryDefinitions)),
 		Description: "",
 	}

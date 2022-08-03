@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/tax-identity",
   "$ref": "#/$defs/TaxIdentity",
   "$defs": {
@@ -26,6 +26,7 @@
           "description": "An other type of source not listed"
         }
       ],
+      "type": "string",
       "title": "Source Key",
       "description": "SourceKey identifies the source of a tax identity"
     },
@@ -69,5 +70,5 @@
       "description": "TaxIdentity stores the details required to identify an entity for tax purposes."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }

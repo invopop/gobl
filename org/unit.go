@@ -156,6 +156,7 @@ func (u Unit) UNECE() Code {
 func (u Unit) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Unit",
+		Type:        "string",
 		AnyOf:       make([]*jsonschema.Schema, len(UnitDefinitions)),
 		Description: "Unit describes how the quantity of the product should be interpreted.",
 	}

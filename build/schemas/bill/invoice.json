@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/bill/invoice",
   "$ref": "#/$defs/Invoice",
   "$defs": {
@@ -195,9 +195,9 @@
           "description": "Used in addition to the Code in some regions."
         },
         "type_key": {
-          "type": "string",
+          "$ref": "#/$defs/TypeKey",
           "title": "Type Key",
-          "description": "Functional type of the invoice, default is always 'commercial'."
+          "description": "Functional type of the invoice. Generally not required."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
@@ -688,7 +688,42 @@
         "payable"
       ],
       "description": "Totals contains the summaries of all calculations for the invoice."
+    },
+    "TypeKey": {
+      "oneOf": [
+        {
+          "const": "commercial",
+          "description": "Commercial invoice"
+        },
+        {
+          "const": "proforma",
+          "description": "Proforma invoice"
+        },
+        {
+          "const": "simplified",
+          "description": "Simplified invoice or receipt"
+        },
+        {
+          "const": "partial",
+          "description": "Partial invoice"
+        },
+        {
+          "const": "corrected",
+          "description": "Corrected invoice"
+        },
+        {
+          "const": "credit-note",
+          "description": "Credit note"
+        },
+        {
+          "const": "self-billed",
+          "description": "Self billed invoice"
+        }
+      ],
+      "type": "string",
+      "title": "Type Key",
+      "description": "TypeKey defines the type of invoice document according to a subset of the UNTDID 1001 standard list."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }

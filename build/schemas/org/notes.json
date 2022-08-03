@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/org/notes",
   "$ref": "#/$defs/Notes",
   "$defs": {
@@ -135,6 +135,7 @@
           "description": "Tax declaration"
         }
       ],
+      "type": "string",
       "title": "Note Key",
       "description": "NoteKey identifies the type of note being edited"
     },
@@ -146,5 +147,5 @@
       "description": "Notes holds an array of Note objects"
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }

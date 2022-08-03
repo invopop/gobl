@@ -60,6 +60,7 @@ func (d Def) BaseAmount() num.Amount {
 func (Code) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Currency Code",
+		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(CodeDefinitions)),
 		Description: "ISO Currency Code",
 	}

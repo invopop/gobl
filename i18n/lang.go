@@ -41,6 +41,7 @@ func (l Lang) Validate() error {
 func (Lang) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Language Code",
+		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(LangDefinitions)),
 		Description: "Identifies the ISO639-1 language code",
 	}

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/instructions",
   "$ref": "#/$defs/Instructions",
   "$defs": {
@@ -166,6 +166,7 @@
           "description": "Online or web payment"
         }
       ],
+      "type": "string",
       "title": "Method Key",
       "description": "Method Key describes how a payment should be made"
     },
@@ -189,5 +190,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.29.3"
 }
