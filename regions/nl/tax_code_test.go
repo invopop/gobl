@@ -57,7 +57,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "valid",
-			code: "000099995B57",
+			code: "000099998B57",
+		},
+		{
+			name: "valid 2",
+			code: "808661863B01",
 		},
 		{
 			name: "not normalized",
