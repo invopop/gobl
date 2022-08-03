@@ -73,7 +73,7 @@ func validateDigits(code, check string) error {
 	sum := mod11(num)
 
 	// changes in 2020 mean that NL VAT numbers have a different check
-	// digit and should be checked with Mod 97 (like IBAN).
+	// digit and should be checked with Mod 97 (like an IBAN).
 	if sum != ck && !checkMod97("NL"+code+"B"+check) {
 		return errors.New("checksum mismatch")
 	}
@@ -96,7 +96,7 @@ func mod11(num int64) int64 {
 }
 
 func checkMod97(code string) bool {
-	// Convert any ASCII letters to numbers
+	// Convert ASCII numbers and letters to integers
 	set := make([]int, len(code))
 	for i, v := range code {
 		char := rune(v)
@@ -107,7 +107,7 @@ func checkMod97(code string) bool {
 		}
 	}
 
-	// Add up all the numbers
+	// Concatenate all the numbers into a single integer
 	var r int
 	for _, c := range set {
 		r = r * 10
@@ -117,6 +117,5 @@ func checkMod97(code string) bool {
 		r = r + c
 	}
 
-	// Now check modulus to see if 1
 	return (r % 97) == 1
 }
