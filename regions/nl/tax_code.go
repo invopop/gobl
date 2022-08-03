@@ -98,8 +98,7 @@ func mod11(num int64) int64 {
 func checkMod97(code string) bool {
 	// Convert ASCII numbers and letters to integers
 	set := make([]int, len(code))
-	for i, v := range code {
-		char := rune(v)
+	for i, char := range code {
 		if char >= 48 && char <= 57 { // 0 -- 9
 			set[i] = int(char - 48)
 		} else { // assume letters
