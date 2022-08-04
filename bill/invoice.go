@@ -27,8 +27,8 @@ type Invoice struct {
 	Code string `json:"code" jsonschema:"title=Code"`
 	// Used in addition to the Code in some regions.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
-	// Optional functional type or name of the invoice, unless needed for specific requirements, leave empty.
-	Type Type `json:"type,omitempty" jsonschema:"title=Type"`
+	// Optional invoice type, leave empty unless needed for a specific situation.
+	Type InvoiceType `json:"type,omitempty" jsonschema:"title=Type"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.

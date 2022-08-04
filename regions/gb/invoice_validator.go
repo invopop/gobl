@@ -21,7 +21,7 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier, validation.Required),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type != bill.TypeSimplified,
+			inv.Type != bill.InvoiceTypeSimplified,
 			validation.Required,
 		)),
 	)
