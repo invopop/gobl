@@ -12,6 +12,7 @@ type TypeKey org.Key
 
 // Predefined list of the invoice type codes officially supported.
 const (
+	TypeKeyNone       TypeKey = ""            // None specified
 	TypeKeyCommercial TypeKey = "commercial"  // Commercial Invoice
 	TypeKeyProforma   TypeKey = "proforma"    // Proforma invoice
 	TypeKeySimplified TypeKey = "simplified"  // Simplified Invoice
@@ -53,22 +54,33 @@ func validTypeKeys() []interface{} {
 
 // Validate is used to ensure the code provided is one of those we know
 // about.
-func (c TypeKey) Validate() error {
-	return validation.Validate(string(c), isValidTypeKey)
+func (k TypeKey) Validate() error {
+	return validation.Validate(string(k), isValidTypeKey)
 }
 
 // UNTDID1001 provides the official code number assigned to the type.
-func (c TypeKey) UNTDID1001() org.Code {
+func (k TypeKey) UNTDID1001() org.Code {
 	for _, d := range TypeKeyDefinitions {
-		if d.Key == c {
+		if d.Key == k {
 			return d.UNTDID1001
 		}
 	}
 	return org.CodeEmpty
 }
 
+// In checks to see if the type key equals one of the
+// provided set.
+func (k TypeKey) In(set ...TypeKey) bool {
+	for _, v := range set {
+		if v == k {
+			return true
+		}
+	}
+	return false
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
-func (c TypeKey) JSONSchema() *jsonschema.Schema {
+func (TypeKey) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Type Key",
 		Type:        "string", // they're all strings
