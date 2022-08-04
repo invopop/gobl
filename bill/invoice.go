@@ -27,8 +27,8 @@ type Invoice struct {
 	Code string `json:"code" jsonschema:"title=Code"`
 	// Used in addition to the Code in some regions.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
-	// Functional type of the invoice. Generally not required.
-	TypeKey TypeKey `json:"type_key,omitempty" jsonschema:"title=Type Key"`
+	// Optional functional type or name of the invoice, unless needed for specific requirements, leave empty.
+	Type Type `json:"type,omitempty" jsonschema:"title=Type"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
@@ -85,7 +85,7 @@ func (inv *Invoice) Validate() error {
 	err := validation.ValidateStruct(inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
-		validation.Field(&inv.TypeKey), // either empty (Commercial) or one of those supported
+		validation.Field(&inv.Type), // either empty or one of those supported
 		validation.Field(&inv.Currency, validation.Required),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Tax),
