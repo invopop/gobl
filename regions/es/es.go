@@ -43,6 +43,13 @@ const (
 	SchemeCashBasis       org.Key = "cash-basis"
 )
 
+// Official stamps or codes validated by government agencies
+const (
+	// TicketBAI (Basque Country) codes used for stamps.
+	StampProviderTBAICode org.Key = "tbai-code"
+	StampProviderTBAIQR   org.Key = "tbai-qr"
+)
+
 // Inbox key and role definitions
 const (
 	InboxKeyFACE org.Key = "face"
