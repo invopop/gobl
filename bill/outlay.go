@@ -20,8 +20,8 @@ type Outlays []*Outlay
 type Outlay struct {
 	// Unique identity for this outlay.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Outlay number index inside the invoice for ordering.
-	Index int `json:"i" jsonschema:"title=Index"`
+	// Outlay number index inside the invoice for ordering (calculated).
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// When was the outlay made.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// Invoice number or other reference detail used to identify the outlay.

@@ -20,10 +20,10 @@ type Combo struct {
 	Category org.Code `json:"cat" jsonschema:"title=Category"`
 	// Rate within a category to apply.
 	Rate org.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
-	// Percent defines the percentage set manually or determined from the rate key.
-	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
-	// Some countries require an additional surcharge.
-	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+	// Percent defines the percentage set manually or determined from the rate key (calculated if rate present).
+	Percent num.Percentage `json:"percent" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
+	// Some countries require an additional surcharge (calculated if rate present).
+	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Internal link back to the category object
 	category *Category
 }

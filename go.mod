@@ -8,7 +8,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.1.2
-	github.com/invopop/jsonschema v0.6.0
+	github.com/invopop/jsonschema v0.6.1-0.20220804171514-4a807f958afc
 	github.com/invopop/yaml v0.1.0
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693

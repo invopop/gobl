@@ -147,5 +147,5 @@
       "description": "Notes holds an array of Note objects"
     }
   },
-  "$comment": "Generated with GOBL v0.29.3"
+  "$comment": "Generated with GOBL v0.30.0"
 }
