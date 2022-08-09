@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/envelope",
   "$ref": "#/$defs/Envelope",
   "$defs": {
@@ -114,5 +114,5 @@
       "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.30.0"
 }

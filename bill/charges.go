@@ -14,8 +14,8 @@ import (
 type LineCharge struct {
 	// Percentage if fixed amount not applied
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Fixed or resulting charge amount to apply
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+	// Fixed or resulting charge amount to apply (calculated if percent present).
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// Reference code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the charge was applied
@@ -38,8 +38,8 @@ type Charges []*Charge
 type Charge struct {
 	// Unique identifying for the discount entry
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Line number inside the list of discounts
-	Index int `json:"i" jsonschema:"title=Index"`
+	// Line number inside the list of discounts (calculated).
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Code to used to refer to the this charge
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Base represents the value used as a base for percent calculations.
@@ -48,8 +48,8 @@ type Charge struct {
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
 	// Percentage to apply to the invoice's Sum
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Amount to apply
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+	// Amount to apply (calculated if percent present)
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// List of taxes to apply to the charge
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Code for why was this charge applied?

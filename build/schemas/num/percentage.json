@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/num/percentage",
   "$ref": "#/$defs/Percentage",
   "$defs": {
@@ -10,5 +10,5 @@
       "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.30.0"
 }

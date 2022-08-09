@@ -264,6 +264,7 @@ func (n *Note) WithSrc(src string) *Note {
 func (k NoteKey) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
 		Title:       "Note Key",
+		Type:        "string", // they're all strings
 		OneOf:       make([]*jsonschema.Schema, len(NoteKeyDefinitions)),
 		Description: "NoteKey identifies the type of note being edited",
 	}

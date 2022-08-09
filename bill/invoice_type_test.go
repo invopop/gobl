@@ -8,17 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTypeKey(t *testing.T) {
-	c := bill.TypeKeyCommercial
-	assert.Equal(t, bill.TypeKey(""), c)
+func TestInvoiceType(t *testing.T) {
+	c := bill.InvoiceTypeCommercial
+	assert.Equal(t, bill.InvoiceType("commercial"), c)
 	assert.Equal(t, org.Code("380"), c.UNTDID1001(), "unexpected UNTDID code")
 	assert.NoError(t, c.Validate())
 
-	c = bill.TypeKeyCorrected
+	c = bill.InvoiceTypeCorrected
 	assert.Equal(t, org.Code("384"), c.UNTDID1001(), "unexpected UNTDID code")
 	assert.NoError(t, c.Validate())
 
-	c = bill.TypeKey("foo")
+	c = bill.InvoiceType("foo")
 	assert.Equal(t, org.CodeEmpty, c.UNTDID1001(), "unexpected UNTDID result")
 	assert.Error(t, c.Validate())
+
+	assert.True(t, c.In("bar", "foo"))
+	assert.False(t, c.In("bar", "dom"))
+
+	var d bill.InvoiceType
+	assert.Equal(t, bill.InvoiceTypeNone, d)
+
 }

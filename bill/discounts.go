@@ -14,8 +14,8 @@ import (
 type LineDiscount struct {
 	// Percentage if fixed amount not applied
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Fixed discount amount to apply
-	Amount num.Amount `json:"amount" jsonschema:"title=Value"`
+	// Fixed discount amount to apply (calculated if percent present).
+	Amount num.Amount `json:"amount" jsonschema:"title=Value" jsonschema_extras:"calculated=true"`
 	// Reason code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the discount was applied
@@ -40,17 +40,17 @@ type Discounts []*Discount
 type Discount struct {
 	// Unique identifying for the discount entry
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Line number inside the list of discounts
-	Index int `json:"i" jsonschema:"title=Index"`
+	// Line number inside the list of discounts (calculated)
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Reference or ID for this Discount
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Base represents the value used as a base for percent calculations.
 	// If not already provided, we'll take the invoices sum.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage to apply to the invoice's Sum
+	// Percentage to apply to the invoice's Sum.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Amount to apply
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+	// Amount to apply (calculated if percent present).
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// List of taxes to apply to the discount
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Code for the reason this discount applied

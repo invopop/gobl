@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/pay/advance",
   "$ref": "#/$defs/Advance",
   "$defs": {
@@ -54,5 +54,5 @@
       "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.30.0"
 }

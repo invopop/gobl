@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gobl.org/draft-0/tax/total",
   "$ref": "#/$defs/Total",
   "$defs": {
@@ -115,5 +115,5 @@
       "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
   },
-  "$comment": "Generated with GOBL v0.29.0"
+  "$comment": "Generated with GOBL v0.30.0"
 }
