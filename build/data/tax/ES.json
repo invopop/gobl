@@ -760,6 +760,67 @@
       ]
     },
     {
+      "code": "IGIC",
+      "name": {
+        "en": "IGIC",
+        "es": "IGIC"
+      },
+      "desc": {
+        "en": "Canary Island General Indirect Tax",
+        "es": "Impuesto General Indirecto Canario"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "es": "Tipo Zero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tipo General"
+          },
+          "values": [
+            {
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido"
+          },
+          "values": [
+            {
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IPSI",
+      "name": {
+        "en": "IPSI",
+        "es": "IPSI"
+      },
+      "desc": {
+        "en": "Production, Services, and Import Tax",
+        "es": "Impuesto sobre la Producción, los Servicios y la Importación"
+      },
+      "rates": []
+    },
+    {
       "code": "IRPF",
       "name": {
         "en": "IRPF",

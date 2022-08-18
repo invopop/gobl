@@ -135,7 +135,7 @@ func (c *Category) Validate() error {
 	err := validation.ValidateStruct(c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
-		validation.Field(&c.Rates, validation.Required),
+		validation.Field(&c.Rates),
 	)
 	return err
 }
