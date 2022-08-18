@@ -65,8 +65,8 @@ type Invoice struct {
 	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
 
-	// Summary of all the invoice totals, including taxes.
-	Totals *Totals `json:"totals" jsonschema:"title=Totals"`
+	// Summary of all the invoice totals, including taxes (calculated).
+	Totals *Totals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
 
 	// The EN 16931-1:2017 standard recognises a need to be able to attach additional
 	// documents to an invoice. We don't support this yet, but this is where

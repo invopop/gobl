@@ -540,7 +540,8 @@ func Region() *tax.Region {
 			// VAT
 			//
 			{
-				Code: common.TaxCategoryVAT,
+				Code:     common.TaxCategoryVAT,
+				Retained: false,
 				Name: i18n.String{
 					i18n.EN: "VAT",
 					i18n.ES: "IVA",
@@ -549,7 +550,6 @@ func Region() *tax.Region {
 					i18n.EN: "Value Added Tax",
 					i18n.ES: "Impuesto sobre el Valor Añadido",
 				},
-				Retained: false,
 				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateZero,
@@ -683,6 +683,81 @@ func Region() *tax.Region {
 						},
 					},
 				},
+			},
+
+			//
+			// IGIC
+			//
+			{
+				Code:     TaxCategoryIGIC,
+				Retained: false,
+				Name: i18n.String{
+					i18n.EN: "IGIC",
+					i18n.ES: "IGIC",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Canary Island General Indirect Tax",
+					i18n.ES: "Impuesto General Indirecto Canario",
+				},
+				// This is a subset of the possible rates.
+				Rates: []*tax.Rate{
+					{
+						Key: common.TaxRateZero,
+						Name: i18n.String{
+							i18n.EN: "Zero Rate",
+							i18n.ES: "Tipo Zero",
+						},
+						Values: []*tax.RateValue{
+							{
+								Percent: num.MakePercentage(0, 3),
+							},
+						},
+					},
+					{
+						Key: common.TaxRateStandard,
+						Name: i18n.String{
+							i18n.EN: "Standard Rate",
+							i18n.ES: "Tipo General",
+						},
+						Values: []*tax.RateValue{
+							{
+								Percent: num.MakePercentage(70, 3),
+							},
+						},
+					},
+					{
+						Key: common.TaxRateReduced,
+						Name: i18n.String{
+							i18n.EN: "Reduced Rate",
+							i18n.ES: "Tipo Reducido",
+						},
+						Values: []*tax.RateValue{
+							{
+								Percent: num.MakePercentage(30, 3),
+							},
+						},
+					},
+				},
+			},
+
+			//
+			// IPSI
+			//
+			{
+				Code:     TaxCategoryIPSI,
+				Retained: false,
+				Name: i18n.String{
+					i18n.EN: "IPSI",
+					i18n.ES: "IPSI",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Production, Services, and Import Tax",
+					i18n.ES: "Impuesto sobre la Producción, los Servicios y la Importación",
+				},
+				// IPSI rates are complex and don't align well regular rates. Users are
+				// recommended to include whatever percentage applies to their situation
+				// directly in the invoice.
+				Rates: []*tax.Rate{},
 			},
 
 			//

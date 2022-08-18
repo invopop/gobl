@@ -283,7 +283,8 @@
         "totals": {
           "$ref": "#/$defs/Totals",
           "title": "Totals",
-          "description": "Summary of all the invoice totals, including taxes."
+          "description": "Summary of all the invoice totals, including taxes (calculated).",
+          "calculated": true
         },
         "notes": {
           "$ref": "https://gobl.org/draft-0/org/notes",
