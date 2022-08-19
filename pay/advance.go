@@ -41,9 +41,9 @@ func (a *Advance) Validate() error {
 	)
 }
 
-// Calculate will update the amount using the rate of the provided
+// CalculateFrom will update the amount using the rate of the provided
 // total, if defined.
-func (a *Advance) Calculate(totalWithTax num.Amount) {
+func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
 	if a.Percent != nil {
 		a.Amount = a.Percent.Of(totalWithTax)
 	}

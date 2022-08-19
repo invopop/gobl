@@ -374,6 +374,8 @@ func (inv *Invoice) calculate(r *tax.Region) error {
 	}
 
 	if inv.Payment != nil {
+		inv.Payment.calculateAdvances(t.TotalWithTax)
+
 		// Deal with advances, if any
 		if t.Advances = inv.Payment.totalAdvance(zero); t.Advances != nil {
 			v := t.Payable.Subtract(*t.Advances)
