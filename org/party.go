@@ -42,9 +42,13 @@ type Person struct {
 	// Unique identity code
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Complete details on the name of the person
-	Name Name `json:"name" jsonschema:"title=Name"`
+	Name Name `json:"name,omitempty" jsonschema:"title=Name"`
+	// Alternate short name.
+	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
 	// What they do within an organization
 	Role string `json:"role,omitempty" jsonschema:"title=Role"`
+	// Regular post addresses for where information should be sent if needed.
+	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
 	// Electronic mail addresses that belong to the person.
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
 	// Regular phone or mobile numbers
@@ -129,6 +133,16 @@ func (p *Party) Validate() error {
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.TaxID),
 		validation.Field(&p.People),
+		validation.Field(&p.Emails),
+		validation.Field(&p.Telephones),
+	)
+}
+
+// Validate is used to check the persons's data meets minimum expectations.
+func (p *Person) Validate() error {
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Name, validation.Required),
+		validation.Field(&p.Addresses),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
 	)
