@@ -29,6 +29,12 @@ func (p *Payment) Validate() error {
 	)
 }
 
+func (p *Payment) calculateAdvances(totalWithTax num.Amount) {
+	for _, a := range p.Advances {
+		a.CalculateFrom(totalWithTax)
+	}
+}
+
 func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
 	if p == nil || len(p.Advances) == 0 {
 		return nil
