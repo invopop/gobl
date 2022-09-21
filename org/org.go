@@ -18,7 +18,7 @@ func init() {
 		Registration{},
 		TaxIdentity{},
 		Meta{},
-		Notes{},
+		Note{},
 		Inbox{},
 	)
 }

@@ -53,13 +53,13 @@ type Invoice struct {
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
 	// List of invoice lines representing each of the items sold to the customer.
-	Lines Lines `json:"lines,omitempty" jsonschema:"title=Lines"`
+	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines"`
 	// Discounts or allowances applied to the complete invoice
-	Discounts Discounts `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
 	// Charges or surcharges applied to the complete invoice
-	Charges Charges `json:"charges,omitempty" jsonschema:"title=Charges"`
+	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
 	// Expenses paid for by the supplier but invoiced directly to the customer.
-	Outlays Outlays `json:"outlays,omitempty" jsonschema:"title=Outlays"`
+	Outlays []*Outlay `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
 	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
@@ -75,7 +75,7 @@ type Invoice struct {
 
 	// Unstructured information that is relevant to the invoice, such as correction or additional
 	// legal details.
-	Notes org.Notes `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -222,19 +222,19 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	}
 
 	i2 := *inv
-	i2.Lines = make(Lines, len(inv.Lines))
+	i2.Lines = make([]*Line, len(inv.Lines))
 	for i, l := range inv.Lines {
 		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
 	}
 
 	if len(inv.Discounts) > 0 {
-		i2.Discounts = make(Discounts, len(inv.Discounts))
+		i2.Discounts = make([]*Discount, len(inv.Discounts))
 		for i, l := range inv.Discounts {
 			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
 		}
 	}
 	if len(i2.Charges) > 0 {
-		i2.Charges = make(Charges, len(inv.Charges))
+		i2.Charges = make([]*Charge, len(inv.Charges))
 		for i, l := range inv.Charges {
 			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
 		}

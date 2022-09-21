@@ -30,9 +30,6 @@ func (lc *LineCharge) Validate() error {
 	)
 }
 
-// Charges represents an array of charge objects
-type Charges []*Charge
-
 // Charge represents a surchange applied to the complete document
 // independent from the individual lines.
 type Charge struct {

@@ -8,9 +8,6 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// Lines holds an array of Line objects.
-type Lines []*Line
-
 // Line is a single row in an invoice.
 type Line struct {
 	// Unique identifier for this line
@@ -33,7 +30,7 @@ type Line struct {
 	Total num.Amount `json:"total" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
 	// Set of specific notes for this line that may be required for
 	// clarification.
-	Notes org.Notes `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
 // GetTaxes responds with the array of tax rates applied to this line.
