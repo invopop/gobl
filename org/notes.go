@@ -207,7 +207,7 @@ var NoteKeyDefinitions = []DefNoteKey{
 }
 
 // Notes holds an array of Note objects
-type Notes []*Note
+// type Notes []*Note
 
 // Note represents a free text of additional information that may be
 // added to a document.

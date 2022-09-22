@@ -8,9 +8,6 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// Outlays holds an array of Outlay objects used inside a billing document.
-type Outlays []*Outlay
-
 // Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately
 // by the third party directly to the customer.
 // Most suppliers will want to include the expenses of their providers as part of their

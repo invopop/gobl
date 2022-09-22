@@ -35,7 +35,7 @@ func TestRemoveIncludedTax(t *testing.T) {
 			},
 		},
 		IssueDate: cal.MakeDate(2022, 6, 13),
-		Lines: bill.Lines{
+		Lines: []*bill.Line{
 			{
 				Quantity: num.MakeAmount(10, 0),
 				Item: &org.Item{
@@ -92,7 +92,7 @@ func TestCalculate(t *testing.T) {
 			},
 		},
 		IssueDate: cal.MakeDate(2022, 6, 13),
-		Lines: bill.Lines{
+		Lines: []*bill.Line{
 			{
 				Quantity: num.MakeAmount(10, 0),
 				Item: &org.Item{

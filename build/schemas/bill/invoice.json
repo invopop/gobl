@@ -72,13 +72,6 @@
       ],
       "description": "Charge represents a surchange applied to the complete document independent from the individual lines."
     },
-    "Charges": {
-      "items": {
-        "$ref": "#/$defs/Charge"
-      },
-      "type": "array",
-      "description": "Charges represents an array of charge objects"
-    },
     "Delivery": {
       "properties": {
         "receiver": {
@@ -167,13 +160,6 @@
       ],
       "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
     },
-    "Discounts": {
-      "items": {
-        "$ref": "#/$defs/Discount"
-      },
-      "type": "array",
-      "description": "Discounts represents an array of discounts."
-    },
     "ExchangeRates": {
       "items": {
         "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
@@ -249,22 +235,34 @@
           "description": "Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices."
         },
         "lines": {
-          "$ref": "#/$defs/Lines",
+          "items": {
+            "$ref": "#/$defs/Line"
+          },
+          "type": "array",
           "title": "Lines",
           "description": "List of invoice lines representing each of the items sold to the customer."
         },
         "discounts": {
-          "$ref": "#/$defs/Discounts",
+          "items": {
+            "$ref": "#/$defs/Discount"
+          },
+          "type": "array",
           "title": "Discounts",
           "description": "Discounts or allowances applied to the complete invoice"
         },
         "charges": {
-          "$ref": "#/$defs/Charges",
+          "items": {
+            "$ref": "#/$defs/Charge"
+          },
+          "type": "array",
           "title": "Charges",
           "description": "Charges or surcharges applied to the complete invoice"
         },
         "outlays": {
-          "$ref": "#/$defs/Outlays",
+          "items": {
+            "$ref": "#/$defs/Outlay"
+          },
+          "type": "array",
           "title": "Outlays",
           "description": "Expenses paid for by the supplier but invoiced directly to the customer."
         },
@@ -287,7 +285,10 @@
           "calculated": true
         },
         "notes": {
-          "$ref": "https://gobl.org/draft-0/org/notes",
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
           "title": "Notes",
           "description": "Unstructured information that is relevant to the invoice, such as correction or additional\nlegal details."
         },
@@ -399,7 +400,10 @@
           "calculated": true
         },
         "notes": {
-          "$ref": "https://gobl.org/draft-0/org/notes",
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
           "title": "Notes",
           "description": "Set of specific notes for this line that may be required for\nclarification."
         }
@@ -474,13 +478,6 @@
       ],
       "description": "LineDiscount represents an amount deducted from the line, and will be applied before taxes."
     },
-    "Lines": {
-      "items": {
-        "$ref": "#/$defs/Line"
-      },
-      "type": "array",
-      "description": "Lines holds an array of Line objects."
-    },
     "Ordering": {
       "properties": {
         "seller": {
@@ -543,13 +540,6 @@
         "amount"
       ],
       "description": "Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."
-    },
-    "Outlays": {
-      "items": {
-        "$ref": "#/$defs/Outlay"
-      },
-      "type": "array",
-      "description": "Outlays holds an array of Outlay objects used inside a billing document."
     },
     "Payment": {
       "properties": {
@@ -736,5 +726,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.30.3"
+  "$comment": "Generated with GOBL v0.30.4"
 }

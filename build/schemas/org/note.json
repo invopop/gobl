@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/notes",
-  "$ref": "#/$defs/Notes",
+  "$id": "https://gobl.org/draft-0/org/note",
+  "$ref": "#/$defs/Note",
   "$defs": {
     "Note": {
       "properties": {
@@ -138,14 +138,7 @@
       "type": "string",
       "title": "Note Key",
       "description": "NoteKey identifies the type of note being edited"
-    },
-    "Notes": {
-      "items": {
-        "$ref": "#/$defs/Note"
-      },
-      "type": "array",
-      "description": "Notes holds an array of Note objects"
     }
   },
-  "$comment": "Generated with GOBL v0.30.3"
+  "$comment": "Generated with GOBL v0.30.4"
 }

@@ -30,9 +30,6 @@ func (ld *LineDiscount) Validate() error {
 	)
 }
 
-// Discounts represents an array of discounts.
-type Discounts []*Discount
-
 // Discount represents an allowance applied to the complete document
 // independent from the individual lines. These have more in common with
 // Invoice Lines than anything else, as each discount must have the

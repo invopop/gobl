@@ -26,7 +26,7 @@ type Scheme struct {
 	// applied.
 	Categories []org.Code `json:"categories,omitempty" jsonschema:"title=Category Codes"`
 
-	// Notes defines messages that should be added to a document
+	// Note defines a message that should be added to a document
 	// when this scheme is used.
 	Note *org.Note `json:"note,omitempty" jsonschema:"title=Note"`
 }
