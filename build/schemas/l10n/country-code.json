@@ -1003,8 +1003,9 @@
         }
       ],
       "type": "string",
-      "title": "Country Code"
+      "title": "Country Code",
+      "description": "Defines an ISO 3166-2 country code"
     }
   },
-  "$comment": "Generated with GOBL v0.30.2"
+  "$comment": "Generated with GOBL v0.30.3"
 }
