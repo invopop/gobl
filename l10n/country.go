@@ -43,7 +43,7 @@ func (CountryCode) JSONSchema() *jsonschema.Schema {
 		Title:       "Country Code",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(CountryDefinitions)),
-		Description: "",
+		Description: "Defines an ISO 3166-2 country code",
 	}
 	for i, v := range CountryDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{

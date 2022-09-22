@@ -210,7 +210,7 @@
         "note": {
           "$ref": "https://gobl.org/draft-0/org/note",
           "title": "Note",
-          "description": "Notes defines messages that should be added to a document\nwhen this scheme is used."
+          "description": "Note defines a message that should be added to a document\nwhen this scheme is used."
         }
       },
       "type": "object",
