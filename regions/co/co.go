@@ -41,8 +41,9 @@ func Region() *tax.Region {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
-		ValidateDocument: Validate,
-
+		ValidateDocument:     Validate,
+		ValidateTaxIdentity:  ValidateTaxIdentity,
+		NormalizeTaxIdentity: NormalizeTaxIdentity,
 		Localities: tax.Localities{
 			{Code: "AMA", Name: i18n.String{i18n.ES: "Amazonas"}, Meta: org.Meta{KeyPost: "91"}},
 			{Code: "ANT", Name: i18n.String{i18n.ES: "Antioquia"}, Meta: org.Meta{KeyPost: "05"}},
