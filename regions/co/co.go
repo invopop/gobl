@@ -179,7 +179,7 @@ func Region() *tax.Region {
 					i18n.ES: "ReteIVA",
 				},
 				Desc: i18n.String{
-					i18n.ES: "Retención sobre Impuesto al Valor Agregado",
+					i18n.ES: "Retención en la fuente por el Impuesto al Valor Agregado",
 				},
 				Retained: true,
 				Rates:    []*tax.Rate{},
@@ -193,7 +193,21 @@ func Region() *tax.Region {
 					i18n.ES: "ReteICA",
 				},
 				Desc: i18n.String{
-					i18n.ES: "Retención sobre Impuesto de Industria y Comercio",
+					i18n.ES: "Retención en la fuente por el Impuesto de Industria y Comercio",
+				},
+				Retained: true,
+				Rates:    []*tax.Rate{},
+			},
+			//
+			// ReteRenta
+			//
+			{
+				Code: TaxCategoryReteRenta,
+				Name: i18n.String{
+					i18n.ES: "ReteRenta",
+				},
+				Desc: i18n.String{
+					i18n.ES: "Retención en la fuente por el Impuesto de la Renta",
 				},
 				Retained: true,
 				Rates:    []*tax.Rate{},

@@ -14,7 +14,7 @@ var (
 	nitMultipliers = []int{3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71}
 )
 
-// ValidateTaxIdenity checks to ensure the NIT code looks okay.
+// ValidateTaxIdentity checks to ensure the NIT code looks okay.
 func ValidateTaxIdentity(tID *org.TaxIdentity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),

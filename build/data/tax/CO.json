@@ -1,0 +1,420 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/region",
+  "name": {
+    "en": "Colombia",
+    "es": "Colombia"
+  },
+  "country": "CO",
+  "localities": [
+    {
+      "code": "AMA",
+      "name": {
+        "es": "Amazonas"
+      },
+      "meta": {
+        "post": "91"
+      }
+    },
+    {
+      "code": "ANT",
+      "name": {
+        "es": "Antioquia"
+      },
+      "meta": {
+        "post": "05"
+      }
+    },
+    {
+      "code": "ARA",
+      "name": {
+        "es": "Arauca"
+      },
+      "meta": {
+        "post": "81"
+      }
+    },
+    {
+      "code": "ATL",
+      "name": {
+        "es": "Atlántico"
+      },
+      "meta": {
+        "post": "08"
+      }
+    },
+    {
+      "code": "DC",
+      "name": {
+        "es": "Bogotá"
+      },
+      "meta": {
+        "post": "11"
+      }
+    },
+    {
+      "code": "BOL",
+      "name": {
+        "es": "Bolívar"
+      },
+      "meta": {
+        "post": "13"
+      }
+    },
+    {
+      "code": "BOY",
+      "name": {
+        "es": "Boyacá"
+      },
+      "meta": {
+        "post": "15"
+      }
+    },
+    {
+      "code": "CAL",
+      "name": {
+        "es": "Caldas"
+      },
+      "meta": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "CAQ",
+      "name": {
+        "es": "Caquetá"
+      },
+      "meta": {
+        "post": "18"
+      }
+    },
+    {
+      "code": "CAS",
+      "name": {
+        "es": "Casanare"
+      },
+      "meta": {
+        "post": "85"
+      }
+    },
+    {
+      "code": "CAU",
+      "name": {
+        "es": "Cauca"
+      },
+      "meta": {
+        "post": "19"
+      }
+    },
+    {
+      "code": "CES",
+      "name": {
+        "es": "Cesar"
+      },
+      "meta": {
+        "post": "20"
+      }
+    },
+    {
+      "code": "CHO",
+      "name": {
+        "es": "Chocó"
+      },
+      "meta": {
+        "post": "27"
+      }
+    },
+    {
+      "code": "COR",
+      "name": {
+        "es": "Córdoba"
+      },
+      "meta": {
+        "post": "23"
+      }
+    },
+    {
+      "code": "CUN",
+      "name": {
+        "es": "Cundinamarca"
+      },
+      "meta": {
+        "post": "25"
+      }
+    },
+    {
+      "code": "GUA",
+      "name": {
+        "es": "Guainía"
+      },
+      "meta": {
+        "post": "94"
+      }
+    },
+    {
+      "code": "GUV",
+      "name": {
+        "es": "Guaviare"
+      },
+      "meta": {
+        "post": "95"
+      }
+    },
+    {
+      "code": "HUI",
+      "name": {
+        "es": "Huila"
+      },
+      "meta": {
+        "post": "41"
+      }
+    },
+    {
+      "code": "LAG",
+      "name": {
+        "es": "La Guajira"
+      },
+      "meta": {
+        "post": "44"
+      }
+    },
+    {
+      "code": "MAG",
+      "name": {
+        "es": "Magdalena"
+      },
+      "meta": {
+        "post": "47"
+      }
+    },
+    {
+      "code": "MET",
+      "name": {
+        "es": "Meta"
+      },
+      "meta": {
+        "post": "50"
+      }
+    },
+    {
+      "code": "NAR",
+      "name": {
+        "es": "Nariño"
+      },
+      "meta": {
+        "post": "52"
+      }
+    },
+    {
+      "code": "NSA",
+      "name": {
+        "es": "Norte de Santander"
+      },
+      "meta": {
+        "post": "54"
+      }
+    },
+    {
+      "code": "PUT",
+      "name": {
+        "es": "Putumayo"
+      },
+      "meta": {
+        "post": "86"
+      }
+    },
+    {
+      "code": "QUI",
+      "name": {
+        "es": "Quindío"
+      },
+      "meta": {
+        "post": "63"
+      }
+    },
+    {
+      "code": "RIS",
+      "name": {
+        "es": "Risaralda"
+      },
+      "meta": {
+        "post": "66"
+      }
+    },
+    {
+      "code": "SAP",
+      "name": {
+        "es": "San Andrés y Providencia"
+      },
+      "meta": {
+        "post": "88"
+      }
+    },
+    {
+      "code": "SAN",
+      "name": {
+        "es": "Santander"
+      },
+      "meta": {
+        "post": "68"
+      }
+    },
+    {
+      "code": "SUC",
+      "name": {
+        "es": "Sucre"
+      },
+      "meta": {
+        "post": "70"
+      }
+    },
+    {
+      "code": "TOL",
+      "name": {
+        "es": "Tolima"
+      },
+      "meta": {
+        "post": "73"
+      }
+    },
+    {
+      "code": "VAC",
+      "name": {
+        "es": "Valle de Cauca"
+      },
+      "meta": {
+        "post": "76"
+      }
+    },
+    {
+      "code": "VAU",
+      "name": {
+        "es": "Vaupés"
+      },
+      "meta": {
+        "post": "97"
+      }
+    },
+    {
+      "code": "VID",
+      "name": {
+        "es": "Vichada"
+      },
+      "meta": {
+        "post": "99"
+      }
+    }
+  ],
+  "currency": "COP",
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "es": "Zero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "es": "Estándar"
+          },
+          "values": [
+            {
+              "since": "2017-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2006-01-01",
+              "percent": "16.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Reducido"
+          },
+          "values": [
+            {
+              "since": "2006-01-01",
+              "percent": "5.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IC",
+      "name": {
+        "es": "IC"
+      },
+      "desc": {
+        "en": "Consumption Tax",
+        "es": "Impuesto sobre Consumo"
+      },
+      "rates": []
+    },
+    {
+      "code": "ICA",
+      "name": {
+        "es": "ICA"
+      },
+      "desc": {
+        "en": "Industry and Commerce Tax",
+        "es": "Impuesto de Industria y Comercio"
+      },
+      "rates": []
+    },
+    {
+      "code": "RVAT",
+      "name": {
+        "es": "ReteIVA"
+      },
+      "desc": {
+        "es": "Retención en la fuente por el Impuesto al Valor Agregado"
+      },
+      "retained": true,
+      "rates": []
+    },
+    {
+      "code": "RICA",
+      "name": {
+        "es": "ReteICA"
+      },
+      "desc": {
+        "es": "Retención en la fuente por el Impuesto de Industria y Comercio"
+      },
+      "retained": true,
+      "rates": []
+    },
+    {
+      "code": "RR",
+      "name": {
+        "es": "ReteRenta"
+      },
+      "desc": {
+        "es": "Retención en la fuente por el Impuesto de la Renta"
+      },
+      "retained": true,
+      "rates": []
+    }
+  ]
+}
