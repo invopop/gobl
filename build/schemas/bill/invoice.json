@@ -726,5 +726,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.30.4"
+  "$comment": "Generated with GOBL v0.30.5"
 }
