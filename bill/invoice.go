@@ -36,9 +36,9 @@ type Invoice struct {
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
-	// Key information regarding a previous invoice and potentially details as to why it
-	// was corrected.
-	Preceding *Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+	// Key information regarding previous invoices and potentially details as to why they
+	// were corrected.
+	Preceding []*Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
 	// When the invoice was created.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`

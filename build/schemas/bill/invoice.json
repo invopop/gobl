@@ -205,9 +205,12 @@
           "description": "Special tax configuration for billing."
         },
         "preceding": {
-          "$ref": "#/$defs/Preceding",
+          "items": {
+            "$ref": "#/$defs/Preceding"
+          },
+          "type": "array",
           "title": "Preceding Details",
-          "description": "Key information regarding a previous invoice and potentially details as to why it\nwas corrected."
+          "description": "Key information regarding previous invoices and potentially details as to why they\nwere corrected."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -574,28 +577,126 @@
           "title": "UUID",
           "description": "Preceding document's UUID if available can be useful for tracing."
         },
-        "code": {
-          "type": "string",
-          "title": "Code",
-          "description": "Identity code of the previous invoice."
-        },
         "series": {
           "type": "string",
           "title": "Series",
-          "description": "Additional identification details"
+          "description": "Series identification code"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Code of the previous document."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Issue Date",
-          "description": "When the preceding invoice was issued."
+          "description": "The issue date if the previous document."
         },
         "period": {
           "$ref": "https://gobl.org/draft-0/cal/period",
           "title": "Period",
-          "description": "Tax period in which the previous invoice has an effect."
+          "description": "Tax period in which the previous invoice had an effect."
         },
         "corrections": {
           "items": {
+            "anyOf": [
+              {
+                "const": "code",
+                "description": "Code has changed."
+              },
+              {
+                "const": "series",
+                "description": "Series has changed."
+              },
+              {
+                "const": "issue-date",
+                "description": "Issue date was modified."
+              },
+              {
+                "const": "supplier",
+                "description": "Supplier details were changed."
+              },
+              {
+                "const": "customer",
+                "description": "Customer details were changed."
+              },
+              {
+                "const": "supplier-name",
+                "description": "Supplier name was changed."
+              },
+              {
+                "const": "customer-name",
+                "description": "Customer name was changed."
+              },
+              {
+                "const": "supplier-tax-id",
+                "description": "Supplier Tax ID was changed."
+              },
+              {
+                "const": "customer-tax-id",
+                "description": "Customer Tax ID was changed."
+              },
+              {
+                "const": "supplier-addr",
+                "description": "Supplier address was modified."
+              },
+              {
+                "const": "customer-addr",
+                "description": "Customer address was modified."
+              },
+              {
+                "const": "line",
+                "description": "Line details were corrected."
+              },
+              {
+                "const": "period",
+                "description": "Period was changed."
+              },
+              {
+                "const": "type",
+                "description": "Type of document was corrected."
+              },
+              {
+                "const": "legal-details",
+                "description": "Legal details were corrected."
+              },
+              {
+                "const": "tax-rate",
+                "description": "Tax rates were modified."
+              },
+              {
+                "const": "tax-amount",
+                "description": "Tax amount was corrected."
+              },
+              {
+                "const": "tax-base",
+                "description": "Taxable base was corrected."
+              },
+              {
+                "const": "tax",
+                "description": "General issue with tax calculations."
+              },
+              {
+                "const": "tax-retained",
+                "description": "Error in retained tax calculations/"
+              },
+              {
+                "const": "refund",
+                "description": "Goods or materials have been returned to supplier."
+              },
+              {
+                "const": "discount",
+                "description": "New discounts or rebates added."
+              },
+              {
+                "const": "judicial",
+                "description": "Court ruling or administrative decision."
+              },
+              {
+                "const": "insolvency",
+                "description": "The customer is insolvent and cannot pay."
+              }
+            ],
             "type": "string"
           },
           "type": "array",
@@ -603,6 +704,24 @@
           "description": "Specific codes for the corrections made."
         },
         "correction_method": {
+          "anyOf": [
+            {
+              "const": "complete",
+              "description": "Everything has changed, this document replaces the previous one."
+            },
+            {
+              "const": "partial",
+              "description": "Only differences corrected."
+            },
+            {
+              "const": "discount",
+              "description": "Deducted from future invoices."
+            },
+            {
+              "const": "authorized",
+              "description": "Permitted by tax agency."
+            }
+          ],
           "type": "string",
           "title": "Correction Method",
           "description": "How has the previous invoice been corrected?"
