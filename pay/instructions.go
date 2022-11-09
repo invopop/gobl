@@ -27,11 +27,11 @@ const (
 // that can be accepted by GOBL.
 type MethodKeyDef struct {
 	// Key being described
-	Key MethodKey `json:"key" jsonschema:"Key"`
+	Key MethodKey `json:"key" jsonschema:"title=Key"`
 	// Details about the meaning of the key
-	Description string `json:"description" jsonschema:"Description"`
+	Description string `json:"description" jsonschema:"title=Description"`
 	// UNTDID 4461 Equivalent Code
-	UNTDID4461 org.Code `json:"untdid4461" jsonschema:"UNTDID 4461 Code"`
+	UNTDID4461 org.Code `json:"untdid4461" jsonschema:"title=UNTDID 4461 Code"`
 }
 
 // MethodKeyDefinitions includes all the payment method keys that

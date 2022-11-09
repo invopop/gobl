@@ -1,12 +1,11 @@
 package bill
 
 import (
-	"errors"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 )
 
 // Preceding allows for information to be provided about a previous invoice that this one
@@ -15,13 +14,13 @@ import (
 type Preceding struct {
 	// Preceding document's UUID if available can be useful for tracing.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Identity code of the previous invoice.
-	Code string `json:"code" jsonschema:"title=Code"`
-	// Additional identification details
+	// Series identification code
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
-	// When the preceding invoice was issued.
+	// Code of the previous document.
+	Code string `json:"code" jsonschema:"title=Code"`
+	// The issue date if the previous document.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
-	// Tax period in which the previous invoice has an effect.
+	// Tax period in which the previous invoice had an effect.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Specific codes for the corrections made.
 	Corrections []CorrectionKey `json:"corrections,omitempty" jsonschema:"title=Corrections"`
@@ -37,18 +36,19 @@ type Preceding struct {
 func (p *Preceding) Validate() error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.UUID),
+		validation.Field(&p.Series),
 		validation.Field(&p.Code, validation.Required),
 		validation.Field(&p.IssueDate, cal.DateNotZero()),
 		validation.Field(&p.Period),
-		validation.Field(&p.Corrections),
-		validation.Field(&p.CorrectionMethod),
+		validation.Field(&p.Corrections, validation.Each(isValidCorrectionKey)),
+		validation.Field(&p.CorrectionMethod, isValidCorrectionMethodKey),
 		validation.Field(&p.Meta),
 	)
 }
 
 // CorrectionKey helps identify from a set of reasons why this correction
 // is happening
-type CorrectionKey string
+type CorrectionKey org.Key
 
 // CorrectionMethodKey identifies that type of correction being applied.
 type CorrectionMethodKey string
@@ -82,43 +82,52 @@ const (
 	InsolvencyCorrectionKey      CorrectionKey = "insolvency"   // the customer is insolvent and cannot pay
 )
 
-// CorrectionKeyList provides a fixed list of all the correction
-// codes that are currently supported by GOBL.
-var CorrectionKeyList = []CorrectionKey{
-	CodeCorrectionKey,
-	SeriesCorrectionKey,
-	IssueDateCorrectionKey,
-	SupplierCorrectionKey,
-	CustomerCorrectionKey,
-	SupplierNameCorrectionKey,
-	CustomerNameCorrectionKey,
-	SupplierTaxIDCorrectionKey,
-	CustomerTaxIDCorrectionKey,
-	SupplierAddressCorrectionKey,
-	CustomerAddressCorrectionKey,
-	LineCorrectionKey,
-	PeriodCorrectionKey,
-	TypeCorrectionKey,
-	LegalDetailsCorrectionKey,
-	TaxRateCorrectionKey,
-	TaxAmountCorrectionKey,
-	TaxBaseCorrectionKey,
-	TaxCorrectionKey,
-	TaxRetainedCorrectionKey,
-	RefundCorrectionKey,
-	DiscountCorrectionKey,
-	JudicialCorrectionKey,
-	InsolvencyCorrectionKey,
+// CorrectionKeyDef holds a definition of a correction key with it's
+// description.
+type CorrectionKeyDef struct {
+	// Key being defined
+	Key CorrectionKey `json:"key" jsonschema:"title=Key"`
+	// Description of the key and how it should be used.
+	Description string `json:"description" jsonschema:"title=Description"`
 }
 
-// Validate ensures the correction code is part of the accepted list
-func (cc CorrectionKey) Validate() error {
-	for _, code := range CorrectionKeyList {
-		if code == cc {
-			return nil
-		}
+// CorrectionKeyDefinitions provides a fixed list of all the correction
+// codes that are currently supported by GOBL.
+var CorrectionKeyDefinitions = []CorrectionKeyDef{
+	{CodeCorrectionKey, "Code has changed."},
+	{SeriesCorrectionKey, "Series has changed."},
+	{IssueDateCorrectionKey, "Issue date was modified."},
+	{SupplierCorrectionKey, "Supplier details were changed."},
+	{CustomerCorrectionKey, "Customer details were changed."},
+	{SupplierNameCorrectionKey, "Supplier name was changed."},
+	{CustomerNameCorrectionKey, "Customer name was changed."},
+	{SupplierTaxIDCorrectionKey, "Supplier Tax ID was changed."},
+	{CustomerTaxIDCorrectionKey, "Customer Tax ID was changed."},
+	{SupplierAddressCorrectionKey, "Supplier address was modified."},
+	{CustomerAddressCorrectionKey, "Customer address was modified."},
+	{LineCorrectionKey, "Line details were corrected."},
+	{PeriodCorrectionKey, "Period was changed."},
+	{TypeCorrectionKey, "Type of document was corrected."},
+	{LegalDetailsCorrectionKey, "Legal details were corrected."},
+	{TaxRateCorrectionKey, "Tax rates were modified."},
+	{TaxAmountCorrectionKey, "Tax amount was corrected."},
+	{TaxBaseCorrectionKey, "Taxable base was corrected."},
+	{TaxCorrectionKey, "General issue with tax calculations."},
+	{TaxRetainedCorrectionKey, "Error in retained tax calculations/"},
+	{RefundCorrectionKey, "Goods or materials have been returned to supplier."},
+	{DiscountCorrectionKey, "New discounts or rebates added."},
+	{JudicialCorrectionKey, "Court ruling or administrative decision."},
+	{InsolvencyCorrectionKey, "The customer is insolvent and cannot pay."},
+}
+
+var isValidCorrectionKey = validation.In(validCorrectionKeys()...)
+
+func validCorrectionKeys() []interface{} {
+	list := make([]interface{}, len(CorrectionKeyDefinitions))
+	for i, v := range CorrectionKeyDefinitions {
+		list[i] = v.Key
 	}
-	return errors.New("invalid")
+	return list
 }
 
 // Defined list of correction methods
@@ -129,21 +138,51 @@ const (
 	AuthorizedCorrectionMethodKey CorrectionMethodKey = "authorized" // Permitted by tax agency
 )
 
-// CorrectionMethodKeyList provides a fixed list of codes for validation
-// purposes.
-var CorrectionMethodKeyList = []CorrectionMethodKey{
-	CompleteCorrectionMethodKey,
-	PartialCorrectionMethodKey,
-	DiscountCorrectionMethodKey,
-	AuthorizedCorrectionMethodKey,
+// CorrectionMethodKeyDef defines the fields used to describe each correction method.
+type CorrectionMethodKeyDef struct {
+	// Key being defined
+	Key CorrectionMethodKey `json:"key" jsonschema:"title=Key"`
+	// Description of the key and how it should be used.
+	Description string `json:"description" jsonschema:"title=Description"`
 }
 
-// Validate ensures the correction code is part of the accepted list
-func (cc CorrectionMethodKey) Validate() error {
-	for _, code := range CorrectionMethodKeyList {
-		if code == cc {
-			return nil
+// CorrectionMethodKeyDefinitions provides a fixed list of codes for validation
+// purposes.
+var CorrectionMethodKeyDefinitions = []CorrectionMethodKeyDef{
+	{CompleteCorrectionMethodKey, "Everything has changed, this document replaces the previous one."},
+	{PartialCorrectionMethodKey, "Only differences corrected."},
+	{DiscountCorrectionMethodKey, "Deducted from future invoices."},
+	{AuthorizedCorrectionMethodKey, "Permitted by tax agency."},
+}
+
+var isValidCorrectionMethodKey = validation.In(validCorrectionMethodKeys()...)
+
+func validCorrectionMethodKeys() []interface{} {
+	list := make([]interface{}, len(CorrectionMethodKeyDefinitions))
+	for i, v := range CorrectionMethodKeyDefinitions {
+		list[i] = v.Key
+	}
+	return list
+}
+
+// JSONSchemaExtend provides additional details to the schema.
+func (CorrectionKey) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.AnyOf = make([]*jsonschema.Schema, len(CorrectionKeyDefinitions))
+	for i, v := range CorrectionKeyDefinitions {
+		s.AnyOf[i] = &jsonschema.Schema{
+			Const:       v.Key,
+			Description: v.Description,
 		}
 	}
-	return errors.New("invalid")
+}
+
+// JSONSchemaExtend provides additional details to the schema.
+func (CorrectionMethodKey) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.AnyOf = make([]*jsonschema.Schema, len(CorrectionMethodKeyDefinitions))
+	for i, v := range CorrectionMethodKeyDefinitions {
+		s.AnyOf[i] = &jsonschema.Schema{
+			Const:       v.Key,
+			Description: v.Description,
+		}
+	}
 }
