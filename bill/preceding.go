@@ -91,7 +91,7 @@ type CorrectionKeyDef struct {
 	Description string `json:"description" jsonschema:"title=Description"`
 }
 
-// CorrectionKeyList provides a fixed list of all the correction
+// CorrectionKeyDefinitions provides a fixed list of all the correction
 // codes that are currently supported by GOBL.
 var CorrectionKeyDefinitions = []CorrectionKeyDef{
 	{CodeCorrectionKey, "Code has changed."},
@@ -146,7 +146,7 @@ type CorrectionMethodKeyDef struct {
 	Description string `json:"description" jsonschema:"title=Description"`
 }
 
-// CorrectionMethodKeyList provides a fixed list of codes for validation
+// CorrectionMethodKeyDefinitions provides a fixed list of codes for validation
 // purposes.
 var CorrectionMethodKeyDefinitions = []CorrectionMethodKeyDef{
 	{CompleteCorrectionMethodKey, "Everything has changed, this document replaces the previous one."},
