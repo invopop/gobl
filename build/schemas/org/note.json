@@ -140,5 +140,5 @@
       "description": "NoteKey identifies the type of note being edited"
     }
   },
-  "$comment": "Generated with GOBL v0.30.5"
+  "$comment": "Generated with GOBL v0.31.0"
 }
