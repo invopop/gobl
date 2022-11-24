@@ -204,7 +204,7 @@ func Region() *tax.Region {
 			{
 				Code: TaxCategoryReteRenta,
 				Name: i18n.String{
-					i18n.ES: "ReteRenta",
+					i18n.ES: "Retefuente",
 				},
 				Desc: i18n.String{
 					i18n.ES: "Retención en la fuente por el Impuesto de la Renta",
