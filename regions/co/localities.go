@@ -409,7 +409,7 @@ var localities = []tax.Locality{
 	{Code: "17486", Name: i18n.String{i18n.ES: "NEIRA"}, Meta: org.Meta{KeyDep: "Caldas"}},
 	{Code: "17495", Name: i18n.String{i18n.ES: "NORCASIA"}, Meta: org.Meta{KeyDep: "Caldas"}},
 	{Code: "17513", Name: i18n.String{i18n.ES: "PÁCORA"}, Meta: org.Meta{KeyDep: "Caldas"}},
-	{Code: "17524", Name: i18n.String{i18n.ES: "PALESTINA"}, Meta: org.Meta{KeyDep: "Caldas"}},
+	{Code: "17524", Name: i18n.String{i18n.ES: "PALESTINA"}, Meta: org.Meta{KeyDep: "Caldas"}}, //nolint:misspell
 	{Code: "17541", Name: i18n.String{i18n.ES: "PENSILVANIA"}, Meta: org.Meta{KeyDep: "Caldas"}},
 	{Code: "17614", Name: i18n.String{i18n.ES: "RIOSUCIO"}, Meta: org.Meta{KeyDep: "Caldas"}},
 	{Code: "17616", Name: i18n.String{i18n.ES: "RISARALDA"}, Meta: org.Meta{KeyDep: "Caldas"}},
@@ -733,7 +733,7 @@ var localities = []tax.Locality{
 	{Code: "41503", Name: i18n.String{i18n.ES: "OPORAPA"}, Meta: org.Meta{KeyDep: "Huila"}},
 	{Code: "41518", Name: i18n.String{i18n.ES: "PAICOL"}, Meta: org.Meta{KeyDep: "Huila"}},
 	{Code: "41524", Name: i18n.String{i18n.ES: "PALERMO"}, Meta: org.Meta{KeyDep: "Huila"}},
-	{Code: "41530", Name: i18n.String{i18n.ES: "PALESTINA"}, Meta: org.Meta{KeyDep: "Huila"}},
+	{Code: "41530", Name: i18n.String{i18n.ES: "PALESTINA"}, Meta: org.Meta{KeyDep: "Huila"}}, //nolint:misspell
 	{Code: "41548", Name: i18n.String{i18n.ES: "PITAL"}, Meta: org.Meta{KeyDep: "Huila"}},
 	{Code: "41551", Name: i18n.String{i18n.ES: "PITALITO"}, Meta: org.Meta{KeyDep: "Huila"}},
 	{Code: "41615", Name: i18n.String{i18n.ES: "RIVERA"}, Meta: org.Meta{KeyDep: "Huila"}},
@@ -979,7 +979,7 @@ var localities = []tax.Locality{
 	{Code: "68121", Name: i18n.String{i18n.ES: "CABRERA"}, Meta: org.Meta{KeyDep: "Santander"}},
 	{Code: "68132", Name: i18n.String{i18n.ES: "CALIFORNIA"}, Meta: org.Meta{KeyDep: "Santander"}},
 	{Code: "68147", Name: i18n.String{i18n.ES: "CAPITANEJO"}, Meta: org.Meta{KeyDep: "Santander"}},
-	{Code: "68152", Name: i18n.String{i18n.ES: "CARCASÍ"}, Meta: org.Meta{KeyDep: "Santander"}},
+	{Code: "68152", Name: i18n.String{i18n.ES: "CARCASÍ"}, Meta: org.Meta{KeyDep: "Santander"}}, //nolint:misspell
 	{Code: "68160", Name: i18n.String{i18n.ES: "CEPITÁ"}, Meta: org.Meta{KeyDep: "Santander"}},
 	{Code: "68162", Name: i18n.String{i18n.ES: "CERRITO"}, Meta: org.Meta{KeyDep: "Santander"}},
 	{Code: "68167", Name: i18n.String{i18n.ES: "CHARALÁ"}, Meta: org.Meta{KeyDep: "Santander"}},
