@@ -21,11 +21,6 @@ const (
 	TaxCategoryReteICA   org.Code = "RICA" // ReteICA
 )
 
-// Keys used in meta data
-const (
-	KeyPost org.Key = "post"
-)
-
 // DIAN official codes to include in stamps.
 const (
 	StampProviderDIANCUFE org.Key = "dian-cufe"
@@ -44,42 +39,7 @@ func Region() *tax.Region {
 		ValidateDocument:     Validate,
 		ValidateTaxIdentity:  ValidateTaxIdentity,
 		NormalizeTaxIdentity: NormalizeTaxIdentity,
-		Localities: tax.Localities{
-			{Code: "AMA", Name: i18n.String{i18n.ES: "Amazonas"}, Meta: org.Meta{KeyPost: "91"}},
-			{Code: "ANT", Name: i18n.String{i18n.ES: "Antioquia"}, Meta: org.Meta{KeyPost: "05"}},
-			{Code: "ARA", Name: i18n.String{i18n.ES: "Arauca"}, Meta: org.Meta{KeyPost: "81"}},
-			{Code: "ATL", Name: i18n.String{i18n.ES: "Atlántico"}, Meta: org.Meta{KeyPost: "08"}},
-			{Code: "DC", Name: i18n.String{i18n.ES: "Bogotá"}, Meta: org.Meta{KeyPost: "11"}},
-			{Code: "BOL", Name: i18n.String{i18n.ES: "Bolívar"}, Meta: org.Meta{KeyPost: "13"}},
-			{Code: "BOY", Name: i18n.String{i18n.ES: "Boyacá"}, Meta: org.Meta{KeyPost: "15"}},
-			{Code: "CAL", Name: i18n.String{i18n.ES: "Caldas"}, Meta: org.Meta{KeyPost: "17"}},
-			{Code: "CAQ", Name: i18n.String{i18n.ES: "Caquetá"}, Meta: org.Meta{KeyPost: "18"}},
-			{Code: "CAS", Name: i18n.String{i18n.ES: "Casanare"}, Meta: org.Meta{KeyPost: "85"}},
-			{Code: "CAU", Name: i18n.String{i18n.ES: "Cauca"}, Meta: org.Meta{KeyPost: "19"}},
-			{Code: "CES", Name: i18n.String{i18n.ES: "Cesar"}, Meta: org.Meta{KeyPost: "20"}},
-			{Code: "CHO", Name: i18n.String{i18n.ES: "Chocó"}, Meta: org.Meta{KeyPost: "27"}},
-			{Code: "COR", Name: i18n.String{i18n.ES: "Córdoba"}, Meta: org.Meta{KeyPost: "23"}},
-			{Code: "CUN", Name: i18n.String{i18n.ES: "Cundinamarca"}, Meta: org.Meta{KeyPost: "25"}},
-			{Code: "GUA", Name: i18n.String{i18n.ES: "Guainía"}, Meta: org.Meta{KeyPost: "94"}},
-			{Code: "GUV", Name: i18n.String{i18n.ES: "Guaviare"}, Meta: org.Meta{KeyPost: "95"}},
-			{Code: "HUI", Name: i18n.String{i18n.ES: "Huila"}, Meta: org.Meta{KeyPost: "41"}},
-			{Code: "LAG", Name: i18n.String{i18n.ES: "La Guajira"}, Meta: org.Meta{KeyPost: "44"}},
-			{Code: "MAG", Name: i18n.String{i18n.ES: "Magdalena"}, Meta: org.Meta{KeyPost: "47"}},
-			{Code: "MET", Name: i18n.String{i18n.ES: "Meta"}, Meta: org.Meta{KeyPost: "50"}},
-			{Code: "NAR", Name: i18n.String{i18n.ES: "Nariño"}, Meta: org.Meta{KeyPost: "52"}},
-			{Code: "NSA", Name: i18n.String{i18n.ES: "Norte de Santander"}, Meta: org.Meta{KeyPost: "54"}},
-			{Code: "PUT", Name: i18n.String{i18n.ES: "Putumayo"}, Meta: org.Meta{KeyPost: "86"}},
-			{Code: "QUI", Name: i18n.String{i18n.ES: "Quindío"}, Meta: org.Meta{KeyPost: "63"}},
-			{Code: "RIS", Name: i18n.String{i18n.ES: "Risaralda"}, Meta: org.Meta{KeyPost: "66"}},
-			{Code: "SAP", Name: i18n.String{i18n.ES: "San Andrés y Providencia"}, Meta: org.Meta{KeyPost: "88"}},
-			{Code: "SAN", Name: i18n.String{i18n.ES: "Santander"}, Meta: org.Meta{KeyPost: "68"}},
-			{Code: "SUC", Name: i18n.String{i18n.ES: "Sucre"}, Meta: org.Meta{KeyPost: "70"}},
-			{Code: "TOL", Name: i18n.String{i18n.ES: "Tolima"}, Meta: org.Meta{KeyPost: "73"}},
-			{Code: "VAC", Name: i18n.String{i18n.ES: "Valle de Cauca"}, Meta: org.Meta{KeyPost: "76"}},
-			{Code: "VAU", Name: i18n.String{i18n.ES: "Vaupés"}, Meta: org.Meta{KeyPost: "97"}},
-			{Code: "VID", Name: i18n.String{i18n.ES: "Vichada"}, Meta: org.Meta{KeyPost: "99"}},
-		},
-
+		Localities:           localities, // see localities.go
 		Categories: []*tax.Category{
 			//
 			// VAT
