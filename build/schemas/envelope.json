@@ -56,7 +56,7 @@
         },
         "stamps": {
           "items": {
-            "$ref": "#/$defs/Stamp"
+            "$ref": "https://gobl.org/draft-0/org/stamp"
           },
           "type": "array",
           "title": "Stamps",
@@ -92,27 +92,7 @@
         "dig"
       ],
       "description": "Header defines the meta data of the body."
-    },
-    "Stamp": {
-      "properties": {
-        "prv": {
-          "$ref": "https://gobl.org/draft-0/org/key",
-          "title": "Provider",
-          "description": "Identity of the agency used to create the stamp usually defined by each region."
-        },
-        "val": {
-          "type": "string",
-          "title": "Value",
-          "description": "The serialized stamp value generated for or by the external agency"
-        }
-      },
-      "type": "object",
-      "required": [
-        "prv",
-        "val"
-      ],
-      "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
     }
   },
-  "$comment": "Generated with GOBL v0.31.0"
+  "$comment": "Generated with GOBL v0.32.0"
 }

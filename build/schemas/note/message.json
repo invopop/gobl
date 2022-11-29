@@ -28,5 +28,5 @@
       "description": "Message represents the minimum possible contents for a GoBL document type."
     }
   },
-  "$comment": "Generated with GOBL v0.31.0"
+  "$comment": "Generated with GOBL v0.32.0"
 }

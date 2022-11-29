@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/stamp",
+  "$ref": "#/$defs/Stamp",
+  "$defs": {
+    "Stamp": {
+      "properties": {
+        "prv": {
+          "$ref": "https://gobl.org/draft-0/org/key",
+          "title": "Provider",
+          "description": "Identity of the agency used to create the stamp usually defined by each region."
+        },
+        "val": {
+          "type": "string",
+          "title": "Value",
+          "description": "The serialized stamp value generated for or by the external agency"
+        }
+      },
+      "type": "object",
+      "required": [
+        "prv",
+        "val"
+      ],
+      "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
+    }
+  },
+  "$comment": "Generated with GOBL v0.32.0"
+}

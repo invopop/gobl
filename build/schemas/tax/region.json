@@ -39,13 +39,6 @@
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
-    "Localities": {
-      "items": {
-        "$ref": "#/$defs/Locality"
-      },
-      "type": "array",
-      "description": "Localities stores an array of locality objects used to describe areas sub-divisions inside a region."
-    },
     "Locality": {
       "properties": {
         "code": {
@@ -150,7 +143,10 @@
           "description": "Locality, city, province, county, or similar code inside the country, if needed."
         },
         "localities": {
-          "$ref": "#/$defs/Localities",
+          "items": {
+            "$ref": "#/$defs/Locality"
+          },
+          "type": "array",
           "title": "Localities",
           "description": "List of sub-localities inside a region."
         },
@@ -228,5 +224,5 @@
       "description": "Schemes defines an array of scheme objects with helper functions."
     }
   },
-  "$comment": "Generated with GOBL v0.31.0"
+  "$comment": "Generated with GOBL v0.32.0"
 }

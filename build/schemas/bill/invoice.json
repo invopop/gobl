@@ -710,6 +710,10 @@
               "description": "Everything has changed, this document replaces the previous one."
             },
             {
+              "const": "revoked",
+              "description": "Previous document has been completely revoked."
+            },
+            {
               "const": "partial",
               "description": "Only differences corrected."
             },
@@ -725,6 +729,14 @@
           "type": "string",
           "title": "Correction Method",
           "description": "How has the previous invoice been corrected?"
+        },
+        "stamps": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/stamp"
+          },
+          "type": "array",
+          "title": "Stamps",
+          "description": "Seals of approval from other organisations."
         },
         "notes": {
           "type": "string",
@@ -845,5 +857,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.31.0"
+  "$comment": "Generated with GOBL v0.32.0"
 }

@@ -7,300 +7,10092 @@
   "country": "CO",
   "localities": [
     {
-      "code": "AMA",
+      "code": "91263",
       "name": {
-        "es": "Amazonas"
+        "es": "EL ENCANTO"
       },
       "meta": {
-        "post": "91"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "ANT",
+      "code": "91405",
       "name": {
-        "es": "Antioquia"
+        "es": "LA CHORRERA"
       },
       "meta": {
-        "post": "05"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "ARA",
+      "code": "91407",
       "name": {
-        "es": "Arauca"
+        "es": "LA PEDRERA"
       },
       "meta": {
-        "post": "81"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "ATL",
+      "code": "91430",
       "name": {
-        "es": "Atlántico"
+        "es": "LA VICTORIA"
       },
       "meta": {
-        "post": "08"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "DC",
+      "code": "91460",
       "name": {
-        "es": "Bogotá"
+        "es": "MIRITI - PARANÁ"
       },
       "meta": {
-        "post": "11"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "BOL",
+      "code": "91530",
       "name": {
-        "es": "Bolívar"
+        "es": "PUERTO ALEGRÍA"
       },
       "meta": {
-        "post": "13"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "BOY",
+      "code": "91536",
       "name": {
-        "es": "Boyacá"
+        "es": "PUERTO ARICA"
       },
       "meta": {
-        "post": "15"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "CAL",
+      "code": "91540",
       "name": {
-        "es": "Caldas"
+        "es": "PUERTO NARIÑO"
       },
       "meta": {
-        "post": "17"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "CAQ",
+      "code": "91669",
       "name": {
-        "es": "Caquetá"
+        "es": "PUERTO SANTANDER"
       },
       "meta": {
-        "post": "18"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "CAS",
+      "code": "91798",
       "name": {
-        "es": "Casanare"
+        "es": "TARAPACÁ"
       },
       "meta": {
-        "post": "85"
+        "dep": "Amazonas"
       }
     },
     {
-      "code": "CAU",
+      "code": "05001",
       "name": {
-        "es": "Cauca"
+        "es": "MEDELLÍN"
       },
       "meta": {
-        "post": "19"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "CES",
+      "code": "05002",
       "name": {
-        "es": "Cesar"
+        "es": "ABEJORRAL"
       },
       "meta": {
-        "post": "20"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "CHO",
+      "code": "05004",
       "name": {
-        "es": "Chocó"
+        "es": "ABRIAQUÍ"
       },
       "meta": {
-        "post": "27"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "COR",
+      "code": "05021",
       "name": {
-        "es": "Córdoba"
+        "es": "ALEJANDRÍA"
       },
       "meta": {
-        "post": "23"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "CUN",
+      "code": "05030",
       "name": {
-        "es": "Cundinamarca"
+        "es": "AMAGÁ"
       },
       "meta": {
-        "post": "25"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "GUA",
+      "code": "05031",
       "name": {
-        "es": "Guainía"
+        "es": "AMALFI"
       },
       "meta": {
-        "post": "94"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "GUV",
+      "code": "05034",
       "name": {
-        "es": "Guaviare"
+        "es": "ANDES"
       },
       "meta": {
-        "post": "95"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "HUI",
+      "code": "05036",
       "name": {
-        "es": "Huila"
+        "es": "ANGELÓPOLIS"
       },
       "meta": {
-        "post": "41"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "LAG",
+      "code": "05038",
       "name": {
-        "es": "La Guajira"
+        "es": "ANGOSTURA"
       },
       "meta": {
-        "post": "44"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "MAG",
+      "code": "05040",
       "name": {
-        "es": "Magdalena"
+        "es": "ANORÍ"
       },
       "meta": {
-        "post": "47"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "MET",
+      "code": "05042",
       "name": {
-        "es": "Meta"
+        "es": "SANTAFÉ DE ANTIOQUIA"
       },
       "meta": {
-        "post": "50"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "NAR",
+      "code": "05044",
       "name": {
-        "es": "Nariño"
+        "es": "ANZA"
       },
       "meta": {
-        "post": "52"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "NSA",
+      "code": "05045",
       "name": {
-        "es": "Norte de Santander"
+        "es": "APARTADÓ"
       },
       "meta": {
-        "post": "54"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "PUT",
+      "code": "05051",
       "name": {
-        "es": "Putumayo"
+        "es": "ARBOLETES"
       },
       "meta": {
-        "post": "86"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "QUI",
+      "code": "05055",
       "name": {
-        "es": "Quindío"
+        "es": "ARGELIA"
       },
       "meta": {
-        "post": "63"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "RIS",
+      "code": "05059",
       "name": {
-        "es": "Risaralda"
+        "es": "ARMENIA"
       },
       "meta": {
-        "post": "66"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "SAP",
+      "code": "05079",
       "name": {
-        "es": "San Andrés y Providencia"
+        "es": "BARBOSA"
       },
       "meta": {
-        "post": "88"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "SAN",
+      "code": "05086",
       "name": {
-        "es": "Santander"
+        "es": "BELMIRA"
       },
       "meta": {
-        "post": "68"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "SUC",
+      "code": "05088",
       "name": {
-        "es": "Sucre"
+        "es": "BELLO"
       },
       "meta": {
-        "post": "70"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "TOL",
+      "code": "05091",
       "name": {
-        "es": "Tolima"
+        "es": "BETANIA"
       },
       "meta": {
-        "post": "73"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "VAC",
+      "code": "05093",
       "name": {
-        "es": "Valle de Cauca"
+        "es": "BETULIA"
       },
       "meta": {
-        "post": "76"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "VAU",
+      "code": "05101",
       "name": {
-        "es": "Vaupés"
+        "es": "CIUDAD BOLÍVAR"
       },
       "meta": {
-        "post": "97"
+        "dep": "Antioquia"
       }
     },
     {
-      "code": "VID",
+      "code": "05107",
       "name": {
-        "es": "Vichada"
+        "es": "BRICEÑO"
       },
       "meta": {
-        "post": "99"
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05113",
+      "name": {
+        "es": "BURITICÁ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05120",
+      "name": {
+        "es": "CÁCERES"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05125",
+      "name": {
+        "es": "CAICEDO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05129",
+      "name": {
+        "es": "CALDAS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05134",
+      "name": {
+        "es": "CAMPAMENTO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05138",
+      "name": {
+        "es": "CAÑASGORDAS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05142",
+      "name": {
+        "es": "CARACOLÍ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05145",
+      "name": {
+        "es": "CARAMANTA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05147",
+      "name": {
+        "es": "CAREPA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05148",
+      "name": {
+        "es": "EL CARMEN DE VIBORAL"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05150",
+      "name": {
+        "es": "CAROLINA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05154",
+      "name": {
+        "es": "CAUCASIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05172",
+      "name": {
+        "es": "CHIGORODÓ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05190",
+      "name": {
+        "es": "CISNEROS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05197",
+      "name": {
+        "es": "COCORNÁ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05206",
+      "name": {
+        "es": "CONCEPCIÓN"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05209",
+      "name": {
+        "es": "CONCORDIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05212",
+      "name": {
+        "es": "COPACABANA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05234",
+      "name": {
+        "es": "DABEIBA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05237",
+      "name": {
+        "es": "DONMATÍAS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05240",
+      "name": {
+        "es": "EBÉJICO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05250",
+      "name": {
+        "es": "EL BAGRE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05264",
+      "name": {
+        "es": "ENTRERRIOS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05266",
+      "name": {
+        "es": "ENVIGADO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05282",
+      "name": {
+        "es": "FREDONIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05284",
+      "name": {
+        "es": "FRONTINO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05306",
+      "name": {
+        "es": "GIRALDO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05308",
+      "name": {
+        "es": "GIRARDOTA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05310",
+      "name": {
+        "es": "GÓMEZ PLATA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05313",
+      "name": {
+        "es": "GRANADA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05315",
+      "name": {
+        "es": "GUADALUPE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05318",
+      "name": {
+        "es": "GUARNE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05321",
+      "name": {
+        "es": "GUATAPE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05347",
+      "name": {
+        "es": "HELICONIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05353",
+      "name": {
+        "es": "HISPANIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05360",
+      "name": {
+        "es": "ITAGUI"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05361",
+      "name": {
+        "es": "ITUANGO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05364",
+      "name": {
+        "es": "JARDÍN"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05368",
+      "name": {
+        "es": "JERICÓ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05376",
+      "name": {
+        "es": "LA CEJA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05380",
+      "name": {
+        "es": "LA ESTRELLA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05390",
+      "name": {
+        "es": "LA PINTADA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05400",
+      "name": {
+        "es": "LA UNIÓN"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05411",
+      "name": {
+        "es": "LIBORINA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05425",
+      "name": {
+        "es": "MACEO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05440",
+      "name": {
+        "es": "MARINILLA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05467",
+      "name": {
+        "es": "MONTEBELLO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05475",
+      "name": {
+        "es": "MURINDÓ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05480",
+      "name": {
+        "es": "MUTATÁ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05483",
+      "name": {
+        "es": "NARIÑO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05490",
+      "name": {
+        "es": "NECOCLÍ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05495",
+      "name": {
+        "es": "NECHÍ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05501",
+      "name": {
+        "es": "OLAYA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05541",
+      "name": {
+        "es": "PEÑOL"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05543",
+      "name": {
+        "es": "PEQUE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05576",
+      "name": {
+        "es": "PUEBLORRICO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05579",
+      "name": {
+        "es": "PUERTO BERRÍO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05585",
+      "name": {
+        "es": "PUERTO NARE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05591",
+      "name": {
+        "es": "PUERTO TRIUNFO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05604",
+      "name": {
+        "es": "REMEDIOS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05607",
+      "name": {
+        "es": "RETIRO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05615",
+      "name": {
+        "es": "RIONEGRO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05628",
+      "name": {
+        "es": "SABANALARGA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05631",
+      "name": {
+        "es": "SABANETA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05642",
+      "name": {
+        "es": "SALGAR"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05647",
+      "name": {
+        "es": "SAN ANDRÉS DE CUERQUÍA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05649",
+      "name": {
+        "es": "SAN CARLOS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05652",
+      "name": {
+        "es": "SAN FRANCISCO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05656",
+      "name": {
+        "es": "SAN JERÓNIMO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05658",
+      "name": {
+        "es": "SAN JOSÉ DE LA MONTAÑA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05659",
+      "name": {
+        "es": "SAN JUAN DE URABÁ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05660",
+      "name": {
+        "es": "SAN LUIS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05664",
+      "name": {
+        "es": "SAN PEDRO DE LOS MILAGROS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05665",
+      "name": {
+        "es": "SAN PEDRO DE URABA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05667",
+      "name": {
+        "es": "SAN RAFAEL"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05670",
+      "name": {
+        "es": "SAN ROQUE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05674",
+      "name": {
+        "es": "SAN VICENTE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05679",
+      "name": {
+        "es": "SANTA BÁRBARA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05686",
+      "name": {
+        "es": "SANTA ROSA DE OSOS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05690",
+      "name": {
+        "es": "SANTO DOMINGO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05697",
+      "name": {
+        "es": "EL SANTUARIO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05736",
+      "name": {
+        "es": "SEGOVIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05756",
+      "name": {
+        "es": "SONSON"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05761",
+      "name": {
+        "es": "SOPETRÁN"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05789",
+      "name": {
+        "es": "TÁMESIS"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05790",
+      "name": {
+        "es": "TARAZÁ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05792",
+      "name": {
+        "es": "TARSO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05809",
+      "name": {
+        "es": "TITIRIBÍ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05819",
+      "name": {
+        "es": "TOLEDO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05837",
+      "name": {
+        "es": "TURBO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05842",
+      "name": {
+        "es": "URAMITA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05847",
+      "name": {
+        "es": "URRAO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05854",
+      "name": {
+        "es": "VALDIVIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05856",
+      "name": {
+        "es": "VALPARAÍSO"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05858",
+      "name": {
+        "es": "VEGACHÍ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05861",
+      "name": {
+        "es": "VENECIA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05873",
+      "name": {
+        "es": "VIGÍA DEL FUERTE"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05885",
+      "name": {
+        "es": "YALÍ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05887",
+      "name": {
+        "es": "YARUMAL"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05890",
+      "name": {
+        "es": "YOLOMBÓ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05893",
+      "name": {
+        "es": "YONDÓ"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "05895",
+      "name": {
+        "es": "ZARAGOZA"
+      },
+      "meta": {
+        "dep": "Antioquia"
+      }
+    },
+    {
+      "code": "81001",
+      "name": {
+        "es": "ARAUCA"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "81065",
+      "name": {
+        "es": "ARAUQUITA"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "81220",
+      "name": {
+        "es": "CRAVO NORTE"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "81300",
+      "name": {
+        "es": "FORTUL"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "81591",
+      "name": {
+        "es": "PUERTO RONDÓN"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "81736",
+      "name": {
+        "es": "SARAVENA"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "81794",
+      "name": {
+        "es": "TAME"
+      },
+      "meta": {
+        "dep": "Arauca"
+      }
+    },
+    {
+      "code": "08001",
+      "name": {
+        "es": "BARRANQUILLA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08078",
+      "name": {
+        "es": "BARANOA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08137",
+      "name": {
+        "es": "CAMPO DE LA CRUZ"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08141",
+      "name": {
+        "es": "CANDELARIA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08296",
+      "name": {
+        "es": "GALAPA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08372",
+      "name": {
+        "es": "JUAN DE ACOSTA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08421",
+      "name": {
+        "es": "LURUACO"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08433",
+      "name": {
+        "es": "MALAMBO"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08436",
+      "name": {
+        "es": "MANATÍ"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08520",
+      "name": {
+        "es": "PALMAR DE VARELA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08549",
+      "name": {
+        "es": "PIOJÓ"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08558",
+      "name": {
+        "es": "POLONUEVO"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08560",
+      "name": {
+        "es": "PONEDERA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08573",
+      "name": {
+        "es": "PUERTO COLOMBIA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08606",
+      "name": {
+        "es": "REPELÓN"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08634",
+      "name": {
+        "es": "SABANAGRANDE"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08638",
+      "name": {
+        "es": "SABANALARGA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08675",
+      "name": {
+        "es": "SANTA LUCÍA"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08685",
+      "name": {
+        "es": "SANTO TOMÁS"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08758",
+      "name": {
+        "es": "SOLEDAD"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08770",
+      "name": {
+        "es": "SUAN"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08832",
+      "name": {
+        "es": "TUBARÁ"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "08849",
+      "name": {
+        "es": "USIACURÍ"
+      },
+      "meta": {
+        "dep": "Atlántico"
+      }
+    },
+    {
+      "code": "11001",
+      "name": {
+        "es": "BOGOTÁ, D.C."
+      },
+      "meta": {
+        "dep": "Bogotá"
+      }
+    },
+    {
+      "code": "13001",
+      "name": {
+        "es": "CARTAGENA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13006",
+      "name": {
+        "es": "ACHÍ"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13030",
+      "name": {
+        "es": "ALTOS DEL ROSARIO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13042",
+      "name": {
+        "es": "ARENAL"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13052",
+      "name": {
+        "es": "ARJONA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13062",
+      "name": {
+        "es": "ARROYOHONDO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13074",
+      "name": {
+        "es": "BARRANCO DE LOBA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13140",
+      "name": {
+        "es": "CALAMAR"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13160",
+      "name": {
+        "es": "CANTAGALLO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13188",
+      "name": {
+        "es": "CICUCO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13212",
+      "name": {
+        "es": "CÓRDOBA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13222",
+      "name": {
+        "es": "CLEMENCIA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13244",
+      "name": {
+        "es": "EL CARMEN DE BOLÍVAR"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13248",
+      "name": {
+        "es": "EL GUAMO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13268",
+      "name": {
+        "es": "EL PEÑÓN"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13300",
+      "name": {
+        "es": "HATILLO DE LOBA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13430",
+      "name": {
+        "es": "MAGANGUÉ"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13433",
+      "name": {
+        "es": "MAHATES"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13440",
+      "name": {
+        "es": "MARGARITA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13442",
+      "name": {
+        "es": "MARÍA LA BAJA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13458",
+      "name": {
+        "es": "MONTECRISTO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13468",
+      "name": {
+        "es": "MOMPÓS"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13473",
+      "name": {
+        "es": "MORALES"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13490",
+      "name": {
+        "es": "NOROSÍ"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13549",
+      "name": {
+        "es": "PINILLOS"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13580",
+      "name": {
+        "es": "REGIDOR"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13600",
+      "name": {
+        "es": "RÍO VIEJO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13620",
+      "name": {
+        "es": "SAN CRISTÓBAL"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13647",
+      "name": {
+        "es": "SAN ESTANISLAO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13650",
+      "name": {
+        "es": "SAN FERNANDO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13654",
+      "name": {
+        "es": "SAN JACINTO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13655",
+      "name": {
+        "es": "SAN JACINTO DEL CAUCA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13657",
+      "name": {
+        "es": "SAN JUAN NEPOMUCENO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13667",
+      "name": {
+        "es": "SAN MARTÍN DE LOBA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13670",
+      "name": {
+        "es": "SAN PABLO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13673",
+      "name": {
+        "es": "SANTA CATALINA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13683",
+      "name": {
+        "es": "SANTA ROSA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13688",
+      "name": {
+        "es": "SANTA ROSA DEL SUR"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13744",
+      "name": {
+        "es": "SIMITÍ"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13760",
+      "name": {
+        "es": "SOPLAVIENTO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13780",
+      "name": {
+        "es": "TALAIGUA NUEVO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13810",
+      "name": {
+        "es": "TIQUISIO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13836",
+      "name": {
+        "es": "TURBACO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13838",
+      "name": {
+        "es": "TURBANÁ"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13873",
+      "name": {
+        "es": "VILLANUEVA"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "13894",
+      "name": {
+        "es": "ZAMBRANO"
+      },
+      "meta": {
+        "dep": "Bolívar"
+      }
+    },
+    {
+      "code": "15001",
+      "name": {
+        "es": "TUNJA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15022",
+      "name": {
+        "es": "ALMEIDA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15047",
+      "name": {
+        "es": "AQUITANIA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15051",
+      "name": {
+        "es": "ARCABUCO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15087",
+      "name": {
+        "es": "BELÉN"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15090",
+      "name": {
+        "es": "BERBEO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15092",
+      "name": {
+        "es": "BETÉITIVA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15097",
+      "name": {
+        "es": "BOAVITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15104",
+      "name": {
+        "es": "BOYACÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15106",
+      "name": {
+        "es": "BRICEÑO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15109",
+      "name": {
+        "es": "BUENAVISTA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15114",
+      "name": {
+        "es": "BUSBANZÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15131",
+      "name": {
+        "es": "CALDAS"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15135",
+      "name": {
+        "es": "CAMPOHERMOSO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15162",
+      "name": {
+        "es": "CERINZA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15172",
+      "name": {
+        "es": "CHINAVITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15176",
+      "name": {
+        "es": "CHIQUINQUIRÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15180",
+      "name": {
+        "es": "CHISCAS"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15183",
+      "name": {
+        "es": "CHITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15185",
+      "name": {
+        "es": "CHITARAQUE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15187",
+      "name": {
+        "es": "CHIVATÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15189",
+      "name": {
+        "es": "CIÉNEGA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15204",
+      "name": {
+        "es": "CÓMBITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15212",
+      "name": {
+        "es": "COPER"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15215",
+      "name": {
+        "es": "CORRALES"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15218",
+      "name": {
+        "es": "COVARACHÍA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15223",
+      "name": {
+        "es": "CUBARÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15224",
+      "name": {
+        "es": "CUCAITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15226",
+      "name": {
+        "es": "CUÍTIVA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15232",
+      "name": {
+        "es": "CHÍQUIZA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15236",
+      "name": {
+        "es": "CHIVOR"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15238",
+      "name": {
+        "es": "DUITAMA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15244",
+      "name": {
+        "es": "EL COCUY"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15248",
+      "name": {
+        "es": "EL ESPINO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15272",
+      "name": {
+        "es": "FIRAVITOBA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15276",
+      "name": {
+        "es": "FLORESTA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15293",
+      "name": {
+        "es": "GACHANTIVÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15296",
+      "name": {
+        "es": "GAMEZA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15299",
+      "name": {
+        "es": "GARAGOA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15317",
+      "name": {
+        "es": "GUACAMAYAS"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15322",
+      "name": {
+        "es": "GUATEQUE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15325",
+      "name": {
+        "es": "GUAYATÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15332",
+      "name": {
+        "es": "GÜICÁN"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15362",
+      "name": {
+        "es": "IZA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15367",
+      "name": {
+        "es": "JENESANO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15368",
+      "name": {
+        "es": "JERICÓ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15377",
+      "name": {
+        "es": "LABRANZAGRANDE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15380",
+      "name": {
+        "es": "LA CAPILLA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15401",
+      "name": {
+        "es": "LA VICTORIA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15403",
+      "name": {
+        "es": "LA UVITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15407",
+      "name": {
+        "es": "VILLA DE LEYVA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15425",
+      "name": {
+        "es": "MACANAL"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15442",
+      "name": {
+        "es": "MARIPÍ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15455",
+      "name": {
+        "es": "MIRAFLORES"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15464",
+      "name": {
+        "es": "MONGUA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15466",
+      "name": {
+        "es": "MONGUÍ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15469",
+      "name": {
+        "es": "MONIQUIRÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15476",
+      "name": {
+        "es": "MOTAVITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15480",
+      "name": {
+        "es": "MUZO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15491",
+      "name": {
+        "es": "NOBSA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15494",
+      "name": {
+        "es": "NUEVO COLÓN"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15500",
+      "name": {
+        "es": "OICATÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15507",
+      "name": {
+        "es": "OTANCHE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15511",
+      "name": {
+        "es": "PACHAVITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15514",
+      "name": {
+        "es": "PÁEZ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15516",
+      "name": {
+        "es": "PAIPA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15518",
+      "name": {
+        "es": "PAJARITO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15522",
+      "name": {
+        "es": "PANQUEBA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15531",
+      "name": {
+        "es": "PAUNA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15533",
+      "name": {
+        "es": "PAYA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15537",
+      "name": {
+        "es": "PAZ DE RÍO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15542",
+      "name": {
+        "es": "PESCA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15550",
+      "name": {
+        "es": "PISBA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15572",
+      "name": {
+        "es": "PUERTO BOYACÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15580",
+      "name": {
+        "es": "QUÍPAMA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15599",
+      "name": {
+        "es": "RAMIRIQUÍ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15600",
+      "name": {
+        "es": "RÁQUIRA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15621",
+      "name": {
+        "es": "RONDÓN"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15632",
+      "name": {
+        "es": "SABOYÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15638",
+      "name": {
+        "es": "SÁCHICA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15646",
+      "name": {
+        "es": "SAMACÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15660",
+      "name": {
+        "es": "SAN EDUARDO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15664",
+      "name": {
+        "es": "SAN JOSÉ DE PARE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15667",
+      "name": {
+        "es": "SAN LUIS DE GACENO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15673",
+      "name": {
+        "es": "SAN MATEO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15676",
+      "name": {
+        "es": "SAN MIGUEL DE SEMA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15681",
+      "name": {
+        "es": "SAN PABLO DE BORBUR"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15686",
+      "name": {
+        "es": "SANTANA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15690",
+      "name": {
+        "es": "SANTA MARÍA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15693",
+      "name": {
+        "es": "SANTA ROSA DE VITERBO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15696",
+      "name": {
+        "es": "SANTA SOFÍA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15720",
+      "name": {
+        "es": "SATIVANORTE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15723",
+      "name": {
+        "es": "SATIVASUR"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15740",
+      "name": {
+        "es": "SIACHOQUE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15753",
+      "name": {
+        "es": "SOATÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15755",
+      "name": {
+        "es": "SOCOTÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15757",
+      "name": {
+        "es": "SOCHA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15759",
+      "name": {
+        "es": "SOGAMOSO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15761",
+      "name": {
+        "es": "SOMONDOCO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15762",
+      "name": {
+        "es": "SORA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15763",
+      "name": {
+        "es": "SOTAQUIRÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15764",
+      "name": {
+        "es": "SORACÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15774",
+      "name": {
+        "es": "SUSACÓN"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15776",
+      "name": {
+        "es": "SUTAMARCHÁN"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15778",
+      "name": {
+        "es": "SUTATENZA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15790",
+      "name": {
+        "es": "TASCO"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15798",
+      "name": {
+        "es": "TENZA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15804",
+      "name": {
+        "es": "TIBANÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15806",
+      "name": {
+        "es": "TIBASOSA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15808",
+      "name": {
+        "es": "TINJACÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15810",
+      "name": {
+        "es": "TIPACOQUE"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15814",
+      "name": {
+        "es": "TOCA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15816",
+      "name": {
+        "es": "TOGÜÍ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15820",
+      "name": {
+        "es": "TÓPAGA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15822",
+      "name": {
+        "es": "TOTA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15832",
+      "name": {
+        "es": "TUNUNGUÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15835",
+      "name": {
+        "es": "TURMEQUÉ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15837",
+      "name": {
+        "es": "TUTA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15839",
+      "name": {
+        "es": "TUTAZÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15842",
+      "name": {
+        "es": "UMBITA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15861",
+      "name": {
+        "es": "VENTAQUEMADA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15879",
+      "name": {
+        "es": "VIRACACHÁ"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "15897",
+      "name": {
+        "es": "ZETAQUIRA"
+      },
+      "meta": {
+        "dep": "Boyacá"
+      }
+    },
+    {
+      "code": "17001",
+      "name": {
+        "es": "MANIZALES"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17013",
+      "name": {
+        "es": "AGUADAS"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17042",
+      "name": {
+        "es": "ANSERMA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17050",
+      "name": {
+        "es": "ARANZAZU"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17088",
+      "name": {
+        "es": "BELALCÁZAR"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17174",
+      "name": {
+        "es": "CHINCHINÁ"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17272",
+      "name": {
+        "es": "FILADELFIA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17380",
+      "name": {
+        "es": "LA DORADA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17388",
+      "name": {
+        "es": "LA MERCED"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17433",
+      "name": {
+        "es": "MANZANARES"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17442",
+      "name": {
+        "es": "MARMATO"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17444",
+      "name": {
+        "es": "MARQUETALIA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17446",
+      "name": {
+        "es": "MARULANDA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17486",
+      "name": {
+        "es": "NEIRA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17495",
+      "name": {
+        "es": "NORCASIA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17513",
+      "name": {
+        "es": "PÁCORA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17524",
+      "name": {
+        "es": "PALESTINA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17541",
+      "name": {
+        "es": "PENSILVANIA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17614",
+      "name": {
+        "es": "RIOSUCIO"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17616",
+      "name": {
+        "es": "RISARALDA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17653",
+      "name": {
+        "es": "SALAMINA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17662",
+      "name": {
+        "es": "SAMANÁ"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17665",
+      "name": {
+        "es": "SAN JOSÉ"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17777",
+      "name": {
+        "es": "SUPÍA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17867",
+      "name": {
+        "es": "VICTORIA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17873",
+      "name": {
+        "es": "VILLAMARÍA"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "17877",
+      "name": {
+        "es": "VITERBO"
+      },
+      "meta": {
+        "dep": "Caldas"
+      }
+    },
+    {
+      "code": "18001",
+      "name": {
+        "es": "FLORENCIA"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18029",
+      "name": {
+        "es": "ALBANIA"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18094",
+      "name": {
+        "es": "BELÉN DE LOS ANDAQUÍES"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18150",
+      "name": {
+        "es": "CARTAGENA DEL CHAIRÁ"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18205",
+      "name": {
+        "es": "CURILLO"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18247",
+      "name": {
+        "es": "EL DONCELLO"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18256",
+      "name": {
+        "es": "EL PAUJIL"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18410",
+      "name": {
+        "es": "LA MONTAÑITA"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18460",
+      "name": {
+        "es": "MILÁN"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18479",
+      "name": {
+        "es": "MORELIA"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18592",
+      "name": {
+        "es": "PUERTO RICO"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18610",
+      "name": {
+        "es": "SAN JOSÉ DEL FRAGUA"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18753",
+      "name": {
+        "es": "SAN VICENTE DEL CAGUÁN"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18756",
+      "name": {
+        "es": "SOLANO"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18785",
+      "name": {
+        "es": "SOLITA"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "18860",
+      "name": {
+        "es": "VALPARAÍSO"
+      },
+      "meta": {
+        "dep": "Caquetá"
+      }
+    },
+    {
+      "code": "85001",
+      "name": {
+        "es": "YOPAL"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85010",
+      "name": {
+        "es": "AGUAZUL"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85015",
+      "name": {
+        "es": "CHAMEZA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85125",
+      "name": {
+        "es": "HATO COROZAL"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85136",
+      "name": {
+        "es": "LA SALINA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85139",
+      "name": {
+        "es": "MANÍ"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85162",
+      "name": {
+        "es": "MONTERREY"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85225",
+      "name": {
+        "es": "NUNCHÍA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85230",
+      "name": {
+        "es": "OROCUÉ"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85250",
+      "name": {
+        "es": "PAZ DE ARIPORO"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85263",
+      "name": {
+        "es": "PORE"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85279",
+      "name": {
+        "es": "RECETOR"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85300",
+      "name": {
+        "es": "SABANALARGA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85315",
+      "name": {
+        "es": "SÁCAMA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85325",
+      "name": {
+        "es": "SAN LUIS DE PALENQUE"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85400",
+      "name": {
+        "es": "TÁMARA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85410",
+      "name": {
+        "es": "TAURAMENA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85430",
+      "name": {
+        "es": "TRINIDAD"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "85440",
+      "name": {
+        "es": "VILLANUEVA"
+      },
+      "meta": {
+        "dep": "Casanare"
+      }
+    },
+    {
+      "code": "19001",
+      "name": {
+        "es": "POPAYÁN"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19022",
+      "name": {
+        "es": "ALMAGUER"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19050",
+      "name": {
+        "es": "ARGELIA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19075",
+      "name": {
+        "es": "BALBOA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19100",
+      "name": {
+        "es": "BOLÍVAR"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19110",
+      "name": {
+        "es": "BUENOS AIRES"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19130",
+      "name": {
+        "es": "CAJIBÍO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19137",
+      "name": {
+        "es": "CALDONO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19142",
+      "name": {
+        "es": "CALOTO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19212",
+      "name": {
+        "es": "CORINTO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19256",
+      "name": {
+        "es": "EL TAMBO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19290",
+      "name": {
+        "es": "FLORENCIA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19300",
+      "name": {
+        "es": "GUACHENÉ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19318",
+      "name": {
+        "es": "GUAPI"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19355",
+      "name": {
+        "es": "INZÁ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19364",
+      "name": {
+        "es": "JAMBALÓ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19392",
+      "name": {
+        "es": "LA SIERRA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19397",
+      "name": {
+        "es": "LA VEGA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19418",
+      "name": {
+        "es": "LÓPEZ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19450",
+      "name": {
+        "es": "MERCADERES"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19455",
+      "name": {
+        "es": "MIRANDA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19473",
+      "name": {
+        "es": "MORALES"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19513",
+      "name": {
+        "es": "PADILLA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19517",
+      "name": {
+        "es": "PAEZ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19532",
+      "name": {
+        "es": "PATÍA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19533",
+      "name": {
+        "es": "PIAMONTE"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19548",
+      "name": {
+        "es": "PIENDAMÓ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19573",
+      "name": {
+        "es": "PUERTO TEJADA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19585",
+      "name": {
+        "es": "PURACÉ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19622",
+      "name": {
+        "es": "ROSAS"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19693",
+      "name": {
+        "es": "SAN SEBASTIÁN"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19698",
+      "name": {
+        "es": "SANTANDER DE QUILICHAO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19701",
+      "name": {
+        "es": "SANTA ROSA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19743",
+      "name": {
+        "es": "SILVIA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19760",
+      "name": {
+        "es": "SOTARA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19780",
+      "name": {
+        "es": "SUÁREZ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19785",
+      "name": {
+        "es": "SUCRE"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19807",
+      "name": {
+        "es": "TIMBÍO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19809",
+      "name": {
+        "es": "TIMBIQUÍ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19821",
+      "name": {
+        "es": "TORIBIO"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19824",
+      "name": {
+        "es": "TOTORÓ"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "19845",
+      "name": {
+        "es": "VILLA RICA"
+      },
+      "meta": {
+        "dep": "Cauca"
+      }
+    },
+    {
+      "code": "20001",
+      "name": {
+        "es": "VALLEDUPAR"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20011",
+      "name": {
+        "es": "AGUACHICA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20013",
+      "name": {
+        "es": "AGUSTÍN CODAZZI"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20032",
+      "name": {
+        "es": "ASTREA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20045",
+      "name": {
+        "es": "BECERRIL"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20060",
+      "name": {
+        "es": "BOSCONIA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20175",
+      "name": {
+        "es": "CHIMICHAGUA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20178",
+      "name": {
+        "es": "CHIRIGUANÁ"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20228",
+      "name": {
+        "es": "CURUMANÍ"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20238",
+      "name": {
+        "es": "EL COPEY"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20250",
+      "name": {
+        "es": "EL PASO"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20295",
+      "name": {
+        "es": "GAMARRA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20310",
+      "name": {
+        "es": "GONZÁLEZ"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20383",
+      "name": {
+        "es": "LA GLORIA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20400",
+      "name": {
+        "es": "LA JAGUA DE IBIRICO"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20443",
+      "name": {
+        "es": "MANAURE"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20517",
+      "name": {
+        "es": "PAILITAS"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20550",
+      "name": {
+        "es": "PELAYA"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20570",
+      "name": {
+        "es": "PUEBLO BELLO"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20614",
+      "name": {
+        "es": "RÍO DE ORO"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20621",
+      "name": {
+        "es": "LA PAZ"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20710",
+      "name": {
+        "es": "SAN ALBERTO"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20750",
+      "name": {
+        "es": "SAN DIEGO"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20770",
+      "name": {
+        "es": "SAN MARTÍN"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "20787",
+      "name": {
+        "es": "TAMALAMEQUE"
+      },
+      "meta": {
+        "dep": "Cesar"
+      }
+    },
+    {
+      "code": "27001",
+      "name": {
+        "es": "QUIBDÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27006",
+      "name": {
+        "es": "ACANDÍ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27025",
+      "name": {
+        "es": "ALTO BAUDÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27050",
+      "name": {
+        "es": "ATRATO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27073",
+      "name": {
+        "es": "BAGADÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27075",
+      "name": {
+        "es": "BAHÍA SOLANO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27077",
+      "name": {
+        "es": "BAJO BAUDÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27099",
+      "name": {
+        "es": "BOJAYA"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27135",
+      "name": {
+        "es": "EL CANTÓN DEL SAN PABLO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27150",
+      "name": {
+        "es": "CARMEN DEL DARIÉN"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27160",
+      "name": {
+        "es": "CÉRTEGUI"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27205",
+      "name": {
+        "es": "CONDOTO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27245",
+      "name": {
+        "es": "EL CARMEN DE ATRATO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27250",
+      "name": {
+        "es": "EL LITORAL DEL SAN JUAN"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27361",
+      "name": {
+        "es": "ISTMINA"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27372",
+      "name": {
+        "es": "JURADÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27413",
+      "name": {
+        "es": "LLORÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27425",
+      "name": {
+        "es": "MEDIO ATRATO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27430",
+      "name": {
+        "es": "MEDIO BAUDÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27450",
+      "name": {
+        "es": "MEDIO SAN JUAN"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27491",
+      "name": {
+        "es": "NÓVITA"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27495",
+      "name": {
+        "es": "NUQUÍ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27580",
+      "name": {
+        "es": "RÍO IRÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27600",
+      "name": {
+        "es": "RÍO QUITO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27615",
+      "name": {
+        "es": "RIOSUCIO"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27660",
+      "name": {
+        "es": "SAN JOSÉ DEL PALMAR"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27745",
+      "name": {
+        "es": "SIPÍ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27787",
+      "name": {
+        "es": "TADÓ"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27800",
+      "name": {
+        "es": "UNGUÍA"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "27810",
+      "name": {
+        "es": "UNIÓN PANAMERICANA"
+      },
+      "meta": {
+        "dep": "Chocó"
+      }
+    },
+    {
+      "code": "23001",
+      "name": {
+        "es": "MONTERÍA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23068",
+      "name": {
+        "es": "AYAPEL"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23079",
+      "name": {
+        "es": "BUENAVISTA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23090",
+      "name": {
+        "es": "CANALETE"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23162",
+      "name": {
+        "es": "CERETÉ"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23168",
+      "name": {
+        "es": "CHIMÁ"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23182",
+      "name": {
+        "es": "CHINÚ"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23189",
+      "name": {
+        "es": "CIÉNAGA DE ORO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23300",
+      "name": {
+        "es": "COTORRA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23350",
+      "name": {
+        "es": "LA APARTADA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23417",
+      "name": {
+        "es": "LORICA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23419",
+      "name": {
+        "es": "LOS CÓRDOBAS"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23464",
+      "name": {
+        "es": "MOMIL"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23466",
+      "name": {
+        "es": "MONTELÍBANO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23500",
+      "name": {
+        "es": "MOÑITOS"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23555",
+      "name": {
+        "es": "PLANETA RICA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23570",
+      "name": {
+        "es": "PUEBLO NUEVO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23574",
+      "name": {
+        "es": "PUERTO ESCONDIDO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23580",
+      "name": {
+        "es": "PUERTO LIBERTADOR"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23586",
+      "name": {
+        "es": "PURÍSIMA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23660",
+      "name": {
+        "es": "SAHAGÚN"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23670",
+      "name": {
+        "es": "SAN ANDRÉS SOTAVENTO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23672",
+      "name": {
+        "es": "SAN ANTERO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23675",
+      "name": {
+        "es": "SAN BERNARDO DEL VIENTO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23678",
+      "name": {
+        "es": "SAN CARLOS"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23682",
+      "name": {
+        "es": "SAN JOSÉ DE URÉ"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23686",
+      "name": {
+        "es": "SAN PELAYO"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23807",
+      "name": {
+        "es": "TIERRALTA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23815",
+      "name": {
+        "es": "TUCHÍN"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "23855",
+      "name": {
+        "es": "VALENCIA"
+      },
+      "meta": {
+        "dep": "Córdoba"
+      }
+    },
+    {
+      "code": "25001",
+      "name": {
+        "es": "AGUA DE DIOS"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25019",
+      "name": {
+        "es": "ALBÁN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25035",
+      "name": {
+        "es": "ANAPOIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25040",
+      "name": {
+        "es": "ANOLAIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25053",
+      "name": {
+        "es": "ARBELÁEZ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25086",
+      "name": {
+        "es": "BELTRÁN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25095",
+      "name": {
+        "es": "BITUIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25099",
+      "name": {
+        "es": "BOJACÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25120",
+      "name": {
+        "es": "CABRERA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25123",
+      "name": {
+        "es": "CACHIPAY"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25126",
+      "name": {
+        "es": "CAJICÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25148",
+      "name": {
+        "es": "CAPARRAPÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25151",
+      "name": {
+        "es": "CAQUEZA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25154",
+      "name": {
+        "es": "CARMEN DE CARUPA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25168",
+      "name": {
+        "es": "CHAGUANÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25175",
+      "name": {
+        "es": "CHÍA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25178",
+      "name": {
+        "es": "CHIPAQUE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25181",
+      "name": {
+        "es": "CHOACHÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25183",
+      "name": {
+        "es": "CHOCONTÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25200",
+      "name": {
+        "es": "COGUA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25214",
+      "name": {
+        "es": "COTA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25224",
+      "name": {
+        "es": "CUCUNUBÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25245",
+      "name": {
+        "es": "EL COLEGIO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25258",
+      "name": {
+        "es": "EL PEÑÓN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25260",
+      "name": {
+        "es": "EL ROSAL"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25269",
+      "name": {
+        "es": "FACATATIVÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25279",
+      "name": {
+        "es": "FOMEQUE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25281",
+      "name": {
+        "es": "FOSCA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25286",
+      "name": {
+        "es": "FUNZA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25288",
+      "name": {
+        "es": "FÚQUENE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25290",
+      "name": {
+        "es": "FUSAGASUGÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25293",
+      "name": {
+        "es": "GACHALA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25295",
+      "name": {
+        "es": "GACHANCIPÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25297",
+      "name": {
+        "es": "GACHETÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25299",
+      "name": {
+        "es": "GAMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25307",
+      "name": {
+        "es": "GIRARDOT"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25312",
+      "name": {
+        "es": "GRANADA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25317",
+      "name": {
+        "es": "GUACHETÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25320",
+      "name": {
+        "es": "GUADUAS"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25322",
+      "name": {
+        "es": "GUASCA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25324",
+      "name": {
+        "es": "GUATAQUÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25326",
+      "name": {
+        "es": "GUATAVITA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25328",
+      "name": {
+        "es": "GUAYABAL DE SIQUIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25335",
+      "name": {
+        "es": "GUAYABETAL"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25339",
+      "name": {
+        "es": "GUTIÉRREZ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25368",
+      "name": {
+        "es": "JERUSALÉN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25372",
+      "name": {
+        "es": "JUNÍN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25377",
+      "name": {
+        "es": "LA CALERA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25386",
+      "name": {
+        "es": "LA MESA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25394",
+      "name": {
+        "es": "LA PALMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25398",
+      "name": {
+        "es": "LA PEÑA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25402",
+      "name": {
+        "es": "LA VEGA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25407",
+      "name": {
+        "es": "LENGUAZAQUE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25426",
+      "name": {
+        "es": "MACHETA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25430",
+      "name": {
+        "es": "MADRID"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25436",
+      "name": {
+        "es": "MANTA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25438",
+      "name": {
+        "es": "MEDINA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25473",
+      "name": {
+        "es": "MOSQUERA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25483",
+      "name": {
+        "es": "NARIÑO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25486",
+      "name": {
+        "es": "NEMOCÓN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25488",
+      "name": {
+        "es": "NILO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25489",
+      "name": {
+        "es": "NIMAIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25491",
+      "name": {
+        "es": "NOCAIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25506",
+      "name": {
+        "es": "VENECIA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25513",
+      "name": {
+        "es": "PACHO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25518",
+      "name": {
+        "es": "PAIME"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25524",
+      "name": {
+        "es": "PANDI"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25530",
+      "name": {
+        "es": "PARATEBUENO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25535",
+      "name": {
+        "es": "PASCA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25572",
+      "name": {
+        "es": "PUERTO SALGAR"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25580",
+      "name": {
+        "es": "PULÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25592",
+      "name": {
+        "es": "QUEBRADANEGRA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25594",
+      "name": {
+        "es": "QUETAME"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25596",
+      "name": {
+        "es": "QUIPILE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25599",
+      "name": {
+        "es": "APULO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25612",
+      "name": {
+        "es": "RICAURTE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25645",
+      "name": {
+        "es": "SAN ANTONIO DEL TEQUENDAMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25649",
+      "name": {
+        "es": "SAN BERNARDO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25653",
+      "name": {
+        "es": "SAN CAYETANO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25658",
+      "name": {
+        "es": "SAN FRANCISCO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25662",
+      "name": {
+        "es": "SAN JUAN DE RÍO SECO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25718",
+      "name": {
+        "es": "SASAIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25736",
+      "name": {
+        "es": "SESQUILÉ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25740",
+      "name": {
+        "es": "SIBATÉ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25743",
+      "name": {
+        "es": "SILVANIA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25745",
+      "name": {
+        "es": "SIMIJACA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25754",
+      "name": {
+        "es": "SOACHA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25758",
+      "name": {
+        "es": "SOPÓ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25769",
+      "name": {
+        "es": "SUBACHOQUE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25772",
+      "name": {
+        "es": "SUESCA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25777",
+      "name": {
+        "es": "SUPATÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25779",
+      "name": {
+        "es": "SUSA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25781",
+      "name": {
+        "es": "SUTATAUSA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25785",
+      "name": {
+        "es": "TABIO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25793",
+      "name": {
+        "es": "TAUSA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25797",
+      "name": {
+        "es": "TENA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25799",
+      "name": {
+        "es": "TENJO"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25805",
+      "name": {
+        "es": "TIBACUY"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25807",
+      "name": {
+        "es": "TIBIRITA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25815",
+      "name": {
+        "es": "TOCAIMA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25817",
+      "name": {
+        "es": "TOCANCIPÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25823",
+      "name": {
+        "es": "TOPAIPÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25839",
+      "name": {
+        "es": "UBALÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25841",
+      "name": {
+        "es": "UBAQUE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25843",
+      "name": {
+        "es": "VILLA DE SAN DIEGO DE UBATE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25845",
+      "name": {
+        "es": "UNE"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25851",
+      "name": {
+        "es": "ÚTICA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25862",
+      "name": {
+        "es": "VERGARA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25867",
+      "name": {
+        "es": "VIANÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25871",
+      "name": {
+        "es": "VILLAGÓMEZ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25873",
+      "name": {
+        "es": "VILLAPINZÓN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25875",
+      "name": {
+        "es": "VILLETA"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25878",
+      "name": {
+        "es": "VIOTÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25885",
+      "name": {
+        "es": "YACOPÍ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25898",
+      "name": {
+        "es": "ZIPACÓN"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "25899",
+      "name": {
+        "es": "ZIPAQUIRÁ"
+      },
+      "meta": {
+        "dep": "Cundinamarca"
+      }
+    },
+    {
+      "code": "94001",
+      "name": {
+        "es": "INÍRIDA"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94343",
+      "name": {
+        "es": "BARRANCO MINAS"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94663",
+      "name": {
+        "es": "MAPIRIPANA"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94883",
+      "name": {
+        "es": "SAN FELIPE"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94884",
+      "name": {
+        "es": "PUERTO COLOMBIA"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94885",
+      "name": {
+        "es": "LA GUADALUPE"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94886",
+      "name": {
+        "es": "CACAHUAL"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94887",
+      "name": {
+        "es": "PANA PANA"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "94888",
+      "name": {
+        "es": "MORICHAL"
+      },
+      "meta": {
+        "dep": "Guainía"
+      }
+    },
+    {
+      "code": "95001",
+      "name": {
+        "es": "SAN JOSÉ DEL GUAVIARE"
+      },
+      "meta": {
+        "dep": "Guaviare"
+      }
+    },
+    {
+      "code": "95015",
+      "name": {
+        "es": "CALAMAR"
+      },
+      "meta": {
+        "dep": "Guaviare"
+      }
+    },
+    {
+      "code": "95025",
+      "name": {
+        "es": "EL RETORNO"
+      },
+      "meta": {
+        "dep": "Guaviare"
+      }
+    },
+    {
+      "code": "95200",
+      "name": {
+        "es": "MIRAFLORES"
+      },
+      "meta": {
+        "dep": "Guaviare"
+      }
+    },
+    {
+      "code": "41001",
+      "name": {
+        "es": "NEIVA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41006",
+      "name": {
+        "es": "ACEVEDO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41013",
+      "name": {
+        "es": "AGRADO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41016",
+      "name": {
+        "es": "AIPE"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41020",
+      "name": {
+        "es": "ALGECIRAS"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41026",
+      "name": {
+        "es": "ALTAMIRA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41078",
+      "name": {
+        "es": "BARAYA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41132",
+      "name": {
+        "es": "CAMPOALEGRE"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41206",
+      "name": {
+        "es": "COLOMBIA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41244",
+      "name": {
+        "es": "ELÍAS"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41298",
+      "name": {
+        "es": "GARZÓN"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41306",
+      "name": {
+        "es": "GIGANTE"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41319",
+      "name": {
+        "es": "GUADALUPE"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41349",
+      "name": {
+        "es": "HOBO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41357",
+      "name": {
+        "es": "IQUIRA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41359",
+      "name": {
+        "es": "ISNOS"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41378",
+      "name": {
+        "es": "LA ARGENTINA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41396",
+      "name": {
+        "es": "LA PLATA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41483",
+      "name": {
+        "es": "NÁTAGA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41503",
+      "name": {
+        "es": "OPORAPA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41518",
+      "name": {
+        "es": "PAICOL"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41524",
+      "name": {
+        "es": "PALERMO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41530",
+      "name": {
+        "es": "PALESTINA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41548",
+      "name": {
+        "es": "PITAL"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41551",
+      "name": {
+        "es": "PITALITO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41615",
+      "name": {
+        "es": "RIVERA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41660",
+      "name": {
+        "es": "SALADOBLANCO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41668",
+      "name": {
+        "es": "SAN AGUSTÍN"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41676",
+      "name": {
+        "es": "SANTA MARÍA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41770",
+      "name": {
+        "es": "SUAZA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41791",
+      "name": {
+        "es": "TARQUI"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41797",
+      "name": {
+        "es": "TESALIA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41799",
+      "name": {
+        "es": "TELLO"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41801",
+      "name": {
+        "es": "TERUEL"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41807",
+      "name": {
+        "es": "TIMANÁ"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41872",
+      "name": {
+        "es": "VILLAVIEJA"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "41885",
+      "name": {
+        "es": "YAGUARÁ"
+      },
+      "meta": {
+        "dep": "Huila"
+      }
+    },
+    {
+      "code": "44001",
+      "name": {
+        "es": "RIOHACHA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44035",
+      "name": {
+        "es": "ALBANIA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44078",
+      "name": {
+        "es": "BARRANCAS"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44090",
+      "name": {
+        "es": "DIBULLA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44098",
+      "name": {
+        "es": "DISTRACCIÓN"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44110",
+      "name": {
+        "es": "EL MOLINO"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44279",
+      "name": {
+        "es": "FONSECA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44378",
+      "name": {
+        "es": "HATONUEVO"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44420",
+      "name": {
+        "es": "LA JAGUA DEL PILAR"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44430",
+      "name": {
+        "es": "MAICAO"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44560",
+      "name": {
+        "es": "MANAURE"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44650",
+      "name": {
+        "es": "SAN JUAN DEL CESAR"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44847",
+      "name": {
+        "es": "URIBIA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44855",
+      "name": {
+        "es": "URUMITA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "44874",
+      "name": {
+        "es": "VILLANUEVA"
+      },
+      "meta": {
+        "dep": "La Guajira"
+      }
+    },
+    {
+      "code": "47001",
+      "name": {
+        "es": "SANTA MARTA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47030",
+      "name": {
+        "es": "ALGARROBO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47053",
+      "name": {
+        "es": "ARACATACA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47058",
+      "name": {
+        "es": "ARIGUANÍ"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47161",
+      "name": {
+        "es": "CERRO SAN ANTONIO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47170",
+      "name": {
+        "es": "CHIVOLO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47189",
+      "name": {
+        "es": "CIÉNAGA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47205",
+      "name": {
+        "es": "CONCORDIA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47245",
+      "name": {
+        "es": "EL BANCO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47258",
+      "name": {
+        "es": "EL PIÑON"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47268",
+      "name": {
+        "es": "EL RETÉN"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47288",
+      "name": {
+        "es": "FUNDACIÓN"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47318",
+      "name": {
+        "es": "GUAMAL"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47460",
+      "name": {
+        "es": "NUEVA GRANADA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47541",
+      "name": {
+        "es": "PEDRAZA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47545",
+      "name": {
+        "es": "PIJIÑO DEL CARMEN"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47551",
+      "name": {
+        "es": "PIVIJAY"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47555",
+      "name": {
+        "es": "PLATO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47570",
+      "name": {
+        "es": "PUEBLOVIEJO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47605",
+      "name": {
+        "es": "REMOLINO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47660",
+      "name": {
+        "es": "SABANAS DE SAN ANGEL"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47675",
+      "name": {
+        "es": "SALAMINA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47692",
+      "name": {
+        "es": "SAN SEBASTIÁN DE BUENAVISTA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47703",
+      "name": {
+        "es": "SAN ZENÓN"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47707",
+      "name": {
+        "es": "SANTA ANA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47720",
+      "name": {
+        "es": "SANTA BÁRBARA DE PINTO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47745",
+      "name": {
+        "es": "SITIONUEVO"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47798",
+      "name": {
+        "es": "TENERIFE"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47960",
+      "name": {
+        "es": "ZAPAYÁN"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "47980",
+      "name": {
+        "es": "ZONA BANANERA"
+      },
+      "meta": {
+        "dep": "Magdalena"
+      }
+    },
+    {
+      "code": "50001",
+      "name": {
+        "es": "VILLAVICENCIO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50006",
+      "name": {
+        "es": "ACACÍAS"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50110",
+      "name": {
+        "es": "BARRANCA DE UPÍA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50124",
+      "name": {
+        "es": "CABUYARO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50150",
+      "name": {
+        "es": "CASTILLA LA NUEVA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50223",
+      "name": {
+        "es": "CUBARRAL"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50226",
+      "name": {
+        "es": "CUMARAL"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50245",
+      "name": {
+        "es": "EL CALVARIO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50251",
+      "name": {
+        "es": "EL CASTILLO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50270",
+      "name": {
+        "es": "EL DORADO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50287",
+      "name": {
+        "es": "FUENTE DE ORO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50313",
+      "name": {
+        "es": "GRANADA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50318",
+      "name": {
+        "es": "GUAMAL"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50325",
+      "name": {
+        "es": "MAPIRIPÁN"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50330",
+      "name": {
+        "es": "MESETAS"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50350",
+      "name": {
+        "es": "LA MACARENA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50370",
+      "name": {
+        "es": "URIBE"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50400",
+      "name": {
+        "es": "LEJANÍAS"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50450",
+      "name": {
+        "es": "PUERTO CONCORDIA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50568",
+      "name": {
+        "es": "PUERTO GAITÁN"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50573",
+      "name": {
+        "es": "PUERTO LÓPEZ"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50577",
+      "name": {
+        "es": "PUERTO LLERAS"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50590",
+      "name": {
+        "es": "PUERTO RICO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50606",
+      "name": {
+        "es": "RESTREPO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50680",
+      "name": {
+        "es": "SAN CARLOS DE GUAROA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50683",
+      "name": {
+        "es": "SAN JUAN DE ARAMA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50686",
+      "name": {
+        "es": "SAN JUANITO"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50689",
+      "name": {
+        "es": "SAN MARTÍN"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "50711",
+      "name": {
+        "es": "VISTAHERMOSA"
+      },
+      "meta": {
+        "dep": "Meta"
+      }
+    },
+    {
+      "code": "52001",
+      "name": {
+        "es": "PASTO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52019",
+      "name": {
+        "es": "ALBÁN"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52022",
+      "name": {
+        "es": "ALDANA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52036",
+      "name": {
+        "es": "ANCUYÁ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52051",
+      "name": {
+        "es": "ARBOLEDA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52079",
+      "name": {
+        "es": "BARBACOAS"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52083",
+      "name": {
+        "es": "BELÉN"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52110",
+      "name": {
+        "es": "BUESACO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52203",
+      "name": {
+        "es": "COLÓN"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52207",
+      "name": {
+        "es": "CONSACA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52210",
+      "name": {
+        "es": "CONTADERO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52215",
+      "name": {
+        "es": "CÓRDOBA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52224",
+      "name": {
+        "es": "CUASPUD"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52227",
+      "name": {
+        "es": "CUMBAL"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52233",
+      "name": {
+        "es": "CUMBITARA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52240",
+      "name": {
+        "es": "CHACHAGÜÍ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52250",
+      "name": {
+        "es": "EL CHARCO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52254",
+      "name": {
+        "es": "EL PEÑOL"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52256",
+      "name": {
+        "es": "EL ROSARIO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52258",
+      "name": {
+        "es": "EL TABLÓN DE GÓMEZ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52260",
+      "name": {
+        "es": "EL TAMBO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52287",
+      "name": {
+        "es": "FUNES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52317",
+      "name": {
+        "es": "GUACHUCAL"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52320",
+      "name": {
+        "es": "GUAITARILLA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52323",
+      "name": {
+        "es": "GUALMATÁN"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52352",
+      "name": {
+        "es": "ILES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52354",
+      "name": {
+        "es": "IMUÉS"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52356",
+      "name": {
+        "es": "IPIALES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52378",
+      "name": {
+        "es": "LA CRUZ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52381",
+      "name": {
+        "es": "LA FLORIDA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52385",
+      "name": {
+        "es": "LA LLANADA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52390",
+      "name": {
+        "es": "LA TOLA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52399",
+      "name": {
+        "es": "LA UNIÓN"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52405",
+      "name": {
+        "es": "LEIVA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52411",
+      "name": {
+        "es": "LINARES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52418",
+      "name": {
+        "es": "LOS ANDES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52427",
+      "name": {
+        "es": "MAGÜI"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52435",
+      "name": {
+        "es": "MALLAMA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52473",
+      "name": {
+        "es": "MOSQUERA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52480",
+      "name": {
+        "es": "NARIÑO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52490",
+      "name": {
+        "es": "OLAYA HERRERA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52506",
+      "name": {
+        "es": "OSPINA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52520",
+      "name": {
+        "es": "FRANCISCO PIZARRO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52540",
+      "name": {
+        "es": "POLICARPA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52560",
+      "name": {
+        "es": "POTOSÍ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52565",
+      "name": {
+        "es": "PROVIDENCIA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52573",
+      "name": {
+        "es": "PUERRES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52585",
+      "name": {
+        "es": "PUPIALES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52612",
+      "name": {
+        "es": "RICAURTE"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52621",
+      "name": {
+        "es": "ROBERTO PAYÁN"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52678",
+      "name": {
+        "es": "SAMANIEGO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52683",
+      "name": {
+        "es": "SANDONÁ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52685",
+      "name": {
+        "es": "SAN BERNARDO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52687",
+      "name": {
+        "es": "SAN LORENZO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52693",
+      "name": {
+        "es": "SAN PABLO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52694",
+      "name": {
+        "es": "SAN PEDRO DE CARTAGO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52696",
+      "name": {
+        "es": "SANTA BÁRBARA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52699",
+      "name": {
+        "es": "SANTACRUZ"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52720",
+      "name": {
+        "es": "SAPUYES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52786",
+      "name": {
+        "es": "TAMINANGO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52788",
+      "name": {
+        "es": "TANGUA"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52835",
+      "name": {
+        "es": "SAN ANDRES DE TUMACO"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52838",
+      "name": {
+        "es": "TÚQUERRES"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "52885",
+      "name": {
+        "es": "YACUANQUER"
+      },
+      "meta": {
+        "dep": "Nariño"
+      }
+    },
+    {
+      "code": "54001",
+      "name": {
+        "es": "CÚCUTA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54003",
+      "name": {
+        "es": "ABREGO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54051",
+      "name": {
+        "es": "ARBOLEDAS"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54099",
+      "name": {
+        "es": "BOCHALEMA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54109",
+      "name": {
+        "es": "BUCARASICA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54125",
+      "name": {
+        "es": "CÁCOTA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54128",
+      "name": {
+        "es": "CACHIRÁ"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54172",
+      "name": {
+        "es": "CHINÁCOTA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54174",
+      "name": {
+        "es": "CHITAGÁ"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54206",
+      "name": {
+        "es": "CONVENCIÓN"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54223",
+      "name": {
+        "es": "CUCUTILLA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54239",
+      "name": {
+        "es": "DURANIA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54245",
+      "name": {
+        "es": "EL CARMEN"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54250",
+      "name": {
+        "es": "EL TARRA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54261",
+      "name": {
+        "es": "EL ZULIA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54313",
+      "name": {
+        "es": "GRAMALOTE"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54344",
+      "name": {
+        "es": "HACARÍ"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54347",
+      "name": {
+        "es": "HERRÁN"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54377",
+      "name": {
+        "es": "LABATECA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54385",
+      "name": {
+        "es": "LA ESPERANZA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54398",
+      "name": {
+        "es": "LA PLAYA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54405",
+      "name": {
+        "es": "LOS PATIOS"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54418",
+      "name": {
+        "es": "LOURDES"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54480",
+      "name": {
+        "es": "MUTISCUA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54498",
+      "name": {
+        "es": "OCAÑA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54518",
+      "name": {
+        "es": "PAMPLONA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54520",
+      "name": {
+        "es": "PAMPLONITA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54553",
+      "name": {
+        "es": "PUERTO SANTANDER"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54599",
+      "name": {
+        "es": "RAGONVALIA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54660",
+      "name": {
+        "es": "SALAZAR"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54670",
+      "name": {
+        "es": "SAN CALIXTO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54673",
+      "name": {
+        "es": "SAN CAYETANO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54680",
+      "name": {
+        "es": "SANTIAGO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54720",
+      "name": {
+        "es": "SARDINATA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54743",
+      "name": {
+        "es": "SILOS"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54800",
+      "name": {
+        "es": "TEORAMA"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54810",
+      "name": {
+        "es": "TIBÚ"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54820",
+      "name": {
+        "es": "TOLEDO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54871",
+      "name": {
+        "es": "VILLA CARO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "54874",
+      "name": {
+        "es": "VILLA DEL ROSARIO"
+      },
+      "meta": {
+        "dep": "Norte de Santander"
+      }
+    },
+    {
+      "code": "86001",
+      "name": {
+        "es": "MOCOA"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86219",
+      "name": {
+        "es": "COLÓN"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86320",
+      "name": {
+        "es": "ORITO"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86568",
+      "name": {
+        "es": "PUERTO ASÍS"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86569",
+      "name": {
+        "es": "PUERTO CAICEDO"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86571",
+      "name": {
+        "es": "PUERTO GUZMÁN"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86573",
+      "name": {
+        "es": "PUERTO LEGUÍZAMO"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86749",
+      "name": {
+        "es": "SIBUNDOY"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86755",
+      "name": {
+        "es": "SAN FRANCISCO"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86757",
+      "name": {
+        "es": "SAN MIGUEL"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86760",
+      "name": {
+        "es": "SANTIAGO"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86865",
+      "name": {
+        "es": "VALLE DEL GUAMUEZ"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "86885",
+      "name": {
+        "es": "VILLAGARZÓN"
+      },
+      "meta": {
+        "dep": "Putumayo"
+      }
+    },
+    {
+      "code": "63001",
+      "name": {
+        "es": "ARMENIA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63111",
+      "name": {
+        "es": "BUENAVISTA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63130",
+      "name": {
+        "es": "CALARCA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63190",
+      "name": {
+        "es": "CIRCASIA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63212",
+      "name": {
+        "es": "CÓRDOBA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63272",
+      "name": {
+        "es": "FILANDIA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63302",
+      "name": {
+        "es": "GÉNOVA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63401",
+      "name": {
+        "es": "LA TEBAIDA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63470",
+      "name": {
+        "es": "MONTENEGRO"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63548",
+      "name": {
+        "es": "PIJAO"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63594",
+      "name": {
+        "es": "QUIMBAYA"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "63690",
+      "name": {
+        "es": "SALENTO"
+      },
+      "meta": {
+        "dep": "Quindío"
+      }
+    },
+    {
+      "code": "66001",
+      "name": {
+        "es": "PEREIRA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66045",
+      "name": {
+        "es": "APÍA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66075",
+      "name": {
+        "es": "BALBOA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66088",
+      "name": {
+        "es": "BELÉN DE UMBRÍA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66170",
+      "name": {
+        "es": "DOSQUEBRADAS"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66318",
+      "name": {
+        "es": "GUÁTICA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66383",
+      "name": {
+        "es": "LA CELIA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66400",
+      "name": {
+        "es": "LA VIRGINIA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66440",
+      "name": {
+        "es": "MARSELLA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66456",
+      "name": {
+        "es": "MISTRATÓ"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66572",
+      "name": {
+        "es": "PUEBLO RICO"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66594",
+      "name": {
+        "es": "QUINCHÍA"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66682",
+      "name": {
+        "es": "SANTA ROSA DE CABAL"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "66687",
+      "name": {
+        "es": "SANTUARIO"
+      },
+      "meta": {
+        "dep": "Risaralda"
+      }
+    },
+    {
+      "code": "88001",
+      "name": {
+        "es": "SAN ANDRÉS"
+      },
+      "meta": {
+        "dep": "San Andres y Providencia"
+      }
+    },
+    {
+      "code": "88564",
+      "name": {
+        "es": "PROVIDENCIA"
+      },
+      "meta": {
+        "dep": "San Andres y Providencia"
+      }
+    },
+    {
+      "code": "68001",
+      "name": {
+        "es": "BUCARAMANGA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68013",
+      "name": {
+        "es": "AGUADA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68020",
+      "name": {
+        "es": "ALBANIA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68051",
+      "name": {
+        "es": "ARATOCA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68077",
+      "name": {
+        "es": "BARBOSA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68079",
+      "name": {
+        "es": "BARICHARA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68081",
+      "name": {
+        "es": "BARRANCABERMEJA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68092",
+      "name": {
+        "es": "BETULIA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68101",
+      "name": {
+        "es": "BOLÍVAR"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68121",
+      "name": {
+        "es": "CABRERA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68132",
+      "name": {
+        "es": "CALIFORNIA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68147",
+      "name": {
+        "es": "CAPITANEJO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68152",
+      "name": {
+        "es": "CARCASÍ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68160",
+      "name": {
+        "es": "CEPITÁ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68162",
+      "name": {
+        "es": "CERRITO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68167",
+      "name": {
+        "es": "CHARALÁ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68169",
+      "name": {
+        "es": "CHARTA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68176",
+      "name": {
+        "es": "CHIMA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68179",
+      "name": {
+        "es": "CHIPATÁ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68190",
+      "name": {
+        "es": "CIMITARRA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68207",
+      "name": {
+        "es": "CONCEPCIÓN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68209",
+      "name": {
+        "es": "CONFINES"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68211",
+      "name": {
+        "es": "CONTRATACIÓN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68217",
+      "name": {
+        "es": "COROMORO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68229",
+      "name": {
+        "es": "CURITÍ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68235",
+      "name": {
+        "es": "EL CARMEN DE CHUCURÍ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68245",
+      "name": {
+        "es": "EL GUACAMAYO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68250",
+      "name": {
+        "es": "EL PEÑÓN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68255",
+      "name": {
+        "es": "EL PLAYÓN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68264",
+      "name": {
+        "es": "ENCINO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68266",
+      "name": {
+        "es": "ENCISO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68271",
+      "name": {
+        "es": "FLORIÁN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68276",
+      "name": {
+        "es": "FLORIDABLANCA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68296",
+      "name": {
+        "es": "GALÁN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68298",
+      "name": {
+        "es": "GAMBITA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68307",
+      "name": {
+        "es": "GIRÓN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68318",
+      "name": {
+        "es": "GUACA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68320",
+      "name": {
+        "es": "GUADALUPE"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68322",
+      "name": {
+        "es": "GUAPOTÁ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68324",
+      "name": {
+        "es": "GUAVATÁ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68327",
+      "name": {
+        "es": "GÜEPSA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68344",
+      "name": {
+        "es": "HATO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68368",
+      "name": {
+        "es": "JESÚS MARÍA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68370",
+      "name": {
+        "es": "JORDÁN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68377",
+      "name": {
+        "es": "LA BELLEZA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68385",
+      "name": {
+        "es": "LANDÁZURI"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68397",
+      "name": {
+        "es": "LA PAZ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68406",
+      "name": {
+        "es": "LEBRIJA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68418",
+      "name": {
+        "es": "LOS SANTOS"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68425",
+      "name": {
+        "es": "MACARAVITA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68432",
+      "name": {
+        "es": "MÁLAGA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68444",
+      "name": {
+        "es": "MATANZA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68464",
+      "name": {
+        "es": "MOGOTES"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68468",
+      "name": {
+        "es": "MOLAGAVITA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68498",
+      "name": {
+        "es": "OCAMONTE"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68500",
+      "name": {
+        "es": "OIBA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68502",
+      "name": {
+        "es": "ONZAGA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68522",
+      "name": {
+        "es": "PALMAR"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68524",
+      "name": {
+        "es": "PALMAS DEL SOCORRO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68533",
+      "name": {
+        "es": "PÁRAMO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68547",
+      "name": {
+        "es": "PIEDECUESTA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68549",
+      "name": {
+        "es": "PINCHOTE"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68572",
+      "name": {
+        "es": "PUENTE NACIONAL"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68573",
+      "name": {
+        "es": "PUERTO PARRA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68575",
+      "name": {
+        "es": "PUERTO WILCHES"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68615",
+      "name": {
+        "es": "RIONEGRO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68655",
+      "name": {
+        "es": "SABANA DE TORRES"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68669",
+      "name": {
+        "es": "SAN ANDRÉS"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68673",
+      "name": {
+        "es": "SAN BENITO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68679",
+      "name": {
+        "es": "SAN GIL"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68682",
+      "name": {
+        "es": "SAN JOAQUÍN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68684",
+      "name": {
+        "es": "SAN JOSÉ DE MIRANDA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68686",
+      "name": {
+        "es": "SAN MIGUEL"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68689",
+      "name": {
+        "es": "SAN VICENTE DE CHUCURÍ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68705",
+      "name": {
+        "es": "SANTA BÁRBARA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68720",
+      "name": {
+        "es": "SANTA HELENA DEL OPÓN"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68745",
+      "name": {
+        "es": "SIMACOTA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68755",
+      "name": {
+        "es": "SOCORRO"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68770",
+      "name": {
+        "es": "SUAITA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68773",
+      "name": {
+        "es": "SUCRE"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68780",
+      "name": {
+        "es": "SURATÁ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68820",
+      "name": {
+        "es": "TONA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68855",
+      "name": {
+        "es": "VALLE DE SAN JOSÉ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68861",
+      "name": {
+        "es": "VÉLEZ"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68867",
+      "name": {
+        "es": "VETAS"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68872",
+      "name": {
+        "es": "VILLANUEVA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "68895",
+      "name": {
+        "es": "ZAPATOCA"
+      },
+      "meta": {
+        "dep": "Santander"
+      }
+    },
+    {
+      "code": "70001",
+      "name": {
+        "es": "SINCELEJO"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70110",
+      "name": {
+        "es": "BUENAVISTA"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70124",
+      "name": {
+        "es": "CAIMITO"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70204",
+      "name": {
+        "es": "COLOSO"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70215",
+      "name": {
+        "es": "COROZAL"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70221",
+      "name": {
+        "es": "COVEÑAS"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70230",
+      "name": {
+        "es": "CHALÁN"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70233",
+      "name": {
+        "es": "EL ROBLE"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70235",
+      "name": {
+        "es": "GALERAS"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70265",
+      "name": {
+        "es": "GUARANDA"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70400",
+      "name": {
+        "es": "LA UNIÓN"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70418",
+      "name": {
+        "es": "LOS PALMITOS"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70429",
+      "name": {
+        "es": "MAJAGUAL"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70473",
+      "name": {
+        "es": "MORROA"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70508",
+      "name": {
+        "es": "OVEJAS"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70523",
+      "name": {
+        "es": "PALMITO"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70670",
+      "name": {
+        "es": "SAMPUÉS"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70678",
+      "name": {
+        "es": "SAN BENITO ABAD"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70702",
+      "name": {
+        "es": "SAN JUAN DE BETULIA"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70708",
+      "name": {
+        "es": "SAN MARCOS"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70713",
+      "name": {
+        "es": "SAN ONOFRE"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70717",
+      "name": {
+        "es": "SAN PEDRO"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70742",
+      "name": {
+        "es": "SAN LUIS DE SINCÉ"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70771",
+      "name": {
+        "es": "SUCRE"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70820",
+      "name": {
+        "es": "SANTIAGO DE TOLÚ"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "70823",
+      "name": {
+        "es": "TOLÚ VIEJO"
+      },
+      "meta": {
+        "dep": "Sucre"
+      }
+    },
+    {
+      "code": "73001",
+      "name": {
+        "es": "IBAGUÉ"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73024",
+      "name": {
+        "es": "ALPUJARRA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73026",
+      "name": {
+        "es": "ALVARADO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73030",
+      "name": {
+        "es": "AMBALEMA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73043",
+      "name": {
+        "es": "ANZOÁTEGUI"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73055",
+      "name": {
+        "es": "ARMERO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73067",
+      "name": {
+        "es": "ATACO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73124",
+      "name": {
+        "es": "CAJAMARCA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73148",
+      "name": {
+        "es": "CARMEN DE APICALÁ"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73152",
+      "name": {
+        "es": "CASABIANCA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73168",
+      "name": {
+        "es": "CHAPARRAL"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73200",
+      "name": {
+        "es": "COELLO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73217",
+      "name": {
+        "es": "COYAIMA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73226",
+      "name": {
+        "es": "CUNDAY"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73236",
+      "name": {
+        "es": "DOLORES"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73268",
+      "name": {
+        "es": "ESPINAL"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73270",
+      "name": {
+        "es": "FALAN"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73275",
+      "name": {
+        "es": "FLANDES"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73283",
+      "name": {
+        "es": "FRESNO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73319",
+      "name": {
+        "es": "GUAMO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73347",
+      "name": {
+        "es": "HERVEO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73349",
+      "name": {
+        "es": "HONDA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73352",
+      "name": {
+        "es": "ICONONZO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73408",
+      "name": {
+        "es": "LÉRIDA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73411",
+      "name": {
+        "es": "LÍBANO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73443",
+      "name": {
+        "es": "SAN SEBASTIÁN DE MARIQUITA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73449",
+      "name": {
+        "es": "MELGAR"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73461",
+      "name": {
+        "es": "MURILLO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73483",
+      "name": {
+        "es": "NATAGAIMA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73504",
+      "name": {
+        "es": "ORTEGA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73520",
+      "name": {
+        "es": "PALOCABILDO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73547",
+      "name": {
+        "es": "PIEDRAS"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73555",
+      "name": {
+        "es": "PLANADAS"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73563",
+      "name": {
+        "es": "PRADO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73585",
+      "name": {
+        "es": "PURIFICACIÓN"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73616",
+      "name": {
+        "es": "RIOBLANCO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73622",
+      "name": {
+        "es": "RONCESVALLES"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73624",
+      "name": {
+        "es": "ROVIRA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73671",
+      "name": {
+        "es": "SALDAÑA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73675",
+      "name": {
+        "es": "SAN ANTONIO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73678",
+      "name": {
+        "es": "SAN LUIS"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73686",
+      "name": {
+        "es": "SANTA ISABEL"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73770",
+      "name": {
+        "es": "SUÁREZ"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73854",
+      "name": {
+        "es": "VALLE DE SAN JUAN"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73861",
+      "name": {
+        "es": "VENADILLO"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73870",
+      "name": {
+        "es": "VILLAHERMOSA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "73873",
+      "name": {
+        "es": "VILLARRICA"
+      },
+      "meta": {
+        "dep": "Tolima"
+      }
+    },
+    {
+      "code": "76001",
+      "name": {
+        "es": "CALI"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76020",
+      "name": {
+        "es": "ALCALÁ"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76036",
+      "name": {
+        "es": "ANDALUCÍA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76041",
+      "name": {
+        "es": "ANSERMANUEVO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76054",
+      "name": {
+        "es": "ARGELIA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76100",
+      "name": {
+        "es": "BOLÍVAR"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76109",
+      "name": {
+        "es": "BUENAVENTURA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76111",
+      "name": {
+        "es": "GUADALAJARA DE BUGA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76113",
+      "name": {
+        "es": "BUGALAGRANDE"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76122",
+      "name": {
+        "es": "CAICEDONIA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76126",
+      "name": {
+        "es": "CALIMA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76130",
+      "name": {
+        "es": "CANDELARIA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76147",
+      "name": {
+        "es": "CARTAGO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76233",
+      "name": {
+        "es": "DAGUA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76243",
+      "name": {
+        "es": "EL ÁGUILA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76246",
+      "name": {
+        "es": "EL CAIRO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76248",
+      "name": {
+        "es": "EL CERRITO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76250",
+      "name": {
+        "es": "EL DOVIO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76275",
+      "name": {
+        "es": "FLORIDA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76306",
+      "name": {
+        "es": "GINEBRA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76318",
+      "name": {
+        "es": "GUACARÍ"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76364",
+      "name": {
+        "es": "JAMUNDÍ"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76377",
+      "name": {
+        "es": "LA CUMBRE"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76400",
+      "name": {
+        "es": "LA UNIÓN"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76403",
+      "name": {
+        "es": "LA VICTORIA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76497",
+      "name": {
+        "es": "OBANDO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76520",
+      "name": {
+        "es": "PALMIRA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76563",
+      "name": {
+        "es": "PRADERA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76606",
+      "name": {
+        "es": "RESTREPO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76616",
+      "name": {
+        "es": "RIOFRÍO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76622",
+      "name": {
+        "es": "ROLDANILLO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76670",
+      "name": {
+        "es": "SAN PEDRO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76736",
+      "name": {
+        "es": "SEVILLA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76823",
+      "name": {
+        "es": "TORO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76828",
+      "name": {
+        "es": "TRUJILLO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76834",
+      "name": {
+        "es": "TULUÁ"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76845",
+      "name": {
+        "es": "ULLOA"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76863",
+      "name": {
+        "es": "VERSALLES"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76869",
+      "name": {
+        "es": "VIJES"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76890",
+      "name": {
+        "es": "YOTOCO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76892",
+      "name": {
+        "es": "YUMBO"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "76895",
+      "name": {
+        "es": "ZARZAL"
+      },
+      "meta": {
+        "dep": "Valle de Cauca"
+      }
+    },
+    {
+      "code": "97001",
+      "name": {
+        "es": "MITÚ"
+      },
+      "meta": {
+        "dep": "Vaupés"
+      }
+    },
+    {
+      "code": "97161",
+      "name": {
+        "es": "CARURU"
+      },
+      "meta": {
+        "dep": "Vaupés"
+      }
+    },
+    {
+      "code": "97511",
+      "name": {
+        "es": "PACOA"
+      },
+      "meta": {
+        "dep": "Vaupés"
+      }
+    },
+    {
+      "code": "97666",
+      "name": {
+        "es": "TARAIRA"
+      },
+      "meta": {
+        "dep": "Vaupés"
+      }
+    },
+    {
+      "code": "97777",
+      "name": {
+        "es": "PAPUNAUA"
+      },
+      "meta": {
+        "dep": "Vaupés"
+      }
+    },
+    {
+      "code": "97889",
+      "name": {
+        "es": "YAVARATÉ"
+      },
+      "meta": {
+        "dep": "Vaupés"
+      }
+    },
+    {
+      "code": "99001",
+      "name": {
+        "es": "PUERTO CARREÑO"
+      },
+      "meta": {
+        "dep": "Vichada"
+      }
+    },
+    {
+      "code": "99524",
+      "name": {
+        "es": "LA PRIMAVERA"
+      },
+      "meta": {
+        "dep": "Vichada"
+      }
+    },
+    {
+      "code": "99624",
+      "name": {
+        "es": "SANTA ROSALÍA"
+      },
+      "meta": {
+        "dep": "Vichada"
+      }
+    },
+    {
+      "code": "99773",
+      "name": {
+        "es": "CUMARIBO"
+      },
+      "meta": {
+        "dep": "Vichada"
       }
     }
   ],

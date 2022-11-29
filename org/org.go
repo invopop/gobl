@@ -20,5 +20,6 @@ func init() {
 		Meta{},
 		Note{},
 		Inbox{},
+		Stamp{},
 	)
 }

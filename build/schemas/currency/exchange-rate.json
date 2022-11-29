@@ -24,5 +24,5 @@
       "description": "ExchangeRate contains data on the rate to be used when converting amounts from the document's base currency to whatever is defined."
     }
   },
-  "$comment": "Generated with GOBL v0.31.0"
+  "$comment": "Generated with GOBL v0.32.0"
 }
