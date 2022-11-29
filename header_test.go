@@ -16,5 +16,5 @@ func TestNewHeader(t *testing.T) {
 		h.Meta["foo"] = "bar"
 		h.Tags = append(h.Tags, "foo")
 		h.Stamps = append(h.Stamps, &org.Stamp{})
-	})
+	}, "header and meta hash should have been initialized")
 }
