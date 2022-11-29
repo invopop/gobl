@@ -26,6 +26,8 @@ type Preceding struct {
 	Corrections []CorrectionKey `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 	// How has the previous invoice been corrected?
 	CorrectionMethod CorrectionMethodKey `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
+	// Seals of approval from other organisations.
+	Stamps []*org.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Additional details regarding preceding invoice
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that may be useful in specific regions
@@ -42,6 +44,7 @@ func (p *Preceding) Validate() error {
 		validation.Field(&p.Period),
 		validation.Field(&p.Corrections, validation.Each(isValidCorrectionKey)),
 		validation.Field(&p.CorrectionMethod, isValidCorrectionMethodKey),
+		validation.Field(&p.Stamps),
 		validation.Field(&p.Meta),
 	)
 }
@@ -133,6 +136,7 @@ func validCorrectionKeys() []interface{} {
 // Defined list of correction methods
 const (
 	CompleteCorrectionMethodKey   CorrectionMethodKey = "complete"   // everything has changed
+	RevokedCorrectionMethodKey    CorrectionMethodKey = "revoked"    // previous document has been completely cancelled
 	PartialCorrectionMethodKey    CorrectionMethodKey = "partial"    // only differences corrected
 	DiscountCorrectionMethodKey   CorrectionMethodKey = "discount"   // deducted from future invoices
 	AuthorizedCorrectionMethodKey CorrectionMethodKey = "authorized" // Permitted by tax agency
@@ -150,6 +154,7 @@ type CorrectionMethodKeyDef struct {
 // purposes.
 var CorrectionMethodKeyDefinitions = []CorrectionMethodKeyDef{
 	{CompleteCorrectionMethodKey, "Everything has changed, this document replaces the previous one."},
+	{RevokedCorrectionMethodKey, "Previous document has been completely revoked."},
 	{PartialCorrectionMethodKey, "Only differences corrected."},
 	{DiscountCorrectionMethodKey, "Deducted from future invoices."},
 	{AuthorizedCorrectionMethodKey, "Permitted by tax agency."},
