@@ -24,7 +24,7 @@ type Region struct {
 	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality"`
 
 	// List of sub-localities inside a region.
-	Localities Localities `json:"localities,omitempty" jsonschema:"title=Localities"`
+	Localities []Locality `json:"localities,omitempty" jsonschema:"title=Localities"`
 
 	// Currency used by the region for tax purposes.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
@@ -47,10 +47,6 @@ type Region struct {
 	// "Calculate" processes.
 	NormalizeTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
 }
-
-// Localities stores an array of locality objects used to describe areas
-// sub-divisions inside a region.
-type Localities []Locality
 
 // Locality represents an area inside a region, like a province
 // or a state, which shares the basic definitions of the region, but

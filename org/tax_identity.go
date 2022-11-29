@@ -92,19 +92,20 @@ var SourceKeyDefinitions = []DefSourceKey{
 // TaxIdentity stores the details required to identify an entity for tax
 // purposes.
 type TaxIdentity struct {
-	// Unique universal identity code.
+	// Unique universal identity code for this tax identity.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
 	// ISO country code for Where the tax identity was issued.
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
 
-	// Where inside a country the Tax ID was issued, if required.
+	// Where inside a country the identity holder is based for tax purposes, like
+	// a city, county, province, state, or combination of various.
 	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality Code"`
 
-	// What is the source document of this tax identity.
+	// What is the source document of the tax identity.
 	Source SourceKey `json:"source,omitempty" jsonschema:"title=Source Key"`
 
-	// Tax identity Code
+	// Normalized code shown on the original identity document.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 
 	// Additional details that may be required.

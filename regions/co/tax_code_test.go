@@ -37,41 +37,63 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
-		name string
-		code string
-		err  string
+		name     string
+		code     string
+		locality l10n.Code
+		err      string
 	}{
-		{name: "empty", code: ""},
-		{name: "good 1", code: "412615332"},
-		{name: "good 2", code: "8110079918"},
-		{name: "good 3", code: "124499654"},
-		{name: "good 4", code: "8300801501"},
-		{name: "good 5", code: "700602703"},
+		{name: "good 1", code: "412615332", locality: "11001"},
+		{name: "good 2", code: "8110079918", locality: "11001"},
+		{name: "good 3", code: "124499654", locality: "08638"},
+		{name: "good 4", code: "8300801501", locality: "11001"},
+		{name: "good 5", code: "700602703", locality: "11001"},
 		{
-			name: "too long",
-			code: "123456789100",
-			err:  "too long",
+			name:     "empty",
+			code:     "",
+			locality: "11001",
+			err:      "code: cannot be blank",
 		},
 		{
-			name: "too short",
-			code: "123456",
-			err:  "too short",
+			name:     "no locality",
+			code:     "412615332",
+			locality: "",
+			err:      "locality: cannot be blank",
 		},
 		{
-			name: "not normalized",
-			code: "12.449.965-4",
-			err:  "contains invalid characters",
+			name:     "invalid locality",
+			code:     "412615332",
+			locality: "99999",
+			err:      "locality: must be a valid value",
 		},
 		{
-			name: "bad checksum",
-			code: "412615331",
-			err:  "checksum mismatch",
+			name:     "too long",
+			code:     "123456789100",
+			locality: "11001",
+			err:      "too long",
+		},
+		{
+			name:     "too short",
+			code:     "123456",
+			locality: "11001",
+			err:      "too short",
+		},
+		{
+			name:     "not normalized",
+			code:     "12.449.965-4",
+			locality: "11001",
+			err:      "contains invalid characters",
+		},
+		{
+			name:     "bad checksum",
+			code:     "412615331",
+			locality: "11001",
+			err:      "checksum mismatch",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &org.TaxIdentity{Country: l10n.CO, Code: tt.code}
+			tID := &org.TaxIdentity{Country: l10n.CO, Code: tt.code, Locality: tt.locality}
 			err := co.ValidateTaxIdentity(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)

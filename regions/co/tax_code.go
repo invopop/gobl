@@ -17,7 +17,8 @@ var (
 // ValidateTaxIdentity checks to ensure the NIT code looks okay.
 func ValidateTaxIdentity(tID *org.TaxIdentity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)),
+		validation.Field(&tID.Locality, validation.Required, isValidLocalityCode),
 	)
 }
 
@@ -28,6 +29,16 @@ func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
 		return err
 	}
 	return nil
+}
+
+var isValidLocalityCode = validation.In(validLocalityCodes()...)
+
+func validLocalityCodes() []interface{} {
+	ls := make([]interface{}, len(localities))
+	for i, v := range localities {
+		ls[i] = v.Code
+	}
+	return ls
 }
 
 func validateTaxCode(value interface{}) error {

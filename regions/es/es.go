@@ -138,7 +138,7 @@ func Region() *tax.Region {
 		ValidateDocument:     Validate,
 		ValidateTaxIdentity:  ValidateTaxIdentity,
 		NormalizeTaxIdentity: NormalizeTaxIdentity,
-		Localities: tax.Localities{
+		Localities: []tax.Locality{
 			{
 				Code: LocalityVI,
 				Name: i18n.String{i18n.ES: "Ávila"},
