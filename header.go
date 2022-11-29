@@ -17,7 +17,7 @@ type Header struct {
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest"`
 
 	// Seals of approval from other organisations.
-	Stamps []*Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*org.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
 	// Set of labels that describe but have no influence on the data.
 	Tags []string `json:"tags,omitempty" jsonschema:"title=Tags"`
@@ -40,19 +40,11 @@ func NewHeader() *Header {
 	return h
 }
 
-// Stamp defines an official seal of approval from a third party like a governmental agency
-// or intermediary and should thus be included in any official envelopes.
-type Stamp struct {
-	// Identity of the agency used to create the stamp usually defined by each region.
-	Provider org.Key `json:"prv" jsonschema:"title=Provider"`
-	// The serialized stamp value generated for or by the external agency
-	Value string `json:"val" jsonschema:"title=Value"`
-}
-
 // Validate checks that the header contains the basic information we need to function.
 func (h *Header) Validate() error {
 	return validation.ValidateStruct(h,
 		validation.Field(&h.UUID, validation.Required, uuid.IsV1),
 		validation.Field(&h.Digest, validation.Required),
+		validation.Field(&h.Stamps),
 	)
 }
