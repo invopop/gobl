@@ -47,7 +47,8 @@ func MakeAmount(val int64, exp uint32) Amount {
 // the `AmountFromHumanString` method.
 func AmountFromString(val string) (Amount, error) {
 	a := Amount{}
-	x := strings.Split(val, ".")
+	n := strings.HasPrefix(val, "-")
+	x := strings.Split(strings.TrimPrefix(val, "-"), ".")
 	l := len(x)
 	if l > 2 {
 		return a, fmt.Errorf("amount must contain 0 or 1 decimal separators: %v", val)
@@ -73,7 +74,11 @@ func AmountFromString(val string) (Amount, error) {
 	}
 
 	// Prepare the result
-	a.value = v
+	if n {
+		a.value = -v
+	} else {
+		a.value = v
+	}
 	a.exp = e
 	return a, nil
 }
@@ -134,10 +139,9 @@ func (a Amount) Split(x int) (Amount, Amount) {
 // Compare two amounts and return an integer value according to the
 // sign of the difference:
 //
-//   -1 if a <  a2
-//    0 if a == a2
-//    1 if a >  a2
-//
+//	-1 if a <  a2
+//	 0 if a == a2
+//	 1 if a >  a2
 func (a Amount) Compare(a2 Amount) int {
 	a, a2 = rescaleAmountPair(a, a2)
 	if a.value < a2.value {
