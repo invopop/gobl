@@ -31,7 +31,7 @@ type Address struct {
 	// The village, town, district, or city.
 	Locality string `json:"locality" jsonschema:"title=Locality"`
 	// Province, County, or State.
-	Region string `json:"region" jsonschema:"title=Region"`
+	Region string `json:"region,omitempty" jsonschema:"title=Region"`
 	// Post or ZIP code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// ISO country code.
