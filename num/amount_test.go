@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/num"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAmountAdd(t *testing.T) {
@@ -52,42 +53,38 @@ func TestAmountCompare(t *testing.T) {
 
 func TestAmountNewFromString(t *testing.T) {
 	a, err := num.AmountFromString("245.890")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-		return
-	}
+	require.NoError(t, err)
+
 	e := num.MakeAmount(245890, 3)
-	if !a.Equals(e) {
-		t.Errorf("unexpected parsed value, got: %v", a)
-	}
+	assert.True(t, a.Equals(e))
+
 	a, err = num.AmountFromString("245")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-		return
-	}
+	assert.NoError(t, err)
 	e = num.MakeAmount(245, 0)
-	if !a.Equals(e) {
-		t.Errorf("unexpected parsed value, got: %v", a)
-	}
+	assert.True(t, a.Equals(e))
+
 	a, err = num.AmountFromString("-245.00")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-	if a.Value() != -24500 {
-		t.Errorf("unexpected parsed amount, got: %v", a.Value())
-	}
-	a, err = num.AmountFromString("23.433.00")
-	if err == nil {
-		t.Errorf("expected error, got: %v", a)
-	}
-	a, err = num.AmountFromString("23,433.00")
-	if err == nil {
-		t.Errorf("expected error, got: %v", a)
-	}
-	a, err = num.AmountFromString("1234.bar")
-	if err == nil {
-		t.Errorf("expected error, got: %v", a)
-	}
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), -24500)
+
+	a, err = num.AmountFromString("-245.12")
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), -24512)
+
+	a, err = num.AmountFromString("0.022")
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), 22)
+
+	a, err = num.AmountFromString("-0.022")
+	assert.NoError(t, err)
+	assert.EqualValues(t, a.Value(), -22)
+
+	_, err = num.AmountFromString("23.433.00")
+	assert.Error(t, err)
+	_, err = num.AmountFromString("23,433.00")
+	assert.Error(t, err)
+	_, err = num.AmountFromString("1234.bar")
+	assert.Error(t, err)
 }
 
 func TestMultiply(t *testing.T) {
@@ -275,6 +272,19 @@ func TestAmountUnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestNegativeAmountUnmarshalJSON(t *testing.T) {
+	d := []byte(`{"amount":"-12.43"}`)
+	o := struct {
+		Amount num.Amount
+	}{}
+	if err := json.Unmarshal(d, &o); err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if o.Amount.Compare(num.MakeAmount(-1243, 2)) != 0 {
+		t.Errorf("got back unexpected response: %+v", o)
+	}
+}
+
 func TestAmountMarshalJSON(t *testing.T) {
 	o := struct {
 		Amount num.Amount `json:"amount"`
@@ -286,6 +296,22 @@ func TestAmountMarshalJSON(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 	de := []byte(`{"amount":"12.67"}`)
+	if !bytes.Equal(d, de) {
+		t.Errorf("results don't match, got: %s", d)
+	}
+}
+
+func TestNegativeAmountMarshalJSON(t *testing.T) {
+	o := struct {
+		Amount num.Amount `json:"amount"`
+	}{
+		Amount: num.MakeAmount(-1267, 2),
+	}
+	d, err := json.Marshal(o)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	de := []byte(`{"amount":"-12.67"}`)
 	if !bytes.Equal(d, de) {
 		t.Errorf("results don't match, got: %s", d)
 	}
