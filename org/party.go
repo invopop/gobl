@@ -35,6 +35,8 @@ type Party struct {
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
 	// Additional registration details about the company that may need to be included in a document.
 	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration"`
+	// Images that can be used to identify the party visually.
+	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -53,6 +55,8 @@ type Person struct {
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
 	// Regular phone or mobile numbers
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
+	// Avatars provider links to images or photos or the person.
+	Avatars []*Image `json:"avatars,omitempty" jsonschema:"title=Avatars"`
 	// Data about the data.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -151,6 +155,7 @@ func (p *Party) Validate() error {
 		validation.Field(&p.People),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
+		validation.Field(&p.Logos),
 		validation.Field(&p.Websites),
 	)
 }

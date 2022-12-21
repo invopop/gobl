@@ -15,5 +15,6 @@ func init() {
 		Telephone{},
 		Registration{},
 		Inbox{},
+		Image{},
 	)
 }
