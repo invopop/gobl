@@ -8,7 +8,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 )
 
 // TaxCodeType represents the types of tax code which are issued

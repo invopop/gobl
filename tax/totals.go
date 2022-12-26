@@ -97,7 +97,7 @@ func (t *Total) Category(code org.Code) *CategoryTotal {
 }
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
-func (t *Total) Calculate(reg *Region, lines []TaxableLine, taxIncluded org.Code, date cal.Date, zero num.Amount) error {
+func (t *Total) Calculate(reg *Regime, lines []TaxableLine, taxIncluded org.Code, date cal.Date, zero num.Amount) error {
 	if reg == nil {
 		return ErrMissingRegion
 	}

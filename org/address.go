@@ -8,7 +8,7 @@ import (
 
 // Address defines a globally acceptable set of attributes that describes
 // a postal or fiscal address.
-// Attribute names loosly based on the xCard file format.
+// Attribute names loosely based on the xCard file format.
 type Address struct {
 	// Internal ID used to identify the party inside a document.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
@@ -28,9 +28,9 @@ type Address struct {
 	Street string `json:"street,omitempty" jsonschema:"title=Street"`
 	// Additional street address details.
 	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
-	// The village, town, district, or city.
+	// Village, town, district, or city, typically inside a region.
 	Locality string `json:"locality" jsonschema:"title=Locality"`
-	// Province, County, or State.
+	// Province, county, or state, inside a country.
 	Region string `json:"region,omitempty" jsonschema:"title=Region"`
 	// Post or ZIP code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`

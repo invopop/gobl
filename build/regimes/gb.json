@@ -1,5 +1,5 @@
 {
-  "$schema": "https://gobl.org/draft-0/tax/region",
+  "$schema": "https://gobl.org/draft-0/tax/regime",
   "name": {
     "en": "United Kingdom"
   },

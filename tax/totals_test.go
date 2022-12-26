@@ -7,8 +7,8 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
-	"github.com/invopop/gobl/regions/es"
+	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +28,7 @@ func (tl *taxableLine) GetTotal() num.Amount {
 }
 
 func TestTotalCalculate(t *testing.T) {
-	spain := es.Region()
+	spain := es.Regime()
 	date := cal.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {

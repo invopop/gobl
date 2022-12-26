@@ -9,7 +9,7 @@ func init() {
 	schema.Register(schema.GOBL.Add("tax"),
 		Set{},
 		Total{},
-		Region{},
+		Regime{},
 	)
 	org.SetTaxIdentityValidation(ValidateTaxIdentity)
 	org.SetTaxIdentityNormalizer(NormalizeTaxIdentity)

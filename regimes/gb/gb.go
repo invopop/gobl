@@ -1,22 +1,22 @@
-package fr
+package gb
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
-// Region provides the tax region definition
-func Region() *tax.Region {
-	return &tax.Region{
-		Country:  l10n.FR,
-		Currency: "EUR",
+// Regime provides the tax region definition
+func Regime() *tax.Regime {
+	return &tax.Regime{
+		Country:  l10n.GB,
+		Currency: "GBP",
 		Name: i18n.String{
-			i18n.EN: "France",
-			i18n.FR: "La France",
+			i18n.EN: "United Kingdom",
 		},
 		ValidateDocument: Validate,
 		Categories: []*tax.Category{
@@ -27,11 +27,9 @@ func Region() *tax.Region {
 				Code: common.TaxCategoryVAT,
 				Name: i18n.String{
 					i18n.EN: "VAT",
-					i18n.FR: "TVA",
 				},
 				Desc: i18n.String{
 					i18n.EN: "Value Added Tax",
-					i18n.FR: "Taxe sur la Valeur Ajoutée",
 				},
 				Retained: false,
 				Rates: []*tax.Rate{
@@ -58,6 +56,18 @@ func Region() *tax.Region {
 							},
 						},
 					},
+					{
+						Key: common.TaxRateReduced,
+						Name: i18n.String{
+							i18n.EN: "Reduced Rate",
+						},
+						Values: []*tax.RateValue{
+							{
+								Since:   cal.NewDate(2011, 1, 4),
+								Percent: num.MakePercentage(50, 3),
+							},
+						},
+					},
 				},
 			},
 		},
@@ -66,5 +76,9 @@ func Region() *tax.Region {
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
+	}
 	return nil
 }

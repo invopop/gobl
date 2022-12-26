@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/internal/currency"
@@ -20,9 +21,9 @@ func Schema() error {
 	return schemas.Generate()
 }
 
-// RegionData generates JSON version of each region's data.
-func RegionData() error {
-	for _, r := range tax.AllRegions() {
+// Regimes generates JSON version of each regimes's data.
+func Regimes() error {
+	for _, r := range tax.AllRegimes() {
 		doc, err := gobl.NewDocument(r)
 		if err != nil {
 			return err
@@ -31,7 +32,12 @@ func RegionData() error {
 		if err != nil {
 			return err
 		}
-		f := filepath.Join("build", "data", "tax", string(r.Country)+".json")
+		n := string(r.Country)
+		if r.Zone != "" {
+			n = n + "_" + string(r.Zone)
+		}
+		n = strings.ToLower(n)
+		f := filepath.Join("build", "regimes", n+".json")
 		if err := ioutil.WriteFile(f, data, 0644); err != nil {
 			return err
 		}

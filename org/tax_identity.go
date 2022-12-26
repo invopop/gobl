@@ -8,6 +8,34 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
+// TaxIdentity stores the details required to identify an entity for tax
+// purposes. There are two levels of accuracy that may be used to
+// describe where an entity is located: Country and Locality.
+// Country is a required field, but locality is optional according to
+// rules of a given tax jurisdiction.
+type TaxIdentity struct {
+	// Unique universal identity code for this tax identity.
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+
+	// ISO country code for Where the tax identity was issued.
+	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
+
+	// Where inside the country the tax identity holder is based for tax purposes
+	// like a village, town, district, city, county, state or province. For some
+	// areas, this could be a regular post or zip code. See the data package for
+	// your country or region for specific validation rules.
+	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone Code"`
+
+	// What is the source document of the tax identity.
+	Source SourceKey `json:"source,omitempty" jsonschema:"title=Source Key"`
+
+	// Normalized code shown on the original identity document.
+	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+
+	// Additional details that may be required.
+	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
 // SourceKey is used to identify different sources of tax
 // identities that may be required by some regions.
 type SourceKey Key
@@ -89,29 +117,6 @@ var SourceKeyDefinitions = []DefSourceKey{
 	},
 }
 
-// TaxIdentity stores the details required to identify an entity for tax
-// purposes.
-type TaxIdentity struct {
-	// Unique universal identity code for this tax identity.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-
-	// ISO country code for Where the tax identity was issued.
-	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
-
-	// Where inside a country the identity holder is based for tax purposes, like
-	// a city, county, province, state, or combination of various.
-	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality Code"`
-
-	// What is the source document of the tax identity.
-	Source SourceKey `json:"source,omitempty" jsonschema:"title=Source Key"`
-
-	// Normalized code shown on the original identity document.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
-
-	// Additional details that may be required.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
 // Calculate will attempt to perform a regional tax normalization
 // on the tax identity.
 func (id *TaxIdentity) Calculate() error {
@@ -126,7 +131,7 @@ func (id *TaxIdentity) Validate() error {
 	err := validation.ValidateStruct(id,
 		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required),
-		validation.Field(&id.Locality),
+		validation.Field(&id.Zone),
 		validation.Field(&id.Source, validation.In(validSourceKeys()...)),
 		validation.Field(&id.Meta),
 	)

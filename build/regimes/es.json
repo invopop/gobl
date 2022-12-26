@@ -1,11 +1,11 @@
 {
-  "$schema": "https://gobl.org/draft-0/tax/region",
+  "$schema": "https://gobl.org/draft-0/tax/regime",
   "name": {
     "en": "Spain",
     "es": "España"
   },
   "country": "ES",
-  "localities": [
+  "zones": [
     {
       "code": "VI",
       "name": {

@@ -39,8 +39,8 @@ func (c *Combo) Validate() error {
 }
 
 // prepare updates the Combo object's Percent and Retained properties according
-// to the region and date provided.
-func (c *Combo) prepare(r *Region, date cal.Date) error {
+// to the regime and date provided.
+func (c *Combo) prepare(r *Regime, date cal.Date) error {
 	c.category = r.Category(c.Category)
 	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())

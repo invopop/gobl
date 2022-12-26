@@ -5,7 +5,7 @@ import (
 
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/es"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/stretchr/testify/assert"
 )
 

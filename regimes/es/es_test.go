@@ -1,14 +1,13 @@
-package nl_test
+package es_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/regions/nl"
+	"github.com/invopop/gobl/regimes/es"
 )
 
 func TestTaxRegion(t *testing.T) {
-	tr := nl.Region()
-	if err := tr.Validate(); err != nil {
+	if err := es.Regime().Validate(); err != nil {
 		t.Errorf("Validation on tax def failed: %v", err.Error())
 	}
 }

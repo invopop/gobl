@@ -12,21 +12,22 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Region defines the holding structure for a regions categories and subsequent
-// Rates and Values.
-type Region struct {
-	// Name of the region
+// Regime defines the holding structure for the definitions of taxes inside a country
+// or territory.
+type Regime struct {
+	// Name of the country
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
 	// Country code for the region
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Code"`
-	// Locality, city, province, county, or similar code inside the country, if needed.
-	Locality l10n.Code `json:"locality,omitempty" jsonschema:"title=Locality"`
+	// Specific Locality, region, city, province, county, or similar code inside
+	// the country, if needed.
+	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
 
-	// List of sub-localities inside a region.
-	Localities []Locality `json:"localities,omitempty" jsonschema:"title=Localities"`
+	// List of sub-zones inside a country.
+	Zones []Zone `json:"zones,omitempty" jsonschema:"title=Zones"`
 
-	// Currency used by the region for tax purposes.
+	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
 	// Set of specific scheme definitions inside the region.
@@ -48,13 +49,13 @@ type Region struct {
 	NormalizeTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
 }
 
-// Locality represents an area inside a region, like a province
-// or a state, which shares the basic definitions of the region, but
+// Zone represents an area inside a country, like a province
+// or a state, which shares the basic definitions of the country, but
 // may vary in some validation rules.
-type Locality struct {
+type Zone struct {
 	// Code
 	Code l10n.Code `json:"code" jsonschema:"title=Code"`
-	// Name of the locality with local and hopefully international
+	// Name of the zone with local and hopefully international
 	// translations.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Any additional information
@@ -107,7 +108,7 @@ type RateValue struct {
 }
 
 // CurrencyDef provides the currency definition object for the region.
-func (r *Region) CurrencyDef() *currency.Def {
+func (r *Regime) CurrencyDef() *currency.Def {
 	d, ok := currency.Get(r.Currency)
 	if !ok {
 		return nil
@@ -117,7 +118,7 @@ func (r *Region) CurrencyDef() *currency.Def {
 
 // Validate enures the region definition is valid, including all
 // subsequent categories.
-func (r *Region) Validate() error {
+func (r *Regime) Validate() error {
 	err := validation.ValidateStruct(r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
@@ -174,7 +175,7 @@ func checkRateValuesOrder(list interface{}) error {
 }
 
 // Category provides the requested category by its code.
-func (r *Region) Category(code org.Code) *Category {
+func (r *Regime) Category(code org.Code) *Category {
 	for _, c := range r.Categories {
 		if c.Code == code {
 			return c

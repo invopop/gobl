@@ -8,7 +8,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
@@ -120,7 +120,7 @@ func (inv *Invoice) Validate() error {
 		if tID == nil {
 			return errors.New("supplier: missing tax identity")
 		}
-		r := tax.RegionFor(tID.Country, tID.Locality)
+		r := tax.RegimeFor(tID.Country, tID.Zone)
 		err = r.ValidateDocument(inv)
 	}
 	return err
@@ -188,7 +188,7 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	tID := inv.Supplier.TaxID
-	r := tax.RegionFor(tID.Country, tID.Locality)
+	r := tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
 		return errors.New("region is missing")
 	}
@@ -202,7 +202,7 @@ func (inv *Invoice) Calculate() error {
 	if tID == nil {
 		return errors.New("unable to determine tax identity")
 	}
-	r = tax.RegionFor(tID.Country, tID.Locality)
+	r = tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
 		return errors.New("region is missing")
 	}
@@ -247,7 +247,7 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	return &i2
 }
 
-func (inv *Invoice) prepareSchemes(r *tax.Region) error {
+func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
 	if inv.Tax == nil {
 		return nil
 	}
@@ -274,7 +274,7 @@ func (inv *Invoice) prepareSchemes(r *tax.Region) error {
 	return nil
 }
 
-func (inv *Invoice) calculate(r *tax.Region) error {
+func (inv *Invoice) calculate(r *tax.Regime) error {
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://gobl.org/draft-0/tax/region",
+  "$schema": "https://gobl.org/draft-0/tax/regime",
   "name": {
     "en": "Colombia",
     "es": "Colombia"
   },
   "country": "CO",
-  "localities": [
+  "zones": [
     {
       "code": "91263",
       "name": {

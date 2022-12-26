@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -62,63 +62,63 @@ const (
 
 )
 
-// Locality code definitions for Spain
+// Zone code definitions for Spain
 const (
-	LocalityVI l10n.Code = "VI" // (01) Álava
-	LocalityAB l10n.Code = "AB" // (02) Albacete
-	LocalityA  l10n.Code = "A"  // (03) Alicante
-	LocalityAL l10n.Code = "AL" // (04) Almería
-	LocalityAV l10n.Code = "AV" // (05) Ávila
-	LocalityBA l10n.Code = "BA" // (06) Badajoz
-	LocalityPM l10n.Code = "PM" // (07) Baleares
-	LocalityIB l10n.Code = "IB" // (07) Baleares
-	LocalityB  l10n.Code = "B"  // (08) Barcelona
-	LocalityBU l10n.Code = "BU" // (09) Burgos
-	LocalityCC l10n.Code = "CC" // (10) Cáceres
-	LocalityCA l10n.Code = "CA" // (11) Cádiz
-	LocalityCS l10n.Code = "CS" // (12) Castellon
-	LocalityCR l10n.Code = "CR" // (13) Ciudad Real
-	LocalityCO l10n.Code = "CO" // (14) Cordoba
-	LocalityC  l10n.Code = "C"  // (15) La Coruña
-	LocalityCU l10n.Code = "CU" // (16) Cuenca
-	LocalityGE l10n.Code = "GE" // (17) Gerona
-	LocalityGI l10n.Code = "GI" // (17) Girona
-	LocalityGR l10n.Code = "GR" // (18) Granada
-	LocalityGU l10n.Code = "GU" // (19) Guadalajara
-	LocalitySS l10n.Code = "SS" // (20) Guipúzcoa
-	LocalityH  l10n.Code = "H"  // (21) Huelva
-	LocalityHU l10n.Code = "HU" // (22) Huesca
-	LocalityJ  l10n.Code = "J"  // (23) Jaén
-	LocalityLE l10n.Code = "LE" // (24) León
-	LocalityL  l10n.Code = "L"  // (25) Lérida / Lleida
-	LocalityLO l10n.Code = "LO" // (26) La Rioja
-	LocalityLU l10n.Code = "LU" // (27) Lugo
-	LocalityM  l10n.Code = "M"  // (28) Madrid
-	LocalityMA l10n.Code = "MA" // (29) Málaga
-	LocalityMU l10n.Code = "MU" // (30) Murcia
-	LocalityNA l10n.Code = "NA" // (31) Navarra
-	LocalityOR l10n.Code = "OR" // (32) Orense
-	LocalityOU l10n.Code = "OU" // (32) Orense
-	LocalityO  l10n.Code = "O"  // (33) Asturias
-	LocalityP  l10n.Code = "P"  // (34) Palencia
-	LocalityGC l10n.Code = "GC" // (35) Las Palmas
-	LocalityPO l10n.Code = "PO" // (36) Pontevedra
-	LocalitySA l10n.Code = "SA" // (37) Salamanca
-	LocalityTF l10n.Code = "TF" // (38) Santa Cruz de Tenerife
-	LocalityS  l10n.Code = "S"  // (39) Cantabria
-	LocalitySG l10n.Code = "SG" // (40) Segovia
-	LocalitySE l10n.Code = "SE" // (41) Sevilla
-	LocalitySO l10n.Code = "SO" // (42) Soria
-	LocalityT  l10n.Code = "T"  // (43) Tarragona
-	LocalityTE l10n.Code = "TE" // (44) Teruel
-	LocalityTO l10n.Code = "TO" // (45) Toledo
-	LocalityV  l10n.Code = "V"  // (46) Valencia
-	LocalityVA l10n.Code = "VA" // (47) Valladolid
-	LocalityBI l10n.Code = "BI" // (48) Vizcaya
-	LocalityZA l10n.Code = "ZA" // (49) Zamora
-	LocalityZ  l10n.Code = "Z"  // (50) Zaragoza
-	LocalityCE l10n.Code = "CE" // (51) Ceuta
-	LocalityML l10n.Code = "ML" // (52) Melilla
+	ZoneVI l10n.Code = "VI" // (01) Álava
+	ZoneAB l10n.Code = "AB" // (02) Albacete
+	ZoneA  l10n.Code = "A"  // (03) Alicante
+	ZoneAL l10n.Code = "AL" // (04) Almería
+	ZoneAV l10n.Code = "AV" // (05) Ávila
+	ZoneBA l10n.Code = "BA" // (06) Badajoz
+	ZonePM l10n.Code = "PM" // (07) Baleares
+	ZoneIB l10n.Code = "IB" // (07) Baleares
+	ZoneB  l10n.Code = "B"  // (08) Barcelona
+	ZoneBU l10n.Code = "BU" // (09) Burgos
+	ZoneCC l10n.Code = "CC" // (10) Cáceres
+	ZoneCA l10n.Code = "CA" // (11) Cádiz
+	ZoneCS l10n.Code = "CS" // (12) Castellon
+	ZoneCR l10n.Code = "CR" // (13) Ciudad Real
+	ZoneCO l10n.Code = "CO" // (14) Cordoba
+	ZoneC  l10n.Code = "C"  // (15) La Coruña
+	ZoneCU l10n.Code = "CU" // (16) Cuenca
+	ZoneGE l10n.Code = "GE" // (17) Gerona
+	ZoneGI l10n.Code = "GI" // (17) Girona
+	ZoneGR l10n.Code = "GR" // (18) Granada
+	ZoneGU l10n.Code = "GU" // (19) Guadalajara
+	ZoneSS l10n.Code = "SS" // (20) Guipúzcoa
+	ZoneH  l10n.Code = "H"  // (21) Huelva
+	ZoneHU l10n.Code = "HU" // (22) Huesca
+	ZoneJ  l10n.Code = "J"  // (23) Jaén
+	ZoneLE l10n.Code = "LE" // (24) León
+	ZoneL  l10n.Code = "L"  // (25) Lérida / Lleida
+	ZoneLO l10n.Code = "LO" // (26) La Rioja
+	ZoneLU l10n.Code = "LU" // (27) Lugo
+	ZoneM  l10n.Code = "M"  // (28) Madrid
+	ZoneMA l10n.Code = "MA" // (29) Málaga
+	ZoneMU l10n.Code = "MU" // (30) Murcia
+	ZoneNA l10n.Code = "NA" // (31) Navarra
+	ZoneOR l10n.Code = "OR" // (32) Orense
+	ZoneOU l10n.Code = "OU" // (32) Orense
+	ZoneO  l10n.Code = "O"  // (33) Asturias
+	ZoneP  l10n.Code = "P"  // (34) Palencia
+	ZoneGC l10n.Code = "GC" // (35) Las Palmas
+	ZonePO l10n.Code = "PO" // (36) Pontevedra
+	ZoneSA l10n.Code = "SA" // (37) Salamanca
+	ZoneTF l10n.Code = "TF" // (38) Santa Cruz de Tenerife
+	ZoneS  l10n.Code = "S"  // (39) Cantabria
+	ZoneSG l10n.Code = "SG" // (40) Segovia
+	ZoneSE l10n.Code = "SE" // (41) Sevilla
+	ZoneSO l10n.Code = "SO" // (42) Soria
+	ZoneT  l10n.Code = "T"  // (43) Tarragona
+	ZoneTE l10n.Code = "TE" // (44) Teruel
+	ZoneTO l10n.Code = "TO" // (45) Toledo
+	ZoneV  l10n.Code = "V"  // (46) Valencia
+	ZoneVA l10n.Code = "VA" // (47) Valladolid
+	ZoneBI l10n.Code = "BI" // (48) Vizcaya
+	ZoneZA l10n.Code = "ZA" // (49) Zamora
+	ZoneZ  l10n.Code = "Z"  // (50) Zaragoza
+	ZoneCE l10n.Code = "CE" // (51) Ceuta
+	ZoneML l10n.Code = "ML" // (52) Melilla
 )
 
 // Custom keys used typically in meta information.
@@ -126,9 +126,9 @@ const (
 	KeyPost org.Key = "post"
 )
 
-// Region provides the Spanish region definition
-func Region() *tax.Region {
-	return &tax.Region{
+// Regime provides the Spanish region definition
+func Regime() *tax.Regime {
+	return &tax.Regime{
 		Country:  l10n.ES,
 		Currency: "EUR",
 		Name: i18n.String{
@@ -138,279 +138,279 @@ func Region() *tax.Region {
 		ValidateDocument:     Validate,
 		ValidateTaxIdentity:  ValidateTaxIdentity,
 		NormalizeTaxIdentity: NormalizeTaxIdentity,
-		Localities: []tax.Locality{
+		Zones: []tax.Zone{
 			{
-				Code: LocalityVI,
+				Code: ZoneVI,
 				Name: i18n.String{i18n.ES: "Ávila"},
 				Meta: org.Meta{KeyPost: "01"},
 			},
 			{
-				Code: LocalityAB,
+				Code: ZoneAB,
 				Name: i18n.String{i18n.ES: "Albacete"},
 				Meta: org.Meta{KeyPost: "02"},
 			},
 			{
-				Code: LocalityA,
+				Code: ZoneA,
 				Name: i18n.String{i18n.ES: "Alicante"},
 				Meta: org.Meta{KeyPost: "03"},
 			},
 			{
-				Code: LocalityAL,
+				Code: ZoneAL,
 				Name: i18n.String{i18n.ES: "Almería"},
 				Meta: org.Meta{KeyPost: "04"},
 			},
 			{
-				Code: LocalityAV,
+				Code: ZoneAV,
 				Name: i18n.String{i18n.ES: "Ávila"},
 				Meta: org.Meta{KeyPost: "05"},
 			},
 			{
-				Code: LocalityBA,
+				Code: ZoneBA,
 				Name: i18n.String{i18n.ES: "Badajoz"},
 				Meta: org.Meta{KeyPost: "06"},
 			},
 			{
-				Code: LocalityPM,
+				Code: ZonePM,
 				Name: i18n.String{i18n.ES: "Baleares"},
 				Meta: org.Meta{KeyPost: "07"},
 			},
 			{
-				Code: LocalityIB,
+				Code: ZoneIB,
 				Name: i18n.String{i18n.ES: "Baleares"},
 				Meta: org.Meta{KeyPost: "07"},
 			},
 			{
-				Code: LocalityB,
+				Code: ZoneB,
 				Name: i18n.String{i18n.ES: "Barcelona"},
 				Meta: org.Meta{KeyPost: "08"},
 			},
 			{
-				Code: LocalityBU,
+				Code: ZoneBU,
 				Name: i18n.String{i18n.ES: "Burgos"},
 				Meta: org.Meta{KeyPost: "09"},
 			},
 			{
-				Code: LocalityCC,
+				Code: ZoneCC,
 				Name: i18n.String{i18n.ES: "Cáceres"},
 				Meta: org.Meta{KeyPost: "10"},
 			},
 			{
-				Code: LocalityCA,
+				Code: ZoneCA,
 				Name: i18n.String{i18n.ES: "Cadiz"},
 				Meta: org.Meta{KeyPost: "11"},
 			},
 			{
-				Code: LocalityCS,
+				Code: ZoneCS,
 				Name: i18n.String{i18n.ES: "Castellón"},
 				Meta: org.Meta{KeyPost: "12"},
 			},
 			{
-				Code: LocalityCR,
+				Code: ZoneCR,
 				Name: i18n.String{i18n.ES: "Ciudad Real"},
 				Meta: org.Meta{KeyPost: "13"},
 			},
 			{
-				Code: LocalityCO,
+				Code: ZoneCO,
 				Name: i18n.String{i18n.ES: "Cordoba"},
 				Meta: org.Meta{KeyPost: "14"},
 			},
 			{
-				Code: LocalityC,
+				Code: ZoneC,
 				Name: i18n.String{i18n.ES: "La Coruña"},
 				Meta: org.Meta{KeyPost: "15"},
 			},
 			{
-				Code: LocalityCU,
+				Code: ZoneCU,
 				Name: i18n.String{i18n.ES: "Cuenca"},
 				Meta: org.Meta{KeyPost: "16"},
 			},
 			{
-				Code: LocalityGE,
+				Code: ZoneGE,
 				Name: i18n.String{i18n.ES: "Gerona"},
 				Meta: org.Meta{KeyPost: "17"},
 			},
 			{
-				Code: LocalityGI,
+				Code: ZoneGI,
 				Name: i18n.String{i18n.ES: "Girona"},
 				Meta: org.Meta{KeyPost: "17"},
 			},
 			{
-				Code: LocalityGR,
+				Code: ZoneGR,
 				Name: i18n.String{i18n.ES: "Granada"},
 				Meta: org.Meta{KeyPost: "18"},
 			},
 			{
-				Code: LocalityGU,
+				Code: ZoneGU,
 				Name: i18n.String{i18n.ES: "Guadalajara"},
 				Meta: org.Meta{KeyPost: "19"},
 			},
 			{
-				Code: LocalitySS,
+				Code: ZoneSS,
 				Name: i18n.String{i18n.ES: "Guipúzcoa"},
 				Meta: org.Meta{KeyPost: "20"},
 			},
 			{
-				Code: LocalityH,
+				Code: ZoneH,
 				Name: i18n.String{i18n.ES: "Huelva"},
 				Meta: org.Meta{KeyPost: "21"},
 			},
 			{
-				Code: LocalityHU,
+				Code: ZoneHU,
 				Name: i18n.String{i18n.ES: "Huesca"},
 				Meta: org.Meta{KeyPost: "22"},
 			},
 			{
-				Code: LocalityJ,
+				Code: ZoneJ,
 				Name: i18n.String{i18n.ES: "Jaén"},
 				Meta: org.Meta{KeyPost: "23"},
 			},
 			{
-				Code: LocalityLE,
+				Code: ZoneLE,
 				Name: i18n.String{i18n.ES: "León"},
 				Meta: org.Meta{KeyPost: "24"},
 			},
 			{
-				Code: LocalityL,
+				Code: ZoneL,
 				Name: i18n.String{i18n.ES: "Lérida / Lleida"},
 				Meta: org.Meta{KeyPost: "25"},
 			},
 			{
-				Code: LocalityLO,
+				Code: ZoneLO,
 				Name: i18n.String{i18n.ES: "La Rioja"},
 				Meta: org.Meta{KeyPost: "26"},
 			},
 			{
-				Code: LocalityLU,
+				Code: ZoneLU,
 				Name: i18n.String{i18n.ES: "Lugo"},
 				Meta: org.Meta{KeyPost: "27"},
 			},
 			{
-				Code: LocalityM,
+				Code: ZoneM,
 				Name: i18n.String{i18n.ES: "Madrid"},
 				Meta: org.Meta{KeyPost: "28"},
 			},
 			{
-				Code: LocalityMA,
+				Code: ZoneMA,
 				Name: i18n.String{i18n.ES: "Málaga"},
 				Meta: org.Meta{KeyPost: "29"},
 			},
 			{
-				Code: LocalityMU,
+				Code: ZoneMU,
 				Name: i18n.String{i18n.ES: "Murcia"},
 				Meta: org.Meta{KeyPost: "30"},
 			},
 			{
-				Code: LocalityNA,
+				Code: ZoneNA,
 				Name: i18n.String{i18n.ES: "Navarra"},
 				Meta: org.Meta{KeyPost: "31"},
 			},
 			{
-				Code: LocalityOR,
+				Code: ZoneOR,
 				Name: i18n.String{i18n.ES: "Orense"},
 				Meta: org.Meta{KeyPost: "32"},
 			},
 			{
-				Code: LocalityOU,
+				Code: ZoneOU,
 				Name: i18n.String{i18n.ES: "Orense"},
 				Meta: org.Meta{KeyPost: "32"},
 			},
 			{
-				Code: LocalityO,
+				Code: ZoneO,
 				Name: i18n.String{i18n.ES: "Asturias"},
 				Meta: org.Meta{KeyPost: "33"},
 			},
 			{
-				Code: LocalityP,
+				Code: ZoneP,
 				Name: i18n.String{i18n.ES: "Palencia"},
 				Meta: org.Meta{KeyPost: "34"},
 			},
 			{
-				Code: LocalityGC,
+				Code: ZoneGC,
 				Name: i18n.String{i18n.ES: "Las Palmas"},
 				Meta: org.Meta{KeyPost: "35"},
 			},
 			{
-				Code: LocalityPO,
+				Code: ZonePO,
 				Name: i18n.String{i18n.ES: "Pontevedra"},
 				Meta: org.Meta{KeyPost: "36"},
 			},
 			{
-				Code: LocalitySA,
+				Code: ZoneSA,
 				Name: i18n.String{i18n.ES: "Salamanca"},
 				Meta: org.Meta{KeyPost: "37"},
 			},
 			{
-				Code: LocalityTF,
+				Code: ZoneTF,
 				Name: i18n.String{i18n.ES: "Santa Cruz de Tenerife"},
 				Meta: org.Meta{KeyPost: "38"},
 			},
 			{
-				Code: LocalityS,
+				Code: ZoneS,
 				Name: i18n.String{i18n.ES: "Cantabria"},
 				Meta: org.Meta{KeyPost: "39"},
 			},
 			{
-				Code: LocalitySG,
+				Code: ZoneSG,
 				Name: i18n.String{i18n.ES: "Segovia"},
 				Meta: org.Meta{KeyPost: "40"},
 			},
 			{
-				Code: LocalitySE,
+				Code: ZoneSE,
 				Name: i18n.String{i18n.ES: "Sevilla"},
 				Meta: org.Meta{KeyPost: "41"},
 			},
 			{
-				Code: LocalitySO,
+				Code: ZoneSO,
 				Name: i18n.String{i18n.ES: "Soria"},
 				Meta: org.Meta{KeyPost: "42"},
 			},
 			{
-				Code: LocalityT,
+				Code: ZoneT,
 				Name: i18n.String{i18n.ES: "Tarragona"},
 				Meta: org.Meta{KeyPost: "43"},
 			},
 			{
-				Code: LocalityTE,
+				Code: ZoneTE,
 				Name: i18n.String{i18n.ES: "Teruel"},
 				Meta: org.Meta{KeyPost: "44"},
 			},
 			{
-				Code: LocalityTO,
+				Code: ZoneTO,
 				Name: i18n.String{i18n.ES: "Toledo"},
 				Meta: org.Meta{KeyPost: "45"},
 			},
 			{
-				Code: LocalityV,
+				Code: ZoneV,
 				Name: i18n.String{i18n.ES: "Valencia"},
 				Meta: org.Meta{KeyPost: "46"},
 			},
 			{
-				Code: LocalityVA,
+				Code: ZoneVA,
 				Name: i18n.String{i18n.ES: "Valladolid"},
 				Meta: org.Meta{KeyPost: "47"},
 			},
 			{
-				Code: LocalityBI,
+				Code: ZoneBI,
 				Name: i18n.String{i18n.ES: "Vizcaya"},
 				Meta: org.Meta{KeyPost: "48"},
 			},
 			{
-				Code: LocalityZA,
+				Code: ZoneZA,
 				Name: i18n.String{i18n.ES: "Zamora"},
 				Meta: org.Meta{KeyPost: "49"},
 			},
 			{
-				Code: LocalityZ,
+				Code: ZoneZ,
 				Name: i18n.String{i18n.ES: "Zaragoza"},
 				Meta: org.Meta{KeyPost: "50"},
 			},
 			{
-				Code: LocalityCE,
+				Code: ZoneCE,
 				Name: i18n.String{i18n.ES: "Ceuta"},
 				Meta: org.Meta{KeyPost: "51"},
 			},
 			{
-				Code: LocalityML,
+				Code: ZoneML,
 				Name: i18n.String{i18n.ES: "Melilla"},
 				Meta: org.Meta{KeyPost: "52"},
 			},

@@ -7,7 +7,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 func ValidateTaxIdentity(tID *org.TaxIdentity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)),
-		validation.Field(&tID.Locality, validation.Required, isValidLocalityCode),
+		validation.Field(&tID.Zone, validation.Required, isValidZoneCode),
 	)
 }
 
@@ -31,11 +31,11 @@ func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
 	return nil
 }
 
-var isValidLocalityCode = validation.In(validLocalityCodes()...)
+var isValidZoneCode = validation.In(validZoneCodes()...)
 
-func validLocalityCodes() []interface{} {
-	ls := make([]interface{}, len(localities))
-	for i, v := range localities {
+func validZoneCodes() []interface{} {
+	ls := make([]interface{}, len(zones))
+	for i, v := range zones {
 		ls[i] = v.Code
 	}
 	return ls

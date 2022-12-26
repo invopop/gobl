@@ -21,7 +21,7 @@ const (
 
 // Departments lists all the regions of Colombia including their ISO code.
 // This is not currently needed by GOBL, but we've left it here for future reference.
-var Departments = []tax.Locality{
+var Departments = []tax.Zone{
 	{Code: "91", Name: i18n.String{i18n.ES: "Amazonas"}, Meta: org.Meta{KeyISO: "AMA"}},
 	{Code: "05", Name: i18n.String{i18n.ES: "Antioquia"}, Meta: org.Meta{KeyISO: "ANT"}},
 	{Code: "81", Name: i18n.String{i18n.ES: "Arauca"}, Meta: org.Meta{KeyISO: "ARA"}},
@@ -57,7 +57,7 @@ var Departments = []tax.Locality{
 	{Code: "99", Name: i18n.String{i18n.ES: "Vichada"}, Meta: org.Meta{KeyISO: "VID"}},
 }
 
-var localities = []tax.Locality{
+var zones = []tax.Zone{
 	{Code: "91263", Name: i18n.String{i18n.ES: "EL ENCANTO"}, Meta: org.Meta{KeyDep: "Amazonas"}},
 	{Code: "91405", Name: i18n.String{i18n.ES: "LA CHORRERA"}, Meta: org.Meta{KeyDep: "Amazonas"}},
 	{Code: "91407", Name: i18n.String{i18n.ES: "LA PEDRERA"}, Meta: org.Meta{KeyDep: "Amazonas"}},

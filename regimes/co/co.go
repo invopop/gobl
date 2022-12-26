@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -27,9 +27,9 @@ const (
 	StampProviderDIANQR   org.Key = "dian-qr"
 )
 
-// Region provides the tax region definition
-func Region() *tax.Region {
-	return &tax.Region{
+// Regime provides the tax region definition
+func Regime() *tax.Regime {
+	return &tax.Regime{
 		Country:  l10n.CO,
 		Currency: "COP",
 		Name: i18n.String{
@@ -39,7 +39,7 @@ func Region() *tax.Region {
 		ValidateDocument:     Validate,
 		ValidateTaxIdentity:  ValidateTaxIdentity,
 		NormalizeTaxIdentity: NormalizeTaxIdentity,
-		Localities:           localities, // see localities.go
+		Zones:                zones, // see zones.go
 		Categories: []*tax.Category{
 			//
 			// VAT
