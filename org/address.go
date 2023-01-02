@@ -2,6 +2,7 @@ package org
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
 )
@@ -39,7 +40,7 @@ type Address struct {
 	// When the postal address is not sufficient, coordinates help locate the address more precisely.
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
 	// Any additional semi-structure details about the address.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Coordinates describes an exact geographical location in the world. We provide support
@@ -59,6 +60,7 @@ type Coordinates struct {
 func (a *Address) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.UUID),
+		validation.Field(&a.Locality, validation.Required),
 		validation.Field(&a.Country),
 		validation.Field(&a.Coordinates),
 		validation.Field(&a.Meta),

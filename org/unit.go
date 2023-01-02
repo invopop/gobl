@@ -2,6 +2,7 @@ package org
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
 )
 
@@ -75,7 +76,7 @@ type DefUnit struct {
 	// Description of the unit
 	Description string `json:"description" jsonschema:"title=Description"`
 	// Standard UN/ECE code
-	UNECE Code `json:"unece" jsonschema:"title=UN/ECE Unit Code"`
+	UNECE cbc.Code `json:"unece" jsonschema:"title=UN/ECE Unit Code"`
 }
 
 // UnitDefinitions describes each of the unit constants.
@@ -138,18 +139,18 @@ var UnitDefinitions = []DefUnit{
 
 // Validate ensures the unit looks correct
 func (u Unit) Validate() error {
-	return validation.Validate(string(u), validation.Match(KeyValidationRegexp))
+	return validation.Validate(string(u), validation.Match(cbc.KeyValidationRegexp))
 }
 
 // UNECE provides the unit's UN/ECE equivalent
 // value. If not available, returns CodeEmpty.
-func (u Unit) UNECE() Code {
+func (u Unit) UNECE() cbc.Code {
 	for _, def := range UnitDefinitions {
 		if def.Unit == u {
 			return def.UNECE
 		}
 	}
-	return CodeEmpty
+	return cbc.CodeEmpty
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.
@@ -168,7 +169,7 @@ func (u Unit) JSONSchema() *jsonschema.Schema {
 	}
 	// Add the custom unit to the end
 	s.AnyOf = append(s.AnyOf, &jsonschema.Schema{
-		Pattern:     KeyPattern,
+		Pattern:     cbc.KeyPattern,
 		Description: "Custom unit definition",
 	})
 	return s

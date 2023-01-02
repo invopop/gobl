@@ -7,8 +7,8 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -25,7 +25,7 @@ var errInvalidVAT = errors.New("invalid VAT number")
 // the calculations required to determine if it is valid.
 // These methods assume the code has already been cleaned and only
 // contains upper-case letters and numbers.
-func ValidateTaxIdentity(tID *org.TaxIdentity) error {
+func ValidateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
@@ -51,7 +51,7 @@ func validateTaxCode(value interface{}) error {
 // NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase. It'll also remove the "NL" part at beginning if present such as required
 // for EU VIES system which is redundant and not used in the validation process.
-func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+func NormalizeTaxIdentity(tID *tax.Identity) error {
 	if err := common.NormalizeTaxIdentity(tID); err != nil {
 		return err
 	}

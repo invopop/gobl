@@ -5,14 +5,14 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 )
 
-// Regime defines the holding structure for the definitions of taxes inside a country
+// RegimeData defines the holding structure for the definitions of taxes inside a country
 // or territory.
 type Regime struct {
 	// Name of the country
@@ -36,17 +36,13 @@ type Regime struct {
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
-	// ValidateDocument is a method to use to validate a document in a given region.
-	ValidateDocument func(doc interface{}) error `json:"-"`
+	// Validator is a method to use to validate a document in a given region.
+	Validator func(doc interface{}) error `json:"-"`
 
-	// ValidateTaxIdentity is a method used to check tax codes for the given
-	// region.
-	ValidateTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
-
-	// NormalizeTaxIdentity is a special method used to normalize the contents
-	// or a local tax identity. Typically this is used as part of the
-	// "Calculate" processes.
-	NormalizeTaxIdentity func(tID *org.TaxIdentity) error `json:"-"`
+	// Calculator is used to performs regime specific calculations on data,
+	// including any normalization that might need to take place such as
+	// with tax codes and removing white-space.
+	Calculator func(doc interface{}) error `json:"-"`
 }
 
 // Zone represents an area inside a country, like a province
@@ -59,12 +55,12 @@ type Zone struct {
 	// translations.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Any additional information
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Category contains the definition of a general type of tax inside a region.
 type Category struct {
-	Code org.Code    `json:"code" jsonschema:"title=Code"`
+	Code cbc.Code    `json:"code" jsonschema:"title=Code"`
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
@@ -81,7 +77,7 @@ type Category struct {
 // Rate defines a single rate inside a category
 type Rate struct {
 	// Key identifies this rate within the system
-	Key org.Key `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
@@ -105,6 +101,23 @@ type RateValue struct {
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// When true, this value should no longer be used.
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
+}
+
+// ValidateDocument performs validation on the provided document.
+func (r *Regime) ValidateDocument(obj interface{}) error {
+	if r.Validator != nil {
+		return r.Validator(obj)
+	}
+	return nil
+}
+
+// CalculateDocument performs any region specific calculations on the provided
+// object.
+func (r *Regime) CalculateDocument(obj interface{}) error {
+	if r.Calculator != nil {
+		return r.Calculator(obj)
+	}
+	return nil
 }
 
 // CurrencyDef provides the currency definition object for the region.
@@ -175,7 +188,7 @@ func checkRateValuesOrder(list interface{}) error {
 }
 
 // Category provides the requested category by its code.
-func (r *Regime) Category(code org.Code) *Category {
+func (r *Regime) Category(code cbc.Code) *Category {
 	for _, c := range r.Categories {
 		if c.Code == code {
 			return c
@@ -186,7 +199,7 @@ func (r *Regime) Category(code org.Code) *Category {
 
 // Rate provides the rate definition with a matching key for
 // the category.
-func (c *Category) Rate(key org.Key) *Rate {
+func (c *Category) Rate(key cbc.Key) *Rate {
 	for _, r := range c.Rates {
 		if r.Key == key {
 			return r

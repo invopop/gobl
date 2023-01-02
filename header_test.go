@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,6 +15,6 @@ func TestNewHeader(t *testing.T) {
 	assert.NotPanics(t, func() {
 		h.Meta["foo"] = "bar"
 		h.Tags = append(h.Tags, "foo")
-		h.Stamps = append(h.Stamps, &org.Stamp{})
+		h.Stamps = append(h.Stamps, &cbc.Stamp{})
 	}, "header and meta hash should have been initialized")
 }

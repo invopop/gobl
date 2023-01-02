@@ -1,18 +1,9 @@
 package regimes
 
 import (
-	"github.com/invopop/gobl/regimes/co"
-	"github.com/invopop/gobl/regimes/es"
-	"github.com/invopop/gobl/regimes/fr"
-	"github.com/invopop/gobl/regimes/gb"
-	"github.com/invopop/gobl/regimes/nl"
-	"github.com/invopop/gobl/tax"
+	_ "github.com/invopop/gobl/regimes/co"
+	_ "github.com/invopop/gobl/regimes/es"
+	_ "github.com/invopop/gobl/regimes/fr"
+	_ "github.com/invopop/gobl/regimes/gb"
+	_ "github.com/invopop/gobl/regimes/nl"
 )
-
-func init() {
-	tax.RegisterRegime(co.Regime())
-	tax.RegisterRegime(es.Regime())
-	tax.RegisterRegime(fr.Regime())
-	tax.RegisterRegime(gb.Regime())
-	tax.RegisterRegime(nl.Regime())
-}

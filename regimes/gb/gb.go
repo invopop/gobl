@@ -10,15 +10,19 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Regime provides the tax region definition
-func Regime() *tax.Regime {
+func init() {
+	tax.RegisterRegime(New())
+}
+
+// New provides the tax region definition
+func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.GB,
 		Currency: "GBP",
 		Name: i18n.String{
 			i18n.EN: "United Kingdom",
 		},
-		ValidateDocument: Validate,
+		Validator: Validate,
 		Categories: []*tax.Category{
 			//
 			// VAT

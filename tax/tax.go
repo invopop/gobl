@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -11,6 +10,4 @@ func init() {
 		Total{},
 		Regime{},
 	)
-	org.SetTaxIdentityValidation(ValidateTaxIdentity)
-	org.SetTaxIdentityNormalizer(NormalizeTaxIdentity)
 }

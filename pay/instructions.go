@@ -3,12 +3,13 @@ package pay
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/jsonschema"
 )
 
 // MethodKey represents a type of payment instruction
-type MethodKey org.Key
+type MethodKey cbc.Key
 
 // Standard payment method codes. This is a heavily reduced list of practical
 // codes which can be linked to UNTDID 4461 counterparts.
@@ -31,7 +32,7 @@ type MethodKeyDef struct {
 	// Details about the meaning of the key
 	Description string `json:"description" jsonschema:"title=Description"`
 	// UNTDID 4461 Equivalent Code
-	UNTDID4461 org.Code `json:"untdid4461" jsonschema:"title=UNTDID 4461 Code"`
+	UNTDID4461 cbc.Code `json:"untdid4461" jsonschema:"title=UNTDID 4461 Code"`
 }
 
 // MethodKeyDefinitions includes all the payment method keys that
@@ -67,7 +68,7 @@ type Instructions struct {
 	// Any additional instructions that may be required to make the payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Non-structured additional data that may be useful.
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Card contains simplified card holder data as a reference for the customer.
@@ -112,13 +113,13 @@ type Online struct {
 }
 
 // UNTDID4461 provides the standard UNTDID 4461 code for the instruction's key.
-func (i *Instructions) UNTDID4461() org.Code {
+func (i *Instructions) UNTDID4461() cbc.Code {
 	for _, v := range MethodKeyDefinitions {
 		if v.Key == i.Key {
 			return v.UNTDID4461
 		}
 	}
-	return org.CodeEmpty
+	return cbc.CodeEmpty
 }
 
 // Validate ensures the Online method details look correct.

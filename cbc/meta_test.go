@@ -1,15 +1,15 @@
-package org_test
+package cbc_test
 
 import (
 	"testing"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 )
 
 type testMetaStruct struct {
-	Meta org.Meta
+	Meta cbc.Meta
 }
 
 func (tms *testMetaStruct) Validate() error {
@@ -20,14 +20,14 @@ func (tms *testMetaStruct) Validate() error {
 
 func TestMeta(t *testing.T) {
 	v := new(testMetaStruct)
-	v.Meta = org.Meta{
-		org.Key("test"): "bar",
+	v.Meta = cbc.Meta{
+		cbc.Key("test"): "bar",
 	}
 	err := v.Validate()
 	assert.NoError(t, err)
 
-	v.Meta = org.Meta{
-		org.Key("bad_key"): "bar",
+	v.Meta = cbc.Meta{
+		cbc.Key("bad_key"): "bar",
 	}
 	err = v.Validate()
 	assert.Error(t, err)

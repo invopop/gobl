@@ -2,8 +2,8 @@ package bill
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 )
@@ -54,7 +54,7 @@ type Charge struct {
 	// Text description as to why the charge was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Additional semi-structured information.
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks the discount's fields.
@@ -79,7 +79,7 @@ func (m *Charge) GetTotal() num.Amount {
 	return m.Amount
 }
 
-func (m *Charge) removeIncludedTaxes(cat org.Code, accuracy uint32) *Charge {
+func (m *Charge) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Charge {
 	rate := m.Taxes.Get(cat)
 	if rate == nil {
 		return m

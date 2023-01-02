@@ -1,16 +1,16 @@
-package org_test
+package tax_test
 
 import (
 	"testing"
 
 	_ "github.com/invopop/gobl" // load all mods
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTaxIdentity(t *testing.T) {
-	tID := &org.TaxIdentity{
+	tID := &tax.Identity{
 		Country: l10n.ES,
 		Code:    "X3157928M",
 	}
@@ -19,7 +19,7 @@ func TestTaxIdentity(t *testing.T) {
 
 	// Invalid tax id that should be validated against regional
 	// checks.
-	tID = &org.TaxIdentity{
+	tID = &tax.Identity{
 		Country: l10n.ES,
 		Code:    "X3157928MMM",
 	}
@@ -27,7 +27,7 @@ func TestTaxIdentity(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "code: unknown type")
 
-	tID = &org.TaxIdentity{
+	tID = &tax.Identity{
 		Country: l10n.ES,
 		Code:    "  x315-7928 m",
 	}

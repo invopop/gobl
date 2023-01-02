@@ -3,7 +3,7 @@ package bill
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
@@ -27,11 +27,11 @@ type Preceding struct {
 	// How has the previous invoice been corrected?
 	CorrectionMethod CorrectionMethodKey `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
 	// Seals of approval from other organisations.
-	Stamps []*org.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Additional details regarding preceding invoice
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that may be useful in specific regions
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate ensures the preceding details look okay
@@ -51,7 +51,7 @@ func (p *Preceding) Validate() error {
 
 // CorrectionKey helps identify from a set of reasons why this correction
 // is happening
-type CorrectionKey org.Key
+type CorrectionKey cbc.Key
 
 // CorrectionMethodKey identifies that type of correction being applied.
 type CorrectionMethodKey string

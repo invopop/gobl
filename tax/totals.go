@@ -2,13 +2,13 @@ package tax
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 )
 
 // CategoryTotal groups together all rates inside a given category.
 type CategoryTotal struct {
-	Code      org.Code     `json:"code" jsonschema:"title=Code"`
+	Code      cbc.Code     `json:"code" jsonschema:"title=Code"`
 	Retained  bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
 	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
 	Base      num.Amount   `json:"base" jsonschema:"title=Base"`
@@ -20,7 +20,7 @@ type CategoryTotal struct {
 // a matching category and rate. The Key is optional as we may be using
 // the percentage to group rates.
 type RateTotal struct {
-	Key     org.Key        `json:"key,omitempty" jsonschema:"title=Key"`
+	Key     cbc.Key        `json:"key,omitempty" jsonschema:"title=Key"`
 	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
 	// Total amount of rate, excluding surcharges
@@ -87,7 +87,7 @@ func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 }
 
 // Category provides the category total for the matching code.
-func (t *Total) Category(code org.Code) *CategoryTotal {
+func (t *Total) Category(code cbc.Code) *CategoryTotal {
 	for _, ct := range t.Categories {
 		if ct.Code == code {
 			return ct
@@ -97,7 +97,7 @@ func (t *Total) Category(code org.Code) *CategoryTotal {
 }
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
-func (t *Total) Calculate(reg *Regime, lines []TaxableLine, taxIncluded org.Code, date cal.Date, zero num.Amount) error {
+func (t *Total) Calculate(reg *Regime, lines []TaxableLine, taxIncluded cbc.Code, date cal.Date, zero num.Amount) error {
 	if reg == nil {
 		return ErrMissingRegion
 	}
@@ -233,7 +233,7 @@ type taxLine struct {
 	taxes Set
 }
 
-func (tl *taxLine) rateForCategory(code org.Code) org.Key {
+func (tl *taxLine) rateForCategory(code cbc.Code) cbc.Key {
 	return tl.taxes.Rate(code)
 }
 

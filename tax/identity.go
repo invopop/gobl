@@ -1,6 +1,7 @@
-package org
+package tax
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
@@ -8,12 +9,12 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
-// TaxIdentity stores the details required to identify an entity for tax
+// Identity stores the details required to identify an entity for tax
 // purposes. There are two levels of accuracy that may be used to
 // describe where an entity is located: Country and Locality.
 // Country is a required field, but locality is optional according to
 // rules of a given tax jurisdiction.
-type TaxIdentity struct {
+type Identity struct {
 	// Unique universal identity code for this tax identity.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
@@ -22,8 +23,8 @@ type TaxIdentity struct {
 
 	// Where inside the country the tax identity holder is based for tax purposes
 	// like a village, town, district, city, county, state or province. For some
-	// areas, this could be a regular post or zip code. See the data package for
-	// your country or region for specific validation rules.
+	// areas, this could be a regular post or zip code. See the regime packages
+	// for specific validation rules.
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone Code"`
 
 	// What is the source document of the tax identity.
@@ -33,12 +34,12 @@ type TaxIdentity struct {
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 
 	// Additional details that may be required.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // SourceKey is used to identify different sources of tax
 // identities that may be required by some regions.
-type SourceKey Key
+type SourceKey cbc.Key
 
 // DefSourceKey defines the details we have regarding a document
 // source key.
@@ -50,33 +51,10 @@ type DefSourceKey struct {
 // RequireTaxIdentityCode is an additional check to use alongside
 // regular validation that will ensure the tax ID has a code
 // value set.
-var RequireTaxIdentityCode = validateTaxID{requireCode: true}
+var RequireIdentityCode = validateTaxID{requireCode: true}
 
 type validateTaxID struct {
 	requireCode bool
-}
-
-var (
-	regionTaxIDValidation func(tID *TaxIdentity) error
-	regionTaxIDNormalizer func(tID *TaxIdentity) error
-)
-
-// SetTaxIdentityValidation will prepare a reference to the tax ID regional
-// validator. This is an internal method and will panic if called more than once.
-func SetTaxIdentityValidation(cb func(tID *TaxIdentity) error) {
-	if regionTaxIDValidation != nil {
-		panic("tax identity regional validation function already set")
-	}
-	regionTaxIDValidation = cb
-}
-
-// SetTaxIdentityNormalizer will prepare a reference to the tax ID regional
-// cleaner. This is an internal method and will panic if called more than once.
-func SetTaxIdentityNormalizer(cb func(tID *TaxIdentity) error) {
-	if regionTaxIDNormalizer != nil {
-		panic("tax identity regional cleaner function already set")
-	}
-	regionTaxIDNormalizer = cb
 }
 
 // Main Source Key definitions.
@@ -117,35 +95,44 @@ var SourceKeyDefinitions = []DefSourceKey{
 	},
 }
 
+// Regime provides the regime object for this tax identity.
+func (id *Identity) Regime() *Regime {
+	return regimes.For(id.Country, id.Zone)
+}
+
 // Calculate will attempt to perform a regional tax normalization
 // on the tax identity.
-func (id *TaxIdentity) Calculate() error {
-	return regionTaxIDNormalizer(id)
+func (id *Identity) Calculate() error {
+	r := id.Regime()
+	if r != nil {
+		return r.CalculateDocument(id)
+	}
+	return nil
 }
 
 // Validate checks to ensure the tax ID contains all the required
-// fields. The check the value itself is in the expected format according
-// to the country, you'll need to use the region packages directly. See also
-// the region `ValidateTaxID` method.
-func (id *TaxIdentity) Validate() error {
+// fields and performs any regime specific validation based on the ID's
+// country and zone properties.
+func (id *Identity) Validate() error {
 	err := validation.ValidateStruct(id,
 		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required),
 		validation.Field(&id.Zone),
-		validation.Field(&id.Source, validation.In(validSourceKeys()...)),
+		validation.Field(&id.Source, validation.In(validSourceKeys...)),
 		validation.Field(&id.Meta),
 	)
 	if err != nil {
 		return err
 	}
-	if regionTaxIDValidation != nil {
-		return regionTaxIDValidation(id)
+	r := regimes.For(id.Country, id.Zone)
+	if r != nil {
+		return r.ValidateDocument(id)
 	}
 	return nil
 }
 
 func (v validateTaxID) Validate(value interface{}) error {
-	id, ok := value.(*TaxIdentity)
+	id, ok := value.(*Identity)
 	if !ok {
 		return nil
 	}
@@ -156,7 +143,9 @@ func (v validateTaxID) Validate(value interface{}) error {
 	)
 }
 
-func validSourceKeys() []interface{} {
+var validSourceKeys = generateValidSourceKeys()
+
+func generateValidSourceKeys() []interface{} {
 	ks := make([]interface{}, len(SourceKeyDefinitions))
 	for i, v := range SourceKeyDefinitions {
 		ks[i] = v.Key
@@ -174,7 +163,7 @@ func (k SourceKey) JSONSchema() *jsonschema.Schema {
 	}
 	for i, v := range SourceKeyDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{
-			Const:       Key(v.Key).String(),
+			Const:       cbc.Key(v.Key).String(),
 			Description: v.Description,
 		}
 	}

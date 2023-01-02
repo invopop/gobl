@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant
@@ -43,7 +44,10 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID, validation.Required, org.RequireTaxIdentityCode),
+		validation.Field(&obj.TaxID,
+			validation.Required,
+			tax.RequireIdentityCode,
+		),
 	)
 }
 
@@ -61,7 +65,7 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 			validation.Required,
 			validation.When(
 				obj.TaxID.Country.In(l10n.ES),
-				org.RequireTaxIdentityCode,
+				tax.RequireIdentityCode,
 			),
 		),
 	)

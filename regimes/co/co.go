@@ -3,6 +3,7 @@ package co
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -11,24 +12,28 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+func init() {
+	tax.RegisterRegime(New())
+}
+
 // Local tax categories.
 const (
-	TaxCategoryIC        org.Code = "IC"  // Impuesto Consumo
-	TaxCategoryICA       org.Code = "ICA" // Impuesto de Industria y Comercio
-	TaxCategoryINC       org.Code = "INC"
-	TaxCategoryReteIVA   org.Code = "RVAT" // ReteIVA
-	TaxCategoryReteRenta org.Code = "RR"   // ReteRenta
-	TaxCategoryReteICA   org.Code = "RICA" // ReteICA
+	TaxCategoryIC        cbc.Code = "IC"  // Impuesto Consumo
+	TaxCategoryICA       cbc.Code = "ICA" // Impuesto de Industria y Comercio
+	TaxCategoryINC       cbc.Code = "INC"
+	TaxCategoryReteIVA   cbc.Code = "RVAT" // ReteIVA
+	TaxCategoryReteRenta cbc.Code = "RR"   // ReteRenta
+	TaxCategoryReteICA   cbc.Code = "RICA" // ReteICA
 )
 
 // DIAN official codes to include in stamps.
 const (
-	StampProviderDIANCUFE org.Key = "dian-cufe"
-	StampProviderDIANQR   org.Key = "dian-qr"
+	StampProviderDIANCUFE cbc.Key = "dian-cufe"
+	StampProviderDIANQR   cbc.Key = "dian-qr"
 )
 
-// Regime provides the tax region definition
-func Regime() *tax.Regime {
+// New provides the tax region definition
+func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.CO,
 		Currency: "COP",
@@ -36,10 +41,9 @@ func Regime() *tax.Regime {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
-		ValidateDocument:     Validate,
-		ValidateTaxIdentity:  ValidateTaxIdentity,
-		NormalizeTaxIdentity: NormalizeTaxIdentity,
-		Zones:                zones, // see zones.go
+		Validator:  Validate,
+		Calculator: Calculate,
+		Zones:      zones, // see zones.go
 		Categories: []*tax.Category{
 			//
 			// VAT
@@ -181,6 +185,19 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
+	case *tax.Identity:
+		return validateTaxIdentity(obj)
+	}
+	return nil
+}
+
+// Calculate will attempt to clean the object passed to it.
+func Calculate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		return normalizeTaxIdentity(obj)
+	case *org.Party:
+		return normalizePartyWithTaxIdentity(obj)
 	}
 	return nil
 }

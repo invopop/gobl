@@ -9,8 +9,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+func init() {
+	tax.RegisterRegime(New())
+}
+
 // Regime provides the Dutch region definition
-func Regime() *tax.Regime {
+func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.NL,
 		Currency: "EUR",
@@ -18,9 +22,8 @@ func Regime() *tax.Regime {
 			i18n.EN: "The Netherlands",
 			i18n.NL: "Nederland",
 		},
-		ValidateDocument:     Validate,
-		ValidateTaxIdentity:  ValidateTaxIdentity,
-		NormalizeTaxIdentity: NormalizeTaxIdentity,
+		Validator:  Validate,
+		Calculator: Calculate,
 		Categories: []*tax.Category{
 			//
 			// VAT
@@ -85,6 +88,15 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
+	}
+	return nil
+}
+
+// Calculate performs region specific calculations on the document.
+func Calculate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		return NormalizeTaxIdentity(obj)
 	}
 	return nil
 }

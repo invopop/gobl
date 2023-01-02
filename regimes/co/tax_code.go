@@ -6,27 +6,46 @@ import (
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 )
 
 var (
 	nitMultipliers = []int{3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71}
 )
 
-// ValidateTaxIdentity checks to ensure the NIT code looks okay.
-func ValidateTaxIdentity(tID *org.TaxIdentity) error {
+// validateTaxIdentity checks to ensure the NIT code looks okay.
+func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)),
 		validation.Field(&tID.Zone, validation.Required, isValidZoneCode),
 	)
 }
 
-// NormalizeTaxIdentity will remove any whitespace or separation characters from
+// normalizeTaxIdentity will remove any whitespace or separation characters from
 // the tax code.
-func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+func normalizeTaxIdentity(tID *tax.Identity) error {
 	if err := common.NormalizeTaxIdentity(tID); err != nil {
 		return err
+	}
+	return nil
+}
+
+func normalizePartyWithTaxIdentity(p *org.Party) error {
+	// override the party's locality and region using the tax identity zone data.
+	tID := p.TaxID
+	if tID != nil && tID.Zone != "" {
+		z := zoneForCode(tID.Zone)
+		if z != nil {
+			if len(p.Addresses) == 0 {
+				return nil
+			}
+			a := p.Addresses[0]
+			a.Locality = z.Name.String(i18n.ES)
+			a.Region = z.Meta[KeyDep]
+		}
 	}
 	return nil
 }

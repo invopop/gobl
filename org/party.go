@@ -1,6 +1,8 @@
 package org
 
 import (
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -14,7 +16,7 @@ type Party struct {
 	// Unique identity code
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
-	TaxID *TaxIdentity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
+	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
 	// Legal name or representation of the organization.
 	Name string `json:"name" jsonschema:"title=Name"`
 	// Alternate short name.
@@ -32,7 +34,7 @@ type Party struct {
 	// Additional registration details about the company that may need to be included in a document.
 	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Person represents a human, and how to contact them electronically.
@@ -50,7 +52,7 @@ type Person struct {
 	// Regular phone or mobile numbers
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
 	// Data about the data.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Name represents what a human is called. This is a complex subject, see this
@@ -74,7 +76,7 @@ type Name struct {
 	// Titles to include after the name.
 	Suffix string `json:"suffix,omitempty" jsonschema:"title=Suffix"`
 	// Any additional useful data.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Email describes the electronic mailing details.
@@ -86,7 +88,7 @@ type Email struct {
 	// Electronic mailing address.
 	Address string `json:"addr" jsonschema:"title=Address"`
 	// Additional fields.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Telephone describes what is expected for a telephone number.
@@ -114,11 +116,15 @@ type Registration struct {
 	Entry   string     `json:"entry,omitempty" jsonschema:"title=Entry"`
 }
 
-// Calculate performs and calcuations required on the Party or
+// Calculate performs any calculations required on the Party or
 // it's properties, like the tax identity.
 func (p *Party) Calculate() error {
 	if p.TaxID != nil {
-		return p.TaxID.Calculate()
+		if err := p.TaxID.Calculate(); err != nil {
+			return err
+		}
+		r := p.TaxID.Regime()
+		return r.CalculateDocument(p)
 	}
 	return nil
 }

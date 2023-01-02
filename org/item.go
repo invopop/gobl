@@ -1,6 +1,7 @@
 package org
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/uuid"
@@ -41,7 +42,7 @@ type Item struct {
 	// Country code of where this item was from originally.
 	Origin l10n.CountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Additional meta information that may be useful
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // ItemCode contains a value and optional label property that means additional

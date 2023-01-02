@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 )
 
 // TaxCodeType represents the types of tax code which are issued
@@ -56,13 +56,13 @@ var (
 	taxCodeOrgRegexp      = regexp.MustCompile(`^(?P<type>[` + taxCodeOrgTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)
 )
 
-// ValidateTaxIdentity looks at the provided identity's code,
+// validateTaxIdentity looks at the provided identity's code,
 // determines the type, and performs the calculations
 // required to determine if it is valid.
 // These methods assume the code has already been normalized
 // and thus only contains upper-case letters and numbers with
 // no white space.
-func ValidateTaxIdentity(tID *org.TaxIdentity) error {
+func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
@@ -83,10 +83,10 @@ func validateTaxCode(value interface{}) error {
 	return err
 }
 
-// NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
+// normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase. It'll also remove the "ES" part at beginning if present such as required
 // for EU VIES system which is redundant and not used in the validation process.
-func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+func normalizeTaxIdentity(tID *tax.Identity) error {
 	if err := common.NormalizeTaxIdentity(tID); err != nil {
 		return err
 	}

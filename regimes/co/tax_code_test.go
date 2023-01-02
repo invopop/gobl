@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,11 +29,31 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &org.TaxIdentity{Country: l10n.ES, Code: ts.Code}
-		err := co.NormalizeTaxIdentity(tID)
+		tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
+		err := co.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
+}
+
+func TestNormalizeParty(t *testing.T) {
+	p := &org.Party{
+		Name: "Test Party",
+		TaxID: &tax.Identity{
+			Country: l10n.CO,
+			Code:    "412615332",
+			Zone:    "11001",
+		},
+		Addresses: []*org.Address{
+			{
+				Locality: "Foo",
+			},
+		},
+	}
+	err := co.Calculate(p)
+	assert.NoError(t, err)
+	assert.Equal(t, p.Addresses[0].Locality, "BOGOTÁ, D.C.")
+	assert.Equal(t, p.Addresses[0].Region, "Bogotá")
 }
 
 func TestValidateTaxIdentity(t *testing.T) {
@@ -93,8 +114,8 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &org.TaxIdentity{Country: l10n.CO, Code: tt.code, Zone: tt.zone}
-			err := co.ValidateTaxIdentity(tID)
+			tID := &tax.Identity{Country: l10n.CO, Code: tt.code, Zone: tt.zone}
+			err := co.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
 			} else {

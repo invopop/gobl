@@ -1,6 +1,8 @@
-package org
+package cbc
 
-import validation "github.com/go-ozzo/ozzo-validation/v4"
+import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+)
 
 // Stamp defines an official seal of approval from a third party like a governmental agency
 // or intermediary and should thus be included in any official envelopes.

@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
+	r := es.New()
 	tests := []struct {
 		Code     string
 		Expected string
@@ -36,8 +37,8 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &org.TaxIdentity{Country: l10n.ES, Code: ts.Code}
-		err := es.NormalizeTaxIdentity(tID)
+		tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
+		err := r.CalculateDocument(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
@@ -178,10 +179,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 			Expected: es.ErrTaxCodeUnknownType,
 		},
 	}
+	r := es.New()
 	for _, ts := range tests {
 		t.Run(ts.Code, func(t *testing.T) {
-			tID := &org.TaxIdentity{Country: l10n.ES, Code: ts.Code}
-			err := es.ValidateTaxIdentity(tID)
+			tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
+			err := r.ValidateDocument(tID)
 			if ts.Expected == nil {
 				assert.NoError(t, err)
 			} else {

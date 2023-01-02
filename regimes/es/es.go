@@ -3,62 +3,66 @@ package es
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
+func init() {
+	tax.RegisterRegime(New())
+}
+
 // Local tax category definitions which are not considered standard.
 const (
-	TaxCategoryIRPF org.Code = "IRPF"
-	TaxCategoryIGIC org.Code = "IGIC"
-	TaxCategoryIPSI org.Code = "IPSI"
+	TaxCategoryIRPF cbc.Code = "IRPF"
+	TaxCategoryIGIC cbc.Code = "IGIC"
+	TaxCategoryIPSI cbc.Code = "IPSI"
 )
 
 // Specific tax rate codes.
 const (
 	// IRPF non-standard Rates (usually for self-employed)
-	TaxRatePro                org.Key = "pro"                 // Professional Services
-	TaxRateProStart           org.Key = "pro-start"           // Professionals, first 2 years
-	TaxRateModules            org.Key = "modules"             // Module system
-	TaxRateAgriculture        org.Key = "agriculture"         // Agricultural
-	TaxRateAgricultureSpecial org.Key = "agriculture-special" // Agricultural special
-	TaxRateCapital            org.Key = "capital"             // Rental or Interest
+	TaxRatePro                cbc.Key = "pro"                 // Professional Services
+	TaxRateProStart           cbc.Key = "pro-start"           // Professionals, first 2 years
+	TaxRateModules            cbc.Key = "modules"             // Module system
+	TaxRateAgriculture        cbc.Key = "agriculture"         // Agricultural
+	TaxRateAgricultureSpecial cbc.Key = "agriculture-special" // Agricultural special
+	TaxRateCapital            cbc.Key = "capital"             // Rental or Interest
 
 	// Special tax rate surcharge extension
-	TaxRateEquivalence org.Key = "eqs"
+	TaxRateEquivalence cbc.Key = "eqs"
 )
 
 // Scheme key definitions
 const (
-	SchemeSimplified      org.Key = "simplified"
-	SchemeCustomerIssued  org.Key = "customer-issued"
-	SchemeTravelAgency    org.Key = "travel-agency"
-	SchemeSecondHandGoods org.Key = "second-hand-goods"
-	SchemeArt             org.Key = "art"
-	SchemeAntiques        org.Key = "antiques"
-	SchemeCashBasis       org.Key = "cash-basis"
+	SchemeSimplified      cbc.Key = "simplified"
+	SchemeCustomerIssued  cbc.Key = "customer-issued"
+	SchemeTravelAgency    cbc.Key = "travel-agency"
+	SchemeSecondHandGoods cbc.Key = "second-hand-goods"
+	SchemeArt             cbc.Key = "art"
+	SchemeAntiques        cbc.Key = "antiques"
+	SchemeCashBasis       cbc.Key = "cash-basis"
 )
 
 // Official stamps or codes validated by government agencies
 const (
 	// TicketBAI (Basque Country) codes used for stamps.
-	StampProviderTBAICode org.Key = "tbai-code"
-	StampProviderTBAIQR   org.Key = "tbai-qr"
+	StampProviderTBAICode cbc.Key = "tbai-code"
+	StampProviderTBAIQR   cbc.Key = "tbai-qr"
 )
 
 // Inbox key and role definitions
 const (
-	InboxKeyFACE org.Key = "face"
+	InboxKeyFACE cbc.Key = "face"
 
 	// Main roles defined in FACE
-	InboxRoleFiscal    org.Key = "fiscal"    // Fiscal / 01
-	InboxRoleRecipient org.Key = "recipient" // Receptor / 02
-	InboxRolePayer     org.Key = "payer"     // Pagador / 03
-	InboxRoleCustomer  org.Key = "customer"  // Comprador / 04
+	InboxRoleFiscal    cbc.Key = "fiscal"    // Fiscal / 01
+	InboxRoleRecipient cbc.Key = "recipient" // Receptor / 02
+	InboxRolePayer     cbc.Key = "payer"     // Pagador / 03
+	InboxRoleCustomer  cbc.Key = "customer"  // Comprador / 04
 
 )
 
@@ -123,11 +127,11 @@ const (
 
 // Custom keys used typically in meta information.
 const (
-	KeyPost org.Key = "post"
+	KeyAddressCode cbc.Key = "post"
 )
 
-// Regime provides the Spanish region definition
-func Regime() *tax.Regime {
+// New provides the Spanish tax regime definition
+func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.ES,
 		Currency: "EUR",
@@ -135,284 +139,283 @@ func Regime() *tax.Regime {
 			i18n.EN: "Spain",
 			i18n.ES: "España",
 		},
-		ValidateDocument:     Validate,
-		ValidateTaxIdentity:  ValidateTaxIdentity,
-		NormalizeTaxIdentity: NormalizeTaxIdentity,
+		Validator:  Validate,
+		Calculator: Calculate,
 		Zones: []tax.Zone{
 			{
 				Code: ZoneVI,
 				Name: i18n.String{i18n.ES: "Ávila"},
-				Meta: org.Meta{KeyPost: "01"},
+				Meta: cbc.Meta{KeyAddressCode: "01"},
 			},
 			{
 				Code: ZoneAB,
 				Name: i18n.String{i18n.ES: "Albacete"},
-				Meta: org.Meta{KeyPost: "02"},
+				Meta: cbc.Meta{KeyAddressCode: "02"},
 			},
 			{
 				Code: ZoneA,
 				Name: i18n.String{i18n.ES: "Alicante"},
-				Meta: org.Meta{KeyPost: "03"},
+				Meta: cbc.Meta{KeyAddressCode: "03"},
 			},
 			{
 				Code: ZoneAL,
 				Name: i18n.String{i18n.ES: "Almería"},
-				Meta: org.Meta{KeyPost: "04"},
+				Meta: cbc.Meta{KeyAddressCode: "04"},
 			},
 			{
 				Code: ZoneAV,
 				Name: i18n.String{i18n.ES: "Ávila"},
-				Meta: org.Meta{KeyPost: "05"},
+				Meta: cbc.Meta{KeyAddressCode: "05"},
 			},
 			{
 				Code: ZoneBA,
 				Name: i18n.String{i18n.ES: "Badajoz"},
-				Meta: org.Meta{KeyPost: "06"},
+				Meta: cbc.Meta{KeyAddressCode: "06"},
 			},
 			{
 				Code: ZonePM,
 				Name: i18n.String{i18n.ES: "Baleares"},
-				Meta: org.Meta{KeyPost: "07"},
+				Meta: cbc.Meta{KeyAddressCode: "07"},
 			},
 			{
 				Code: ZoneIB,
 				Name: i18n.String{i18n.ES: "Baleares"},
-				Meta: org.Meta{KeyPost: "07"},
+				Meta: cbc.Meta{KeyAddressCode: "07"},
 			},
 			{
 				Code: ZoneB,
 				Name: i18n.String{i18n.ES: "Barcelona"},
-				Meta: org.Meta{KeyPost: "08"},
+				Meta: cbc.Meta{KeyAddressCode: "08"},
 			},
 			{
 				Code: ZoneBU,
 				Name: i18n.String{i18n.ES: "Burgos"},
-				Meta: org.Meta{KeyPost: "09"},
+				Meta: cbc.Meta{KeyAddressCode: "09"},
 			},
 			{
 				Code: ZoneCC,
 				Name: i18n.String{i18n.ES: "Cáceres"},
-				Meta: org.Meta{KeyPost: "10"},
+				Meta: cbc.Meta{KeyAddressCode: "10"},
 			},
 			{
 				Code: ZoneCA,
 				Name: i18n.String{i18n.ES: "Cadiz"},
-				Meta: org.Meta{KeyPost: "11"},
+				Meta: cbc.Meta{KeyAddressCode: "11"},
 			},
 			{
 				Code: ZoneCS,
 				Name: i18n.String{i18n.ES: "Castellón"},
-				Meta: org.Meta{KeyPost: "12"},
+				Meta: cbc.Meta{KeyAddressCode: "12"},
 			},
 			{
 				Code: ZoneCR,
 				Name: i18n.String{i18n.ES: "Ciudad Real"},
-				Meta: org.Meta{KeyPost: "13"},
+				Meta: cbc.Meta{KeyAddressCode: "13"},
 			},
 			{
 				Code: ZoneCO,
 				Name: i18n.String{i18n.ES: "Cordoba"},
-				Meta: org.Meta{KeyPost: "14"},
+				Meta: cbc.Meta{KeyAddressCode: "14"},
 			},
 			{
 				Code: ZoneC,
 				Name: i18n.String{i18n.ES: "La Coruña"},
-				Meta: org.Meta{KeyPost: "15"},
+				Meta: cbc.Meta{KeyAddressCode: "15"},
 			},
 			{
 				Code: ZoneCU,
 				Name: i18n.String{i18n.ES: "Cuenca"},
-				Meta: org.Meta{KeyPost: "16"},
+				Meta: cbc.Meta{KeyAddressCode: "16"},
 			},
 			{
 				Code: ZoneGE,
 				Name: i18n.String{i18n.ES: "Gerona"},
-				Meta: org.Meta{KeyPost: "17"},
+				Meta: cbc.Meta{KeyAddressCode: "17"},
 			},
 			{
 				Code: ZoneGI,
 				Name: i18n.String{i18n.ES: "Girona"},
-				Meta: org.Meta{KeyPost: "17"},
+				Meta: cbc.Meta{KeyAddressCode: "17"},
 			},
 			{
 				Code: ZoneGR,
 				Name: i18n.String{i18n.ES: "Granada"},
-				Meta: org.Meta{KeyPost: "18"},
+				Meta: cbc.Meta{KeyAddressCode: "18"},
 			},
 			{
 				Code: ZoneGU,
 				Name: i18n.String{i18n.ES: "Guadalajara"},
-				Meta: org.Meta{KeyPost: "19"},
+				Meta: cbc.Meta{KeyAddressCode: "19"},
 			},
 			{
 				Code: ZoneSS,
 				Name: i18n.String{i18n.ES: "Guipúzcoa"},
-				Meta: org.Meta{KeyPost: "20"},
+				Meta: cbc.Meta{KeyAddressCode: "20"},
 			},
 			{
 				Code: ZoneH,
 				Name: i18n.String{i18n.ES: "Huelva"},
-				Meta: org.Meta{KeyPost: "21"},
+				Meta: cbc.Meta{KeyAddressCode: "21"},
 			},
 			{
 				Code: ZoneHU,
 				Name: i18n.String{i18n.ES: "Huesca"},
-				Meta: org.Meta{KeyPost: "22"},
+				Meta: cbc.Meta{KeyAddressCode: "22"},
 			},
 			{
 				Code: ZoneJ,
 				Name: i18n.String{i18n.ES: "Jaén"},
-				Meta: org.Meta{KeyPost: "23"},
+				Meta: cbc.Meta{KeyAddressCode: "23"},
 			},
 			{
 				Code: ZoneLE,
 				Name: i18n.String{i18n.ES: "León"},
-				Meta: org.Meta{KeyPost: "24"},
+				Meta: cbc.Meta{KeyAddressCode: "24"},
 			},
 			{
 				Code: ZoneL,
 				Name: i18n.String{i18n.ES: "Lérida / Lleida"},
-				Meta: org.Meta{KeyPost: "25"},
+				Meta: cbc.Meta{KeyAddressCode: "25"},
 			},
 			{
 				Code: ZoneLO,
 				Name: i18n.String{i18n.ES: "La Rioja"},
-				Meta: org.Meta{KeyPost: "26"},
+				Meta: cbc.Meta{KeyAddressCode: "26"},
 			},
 			{
 				Code: ZoneLU,
 				Name: i18n.String{i18n.ES: "Lugo"},
-				Meta: org.Meta{KeyPost: "27"},
+				Meta: cbc.Meta{KeyAddressCode: "27"},
 			},
 			{
 				Code: ZoneM,
 				Name: i18n.String{i18n.ES: "Madrid"},
-				Meta: org.Meta{KeyPost: "28"},
+				Meta: cbc.Meta{KeyAddressCode: "28"},
 			},
 			{
 				Code: ZoneMA,
 				Name: i18n.String{i18n.ES: "Málaga"},
-				Meta: org.Meta{KeyPost: "29"},
+				Meta: cbc.Meta{KeyAddressCode: "29"},
 			},
 			{
 				Code: ZoneMU,
 				Name: i18n.String{i18n.ES: "Murcia"},
-				Meta: org.Meta{KeyPost: "30"},
+				Meta: cbc.Meta{KeyAddressCode: "30"},
 			},
 			{
 				Code: ZoneNA,
 				Name: i18n.String{i18n.ES: "Navarra"},
-				Meta: org.Meta{KeyPost: "31"},
+				Meta: cbc.Meta{KeyAddressCode: "31"},
 			},
 			{
 				Code: ZoneOR,
 				Name: i18n.String{i18n.ES: "Orense"},
-				Meta: org.Meta{KeyPost: "32"},
+				Meta: cbc.Meta{KeyAddressCode: "32"},
 			},
 			{
 				Code: ZoneOU,
 				Name: i18n.String{i18n.ES: "Orense"},
-				Meta: org.Meta{KeyPost: "32"},
+				Meta: cbc.Meta{KeyAddressCode: "32"},
 			},
 			{
 				Code: ZoneO,
 				Name: i18n.String{i18n.ES: "Asturias"},
-				Meta: org.Meta{KeyPost: "33"},
+				Meta: cbc.Meta{KeyAddressCode: "33"},
 			},
 			{
 				Code: ZoneP,
 				Name: i18n.String{i18n.ES: "Palencia"},
-				Meta: org.Meta{KeyPost: "34"},
+				Meta: cbc.Meta{KeyAddressCode: "34"},
 			},
 			{
 				Code: ZoneGC,
 				Name: i18n.String{i18n.ES: "Las Palmas"},
-				Meta: org.Meta{KeyPost: "35"},
+				Meta: cbc.Meta{KeyAddressCode: "35"},
 			},
 			{
 				Code: ZonePO,
 				Name: i18n.String{i18n.ES: "Pontevedra"},
-				Meta: org.Meta{KeyPost: "36"},
+				Meta: cbc.Meta{KeyAddressCode: "36"},
 			},
 			{
 				Code: ZoneSA,
 				Name: i18n.String{i18n.ES: "Salamanca"},
-				Meta: org.Meta{KeyPost: "37"},
+				Meta: cbc.Meta{KeyAddressCode: "37"},
 			},
 			{
 				Code: ZoneTF,
 				Name: i18n.String{i18n.ES: "Santa Cruz de Tenerife"},
-				Meta: org.Meta{KeyPost: "38"},
+				Meta: cbc.Meta{KeyAddressCode: "38"},
 			},
 			{
 				Code: ZoneS,
 				Name: i18n.String{i18n.ES: "Cantabria"},
-				Meta: org.Meta{KeyPost: "39"},
+				Meta: cbc.Meta{KeyAddressCode: "39"},
 			},
 			{
 				Code: ZoneSG,
 				Name: i18n.String{i18n.ES: "Segovia"},
-				Meta: org.Meta{KeyPost: "40"},
+				Meta: cbc.Meta{KeyAddressCode: "40"},
 			},
 			{
 				Code: ZoneSE,
 				Name: i18n.String{i18n.ES: "Sevilla"},
-				Meta: org.Meta{KeyPost: "41"},
+				Meta: cbc.Meta{KeyAddressCode: "41"},
 			},
 			{
 				Code: ZoneSO,
 				Name: i18n.String{i18n.ES: "Soria"},
-				Meta: org.Meta{KeyPost: "42"},
+				Meta: cbc.Meta{KeyAddressCode: "42"},
 			},
 			{
 				Code: ZoneT,
 				Name: i18n.String{i18n.ES: "Tarragona"},
-				Meta: org.Meta{KeyPost: "43"},
+				Meta: cbc.Meta{KeyAddressCode: "43"},
 			},
 			{
 				Code: ZoneTE,
 				Name: i18n.String{i18n.ES: "Teruel"},
-				Meta: org.Meta{KeyPost: "44"},
+				Meta: cbc.Meta{KeyAddressCode: "44"},
 			},
 			{
 				Code: ZoneTO,
 				Name: i18n.String{i18n.ES: "Toledo"},
-				Meta: org.Meta{KeyPost: "45"},
+				Meta: cbc.Meta{KeyAddressCode: "45"},
 			},
 			{
 				Code: ZoneV,
 				Name: i18n.String{i18n.ES: "Valencia"},
-				Meta: org.Meta{KeyPost: "46"},
+				Meta: cbc.Meta{KeyAddressCode: "46"},
 			},
 			{
 				Code: ZoneVA,
 				Name: i18n.String{i18n.ES: "Valladolid"},
-				Meta: org.Meta{KeyPost: "47"},
+				Meta: cbc.Meta{KeyAddressCode: "47"},
 			},
 			{
 				Code: ZoneBI,
 				Name: i18n.String{i18n.ES: "Vizcaya"},
-				Meta: org.Meta{KeyPost: "48"},
+				Meta: cbc.Meta{KeyAddressCode: "48"},
 			},
 			{
 				Code: ZoneZA,
 				Name: i18n.String{i18n.ES: "Zamora"},
-				Meta: org.Meta{KeyPost: "49"},
+				Meta: cbc.Meta{KeyAddressCode: "49"},
 			},
 			{
 				Code: ZoneZ,
 				Name: i18n.String{i18n.ES: "Zaragoza"},
-				Meta: org.Meta{KeyPost: "50"},
+				Meta: cbc.Meta{KeyAddressCode: "50"},
 			},
 			{
 				Code: ZoneCE,
 				Name: i18n.String{i18n.ES: "Ceuta"},
-				Meta: org.Meta{KeyPost: "51"},
+				Meta: cbc.Meta{KeyAddressCode: "51"},
 			},
 			{
 				Code: ZoneML,
 				Name: i18n.String{i18n.ES: "Melilla"},
-				Meta: org.Meta{KeyPost: "52"},
+				Meta: cbc.Meta{KeyAddressCode: "52"},
 			},
 		},
 		Schemes: []*tax.Scheme{
@@ -423,11 +426,11 @@ func Regime() *tax.Regime {
 					i18n.EN: "Reverse Charge",
 					i18n.ES: "Inversión del sujeto pasivo",
 				},
-				Categories: []org.Code{
+				Categories: []cbc.Code{
 					common.TaxCategoryVAT,
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(common.SchemeReverseCharge),
 					Text: "Reverse Charge / Inversión del sujeto pasivo.",
 				},
@@ -450,8 +453,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Simplified tax scheme",
 					i18n.ES: "Contribuyente en régimen simplificado",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeSimplified),
 					Text: "Factura expedida por contibuyente en régimen simplificado.",
 				},
@@ -463,8 +466,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Customer issued invoice",
 					i18n.ES: "Facturación por el destinatario",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeCustomerIssued),
 					Text: "Facturación por el destinatario.",
 				},
@@ -476,8 +479,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Special scheme for travel agencies",
 					i18n.ES: "Régimen especial de las agencias de viajes",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeTravelAgency),
 					Text: "Régimen especial de las agencias de viajes.",
 				},
@@ -489,8 +492,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Special scheme for second-hand goods",
 					i18n.ES: "Régimen especial de los bienes usados",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeSecondHandGoods),
 					Text: "Régimen especial de los bienes usados.",
 				},
@@ -502,8 +505,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Special scheme of works of art",
 					i18n.ES: "Régimen especial de los objetos de arte",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeArt),
 					Text: "Régimen especial de los objetos de arte.",
 				},
@@ -515,8 +518,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Special scheme of antiques and collectables",
 					i18n.ES: "Régimen especial de las antigüedades y objetos de colección",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeAntiques),
 					Text: "Régimen especial de las antigüedades y objetos de colección.",
 				},
@@ -528,8 +531,8 @@ func Regime() *tax.Regime {
 					i18n.EN: "Special scheme on cash basis",
 					i18n.ES: "Régimen especial del criterio de caja",
 				},
-				Note: &org.Note{
-					Key:  org.NoteKeyLegal,
+				Note: &cbc.Note{
+					Key:  cbc.NoteKeyLegal,
 					Src:  string(SchemeCashBasis),
 					Text: "Régimen especial del criterio de caja.",
 				},
@@ -850,6 +853,17 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
+	case *tax.Identity:
+		return validateTaxIdentity(obj)
+	}
+	return nil
+}
+
+// Calculate will perform any regime specific calculations.
+func Calculate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		return normalizeTaxIdentity(obj)
 	}
 	return nil
 }

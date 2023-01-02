@@ -1,15 +1,15 @@
-package org_test
+package cbc_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestKey(t *testing.T) {
 	var checks = []struct {
-		key org.Key
+		key cbc.Key
 		err bool
 		val string
 	}{
@@ -17,7 +17,7 @@ func TestKey(t *testing.T) {
 		{key: "test"},
 		{key: "1a"},
 		{key: "ack1"},
-		{key: org.Key("1a").With("foo"), val: "1a+foo"},
+		{key: cbc.Key("1a").With("foo"), val: "1a+foo"},
 		{key: "-a", err: true},
 		{key: "a-", err: true},
 		{key: "1", err: true},
@@ -42,7 +42,7 @@ func TestKey(t *testing.T) {
 }
 
 func TestKeyIn(t *testing.T) {
-	c := org.Key("standard")
+	c := cbc.Key("standard")
 
 	assert.True(t, c.In("pro", "reduced+eqs", "standard"))
 	assert.False(t, c.In("pro", "reduced"))

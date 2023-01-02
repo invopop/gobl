@@ -2,13 +2,13 @@ package bill
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
 )
 
 // InvoiceType defines the type of invoice document according to a subset of the UNTDID 1001
 // standard list.
-type InvoiceType org.Key
+type InvoiceType cbc.Key
 
 // Predefined list of the invoice type codes officially supported.
 const (
@@ -26,7 +26,7 @@ const (
 type InvoiceTypeDef struct {
 	Key         InvoiceType `json:"key" jsonschema:"title=InvoiceType Key"`
 	Description string      `json:"description" jsonschema:"title=Description"`
-	UNTDID1001  org.Code    `json:"untdid1001" jsonschema:"title=UNTDID 1001 Code"`
+	UNTDID1001  cbc.Code    `json:"untdid1001" jsonschema:"title=UNTDID 1001 Code"`
 }
 
 // InvoiceTypeDefinitions describes each of the InvoiceTypes supported by
@@ -59,13 +59,13 @@ func (k InvoiceType) Validate() error {
 }
 
 // UNTDID1001 provides the official code number assigned to the type.
-func (k InvoiceType) UNTDID1001() org.Code {
+func (k InvoiceType) UNTDID1001() cbc.Code {
 	for _, d := range InvoiceTypeDefinitions {
 		if d.Key == k {
 			return d.UNTDID1001
 		}
 	}
-	return org.CodeEmpty
+	return cbc.CodeEmpty
 }
 
 // In checks to see if the type key equals one of the
@@ -89,7 +89,7 @@ func (InvoiceType) JSONSchema() *jsonschema.Schema {
 	}
 	for i, v := range InvoiceTypeDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{
-			Const:       org.Key(v.Key).String(),
+			Const:       cbc.Key(v.Key).String(),
 			Description: v.Description,
 		}
 	}

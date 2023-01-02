@@ -4,31 +4,32 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
 )
 
 // Standard tax categories that may be shared between countries.
 const (
-	TaxCategoryVAT org.Code = "VAT"
+	TaxCategoryVAT cbc.Code = "VAT"
 )
 
 // Most commonly used codes. Local regions may add their own rate codes.
 const (
-	TaxRateZero         org.Key = "zero"
-	TaxRateStandard     org.Key = "standard"
-	TaxRateReduced      org.Key = "reduced"
-	TaxRateSuperReduced org.Key = "super-reduced"
+	TaxRateZero         cbc.Key = "zero"
+	TaxRateStandard     cbc.Key = "standard"
+	TaxRateReduced      cbc.Key = "reduced"
+	TaxRateSuperReduced cbc.Key = "super-reduced"
 )
 
 // Standard scheme definitions
 const (
-	SchemeReverseCharge org.Key = "reverse-charge"
-	SchemeCustomerRates org.Key = "customer-rates"
+	SchemeReverseCharge cbc.Key = "reverse-charge"
+	SchemeCustomerRates cbc.Key = "customer-rates"
 )
 
 // Common inbox keys
 const (
-	InboxKeyPEPPOL org.Key = "peppol-id"
+	InboxKeyPEPPOL cbc.Key = "peppol-id"
 )
 
 var (
@@ -37,7 +38,7 @@ var (
 
 // NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase.
-func NormalizeTaxIdentity(tID *org.TaxIdentity) error {
+func NormalizeTaxIdentity(tID *tax.Identity) error {
 	code := strings.ToUpper(tID.Code)
 	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
 	tID.Code = code
