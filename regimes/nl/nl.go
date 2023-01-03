@@ -13,7 +13,7 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
-// Regime provides the Dutch region definition
+// New provides the Dutch region definition
 func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.NL,

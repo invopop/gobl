@@ -12,7 +12,7 @@ import (
 	"github.com/invopop/gobl/num"
 )
 
-// RegimeData defines the holding structure for the definitions of taxes inside a country
+// Regime defines the holding structure for the definitions of taxes inside a country
 // or territory.
 type Regime struct {
 	// Name of the country

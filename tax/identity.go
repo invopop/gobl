@@ -48,7 +48,7 @@ type DefSourceKey struct {
 	Description string    `json:"description" jsonschema:"title=Description"`
 }
 
-// RequireTaxIdentityCode is an additional check to use alongside
+// RequireIdentityCode is an additional check to use alongside
 // regular validation that will ensure the tax ID has a code
 // value set.
 var RequireIdentityCode = validateTaxID{requireCode: true}
