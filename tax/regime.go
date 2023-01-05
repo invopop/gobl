@@ -49,11 +49,15 @@ type Regime struct {
 // or a state, which shares the basic definitions of the country, but
 // may vary in some validation rules.
 type Zone struct {
-	// Code
+	// Unique zone code.
 	Code l10n.Code `json:"code" jsonschema:"title=Code"`
-	// Name of the zone with local and hopefully international
-	// translations.
-	Name i18n.String `json:"name" jsonschema:"title=Name"`
+	// Name of the zone to be use if a locality or region is not applicable.
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Village, town, district, or city name which should coincide with
+	// address data.
+	Locality i18n.String `json:"locality,omitempty" jsonschema:"title=Locality"`
+	// Province, county, or state which should match address data.
+	Region i18n.String `json:"region,omitempty" jsonschema:"title=Region"`
 	// Any additional information
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -136,6 +140,19 @@ func (r *Regime) Validate() error {
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Categories, validation.Required),
+		validation.Field(&r.Zones),
+	)
+	return err
+}
+
+// Validate ensures that the zone looks correct.
+func (z *Zone) Validate() error {
+	err := validation.ValidateStruct(z,
+		validation.Field(&z.Code, validation.Required),
+		validation.Field(&z.Name),
+		validation.Field(&z.Locality),
+		validation.Field(&z.Region),
+		validation.Field(&z.Meta),
 	)
 	return err
 }

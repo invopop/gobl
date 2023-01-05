@@ -65,9 +65,9 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, inv.Supplier.Addresses[0].Locality, "BOGOTÁ, D.C.")
+	assert.Equal(t, inv.Supplier.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, inv.Supplier.Addresses[0].Region, "Bogotá")
-	assert.Equal(t, inv.Customer.Addresses[0].Locality, "SABANALARGA")
+	assert.Equal(t, inv.Customer.Addresses[0].Locality, "Sabanalarga")
 	assert.Equal(t, inv.Customer.Addresses[0].Region, "Atlántico")
 
 	inv.Supplier.TaxID.Zone = ""

@@ -52,7 +52,7 @@ func TestNormalizeParty(t *testing.T) {
 	}
 	err := co.Calculate(p)
 	assert.NoError(t, err)
-	assert.Equal(t, p.Addresses[0].Locality, "BOGOTÁ, D.C.")
+	assert.Equal(t, p.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, p.Addresses[0].Region, "Bogotá")
 }
 

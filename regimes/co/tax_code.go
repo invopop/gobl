@@ -43,8 +43,8 @@ func normalizePartyWithTaxIdentity(p *org.Party) error {
 				return nil
 			}
 			a := p.Addresses[0]
-			a.Locality = z.Name.String(i18n.ES)
-			a.Region = z.Meta[KeyDep]
+			a.Locality = z.Locality.String(i18n.ES)
+			a.Region = z.Region.String(i18n.ES)
 		}
 	}
 	return nil

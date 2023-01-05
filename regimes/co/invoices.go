@@ -26,6 +26,7 @@ func (v *invoiceValidator) validate() error {
 			validation.Required,
 			validation.By(v.validParty),
 		)),
+		validation.Field(&inv.Outlays, validation.Length(0, 0)),
 	)
 }
 
