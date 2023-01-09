@@ -28,7 +28,7 @@ const (
 
 // DIAN official codes to include in stamps.
 const (
-	StampProviderDIANCUFE cbc.Key = "dian-cufe"
+	StampProviderDIANCUDE cbc.Key = "dian-cude"
 	StampProviderDIANQR   cbc.Key = "dian-qr"
 )
 
