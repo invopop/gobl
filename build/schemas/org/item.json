@@ -52,7 +52,7 @@
           "description": "Country code of where this item was from originally."
         },
         "meta": {
-          "$ref": "https://gobl.org/draft-0/org/meta",
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
           "description": "Additional meta information that may be useful"
         }
@@ -84,5 +84,5 @@
       "description": "ItemCode contains a value and optional label property that means additional codes can be added to an item."
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }

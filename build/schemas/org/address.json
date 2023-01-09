@@ -53,12 +53,12 @@
         "locality": {
           "type": "string",
           "title": "Locality",
-          "description": "The village, town, district, or city."
+          "description": "Village, town, district, or city, typically inside a region."
         },
         "region": {
           "type": "string",
           "title": "Region",
-          "description": "Province, County, or State."
+          "description": "Province, county, or state, inside a country."
         },
         "code": {
           "type": "string",
@@ -76,7 +76,7 @@
           "description": "When the postal address is not sufficient, coordinates help locate the address more precisely."
         },
         "meta": {
-          "$ref": "https://gobl.org/draft-0/org/meta",
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
           "description": "Any additional semi-structure details about the address."
         }
@@ -88,5 +88,5 @@
       "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address."
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }

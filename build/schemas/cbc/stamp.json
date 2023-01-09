@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/stamp",
+  "$id": "https://gobl.org/draft-0/cbc/stamp",
   "$ref": "#/$defs/Stamp",
   "$defs": {
     "Stamp": {
       "properties": {
         "prv": {
-          "$ref": "https://gobl.org/draft-0/org/key",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Provider",
           "description": "Identity of the agency used to create the stamp usually defined by each region."
         },
@@ -24,5 +24,5 @@
       "description": "Stamp defines an official seal of approval from a third party like a governmental agency or intermediary and should thus be included in any official envelopes."
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }

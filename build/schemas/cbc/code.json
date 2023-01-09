@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/code",
+  "$id": "https://gobl.org/draft-0/cbc/code",
   "$ref": "#/$defs/Code",
   "$defs": {
     "Code": {
@@ -12,5 +12,5 @@
       "description": "Short upper-case identifier."
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }

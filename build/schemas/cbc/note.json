@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/org/note",
+  "$id": "https://gobl.org/draft-0/cbc/note",
   "$ref": "#/$defs/Note",
   "$defs": {
     "Note": {
@@ -140,5 +140,5 @@
       "description": "NoteKey identifies the type of note being edited"
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }

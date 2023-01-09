@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/tax/region",
-  "$ref": "#/$defs/Region",
+  "$id": "https://gobl.org/draft-0/tax/regime",
+  "$ref": "#/$defs/Regime",
   "$defs": {
     "Category": {
       "properties": {
         "code": {
-          "$ref": "https://gobl.org/draft-0/org/code",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code"
         },
         "name": {
@@ -39,35 +39,10 @@
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
-    "Locality": {
-      "properties": {
-        "code": {
-          "$ref": "https://gobl.org/draft-0/l10n/code",
-          "title": "Code",
-          "description": "Code"
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name of the locality with local and hopefully international\ntranslations."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/org/meta",
-          "title": "Meta",
-          "description": "Any additional information"
-        }
-      },
-      "type": "object",
-      "required": [
-        "code",
-        "name"
-      ],
-      "description": "Locality represents an area inside a region, like a province or a state, which shares the basic definitions of the region, but may vary in some validation rules."
-    },
     "Rate": {
       "properties": {
         "key": {
-          "$ref": "https://gobl.org/draft-0/org/key",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
           "description": "Key identifies this rate within the system"
         },
@@ -125,35 +100,35 @@
       ],
       "description": "RateValue contains a percentage rate or fixed amount for a given date range."
     },
-    "Region": {
+    "Regime": {
       "properties": {
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name",
-          "description": "Name of the region"
+          "description": "Name of the country"
         },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Code",
           "description": "Country code for the region"
         },
-        "locality": {
+        "zone": {
           "$ref": "https://gobl.org/draft-0/l10n/code",
-          "title": "Locality",
-          "description": "Locality, city, province, county, or similar code inside the country, if needed."
+          "title": "Zone",
+          "description": "Specific Locality, region, city, province, county, or similar code inside\nthe country, if needed."
         },
-        "localities": {
+        "zones": {
           "items": {
-            "$ref": "#/$defs/Locality"
+            "$ref": "#/$defs/Zone"
           },
           "type": "array",
-          "title": "Localities",
-          "description": "List of sub-localities inside a region."
+          "title": "Zones",
+          "description": "List of sub-zones inside a country."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
-          "description": "Currency used by the region for tax purposes."
+          "description": "Currency used by the country."
         },
         "schemes": {
           "$ref": "#/$defs/Schemes",
@@ -176,12 +151,12 @@
         "currency",
         "categories"
       ],
-      "description": "Region defines the holding structure for a regions categories and subsequent Rates and Values."
+      "description": "Regime defines the holding structure for the definitions of taxes inside a country or territory."
     },
     "Scheme": {
       "properties": {
         "key": {
-          "$ref": "https://gobl.org/draft-0/org/key",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
           "description": "Key used to identify this scheme"
         },
@@ -197,14 +172,14 @@
         },
         "categories": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/org/code"
+            "$ref": "https://gobl.org/draft-0/cbc/code"
           },
           "type": "array",
           "title": "Category Codes",
           "description": "List of tax category codes that can be used when this scheme is\napplied."
         },
         "note": {
-          "$ref": "https://gobl.org/draft-0/org/note",
+          "$ref": "https://gobl.org/draft-0/cbc/note",
           "title": "Note",
           "description": "Note defines a message that should be added to a document\nwhen this scheme is used."
         }
@@ -222,7 +197,41 @@
       },
       "type": "array",
       "description": "Schemes defines an array of scheme objects with helper functions."
+    },
+    "Zone": {
+      "properties": {
+        "code": {
+          "$ref": "https://gobl.org/draft-0/l10n/code",
+          "title": "Code",
+          "description": "Unique zone code."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the zone to be use if a locality or region is not applicable."
+        },
+        "locality": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Locality",
+          "description": "Village, town, district, or city name which should coincide with\naddress data."
+        },
+        "region": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Region",
+          "description": "Province, county, or state which should match address data."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional information"
+        }
+      },
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }

@@ -20,7 +20,7 @@
           "description": "Electronic mailing address."
         },
         "meta": {
-          "$ref": "https://gobl.org/draft-0/org/meta",
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
           "description": "Additional fields."
         }
@@ -32,5 +32,5 @@
       "description": "Email describes the electronic mailing details."
     }
   },
-  "$comment": "Generated with GOBL v0.33.0"
+  "$comment": "Generated with GOBL v0.34.0"
 }
