@@ -10,7 +10,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,13 +23,13 @@ func TestRemoveIncludedTax(t *testing.T) {
 			PricesInclude: common.TaxCategoryVAT,
 		},
 		Supplier: &org.Party{
-			TaxID: &org.TaxIdentity{
+			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
-			TaxID: &org.TaxIdentity{
+			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "54387763P",
 			},
@@ -80,13 +80,13 @@ func TestCalculate(t *testing.T) {
 			PricesInclude: common.TaxCategoryVAT,
 		},
 		Supplier: &org.Party{
-			TaxID: &org.TaxIdentity{
+			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
-			TaxID: &org.TaxIdentity{
+			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "54387763P",
 			},

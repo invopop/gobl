@@ -2,8 +2,8 @@ package gobl
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -17,13 +17,13 @@ type Header struct {
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest"`
 
 	// Seals of approval from other organisations.
-	Stamps []*org.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
 	// Set of labels that describe but have no influence on the data.
 	Tags []string `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Additional semi-structured information about this envelope.
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
 	// Any information that may be relevant to other humans about this envelope
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
@@ -36,7 +36,7 @@ type Header struct {
 func NewHeader() *Header {
 	h := new(Header)
 	h.UUID = uuid.MakeV1()
-	h.Meta = make(org.Meta)
+	h.Meta = make(cbc.Meta)
 	return h
 }
 

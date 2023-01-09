@@ -1,0 +1,902 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Spain",
+    "es": "España"
+  },
+  "country": "ES",
+  "zones": [
+    {
+      "code": "VI",
+      "region": {
+        "es": "Ávila"
+      },
+      "meta": {
+        "post": "01"
+      }
+    },
+    {
+      "code": "AB",
+      "region": {
+        "es": "Albacete"
+      },
+      "meta": {
+        "post": "02"
+      }
+    },
+    {
+      "code": "A",
+      "region": {
+        "es": "Alicante"
+      },
+      "meta": {
+        "post": "03"
+      }
+    },
+    {
+      "code": "AL",
+      "region": {
+        "es": "Almería"
+      },
+      "meta": {
+        "post": "04"
+      }
+    },
+    {
+      "code": "AV",
+      "region": {
+        "es": "Ávila"
+      },
+      "meta": {
+        "post": "05"
+      }
+    },
+    {
+      "code": "BA",
+      "region": {
+        "es": "Badajoz"
+      },
+      "meta": {
+        "post": "06"
+      }
+    },
+    {
+      "code": "PM",
+      "region": {
+        "es": "Baleares"
+      },
+      "meta": {
+        "post": "07"
+      }
+    },
+    {
+      "code": "IB",
+      "region": {
+        "es": "Baleares"
+      },
+      "meta": {
+        "post": "07"
+      }
+    },
+    {
+      "code": "B",
+      "region": {
+        "es": "Barcelona"
+      },
+      "meta": {
+        "post": "08"
+      }
+    },
+    {
+      "code": "BU",
+      "region": {
+        "es": "Burgos"
+      },
+      "meta": {
+        "post": "09"
+      }
+    },
+    {
+      "code": "CC",
+      "region": {
+        "es": "Cáceres"
+      },
+      "meta": {
+        "post": "10"
+      }
+    },
+    {
+      "code": "CA",
+      "region": {
+        "es": "Cadiz"
+      },
+      "meta": {
+        "post": "11"
+      }
+    },
+    {
+      "code": "CS",
+      "region": {
+        "es": "Castellón"
+      },
+      "meta": {
+        "post": "12"
+      }
+    },
+    {
+      "code": "CR",
+      "region": {
+        "es": "Ciudad Real"
+      },
+      "meta": {
+        "post": "13"
+      }
+    },
+    {
+      "code": "CO",
+      "region": {
+        "es": "Cordoba"
+      },
+      "meta": {
+        "post": "14"
+      }
+    },
+    {
+      "code": "C",
+      "region": {
+        "es": "La Coruña"
+      },
+      "meta": {
+        "post": "15"
+      }
+    },
+    {
+      "code": "CU",
+      "region": {
+        "es": "Cuenca"
+      },
+      "meta": {
+        "post": "16"
+      }
+    },
+    {
+      "code": "GE",
+      "region": {
+        "es": "Gerona"
+      },
+      "meta": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "GI",
+      "region": {
+        "es": "Girona"
+      },
+      "meta": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "GR",
+      "region": {
+        "es": "Granada"
+      },
+      "meta": {
+        "post": "18"
+      }
+    },
+    {
+      "code": "GU",
+      "region": {
+        "es": "Guadalajara"
+      },
+      "meta": {
+        "post": "19"
+      }
+    },
+    {
+      "code": "SS",
+      "region": {
+        "es": "Guipúzcoa"
+      },
+      "meta": {
+        "post": "20"
+      }
+    },
+    {
+      "code": "H",
+      "region": {
+        "es": "Huelva"
+      },
+      "meta": {
+        "post": "21"
+      }
+    },
+    {
+      "code": "HU",
+      "region": {
+        "es": "Huesca"
+      },
+      "meta": {
+        "post": "22"
+      }
+    },
+    {
+      "code": "J",
+      "region": {
+        "es": "Jaén"
+      },
+      "meta": {
+        "post": "23"
+      }
+    },
+    {
+      "code": "LE",
+      "region": {
+        "es": "León"
+      },
+      "meta": {
+        "post": "24"
+      }
+    },
+    {
+      "code": "L",
+      "region": {
+        "es": "Lérida / Lleida"
+      },
+      "meta": {
+        "post": "25"
+      }
+    },
+    {
+      "code": "LO",
+      "region": {
+        "es": "La Rioja"
+      },
+      "meta": {
+        "post": "26"
+      }
+    },
+    {
+      "code": "LU",
+      "region": {
+        "es": "Lugo"
+      },
+      "meta": {
+        "post": "27"
+      }
+    },
+    {
+      "code": "M",
+      "region": {
+        "es": "Madrid"
+      },
+      "meta": {
+        "post": "28"
+      }
+    },
+    {
+      "code": "MA",
+      "region": {
+        "es": "Málaga"
+      },
+      "meta": {
+        "post": "29"
+      }
+    },
+    {
+      "code": "MU",
+      "region": {
+        "es": "Murcia"
+      },
+      "meta": {
+        "post": "30"
+      }
+    },
+    {
+      "code": "NA",
+      "region": {
+        "es": "Navarra"
+      },
+      "meta": {
+        "post": "31"
+      }
+    },
+    {
+      "code": "OR",
+      "region": {
+        "es": "Orense"
+      },
+      "meta": {
+        "post": "32"
+      }
+    },
+    {
+      "code": "OU",
+      "region": {
+        "es": "Orense"
+      },
+      "meta": {
+        "post": "32"
+      }
+    },
+    {
+      "code": "O",
+      "region": {
+        "es": "Asturias"
+      },
+      "meta": {
+        "post": "33"
+      }
+    },
+    {
+      "code": "P",
+      "region": {
+        "es": "Palencia"
+      },
+      "meta": {
+        "post": "34"
+      }
+    },
+    {
+      "code": "GC",
+      "region": {
+        "es": "Las Palmas"
+      },
+      "meta": {
+        "post": "35"
+      }
+    },
+    {
+      "code": "PO",
+      "region": {
+        "es": "Pontevedra"
+      },
+      "meta": {
+        "post": "36"
+      }
+    },
+    {
+      "code": "SA",
+      "region": {
+        "es": "Salamanca"
+      },
+      "meta": {
+        "post": "37"
+      }
+    },
+    {
+      "code": "TF",
+      "region": {
+        "es": "Santa Cruz de Tenerife"
+      },
+      "meta": {
+        "post": "38"
+      }
+    },
+    {
+      "code": "S",
+      "region": {
+        "es": "Cantabria"
+      },
+      "meta": {
+        "post": "39"
+      }
+    },
+    {
+      "code": "SG",
+      "region": {
+        "es": "Segovia"
+      },
+      "meta": {
+        "post": "40"
+      }
+    },
+    {
+      "code": "SE",
+      "region": {
+        "es": "Sevilla"
+      },
+      "meta": {
+        "post": "41"
+      }
+    },
+    {
+      "code": "SO",
+      "region": {
+        "es": "Soria"
+      },
+      "meta": {
+        "post": "42"
+      }
+    },
+    {
+      "code": "T",
+      "region": {
+        "es": "Tarragona"
+      },
+      "meta": {
+        "post": "43"
+      }
+    },
+    {
+      "code": "TE",
+      "region": {
+        "es": "Teruel"
+      },
+      "meta": {
+        "post": "44"
+      }
+    },
+    {
+      "code": "TO",
+      "region": {
+        "es": "Toledo"
+      },
+      "meta": {
+        "post": "45"
+      }
+    },
+    {
+      "code": "V",
+      "region": {
+        "es": "Valencia"
+      },
+      "meta": {
+        "post": "46"
+      }
+    },
+    {
+      "code": "VA",
+      "region": {
+        "es": "Valladolid"
+      },
+      "meta": {
+        "post": "47"
+      }
+    },
+    {
+      "code": "BI",
+      "region": {
+        "es": "Vizcaya"
+      },
+      "meta": {
+        "post": "48"
+      }
+    },
+    {
+      "code": "ZA",
+      "region": {
+        "es": "Zamora"
+      },
+      "meta": {
+        "post": "49"
+      }
+    },
+    {
+      "code": "Z",
+      "region": {
+        "es": "Zaragoza"
+      },
+      "meta": {
+        "post": "50"
+      }
+    },
+    {
+      "code": "CE",
+      "region": {
+        "es": "Ceuta"
+      },
+      "meta": {
+        "post": "51"
+      }
+    },
+    {
+      "code": "ML",
+      "region": {
+        "es": "Melilla"
+      },
+      "meta": {
+        "post": "52"
+      }
+    }
+  ],
+  "currency": "EUR",
+  "schemes": [
+    {
+      "key": "reverse-charge",
+      "name": {
+        "en": "Reverse Charge",
+        "es": "Inversión del sujeto pasivo"
+      },
+      "categories": [
+        "VAT"
+      ],
+      "note": {
+        "key": "legal",
+        "src": "reverse-charge",
+        "text": "Reverse Charge / Inversión del sujeto pasivo."
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "en": "Customer Country Rates",
+        "es": "Tasas del País del Cliente"
+      },
+      "description": {
+        "en": "Use the customers country to determine tax rates."
+      }
+    },
+    {
+      "key": "simplified",
+      "name": {
+        "en": "Simplified tax scheme",
+        "es": "Contribuyente en régimen simplificado"
+      },
+      "note": {
+        "key": "legal",
+        "src": "simplified",
+        "text": "Factura expedida por contibuyente en régimen simplificado."
+      }
+    },
+    {
+      "key": "customer-issued",
+      "name": {
+        "en": "Customer issued invoice",
+        "es": "Facturación por el destinatario"
+      },
+      "note": {
+        "key": "legal",
+        "src": "customer-issued",
+        "text": "Facturación por el destinatario."
+      }
+    },
+    {
+      "key": "travel-agency",
+      "name": {
+        "en": "Special scheme for travel agencies",
+        "es": "Régimen especial de las agencias de viajes"
+      },
+      "note": {
+        "key": "legal",
+        "src": "travel-agency",
+        "text": "Régimen especial de las agencias de viajes."
+      }
+    },
+    {
+      "key": "second-hand-goods",
+      "name": {
+        "en": "Special scheme for second-hand goods",
+        "es": "Régimen especial de los bienes usados"
+      },
+      "note": {
+        "key": "legal",
+        "src": "second-hand-goods",
+        "text": "Régimen especial de los bienes usados."
+      }
+    },
+    {
+      "key": "art",
+      "name": {
+        "en": "Special scheme of works of art",
+        "es": "Régimen especial de los objetos de arte"
+      },
+      "note": {
+        "key": "legal",
+        "src": "art",
+        "text": "Régimen especial de los objetos de arte."
+      }
+    },
+    {
+      "key": "antiques",
+      "name": {
+        "en": "Special scheme of antiques and collectables",
+        "es": "Régimen especial de las antigüedades y objetos de colección"
+      },
+      "note": {
+        "key": "legal",
+        "src": "antiques",
+        "text": "Régimen especial de las antigüedades y objetos de colección."
+      }
+    },
+    {
+      "key": "cash-basis",
+      "name": {
+        "en": "Special scheme on cash basis",
+        "es": "Régimen especial del criterio de caja"
+      },
+      "note": {
+        "key": "legal",
+        "src": "cash-basis",
+        "text": "Régimen especial del criterio de caja."
+      }
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "es": "Impuesto sobre el Valor Añadido"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "es": "Tipo Zero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tipo General"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "18.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "16.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard+eqs",
+          "name": {
+            "en": "Standard Rate + Equivalence Surcharge",
+            "es": "Tipo General + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%",
+              "surcharge": "5.2%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "18.0%",
+              "surcharge": "4.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "10.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "7.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced+eqs",
+          "name": {
+            "en": "Reduced Rate + Equivalence Surcharge",
+            "es": "Tipo Reducido + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "2012-09-01",
+              "percent": "10.0%",
+              "surcharge": "1.4%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "8.0%",
+              "surcharge": "1.0%"
+            }
+          ]
+        },
+        {
+          "key": "super-reduced",
+          "name": {
+            "en": "Super-Reduced Rate",
+            "es": "Tipo Superreducido"
+          },
+          "values": [
+            {
+              "since": "1995-01-01",
+              "percent": "4.0%"
+            },
+            {
+              "since": "1993-01-01",
+              "percent": "3.0%"
+            }
+          ]
+        },
+        {
+          "key": "super-reduced+eqs",
+          "name": {
+            "en": "Super-Reduced Rate + Equivalence Surcharge",
+            "es": "Tipo Superreducido + Recargo de Equivalencia"
+          },
+          "values": [
+            {
+              "since": "1995-01-01",
+              "percent": "4.0%",
+              "surcharge": "0.5%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IGIC",
+      "name": {
+        "en": "IGIC",
+        "es": "IGIC"
+      },
+      "desc": {
+        "en": "Canary Island General Indirect Tax",
+        "es": "Impuesto General Indirecto Canario"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "es": "Tipo Zero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tipo General"
+          },
+          "values": [
+            {
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Tipo Reducido"
+          },
+          "values": [
+            {
+              "percent": "3.0%"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "IPSI",
+      "name": {
+        "en": "IPSI",
+        "es": "IPSI"
+      },
+      "desc": {
+        "en": "Production, Services, and Import Tax",
+        "es": "Impuesto sobre la Producción, los Servicios y la Importación"
+      },
+      "rates": []
+    },
+    {
+      "code": "IRPF",
+      "name": {
+        "en": "IRPF",
+        "es": "IRPF"
+      },
+      "desc": {
+        "en": "Personal income tax.",
+        "es": "Impuesto sobre la renta de las personas físicas."
+      },
+      "retained": true,
+      "rates": [
+        {
+          "key": "pro",
+          "name": {
+            "en": "Professional Rate",
+            "es": "Professionales"
+          },
+          "values": [
+            {
+              "since": "2015-07-12",
+              "percent": "15.0%"
+            },
+            {
+              "since": "2015-01-01",
+              "percent": "19.0%"
+            },
+            {
+              "since": "2012-09-01",
+              "percent": "21.0%"
+            },
+            {
+              "since": "2007-01-01",
+              "percent": "15.0%"
+            }
+          ]
+        },
+        {
+          "key": "pro-start",
+          "name": {
+            "en": "Professional Starting Rate",
+            "es": "Professionales Inicio"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "key": "capital",
+          "name": {
+            "en": "Rental or Interest Capital",
+            "es": "Alquileres o Intereses de Capital"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "19.0%"
+            }
+          ]
+        },
+        {
+          "key": "modules",
+          "name": {
+            "en": "Modules Rate",
+            "es": "Tipo Modulos"
+          },
+          "values": [
+            {
+              "since": "2007-01-01",
+              "percent": "1.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

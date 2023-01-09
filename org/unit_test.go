@@ -3,6 +3,7 @@ package org_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,11 +21,11 @@ func TestUnitValidation(t *testing.T) {
 
 func TestUnitUNECE(t *testing.T) {
 	u := org.Unit("h")
-	assert.Equal(t, u.UNECE(), org.Code("HUR"))
+	assert.Equal(t, u.UNECE(), cbc.Code("HUR"))
 
 	u = org.UnitTetraBrik
-	assert.Equal(t, u.UNECE(), org.CodeEmpty, "valid but no code")
+	assert.Equal(t, u.UNECE(), cbc.CodeEmpty, "valid but no code")
 
 	u = org.Unit("FOO")
-	assert.Equal(t, u.UNECE(), org.CodeEmpty)
+	assert.Equal(t, u.UNECE(), cbc.CodeEmpty)
 }

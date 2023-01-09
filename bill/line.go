@@ -2,6 +2,7 @@ package bill
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -30,7 +31,7 @@ type Line struct {
 	Total num.Amount `json:"total" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
 	// Set of specific notes for this line that may be required for
 	// clarification.
-	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
 // GetTaxes responds with the array of tax rates applied to this line.
@@ -80,7 +81,7 @@ func (l *Line) calculate() {
 	}
 }
 
-func (l *Line) removeIncludedTaxes(cat org.Code, accuracy uint32) *Line {
+func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
 	rate := l.Taxes.Get(cat)
 	if rate == nil {
 		return l

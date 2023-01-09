@@ -35,11 +35,10 @@ func MakePercentage(value int64, exp uint32) Percentage {
 // PercentageFromString builds a percentage value from a provided string.
 // The % symbol will be removed automatically and rescale the stored amount
 // to make future calculations easier. For example, the following two strings
-// will be interpretted equally:
+// will be interpreted equally:
 //
-//  * `0.160`
-//  * `16.0%`
-//
+//   - `0.160`
+//   - `16.0%`
 func PercentageFromString(str string) (Percentage, error) {
 	p := Percentage{}
 	l := len(str)

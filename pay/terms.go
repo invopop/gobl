@@ -3,14 +3,14 @@ package pay
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/jsonschema"
 )
 
 // TermKey defines the type of terms being handled
-type TermKey org.Key
+type TermKey cbc.Key
 
 // Terms defines when we expect the customer to pay, or have paid, for
 // the contents of the document.
@@ -56,7 +56,7 @@ type TermKeyDef struct {
 	// Human text for the key
 	Description string `json:"description" jsonschema:"Description"`
 	// The equivalent UNTDID 4279 Code
-	UNTDID4279 org.Code `json:"untdid4279" jsonschema:"UNTDID 4279 Code"`
+	UNTDID4279 cbc.Code `json:"untdid4279" jsonschema:"UNTDID 4279 Code"`
 }
 
 // TermKeyDefinitions includes all the currently accepted
@@ -84,13 +84,13 @@ type DueDate struct {
 }
 
 // UNTDID4279 returns the UNTDID 4270 code associated with the terms key.
-func (t *Terms) UNTDID4279() org.Code {
+func (t *Terms) UNTDID4279() cbc.Code {
 	for _, v := range TermKeyDefinitions {
 		if t.Key == v.Key {
 			return v.UNTDID4279
 		}
 	}
-	return org.CodeEmpty
+	return cbc.CodeEmpty
 }
 
 // CalculateDues goes through each DueDate. If it has a percentage

@@ -14,14 +14,13 @@ type ExchangeRates []*ExchangeRate
 // For example, our document is in EUR and some amounts are defined in USD. Our
 // ExchangeRate instance may be defined and used as:
 //
-//   rate := &currency.ExchangeRate{
-//	   Currency: currency.USD,
-//     Amount: "0.875967",
-//   }
+//	  rate := &currency.ExchangeRate{
+//		   Currency: currency.USD,
+//	    Amount: "0.875967",
+//	  }
 //
-//   val := "100.00" // USD
-//   val.Multiply(rate.Amount) // EUR: "87.60"
-//
+//	  val := "100.00" // USD
+//	  val.Multiply(rate.Amount) // EUR: "87.60"
 type ExchangeRate struct {
 	// ISO currency code this rate represents.
 	Currency Code `json:"currency" jsonschema:"title=Currency"`

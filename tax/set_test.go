@@ -3,7 +3,7 @@ package tax_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -160,8 +160,8 @@ func TestSetRate(t *testing.T) {
 			Rate:     "pro",
 		},
 	}
-	assert.Equal(t, s.Rate("VAT"), org.Key("standard"))
-	assert.Equal(t, s.Rate("IRPF"), org.Key("pro"))
+	assert.Equal(t, s.Rate("VAT"), cbc.Key("standard"))
+	assert.Equal(t, s.Rate("IRPF"), cbc.Key("pro"))
 	assert.Empty(t, s.Rate("FOO"))
 }
 
@@ -176,6 +176,6 @@ func TestSetGet(t *testing.T) {
 			Rate:     "pro",
 		},
 	}
-	assert.NotNil(t, s.Get(org.Code("VAT")))
-	assert.Nil(t, s.Get(org.Code("FOO")))
+	assert.NotNil(t, s.Get(cbc.Code("VAT")))
+	assert.Nil(t, s.Get(cbc.Code("FOO")))
 }

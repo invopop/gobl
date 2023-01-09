@@ -4,22 +4,22 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInvoiceType(t *testing.T) {
 	c := bill.InvoiceTypeCommercial
 	assert.Equal(t, bill.InvoiceType("commercial"), c)
-	assert.Equal(t, org.Code("380"), c.UNTDID1001(), "unexpected UNTDID code")
+	assert.Equal(t, cbc.Code("380"), c.UNTDID1001(), "unexpected UNTDID code")
 	assert.NoError(t, c.Validate())
 
 	c = bill.InvoiceTypeCorrected
-	assert.Equal(t, org.Code("384"), c.UNTDID1001(), "unexpected UNTDID code")
+	assert.Equal(t, cbc.Code("384"), c.UNTDID1001(), "unexpected UNTDID code")
 	assert.NoError(t, c.Validate())
 
 	c = bill.InvoiceType("foo")
-	assert.Equal(t, org.CodeEmpty, c.UNTDID1001(), "unexpected UNTDID result")
+	assert.Equal(t, cbc.CodeEmpty, c.UNTDID1001(), "unexpected UNTDID result")
 	assert.Error(t, c.Validate())
 
 	assert.True(t, c.In("bar", "foo"))

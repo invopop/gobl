@@ -2,13 +2,14 @@ package org
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
 )
 
 // Address defines a globally acceptable set of attributes that describes
 // a postal or fiscal address.
-// Attribute names loosly based on the xCard file format.
+// Attribute names loosely based on the xCard file format.
 type Address struct {
 	// Internal ID used to identify the party inside a document.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
@@ -28,9 +29,9 @@ type Address struct {
 	Street string `json:"street,omitempty" jsonschema:"title=Street"`
 	// Additional street address details.
 	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
-	// The village, town, district, or city.
+	// Village, town, district, or city, typically inside a region.
 	Locality string `json:"locality" jsonschema:"title=Locality"`
-	// Province, County, or State.
+	// Province, county, or state, inside a country.
 	Region string `json:"region,omitempty" jsonschema:"title=Region"`
 	// Post or ZIP code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
@@ -39,7 +40,7 @@ type Address struct {
 	// When the postal address is not sufficient, coordinates help locate the address more precisely.
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
 	// Any additional semi-structure details about the address.
-	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Coordinates describes an exact geographical location in the world. We provide support
@@ -59,6 +60,7 @@ type Coordinates struct {
 func (a *Address) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.UUID),
+		validation.Field(&a.Locality, validation.Required),
 		validation.Field(&a.Country),
 		validation.Field(&a.Coordinates),
 		validation.Field(&a.Meta),

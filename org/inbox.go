@@ -2,6 +2,7 @@ package org
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -13,10 +14,10 @@ type Inbox struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
 	// Type of inbox being defined.
-	Key Key `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
 	// Role assigned to this inbox that may be relevant for the consumer.
-	Role Key `json:"role,omitempty" jsonschema:"title=Role"`
+	Role cbc.Key `json:"role,omitempty" jsonschema:"title=Role"`
 
 	// Human name for the inbox.
 	Name string `json:"name,omitempty" jsonschema:"title=Name"`

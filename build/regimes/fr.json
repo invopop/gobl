@@ -1,0 +1,47 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "France",
+    "fr": "La France"
+  },
+  "country": "FR",
+  "currency": "EUR",
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "fr": "TVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "fr": "Taxe sur la Valeur Ajoutée"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate"
+          },
+          "values": [
+            {
+              "since": "2011-01-04",
+              "percent": "20.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

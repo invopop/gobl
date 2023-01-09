@@ -5,8 +5,8 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 )
 
 // Set defines a list of tax categories and their rates to be used alongside taxable items.
@@ -17,9 +17,9 @@ type Set []*Combo
 // during calculation.
 type Combo struct {
 	// Tax category code from those available inside a region.
-	Category org.Code `json:"cat" jsonschema:"title=Category"`
+	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
 	// Rate within a category to apply.
-	Rate org.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
+	Rate cbc.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Percent defines the percentage set manually or determined from the rate key (calculated if rate present).
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
@@ -39,14 +39,14 @@ func (c *Combo) Validate() error {
 }
 
 // prepare updates the Combo object's Percent and Retained properties according
-// to the region and date provided.
-func (c *Combo) prepare(r *Region, date cal.Date) error {
+// to the regime and date provided.
+func (c *Combo) prepare(r *Regime, date cal.Date) error {
 	c.category = r.Category(c.Category)
 	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
 	}
 
-	if c.Rate != org.KeyEmpty {
+	if c.Rate != cbc.KeyEmpty {
 		rate := c.category.Rate(c.Rate)
 		if rate == nil {
 			return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
@@ -69,7 +69,7 @@ func (c *Combo) prepare(r *Region, date cal.Date) error {
 
 // Validate ensures the set of tax combos looks correct
 func (s Set) Validate() error {
-	combos := make(map[org.Code]org.Key)
+	combos := make(map[cbc.Code]cbc.Key)
 	for i, c := range s {
 		if _, ok := combos[c.Category]; ok {
 			return fmt.Errorf("%d: category %v is duplicated", i, c.Category)
@@ -101,7 +101,7 @@ func (s Set) Equals(s2 Set) bool {
 }
 
 // Get the Rate key for the given category
-func (s Set) Get(cat org.Code) *Combo {
+func (s Set) Get(cat cbc.Code) *Combo {
 	for _, c := range s {
 		if c.Category == cat {
 			return c
@@ -111,7 +111,7 @@ func (s Set) Get(cat org.Code) *Combo {
 }
 
 // Rate returns the rate from the matching category, if set.
-func (s Set) Rate(cat org.Code) org.Key {
+func (s Set) Rate(cat cbc.Code) cbc.Key {
 	for _, c := range s {
 		if c.Category == cat {
 			return c.Rate

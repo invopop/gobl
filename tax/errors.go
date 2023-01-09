@@ -3,13 +3,13 @@ package tax
 import (
 	"fmt"
 
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/cbc"
 )
 
 // Error is a general wrapper around tax errors produced during run
 // time, typically during calculations. Not to be confused with errors
 // produced from definition validation.
-type Error org.Key
+type Error cbc.Key
 
 // Standard list of tax errors
 const (

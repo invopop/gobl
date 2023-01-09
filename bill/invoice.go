@@ -5,10 +5,11 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regions/common"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
@@ -75,9 +76,9 @@ type Invoice struct {
 
 	// Unstructured information that is relevant to the invoice, such as correction or additional
 	// legal details.
-	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
-	Meta org.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.
@@ -120,7 +121,7 @@ func (inv *Invoice) Validate() error {
 		if tID == nil {
 			return errors.New("supplier: missing tax identity")
 		}
-		r := tax.RegionFor(tID.Country, tID.Locality)
+		r := tax.Regimes().For(tID.Country, tID.Zone)
 		err = r.ValidateDocument(inv)
 	}
 	return err
@@ -188,9 +189,9 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	tID := inv.Supplier.TaxID
-	r := tax.RegionFor(tID.Country, tID.Locality)
+	r := tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
-		return errors.New("region is missing")
+		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
 
 	if err := inv.prepareSchemes(r); err != nil {
@@ -202,9 +203,9 @@ func (inv *Invoice) Calculate() error {
 	if tID == nil {
 		return errors.New("unable to determine tax identity")
 	}
-	r = tax.RegionFor(tID.Country, tID.Locality)
+	r = tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
-		return errors.New("region is missing")
+		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
 
 	return inv.calculate(r)
@@ -247,7 +248,7 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	return &i2
 }
 
-func (inv *Invoice) prepareSchemes(r *tax.Region) error {
+func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
 	if inv.Tax == nil {
 		return nil
 	}
@@ -259,7 +260,7 @@ func (inv *Invoice) prepareSchemes(r *tax.Region) error {
 
 		// apply the scheme's note, but ensure it's not a duplicate by checking the Src.
 		if s.Note != nil {
-			var en *org.Note
+			var en *cbc.Note
 			for _, n := range inv.Notes {
 				if n.Src == string(k) {
 					en = n
@@ -274,7 +275,7 @@ func (inv *Invoice) prepareSchemes(r *tax.Region) error {
 	return nil
 }
 
-func (inv *Invoice) calculate(r *tax.Region) error {
+func (inv *Invoice) calculate(r *tax.Regime) error {
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate
@@ -338,7 +339,7 @@ func (inv *Invoice) calculate(r *tax.Region) error {
 	}
 
 	// Now figure out the tax totals (with some interface conversion)
-	var pit org.Code
+	var pit cbc.Code
 	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
 		pit = inv.Tax.PricesInclude
 	}
@@ -390,7 +391,7 @@ func (inv *Invoice) calculate(r *tax.Region) error {
 	return nil
 }
 
-func (inv *Invoice) determineTaxIdentity() *org.TaxIdentity {
+func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 	if inv.Tax != nil {
 		if inv.Tax.Schemes.Contains(common.SchemeCustomerRates) {
 			if inv.Customer == nil {
