@@ -28,8 +28,8 @@ const (
 
 // DIAN official codes to include in stamps.
 const (
-	StampProviderDIANCUFE cbc.Key = "dian-cufe"
-	StampProviderDIANQR   cbc.Key = "dian-qr"
+	StampProviderDIANCUDE org.Key = "dian-cude"
+	StampProviderDIANQR   org.Key = "dian-qr"
 )
 
 // New provides the tax region definition
