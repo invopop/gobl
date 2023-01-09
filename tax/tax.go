@@ -9,5 +9,6 @@ func init() {
 		Set{},
 		Total{},
 		Regime{},
+		Identity{},
 	)
 }

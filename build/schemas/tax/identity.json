@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/identity",
+  "$ref": "#/$defs/Identity",
+  "$defs": {
+    "Identity": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique universal identity code for this tax identity."
+        },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/country-code",
+          "title": "Country Code",
+          "description": "ISO country code for Where the tax identity was issued."
+        },
+        "zone": {
+          "$ref": "https://gobl.org/draft-0/l10n/code",
+          "title": "Zone Code",
+          "description": "Where inside the country the tax identity holder is based for tax purposes\nlike a village, town, district, city, county, state or province. For some\nareas, this could be a regular post or zip code. See the regime packages\nfor specific validation rules."
+        },
+        "source": {
+          "$ref": "#/$defs/SourceKey",
+          "title": "Source Key",
+          "description": "What is the source document of the tax identity."
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Normalized code shown on the original identity document."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional details that may be required."
+        }
+      },
+      "type": "object",
+      "required": [
+        "country"
+      ],
+      "description": "Identity stores the details required to identify an entity for tax purposes."
+    },
+    "SourceKey": {
+      "oneOf": [
+        {
+          "const": "tax-agency",
+          "description": "Sourced directly from a tax agency"
+        },
+        {
+          "const": "passport",
+          "description": "A passport document"
+        },
+        {
+          "const": "national",
+          "description": "National ID Card or similar"
+        },
+        {
+          "const": "permit",
+          "description": "Residential or similar permit"
+        },
+        {
+          "const": "other",
+          "description": "An other type of source not listed"
+        }
+      ],
+      "type": "string",
+      "title": "Source Key",
+      "description": "SourceKey identifies the source of a tax identity"
+    }
+  },
+  "$comment": "Generated with GOBL v0.34.1"
+}
