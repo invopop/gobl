@@ -5,7 +5,7 @@
   "$defs": {
     "Code": {
       "type": "string",
-      "pattern": "\\A[A-Z0-9]+\\z",
+      "pattern": "^[A-Z0-9]+$",
       "title": "Code",
       "description": "Code is used for short identifies like country or state codes."
     }
