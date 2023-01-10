@@ -13,7 +13,7 @@ import (
 type Code string
 
 var (
-	codePattern = `\A[A-Z0-9]+\z`
+	codePattern = `^[A-Z0-9]+$`
 	codeFormat  = regexp.MustCompile(codePattern)
 )
 
