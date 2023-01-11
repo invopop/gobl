@@ -17,6 +17,7 @@ const (
 const (
 	TaxRateZero         cbc.Key = "zero"
 	TaxRateStandard     cbc.Key = "standard"
+	TaxRateIntermediate cbc.Key = "intermediate"
 	TaxRateReduced      cbc.Key = "reduced"
 	TaxRateSuperReduced cbc.Key = "super-reduced"
 )

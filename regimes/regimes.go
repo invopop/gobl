@@ -8,4 +8,5 @@ import (
 	_ "github.com/invopop/gobl/regimes/fr"
 	_ "github.com/invopop/gobl/regimes/gb"
 	_ "github.com/invopop/gobl/regimes/nl"
+	_ "github.com/invopop/gobl/regimes/pt"
 )
