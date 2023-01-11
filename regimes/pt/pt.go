@@ -100,7 +100,7 @@ func newContinent() *tax.Regime {
 					Key: common.TaxRateIntermediate,
 					Name: i18n.String{
 						i18n.EN: "Intermediate Rate",
-						i18n.PT: "Taxa Intermédia",
+						i18n.PT: "Taxa Intermédia", //nolint:misspell
 					},
 					Values: []*tax.RateValue{
 						{
@@ -166,7 +166,7 @@ func newAcores() *tax.Regime {
 					Key: common.TaxRateIntermediate,
 					Name: i18n.String{
 						i18n.EN: "Intermediate Rate",
-						i18n.PT: "Taxa Intermédia",
+						i18n.PT: "Taxa Intermédia", //nolint:misspell
 					},
 					Values: []*tax.RateValue{
 						{
@@ -232,7 +232,7 @@ func newMadeira() *tax.Regime {
 					Key: common.TaxRateIntermediate,
 					Name: i18n.String{
 						i18n.EN: "Intermediate Rate",
-						i18n.PT: "Taxa Intermédia",
+						i18n.PT: "Taxa Intermédia", //nolint:misspell
 					},
 					Values: []*tax.RateValue{
 						{

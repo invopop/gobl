@@ -53,6 +53,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "invalid zone",
+			code: "420000000",
+			err:  "invalid prefix",
+		},
+		{
+			name: "invalid zone",
 			code: "287024008",
 			zone: "XX",
 			err:  "zone: must be a valid value",
