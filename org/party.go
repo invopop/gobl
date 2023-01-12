@@ -29,7 +29,7 @@ type Party struct {
 	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
 	// Electronic mail addresses
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
-	//
+	// Public websites that provide further information about the party.
 	Websites []*Website `json:"websites,omitempty" jsonschema:"title=Websites"`
 	// Regular telephone numbers
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
