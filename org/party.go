@@ -29,6 +29,8 @@ type Party struct {
 	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
 	// Electronic mail addresses
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
+	//
+	Websites []*Website `json:"websites,omitempty" jsonschema:"title=Websites"`
 	// Regular telephone numbers
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
 	// Additional registration details about the company that may need to be included in a document.
@@ -101,6 +103,18 @@ type Telephone struct {
 	Number string `json:"num" jsonschema:"title=Number"`
 }
 
+// Website describes what is expected for a web address.
+type Website struct {
+	// Unique identity code
+	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Identifier for this number.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Title of the website to help distinguish between this and other links.
+	Title string `json:"title,omitempty" jsonschema:"title=Title"`
+	// URL for the website.
+	URL string `json:"url" jsonschema:"title=URL,format=uri"`
+}
+
 // Registration is used in countries that require additional information to be associated
 // with a company usually related to a specific registration office.
 // The definition found here is based on the details required for spain.
@@ -137,6 +151,7 @@ func (p *Party) Validate() error {
 		validation.Field(&p.People),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
+		validation.Field(&p.Websites),
 	)
 }
 
@@ -151,5 +166,12 @@ func (e *Email) Validate() error {
 func (t *Telephone) Validate() error {
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Number, validation.Required, is.E164),
+	)
+}
+
+// Validate checks the telephone objects number to ensure it looks correct.
+func (w *Website) Validate() error {
+	return validation.ValidateStruct(w,
+		validation.Field(&w.URL, validation.Required, is.URL),
 	)
 }

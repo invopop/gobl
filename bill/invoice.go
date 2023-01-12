@@ -24,10 +24,10 @@ type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
+	// Used as a prefix to group codes.
+	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
-	// Used in addition to the Code in some regions.
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Optional invoice type, leave empty unless needed for a specific situation.
 	Type InvoiceType `json:"type,omitempty" jsonschema:"title=Type"`
 	// Currency for all invoice totals.
@@ -62,8 +62,11 @@ type Invoice struct {
 	// Expenses paid for by the supplier but invoiced directly to the customer.
 	Outlays []*Outlay `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
+	// Ordering details including document references and buyer or seller parties.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
-	Payment  *Payment  `json:"payment,omitempty" jsonschema:"title=Payment Details"`
+	// Information on when, how, and to whom the invoice should be paid.
+	Payment *Payment `json:"payment,omitempty" jsonschema:"title=Payment Details"`
+	// Specific details on delivery of the goods referenced in the invoice.
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
 
 	// Summary of all the invoice totals, including taxes (calculated).

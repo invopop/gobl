@@ -9,8 +9,8 @@ import (
 
 // Payment contains details as to how the invoice should be paid.
 type Payment struct {
-	// The party responsible for paying for the invoice, if not the customer.
-	Payer *org.Party `json:"payer,omitempty" jsonschema:"title=Payer"`
+	// The party responsible for receiving payment of the invoice, if not the supplier.
+	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payer"`
 	// Payment terms or conditions.
 	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
 	// Any amounts that have been paid in advance and should be deducted from the amount due.
@@ -22,7 +22,7 @@ type Payment struct {
 // Validate checks to make sure the payment data looks good
 func (p *Payment) Validate() error {
 	return validation.ValidateStruct(p,
-		validation.Field(&p.Payer),
+		validation.Field(&p.Payee),
 		validation.Field(&p.Terms),
 		validation.Field(&p.Advances),
 		validation.Field(&p.Instructions),
