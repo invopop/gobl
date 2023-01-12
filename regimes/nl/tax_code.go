@@ -2,7 +2,6 @@ package nl
 
 import (
 	"errors"
-	"regexp"
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -13,10 +12,6 @@ import (
 
 const (
 	vatLen = 12
-)
-
-var (
-	taxCodeCountryRegexp = regexp.MustCompile(`^NL`)
 )
 
 var errInvalidVAT = errors.New("invalid VAT number")
