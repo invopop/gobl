@@ -87,12 +87,12 @@
         "start_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Start Date",
-          "description": "Start of a n invoicing or delivery period"
+          "description": "Start of an invoicing or delivery period"
         },
         "end_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "End Date",
-          "description": "End of a n invoicing or delivery period"
+          "description": "End of an invoicing or delivery period"
         }
       },
       "type": "object",
@@ -160,6 +160,33 @@
       ],
       "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
     },
+    "DocumentReference": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique ID copied from the source document."
+        },
+        "series": {
+          "type": "string",
+          "title": "Series",
+          "description": "Series the reference document belongs to."
+        },
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Source document's code or other identifier."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "Link to the source document."
+        }
+      },
+      "type": "object",
+      "description": "DocumentReference provides a link to a existing document."
+    },
     "ExchangeRates": {
       "items": {
         "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
@@ -174,15 +201,15 @@
           "title": "UUID",
           "description": "Unique document ID. Not required, but always recommended in addition to the Code."
         },
+        "series": {
+          "type": "string",
+          "title": "Series",
+          "description": "Used as a prefix to group codes."
+        },
         "code": {
           "type": "string",
           "title": "Code",
           "description": "Sequential code used to identify this invoice in tax declarations."
-        },
-        "series": {
-          "type": "string",
-          "title": "Series",
-          "description": "Used in addition to the Code in some regions."
         },
         "type": {
           "$ref": "#/$defs/InvoiceType",
@@ -271,15 +298,18 @@
         },
         "ordering": {
           "$ref": "#/$defs/Ordering",
-          "title": "Ordering Details"
+          "title": "Ordering Details",
+          "description": "Ordering details including document references and buyer or seller parties."
         },
         "payment": {
           "$ref": "#/$defs/Payment",
-          "title": "Payment Details"
+          "title": "Payment Details",
+          "description": "Information on when, how, and to whom the invoice should be paid."
         },
         "delivery": {
           "$ref": "#/$defs/Delivery",
-          "title": "Delivery Details"
+          "title": "Delivery Details",
+          "description": "Specific details on delivery of the goods referenced in the invoice."
         },
         "totals": {
           "$ref": "#/$defs/Totals",
@@ -483,14 +513,56 @@
     },
     "Ordering": {
       "properties": {
+        "code": {
+          "type": "string",
+          "title": "Code",
+          "description": "Identifier assigned by the customer or buyer for internal routing purposes."
+        },
+        "project": {
+          "$ref": "#/$defs/DocumentReference",
+          "title": "Project",
+          "description": "Project this invoice refers to."
+        },
+        "contract": {
+          "$ref": "#/$defs/DocumentReference",
+          "title": "Contract",
+          "description": "The identification of a contract."
+        },
+        "purchase": {
+          "$ref": "#/$defs/DocumentReference",
+          "title": "Purchase Order",
+          "description": "Purchase order issued by the customer or buyer."
+        },
+        "sale": {
+          "$ref": "#/$defs/DocumentReference",
+          "description": "Sales order issued by the supplier or seller."
+        },
+        "receiving": {
+          "$ref": "#/$defs/DocumentReference",
+          "description": "Receiving Advice."
+        },
+        "despatch": {
+          "$ref": "#/$defs/DocumentReference",
+          "title": "Despatch Advice",
+          "description": "Despatch advice."
+        },
+        "tender": {
+          "$ref": "#/$defs/DocumentReference",
+          "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
+        },
+        "buyer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Buyer",
+          "description": "Party who is responsible for making the purchase, but is not responsible\nfor handling taxes."
+        },
         "seller": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Seller",
-          "description": "Party who is selling the goods and is not responsible for taxes"
+          "description": "Party who is selling the goods but is not responsible for taxes like the\nsupplier."
         }
       },
       "type": "object",
-      "description": "Ordering allows additional order details to be appended"
+      "description": "Ordering provides additional information about the ordering process including references to other documents and alternative parties involved in the order-to-delivery process."
     },
     "Outlay": {
       "properties": {
@@ -546,10 +618,10 @@
     },
     "Payment": {
       "properties": {
-        "payer": {
+        "payee": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Payer",
-          "description": "The party responsible for paying for the invoice, if not the customer."
+          "description": "The party responsible for receiving payment of the invoice, if not the supplier."
         },
         "terms": {
           "$ref": "https://gobl.org/draft-0/pay/terms",

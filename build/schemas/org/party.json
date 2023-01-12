@@ -62,6 +62,14 @@
           "title": "Email Addresses",
           "description": "Electronic mail addresses"
         },
+        "websites": {
+          "items": {
+            "$ref": "#/$defs/Website"
+          },
+          "type": "array",
+          "title": "Websites",
+          "description": "Public websites that provide further information about the party."
+        },
         "telephones": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/telephone"
@@ -86,6 +94,36 @@
         "name"
       ],
       "description": "Party represents a person or business entity."
+    },
+    "Website": {
+      "properties": {
+        "uuid": {
+          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
+          "description": "Unique identity code"
+        },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Identifier for this number."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Title of the website to help distinguish between this and other links."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "URL for the website."
+        }
+      },
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "description": "Website describes what is expected for a web address."
     }
   },
   "$comment": "Generated with GOBL v0.34.1"

@@ -13,9 +13,9 @@ type Delivery struct {
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
 	// When the goods should be expected
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
-	// Start of a n invoicing or delivery period
+	// Start of an invoicing or delivery period
 	StartDate *cal.Date `json:"start_date,omitempty" jsonschema:"title=Start Date"`
-	// End of a n invoicing or delivery period
+	// End of an invoicing or delivery period
 	EndDate *cal.Date `json:"end_date,omitempty" jsonschema:"title=End Date"`
 }
 
