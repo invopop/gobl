@@ -23,6 +23,10 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			Expected: "800134536",
 		},
 		{
+			Code:     "PT 800.134.536",
+			Expected: "800134536",
+		},
+		{
 			Code:     "36029785",
 			Expected: "36029785",
 		},

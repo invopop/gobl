@@ -42,6 +42,7 @@ var (
 func NormalizeTaxIdentity(tID *tax.Identity) error {
 	code := strings.ToUpper(tID.Code)
 	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = strings.TrimPrefix(code, string(tID.Country))
 	tID.Code = code
 	return nil
 }

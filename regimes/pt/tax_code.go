@@ -28,10 +28,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 // normalizeTaxIdentity will remove any whitespace or separation characters from
 // the tax code.
 func normalizeTaxIdentity(tID *tax.Identity) error {
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
-	return nil
+	return common.NormalizeTaxIdentity(tID)
 }
 
 var isValidZoneCode = validation.In(validZoneCodes()...)
