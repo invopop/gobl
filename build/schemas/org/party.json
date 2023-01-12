@@ -67,7 +67,8 @@
             "$ref": "#/$defs/Website"
           },
           "type": "array",
-          "title": "Websites"
+          "title": "Websites",
+          "description": "Public websites that provide further information about the party."
         },
         "telephones": {
           "items": {

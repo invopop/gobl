@@ -175,7 +175,7 @@
         "code": {
           "type": "string",
           "title": "Code",
-          "description": "Source document's code."
+          "description": "Source document's code or other identifier."
         },
         "url": {
           "type": "string",
@@ -185,9 +185,6 @@
         }
       },
       "type": "object",
-      "required": [
-        "code"
-      ],
       "description": "DocumentReference provides a link to a existing document."
     },
     "ExchangeRates": {

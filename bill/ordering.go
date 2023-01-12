@@ -41,8 +41,8 @@ type DocumentReference struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Series the reference document belongs to.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
-	// Source document's code.
-	Code string `json:"code" jsonschema:"title=Code"`
+	// Source document's code or other identifier.
+	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Link to the source document.
 	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
 }
@@ -66,7 +66,7 @@ func (o *Ordering) Validate() error {
 func (dr *DocumentReference) Validate() error {
 	return validation.ValidateStruct(dr,
 		validation.Field(&dr.UUID),
-		validation.Field(&dr.Code, validation.Required),
+		validation.Field(&dr.Code),
 		validation.Field(&dr.URL, is.URL),
 	)
 }
