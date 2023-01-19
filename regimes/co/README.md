@@ -1,4 +1,8 @@
-# GOBL Colombia Region
+# GOBL Colombia Tax Regime
+
+## Zones
+
+Colombia requires zones to be defined in supplier and customer party's tax identity.
 
 ## Invoice Series & Code
 

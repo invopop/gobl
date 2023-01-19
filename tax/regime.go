@@ -20,6 +20,7 @@ type Regime struct {
 
 	// Country code for the region
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Code"`
+
 	// Specific Locality, region, city, province, county, or similar code inside
 	// the country, if needed.
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
@@ -87,8 +88,9 @@ type Rate struct {
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
 	// Values contains a list of Value objects that contain the
-	// current and historical percentage values for the rate;
-	// order is important, newer values should come before
+	// current and historical percentage values for the rate and
+	// additional filters.
+	// Order is important, newer values should come before
 	// older values.
 	Values []*RateValue `json:"values" jsonschema:"title=Values"`
 }
@@ -97,6 +99,8 @@ type Rate struct {
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
 type RateValue struct {
+	// Only use this value if one of the zones matches.
+	Zones []l10n.Code `json:"zones,omitempty" jsonschema:"title=Zones"`
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
 	// Percent rate that should be applied
@@ -179,9 +183,9 @@ func (r *Rate) Validate() error {
 }
 
 // Validate ensures the tax rate contains all the required fields.
-func (v *RateValue) Validate() error {
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Percent, validation.Required),
+func (rv *RateValue) Validate() error {
+	return validation.ValidateStruct(rv,
+		validation.Field(&rv.Percent, validation.Required),
 	)
 }
 
@@ -225,12 +229,27 @@ func (c *Category) Rate(key cbc.Key) *Rate {
 	return nil
 }
 
-// On determines the tax rate value for the provided date.
-func (r *Rate) On(date cal.Date) *RateValue {
-	for _, v := range r.Values {
-		if v.Since == nil || !v.Since.IsValid() || v.Since.Before(date.Date) {
-			return v
+// Value determines the tax rate value for the provided date and zone, if applicable.
+func (r *Rate) Value(date cal.Date, zone l10n.Code) *RateValue {
+	for _, rv := range r.Values {
+		if len(rv.Zones) > 0 {
+			if !rv.HasZone(zone) {
+				continue
+			}
+		}
+		if rv.Since == nil || !rv.Since.IsValid() || rv.Since.Before(date.Date) {
+			return rv
 		}
 	}
 	return nil
+}
+
+// HasZone returns true if the rate value has a zone that matches the one provided.
+func (rv *RateValue) HasZone(zone l10n.Code) bool {
+	for _, z := range rv.Zones {
+		if z == zone {
+			return true
+		}
+	}
+	return false
 }

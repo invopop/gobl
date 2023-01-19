@@ -3,6 +3,7 @@ package tax
 import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 )
 
@@ -44,19 +45,23 @@ type Total struct {
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
 }
 
+// TotalCalculator is used to calculate a tax totals object using the configured
+// parameters.
+type TotalCalculator struct {
+	// Data used for making calculations that is not persisted
+	Regime   *Regime
+	Zone     l10n.Code
+	Zero     num.Amount
+	Includes cbc.Code
+	Date     cal.Date
+	Lines    []TaxableLine
+}
+
 // TaxableLine defines what we expect from a line in order to subsequently calculate
 // the taxes that need to be added or retained.
 type TaxableLine interface {
 	GetTaxes() Set
 	GetTotal() num.Amount
-}
-
-// NewTotal initiates a new total instance.
-func NewTotal(zero num.Amount) *Total {
-	t := new(Total)
-	t.Categories = make([]*CategoryTotal, 0)
-	t.Sum = zero
-	return t
 }
 
 // newCategoryTotal prepares a category total calculation.
@@ -97,18 +102,22 @@ func (t *Total) Category(code cbc.Code) *CategoryTotal {
 }
 
 // Calculate figures out the total taxes for the set of `TaxableLine`s provided.
-func (t *Total) Calculate(reg *Regime, lines []TaxableLine, taxIncluded cbc.Code, date cal.Date, zero num.Amount) error {
-	if reg == nil {
+func (tc *TotalCalculator) Calculate(t *Total) error {
+	if tc.Regime == nil {
 		return ErrMissingRegion
 	}
 
+	// reset
+	t.Categories = make([]*CategoryTotal, 0)
+	t.Sum = tc.Zero
+
 	// get a simplified list of lines we can manipulate if needed
-	taxLines := mapTaxLines(lines)
+	taxLines := mapTaxLines(tc.Lines)
 
 	// First, prepare all tax combos with the region and date details
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
-			if err := c.prepare(reg, date); err != nil {
+			if err := c.prepare(tc); err != nil {
 				return err
 			}
 		}
@@ -117,12 +126,12 @@ func (t *Total) Calculate(reg *Regime, lines []TaxableLine, taxIncluded cbc.Code
 	// If prices include a tax, perform a pre-loop to update all the line prices with
 	// the price minus the defined tax. To help reduce the risk of rounding errors,
 	// we'll add an extra couple of 0s.
-	if !taxIncluded.IsEmpty() {
+	if !tc.Includes.IsEmpty() {
 		for _, tl := range taxLines {
-			if rate := tl.rateForCategory(taxIncluded); rate != "" {
-				c := tl.taxes.Get(taxIncluded)
+			if rate := tl.rateForCategory(tc.Includes); rate != "" {
+				c := tl.taxes.Get(tc.Includes)
 				if c.category.Retained {
-					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", taxIncluded.String())
+					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 				}
 
 				// update the price scale, add two 0s, this will be removed later.
@@ -135,16 +144,16 @@ func (t *Total) Calculate(reg *Regime, lines []TaxableLine, taxIncluded cbc.Code
 	// Go through each line and add the price to the base of each tax
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
-			rt := t.rateTotalFor(c, zero)
+			rt := t.rateTotalFor(c, tc.Zero)
 			rt.Base = rt.Base.MatchPrecision(tl.price)
 			rt.Base = rt.Base.Add(tl.price)
 		}
 	}
 
 	// Now go through each category to apply the percentage and calculate the final sums
-	t.Sum = zero
+	t.Sum = tc.Zero
 	for _, ct := range t.Categories {
-		ct.calculate(zero)
+		ct.calculate(tc.Zero)
 		if ct.Retained {
 			t.Sum = t.Sum.Subtract(ct.Amount)
 			if ct.Surcharge != nil {

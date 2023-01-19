@@ -49,7 +49,6 @@ var (
 
 // Known combinations of codes
 var (
-	taxCodeCountryRegexp  = regexp.MustCompile(`^ES`)
 	taxCodeNationalRegexp = regexp.MustCompile(`^(?P<number>[0-9]{8})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeForeignRegexp  = regexp.MustCompile(`^(?P<type>[` + taxCodeForeignTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[` + taxCodeCheckLetters + `])$`)
 	taxCodeOtherRegexp    = regexp.MustCompile(`^(?P<type>[` + taxCodeOtherTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)
@@ -87,11 +86,7 @@ func validateTaxCode(value interface{}) error {
 // uppercase. It'll also remove the "ES" part at beginning if present such as required
 // for EU VIES system which is redundant and not used in the validation process.
 func normalizeTaxIdentity(tID *tax.Identity) error {
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
-	tID.Code = taxCodeCountryRegexp.ReplaceAllString(tID.Code, "")
-	return nil
+	return common.NormalizeTaxIdentity(tID)
 }
 
 // DetermineTaxCodeType takes a valid code and determines the type. If the code

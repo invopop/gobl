@@ -1,0 +1,234 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Portugal",
+    "pt": "Portugal"
+  },
+  "country": "PT",
+  "zones": [
+    {
+      "code": "01",
+      "region": {
+        "pt": "Aveiro"
+      }
+    },
+    {
+      "code": "02",
+      "region": {
+        "pt": "Beja"
+      }
+    },
+    {
+      "code": "03",
+      "region": {
+        "pt": "Braga"
+      }
+    },
+    {
+      "code": "04",
+      "region": {
+        "pt": "Bragança"
+      }
+    },
+    {
+      "code": "05",
+      "region": {
+        "pt": "Castelo Branco"
+      }
+    },
+    {
+      "code": "06",
+      "region": {
+        "pt": "Coimbra"
+      }
+    },
+    {
+      "code": "07",
+      "region": {
+        "pt": "Évora"
+      }
+    },
+    {
+      "code": "08",
+      "region": {
+        "pt": "Faro"
+      }
+    },
+    {
+      "code": "09",
+      "region": {
+        "pt": "Guarda"
+      }
+    },
+    {
+      "code": "10",
+      "region": {
+        "pt": "Leiria"
+      }
+    },
+    {
+      "code": "11",
+      "region": {
+        "pt": "Lisboa"
+      }
+    },
+    {
+      "code": "12",
+      "region": {
+        "pt": "Portalegre"
+      }
+    },
+    {
+      "code": "13",
+      "region": {
+        "pt": "Porto"
+      }
+    },
+    {
+      "code": "14",
+      "region": {
+        "pt": "Santarém"
+      }
+    },
+    {
+      "code": "15",
+      "region": {
+        "pt": "Setúbal"
+      }
+    },
+    {
+      "code": "16",
+      "region": {
+        "pt": "Viana do Castelo"
+      }
+    },
+    {
+      "code": "17",
+      "region": {
+        "pt": "Vila Real"
+      }
+    },
+    {
+      "code": "18",
+      "region": {
+        "pt": "Viseu"
+      }
+    },
+    {
+      "code": "20",
+      "region": {
+        "pt": "Região Autónoma dos Açores"
+      }
+    },
+    {
+      "code": "30",
+      "region": {
+        "pt": "Região Autónoma da Madeira"
+      }
+    }
+  ],
+  "currency": "EUR",
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "pt": "IVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "pt": "Imposto sobre o Valor Acrescentado"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "pt": "Tipo Geral"
+          },
+          "values": [
+            {
+              "zones": [
+                "20"
+              ],
+              "since": "2011-01-01",
+              "percent": "16.0%"
+            },
+            {
+              "zones": [
+                "20"
+              ],
+              "since": "2011-01-01",
+              "percent": "18.0%"
+            },
+            {
+              "zones": [
+                "30"
+              ],
+              "since": "2011-01-01",
+              "percent": "22.0%"
+            },
+            {
+              "since": "2011-01-01",
+              "percent": "23.0%"
+            }
+          ]
+        },
+        {
+          "key": "intermediate",
+          "name": {
+            "en": "Intermediate Rate",
+            "pt": "Taxa Intermédia"
+          },
+          "values": [
+            {
+              "zones": [
+                "20"
+              ],
+              "since": "2011-01-01",
+              "percent": "9.0%"
+            },
+            {
+              "zones": [
+                "30"
+              ],
+              "since": "2011-01-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "2011-01-01",
+              "percent": "13.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate",
+            "pt": "Taxa Reduzida"
+          },
+          "values": [
+            {
+              "zones": [
+                "20"
+              ],
+              "since": "2011-01-01",
+              "percent": "4.0%"
+            },
+            {
+              "zones": [
+                "30"
+              ],
+              "since": "2011-01-01",
+              "percent": "5.0%"
+            },
+            {
+              "since": "2011-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

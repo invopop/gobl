@@ -211,7 +211,7 @@ func (inv *Invoice) Calculate() error {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
 
-	return inv.calculate(r)
+	return inv.calculate(r, tID)
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
@@ -278,7 +278,7 @@ func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
 	return nil
 }
 
-func (inv *Invoice) calculate(r *tax.Regime) error {
+func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate
@@ -346,7 +346,16 @@ func (inv *Invoice) calculate(r *tax.Regime) error {
 	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
 		pit = inv.Tax.PricesInclude
 	}
-	if err := t.Taxes.Calculate(r, tls, pit, *date, zero); err != nil {
+	t.Taxes = new(tax.Total)
+	tc := &tax.TotalCalculator{
+		Zero:     zero,
+		Regime:   r,
+		Zone:     tID.Zone,
+		Date:     *date,
+		Includes: pit,
+		Lines:    tls,
+	}
+	if err := tc.Calculate(t.Taxes); err != nil {
 		return err
 	}
 
@@ -417,7 +426,7 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Charge = nil
 	t.TaxIncluded = nil
 	t.Total = zero
-	t.Taxes = tax.NewTotal(zero)
+	t.Taxes = nil
 	t.Tax = zero
 	t.TotalWithTax = zero
 	t.Outlays = nil

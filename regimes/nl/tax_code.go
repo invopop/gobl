@@ -2,7 +2,6 @@ package nl
 
 import (
 	"errors"
-	"regexp"
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -13,10 +12,6 @@ import (
 
 const (
 	vatLen = 12
-)
-
-var (
-	taxCodeCountryRegexp = regexp.MustCompile(`^NL`)
 )
 
 var errInvalidVAT = errors.New("invalid VAT number")
@@ -52,11 +47,7 @@ func validateTaxCode(value interface{}) error {
 // uppercase. It'll also remove the "NL" part at beginning if present such as required
 // for EU VIES system which is redundant and not used in the validation process.
 func NormalizeTaxIdentity(tID *tax.Identity) error {
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
-	tID.Code = taxCodeCountryRegexp.ReplaceAllString(tID.Code, "")
-	return nil
+	return common.NormalizeTaxIdentity(tID)
 }
 
 func validateDigits(code, check string) error {
