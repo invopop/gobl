@@ -183,9 +183,9 @@ func (r *Rate) Validate() error {
 }
 
 // Validate ensures the tax rate contains all the required fields.
-func (v *RateValue) Validate() error {
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Percent, validation.Required),
+func (rv *RateValue) Validate() error {
+	return validation.ValidateStruct(rv,
+		validation.Field(&rv.Percent, validation.Required),
 	)
 }
 
@@ -244,6 +244,7 @@ func (r *Rate) Value(date cal.Date, zone l10n.Code) *RateValue {
 	return nil
 }
 
+// HasZone returns true if the rate value has a zone that matches the one provided.
 func (rv *RateValue) HasZone(zone l10n.Code) bool {
 	for _, z := range rv.Zones {
 		if z == zone {
