@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 )
@@ -38,12 +37,12 @@ func (c *Combo) Validate() error {
 	)
 }
 
-// prepare updates the Combo object's Percent and Retained properties according
-// to the regime and date provided.
-func (c *Combo) prepare(r *Regime, date cal.Date) error {
-	c.category = r.Category(c.Category)
+// prepare updates the Combo object's Percent and Retained properties using the base totals
+// as a source of additional data for making decisions.
+func (c *Combo) prepare(tc *TotalCalculator) error {
+	c.category = tc.Regime.Category(c.Category)
 	if c.category == nil {
-		return ErrInvalidCategory.WithMessage("'%s' not in region", c.Category.String())
+		return ErrInvalidCategory.WithMessage("'%s' not defined in region", c.Category.String())
 	}
 
 	if c.Rate != cbc.KeyEmpty {
@@ -51,9 +50,9 @@ func (c *Combo) prepare(r *Regime, date cal.Date) error {
 		if rate == nil {
 			return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
 		}
-		value := rate.On(date)
+		value := rate.Value(tc.Date, tc.Zone)
 		if value == nil {
-			return ErrInvalidDate.WithMessage("data unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
+			return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
 		}
 		c.Percent = value.Percent
 		if value.Surcharge != nil {

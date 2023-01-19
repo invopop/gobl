@@ -6,9 +6,11 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,10 +31,13 @@ func (tl *taxableLine) GetTotal() num.Amount {
 
 func TestTotalCalculate(t *testing.T) {
 	spain := es.New()
+	portugal := pt.New()
 	date := cal.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {
 		desc        string
+		regime      *tax.Regime // default, spain
+		zone        l10n.Code   // default empty
 		lines       []tax.TaxableLine
 		date        *cal.Date
 		taxIncluded cbc.Code
@@ -83,6 +88,42 @@ func TestTotalCalculate(t *testing.T) {
 					},
 				},
 				Sum: num.MakeAmount(2100, 2),
+			},
+		},
+		{
+			desc:   "with VAT in Azores",
+			regime: portugal,
+			zone:   pt.ZoneAzores,
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.MakePercentage(160, 3),
+								Amount:  num.MakeAmount(1600, 2),
+							},
+						},
+						Base:   num.MakeAmount(10000, 2),
+						Amount: num.MakeAmount(1600, 2),
+					},
+				},
+				Sum: num.MakeAmount(1600, 2),
 			},
 		},
 		{
@@ -632,7 +673,7 @@ func TestTotalCalculate(t *testing.T) {
 				},
 			},
 			err:        tax.ErrInvalidDate,
-			errContent: "invalid-date: data unavailable for 'pro' in 'IRPF' on '2005-01-01'",
+			errContent: "invalid-date: rate value unavailable for 'pro' in 'IRPF' on '2005-01-01'",
 		},
 		{
 			desc: "with invalid tax included",
@@ -659,8 +700,24 @@ func TestTotalCalculate(t *testing.T) {
 			if test.date != nil {
 				d = *test.date
 			}
-			tot := tax.NewTotal(zero)
-			err := tot.Calculate(spain, test.lines, test.taxIncluded, d, zero)
+			reg := spain
+			if test.regime != nil {
+				reg = test.regime
+			}
+			zone := l10n.CodeEmpty
+			if test.zone != l10n.CodeEmpty {
+				zone = test.zone
+			}
+			tc := &tax.TotalCalculator{
+				Regime:   reg,
+				Zone:     zone,
+				Zero:     zero,
+				Date:     d,
+				Includes: test.taxIncluded,
+				Lines:    test.lines,
+			}
+			tot := new(tax.Total)
+			err := tc.Calculate(tot)
 			if test.err != nil && assert.Error(t, err) {
 				assert.ErrorIs(t, err, test.err)
 			}
@@ -668,7 +725,7 @@ func TestTotalCalculate(t *testing.T) {
 				assert.Contains(t, err.Error(), test.errContent)
 			}
 			if test.want != nil {
-				if !assert.EqualValues(t, test.want, tot) {
+				if !assert.EqualValues(t, tot, test.want) {
 					data, _ := json.MarshalIndent(tot, "", "  ")
 					t.Logf("data output: %v", string(data))
 				}

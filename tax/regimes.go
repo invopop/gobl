@@ -32,14 +32,14 @@ func (c *RegimeCollection) add(r *Regime) {
 
 // For provides a single matching regime from the collection, or nil if
 // no match is found.
-func (c *RegimeCollection) For(country l10n.CountryCode, locality l10n.Code) *Regime {
+func (c *RegimeCollection) For(country l10n.CountryCode, zone l10n.Code) *Regime {
 	set, ok := c.list[country]
 	if !ok {
 		return nil
 	}
 	// First sweep
 	for _, r := range set {
-		if r.Zone == locality {
+		if r.Zone == zone {
 			return r
 		}
 	}

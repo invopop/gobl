@@ -24,6 +24,6 @@ var zones = []tax.Zone{
 	{Code: ZoneVianaDoCastelo, Region: i18n.String{i18n.PT: "Viana do Castelo"}},
 	{Code: ZoneVilaReal, Region: i18n.String{i18n.PT: "Vila Real"}},
 	{Code: ZoneViseu, Region: i18n.String{i18n.PT: "Viseu"}},
-	{Code: ZoneAcores, Region: i18n.String{i18n.PT: "Região Autónoma dos Açores"}},
+	{Code: ZoneAzores, Region: i18n.String{i18n.PT: "Região Autónoma dos Açores"}},
 	{Code: ZoneMadeira, Region: i18n.String{i18n.PT: "Região Autónoma da Madeira"}},
 }
