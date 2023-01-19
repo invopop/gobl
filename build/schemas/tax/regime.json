@@ -60,7 +60,7 @@
           },
           "type": "array",
           "title": "Values",
-          "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate;\norder is important, newer values should come before\nolder values."
+          "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
         }
       },
       "type": "object",
@@ -73,6 +73,14 @@
     },
     "RateValue": {
       "properties": {
+        "zones": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/l10n/code"
+          },
+          "type": "array",
+          "title": "Zones",
+          "description": "Only use this value if one of the zones matches."
+        },
         "since": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Since",

@@ -83,6 +83,14 @@
           "title": "Registration",
           "description": "Additional registration details about the company that may need to be included in a document."
         },
+        "logos": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/image"
+          },
+          "type": "array",
+          "title": "Logos",
+          "description": "Images that can be used to identify the party visually."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
