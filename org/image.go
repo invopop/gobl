@@ -16,7 +16,10 @@ type Image struct {
 	// Label to help identify the image.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// URL of the image
-	URL string `json:"url" jsonschema:"title=URL"`
+	URL string `json:"url,omitempty" jsonschema:"title=URL"`
+	// As an alternative to the URL and only when the source data is small,
+	// like an SVG, the raw data may be provided using Base64 encoding.
+	Data []byte `json:"data,omitempty" jsonschema:"title=Data"`
 	// Format of the image.
 	MIME string `json:"mime,omitempty" jsonschema:"title=MIME"`
 	// Details of what the image represents.
@@ -36,7 +39,7 @@ type Image struct {
 func (i *Image) Validate() error {
 	return validation.ValidateStruct(i,
 		validation.Field(&i.UUID),
-		validation.Field(&i.URL, validation.Required, is.URL),
+		validation.Field(&i.URL, is.URL),
 		validation.Field(&i.Height, validation.Min(1), validation.Max(2048)),
 		validation.Field(&i.Width, validation.Min(1), validation.Max(2048)),
 		validation.Field(&i.Digest),
