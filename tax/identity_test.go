@@ -16,6 +16,7 @@ func TestTaxIdentity(t *testing.T) {
 	}
 	err := tID.Validate()
 	assert.NoError(t, err)
+	assert.Equal(t, tID.String(), "ESX3157928M")
 
 	// Invalid tax id that should be validated against regional
 	// checks.

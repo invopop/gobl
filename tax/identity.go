@@ -1,6 +1,8 @@
 package tax
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
@@ -93,6 +95,11 @@ var SourceKeyDefinitions = []DefSourceKey{
 		Key:         SourceKeyOther,
 		Description: "An other type of source not listed",
 	},
+}
+
+// String provides a string representation of the tax identity.
+func (id *Identity) String() string {
+	return fmt.Sprintf("%s%s", id.Country, id.Code)
 }
 
 // Regime provides the regime object for this tax identity.
