@@ -491,6 +491,53 @@ func TestTotalCalculate(t *testing.T) {
 			},
 		},
 		{
+			desc: "with multirate VAT as percentages, and included in price",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.MakePercentage(100, 3),
+						},
+					},
+					amount: num.MakeAmount(15000, 2),
+				},
+			},
+			taxIncluded: common.TaxCategoryVAT,
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Base:    num.MakeAmount(8264, 2),
+								Percent: num.MakePercentage(210, 3),
+								Amount:  num.MakeAmount(1736, 2),
+							},
+							{
+								Base:    num.MakeAmount(13636, 2),
+								Percent: num.MakePercentage(100, 3),
+								Amount:  num.MakeAmount(1364, 2),
+							},
+						},
+						Base:   num.MakeAmount(21900, 2),
+						Amount: num.MakeAmount(3100, 2),
+					},
+				},
+				Sum: num.MakeAmount(3100, 2),
+			},
+		},
+		{
 			desc: "with multirate VAT and retained tax",
 			lines: []tax.TaxableLine{
 				&taxableLine{
