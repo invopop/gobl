@@ -128,8 +128,7 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 	// we'll add an extra couple of 0s.
 	if !tc.Includes.IsEmpty() {
 		for _, tl := range taxLines {
-			if rate := tl.rateForCategory(tc.Includes); rate != "" {
-				c := tl.taxes.Get(tc.Includes)
+			if c := tl.taxes.Get(tc.Includes); c != nil {
 				if c.category.Retained {
 					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 				}
@@ -240,10 +239,6 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 type taxLine struct {
 	price num.Amount
 	taxes Set
-}
-
-func (tl *taxLine) rateForCategory(code cbc.Code) cbc.Key {
-	return tl.taxes.Rate(code)
 }
 
 func mapTaxLines(lines []TaxableLine) []*taxLine {
