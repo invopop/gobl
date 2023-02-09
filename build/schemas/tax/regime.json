@@ -139,7 +139,10 @@
           "description": "Currency used by the country."
         },
         "schemes": {
-          "$ref": "#/$defs/Schemes",
+          "items": {
+            "$ref": "#/$defs/Scheme"
+          },
+          "type": "array",
           "title": "Schemes",
           "description": "Set of specific scheme definitions inside the region."
         },
@@ -198,13 +201,6 @@
         "name"
       ],
       "description": "Scheme contains the definition of a scheme that belongs to a region and can be used to simplify validation processes for document contents."
-    },
-    "Schemes": {
-      "items": {
-        "$ref": "#/$defs/Scheme"
-      },
-      "type": "array",
-      "description": "Schemes defines an array of scheme objects with helper functions."
     },
     "Zone": {
       "properties": {
