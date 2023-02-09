@@ -24,6 +24,16 @@ type Tax struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// ContainsScheme returns true if the tax contains the given scheme.
+func (t *Tax) ContainsScheme(key cbc.Key) bool {
+	for _, s := range t.Schemes {
+		if s == key {
+			return true
+		}
+	}
+	return false
+}
+
 // Validate ensures the tax details look valid.
 func (t *Tax) Validate() error {
 	return validation.ValidateStruct(t,
