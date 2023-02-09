@@ -3,7 +3,6 @@ package bill
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/tax"
 )
 
 // TaxScheme allows for defining a specific or special scheme that applies to the
@@ -18,7 +17,7 @@ type Tax struct {
 	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
 
 	// Special tax schemes that apply to this invoice according to local requirements.
-	Schemes tax.SchemeKeys `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+	Schemes []cbc.Key `json:"schemes,omitempty" jsonschema:"title=Schemes"`
 
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.

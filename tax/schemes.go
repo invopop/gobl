@@ -1,15 +1,10 @@
 package tax
 
 import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 )
-
-// Schemes defines an array of scheme objects with helper functions.
-type Schemes []*Scheme
-
-// SchemeKeys stores a list of keys that makes it easier to perform matches.
-type SchemeKeys []cbc.Key
 
 // Scheme contains the definition of a scheme that belongs to a region and can be used
 // to simplify validation processes for document contents.
@@ -31,23 +26,13 @@ type Scheme struct {
 	Note *cbc.Note `json:"note,omitempty" jsonschema:"title=Note"`
 }
 
-// ForKey finds the scheme with a matching key.
-func (ss Schemes) ForKey(key cbc.Key) *Scheme {
-	for _, s := range ss {
-		if s.Key == key {
-			return s
-		}
-	}
-	return nil
-}
-
-// Contains returns true if the list of keys contains a match for the provided
-// key.
-func (sk SchemeKeys) Contains(key cbc.Key) bool {
-	for _, v := range sk {
-		if key == v {
-			return true
-		}
-	}
-	return false
+// Validate ensures the tax details look valid.
+func (s *Scheme) Validate() error {
+	return validation.ValidateStruct(s,
+		validation.Field(&s.Key, validation.Required),
+		validation.Field(&s.Name, validation.Required),
+		validation.Field(&s.Description),
+		validation.Field(&s.Categories),
+		validation.Field(&s.Note),
+	)
 }
