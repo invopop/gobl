@@ -70,5 +70,5 @@
       "description": "SourceKey identifies the source of a tax identity"
     }
   },
-  "$comment": "Generated with GOBL v0.35.0"
+  "$comment": "Generated with GOBL v0.36.0"
 }

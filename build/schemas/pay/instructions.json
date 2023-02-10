@@ -133,7 +133,7 @@
       "required": [
         "key"
       ],
-      "description": "Instructions holds a set of instructions that determine how the payment has or should be made."
+      "description": "Instructions determine how the payment has or should be made."
     },
     "MethodKey": {
       "oneOf": [
@@ -147,11 +147,11 @@
         },
         {
           "const": "credit-transfer",
-          "description": "Send initiated bank or wire transfer"
+          "description": "Sender initiated bank or wire transfer"
         },
         {
           "const": "debit-transfer",
-          "description": "Receive initiated bank or wire transfer"
+          "description": "Receiver initiated bank or wire transfer"
         },
         {
           "const": "cash",
@@ -190,5 +190,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.35.0"
+  "$comment": "Generated with GOBL v0.36.0"
 }

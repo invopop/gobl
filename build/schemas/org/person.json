@@ -62,5 +62,5 @@
       "description": "Person represents a human, and how to contact them electronically."
     }
   },
-  "$comment": "Generated with GOBL v0.35.0"
+  "$comment": "Generated with GOBL v0.36.0"
 }
