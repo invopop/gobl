@@ -38,18 +38,18 @@ type MethodKeyDef struct {
 // MethodKeyDefinitions includes all the payment method keys that
 // are accepted by GOBL.
 var MethodKeyDefinitions = []MethodKeyDef{
-	{MethodKeyAny, "Any method available, no preference", "1"},                // Instrument not defined
-	{MethodKeyCard, "Credit or debit card", "48"},                             // Bank card
-	{MethodKeyCreditTransfer, "Send initiated bank or wire transfer", "30"},   // credit transfer
-	{MethodKeyDebitTransfer, "Receive initiated bank or wire transfer", "31"}, // debit transfer
-	{MethodKeyCash, "Cash", "10"},                                             // in cash
-	{MethodKeyDirectDebit, "Direct debit", "49"},                              // direct debit
-	{MethodKeyOnline, "Online or web payment", "68"},                          // online payment service
+	{MethodKeyAny, "Any method available, no preference", "1"},                 // Instrument not defined
+	{MethodKeyCard, "Credit or debit card", "48"},                              // Bank card
+	{MethodKeyCreditTransfer, "Sender initiated bank or wire transfer", "30"},  // credit transfer
+	{MethodKeyDebitTransfer, "Receiver initiated bank or wire transfer", "31"}, // debit transfer
+	{MethodKeyCash, "Cash", "10"},                                              // in cash
+	{MethodKeyDirectDebit, "Direct debit", "49"},                               // direct debit
+	{MethodKeyOnline, "Online or web payment", "68"},                           // online payment service
 }
 
-// Instructions holds a set of instructions that determine how the payment has
-// or should be made. A single "code" exists in which the preferred payment method
-// should be provided. All other details serve as a reference.
+// Instructions determine how the payment has or should be made. A
+// single "key" exists in which the preferred payment method
+// should be provided, all other details serve as a reference.
 type Instructions struct {
 	// How payment is expected or has been arranged to be collected
 	Key MethodKey `json:"key" jsonschema:"title=Key"`

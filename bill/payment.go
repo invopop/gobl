@@ -14,7 +14,7 @@ type Payment struct {
 	// Payment terms or conditions.
 	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
 	// Any amounts that have been paid in advance and should be deducted from the amount due.
-	Advances pay.Advances `json:"advances,omitempty" jsonschema:"title=Advances"`
+	Advances []*pay.Advance `json:"advances,omitempty" jsonschema:"title=Advances"`
 	// Details on how payment should be made.
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
 }

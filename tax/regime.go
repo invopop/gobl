@@ -32,7 +32,7 @@ type Regime struct {
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
 	// Set of specific scheme definitions inside the region.
-	Schemes Schemes `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+	Schemes []*Scheme `json:"schemes,omitempty" jsonschema:"title=Schemes"`
 
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
@@ -135,6 +135,16 @@ func (r *Regime) CurrencyDef() *currency.Def {
 		return nil
 	}
 	return &d
+}
+
+// SchemeFor returns the scheme definition for the given key.
+func (r *Regime) SchemeFor(key cbc.Key) *Scheme {
+	for _, s := range r.Schemes {
+		if s.Key == key {
+			return s
+		}
+	}
+	return nil
 }
 
 // Validate enures the region definition is valid, including all

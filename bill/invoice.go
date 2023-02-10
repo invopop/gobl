@@ -33,7 +33,7 @@ type Invoice struct {
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
-	ExchangeRates currency.ExchangeRates `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
+	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
@@ -256,7 +256,7 @@ func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
 		return nil
 	}
 	for _, k := range inv.Tax.Schemes {
-		s := r.Schemes.ForKey(k)
+		s := r.SchemeFor(k)
 		if s == nil {
 			return fmt.Errorf("invalid scheme: %v", k)
 		}
@@ -367,7 +367,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	if inv.Tax != nil && inv.Tax.Schemes.Contains(common.SchemeReverseCharge) {
+	if inv.Tax != nil && inv.Tax.ContainsScheme(common.SchemeReverseCharge) {
 		t.Tax = zero
 	} else {
 		t.Tax = t.Taxes.Sum
@@ -405,7 +405,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 
 func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 	if inv.Tax != nil {
-		if inv.Tax.Schemes.Contains(common.SchemeCustomerRates) {
+		if inv.Tax.ContainsScheme(common.SchemeCustomerRates) {
 			if inv.Customer == nil {
 				return nil
 			}

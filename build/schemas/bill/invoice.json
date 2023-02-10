@@ -3,13 +3,6 @@
   "$id": "https://gobl.org/draft-0/bill/invoice",
   "$ref": "#/$defs/Invoice",
   "$defs": {
-    "Advances": {
-      "items": {
-        "$ref": "https://gobl.org/draft-0/pay/advance"
-      },
-      "type": "array",
-      "description": "Advances contains an array of advance objects."
-    },
     "Charge": {
       "properties": {
         "uuid": {
@@ -187,13 +180,6 @@
       "type": "object",
       "description": "DocumentReference provides a link to a existing document."
     },
-    "ExchangeRates": {
-      "items": {
-        "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
-      },
-      "type": "array",
-      "description": "ExchangeRates represents an array of currency exchange rates."
-    },
     "Invoice": {
       "properties": {
         "uuid": {
@@ -222,7 +208,10 @@
           "description": "Currency for all invoice totals."
         },
         "exchange_rates": {
-          "$ref": "#/$defs/ExchangeRates",
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
+          },
+          "type": "array",
           "title": "Exchange Rates",
           "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
         },
@@ -629,7 +618,10 @@
           "description": "Payment terms or conditions."
         },
         "advances": {
-          "$ref": "#/$defs/Advances",
+          "items": {
+            "$ref": "https://gobl.org/draft-0/pay/advance"
+          },
+          "type": "array",
           "title": "Advances",
           "description": "Any amounts that have been paid in advance and should be deducted from the amount due."
         },
@@ -828,13 +820,6 @@
       ],
       "description": "Preceding allows for information to be provided about a previous invoice that this one will replace or subtract from."
     },
-    "SchemeKeys": {
-      "items": {
-        "$ref": "https://gobl.org/draft-0/cbc/key"
-      },
-      "type": "array",
-      "description": "SchemeKeys stores a list of keys that makes it easier to perform matches."
-    },
     "Tax": {
       "properties": {
         "prices_include": {
@@ -843,7 +828,10 @@
           "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
         },
         "schemes": {
-          "$ref": "#/$defs/SchemeKeys",
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
           "title": "Schemes",
           "description": "Special tax schemes that apply to this invoice according to local requirements."
         },
