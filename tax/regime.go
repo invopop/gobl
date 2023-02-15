@@ -111,17 +111,18 @@ type RateValue struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
-// ValidateDocument performs validation on the provided document.
-func (r *Regime) ValidateDocument(obj interface{}) error {
+// ValidateObject performs validation on the provided object in the context
+// of the regime.
+func (r *Regime) ValidateObject(obj interface{}) error {
 	if r.Validator != nil {
 		return r.Validator(obj)
 	}
 	return nil
 }
 
-// Calculate performs any region specific calculations on the provided
+// CalculateObject performs any regime specific calculations on the provided
 // object.
-func (r *Regime) Calculate(obj interface{}) error {
+func (r *Regime) CalculateObject(obj interface{}) error {
 	if r.Calculator != nil {
 		return r.Calculator(obj)
 	}

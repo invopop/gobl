@@ -112,7 +112,7 @@ func (id *Identity) Regime() *Regime {
 func (id *Identity) Calculate() error {
 	r := id.Regime()
 	if r != nil {
-		return r.Calculate(id)
+		return r.CalculateObject(id)
 	}
 	return nil
 }
@@ -126,6 +126,7 @@ func (id *Identity) Validate() error {
 		validation.Field(&id.Country, validation.Required),
 		validation.Field(&id.Zone),
 		validation.Field(&id.Source, validation.In(validSourceKeys...)),
+		validation.Field(&id.Code),
 		validation.Field(&id.Meta),
 	)
 	if err != nil {
@@ -133,7 +134,7 @@ func (id *Identity) Validate() error {
 	}
 	r := regimes.For(id.Country, id.Zone)
 	if r != nil {
-		return r.ValidateDocument(id)
+		return r.ValidateObject(id)
 	}
 	return nil
 }

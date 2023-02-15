@@ -6,12 +6,13 @@ import (
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 var (
-	validPrefixes = map[string]bool{
+	validPrefixes = map[cbc.Code]bool{
 		"1": true, "2": true, "3": true, "5": true, "6": true, "8": true,
 		"45": true, "70": true, "71": true, "72": true, "74": true, "75": true,
 		"77": true, "78": true, "79": true, "90": true, "91": true, "98": true, "99": true}
@@ -43,7 +44,7 @@ func validZoneCodes() []interface{} {
 
 // based on example provided by https://pt.wikipedia.org/wiki/N%C3%BAmero_de_identifica%C3%A7%C3%A3o_fiscal
 func validateTaxCode(value interface{}) error {
-	code, ok := value.(string)
+	code, ok := value.(cbc.Code)
 	if !ok {
 		return nil
 	}

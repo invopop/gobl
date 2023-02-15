@@ -141,7 +141,7 @@ func (p *Party) Calculate() error {
 			return err
 		}
 		r = p.TaxID.Regime()
-		return r.Calculate(p)
+		return r.CalculateObject(p)
 	}
 	return nil
 }

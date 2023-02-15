@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -68,7 +69,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 }
 
 func validateTaxCode(value interface{}) error {
-	code, ok := value.(string)
+	code, ok := value.(cbc.Code)
 	if !ok {
 		return nil
 	}
@@ -91,22 +92,22 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 
 // DetermineTaxCodeType takes a valid code and determines the type. If the code
 // is not valid, the `UnknownTaxCode` type will be returned.
-func DetermineTaxCodeType(code string) (TaxCodeType, error) {
+func DetermineTaxCodeType(code cbc.Code) (TaxCodeType, error) {
 	switch {
-	case taxCodeOrgRegexp.MatchString(code):
+	case taxCodeOrgRegexp.MatchString(string(code)):
 		return OrganizationTaxCode, verifyOrgCode(code)
-	case taxCodeNationalRegexp.MatchString(code):
+	case taxCodeNationalRegexp.MatchString(string(code)):
 		return NationalTaxCode, verifyNationalCode(code)
-	case taxCodeForeignRegexp.MatchString(code):
+	case taxCodeForeignRegexp.MatchString(string(code)):
 		return ForeignTaxCode, verifyForeignCode(code)
-	case taxCodeOtherRegexp.MatchString(code):
+	case taxCodeOtherRegexp.MatchString(string(code)):
 		return OtherTaxCode, verifyOtherCode(code)
 	default:
 		return UnknownTaxCode, nil
 	}
 }
 
-func verifyNationalCode(code string) error {
+func verifyNationalCode(code cbc.Code) error {
 	m, err := extractMatches(taxCodeNationalRegexp, code)
 	if err != nil {
 		return err
@@ -125,7 +126,7 @@ func verifyNationalCode(code string) error {
 	return nil // success
 }
 
-func verifyForeignCode(code string) error {
+func verifyForeignCode(code cbc.Code) error {
 	m, err := extractMatches(taxCodeForeignRegexp, code)
 	if err != nil {
 		return err
@@ -145,7 +146,7 @@ func verifyForeignCode(code string) error {
 	return nil // success
 }
 
-func verifyOrgCode(code string) error {
+func verifyOrgCode(code cbc.Code) error {
 	m, err := extractMatches(taxCodeOrgRegexp, code)
 	if err != nil {
 		return err
@@ -153,7 +154,7 @@ func verifyOrgCode(code string) error {
 	return verifyOrgCodeMatches(m)
 }
 
-func verifyOtherCode(code string) error {
+func verifyOtherCode(code cbc.Code) error {
 	m, err := extractMatches(taxCodeOtherRegexp, code)
 	if err != nil {
 		return err
@@ -205,8 +206,8 @@ func verifyOrgCodeMatches(m map[string]string) error {
 
 // regex handling is a bit long winded, this helper makes it easier to extract
 // named matches.
-func extractMatches(regex *regexp.Regexp, code string) (map[string]string, error) {
-	m := regex.FindStringSubmatch(code)
+func extractMatches(regex *regexp.Regexp, code cbc.Code) (map[string]string, error) {
+	m := regex.FindStringSubmatch(code.String())
 	if len(m) == 0 {
 		return nil, ErrTaxCodeNoMatch
 	}

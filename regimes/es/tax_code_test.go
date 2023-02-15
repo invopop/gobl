@@ -39,7 +39,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
-		err := r.Calculate(tID)
+		err := r.CalculateObject(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
@@ -184,7 +184,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 	for _, ts := range tests {
 		t.Run(string(ts.Code), func(t *testing.T) {
 			tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
-			err := r.ValidateDocument(tID)
+			err := r.ValidateObject(tID)
 			if ts.Expected == nil {
 				assert.NoError(t, err)
 			} else {

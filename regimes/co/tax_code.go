@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
@@ -61,7 +62,7 @@ func validZoneCodes() []interface{} {
 }
 
 func validateTaxCode(value interface{}) error {
-	code, ok := value.(string)
+	code, ok := value.(cbc.Code)
 	if !ok {
 		return nil
 	}
@@ -85,8 +86,8 @@ func validateTaxCode(value interface{}) error {
 	return validateDigits(code[0:l-1], code[l-1:l])
 }
 
-func validateDigits(code, check string) error {
-	ck, err := strconv.Atoi(check)
+func validateDigits(code, check cbc.Code) error {
+	ck, err := strconv.Atoi(string(check))
 	if err != nil {
 		return fmt.Errorf("invalid check: %w", err)
 	}

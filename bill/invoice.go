@@ -125,7 +125,7 @@ func (inv *Invoice) Validate() error {
 			return errors.New("supplier: missing tax identity")
 		}
 		r := tax.Regimes().For(tID.Country, tID.Zone)
-		err = r.ValidateDocument(inv)
+		err = r.ValidateObject(inv)
 	}
 	return err
 }
