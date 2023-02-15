@@ -58,7 +58,7 @@ func TestDoc(t *testing.T) {
 func TestBytes(t *testing.T) {
 	for i, test := range tests {
 		result := here.Bytes(test.raw)
-		if bytes.Compare(result, []byte(test.expect)) != 0 {
+		if !bytes.Equal(result, []byte(test.expect)) {
 			t.Errorf("tests[%d] failed: expected=> %#v, result=> %#v", i, test.expect, result)
 		}
 	}

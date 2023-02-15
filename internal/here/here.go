@@ -64,9 +64,9 @@ func getMinIndent(lines []string, skipFirstLine bool) int {
 		}
 
 		indentSize := 0
-		for _, r := range []rune(line) {
+		for _, r := range line {
 			if unicode.IsSpace(r) {
-				indentSize += 1
+				indentSize++
 			} else {
 				break
 			}
