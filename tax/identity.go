@@ -33,7 +33,7 @@ type Identity struct {
 	Source SourceKey `json:"source,omitempty" jsonschema:"title=Source Key"`
 
 	// Normalized code shown on the original identity document.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
 	// Additional details that may be required.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -112,7 +112,7 @@ func (id *Identity) Regime() *Regime {
 func (id *Identity) Calculate() error {
 	r := id.Regime()
 	if r != nil {
-		return r.CalculateDocument(id)
+		return r.Calculate(id)
 	}
 	return nil
 }

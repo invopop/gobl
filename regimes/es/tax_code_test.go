@@ -3,6 +3,7 @@ package es_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
@@ -12,8 +13,8 @@ import (
 func TestNormalizeTaxIdentity(t *testing.T) {
 	r := es.New()
 	tests := []struct {
-		Code     string
-		Expected string
+		Code     cbc.Code
+		Expected cbc.Code
 	}{
 		{
 			Code:     "93471790-C",
@@ -38,7 +39,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
-		err := r.CalculateDocument(tID)
+		err := r.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
@@ -46,7 +47,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
-		Code     string
+		Code     cbc.Code
 		Expected error
 	}{
 		// *** EMPTY ***
@@ -181,7 +182,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 	}
 	r := es.New()
 	for _, ts := range tests {
-		t.Run(ts.Code, func(t *testing.T) {
+		t.Run(string(ts.Code), func(t *testing.T) {
 			tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
 			err := r.ValidateDocument(tID)
 			if ts.Expected == nil {

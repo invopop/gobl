@@ -11,12 +11,16 @@ import (
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 2 and 6 inclusive upper-case letters or numbers.
+// 1 and 24 inclusive upper-case letters or numbers.
 type Code string
 
 var (
-	codePattern          = `^[A-Z0-9]{1,6}$`
+	codePattern          = `^[A-Z0-9]+$`
 	codeValidationRegexp = regexp.MustCompile(codePattern)
+)
+
+const (
+	codeMaxLength = 24
 )
 
 // CodeEmpty is used when no code is defined.
@@ -25,7 +29,7 @@ const CodeEmpty Code = ""
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
 	return validation.Validate(string(c),
-		validation.Length(1, 6),
+		validation.Length(1, codeMaxLength),
 		validation.Match(codeValidationRegexp),
 	)
 }
@@ -58,7 +62,7 @@ func (Code) JSONSchema() *jsonschema.Schema {
 		Pattern:     codePattern,
 		Title:       "Code",
 		MinLength:   1,
-		MaxLength:   6,
-		Description: "Short upper-case identifier.",
+		MaxLength:   codeMaxLength,
+		Description: "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols.",
 	}
 }

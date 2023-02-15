@@ -119,9 +119,9 @@ func (r *Regime) ValidateDocument(obj interface{}) error {
 	return nil
 }
 
-// CalculateDocument performs any region specific calculations on the provided
+// Calculate performs any region specific calculations on the provided
 // object.
-func (r *Regime) CalculateDocument(obj interface{}) error {
+func (r *Regime) Calculate(obj interface{}) error {
 	if r.Calculator != nil {
 		return r.Calculator(obj)
 	}

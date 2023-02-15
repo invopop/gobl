@@ -11,12 +11,12 @@ import (
 
 // Party represents a person or business entity.
 type Party struct {
-	// Internal ID used to identify the party inside a document.
-	ID string `json:"id,omitempty" jsonschema:"title=ID"`
 	// Unique identity code
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
 	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
+	// Set of codes used to identify the party in other systems.
+	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Legal name or representation of the organization.
 	Name string `json:"name" jsonschema:"title=Name"`
 	// Alternate short name.
@@ -43,8 +43,6 @@ type Party struct {
 
 // Person represents a human, and how to contact them electronically.
 type Person struct {
-	// Internal ID used to identify the person inside a document.
-	ID string `json:"id,omitempty" jsonschema:"title=ID"`
 	// Unique identity code
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Complete details on the name of the person
@@ -137,12 +135,13 @@ type Registration struct {
 // Calculate performs any calculations required on the Party or
 // it's properties, like the tax identity.
 func (p *Party) Calculate() error {
+	var r *tax.Regime
 	if p.TaxID != nil {
 		if err := p.TaxID.Calculate(); err != nil {
 			return err
 		}
-		r := p.TaxID.Regime()
-		return r.CalculateDocument(p)
+		r = p.TaxID.Regime()
+		return r.Calculate(p)
 	}
 	return nil
 }
@@ -152,6 +151,7 @@ func (p *Party) Validate() error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.TaxID),
+		validation.Field(&p.Identities),
 		validation.Field(&p.People),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
