@@ -28,6 +28,7 @@ func (m *Message) Validate() error {
 	)
 }
 
+// JSONSchemaExtend adds examples to the JSON Schema.
 func (Message) JSONSchemaExtend(s *jsonschema.Schema) {
 	exs := here.Bytes(`
 		[
