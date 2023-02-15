@@ -836,7 +836,7 @@
           "key": "pro",
           "name": {
             "en": "Professional Rate",
-            "es": "Professionales"
+            "es": "Profesionales"
           },
           "values": [
             {
@@ -861,7 +861,7 @@
           "key": "pro-start",
           "name": {
             "en": "Professional Starting Rate",
-            "es": "Professionales Inicio"
+            "es": "Profesionales Inicio"
           },
           "values": [
             {
