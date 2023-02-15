@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/internal/here"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 )
@@ -116,8 +117,12 @@ func (d *Document) MarshalJSON() ([]byte, error) {
 // JSONSchema returns a jsonschema.Schema instance.
 func (Document) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
-		Type:        "object",
-		Title:       "Document",
-		Description: "Contents of the envelope that must contain a $schema.",
+		Type:  "object",
+		Title: "Document",
+		Description: here.Doc(`
+			Contains the document payload to be included inside an Envelope.
+			
+			The document must contain a <code>$schema</code> property that identifies
+			the data's structure otherwise it will be rejected.`),
 	}
 }

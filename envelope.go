@@ -10,8 +10,10 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// Envelope wraps around a gobl document and provides support for digest creation
-// and digital signatures.
+// Envelope wraps around a document adding headers and
+// digital signatures. An Envelope is similar to a regular envelope
+// in the physical world, it keeps the contents safe and helps
+// get the document where its needed.
 type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
 	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`

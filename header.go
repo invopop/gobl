@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/uuid"
 )
 
-// Header defines the meta data of the body. The header is used as the payload
+// Header defines the metadata of the body. The header is used as the payload
 // for the JSON Web Signatures, so we want this to be as compact as possible.
 type Header struct {
 	// Unique UUIDv1 identifier for the envelope.

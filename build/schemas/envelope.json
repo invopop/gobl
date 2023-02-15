@@ -6,7 +6,7 @@
     "Document": {
       "type": "object",
       "title": "Document",
-      "description": "Contents of the envelope that must contain a $schema."
+      "description": "Contains the document payload to be included inside an Envelope.\n\nThe document must contain a \u003ccode\u003e$schema\u003c/code\u003e property that identifies\nthe data's structure otherwise it will be rejected."
     },
     "Envelope": {
       "properties": {
@@ -40,7 +40,7 @@
         "head",
         "doc"
       ],
-      "description": "Envelope wraps around a gobl document and provides support for digest creation and digital signatures."
+      "description": "Envelope wraps around a document adding headers and digital signatures."
     },
     "Header": {
       "properties": {
@@ -91,7 +91,7 @@
         "uuid",
         "dig"
       ],
-      "description": "Header defines the meta data of the body."
+      "description": "Header defines the metadata of the body."
     }
   },
   "$comment": "Generated with GOBL v0.36.0"
