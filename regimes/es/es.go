@@ -782,7 +782,7 @@ func New() *tax.Regime {
 						Key: TaxRatePro,
 						Name: i18n.String{
 							i18n.EN: "Professional Rate",
-							i18n.ES: "Professionales",
+							i18n.ES: "Profesionales",
 						},
 						Values: []*tax.RateValue{
 							{
@@ -807,7 +807,7 @@ func New() *tax.Regime {
 						Key: TaxRateProStart,
 						Name: i18n.String{
 							i18n.EN: "Professional Starting Rate",
-							i18n.ES: "Professionales Inicio",
+							i18n.ES: "Profesionales Inicio",
 						},
 						Values: []*tax.RateValue{
 							{
