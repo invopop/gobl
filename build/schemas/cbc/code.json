@@ -5,12 +5,12 @@
   "$defs": {
     "Code": {
       "type": "string",
-      "maxLength": 6,
+      "maxLength": 24,
       "minLength": 1,
-      "pattern": "^[A-Z0-9]{1,6}$",
+      "pattern": "^[A-Z0-9]+$",
       "title": "Code",
-      "description": "Short upper-case identifier."
+      "description": "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols."
     }
   },
-  "$comment": "Generated with GOBL v0.36.0"
+  "$comment": "Generated with GOBL v0.37.0"
 }

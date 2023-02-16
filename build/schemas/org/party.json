@@ -5,11 +5,6 @@
   "$defs": {
     "Party": {
       "properties": {
-        "id": {
-          "type": "string",
-          "title": "ID",
-          "description": "Internal ID used to identify the party inside a document."
-        },
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
@@ -19,6 +14,14 @@
           "$ref": "https://gobl.org/draft-0/tax/identity",
           "title": "Tax Identity",
           "description": "The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Set of codes used to identify the party in other systems."
         },
         "name": {
           "type": "string",
@@ -134,5 +137,5 @@
       "description": "Website describes what is expected for a web address."
     }
   },
-  "$comment": "Generated with GOBL v0.36.0"
+  "$comment": "Generated with GOBL v0.37.0"
 }

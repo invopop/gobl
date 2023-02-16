@@ -26,7 +26,7 @@
           "description": "What is the source document of the tax identity."
         },
         "code": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
           "description": "Normalized code shown on the original identity document."
         },
@@ -70,5 +70,5 @@
       "description": "SourceKey identifies the source of a tax identity"
     }
   },
-  "$comment": "Generated with GOBL v0.36.0"
+  "$comment": "Generated with GOBL v0.37.0"
 }

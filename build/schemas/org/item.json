@@ -8,16 +8,24 @@
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
-          "description": "Unique identify of this item independent of the Supplier IDs"
+          "description": "Unique identity of this item"
         },
         "ref": {
           "type": "string",
           "title": "Ref",
-          "description": "Primary reference code that identifies this item. Additional codes can be provided in the 'codes' field."
+          "description": "Primary reference code that identifies this item.\nAdditional codes can be provided in the 'identities' property."
         },
         "name": {
           "type": "string",
           "description": "Brief name of the item"
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer."
         },
         "desc": {
           "type": "string",
@@ -38,14 +46,6 @@
           "title": "Unit",
           "description": "Unit of measure."
         },
-        "codes": {
-          "items": {
-            "$ref": "#/$defs/ItemCode"
-          },
-          "type": "array",
-          "title": "Codes",
-          "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. The should be agreed upon between supplier and customer."
-        },
         "origin": {
           "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Country of Origin",
@@ -63,26 +63,7 @@
         "price"
       ],
       "description": "Item is used to describe a single product or service."
-    },
-    "ItemCode": {
-      "properties": {
-        "label": {
-          "type": "string",
-          "title": "Label",
-          "description": "Local or human reference for the type of code the value\nrepresents."
-        },
-        "value": {
-          "type": "string",
-          "title": "Value",
-          "description": "The item code's value."
-        }
-      },
-      "type": "object",
-      "required": [
-        "value"
-      ],
-      "description": "ItemCode contains a value and optional label property that means additional codes can be added to an item."
     }
   },
-  "$comment": "Generated with GOBL v0.36.0"
+  "$comment": "Generated with GOBL v0.37.0"
 }
