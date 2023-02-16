@@ -4,17 +4,18 @@ import "github.com/invopop/gobl/schema"
 
 func init() {
 	schema.Register(schema.GOBL.Add("org"),
-		Unit(""),
 		Address{},
 		Coordinates{},
+		Email{},
+		Identity{},
+		Image{},
+		Inbox{},
 		Item{},
+		Name{},
 		Party{},
 		Person{},
-		Name{},
-		Email{},
-		Telephone{},
 		Registration{},
-		Inbox{},
-		Image{},
+		Telephone{},
+		Unit(""),
 	)
 }

@@ -3,6 +3,7 @@ package co_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
@@ -12,8 +13,8 @@ import (
 
 func TestNormalizeTaxIdentity(t *testing.T) {
 	tests := []struct {
-		Code     string
-		Expected string
+		Code     cbc.Code
+		Expected cbc.Code
 	}{
 		{
 			Code:     "901.458.652-7",
@@ -59,7 +60,7 @@ func TestNormalizeParty(t *testing.T) {
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string
-		code string
+		code cbc.Code
 		zone l10n.Code
 		err  string
 	}{

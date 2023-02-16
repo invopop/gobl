@@ -10,7 +10,9 @@ import (
 
 // Standard tax categories that may be shared between countries.
 const (
-	TaxCategoryVAT cbc.Code = "VAT"
+	TaxCategoryST  cbc.Code = "ST"  // Sales Tax
+	TaxCategoryVAT cbc.Code = "VAT" // Value Added Tax
+	TaxCategoryGST cbc.Code = "GST" // Goods and Services Tax
 )
 
 // Most commonly used codes. Local regions may add their own rate codes.
@@ -33,6 +35,11 @@ const (
 	InboxKeyPEPPOL cbc.Key = "peppol-id"
 )
 
+// Common Identity Type Codes that are not country specific.
+const (
+	IdentityTypeDUNS cbc.Code = "DUNS" // Dun & Bradstreet - Data Universal Numbering System
+)
+
 var (
 	taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
 )
@@ -40,9 +47,9 @@ var (
 // NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase.
 func NormalizeTaxIdentity(tID *tax.Identity) error {
-	code := strings.ToUpper(tID.Code)
+	code := strings.ToUpper(tID.Code.String())
 	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
 	code = strings.TrimPrefix(code, string(tID.Country))
-	tID.Code = code
+	tID.Code = cbc.Code(code)
 	return nil
 }

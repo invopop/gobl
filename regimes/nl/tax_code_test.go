@@ -3,6 +3,7 @@ package nl_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/nl"
 	"github.com/invopop/gobl/tax"
@@ -11,8 +12,8 @@ import (
 
 func TestNormalizeTaxIdentity(t *testing.T) {
 	tests := []struct {
-		Code     string
-		Expected string
+		Code     cbc.Code
+		Expected cbc.Code
 	}{
 		{
 			Code:     "000099995b57",
@@ -38,7 +39,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string
-		code string
+		code cbc.Code
 		err  string
 	}{
 		{

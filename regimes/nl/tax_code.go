@@ -2,10 +2,12 @@ package nl
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -27,7 +29,7 @@ func ValidateTaxIdentity(tID *tax.Identity) error {
 }
 
 func validateTaxCode(value interface{}) error {
-	code, ok := value.(string)
+	code, ok := value.(cbc.Code)
 	if !ok {
 		return nil
 	}
@@ -50,12 +52,12 @@ func NormalizeTaxIdentity(tID *tax.Identity) error {
 	return common.NormalizeTaxIdentity(tID)
 }
 
-func validateDigits(code, check string) error {
-	num, err := strconv.ParseInt(code, 10, 64)
+func validateDigits(code, check cbc.Code) error {
+	num, err := strconv.ParseInt(string(code), 10, 64)
 	if err != nil {
 		return errInvalidVAT
 	}
-	_, err = strconv.Atoi(check)
+	_, err = strconv.Atoi(string(check))
 	if err != nil {
 		return errInvalidVAT
 	}
@@ -65,7 +67,7 @@ func validateDigits(code, check string) error {
 
 	// changes in 2020 mean that NL VAT numbers have a different check
 	// digit and should be checked with Mod 97 (like an IBAN).
-	if sum != ck && !checkMod97("NL"+code+"B"+check) {
+	if sum != ck && !checkMod97(fmt.Sprintf("NL%sB%s", code, check)) {
 		return errors.New("checksum mismatch")
 	}
 

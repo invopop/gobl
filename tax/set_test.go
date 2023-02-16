@@ -64,7 +64,7 @@ func TestSetValidation(t *testing.T) {
 					Rate:     "standard",
 				},
 			},
-			err: "cat: the length must be between",
+			err: "cat: must be in a valid format",
 		},
 		{
 			desc: "invalid rate",

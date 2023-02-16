@@ -25,8 +25,9 @@ func TestTaxIdentity(t *testing.T) {
 		Code:    "X3157928MMM",
 	}
 	err = tID.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "code: unknown type")
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "code: unknown type")
+	}
 
 	tID = &tax.Identity{
 		Country: l10n.ES,
@@ -34,5 +35,5 @@ func TestTaxIdentity(t *testing.T) {
 	}
 	err = tID.Calculate()
 	assert.NoError(t, err)
-	assert.Equal(t, tID.Code, "X3157928M")
+	assert.Equal(t, tID.Code.String(), "X3157928M")
 }

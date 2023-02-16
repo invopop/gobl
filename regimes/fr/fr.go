@@ -2,11 +2,21 @@ package fr
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
+)
+
+// Identification keys used for additional codes not
+// covered by the standard fields.
+const (
+	IdentityTypeSIRET cbc.Code = "SIRET" // SIRET number is used to identify each establishment that makes up a company.
+	IdentityTypeRCS   cbc.Code = "RCS"   // Trade and Companies Register.
+	IdentityTypeRM    cbc.Code = "RM"    // Directory of Traders.
+	IdentityTypeNAF   cbc.Code = "NAF"   // Identifies the main branch of activity of the company or self-employed person.
 )
 
 func init() {

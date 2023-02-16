@@ -3,6 +3,7 @@ package gb
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -13,6 +14,11 @@ import (
 func init() {
 	tax.RegisterRegime(New())
 }
+
+// Identification code types unique to the United Kingdom.
+const (
+	IdentityTypeCRN cbc.Code = "CRN" // Company Registration Number
+)
 
 // New provides the tax region definition
 func New() *tax.Regime {
