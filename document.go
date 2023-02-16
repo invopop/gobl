@@ -122,7 +122,7 @@ func (Document) JSONSchema() *jsonschema.Schema {
 		Description: here.Doc(`
 			Contains the document payload to be included inside an Envelope.
 			
-			The document must contain a <code>$schema</code> property that identifies
+			The document must contain a ` + "`" + `$schema` + "`" + ` property that identifies
 			the data's structure otherwise it will be rejected.`),
 	}
 }

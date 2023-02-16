@@ -6,7 +6,7 @@
     "Document": {
       "type": "object",
       "title": "Document",
-      "description": "Contains the document payload to be included inside an Envelope.\n\nThe document must contain a \u003ccode\u003e$schema\u003c/code\u003e property that identifies\nthe data's structure otherwise it will be rejected."
+      "description": "Contains the document payload to be included inside an Envelope.\n\nThe document must contain a `$schema` property that identifies\nthe data's structure otherwise it will be rejected."
     },
     "Envelope": {
       "properties": {
