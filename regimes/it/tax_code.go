@@ -48,31 +48,9 @@ func validateTaxCode(value interface{}) error {
 		return errors.New("invalid length")
 	}
 
-	if computeLuhnCheckDigit(string(code[:10])) != int(code[10]-'0') {
+	if common.ComputeLuhnCheckDigit(string(code[:10])) != int(code[10]-'0') {
 		return errors.New("invalid check digit")
 	}
 
 	return nil
-}
-
-// Luhn Algorithm https://en.wikipedia.org/wiki/Luhn_algorithm
-func computeLuhnCheckDigit(number string) int {
-	sum := 0
-	pos := 0
-
-	for i := len(number) - 1; i >= 0; i-- {
-		digit := int(number[i] - '0')
-
-		if pos%2 == 0 {
-			digit *= 2
-			if digit > 9 {
-				digit -= 9
-			}
-		}
-
-		sum += digit
-		pos++
-	}
-
-	return (10 - (sum % 10)) % 10
 }
