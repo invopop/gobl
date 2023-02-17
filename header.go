@@ -48,3 +48,18 @@ func (h *Header) Validate() error {
 		validation.Field(&h.Stamps),
 	)
 }
+
+// AddStamp adds a new stamp to the header. If the stamp already exists,
+// it will be overwritten.
+func (h *Header) AddStamp(s *cbc.Stamp) {
+	if h.Stamps == nil {
+		h.Stamps = make([]*cbc.Stamp, 0)
+	}
+	for _, v := range h.Stamps {
+		if v.Provider == s.Provider {
+			v.Value = s.Value
+			return
+		}
+	}
+	h.Stamps = append(h.Stamps, s)
+}

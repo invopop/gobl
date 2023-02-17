@@ -18,3 +18,15 @@ func TestNewHeader(t *testing.T) {
 		h.Stamps = append(h.Stamps, &cbc.Stamp{})
 	}, "header and meta hash should have been initialized")
 }
+
+func TestHeaderAddStamp(t *testing.T) {
+	h := gobl.NewHeader()
+	h.AddStamp(&cbc.Stamp{Provider: "foo", Value: "bar"})
+	assert.Len(t, h.Stamps, 1)
+	h.AddStamp(&cbc.Stamp{Provider: "foo", Value: "baz"})
+	assert.Len(t, h.Stamps, 1)
+	assert.Equal(t, "baz", h.Stamps[0].Value)
+	h.AddStamp(&cbc.Stamp{Provider: "bar", Value: "bax"})
+	assert.Len(t, h.Stamps, 2)
+	assert.Equal(t, "bax", h.Stamps[1].Value)
+}
