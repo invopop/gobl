@@ -64,7 +64,7 @@ func New() *tax.Regime {
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
-							i18n.ES: "Zero",
+							i18n.ES: "Cero",
 						},
 						Values: []*tax.RateValue{
 							{
