@@ -4,7 +4,7 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 ## Public Documentations
 
-### <b>FatturaPA</b>
+### FatturaPA
 
 [Historical Documentations](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
 
@@ -12,11 +12,16 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 [Schema V1.2.2 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/Specifiche_tecniche_del_formato_FatturaPA_v1.3.1.pdf) - most up-to-date but difficult
 
+### Tax Rates
+
+[IRPEF](https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef)
+[IVA (VAT)](https://www.agenziaentrate.gov.it/portale/web/guest/iva-regole-generali-aliquote-esenzioni-pagamento/norme-generali-e-aliquote#:~:text=In%20Italia%20l'aliquota%20ordinaria,per%20esempio%20per%20alcuni%20alimenti)
+
 #### Changes from 1.2.1 to 1.2.2
 - Documentation changes: TD25, N1, N6.2, N7
 - Addition of TD28: Acquisti da San Marino con IVA (fattura cartacea)
 
-### <b>Tax Definitions</b>
+### Tax Definitions
 
 [Fiscal Code (Codice Fiscale)](https://en.wikipedia.org/wiki/Italian_fiscal_code)
 
