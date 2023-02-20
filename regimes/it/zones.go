@@ -5,6 +5,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// source: https://www1.agenziaentrate.gov.it/servizi/codici/ricerca/VisualizzaTabella.php?ArcName=ENTI-T2
+
 var zones = []tax.Zone{
 	{Code: "AG", Region: i18n.String{i18n.IT: "Agrigento"}},
 	{Code: "AL", Region: i18n.String{i18n.IT: "Alessandria"}},
