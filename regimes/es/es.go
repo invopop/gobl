@@ -93,7 +93,7 @@ func New() *tax.Regime {
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
-							i18n.ES: "Tipo Zero",
+							i18n.ES: "Tipo Cero",
 						},
 						Values: []*tax.RateValue{
 							{
@@ -243,7 +243,7 @@ func New() *tax.Regime {
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
-							i18n.ES: "Tipo Zero",
+							i18n.ES: "Tipo Cero",
 						},
 						Values: []*tax.RateValue{
 							{
