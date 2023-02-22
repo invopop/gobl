@@ -37,7 +37,7 @@ FatturaPA demands very specific categorization for the type of economic activity
 document type, fund type, etc. It will be a challenge to map these onto GOBL
 constructs.
 
-##### RegimeFiscale (Tax System)
+##### RegimeFiscale (Tax System) - mandatory
 
 |  |  |
 |---|---|
@@ -60,7 +60,7 @@ constructs.
 | RF18 | Other |
 | RF19 | "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)" |
 
-##### TipoCassa (Fund Type)
+##### TipoCassa (Fund Type) - optional
 
 | | |
 |---|---|
@@ -87,7 +87,7 @@ constructs.
 | TC21 | National pension and welfare board for psychologists (ENPAP - Ente Nazionale Previdenza e Assistenza Psicologi) |
 | TC22 | National Social Security Institute (INPS - Istituto Nazionale della Previdenza Sociale) |
 
-##### ModalitaPagamento (Payment Method)
+##### ModalitaPagamento (Payment Method) - mandatory
 
 | | |
 |---|---|
@@ -115,7 +115,7 @@ constructs.
 | MP22 | Deduction on sums already collected |
 | MP23 | PagoPA |
 
-##### TipoDocumento (Document Type)
+##### TipoDocumento (Document Type) - mandatory
 | | |
 |---|---|
 | TD01 | invoice |
@@ -138,7 +138,7 @@ constructs.
 | TD27 | self invoicing for self consumption or for free transfer without recourse |
 | TD28 | Purchases from San Marino with VAT (paper invoice) |
 
-##### Natura (Nature)
+##### Natura (Nature) - optional
 | | |
 |---|---|
 | N1 | excluded pursuant to Art. 15, DPR 633/72 |
@@ -166,7 +166,7 @@ constructs.
 | N6.9 | reverse charge - other cases |
 | N7 | "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)" |
 
-##### TipoRitenuta (Withholding Type)
+##### TipoRitenuta (Withholding Type) - optional
 | | |
 |---|---|
 | RT01 | witholding tax natural persons |
