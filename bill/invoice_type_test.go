@@ -9,12 +9,12 @@ import (
 )
 
 func TestInvoiceType(t *testing.T) {
-	c := bill.InvoiceTypeCommercial
-	assert.Equal(t, bill.InvoiceType("commercial"), c)
-	assert.Equal(t, cbc.Code("380"), c.UNTDID1001(), "unexpected UNTDID code")
+	c := bill.InvoiceTypeSelfBilled
+	assert.Equal(t, bill.InvoiceType("self-billed"), c)
+	assert.Equal(t, cbc.Code("389"), c.UNTDID1001(), "unexpected UNTDID code")
 	assert.NoError(t, c.Validate())
 
-	c = bill.InvoiceTypeCorrected
+	c = bill.InvoiceTypeCorrective
 	assert.Equal(t, cbc.Code("384"), c.UNTDID1001(), "unexpected UNTDID code")
 	assert.NoError(t, c.Validate())
 
@@ -26,6 +26,6 @@ func TestInvoiceType(t *testing.T) {
 	assert.False(t, c.In("bar", "dom"))
 
 	var d bill.InvoiceType
-	assert.Equal(t, bill.InvoiceTypeNone, d)
+	assert.Equal(t, bill.InvoiceTypeDefault, d)
 
 }

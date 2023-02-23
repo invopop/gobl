@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strconv"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 var (

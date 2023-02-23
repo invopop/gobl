@@ -1,9 +1,9 @@
 package tax
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/validation"
 )
 
 // Scheme contains the definition of a scheme that belongs to a region and can be used

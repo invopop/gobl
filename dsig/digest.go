@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/validation"
 )
 
 // DigestAlgorithm determines the name of the algorithm used to generate the digest's

@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal/here"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Document helps us handle the document's contents by essentially wrapping around

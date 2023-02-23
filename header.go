@@ -1,10 +1,10 @@
 package gobl
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/validation"
 )
 
 // Header defines the metadata of the body. The header is used as the payload

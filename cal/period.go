@@ -1,6 +1,6 @@
 package cal
 
-import validation "github.com/go-ozzo/ozzo-validation/v4"
+import "github.com/invopop/validation"
 
 // Period represents two dates with a start and finish.
 type Period struct {

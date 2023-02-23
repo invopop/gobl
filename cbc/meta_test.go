@@ -3,8 +3,8 @@ package cbc_test
 import (
 	"testing"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 

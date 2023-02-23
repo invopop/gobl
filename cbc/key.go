@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Key is used to define an ID or code that more closely represents

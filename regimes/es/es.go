@@ -73,6 +73,10 @@ func New() *tax.Regime {
 		Calculator: Calculate,
 		Zones:      zones,
 		Schemes:    schemes,
+		Preceding: &tax.PrecedingDefinitions{
+			Corrections:       correctionList,
+			CorrectionMethods: correctionMethodList,
+		},
 		Categories: []*tax.Category{
 			//
 			// VAT

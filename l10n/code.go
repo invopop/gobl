@@ -3,8 +3,8 @@ package l10n
 import (
 	"regexp"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Code is used for short identifiers like country or state codes.

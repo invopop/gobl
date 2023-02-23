@@ -5,8 +5,8 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/invopop/validation"
+	"github.com/invopop/validation/is"
 )
 
 // Party represents a person or business entity.

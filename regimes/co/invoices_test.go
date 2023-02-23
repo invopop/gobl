@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,6 +21,58 @@ func baseInvoice() *bill.Invoice {
 		Currency:  currency.COP,
 		Code:      "TEST",
 		IssueDate: cal.MakeDate(2022, 12, 27),
+		Supplier: &org.Party{
+			Name: "Test Party",
+			TaxID: &tax.Identity{
+				Country: l10n.CO,
+				Code:    "412615332",
+				Zone:    "11001",
+			},
+			Addresses: []*org.Address{
+				{
+					Locality: "Foo",
+				},
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: l10n.CO,
+				Code:    "124499654",
+				Zone:    "08638",
+			},
+			Addresses: []*org.Address{
+				{
+					Locality: "Foo",
+				},
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 3),
+				Item: &org.Item{
+					Name:  "bogus",
+					Price: num.MakeAmount(1000, 3),
+				},
+			},
+		},
+	}
+	return inv
+}
+
+func creditNote() *bill.Invoice {
+	inv := &bill.Invoice{
+		Currency:  currency.COP,
+		Code:      "TEST",
+		Type:      bill.InvoiceTypeCreditNote,
+		IssueDate: cal.MakeDate(2022, 12, 29),
+		Preceding: []*bill.Preceding{
+			{
+				Code:             "TEST",
+				IssueDate:        cal.MakeDate(2022, 12, 27),
+				CorrectionMethod: co.CorrectionMethodKeyRevoked,
+			},
+		},
 		Supplier: &org.Party{
 			Name: "Test Party",
 			TaxID: &tax.Identity{
@@ -79,4 +132,20 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	err = inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "zone: must be a valid value")
+}
+
+func TestBasicCreditNoteValidation(t *testing.T) {
+	inv := creditNote()
+	err := inv.Calculate()
+	require.NoError(t, err)
+	err = inv.Validate()
+	assert.NoError(t, err)
+	assert.Equal(t, inv.Preceding[0].CorrectionMethod, co.CorrectionMethodKeyRevoked)
+
+	inv.Preceding[0].CorrectionMethod = "fooo"
+	err = inv.Validate()
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "correction_method: must be a valid value")
+	}
+
 }

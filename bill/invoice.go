@@ -13,7 +13,7 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/validation"
 )
 
 // Invoice represents a payment claim for goods or services supplied under
