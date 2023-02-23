@@ -19,6 +19,7 @@ func New() *tax.Regime {
 		Calculator: Calculate,
 		Zones:      zones,      // zones.go
 		Categories: categories, // categories.go
+		Schemes:    schemes,    // schemes.go
 	}
 }
 
