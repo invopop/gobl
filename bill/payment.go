@@ -1,10 +1,10 @@
 package bill
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/validation"
 )
 
 // Payment contains details as to how the invoice should be paid.

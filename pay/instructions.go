@@ -1,11 +1,11 @@
 package pay
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
+	"github.com/invopop/validation/is"
 )
 
 // MethodKey represents a type of payment instruction

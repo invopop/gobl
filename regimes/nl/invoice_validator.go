@@ -1,10 +1,10 @@
 package nl
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant

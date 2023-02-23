@@ -1,11 +1,11 @@
 package bill
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/validation"
 )
 
 // Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately

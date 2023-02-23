@@ -45,6 +45,9 @@ func New() *tax.Regime {
 		Validator:  Validate,
 		Calculator: Calculate,
 		Zones:      zones, // see zones.go
+		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
+			CorrectionMethods: correctionMethodList,
+		},
 		Categories: []*tax.Category{
 			//
 			// VAT

@@ -1,12 +1,12 @@
 package pay
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // TermKey defines the type of terms being handled

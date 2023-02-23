@@ -3,10 +3,10 @@ package note
 import (
 	"encoding/json"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/internal/here"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Message represents a simple message object with a title and some

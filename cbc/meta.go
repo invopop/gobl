@@ -1,6 +1,6 @@
 package cbc
 
-import validation "github.com/go-ozzo/ozzo-validation/v4"
+import "github.com/invopop/validation"
 
 // Meta defines a structure for data about the data being defined.
 // Typically would be used for adding additional IDs or specifications

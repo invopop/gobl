@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/uuid"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/validation"
 )
 
 // Item is used to describe a single product or service. Minimal usage

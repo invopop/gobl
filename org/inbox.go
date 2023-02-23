@@ -1,9 +1,9 @@
 package org
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/validation"
 )
 
 // Inbox is used to store data about a connection with a service that is responsible

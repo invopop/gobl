@@ -1,9 +1,9 @@
 package bill
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // InvoiceType defines the type of invoice document according to a subset of the UNTDID 1001
@@ -12,14 +12,13 @@ type InvoiceType cbc.Key
 
 // Predefined list of the invoice type codes officially supported.
 const (
-	InvoiceTypeNone       InvoiceType = ""            // None specified
-	InvoiceTypeProforma   InvoiceType = "proforma"    // Proforma invoice
-	InvoiceTypeSimplified InvoiceType = "simplified"  // Simplified Invoice
-	InvoiceTypePartial    InvoiceType = "partial"     // Partial Invoice
-	InvoiceTypeCommercial InvoiceType = "commercial"  // Commercial Invoice
-	InvoiceTypeCorrected  InvoiceType = "corrected"   // Corrected Invoice
-	InvoiceTypeCreditNote InvoiceType = "credit-note" // Credit Note
-	InvoiceTypeSelfBilled InvoiceType = "self-billed" // Self Billed Invoice
+	InvoiceTypeDefault    InvoiceType = ""
+	InvoiceTypeProforma   InvoiceType = "proforma"
+	InvoiceTypeSimplified InvoiceType = "simplified"
+	InvoiceTypePartial    InvoiceType = "partial"
+	InvoiceTypeCorrective InvoiceType = "corrective"
+	InvoiceTypeCreditNote InvoiceType = "credit-note"
+	InvoiceTypeSelfBilled InvoiceType = "self-billed"
 )
 
 // InvoiceTypeDef is used to describe a type definition.
@@ -33,13 +32,13 @@ type InvoiceTypeDef struct {
 // GOBL invoices, and includes a reference to the matching
 // UNTDID 1001 code.
 var InvoiceTypeDefinitions = []InvoiceTypeDef{
-	{InvoiceTypeProforma, "Proforma invoice, for a clients validation before sending a final invoice.", "325"},
-	{InvoiceTypeSimplified, "Simplified invoice or receipt typically used for small transactions that don't require customer details.", "380"}, // same UNTDID as commercial
-	{InvoiceTypePartial, "Partial invoice", "326"},
-	{InvoiceTypeCommercial, "Commercial invoice, usually cross-border transactions requiring an invoice for customs.", "380"},
-	{InvoiceTypeCorrected, "Corrected invoice", "384"},
-	{InvoiceTypeCreditNote, "Credit note", "381"},
-	{InvoiceTypeSelfBilled, "Self billed invoice", "389"},
+	{InvoiceTypeDefault, "A regular commercial invoice document between a supplier and customer.", "380"},
+	{InvoiceTypeProforma, "For a clients validation before sending a final invoice.", "325"},
+	{InvoiceTypeSimplified, "Typically used for small transactions that don't require customer details.", "380"}, // same UNTDID as commercial
+	{InvoiceTypePartial, "Reflecting partial delivery of goods or services to be paid.", "326"},
+	{InvoiceTypeSelfBilled, "Created by a customer on behalf of the supplier.", "389"},
+	{InvoiceTypeCorrective, "Corrected invoice that completely replaces the preceding document.", "384"},
+	{InvoiceTypeCreditNote, "Reflects a refund either partial or complete of the preceding document.", "381"},
 }
 
 var isValidInvoiceType = validation.In(validInvoiceTypes()...)

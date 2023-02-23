@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // TaxCodeType represents the types of tax code which are issued

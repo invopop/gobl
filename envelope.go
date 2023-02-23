@@ -3,7 +3,7 @@ package gobl
 import (
 	"fmt"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/validation"
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/schema"
