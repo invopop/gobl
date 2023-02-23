@@ -4,7 +4,10 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/cbc"
 )
+
+var IdentityTypeFiscalCode cbc.Code = "CF" // Codice Fiscale
 
 // New instantiates a new Italian regime.
 func New() *tax.Regime {

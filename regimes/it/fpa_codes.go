@@ -1,23 +1,21 @@
 package it
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 )
 
-// KeyDefinition defines properties of a key that is specific for a regime.
-type KeyDefinition struct {
+// FPACodeDefinition defines properties of an alphanumeric codes used by
+// FatturaPA, Italy's e-invoicing system. The codes are used to classify
+// various aspects of an invoice, namely the tax system, fund type, payment
+// method, document type, nature, and withholding type.
+type FPACodeDefinition struct {
 	// Actual key value.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// There is usually a mapping between a key and some local code.
+	//
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
-	// Short name for the key, if relevant.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-	// Any additional data that might be relevant in some regimes?
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 const (
@@ -34,18 +32,29 @@ const (
 	FPACodeDocumentTypeInvoice    cbc.Key = "document-type-invoice"     // TD01
 	FPACodeDocumentTypeCreditNote cbc.Key = "document-type-credit-note" // TD04
 
+	// Nature (Natura) Codes
+	// Reverse Charges
+	FPACodeNatureRCScrapMaterials             cbc.Key = "nature-rc-scrap-materials"             // N6.1
+	FPACodeNatureRCGoldSilver                 cbc.Key = "nature-rc-gold-silver"                 // N6.2
+	FPACodeNatureRCConstructionSubcontracting cbc.Key = "nature-rc-construction-subcontracting" // N6.3
+	FPACodeNatureRCBuildings                  cbc.Key = "nature-rc-buildings"                   // N6.4
+	FPACodeNatureRCMobile                     cbc.Key = "nature-rc-mobile"                      // N6.5
+	FPACodeNatureRCElectronics                cbc.Key = "nature-rc-electronics"                 // N6.6
+	FPACodeNatureRCConstructionProvisions     cbc.Key = "nature-rc-construction-provisions"     // N6.7
+	FPACodeNatureRCEnergy                     cbc.Key = "nature-rc-energy"                      // N6.8
+	FPACodeNatureRCOther                      cbc.Key = "nature-rc-other"                       // N6.9
+
 	// Withholding Tax (TipoRitenuta) Codes
-	FPAWithholdingTaxNaturalPersons    cbc.Key = "withholding-tax-natural-persons"       // TR01
-	FPAWithholdingTaxLegalPersons      cbc.Key = "withholding-tax-legal-persons"         // TR02
-	FPAWithholdingINPSContribution     cbc.Key = "withholding-tax-inps-contribution"     // TR03
-	FPAWithholdingENASARCOContribution cbc.Key = "withholding-tax-enasarco-contribution" // TR04
-	FPAWithholdingENPAMContribution    cbc.Key = "withholding-tax-enpam-contribution"    // TR05
-	FPAWithholdingOtherSocialSecurity  cbc.Key = "withholding-tax-other-social-security" // TR06
+	FPACodeWithholdingNaturalPersons       cbc.Key = "withholding-tax-natural-persons"       // TR01
+	FPACodeWithholdingLegalPersons         cbc.Key = "withholding-tax-legal-persons"         // TR02
+	FPACodeWithholdingINPSContribution     cbc.Key = "withholding-tax-inps-contribution"     // TR03
+	FPACodeWithholdingENASARCOContribution cbc.Key = "withholding-tax-enasarco-contribution" // TR04
+	FPACodeWithholdingENPAMContribution    cbc.Key = "withholding-tax-enpam-contribution"    // TR05
+	FPACodeWithholdingOtherSocialSecurity  cbc.Key = "withholding-tax-other-social-security" // TR06
 )
 
-// FPACode defines alphanumeric codes used by FatturaPA, Italy's e-invoicing
-// system
-var FPACodes = []*KeyDefinition{
+// FPACodeDefs includes all FatturaPA codes currently supported in GOBL
+var FPACodeDefs = []*FPACodeDefinition{
 	// Tax System Codes
 	{
 		Key:  FPACodeTaxSystemOrdinary,
@@ -107,7 +116,7 @@ var FPACodes = []*KeyDefinition{
 	},
 	// Withholding Tax Codes
 	{
-		Key:  FPAWithholdingTaxNaturalPersons,
+		Key:  FPACodeWithholdingNaturalPersons,
 		Code: "TR01",
 		Desc: i18n.String{
 			i18n.EN: "Withholding tax natural persons",
@@ -115,7 +124,7 @@ var FPACodes = []*KeyDefinition{
 		},
 	},
 	{
-		Key:  FPAWithholdingTaxLegalPersons,
+		Key:  FPACodeWithholdingLegalPersons,
 		Code: "TR02",
 		Desc: i18n.String{
 			i18n.EN: "Withholding tax legal persons",
@@ -123,7 +132,7 @@ var FPACodes = []*KeyDefinition{
 		},
 	},
 	{
-		Key:  FPAWithholdingINPSContribution,
+		Key:  FPACodeWithholdingINPSContribution,
 		Code: "TR03",
 		Desc: i18n.String{
 			i18n.EN: "INPS contribution",
@@ -131,7 +140,7 @@ var FPACodes = []*KeyDefinition{
 		},
 	},
 	{
-		Key:  FPAWithholdingENASARCOContribution,
+		Key:  FPACodeWithholdingENASARCOContribution,
 		Code: "TR04",
 		Desc: i18n.String{
 			i18n.EN: "ENASARCO contribution",
@@ -139,7 +148,7 @@ var FPACodes = []*KeyDefinition{
 		},
 	},
 	{
-		Key:  FPAWithholdingENPAMContribution,
+		Key:  FPACodeWithholdingENPAMContribution,
 		Code: "TR05",
 		Desc: i18n.String{
 			i18n.EN: "ENPAM contribution",
@@ -147,11 +156,84 @@ var FPACodes = []*KeyDefinition{
 		},
 	},
 	{
-		Key:  FPAWithholdingOtherSocialSecurity,
+		Key:  FPACodeWithholdingOtherSocialSecurity,
 		Code: "TR06",
 		Desc: i18n.String{
 			i18n.EN: "Other social security contribution",
 			i18n.IT: "Altro contributo previdenziale",
+		},
+	},
+	// Nature Codes
+	{
+		Key:  FPACodeNatureRCScrapMaterials,
+		Code: "N6.1",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - transfer of scrap and other recyclable materials",
+			i18n.IT: "Inversione contabile - cessione di rottami e altri materiali di recupero",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCGoldSilver,
+		Code: "N6.2",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - trasnfer of gold, pure silver, and jewelery",
+			i18n.IT: "Inversione contabile - cessione di oro e argento puro",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCConstructionSubcontracting,
+		Code: "N6.3",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - subcontracting in the construction sector",
+			i18n.IT: "Inversione contabile - subappalto nel settore edile",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCBuildings,
+		Code: "N6.4",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - transfer of buildings",
+			i18n.IT: "Inversione contabile - cessione di fabbricati",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCMobile,
+		Code: "N6.5",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - transfer of mobile phones",
+			i18n.IT: "Inversione contabile - cessione di telefoni cellulari",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCElectronics,
+		Code: "N6.6",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - transfer of electronic products",
+			i18n.IT: "Inversione contabile - cessione di prodotti elettronici",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCConstructionProvisions,
+		Code: "N6.7",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - provisions in the construction and related sectors",
+			i18n.IT: "Inversione contabile - prestazioni comparto edile e settori connessi",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCEnergy,
+		Code: "N6.8",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - transactions in the energy sector",
+			i18n.IT: "Inversione contabile - operazioni settore energetico",
+		},
+	},
+	{
+		Key:  FPACodeNatureRCOther,
+		Code: "N6.9",
+		Desc: i18n.String{
+			i18n.EN: "Reverse charge - other cases",
+			i18n.IT: "Inversione contabile - altri casi",
 		},
 	},
 }
