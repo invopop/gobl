@@ -1,64 +1,71 @@
 package it
 
 import (
-	"github.com/invopop/gobl/cbc"
+	"regexp"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/i18n"
 )
 
 // FPACodeDefinition defines properties of an alphanumeric codes used by
 // FatturaPA, Italy's e-invoicing system. The codes are used to classify
 // various aspects of an invoice, namely the tax system, fund type, payment
-// method, document type, nature, and withholding type.
+// method, document type, nature, and withholding type. An FPACode can include
+// uppercase letters, numbers, and a "." separator for the numeric portion.
+type FPACode string
+
 type FPACodeDefinition struct {
-	// Actual key value.
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	//
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	// Alphanumeric code as required by FatturaPA.
+	Code FPACode
 	// Description offering more details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 }
 
+var (
+	codePattern          = `^[A-Z]+[0-9]+(\.[0-9]+)?$`
+	codeValidationRegexp = regexp.MustCompile(codePattern)
+)
+
 const (
 	// Tax System (RegimeFiscale) Codes
-	FPACodeTaxSystemOrdinary cbc.Key = "tax-system-ordinary" // RF01
+	FPACodeTaxSystemOrdinary FPACode = "RF01"
 
 	// Payment Method (ModalitaPagamento) Codes
-	FPACodePaymentMethodCash         cbc.Key = "tax-system-cash"          // MP01
-	FPACodePaymentMethodBankTransfer cbc.Key = "tax-system-bank-transfer" // MP05
-	FPACodePaymentMethodCard         cbc.Key = "tax-system-card"          // MP08
-	FPACodePaymentDirectDebit        cbc.Key = "tax-system-direct-debit"  // MP10
+	FPACodePaymentMethodCash         FPACode = "MP01"
+	FPACodePaymentMethodBankTransfer FPACode = "MP05"
+	FPACodePaymentMethodCard         FPACode = "MP08"
+	FPACodePaymentDirectDebit        FPACode = "MP10"
 
 	// Document Type (TipoDocumento) Codes
-	FPACodeDocumentTypeInvoice    cbc.Key = "document-type-invoice"     // TD01
-	FPACodeDocumentTypeCreditNote cbc.Key = "document-type-credit-note" // TD04
+	FPACodeDocumentTypeInvoice    FPACode = "TD01"
+	FPACodeDocumentTypeCreditNote FPACode = "TD04"
 
 	// Nature (Natura) Codes
 	// Reverse Charges
-	FPACodeNatureRCScrapMaterials             cbc.Key = "nature-rc-scrap-materials"             // N6.1
-	FPACodeNatureRCGoldSilver                 cbc.Key = "nature-rc-gold-silver"                 // N6.2
-	FPACodeNatureRCConstructionSubcontracting cbc.Key = "nature-rc-construction-subcontracting" // N6.3
-	FPACodeNatureRCBuildings                  cbc.Key = "nature-rc-buildings"                   // N6.4
-	FPACodeNatureRCMobile                     cbc.Key = "nature-rc-mobile"                      // N6.5
-	FPACodeNatureRCElectronics                cbc.Key = "nature-rc-electronics"                 // N6.6
-	FPACodeNatureRCConstructionProvisions     cbc.Key = "nature-rc-construction-provisions"     // N6.7
-	FPACodeNatureRCEnergy                     cbc.Key = "nature-rc-energy"                      // N6.8
-	FPACodeNatureRCOther                      cbc.Key = "nature-rc-other"                       // N6.9
+	FPACodeNatureRCScrapMaterials             FPACode = "N6.1"
+	FPACodeNatureRCGoldSilver                 FPACode = "N6.2"
+	FPACodeNatureRCConstructionSubcontracting FPACode = "N6.3"
+	FPACodeNatureRCBuildings                  FPACode = "N6.4"
+	FPACodeNatureRCMobile                     FPACode = "N6.5"
+	FPACodeNatureRCElectronics                FPACode = "N6.6"
+	FPACodeNatureRCConstructionProvisions     FPACode = "N6.7"
+	FPACodeNatureRCEnergy                     FPACode = "N6.8"
+	FPACodeNatureRCOther                      FPACode = "N6.9"
 
 	// Withholding Tax (TipoRitenuta) Codes
-	FPACodeWithholdingNaturalPersons       cbc.Key = "withholding-tax-natural-persons"       // TR01
-	FPACodeWithholdingLegalPersons         cbc.Key = "withholding-tax-legal-persons"         // TR02
-	FPACodeWithholdingINPSContribution     cbc.Key = "withholding-tax-inps-contribution"     // TR03
-	FPACodeWithholdingENASARCOContribution cbc.Key = "withholding-tax-enasarco-contribution" // TR04
-	FPACodeWithholdingENPAMContribution    cbc.Key = "withholding-tax-enpam-contribution"    // TR05
-	FPACodeWithholdingOtherSocialSecurity  cbc.Key = "withholding-tax-other-social-security" // TR06
+	FPACodeWithholdingNaturalPersons       FPACode = "TR01"
+	FPACodeWithholdingLegalPersons         FPACode = "TR02"
+	FPACodeWithholdingINPSContribution     FPACode = "TR03"
+	FPACodeWithholdingENASARCOContribution FPACode = "TR04"
+	FPACodeWithholdingENPAMContribution    FPACode = "TR05"
+	FPACodeWithholdingOtherSocialSecurity  FPACode = "TR06"
 )
 
 // FPACodeDefs includes all FatturaPA codes currently supported in GOBL
 var FPACodeDefs = []*FPACodeDefinition{
 	// Tax System Codes
 	{
-		Key:  FPACodeTaxSystemOrdinary,
-		Code: "RF01",
+		Code: FPACodeTaxSystemOrdinary,
 		Desc: i18n.String{
 			i18n.EN: "Ordinary tax system",
 			i18n.IT: "Regime ordinario",
@@ -66,32 +73,28 @@ var FPACodeDefs = []*FPACodeDefinition{
 	},
 	// Payment Method Codes
 	{
-		Key:  FPACodePaymentMethodCash,
-		Code: "MP01",
+		Code: FPACodePaymentMethodCash,
 		Desc: i18n.String{
 			i18n.EN: "Cash",
 			i18n.IT: "Contanti",
 		},
 	},
 	{
-		Key:  FPACodePaymentMethodBankTransfer,
-		Code: "MP05",
+		Code: FPACodePaymentMethodBankTransfer,
 		Desc: i18n.String{
 			i18n.EN: "Bank transfer",
 			i18n.IT: "Bonifico bancario",
 		},
 	},
 	{
-		Key:  FPACodePaymentMethodCard,
-		Code: "MP08",
+		Code: FPACodePaymentMethodCard,
 		Desc: i18n.String{
 			i18n.EN: "Card",
 			i18n.IT: "Carta di credito",
 		},
 	},
 	{
-		Key:  FPACodePaymentDirectDebit,
-		Code: "MP10",
+		Code: FPACodePaymentDirectDebit,
 		Desc: i18n.String{
 			i18n.EN: "Direct debit",
 			i18n.IT: "Rid",
@@ -99,16 +102,14 @@ var FPACodeDefs = []*FPACodeDefinition{
 	},
 	// Document Type Codes
 	{
-		Key:  FPACodeDocumentTypeInvoice,
-		Code: "TD01",
+		Code: FPACodeDocumentTypeInvoice,
 		Desc: i18n.String{
 			i18n.EN: "Invoice",
 			i18n.IT: "Fattura",
 		},
 	},
 	{
-		Key:  FPACodeDocumentTypeCreditNote,
-		Code: "TD04",
+		Code: FPACodeDocumentTypeCreditNote,
 		Desc: i18n.String{
 			i18n.EN: "Credit cote",
 			i18n.IT: "Nota di credito",
@@ -116,48 +117,42 @@ var FPACodeDefs = []*FPACodeDefinition{
 	},
 	// Withholding Tax Codes
 	{
-		Key:  FPACodeWithholdingNaturalPersons,
-		Code: "TR01",
+		Code: FPACodeWithholdingNaturalPersons,
 		Desc: i18n.String{
 			i18n.EN: "Withholding tax natural persons",
 			i18n.IT: "Ritenuta persone fisiche",
 		},
 	},
 	{
-		Key:  FPACodeWithholdingLegalPersons,
-		Code: "TR02",
+		Code: FPACodeWithholdingLegalPersons,
 		Desc: i18n.String{
 			i18n.EN: "Withholding tax legal persons",
 			i18n.IT: "Ritenuta persone giuridiche",
 		},
 	},
 	{
-		Key:  FPACodeWithholdingINPSContribution,
-		Code: "TR03",
+		Code: FPACodeWithholdingINPSContribution,
 		Desc: i18n.String{
 			i18n.EN: "INPS contribution",
 			i18n.IT: "Contributo INPS",
 		},
 	},
 	{
-		Key:  FPACodeWithholdingENASARCOContribution,
-		Code: "TR04",
+		Code: FPACodeWithholdingENASARCOContribution,
 		Desc: i18n.String{
 			i18n.EN: "ENASARCO contribution",
 			i18n.IT: "Contributo ENASARCO",
 		},
 	},
 	{
-		Key:  FPACodeWithholdingENPAMContribution,
-		Code: "TR05",
+		Code: FPACodeWithholdingENPAMContribution,
 		Desc: i18n.String{
 			i18n.EN: "ENPAM contribution",
 			i18n.IT: "Contributo ENPAM",
 		},
 	},
 	{
-		Key:  FPACodeWithholdingOtherSocialSecurity,
-		Code: "TR06",
+		Code: FPACodeWithholdingOtherSocialSecurity,
 		Desc: i18n.String{
 			i18n.EN: "Other social security contribution",
 			i18n.IT: "Altro contributo previdenziale",
@@ -165,75 +160,73 @@ var FPACodeDefs = []*FPACodeDefinition{
 	},
 	// Nature Codes
 	{
-		Key:  FPACodeNatureRCScrapMaterials,
-		Code: "N6.1",
+		Code: FPACodeNatureRCScrapMaterials,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - transfer of scrap and other recyclable materials",
 			i18n.IT: "Inversione contabile - cessione di rottami e altri materiali di recupero",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCGoldSilver,
-		Code: "N6.2",
+		Code: FPACodeNatureRCGoldSilver,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - trasnfer of gold, pure silver, and jewelery",
 			i18n.IT: "Inversione contabile - cessione di oro e argento puro",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCConstructionSubcontracting,
-		Code: "N6.3",
+		Code: FPACodeNatureRCConstructionSubcontracting,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - subcontracting in the construction sector",
 			i18n.IT: "Inversione contabile - subappalto nel settore edile",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCBuildings,
-		Code: "N6.4",
+		Code: FPACodeNatureRCBuildings,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - transfer of buildings",
 			i18n.IT: "Inversione contabile - cessione di fabbricati",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCMobile,
-		Code: "N6.5",
+		Code: FPACodeNatureRCMobile,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - transfer of mobile phones",
 			i18n.IT: "Inversione contabile - cessione di telefoni cellulari",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCElectronics,
-		Code: "N6.6",
+		Code: FPACodeNatureRCElectronics,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - transfer of electronic products",
 			i18n.IT: "Inversione contabile - cessione di prodotti elettronici",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCConstructionProvisions,
-		Code: "N6.7",
+		Code: FPACodeNatureRCConstructionProvisions,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - provisions in the construction and related sectors",
 			i18n.IT: "Inversione contabile - prestazioni comparto edile e settori connessi",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCEnergy,
-		Code: "N6.8",
+		Code: FPACodeNatureRCEnergy,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - transactions in the energy sector",
 			i18n.IT: "Inversione contabile - operazioni settore energetico",
 		},
 	},
 	{
-		Key:  FPACodeNatureRCOther,
-		Code: "N6.9",
+		Code: FPACodeNatureRCOther,
 		Desc: i18n.String{
 			i18n.EN: "Reverse charge - other cases",
 			i18n.IT: "Inversione contabile - altri casi",
 		},
 	},
+}
+
+// Validate ensures that the code complies with the expected rules.
+func (c FPACode) Validate() error {
+	return validation.Validate(string(c),
+		validation.Match(codeValidationRegexp),
+	)
 }

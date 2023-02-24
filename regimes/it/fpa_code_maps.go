@@ -7,56 +7,96 @@ import (
 	"github.com/invopop/gobl/regimes/common"
 )
 
+// Fattura PA codes are used by the Italian tax system to classify various
+// aspects of the invoice, namely the type of document, the payment method,
+// the nature of the transaction, the type of fund (if applicable), and the
+// type of withholding taxes (if applicable).
 const (
-	FPACodeTypeTaxSystem       cbc.Key = "fpa-tax-system"
-	FPACodeTypeFundType        cbc.Key = "fpa-fund-type"
-	FPACodeTypePaymentMethod   cbc.Key = "fpa-payment-method"
-	FPACodeTypeDocumentType    cbc.Key = "fpa-document-type"
-	FPACodeTypeNature          cbc.Key = "fpa-nature"
-	FPACodeTypeWithholdingType cbc.Key = "fpa-withholding-type"
+	FPACodeTypeTaxSystem         cbc.Key = "fpa-tax-system"         // RegimeFiscale
+	FPACodeTypeFundType          cbc.Key = "fpa-fund-type"          // TipoCassa
+	FPACodeTypePaymentMethod     cbc.Key = "fpa-payment-method"     // ModalitaPagamento
+	FPACodeTypeDocumentType      cbc.Key = "fpa-document-type"      // TipoDocumento
+	FPACodeTypeTransactionNature cbc.Key = "fpa-transaction-nature" // Natura
+	FPACodeTypeWithholdingType   cbc.Key = "fpa-withholding-type"   // TipoRitenuta
 )
 
-type FPACodeOptions struct {
-	FPACodeType cbc.Key
-	FPACodes    []string
+// FPACodeGroup is a group of FPA codes under the same type that are variations
+// of a related concept.
+type FPACodeGroup struct {
+	Type  cbc.Key
+	Codes []FPACode
 }
 
-var InvoiceTypeMap = map[bill.InvoiceType]*FPACodeOptions{
+// InvoiceTypeMap maps invoice types to FPA codes.
+var InvoiceTypeMap = map[bill.InvoiceType]*FPACodeGroup{
 	bill.InvoiceTypeNone: {
-		FPACodeType: FPACodeTypeDocumentType,
-		FPACodes:    []string{"TD01"},
+		Type: FPACodeTypeDocumentType,
+		Codes: []FPACode{
+			FPACodeDocumentTypeInvoice,
+		},
 	},
 	bill.InvoiceTypeCreditNote: {
-		FPACodeType: FPACodeTypeDocumentType,
-		FPACodes:    []string{"TD04"},
+		Type: FPACodeTypeDocumentType,
+		Codes: []FPACode{
+			FPACodeDocumentTypeCreditNote,
+		},
 	},
 }
 
-var PaymentMethodMap = map[pay.MethodKey]*FPACodeOptions{
+// PaymentMethodMap maps the invoice's payment instruction keys to FPA codes.
+var PaymentMethodMap = map[pay.MethodKey]*FPACodeGroup{
 	pay.MethodKeyCash: {
-		FPACodeType: FPACodeTypePaymentMethod,
-		FPACodes:    []string{"MP01"},
+		Type: FPACodeTypePaymentMethod,
+		Codes: []FPACode{
+			FPACodePaymentMethodCash,
+		},
 	},
 	pay.MethodKeyCard: {
-		FPACodeType: FPACodeTypePaymentMethod,
-		FPACodes:    []string{"MP08"},
+		Type: FPACodeTypePaymentMethod,
+		Codes: []FPACode{
+			FPACodePaymentMethodCard,
+		},
 	},
 	pay.MethodKeyDirectDebit: {
-		FPACodeType: FPACodeTypePaymentMethod,
-		FPACodes:    []string{"MP10"},
+		Type: FPACodeTypePaymentMethod,
+		Codes: []FPACode{
+			FPACodePaymentDirectDebit,
+		},
 	},
 }
 
-var SchemeMap = map[cbc.Key]*FPACodeOptions{
+// SchemeMap maps the invoice's scheme keys to FPA codes. There is a limitation
+// here, in that the FPA codes of "Nature" do not necessarily map onto the
+// general concept of "Scheme" and vice versa.
+var SchemeMap = map[cbc.Key]*FPACodeGroup{
 	common.SchemeReverseCharge: {
-		FPACodeType: FPACodeTypeNature,
-		FPACodes:    []string{"N6.1", "N6.2", "N6.3", "N6.4", "N6.5", "N6.6", "N6.7", "N6.8", "N6.9"},
+		Type: FPACodeTypeTransactionNature,
+		Codes: []FPACode{
+			FPACodeNatureRCScrapMaterials,
+			FPACodeNatureRCGoldSilver,
+			FPACodeNatureRCConstructionSubcontracting,
+			FPACodeNatureRCBuildings,
+			FPACodeNatureRCMobile,
+			FPACodeNatureRCElectronics,
+			FPACodeNatureRCConstructionProvisions,
+			FPACodeNatureRCEnergy,
+			FPACodeNatureRCOther,
+		},
 	},
 }
 
-var TaxCategoryMap = map[cbc.Code]*FPACodeOptions{
+// TaxCategoryMap maps the invoice's tax category keys to FPA codes related to
+// withholding taxes.
+var TaxCategoryMap = map[cbc.Code]*FPACodeGroup{
 	TaxCategoryRA: {
-		FPACodeType: FPACodeTypeWithholdingType,
-		FPACodes:    []string{"RT01", "RT02", "RT03", "RT04", "RT05", "RT06"},
+		Type: FPACodeTypeWithholdingType,
+		Codes: []FPACode{
+			FPACodeWithholdingNaturalPersons,
+			FPACodeWithholdingLegalPersons,
+			FPACodeWithholdingINPSContribution,
+			FPACodeWithholdingENASARCOContribution,
+			FPACodeWithholdingENPAMContribution,
+			FPACodeWithholdingOtherSocialSecurity,
+		},
 	},
 }
