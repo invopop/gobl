@@ -15,20 +15,20 @@ const (
 
 var correctionMethodList = []*tax.KeyDefinition{
 	{
-		Key:  CorrectionMethodKeyPartial,
-		Code: "1",
+		Key: CorrectionMethodKeyPartial,
 		Desc: i18n.String{
 			i18n.EN: "Partial refund of part of the goods or services.",
 			i18n.ES: "Devolución de parte de los bienes; no aceptación de partes del servicio.",
 		},
+		Meta: cbc.Meta{KeyDIAN: "1"},
 	},
 	{
-		Key:  CorrectionMethodKeyRevoked,
-		Code: "2",
+		Key: CorrectionMethodKeyRevoked,
 		Desc: i18n.String{
 			i18n.EN: "Previous document has been completely cancelled.",
 			i18n.ES: "Anulación de la factura anterior.",
 		},
+		Meta: cbc.Meta{KeyDIAN: "2"},
 	},
 }
 
