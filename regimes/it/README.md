@@ -90,31 +90,31 @@ constructs.
 
 ##### ModalitaPagamento (Payment Method)
 
-|      |                                                   |
-| ---- | ------------------------------------------------- |
-| MP01 | cash                                              |
-| MP02 | cheque                                            |
-| MP03 | banker's draft                                    |
-| MP04 | cash at Treasury                                  |
-| MP05 | bank transfer                                     |
-| MP06 | money order                                       |
-| MP07 | pre-compiled bank payment slip                    |
-| MP08 | payment card                                      |
-| MP09 | direct debit                                      |
-| MP10 | utilities direct debit                            |
-| MP11 | fast direct debit                                 |
-| MP12 | collection order                                  |
-| MP13 | payment by notice                                 |
-| MP14 | tax office quittance                              |
-| MP15 | transfer on special accounting accounts           |
-| MP16 | order for direct payment from bank account        |
-| MP17 | order for direct payment from post office account |
-| MP18 | bulletin postal account                           |
-| MP19 | SEPA Direct Debit                                 |
-| MP20 | SEPA Direct Debit CORE                            |
-| MP21 | SEPA Direct Debit B2B                             |
-| MP22 | Deduction on sums already collected               |
-| MP23 | PagoPA                                            |
+| Code | Key               | SubKey      | Description                                       |
+| ---- | ----------------- | ----------- | ------------------------------------------------- |
+| MP01 | `cash`            |             | Cash                                              |
+| MP02 | `cheque`          |             | cheque                                            |
+| MP03 | `bank-draft`      |             | Banker's draft                                    |
+| MP04 | `cash`            | `treasury`  | Cash at Treasury                                  |
+| MP05 | `credit-transfer` |             | bank transfer                                     |
+| MP06 | NA                |             | money order                                       |
+| MP07 | NA                |             | pre-compiled bank payment slip                    |
+| MP08 | `card`            |             | payment card                                      |
+| MP09 | `direct-debit`    |             | direct debit                                      |
+| MP10 | `direct-debit`    | `utilities` | Utilities direct debit (must be rare!)            |
+| MP11 | `direct-debit`    | `fast`      | fast direct debit                                 |
+| MP12 | NA                |             | collection order                                  |
+| MP13 | NA                |             | payment by notice                                 |
+| MP14 | NA                |             | tax office quittance                              |
+| MP15 | NA                |             | transfer on special accounting accounts           |
+| MP16 | NA                |             | order for direct payment from bank account        |
+| MP17 | NA                |             | order for direct payment from post office account |
+| MP18 | NA                |             | bulletin postal account                           |
+| MP19 | `direct-debit`    | `sepa`      | SEPA Direct Debit                                 |
+| MP20 | `direct-debit`    | `sepa-core` | SEPA Direct Debit CORE                            |
+| MP21 | `direct-debit`    | `sepa-b2b`  | SEPA Direct Debit B2B                             |
+| MP22 | `credit`          |             | Deduction on sums already collected               |
+| MP23 | `online`          | `pagopa`    | PagoPA                                            |
 
 ##### TipoDocumento (Document Type)
 
@@ -140,8 +140,8 @@ constructs.
 | TD24 |               | `deferred`                 | "deferred invoice ex art.21, c.4, lett. a) DPR 633/72"                                                                                                                            |
 | TD25 |               | `deferred`, `third-period` | "deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72"                                                                                                               |
 | TD26 |               | `depreciable-assets`       | sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72)                                                                                                      |
-| TD27 | `self-billed` |                            | self invoicing for self consumption or for free transfer without recourse                                                                                                         |
-| TD28 |               | `san-merino`               | Purchases from San Marino with VAT (paper invoice)                                                                                                                                |
+| TD27 | `self-billed` | TBD                        | self invoicing for self consumption or for free transfer without recourse                                                                                                         |
+| TD28 |               | `san-merino-paper`         | Purchases from San Marino with VAT (paper invoice)                                                                                                                                |
 
 Note: fields marked with (\*) are for simplified invoice documents.
 
