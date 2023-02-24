@@ -8,6 +8,10 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// IdentityTypeFiscalCode represents the Italian Fiscal Code (Codice Fiscale).
+// See https://en.wikipedia.org/wiki/Italian_fiscal_code. Every natural person
+// has a fiscal code, and it is used to identify them for tax purposes. Not to
+// be confused with the Italian VAT number (Partita IVA).
 var IdentityTypeFiscalCode cbc.Code = "CF" // Codice Fiscale
 
 // New instantiates a new Italian regime.

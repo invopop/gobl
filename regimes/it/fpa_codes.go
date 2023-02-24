@@ -7,13 +7,14 @@ import (
 	"github.com/invopop/gobl/i18n"
 )
 
-// FPACodeDefinition defines properties of an alphanumeric codes used by
-// FatturaPA, Italy's e-invoicing system. The codes are used to classify
-// various aspects of an invoice, namely the tax system, fund type, payment
-// method, document type, nature, and withholding type. An FPACode can include
-// uppercase letters, numbers, and a "." separator for the numeric portion.
+// FPACode is an alphanumeric code used by FatturaPA, Italy's e-invoicing
+// system. The codes are used to classify various aspects of an invoice, namely
+// the tax system, fund type, payment method, document type, transaction nature,
+// and withholding tax type. An FPACode can include uppercase letters, numbers,
+// and a "." separator for the numeric portion.
 type FPACode string
 
+// FPACodeDefinition defines properties of a FPACode
 type FPACodeDefinition struct {
 	// Alphanumeric code as required by FatturaPA.
 	Code FPACode
@@ -26,11 +27,13 @@ var (
 	codeValidationRegexp = regexp.MustCompile(codePattern)
 )
 
+// Tax System (RegimeFiscale) Codes
 const (
-	// Tax System (RegimeFiscale) Codes
 	FPACodeTaxSystemOrdinary FPACode = "RF01"
+)
 
-	// Payment Method (ModalitaPagamento) Codes
+// Payment Method (ModalitaPagamento) Codes
+const (
 	FPACodePaymentCash                 FPACode = "MP01"
 	FPACodePaymentBankTransfer         FPACode = "MP05"
 	FPACodePaymentCard                 FPACode = "MP08"
@@ -40,14 +43,18 @@ const (
 	FPACodePaymentDirectDebitSepa      FPACode = "MP19"
 	FPACodePaymentDirectDebitSepaCore  FPACode = "MP20"
 	FPACodePaymentDirectDebitSepaB2B   FPACode = "MP21"
+)
 
-	// Document Type (TipoDocumento) Codes
+// Document Type (TipoDocumento) Codes
+const (
 	FPACodeDocumentTypeInvoice    FPACode = "TD01"
 	FPACodeDocumentTypeCreditNote FPACode = "TD04"
+)
 
-	// Nature (Natura) Codes
+// Nature (Natura) Codes
+const (
 	// Reverse Charges
-	FPACodeNatureRCScrapMaterials             FPACode = "N6.1"
+	FPACodeNatureRCScrapMaterials             FPACode = "N6.1" // nolint:revive
 	FPACodeNatureRCGoldSilver                 FPACode = "N6.2"
 	FPACodeNatureRCConstructionSubcontracting FPACode = "N6.3"
 	FPACodeNatureRCBuildings                  FPACode = "N6.4"
@@ -56,8 +63,10 @@ const (
 	FPACodeNatureRCConstructionProvisions     FPACode = "N6.7"
 	FPACodeNatureRCEnergy                     FPACode = "N6.8"
 	FPACodeNatureRCOther                      FPACode = "N6.9"
+)
 
-	// Withholding Tax (TipoRitenuta) Codes
+// Withholding Tax (TipoRitenuta) Codes
+const (
 	FPACodeWithholdingNaturalPersons       FPACode = "TR01"
 	FPACodeWithholdingLegalPersons         FPACode = "TR02"
 	FPACodeWithholdingINPSContribution     FPACode = "TR03"
@@ -81,7 +90,7 @@ var FPACodeDefs = []*FPACodeDefinition{
 		Code: FPACodePaymentCash,
 		Desc: i18n.String{
 			i18n.EN: "Cash",
-			i18n.IT: "Contanti",
+			i18n.IT: "Contanti", // nolint:misspell
 		},
 	},
 	{
@@ -174,28 +183,28 @@ var FPACodeDefs = []*FPACodeDefinition{
 		Code: FPACodeWithholdingINPSContribution,
 		Desc: i18n.String{
 			i18n.EN: "INPS contribution",
-			i18n.IT: "Contributo INPS",
+			i18n.IT: "Contributo INPS", // nolint:misspell
 		},
 	},
 	{
 		Code: FPACodeWithholdingENASARCOContribution,
 		Desc: i18n.String{
 			i18n.EN: "ENASARCO contribution",
-			i18n.IT: "Contributo ENASARCO",
+			i18n.IT: "Contributo ENASARCO", // nolint:misspell
 		},
 	},
 	{
 		Code: FPACodeWithholdingENPAMContribution,
 		Desc: i18n.String{
 			i18n.EN: "ENPAM contribution",
-			i18n.IT: "Contributo ENPAM",
+			i18n.IT: "Contributo ENPAM", // nolint:misspell
 		},
 	},
 	{
 		Code: FPACodeWithholdingOtherSocialSecurity,
 		Desc: i18n.String{
 			i18n.EN: "Other social security contribution",
-			i18n.IT: "Altro contributo previdenziale",
+			i18n.IT: "Altro contributo previdenziale", // nolint:misspell
 		},
 	},
 	// Nature Codes
@@ -209,7 +218,7 @@ var FPACodeDefs = []*FPACodeDefinition{
 	{
 		Code: FPACodeNatureRCGoldSilver,
 		Desc: i18n.String{
-			i18n.EN: "Reverse charge - trasnfer of gold, pure silver, and jewelery",
+			i18n.EN: "Reverse charge - transfer of gold, pure silver, and jewelery",
 			i18n.IT: "Inversione contabile - cessione di oro e argento puro",
 		},
 	},
