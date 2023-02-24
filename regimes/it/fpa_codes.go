@@ -34,7 +34,7 @@ const (
 	FPACodePaymentMethodCash         FPACode = "MP01"
 	FPACodePaymentMethodBankTransfer FPACode = "MP05"
 	FPACodePaymentMethodCard         FPACode = "MP08"
-	FPACodePaymentDirectDebit        FPACode = "MP10"
+	FPACodePaymentMethodDirectDebit  FPACode = "MP10"
 
 	// Document Type (TipoDocumento) Codes
 	FPACodeDocumentTypeInvoice    FPACode = "TD01"
