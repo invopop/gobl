@@ -29,9 +29,9 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 [Agenzia Entrate (Tax Office) IVA Doc](https://www.agenziaentrate.gov.it/portale/web/english/nse/business/vat-in-italy)
 
-### Challenges
+## Challenges
 
-#### Special Codes (WIP)
+### Special Codes (WIP)
 
 FatturaPA demands the classificationss of the invoice data using predefined
 alphanmueric code refered to as FPACodes in this package. These codes can be
@@ -46,12 +46,12 @@ like reverse charges (what we would find in a `inv.Tax.Schemes`) as well as
 classifications for "non-taxable" items (not really a scheme—more like a `Note`
 attached to a line item?).
 
-##### Tax System (Regime Fiscale)
+#### Tax System (Regime Fiscale)
 
 A "tax system" in Italy is a property of the seller and not the product or the
 service provided.
 
-<b>bill.Invoice Mapping:</b> none (or could we use `inv.Tax.Schemes`?)
+`bill.Invoice` Mapping: none (or could we use `inv.Tax.Schemes`?)
 
 | Code | support | Description                                                    |
 |------|---------|----------------------------------------------------------------|
@@ -74,9 +74,9 @@ service provided.
 | RF18 |         | Other                                                          |
 | RF19 |         | Flat rate                                                      |
 
-##### Fund Type (TipoCassa)
+#### Fund Type (TipoCassa)
 
-<b>bill.Invoice Mapping:</b> none
+`bill.Invoice` Mapping: none
 
 | Code | Supported | Description                                                                  |
 |------|-----------|------------------------------------------------------------------------------|
@@ -103,9 +103,9 @@ service provided.
 | TC21 |           | ENPAP (National pension and welfare board for psychologists)                 |
 | TC22 |           | INPS (National Social Security Institute)                                    |
 
-##### Payment Method (Modalita di Pagamento)
+#### Payment Method (Modalita di Pagamento)
 
-<b>bill.Invoice Mapping:</b> inv.Payment.Instructions
+`bill.Invoice` Mapping: `inv.Payment.Instructions`
 
 | Code | Support | Description                                       |
 |------|---------|---------------------------------------------------|
@@ -133,9 +133,9 @@ service provided.
 | MP22 |         | Deduction on sums already collected               |
 | MP23 |         | PagoPA                                            |
 
-##### Document Type (Tipo Documento)
+#### Document Type (Tipo Documento)
 
-<b>bill.Invoice Mapping:</b> inv.Type
+`bill.Invoice` Mapping: `inv.Type`
 
 | Code | Support | Description                                                          |
 |------|---------|----------------------------------------------------------------------|
@@ -159,9 +159,9 @@ service provided.
 | TD27 |         | self invoicing for self consumption / free transfer without recourse |
 | TD28 |         | Purchases from San Marino with VAT (paper invoice)                   |
 
-##### Nature (Natura)
+#### Nature (Natura)
 
-<b>bill.Invoice Mapping:</b> inv.Tax.Schemes, (potentially) inv.Lines[].Notes
+`bill.Invoice` Mapping: `inv.Tax.Schemes`, (potentially) `inv.Lines[].Notes`
 
 | Code | Support | Description                                                             |
 |------|---------|-------------------------------------------------------------------------|
@@ -187,9 +187,9 @@ service provided.
 | N6.9 | ✓       | reverse charge - other cases                                            |
 | N7   |         | VAT paid in other EU countries (telecommunications)                     |
 
-##### Withholding Type (Tipo Ritenuta)
+#### Withholding Type (Tipo Ritenuta)
 
-<b>bill.Invoice Mapping:</b> inv.Totals.Taxes
+`bill.Invoice` Mapping: `inv.Totals.Taxes`
 
 | Code | Support | Description                        |
 |------|---------|------------------------------------|
