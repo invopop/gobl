@@ -8,8 +8,8 @@ import (
 )
 
 // Preceding allows for information to be provided about a previous invoice that this one
-// will replace or subtract from. If this is used, the invoice type code will most likely need
-// to be set to `corrected` or `credit-note`.
+// will replace, subtract from, or add to. If this is used, the invoice type code will most likely need
+// to be set to `corrective`, `credit-note`, or similar.
 type Preceding struct {
 	// Preceding document's UUID if available can be useful for tracing.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
