@@ -33,34 +33,50 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 #### Special Codes (WIP)
 
-FatturaPA demands very specific categorization for the type of economic activity,
-document type, fund type, etc. It will be a challenge to map these onto GOBL
-constructs.
+FatturaPA demands the classificationss of the invoice data using predefined
+alphanmueric code refered to as FPACodes in this package. These codes can be
+unbelieveably specific (e.g. TD28: "Purchase from San Marino with VAT (paper
+invoice)", RF06: "Match sales") and includes distinctions we normally would not
+(MP09, MP10, MP11, MP19, MP20, and MP21 all refer to different types of direct
+debit payments).
 
-##### RegimeFiscale (Tax System) - mandatory
+Additionally, there is no straightforward mapping between the FPACodes and
+fields supported in `bill.Invoice`. "Nature" codes, for example, include things
+like reverse charges (what we would find in a `inv.Tax.Schemes`) as well as
+classifications for "non-taxable" items (not really a scheme—more like a `Note`
+attached to a line item?).
 
-| Code | support | Description                                                            |
-|------|---------|------------------------------------------------------------------------|
-| RF01 | ✓       | Ordinary                                                               |
-| RF02 |         | Minimum taxpayers                                                      |
-| RF04 |         | Agriculture and connected activities and fishing                       |
-| RF05 |         | Sale of salts and tobaccos                                             |
-| RF06 |         | Match sales                                                            |
-| RF07 |         | Publishing                                                             |
-| RF08 |         | Management of public telephone services                                |
-| RF09 |         | Resale of public transport and parking documents                       |
-| RF10 |         | Entertainment, gaming, etc referred to by tariff in DPR 640/72         |
-| RF11 |         | Travel and tourism agencies                                            |
-| RF12 |         | Farmhouse accommodation/restaurants                                    |
-| RF13 |         | Door-to-door sales                                                     |
-| RF14 |         | Resale of used goods, artworks, antiques or collector's items          |
-| RF15 |         | Artwork, antiques or collector's items auction agencies                |
-| RF16 |         | VAT paid in cash by P.A.                                               |
-| RF17 |         | VAT paid in cash by subjects with business turnover below Euro 200,000 |
-| RF18 |         | Other                                                                  |
-| RF19 |         | Flat rate                                                              |
+##### Tax System (Regime Fiscale)
 
-##### TipoCassa (Fund Type)
+A "tax system" in Italy is a property of the seller and not the product or the
+service provided.
+
+<b>bill.Invoice Mapping:</b> none (or could we use `inv.Tax.Schemes`?)
+
+| Code | support | Description                                                    |
+|------|---------|----------------------------------------------------------------|
+| RF01 | ✓       | Ordinary                                                       |
+| RF02 |         | Minimum taxpayers                                              |
+| RF04 |         | Agriculture and connected activities and fishing               |
+| RF05 |         | Sale of salts and tobaccos                                     |
+| RF06 |         | Match sales                                                    |
+| RF07 |         | Publishing                                                     |
+| RF08 |         | Management of public telephone services                        |
+| RF09 |         | Resale of public transport and parking documents               |
+| RF10 |         | Entertainment, gaming, etc referred to by tariff in DPR 640/72 |
+| RF11 |         | Travel and tourism agencies                                    |
+| RF12 |         | Agrotourism (Farmhouse accomodations and restaurants)          |
+| RF13 |         | Door-to-door sales                                             |
+| RF14 |         | Resale of used goods, artworks, antiques or collector's items  |
+| RF15 |         | Artwork, antiques or collector's items auction agencies        |
+| RF16 |         | VAT paid in cash by P.A.                                       |
+| RF17 |         | VAT paid in cash by subjects with business turnover <€200,000  |
+| RF18 |         | Other                                                          |
+| RF19 |         | Flat rate                                                      |
+
+##### Fund Type (TipoCassa)
+
+<b>bill.Invoice Mapping:</b> none
 
 | Code | Supported | Description                                                                  |
 |------|-----------|------------------------------------------------------------------------------|
@@ -87,7 +103,9 @@ constructs.
 | TC21 |           | ENPAP (National pension and welfare board for psychologists)                 |
 | TC22 |           | INPS (National Social Security Institute)                                    |
 
-##### ModalitaPagamento (Payment Method)
+##### Payment Method (Modalita di Pagamento)
+
+<b>bill.Invoice Mapping:</b> inv.Payment.Instructions
 
 | Code | Support | Description                                       |
 |------|---------|---------------------------------------------------|
@@ -115,7 +133,9 @@ constructs.
 | MP22 |         | Deduction on sums already collected               |
 | MP23 |         | PagoPA                                            |
 
-##### TipoDocumento (Document Type)
+##### Document Type (Tipo Documento)
+
+<b>bill.Invoice Mapping:</b> inv.Type
 
 | Code | Support | Description                                                          |
 |------|---------|----------------------------------------------------------------------|
@@ -139,7 +159,9 @@ constructs.
 | TD27 |         | self invoicing for self consumption / free transfer without recourse |
 | TD28 |         | Purchases from San Marino with VAT (paper invoice)                   |
 
-##### Natura (Nature)
+##### Nature (Natura)
+
+<b>bill.Invoice Mapping:</b> inv.Tax.Schemes, (potentially) inv.Lines[].Notes
 
 | Code | Support | Description                                                             |
 |------|---------|-------------------------------------------------------------------------|
@@ -165,7 +187,9 @@ constructs.
 | N6.9 | ✓       | reverse charge - other cases                                            |
 | N7   |         | VAT paid in other EU countries (telecommunications)                     |
 
-##### TipoRitenuta (Withholding Type)
+##### Withholding Type (Tipo Ritenuta)
+
+<b>bill.Invoice Mapping:</b> inv.Totals.Taxes
 
 | Code | Support | Description                        |
 |------|---------|------------------------------------|
