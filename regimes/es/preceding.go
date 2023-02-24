@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-// List of correction codes that are supported by the Spanish regime.
+// List of correction codes derived from the Spanish FacturaE format.
 const (
 	CorrectionKeyCode            cbc.Key = "code"       // Invoice Code
 	CorrectionKeySeries          cbc.Key = "series"     // Invoice series number
@@ -35,6 +35,7 @@ const (
 	CorrectionKeyInsolvency      cbc.Key = "insolvency"   // the customer is insolvent and cannot pay
 )
 
+// List of correction methods derived from the Spanish FacturaE format.
 const (
 	CorrectionMethodKeyComplete   cbc.Key = "complete"   // everything has changed
 	CorrectionMethodKeyPartial    cbc.Key = "partial"    // only differences corrected
@@ -42,8 +43,8 @@ const (
 	CorrectionMethodKeyAuthorized cbc.Key = "authorized" // Permitted by tax agency
 )
 
-// CorrectionMap maps GOBL Correction Codes to reason models acceptable for
-// spanish invoices.
+// correctionList contains an array of Key Definitions describing each of the acceptable
+// correction keys, descriptions, and their "code" as determined by the FacturaE specifications.
 var correctionList = []*tax.KeyDefinition{
 	{
 		Key:  CorrectionKeyCode,
