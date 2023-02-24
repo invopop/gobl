@@ -20,6 +20,9 @@ const (
 	MethodKeyCreditTransfer MethodKey = "credit-transfer"
 	MethodKeyDebitTransfer  MethodKey = "debit-transfer"
 	MethodKeyCash           MethodKey = "cash"
+	MethodKeyCheque         MethodKey = "cheque"
+	MethodKeyCredit         MethodKey = "credit"
+	MethodKeyBankDraft      MethodKey = "bank-draft"
 	MethodKeyDirectDebit    MethodKey = "direct-debit" // aka. Mandate
 	MethodKeyOnline         MethodKey = "online"       // Website from which payment can be made
 )
@@ -43,6 +46,9 @@ var MethodKeyDefinitions = []MethodKeyDef{
 	{MethodKeyCreditTransfer, "Sender initiated bank or wire transfer", "30"},  // credit transfer
 	{MethodKeyDebitTransfer, "Receiver initiated bank or wire transfer", "31"}, // debit transfer
 	{MethodKeyCash, "Cash", "10"},                                              // in cash
+	{MethodKeyCheque, "Cheque", ""},                                            // cheque
+	{MethodKeyCredit, "Credit", ""},                                            // credit
+	{MethodKeyBankDraft, "Bankers Draft or Bank Cheque", ""},                   // Banker's draft,
 	{MethodKeyDirectDebit, "Direct debit", "49"},                               // direct debit
 	{MethodKeyOnline, "Online or web payment", "68"},                           // online payment service
 }
