@@ -31,10 +31,15 @@ const (
 	FPACodeTaxSystemOrdinary FPACode = "RF01"
 
 	// Payment Method (ModalitaPagamento) Codes
-	FPACodePaymentMethodCash         FPACode = "MP01"
-	FPACodePaymentMethodBankTransfer FPACode = "MP05"
-	FPACodePaymentMethodCard         FPACode = "MP08"
-	FPACodePaymentMethodDirectDebit  FPACode = "MP10"
+	FPACodePaymentCash                 FPACode = "MP01"
+	FPACodePaymentBankTransfer         FPACode = "MP05"
+	FPACodePaymentCard                 FPACode = "MP08"
+	FPACodePaymentDirectDebit          FPACode = "MP10"
+	FPACodePaymentDirectDebitUtilities FPACode = "MP10"
+	FPACodePaymentDirectDebitFast      FPACode = "MP11"
+	FPACodePaymentDirectDebitSepa      FPACode = "MP19"
+	FPACodePaymentDirectDebitSepaCore  FPACode = "MP20"
+	FPACodePaymentDirectDebitSepaB2B   FPACode = "MP21"
 
 	// Document Type (TipoDocumento) Codes
 	FPACodeDocumentTypeInvoice    FPACode = "TD01"
@@ -73,21 +78,21 @@ var FPACodeDefs = []*FPACodeDefinition{
 	},
 	// Payment Method Codes
 	{
-		Code: FPACodePaymentMethodCash,
+		Code: FPACodePaymentCash,
 		Desc: i18n.String{
 			i18n.EN: "Cash",
 			i18n.IT: "Contanti",
 		},
 	},
 	{
-		Code: FPACodePaymentMethodBankTransfer,
+		Code: FPACodePaymentBankTransfer,
 		Desc: i18n.String{
 			i18n.EN: "Bank transfer",
 			i18n.IT: "Bonifico bancario",
 		},
 	},
 	{
-		Code: FPACodePaymentMethodCard,
+		Code: FPACodePaymentCard,
 		Desc: i18n.String{
 			i18n.EN: "Card",
 			i18n.IT: "Carta di credito",
@@ -97,7 +102,42 @@ var FPACodeDefs = []*FPACodeDefinition{
 		Code: FPACodePaymentDirectDebit,
 		Desc: i18n.String{
 			i18n.EN: "Direct debit",
-			i18n.IT: "Rid",
+			i18n.IT: "RID",
+		},
+	},
+	{
+		Code: FPACodePaymentDirectDebitUtilities,
+		Desc: i18n.String{
+			i18n.EN: "Direct debit utilities",
+			i18n.IT: "RID utenze",
+		},
+	},
+	{
+		Code: FPACodePaymentDirectDebitFast,
+		Desc: i18n.String{
+			i18n.EN: "Direct debit fast",
+			i18n.IT: "RID veloce",
+		},
+	},
+	{
+		Code: FPACodePaymentDirectDebitSepa,
+		Desc: i18n.String{
+			i18n.EN: "SEPA Direct Debit",
+			i18n.IT: "SEPA Direct Debit",
+		},
+	},
+	{
+		Code: FPACodePaymentDirectDebitSepaCore,
+		Desc: i18n.String{
+			i18n.EN: "SEPA Direct Debit CORE",
+			i18n.IT: "SEPA Direct Debit CORE",
+		},
+	},
+	{
+		Code: FPACodePaymentDirectDebitSepaB2B,
+		Desc: i18n.String{
+			i18n.EN: "SEPA Direct Debit B2B",
+			i18n.IT: "SEPA Direct Debit B2B",
 		},
 	},
 	// Document Type Codes

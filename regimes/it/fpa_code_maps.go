@@ -48,31 +48,36 @@ var PaymentMethodMap = map[pay.MethodKey]*FPACodeGroup{
 	pay.MethodKeyCash: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentMethodCash,
+			FPACodePaymentCash,
 		},
 	},
 	pay.MethodKeyCard: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentMethodCard,
+			FPACodePaymentCard,
 		},
 	},
 	pay.MethodKeyDirectDebit: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentMethodDirectDebit,
+			FPACodePaymentDirectDebit,
+			FPACodePaymentDirectDebitUtilities,
+			FPACodePaymentDirectDebitFast,
+			FPACodePaymentDirectDebitSepa,
+			FPACodePaymentDirectDebitSepaCore,
+			FPACodePaymentDirectDebitSepaB2B,
 		},
 	},
 	pay.MethodKeyCreditTransfer: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentMethodBankTransfer
+			FPACodePaymentBankTransfer
 		},
 	},
 	pay.MethodKeyDebitTransfer: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentMethodBankTransfer
+			FPACodePaymentBankTransfer
 		},
 	},
 }
