@@ -18,6 +18,7 @@ const (
 	InvoiceTypePartial    InvoiceType = "partial"
 	InvoiceTypeCorrective InvoiceType = "corrective"
 	InvoiceTypeCreditNote InvoiceType = "credit-note"
+	InvoiceTypeDebitNote  InvoiceType = "debit-note"
 	InvoiceTypeSelfBilled InvoiceType = "self-billed"
 )
 
@@ -36,9 +37,10 @@ var InvoiceTypeDefinitions = []InvoiceTypeDef{
 	{InvoiceTypeProforma, "For a clients validation before sending a final invoice.", "325"},
 	{InvoiceTypeSimplified, "Typically used for small transactions that don't require customer details.", "380"}, // same UNTDID as commercial
 	{InvoiceTypePartial, "Reflecting partial delivery of goods or services to be paid.", "326"},
-	{InvoiceTypeSelfBilled, "Created by a customer on behalf of the supplier.", "389"},
 	{InvoiceTypeCorrective, "Corrected invoice that completely replaces the preceding document.", "384"},
 	{InvoiceTypeCreditNote, "Reflects a refund either partial or complete of the preceding document.", "381"},
+	{InvoiceTypeDebitNote, "An additional set of charges to be added to the preceding document.", "383"},
+	{InvoiceTypeSelfBilled, "Created by a customer on behalf of the supplier.", "389"},
 }
 
 var isValidInvoiceType = validation.In(validInvoiceTypes()...)
