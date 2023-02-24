@@ -115,12 +115,3 @@ var taxCategories = []*tax.Category{
 		},
 	},
 }
-
-func taxCategoryFromCode(code cbc.Code) *tax.Category {
-	for _, c := range taxCategories {
-		if c.Code == code {
-			return c
-		}
-	}
-	return nil
-}

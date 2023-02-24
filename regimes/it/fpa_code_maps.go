@@ -71,13 +71,13 @@ var PaymentMethodMap = map[pay.MethodKey]*FPACodeGroup{
 	pay.MethodKeyCreditTransfer: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentBankTransfer
+			FPACodePaymentBankTransfer,
 		},
 	},
 	pay.MethodKeyDebitTransfer: {
 		Type: FPACodeTypePaymentMethod,
 		Codes: []FPACode{
-			FPACodePaymentBankTransfer
+			FPACodePaymentBankTransfer,
 		},
 	},
 }

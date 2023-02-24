@@ -124,11 +124,11 @@ func (v *invoiceValidator) meta(value interface{}) error {
 
 	// Validate Withholding Tax FPA code
 	// Only retained taxes are considered.
-	for _, cat := range v.inv.Totals.Taxes.Categories {
-		if !taxCategoryFromCode(cat.Code).Retained {
+	for _, catTotal := range v.inv.Totals.Taxes.Categories {
+		if !catTotal.Retained {
 			break
 		}
-		codeGroup = TaxCategoryMap[cat.Code]
+		codeGroup = TaxCategoryMap[catTotal.Code]
 		err = validateMetaFPACode(meta, codeGroup)
 		if err != nil {
 			return err
