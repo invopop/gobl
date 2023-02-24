@@ -1,10 +1,11 @@
 package it
 
 import (
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/gobl/cbc"
 )
 
 var IdentityTypeFiscalCode cbc.Code = "CF" // Codice Fiscale
@@ -20,9 +21,9 @@ func New() *tax.Regime {
 		},
 		Validator:  Validate,
 		Calculator: Calculate,
-		Zones:      zones,      // zones.go
-		Categories: categories, // categories.go
-		Schemes:    schemes,    // schemes.go
+		Zones:      zones,         // zones.go
+		Categories: taxCategories, // tax_categories.go
+		Schemes:    schemes,       // schemes.go
 	}
 }
 
@@ -30,6 +31,8 @@ func New() *tax.Regime {
 func Validate(doc interface{}) error {
 
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}

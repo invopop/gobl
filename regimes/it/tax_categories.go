@@ -10,11 +10,10 @@ import (
 
 // Local tax category definitions which are not considered standard.
 const (
-	TaxCategoryRA   cbc.Code = "RA" // https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
-	TaxCategoryINPS cbc.Code = "INPS"
+	TaxCategoryRA cbc.Code = "RA" // https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
 )
 
-var categories = []*tax.Category{
+var taxCategories = []*tax.Category{
 	{
 		Code:     common.TaxCategoryVAT,
 		Retained: false,
@@ -115,4 +114,13 @@ var categories = []*tax.Category{
 			},
 		},
 	},
+}
+
+func taxCategoryFromCode(code cbc.Code) *tax.Category {
+	for _, c := range taxCategories {
+		if c.Code == code {
+			return c
+		}
+	}
+	return nil
 }
