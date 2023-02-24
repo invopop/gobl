@@ -127,8 +127,6 @@ type PrecedingDefinitions struct {
 type KeyDefinition struct {
 	// Actual key value.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// There is usually a mapping between a key and some local code.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Short name for the key, if relevant.
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
