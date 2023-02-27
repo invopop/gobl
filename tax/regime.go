@@ -87,7 +87,9 @@ type Rate struct {
 	// Key identifies this rate within the system
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
+	// Human name of the rate
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
+	// Useful description of the rate.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
 	// Values contains a list of Value objects that contain the
@@ -96,6 +98,10 @@ type Rate struct {
 	// Order is important, newer values should come before
 	// older values.
 	Values []*RateValue `json:"values" jsonschema:"title=Values"`
+
+	// Tags contains a set of tag definitions that can be applied
+	// when a tax in the same Category and Rate is used.
+	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
 }
 
 // RateValue contains a percentage rate or fixed amount for a given date range.
