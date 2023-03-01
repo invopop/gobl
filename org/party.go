@@ -135,15 +135,17 @@ type Registration struct {
 // Calculate performs any calculations required on the Party or
 // it's properties, like the tax identity.
 func (p *Party) Calculate() error {
-	var r *tax.Regime
-	if p.TaxID != nil {
-		if err := p.TaxID.Calculate(); err != nil {
-			return err
-		}
-		r = p.TaxID.Regime()
-		return r.CalculateObject(p)
+	if p.TaxID == nil {
+		return nil
 	}
-	return nil
+	if err := p.TaxID.Calculate(); err != nil {
+		return err
+	}
+	r := p.TaxID.Regime()
+	if r == nil {
+		return nil // nothing to do here
+	}
+	return r.CalculateObject(p)
 }
 
 // Validate is used to check the party's data meets minimum expectations.
