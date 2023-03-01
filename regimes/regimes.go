@@ -1,3 +1,5 @@
+// Package regimes simple ensures that each of the individually defined tax regimes
+// is loaded correctly and ready to use from other GOBL packages.
 package regimes
 
 import (

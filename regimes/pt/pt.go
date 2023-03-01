@@ -1,3 +1,4 @@
+// Package pt provides models for dealing with the Portuguese tax regime.
 package pt
 
 import (

@@ -1,3 +1,5 @@
+// Package currency is used internally to generate Go currency structures from
+// a data source.
 package currency
 
 import (

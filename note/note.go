@@ -1,3 +1,4 @@
+// Package note provides models for generating simple messages.
 package note
 
 import (

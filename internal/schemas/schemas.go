@@ -1,3 +1,4 @@
+// Package schemas helps generate JSON Schema files from the main GOBL packages.
 package schemas
 
 import (

@@ -1,3 +1,4 @@
+// Package c14n provides canonical JSON encoding and decoding.
 package c14n
 
 import (

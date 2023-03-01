@@ -1,3 +1,4 @@
+// Package gobl contains all the base models for GOBL.
 package gobl
 
 import (

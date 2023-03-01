@@ -1,3 +1,4 @@
+// Package it provides the Italian tax regime.
 package it
 
 import (

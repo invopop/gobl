@@ -1,3 +1,4 @@
+// Package l10n provides localization models and data.
 package l10n
 
 import (

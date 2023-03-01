@@ -1,3 +1,4 @@
+// Package uuid provides a wrapper for handling UUID codes.
 package uuid
 
 import (

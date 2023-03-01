@@ -1,3 +1,4 @@
+// Package bill provides models for dealing with Billing and specifically invoicing.
 package bill
 
 import (

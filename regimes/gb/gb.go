@@ -1,3 +1,4 @@
+// Package gb provides the United Kingdom tax regime.
 package gb
 
 import (

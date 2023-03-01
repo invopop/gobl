@@ -3,25 +3,31 @@
 // http://opensource.org/licenses/mit-license.php
 // Source: https://github.com/makenowjust/heredoc
 
-// Package heredoc provides creation of here-documents from raw strings.
+// Package here provides creation of here-documents from raw strings.
 //
 // Golang supports raw-string syntax.
-//     doc := `
-//     	Foo
-//     	Bar
-//     `
+//
+//	doc := `
+//		Foo
+//		Bar
+//	`
+//
 // But raw-string cannot recognize indentation. Thus such content is an indented string, equivalent to
-//     "\n\tFoo\n\tBar\n"
+//
+//	"\n\tFoo\n\tBar\n"
+//
 // I dont't want this!
 //
 // However this problem is solved by package heredoc.
-//     doc := here.Doc(`
-//     	Foo
-//     	Bar
-//     `)
+//
+//	doc := here.Doc(`
+//		Foo
+//		Bar
+//	`)
+//
 // Is equivalent to
-//     "Foo\nBar\n"
-
+//
+//	"Foo\nBar\n"
 package here
 
 import (
