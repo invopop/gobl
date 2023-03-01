@@ -12,9 +12,9 @@ type Tag struct {
 	// Key used to identify the tag
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Name of this scheme.
-	Name i18n.String `json:"name" jsonschema:"title=Name"`
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 	// Human details describing what this scheme is used for.
-	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
+	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 	// List of schemes that this tag can appear under.
 	Schemes []cbc.Key `json:"schemes,omitempty" jsonschema:"title=Schemes"`
 	// Additional local
@@ -25,8 +25,8 @@ type Tag struct {
 func (t *Tag) Validate() error {
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Key, validation.Required),
-		validation.Field(&t.Name, validation.Required),
-		validation.Field(&t.Description),
+		validation.Field(&t.Name),
+		validation.Field(&t.Desc),
 		validation.Field(&t.Meta),
 	)
 }

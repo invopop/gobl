@@ -2,9 +2,17 @@
 package it
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
+)
+
+// Keys used for meta data from external sources.
+const (
+	KeyFatturaPATipoDocumento cbc.Key = "fatturapa-tipo-documento"
+	KeyFatturaPARegimeFiscale cbc.Key = "fatturapa-regime-fiscale"
+	KeyFatturaPANatura        cbc.Key = "fatturapa-natura"
 )
 
 // New instantiates a new Italian regime.
@@ -16,6 +24,7 @@ func New() *tax.Regime {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
+		Schemes:    schemes,
 		Validator:  Validate,
 		Calculator: Calculate,
 		Zones:      zones,      // zones.go

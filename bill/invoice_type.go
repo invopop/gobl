@@ -80,6 +80,11 @@ func (k InvoiceType) In(set ...InvoiceType) bool {
 	return false
 }
 
+// Key provides the underlying cbc.Key instance.
+func (k InvoiceType) Key() cbc.Key {
+	return cbc.Key(k)
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (InvoiceType) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{
