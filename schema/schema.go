@@ -1,3 +1,4 @@
+// Package schema provides a simple way to register and lookup schemas.
 package schema
 
 import (

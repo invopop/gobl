@@ -1,3 +1,4 @@
+// Package es provides tax regime support for Spain.
 package es
 
 import (

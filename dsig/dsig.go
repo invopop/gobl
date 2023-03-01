@@ -1,3 +1,4 @@
+// Package dsig provides models for dealing with digital signatures.
 package dsig
 
 import (

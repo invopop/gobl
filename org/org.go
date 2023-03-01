@@ -1,3 +1,4 @@
+// Package org contains structures related to organization.
 package org
 
 import "github.com/invopop/gobl/schema"

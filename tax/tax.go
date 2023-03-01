@@ -1,3 +1,4 @@
+// Package tax encapsulates models related to taxation.
 package tax
 
 import (

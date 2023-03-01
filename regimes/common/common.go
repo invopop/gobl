@@ -1,3 +1,4 @@
+// Package common provides re-usable regime related structures and data.
 package common
 
 import (

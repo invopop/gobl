@@ -1,3 +1,5 @@
+// Package num provides support for dealing with amounts and percentages without
+// rounding errors.
 package num
 
 import "github.com/invopop/gobl/schema"

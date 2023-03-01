@@ -1,3 +1,4 @@
+// Package iotools helps with reading documents.
 package iotools
 
 import (

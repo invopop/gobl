@@ -1,3 +1,4 @@
+// Package fr provides the tax region definition for France.
 package fr
 
 import (

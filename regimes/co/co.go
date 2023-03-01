@@ -1,3 +1,4 @@
+// Package co handles tax regime data for Colombia.
 package co
 
 import (

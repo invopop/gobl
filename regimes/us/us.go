@@ -1,3 +1,4 @@
+// Package us provides models for dealing with the United States of America.
 package us
 
 import (
