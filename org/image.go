@@ -1,10 +1,10 @@
 package org
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/validation"
+	"github.com/invopop/validation/is"
 )
 
 // Image describes a logo or photo that represents an entity. Most

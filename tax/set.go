@@ -3,9 +3,9 @@ package tax
 import (
 	"fmt"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/validation"
 )
 
 // Set defines a list of tax categories and their rates to be used alongside taxable items.

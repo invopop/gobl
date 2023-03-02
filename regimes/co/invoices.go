@@ -1,11 +1,11 @@
 package co
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 type invoiceValidator struct {
@@ -22,11 +22,16 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.validParty)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type != bill.InvoiceTypeSimplified,
+			inv.Type.In(bill.InvoiceTypeDefault),
 			validation.Required,
 			validation.By(v.validParty),
 		)),
-		validation.Field(&inv.Outlays, validation.Length(0, 0)),
+		validation.Field(&inv.Preceding, validation.When(
+			inv.Type.In(bill.InvoiceTypeCreditNote),
+			validation.Required,
+			validation.Each(validation.By(v.preceding)),
+		)),
+		validation.Field(&inv.Outlays, validation.Empty),
 	)
 }
 
@@ -63,5 +68,15 @@ func (v *invoiceValidator) validTaxIdentity(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Zone, validation.Required, validation.In(zoneCodes...)),
+	)
+}
+
+func (v *invoiceValidator) preceding(value interface{}) error {
+	obj, ok := value.(*bill.Preceding)
+	if !ok {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.CorrectionMethod, validation.Required, isValidCorrectionMethodKey),
 	)
 }

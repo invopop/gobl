@@ -1,11 +1,11 @@
 package pay
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/validation"
 )
 
 // Advance represents a single payment that has been made already, such

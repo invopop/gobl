@@ -1,8 +1,8 @@
 package pt
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/validation"
 )
 
 type invoiceValidator struct {

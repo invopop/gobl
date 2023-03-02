@@ -1,8 +1,8 @@
 package gb
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/validation"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant

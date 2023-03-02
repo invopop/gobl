@@ -1,9 +1,9 @@
 package org
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Unit is used to represent standard unit types.

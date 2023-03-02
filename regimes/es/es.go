@@ -59,6 +59,7 @@ const (
 // Custom keys used typically in meta information.
 const (
 	KeyAddressCode cbc.Key = "post"
+	KeyFacturaE    cbc.Key = "facturae"
 )
 
 // New provides the Spanish tax regime definition
@@ -74,6 +75,10 @@ func New() *tax.Regime {
 		Calculator: Calculate,
 		Zones:      zones,
 		Schemes:    schemes,
+		Preceding: &tax.PrecedingDefinitions{
+			Corrections:       correctionList,
+			CorrectionMethods: correctionMethodList,
+		},
 		Categories: []*tax.Category{
 			//
 			// VAT

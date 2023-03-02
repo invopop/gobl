@@ -1,8 +1,8 @@
 package l10n
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // CountryCode defines an ISO 3166-2 country code.

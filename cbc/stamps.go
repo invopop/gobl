@@ -1,7 +1,7 @@
 package cbc
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/validation"
 )
 
 // Stamp defines an official seal of approval from a third party like a governmental agency

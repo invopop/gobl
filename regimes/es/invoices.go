@@ -1,11 +1,11 @@
 package es
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant
@@ -25,13 +25,14 @@ func (v *invoiceValidator) validate() error {
 		// Only commercial and simplified supported at this time for spain.
 		// Rectification state determined by Preceding value.
 		validation.Field(&inv.Type, validation.In(
-			bill.InvoiceTypeNone,
+			bill.InvoiceTypeDefault,
 			bill.InvoiceTypeSimplified,
+			bill.InvoiceTypeCorrective,
 		)),
-		validation.Field(&inv.Preceding, validation.By(v.preceding)),
+		validation.Field(&inv.Preceding, validation.Each(validation.By(v.preceding))),
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type != bill.InvoiceTypeSimplified,
+			inv.Type.In(bill.InvoiceTypeDefault),
 			validation.Required,
 			validation.By(v.commercialCustomer),
 		)),
@@ -78,7 +79,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Period, validation.Required),
-		validation.Field(&obj.Corrections, validation.Required, validation.In(correctionReasonKeys()...)),
-		validation.Field(&obj.CorrectionMethod, validation.Required, validation.In(correctionMethodKeys()...)),
+		validation.Field(&obj.Corrections, validation.Required, isValidCorrectionKey),
+		validation.Field(&obj.CorrectionMethod, validation.Required, isValidCorrectionMethodKey),
 	)
 }

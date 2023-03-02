@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Date represents a simple date without time used most frequently

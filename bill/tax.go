@@ -1,8 +1,8 @@
 package bill
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/validation"
 )
 
 // TaxScheme allows for defining a specific or special scheme that applies to the

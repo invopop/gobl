@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 

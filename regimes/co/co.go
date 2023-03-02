@@ -33,6 +33,11 @@ const (
 	StampProviderDIANQR   cbc.Key = "dian-qr"
 )
 
+// Special keys to use in meta data.
+const (
+	KeyDIAN cbc.Key = "dian"
+)
+
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
@@ -45,6 +50,9 @@ func New() *tax.Regime {
 		Validator:  Validate,
 		Calculator: Calculate,
 		Zones:      zones, // see zones.go
+		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
+			CorrectionMethods: correctionMethodList,
+		},
 		Categories: []*tax.Category{
 			//
 			// VAT

@@ -1,8 +1,8 @@
 package cbc
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // NoteKey is used to describe the key used for identifying

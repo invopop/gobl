@@ -8,7 +8,7 @@ import (
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/invopop/validation"
 )
 
 // Identity stores the details required to identify an entity for tax

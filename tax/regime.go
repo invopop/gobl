@@ -3,13 +3,13 @@ package tax
 import (
 	"errors"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/validation"
 )
 
 // Regime defines the holding structure for the definitions of taxes inside a country
@@ -33,6 +33,9 @@ type Regime struct {
 
 	// Set of specific scheme definitions inside the region.
 	Schemes []*Scheme `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+
+	// Configuration details for preceding options.
+	Preceding *PrecedingDefinitions `json:"preceding,omitempty" jsonschema:"title=Preceding"`
 
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
@@ -109,6 +112,27 @@ type RateValue struct {
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// When true, this value should no longer be used.
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
+}
+
+// PrecedingDefinitions contains details about what can be defined in Invoice
+// preceding document data.
+type PrecedingDefinitions struct {
+	// Corrections contains a list of all the keys that can be used to identify a correction.
+	Corrections []*KeyDefinition `json:"corrections,omitempty" jsonschema:"title=Corrections"`
+	// CorrectionMethods describe the methods used to correct an invoice.
+	CorrectionMethods []*KeyDefinition `json:"correction_methods,omitempty" jsonschema:"title=Correction Methods"`
+}
+
+// KeyDefinition defines properties of a key that is specific for a regime.
+type KeyDefinition struct {
+	// Actual key value.
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	// Short name for the key, if relevant.
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Description offering more details about when the key should be used.
+	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
+	// Any additional data that might be relevant in some regimes?
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // ValidateObject performs validation on the provided object in the context

@@ -3,8 +3,8 @@ package cbc
 import (
 	"regexp"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 )
 
 // Code represents a string used to uniquely identify the data we're looking
