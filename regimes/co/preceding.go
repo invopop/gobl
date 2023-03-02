@@ -9,8 +9,11 @@ import (
 
 // Preceding document correction method constants.
 const (
-	CorrectionMethodKeyPartial cbc.Key = "partial"
-	CorrectionMethodKeyRevoked cbc.Key = "revoked"
+	CorrectionMethodKeyPartial         cbc.Key = "partial"
+	CorrectionMethodKeyRevoked         cbc.Key = "revoked"
+	CorrectionMethodKeyDiscount        cbc.Key = "discount"
+	CorrectionMethodKeyPriceAdjustment cbc.Key = "price-adjustment"
+	CorrectionMethodKeyOther           cbc.Key = "other"
 )
 
 var correctionMethodList = []*tax.KeyDefinition{
@@ -29,6 +32,30 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.ES: "Anulación de la factura anterior.",
 		},
 		Meta: cbc.Meta{KeyDIAN: "2"},
+	},
+	{
+		Key: CorrectionMethodKeyDiscount,
+		Desc: i18n.String{
+			i18n.EN: "Partial or total discount.",
+			i18n.ES: "Rebaja o descuento parcial o total.",
+		},
+		Meta: cbc.Meta{KeyDIAN: "3"},
+	},
+	{
+		Key: CorrectionMethodKeyPriceAdjustment,
+		Desc: i18n.String{
+			i18n.EN: "Ajuste de precio.",
+			i18n.ES: "Price adjustment.",
+		},
+		Meta: cbc.Meta{KeyDIAN: "4"},
+	},
+	{
+		Key: CorrectionMethodKeyOther,
+		Desc: i18n.String{
+			i18n.EN: "Otros.",
+			i18n.ES: "Other.",
+		},
+		Meta: cbc.Meta{KeyDIAN: "5"},
 	},
 }
 
