@@ -1,0 +1,89 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "series": "SAMPLE",
+  "code": "001",
+  "currency": "EUR",
+  "issue_date": "2023-03-02",
+  "tax": {
+    "schemes": ["freelance"]
+  },
+  "supplier": {
+    "tax_id": {
+      "country": "IT",
+      "code": "12345678903"
+    },
+    "name": "MªF. Services",
+    "people": [
+      {
+        "name": {
+          "given": "MARIA FRANCISCA",
+          "surname": "MONTERO",
+          "surname2": "ESTEBAN"
+        }
+      }
+    ],
+    "addresses": [
+      {
+        "num": "9",
+        "street": "CAMÍ MADRID",
+        "locality": "CANENA",
+        "region": "JAÉN",
+        "code": "23480",
+        "country": "IT"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "billing@example.com"
+      }
+    ]
+  },
+  "customer": {
+    "tax_id": {
+      "country": "IT",
+      "code": "13029381004"
+    },
+    "name": "Sample Consumer"
+  },
+  "lines": [
+    {
+      "quantity": "20",
+      "item": {
+        "name": "Development services",
+        "price": "90.00",
+        "unit": "h"
+      },
+      "discounts": [
+        {
+          "percent": "10%",
+          "reason": "Special discount"
+        }
+      ],
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "standard"
+        },
+        {
+          "cat": "IRPEF",
+          "percent": "20.0%"
+        }
+      ]
+    },
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Zero test",
+        "price": "100.00",
+        "unit": "h"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "zero",
+          "tag": "not-subject-other"
+        }
+      ]
+    }
+  ]
+}

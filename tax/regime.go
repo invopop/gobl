@@ -80,6 +80,10 @@ type Category struct {
 
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates" jsonschema:"title=Rates"`
+
+	// Meta contains additional information about the category that is relevant
+	// for local frequently used formats.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Rate defines a single rate inside a category
@@ -102,6 +106,10 @@ type Rate struct {
 	// Tags contains a set of tag definitions that can be applied
 	// when a tax in the same Category and Rate is used.
 	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
+
+	// Meta contains additional information about the rate that is relevant
+	// for local frequently used implementations.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // RateValue contains a percentage rate or fixed amount for a given date range.
