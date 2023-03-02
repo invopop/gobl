@@ -8,10 +8,10 @@ package it
 import (
 	"errors"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // validateTaxIdentity looks at the provided identity's code and performs the
