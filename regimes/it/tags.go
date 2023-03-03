@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Tag keys detemoined from the "Natura" field from FatturaPA.
+// Tag keys determined from the "Natura" field from FatturaPA.
 const (
 	TagKeyExcluded                                cbc.Key = "excluded"
 	TagKeyNotSubject                              cbc.Key = "not-subject" // not used since 1 Jan 2021

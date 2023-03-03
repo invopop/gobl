@@ -11,9 +11,9 @@ import (
 type Tag struct {
 	// Key used to identify the tag
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// Name of this scheme.
+	// Name of this tag.
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Human details describing what this scheme is used for.
+	// Human details describing what this tag is used for.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 	// List of schemes that this tag can appear under.
 	Schemes []cbc.Key `json:"schemes,omitempty" jsonschema:"title=Schemes"`
