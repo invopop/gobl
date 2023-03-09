@@ -25,14 +25,14 @@ func (v *invoiceValidator) validate() error {
 		// Only commercial and simplified supported at this time for spain.
 		// Rectification state determined by Preceding value.
 		validation.Field(&inv.Type, validation.In(
-			bill.InvoiceTypeDefault,
+			bill.InvoiceTypeStandard,
 			bill.InvoiceTypeSimplified,
 			bill.InvoiceTypeCorrective,
 		)),
 		validation.Field(&inv.Preceding, validation.Each(validation.By(v.preceding))),
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type.In(bill.InvoiceTypeDefault),
+			inv.Type.In(bill.InvoiceTypeStandard),
 			validation.Required,
 			validation.By(v.commercialCustomer),
 		)),

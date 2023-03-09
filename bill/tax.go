@@ -16,8 +16,8 @@ type Tax struct {
 	// tax.
 	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
 
-	// Special tax schemes that apply to this invoice according to local requirements.
-	Schemes []cbc.Key `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+	// Special tax tags that apply to this invoice according to local requirements.
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
@@ -25,8 +25,8 @@ type Tax struct {
 }
 
 // ContainsScheme returns true if the tax contains the given scheme.
-func (t *Tax) ContainsScheme(key cbc.Key) bool {
-	for _, s := range t.Schemes {
+func (t *Tax) ContainsTag(key cbc.Key) bool {
+	for _, s := range t.Tags {
 		if s == key {
 			return true
 		}
@@ -38,7 +38,7 @@ func (t *Tax) ContainsScheme(key cbc.Key) bool {
 func (t *Tax) Validate() error {
 	return validation.ValidateStruct(t,
 		validation.Field(&t.PricesInclude),
-		validation.Field(&t.Schemes),
+		validation.Field(&t.Tags),
 		validation.Field(&t.Meta),
 	)
 }

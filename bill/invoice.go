@@ -12,8 +12,14 @@ import (
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
+)
+
+// Constants used to help identify invoices
+const (
+	ShortSchemaInvoice = "bill/invoice"
 )
 
 // Invoice represents a payment claim for goods or services supplied under
@@ -23,13 +29,12 @@ import (
 type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-
 	// Used as a prefix to group codes.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
-	// Optional invoice type, leave empty unless needed for a specific situation.
-	Type InvoiceType `json:"type,omitempty" jsonschema:"title=Type"`
+	// Type of invoice document subject to the requirements of the local tax regime.
+	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
@@ -89,7 +94,7 @@ func (inv *Invoice) Validate() error {
 	err := validation.ValidateStruct(inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
-		validation.Field(&inv.Type), // either empty or one of those supported
+		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
 		validation.Field(&inv.Currency, validation.Required),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Tax),
@@ -179,6 +184,9 @@ func (t *Totals) Validate() error {
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
 func (inv *Invoice) Calculate() error {
+	if inv.Type == "" {
+		inv.Type = InvoiceTypeStandard
+	}
 	if inv.Supplier == nil {
 		return errors.New("missing or invalid supplier tax identity")
 	}
@@ -255,7 +263,7 @@ func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
 	if inv.Tax == nil {
 		return nil
 	}
-	for _, k := range inv.Tax.Schemes {
+	for _, k := range inv.Tax.Tags {
 		s := r.SchemeFor(k)
 		if s == nil {
 			return fmt.Errorf("invalid scheme: %v", k)
@@ -367,7 +375,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	if inv.Tax != nil && inv.Tax.ContainsScheme(common.SchemeReverseCharge) {
+	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
 		t.Tax = zero
 	} else {
 		t.Tax = t.Taxes.Sum
@@ -433,4 +441,19 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Payable = zero
 	t.Advances = nil
 	t.Due = nil
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
+	props := schema.Properties
+	if val, ok := props.Get("type"); ok {
+		its := val.(*jsonschema.Schema)
+		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
+		for i, v := range InvoiceTypes {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       cbc.Key(v.Key).String(),
+				Description: v.Description,
+			}
+		}
+	}
 }

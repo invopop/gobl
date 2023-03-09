@@ -31,8 +31,8 @@ type Regime struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
-	// Set of specific scheme definitions inside the region.
-	Schemes []*Scheme `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+	// Sets of scenario definitions inside the region.
+	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for preceding options.
 	Preceding *PrecedingDefinitions `json:"preceding,omitempty" jsonschema:"title=Preceding"`
@@ -105,7 +105,7 @@ type Rate struct {
 
 	// Tags contains a set of tag definitions that can be applied
 	// when a tax in the same Category and Rate is used.
-	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
+	Tags []*TagDef `json:"tags" jsonschema:"title=Tags"`
 
 	// Meta contains additional information about the rate that is relevant
 	// for local frequently used implementations.
@@ -176,22 +176,13 @@ func (r *Regime) CurrencyDef() *currency.Def {
 	return &d
 }
 
-// SchemeFor returns the scheme definition for the given key.
-func (r *Regime) SchemeFor(key cbc.Key) *Scheme {
-	for _, s := range r.Schemes {
-		if s.Key == key {
-			return s
-		}
-	}
-	return nil
-}
-
 // Validate enures the region definition is valid, including all
 // subsequent categories.
 func (r *Regime) Validate() error {
 	err := validation.ValidateStruct(r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
+		validation.Field(&r.Scenarios),
 		validation.Field(&r.Categories, validation.Required),
 		validation.Field(&r.Zones),
 	)

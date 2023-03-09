@@ -81,7 +81,7 @@
         {
           "cat": "VAT",
           "rate": "zero",
-          "tag": "not-subject-other"
+          "tags": ["not-subject+other"]
         }
       ]
     }

@@ -58,8 +58,12 @@ const (
 
 // Custom keys used typically in meta information.
 const (
-	KeyAddressCode cbc.Key = "post"
-	KeyFacturaE    cbc.Key = "facturae"
+	KeyAddressCode                 cbc.Key = "post"
+	KeyFacturaE                    cbc.Key = "facturae"
+	KeyFacturaETaxTypeCode         cbc.Key = "facturae-tax-type-code"
+	KeyFacturaEInvoiceDocumentType cbc.Key = "facturae-invoice-document-type"
+	KeyFacturaEInvoiceClass        cbc.Key = "facturae-invoice-class"
+	KeyTicketBAICausaExencion      cbc.Key = "ticketbai-causa-exencion"
 )
 
 // New provides the Spanish tax regime definition
@@ -74,7 +78,10 @@ func New() *tax.Regime {
 		Validator:  Validate,
 		Calculator: Calculate,
 		Zones:      zones,
-		Schemes:    schemes,
+		Tags:       invoiceTags,
+		Scenarios: []*tax.ScenarioSet{
+			invoiceScenarios,
+		},
 		Preceding: &tax.PrecedingDefinitions{
 			Corrections:       correctionList,
 			CorrectionMethods: correctionMethodList,
@@ -94,6 +101,9 @@ func New() *tax.Regime {
 					i18n.EN: "Value Added Tax",
 					i18n.ES: "Impuesto sobre el Valor Añadido",
 				},
+				Meta: cbc.Meta{
+					KeyFacturaETaxTypeCode: "01",
+				},
 				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateZero,
@@ -101,6 +111,7 @@ func New() *tax.Regime {
 							i18n.EN: "Zero Rate",
 							i18n.ES: "Tipo Cero",
 						},
+						Tags: exemptTaxTags,
 						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(0, 3),
@@ -113,6 +124,7 @@ func New() *tax.Regime {
 							i18n.EN: "Standard Rate",
 							i18n.ES: "Tipo General",
 						},
+						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
@@ -138,6 +150,7 @@ func New() *tax.Regime {
 							i18n.EN: "Standard Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo General + Recargo de Equivalencia",
 						},
+						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:     cal.NewDate(2012, 9, 1),
@@ -157,6 +170,7 @@ func New() *tax.Regime {
 							i18n.EN: "Reduced Rate",
 							i18n.ES: "Tipo Reducido",
 						},
+						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
@@ -182,6 +196,7 @@ func New() *tax.Regime {
 							i18n.EN: "Reduced Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
 						},
+						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:     cal.NewDate(2012, 9, 1),
@@ -201,6 +216,7 @@ func New() *tax.Regime {
 							i18n.EN: "Super-Reduced Rate",
 							i18n.ES: "Tipo Superreducido",
 						},
+						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(1995, 1, 1),
@@ -218,6 +234,7 @@ func New() *tax.Regime {
 							i18n.EN: "Super-Reduced Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
 						},
+						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:     cal.NewDate(1995, 1, 1),
@@ -238,6 +255,9 @@ func New() *tax.Regime {
 				Name: i18n.String{
 					i18n.EN: "IGIC",
 					i18n.ES: "IGIC",
+				},
+				Meta: cbc.Meta{
+					KeyFacturaETaxTypeCode: "03",
 				},
 				Desc: i18n.String{
 					i18n.EN: "Canary Island General Indirect Tax",
@@ -294,6 +314,9 @@ func New() *tax.Regime {
 					i18n.EN: "IPSI",
 					i18n.ES: "IPSI",
 				},
+				Meta: cbc.Meta{
+					KeyFacturaETaxTypeCode: "02",
+				},
 				Desc: i18n.String{
 					i18n.EN: "Production, Services, and Import Tax",
 					i18n.ES: "Impuesto sobre la Producción, los Servicios y la Importación",
@@ -313,6 +336,9 @@ func New() *tax.Regime {
 				Name: i18n.String{
 					i18n.EN: "IRPF",
 					i18n.ES: "IRPF",
+				},
+				Meta: cbc.Meta{
+					KeyFacturaETaxTypeCode: "04",
 				},
 				Desc: i18n.String{
 					i18n.EN: "Personal income tax.",

@@ -5,71 +5,67 @@ import (
 	"github.com/invopop/validation"
 )
 
-// NoteKey is used to describe the key used for identifying
-// the type of note.
-type NoteKey Key
-
 // Predefined list of supported note keys based on the
 // UNTDID 4451 list of text subject qualifiers. We've picked the ones
 // which we think are most useful, but if you require an additional
 // code, please send a pull request.
 const (
 	// Goods Description
-	NoteKeyGoods NoteKey = "goods"
+	NoteKeyGoods Key = "goods"
 	// Terms of Payment
-	NoteKeyPayment NoteKey = "payment"
+	NoteKeyPayment Key = "payment"
 	// Legal or regulatory information
-	NoteKeyLegal NoteKey = "legal"
+	NoteKeyLegal Key = "legal"
 	// Dangerous goods additional information
-	NoteKeyDangerousGoods NoteKey = "dangerous-goods"
+	NoteKeyDangerousGoods Key = "dangerous-goods"
 	// Acknowledgement Description
-	NoteKeyAck NoteKey = "ack"
+	NoteKeyAck Key = "ack"
 	// Rate additional information
-	NoteKeyRate NoteKey = "rate"
+	NoteKeyRate Key = "rate"
 	// Reason
-	NoteKeyReason NoteKey = "reason"
+	NoteKeyReason Key = "reason"
 	// Dispute
-	NoteKeyDispute NoteKey = "dispute"
+	NoteKeyDispute Key = "dispute"
 	// Customer remarks
-	NoteKeyCustomer NoteKey = "customer"
+	NoteKeyCustomer Key = "customer"
 	// Glossary
-	NoteKeyGlossary NoteKey = "glossary"
+	NoteKeyGlossary Key = "glossary"
 	// Customs declaration information
-	NoteKeyCustoms NoteKey = "customs"
+	NoteKeyCustoms Key = "customs"
 	// General information
-	NoteKeyGeneral NoteKey = "general"
+	NoteKeyGeneral Key = "general"
 	// Handling instructions
-	NoteKeyHandling NoteKey = "handling"
+	NoteKeyHandling Key = "handling"
 	// Packaging information
-	NoteKeyPackaging NoteKey = "packaging"
+	NoteKeyPackaging Key = "packaging"
 	// Loading instructions
-	NoteKeyLoading NoteKey = "loading"
+	NoteKeyLoading Key = "loading"
 	// Price conditions
-	NoteKeyPrice NoteKey = "price"
+	NoteKeyPrice Key = "price"
 	// Priority information
-	NoteKeyPriority NoteKey = "priority"
+	NoteKeyPriority Key = "priority"
 	// Regulatory information
-	NoteKeyRegulatory NoteKey = "regulatory"
+	NoteKeyRegulatory Key = "regulatory"
 	// Safety Instructions
-	NoteKeySafety NoteKey = "safety"
+	NoteKeySafety Key = "safety"
 	// Ship Line
-	NoteKeyShipLine NoteKey = "ship-line"
+	NoteKeyShipLine Key = "ship-line"
 	// Supplier remarks
-	NoteKeySupplier NoteKey = "supplier"
+	NoteKeySupplier Key = "supplier"
 	// Transportation information
-	NoteKeyTransport NoteKey = "transport"
+	NoteKeyTransport Key = "transport"
 	// Delivery Information
-	NoteKeyDelivery NoteKey = "delivery"
+	NoteKeyDelivery Key = "delivery"
 	// Quarantine Information
-	NoteKeyQuarantine NoteKey = "quarantine"
+	NoteKeyQuarantine Key = "quarantine"
 	// Tax declaration
-	NoteKeyTax NoteKey = "tax"
+	NoteKeyTax Key = "tax"
 )
 
 // DefNoteKey holds a note key definition
 type DefNoteKey struct {
 	// Key to match against
-	Key NoteKey `json:"key" jsonschema:"title=Key"`
+	Key Key `json:"key" jsonschema:"title=Key"`
 	// Description of the Note Key
 	Description string `json:"description" jsonschema:"title=Description"`
 	// UNTDID 4451 code
@@ -206,18 +202,15 @@ var NoteKeyDefinitions = []DefNoteKey{
 	},
 }
 
-// Notes holds an array of Note objects
-// type Notes []*Note
-
 // Note represents a free text of additional information that may be
 // added to a document.
 type Note struct {
 	// Key specifying subject of the text
-	Key NoteKey `json:"key,omitempty" jsonschema:"title=Key"`
+	Key Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Code used for additional data that may be required to identify the note.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Source of this note, especially useful when auto-generated.
-	Src string `json:"src,omitempty" jsonschema:"title=Source"`
+	Src Key `json:"src,omitempty" jsonschema:"title=Source"`
 	// The contents of the note
 	Text string `json:"text" jsonschema:"title=Text"`
 }
@@ -254,25 +247,19 @@ func (n *Note) UNTDID4451() Code {
 // WithSrc instantiates a new source instance with the provided
 // source property set. This is a useful pattern for regional
 // configurations.
-func (n *Note) WithSrc(src string) *Note {
+func (n *Note) WithSrc(src Key) *Note {
 	nw := *n // copy
 	nw.Src = src
 	return &nw
 }
 
-// JSONSchema provides a representation of the struct for usage in Schema.
-func (k NoteKey) JSONSchema() *jsonschema.Schema {
-	s := &jsonschema.Schema{
-		Title:       "Note Key",
-		Type:        "string", // they're all strings
-		OneOf:       make([]*jsonschema.Schema, len(NoteKeyDefinitions)),
-		Description: "NoteKey identifies the type of note being edited",
-	}
+// JSONSchemaExtend adds the list of definitions for the notes.
+func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
+	schema.OneOf = make([]*jsonschema.Schema, len(NoteKeyDefinitions))
 	for i, v := range NoteKeyDefinitions {
-		s.OneOf[i] = &jsonschema.Schema{
-			Const:       Key(v.Key).String(),
+		schema.OneOf[i] = &jsonschema.Schema{
+			Const:       v.Key.String(),
 			Description: v.Description,
 		}
 	}
-	return s
 }

@@ -23,9 +23,9 @@ type Combo struct {
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
-	// Additional data may be required in some regimes, the tag
+	// Additional data may be required in some regimes, the tags
 	// property helps reference them.
-	Tag cbc.Key `json:"tag,omitempty" jsonschema:"title=Tag"`
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -37,7 +37,7 @@ func (c *Combo) Validate() error {
 		validation.Field(&c.Rate), // optional, but should be checked if present
 		validation.Field(&c.Percent, validation.Required),
 		validation.Field(&c.Surcharge), // not required, but should be valid number
-		validation.Field(&c.Tag),
+		validation.Field(&c.Tags),
 	)
 }
 

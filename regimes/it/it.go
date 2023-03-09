@@ -30,7 +30,8 @@ func New() *tax.Regime {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
-		Schemes:    schemes, // schemes.go
+		Tags:       invoiceTags,
+		Scenarios:  scenarios, // scenarios.go
 		Validator:  Validate,
 		Calculator: Calculate,
 		Zones:      zones,      // zones.go

@@ -25,10 +25,12 @@ const (
 	TaxRateSuperReduced cbc.Key = "super-reduced"
 )
 
-// Standard scheme definitions
+// Standard tax tags
 const (
-	SchemeReverseCharge cbc.Key = "reverse-charge"
-	SchemeCustomerRates cbc.Key = "customer-rates"
+	TagReverseCharge cbc.Key = "reverse-charge"
+	TagCustomerRates cbc.Key = "customer-rates"
+	TagSelfBilled    cbc.Key = "self-billed"
+	TagPartial       cbc.Key = "partial"
 )
 
 // Common inbox keys
