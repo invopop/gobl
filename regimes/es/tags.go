@@ -51,6 +51,22 @@ var invoiceTags = []*tax.Tag{
 			i18n.ES: "Tarifas aplicables al destinatario",
 		},
 	},
+	// Reverse Charge Mechanism
+	{
+		Key: common.TagReverseCharge,
+		Name: i18n.String{
+			i18n.EN: "Reverse Charge",
+			i18n.ES: "Inversión del sujeto pasivo",
+		},
+	},
+	// Customer issued invoices
+	{
+		Key: common.TagSelfBilled,
+		Name: i18n.String{
+			i18n.EN: "Customer issued invoice",
+			i18n.ES: "Facturación por el destinatario",
+		},
+	},
 	// Copy of the original document
 	{
 		Key: TagCopy,
@@ -67,14 +83,6 @@ var invoiceTags = []*tax.Tag{
 			i18n.ES: "Recapitulativa",
 		},
 	},
-	// Reverse Charge Mechanism
-	{
-		Key: common.TagReverseCharge,
-		Name: i18n.String{
-			i18n.EN: "Reverse Charge",
-			i18n.ES: "Inversión del sujeto pasivo",
-		},
-	},
 	// Simplified Scheme (Modules)
 	{
 		Key: TagSimplifiedScheme,
@@ -83,14 +91,7 @@ var invoiceTags = []*tax.Tag{
 			i18n.ES: "Contribuyente en régimen simplificado",
 		},
 	},
-	// Customer issued invoices
-	{
-		Key: common.TagSelfBilled,
-		Name: i18n.String{
-			i18n.EN: "Customer issued invoice",
-			i18n.ES: "Facturación por el destinatario",
-		},
-	},
+
 	// Travel agency
 	{
 		Key: TagTravelAgency,
