@@ -30,6 +30,14 @@ type Scenario struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// ScenarioSummary is the result after running through a set of
+// scenarios and determining which combinations of Notes and Meta
+// are viable.
+type ScenarioSummary struct {
+	Notes []*cbc.Note
+	Meta  cbc.Meta
+}
+
 // Validate checks the scenario set for errors.
 func (ss *ScenarioSet) Validate() error {
 	err := validation.ValidateStruct(ss,
@@ -37,6 +45,61 @@ func (ss *ScenarioSet) Validate() error {
 		validation.Field(&ss.List, validation.Required),
 	)
 	return err
+}
+
+// SummaryFor returns a summary by applying the scenarios to the
+// supplied document.
+func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key) *ScenarioSummary {
+	summary := &ScenarioSummary{
+		Notes: make([]*cbc.Note, 0),
+		Meta:  make(cbc.Meta),
+	}
+	for _, s := range ss.List {
+		if s.match(docType, docTags) {
+			if s.Note != nil {
+				summary.Notes = append(summary.Notes, s.Note)
+			}
+			for k, v := range s.Meta {
+				summary.Meta[k] = v
+			}
+		}
+	}
+	return summary
+}
+
+func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key) bool {
+	if s.Types != nil {
+		// no types in scenario implies always match
+		if !s.hasType(docType) {
+			return false
+		}
+	}
+	if s.Tags != nil {
+		// no tags in scenario implies always match
+		if !s.hasTags(docTags) {
+			return false
+		}
+	}
+	return true
+}
+
+// hasType returns true if the scenario has the specified document type.
+func (s *Scenario) hasType(docType cbc.Key) bool {
+	return docType.In(s.Types...)
+}
+
+// hasTags returns true if the the provided document tags is a subset of the
+// scenarios tags.
+func (s *Scenario) hasTags(docTags []cbc.Key) bool {
+	if len(s.Tags) > 0 {
+		for _, t := range s.Tags {
+			if !t.In(docTags...) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }
 
 // Validate checks the scenario for errors.

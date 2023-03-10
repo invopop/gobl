@@ -6,9 +6,9 @@ import (
 	"github.com/invopop/validation"
 )
 
-// TagDef describes a tax tag that can be used to identify additional
+// Tag describes a tax tag that can be used to identify additional
 // requirements in an electronic invoice.
-type TagDef struct {
+type Tag struct {
 	// Key used to identify the tag
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Name of this tag.
@@ -18,7 +18,7 @@ type TagDef struct {
 }
 
 // Validate ensures the tax tag looks valid.
-func (td *TagDef) Validate() error {
+func (td *Tag) Validate() error {
 	return validation.ValidateStruct(td,
 		validation.Field(&td.Key, validation.Required),
 		validation.Field(&td.Name),

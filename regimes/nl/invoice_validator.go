@@ -3,6 +3,7 @@ package nl
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -23,7 +24,7 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type != bill.InvoiceTypeSimplified,
+			!inv.Tax.ContainsTag(common.TagSimplified),
 			validation.Required,
 			validation.By(v.customer),
 		)),

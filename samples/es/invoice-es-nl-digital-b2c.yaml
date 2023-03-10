@@ -3,7 +3,7 @@ currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-X-002"
 tax:
-  schemes:
+  tags:
     - customer-rates
 
 supplier:

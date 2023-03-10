@@ -9,7 +9,6 @@ import (
 const (
 	InvoiceTypeStandard   cbc.Key = "standard"
 	InvoiceTypeProforma   cbc.Key = "proforma"
-	InvoiceTypeSimplified cbc.Key = "simplified"
 	InvoiceTypeCorrective cbc.Key = "corrective"
 	InvoiceTypeCreditNote cbc.Key = "credit-note"
 	InvoiceTypeDebitNote  cbc.Key = "debit-note"
@@ -24,13 +23,12 @@ type InvoiceTypeDef struct {
 	UNTDID1001  cbc.Code `json:"untdid1001" jsonschema:"title=UNTDID 1001 Code"`
 }
 
-// InvoiceTypeDefinitions describes each of the InvoiceTypes supported by
+// InvoiceTypes describes each of the InvoiceTypes supported by
 // GOBL invoices, and includes a reference to the matching
 // UNTDID 1001 code.
 var InvoiceTypes = invoiceTypeDefs{
 	{InvoiceTypeStandard, "A regular commercial invoice document between a supplier and customer.", "380"},
 	{InvoiceTypeProforma, "For a clients validation before sending a final invoice.", "325"},
-	{InvoiceTypeSimplified, "Typically used for small transactions that don't require customer details.", "380"}, // same UNTDID as commercial
 	{InvoiceTypeCorrective, "Corrected invoice that completely replaces the preceding document.", "384"},
 	{InvoiceTypeCreditNote, "Reflects a refund either partial or complete of the preceding document.", "381"},
 	{InvoiceTypeDebitNote, "An additional set of charges to be added to the preceding document.", "383"},
@@ -51,7 +49,7 @@ func (l invoiceTypeDefs) UNTDID1001(key cbc.Key) cbc.Code {
 func validInvoiceTypes() []interface{} {
 	list := make([]interface{}, len(InvoiceTypes))
 	for i, d := range InvoiceTypes {
-		list[i] = string(d.Key)
+		list[i] = d.Key
 	}
 	return list
 }

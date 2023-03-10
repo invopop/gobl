@@ -9,15 +9,15 @@ import (
 
 // Universal tax tags
 const (
-	TagCopy            cbc.Key = "copy"
-	TagSummary         cbc.Key = "summary"
-	TagSimplified      cbc.Key = "simplified"
-	TagCustomerIssued  cbc.Key = "customer-issued"
-	TagTravelAgency    cbc.Key = "travel-agency"
-	TagSecondHandGoods cbc.Key = "second-hand-goods"
-	TagArt             cbc.Key = "art"
-	TagAntiques        cbc.Key = "antiques"
-	TagCashBasis       cbc.Key = "cash-basis"
+	TagCopy             cbc.Key = "copy"
+	TagSummary          cbc.Key = "summary"
+	TagSimplifiedScheme cbc.Key = "simplified-scheme"
+	TagCustomerIssued   cbc.Key = "customer-issued"
+	TagTravelAgency     cbc.Key = "travel-agency"
+	TagSecondHandGoods  cbc.Key = "second-hand-goods"
+	TagArt              cbc.Key = "art"
+	TagAntiques         cbc.Key = "antiques"
+	TagCashBasis        cbc.Key = "cash-basis"
 )
 
 // Tax tags which may be used in the Basque Country.
@@ -34,7 +34,23 @@ const (
 	TagOther     cbc.Key = "other"
 )
 
-var invoiceTags = []*tax.TagDef{
+var invoiceTags = []*tax.Tag{
+	// Simplified Invoice
+	{
+		Key: common.TagSimplified,
+		Name: i18n.String{
+			i18n.EN: "Simplified Invoice",
+			i18n.ES: "Factura Simplificada",
+		},
+	},
+	// Customer rates (mainly for digital goods inside EU)
+	{
+		Key: common.TagCustomerRates,
+		Name: i18n.String{
+			i18n.EN: "Customer rates",
+			i18n.ES: "Tarifas aplicables al destinatario",
+		},
+	},
 	// Copy of the original document
 	{
 		Key: TagCopy,
@@ -59,9 +75,9 @@ var invoiceTags = []*tax.TagDef{
 			i18n.ES: "Inversión del sujeto pasivo",
 		},
 	},
-	// Simplified Regime (Modules)
+	// Simplified Scheme (Modules)
 	{
-		Key: TagSimplified,
+		Key: TagSimplifiedScheme,
 		Name: i18n.String{
 			i18n.EN: "Simplified tax scheme",
 			i18n.ES: "Contribuyente en régimen simplificado",
@@ -117,7 +133,7 @@ var invoiceTags = []*tax.TagDef{
 	},
 }
 
-var commonVATTags = []*tax.TagDef{
+var commonVATTags = []*tax.Tag{
 	{
 		Key: TagProvider,
 		Name: i18n.String{
@@ -141,7 +157,7 @@ var commonVATTags = []*tax.TagDef{
 	},
 }
 
-var exemptTaxTags = []*tax.TagDef{
+var exemptTaxTags = []*tax.Tag{
 	{
 		Key: TagExempt.With(TagArticle20),
 		Name: i18n.String{

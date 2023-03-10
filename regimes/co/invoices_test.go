@@ -114,17 +114,16 @@ func creditNote() *bill.Invoice {
 
 func TestBasicInvoiceValidation(t *testing.T) {
 	inv := baseInvoice()
-	err := inv.Calculate()
-	require.NoError(t, err)
-	err = inv.Validate()
-	assert.NoError(t, err)
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, inv.Type, bill.InvoiceTypeStandard)
+	require.NoError(t, inv.Validate())
 	assert.Equal(t, inv.Supplier.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, inv.Supplier.Addresses[0].Region, "Bogotá")
 	assert.Equal(t, inv.Customer.Addresses[0].Locality, "Sabanalarga")
 	assert.Equal(t, inv.Customer.Addresses[0].Region, "Atlántico")
 
 	inv.Supplier.TaxID.Zone = ""
-	err = inv.Validate()
+	err := inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "zone: cannot be blank")
 

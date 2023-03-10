@@ -12,20 +12,20 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		// ** Invoice Document Types **
 		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Meta:  cbc.Meta{KeyFacturaEInvoiceDocumentType: "FC"},
+			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCorrective},
+			Meta:  cbc.Meta{KeyFacturaEInvoiceDocumentType: "FC"}, // default
 		},
 		{
-			Types: []cbc.Key{bill.InvoiceTypeSimplified},
-			Meta:  cbc.Meta{KeyFacturaEInvoiceDocumentType: "FA"},
+			Tags: []cbc.Key{common.TagSimplified},
+			Meta: cbc.Meta{KeyFacturaEInvoiceDocumentType: "FA"},
 		},
 		{
-			Tags: []cbc.Key{common.TagSelfBilled}, // duplicated with notes
+			Tags: []cbc.Key{common.TagSelfBilled},
 			Meta: cbc.Meta{KeyFacturaEInvoiceDocumentType: "AF"},
 		},
 		// ** Invoice Class **
 		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeSimplified},
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Meta: cbc.Meta{
 				KeyFacturaEInvoiceClass: "OO", // Original Invoice
 			},
@@ -44,7 +44,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Tags:  []cbc.Key{TagCopy},
-			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeSimplified},
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Meta: cbc.Meta{
 				KeyFacturaEInvoiceClass: "CO", // Copy of the original
 			},
@@ -73,12 +73,12 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "Reverse Charge / Inversión del sujeto pasivo.",
 			},
 		},
-		// Simplified Regime (Modules)
+		// Simplified Scheme (Modules)
 		{
-			Tags: []cbc.Key{TagSimplified},
+			Tags: []cbc.Key{TagSimplifiedScheme},
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  TagSimplified,
+				Src:  TagSimplifiedScheme,
 				Text: "Factura expedida por contibuyente en régimen simplificado.",
 			},
 		},

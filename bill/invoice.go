@@ -184,7 +184,7 @@ func (t *Totals) Validate() error {
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
 func (inv *Invoice) Calculate() error {
-	if inv.Type == "" {
+	if inv.Type == cbc.KeyEmpty {
 		inv.Type = InvoiceTypeStandard
 	}
 	if inv.Supplier == nil {
@@ -199,22 +199,16 @@ func (inv *Invoice) Calculate() error {
 		}
 	}
 
-	tID := inv.Supplier.TaxID
-	r := tax.RegimeFor(tID.Country, tID.Zone)
-	if r == nil {
-		return fmt.Errorf("no tax regime for %v", tID.Country)
-	}
-
-	if err := inv.prepareSchemes(r); err != nil {
+	if err := inv.prepareTagsAndScenarios(); err != nil {
 		return err
 	}
 
 	// Should we use the customers identity for calculations?
-	tID = inv.determineTaxIdentity()
+	tID := inv.determineTaxIdentity()
 	if tID == nil {
 		return errors.New("unable to determine tax identity")
 	}
-	r = tax.RegimeFor(tID.Country, tID.Zone)
+	r := tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
@@ -259,30 +253,63 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	return &i2
 }
 
-func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
+// ScenarioSummary determines a summary of the tax scenario for the invoice based on
+// the document type and tax tags.
+func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return nil
+	}
+	return inv.scenarioSummary(r)
+}
+
+func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
+	ss := r.ScenarioSet(ShortSchemaInvoice)
+	if ss == nil {
+		return nil
+	}
+	tags := []cbc.Key{}
+	if inv.Tax != nil {
+		tags = inv.Tax.Tags
+	}
+	return ss.SummaryFor(inv.Type, tags)
+}
+
+func (inv *Invoice) prepareTagsAndScenarios() error {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return nil
+	}
 	if inv.Tax == nil {
 		return nil
 	}
-	for _, k := range inv.Tax.Tags {
-		s := r.SchemeFor(k)
-		if s == nil {
-			return fmt.Errorf("invalid scheme: %v", k)
-		}
 
-		// apply the scheme's note, but ensure it's not a duplicate by checking the Src.
-		if s.Note != nil {
-			var en *cbc.Note
-			for _, n := range inv.Notes {
-				if n.Src == string(k) {
-					en = n
-					break
-				}
-			}
-			if en == nil {
-				inv.Notes = append(inv.Notes, s.Note)
-			}
+	// First check the tags are all valid
+	for _, k := range inv.Tax.Tags {
+		if t := r.Tag(k); t == nil {
+			return fmt.Errorf("invalid document tag: %v", k)
 		}
 	}
+
+	// Use the scenario summary to add any notes to the invoice
+	ss := inv.scenarioSummary(r)
+	if ss == nil {
+		return nil
+	}
+	for _, n := range ss.Notes {
+		// make sure we don't already have the same note in the invoice
+		var en *cbc.Note
+		for _, n2 := range inv.Notes {
+			if n.Src == n2.Src {
+				en = n
+				break
+			}
+		}
+		if en == nil {
+			inv.Notes = append(inv.Notes, n)
+		}
+	}
+
 	return nil
 }
 
@@ -413,7 +440,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 
 func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 	if inv.Tax != nil {
-		if inv.Tax.ContainsScheme(common.SchemeCustomerRates) {
+		if inv.Tax.ContainsTag(common.TagCustomerRates) {
 			if inv.Customer == nil {
 				return nil
 			}
@@ -424,6 +451,17 @@ func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 		return nil
 	}
 	return inv.Supplier.TaxID
+}
+
+func taxRegimeFor(party *org.Party) *tax.Regime {
+	if party == nil {
+		return nil
+	}
+	tID := party.TaxID
+	if tID == nil {
+		return nil
+	}
+	return tax.RegimeFor(tID.Country, tID.Zone)
 }
 
 // Reset sets all the totals to the provided zero amount with the correct
@@ -451,7 +489,7 @@ func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
 		for i, v := range InvoiceTypes {
 			its.OneOf[i] = &jsonschema.Schema{
-				Const:       cbc.Key(v.Key).String(),
+				Const:       v.Key.String(),
 				Description: v.Description,
 			}
 		}

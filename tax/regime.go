@@ -2,6 +2,7 @@ package tax
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -31,7 +32,11 @@ type Regime struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
-	// Sets of scenario definitions inside the region.
+	// Tags that can be applied at the document level to identify additional
+	// considerations.
+	Tags []*Tag `json:"tags,omitempty" jsonschema:"title=Tags"`
+
+	// Sets of scenario definitions for the regime.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for preceding options.
@@ -105,7 +110,7 @@ type Rate struct {
 
 	// Tags contains a set of tag definitions that can be applied
 	// when a tax in the same Category and Rate is used.
-	Tags []*TagDef `json:"tags" jsonschema:"title=Tags"`
+	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
 
 	// Meta contains additional information about the rate that is relevant
 	// for local frequently used implementations.
@@ -174,6 +179,17 @@ func (r *Regime) CurrencyDef() *currency.Def {
 		return nil
 	}
 	return &d
+}
+
+// ScenarioSet returns a single scenario set instance for the provided
+// document schema.
+func (r *Regime) ScenarioSet(schema string) *ScenarioSet {
+	for _, s := range r.Scenarios {
+		if strings.HasSuffix(schema, s.Schema) {
+			return s
+		}
+	}
+	return nil
 }
 
 // Validate enures the region definition is valid, including all
@@ -253,6 +269,16 @@ func (r *Regime) Category(code cbc.Code) *Category {
 	for _, c := range r.Categories {
 		if c.Code == code {
 			return c
+		}
+	}
+	return nil
+}
+
+// Tag returns the tag for the provided key
+func (r *Regime) Tag(key cbc.Key) *Tag {
+	for _, t := range r.Tags {
+		if t.Key == key {
+			return t
 		}
 	}
 	return nil

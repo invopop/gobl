@@ -27,6 +27,7 @@ const (
 
 // Standard tax tags
 const (
+	TagSimplified    cbc.Key = "simplified"
 	TagReverseCharge cbc.Key = "reverse-charge"
 	TagCustomerRates cbc.Key = "customer-rates"
 	TagSelfBilled    cbc.Key = "self-billed"

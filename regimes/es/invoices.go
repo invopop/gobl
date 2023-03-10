@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -26,13 +27,12 @@ func (v *invoiceValidator) validate() error {
 		// Rectification state determined by Preceding value.
 		validation.Field(&inv.Type, validation.In(
 			bill.InvoiceTypeStandard,
-			bill.InvoiceTypeSimplified,
 			bill.InvoiceTypeCorrective,
 		)),
 		validation.Field(&inv.Preceding, validation.Each(validation.By(v.preceding))),
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type.In(bill.InvoiceTypeStandard),
+			!inv.Tax.ContainsTag(common.TagSimplified),
 			validation.Required,
 			validation.By(v.commercialCustomer),
 		)),

@@ -3,12 +3,19 @@ package it
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 // Document tag keys
 const (
-	TagFreelance cbc.Key = "freelance"
+	// Tags for document type
+	TagFreelance       cbc.Key = "freelance"
+	TagCeilingExceeded cbc.Key = "ceiling-exceeded"
+	TagSanMerinoPaper  cbc.Key = "san-merino-paper"
+
+	// Tags for Fiscal Regime
+	TagMinimumTaxPayers cbc.Key = "minimum-tax-payers"
 )
 
 // Category tag keys determined from the "Natura" field from FatturaPA.
@@ -37,7 +44,11 @@ const (
 	TagEnergy                     cbc.Key = "energy"
 )
 
-var invoiceTags = []*tax.TagDef{
+// This is only a partial list of all the potential tags that
+// could be available for use in Italy. Given the complexity
+// involved, we've focussed here on the most useful.
+var invoiceTags = []*tax.Tag{
+	// *** Document Type Tags ***
 	{
 		Key: TagFreelance,
 		Name: i18n.String{
@@ -45,9 +56,46 @@ var invoiceTags = []*tax.TagDef{
 			i18n.IT: "Parcella",
 		},
 	},
+	{
+		Key: common.TagReverseCharge,
+		Name: i18n.String{
+			i18n.EN: "Reverse Charge",
+			i18n.IT: "Inversione del soggetto passivo",
+		},
+	},
+	{
+		Key: common.TagSelfBilled,
+		Name: i18n.String{
+			i18n.EN: "Self-billed",
+			i18n.IT: "Autofattura",
+		},
+	},
+	{
+		Key: TagCeilingExceeded,
+		Name: i18n.String{
+			i18n.EN: "Ceiling exceeded",
+			i18n.IT: "Splafonamento",
+		},
+	},
+	{
+		Key: TagSanMerinoPaper,
+		Name: i18n.String{
+			i18n.EN: "Purchases from San Merino with VAT and paper invoice",
+			i18n.IT: "Acquisti da San Merino con IVA e fattura cartacea",
+		},
+	},
+
+	// **** Fiscal Regime Tags ****
+	{
+		Key: TagMinimumTaxPayers,
+		Name: i18n.String{
+			i18n.EN: "Minimum Taxpayers",
+			i18n.IT: "Contribuenti minimi",
+		},
+	},
 }
 
-var vatZeroTaxTags = []*tax.TagDef{
+var vatZeroTaxTags = []*tax.Tag{
 	{
 		Key: TagExcluded,
 		Name: i18n.String{
