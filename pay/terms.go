@@ -9,14 +9,11 @@ import (
 	"github.com/invopop/validation"
 )
 
-// TermKey defines the type of terms being handled
-type TermKey cbc.Key
-
 // Terms defines when we expect the customer to pay, or have paid, for
 // the contents of the document.
 type Terms struct {
 	// Type of terms to be applied.
-	Key TermKey `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Text detail of the chosen payment terms.
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Set of dates for agreed payments.
@@ -28,31 +25,31 @@ type Terms struct {
 // Pre-defined Payment Terms based on UNTDID 4279
 const (
 	// None defined
-	TermKeyNA TermKey = ""
+	TermKeyNA cbc.Key = ""
 	// End of Month
-	TermKeyEndOfMonth TermKey = "end-of-month"
+	TermKeyEndOfMonth cbc.Key = "end-of-month"
 	// Due on a specific date
-	TermKeyDueDate TermKey = "due-date"
+	TermKeyDueDate cbc.Key = "due-date"
 	// Deferred until after the due dates
-	TermKeyDeferred TermKey = "deferred"
+	TermKeyDeferred cbc.Key = "deferred"
 	// Month after the present
-	TermKeyProximo TermKey = "proximo"
+	TermKeyProximo cbc.Key = "proximo"
 	// on receipt of invoice
-	TermKeyInstant TermKey = "instant"
+	TermKeyInstant cbc.Key = "instant"
 	// chosen by buyer
-	TermKeyElective TermKey = "elective"
+	TermKeyElective cbc.Key = "elective"
 	// Seller to advise buyer in separate transaction
-	TermKeyPending TermKey = "pending"
+	TermKeyPending cbc.Key = "pending"
 	// Payment made in advance
-	TermKeyAdvance TermKey = "advance"
+	TermKeyAdvance cbc.Key = "advance"
 	// Payment on Delivery
-	TermKeyDelivery TermKey = "delivery"
+	TermKeyDelivery cbc.Key = "delivery"
 )
 
 // TermKeyDef holds a definition of a single payment term key
 type TermKeyDef struct {
 	// The key being defined
-	Key TermKey `json:"key" jsonschema:"Key"`
+	Key cbc.Key `json:"key" jsonschema:"Key"`
 	// Human text for the key
 	Description string `json:"description" jsonschema:"Description"`
 	// The equivalent UNTDID 4279 Code
@@ -135,18 +132,16 @@ func (dd *DueDate) Validate() error {
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.
-func (TermKey) JSONSchema() *jsonschema.Schema {
-	s := &jsonschema.Schema{
-		Title:       "Term Key",
-		Type:        "string",
-		OneOf:       make([]*jsonschema.Schema, len(TermKeyDefinitions)),
-		Description: "Payment terms key",
-	}
-	for i, v := range TermKeyDefinitions {
-		s.OneOf[i] = &jsonschema.Schema{
-			Const:       v.Key,
-			Description: v.Description,
+func (Terms) JSONSchemaExtend(schema *jsonschema.Schema) {
+	val, _ := schema.Properties.Get("key")
+	prop, ok := val.(*jsonschema.Schema)
+	if ok {
+		prop.OneOf = make([]*jsonschema.Schema, len(TermKeyDefinitions))
+		for i, v := range TermKeyDefinitions {
+			prop.OneOf[i] = &jsonschema.Schema{
+				Const:       v.Key,
+				Description: v.Description,
+			}
 		}
 	}
-	return s
 }
