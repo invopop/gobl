@@ -67,15 +67,15 @@ func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key) *ScenarioS
 	return summary
 }
 
+// match checks if the scenario has a matching doc type or set of tags.
+// Empty types or tags in the scenario implies that all values are valid.
 func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key) bool {
-	if s.Types != nil {
-		// no types in scenario implies always match
+	if len(s.Types) > 0 {
 		if !s.hasType(docType) {
 			return false
 		}
 	}
-	if s.Tags != nil {
-		// no tags in scenario implies always match
+	if len(s.Tags) > 0 {
 		if !s.hasTags(docTags) {
 			return false
 		}

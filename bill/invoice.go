@@ -168,7 +168,7 @@ type Totals struct {
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
-// Validate the totals used in invoice.
+// ValidateWithContext checks the totals calculated for the invoice.
 func (t *Totals) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.Sum, validation.Required),
