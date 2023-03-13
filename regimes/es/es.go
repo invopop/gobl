@@ -101,6 +101,7 @@ func New() *tax.Regime {
 					i18n.EN: "Value Added Tax",
 					i18n.ES: "Impuesto sobre el Valor Añadido",
 				},
+				Tags: vatTaxTags,
 				Meta: cbc.Meta{
 					KeyFacturaETaxTypeCode: "01",
 				},
@@ -111,7 +112,6 @@ func New() *tax.Regime {
 							i18n.EN: "Zero Rate",
 							i18n.ES: "Tipo Cero",
 						},
-						Tags: exemptTaxTags,
 						Values: []*tax.RateValue{
 							{
 								Percent: num.MakePercentage(0, 3),
@@ -124,7 +124,6 @@ func New() *tax.Regime {
 							i18n.EN: "Standard Rate",
 							i18n.ES: "Tipo General",
 						},
-						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
@@ -150,7 +149,6 @@ func New() *tax.Regime {
 							i18n.EN: "Standard Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo General + Recargo de Equivalencia",
 						},
-						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:     cal.NewDate(2012, 9, 1),
@@ -170,7 +168,6 @@ func New() *tax.Regime {
 							i18n.EN: "Reduced Rate",
 							i18n.ES: "Tipo Reducido",
 						},
-						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(2012, 9, 1),
@@ -196,7 +193,6 @@ func New() *tax.Regime {
 							i18n.EN: "Reduced Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
 						},
-						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:     cal.NewDate(2012, 9, 1),
@@ -216,7 +212,6 @@ func New() *tax.Regime {
 							i18n.EN: "Super-Reduced Rate",
 							i18n.ES: "Tipo Superreducido",
 						},
-						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:   cal.NewDate(1995, 1, 1),
@@ -234,7 +229,6 @@ func New() *tax.Regime {
 							i18n.EN: "Super-Reduced Rate + Equivalence Surcharge",
 							i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
 						},
-						Tags: commonVATTags,
 						Values: []*tax.RateValue{
 							{
 								Since:     cal.NewDate(1995, 1, 1),

@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -11,6 +12,11 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
+)
+
+const (
+	// KeyRegime is used in the context to store the tax regime during validation.
+	KeyRegime cbc.Key = "tax-regime"
 )
 
 // Regime defines the holding structure for the definitions of taxes inside a country
@@ -86,6 +92,10 @@ type Category struct {
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates" jsonschema:"title=Rates"`
 
+	// Tags contains a set of tag definitions that can be applied
+	// for this tax category.
+	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
+
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -107,10 +117,6 @@ type Rate struct {
 	// Order is important, newer values should come before
 	// older values.
 	Values []*RateValue `json:"values" jsonschema:"title=Values"`
-
-	// Tags contains a set of tag definitions that can be applied
-	// when a tax in the same Category and Rate is used.
-	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
 
 	// Meta contains additional information about the rate that is relevant
 	// for local frequently used implementations.
@@ -205,6 +211,62 @@ func (r *Regime) Validate() error {
 	return err
 }
 
+// InTags returns a validation rule to ensure the tag key
+// is inside the list of known tags.
+func (r *Regime) InTags() validation.Rule {
+	if r == nil {
+		return validation.In()
+	}
+	tags := make([]interface{}, len(r.Tags))
+	for i, t := range r.Tags {
+		tags[i] = t.Key
+	}
+	return validation.In(tags...)
+}
+
+// InCategoryTags provides a list of tags for the category.
+func (r *Regime) InCategoryTags(cat cbc.Code) validation.Rule {
+	if r == nil {
+		return validation.In()
+	}
+	c := r.Category(cat)
+	if c == nil {
+		return validation.In()
+	}
+	tags := make([]interface{}, len(c.Tags))
+	for i, t := range c.Tags {
+		tags[i] = t.Key
+	}
+	return validation.In(tags...)
+}
+
+// InCategories returns a validation rule to ensure the category code
+// is inside the list of known codes.
+func (r *Regime) InCategories() validation.Rule {
+	if r == nil {
+		return validation.In()
+	}
+	cats := make([]interface{}, len(r.Categories))
+	for i, c := range r.Categories {
+		cats[i] = c.Code
+	}
+	return validation.In(cats...)
+}
+
+// WithContext adds this regime to the given context.
+func (r *Regime) WithContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, KeyRegime, r)
+}
+
+// RegimeFromContext returns the regime from the given context, or nil.
+func RegimeFromContext(ctx context.Context) *Regime {
+	r, ok := ctx.Value(KeyRegime).(*Regime)
+	if !ok {
+		return nil
+	}
+	return r
+}
+
 // Validate ensures that the zone looks correct.
 func (z *Zone) Validate() error {
 	err := validation.ValidateStruct(z,
@@ -222,6 +284,7 @@ func (c *Category) Validate() error {
 	err := validation.ValidateStruct(c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
+		validation.Field(&c.Tags),
 		validation.Field(&c.Rates),
 	)
 	return err
@@ -290,6 +353,16 @@ func (c *Category) Rate(key cbc.Key) *Rate {
 	for _, r := range c.Rates {
 		if r.Key == key {
 			return r
+		}
+	}
+	return nil
+}
+
+// Tag returns the tag for the provided key in the category.
+func (c *Category) Tag(key cbc.Key) *Tag {
+	for _, t := range c.Tags {
+		if t.Key == key {
+			return t
 		}
 	}
 	return nil

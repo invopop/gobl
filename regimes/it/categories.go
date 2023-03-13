@@ -27,6 +27,7 @@ var categories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.IT: "Imposta sul Valore Aggiunto",
 		},
+		Tags: vatTaxTags,
 		Rates: []*tax.Rate{
 			{
 				Key: common.TaxRateZero,
@@ -34,7 +35,6 @@ var categories = []*tax.Category{
 					i18n.EN: "Zero Rate",
 					i18n.IT: "Aliquota Zero",
 				},
-				Tags: vatZeroTaxTags,
 				Values: []*tax.RateValue{
 					{
 						Percent: num.MakePercentage(0, 3),

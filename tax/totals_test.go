@@ -702,7 +702,7 @@ func TestTotalCalculate(t *testing.T) {
 				},
 			},
 			err:        tax.ErrInvalidRate,
-			errContent: "invalid-rate: 'standard' not in category 'IRPF'",
+			errContent: "invalid-rate: 'standard' rate not defined in category 'IRPF'",
 		},
 
 		{

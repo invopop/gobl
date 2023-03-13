@@ -1,7 +1,10 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -33,10 +36,11 @@ func (t *Tax) ContainsTag(key cbc.Key) bool {
 }
 
 // Validate ensures the tax details look valid.
-func (t *Tax) Validate() error {
-	return validation.ValidateStruct(t,
+func (t *Tax) ValidateWithContext(ctx context.Context) error {
+	r := ctx.Value(tax.KeyRegime).(*tax.Regime)
+	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
-		validation.Field(&t.Tags),
+		validation.Field(&t.Tags, validation.Each(r.InTags())),
 		validation.Field(&t.Meta),
 	)
 }

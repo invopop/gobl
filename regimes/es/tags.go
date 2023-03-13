@@ -134,7 +134,8 @@ var invoiceTags = []*tax.Tag{
 	},
 }
 
-var commonVATTags = []*tax.Tag{
+var vatTaxTags = []*tax.Tag{
+	// Common Tags
 	{
 		Key: TagProvider,
 		Name: i18n.String{
@@ -156,9 +157,8 @@ var commonVATTags = []*tax.Tag{
 			i18n.EN: "Delivery of goods",
 		},
 	},
-}
 
-var exemptTaxTags = []*tax.Tag{
+	// Exempt Tags
 	{
 		Key: TagExempt.With(TagArticle20),
 		Name: i18n.String{

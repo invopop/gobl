@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -91,7 +92,18 @@ type Invoice struct {
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.
 func (inv *Invoice) Validate() error {
-	err := validation.ValidateStruct(inv,
+	return inv.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks to ensure the invoice is valid and contains all the
+// information we need.
+func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return errors.New("supplier: invalid or unknown tax regime")
+	}
+	ctx = r.WithContext(ctx)
+	err := validation.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
 		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
@@ -122,14 +134,7 @@ func (inv *Invoice) Validate() error {
 		validation.Field(&inv.Notes),
 		validation.Field(&inv.Meta),
 	)
-	if err == nil && inv.Supplier != nil {
-		// Always validate contents using supplier's tax
-		// identity.
-		tID := inv.Supplier.TaxID
-		if tID == nil {
-			return errors.New("supplier: missing tax identity")
-		}
-		r := tax.Regimes().For(tID.Country, tID.Zone)
+	if err == nil {
 		err = r.ValidateObject(inv)
 	}
 	return err
@@ -164,8 +169,8 @@ type Totals struct {
 }
 
 // Validate the totals used in invoice.
-func (t *Totals) Validate() error {
-	return validation.ValidateStruct(t,
+func (t *Totals) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.Sum, validation.Required),
 		validation.Field(&t.Discount),
 		validation.Field(&t.Charge),

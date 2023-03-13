@@ -1,6 +1,8 @@
 package gobl
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/uuid"
@@ -42,7 +44,12 @@ func NewHeader() *Header {
 
 // Validate checks that the header contains the basic information we need to function.
 func (h *Header) Validate() error {
-	return validation.ValidateStruct(h,
+	return h.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks that the header contains the basic information we need to function.
+func (h *Header) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, h,
 		validation.Field(&h.UUID, validation.Required, uuid.IsV1),
 		validation.Field(&h.Digest, validation.Required),
 		validation.Field(&h.Stamps),

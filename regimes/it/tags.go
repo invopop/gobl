@@ -95,7 +95,7 @@ var invoiceTags = []*tax.Tag{
 	},
 }
 
-var vatZeroTaxTags = []*tax.Tag{
+var vatTaxTags = []*tax.Tag{
 	{
 		Key: TagExcluded,
 		Name: i18n.String{
