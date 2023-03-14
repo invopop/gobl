@@ -29,6 +29,19 @@
           "type": "array",
           "title": "Rates",
           "description": "Specific tax definitions inside this category."
+        },
+        "tags": {
+          "items": {
+            "$ref": "#/$defs/Tag"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags contains a set of tag definitions that can be applied\nfor this tax category."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains additional information about the category that is relevant\nfor local frequently used formats."
         }
       },
       "type": "object",
@@ -39,6 +52,57 @@
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
+    "KeyDefinition": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Actual key value."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Short name for the key, if relevant."
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description offering more details about when the key should be used."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional data that might be relevant in some regimes?"
+        }
+      },
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "description": "KeyDefinition defines properties of a key that is specific for a regime."
+    },
+    "PrecedingDefinitions": {
+      "properties": {
+        "corrections": {
+          "items": {
+            "$ref": "#/$defs/KeyDefinition"
+          },
+          "type": "array",
+          "title": "Corrections",
+          "description": "Corrections contains a list of all the keys that can be used to identify a correction."
+        },
+        "correction_methods": {
+          "items": {
+            "$ref": "#/$defs/KeyDefinition"
+          },
+          "type": "array",
+          "title": "Correction Methods",
+          "description": "CorrectionMethods describe the methods used to correct an invoice."
+        }
+      },
+      "type": "object",
+      "description": "PrecedingDefinitions contains details about what can be defined in Invoice preceding document data."
+    },
     "Rate": {
       "properties": {
         "key": {
@@ -48,11 +112,13 @@
         },
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name"
+          "title": "Name",
+          "description": "Human name of the rate"
         },
         "desc": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Description"
+          "title": "Description",
+          "description": "Useful description of the rate."
         },
         "values": {
           "items": {
@@ -61,6 +127,11 @@
           "type": "array",
           "title": "Values",
           "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta contains additional information about the rate that is relevant\nfor local frequently used implementations."
         }
       },
       "type": "object",
@@ -138,13 +209,26 @@
           "title": "Currency",
           "description": "Currency used by the country."
         },
-        "schemes": {
+        "tags": {
           "items": {
-            "$ref": "#/$defs/Scheme"
+            "$ref": "#/$defs/Tag"
           },
           "type": "array",
-          "title": "Schemes",
-          "description": "Set of specific scheme definitions inside the region."
+          "title": "Tags",
+          "description": "Tags that can be applied at the document level to identify additional\nconsiderations."
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/ScenarioSet"
+          },
+          "type": "array",
+          "title": "Scenarios",
+          "description": "Sets of scenario definitions for the regime."
+        },
+        "preceding": {
+          "$ref": "#/$defs/PrecedingDefinitions",
+          "title": "Preceding",
+          "description": "Configuration details for preceding options."
         },
         "categories": {
           "items": {
@@ -164,43 +248,84 @@
       ],
       "description": "Regime defines the holding structure for the definitions of taxes inside a country or territory."
     },
-    "Scheme": {
+    "Scenario": {
       "properties": {
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Key used to identify this scheme"
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name of this scheme."
-        },
-        "description": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Description",
-          "description": "Human details describing what this scheme is used for."
-        },
-        "categories": {
+        "type": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/code"
+            "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Category Codes",
-          "description": "List of tax category codes that can be used when this scheme is\napplied."
+          "title": "Type",
+          "description": "Type of document, if present."
+        },
+        "tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Tag",
+          "description": "Tag that was applied to the document"
         },
         "note": {
           "$ref": "https://gobl.org/draft-0/cbc/note",
           "title": "Note",
-          "description": "Note defines a message that should be added to a document\nwhen this scheme is used."
+          "description": "A note to be added to the document if the scenario is applied."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional local meta data that may be useful in integrations."
+        }
+      },
+      "type": "object",
+      "description": "Scenario is used to describe a tax scenario of a document based on the combination of document type and tag used."
+    },
+    "ScenarioSet": {
+      "properties": {
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Partial or complete schema URL for the document type"
+        },
+        "list": {
+          "items": {
+            "$ref": "#/$defs/Scenario"
+          },
+          "type": "array",
+          "title": "List",
+          "description": "List of scenarios for the schema"
         }
       },
       "type": "object",
       "required": [
-        "key",
-        "name"
+        "schema",
+        "list"
       ],
-      "description": "Scheme contains the definition of a scheme that belongs to a region and can be used to simplify validation processes for document contents."
+      "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
+    },
+    "Tag": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key used to identify the tag"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of this tag."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional local"
+        }
+      },
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "description": "Tag describes a tax tag that can be used to identify additional requirements in an electronic invoice."
     },
     "Zone": {
       "properties": {
@@ -237,5 +362,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.37.0"
+  "$comment": "Generated with GOBL v0.38.0"
 }

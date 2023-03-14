@@ -94,7 +94,7 @@ type Category struct {
 
 	// Tags contains a set of tag definitions that can be applied
 	// for this tax category.
-	Tags []*Tag `json:"tags" jsonschema:"title=Tags"`
+	Tags []*Tag `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.

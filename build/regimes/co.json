@@ -14581,6 +14581,60 @@
     }
   ],
   "currency": "COP",
+  "preceding": {
+    "correction_methods": [
+      {
+        "key": "partial",
+        "desc": {
+          "en": "Partial refund of part of the goods or services.",
+          "es": "Devolución de parte de los bienes; no aceptación de partes del servicio."
+        },
+        "meta": {
+          "dian": "1"
+        }
+      },
+      {
+        "key": "revoked",
+        "desc": {
+          "en": "Previous document has been completely cancelled.",
+          "es": "Anulación de la factura anterior."
+        },
+        "meta": {
+          "dian": "2"
+        }
+      },
+      {
+        "key": "discount",
+        "desc": {
+          "en": "Partial or total discount.",
+          "es": "Rebaja o descuento parcial o total."
+        },
+        "meta": {
+          "dian": "3"
+        }
+      },
+      {
+        "key": "price-adjustment",
+        "desc": {
+          "en": "Ajuste de precio.",
+          "es": "Price adjustment."
+        },
+        "meta": {
+          "dian": "4"
+        }
+      },
+      {
+        "key": "other",
+        "desc": {
+          "en": "Otros.",
+          "es": "Other."
+        },
+        "meta": {
+          "dian": "5"
+        }
+      }
+    ]
+  },
   "categories": [
     {
       "code": "VAT",

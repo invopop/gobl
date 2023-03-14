@@ -1,0 +1,1182 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Italy",
+    "it": "Italia"
+  },
+  "country": "IT",
+  "zones": [
+    {
+      "code": "AG",
+      "region": {
+        "it": "Agrigento"
+      }
+    },
+    {
+      "code": "AL",
+      "region": {
+        "it": "Alessandria"
+      }
+    },
+    {
+      "code": "AN",
+      "region": {
+        "it": "Ancona"
+      }
+    },
+    {
+      "code": "AO",
+      "region": {
+        "it": "Aosta/Aoste"
+      }
+    },
+    {
+      "code": "AR",
+      "region": {
+        "it": "Arezzo"
+      }
+    },
+    {
+      "code": "AP",
+      "region": {
+        "it": "Ascoli Piceno"
+      }
+    },
+    {
+      "code": "AT",
+      "region": {
+        "it": "Asti"
+      }
+    },
+    {
+      "code": "AV",
+      "region": {
+        "it": "Avellino"
+      }
+    },
+    {
+      "code": "BA",
+      "region": {
+        "it": "Bari"
+      }
+    },
+    {
+      "code": "BT",
+      "region": {
+        "it": "Barletta-Andria-Trani"
+      }
+    },
+    {
+      "code": "BL",
+      "region": {
+        "it": "Belluno"
+      }
+    },
+    {
+      "code": "BN",
+      "region": {
+        "it": "Benevento"
+      }
+    },
+    {
+      "code": "BG",
+      "region": {
+        "it": "Bergamo"
+      }
+    },
+    {
+      "code": "BI",
+      "region": {
+        "it": "Biella"
+      }
+    },
+    {
+      "code": "BO",
+      "region": {
+        "it": "Bologna"
+      }
+    },
+    {
+      "code": "BZ",
+      "region": {
+        "it": "Bolzano"
+      }
+    },
+    {
+      "code": "BS",
+      "region": {
+        "it": "Brescia"
+      }
+    },
+    {
+      "code": "BR",
+      "region": {
+        "it": "Brindisi"
+      }
+    },
+    {
+      "code": "CA",
+      "region": {
+        "it": "Cagliari"
+      }
+    },
+    {
+      "code": "CL",
+      "region": {
+        "it": "Caltanissetta"
+      }
+    },
+    {
+      "code": "CB",
+      "region": {
+        "it": "Campobasso"
+      }
+    },
+    {
+      "code": "CE",
+      "region": {
+        "it": "Caserta"
+      }
+    },
+    {
+      "code": "CT",
+      "region": {
+        "it": "Catania"
+      }
+    },
+    {
+      "code": "CZ",
+      "region": {
+        "it": "Catanzaro"
+      }
+    },
+    {
+      "code": "CH",
+      "region": {
+        "it": "Chieti"
+      }
+    },
+    {
+      "code": "CO",
+      "region": {
+        "it": "Como"
+      }
+    },
+    {
+      "code": "CS",
+      "region": {
+        "it": "Cosenza"
+      }
+    },
+    {
+      "code": "CR",
+      "region": {
+        "it": "Cremona"
+      }
+    },
+    {
+      "code": "KR",
+      "region": {
+        "it": "Crotone"
+      }
+    },
+    {
+      "code": "CN",
+      "region": {
+        "it": "Cuneo"
+      }
+    },
+    {
+      "code": "EN",
+      "region": {
+        "it": "Enna"
+      }
+    },
+    {
+      "code": "FM",
+      "region": {
+        "it": "Fermo"
+      }
+    },
+    {
+      "code": "FE",
+      "region": {
+        "it": "Ferrara"
+      }
+    },
+    {
+      "code": "FI",
+      "region": {
+        "it": "Firenze"
+      }
+    },
+    {
+      "code": "FG",
+      "region": {
+        "it": "Foggia"
+      }
+    },
+    {
+      "code": "FC",
+      "region": {
+        "it": "Forlì-Cesena"
+      }
+    },
+    {
+      "code": "FR",
+      "region": {
+        "it": "Frosinone"
+      }
+    },
+    {
+      "code": "GE",
+      "region": {
+        "it": "Genova"
+      }
+    },
+    {
+      "code": "GO",
+      "region": {
+        "it": "Gorizia"
+      }
+    },
+    {
+      "code": "GR",
+      "region": {
+        "it": "Grosseto"
+      }
+    },
+    {
+      "code": "IM",
+      "region": {
+        "it": "Imperia"
+      }
+    },
+    {
+      "code": "IS",
+      "region": {
+        "it": "Isernia"
+      }
+    },
+    {
+      "code": "AQ",
+      "region": {
+        "it": "L'Aquila"
+      }
+    },
+    {
+      "code": "SP",
+      "region": {
+        "it": "La Spezia"
+      }
+    },
+    {
+      "code": "LT",
+      "region": {
+        "it": "Latina"
+      }
+    },
+    {
+      "code": "LE",
+      "region": {
+        "it": "Lecce"
+      }
+    },
+    {
+      "code": "LC",
+      "region": {
+        "it": "Lecco"
+      }
+    },
+    {
+      "code": "LI",
+      "region": {
+        "it": "Livorno"
+      }
+    },
+    {
+      "code": "LO",
+      "region": {
+        "it": "Lodi"
+      }
+    },
+    {
+      "code": "LU",
+      "region": {
+        "it": "Lucca"
+      }
+    },
+    {
+      "code": "MC",
+      "region": {
+        "it": "Macerata"
+      }
+    },
+    {
+      "code": "MN",
+      "region": {
+        "it": "Mantova"
+      }
+    },
+    {
+      "code": "MS",
+      "region": {
+        "it": "Massa-Carrara"
+      }
+    },
+    {
+      "code": "MT",
+      "region": {
+        "it": "Matera"
+      }
+    },
+    {
+      "code": "ME",
+      "region": {
+        "it": "Messina"
+      }
+    },
+    {
+      "code": "MI",
+      "region": {
+        "it": "Milano"
+      }
+    },
+    {
+      "code": "MO",
+      "region": {
+        "it": "Modena"
+      }
+    },
+    {
+      "code": "MB",
+      "region": {
+        "it": "Monza e Brianza"
+      }
+    },
+    {
+      "code": "NA",
+      "region": {
+        "it": "Napoli"
+      }
+    },
+    {
+      "code": "NO",
+      "region": {
+        "it": "Novara"
+      }
+    },
+    {
+      "code": "NU",
+      "region": {
+        "it": "Nuoro"
+      }
+    },
+    {
+      "code": "OR",
+      "region": {
+        "it": "Oristano"
+      }
+    },
+    {
+      "code": "PD",
+      "region": {
+        "it": "Padova"
+      }
+    },
+    {
+      "code": "PA",
+      "region": {
+        "it": "Palermo"
+      }
+    },
+    {
+      "code": "PR",
+      "region": {
+        "it": "Parma"
+      }
+    },
+    {
+      "code": "PV",
+      "region": {
+        "it": "Pavia"
+      }
+    },
+    {
+      "code": "PG",
+      "region": {
+        "it": "Perugia"
+      }
+    },
+    {
+      "code": "PU",
+      "region": {
+        "it": "Pesaro e Urbino"
+      }
+    },
+    {
+      "code": "PE",
+      "region": {
+        "it": "Pescara"
+      }
+    },
+    {
+      "code": "PC",
+      "region": {
+        "it": "Piacenza"
+      }
+    },
+    {
+      "code": "PI",
+      "region": {
+        "it": "Pisa"
+      }
+    },
+    {
+      "code": "PT",
+      "region": {
+        "it": "Pistoia"
+      }
+    },
+    {
+      "code": "PN",
+      "region": {
+        "it": "Pordenone"
+      }
+    },
+    {
+      "code": "PZ",
+      "region": {
+        "it": "Potenza"
+      }
+    },
+    {
+      "code": "PO",
+      "region": {
+        "it": "Prato"
+      }
+    },
+    {
+      "code": "RG",
+      "region": {
+        "it": "Ragusa"
+      }
+    },
+    {
+      "code": "RA",
+      "region": {
+        "it": "Ravenna"
+      }
+    },
+    {
+      "code": "RC",
+      "region": {
+        "it": "Reggio Calabria"
+      }
+    },
+    {
+      "code": "RE",
+      "region": {
+        "it": "Reggio Emilia"
+      }
+    },
+    {
+      "code": "RI",
+      "region": {
+        "it": "Rieti"
+      }
+    },
+    {
+      "code": "RN",
+      "region": {
+        "it": "Rimini"
+      }
+    },
+    {
+      "code": "RM",
+      "region": {
+        "it": "Roma"
+      }
+    },
+    {
+      "code": "RO",
+      "region": {
+        "it": "Rovigo"
+      }
+    },
+    {
+      "code": "SA",
+      "region": {
+        "it": "Salerno"
+      }
+    },
+    {
+      "code": "SS",
+      "region": {
+        "it": "Sassari"
+      }
+    },
+    {
+      "code": "SV",
+      "region": {
+        "it": "Savona"
+      }
+    },
+    {
+      "code": "SI",
+      "region": {
+        "it": "Siena"
+      }
+    },
+    {
+      "code": "SR",
+      "region": {
+        "it": "Siracusa"
+      }
+    },
+    {
+      "code": "SO",
+      "region": {
+        "it": "Sondrio"
+      }
+    },
+    {
+      "code": "SU",
+      "region": {
+        "it": "Sud Sardegna"
+      }
+    },
+    {
+      "code": "TA",
+      "region": {
+        "it": "Taranto"
+      }
+    },
+    {
+      "code": "TE",
+      "region": {
+        "it": "Teramo"
+      }
+    },
+    {
+      "code": "TR",
+      "region": {
+        "it": "Terni"
+      }
+    },
+    {
+      "code": "TO",
+      "region": {
+        "it": "Torino"
+      }
+    },
+    {
+      "code": "TP",
+      "region": {
+        "it": "Trapani"
+      }
+    },
+    {
+      "code": "TN",
+      "region": {
+        "it": "Trento"
+      }
+    },
+    {
+      "code": "TV",
+      "region": {
+        "it": "Treviso"
+      }
+    },
+    {
+      "code": "TS",
+      "region": {
+        "it": "Trieste"
+      }
+    },
+    {
+      "code": "UD",
+      "region": {
+        "it": "Udine"
+      }
+    },
+    {
+      "code": "VA",
+      "region": {
+        "it": "Varese"
+      }
+    },
+    {
+      "code": "VE",
+      "region": {
+        "it": "Venezia"
+      }
+    },
+    {
+      "code": "VB",
+      "region": {
+        "it": "Verbano-Cusio-Ossola"
+      }
+    },
+    {
+      "code": "VC",
+      "region": {
+        "it": "Vercelli"
+      }
+    },
+    {
+      "code": "VR",
+      "region": {
+        "it": "Verona"
+      }
+    },
+    {
+      "code": "VV",
+      "region": {
+        "it": "Vibo Valentia"
+      }
+    },
+    {
+      "code": "VI",
+      "region": {
+        "it": "Vicenza"
+      }
+    },
+    {
+      "code": "VT",
+      "region": {
+        "it": "Viterbo"
+      }
+    }
+  ],
+  "currency": "EUR",
+  "tags": [
+    {
+      "key": "freelance",
+      "name": {
+        "en": "Freelancer",
+        "it": "Parcella"
+      }
+    },
+    {
+      "key": "reverse-charge",
+      "name": {
+        "en": "Reverse Charge",
+        "it": "Inversione del soggetto passivo"
+      }
+    },
+    {
+      "key": "self-billed",
+      "name": {
+        "en": "Self-billed",
+        "it": "Autofattura"
+      }
+    },
+    {
+      "key": "ceiling-exceeded",
+      "name": {
+        "en": "Ceiling exceeded",
+        "it": "Splafonamento"
+      }
+    },
+    {
+      "key": "san-merino-paper",
+      "name": {
+        "en": "Purchases from San Merino with VAT and paper invoice",
+        "it": "Acquisti da San Merino con IVA e fattura cartacea"
+      }
+    },
+    {
+      "key": "minimum-tax-payers",
+      "name": {
+        "en": "Minimum Taxpayers",
+        "it": "Contribuenti minimi"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD01"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD02"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD04"
+          }
+        },
+        {
+          "type": [
+            "debit-note"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD05"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "freelance"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD06"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "partial",
+            "freelance"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD03"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD07"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD08"
+          }
+        },
+        {
+          "type": [
+            "debit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD09"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "reverse-charge"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD16"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "ceiling-exceeded"
+          ],
+          "meta": {
+            "fatturapa-tipo-documento": "TD21"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "meta": {
+            "fatturapa-regime-fiscale": "RF01"
+          }
+        },
+        {
+          "tags": [
+            "minimum-tax-payers"
+          ],
+          "meta": {
+            "fatturapa-regime-fiscale": "RF02"
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "it": "IVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "it": "Imposta sul Valore Aggiunto"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "it": "Aliquota Zero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "super-reduced",
+          "name": {
+            "en": "Minimum Rate",
+            "it": "Aliquota Minima"
+          },
+          "values": [
+            {
+              "percent": "4.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate",
+            "it": "Aliquota Ridotta"
+          },
+          "values": [
+            {
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "key": "intermediate",
+          "name": {
+            "en": "Intermediate Rate",
+            "it": "Aliquota Intermedia"
+          },
+          "values": [
+            {
+              "percent": "10.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Ordinary Rate",
+            "it": "Aliquota Ordinaria"
+          },
+          "values": [
+            {
+              "percent": "22.0%"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        {
+          "key": "excluded",
+          "name": {
+            "en": "Excluded pursuant to Art. 15, DPR 633/72",
+            "it": "Escluse ex. art. 15 del D.P.R. 633/1972"
+          },
+          "meta": {
+            "fatturapa-natura": "N1"
+          }
+        },
+        {
+          "key": "not-subject",
+          "name": {
+            "en": "Not subject (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
+            "it": "Non soggette (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
+          },
+          "meta": {
+            "fatturapa-natura": "N2"
+          }
+        },
+        {
+          "key": "not-subject+article-7",
+          "name": {
+            "en": "Not subject pursuant to Art. 7, DPR 633/72",
+            "it": "Non soggette ex. art. 7 del D.P.R. 633/72"
+          },
+          "meta": {
+            "fatturapa-natura": "N2.1"
+          }
+        },
+        {
+          "key": "not-subject+other",
+          "name": {
+            "en": "Not subject - other",
+            "it": "Non soggette - altri casi"
+          },
+          "meta": {
+            "fatturapa-natura": "N2.2"
+          }
+        },
+        {
+          "key": "not-taxable",
+          "name": {
+            "en": "Not taxable (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
+            "it": "Non imponibili (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
+          },
+          "meta": {
+            "fatturapa-natura": "N3"
+          }
+        },
+        {
+          "key": "not-taxable+export",
+          "name": {
+            "en": "Not taxable - exports",
+            "it": "Non imponibili - esportazioni"
+          },
+          "meta": {
+            "fatturapa-natura": "N3.1"
+          }
+        },
+        {
+          "key": "not-taxable+intra-community",
+          "name": {
+            "en": "Not taxable - intra-community supplies",
+            "it": "Non imponibili - cessioni intracomunitarie"
+          },
+          "meta": {
+            "fatturapa-natura": "N3.2"
+          }
+        },
+        {
+          "key": "not-taxable+san-merino",
+          "name": {
+            "en": "Not taxable - transfers to San Marino",
+            "it": "Non imponibili - cessioni verso San Marino"
+          },
+          "meta": {
+            "fatturapa-natura": "N3.3"
+          }
+        },
+        {
+          "key": "not-taxable+export-supplies",
+          "name": {
+            "en": "Not taxable - export supplies of goods and services",
+            "it": "Non Imponibili - operazioni assimilate alle cessioni all'esportazione"
+          },
+          "meta": {
+            "fatturapa-natura": "N3.4"
+          }
+        },
+        {
+          "key": "not-taxable+declaration-of-intent",
+          "name": {
+            "en": "Not taxable - declaration of intent",
+            "it": "Non imponibili - dichiarazioni d'intento"
+          },
+          "meta": {
+            "fatturapa-natura": "N3.5"
+          }
+        },
+        {
+          "key": "not-taxable+other",
+          "name": {
+            "en": "Not taxable - other",
+            "it": "Non imponibili - altre operazioni che non concorrono alla formazione del plafond"
+          },
+          "meta": {
+            "fatturapa-natura": "N3.6"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt",
+            "it": "Esenti"
+          },
+          "meta": {
+            "fatturapa-natura": "N4"
+          }
+        },
+        {
+          "key": "margin-regime",
+          "name": {
+            "en": "Margin regime / VAT not exposed",
+            "it": "Regime del margine/IVA non esposta in fattura"
+          },
+          "meta": {
+            "fatturapa-natura": "N5"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge (for transactions in reverse charge or for self invoicing for purchase of extra UE services or for import of goods only in the cases provided for) — (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
+            "it": "Inversione contabile (per operazioni in regime di inversione contabile o per autofattura per acquisti di servizi extra UE o per importazioni di beni solo nei casi previsti) — (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
+          },
+          "meta": {
+            "fatturapa-natura": "N6"
+          }
+        },
+        {
+          "key": "reverse-charge+scrap",
+          "name": {
+            "en": "Reverse charge - Transfer of scrap and of other recyclable materials",
+            "it": "Inversione contabile - cessione di rottami e altri materiali di recupero"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.1"
+          }
+        },
+        {
+          "key": "reverse-charge+precious-metals",
+          "name": {
+            "en": "Reverse charge - Transfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO",
+            "it": "Inversione contabile - cessione di oro e argento ai sensi della legge 7/2000 nonché di oreficeria usata ad OPO"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.2"
+          }
+        },
+        {
+          "key": "reverse-charge+construction-subcontracting",
+          "name": {
+            "en": "Reverse charge - Construction subcontracting",
+            "it": "Inversione contabile - subappalto nel settore edile"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.3"
+          }
+        },
+        {
+          "key": "reverse-charge+buildings",
+          "name": {
+            "en": "Reverse charge - Transfer of buildings",
+            "it": "Inversione contabile - cessione di fabbricati"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.4"
+          }
+        },
+        {
+          "key": "reverse-charge+mobile",
+          "name": {
+            "en": "Reverse charge - Transfer of mobile phones",
+            "it": "Inversione contabile - cessione di telefoni cellulari"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.5"
+          }
+        },
+        {
+          "key": "reverse-charge+electronics",
+          "name": {
+            "en": "Reverse charge - Transfer of electronic products",
+            "it": "Inversione contabile - cessione di prodotti elettronici"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.6"
+          }
+        },
+        {
+          "key": "reverse-charge+construction",
+          "name": {
+            "en": "Reverse charge - provisions in the construction and related sectors",
+            "it": "Inversione contabile - prestazioni comparto edile e settori connessi"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.7"
+          }
+        },
+        {
+          "key": "reverse-charge+energy",
+          "name": {
+            "en": "Reverse charge - transactions in the energy sector",
+            "it": "Inversione contabile - operazioni settore energetico"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.8"
+          }
+        },
+        {
+          "key": "reverse-charge+other",
+          "name": {
+            "en": "Reverse charge - other cases",
+            "it": "Inversione contabile - altri casi"
+          },
+          "meta": {
+            "fatturapa-natura": "N6.9"
+          }
+        },
+        {
+          "key": "vat-eu",
+          "name": {
+            "en": "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)",
+            "it": "IVA assolta in altro stato UE (prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-octies lett. a, b, art. 74-sexies DPR 633/72)"
+          },
+          "meta": {
+            "fatturapa-natura": "N7"
+          }
+        }
+      ]
+    },
+    {
+      "code": "IRPEF",
+      "name": {
+        "en": "IRPEF",
+        "it": "IRPEF"
+      },
+      "desc": {
+        "en": "Personal Income Tax",
+        "it": "Imposta sul Reddito delle Persone Fisiche"
+      },
+      "retained": true,
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Ordinary Rate",
+            "it": "Aliquota Ordinaria"
+          },
+          "values": [
+            {
+              "percent": "20.0%"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "fatturapa-tipo-ritenuta": "RT01"
+      }
+    }
+  ]
+}

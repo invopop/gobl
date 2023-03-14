@@ -198,9 +198,31 @@
           "description": "Sequential code used to identify this invoice in tax declarations."
         },
         "type": {
-          "$ref": "#/$defs/InvoiceType",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "standard",
+              "description": "A regular commercial invoice document between a supplier and customer."
+            },
+            {
+              "const": "proforma",
+              "description": "For a clients validation before sending a final invoice."
+            },
+            {
+              "const": "corrective",
+              "description": "Corrected invoice that completely replaces the preceding document."
+            },
+            {
+              "const": "credit-note",
+              "description": "Reflects a refund either partial or complete of the preceding document."
+            },
+            {
+              "const": "debit-note",
+              "description": "An additional set of charges to be added to the preceding document."
+            }
+          ],
           "title": "Type",
-          "description": "Optional invoice type, leave empty unless needed for a specific situation."
+          "description": "Type of invoice document subject to the requirements of the local tax regime."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
@@ -323,47 +345,13 @@
       "type": "object",
       "required": [
         "code",
+        "type",
         "currency",
         "issue_date",
         "supplier",
         "totals"
       ],
       "description": "Invoice represents a payment claim for goods or services supplied under conditions agreed between the supplier and the customer."
-    },
-    "InvoiceType": {
-      "oneOf": [
-        {
-          "const": "proforma",
-          "description": "Proforma invoice, for a clients validation before sending a final invoice."
-        },
-        {
-          "const": "simplified",
-          "description": "Simplified invoice or receipt typically used for small transactions that don't require customer details."
-        },
-        {
-          "const": "partial",
-          "description": "Partial invoice"
-        },
-        {
-          "const": "commercial",
-          "description": "Commercial invoice, usually cross-border transactions requiring an invoice for customs."
-        },
-        {
-          "const": "corrected",
-          "description": "Corrected invoice"
-        },
-        {
-          "const": "credit-note",
-          "description": "Credit note"
-        },
-        {
-          "const": "self-billed",
-          "description": "Self billed invoice"
-        }
-      ],
-      "type": "string",
-      "title": "Invoice Type",
-      "description": "Defines an invoice type according to a subset of the UNTDID 1001 standard list."
     },
     "Line": {
       "properties": {
@@ -654,145 +642,12 @@
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Issue Date",
-          "description": "The issue date if the previous document."
+          "description": "The issue date of the previous document."
         },
-        "period": {
-          "$ref": "https://gobl.org/draft-0/cal/period",
-          "title": "Period",
-          "description": "Tax period in which the previous invoice had an effect."
-        },
-        "corrections": {
-          "items": {
-            "anyOf": [
-              {
-                "const": "code",
-                "description": "Code has changed."
-              },
-              {
-                "const": "series",
-                "description": "Series has changed."
-              },
-              {
-                "const": "issue-date",
-                "description": "Issue date was modified."
-              },
-              {
-                "const": "supplier",
-                "description": "Supplier details were changed."
-              },
-              {
-                "const": "customer",
-                "description": "Customer details were changed."
-              },
-              {
-                "const": "supplier-name",
-                "description": "Supplier name was changed."
-              },
-              {
-                "const": "customer-name",
-                "description": "Customer name was changed."
-              },
-              {
-                "const": "supplier-tax-id",
-                "description": "Supplier Tax ID was changed."
-              },
-              {
-                "const": "customer-tax-id",
-                "description": "Customer Tax ID was changed."
-              },
-              {
-                "const": "supplier-addr",
-                "description": "Supplier address was modified."
-              },
-              {
-                "const": "customer-addr",
-                "description": "Customer address was modified."
-              },
-              {
-                "const": "line",
-                "description": "Line details were corrected."
-              },
-              {
-                "const": "period",
-                "description": "Period was changed."
-              },
-              {
-                "const": "type",
-                "description": "Type of document was corrected."
-              },
-              {
-                "const": "legal-details",
-                "description": "Legal details were corrected."
-              },
-              {
-                "const": "tax-rate",
-                "description": "Tax rates were modified."
-              },
-              {
-                "const": "tax-amount",
-                "description": "Tax amount was corrected."
-              },
-              {
-                "const": "tax-base",
-                "description": "Taxable base was corrected."
-              },
-              {
-                "const": "tax",
-                "description": "General issue with tax calculations."
-              },
-              {
-                "const": "tax-retained",
-                "description": "Error in retained tax calculations/"
-              },
-              {
-                "const": "refund",
-                "description": "Goods or materials have been returned to supplier."
-              },
-              {
-                "const": "discount",
-                "description": "New discounts or rebates added."
-              },
-              {
-                "const": "judicial",
-                "description": "Court ruling or administrative decision."
-              },
-              {
-                "const": "insolvency",
-                "description": "The customer is insolvent and cannot pay."
-              }
-            ],
-            "type": "string"
-          },
-          "type": "array",
-          "title": "Corrections",
-          "description": "Specific codes for the corrections made."
-        },
-        "correction_method": {
-          "anyOf": [
-            {
-              "const": "complete",
-              "description": "Everything has changed, this document replaces the previous one."
-            },
-            {
-              "const": "revoked",
-              "description": "Previous document has been completely revoked."
-            },
-            {
-              "const": "partial",
-              "description": "Only differences corrected."
-            },
-            {
-              "const": "discount",
-              "description": "Deducted from future invoices."
-            },
-            {
-              "const": "authorized",
-              "description": "Permitted by tax agency."
-            }
-          ],
+        "reason": {
           "type": "string",
-          "title": "Correction Method",
-          "description": "How has the previous invoice been corrected?"
+          "title": "Reason",
+          "description": "Human readable description on why the preceding invoice is being replaced."
         },
         "stamps": {
           "items": {
@@ -800,12 +655,25 @@
           },
           "type": "array",
           "title": "Stamps",
-          "description": "Seals of approval from other organisations."
+          "description": "Seals of approval from other organisations that may need to be listed."
         },
-        "notes": {
-          "type": "string",
-          "title": "Notes",
-          "description": "Additional details regarding preceding invoice"
+        "corrections": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Corrections",
+          "description": "Tax regime specific keys reflecting why the preceding invoice is being replaced."
+        },
+        "correction_method": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Correction Method",
+          "description": "Tax regime specific keys reflecting the method used to correct the preceding invoice."
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/cal/period",
+          "title": "Period",
+          "description": "Tax period in which the previous invoice had an effect required by some tax regimes and formats."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -818,7 +686,7 @@
         "code",
         "issue_date"
       ],
-      "description": "Preceding allows for information to be provided about a previous invoice that this one will replace or subtract from."
+      "description": "Preceding allows for information to be provided about a previous invoice that this one will replace, subtract from, or add to."
     },
     "Tax": {
       "properties": {
@@ -827,13 +695,13 @@
           "title": "Prices Include",
           "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
         },
-        "schemes": {
+        "tags": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Schemes",
-          "description": "Special tax schemes that apply to this invoice according to local requirements."
+          "title": "Tags",
+          "description": "Special tax tags that apply to this invoice according to local requirements."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -917,5 +785,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.37.0"
+  "$comment": "Generated with GOBL v0.38.0"
 }

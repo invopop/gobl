@@ -78,7 +78,49 @@
     "Instructions": {
       "properties": {
         "key": {
-          "$ref": "#/$defs/MethodKey",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "any",
+              "description": "Any method available, no preference"
+            },
+            {
+              "const": "card",
+              "description": "Credit or debit card"
+            },
+            {
+              "const": "credit-transfer",
+              "description": "Sender initiated bank or wire transfer"
+            },
+            {
+              "const": "debit-transfer",
+              "description": "Receiver initiated bank or wire transfer"
+            },
+            {
+              "const": "cash",
+              "description": "Cash"
+            },
+            {
+              "const": "cheque",
+              "description": "Cheque"
+            },
+            {
+              "const": "credit",
+              "description": "Credit"
+            },
+            {
+              "const": "bank-draft",
+              "description": "Bankers Draft or Bank Cheque"
+            },
+            {
+              "const": "direct-debit",
+              "description": "Direct debit"
+            },
+            {
+              "const": "online",
+              "description": "Online or web payment"
+            }
+          ],
           "title": "Key",
           "description": "How payment is expected or has been arranged to be collected"
         },
@@ -135,41 +177,6 @@
       ],
       "description": "Instructions determine how the payment has or should be made."
     },
-    "MethodKey": {
-      "oneOf": [
-        {
-          "const": "any",
-          "description": "Any method available, no preference"
-        },
-        {
-          "const": "card",
-          "description": "Credit or debit card"
-        },
-        {
-          "const": "credit-transfer",
-          "description": "Sender initiated bank or wire transfer"
-        },
-        {
-          "const": "debit-transfer",
-          "description": "Receiver initiated bank or wire transfer"
-        },
-        {
-          "const": "cash",
-          "description": "Cash"
-        },
-        {
-          "const": "direct-debit",
-          "description": "Direct debit"
-        },
-        {
-          "const": "online",
-          "description": "Online or web payment"
-        }
-      ],
-      "type": "string",
-      "title": "Method Key",
-      "description": "Method Key describes how a payment should be made"
-    },
     "Online": {
       "properties": {
         "name": {
@@ -190,5 +197,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.37.0"
+  "$comment": "Generated with GOBL v0.38.0"
 }
