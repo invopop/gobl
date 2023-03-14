@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -12,8 +13,14 @@ import (
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
+)
+
+// Constants used to help identify invoices
+const (
+	ShortSchemaInvoice = "bill/invoice"
 )
 
 // Invoice represents a payment claim for goods or services supplied under
@@ -23,13 +30,12 @@ import (
 type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-
 	// Used as a prefix to group codes.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
-	// Optional invoice type, leave empty unless needed for a specific situation.
-	Type InvoiceType `json:"type,omitempty" jsonschema:"title=Type"`
+	// Type of invoice document subject to the requirements of the local tax regime.
+	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
@@ -86,10 +92,21 @@ type Invoice struct {
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.
 func (inv *Invoice) Validate() error {
-	err := validation.ValidateStruct(inv,
+	return inv.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks to ensure the invoice is valid and contains all the
+// information we need.
+func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return errors.New("supplier: invalid or unknown tax regime")
+	}
+	ctx = r.WithContext(ctx)
+	err := validation.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Code, validation.Required),
-		validation.Field(&inv.Type), // either empty or one of those supported
+		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
 		validation.Field(&inv.Currency, validation.Required),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Tax),
@@ -117,14 +134,7 @@ func (inv *Invoice) Validate() error {
 		validation.Field(&inv.Notes),
 		validation.Field(&inv.Meta),
 	)
-	if err == nil && inv.Supplier != nil {
-		// Always validate contents using supplier's tax
-		// identity.
-		tID := inv.Supplier.TaxID
-		if tID == nil {
-			return errors.New("supplier: missing tax identity")
-		}
-		r := tax.Regimes().For(tID.Country, tID.Zone)
+	if err == nil {
 		err = r.ValidateObject(inv)
 	}
 	return err
@@ -158,9 +168,9 @@ type Totals struct {
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
-// Validate the totals used in invoice.
-func (t *Totals) Validate() error {
-	return validation.ValidateStruct(t,
+// ValidateWithContext checks the totals calculated for the invoice.
+func (t *Totals) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.Sum, validation.Required),
 		validation.Field(&t.Discount),
 		validation.Field(&t.Charge),
@@ -179,6 +189,9 @@ func (t *Totals) Validate() error {
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
 func (inv *Invoice) Calculate() error {
+	if inv.Type == cbc.KeyEmpty {
+		inv.Type = InvoiceTypeStandard
+	}
 	if inv.Supplier == nil {
 		return errors.New("missing or invalid supplier tax identity")
 	}
@@ -191,22 +204,16 @@ func (inv *Invoice) Calculate() error {
 		}
 	}
 
-	tID := inv.Supplier.TaxID
-	r := tax.RegimeFor(tID.Country, tID.Zone)
-	if r == nil {
-		return fmt.Errorf("no tax regime for %v", tID.Country)
-	}
-
-	if err := inv.prepareSchemes(r); err != nil {
+	if err := inv.prepareTagsAndScenarios(); err != nil {
 		return err
 	}
 
 	// Should we use the customers identity for calculations?
-	tID = inv.determineTaxIdentity()
+	tID := inv.determineTaxIdentity()
 	if tID == nil {
 		return errors.New("unable to determine tax identity")
 	}
-	r = tax.RegimeFor(tID.Country, tID.Zone)
+	r := tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
@@ -251,30 +258,63 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	return &i2
 }
 
-func (inv *Invoice) prepareSchemes(r *tax.Regime) error {
+// ScenarioSummary determines a summary of the tax scenario for the invoice based on
+// the document type and tax tags.
+func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return nil
+	}
+	return inv.scenarioSummary(r)
+}
+
+func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
+	ss := r.ScenarioSet(ShortSchemaInvoice)
+	if ss == nil {
+		return nil
+	}
+	tags := []cbc.Key{}
+	if inv.Tax != nil {
+		tags = inv.Tax.Tags
+	}
+	return ss.SummaryFor(inv.Type, tags)
+}
+
+func (inv *Invoice) prepareTagsAndScenarios() error {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return nil
+	}
 	if inv.Tax == nil {
 		return nil
 	}
-	for _, k := range inv.Tax.Schemes {
-		s := r.SchemeFor(k)
-		if s == nil {
-			return fmt.Errorf("invalid scheme: %v", k)
-		}
 
-		// apply the scheme's note, but ensure it's not a duplicate by checking the Src.
-		if s.Note != nil {
-			var en *cbc.Note
-			for _, n := range inv.Notes {
-				if n.Src == string(k) {
-					en = n
-					break
-				}
-			}
-			if en == nil {
-				inv.Notes = append(inv.Notes, s.Note)
-			}
+	// First check the tags are all valid
+	for _, k := range inv.Tax.Tags {
+		if t := r.Tag(k); t == nil {
+			return fmt.Errorf("invalid document tag: %v", k)
 		}
 	}
+
+	// Use the scenario summary to add any notes to the invoice
+	ss := inv.scenarioSummary(r)
+	if ss == nil {
+		return nil
+	}
+	for _, n := range ss.Notes {
+		// make sure we don't already have the same note in the invoice
+		var en *cbc.Note
+		for _, n2 := range inv.Notes {
+			if n.Src == n2.Src {
+				en = n
+				break
+			}
+		}
+		if en == nil {
+			inv.Notes = append(inv.Notes, n)
+		}
+	}
+
 	return nil
 }
 
@@ -367,7 +407,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	if inv.Tax != nil && inv.Tax.ContainsScheme(common.SchemeReverseCharge) {
+	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
 		t.Tax = zero
 	} else {
 		t.Tax = t.Taxes.Sum
@@ -405,7 +445,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 
 func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 	if inv.Tax != nil {
-		if inv.Tax.ContainsScheme(common.SchemeCustomerRates) {
+		if inv.Tax.ContainsTag(common.TagCustomerRates) {
 			if inv.Customer == nil {
 				return nil
 			}
@@ -416,6 +456,17 @@ func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 		return nil
 	}
 	return inv.Supplier.TaxID
+}
+
+func taxRegimeFor(party *org.Party) *tax.Regime {
+	if party == nil {
+		return nil
+	}
+	tID := party.TaxID
+	if tID == nil {
+		return nil
+	}
+	return tax.RegimeFor(tID.Country, tID.Zone)
 }
 
 // Reset sets all the totals to the provided zero amount with the correct
@@ -433,4 +484,19 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Payable = zero
 	t.Advances = nil
 	t.Due = nil
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
+	props := schema.Properties
+	if val, ok := props.Get("type"); ok {
+		its := val.(*jsonschema.Schema)
+		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
+		for i, v := range InvoiceTypes {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       v.Key.String(),
+				Description: v.Description,
+			}
+		}
+	}
 }

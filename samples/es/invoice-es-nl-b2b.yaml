@@ -6,7 +6,7 @@ tax:
   # this is a bit random, but demos that prices may include tax
   # that will be deducted from final price correctly.
   prices_include: "VAT"
-  schemes:
+  tags:
     - reverse-charge
 
 supplier:

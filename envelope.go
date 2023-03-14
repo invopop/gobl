@@ -1,6 +1,7 @@
 package gobl
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/invopop/validation"
@@ -60,7 +61,12 @@ func Envelop(doc interface{}) (*Envelope, error) {
 
 // Validate ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) Validate() error {
-	err := validation.ValidateStruct(e,
+	return e.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
+func (e *Envelope) ValidateWithContext(ctx context.Context) error {
+	err := validation.ValidateStructWithContext(ctx, e,
 		validation.Field(&e.Schema, validation.Required),
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required), // this will also check payload

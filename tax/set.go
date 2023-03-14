@@ -1,6 +1,8 @@
 package tax
 
 import (
+	"context"
+	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
@@ -23,17 +25,25 @@ type Combo struct {
 	Percent num.Percentage `json:"percent" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
+	// Additional data may be required in some regimes, the tags
+	// property helps reference them.
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Internal link back to the category object
 	category *Category
 }
 
-// Validate ensures the Combo has the correct details.
-func (c *Combo) Validate() error {
-	return validation.ValidateStruct(c,
-		validation.Field(&c.Category, validation.Required),
+// ValidateWithContext ensures the Combo has the correct details.
+func (c *Combo) ValidateWithContext(ctx context.Context) error {
+	r, _ := ctx.Value(KeyRegime).(*Regime)
+	if r == nil {
+		return errors.New("tax regime not found in context")
+	}
+	return validation.ValidateStructWithContext(ctx, c,
+		validation.Field(&c.Category, validation.Required, r.InCategories()),
 		validation.Field(&c.Rate), // optional, but should be checked if present
 		validation.Field(&c.Percent, validation.Required),
 		validation.Field(&c.Surcharge), // not required, but should be valid number
+		validation.Field(&c.Tags, validation.Each(r.InCategoryTags(c.Category))),
 	)
 }
 
@@ -42,18 +52,19 @@ func (c *Combo) Validate() error {
 func (c *Combo) prepare(tc *TotalCalculator) error {
 	c.category = tc.Regime.Category(c.Category)
 	if c.category == nil {
-		return ErrInvalidCategory.WithMessage("'%s' not defined in region", c.Category.String())
+		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
 	}
 
 	if c.Rate != cbc.KeyEmpty {
 		rate := c.category.Rate(c.Rate)
 		if rate == nil {
-			return ErrInvalidRate.WithMessage("'%s' not in category '%s'", c.Rate.String(), c.Category.String())
+			return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
 		}
 		value := rate.Value(tc.Date, tc.Zone)
 		if value == nil {
 			return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
 		}
+
 		c.Percent = value.Percent
 		if value.Surcharge != nil {
 			s := *value.Surcharge // copy
@@ -66,14 +77,14 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 	return nil
 }
 
-// Validate ensures the set of tax combos looks correct
-func (s Set) Validate() error {
+// ValidateWithContext ensures the set of tax combos looks correct
+func (s Set) ValidateWithContext(ctx context.Context) error {
 	combos := make(map[cbc.Code]cbc.Key)
 	for i, c := range s {
 		if _, ok := combos[c.Category]; ok {
 			return fmt.Errorf("%d: category %v is duplicated", i, c.Category)
 		}
-		if err := c.Validate(); err != nil {
+		if err := c.ValidateWithContext(ctx); err != nil {
 			return fmt.Errorf("%d: %w", i, err)
 		}
 		combos[c.Category] = c.Rate

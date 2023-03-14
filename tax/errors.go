@@ -15,6 +15,7 @@ type Error cbc.Key
 const (
 	ErrMissingRegion        Error = "missing-region"
 	ErrInvalidCategory      Error = "invalid-category"
+	ErrInvalidTag           Error = "invalid-tag"
 	ErrInvalidRate          Error = "invalid-rate"
 	ErrInvalidDate          Error = "invalid-date"
 	ErrInvalidPricesInclude Error = "invalid-prices-include"

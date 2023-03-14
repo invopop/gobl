@@ -22,7 +22,7 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier, validation.Required, validation.By(v.validParty)),
 		validation.Field(&inv.Customer, validation.When(
-			inv.Type.In(bill.InvoiceTypeDefault),
+			inv.Type.In(bill.InvoiceTypeStandard),
 			validation.Required,
 			validation.By(v.validParty),
 		)),

@@ -1,7 +1,11 @@
 package bill
 
 import (
+	"context"
+	"errors"
+
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -16,29 +20,31 @@ type Tax struct {
 	// tax.
 	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
 
-	// Special tax schemes that apply to this invoice according to local requirements.
-	Schemes []cbc.Key `json:"schemes,omitempty" jsonschema:"title=Schemes"`
+	// Special tax tags that apply to this invoice according to local requirements.
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// ContainsScheme returns true if the tax contains the given scheme.
-func (t *Tax) ContainsScheme(key cbc.Key) bool {
-	for _, s := range t.Schemes {
-		if s == key {
-			return true
-		}
+// ContainsTag returns true if the tax contains the given tag.
+func (t *Tax) ContainsTag(key cbc.Key) bool {
+	if t == nil {
+		return false
 	}
-	return false
+	return key.In(t.Tags...)
 }
 
-// Validate ensures the tax details look valid.
-func (t *Tax) Validate() error {
-	return validation.ValidateStruct(t,
+// ValidateWithContext ensures the tax details look valid.
+func (t *Tax) ValidateWithContext(ctx context.Context) error {
+	r, _ := ctx.Value(tax.KeyRegime).(*tax.Regime)
+	if r == nil {
+		return errors.New("tax regime not found in context")
+	}
+	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
-		validation.Field(&t.Schemes),
+		validation.Field(&t.Tags, validation.Each(r.InTags())),
 		validation.Field(&t.Meta),
 	)
 }

@@ -10,8 +10,9 @@ import (
 
 // Local tax category definitions which are not considered standard.
 const (
-	TaxCategoryRA   cbc.Code = "RA" // https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
-	TaxCategoryINPS cbc.Code = "INPS"
+	// https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
+	TaxCategoryIRPEF cbc.Code = "IRPEF"
+	TaxCategoryINPS  cbc.Code = "INPS"
 )
 
 var categories = []*tax.Category{
@@ -26,6 +27,7 @@ var categories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.IT: "Imposta sul Valore Aggiunto",
 		},
+		Tags: vatTaxTags,
 		Rates: []*tax.Rate{
 			{
 				Key: common.TaxRateZero,
@@ -90,19 +92,24 @@ var categories = []*tax.Category{
 		},
 	},
 	{
-		Code:     TaxCategoryRA,
+		// IT: https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
+		// EN: https://www.agenziaentrate.gov.it/portale/web/english/information-for-specific-categories-of-workers
+		Code:     TaxCategoryIRPEF,
 		Retained: true,
 		Name: i18n.String{
-			i18n.EN: "RA",
-			i18n.IT: "RA",
+			i18n.EN: "IRPEF",
+			i18n.IT: "IRPEF",
 		},
 		Desc: i18n.String{
-			i18n.EN: "Withholding Tax",
-			i18n.IT: "Ritenuta d'Acconto",
+			i18n.EN: "Personal Income Tax",
+			i18n.IT: "Imposta sul Reddito delle Persone Fisiche",
+		},
+		Meta: cbc.Meta{
+			KeyFatturaPATipoRitenuta: "RT01",
 		},
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateZero,
+				Key: common.TaxRateStandard,
 				Name: i18n.String{
 					i18n.EN: "Ordinary Rate",
 					i18n.IT: "Aliquota Ordinaria",

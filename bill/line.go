@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -44,9 +46,10 @@ func (l *Line) GetTotal() num.Amount {
 	return l.Total
 }
 
-// Validate ensures the line contains everything required.
-func (l *Line) Validate() error {
-	return validation.ValidateStruct(l,
+// ValidateWithContext ensures the line contains everything required using
+// the provided context that should include the regime.
+func (l *Line) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, l,
 		validation.Field(&l.UUID),
 		validation.Field(&l.Index, validation.Required),
 		validation.Field(&l.Quantity, validation.Required),

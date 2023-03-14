@@ -2,6 +2,7 @@ package gobl
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
 	"github.com/invopop/gobl/c14n"
@@ -58,7 +59,13 @@ func (d *Document) Instance() interface{} {
 // Validate checks to ensure the document has everything it needs
 // and will pass on the validation call to the payload.
 func (d *Document) Validate() error {
-	err := validation.ValidateStruct(d,
+	return d.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks to ensure the document has everything it needs
+// and will pass on the validation call to the payload.
+func (d *Document) ValidateWithContext(ctx context.Context) error {
+	err := validation.ValidateStructWithContext(ctx, d,
 		validation.Field(&d.schema, validation.Required),
 	)
 	if err != nil {
@@ -66,7 +73,7 @@ func (d *Document) Validate() error {
 	}
 	// return any errors from the payload as if they were for the document
 	// itself.
-	return validation.Validate(d.payload)
+	return validation.ValidateWithContext(ctx, d.payload)
 }
 
 // Insert places the provided object inside the document and looks up the schema
