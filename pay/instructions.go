@@ -8,30 +8,27 @@ import (
 	"github.com/invopop/validation/is"
 )
 
-// MethodKey represents a type of payment instruction
-type MethodKey cbc.Key
-
 // Standard payment method codes. This is a heavily reduced list of practical
 // codes which can be linked to UNTDID 4461 counterparts.
 // If you require more payment method options, please send your pull requests.
 const (
-	MethodKeyAny            MethodKey = "any" // Use any method available.
-	MethodKeyCard           MethodKey = "card"
-	MethodKeyCreditTransfer MethodKey = "credit-transfer"
-	MethodKeyDebitTransfer  MethodKey = "debit-transfer"
-	MethodKeyCash           MethodKey = "cash"
-	MethodKeyCheque         MethodKey = "cheque"
-	MethodKeyCredit         MethodKey = "credit"
-	MethodKeyBankDraft      MethodKey = "bank-draft"
-	MethodKeyDirectDebit    MethodKey = "direct-debit" // aka. Mandate
-	MethodKeyOnline         MethodKey = "online"       // Website from which payment can be made
+	MethodKeyAny            cbc.Key = "any" // Use any method available.
+	MethodKeyCard           cbc.Key = "card"
+	MethodKeyCreditTransfer cbc.Key = "credit-transfer"
+	MethodKeyDebitTransfer  cbc.Key = "debit-transfer"
+	MethodKeyCash           cbc.Key = "cash"
+	MethodKeyCheque         cbc.Key = "cheque"
+	MethodKeyCredit         cbc.Key = "credit"
+	MethodKeyBankDraft      cbc.Key = "bank-draft"
+	MethodKeyDirectDebit    cbc.Key = "direct-debit" // aka. Mandate
+	MethodKeyOnline         cbc.Key = "online"       // Website from which payment can be made
 )
 
 // MethodKeyDef is used to define each of the Method Keys
 // that can be accepted by GOBL.
 type MethodKeyDef struct {
 	// Key being described
-	Key MethodKey `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Details about the meaning of the key
 	Description string `json:"description" jsonschema:"title=Description"`
 	// UNTDID 4461 Equivalent Code
@@ -58,7 +55,7 @@ var MethodKeyDefinitions = []MethodKeyDef{
 // should be provided, all other details serve as a reference.
 type Instructions struct {
 	// How payment is expected or has been arranged to be collected
-	Key MethodKey `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Optional text description of the payment method
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Remittance information, a text value used to link the payment with the invoice.
@@ -155,19 +152,17 @@ func validMethodKeys() []interface{} {
 	return list
 }
 
-// JSONSchema provides a representation of the struct for usage in Schema.
-func (k MethodKey) JSONSchema() *jsonschema.Schema {
-	s := &jsonschema.Schema{
-		Title:       "Method Key",
-		Type:        "string",
-		OneOf:       make([]*jsonschema.Schema, len(MethodKeyDefinitions)),
-		Description: "Method Key describes how a payment should be made",
-	}
-	for i, v := range MethodKeyDefinitions {
-		s.OneOf[i] = &jsonschema.Schema{
-			Const:       v.Key,
-			Description: v.Description,
+// JSONSchemaExtend adds the method key definitions to the schema.
+func (Instructions) JSONSchemaExtend(schema *jsonschema.Schema) {
+	val, _ := schema.Properties.Get("key")
+	prop, ok := val.(*jsonschema.Schema)
+	if ok {
+		prop.OneOf = make([]*jsonschema.Schema, len(MethodKeyDefinitions))
+		for i, v := range MethodKeyDefinitions {
+			prop.OneOf[i] = &jsonschema.Schema{
+				Const:       v.Key,
+				Description: v.Description,
+			}
 		}
 	}
-	return s
 }

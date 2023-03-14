@@ -30,7 +30,7 @@ type Identity struct {
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone Code"`
 
 	// What is the source document of the tax identity.
-	Source SourceKey `json:"source,omitempty" jsonschema:"title=Source Key"`
+	Source cbc.Key `json:"source,omitempty" jsonschema:"title=Source Key"`
 
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
@@ -39,15 +39,11 @@ type Identity struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// SourceKey is used to identify different sources of tax
-// identities that may be required by some regions.
-type SourceKey cbc.Key
-
 // DefSourceKey defines the details we have regarding a document
 // source key.
 type DefSourceKey struct {
-	Key         SourceKey `json:"key" jsonschema:"title=Key"`
-	Description string    `json:"description" jsonschema:"title=Description"`
+	Key         cbc.Key `json:"key" jsonschema:"title=Key"`
+	Description string  `json:"description" jsonschema:"title=Description"`
 }
 
 // RequireIdentityCode is an additional check to use alongside
@@ -62,15 +58,15 @@ type validateTaxID struct {
 // Main Source Key definitions.
 const (
 	// Directly from tax Agency
-	SourceKeyTaxAgency SourceKey = "tax-agency"
+	SourceKeyTaxAgency cbc.Key = "tax-agency"
 	// A passport document
-	SourceKeyPassport SourceKey = "passport"
+	SourceKeyPassport cbc.Key = "passport"
 	// National ID Card or similar
-	SourceKeyNational SourceKey = "national"
+	SourceKeyNational cbc.Key = "national"
 	// Residential permit
-	SourceKeyPermit SourceKey = "permit"
+	SourceKeyPermit cbc.Key = "permit"
 	// Something else
-	SourceKeyOther SourceKey = "other"
+	SourceKeyOther cbc.Key = "other"
 )
 
 // SourceKeyDefinitions lists all the keys with their descriptions
@@ -161,19 +157,15 @@ func generateValidSourceKeys() []interface{} {
 	return ks
 }
 
-// JSONSchema provides a representation of the struct for usage in Schema.
-func (k SourceKey) JSONSchema() *jsonschema.Schema {
-	s := &jsonschema.Schema{
-		Title:       "Source Key",
-		Type:        "string",
-		OneOf:       make([]*jsonschema.Schema, len(SourceKeyDefinitions)),
-		Description: "SourceKey identifies the source of a tax identity",
-	}
+// JSONSchemaExtend adds the source key definitions to the schema.
+func (Identity) JSONSchemaExtend(schema *jsonschema.Schema) {
+	val, _ := schema.Properties.Get("source")
+	prop, _ := val.(*jsonschema.Schema)
+	prop.OneOf = make([]*jsonschema.Schema, len(SourceKeyDefinitions))
 	for i, v := range SourceKeyDefinitions {
-		s.OneOf[i] = &jsonschema.Schema{
-			Const:       cbc.Key(v.Key).String(),
+		prop.OneOf[i] = &jsonschema.Schema{
+			Const:       v.Key.String(),
 			Description: v.Description,
 		}
 	}
-	return s
 }
