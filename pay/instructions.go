@@ -152,7 +152,7 @@ func validMethodKeys() []interface{} {
 	return list
 }
 
-// JSONSchema provides a representation of the struct for usage in Schema.
+// JSONSchemaExtend adds the method key definitions to the schema.
 func (Instructions) JSONSchemaExtend(schema *jsonschema.Schema) {
 	val, _ := schema.Properties.Get("key")
 	prop, ok := val.(*jsonschema.Schema)

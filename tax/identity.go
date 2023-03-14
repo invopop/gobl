@@ -157,7 +157,7 @@ func generateValidSourceKeys() []interface{} {
 	return ks
 }
 
-// JSONSchema provides a representation of the struct for usage in Schema.
+// JSONSchemaExtend adds the source key definitions to the schema.
 func (Identity) JSONSchemaExtend(schema *jsonschema.Schema) {
 	val, _ := schema.Properties.Get("source")
 	prop, _ := val.(*jsonschema.Schema)

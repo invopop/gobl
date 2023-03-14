@@ -131,7 +131,7 @@ func (dd *DueDate) Validate() error {
 	)
 }
 
-// JSONSchema provides a representation of the struct for usage in Schema.
+// JSONSchemaExtend adds the payment terms key list to the schema.
 func (Terms) JSONSchemaExtend(schema *jsonschema.Schema) {
 	val, _ := schema.Properties.Get("key")
 	prop, ok := val.(*jsonschema.Schema)
