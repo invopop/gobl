@@ -104,6 +104,7 @@ var categories = []*tax.Category{
 			i18n.EN: "Personal Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Persone Fisiche",
 		},
+		Tags: retainedTaxTags,
 		Meta: cbc.Meta{
 			KeyFatturaPATipoRitenuta: "RT01",
 		},
