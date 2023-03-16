@@ -1171,10 +1171,10 @@
       ],
       "tags": [
         {
-          "key": "provider",
+          "key": "resale",
           "name": {
-            "en": "Operation in equivalence surcharge or simplified regime",
-            "es": "Operacion en recargo de equivalencia o regimen simplificado"
+            "en": "Resale of goods without modification by vendor in the simplified regime",
+            "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
           }
         },
         {
