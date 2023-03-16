@@ -20,9 +20,9 @@ const (
 	TagCashBasis        cbc.Key = "cash-basis"
 )
 
-// Tax tags which may be used in the Basque Country.
+// Tax tags which may be used by TicketBAI in the Basque Country.
 const (
-	TagProvider  cbc.Key = "provider"
+	TagResale    cbc.Key = "resale"
 	TagServices  cbc.Key = "services"
 	TagGoods     cbc.Key = "goods"
 	TagExempt    cbc.Key = "exempt"
@@ -134,13 +134,15 @@ var invoiceTags = []*tax.Tag{
 	},
 }
 
+// Special tags required for by the TicketBAI system in the basque country
+// on a per-line basis.
 var vatTaxTags = []*tax.Tag{
 	// Common Tags
 	{
-		Key: TagProvider,
+		Key: TagResale,
 		Name: i18n.String{
-			i18n.ES: "Operacion en recargo de equivalencia o regimen simplificado",
-			i18n.EN: "Operation in equivalence surcharge or simplified regime",
+			i18n.ES: "Reventa de bienes sin modificación por vendedor en regimen simplificado",
+			i18n.EN: "Resale of goods without modification by vendor in the simplified regime",
 		},
 	},
 	{
