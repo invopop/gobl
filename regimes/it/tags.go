@@ -481,7 +481,7 @@ var retainedTaxTags = []*tax.Tag{
 		Key: TagCivilService,
 		Name: i18n.String{
 			i18n.EN: "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
-			i18n.IT: "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017;",
+			i18n.IT: "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017;", //nolint:misspell
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "K",
