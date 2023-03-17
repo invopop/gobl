@@ -380,8 +380,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagSelfEmployedHabitual,
 		Name: i18n.String{
-			i18n.EN: "Self-employed work falling within the habitual practice of an art or profession",
-			i18n.IT: "prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale",
+			i18n.EN: "Self-employment services falling within the exercise of habitual art or profession",
+			i18n.IT: "Prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "A",
@@ -390,8 +390,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagAuthorIPUsage,
 		Name: i18n.String{
-			i18n.EN: "Use of intellectual property by the author",
-			i18n.IT: "uso di beni immateriali ad opera dell'autore",
+			i18n.EN: "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
+			i18n.IT: "Utilizzazione economica, da parte dell'autore o dell'inventore, di opere dell'ingegno, di brevetti industriali e di processi, formule o informazioni relativi ad esperienze acquisite in campo industriale, commerciale o scientifico;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "B",
@@ -400,8 +400,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagPartnershipAgreements,
 		Name: i18n.String{
-			i18n.EN: "Partnership agreements in the exercise of an art or profession",
-			i18n.IT: "accordi di collaborazione coordinata e continuativa nello svolgimento di attività artistiche o professionali",
+			i18n.EN: "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
+			i18n.IT: "Utili derivanti da contratti di associazione in partecipazione e da contratti di cointeressenza, quando l'apporto è costituito esclusivamente dalla prestazione di lavoro;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "C",
@@ -410,8 +410,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagFounderLimitedCompany,
 		Name: i18n.String{
-			i18n.EN: "Payments made to the founder of a limited company",
-			i18n.IT: "versamenti effettuati al socio fondatore di società a responsabilità limitata",
+			i18n.EN: "Profits due to the promoting partners and founding partners of capital companies",
+			i18n.IT: "Utili spettanti ai soci promotori ed ai soci fondatori delle società di capitali;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "D",
@@ -420,8 +420,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagCertificationDishonoredBills,
 		Name: i18n.String{
-			i18n.EN: "Certification of dishonored bills and protests",
-			i18n.IT: "certificazione dei protesti e delle cambiali disonorate",
+			i18n.EN: "Bills of exchange protests levied by municipal secretaries",
+			i18n.IT: "Levata di protesti cambiari da parte dei segretari comunali;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "E",
@@ -430,8 +430,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagHonoraryJudicialOfficers,
 		Name: i18n.String{
-			i18n.EN: "Payments made to honorary judges and prosecutors",
-			i18n.IT: "versamenti effettuati ai magistrati e ai pubblici ministeri onorari",
+			i18n.EN: "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
+			i18n.IT: "Indennità corrisposte ai giudici onorari di pace e ai vice procuratori onorari;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "F",
@@ -440,8 +440,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagCessationSports,
 		Name: i18n.String{
-			i18n.EN: "Payments made to sports clubs upon cessation of activity",
-			i18n.IT: "versamenti effettuati alle associazioni sportive dilettantistiche in caso di cessazione dell'attività",
+			i18n.EN: "Allowances paid for the cessation of professional sports activities",
+			i18n.IT: "Indennità corrisposte per la cessazione di attività sportiva professionale;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "G",
@@ -450,8 +450,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagCessationAgency,
 		Name: i18n.String{
-			i18n.EN: "Payments made to agents upon cessation of activity",
-			i18n.IT: "versamenti effettuati agli agenti in caso di cessazione dell'attività",
+			i18n.EN: "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
+			i18n.IT: "Indennità corrisposte per la cessazione dei rapporti di agenzia delle persone fisiche e delle società di persone con esclusione delle somme maturate entro il 31 dicembre 2003, già imputate per competenza e tassate come reddito d'impresa;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "H",
@@ -460,8 +460,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagCessationNotary,
 		Name: i18n.String{
-			i18n.EN: "Payments made to notaries upon cessation of activity",
-			i18n.IT: "versamenti effettuati ai notai in caso di cessazione dell'attività",
+			i18n.EN: "Allowances paid for the cessation of notarial functions",
+			i18n.IT: "Indennità corrisposte per la cessazione da funzioni notarili;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "I",
@@ -470,8 +470,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagTruffleGathering,
 		Name: i18n.String{
-			i18n.EN: "Truffle gathering and sale",
-			i18n.IT: "raccolta e vendita di tartufi",
+			i18n.EN: "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
+			i18n.IT: "Compensi corrisposti ai raccoglitori occasionali di tartufi non identificati ai fini dell'imposta sul valore aggiunto, in relazione alla cessione di tartufi;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "J",
@@ -480,8 +480,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagCivilService,
 		Name: i18n.String{
-			i18n.EN: "Civil service",
-			i18n.IT: "prestazione di servizio civile",
+			i18n.EN: "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
+			i18n.IT: "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "K",
@@ -490,8 +490,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagEntitledIPUsage,
 		Name: i18n.String{
-			i18n.EN: "Use of intellectual property by entitled parties free of charge",
-			i18n.IT: "uso di beni immateriali ad opera di soggetti aventi diritto a titolo gratuito",
+			i18n.EN: "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
+			i18n.IT: "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti dagli aventi causa a titolo gratuito (ad es. eredi e legatari dell'autore e inventore);",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "L",
@@ -500,8 +500,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagPurchasedIPUsage,
 		Name: i18n.String{
-			i18n.EN: "Use of intellectual property by parties who paid for it",
-			i18n.IT: "uso di beni immateriali ad opera di soggetti aventi diritto a titolo oneroso",
+			i18n.EN: "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
+			i18n.IT: "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "L1",
@@ -510,8 +510,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagOccasionalSelfEmployment,
 		Name: i18n.String{
-			i18n.EN: "Occasional self-employment",
-			i18n.IT: "lavoro autonomo occasionale",
+			i18n.EN: "Self-employment services not carried out habitually",
+			i18n.IT: "Prestazioni di lavoro autonomo non esercitate abitualmente;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "M",
@@ -520,8 +520,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagAssumptionObligations,
 		Name: i18n.String{
-			i18n.EN: "Assumption of obligations",
-			i18n.IT: "assunzione di obbligazioni",
+			i18n.EN: "Income deriving from the assumption of obligations to do, not to do, or to allow",
+			i18n.IT: "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "M1",
@@ -530,8 +530,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagENPAPISelfEmployment,
 		Name: i18n.String{
-			i18n.EN: "ENPAPI self-employment",
-			i18n.IT: "lavoro autonomo ENPAPI",
+			i18n.EN: "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
+			i18n.IT: "Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l'obbligo di iscrizione alla gestione separata enpapi;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "M2",
@@ -540,8 +540,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagAmateurSports,
 		Name: i18n.String{
-			i18n.EN: "Amateur sports activities",
-			i18n.IT: "attività sportive dilettantistiche",
+			i18n.EN: "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
+			i18n.IT: "Indennità di trasferta, rimborso forfetario di spese, premi e compensi erogati: - nell'esercizio diretto di attività sportive dilettantistiche; - in relazione a rapporti di collaborazione coordinata e continuativa di carattere amministrativo-gestionale di natura non professionale resi a favore di società e associazioni sportive dilettantistiche e di cori, bande e filodrammatiche da parte del direttore e dei collaboratori tecnici;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "N",
@@ -550,8 +550,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagNonENPAPISelfEmployment,
 		Name: i18n.String{
-			i18n.EN: "Non-ENPAPI self-employment",
-			i18n.IT: "lavoro autonomo non ENPAPI",
+			i18n.EN: "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
+			i18n.IT: "Prestazioni di lavoro autonomo non esercitate abitualmente, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001);",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "O",
@@ -560,8 +560,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagNonENPAPIObligations,
 		Name: i18n.String{
-			i18n.EN: "Non-ENPAPI obligations",
-			i18n.IT: "obbligazioni non ENPAPI",
+			i18n.EN: "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
+			i18n.IT: "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001);",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "O1",
@@ -570,8 +570,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagSwissEquipmentsUse,
 		Name: i18n.String{
-			i18n.EN: "Use of Swiss manufactured equipment",
-			i18n.IT: "uso di apparecchiature di fabbricazione svizzera",
+			i18n.EN: "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
+			i18n.IT: "Compensi corrisposti a soggetti non residenti privi di stabile organizzazione per l'uso o la concessione in uso di attrezzature industriali, commerciali o scientifiche che si trovano nel territorio dello stato ovvero a società svizzere o stabili organizzazioni di società svizzere che possiedono i requisiti di cui all'art. 15, comma 2 dell'accordo tra la comunità europea e la confederazione svizzera del 26 ottobre 2004 (pubblicato in g.u.c.e. del 29 dicembre 2004 n. l385/30);",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "P",
@@ -580,8 +580,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagSingleMandateAgent,
 		Name: i18n.String{
-			i18n.EN: "Single-mandate agent",
-			i18n.IT: "agente con mandato singolo",
+			i18n.EN: "Commissions paid to a single-mandate agent or commercial representative",
+			i18n.IT: "Provvigioni corrisposte ad agente o rappresentante di commercio monomandatario;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "Q",
@@ -590,8 +590,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagMultiMandateAgent,
 		Name: i18n.String{
-			i18n.EN: "Multi-mandate agent",
-			i18n.IT: "agente con mandato multiplo",
+			i18n.EN: "Commissions paid to a multi-mandate agent or commercial representative",
+			i18n.IT: "Provvigioni corrisposte ad agente o rappresentante di commercio plurimandatario;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "R",
@@ -600,8 +600,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagCommissionAgent,
 		Name: i18n.String{
-			i18n.EN: "Commission agent",
-			i18n.IT: "agente di commissione",
+			i18n.EN: "Commissions paid to a commission agent",
+			i18n.IT: "Provvigioni corrisposte a commissionario;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "S",
@@ -610,8 +610,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagComissionBroker,
 		Name: i18n.String{
-			i18n.EN: "Commission broker",
-			i18n.IT: "mediatore di commissione",
+			i18n.EN: "Commissions paid to a broker",
+			i18n.IT: "Provvigioni corrisposte a mediatore;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "T",
@@ -620,8 +620,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagBusinessReferrer,
 		Name: i18n.String{
-			i18n.EN: "Business referrer",
-			i18n.IT: "promotore di affari",
+			i18n.EN: "Commissions paid to a business finder",
+			i18n.IT: "Provvigioni corrisposte a procacciatore di affari;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "U",
@@ -630,8 +630,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagHomeSales,
 		Name: i18n.String{
-			i18n.EN: "Home sales",
-			i18n.IT: "vendita di case",
+			i18n.EN: "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
+			i18n.IT: "Provvigioni corrisposte a incaricato per le vendite a domicilio; provvigioni corrisposte a incaricato per la vendita porta a porta e per la vendita ambulante di giornali quotidiani e periodici (l. 25 febbraio 1987, n. 67);",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "V",
@@ -640,8 +640,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagOccasionalCommercial,
 		Name: i18n.String{
-			i18n.EN: "Occasional commercial activity",
-			i18n.IT: "attività commerciale occasionale",
+			i18n.EN: "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
+			i18n.IT: "Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d'affari);",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "V1",
@@ -650,8 +650,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagHomeSalesNonHabitual,
 		Name: i18n.String{
-			i18n.EN: "Non-habitual home sales",
-			i18n.IT: "vendita di case non abituale",
+			i18n.EN: "Income from non-habitual services provided by direct home sales agents",
+			i18n.IT: "Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "V2",
@@ -660,8 +660,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagContractWork2021,
 		Name: i18n.String{
-			i18n.EN: "Contract work in 2021",
-			i18n.IT: "lavoro a contratto nel 2021",
+			i18n.EN: "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
+			i18n.IT: "Corrispettivi erogati nel 2021 per prestazioni relative a contratti d'appalto cui si sono resi applicabili le disposizioni contenute nell'art. 25-ter del d.p.r. n. 600 del 29 settembre 1973;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "W",
@@ -670,8 +670,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagEUFees2004,
 		Name: i18n.String{
-			i18n.EN: "EU fees in 2004",
-			i18n.IT: "tariffe UE nel 2004",
+			i18n.EN: "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
+			i18n.IT: "Canoni corrisposti nel 2004 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "X",
@@ -680,8 +680,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagEUFees2005H1,
 		Name: i18n.String{
-			i18n.EN: "EU fees in the first half of 2005",
-			i18n.IT: "tariffe UE nella prima metà del 2005",
+			i18n.EN: "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
+			i18n.IT: "Canoni corrisposti dal 1° gennaio 2005 al 26 luglio 2005 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. n. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. n. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "Y",
@@ -690,8 +690,8 @@ var retainedTaxTags = []*tax.Tag{
 	{
 		Key: TagOtherTitle,
 		Name: i18n.String{
-			i18n.EN: "Other titles",
-			i18n.IT: "altri titoli",
+			i18n.EN: "Different title from the previous ones",
+			i18n.IT: "Titolo diverso dai precedenti;",
 		},
 		Meta: cbc.Meta{
 			KeyFatturaPACausalePagamento: "ZO",
