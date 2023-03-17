@@ -16,9 +16,8 @@ import (
 
 // validateTaxIdentity looks at the provided identity's code and performs the
 // calculations required to determine if it is valid.
-// These methods assume the code has already been normalized
-// and thus only contains upper-case letters and numbers with
-// no white space.
+// These methods assume the code has already been normalized and thus only
+// contains upper-case letters and numbers with no white space.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)))
