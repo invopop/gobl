@@ -11,8 +11,12 @@ import (
 // Local tax category definitions which are not considered standard.
 const (
 	// https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
-	TaxCategoryIRPEF cbc.Code = "IRPEF"
-	TaxCategoryINPS  cbc.Code = "INPS"
+	TaxCategoryIRPEF    cbc.Code = "IRPEF"
+	TaxCategoryIRES     cbc.Code = "IRES"
+	TaxCategoryINPS     cbc.Code = "INPS"
+	TaxCategoryENASARCO cbc.Code = "ENASARCO"
+	TaxCategoryENPAM    cbc.Code = "ENPAM"
+	TaxCategoryOther    cbc.Code = "OTHER"
 )
 
 var categories = []*tax.Category{
@@ -121,6 +125,100 @@ var categories = []*tax.Category{
 					},
 				},
 			},
+		},
+	},
+	{
+		Code:     TaxCategoryIRES,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "IRES",
+			i18n.IT: "IRES",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Corporate Income Tax",
+			i18n.IT: "Imposta sul Reddito delle Società",
+		},
+		Tags: retainedTaxTags,
+		Meta: cbc.Meta{
+			KeyFatturaPATipoRitenuta: "RT02",
+		},
+		Rates: []*tax.Rate{
+			{
+				Key: common.TaxRateStandard,
+				Name: i18n.String{
+					i18n.EN: "Ordinary Rate",
+					i18n.IT: "Aliquota Ordinaria",
+				},
+				Values: []*tax.RateValue{
+					{
+						Percent: num.MakePercentage(240, 3),
+					},
+				},
+			},
+		},
+	},
+	{
+		Code:     TaxCategoryINPS,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "INPS Contribution",
+			i18n.IT: "Contributo INPS", // nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Contribution to the National Social Security Institute",
+			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
+		},
+		Tags: retainedTaxTags,
+		Meta: cbc.Meta{
+			KeyFatturaPATipoRitenuta: "RT03",
+		},
+	},
+	{
+		Code:     TaxCategoryENASARCO,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "ENASARCO Contribution",
+			i18n.IT: "Contributo ENASARCO", // nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Contribution to the National Welfare Board for Sales Agents and Representatives",
+			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
+		},
+		Tags: retainedTaxTags,
+		Meta: cbc.Meta{
+			KeyFatturaPATipoRitenuta: "RT04",
+		},
+	},
+	{
+		Code:     TaxCategoryENPAM,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "ENPAM Contribution",
+			i18n.IT: "Contributo ENPAM", // nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Contribution to the National Pension and Welfare Board for Doctors",
+			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
+		},
+		Tags: retainedTaxTags,
+		Meta: cbc.Meta{
+			KeyFatturaPATipoRitenuta: "RT05",
+		},
+	},
+	{
+		Code:     TaxCategoryOther,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "Other",
+			i18n.IT: "Altra",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Other social security contribution",
+			i18n.IT: "Altro contributo previdenziale", // nolint:misspell
+		},
+		Tags: retainedTaxTags,
+		Meta: cbc.Meta{
+			KeyFatturaPATipoRitenuta: "RT06",
 		},
 	},
 }
