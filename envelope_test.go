@@ -1,6 +1,8 @@
 package gobl_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"testing"
 
@@ -12,9 +14,48 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/uuid"
 )
 
 var testKey = dsig.NewES256Key()
+
+func ExampleNewEnvelope_complete() {
+	// Prepare a new Envelope with a region
+	env := gobl.NewEnvelope()
+	env.Head.UUID = uuid.MustParse("871c1e6a-8b5c-11ec-af5f-3e7e00ce5635")
+
+	// Prepare a payload and insert
+	msg := &note.Message{
+		Content: "sample message content",
+	}
+	if err := env.Insert(msg); err != nil {
+		panic(err.Error())
+	}
+	if err := env.Validate(); err != nil {
+		panic(err.Error())
+	}
+
+	data, err := json.MarshalIndent(env, "", "\t")
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Printf("%v\n", string(data))
+	// Output:
+	// {
+	// 	"$schema": "https://gobl.org/draft-0/envelope",
+	// 	"head": {
+	// 		"uuid": "871c1e6a-8b5c-11ec-af5f-3e7e00ce5635",
+	// 		"dig": {
+	// 			"alg": "sha256",
+	// 			"val": "7d539c46ca03a4ecb1fcc4cb00d2ada34275708ee326caafee04d9dcfed862ee"
+	// 		}
+	// 	},
+	// 	"doc": {
+	// 		"$schema": "https://gobl.org/draft-0/note/message",
+	// 		"content": "sample message content"
+	// 	}
+	// }
+}
 
 func TestEnvelop(t *testing.T) {
 	msg := &note.Message{Content: "This is test content."}
@@ -85,7 +126,7 @@ func TestEnvelopeInsert(t *testing.T) {
 func TestEnvelopeComplete(t *testing.T) {
 	e := new(gobl.Envelope)
 
-	data, err := ioutil.ReadFile("./samples/es/invoice-es-es.env.yaml")
+	data, err := ioutil.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
