@@ -22,8 +22,8 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Customer, validation.By(v.customer)),
 		validation.Field(&inv.Supplier, validation.By(v.supplier)),
+		validation.Field(&inv.Customer, validation.By(v.customer)),
 	)
 }
 
@@ -37,7 +37,6 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
-			tax.RequireIdentityType,
 			tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
 		),
 	)
@@ -56,7 +55,6 @@ func (v *invoiceValidator) customer(value interface{}) error {
 			validation.When(
 				p.TaxID.Country.In(l10n.IT), // if destination is Italian
 				validation.Required,
-				tax.RequireIdentityType,
 				tax.RequireIdentityCode,
 				tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment, TaxIdentityTypeIndividual),
 			),

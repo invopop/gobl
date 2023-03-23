@@ -14,11 +14,6 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
-// IdentityTypeCodiceFiscale is different from the VAT number (Partita IVA), and
-// it is used as the tax identification number when the subject does not have a
-// VAT number, such as individuals.
-const IdentityTypeCodiceFiscale = "CF"
-
 // Keys used for meta data from external sources.
 const (
 	KeyFatturaPATipoDocumento    cbc.Key = "fatturapa-tipo-documento"
@@ -38,12 +33,12 @@ func New() *tax.Regime {
 			i18n.IT: "Italia",
 		},
 		IdentityTypes: taxIdentityTypes,
-		Tags:       invoiceTags,
-		Scenarios:  scenarios, // scenarios.go
-		Validator:  Validate,
-		Calculator: Calculate,
-		Zones:      zones,      // zones.go
-		Categories: categories, // categories.go
+		Tags:          invoiceTags,
+		Scenarios:     scenarios, // scenarios.go
+		Validator:     Validate,
+		Calculator:    Calculate,
+		Zones:         zones,      // zones.go
+		Categories:    categories, // categories.go
 	}
 }
 

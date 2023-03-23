@@ -64,7 +64,7 @@ const (
 	KeyFacturaEInvoiceDocumentType cbc.Key = "facturae-invoice-document-type"
 	KeyFacturaEInvoiceClass        cbc.Key = "facturae-invoice-class"
 	KeyTicketBAICausaExencion      cbc.Key = "ticketbai-causa-exencion"
-	KeyTicketBAIIDType cbc.Key = "ticketbai-id-type"
+	KeyTicketBAIIDType             cbc.Key = "ticketbai-id-type"
 )
 
 // New provides the Spanish tax regime definition
@@ -76,11 +76,11 @@ func New() *tax.Regime {
 			i18n.EN: "Spain",
 			i18n.ES: "España",
 		},
-		Validator:  Validate,
-		Calculator: Calculate,
-		Zones:      zones,
+		Validator:     Validate,
+		Calculator:    Calculate,
+		Zones:         zones,
 		IdentityTypes: taxIdentityTypes,
-		Tags:       invoiceTags,
+		Tags:          invoiceTags,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
