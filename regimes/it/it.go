@@ -28,13 +28,6 @@ const (
 	KeyFatturaPACausalePagamento cbc.Key = "fatturapa-causale-pagamento"
 )
 
-// Valid types for Italian tax identities
-const (
-	PartyTypePublicAdministration cbc.Key = "government"
-	PartyTypeNaturalPerson        cbc.Key = "individual"
-	PartyTypeLegalPerson          cbc.Key = "entity"
-)
-
 // New instantiates a new Italian regime.
 func New() *tax.Regime {
 	return &tax.Regime{
@@ -44,6 +37,7 @@ func New() *tax.Regime {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
+		IdentityTypes: taxIdentityTypes,
 		Tags:       invoiceTags,
 		Scenarios:  scenarios, // scenarios.go
 		Validator:  Validate,

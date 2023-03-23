@@ -17,7 +17,7 @@ import (
 // national individuals, foreigners, and legal organizations.
 type TaxCodeType string
 
-// Supported tax code types.
+// Supported tax code types, from code itself.
 const (
 	NationalTaxCode     TaxCodeType = "N"
 	ForeignTaxCode      TaxCodeType = "X"
@@ -25,6 +25,68 @@ const (
 	OtherTaxCode        TaxCodeType = "O"
 	UnknownTaxCode      TaxCodeType = "NA"
 )
+
+// The tax identity type is required for TicketBAI documents
+// in the Basque Country.
+const (
+	TaxIdentityTypeFiscal cbc.Key = "fiscal"
+	TaxIdentityTypePassport cbc.Key = "passport"
+	TaxIdentityTypeForeign cbc.Key = "foreign"
+	TaxIdentityTypeResident cbc.Key = "resident"
+	TaxIdentityTypePther cbc.Key = "other"
+)
+
+var taxIdentityTypes = []*tax.IdentityType{
+	{
+		Key: TaxIdentityTypeFiscal,
+		Name: i18n.String{
+			i18n.EN: "National Tax Identity",
+			i18n.ES: "Número de Identificación Fiscal",
+		},
+		Meta: cbc.Meta{
+			KeyTicketBAIIDType: "02",
+		},
+	},
+	{
+		Key: TaxIdentityTypePassport,
+		Name: i18n.String{
+			i18n.EN: "Passport",
+			i18n.ES: "Pasaporte",
+		},
+		Meta: cbc.Meta{
+			KeyTicketBAIIDType: "03",
+		},
+	},
+	{
+		Key: TaxIdentityTypeForeign,
+		Name: i18n.String{
+			i18n.EN: "National ID Card or similar from a foreign country",
+			i18n.ES: "Documento oficial de identificación expedido por el país o territorio de residencia",
+		},
+		Meta: cbc.Meta{
+			KeyTicketBAIIDType: "04",
+		},
+	},
+	{
+		Key: TaxIdentityTypeResident,
+		Name: i18n.String{
+			i18n.EN: "Residential permit",
+			i18n.ES: "Certificado de residencia",
+		},
+		Meta: cbc.Meta{
+			KeyTicketBAIIDType: "05",
+		},
+	},
+	{
+		Key: TaxIdentityTypeOther,
+		Name: i18n.String{
+			i18n.String{
+				i18n.EN: "An other type of source not listed",
+				i18n.ES: "Otro documento probatorio",
+			},
+		},
+	},
+}
 
 // tax ID standard tables
 const (
@@ -64,7 +126,9 @@ var (
 // no white space.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+		validation.Field(&tID.Code,
+			validation.By(validateTaxCode),
+		),
 	)
 }
 

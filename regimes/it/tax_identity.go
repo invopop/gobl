@@ -14,13 +14,57 @@ import (
 	"github.com/invopop/validation"
 )
 
+// Italian identity types.
+const (
+	TaxIdentityTypeBusiness cbc.Key = "business" // default
+	TaxIdentityTypeGovernment cbc.Key = "government"
+	TaxIdentityTypeIndividual cbc.Key = "individual"
+)
+
+var regularTaxIdentityTypes = []*tax.IdentityType{
+	TaxIdentityTypeBusiness,
+	TaxIdentityTypeGovernment,
+}
+
+var taxIdentityTypes = []*tax.IdentityType{
+	{
+		Key: TaxIdentityTypeGovernment,
+		Name: i18n.String{
+			i18n.EN: "Public Administration",
+		},
+		Meta: cbc.Meta{
+		},
+	},
+	{
+		Key: TaxIdentityTypeIndividual,
+		Name: i18n.String{
+			i18n.EN: "Natural Person",
+		},
+		Meta: cbc.Meta{},
+	},
+	{
+		Key: TaxIdentityTypeBusiness,
+		Name: i18n.String{
+			i18n.EN: "Legal Person",
+		},
+		Meta: cbc.Meta{},
+	},
+}
+
 // validateTaxIdentity looks at the provided identity's code and performs the
 // calculations required to determine if it is valid.
 // These methods assume the code has already been normalized and thus only
 // contains upper-case letters and numbers with no white space.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)))
+		validation.Field(&tID.Code,
+			validation.Required, // always needed
+			validation.When(
+				tID.Type.In(regularTaxIdentityTypes),
+				validation.By(validateTaxCode),
+			),
+		),
+	)
 }
 
 // normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are

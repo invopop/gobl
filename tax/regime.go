@@ -38,6 +38,10 @@ type Regime struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
+	// Identity types specific for the regime and may be validated
+	// against.
+	IdentityTypes []*IdentityType `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
+
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
 	Tags []*Tag `json:"tags,omitempty" jsonschema:"title=Tags"`

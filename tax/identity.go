@@ -29,8 +29,9 @@ type Identity struct {
 	// for specific validation rules.
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone Code"`
 
-	// What is the source document of the tax identity.
-	Source cbc.Key `json:"source,omitempty" jsonschema:"title=Source Key"`
+	// Type is set according the requirements of each regime, some have a single
+	// tax document type code, others require a choice to be made.
+	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
@@ -39,11 +40,14 @@ type Identity struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// DefSourceKey defines the details we have regarding a document
-// source key.
-type DefSourceKey struct {
-	Key         cbc.Key `json:"key" jsonschema:"title=Key"`
-	Description string  `json:"description" jsonschema:"title=Description"`
+// IdentityType describes a single possible value for a tax identity type.
+type IdentityType struct {
+	// Key used to identify the type
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	// Name for the identity type
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Additional regime specific meta data
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title="Meta"`
 }
 
 // RequireIdentityCode is an additional check to use alongside
@@ -51,46 +55,19 @@ type DefSourceKey struct {
 // value set.
 var RequireIdentityCode = validateTaxID{requireCode: true}
 
-type validateTaxID struct {
-	requireCode bool
+// RequireIdentityType ensures that the identity type is set.
+var RequireIdentityType = validateTaxID{requireType: true}
+
+// IdentityTypeIn checks that the identity code is within one of the
+// acceptable keys.
+var IdentityTypeIn = func(keys *cbc.Key...) validation.Rule {
+	return validateTaxID{typeIn: keys}
 }
 
-// Main Source Key definitions.
-const (
-	// Directly from tax Agency
-	SourceKeyTaxAgency cbc.Key = "tax-agency"
-	// A passport document
-	SourceKeyPassport cbc.Key = "passport"
-	// National ID Card or similar
-	SourceKeyNational cbc.Key = "national"
-	// Residential permit
-	SourceKeyPermit cbc.Key = "permit"
-	// Something else
-	SourceKeyOther cbc.Key = "other"
-)
-
-// SourceKeyDefinitions lists all the keys with their descriptions
-var SourceKeyDefinitions = []DefSourceKey{
-	{
-		Key:         SourceKeyTaxAgency,
-		Description: "Sourced directly from a tax agency",
-	},
-	{
-		Key:         SourceKeyPassport,
-		Description: "A passport document",
-	},
-	{
-		Key:         SourceKeyNational,
-		Description: "National ID Card or similar",
-	},
-	{
-		Key:         SourceKeyPermit,
-		Description: "Residential or similar permit",
-	},
-	{
-		Key:         SourceKeyOther,
-		Description: "An other type of source not listed",
-	},
+type validateTaxID struct {
+	requireCode bool
+	requireType bool
+	typeIn []inteface{}
 }
 
 // String provides a string representation of the tax identity.
@@ -121,7 +98,7 @@ func (id *Identity) Validate() error {
 		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required),
 		validation.Field(&id.Zone),
-		validation.Field(&id.Source, validation.In(validSourceKeys...)),
+		validation.Field(&id.Type),
 		validation.Field(&id.Code),
 		validation.Field(&id.Meta),
 	)
@@ -144,28 +121,10 @@ func (v validateTaxID) Validate(value interface{}) error {
 		validation.Field(&id.Code,
 			validation.When(v.requireCode, validation.Required),
 		),
+		validation.Field(&id.Type,
+			validation.When(v.requireType, validation.Required),
+			validation.When(len(v.typeIn) > 0, validation.In(v.typeIn...)),
+		)
 	)
 }
 
-var validSourceKeys = generateValidSourceKeys()
-
-func generateValidSourceKeys() []interface{} {
-	ks := make([]interface{}, len(SourceKeyDefinitions))
-	for i, v := range SourceKeyDefinitions {
-		ks[i] = v.Key
-	}
-	return ks
-}
-
-// JSONSchemaExtend adds the source key definitions to the schema.
-func (Identity) JSONSchemaExtend(schema *jsonschema.Schema) {
-	val, _ := schema.Properties.Get("source")
-	prop, _ := val.(*jsonschema.Schema)
-	prop.OneOf = make([]*jsonschema.Schema, len(SourceKeyDefinitions))
-	for i, v := range SourceKeyDefinitions {
-		prop.OneOf[i] = &jsonschema.Schema{
-			Const:       v.Key.String(),
-			Description: v.Description,
-		}
-	}
-}

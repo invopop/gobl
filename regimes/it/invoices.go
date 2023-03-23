@@ -30,7 +30,6 @@ func (v *invoiceValidator) validate() error {
 
 func (v *invoiceValidator) supplier(value interface{}) error {
 	obj, _ := value.(*org.Party)
-
 	if obj == nil {
 		return nil
 	}
@@ -39,6 +38,8 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
+			tax.RequireIdentityType,
+			tax.IdentityTypeIn()
 		),
 	)
 }
