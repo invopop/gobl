@@ -86,11 +86,6 @@ func New() *tax.Regime {
 								Percent: num.MakePercentage(160, 3),
 							},
 							{
-								Zones:   []l10n.Code{ZoneAzores},
-								Since:   cal.NewDate(2011, 1, 1),
-								Percent: num.MakePercentage(180, 3),
-							},
-							{
 								Zones:   []l10n.Code{ZoneMadeira},
 								Since:   cal.NewDate(2011, 1, 1),
 								Percent: num.MakePercentage(220, 3),
