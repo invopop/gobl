@@ -37,8 +37,6 @@ type Party struct {
 	Registration *Registration `json:"registration,omitempty" jsonschema:"title=Registration"`
 	// Images that can be used to identify the party visually.
 	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
-	// Type of party
-	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type Key"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }

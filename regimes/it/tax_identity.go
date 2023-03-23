@@ -54,7 +54,11 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
 			validation.Required, // always needed
-			validation.By(validateTaxCode),
+			validation.When(
+				tID.Type.In(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
+				validation.By(validateTaxCode),
+			),
+			// TODO: add validation for individual tax ID
 		),
 	)
 }

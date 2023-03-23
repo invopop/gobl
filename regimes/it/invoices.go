@@ -2,6 +2,7 @@ package it
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -51,11 +52,14 @@ func (v *invoiceValidator) customer(value interface{}) error {
 	// Customers must have a tax ID (PartitaIVA) if they are legal entities like
 	// government offices and companies.
 	return validation.ValidateStruct(p,
-		validation.Field(&p.Type, validation.Required),
 		validation.Field(&p.TaxID,
-			validation.Required,
-			tax.RequireIdentityType,
-			tax.RequireIdentityCode,
+			validation.When(
+				p.TaxID.Country.In(l10n.IT), // if destination is Italian
+				validation.Required,
+				tax.RequireIdentityType,
+				tax.RequireIdentityCode,
+				tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment, TaxIdentityTypeIndividual),
+			),
 		),
 	)
 }
