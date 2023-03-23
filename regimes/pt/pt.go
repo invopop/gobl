@@ -47,6 +47,12 @@ const (
 	ZoneMadeira        l10n.Code = "30" // Autonomous Region
 )
 
+// AT official codes to include in stamps.
+const (
+	StampProviderATATCUD cbc.Key = "at-atcud"
+	StampProviderATQR    cbc.Key = "at-qr"
+)
+
 // New instantiates a new Portugal regime for the given zone.
 func New() *tax.Regime {
 	return &tax.Regime{
