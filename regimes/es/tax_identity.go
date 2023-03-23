@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -29,11 +30,11 @@ const (
 // The tax identity type is required for TicketBAI documents
 // in the Basque Country.
 const (
-	TaxIdentityTypeFiscal cbc.Key = "fiscal"
+	TaxIdentityTypeFiscal   cbc.Key = "fiscal"
 	TaxIdentityTypePassport cbc.Key = "passport"
-	TaxIdentityTypeForeign cbc.Key = "foreign"
+	TaxIdentityTypeForeign  cbc.Key = "foreign"
 	TaxIdentityTypeResident cbc.Key = "resident"
-	TaxIdentityTypePther cbc.Key = "other"
+	TaxIdentityTypeOther    cbc.Key = "other"
 )
 
 var taxIdentityTypes = []*tax.IdentityType{
@@ -80,10 +81,11 @@ var taxIdentityTypes = []*tax.IdentityType{
 	{
 		Key: TaxIdentityTypeOther,
 		Name: i18n.String{
-			i18n.String{
-				i18n.EN: "An other type of source not listed",
-				i18n.ES: "Otro documento probatorio",
-			},
+			i18n.EN: "An other type of source not listed",
+			i18n.ES: "Otro documento probatorio",
+		},
+		Meta: cbc.Meta{
+			KeyTicketBAIIDType: "06",
 		},
 	},
 }

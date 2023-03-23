@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
 )
@@ -47,7 +47,7 @@ type IdentityType struct {
 	// Name for the identity type
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 	// Additional regime specific meta data
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title="Meta"`
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // RequireIdentityCode is an additional check to use alongside
@@ -60,14 +60,18 @@ var RequireIdentityType = validateTaxID{requireType: true}
 
 // IdentityTypeIn checks that the identity code is within one of the
 // acceptable keys.
-var IdentityTypeIn = func(keys *cbc.Key...) validation.Rule {
-	return validateTaxID{typeIn: keys}
+var IdentityTypeIn = func(keys ...cbc.Key) validation.Rule {
+	out := make([]interface{}, len(keys))
+	for i, l := range keys {
+		out[i] = l
+	}
+	return validateTaxID{typeIn: out}
 }
 
 type validateTaxID struct {
 	requireCode bool
 	requireType bool
-	typeIn []inteface{}
+	typeIn      []interface{}
 }
 
 // String provides a string representation of the tax identity.
@@ -124,7 +128,6 @@ func (v validateTaxID) Validate(value interface{}) error {
 		validation.Field(&id.Type,
 			validation.When(v.requireType, validation.Required),
 			validation.When(len(v.typeIn) > 0, validation.In(v.typeIn...)),
-		)
+		),
 	)
 }
-

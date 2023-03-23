@@ -9,6 +9,7 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -16,15 +17,10 @@ import (
 
 // Italian identity types.
 const (
-	TaxIdentityTypeBusiness cbc.Key = "business" // default
+	TaxIdentityTypeBusiness   cbc.Key = "business" // default
 	TaxIdentityTypeGovernment cbc.Key = "government"
 	TaxIdentityTypeIndividual cbc.Key = "individual"
 )
-
-var regularTaxIdentityTypes = []*tax.IdentityType{
-	TaxIdentityTypeBusiness,
-	TaxIdentityTypeGovernment,
-}
 
 var taxIdentityTypes = []*tax.IdentityType{
 	{
@@ -32,8 +28,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 		Name: i18n.String{
 			i18n.EN: "Public Administration",
 		},
-		Meta: cbc.Meta{
-		},
+		Meta: cbc.Meta{},
 	},
 	{
 		Key: TaxIdentityTypeIndividual,
@@ -59,10 +54,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
 			validation.Required, // always needed
-			validation.When(
-				tID.Type.In(regularTaxIdentityTypes),
-				validation.By(validateTaxCode),
-			),
+			validation.By(validateTaxCode),
 		),
 	)
 }

@@ -1,8 +1,6 @@
 package it
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -39,14 +37,13 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			validation.Required,
 			tax.RequireIdentityCode,
 			tax.RequireIdentityType,
-			tax.IdentityTypeIn()
+			tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
 		),
 	)
 }
 
 func (v *invoiceValidator) customer(value interface{}) error {
 	p, _ := value.(*org.Party)
-
 	if p == nil {
 		return nil
 	}
@@ -57,38 +54,8 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		validation.Field(&p.Type, validation.Required),
 		validation.Field(&p.TaxID,
 			validation.Required,
-			validation.When(
-				p.Type == PartyTypePublicAdministration || p.Type == PartyTypeLegalPerson,
-				tax.RequireIdentityCode,
-			),
-		),
-		validation.Field(&p.Identities,
-			validation.Required,
-			validation.When(
-				p.Type == PartyTypeNaturalPerson,
-				validation.By(v.customerNaturalPerson),
-			),
+			tax.RequireIdentityType,
+			tax.RequireIdentityCode,
 		),
 	)
-}
-
-func (v *invoiceValidator) customerNaturalPerson(value interface{}) error {
-	p, _ := value.(*org.Party)
-	if p == nil {
-		return nil
-	}
-
-	var cf *org.Identity
-
-	for _, id := range p.Identities {
-		if id.Type == IdentityTypeCodiceFiscale {
-			cf = id
-		}
-	}
-
-	if cf == nil {
-		return errors.New("natural persons must have a codice fiscale")
-	}
-
-	return nil
 }
