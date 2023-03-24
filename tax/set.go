@@ -47,6 +47,14 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
+// ContainsTag returns true if the tax combo contains the given tag.
+func (c *Combo) ContainsTag(key cbc.Key) bool {
+	if c == nil {
+		return false
+	}
+	return key.In(c.Tags...)
+}
+
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
 func (c *Combo) prepare(tc *TotalCalculator) error {

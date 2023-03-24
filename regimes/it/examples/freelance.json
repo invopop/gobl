@@ -5,7 +5,7 @@
   "currency": "EUR",
   "issue_date": "2023-03-02",
   "tax": {
-    "schemes": ["freelance"]
+    "tags": ["freelance"]
   },
   "supplier": {
     "tax_id": {
