@@ -81,10 +81,10 @@ func (m *Charge) GetTotal() num.Amount {
 
 func (m *Charge) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Charge {
 	rate := m.Taxes.Get(cat)
-	if rate == nil {
+	if rate == nil || rate.Percent == nil {
 		return m
 	}
 	m2 := *m
-	m2.Amount = m2.Amount.Upscale(accuracy).Remove(rate.Percent)
+	m2.Amount = m2.Amount.Upscale(accuracy).Remove(*rate.Percent)
 	return &m2
 }

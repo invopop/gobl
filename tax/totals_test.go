@@ -91,6 +91,25 @@ func TestTotalCalculate(t *testing.T) {
 			},
 		},
 		{
+			desc: "with exemption",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Tags:     []cbc.Key{es.TagExempt},
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{},
+				Sum:        num.MakeAmount(0, 2),
+			},
+		},
+		{
 			desc:   "with VAT in Azores",
 			regime: portugal,
 			zone:   pt.ZoneAzores,
@@ -133,7 +152,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(210, 3),
+							Percent:  num.NewPercentage(210, 3),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -168,7 +187,7 @@ func TestTotalCalculate(t *testing.T) {
 						{
 							Category: common.TaxCategoryVAT,
 							Rate:     common.TaxRateStandard,
-							Percent:  num.MakePercentage(200, 3),
+							Percent:  num.NewPercentage(200, 3),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -308,7 +327,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(210, 3),
+							Percent:  num.NewPercentage(210, 3),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -317,7 +336,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(2100, 4), // different exp.
+							Percent:  num.NewPercentage(2100, 4), // different exp.
 						},
 					},
 					amount: num.MakeAmount(15000, 2),
@@ -399,7 +418,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(210, 3),
+							Percent:  num.NewPercentage(210, 3),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -408,7 +427,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(100, 3),
+							Percent:  num.NewPercentage(100, 3),
 						},
 					},
 					amount: num.MakeAmount(15000, 2),
@@ -497,7 +516,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(210, 3),
+							Percent:  num.NewPercentage(210, 3),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -506,7 +525,7 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Percent:  num.MakePercentage(100, 3),
+							Percent:  num.NewPercentage(100, 3),
 						},
 					},
 					amount: num.MakeAmount(15000, 2),

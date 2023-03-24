@@ -86,22 +86,22 @@ func (l *Line) calculate() {
 
 func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
 	rate := l.Taxes.Get(cat)
-	if rate == nil {
+	if rate == nil || rate.Percent == nil {
 		return l
 	}
 
 	l2 := *l
 	l2i := *l.Item
 
-	l2i.Price = l2i.Price.Upscale(accuracy).Remove(rate.Percent)
-	l2.Sum = l2.Sum.Upscale(accuracy).Remove(rate.Percent)
-	l2.Total = l2.Total.Upscale(accuracy).Remove(rate.Percent)
+	l2i.Price = l2i.Price.Upscale(accuracy).Remove(*rate.Percent)
+	l2.Sum = l2.Sum.Upscale(accuracy).Remove(*rate.Percent)
+	l2.Total = l2.Total.Upscale(accuracy).Remove(*rate.Percent)
 
 	if len(l2.Discounts) > 0 {
 		rows := make([]*LineDiscount, len(l2.Discounts))
 		for i, v := range l.Discounts {
 			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Remove(rate.Percent)
+			d.Amount = d.Amount.Upscale(accuracy).Remove(*rate.Percent)
 			rows[i] = &d
 		}
 		l2.Discounts = rows
@@ -111,7 +111,7 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
 		rows := make([]*LineCharge, len(l2.Charges))
 		for i, v := range l.Charges {
 			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Remove(rate.Percent)
+			d.Amount = d.Amount.Upscale(accuracy).Remove(*rate.Percent)
 			rows[i] = &d
 		}
 		l2.Charges = rows

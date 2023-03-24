@@ -23,6 +23,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     "standard",
+					Percent:  num.NewPercentage(20, 3),
 				},
 			},
 			err: nil,
@@ -38,10 +39,12 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     "standard",
+					Percent:  num.NewPercentage(20, 3),
 				},
 				{
 					Category: "IRPF",
 					Rate:     "pro",
+					Percent:  num.NewPercentage(15, 3),
 				},
 			},
 		},
@@ -51,11 +54,13 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     "standard",
+					Percent:  num.NewPercentage(20, 3),
 					Tags:     []cbc.Key{es.TagServices},
 				},
 				{
 					Category: "IRPF",
 					Rate:     "pro",
+					Percent:  num.NewPercentage(15, 3),
 				},
 			},
 		},
@@ -65,20 +70,40 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     "standard",
+					Percent:  num.NewPercentage(20, 3),
 				},
 				{
 					Category: "VAT",
 					Rate:     "reduced",
+					Percent:  num.NewPercentage(20, 3),
 				},
 			},
 			err: "duplicated",
+		},
+		{
+			desc: "missing percentage",
+			set: tax.Set{
+				{
+					Category: "VAT",
+				},
+			},
+			err: "percent: cannot be blank",
+		},
+		{
+			desc: "missing percentage with tag",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Tags:     []cbc.Key{es.TagServices},
+				},
+			},
 		},
 		{
 			desc: "undefined category code",
 			set: tax.Set{
 				{
 					Category: "VAT2",
-					Percent:  num.MakePercentage(20, 2),
+					Percent:  num.NewPercentage(20, 3),
 				},
 			},
 			err: "cat: must be a valid value",
@@ -88,7 +113,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Percent:  num.MakePercentage(20, 2),
+					Percent:  num.NewPercentage(20, 3),
 					Tags:     []cbc.Key{es.TagServices, "invalid-tag"},
 				},
 			},
@@ -100,6 +125,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     "STD",
+					Percent:  num.NewPercentage(20, 3),
 				},
 			},
 			err: "rate: must be in a valid format",
