@@ -11,7 +11,7 @@ import (
 func TestPrecedingValidation(t *testing.T) {
 	p := new(bill.Preceding)
 	p.Code = "FOO"
-	p.IssueDate = cal.MakeDate(2022, 11, 6)
+	p.IssueDate = cal.NewDate(2022, 11, 6)
 
 	err := p.Validate()
 	assert.NoError(t, err)

@@ -18,7 +18,7 @@ type Preceding struct {
 	// Code of the previous document.
 	Code string `json:"code" jsonschema:"title=Code"`
 	// The issue date of the previous document.
-	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Human readable description on why the preceding invoice is being replaced.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Seals of approval from other organisations that may need to be listed.
