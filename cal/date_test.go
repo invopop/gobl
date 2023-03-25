@@ -59,6 +59,9 @@ func TestDateValidation(t *testing.T) {
 		dp := cal.NewDate(2021, 1, 0)
 		assert.Error(t, dp.Validate())
 		assert.Error(t, validation.Validate(dp))
+
+		dp = nil
+		assert.NoError(t, validation.Validate(dp))
 	})
 
 	t.Run("date not zero", func(t *testing.T) {
