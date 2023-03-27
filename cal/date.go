@@ -1,6 +1,7 @@
 package cal
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -32,6 +33,37 @@ func MakeDate(year int, month time.Month, day int) Date {
 	}
 }
 
+// Validate ensures the the date object looks valid.
+func (d Date) Validate() error {
+	if d.IsZero() {
+		return nil // there is a specific test for this
+	}
+	if !d.Date.IsValid() {
+		return errors.New("invalid date")
+	}
+	return nil
+}
+
+// UnmarshalJSON is used to parse a date from json and ensures that
+// we can handle invalid data reasonably.
+func (d *Date) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	// Zero dates are not great, put pass validation.
+	if s == "0000-00-00" {
+		*d = Date{}
+		return nil
+	}
+	dt, err := civil.ParseDate(s)
+	if err != nil {
+		return err
+	}
+	*d = Date{dt}
+	return nil
+}
+
 // JSONSchema returns a custom json schema for the date.
 func (Date) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
@@ -54,6 +86,9 @@ func (d *dateValidationRule) Validate(value interface{}) error {
 	if !ok {
 		inp, ok := value.(*Date)
 		if !ok {
+			return nil
+		}
+		if inp == nil {
 			return nil
 		}
 		in = *inp

@@ -69,7 +69,7 @@ func creditNote() *bill.Invoice {
 		Preceding: []*bill.Preceding{
 			{
 				Code:             "TEST",
-				IssueDate:        cal.MakeDate(2022, 12, 27),
+				IssueDate:        cal.NewDate(2022, 12, 27),
 				CorrectionMethod: co.CorrectionMethodKeyRevoked,
 			},
 		},

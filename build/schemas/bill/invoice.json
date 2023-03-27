@@ -683,8 +683,7 @@
       },
       "type": "object",
       "required": [
-        "code",
-        "issue_date"
+        "code"
       ],
       "description": "Preceding allows for information to be provided about a previous invoice that this one will replace, subtract from, or add to."
     },
