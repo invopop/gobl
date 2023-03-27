@@ -20,32 +20,10 @@
           "title": "Zone Code",
           "description": "Where inside the country the tax identity holder is based for tax purposes\nlike a village, town, district, city, county, state or province. For some\nareas, this could be a regular post or zip code. See the regime packages\nfor specific validation rules."
         },
-        "source": {
+        "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
-            {
-              "const": "tax-agency",
-              "description": "Sourced directly from a tax agency"
-            },
-            {
-              "const": "passport",
-              "description": "A passport document"
-            },
-            {
-              "const": "national",
-              "description": "National ID Card or similar"
-            },
-            {
-              "const": "permit",
-              "description": "Residential or similar permit"
-            },
-            {
-              "const": "other",
-              "description": "An other type of source not listed"
-            }
-          ],
-          "title": "Source Key",
-          "description": "What is the source document of the tax identity."
+          "title": "Type",
+          "description": "Type is set according the requirements of each regime, some have a single\ntax document type code, others require a choice to be made."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -65,5 +43,5 @@
       "description": "Identity stores the details required to identify an entity for tax purposes."
     }
   },
-  "$comment": "Generated with GOBL v0.38.1"
+  "$comment": "Generated with GOBL v0.39.0"
 }

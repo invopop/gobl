@@ -503,6 +503,58 @@
     }
   ],
   "currency": "EUR",
+  "identity_types": [
+    {
+      "key": "fiscal",
+      "name": {
+        "en": "National Tax Identity",
+        "es": "Número de Identificación Fiscal"
+      },
+      "meta": {
+        "ticketbai-id-type": "02"
+      }
+    },
+    {
+      "key": "passport",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      },
+      "meta": {
+        "ticketbai-id-type": "03"
+      }
+    },
+    {
+      "key": "foreign",
+      "name": {
+        "en": "National ID Card or similar from a foreign country",
+        "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
+      },
+      "meta": {
+        "ticketbai-id-type": "04"
+      }
+    },
+    {
+      "key": "resident",
+      "name": {
+        "en": "Residential permit",
+        "es": "Certificado de residencia"
+      },
+      "meta": {
+        "ticketbai-id-type": "05"
+      }
+    },
+    {
+      "key": "other",
+      "name": {
+        "en": "An other type of source not listed",
+        "es": "Otro documento probatorio"
+      },
+      "meta": {
+        "ticketbai-id-type": "06"
+      }
+    }
+  ],
   "tags": [
     {
       "key": "simplified",
