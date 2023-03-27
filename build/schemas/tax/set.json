@@ -38,8 +38,7 @@
       },
       "type": "object",
       "required": [
-        "cat",
-        "percent"
+        "cat"
       ],
       "description": "Combo represents the tax combination of a category code and rate key."
     },
@@ -51,5 +50,5 @@
       "description": "Set defines a list of tax categories and their rates to be used alongside taxable items."
     }
   },
-  "$comment": "Generated with GOBL v0.38.1"
+  "$comment": "Generated with GOBL v0.39.0"
 }

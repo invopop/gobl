@@ -52,6 +52,30 @@
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
+    "IdentityType": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key used to identify the type"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name for the identity type"
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional regime specific meta data"
+        }
+      },
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "description": "IdentityType describes a single possible value for a tax identity type."
+    },
     "KeyDefinition": {
       "properties": {
         "key": {
@@ -209,6 +233,14 @@
           "title": "Currency",
           "description": "Currency used by the country."
         },
+        "identity_types": {
+          "items": {
+            "$ref": "#/$defs/IdentityType"
+          },
+          "type": "array",
+          "title": "Identity Types",
+          "description": "Identity types specific for the regime and may be validated\nagainst."
+        },
         "tags": {
           "items": {
             "$ref": "#/$defs/Tag"
@@ -362,5 +394,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.38.1"
+  "$comment": "Generated with GOBL v0.39.0"
 }
