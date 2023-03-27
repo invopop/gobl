@@ -79,7 +79,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
 	rt.Key = c.Rate // may be empty!
-	rt.Percent = c.Percent
+	rt.Percent = *c.Percent
 	rt.Base = zero
 	rt.Amount = zero
 	if c.Surcharge != nil {
@@ -143,6 +143,9 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 	// Go through each line and add the price to the base of each tax
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
+			if c.Percent == nil {
+				continue // implies exempt
+			}
 			rt := t.rateTotalFor(c, tc.Zero)
 			rt.Base = rt.Base.MatchPrecision(tl.price)
 			rt.Base = rt.Base.Add(tl.price)
@@ -191,6 +194,9 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 }
 
 func (rt *RateTotal) matches(c *Combo) bool {
+	if c.Percent == nil {
+		return false
+	}
 	if c.Surcharge != nil {
 		if rt.Surcharge == nil {
 			return false
@@ -201,7 +207,7 @@ func (rt *RateTotal) matches(c *Combo) bool {
 	} else if rt.Surcharge != nil {
 		return false
 	}
-	return rt.Percent.Equals(c.Percent)
+	return rt.Percent.Equals(*c.Percent)
 }
 
 // rateTotalFor either finds of creates total objects for the category and rate.

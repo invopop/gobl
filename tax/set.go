@@ -22,7 +22,7 @@ type Combo struct {
 	// Rate within a category to apply.
 	Rate cbc.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Percent defines the percentage set manually or determined from the rate key (calculated if rate present).
-	Percent num.Percentage `json:"percent" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Additional data may be required in some regimes, the tags
@@ -41,7 +41,9 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
 		validation.Field(&c.Rate), // optional, but should be checked if present
-		validation.Field(&c.Percent, validation.Required),
+		validation.Field(&c.Percent,
+			validation.When(len(c.Tags) == 0, validation.Required),
+		),
 		validation.Field(&c.Surcharge), // not required, but should be valid number
 		validation.Field(&c.Tags, validation.Each(r.InCategoryTags(c.Category))),
 	)
@@ -73,7 +75,8 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 			return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
 		}
 
-		c.Percent = value.Percent
+		p := value.Percent // copy
+		c.Percent = &p
 		if value.Surcharge != nil {
 			s := *value.Surcharge // copy
 			c.Surcharge = &s
