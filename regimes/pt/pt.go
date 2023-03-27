@@ -4,6 +4,7 @@ package pt
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -15,6 +16,11 @@ import (
 func init() {
 	tax.RegisterRegime(New())
 }
+
+// Custom keys used typically in meta information
+const (
+	KeyTaxExemptionCode cbc.Key = "at-tax-exemption-code"
+)
 
 // Zone code definitions for Portugal based on districts and
 // autonomous regions based on ISO 3166-2:PT.
@@ -41,6 +47,12 @@ const (
 	ZoneMadeira        l10n.Code = "30" // Autonomous Region
 )
 
+// AT official codes to include in stamps.
+const (
+	StampProviderATATCUD cbc.Key = "at-atcud"
+	StampProviderATQR    cbc.Key = "at-qr"
+)
+
 // New instantiates a new Portugal regime for the given zone.
 func New() *tax.Regime {
 	return &tax.Regime{
@@ -65,6 +77,7 @@ func New() *tax.Regime {
 					i18n.PT: "Imposto sobre o Valor Acrescentado",
 				},
 				Retained: false,
+				Tags:     vatTaxTags,
 				Rates: []*tax.Rate{
 					{
 						Key: common.TaxRateStandard,
@@ -77,11 +90,6 @@ func New() *tax.Regime {
 								Zones:   []l10n.Code{ZoneAzores},
 								Since:   cal.NewDate(2011, 1, 1),
 								Percent: num.MakePercentage(160, 3),
-							},
-							{
-								Zones:   []l10n.Code{ZoneAzores},
-								Since:   cal.NewDate(2011, 1, 1),
-								Percent: num.MakePercentage(180, 3),
 							},
 							{
 								Zones:   []l10n.Code{ZoneMadeira},
