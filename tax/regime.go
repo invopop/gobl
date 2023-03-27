@@ -56,12 +56,16 @@ type Regime struct {
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
 	// Validator is a method to use to validate a document in a given region.
-	Validator func(doc interface{}) error `json:"-"`
+	Validator func(doc interface{}) error
 
 	// Calculator is used to performs regime specific calculations on data,
 	// including any normalization that might need to take place such as
 	// with tax codes and removing white-space.
-	Calculator func(doc interface{}) error `json:"-"`
+	Calculator func(doc interface{}) error
+
+	// Corrector provides a method to use to correct a document of the
+	// provided type.
+	Corrector func(doc interface{}) interface{}
 }
 
 // Zone represents an area inside a country, like a province

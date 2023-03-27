@@ -2,6 +2,7 @@ package bill
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -138,6 +139,83 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		err = r.ValidateObject(inv)
 	}
 	return err
+}
+
+func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
+	o := new(Options)
+	for _, row := range opts {
+		row(o)
+	}
+	o.Previous = inv
+
+	i2, err := inv.Clone()
+	if err != nil {
+		return nil, err
+	}
+
+	i2.UUID = nil
+	i2.Series = ""
+	i2.Code = ""
+	i2.Preceding = append(i2.Preceding, &Preceding{
+		UUID:             inv.UUID,
+		Series:           inv.Series,
+		Code:             inv.Code,
+		IssueDate:        &inv.IssueDate,
+		Reason:           o.Reason,
+		Corrections:      o.Corrections,
+		CorrectionMethod: o.CorrectionMethod,
+	})
+
+	i2.Type = InvoiceTypeCorrective
+	if o.Refund {
+		i2.Type = InvoiceTypeCreditNote
+	} else if o.Append {
+		i2.Type = InvoiceTypeDebitNote
+	}
+
+	// Now grab the regime and process any local corrections or
+	// processing errors.
+	r := taxRegimeFor(i2.Supplier)
+	if r != nil {
+		if co, ok := r.Corrector(i2).(Corrector); ok {
+			if err := co.Correct(i2, o); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return i2, nil
+}
+
+// Clone makes a copy of the invoice by serializing and deserializing it.
+// the contents.
+func (inv *Invoice) Clone() (*Invoice, error) {
+	i2 := new(Invoice)
+	data, err := json.Marshal(inv)
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(data, i2); err != nil {
+		return nil, err
+	}
+	return i2, nil
+}
+
+// Invert effectively reverses the invoice by inverting the sign of all quantity
+// or amount values.
+func (inv *Invoice) Invert() {
+	for _, row := range inv.Lines {
+		row.Quantity = row.Quantity.Invert()
+	}
+	for _, row := range inv.Charges {
+		row.Amount = row.Amount.Invert()
+	}
+	for _, row := range inv.Discounts {
+		row.Amount = row.Amount.Invert()
+	}
+	for _, row := range inv.Outlays {
+		row.Amount = row.Amount.Invert()
+	}
 }
 
 // Totals contains the summaries of all calculations for the invoice.
