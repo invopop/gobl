@@ -8,39 +8,41 @@ import (
 
 // Tax exemption tags
 const (
-	TagExempt cbc.Key = "exempt"
-	TagM01    cbc.Key = "m01"
-	TagM02    cbc.Key = "m02"
-	TagM04    cbc.Key = "m04"
-	TagM05    cbc.Key = "m05"
-	TagM06    cbc.Key = "m06"
-	TagM07    cbc.Key = "m07"
-	TagM09    cbc.Key = "m09"
-	TagM10    cbc.Key = "m10"
-	TagM11    cbc.Key = "m11"
-	TagM12    cbc.Key = "m12"
-	TagM13    cbc.Key = "m13"
-	TagM14    cbc.Key = "m14"
-	TagM15    cbc.Key = "m15"
-	TagM16    cbc.Key = "m16"
-	TagM19    cbc.Key = "m19"
-	TagM20    cbc.Key = "m20"
-	TagM21    cbc.Key = "m21"
-	TagM25    cbc.Key = "m25"
-	TagM30    cbc.Key = "m30"
-	TagM31    cbc.Key = "m31"
-	TagM32    cbc.Key = "m32"
-	TagM33    cbc.Key = "m33"
-	TagM40    cbc.Key = "m40"
-	TagM41    cbc.Key = "m41"
-	TagM42    cbc.Key = "m42"
-	TagM43    cbc.Key = "m43"
-	TagM99    cbc.Key = "m99"
+	TagExempt        cbc.Key = "exempt"
+	TagOutlay        cbc.Key = "outlay"
+	TagIntrastate    cbc.Key = "intrastate-export"
+	TagImports       cbc.Key = "imports"
+	TagExports       cbc.Key = "exports"
+	TagSuspension    cbc.Key = "suspension-scheme"
+	TagInternalOps   cbc.Key = "internal-operations"
+	TagSmallRetail   cbc.Key = "small-retail-scheme"
+	TagExemptScheme  cbc.Key = "exempt-scheme"
+	TagTobacco       cbc.Key = "tobacco-scheme"
+	TagMargin        cbc.Key = "margin-scheme"
+	TagTravel        cbc.Key = "travel"
+	TagSecondHand    cbc.Key = "second-hand"
+	TagArt           cbc.Key = "art"
+	TagAntiques      cbc.Key = "antiques"
+	TagTrasmission   cbc.Key = "goods-transmission"
+	TagOther         cbc.Key = "other"
+	TagFlatRate      cbc.Key = "flat-rate-scheme"
+	TagNonDeductible cbc.Key = "non-deductible"
+	TagConsignment   cbc.Key = "consignment-goods"
+	TagReverseCharge cbc.Key = "reverse-charge"
+	TagWaste         cbc.Key = "waste"
+	TagCivilEng      cbc.Key = "civil-eng"
+	TagGreenhouse    cbc.Key = "greenhouse"
+	TagWoods         cbc.Key = "woods"
+	TagB2B           cbc.Key = "b2b"
+	TagIntraEU       cbc.Key = "intraeu"
+	TagRealEstate    cbc.Key = "real-estate"
+	TagGold          cbc.Key = "gold"
+	TagNonTaxable    cbc.Key = "non-taxable"
 )
 
 var vatTaxTags = []*tax.Tag{
 	{
-		Key: TagExempt.With(TagM01),
+		Key: TagExempt.With(TagOutlay),
 		Name: i18n.String{
 			i18n.EN: "Article 16, No. 6 of the VAT code",
 			i18n.PT: "Artigo 16.°, n.° 6 do CIVA",
@@ -50,7 +52,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM02),
+		Key: TagExempt.With(TagIntrastate),
 		Name: i18n.String{
 			i18n.EN: "Article 6 of the Decree-Law 198/90 of 19th June",
 			i18n.PT: "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho",
@@ -60,7 +62,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM04),
+		Key: TagExempt.With(TagImports),
 		Name: i18n.String{
 			i18n.EN: "Exempt pursuant to article 13 of the VAT code",
 			i18n.PT: "Isento artigo 13.° do CIVA",
@@ -70,7 +72,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM05),
+		Key: TagExempt.With(TagExports),
 		Name: i18n.String{
 			i18n.EN: "Exempt pursuant to article 14 of the VAT code",
 			i18n.PT: "Isento artigo 14.° do CIVA",
@@ -80,7 +82,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM06),
+		Key: TagExempt.With(TagSuspension),
 		Name: i18n.String{
 			i18n.EN: "Exempt pursuant to article 15 of the VAT code",
 			i18n.PT: "Isento artigo 15.° do CIVA",
@@ -90,7 +92,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM07),
+		Key: TagExempt.With(TagInternalOps),
 		Name: i18n.String{
 			i18n.EN: "Exempt pursuant to article 9 of the VAT code",
 			i18n.PT: "Isento artigo 9.° do CIVA",
@@ -100,7 +102,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM09),
+		Key: TagExempt.With(TagSmallRetail),
 		Name: i18n.String{
 			i18n.EN: "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
 			i18n.PT: "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA",
@@ -110,7 +112,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM10),
+		Key: TagExempt.With(TagExemptScheme),
 		Name: i18n.String{
 			i18n.EN: "VAT - exemption scheme / Article 57 of the VAT code",
 			i18n.PT: "IVA - regime de isenção / Artigo 57.° do CIVA",
@@ -120,7 +122,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM11),
+		Key: TagExempt.With(TagTobacco),
 		Name: i18n.String{
 			i18n.EN: "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
 			i18n.PT: "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto",
@@ -130,7 +132,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM12),
+		Key: TagExempt.With(TagMargin).With(TagTravel),
 		Name: i18n.String{
 			i18n.EN: "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
 			i18n.PT: "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho",
@@ -140,7 +142,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM13),
+		Key: TagExempt.With(TagMargin).With(TagSecondHand),
 		Name: i18n.String{
 			i18n.EN: "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
 			i18n.PT: "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro",
@@ -150,7 +152,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM14),
+		Key: TagExempt.With(TagMargin).With(TagArt),
 		Name: i18n.String{
 			i18n.EN: "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
 			i18n.PT: "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro",
@@ -160,7 +162,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM15),
+		Key: TagExempt.With(TagMargin).With(TagAntiques),
 		Name: i18n.String{
 			i18n.EN: "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
 			i18n.PT: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro",
@@ -170,7 +172,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM16),
+		Key: TagExempt.With(TagTrasmission),
 		Name: i18n.String{
 			i18n.EN: "Exempt pursuant to Article 14 of the RITI",
 			i18n.PT: "Isento artigo 14.° do RITI",
@@ -180,7 +182,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM19),
+		Key: TagExempt.With(TagOther),
 		Name: i18n.String{
 			i18n.EN: "Other exemptions - Temporary exemptions determined by specific legislation",
 			i18n.PT: "Outras isenções - Isenções temporárias determinadas em diploma próprio",
@@ -190,7 +192,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM20),
+		Key: TagExempt.With(TagFlatRate),
 		Name: i18n.String{
 			i18n.EN: "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
 			i18n.PT: "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA",
@@ -200,7 +202,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM21),
+		Key: TagExempt.With(TagNonDeductible),
 		Name: i18n.String{
 			i18n.EN: "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
 			i18n.PT: "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA",
@@ -210,7 +212,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM25),
+		Key: TagExempt.With(TagConsignment),
 		Name: i18n.String{
 			i18n.EN: "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
 			i18n.PT: "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA",
@@ -220,7 +222,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM30),
+		Key: TagExempt.With(TagReverseCharge).With(TagWaste),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA",
@@ -230,7 +232,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM31),
+		Key: TagExempt.With(TagReverseCharge).With(TagCivilEng),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA",
@@ -240,7 +242,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM32),
+		Key: TagExempt.With(TagReverseCharge).With(TagGreenhouse),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA",
@@ -250,7 +252,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM33),
+		Key: TagExempt.With(TagReverseCharge).With(TagWoods),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA",
@@ -260,7 +262,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM40),
+		Key: TagExempt.With(TagReverseCharge).With(TagB2B),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
 			i18n.PT: "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário",
@@ -270,7 +272,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM41),
+		Key: TagExempt.With(TagReverseCharge).With(TagIntraEU),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Article 8 No. 3 of the RITI",
 			i18n.PT: "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI",
@@ -280,7 +282,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM42),
+		Key: TagExempt.With(TagReverseCharge).With(TagRealEstate),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
 			i18n.PT: "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro",
@@ -290,7 +292,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM43),
+		Key: TagExempt.With(TagReverseCharge).With(TagGold),
 		Name: i18n.String{
 			i18n.EN: "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
 			i18n.PT: "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro",
@@ -300,7 +302,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagM99),
+		Key: TagExempt.With(TagNonTaxable),
 		Name: i18n.String{
 			i18n.EN: "Not subject to tax or not taxed",
 			i18n.PT: "Não sujeito ou não tributado",
