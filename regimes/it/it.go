@@ -2,6 +2,7 @@
 package it
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
@@ -31,12 +32,13 @@ func New() *tax.Regime {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
-		Tags:       invoiceTags,
-		Scenarios:  scenarios, // scenarios.go
-		Validator:  Validate,
-		Calculator: Calculate,
-		Zones:      zones,      // zones.go
-		Categories: categories, // categories.go
+		IdentityTypes: taxIdentityTypes,
+		Tags:          invoiceTags,
+		Scenarios:     scenarios, // scenarios.go
+		Validator:     Validate,
+		Calculator:    Calculate,
+		Zones:         zones,      // zones.go
+		Categories:    categories, // categories.go
 	}
 }
 
@@ -45,6 +47,8 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	}
 	return nil
 }
