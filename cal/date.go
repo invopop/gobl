@@ -33,6 +33,22 @@ func MakeDate(year int, month time.Month, day int) Date {
 	}
 }
 
+// Today generates a new date instance for today.
+func Today() Date {
+	t := time.Now().UTC()
+	return Date{
+		civil.DateOf(t),
+	}
+}
+
+// TodayIn generates a new date instance for today in the given location.
+func TodayIn(loc *time.Location) Date {
+	t := time.Now().In(loc)
+	return Date{
+		civil.DateOf(t),
+	}
+}
+
 // Validate ensures the the date object looks valid.
 func (d Date) Validate() error {
 	if d.IsZero() {

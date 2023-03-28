@@ -78,11 +78,13 @@ func New() *tax.Regime {
 		Categories: taxCategories,
 		Validator:  Validate,
 		Calculator: Calculate,
-		Corrector:  corrector,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
 		Preceding: &tax.PrecedingDefinitions{
+			Types: []cbc.Key{
+				bill.InvoiceTypeCorrective,
+			},
 			Corrections:       correctionList,
 			CorrectionMethods: correctionMethodList,
 		},
@@ -105,14 +107,6 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
-	}
-	return nil
-}
-
-func corrector(doc interface{}) interface{} {
-	switch doc.(type) {
-	case *bill.Invoice:
-		return invoiceCorrector{}
 	}
 	return nil
 }

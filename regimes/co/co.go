@@ -51,6 +51,13 @@ func New() *tax.Regime {
 		Calculator: Calculate,
 		Zones:      zones, // see zones.go
 		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
+			Types: []cbc.Key{
+				bill.InvoiceTypeCreditNote,
+			},
+			Stamps: []cbc.Key{
+				StampProviderDIANCUDE,
+				StampProviderDIANQR,
+			},
 			CorrectionMethods: correctionMethodList,
 		},
 		Categories: []*tax.Category{

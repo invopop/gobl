@@ -62,10 +62,6 @@ type Regime struct {
 	// including any normalization that might need to take place such as
 	// with tax codes and removing white-space.
 	Calculator func(doc interface{}) error
-
-	// Corrector provides a method to use to correct a document of the
-	// provided type.
-	Corrector func(doc interface{}) interface{}
 }
 
 // Zone represents an area inside a country, like a province
@@ -150,6 +146,10 @@ type RateValue struct {
 // PrecedingDefinitions contains details about what can be defined in Invoice
 // preceding document data.
 type PrecedingDefinitions struct {
+	// The types of sub-documents supported by the regime
+	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
+	// Stamps that must be copied from the preceding document.
+	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Corrections contains a list of all the keys that can be used to identify a correction.
 	Corrections []*KeyDefinition `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 	// CorrectionMethods describe the methods used to correct an invoice.

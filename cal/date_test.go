@@ -8,10 +8,10 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDateJSONParsing(t *testing.T) {
-
 	// Handle a zero date
 	t.Run("zero date", func(t *testing.T) {
 		var d cal.Date
@@ -109,4 +109,19 @@ func TestDateValidation(t *testing.T) {
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "too late")
 	})
+}
+
+func TestDateToday(t *testing.T) {
+	d := cal.Today()
+	assert.Equal(t, d.Year, time.Now().Year())
+	assert.Equal(t, d.Month, time.Now().Month())
+	assert.Equal(t, d.Day, time.Now().Day())
+
+	l, err := time.LoadLocation("America/New_York")
+	require.NoError(t, err)
+	tn := time.Now().In(l)
+	d = cal.TodayIn(l)
+	assert.Equal(t, d.Year, tn.Year())
+	assert.Equal(t, d.Month, tn.Month())
+	assert.Equal(t, d.Day, tn.Day())
 }
