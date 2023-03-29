@@ -2,10 +2,13 @@ package gobl
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/invopop/validation"
 
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
@@ -188,4 +191,23 @@ func (e *Envelope) Extract() interface{} {
 		return nil
 	}
 	return e.Document.Instance()
+}
+
+// Correct will attempt to build a new envelope as a correction of the
+// current envelope contents, if possible.
+func (e *Envelope) Correct(opts ...cbc.Option) (*Envelope, error) {
+	doc := e.Document.Instance()
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		if len(e.Head.Stamps) > 0 {
+			opts = append(opts, bill.WithStamps(e.Head.Stamps))
+		}
+		i2, err := obj.Correct(opts...)
+		if err != nil {
+			return nil, err
+		}
+		return Envelop(i2)
+	default:
+		return nil, errors.New("cannot correct this type of document")
+	}
 }

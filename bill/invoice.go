@@ -2,13 +2,13 @@ package bill
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
@@ -140,50 +140,44 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	return err
 }
 
-// Totals contains the summaries of all calculations for the invoice.
-type Totals struct {
-	// Sum of all line item sums
-	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
-	// Sum of all document level discounts
-	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Discount"`
-	// Sum of all document level charges
-	Charge *num.Amount `json:"charge,omitempty" jsonschema:"title=Charge"`
-	// If prices include tax, this is the total tax included in the price.
-	TaxIncluded *num.Amount `json:"tax_included,omitempty" jsonschema:"title=Tax Included"`
-	// Sum of all line sums minus the discounts, plus the charges, without tax.
-	Total num.Amount `json:"total" jsonschema:"title=Total"`
-	// Summary of all the taxes included in the invoice.
-	Taxes *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals"`
-	// Total amount of tax to apply to the invoice.
-	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax"`
-	// Grand total after all taxes have been applied.
-	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
-	// Total paid in outlays that need to be reimbursed
-	Outlays *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals"`
-	// Total amount to be paid after applying taxes and outlays.
-	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
-	// Total amount already paid in advance.
-	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance"`
-	// How much actually needs to be paid now.
-	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
+// Clone makes a copy of the invoice by serializing and deserializing it.
+// the contents.
+func (inv *Invoice) Clone() (*Invoice, error) {
+	i2 := new(Invoice)
+	data, err := json.Marshal(inv)
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(data, i2); err != nil {
+		return nil, err
+	}
+	return i2, nil
 }
 
-// ValidateWithContext checks the totals calculated for the invoice.
-func (t *Totals) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, t,
-		validation.Field(&t.Sum, validation.Required),
-		validation.Field(&t.Discount),
-		validation.Field(&t.Charge),
-		validation.Field(&t.TaxIncluded),
-		validation.Field(&t.Total, validation.Required),
-		validation.Field(&t.Taxes),
-		validation.Field(&t.Tax),
-		validation.Field(&t.TotalWithTax),
-		validation.Field(&t.Outlays),
-		validation.Field(&t.Payable),
-		validation.Field(&t.Advances),
-		validation.Field(&t.Due),
-	)
+// Invert effectively reverses the invoice by inverting the sign of all quantity
+// or amount values.
+func (inv *Invoice) Invert() {
+	for _, row := range inv.Lines {
+		row.Quantity = row.Quantity.Invert()
+	}
+	for _, row := range inv.Charges {
+		row.Amount = row.Amount.Invert()
+	}
+	for _, row := range inv.Discounts {
+		row.Amount = row.Amount.Invert()
+	}
+	for _, row := range inv.Outlays {
+		row.Amount = row.Amount.Invert()
+	}
+}
+
+// Empty is a convenience method that will empty all the lines and
+// related rows.
+func (inv *Invoice) Empty() {
+	inv.Lines = make([]*Line, 0)
+	inv.Charges = make([]*Charge, 0)
+	inv.Discounts = make([]*Discount, 0)
+	inv.Outlays = make([]*Outlay, 0)
 }
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
@@ -467,23 +461,6 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 		return nil
 	}
 	return tax.RegimeFor(tID.Country, tID.Zone)
-}
-
-// Reset sets all the totals to the provided zero amount with the correct
-// decimal places.
-func (t *Totals) reset(zero num.Amount) {
-	t.Sum = zero
-	t.Discount = nil
-	t.Charge = nil
-	t.TaxIncluded = nil
-	t.Total = zero
-	t.Taxes = nil
-	t.Tax = zero
-	t.TotalWithTax = zero
-	t.Outlays = nil
-	t.Payable = zero
-	t.Advances = nil
-	t.Due = nil
 }
 
 // JSONSchemaExtend extends the schema with additional property details

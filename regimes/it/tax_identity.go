@@ -79,19 +79,21 @@ func validateTaxCode(value interface{}) error {
 	if !ok || code == "" {
 		return nil
 	}
+	str := code.String()
 
-	for _, v := range code {
+	for _, v := range str {
 		x := v - 48
 		if x < 0 || x > 9 {
 			return errors.New("contains invalid characters")
 		}
 	}
 
-	if len(code) != 11 {
+	if len(str) != 11 {
 		return errors.New("invalid length")
 	}
 
-	if common.ComputeLuhnCheckDigit(string(code[:10])) != int(code[10]-'0') {
+	chk := common.ComputeLuhnCheckDigit(str[:10])
+	if chk != str[10:] {
 		return errors.New("invalid check digit")
 	}
 

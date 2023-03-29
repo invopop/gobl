@@ -56,12 +56,12 @@ type Regime struct {
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
 	// Validator is a method to use to validate a document in a given region.
-	Validator func(doc interface{}) error `json:"-"`
+	Validator func(doc interface{}) error
 
 	// Calculator is used to performs regime specific calculations on data,
 	// including any normalization that might need to take place such as
 	// with tax codes and removing white-space.
-	Calculator func(doc interface{}) error `json:"-"`
+	Calculator func(doc interface{}) error
 }
 
 // Zone represents an area inside a country, like a province
@@ -146,6 +146,10 @@ type RateValue struct {
 // PrecedingDefinitions contains details about what can be defined in Invoice
 // preceding document data.
 type PrecedingDefinitions struct {
+	// The types of sub-documents supported by the regime
+	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
+	// Stamps that must be copied from the preceding document.
+	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Corrections contains a list of all the keys that can be used to identify a correction.
 	Corrections []*KeyDefinition `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 	// CorrectionMethods describe the methods used to correct an invoice.
@@ -395,4 +399,12 @@ func (rv *RateValue) HasZone(zone l10n.Code) bool {
 		}
 	}
 	return false
+}
+
+// HasType returns true if the preceding definitions has a type that matches the one provided.
+func (pd *PrecedingDefinitions) HasType(t cbc.Key) bool {
+	if pd == nil {
+		return false // no preceding definitions
+	}
+	return t.In(pd.Types...)
 }

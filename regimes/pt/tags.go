@@ -23,7 +23,7 @@ const (
 	TagSecondHand    cbc.Key = "second-hand"
 	TagArt           cbc.Key = "art"
 	TagAntiques      cbc.Key = "antiques"
-	TagTrasmission   cbc.Key = "goods-transmission"
+	TagTransmission  cbc.Key = "goods-transmission"
 	TagOther         cbc.Key = "other"
 	TagFlatRate      cbc.Key = "flat-rate-scheme"
 	TagNonDeductible cbc.Key = "non-deductible"
@@ -172,7 +172,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagExempt.With(TagTrasmission),
+		Key: TagExempt.With(TagTransmission),
 		Name: i18n.String{
 			i18n.EN: "Exempt pursuant to Article 14 of the RITI",
 			i18n.PT: "Isento artigo 14.° do RITI",
