@@ -400,3 +400,11 @@ func (rv *RateValue) HasZone(zone l10n.Code) bool {
 	}
 	return false
 }
+
+// HasType returns true if the preceding definitions has a type that matches the one provided.
+func (pd *PrecedingDefinitions) HasType(t cbc.Key) bool {
+	if pd == nil {
+		return false // no preceding definitions
+	}
+	return t.In(pd.Types...)
+}

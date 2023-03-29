@@ -11,12 +11,12 @@ import (
 // correctionOptions defines a structure used to pass configuration options
 // for certain method calls.
 type correctionOptions struct {
-	Stamps           []*cbc.Stamp
-	Refund           bool
-	Append           bool
-	Reason           string
-	CorrectionMethod cbc.Key
-	Corrections      []cbc.Key
+	stamps           []*cbc.Stamp
+	credit           bool
+	debit            bool
+	reason           string
+	correctionMethod cbc.Key
+	corrections      []cbc.Key
 }
 
 // WithStamps provides a configuration option with stamp information
@@ -25,7 +25,7 @@ type correctionOptions struct {
 func WithStamps(stamps []*cbc.Stamp) cbc.Option {
 	return func(o interface{}) {
 		opts := o.(*correctionOptions)
-		opts.Stamps = stamps
+		opts.stamps = stamps
 	}
 }
 
@@ -33,7 +33,7 @@ func WithStamps(stamps []*cbc.Stamp) cbc.Option {
 func WithReason(reason string) cbc.Option {
 	return func(o interface{}) {
 		opts := o.(*correctionOptions)
-		opts.Reason = reason
+		opts.reason = reason
 	}
 }
 
@@ -41,7 +41,7 @@ func WithReason(reason string) cbc.Option {
 func WithCorrectionMethod(method cbc.Key) cbc.Option {
 	return func(o interface{}) {
 		opts := o.(*correctionOptions)
-		opts.CorrectionMethod = method
+		opts.correctionMethod = method
 	}
 }
 
@@ -50,21 +50,22 @@ func WithCorrectionMethod(method cbc.Key) cbc.Option {
 func WithCorrection(correction cbc.Key) cbc.Option {
 	return func(o interface{}) {
 		opts := o.(*correctionOptions)
-		opts.Corrections = append(opts.Corrections, correction)
+		opts.corrections = append(opts.corrections, correction)
 	}
 }
 
-// Refund indicates that the corrective operation is a refund.
-var Refund cbc.Option = func(o interface{}) {
+// Credit indicates that the corrective operation requires a credit note
+// or equivalent.
+var Credit cbc.Option = func(o interface{}) {
 	opts := o.(*correctionOptions)
-	opts.Refund = true
+	opts.credit = true
 }
 
-// Append indicates that the corrective operation is to append
-// new items to the previous invoice.
-var Append cbc.Option = func(o interface{}) {
+// Debit indicates that the corrective operation is to append
+// new items to the previous invoice, usually as a debit note.
+var Debit cbc.Option = func(o interface{}) {
 	opts := o.(*correctionOptions)
-	opts.Append = true
+	opts.debit = true
 }
 
 // Correct builds a new invoice using this one as a base for the preceding
@@ -73,6 +74,9 @@ func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
 	o := new(correctionOptions)
 	for _, row := range opts {
 		row(o)
+	}
+	if o.credit && o.debit {
+		return nil, errors.New("cannot use both credit and debit options")
 	}
 
 	r := taxRegimeFor(inv.Supplier)
@@ -95,32 +99,34 @@ func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
 		Series:           inv.Series,
 		Code:             inv.Code,
 		IssueDate:        &inv.IssueDate,
-		Reason:           o.Reason,
-		Corrections:      o.Corrections,
-		CorrectionMethod: o.CorrectionMethod,
+		Reason:           o.reason,
+		Corrections:      o.corrections,
+		CorrectionMethod: o.correctionMethod,
 	}
 
 	// Take the regime def to figure out what needs to be copied
-	if o.Refund {
-		if InvoiceTypeCreditNote.In(r.Preceding.Types...) {
+	if o.credit {
+		if r.Preceding.HasType(InvoiceTypeCreditNote) {
 			// regular credit note
 			i2.Type = InvoiceTypeCreditNote
-		} else if InvoiceTypeCorrective.In(r.Preceding.Types...) {
+		} else if r.Preceding.HasType(InvoiceTypeCorrective) {
 			// corrective invoice with negative values
 			i2.Type = InvoiceTypeCorrective
 			i2.Invert()
 		} else {
-			return nil, errors.New("refund not supported by regime")
+			return nil, errors.New("credit not supported by regime")
 		}
-	} else if o.Append {
-		if InvoiceTypeDebitNote.In(r.Preceding.Types...) {
-			// regular debit note
+	} else if o.debit {
+		if r.Preceding.HasType(InvoiceTypeDebitNote) {
+			// regular debit note, implies no rows as new ones
+			// will be added
 			i2.Type = InvoiceTypeDebitNote
+			i2.Empty()
 		} else {
-			return nil, errors.New("append not supported by regime")
+			return nil, errors.New("debit not supported by regime")
 		}
 	} else {
-		if InvoiceTypeCorrective.In(r.Preceding.Types...) {
+		if r.Preceding.HasType(InvoiceTypeCorrective) {
 			i2.Type = InvoiceTypeCorrective
 		} else {
 			return nil, errors.New("correction not supported by regime")
@@ -128,20 +134,23 @@ func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
 	}
 
 	// Make sure the stamps are there too
-	for _, k := range r.Preceding.Stamps {
-		var s *cbc.Stamp
-		for _, row := range o.Stamps {
-			if row.Provider == k {
-				s = row
-				break
+	if r.Preceding != nil {
+		for _, k := range r.Preceding.Stamps {
+			var s *cbc.Stamp
+			for _, row := range o.stamps {
+				if row.Provider == k {
+					s = row
+					break
+				}
 			}
+			if s == nil {
+				return nil, fmt.Errorf("missing stamp: %v", k)
+			}
+			pre.Stamps = append(pre.Stamps, s)
 		}
-		if s == nil {
-			return nil, fmt.Errorf("missing stamp: %v", k)
-		}
-		pre.Stamps = append(pre.Stamps, s)
 	}
 
-	i2.Preceding = append(i2.Preceding, pre)
+	// Replace all previous preceding data
+	i2.Preceding = []*Preceding{pre}
 	return i2, nil
 }

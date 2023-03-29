@@ -17,9 +17,9 @@ import (
 )
 
 func TestInvoiceCorrect(t *testing.T) {
+	// Spanish Case (only corrective)
 	i := testInvoiceESForCorrection(t)
-
-	i2, err := i.Correct(bill.Refund, bill.WithReason("test refund"))
+	i2, err := i.Correct(bill.Credit, bill.WithReason("test refund"))
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCorrective, i2.Type)
 	assert.Equal(t, i2.Lines[0].Quantity.String(), "-10")
@@ -31,16 +31,28 @@ func TestInvoiceCorrect(t *testing.T) {
 	err = i2.Calculate()
 	require.NoError(t, err)
 
-	_, err = i.Correct(bill.Append, bill.WithReason("should fail"))
+	_, err = i.Correct(bill.Debit, bill.WithReason("should fail"))
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "append not supported")
+	assert.Contains(t, err.Error(), "debit not supported")
 
 	i2, err = i.Correct()
 	require.NoError(t, err)
 	assert.Equal(t, i2.Type, bill.InvoiceTypeCorrective)
 
+	// France case (both corrective and credit note)
+	i = testInvoiceFRForCorrection(t)
+	i2, err = i.Correct()
+	require.NoError(t, err)
+	assert.Equal(t, i2.Type, bill.InvoiceTypeCorrective)
+
+	i2, err = i.Correct(bill.Credit)
+	require.NoError(t, err)
+	assert.Equal(t, i2.Type, bill.InvoiceTypeCreditNote)
+
+	// Colombia case (only credit note)
+
 	i = testInvoiceCOForCorrection(t)
-	_, err = i.Correct(bill.Refund)
+	_, err = i.Correct(bill.Credit)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "missing stamp")
 
@@ -50,7 +62,7 @@ func TestInvoiceCorrect(t *testing.T) {
 			Value:    "FOOO",
 		},
 		{
-			Provider: co.StampProviderDIANQR,
+			Provider: co.StampProviderDIANQR, // not copied!
 			Value:    "BARRRR",
 		},
 	}
@@ -59,11 +71,13 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "correction not supported by regime")
 
-	i2, err = i.Correct(bill.Refund, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
+	i2, err = i.Correct(bill.Credit, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
 	require.NoError(t, err)
 	assert.Equal(t, i2.Type, bill.InvoiceTypeCreditNote)
-	assert.Len(t, i2.Preceding[0].Stamps, 2)
-	assert.Equal(t, i2.Preceding[0].CorrectionMethod, co.CorrectionMethodKeyRevoked)
+	pre = i2.Preceding[0]
+	require.Len(t, pre.Stamps, 1)
+	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
+	assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
 }
 
 func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
@@ -84,6 +98,49 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "54387763P",
+			},
+		},
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+				Discounts: []*bill.LineDiscount{
+					{
+						Reason:  "Testing",
+						Percent: num.NewPercentage(10, 2),
+					},
+				},
+			},
+		},
+	}
+	return i
+}
+
+func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
+	t.Helper()
+	i := &bill.Invoice{
+		Series: "TEST",
+		Code:   "123",
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.FR,
+				Code:    "732829320",
+			},
+		},
+		Customer: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.FR,
+				Code:    "391838042",
 			},
 		},
 		IssueDate: cal.MakeDate(2022, 6, 13),

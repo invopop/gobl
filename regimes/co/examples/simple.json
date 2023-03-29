@@ -1,0 +1,65 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "code": "1234",
+  "series": "SETT",
+  "currency": "COP",
+  "issue_date": "2021-01-01",
+  "supplier": {
+    "tax_id": {
+      "country": "CO",
+      "code": "9014514812",
+      "zone": "11001"
+    },
+    "name": "EXAMPLE SUPPLIER S.A.S."
+  },
+  "customer": {
+    "tax_id": {
+      "country": "CO",
+      "code": "9014514805",
+      "zone": "11001"
+    },
+    "name": "EXAMPLE CUSTOMER S.A.S.",
+    "addresses": [
+      {
+        "street": "CRA 8 113 31 OF 703",
+        "zone": "Bogotá, D.C.",
+        "region": "Bogotá",
+        "country": "CO"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "benito.ortiz@example.com"
+      }
+    ],
+    "telephones": [
+      {
+        "num": "3114131811"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Servicios Mes de Julio 2022",
+        "price": "200000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "percent": "19%"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2021-01-01"
+        }
+      ]
+    }
+  }
+}

@@ -91,7 +91,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.CO, Code: tt.code, Zone: tt.zone}
+			tID := &tax.Identity{Country: l10n.PT, Code: tt.code, Zone: tt.zone}
 			err := pt.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
