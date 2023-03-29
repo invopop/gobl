@@ -14582,6 +14582,12 @@
   ],
   "currency": "COP",
   "preceding": {
+    "types": [
+      "credit-note"
+    ],
+    "stamps": [
+      "dian-cude"
+    ],
     "correction_methods": [
       {
         "key": "partial",

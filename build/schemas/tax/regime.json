@@ -107,6 +107,22 @@
     },
     "PrecedingDefinitions": {
       "properties": {
+        "types": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Types",
+          "description": "The types of sub-documents supported by the regime"
+        },
+        "stamps": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Stamps",
+          "description": "Stamps that must be copied from the preceding document."
+        },
         "corrections": {
           "items": {
             "$ref": "#/$defs/KeyDefinition"
@@ -394,5 +410,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.39.0"
+  "$comment": "Generated with GOBL v0.40.0"
 }

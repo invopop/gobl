@@ -6,6 +6,12 @@
   },
   "country": "FR",
   "currency": "EUR",
+  "preceding": {
+    "types": [
+      "corrective",
+      "credit-note"
+    ]
+  },
   "categories": [
     {
       "code": "VAT",
