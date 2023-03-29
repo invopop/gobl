@@ -19,6 +19,11 @@ import (
 func TestInvoiceCorrect(t *testing.T) {
 	// Spanish Case (only corrective)
 	i := testInvoiceESForCorrection(t)
+
+	_, err := i.Correct(bill.Credit, bill.Debit)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot use both credit and debit options")
+
 	i2, err := i.Correct(bill.Credit, bill.WithReason("test refund"))
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCorrective, i2.Type)
