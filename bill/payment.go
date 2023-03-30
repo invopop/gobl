@@ -29,6 +29,14 @@ func (p *Payment) Validate() error {
 	)
 }
 
+// ResetAdvances clears the advances list.
+func (p *Payment) ResetAdvances() {
+	if p == nil {
+		return
+	}
+	p.Advances = make([]*pay.Advance, 0)
+}
+
 func (p *Payment) calculateAdvances(totalWithTax num.Amount) {
 	for _, a := range p.Advances {
 		a.CalculateFrom(totalWithTax)

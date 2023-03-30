@@ -68,32 +68,29 @@ var Debit cbc.Option = func(o interface{}) {
 	opts.debit = true
 }
 
-// Correct builds a new invoice using this one as a base for the preceding
-// data.
-func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
+// Correct moves key fields of the current invoice to the preceding
+// structure and performs any regime specific actions defined by the
+// regime's configuration.
+// If the existing document doesn't have a code, we'll raise an error, for
+// most use cases this will prevent looping over the same invoice.
+func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	o := new(correctionOptions)
 	for _, row := range opts {
 		row(o)
 	}
 	if o.credit && o.debit {
-		return nil, errors.New("cannot use both credit and debit options")
+		return errors.New("cannot use both credit and debit options")
+	}
+	if inv.Code == "" {
+		return errors.New("cannot correct an invoice without a code")
 	}
 
 	r := taxRegimeFor(inv.Supplier)
 	if r == nil {
-		return nil, errors.New("failed to load supplier regime")
-	}
-
-	i2, err := inv.Clone()
-	if err != nil {
-		return nil, err
+		return errors.New("failed to load supplier regime")
 	}
 
 	// Copy and prepare the basic fields
-	i2.UUID = nil
-	i2.Series = ""
-	i2.Code = ""
-	i2.IssueDate = cal.Today()
 	pre := &Preceding{
 		UUID:             inv.UUID,
 		Series:           inv.Series,
@@ -103,33 +100,38 @@ func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
 		Corrections:      o.corrections,
 		CorrectionMethod: o.correctionMethod,
 	}
+	inv.UUID = nil
+	inv.Series = ""
+	inv.Code = ""
+	inv.IssueDate = cal.Today()
 
 	// Take the regime def to figure out what needs to be copied
 	if o.credit {
 		if r.Preceding.HasType(InvoiceTypeCreditNote) {
 			// regular credit note
-			i2.Type = InvoiceTypeCreditNote
+			inv.Type = InvoiceTypeCreditNote
 		} else if r.Preceding.HasType(InvoiceTypeCorrective) {
 			// corrective invoice with negative values
-			i2.Type = InvoiceTypeCorrective
-			i2.Invert()
+			inv.Type = InvoiceTypeCorrective
+			inv.Invert()
 		} else {
-			return nil, errors.New("credit not supported by regime")
+			return errors.New("credit not supported by regime")
 		}
+		inv.Payment.ResetAdvances()
 	} else if o.debit {
 		if r.Preceding.HasType(InvoiceTypeDebitNote) {
 			// regular debit note, implies no rows as new ones
 			// will be added
-			i2.Type = InvoiceTypeDebitNote
-			i2.Empty()
+			inv.Type = InvoiceTypeDebitNote
+			inv.Empty()
 		} else {
-			return nil, errors.New("debit not supported by regime")
+			return errors.New("debit not supported by regime")
 		}
 	} else {
 		if r.Preceding.HasType(InvoiceTypeCorrective) {
-			i2.Type = InvoiceTypeCorrective
+			inv.Type = InvoiceTypeCorrective
 		} else {
-			return nil, errors.New("correction not supported by regime")
+			return errors.New("correction not supported by regime")
 		}
 	}
 
@@ -144,13 +146,14 @@ func (inv *Invoice) Correct(opts ...cbc.Option) (*Invoice, error) {
 				}
 			}
 			if s == nil {
-				return nil, fmt.Errorf("missing stamp: %v", k)
+				return fmt.Errorf("missing stamp: %v", k)
 			}
 			pre.Stamps = append(pre.Stamps, s)
 		}
 	}
 
 	// Replace all previous preceding data
-	i2.Preceding = []*Preceding{pre}
-	return i2, nil
+	inv.Preceding = []*Preceding{pre}
+
+	return inv.Calculate()
 }

@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 
 	"github.com/invopop/gobl/c14n"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal/here"
 	"github.com/invopop/gobl/schema"
@@ -19,6 +21,18 @@ import (
 type Document struct {
 	schema  schema.ID
 	payload interface{}
+}
+
+// Calculable defines the methods expected of a document payload that contains a `Calculate`
+// method to be used to perform any additional calculations.
+type Calculable interface {
+	Calculate() error
+}
+
+// Correctable defines the expected interface of a document that can be
+// corrected.
+type Correctable interface {
+	Correct(...cbc.Option) error
 }
 
 // NewDocument instantiates a Document wrapper around the provided object.
@@ -56,6 +70,16 @@ func (d *Document) Instance() interface{} {
 	return d.payload
 }
 
+// Calculate will attempt to run the calculation method on the
+// document payload.
+func (d *Document) Calculate() error {
+	pl, ok := d.payload.(Calculable)
+	if !ok {
+		return nil
+	}
+	return pl.Calculate()
+}
+
 // Validate checks to ensure the document has everything it needs
 // and will pass on the validation call to the payload.
 func (d *Document) Validate() error {
@@ -76,6 +100,19 @@ func (d *Document) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateWithContext(ctx, d.payload)
 }
 
+// Correct will attempt to run the correction method on the document
+// using some of the provided options.
+func (d *Document) Correct(opts ...cbc.Option) error {
+	pl, ok := d.payload.(Correctable)
+	if !ok {
+		return errors.New("document cannot be corrected")
+	}
+	if err := pl.Correct(opts...); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Insert places the provided object inside the document and looks up the schema
 // information to ensure it is known.
 func (d *Document) insert(payload interface{}) error {
@@ -85,6 +122,20 @@ func (d *Document) insert(payload interface{}) error {
 	}
 	d.payload = payload
 	return nil
+}
+
+// Clone makes a copy of the document by serializing and deserializing it.
+// the contents into a new document instance.
+func (d *Document) Clone() (*Document, error) {
+	d2 := new(Document)
+	data, err := json.Marshal(d)
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(data, d2); err != nil {
+		return nil, err
+	}
+	return d2, nil
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
