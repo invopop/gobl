@@ -22,7 +22,9 @@ const (
 
 // Special keys to use in meta data.
 const (
-	KeyDIAN cbc.Key = "dian"
+	KeyDIAN                    cbc.Key = "dian"
+	KeyDIANCompanyID           cbc.Key = "dian-company-id"
+	KeyDIANAdditionalAccountID cbc.Key = "dian-additional-account-id"
 )
 
 // New provides the tax region definition
@@ -34,9 +36,10 @@ func New() *tax.Regime {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
-		Validator:  Validate,
-		Calculator: Calculate,
-		Zones:      zones, // see zones.go
+		Validator:     Validate,
+		Calculator:    Calculate,
+		IdentityTypes: taxIdentityTypes, // see tax_identity.go
+		Zones:         zones,            // see zones.go
 		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
 			Types: []cbc.Key{
 				bill.InvoiceTypeCreditNote,

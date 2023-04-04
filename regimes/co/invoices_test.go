@@ -21,6 +21,7 @@ func baseInvoice() *bill.Invoice {
 		Currency:  currency.COP,
 		Code:      "TEST",
 		IssueDate: cal.MakeDate(2022, 12, 27),
+		Type:      bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
 			Name: "Test Party",
 			TaxID: &tax.Identity{
@@ -131,6 +132,13 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	err = inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "zone: must be a valid value")
+
+	inv = baseInvoice()
+	require.NoError(t, inv.Calculate())
+	inv.Supplier.TaxID.Type = co.TaxIdentityTypeCitizen
+	err = inv.Validate()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "supplier: (tax_id: (type: must be a valid value.).).")
 }
 
 func TestBasicCreditNoteValidation(t *testing.T) {
