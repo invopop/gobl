@@ -19,45 +19,51 @@ import (
 func TestInvoiceCorrect(t *testing.T) {
 	// Spanish Case (only corrective)
 	i := testInvoiceESForCorrection(t)
-
-	_, err := i.Correct(bill.Credit, bill.Debit)
+	err := i.Correct(bill.Credit, bill.Debit)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "cannot use both credit and debit options")
 
-	i2, err := i.Correct(bill.Credit, bill.WithReason("test refund"))
+	i = testInvoiceESForCorrection(t)
+	err = i.Correct(bill.Credit, bill.WithReason("test refund"))
 	require.NoError(t, err)
-	assert.Equal(t, bill.InvoiceTypeCorrective, i2.Type)
-	assert.Equal(t, i2.Lines[0].Quantity.String(), "-10")
-	pre := i2.Preceding[0]
-	assert.Equal(t, pre.Series, i.Series)
-	assert.Equal(t, pre.Code, i.Code)
+	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
+	pre := i.Preceding[0]
+	assert.Equal(t, pre.Series, "TEST")
+	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.Reason, "test refund")
+	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
 
-	err = i2.Calculate()
-	require.NoError(t, err)
+	// can't run twice
+	err = i.Correct()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot correct an invoice without a code")
 
-	_, err = i.Correct(bill.Debit, bill.WithReason("should fail"))
+	i = testInvoiceESForCorrection(t)
+	err = i.Correct(bill.Debit, bill.WithReason("should fail"))
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "debit not supported")
 
-	i2, err = i.Correct()
+	i = testInvoiceESForCorrection(t)
+	err = i.Correct()
 	require.NoError(t, err)
-	assert.Equal(t, i2.Type, bill.InvoiceTypeCorrective)
+	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
 
 	// France case (both corrective and credit note)
 	i = testInvoiceFRForCorrection(t)
-	i2, err = i.Correct()
+	err = i.Correct()
 	require.NoError(t, err)
-	assert.Equal(t, i2.Type, bill.InvoiceTypeCorrective)
+	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
 
-	i2, err = i.Correct(bill.Credit)
+	i = testInvoiceFRForCorrection(t)
+	err = i.Correct(bill.Credit)
 	require.NoError(t, err)
-	assert.Equal(t, i2.Type, bill.InvoiceTypeCreditNote)
+	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 
 	// Colombia case (only credit note)
 
 	i = testInvoiceCOForCorrection(t)
-	_, err = i.Correct(bill.Credit)
+	err = i.Correct(bill.Credit)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "missing stamp")
 
@@ -72,14 +78,16 @@ func TestInvoiceCorrect(t *testing.T) {
 		},
 	}
 
-	_, err = i.Correct(bill.WithStamps(stamps))
+	i = testInvoiceCOForCorrection(t)
+	err = i.Correct(bill.WithStamps(stamps))
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "correction not supported by regime")
 
-	i2, err = i.Correct(bill.Credit, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
+	i = testInvoiceCOForCorrection(t)
+	err = i.Correct(bill.Credit, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
 	require.NoError(t, err)
-	assert.Equal(t, i2.Type, bill.InvoiceTypeCreditNote)
-	pre = i2.Preceding[0]
+	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
+	pre = i.Preceding[0]
 	require.Len(t, pre.Stamps, 1)
 	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
 	assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)

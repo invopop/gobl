@@ -248,3 +248,25 @@ func TestEnvelopeSign(t *testing.T) {
 		assert.Len(t, env.Signatures, 1)
 	})
 }
+func TestEnvelopeCorrect(t *testing.T) {
+	t.Run("correct invoice", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+
+		data, err := ioutil.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+		require.NoError(t, env.Calculate())
+
+		_, err = env.Correct()
+		require.NoError(t, err)
+
+		doc := env.Extract().(*bill.Invoice)
+		assert.Equal(t, doc.Type, bill.InvoiceTypeStandard, "no change")
+
+		e2, err := env.Correct()
+		require.NoError(t, err)
+		doc = e2.Extract().(*bill.Invoice)
+		assert.Equal(t, doc.Type, bill.InvoiceTypeCorrective, "corrected")
+	})
+}

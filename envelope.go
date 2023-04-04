@@ -2,7 +2,6 @@ package gobl
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/invopop/validation"
@@ -32,12 +31,6 @@ type Envelope struct {
 // EnvelopeSchema sets the general definition of the schema ID for this version of the
 // envelope.
 var EnvelopeSchema = schema.GOBL.Add("envelope")
-
-// Calculable defines the methods expected of a document payload that contains a `Calculate`
-// method to be used to perform any additional calculations.
-type Calculable interface {
-	Calculate() error
-}
 
 // NewEnvelope builds a new envelope object ready for data to be inserted
 // and signed. If you are loading data from json, you can safely use a regular
@@ -157,16 +150,9 @@ func (e *Envelope) calculate() error {
 	// Always set our schema version
 	e.Schema = EnvelopeSchema
 
-	doc := e.Document.Instance()
-	if doc == nil {
-		return ErrUnknownSchema.WithErrorf("schema: %v", e.Document.Schema().String())
-	}
-
 	// arm doors and cross check
-	if obj, ok := doc.(Calculable); ok {
-		if err := obj.Calculate(); err != nil {
-			return ErrCalculation.WithCause(err)
-		}
+	if err := e.Document.Calculate(); err != nil {
+		return ErrCalculation.WithCause(err)
 	}
 
 	// Double check the header looks okay
@@ -196,18 +182,24 @@ func (e *Envelope) Extract() interface{} {
 // Correct will attempt to build a new envelope as a correction of the
 // current envelope contents, if possible.
 func (e *Envelope) Correct(opts ...cbc.Option) (*Envelope, error) {
-	doc := e.Document.Instance()
-	switch obj := doc.(type) {
+	// Determine any extra options
+	switch e.Document.Instance().(type) {
 	case *bill.Invoice:
+		// Special case for invoices so that we copy over
+		// the stamps from the original invoice headers.
 		if len(e.Head.Stamps) > 0 {
 			opts = append(opts, bill.WithStamps(e.Head.Stamps))
 		}
-		i2, err := obj.Correct(opts...)
-		if err != nil {
-			return nil, err
-		}
-		return Envelop(i2)
-	default:
-		return nil, errors.New("cannot correct this type of document")
 	}
+
+	nd, err := e.Document.Clone()
+	if err != nil {
+		return nil, err
+	}
+	if err := nd.Correct(opts...); err != nil {
+		return nil, err
+	}
+
+	// Create a completely new envelope with a new set of data.
+	return Envelop(nd)
 }

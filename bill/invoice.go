@@ -2,7 +2,6 @@ package bill
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -140,20 +139,6 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	return err
 }
 
-// Clone makes a copy of the invoice by serializing and deserializing it.
-// the contents.
-func (inv *Invoice) Clone() (*Invoice, error) {
-	i2 := new(Invoice)
-	data, err := json.Marshal(inv)
-	if err != nil {
-		return nil, err
-	}
-	if err = json.Unmarshal(data, i2); err != nil {
-		return nil, err
-	}
-	return i2, nil
-}
-
 // Invert effectively reverses the invoice by inverting the sign of all quantity
 // or amount values.
 func (inv *Invoice) Invert() {
@@ -169,6 +154,7 @@ func (inv *Invoice) Invert() {
 	for _, row := range inv.Outlays {
 		row.Amount = row.Amount.Invert()
 	}
+	inv.Totals = nil
 }
 
 // Empty is a convenience method that will empty all the lines and
@@ -178,6 +164,8 @@ func (inv *Invoice) Empty() {
 	inv.Charges = make([]*Charge, 0)
 	inv.Discounts = make([]*Discount, 0)
 	inv.Outlays = make([]*Outlay, 0)
+	inv.Totals = nil
+	inv.Payment.ResetAdvances()
 }
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
