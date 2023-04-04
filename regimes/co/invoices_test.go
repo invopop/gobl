@@ -134,11 +134,19 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "zone: must be a valid value")
 
 	inv = baseInvoice()
-	require.NoError(t, inv.Calculate())
 	inv.Supplier.TaxID.Type = co.TaxIdentityTypeCitizen
+	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "supplier: (tax_id: (type: must be a valid value.).).")
+
+	inv = baseInvoice()
+	inv.Customer.TaxID.Type = co.TaxIdentityTypeCitizen
+	inv.Customer.TaxID.Code = "100100100"
+	inv.Customer.TaxID.Zone = ""
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.NoError(t, err)
 }
 
 func TestBasicCreditNoteValidation(t *testing.T) {

@@ -82,7 +82,13 @@ func (v *invoiceValidator) validTaxIdentity(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Zone, validation.Required, validation.In(zoneCodes...)),
+		validation.Field(&obj.Zone,
+			validation.In(zoneCodes...),
+			validation.When(
+				obj.Type.In(TaxIdentityTypeTIN),
+				validation.Required,
+			),
+		),
 	)
 }
 

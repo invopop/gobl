@@ -72,6 +72,24 @@ func TestNormalizeParty(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, p.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, p.Addresses[0].Region, "Bogotá")
+
+	p = &org.Party{
+		Name: "Test Party No Zone",
+		TaxID: &tax.Identity{
+			Country: l10n.CO,
+			Type:    co.TaxIdentityTypeCitizen,
+			Code:    "100100100",
+		},
+		Addresses: []*org.Address{
+			{
+				Locality: "Foo",
+			},
+		},
+	}
+	err = co.Calculate(p)
+	require.NoError(t, err)
+	err = co.Validate(p)
+	assert.NoError(t, err)
 }
 
 func TestValidateTaxIdentity(t *testing.T) {
@@ -88,14 +106,21 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good 4", typ: "tin", code: "8300801501", zone: "11001"},
 		{name: "good 5", typ: "tin", code: "700602703", zone: "11001"},
 		{
-			name: "empty",
+			name: "missing code",
 			typ:  "tin",
 			code: "",
 			zone: "11001",
 			err:  "code: cannot be blank",
 		},
 		{
-			name: "empty",
+			name: "missing zone for citizen",
+			typ:  co.TaxIdentityTypeCitizen,
+			code: "100100100",
+			zone: "",
+			err:  "",
+		},
+		{
+			name: "missing type",
 			typ:  "",
 			code: "100100100",
 			zone: "11001",
