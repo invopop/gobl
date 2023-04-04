@@ -14581,6 +14581,140 @@
     }
   ],
   "currency": "COP",
+  "identity_types": [
+    {
+      "key": "tin",
+      "name": {
+        "en": "TIN - Tax Identification Number",
+        "es": "NIT - Número de Identificación Tributaria"
+      },
+      "meta": {
+        "dian-additional-account-id": "1",
+        "dian-company-id": "31"
+      }
+    },
+    {
+      "key": "civil",
+      "name": {
+        "en": "Civil Registry",
+        "es": "Registro Civil"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "11"
+      }
+    },
+    {
+      "key": "card",
+      "name": {
+        "en": "Identity Card",
+        "es": "Tarjeta de Identidad"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "12"
+      }
+    },
+    {
+      "key": "citizen",
+      "name": {
+        "en": "Citizen Identity Card",
+        "es": "Cédula de ciudadanía"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "13"
+      }
+    },
+    {
+      "key": "card+foreigner",
+      "name": {
+        "en": "Foreigner Identity Card",
+        "es": "Tarjeta de Extranjería"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "21"
+      }
+    },
+    {
+      "key": "citizen+foreigner",
+      "name": {
+        "en": "Foreigner Citizen Identity Card",
+        "es": "Cédula de extranjería"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "22"
+      }
+    },
+    {
+      "key": "tin+individual",
+      "name": {
+        "en": "TIN of an individual",
+        "es": "NIT de persona natural"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "31"
+      }
+    },
+    {
+      "key": "passport",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "41"
+      }
+    },
+    {
+      "key": "foreign",
+      "name": {
+        "en": "Foreign Document",
+        "es": "Documento de identificación extranjero"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "42"
+      }
+    },
+    {
+      "key": "pep",
+      "name": {
+        "en": "PEP - Special Permit to Stay",
+        "es": "PEP - Permiso Especial de Permanencia"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "47"
+      }
+    },
+    {
+      "key": "tin+foreign",
+      "name": {
+        "en": "Foreign TIN",
+        "es": "NIT de otro país"
+      },
+      "meta": {
+        "dian-additional-account-id": "1",
+        "dian-company-id": "50"
+      }
+    },
+    {
+      "key": "nuip",
+      "name": {
+        "en": "NUIP - National Unique Personal Identification Number",
+        "es": "NUIP - Número Único de Identificación Personal"
+      },
+      "meta": {
+        "dian-additional-account-id": "2",
+        "dian-company-id": "91"
+      }
+    }
+  ],
   "preceding": {
     "types": [
       "credit-note"
