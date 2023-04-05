@@ -178,7 +178,7 @@ Note: fields marked with (\*) are for simplified invoice documents.
 
 ##### TipoRitenuta (Withholding Type)
 
-|      |                                    |
+| Code | Description                        |
 | ---- | ---------------------------------- |
 | RT01 | witholding tax natural persons     |
 | RT02 | witholding corporate entities      |
@@ -186,3 +186,7 @@ Note: fields marked with (\*) are for simplified invoice documents.
 | RT04 | ENASARCO contribution              |
 | RT05 | ENPAM contribution                 |
 | RT06 | Other social security contribution |
+
+## TODO
+- Document Codice Destinatario (uses inbox codes)
+- Document how local codes are mapped

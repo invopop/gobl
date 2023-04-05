@@ -2,6 +2,8 @@ package org
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
@@ -122,14 +124,16 @@ type Website struct {
 // The definition found here is based on the details required for spain.
 // If your country requires additional fields, please let us know.
 type Registration struct {
-	UUID    *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	Office  string     `json:"office,omitempty" jsonschema:"title=Office"`
-	Book    string     `json:"book,omitempty" jsonschema:"title=Book"`
-	Volume  string     `json:"volume,omitempty" jsonschema:"title=Volume"`
-	Sheet   string     `json:"sheet,omitempty" jsonschema:"title=Sheet"`
-	Section string     `json:"section,omitempty" jsonschema:"title=Section"`
-	Page    string     `json:"page,omitempty" jsonschema:"title=Page"`
-	Entry   string     `json:"entry,omitempty" jsonschema:"title=Entry"`
+	UUID     *uuid.UUID    `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	Capital  *num.Amount   `json:"social_capital,omitempty" jsonschema:"title=Capital"`
+	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
+	Office   string        `json:"office,omitempty" jsonschema:"title=Office"`
+	Book     string        `json:"book,omitempty" jsonschema:"title=Book"`
+	Volume   string        `json:"volume,omitempty" jsonschema:"title=Volume"`
+	Sheet    string        `json:"sheet,omitempty" jsonschema:"title=Sheet"`
+	Section  string        `json:"section,omitempty" jsonschema:"title=Section"`
+	Page     string        `json:"page,omitempty" jsonschema:"title=Page"`
+	Entry    string        `json:"entry,omitempty" jsonschema:"title=Entry"`
 }
 
 // Calculate performs any calculations required on the Party or
