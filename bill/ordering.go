@@ -13,7 +13,8 @@ import (
 type Ordering struct {
 	// Identifier assigned by the customer or buyer for internal routing purposes.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
-	// Period of time that the invoice document refers to.
+	// Period of time that the invoice document refers to often used in addition to the details
+	// provided in the individual line items.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Project this invoice refers to.
 	Project *DocumentReference `json:"project,omitempty" jsonschema:"title=Project"`

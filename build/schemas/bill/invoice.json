@@ -498,7 +498,7 @@
         "period": {
           "$ref": "https://gobl.org/draft-0/cal/period",
           "title": "Period",
-          "description": "Period of time that the invoice document refers to."
+          "description": "Period of time that the invoice document refers to often used in addition to the details\nprovided in the individual line items."
         },
         "project": {
           "$ref": "#/$defs/DocumentReference",
