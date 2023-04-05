@@ -4,8 +4,12 @@ import "github.com/invopop/validation"
 
 // Period represents two dates with a start and finish.
 type Period struct {
+	// Label is a short description of the period.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Start indicates when this period starts.
 	Start Date `json:"start"`
-	End   Date `json:"end"`
+	// End indicates when the period ends, and must be after the start date.
+	End Date `json:"end"`
 }
 
 // Validate checks to ensure the period looks correct.
