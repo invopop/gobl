@@ -67,6 +67,9 @@ type Invoice struct {
 	// Expenses paid for by the supplier but invoiced directly to the customer.
 	Outlays []*Outlay `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
+	// Tax stamps required by the local tax regime.
+	DutyStamp *cbc.Stamp `json:"duty_stamp,omitempty" jsonschema:"title=Duty Stamp"`
+
 	// Ordering details including document references and buyer or seller parties.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
 	// Information on when, how, and to whom the invoice should be paid.

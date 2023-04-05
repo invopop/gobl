@@ -1,6 +1,7 @@
 package cbc
 
 import (
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
 )
 
@@ -11,6 +12,8 @@ type Stamp struct {
 	Provider Key `json:"prv" jsonschema:"title=Provider"`
 	// The serialized stamp value generated for or by the external agency
 	Value string `json:"val" jsonschema:"title=Value"`
+	// The fee incurred by the stamp
+	Fee num.Amount `json:"fee,omitempty" jsonschema:"title=Fee"`
 	// Any additional semi-structured information
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
