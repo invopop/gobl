@@ -11,6 +11,8 @@ type Stamp struct {
 	Provider Key `json:"prv" jsonschema:"title=Provider"`
 	// The serialized stamp value generated for or by the external agency
 	Value string `json:"val" jsonschema:"title=Value"`
+	// Any additional semi-structured information
+	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks that the header contains the basic information we need to function.
