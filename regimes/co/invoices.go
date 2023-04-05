@@ -20,12 +20,18 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Supplier, validation.Required, validation.By(v.validParty)),
-		validation.Field(&inv.Customer, validation.When(
-			inv.Type.In(bill.InvoiceTypeStandard),
+		validation.Field(&inv.Type,
+			validation.In(bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote),
+		),
+		validation.Field(&inv.Supplier,
 			validation.Required,
 			validation.By(v.validParty),
-		)),
+			validation.By(v.validSupplier),
+		),
+		validation.Field(&inv.Customer,
+			validation.Required,
+			validation.By(v.validParty),
+		),
 		validation.Field(&inv.Preceding, validation.When(
 			inv.Type.In(bill.InvoiceTypeCreditNote),
 			validation.Required,
@@ -37,11 +43,8 @@ func (v *invoiceValidator) validate() error {
 
 func (v *invoiceValidator) validParty(value interface{}) error {
 	obj, _ := value.(*org.Party)
-	if obj == nil {
+	if obj == nil || obj.TaxID == nil {
 		return nil
-	}
-	if obj.TaxID == nil {
-		return nil // validation already handled, this prevents panics
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
@@ -61,13 +64,31 @@ func (v *invoiceValidator) validParty(value interface{}) error {
 	)
 }
 
+func (v *invoiceValidator) validSupplier(value interface{}) error {
+	obj, _ := value.(*org.Party)
+	if obj == nil || obj.TaxID == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.TaxID,
+			tax.IdentityTypeIn(TaxIdentityTypeTIN),
+		),
+	)
+}
+
 func (v *invoiceValidator) validTaxIdentity(value interface{}) error {
 	obj, _ := value.(*tax.Identity)
 	if obj == nil {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Zone, validation.Required, validation.In(zoneCodes...)),
+		validation.Field(&obj.Zone,
+			validation.In(zoneCodes...),
+			validation.When(
+				obj.Type.In(TaxIdentityTypeTIN),
+				validation.Required,
+			),
+		),
 	)
 }
 
