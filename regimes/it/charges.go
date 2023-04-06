@@ -6,15 +6,16 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// List of charge types specific to the italian regime.
 const (
-	ChargeTypeBollo cbc.Key = "bollo"
+	ChargeKeyStampDuty cbc.Key = "stamp-duty"
 )
 
-var chargeTypes = []*tax.KeyDefinition{
+var chargeKeys = []*tax.KeyDefinition{
 	{
-		Key: ChargeTypeBollo,
+		Key: ChargeKeyStampDuty,
 		Name: i18n.String{
-			i18n.EN: "Duty Stamp",
+			i18n.EN: "Stamp Stamp",
 			i18n.IT: "Bollo",
 		},
 		Desc: i18n.String{

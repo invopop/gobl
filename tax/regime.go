@@ -43,7 +43,7 @@ type Regime struct {
 	IdentityTypes []*IdentityType `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
 
 	// Charge types specific for the regime and may be validated or used in the UI as suggestions
-	ChargeTypes []*KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
+	ChargeKeys []*KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
 
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
