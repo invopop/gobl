@@ -32,6 +32,7 @@ func New() *tax.Regime {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
+		ChargeTypes:   chargeTypes, // charges.go
 		IdentityTypes: taxIdentityTypes,
 		Tags:          invoiceTags,
 		Scenarios:     scenarios, // scenarios.go
