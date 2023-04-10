@@ -32,7 +32,10 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 [Agenzia Entrate (Tax Office) IVA Doc](https://www.agenziaentrate.gov.it/portale/web/english/nse/business/vat-in-italy)
 
-### Challenges
+### Italy-specific Details
+
+#### Stamp Duty
+Add an invoice-level `bill.Charge` and use `it.ChargeKeyStampDuty` as the `bill.Charge.Key`.
 
 #### Special Codes (WIP)
 
