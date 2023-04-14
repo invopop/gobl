@@ -36,7 +36,7 @@ The SIREN and SIRET numbers may also be defined inside the `org.Party`'s `identi
   "identities": [
     {
       "type": "SIREN",
-      "code": "73282932"
+      "code": "732829320"
     },
     {
       "type": "SIRET",
