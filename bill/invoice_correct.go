@@ -91,12 +91,11 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	}
 
 	// Copy and prepare the basic fields
-	iDate := inv.IssueDate
 	pre := &Preceding{
 		UUID:             inv.UUID,
 		Series:           inv.Series,
 		Code:             inv.Code,
-		IssueDate:        &iDate,
+		IssueDate:        inv.IssueDate.Clone(),
 		Reason:           o.reason,
 		Corrections:      o.corrections,
 		CorrectionMethod: o.correctionMethod,
