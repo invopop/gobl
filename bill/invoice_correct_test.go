@@ -28,9 +28,11 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
+	assert.Equal(t, i.IssueDate, cal.Today())
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series, "TEST")
 	assert.Equal(t, pre.Code, "123")
+	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
 	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
 
