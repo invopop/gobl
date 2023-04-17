@@ -15,8 +15,8 @@ var chargeKeys = []*tax.KeyDefinition{
 	{
 		Key: ChargeKeyStampDuty,
 		Name: i18n.String{
-			i18n.EN: "Stamp Stamp",
-			i18n.IT: "Bollo",
+			i18n.EN: "Stamp Duty",
+			i18n.IT: "Imposta di bollo",
 		},
 		Desc: i18n.String{
 			i18n.EN: "A fixed-price tax applied to the production, request or presentation of certain documents: civil, commercial, judicial and extrajudicial documents, on notices, on posters.",
