@@ -125,3 +125,11 @@ func TestDateToday(t *testing.T) {
 	assert.Equal(t, d.Month, tn.Month())
 	assert.Equal(t, d.Day, tn.Day())
 }
+
+func TestDateClone(t *testing.T) {
+	d := cal.MakeDate(2021, time.May, 26)
+	d2 := d.Clone()
+	assert.Equal(t, d.String(), d2.String())
+	d = cal.MakeDate(2021, time.May, 27)
+	assert.NotEqual(t, d.String(), d2.String())
+}
