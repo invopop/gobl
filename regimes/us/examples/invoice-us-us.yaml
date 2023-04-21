@@ -1,0 +1,39 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "USD"
+issue_date: "2023-04-21"
+series: "SAMPLE"
+code: "001"
+tax:
+  prices_include: "ST"
+
+supplier:
+  tax_id:
+    country: "US"
+  name: "Provide One Inc."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "16"
+      street: "Jessie Street"
+      locality: "San Francisco"
+      region: "CA"
+      code: "94105"
+      country: "US"
+
+customer:
+  name: "Sample Consumer"
+  emails:
+    - addr: "email@sample.com"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: ST
+        percent: "8.5%"
