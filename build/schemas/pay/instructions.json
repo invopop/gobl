@@ -82,43 +82,53 @@
           "oneOf": [
             {
               "const": "any",
-              "description": "Any method available, no preference"
+              "title": "Any",
+              "description": "Any method available, no preference."
             },
             {
               "const": "card",
-              "description": "Credit or debit card"
+              "title": "Card",
+              "description": "Credit or debit card."
             },
             {
               "const": "credit-transfer",
-              "description": "Sender initiated bank or wire transfer"
+              "title": "Credit Transfer",
+              "description": "Sender initiated bank or wire transfer."
             },
             {
               "const": "debit-transfer",
-              "description": "Receiver initiated bank or wire transfer"
+              "title": "Debit Transfer",
+              "description": "Receiver initiated bank or wire transfer."
             },
             {
               "const": "cash",
-              "description": "Cash"
+              "title": "Cash",
+              "description": "Cash in hand."
             },
             {
               "const": "cheque",
-              "description": "Cheque"
+              "title": "Cheque",
+              "description": "Cheque from bank."
             },
             {
               "const": "credit",
-              "description": "Credit"
+              "title": "Credit",
+              "description": "Using credit from previous transactions with the supplier."
             },
             {
               "const": "bank-draft",
-              "description": "Bankers Draft or Bank Cheque"
+              "title": "Draft",
+              "description": "Bankers Draft or Bank Cheque."
             },
             {
               "const": "direct-debit",
-              "description": "Direct debit"
+              "title": "Direct Debit",
+              "description": "Direct debit from the customers bank account."
             },
             {
               "const": "online",
-              "description": "Online or web payment"
+              "title": "Online",
+              "description": "Online or web payment."
             }
           ],
           "title": "Key",
@@ -197,5 +207,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.42.0"
+  "$comment": "Generated with GOBL v0.42.3"
 }

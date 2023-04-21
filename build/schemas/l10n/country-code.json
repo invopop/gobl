@@ -7,999 +7,999 @@
       "oneOf": [
         {
           "const": "AF",
-          "description": "Afghanistan"
+          "title": "Afghanistan"
         },
         {
           "const": "AX",
-          "description": "Åland Islands"
+          "title": "Åland Islands"
         },
         {
           "const": "AL",
-          "description": "Albania"
+          "title": "Albania"
         },
         {
           "const": "DZ",
-          "description": "Algeria"
+          "title": "Algeria"
         },
         {
           "const": "AS",
-          "description": "American Samoa"
+          "title": "American Samoa"
         },
         {
           "const": "AD",
-          "description": "Andorra"
+          "title": "Andorra"
         },
         {
           "const": "AO",
-          "description": "Angola"
+          "title": "Angola"
         },
         {
           "const": "AI",
-          "description": "Anguilla"
+          "title": "Anguilla"
         },
         {
           "const": "AQ",
-          "description": "Antarctica"
+          "title": "Antarctica"
         },
         {
           "const": "AG",
-          "description": "Antigua and Barbuda"
+          "title": "Antigua and Barbuda"
         },
         {
           "const": "AR",
-          "description": "Argentina"
+          "title": "Argentina"
         },
         {
           "const": "AM",
-          "description": "Armenia"
+          "title": "Armenia"
         },
         {
           "const": "AW",
-          "description": "Aruba"
+          "title": "Aruba"
         },
         {
           "const": "AU",
-          "description": "Australia "
+          "title": "Australia "
         },
         {
           "const": "AT",
-          "description": "Austria"
+          "title": "Austria"
         },
         {
           "const": "AZ",
-          "description": "Azerbaijan"
+          "title": "Azerbaijan"
         },
         {
           "const": "BS",
-          "description": "Bahamas (the)"
+          "title": "Bahamas (the)"
         },
         {
           "const": "BH",
-          "description": "Bahrain"
+          "title": "Bahrain"
         },
         {
           "const": "BD",
-          "description": "Bangladesh"
+          "title": "Bangladesh"
         },
         {
           "const": "BB",
-          "description": "Barbados"
+          "title": "Barbados"
         },
         {
           "const": "BY",
-          "description": "Belarus"
+          "title": "Belarus"
         },
         {
           "const": "BE",
-          "description": "Belgium"
+          "title": "Belgium"
         },
         {
           "const": "BZ",
-          "description": "Belize"
+          "title": "Belize"
         },
         {
           "const": "BJ",
-          "description": "Benin"
+          "title": "Benin"
         },
         {
           "const": "BM",
-          "description": "Bermuda"
+          "title": "Bermuda"
         },
         {
           "const": "BT",
-          "description": "Bhutan"
+          "title": "Bhutan"
         },
         {
           "const": "BO",
-          "description": "Bolivia (Plurinational State of)"
+          "title": "Bolivia (Plurinational State of)"
         },
         {
           "const": "BQ",
-          "description": "Bonaire, Sint Eustatius and Saba"
+          "title": "Bonaire, Sint Eustatius and Saba"
         },
         {
           "const": "BA",
-          "description": "Bosnia and Herzegovina"
+          "title": "Bosnia and Herzegovina"
         },
         {
           "const": "BW",
-          "description": "Botswana"
+          "title": "Botswana"
         },
         {
           "const": "BV",
-          "description": "Bouvet Island"
+          "title": "Bouvet Island"
         },
         {
           "const": "BR",
-          "description": "Brazil"
+          "title": "Brazil"
         },
         {
           "const": "IO",
-          "description": "British Indian Ocean Territory (the)"
+          "title": "British Indian Ocean Territory (the)"
         },
         {
           "const": "BN",
-          "description": "Brunei Darussalam"
+          "title": "Brunei Darussalam"
         },
         {
           "const": "BG",
-          "description": "Bulgaria"
+          "title": "Bulgaria"
         },
         {
           "const": "BF",
-          "description": "Burkina Faso"
+          "title": "Burkina Faso"
         },
         {
           "const": "BI",
-          "description": "Burundi"
+          "title": "Burundi"
         },
         {
           "const": "CV",
-          "description": "Cabo Verde"
+          "title": "Cabo Verde"
         },
         {
           "const": "KH",
-          "description": "Cambodia"
+          "title": "Cambodia"
         },
         {
           "const": "CM",
-          "description": "Cameroon"
+          "title": "Cameroon"
         },
         {
           "const": "CA",
-          "description": "Canada"
+          "title": "Canada"
         },
         {
           "const": "KY",
-          "description": "Cayman Islands (the)"
+          "title": "Cayman Islands (the)"
         },
         {
           "const": "CF",
-          "description": "Central African Republic (the)"
+          "title": "Central African Republic (the)"
         },
         {
           "const": "TD",
-          "description": "Chad"
+          "title": "Chad"
         },
         {
           "const": "CL",
-          "description": "Chile"
+          "title": "Chile"
         },
         {
           "const": "CN",
-          "description": "China"
+          "title": "China"
         },
         {
           "const": "CX",
-          "description": "Christmas Island"
+          "title": "Christmas Island"
         },
         {
           "const": "CC",
-          "description": "Cocos (Keeling) Islands (the)"
+          "title": "Cocos (Keeling) Islands (the)"
         },
         {
           "const": "CO",
-          "description": "Colombia"
+          "title": "Colombia"
         },
         {
           "const": "KM",
-          "description": "Comoros (the)"
+          "title": "Comoros (the)"
         },
         {
           "const": "CG",
-          "description": "Congo (the Democratic Republic of the)"
+          "title": "Congo (the Democratic Republic of the)"
         },
         {
           "const": "CD",
-          "description": "Congo (the)"
+          "title": "Congo (the)"
         },
         {
           "const": "CK",
-          "description": "Cook Islands (the)"
+          "title": "Cook Islands (the)"
         },
         {
           "const": "CR",
-          "description": "Costa Rica"
+          "title": "Costa Rica"
         },
         {
           "const": "CI",
-          "description": "Côte d'Ivoire"
+          "title": "Côte d'Ivoire"
         },
         {
           "const": "HR",
-          "description": "Croatia"
+          "title": "Croatia"
         },
         {
           "const": "CU",
-          "description": "Cuba"
+          "title": "Cuba"
         },
         {
           "const": "CW",
-          "description": "Curaçao"
+          "title": "Curaçao"
         },
         {
           "const": "CY",
-          "description": "Cyprus"
+          "title": "Cyprus"
         },
         {
           "const": "CZ",
-          "description": "Czechia"
+          "title": "Czechia"
         },
         {
           "const": "DK",
-          "description": "Denmark"
+          "title": "Denmark"
         },
         {
           "const": "DJ",
-          "description": "Djibouti"
+          "title": "Djibouti"
         },
         {
           "const": "DM",
-          "description": "Dominica"
+          "title": "Dominica"
         },
         {
           "const": "DO",
-          "description": "Dominican Republic (the)"
+          "title": "Dominican Republic (the)"
         },
         {
           "const": "EC",
-          "description": "Ecuador"
+          "title": "Ecuador"
         },
         {
           "const": "EG",
-          "description": "Egypt"
+          "title": "Egypt"
         },
         {
           "const": "SV",
-          "description": "El Salvador"
+          "title": "El Salvador"
         },
         {
           "const": "GQ",
-          "description": "Equatorial Guinea"
+          "title": "Equatorial Guinea"
         },
         {
           "const": "ER",
-          "description": "Eritrea"
+          "title": "Eritrea"
         },
         {
           "const": "EE",
-          "description": "Estonia"
+          "title": "Estonia"
         },
         {
           "const": "SZ",
-          "description": "Eswatini"
+          "title": "Eswatini"
         },
         {
           "const": "ET",
-          "description": "Ethiopia"
+          "title": "Ethiopia"
         },
         {
           "const": "FK",
-          "description": "Falkland Islands (the)"
+          "title": "Falkland Islands (the)"
         },
         {
           "const": "FO",
-          "description": "Faroe Islands (the)"
+          "title": "Faroe Islands (the)"
         },
         {
           "const": "FJ",
-          "description": "Fiji"
+          "title": "Fiji"
         },
         {
           "const": "FI",
-          "description": "Finland"
+          "title": "Finland"
         },
         {
           "const": "FR",
-          "description": "France"
+          "title": "France"
         },
         {
           "const": "GF",
-          "description": "French Guiana"
+          "title": "French Guiana"
         },
         {
           "const": "PF",
-          "description": "French Polynesia"
+          "title": "French Polynesia"
         },
         {
           "const": "TF",
-          "description": "French Southern Territories (the) "
+          "title": "French Southern Territories (the) "
         },
         {
           "const": "GA",
-          "description": "Gabon"
+          "title": "Gabon"
         },
         {
           "const": "GM",
-          "description": "Gambia (the)"
+          "title": "Gambia (the)"
         },
         {
           "const": "GE",
-          "description": "Georgia"
+          "title": "Georgia"
         },
         {
           "const": "DE",
-          "description": "Germany"
+          "title": "Germany"
         },
         {
           "const": "GH",
-          "description": "Ghana"
+          "title": "Ghana"
         },
         {
           "const": "GI",
-          "description": "Gibraltar"
+          "title": "Gibraltar"
         },
         {
           "const": "GR",
-          "description": "Greece"
+          "title": "Greece"
         },
         {
           "const": "GL",
-          "description": "Greenland"
+          "title": "Greenland"
         },
         {
           "const": "GD",
-          "description": "Grenada"
+          "title": "Grenada"
         },
         {
           "const": "GP",
-          "description": "Guadeloupe"
+          "title": "Guadeloupe"
         },
         {
           "const": "GU",
-          "description": "Guam"
+          "title": "Guam"
         },
         {
           "const": "GT",
-          "description": "Guatemala"
+          "title": "Guatemala"
         },
         {
           "const": "GG",
-          "description": "Guernsey"
+          "title": "Guernsey"
         },
         {
           "const": "GN",
-          "description": "Guinea"
+          "title": "Guinea"
         },
         {
           "const": "GW",
-          "description": "Guinea-Bissau"
+          "title": "Guinea-Bissau"
         },
         {
           "const": "GY",
-          "description": "Guyana"
+          "title": "Guyana"
         },
         {
           "const": "HT",
-          "description": "Haiti"
+          "title": "Haiti"
         },
         {
           "const": "HM",
-          "description": "Heard Island and McDonald Islands"
+          "title": "Heard Island and McDonald Islands"
         },
         {
           "const": "VA",
-          "description": "Holy See (the)"
+          "title": "Holy See (the)"
         },
         {
           "const": "HN",
-          "description": "Honduras"
+          "title": "Honduras"
         },
         {
           "const": "HK",
-          "description": "Hong Kong"
+          "title": "Hong Kong"
         },
         {
           "const": "HU",
-          "description": "Hungary"
+          "title": "Hungary"
         },
         {
           "const": "IS",
-          "description": "Iceland"
+          "title": "Iceland"
         },
         {
           "const": "IN",
-          "description": "India"
+          "title": "India"
         },
         {
           "const": "ID",
-          "description": "Indonesia"
+          "title": "Indonesia"
         },
         {
           "const": "IR",
-          "description": "Iran (Islamic Republic of)"
+          "title": "Iran (Islamic Republic of)"
         },
         {
           "const": "IQ",
-          "description": "Iraq"
+          "title": "Iraq"
         },
         {
           "const": "IE",
-          "description": "Ireland"
+          "title": "Ireland"
         },
         {
           "const": "IM",
-          "description": "Isle of Man"
+          "title": "Isle of Man"
         },
         {
           "const": "IL",
-          "description": "Israel"
+          "title": "Israel"
         },
         {
           "const": "IT",
-          "description": "Italy"
+          "title": "Italy"
         },
         {
           "const": "JM",
-          "description": "Jamaica"
+          "title": "Jamaica"
         },
         {
           "const": "JP",
-          "description": "Japan"
+          "title": "Japan"
         },
         {
           "const": "JE",
-          "description": "Jersey"
+          "title": "Jersey"
         },
         {
           "const": "JO",
-          "description": "Jordan"
+          "title": "Jordan"
         },
         {
           "const": "KZ",
-          "description": "Kazakhstan"
+          "title": "Kazakhstan"
         },
         {
           "const": "KE",
-          "description": "Kenya"
+          "title": "Kenya"
         },
         {
           "const": "KI",
-          "description": "Kiribati"
+          "title": "Kiribati"
         },
         {
           "const": "KP",
-          "description": "Korea (the Democratic People's Republic of)"
+          "title": "Korea (the Democratic People's Republic of)"
         },
         {
           "const": "KR",
-          "description": "Korea (the Republic of)"
+          "title": "Korea (the Republic of)"
         },
         {
           "const": "KW",
-          "description": "Kuwait"
+          "title": "Kuwait"
         },
         {
           "const": "KG",
-          "description": "Kyrgyzstan"
+          "title": "Kyrgyzstan"
         },
         {
           "const": "LA",
-          "description": "Lao People's Democratic Republic (the)"
+          "title": "Lao People's Democratic Republic (the)"
         },
         {
           "const": "LV",
-          "description": "Latvia"
+          "title": "Latvia"
         },
         {
           "const": "LB",
-          "description": "Lebanon"
+          "title": "Lebanon"
         },
         {
           "const": "LS",
-          "description": "Lesotho"
+          "title": "Lesotho"
         },
         {
           "const": "LR",
-          "description": "Liberia"
+          "title": "Liberia"
         },
         {
           "const": "LY",
-          "description": "Libya"
+          "title": "Libya"
         },
         {
           "const": "LI",
-          "description": "Liechtenstein"
+          "title": "Liechtenstein"
         },
         {
           "const": "LT",
-          "description": "Lithuania"
+          "title": "Lithuania"
         },
         {
           "const": "LU",
-          "description": "Luxembourg"
+          "title": "Luxembourg"
         },
         {
           "const": "MO",
-          "description": "Macao"
+          "title": "Macao"
         },
         {
           "const": "MK",
-          "description": "North Macedonia"
+          "title": "North Macedonia"
         },
         {
           "const": "MG",
-          "description": "Madagascar"
+          "title": "Madagascar"
         },
         {
           "const": "MW",
-          "description": "Malawi"
+          "title": "Malawi"
         },
         {
           "const": "MY",
-          "description": "Malaysia"
+          "title": "Malaysia"
         },
         {
           "const": "MV",
-          "description": "Maldives"
+          "title": "Maldives"
         },
         {
           "const": "ML",
-          "description": "Mali"
+          "title": "Mali"
         },
         {
           "const": "MT",
-          "description": "Malta"
+          "title": "Malta"
         },
         {
           "const": "MH",
-          "description": "Marshall Islands (the)"
+          "title": "Marshall Islands (the)"
         },
         {
           "const": "MQ",
-          "description": "Martinique"
+          "title": "Martinique"
         },
         {
           "const": "MR",
-          "description": "Mauritania"
+          "title": "Mauritania"
         },
         {
           "const": "MU",
-          "description": "Mauritius"
+          "title": "Mauritius"
         },
         {
           "const": "YT",
-          "description": "Mayotte"
+          "title": "Mayotte"
         },
         {
           "const": "MX",
-          "description": "Mexico"
+          "title": "Mexico"
         },
         {
           "const": "FM",
-          "description": "Micronesia (Federated States of)"
+          "title": "Micronesia (Federated States of)"
         },
         {
           "const": "MD",
-          "description": "Moldova (the Republic of)"
+          "title": "Moldova (the Republic of)"
         },
         {
           "const": "MC",
-          "description": "Monaco"
+          "title": "Monaco"
         },
         {
           "const": "MN",
-          "description": "Mongolia"
+          "title": "Mongolia"
         },
         {
           "const": "ME",
-          "description": "Montenegro"
+          "title": "Montenegro"
         },
         {
           "const": "MS",
-          "description": "Montserrat"
+          "title": "Montserrat"
         },
         {
           "const": "MA",
-          "description": "Morocco"
+          "title": "Morocco"
         },
         {
           "const": "MZ",
-          "description": "Mozambique"
+          "title": "Mozambique"
         },
         {
           "const": "MM",
-          "description": "Myanmar"
+          "title": "Myanmar"
         },
         {
           "const": "NA",
-          "description": "Namibia"
+          "title": "Namibia"
         },
         {
           "const": "NR",
-          "description": "Nauru"
+          "title": "Nauru"
         },
         {
           "const": "NP",
-          "description": "Nepal"
+          "title": "Nepal"
         },
         {
           "const": "NL",
-          "description": "Netherlands (the)"
+          "title": "Netherlands (the)"
         },
         {
           "const": "NC",
-          "description": "New Caledonia"
+          "title": "New Caledonia"
         },
         {
           "const": "NZ",
-          "description": "New Zealand"
+          "title": "New Zealand"
         },
         {
           "const": "NI",
-          "description": "Nicaragua"
+          "title": "Nicaragua"
         },
         {
           "const": "NE",
-          "description": "Niger (the)"
+          "title": "Niger (the)"
         },
         {
           "const": "NG",
-          "description": "Nigeria"
+          "title": "Nigeria"
         },
         {
           "const": "NU",
-          "description": "Niue"
+          "title": "Niue"
         },
         {
           "const": "NF",
-          "description": "Norfolk Island"
+          "title": "Norfolk Island"
         },
         {
           "const": "MP",
-          "description": "Northern Mariana Islands (the)"
+          "title": "Northern Mariana Islands (the)"
         },
         {
           "const": "NO",
-          "description": "Norway"
+          "title": "Norway"
         },
         {
           "const": "OM",
-          "description": "Oman"
+          "title": "Oman"
         },
         {
           "const": "PK",
-          "description": "Pakistan"
+          "title": "Pakistan"
         },
         {
           "const": "PW",
-          "description": "Palau"
+          "title": "Palau"
         },
         {
           "const": "PS",
-          "description": "Palestine, State of"
+          "title": "Palestine, State of"
         },
         {
           "const": "PA",
-          "description": "Panama"
+          "title": "Panama"
         },
         {
           "const": "PG",
-          "description": "Papua New Guinea"
+          "title": "Papua New Guinea"
         },
         {
           "const": "PY",
-          "description": "Paraguay"
+          "title": "Paraguay"
         },
         {
           "const": "PE",
-          "description": "Peru"
+          "title": "Peru"
         },
         {
           "const": "PH",
-          "description": "Philippines (the)"
+          "title": "Philippines (the)"
         },
         {
           "const": "PN",
-          "description": "Pitcairn"
+          "title": "Pitcairn"
         },
         {
           "const": "PL",
-          "description": "Poland"
+          "title": "Poland"
         },
         {
           "const": "PT",
-          "description": "Portugal"
+          "title": "Portugal"
         },
         {
           "const": "PR",
-          "description": "Puerto Rico"
+          "title": "Puerto Rico"
         },
         {
           "const": "QA",
-          "description": "Qatar"
+          "title": "Qatar"
         },
         {
           "const": "RE",
-          "description": "Réunion"
+          "title": "Réunion"
         },
         {
           "const": "RO",
-          "description": "Romania"
+          "title": "Romania"
         },
         {
           "const": "RU",
-          "description": "Russian Federation (the)"
+          "title": "Russian Federation (the)"
         },
         {
           "const": "RW",
-          "description": "Rwanda"
+          "title": "Rwanda"
         },
         {
           "const": "BL",
-          "description": "Saint Barthélemy"
+          "title": "Saint Barthélemy"
         },
         {
           "const": "SH",
-          "description": "Saint Helena, Ascension and Tristan da Cunha"
+          "title": "Saint Helena, Ascension and Tristan da Cunha"
         },
         {
           "const": "KN",
-          "description": "Saint Kitts and Nevis"
+          "title": "Saint Kitts and Nevis"
         },
         {
           "const": "LC",
-          "description": "Saint Lucia"
+          "title": "Saint Lucia"
         },
         {
           "const": "MF",
-          "description": "Saint Martin (French part)"
+          "title": "Saint Martin (French part)"
         },
         {
           "const": "PM",
-          "description": "Saint Pierre and Miquelon"
+          "title": "Saint Pierre and Miquelon"
         },
         {
           "const": "VC",
-          "description": "Saint Vincent and the Grenadines"
+          "title": "Saint Vincent and the Grenadines"
         },
         {
           "const": "WS",
-          "description": "Samoa"
+          "title": "Samoa"
         },
         {
           "const": "SM",
-          "description": "San Marino"
+          "title": "San Marino"
         },
         {
           "const": "ST",
-          "description": "Sao Tome and Principe"
+          "title": "Sao Tome and Principe"
         },
         {
           "const": "SA",
-          "description": "Saudi Arabia"
+          "title": "Saudi Arabia"
         },
         {
           "const": "SN",
-          "description": "Senegal"
+          "title": "Senegal"
         },
         {
           "const": "RS",
-          "description": "Serbia"
+          "title": "Serbia"
         },
         {
           "const": "SC",
-          "description": "Seychelles"
+          "title": "Seychelles"
         },
         {
           "const": "SL",
-          "description": "Sierra Leone"
+          "title": "Sierra Leone"
         },
         {
           "const": "SG",
-          "description": "Singapore"
+          "title": "Singapore"
         },
         {
           "const": "SX",
-          "description": "Sint Maarten (Dutch part)"
+          "title": "Sint Maarten (Dutch part)"
         },
         {
           "const": "SK",
-          "description": "Slovakia"
+          "title": "Slovakia"
         },
         {
           "const": "SI",
-          "description": "Slovenia"
+          "title": "Slovenia"
         },
         {
           "const": "SB",
-          "description": "Solomon Islands"
+          "title": "Solomon Islands"
         },
         {
           "const": "SO",
-          "description": "Somalia"
+          "title": "Somalia"
         },
         {
           "const": "ZA",
-          "description": "South Africa"
+          "title": "South Africa"
         },
         {
           "const": "GS",
-          "description": "South Georgia and the South Sandwich Islands"
+          "title": "South Georgia and the South Sandwich Islands"
         },
         {
           "const": "SS",
-          "description": "South Sudan"
+          "title": "South Sudan"
         },
         {
           "const": "ES",
-          "description": "Spain"
+          "title": "Spain"
         },
         {
           "const": "LK",
-          "description": "Sri Lanka"
+          "title": "Sri Lanka"
         },
         {
           "const": "SD",
-          "description": "Sudan (the)"
+          "title": "Sudan (the)"
         },
         {
           "const": "SR",
-          "description": "Suriname"
+          "title": "Suriname"
         },
         {
           "const": "SJ",
-          "description": "Svalbard and Jan Mayen"
+          "title": "Svalbard and Jan Mayen"
         },
         {
           "const": "SE",
-          "description": "Sweden"
+          "title": "Sweden"
         },
         {
           "const": "CH",
-          "description": "Switzerland"
+          "title": "Switzerland"
         },
         {
           "const": "SY",
-          "description": "Syrian Arab Republic (the)"
+          "title": "Syrian Arab Republic (the)"
         },
         {
           "const": "TW",
-          "description": "Taiwan (Province of China)"
+          "title": "Taiwan (Province of China)"
         },
         {
           "const": "TJ",
-          "description": "Tajikistan"
+          "title": "Tajikistan"
         },
         {
           "const": "TZ",
-          "description": "Tanzania, the United Republic of"
+          "title": "Tanzania, the United Republic of"
         },
         {
           "const": "TH",
-          "description": "Thailand"
+          "title": "Thailand"
         },
         {
           "const": "TL",
-          "description": "Timor-Leste "
+          "title": "Timor-Leste "
         },
         {
           "const": "TG",
-          "description": "Togo"
+          "title": "Togo"
         },
         {
           "const": "TK",
-          "description": "Tokelau"
+          "title": "Tokelau"
         },
         {
           "const": "TO",
-          "description": "Tonga"
+          "title": "Tonga"
         },
         {
           "const": "TT",
-          "description": "Trinidad and Tobago"
+          "title": "Trinidad and Tobago"
         },
         {
           "const": "TN",
-          "description": "Tunisia"
+          "title": "Tunisia"
         },
         {
           "const": "TR",
-          "description": "Türkiye"
+          "title": "Türkiye"
         },
         {
           "const": "TM",
-          "description": "Turkmenistan"
+          "title": "Turkmenistan"
         },
         {
           "const": "TC",
-          "description": "Turks and Caicos Islands (the)"
+          "title": "Turks and Caicos Islands (the)"
         },
         {
           "const": "TV",
-          "description": "Tuvalu"
+          "title": "Tuvalu"
         },
         {
           "const": "UG",
-          "description": "Uganda"
+          "title": "Uganda"
         },
         {
           "const": "UA",
-          "description": "Ukraine"
+          "title": "Ukraine"
         },
         {
           "const": "AE",
-          "description": "United Arab Emirates (the)"
+          "title": "United Arab Emirates (the)"
         },
         {
           "const": "GB",
-          "description": "United Kingdom of Great Britain and Northern Ireland (the)"
+          "title": "United Kingdom of Great Britain and Northern Ireland (the)"
         },
         {
           "const": "US",
-          "description": "United States of America (the)"
+          "title": "United States of America (the)"
         },
         {
           "const": "UM",
-          "description": "United States Minor Outlying Islands (the)"
+          "title": "United States Minor Outlying Islands (the)"
         },
         {
           "const": "UY",
-          "description": "Uruguay"
+          "title": "Uruguay"
         },
         {
           "const": "UZ",
-          "description": "Uzbekistan"
+          "title": "Uzbekistan"
         },
         {
           "const": "VU",
-          "description": "Vanuatu"
+          "title": "Vanuatu"
         },
         {
           "const": "VE",
-          "description": "Venezuela (Bolivarian Republic of)"
+          "title": "Venezuela (Bolivarian Republic of)"
         },
         {
           "const": "VN",
-          "description": "Viet Nam"
+          "title": "Viet Nam"
         },
         {
           "const": "VG",
-          "description": "Virgin Islands (British)"
+          "title": "Virgin Islands (British)"
         },
         {
           "const": "VI",
-          "description": "Virgin Islands (U.S.)"
+          "title": "Virgin Islands (U.S.)"
         },
         {
           "const": "WF",
-          "description": "Wallis and Futuna"
+          "title": "Wallis and Futuna"
         },
         {
           "const": "EH",
-          "description": "Western Sahara"
+          "title": "Western Sahara"
         },
         {
           "const": "YE",
-          "description": "Yemen"
+          "title": "Yemen"
         },
         {
           "const": "ZM",
-          "description": "Zambia"
+          "title": "Zambia"
         },
         {
           "const": "ZW",
-          "description": "Zimbabwe"
+          "title": "Zimbabwe"
         }
       ],
       "type": "string",
@@ -1007,5 +1007,5 @@
       "description": "Defines an ISO 3166-2 country code"
     }
   },
-  "$comment": "Generated with GOBL v0.42.0"
+  "$comment": "Generated with GOBL v0.42.3"
 }

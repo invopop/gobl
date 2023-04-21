@@ -66,6 +66,8 @@ const (
 type DefNoteKey struct {
 	// Key to match against
 	Key Key `json:"key" jsonschema:"title=Key"`
+	// Brief name of the key
+	Title string `json:"title" jsonschema:"title=Title"`
 	// Description of the Note Key
 	Description string `json:"description" jsonschema:"title=Description"`
 	// UNTDID 4451 code
@@ -77,126 +79,151 @@ type DefNoteKey struct {
 var NoteKeyDefinitions = []DefNoteKey{
 	{
 		Key:         NoteKeyGoods,
+		Title:       "Goods",
 		Description: "Goods Description",
 		UNTDID4451:  "AAA",
 	},
 	{
 		Key:         NoteKeyPayment,
+		Title:       "Payment",
 		Description: "Terms of Payment",
 		UNTDID4451:  "PMT",
 	},
 	{
 		Key:         NoteKeyLegal,
+		Title:       "Legal",
 		Description: "Legal or regulatory information",
 		UNTDID4451:  "ABY", // Regulatory information
 	},
 	{
 		Key:         NoteKeyDangerousGoods,
+		Title:       "Dangerous Goods",
 		Description: "Dangerous goods additional information",
 		UNTDID4451:  "AAC",
 	},
 	{
 		Key:         NoteKeyAck,
+		Title:       "Acknowledgement",
 		Description: "Acknowledgement Description",
 		UNTDID4451:  "AAE",
 	},
 	{
 		Key:         NoteKeyRate,
+		Title:       "Rate",
 		Description: "Rate additional information",
 		UNTDID4451:  "AAF",
 	},
 	{
 		Key:         NoteKeyReason,
-		Description: "Reason",
+		Title:       "Reason",
+		Description: "Explanation of something relevant to the document",
 		UNTDID4451:  "ACD",
 	},
 	{
 		Key:         NoteKeyDispute,
-		Description: "Dispute",
+		Title:       "Dispute",
+		Description: "Details on a dispute.",
 		UNTDID4451:  "ACE",
 	},
 	{
 		Key:         NoteKeyCustomer,
+		Title:       "Customer",
 		Description: "Customer remarks",
 		UNTDID4451:  "CUR",
 	},
 	{
 		Key:         NoteKeyGlossary,
-		Description: "Glossary",
+		Title:       "Glossary",
+		Description: "Glossary of terms",
 		UNTDID4451:  "ACZ",
 	},
 	{
 		Key:         NoteKeyCustoms,
+		Title:       "Customs",
 		Description: "Customs declaration information",
 		UNTDID4451:  "CUS",
 	},
 	{
 		Key:         NoteKeyGeneral,
+		Title:       "General",
 		Description: "General information",
 		UNTDID4451:  "AAI",
 	},
 	{
 		Key:         NoteKeyHandling,
+		Title:       "Handling",
 		Description: "Handling instructions",
 		UNTDID4451:  "HAN",
 	},
 	{
 		Key:         NoteKeyPackaging,
+		Title:       "Packaging",
 		Description: "Packaging information",
 		UNTDID4451:  "PKG",
 	},
 	{
 		Key:         NoteKeyLoading,
+		Title:       "Loading",
 		Description: "Loading instructions",
 		UNTDID4451:  "LOI",
 	},
 	{
 		Key:         NoteKeyPrice,
+		Title:       "Price",
 		Description: "Price conditions",
 		UNTDID4451:  "AAK",
 	},
 	{
 		Key:         NoteKeyPriority,
+		Title:       "Priority",
 		Description: "Priority information",
 		UNTDID4451:  "PRI",
 	},
 	{
 		Key:         NoteKeyRegulatory,
+		Title:       "Regulatory",
 		Description: "Regulatory information",
 		UNTDID4451:  "REG",
 	},
 	{
 		Key:         NoteKeySafety,
+		Title:       "Safety",
 		Description: "Safety instructions",
 		UNTDID4451:  "SAF",
 	},
 	{
 		Key:         NoteKeyShipLine,
+		Title:       "Ship Line",
 		Description: "Ship line",
 		UNTDID4451:  "SLR",
 	},
 	{
 		Key:         NoteKeySupplier,
+		Title:       "Supplier",
 		Description: "Supplier remarks",
 		UNTDID4451:  "SUR",
 	},
 	{
 		Key:         NoteKeyTransport,
+		Title:       "Transport",
 		Description: "Transportation information",
 		UNTDID4451:  "TRA",
 	},
 	{
 		Key:         NoteKeyDelivery,
+		Title:       "Delivery",
 		Description: "Delivery information",
 		UNTDID4451:  "DEL",
 	},
 	{
 		Key:         NoteKeyQuarantine,
+		Title:       "Quarantine",
 		Description: "Quarantine information",
 		UNTDID4451:  "QIN",
 	},
 	{
 		Key:         NoteKeyTax,
+		Title:       "Tax",
 		Description: "Tax declaration",
 		UNTDID4451:  "TXD",
 	},
@@ -261,6 +288,7 @@ func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 	for i, v := range NoteKeyDefinitions {
 		ks.OneOf[i] = &jsonschema.Schema{
 			Const:       v.Key.String(),
+			Title:       v.Title,
 			Description: v.Description,
 		}
 	}

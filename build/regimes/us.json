@@ -1,0 +1,20 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "United States of America"
+  },
+  "country": "US",
+  "currency": "USD",
+  "categories": [
+    {
+      "code": "ST",
+      "name": {
+        "en": "Sales Tax"
+      },
+      "desc": {
+        "en": "Sales Tax"
+      },
+      "rates": []
+    }
+  ]
+}

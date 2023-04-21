@@ -10,102 +10,127 @@
           "oneOf": [
             {
               "const": "goods",
+              "title": "Goods",
               "description": "Goods Description"
             },
             {
               "const": "payment",
+              "title": "Payment",
               "description": "Terms of Payment"
             },
             {
               "const": "legal",
+              "title": "Legal",
               "description": "Legal or regulatory information"
             },
             {
               "const": "dangerous-goods",
+              "title": "Dangerous Goods",
               "description": "Dangerous goods additional information"
             },
             {
               "const": "ack",
+              "title": "Acknowledgement",
               "description": "Acknowledgement Description"
             },
             {
               "const": "rate",
+              "title": "Rate",
               "description": "Rate additional information"
             },
             {
               "const": "reason",
-              "description": "Reason"
+              "title": "Reason",
+              "description": "Explanation of something relevant to the document"
             },
             {
               "const": "dispute",
-              "description": "Dispute"
+              "title": "Dispute",
+              "description": "Details on a dispute."
             },
             {
               "const": "customer",
+              "title": "Customer",
               "description": "Customer remarks"
             },
             {
               "const": "glossary",
-              "description": "Glossary"
+              "title": "Glossary",
+              "description": "Glossary of terms"
             },
             {
               "const": "customs",
+              "title": "Customs",
               "description": "Customs declaration information"
             },
             {
               "const": "general",
+              "title": "General",
               "description": "General information"
             },
             {
               "const": "handling",
+              "title": "Handling",
               "description": "Handling instructions"
             },
             {
               "const": "packaging",
+              "title": "Packaging",
               "description": "Packaging information"
             },
             {
               "const": "loading",
+              "title": "Loading",
               "description": "Loading instructions"
             },
             {
               "const": "price",
+              "title": "Price",
               "description": "Price conditions"
             },
             {
               "const": "priority",
+              "title": "Priority",
               "description": "Priority information"
             },
             {
               "const": "regulatory",
+              "title": "Regulatory",
               "description": "Regulatory information"
             },
             {
               "const": "safety",
+              "title": "Safety",
               "description": "Safety instructions"
             },
             {
               "const": "ship-line",
+              "title": "Ship Line",
               "description": "Ship line"
             },
             {
               "const": "supplier",
+              "title": "Supplier",
               "description": "Supplier remarks"
             },
             {
               "const": "transport",
+              "title": "Transport",
               "description": "Transportation information"
             },
             {
               "const": "delivery",
+              "title": "Delivery",
               "description": "Delivery information"
             },
             {
               "const": "quarantine",
+              "title": "Quarantine",
               "description": "Quarantine information"
             },
             {
               "const": "tax",
+              "title": "Tax",
               "description": "Tax declaration"
             }
           ],
@@ -135,5 +160,5 @@
       "description": "Note represents a free text of additional information that may be added to a document."
     }
   },
-  "$comment": "Generated with GOBL v0.42.0"
+  "$comment": "Generated with GOBL v0.42.3"
 }

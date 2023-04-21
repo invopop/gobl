@@ -202,22 +202,27 @@
           "oneOf": [
             {
               "const": "standard",
+              "title": "Standard",
               "description": "A regular commercial invoice document between a supplier and customer."
             },
             {
               "const": "proforma",
+              "title": "Proforma",
               "description": "For a clients validation before sending a final invoice."
             },
             {
               "const": "corrective",
+              "title": "Corrective",
               "description": "Corrected invoice that completely replaces the preceding document."
             },
             {
               "const": "credit-note",
+              "title": "Credit Note",
               "description": "Reflects a refund either partial or complete of the preceding document."
             },
             {
               "const": "debit-note",
+              "title": "Debit Note",
               "description": "An additional set of charges to be added to the preceding document."
             }
           ],
@@ -789,5 +794,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.42.0"
+  "$comment": "Generated with GOBL v0.42.3"
 }

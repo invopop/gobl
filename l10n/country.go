@@ -47,8 +47,8 @@ func (CountryCode) JSONSchema() *jsonschema.Schema {
 	}
 	for i, v := range CountryDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{
-			Const:       v.Code,
-			Description: v.Name,
+			Const: v.Code,
+			Title: v.Name,
 		}
 	}
 	return s

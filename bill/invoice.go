@@ -460,6 +460,7 @@ func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 		for i, v := range InvoiceTypes {
 			its.OneOf[i] = &jsonschema.Schema{
 				Const:       v.Key.String(),
+				Title:       v.Title,
 				Description: v.Description,
 			}
 		}
