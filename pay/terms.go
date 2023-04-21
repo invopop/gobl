@@ -49,26 +49,28 @@ const (
 // TermKeyDef holds a definition of a single payment term key
 type TermKeyDef struct {
 	// The key being defined
-	Key cbc.Key `json:"key" jsonschema:"Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	// Human readable title for the key
+	Title string `json:"title" jsonschema:"title=Title"`
 	// Human text for the key
-	Description string `json:"description" jsonschema:"Description"`
+	Description string `json:"description" jsonschema:"title=Description"`
 	// The equivalent UNTDID 4279 Code
-	UNTDID4279 cbc.Code `json:"untdid4279" jsonschema:"UNTDID 4279 Code"`
+	UNTDID4279 cbc.Code `json:"untdid4279" jsonschema:"title=UNTDID 4279 Code"`
 }
 
 // TermKeyDefinitions includes all the currently accepted
 // GOBL Payment Term definitions.
 var TermKeyDefinitions = []TermKeyDef{
-	{TermKeyNA, "Not yet defined", "16"},
-	{TermKeyEndOfMonth, "End of month", "2"},
-	{TermKeyDueDate, "Due on a specific date", "3"},
-	{TermKeyDeferred, "Deferred until after the due date", "4"},
-	{TermKeyProximo, "Month after the present", "9"},
-	{TermKeyInstant, "On receipt of invoice", "10"},
-	{TermKeyElective, "Chosen by the buyer", "11"},
-	{TermKeyPending, "Seller to advise buyer in separate transaction", "13"},
-	{TermKeyAdvance, "Payment made in advance", "32"},
-	{TermKeyDelivery, "Payment on Delivery", "52"}, // Cash on Delivery (COD)
+	{TermKeyNA, "NA", "Not yet defined", "16"},
+	{TermKeyEndOfMonth, "End of Month", "End of month", "2"},
+	{TermKeyDueDate, "Due Date", "Due on a specific date", "3"},
+	{TermKeyDeferred, "Deferred", "Deferred until after the due date", "4"},
+	{TermKeyProximo, "Proximo", "Month after the present", "9"},
+	{TermKeyInstant, "Instant", "On receipt of invoice", "10"},
+	{TermKeyElective, "Elective", "Chosen by the buyer", "11"},
+	{TermKeyPending, "Pending", "Seller to advise buyer in separate transaction", "13"},
+	{TermKeyAdvance, "Advance", "Payment made in advance", "32"},
+	{TermKeyDelivery, "Delivery", "Payment on Delivery", "52"}, // Cash on Delivery (COD)
 }
 
 // DueDate contains an amount that should be paid by the given date.
@@ -140,6 +142,7 @@ func (Terms) JSONSchemaExtend(schema *jsonschema.Schema) {
 		for i, v := range TermKeyDefinitions {
 			prop.OneOf[i] = &jsonschema.Schema{
 				Const:       v.Key,
+				Title:       v.Title,
 				Description: v.Description,
 			}
 		}
