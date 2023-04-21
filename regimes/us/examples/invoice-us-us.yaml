@@ -11,7 +11,7 @@ supplier:
     country: "US"
   name: "Provide One Inc."
   emails:
-    - addr: "billing@example.com"
+    - addr: "billing@provideone.com"
   addresses:
     - num: "16"
       street: "Jessie Street"
