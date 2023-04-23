@@ -522,10 +522,12 @@
         },
         "sale": {
           "$ref": "#/$defs/DocumentReference",
+          "title": "Sales Order",
           "description": "Sales order issued by the supplier or seller."
         },
         "receiving": {
           "$ref": "#/$defs/DocumentReference",
+          "title": "Receiving Advice",
           "description": "Receiving Advice."
         },
         "despatch": {
@@ -535,6 +537,7 @@
         },
         "tender": {
           "$ref": "#/$defs/DocumentReference",
+          "title": "Tender Advice",
           "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
         },
         "buyer": {

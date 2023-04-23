@@ -9,6 +9,14 @@
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID"
         },
+        "social_capital": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Capital"
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency"
+        },
         "office": {
           "type": "string",
           "title": "Office"
