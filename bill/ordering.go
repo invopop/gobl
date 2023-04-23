@@ -23,13 +23,13 @@ type Ordering struct {
 	// Purchase order issued by the customer or buyer.
 	Purchase *DocumentReference `json:"purchase,omitempty" jsonschema:"title=Purchase Order"`
 	// Sales order issued by the supplier or seller.
-	Sale *DocumentReference `json:"sale,omitempty" jsonschena:"title=Sales Order"`
+	Sale *DocumentReference `json:"sale,omitempty" jsonschema:"title=Sales Order"`
 	// Receiving Advice.
-	Receiving *DocumentReference `json:"receiving,omitempty" jsonschame:"title=Receiving Advice"`
+	Receiving *DocumentReference `json:"receiving,omitempty" jsonschema:"title=Receiving Advice"`
 	// Despatch advice.
 	Despatch *DocumentReference `json:"despatch,omitempty" jsonschema:"title=Despatch Advice"`
 	// Tender advice, the identification of the call for tender or lot the invoice relates to.
-	Tender *DocumentReference `json:"tender,omitempty" jsonscheme:"title=Tender Advice"`
+	Tender *DocumentReference `json:"tender,omitempty" jsonschema:"title=Tender Advice"`
 
 	// Party who is responsible for making the purchase, but is not responsible
 	// for handling taxes.

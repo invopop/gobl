@@ -12,10 +12,12 @@
         },
         "start": {
           "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Start",
           "description": "Start indicates when this period starts."
         },
         "end": {
           "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "End",
           "description": "End indicates when the period ends, and must be after the start date."
         }
       },

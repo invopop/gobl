@@ -7,9 +7,9 @@ type Period struct {
 	// Label is a short description of the period.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Start indicates when this period starts.
-	Start Date `json:"start"`
+	Start Date `json:"start" jsonschema:"title=Start"`
 	// End indicates when the period ends, and must be after the start date.
-	End Date `json:"end"`
+	End Date `json:"end" jsonschema:"title=End"`
 }
 
 // Validate checks to ensure the period looks correct.
