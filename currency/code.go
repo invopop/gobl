@@ -66,8 +66,8 @@ func (Code) JSONSchema() *jsonschema.Schema {
 	}
 	for i, v := range CodeDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{
-			Const:       v.Code,
-			Description: v.Name,
+			Const: v.Code,
+			Title: v.Name,
 		}
 	}
 	return s

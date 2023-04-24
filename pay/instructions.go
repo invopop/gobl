@@ -29,6 +29,8 @@ const (
 type MethodKeyDef struct {
 	// Key being described
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	// Human value of the key
+	Title string `json:"title" jsonschema:"title=Title"`
 	// Details about the meaning of the key
 	Description string `json:"description" jsonschema:"title=Description"`
 	// UNTDID 4461 Equivalent Code
@@ -38,16 +40,16 @@ type MethodKeyDef struct {
 // MethodKeyDefinitions includes all the payment method keys that
 // are accepted by GOBL.
 var MethodKeyDefinitions = []MethodKeyDef{
-	{MethodKeyAny, "Any method available, no preference", "1"},                 // Instrument not defined
-	{MethodKeyCard, "Credit or debit card", "48"},                              // Bank card
-	{MethodKeyCreditTransfer, "Sender initiated bank or wire transfer", "30"},  // credit transfer
-	{MethodKeyDebitTransfer, "Receiver initiated bank or wire transfer", "31"}, // debit transfer
-	{MethodKeyCash, "Cash", "10"},                                              // in cash
-	{MethodKeyCheque, "Cheque", ""},                                            // cheque
-	{MethodKeyCredit, "Credit", ""},                                            // credit
-	{MethodKeyBankDraft, "Bankers Draft or Bank Cheque", ""},                   // Banker's draft,
-	{MethodKeyDirectDebit, "Direct debit", "49"},                               // direct debit
-	{MethodKeyOnline, "Online or web payment", "68"},                           // online payment service
+	{MethodKeyAny, "Any", "Any method available, no preference.", "1"},                            // Instrument not defined
+	{MethodKeyCard, "Card", "Credit or debit card.", "48"},                                        // Bank card
+	{MethodKeyCreditTransfer, "Credit Transfer", "Sender initiated bank or wire transfer.", "30"}, // credit transfer
+	{MethodKeyDebitTransfer, "Debit Transfer", "Receiver initiated bank or wire transfer.", "31"}, // debit transfer
+	{MethodKeyCash, "Cash", "Cash in hand.", "10"},                                                // in cash
+	{MethodKeyCheque, "Cheque", "Cheque from bank.", ""},                                          // cheque
+	{MethodKeyCredit, "Credit", "Using credit from previous transactions with the supplier.", ""}, // credit
+	{MethodKeyBankDraft, "Draft", "Bankers Draft or Bank Cheque.", ""},                            // Banker's draft,
+	{MethodKeyDirectDebit, "Direct Debit", "Direct debit from the customers bank account.", "49"}, // direct debit
+	{MethodKeyOnline, "Online", "Online or web payment.", "68"},                                   // online payment service
 }
 
 // Instructions determine how the payment has or should be made. A
@@ -161,6 +163,7 @@ func (Instructions) JSONSchemaExtend(schema *jsonschema.Schema) {
 		for i, v := range MethodKeyDefinitions {
 			prop.OneOf[i] = &jsonschema.Schema{
 				Const:       v.Key,
+				Title:       v.Title,
 				Description: v.Description,
 			}
 		}

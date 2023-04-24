@@ -95,7 +95,7 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 		UUID:             inv.UUID,
 		Series:           inv.Series,
 		Code:             inv.Code,
-		IssueDate:        &inv.IssueDate,
+		IssueDate:        inv.IssueDate.Clone(),
 		Reason:           o.reason,
 		Corrections:      o.corrections,
 		CorrectionMethod: o.correctionMethod,

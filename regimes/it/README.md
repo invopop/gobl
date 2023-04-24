@@ -37,11 +37,14 @@ Italy uses the FatturaPA format for their e-invoicing system.
 #### Stamp Duty
 Add an invoice-level `bill.Charge` and use `it.ChargeKeyStampDuty` as the `bill.Charge.Key`.
 
-#### Special Codes (WIP)
+#### Numero REA
+`Party.Registration` is used to store the Numero REA (Registro delle Imprese) of the company.
+The `Office` field is used to store the Provincia (Province) of the company, the `Entry` field is used to store the Numero REA. Additionally, the share capital is stored in the `Capital` field used in conjunction with `Currency`.
+
+#### Local Codes
 
 FatturaPA demands very specific categorization for the type of economic activity,
-document type, fund type, etc. It will be a challenge to map these onto GOBL
-constructs.
+document type, fund type, etc.
 
 ##### RegimeFiscale (Tax System)
 
@@ -181,7 +184,7 @@ Note: fields marked with (\*) are for simplified invoice documents.
 
 ##### TipoRitenuta (Withholding Type)
 
-|      |                                    |
+| Code | Description                        |
 | ---- | ---------------------------------- |
 | RT01 | witholding tax natural persons     |
 | RT02 | witholding corporate entities      |
@@ -189,3 +192,7 @@ Note: fields marked with (\*) are for simplified invoice documents.
 | RT04 | ENASARCO contribution              |
 | RT05 | ENPAM contribution                 |
 | RT06 | Other social security contribution |
+
+## TODO
+- Document Codice Destinatario (uses inbox codes)
+- Document how local codes are mapped

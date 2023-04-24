@@ -60,6 +60,12 @@ func (d Date) Validate() error {
 	return nil
 }
 
+// Clone returns a new pointer to a copy of the date.
+func (d *Date) Clone() *Date {
+	d2 := *d
+	return &d2
+}
+
 // UnmarshalJSON is used to parse a date from json and ensures that
 // we can handle invalid data reasonably.
 func (d *Date) UnmarshalJSON(data []byte) error {

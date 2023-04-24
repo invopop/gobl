@@ -45,42 +45,52 @@
           "oneOf": [
             {
               "const": "",
+              "title": "NA",
               "description": "Not yet defined"
             },
             {
               "const": "end-of-month",
+              "title": "End of Month",
               "description": "End of month"
             },
             {
               "const": "due-date",
+              "title": "Due Date",
               "description": "Due on a specific date"
             },
             {
               "const": "deferred",
+              "title": "Deferred",
               "description": "Deferred until after the due date"
             },
             {
               "const": "proximo",
+              "title": "Proximo",
               "description": "Month after the present"
             },
             {
               "const": "instant",
+              "title": "Instant",
               "description": "On receipt of invoice"
             },
             {
               "const": "elective",
+              "title": "Elective",
               "description": "Chosen by the buyer"
             },
             {
               "const": "pending",
+              "title": "Pending",
               "description": "Seller to advise buyer in separate transaction"
             },
             {
               "const": "advance",
+              "title": "Advance",
               "description": "Payment made in advance"
             },
             {
               "const": "delivery",
+              "title": "Delivery",
               "description": "Payment on Delivery"
             }
           ],
@@ -113,5 +123,5 @@
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   },
-  "$comment": "Generated with GOBL v0.42.0"
+  "$comment": "Generated with GOBL v0.42.3"
 }

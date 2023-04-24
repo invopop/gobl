@@ -22,6 +22,12 @@
         }
       }
     ],
+    "registration": {
+      "capital": "50000.00",
+      "currency": "EUR",
+      "entry": "123456",
+      "office": "RM"
+    },
     "addresses": [
       {
         "num": "9",

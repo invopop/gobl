@@ -151,6 +151,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 
 func TestBasicCreditNoteValidation(t *testing.T) {
 	inv := creditNote()
+	inv.Preceding[0].Reason = "Correcting an error"
 	err := inv.Calculate()
 	require.NoError(t, err)
 	err = inv.Validate()

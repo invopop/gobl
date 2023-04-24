@@ -10,15 +10,50 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNormalizeTaxIdentity(t *testing.T) {
+	r := fr.New()
+	tests := []struct {
+		Code     cbc.Code
+		Expected cbc.Code
+	}{
+		{
+			Code:     "356000000", // SIREN to VAT
+			Expected: "39356000000",
+		},
+		{
+			Code:     "44 73282 9320 ",
+			Expected: "44732829320",
+		},
+		{
+			Code:     "391-838-042",
+			Expected: "44391838042",
+		},
+		{
+			Code:     "FR391838042",
+			Expected: "44391838042",
+		},
+		{
+			Code:     "FR44391838042",
+			Expected: "44391838042",
+		},
+	}
+	for _, ts := range tests {
+		tID := &tax.Identity{Country: l10n.FR, Code: ts.Code}
+		err := r.CalculateObject(tID)
+		assert.NoError(t, err)
+		assert.Equal(t, ts.Expected, tID.Code)
+	}
+}
+
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
 		err  string
 	}{
-		{name: "good 1", code: "356000000"},
-		{name: "good 2", code: "732829320"},
-		{name: "good 3", code: "391838042"},
+		{name: "good 1", code: "39356000000"},
+		{name: "good 2", code: "44732829320"},
+		{name: "good 3", code: "44391838042"},
 		{
 			name: "empty",
 			code: "",
@@ -26,7 +61,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "too long",
-			code: "123456789100",
+			code: "44123456789100",
 			err:  "invalid format",
 		},
 		{
@@ -41,7 +76,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "bad checksum",
-			code: "999999991",
+			code: "44999999991",
 			err:  "checksum mismatch",
 		},
 	}
