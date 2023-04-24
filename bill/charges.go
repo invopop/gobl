@@ -35,7 +35,7 @@ func (lc *LineCharge) Validate() error {
 type Charge struct {
 	// Unique identifying for the discount entry
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	// Type of the charge, useful when regimes require special types of charges.
+	// Key for grouping or identifying charges for tax purposes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Line number inside the list of discounts (calculated).
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
