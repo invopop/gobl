@@ -34,6 +34,9 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 ### Italy-specific Details
 
+#### Stamp Duty
+Add an invoice-level `bill.Charge` and use `it.ChargeKeyStampDuty` as the `bill.Charge.Key`.
+
 #### Numero REA
 `Party.Registration` is used to store the Numero REA (Registro delle Imprese) of the company.
 The `Office` field is used to store the Provincia (Province) of the company, the `Entry` field is used to store the Numero REA. Additionally, the share capital is stored in the `Capital` field used in conjunction with `Currency`.
