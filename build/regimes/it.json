@@ -670,6 +670,19 @@
       }
     }
   ],
+  "charge_types": [
+    {
+      "key": "stamp-duty",
+      "name": {
+        "en": "Stamp Duty",
+        "it": "Imposta di bollo"
+      },
+      "desc": {
+        "en": "A fixed-price tax applied to the production, request or presentation of certain documents: civil, commercial, judicial and extrajudicial documents, on notices, on posters.",
+        "it": "Un'imposta applicata alla produzione, richiesta o presentazione di determinati documenti: atti civili, commerciali, giudiziali ed extragiudiziali, sugli avvisi, sui manifesti."
+      }
+    }
+  ],
   "tags": [
     {
       "key": "freelance",

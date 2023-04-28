@@ -10,6 +10,11 @@
           "title": "UUID",
           "description": "Unique identifying for the discount entry"
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key for grouping or identifying charges for tax purposes."
+        },
         "i": {
           "type": "integer",
           "title": "Index",
@@ -797,5 +802,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.42.3"
+  "$comment": "Generated with GOBL v0.42.4"
 }
