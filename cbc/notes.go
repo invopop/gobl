@@ -240,13 +240,18 @@ type Note struct {
 	Src Key `json:"src,omitempty" jsonschema:"title=Source"`
 	// The contents of the note
 	Text string `json:"text" jsonschema:"title=Text"`
+	// Additional information about the note
+	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks that the note looks okay.
 func (n *Note) Validate() error {
 	return validation.ValidateStruct(n,
 		validation.Field(&n.Key, isValidNoteKey),
+		validation.Field(&n.Code),
 		validation.Field(&n.Text, validation.Required),
+		validation.Field(&n.Src),
+		validation.Field(&n.Meta),
 	)
 }
 
