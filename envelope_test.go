@@ -136,7 +136,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("remove stamps", func(t *testing.T) {
+	t.Run("handle stamps", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		require.NoError(t, e.Insert(m))
 		e.Head.AddStamp(&cbc.Stamp{Provider: cbc.Key("test"), Value: "test"})
@@ -149,9 +149,13 @@ func TestEnvelopeCalculate(t *testing.T) {
 		assert.Contains(t, err.Error(), "stamps: must be blank.")
 		err = e.Calculate()
 		assert.NoError(t, err)
-		assert.Empty(t, e.Head.Stamps)
-		err = e.Validate()
-		assert.NoError(t, err)
+		assert.Len(t, e.Head.Stamps, 1)
+		/*
+			// Removed for now as we prefer to just validate.
+			assert.Empty(t, e.Head.Stamps)
+			err = e.Validate()
+			assert.NoError(t, err)
+		*/
 	})
 }
 

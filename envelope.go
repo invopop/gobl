@@ -167,11 +167,6 @@ func (e *Envelope) calculate() error {
 	if err != nil {
 		return err
 	}
-	if e.Head.Draft {
-		// Draft envelopes should not contain any stamps. This helps prevent
-		// mistakes with data that could be "stamped" and then change later.
-		e.Head.Stamps = nil
-	}
 
 	return nil
 }
