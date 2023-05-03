@@ -20,6 +20,8 @@ import (
 
 var testKey = dsig.NewES256Key()
 
+const testMessageContent = "This is test content."
+
 func ExampleNewEnvelope_complete() {
 	// Prepare a new Envelope with a region
 	env := gobl.NewEnvelope()
@@ -59,7 +61,7 @@ func ExampleNewEnvelope_complete() {
 }
 
 func TestEnvelop(t *testing.T) {
-	msg := &note.Message{Content: "This is test content."}
+	msg := &note.Message{Content: testMessageContent}
 	e, err := gobl.Envelop(msg)
 	require.NoError(t, err)
 	if assert.NotNil(t, e) {
@@ -69,7 +71,7 @@ func TestEnvelop(t *testing.T) {
 
 func TestEnvelopeDocument(t *testing.T) {
 	m := new(note.Message)
-	m.Content = "This is test content."
+	m.Content = testMessageContent
 
 	e := gobl.NewEnvelope()
 	if assert.NotNil(t, e.Head) {
@@ -106,7 +108,7 @@ func TestEnvelopeExtract(t *testing.T) {
 
 func TestEnvelopeInsert(t *testing.T) {
 	m := new(note.Message)
-	m.Content = "This is test content."
+	m.Content = testMessageContent
 
 	t.Run("missing head", func(t *testing.T) {
 		e := new(gobl.Envelope)
@@ -125,7 +127,7 @@ func TestEnvelopeInsert(t *testing.T) {
 
 func TestEnvelopeCalculate(t *testing.T) {
 	m := new(note.Message)
-	m.Content = "This is test content."
+	m.Content = testMessageContent
 
 	t.Run("basics", func(t *testing.T) {
 		e := gobl.NewEnvelope()
