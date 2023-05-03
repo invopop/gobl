@@ -18,7 +18,8 @@ type Header struct {
 	// Digest of the canonical JSON body.
 	Digest *dsig.Digest `json:"dig" jsonschema:"title=Digest"`
 
-	// Seals of approval from other organisations.
+	// Seals of approval from other organisations that can only be added to
+	// non-draft envelopes.
 	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
 	// Set of labels that describe but have no influence on the data.
@@ -52,7 +53,10 @@ func (h *Header) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, h,
 		validation.Field(&h.UUID, validation.Required, uuid.IsV1),
 		validation.Field(&h.Digest, validation.Required),
-		validation.Field(&h.Stamps),
+		validation.Field(&h.Stamps,
+			validation.When(h.Draft, validation.Empty),
+			cbc.DetectDuplicateStamps,
+		),
 	)
 }
 

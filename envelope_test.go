@@ -12,12 +12,15 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/uuid"
 )
 
 var testKey = dsig.NewES256Key()
+
+const testMessageContent = "This is test content."
 
 func ExampleNewEnvelope_complete() {
 	// Prepare a new Envelope with a region
@@ -58,7 +61,7 @@ func ExampleNewEnvelope_complete() {
 }
 
 func TestEnvelop(t *testing.T) {
-	msg := &note.Message{Content: "This is test content."}
+	msg := &note.Message{Content: testMessageContent}
 	e, err := gobl.Envelop(msg)
 	require.NoError(t, err)
 	if assert.NotNil(t, e) {
@@ -68,7 +71,7 @@ func TestEnvelop(t *testing.T) {
 
 func TestEnvelopeDocument(t *testing.T) {
 	m := new(note.Message)
-	m.Content = "This is test content."
+	m.Content = testMessageContent
 
 	e := gobl.NewEnvelope()
 	if assert.NotNil(t, e.Head) {
@@ -105,7 +108,7 @@ func TestEnvelopeExtract(t *testing.T) {
 
 func TestEnvelopeInsert(t *testing.T) {
 	m := new(note.Message)
-	m.Content = "This is test content."
+	m.Content = testMessageContent
 
 	t.Run("missing head", func(t *testing.T) {
 		e := new(gobl.Envelope)
@@ -120,7 +123,40 @@ func TestEnvelopeInsert(t *testing.T) {
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "no-document")
 	})
+}
 
+func TestEnvelopeCalculate(t *testing.T) {
+	m := new(note.Message)
+	m.Content = testMessageContent
+
+	t.Run("basics", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(m))
+		err := e.Calculate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("handle stamps", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(m))
+		e.Head.AddStamp(&cbc.Stamp{Provider: cbc.Key("test"), Value: "test"})
+		err := e.Calculate()
+		assert.NoError(t, err)
+		assert.NotEmpty(t, e.Head.Stamps)
+		e.Head.Draft = true
+		err = e.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "stamps: must be blank.")
+		err = e.Calculate()
+		assert.NoError(t, err)
+		assert.Len(t, e.Head.Stamps, 1)
+		/*
+			// Removed for now as we prefer to just validate.
+			assert.Empty(t, e.Head.Stamps)
+			err = e.Validate()
+			assert.NoError(t, err)
+		*/
+	})
 }
 
 func TestEnvelopeComplete(t *testing.T) {
