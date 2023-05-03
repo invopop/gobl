@@ -12,6 +12,7 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/uuid"
@@ -120,7 +121,31 @@ func TestEnvelopeInsert(t *testing.T) {
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "no-document")
 	})
+}
 
+func TestEnvelopeCalculate(t *testing.T) {
+	m := new(note.Message)
+	m.Content = "This is test content."
+
+	t.Run("basics", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(m))
+		err := e.Calculate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("remove stamps", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		require.NoError(t, e.Insert(m))
+		e.Head.AddStamp(&cbc.Stamp{Provider: cbc.Key("test"), Value: "test"})
+		err := e.Calculate()
+		assert.NoError(t, err)
+		assert.NotEmpty(t, e.Head.Stamps)
+		e.Head.Draft = true
+		err = e.Calculate()
+		assert.NoError(t, err)
+		assert.Empty(t, e.Head.Stamps)
+	})
 }
 
 func TestEnvelopeComplete(t *testing.T) {

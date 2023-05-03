@@ -1,6 +1,9 @@
 package cbc
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/invopop/validation"
 )
 
@@ -19,4 +22,34 @@ func (s *Stamp) Validate() error {
 		validation.Field(&s.Provider, validation.Required),
 		validation.Field(&s.Value, validation.Required),
 	)
+}
+
+// In checks if the stamp is in the list of stamps.
+func (s *Stamp) In(ss []*Stamp) bool {
+	for _, r := range ss {
+		if s.Provider == r.Provider {
+			return true
+		}
+	}
+	return false
+}
+
+// DetectDuplicateStamps checks if the list of stamps contains duplicate
+// provider keys.
+var DetectDuplicateStamps = validation.By(duplicateDuplicateStamps)
+
+func duplicateDuplicateStamps(list interface{}) error {
+	values, ok := list.([]*Stamp)
+	if !ok {
+		return errors.New("must be a stamp array")
+	}
+	set := []*Stamp{}
+	// loop through and check order of Since value
+	for _, v := range values {
+		if v.In(set) {
+			return fmt.Errorf("duplicate stamp '%v'", v.Provider)
+		}
+		set = append(set, v)
+	}
+	return nil
 }
