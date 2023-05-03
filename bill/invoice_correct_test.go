@@ -51,6 +51,13 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
 
+	// With preset date
+	i = testInvoiceESForCorrection(t)
+	d := cal.MakeDate(2023, 6, 13)
+	err = i.Correct(bill.WithDate(d))
+	require.NoError(t, err)
+	assert.Equal(t, i.IssueDate, d)
+
 	// France case (both corrective and credit note)
 	i = testInvoiceFRForCorrection(t)
 	err = i.Correct()
