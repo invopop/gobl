@@ -11,6 +11,7 @@ import (
 // correctionOptions defines a structure used to pass configuration options
 // for certain method calls.
 type correctionOptions struct {
+	date             *cal.Date
 	stamps           []*cbc.Stamp
 	credit           bool
 	debit            bool
@@ -51,6 +52,15 @@ func WithCorrection(correction cbc.Key) cbc.Option {
 	return func(o interface{}) {
 		opts := o.(*correctionOptions)
 		opts.corrections = append(opts.corrections, correction)
+	}
+}
+
+// WithDate can be used to override the date of the corrective invoice
+// produced.
+func WithDate(date cal.Date) cbc.Option {
+	return func(o interface{}) {
+		opts := o.(*correctionOptions)
+		opts.date = &date
 	}
 }
 
@@ -103,7 +113,11 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	inv.UUID = nil
 	inv.Series = ""
 	inv.Code = ""
-	inv.IssueDate = cal.Today()
+	if o.date != nil {
+		inv.IssueDate = *o.date
+	} else {
+		inv.IssueDate = cal.Today()
+	}
 
 	// Take the regime def to figure out what needs to be copied
 	if o.credit {
