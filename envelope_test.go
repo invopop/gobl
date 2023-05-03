@@ -142,9 +142,14 @@ func TestEnvelopeCalculate(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, e.Head.Stamps)
 		e.Head.Draft = true
+		err = e.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "stamps: must be blank.")
 		err = e.Calculate()
 		assert.NoError(t, err)
 		assert.Empty(t, e.Head.Stamps)
+		err = e.Validate()
+		assert.NoError(t, err)
 	})
 }
 
