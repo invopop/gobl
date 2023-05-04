@@ -132,6 +132,9 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 				if c.category.Retained {
 					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 				}
+				if c.Percent == nil {
+					return ErrInvalidRate.WithMessage("missing '%s' percentage", tc.Includes.String())
+				}
 
 				// update the price scale, add two 0s, this will be removed later.
 				tl.price = tl.price.Rescale(tl.price.Exp() + 2)
