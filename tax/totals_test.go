@@ -179,6 +179,7 @@ func TestTotalCalculate(t *testing.T) {
 				Sum: num.MakeAmount(2100, 2),
 			},
 		},
+
 		{
 			desc: "with VAT percents defined, rate override",
 			lines: []tax.TaxableLine{
@@ -757,6 +758,25 @@ func TestTotalCalculate(t *testing.T) {
 			taxIncluded: es.TaxCategoryIRPF,
 			err:         tax.ErrInvalidPricesInclude,
 			errContent:  "cannot include retained",
+		},
+		{
+			desc: "tax included with missing rate",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Tags:     []cbc.Key{"random"},
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: common.TaxCategoryVAT,
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{},
+				Sum:        num.MakeAmount(0, 2),
+			},
 		},
 	}
 
