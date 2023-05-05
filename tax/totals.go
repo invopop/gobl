@@ -133,7 +133,8 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 				}
 				if c.Percent == nil {
-					return ErrInvalidRate.WithMessage("missing '%s' percentage", tc.Includes.String())
+					// can't work without a percent value, just skip
+					continue
 				}
 
 				// update the price scale, add two 0s, this will be removed later.

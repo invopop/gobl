@@ -766,14 +766,17 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
+							Tags:     []cbc.Key{"random"},
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 			},
 			taxIncluded: common.TaxCategoryVAT,
-			err:         tax.ErrInvalidRate,
-			errContent:  "missing 'VAT' percentage",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{},
+				Sum:        num.MakeAmount(0, 2),
+			},
 		},
 	}
 
