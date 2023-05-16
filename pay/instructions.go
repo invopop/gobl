@@ -22,6 +22,7 @@ const (
 	MethodKeyBankDraft      cbc.Key = "bank-draft"
 	MethodKeyDirectDebit    cbc.Key = "direct-debit" // aka. Mandate
 	MethodKeyOnline         cbc.Key = "online"       // Website from which payment can be made
+	MethodKeyVoucher        cbc.Key = "voucher"
 )
 
 // MethodKeyDef is used to define each of the Method Keys
@@ -50,6 +51,7 @@ var MethodKeyDefinitions = []MethodKeyDef{
 	{MethodKeyBankDraft, "Draft", "Bankers Draft or Bank Cheque.", ""},                            // Banker's draft,
 	{MethodKeyDirectDebit, "Direct Debit", "Direct debit from the customers bank account.", "49"}, // direct debit
 	{MethodKeyOnline, "Online", "Online or web payment.", "68"},                                   // online payment service
+	{MethodKeyVoucher, "Voucher", "Gift voucher or coupon.", ""},                                  // voucher
 }
 
 // Instructions determine how the payment has or should be made. A
