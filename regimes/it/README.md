@@ -35,9 +35,11 @@ Italy uses the FatturaPA format for their e-invoicing system.
 ### Italy-specific Details
 
 #### Stamp Duty
+
 Add an invoice-level `bill.Charge` and use `it.ChargeKeyStampDuty` as the `bill.Charge.Key`.
 
 #### Numero REA
+
 `Party.Registration` is used to store the Numero REA (Registro delle Imprese) of the company.
 The `Office` field is used to store the Provincia (Province) of the company, the `Entry` field is used to store the Numero REA. Additionally, the share capital is stored in the `Capital` field used in conjunction with `Currency`.
 
@@ -96,33 +98,37 @@ document type, fund type, etc.
 | TC21 | National pension and welfare board for psychologists (ENPAP - Ente Nazionale Previdenza e Assistenza Psicologi)                                |
 | TC22 | National Social Security Institute (INPS - Istituto Nazionale della Previdenza Sociale)                                                        |
 
-##### ModalitaPagamento (Payment Method)
+##### ModalitaPagamento (Payment Means)
 
-| Code | Key               | SubKey      | Description                                       |
-| ---- | ----------------- | ----------- | ------------------------------------------------- |
-| MP01 | `cash`            |             | Cash                                              |
-| MP02 | `cheque`          |             | cheque                                            |
-| MP03 | `bank-draft`      |             | Banker's draft                                    |
-| MP04 | `cash`            | `treasury`  | Cash at Treasury                                  |
-| MP05 | `credit-transfer` |             | bank transfer                                     |
-| MP06 | NA                |             | money order                                       |
-| MP07 | NA                |             | pre-compiled bank payment slip                    |
-| MP08 | `card`            |             | payment card                                      |
-| MP09 | `direct-debit`    |             | direct debit                                      |
-| MP10 | `direct-debit`    | `utilities` | Utilities direct debit (must be rare!)            |
-| MP11 | `direct-debit`    | `fast`      | fast direct debit                                 |
-| MP12 | NA                |             | collection order                                  |
-| MP13 | NA                |             | payment by notice                                 |
-| MP14 | NA                |             | tax office quittance                              |
-| MP15 | NA                |             | transfer on special accounting accounts           |
-| MP16 | NA                |             | order for direct payment from bank account        |
-| MP17 | NA                |             | order for direct payment from post office account |
-| MP18 | NA                |             | bulletin postal account                           |
-| MP19 | `direct-debit`    | `sepa`      | SEPA Direct Debit                                 |
-| MP20 | `direct-debit`    | `sepa-core` | SEPA Direct Debit CORE                            |
-| MP21 | `direct-debit`    | `sepa-b2b`  | SEPA Direct Debit B2B                             |
-| MP22 | `credit`          |             | Deduction on sums already collected               |
-| MP23 | `online`          | `pagopa`    | PagoPA                                            |
+The following table describes how to map the Italian payment means codes to those of GOBL. The list is based on the official mapping of the FatturaPA codes to EU Semantic invoice definition, more details available [here](https://www.agenziaentrate.gov.it/portale/documents/20143/288396/Technical+Rules+for+European+Invoicing+v2.1.pdf).
+
+If more precision is required for the type of payment means, the `code` property when available can be use to override the main value.
+
+| Code | Key               | Code   | Description                                                     |
+| ---- | ----------------- | ------ | --------------------------------------------------------------- |
+| MP01 | `cash`            |        | Cash                                                            |
+| MP02 | `cheque`          |        | Cheque                                                          |
+| MP03 | `bank-draft`      |        | Banker's draft                                                  |
+| MP04 | `cash`            | `MP04` | Cash at Treasury                                                |
+| MP05 | `credit-transfer` |        | bank transfer                                                   |
+| MP06 | `promissory-note` |        | Promissory Note                                                 |
+| MP07 | `other`           | `MP07` | Pre-compiled bank payment slip                                  |
+| MP08 | `card`            |        | Any type of payment card                                        |
+| MP09 | `direct-debit`    | `MP09` | Direct debit (RID)                                              |
+| MP10 | `direct-debit`    | `MP10` | Utilities direct debit (RID utenze)                             |
+| MP11 | `direct-debit`    | `MP11` | Fast direct debit (RID veloce)                                  |
+| MP12 | `other`           | `MP12` | Collection order (RIBA)                                         |
+| MP13 | `debit-transfer`  |        | Payment by notice (MAV)                                         |
+| MP14 | `other`           | `MP14` | Tax office quittance                                            |
+| MP15 | `other`           | `MP15` | Transfer on special accounting accounts                         |
+| MP16 | `other`           | `MP16` | Order for direct payment from bank account                      |
+| MP17 | `other`           | `MP17` | Order for direct payment from post office account               |
+| MP18 | `other`           | `MP18` | Bulletin postal account                                         |
+| MP19 | `direct-debit`    |        | SEPA Direct Debit (default type of direct debit)                |
+| MP20 | `direct-debit`    | `MP20` | SEPA Direct Debit CORE                                          |
+| MP21 | `direct-debit`    | `MP21` | SEPA Direct Debit B2B                                           |
+| MP22 | `netting`         |        | Deduction on sums already collected from previous transactions. |
+| MP23 | `online`          | `MP23` | PagoPA                                                          |
 
 ##### TipoDocumento (Document Type)
 
@@ -155,8 +161,8 @@ Note: fields marked with (\*) are for simplified invoice documents.
 
 ##### Natura (Nature)
 
-|      |                                                                                                                                                                                                                                                          |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| Code | Description                                                                                                                                                                                                                                              |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | N1   | excluded pursuant to Art. 15, DPR 633/72                                                                                                                                                                                                                 |
 | N2   | not subject (this code is no longer permitted to use on invoices emitted from 1 January 2021 )                                                                                                                                                           |
 | N2.1 | not subject to VAT under the articles from 7 to 7-septies of DPR 633/72                                                                                                                                                                                  |
@@ -170,7 +176,7 @@ Note: fields marked with (\*) are for simplified invoice documents.
 | N3.6 | not taxable – other transactions that don’t contribute to the determination of ceiling                                                                                                                                                                   |
 | N4   | exempt                                                                                                                                                                                                                                                   |
 | N5   | margin regime / VAT not exposed on invoice                                                                                                                                                                                                               |
-| N6   | "reverse charge (for transactions in reverse charge or for self invoicing for purchase of extra UE services or for import of goods only in the cases provided for) — (this code is no longer permitted to use on invoices emitted from 1 January 2021 )" |     |
+| N6   | "reverse charge (for transactions in reverse charge or for self invoicing for purchase of extra UE services or for import of goods only in the cases provided for) — (this code is no longer permitted to use on invoices emitted from 1 January 2021 )" |
 | N6.1 | reverse charge - transfer of scrap and of other recyclable materials                                                                                                                                                                                     |
 | N6.2 | reverse charge - trasnfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO                                                                                                                                                 |
 | N6.3 | reverse charge - subcontracting in the construction sector                                                                                                                                                                                               |
@@ -194,5 +200,6 @@ Note: fields marked with (\*) are for simplified invoice documents.
 | RT06 | Other social security contribution |
 
 ## TODO
+
 - Document Codice Destinatario (uses inbox codes)
 - Document how local codes are mapped

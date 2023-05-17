@@ -15,7 +15,7 @@ func TestInstructionsKey(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "key: must be a valid value")
 
-	i.Key = pay.MethodKeyCard
+	i.Key = pay.MeansKeyCard
 	err = i.Validate()
 	assert.NoError(t, err)
 }
