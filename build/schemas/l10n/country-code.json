@@ -59,7 +59,7 @@
         },
         {
           "const": "AU",
-          "title": "Australia "
+          "title": "Australia"
         },
         {
           "const": "AT",
@@ -71,7 +71,7 @@
         },
         {
           "const": "BS",
-          "title": "Bahamas (the)"
+          "title": "Bahamas"
         },
         {
           "const": "BH",
@@ -111,7 +111,7 @@
         },
         {
           "const": "BO",
-          "title": "Bolivia (Plurinational State of)"
+          "title": "Bolivia, Plurinational State of"
         },
         {
           "const": "BQ",
@@ -135,7 +135,7 @@
         },
         {
           "const": "IO",
-          "title": "British Indian Ocean Territory (the)"
+          "title": "British Indian Ocean Territory"
         },
         {
           "const": "BN",
@@ -171,11 +171,11 @@
         },
         {
           "const": "KY",
-          "title": "Cayman Islands (the)"
+          "title": "Cayman Islands"
         },
         {
           "const": "CF",
-          "title": "Central African Republic (the)"
+          "title": "Central African Republic"
         },
         {
           "const": "TD",
@@ -195,7 +195,7 @@
         },
         {
           "const": "CC",
-          "title": "Cocos (Keeling) Islands (the)"
+          "title": "Cocos (Keeling) Islands"
         },
         {
           "const": "CO",
@@ -203,19 +203,19 @@
         },
         {
           "const": "KM",
-          "title": "Comoros (the)"
+          "title": "Comoros"
         },
         {
           "const": "CG",
-          "title": "Congo (the Democratic Republic of the)"
+          "title": "Congo"
         },
         {
           "const": "CD",
-          "title": "Congo (the)"
+          "title": "Congo, Democratic Republic of the"
         },
         {
           "const": "CK",
-          "title": "Cook Islands (the)"
+          "title": "Cook Islands"
         },
         {
           "const": "CR",
@@ -259,7 +259,7 @@
         },
         {
           "const": "DO",
-          "title": "Dominican Republic (the)"
+          "title": "Dominican Republic"
         },
         {
           "const": "EC",
@@ -295,11 +295,11 @@
         },
         {
           "const": "FK",
-          "title": "Falkland Islands (the)"
+          "title": "Falkland Islands"
         },
         {
           "const": "FO",
-          "title": "Faroe Islands (the)"
+          "title": "Faroe Islands"
         },
         {
           "const": "FJ",
@@ -323,7 +323,7 @@
         },
         {
           "const": "TF",
-          "title": "French Southern Territories (the) "
+          "title": "French Southern Territories"
         },
         {
           "const": "GA",
@@ -331,7 +331,7 @@
         },
         {
           "const": "GM",
-          "title": "Gambia (the)"
+          "title": "Gambia"
         },
         {
           "const": "GE",
@@ -427,7 +427,7 @@
         },
         {
           "const": "IR",
-          "title": "Iran (Islamic Republic of)"
+          "title": "Iran, Islamic Republic of"
         },
         {
           "const": "IQ",
@@ -479,11 +479,11 @@
         },
         {
           "const": "KP",
-          "title": "Korea (the Democratic People's Republic of)"
+          "title": "Korea, Democratic People's Republic of"
         },
         {
           "const": "KR",
-          "title": "Korea (the Republic of)"
+          "title": "Korea, Republic of"
         },
         {
           "const": "KW",
@@ -495,7 +495,7 @@
         },
         {
           "const": "LA",
-          "title": "Lao People's Democratic Republic (the)"
+          "title": "Lao People's Democratic Republic"
         },
         {
           "const": "LV",
@@ -563,7 +563,7 @@
         },
         {
           "const": "MH",
-          "title": "Marshall Islands (the)"
+          "title": "Marshall Islands"
         },
         {
           "const": "MQ",
@@ -587,11 +587,11 @@
         },
         {
           "const": "FM",
-          "title": "Micronesia (Federated States of)"
+          "title": "Micronesia, Federated States of"
         },
         {
           "const": "MD",
-          "title": "Moldova (the Republic of)"
+          "title": "Moldova, Republic of"
         },
         {
           "const": "MC",
@@ -635,7 +635,7 @@
         },
         {
           "const": "NL",
-          "title": "Netherlands (the)"
+          "title": "Netherlands"
         },
         {
           "const": "NC",
@@ -651,7 +651,7 @@
         },
         {
           "const": "NE",
-          "title": "Niger (the)"
+          "title": "Niger"
         },
         {
           "const": "NG",
@@ -667,7 +667,7 @@
         },
         {
           "const": "MP",
-          "title": "Northern Mariana Islands (the)"
+          "title": "Northern Mariana Islands"
         },
         {
           "const": "NO",
@@ -707,7 +707,7 @@
         },
         {
           "const": "PH",
-          "title": "Philippines (the)"
+          "title": "Philippines"
         },
         {
           "const": "PN",
@@ -739,7 +739,7 @@
         },
         {
           "const": "RU",
-          "title": "Russian Federation (the)"
+          "title": "Russian Federation"
         },
         {
           "const": "RW",
@@ -851,7 +851,7 @@
         },
         {
           "const": "SD",
-          "title": "Sudan (the)"
+          "title": "Sudan"
         },
         {
           "const": "SR",
@@ -871,7 +871,7 @@
         },
         {
           "const": "SY",
-          "title": "Syrian Arab Republic (the)"
+          "title": "Syrian Arab Republic"
         },
         {
           "const": "TW",
@@ -891,7 +891,7 @@
         },
         {
           "const": "TL",
-          "title": "Timor-Leste "
+          "title": "Timor-Leste"
         },
         {
           "const": "TG",
@@ -923,7 +923,7 @@
         },
         {
           "const": "TC",
-          "title": "Turks and Caicos Islands (the)"
+          "title": "Turks and Caicos Islands"
         },
         {
           "const": "TV",
@@ -939,19 +939,19 @@
         },
         {
           "const": "AE",
-          "title": "United Arab Emirates (the)"
+          "title": "United Arab Emirates"
         },
         {
           "const": "GB",
-          "title": "United Kingdom of Great Britain and Northern Ireland (the)"
+          "title": "United Kingdom"
         },
         {
           "const": "US",
-          "title": "United States of America (the)"
+          "title": "United States of America"
         },
         {
           "const": "UM",
-          "title": "United States Minor Outlying Islands (the)"
+          "title": "United States Minor Outlying Islands"
         },
         {
           "const": "UY",
@@ -967,7 +967,7 @@
         },
         {
           "const": "VE",
-          "title": "Venezuela (Bolivarian Republic of)"
+          "title": "Venezuela, Bolivarian Republic of"
         },
         {
           "const": "VN",
@@ -1007,5 +1007,5 @@
       "description": "Defines an ISO 3166-2 country code"
     }
   },
-  "$comment": "Generated with GOBL v0.42.4"
+  "$comment": "Generated with GOBL v0.42.8"
 }

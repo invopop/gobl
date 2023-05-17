@@ -84,8 +84,8 @@
               "description": "Seller to advise buyer in separate transaction"
             },
             {
-              "const": "advance",
-              "title": "Advance",
+              "const": "advanced",
+              "title": "Advanced",
               "description": "Payment made in advance"
             },
             {
@@ -123,5 +123,5 @@
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   },
-  "$comment": "Generated with GOBL v0.42.4"
+  "$comment": "Generated with GOBL v0.42.8"
 }
