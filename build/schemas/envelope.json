@@ -60,7 +60,7 @@
           },
           "type": "array",
           "title": "Stamps",
-          "description": "Seals of approval from other organisations."
+          "description": "Seals of approval from other organisations that can only be added to\nnon-draft envelopes."
         },
         "tags": {
           "items": {
@@ -94,5 +94,5 @@
       "description": "Header defines the metadata of the body."
     }
   },
-  "$comment": "Generated with GOBL v0.42.4"
+  "$comment": "Generated with GOBL v0.42.8"
 }

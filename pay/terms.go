@@ -41,7 +41,7 @@ const (
 	// Seller to advise buyer in separate transaction
 	TermKeyPending cbc.Key = "pending"
 	// Payment made in advance
-	TermKeyAdvance cbc.Key = "advance"
+	TermKeyAdvanced cbc.Key = "advanced"
 	// Payment on Delivery
 	TermKeyDelivery cbc.Key = "delivery"
 )
@@ -69,7 +69,7 @@ var TermKeyDefinitions = []TermKeyDef{
 	{TermKeyInstant, "Instant", "On receipt of invoice", "10"},
 	{TermKeyElective, "Elective", "Chosen by the buyer", "11"},
 	{TermKeyPending, "Pending", "Seller to advise buyer in separate transaction", "13"},
-	{TermKeyAdvance, "Advance", "Payment made in advance", "32"},
+	{TermKeyAdvanced, "Advanced", "Payment made in advance", "32"},
 	{TermKeyDelivery, "Delivery", "Payment on Delivery", "52"}, // Cash on Delivery (COD)
 }
 

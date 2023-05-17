@@ -20,7 +20,7 @@ func TestTermsValidation(t *testing.T) {
 	assert.Error(t, err, "expected validation error")
 	assert.Contains(t, err.Error(), "key: must be a valid value")
 
-	tm.Key = TermKeyAdvance
+	tm.Key = TermKeyAdvanced
 	err = tm.Validate()
 	assert.NoError(t, err)
 
