@@ -18,10 +18,9 @@ var (
 	KeyPattern = `^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$`
 	// KeyValidationRegexp is used for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
-
-	// Minimum key length
+	// KeyMinLength defines the minimum key length
 	KeyMinLength = 2
-	// Maximum key length
+	// KeyMaxLength defines the maximum key length
 	KeyMaxLength = 64
 )
 
