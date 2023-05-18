@@ -3,7 +3,6 @@ package pay
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -13,7 +12,7 @@ import (
 // should be provided, all other details serve as a reference.
 type Instructions struct {
 	// The payment means expected or that have been arranged to be used to make the payment.
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	Key MeansKey `json:"key" jsonschema:"title=Key"`
 	// Additional code for the payment means if not defined in the standard list of keys.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Optional text description of the payment method
@@ -95,25 +94,9 @@ func (u *Online) Validate() error {
 // Validate ensures the fields provided in the instructions are valid.
 func (i *Instructions) Validate() error {
 	return validation.ValidateStruct(i,
-		validation.Field(&i.Key, validation.Required, isValidMeansKey),
+		validation.Field(&i.Key, validation.Required, IsValidMeansKey),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),
 		validation.Field(&i.Online),
 	)
-}
-
-// JSONSchemaExtend adds the method key definitions to the schema.
-func (Instructions) JSONSchemaExtend(schema *jsonschema.Schema) {
-	val, _ := schema.Properties.Get("key")
-	prop, ok := val.(*jsonschema.Schema)
-	if ok {
-		prop.OneOf = make([]*jsonschema.Schema, len(MeansKeyDefinitions))
-		for i, v := range MeansKeyDefinitions {
-			prop.OneOf[i] = &jsonschema.Schema{
-				Const:       v.Key,
-				Title:       v.Title,
-				Description: v.Description,
-			}
-		}
-	}
 }

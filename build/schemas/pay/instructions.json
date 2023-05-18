@@ -78,61 +78,14 @@
     "Instructions": {
       "properties": {
         "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
-            {
-              "const": "any",
-              "title": "Any",
-              "description": "Any method available, no preference."
-            },
-            {
-              "const": "card",
-              "title": "Card",
-              "description": "Credit or debit card."
-            },
-            {
-              "const": "credit-transfer",
-              "title": "Credit Transfer",
-              "description": "Sender initiated bank or wire transfer."
-            },
-            {
-              "const": "debit-transfer",
-              "title": "Debit Transfer",
-              "description": "Receiver initiated bank or wire transfer."
-            },
-            {
-              "const": "cash",
-              "title": "Cash",
-              "description": "Cash in hand."
-            },
-            {
-              "const": "cheque",
-              "title": "Cheque",
-              "description": "Cheque from bank."
-            },
-            {
-              "const": "credit",
-              "title": "Credit",
-              "description": "Using credit from previous transactions with the supplier."
-            },
-            {
-              "const": "bank-draft",
-              "title": "Draft",
-              "description": "Bankers Draft or Bank Cheque."
-            },
-            {
-              "const": "direct-debit",
-              "title": "Direct Debit",
-              "description": "Direct debit from the customers bank account."
-            },
-            {
-              "const": "online",
-              "title": "Online",
-              "description": "Online or web payment."
-            }
-          ],
+          "$ref": "https://gobl.org/draft-0/pay/means-key",
           "title": "Key",
-          "description": "How payment is expected or has been arranged to be collected"
+          "description": "The payment means expected or that have been arranged to be used to make the payment."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Additional code for the payment means if not defined in the standard list of keys."
         },
         "detail": {
           "type": "string",
@@ -141,8 +94,8 @@
         },
         "ref": {
           "type": "string",
-          "title": "Ref",
-          "description": "Remittance information, a text value used to link the payment with the invoice."
+          "title": "Reference",
+          "description": "Remittance information or concept, a text value used to link the payment with the invoice."
         },
         "credit_transfer": {
           "items": {

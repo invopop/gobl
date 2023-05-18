@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -18,8 +17,8 @@ type Advance struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// When the advance was made.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
-	// Key is the payment means used to make the advance.
-	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// The payment means used to make the advance.
+	Key MeansKey `json:"key,omitempty" jsonschema:"title=Key"`
 	// Code of the payment means if not defined in the standard list of keys.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// ID or reference for the advance.
@@ -40,6 +39,8 @@ type Advance struct {
 func (a *Advance) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.Amount, validation.Required),
+		validation.Field(&a.Key, IsValidMeansKey),
+		validation.Field(&a.Code),
 		validation.Field(&a.Description, validation.Required),
 	)
 }
@@ -49,21 +50,5 @@ func (a *Advance) Validate() error {
 func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
 	if a.Percent != nil {
 		a.Amount = a.Percent.Of(totalWithTax)
-	}
-}
-
-// JSONSchemaExtend adds the method key definitions to the schema.
-func (Advance) JSONSchemaExtend(schema *jsonschema.Schema) {
-	val, _ := schema.Properties.Get("key")
-	prop, ok := val.(*jsonschema.Schema)
-	if ok {
-		prop.OneOf = make([]*jsonschema.Schema, len(MeansKeyDefinitions))
-		for i, v := range MeansKeyDefinitions {
-			prop.OneOf[i] = &jsonschema.Schema{
-				Const:       v.Key,
-				Title:       v.Title,
-				Description: v.Description,
-			}
-		}
 	}
 }

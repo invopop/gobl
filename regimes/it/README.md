@@ -102,7 +102,7 @@ document type, fund type, etc.
 
 The following table describes how to map the Italian payment means codes to those of GOBL. The list is based on the official mapping of the FatturaPA codes to EU Semantic invoice definition, more details available [here](https://www.agenziaentrate.gov.it/portale/documents/20143/288396/Technical+Rules+for+European+Invoicing+v2.1.pdf).
 
-If more precision is required for the type of payment means, the `code` property when available can be use to override the main value.
+If more precision is required for the type of payment means, the `code` property when available can be use to extend the `key`.
 
 | Code | Key               | Code   | Description                                                     |
 | ---- | ----------------- | ------ | --------------------------------------------------------------- |

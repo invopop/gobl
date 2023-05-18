@@ -18,6 +18,11 @@ var (
 	KeyPattern = `^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$`
 	// KeyValidationRegexp is used for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
+
+	// Minimum key length
+	KeyMinLength = 2
+	// Maximum key length
+	KeyMaxLength = 64
 )
 
 // KeyEmpty is used when no key is available.
@@ -60,8 +65,8 @@ func (Key) JSONSchema() *jsonschema.Schema {
 		Type:        "string",
 		Pattern:     KeyPattern,
 		Title:       "Key",
-		MinLength:   2,
-		MaxLength:   64,
+		MinLength:   KeyMinLength,
+		MaxLength:   KeyMaxLength,
 		Description: "Text identifier to be used instead of a code for a more verbose but readable identifier.",
 	}
 }

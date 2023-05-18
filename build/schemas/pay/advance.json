@@ -15,6 +15,16 @@
           "title": "Date",
           "description": "When the advance was made."
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/pay/means-key",
+          "title": "Key",
+          "description": "The payment means used to make the advance."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code of the payment means if not defined in the standard list of keys."
+        },
         "ref": {
           "type": "string",
           "title": "Reference",
