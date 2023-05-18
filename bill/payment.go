@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -19,9 +21,9 @@ type Payment struct {
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
 }
 
-// Validate checks to make sure the payment data looks good
-func (p *Payment) Validate() error {
-	return validation.ValidateStruct(p,
+// ValidateWithContext checks to make sure the payment data looks good
+func (p *Payment) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.Payee),
 		validation.Field(&p.Terms),
 		validation.Field(&p.Advances),

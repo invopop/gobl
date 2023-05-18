@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -50,6 +51,10 @@ func Validate(doc interface{}) error {
 		return validateTaxIdentity(obj)
 	case *bill.Invoice:
 		return validateInvoice(obj)
+	case *pay.Instructions:
+		return validatePayInstructions(obj)
+	case *pay.Advance:
+		return validatePayAdvance(obj)
 	}
 	return nil
 }

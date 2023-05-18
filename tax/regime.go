@@ -278,6 +278,16 @@ func RegimeFromContext(ctx context.Context) *Regime {
 	return r
 }
 
+// ValidateInRegime ensures that the object is valid in the context of the
+// regime.
+func ValidateInRegime(ctx context.Context, obj interface{}) error {
+	r := RegimeFromContext(ctx)
+	if r == nil {
+		return nil
+	}
+	return r.ValidateObject(obj)
+}
+
 // Validate ensures that the zone looks correct.
 func (z *Zone) Validate() error {
 	err := validation.ValidateStruct(z,

@@ -1,10 +1,13 @@
 package pay
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -37,12 +40,21 @@ type Advance struct {
 
 // Validate checks the advance looks okay
 func (a *Advance) Validate() error {
-	return validation.ValidateStruct(a,
+	return a.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks the advance looks okay inside the context.
+func (a *Advance) ValidateWithContext(ctx context.Context) error {
+	err := validation.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.Amount, validation.Required),
 		validation.Field(&a.Key, IsValidMeansKey),
 		validation.Field(&a.Code),
 		validation.Field(&a.Description, validation.Required),
 	)
+	if err == nil {
+		err = tax.ValidateInRegime(ctx, a)
+	}
+	return err
 }
 
 // CalculateFrom will update the amount using the rate of the provided
