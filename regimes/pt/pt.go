@@ -16,7 +16,8 @@ func init() {
 
 // Custom keys used typically in meta information
 const (
-	KeyTaxExemptionCode cbc.Key = "at-tax-exemption-code"
+	KeyATTaxExemptionCode cbc.Key = "at-tax-exemption-code"
+	KeyATInvoiceType      cbc.Key = "at-invoice-type"
 )
 
 // Zone code definitions for Portugal based on districts and
@@ -60,6 +61,8 @@ func New() *tax.Regime {
 			i18n.PT: "Portugal",
 		},
 		Zones:      zones,
+		Tags:       invoiceTags,
+		Scenarios:  scenarios,
 		Validator:  Validate,
 		Calculator: Calculate,
 		Preceding: &tax.PrecedingDefinitions{
