@@ -5,7 +5,7 @@
   "currency": "EUR",
   "issue_date": "2023-03-02",
   "tax": {
-    "tags": ["freelance", "self-employed-habitual"]
+    "tags": ["freelance"]
   },
   "supplier": {
     "tax_id": {
@@ -74,7 +74,8 @@
         },
         {
           "cat": "IRPEF",
-          "percent": "20.0%"
+          "percent": "20.0%",
+          "tags": ["self-employed-habitual"]
         }
       ],
       "sum": "1800.00",

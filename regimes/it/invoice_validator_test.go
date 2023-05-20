@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -86,8 +87,10 @@ func TestInvoiceValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
+}
 
-	inv = testInvoiceStandard(t)
+func TestCustomerValidation(t *testing.T) {
+	inv := testInvoiceStandard(t)
 	inv.Customer.TaxID = &tax.Identity{
 		Country: l10n.IT,
 		Type:    it.TaxIdentityTypeIndividual,
@@ -96,7 +99,10 @@ func TestInvoiceValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 
-	inv = testInvoiceStandard(t)
+}
+
+func TestSupplierValidation(t *testing.T) {
+	inv := testInvoiceStandard(t)
 	inv.Supplier.TaxID = &tax.Identity{
 		Country: l10n.IT,
 		Type:    it.TaxIdentityTypeIndividual,
@@ -106,4 +112,25 @@ func TestInvoiceValidation(t *testing.T) {
 	err := inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "type: must be a valid value")
+}
+
+func TestRetainedTaxesValidation(t *testing.T) {
+	inv := testInvoiceStandard(t)
+	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
+		Category: "IRPEF",
+		Percent:  num.NewPercentage(20, 2),
+	})
+	require.NoError(t, inv.Calculate())
+	err := inv.Validate()
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invoice with retained taxes must include a valid retained tax tag")
+
+	inv = testInvoiceStandard(t)
+	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
+		Category: "IRPEF",
+		Percent:  num.NewPercentage(20, 2),
+		Tags:     []cbc.Key{"self-employed-habitual"},
+	})
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
 }
