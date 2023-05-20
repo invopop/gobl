@@ -1,6 +1,8 @@
 package it
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
@@ -28,36 +30,84 @@ func (v *invoiceValidator) validate() error {
 }
 
 func (v *invoiceValidator) supplier(value interface{}) error {
-	obj, _ := value.(*org.Party)
-	if obj == nil {
-		return nil
+	supplier, _ := value.(*org.Party)
+	if supplier == nil {
+		return errors.New("missing supplier details")
 	}
 
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
+	return validation.ValidateStruct(supplier,
+		validation.Field(&supplier.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
 			tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
+		),
+		validation.Field(&supplier.Addresses,
+			validation.By(validateAddress("supplier")),
+		),
+		validation.Field(&supplier.Registration,
+			validation.By(validateRegistration),
 		),
 	)
 }
 
 func (v *invoiceValidator) customer(value interface{}) error {
-	p, _ := value.(*org.Party)
-	if p == nil {
-		return nil
+	customer, _ := value.(*org.Party)
+	if customer == nil {
+		return errors.New("missing customer details")
 	}
 
 	// Customers must have a tax ID (PartitaIVA) if they are legal entities like
 	// government offices and companies.
-	return validation.ValidateStruct(p,
-		validation.Field(&p.TaxID,
+	return validation.ValidateStruct(customer,
+		validation.Field(&customer.TaxID,
 			validation.When(
-				p.TaxID.Country.In(l10n.IT), // if destination is Italian
+				customer.TaxID.Country.In(l10n.IT), // if destination is Italian
 				validation.Required,
 				tax.RequireIdentityCode,
 				tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment, TaxIdentityTypeIndividual),
 			),
 		),
+		validation.Field(&customer.Addresses,
+			validation.By(validateAddress("customer")),
+		),
+	)
+}
+
+func validateAddress(partyType string) validation.RuleFunc {
+	return func(value interface{}) error {
+		v, ok := value.([]org.Address)
+		if !ok {
+			return errors.New("value is not a slice of Address")
+		}
+
+		if len(v) != 1 {
+			return errors.New(partyType + " must have exactly one address")
+		}
+
+		address := v[0]
+
+		return validation.ValidateStruct(&address,
+			validation.Field(&address.Country),
+			validation.Field(&address.Locality, validation.Required),
+			validation.Field(&address.Code, validation.Required),
+			validation.Field(&address.Street, validation.Required),
+			validation.Field(&address.Number, validation.Required),
+		)
+	}
+}
+
+func validateRegistration(value interface{}) error {
+	v, ok := value.(*org.Registration)
+	if !ok {
+		return errors.New("value is not a valid Registration")
+	}
+
+	if v == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(v,
+		validation.Field(&v.Entry, validation.Required),
+		validation.Field(&v.Office, validation.Required),
 	)
 }

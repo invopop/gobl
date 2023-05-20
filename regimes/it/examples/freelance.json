@@ -5,7 +5,7 @@
   "currency": "EUR",
   "issue_date": "2023-03-02",
   "tax": {
-    "tags": ["freelance"]
+    "tags": ["freelance", "self-employed-habitual"]
   },
   "supplier": {
     "tax_id": {
@@ -53,6 +53,7 @@
   },
   "lines": [
     {
+      "i": 1,
       "quantity": "20",
       "item": {
         "name": "Development services",
@@ -61,6 +62,7 @@
       },
       "discounts": [
         {
+          "amount": "180.00",
           "percent": "10%",
           "reason": "Special discount"
         }
@@ -74,9 +76,12 @@
           "cat": "IRPEF",
           "percent": "20.0%"
         }
-      ]
+      ],
+      "sum": "1800.00",
+      "total": "1800.00"
     },
     {
+      "i": 2,
       "quantity": "1",
       "item": {
         "name": "Zero test",
@@ -89,7 +94,9 @@
           "rate": "zero",
           "tags": ["not-subject+other"]
         }
-      ]
+      ],
+      "sum": "100.00",
+      "total": "100.00"
     }
   ]
 }

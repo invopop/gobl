@@ -29,6 +29,15 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Country: l10n.IT,
 				Code:    "12345678903",
 			},
+			Addresses: []*org.Address{
+				{
+					Street:   "Via di Test",
+					Code:     "12345",
+					Locality: "Rome",
+					Country:  l10n.IT,
+					Number:   "3",
+				},
+			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -36,6 +45,15 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Country: l10n.IT,
 				Type:    it.TaxIdentityTypeBusiness,
 				Code:    "13029381004",
+			},
+			Addresses: []*org.Address{
+				{
+					Street:   "Piazza di Test",
+					Code:     "38342",
+					Locality: "Venezia",
+					Country:  l10n.IT,
+					Number:   "1",
+				},
 			},
 		},
 		IssueDate: cal.MakeDate(2022, 6, 13),
@@ -88,5 +106,4 @@ func TestInvoiceValidation(t *testing.T) {
 	err := inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "type: must be a valid value")
-
 }
