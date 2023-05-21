@@ -25,7 +25,12 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 
-	err := v.validateRetainedTaxes()
+	err := v.validateScenarios()
+	if err != nil {
+		return err
+	}
+
+	err = v.validateRetainedTaxes()
 	if err != nil {
 		return err
 	}
@@ -71,7 +76,11 @@ func (v *invoiceValidator) customer(value interface{}) error {
 				customer.TaxID.Country.In(l10n.IT),
 				validation.Required,
 				tax.RequireIdentityCode,
-				tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment, TaxIdentityTypeIndividual),
+				tax.IdentityTypeIn(
+					TaxIdentityTypeBusiness,
+					TaxIdentityTypeGovernment,
+					TaxIdentityTypeIndividual,
+				),
 			),
 		),
 		validation.Field(&customer.Addresses,
@@ -117,6 +126,24 @@ func validateRegistration(value interface{}) error {
 		validation.Field(&v.Entry, validation.Required),
 		validation.Field(&v.Office, validation.Required),
 	)
+}
+
+// validateScenarios checks that the invoice includes scenarios that help determine
+// TipoDocumento and RegimeFiscale
+func (v *invoiceValidator) validateScenarios() error {
+	ss := v.inv.ScenarioSummary()
+
+	td := ss.Meta[KeyFatturaPATipoDocumento]
+	if td == "" {
+		return errors.New("missing scenario related to TipoDocumento")
+	}
+
+	rf := ss.Meta[KeyFatturaPARegimeFiscale]
+	if rf == "" {
+		return errors.New("missing scenario related to RegimeFiscale")
+	}
+
+	return nil
 }
 
 // validateRetainedTaxes checks that the invoices with retained taxes has a valid

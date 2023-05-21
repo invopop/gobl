@@ -24,6 +24,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
 		},
+		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
