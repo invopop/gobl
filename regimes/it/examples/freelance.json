@@ -7,6 +7,7 @@
   "tax": {
     "tags": ["freelance"]
   },
+  "type": "standard",
   "supplier": {
     "tax_id": {
       "country": "IT",
@@ -22,18 +23,12 @@
         }
       }
     ],
-    "registration": {
-      "capital": "50000.00",
-      "currency": "EUR",
-      "entry": "123456",
-      "office": "RM"
-    },
     "addresses": [
       {
         "num": "9",
-        "street": "CAMÍ MADRID",
-        "locality": "CANENA",
-        "region": "JAÉN",
+        "street": "VIA DI TORREVECCHIA",
+        "locality": "ROMA",
+        "region": "RM",
         "code": "23480",
         "country": "IT"
       }
@@ -49,7 +44,17 @@
       "country": "IT",
       "code": "13029381004"
     },
-    "name": "Sample Consumer"
+    "name": "David Bowie",
+    "addresses": [
+      {
+        "num": "1",
+        "street": "Via del Corso",
+        "locality": "Roma",
+        "region": "RM",
+        "code": "00100",
+        "country": "IT"
+      }
+    ]
   },
   "lines": [
     {
