@@ -12,7 +12,7 @@ const (
 	// Tags for document type
 	TagFreelance       cbc.Key = "freelance"
 	TagCeilingExceeded cbc.Key = "ceiling-exceeded"
-	TagSanMerinoPaper  cbc.Key = "san-merino-paper"
+	TagSanMarinoPaper  cbc.Key = "san-marino-paper"
 
 	// Tags for Fiscal Regime
 	TagMinimumTaxPayers cbc.Key = "minimum-tax-payers"
@@ -31,7 +31,7 @@ const (
 	TagArticle7                   cbc.Key = "article-7"
 	TagExport                     cbc.Key = "export"
 	TagIntraCommunity             cbc.Key = "intra-community"
-	TagSanMerino                  cbc.Key = "san-merino"
+	TagSanMarino                  cbc.Key = "san-marino"
 	TagExportSupplies             cbc.Key = "export-supplies"
 	TagDeclarationOfIntent        cbc.Key = "declaration-of-intent"
 	TagScrap                      cbc.Key = "scrap"
@@ -116,10 +116,10 @@ var invoiceTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagSanMerinoPaper,
+		Key: TagSanMarinoPaper,
 		Name: i18n.String{
-			i18n.EN: "Purchases from San Merino with VAT and paper invoice",
-			i18n.IT: "Acquisti da San Merino con IVA e fattura cartacea",
+			i18n.EN: "Purchases from San Marino with VAT and paper invoice",
+			i18n.IT: "Acquisti da San Marino con IVA e fattura cartacea",
 		},
 	},
 
@@ -205,7 +205,7 @@ var vatTaxTags = []*tax.Tag{
 		},
 	},
 	{
-		Key: TagNotTaxable.With(TagSanMerino),
+		Key: TagNotTaxable.With(TagSanMarino),
 		Name: i18n.String{
 			i18n.EN: "Not taxable - transfers to San Marino",
 			i18n.IT: "Non imponibili - cessioni verso San Marino",

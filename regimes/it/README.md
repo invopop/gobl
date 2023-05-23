@@ -149,7 +149,7 @@ document type, fund type, etc.
 | TD25 |               | `deferred`, `third-period` | "deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72"                                                                                                               |
 | TD26 |               | `depreciable-assets`       | sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72)                                                                                                      |
 | TD27 | `self-billed` | TBD                        | self invoicing for self consumption or for free transfer without recourse                                                                                                         |
-| TD28 |               | `san-merino-paper`         | Purchases from San Marino with VAT (paper invoice)                                                                                                                                |
+| TD28 |               | `san-marino-paper`         | Purchases from San Marino with VAT (paper invoice)                                                                                                                                |
 
 Note: fields marked with (\*) are for simplified invoice documents.
 
