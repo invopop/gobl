@@ -7,6 +7,7 @@
   "tax": {
     "tags": ["freelance"]
   },
+  "type": "standard",
   "supplier": {
     "tax_id": {
       "country": "IT",
@@ -22,18 +23,12 @@
         }
       }
     ],
-    "registration": {
-      "capital": "50000.00",
-      "currency": "EUR",
-      "entry": "123456",
-      "office": "RM"
-    },
     "addresses": [
       {
         "num": "9",
-        "street": "CAMÍ MADRID",
-        "locality": "CANENA",
-        "region": "JAÉN",
+        "street": "VIA DI TORREVECCHIA",
+        "locality": "ROMA",
+        "region": "RM",
         "code": "23480",
         "country": "IT"
       }
@@ -49,10 +44,21 @@
       "country": "IT",
       "code": "13029381004"
     },
-    "name": "Sample Consumer"
+    "name": "David Bowie",
+    "addresses": [
+      {
+        "num": "1",
+        "street": "Via del Corso",
+        "locality": "Roma",
+        "region": "RM",
+        "code": "00100",
+        "country": "IT"
+      }
+    ]
   },
   "lines": [
     {
+      "i": 1,
       "quantity": "20",
       "item": {
         "name": "Development services",
@@ -61,6 +67,7 @@
       },
       "discounts": [
         {
+          "amount": "180.00",
           "percent": "10%",
           "reason": "Special discount"
         }
@@ -72,11 +79,15 @@
         },
         {
           "cat": "IRPEF",
-          "percent": "20.0%"
+          "percent": "20.0%",
+          "tags": ["self-employed-habitual"]
         }
-      ]
+      ],
+      "sum": "1800.00",
+      "total": "1800.00"
     },
     {
+      "i": 2,
       "quantity": "1",
       "item": {
         "name": "Zero test",
@@ -89,7 +100,9 @@
           "rate": "zero",
           "tags": ["not-subject+other"]
         }
-      ]
+      ],
+      "sum": "100.00",
+      "total": "100.00"
     }
   ]
 }
