@@ -91,7 +91,7 @@ func (k Key) IsEmpty() bool {
 }
 
 // HasValidKeyIn provides a validator to check the Key's
-// value is within the provided know set.
+// value is within the provided known set.
 func HasValidKeyIn(keys ...Key) validation.Rule {
 	return hasKeyRule{elements: keys}
 }
