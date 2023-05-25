@@ -13,7 +13,7 @@ const (
 	// Tags for document type
 	TagFreelance       cbc.Key = "freelance"
 	TagCeilingExceeded cbc.Key = "ceiling-exceeded"
-	TagSanMerinoPaper  cbc.Key = "san-merino-paper"
+	TagSanMarinoPaper  cbc.Key = "san-marino-paper"
 
 	// Tags for Fiscal Regime
 	TagMinimumTaxPayers cbc.Key = "minimum-tax-payers"
@@ -53,10 +53,10 @@ var invoiceTags = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: TagSanMerinoPaper,
+		Key: TagSanMarinoPaper,
 		Name: i18n.String{
-			i18n.EN: "Purchases from San Merino with VAT and paper invoice",
-			i18n.IT: "Acquisti da San Merino con IVA e fattura cartacea",
+			i18n.EN: "Purchases from San Marino with VAT and paper invoice",
+			i18n.IT: "Acquisti da San Marino con IVA e fattura cartacea",
 		},
 	},
 

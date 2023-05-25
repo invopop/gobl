@@ -680,10 +680,10 @@
       }
     },
     {
-      "key": "san-merino-paper",
+      "key": "san-marino-paper",
       "name": {
-        "en": "Purchases from San Merino with VAT and paper invoice",
-        "it": "Acquisti da San Merino con IVA e fattura cartacea"
+        "en": "Purchases from San Marino with VAT and paper invoice",
+        "it": "Acquisti da San Marino con IVA e fattura cartacea"
       }
     },
     {
@@ -1320,7 +1320,7 @@
           }
         },
         {
-          "key": "not-taxable+san-merino",
+          "key": "not-taxable+san-marino",
           "name": {
             "en": "Not taxable - transfers to San Marino",
             "it": "Non imponibili - cessioni verso San Marino"

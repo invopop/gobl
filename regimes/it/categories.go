@@ -33,7 +33,7 @@ const (
 	TaxRateArticle7                   cbc.Key = "article-7"
 	TaxRateExport                     cbc.Key = "export"
 	TaxRateIntraCommunity             cbc.Key = "intra-community"
-	TaxRateSanMerino                  cbc.Key = "san-merino"
+	TaxRateSanMarino                  cbc.Key = "san-marino"
 	TaxRateExportSupplies             cbc.Key = "export-supplies"
 	TaxRateDeclarationOfIntent        cbc.Key = "declaration-of-intent"
 	TaxRateScrap                      cbc.Key = "scrap"
@@ -235,7 +235,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateNotTaxable.With(TaxRateSanMerino),
+				Key:    TaxRateNotTaxable.With(TaxRateSanMarino),
 				Exempt: true,
 				Name: i18n.String{
 					i18n.EN: "Not taxable - transfers to San Marino",
