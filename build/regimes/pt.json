@@ -225,16 +225,16 @@
               "percent": "6.0%"
             }
           ]
-        }
-      ],
-      "tags": [
+        },
         {
           "key": "exempt+outlay",
           "name": {
             "en": "Article 16, No. 6 of the VAT code",
             "pt": "Artigo 16.°, n.° 6 do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M01"
           }
         },
@@ -244,7 +244,9 @@
             "en": "Article 6 of the Decree-Law 198/90 of 19th June",
             "pt": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M02"
           }
         },
@@ -254,7 +256,9 @@
             "en": "Exempt pursuant to article 13 of the VAT code",
             "pt": "Isento artigo 13.° do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M04"
           }
         },
@@ -264,7 +268,9 @@
             "en": "Exempt pursuant to article 14 of the VAT code",
             "pt": "Isento artigo 14.° do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M05"
           }
         },
@@ -274,7 +280,9 @@
             "en": "Exempt pursuant to article 15 of the VAT code",
             "pt": "Isento artigo 15.° do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M06"
           }
         },
@@ -284,7 +292,9 @@
             "en": "Exempt pursuant to article 9 of the VAT code",
             "pt": "Isento artigo 9.° do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M07"
           }
         },
@@ -294,7 +304,9 @@
             "en": "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
             "pt": "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M09"
           }
         },
@@ -304,7 +316,9 @@
             "en": "VAT - exemption scheme / Article 57 of the VAT code",
             "pt": "IVA - regime de isenção / Artigo 57.° do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M10"
           }
         },
@@ -314,7 +328,9 @@
             "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
             "pt": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M11"
           }
         },
@@ -324,7 +340,9 @@
             "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
             "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M12"
           }
         },
@@ -334,7 +352,9 @@
             "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M13"
           }
         },
@@ -344,7 +364,9 @@
             "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M14"
           }
         },
@@ -354,7 +376,9 @@
             "en": "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M15"
           }
         },
@@ -364,7 +388,9 @@
             "en": "Exempt pursuant to Article 14 of the RITI",
             "pt": "Isento artigo 14.° do RITI"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M16"
           }
         },
@@ -374,7 +400,9 @@
             "en": "Other exemptions - Temporary exemptions determined by specific legislation",
             "pt": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M19"
           }
         },
@@ -384,7 +412,9 @@
             "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
             "pt": "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M20"
           }
         },
@@ -394,7 +424,9 @@
             "en": "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
             "pt": "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M21"
           }
         },
@@ -404,7 +436,9 @@
             "en": "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
             "pt": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M25"
           }
         },
@@ -414,7 +448,9 @@
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M30"
           }
         },
@@ -424,7 +460,9 @@
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M31"
           }
         },
@@ -434,7 +472,9 @@
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M32"
           }
         },
@@ -444,7 +484,9 @@
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M33"
           }
         },
@@ -454,7 +496,9 @@
             "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
             "pt": "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M40"
           }
         },
@@ -464,7 +508,9 @@
             "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
             "pt": "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M41"
           }
         },
@@ -474,7 +520,9 @@
             "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M42"
           }
         },
@@ -484,7 +532,9 @@
             "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M43"
           }
         },
@@ -494,7 +544,9 @@
             "en": "Not subject to tax or not taxed",
             "pt": "Não sujeito ou não tributado"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "at-tax-exemption-code": "M99"
           }
         }

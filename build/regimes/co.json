@@ -14588,7 +14588,7 @@
         "en": "TIN - Tax Identification Number",
         "es": "NIT - Número de Identificación Tributaria"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "1",
         "dian-company-id": "31"
       }
@@ -14599,7 +14599,7 @@
         "en": "Civil Registry",
         "es": "Registro Civil"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "11"
       }
@@ -14610,7 +14610,7 @@
         "en": "Identity Card",
         "es": "Tarjeta de Identidad"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "12"
       }
@@ -14621,7 +14621,7 @@
         "en": "Citizen Identity Card",
         "es": "Cédula de ciudadanía"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "13"
       }
@@ -14632,7 +14632,7 @@
         "en": "Foreigner Identity Card",
         "es": "Tarjeta de Extranjería"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "21"
       }
@@ -14643,7 +14643,7 @@
         "en": "Foreigner Citizen Identity Card",
         "es": "Cédula de extranjería"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "22"
       }
@@ -14654,7 +14654,7 @@
         "en": "TIN of an individual",
         "es": "NIT de persona natural"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "31"
       }
@@ -14665,7 +14665,7 @@
         "en": "Passport",
         "es": "Pasaporte"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "41"
       }
@@ -14676,7 +14676,7 @@
         "en": "Foreign Document",
         "es": "Documento de identificación extranjero"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "42"
       }
@@ -14687,7 +14687,7 @@
         "en": "PEP - Special Permit to Stay",
         "es": "PEP - Permiso Especial de Permanencia"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "47"
       }
@@ -14698,7 +14698,7 @@
         "en": "Foreign TIN",
         "es": "NIT de otro país"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "1",
         "dian-company-id": "50"
       }
@@ -14709,7 +14709,7 @@
         "en": "NUIP - National Unique Personal Identification Number",
         "es": "NUIP - Número Único de Identificación Personal"
       },
-      "meta": {
+      "codes": {
         "dian-additional-account-id": "2",
         "dian-company-id": "91"
       }

@@ -16,14 +16,75 @@
           "description": "When the advance was made."
         },
         "key": {
-          "$ref": "https://gobl.org/draft-0/pay/means-key",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "any",
+              "title": "Any",
+              "description": "Any method available, no preference."
+            },
+            {
+              "const": "card",
+              "title": "Card",
+              "description": "Payment card."
+            },
+            {
+              "const": "credit-transfer",
+              "title": "Credit Transfer",
+              "description": "Sender initiated bank or wire transfer."
+            },
+            {
+              "const": "debit-transfer",
+              "title": "Debit Transfer",
+              "description": "Receiver initiated bank or wire transfer."
+            },
+            {
+              "const": "cash",
+              "title": "Cash",
+              "description": "Cash in hand."
+            },
+            {
+              "const": "cheque",
+              "title": "Cheque",
+              "description": "Cheque from bank."
+            },
+            {
+              "const": "bank-draft",
+              "title": "Draft",
+              "description": "Bankers Draft or Bank Cheque."
+            },
+            {
+              "const": "direct-debit",
+              "title": "Direct Debit",
+              "description": "Direct debit from the customers bank account."
+            },
+            {
+              "const": "online",
+              "title": "Online",
+              "description": "Online or web payment."
+            },
+            {
+              "const": "promissory-note",
+              "title": "Promissory Note",
+              "description": "Promissory note contract."
+            },
+            {
+              "const": "netting",
+              "title": "Netting",
+              "description": "Intercompany clearing or clearing between partners."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Other or mutually defined means of payment."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Regime Specific Key"
+            }
+          ],
           "title": "Key",
           "description": "The payment means used to make the advance."
-        },
-        "code": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Code",
-          "description": "Code of the payment means if not defined in the standard list of keys."
         },
         "ref": {
           "type": "string",

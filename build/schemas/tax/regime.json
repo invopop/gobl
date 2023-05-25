@@ -30,13 +30,10 @@
           "title": "Rates",
           "description": "Specific tax definitions inside this category."
         },
-        "tags": {
-          "items": {
-            "$ref": "#/$defs/Tag"
-          },
-          "type": "array",
-          "title": "Tags",
-          "description": "Tags contains a set of tag definitions that can be applied\nfor this tax category."
+        "codes": {
+          "$ref": "#/$defs/CodeSet",
+          "title": "Codes",
+          "description": "Codes defines a set of regime specific code mappings."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -52,29 +49,14 @@
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
-    "IdentityType": {
-      "properties": {
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Key used to identify the type"
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name for the identity type"
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Additional regime specific meta data"
+    "CodeSet": {
+      "patternProperties": {
+        ".*": {
+          "$ref": "https://gobl.org/draft-0/cbc/code"
         }
       },
       "type": "object",
-      "required": [
-        "key"
-      ],
-      "description": "IdentityType describes a single possible value for a tax identity type."
+      "description": "CodeSet is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
     },
     "KeyDefinition": {
       "properties": {
@@ -93,10 +75,15 @@
           "title": "Description",
           "description": "Description offering more details about when the key should be used."
         },
+        "codes": {
+          "$ref": "#/$defs/CodeSet",
+          "title": "Codes",
+          "description": "Codes defines a set of codes that may be used within a given regime or format\nthat will help identify which key definition to use."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
-          "description": "Any additional data that might be relevant in some regimes?"
+          "description": "Any additional data that might be relevant in some regimes."
         }
       },
       "type": "object",
@@ -160,6 +147,11 @@
           "title": "Description",
           "description": "Useful description of the rate."
         },
+        "exempt": {
+          "type": "boolean",
+          "title": "Exempt",
+          "description": "Exempt when true implies that the rate when used in a tax Combo should\nnot define a percent value."
+        },
         "values": {
           "items": {
             "$ref": "#/$defs/RateValue"
@@ -167,6 +159,11 @@
           "type": "array",
           "title": "Values",
           "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
+        },
+        "codes": {
+          "$ref": "#/$defs/CodeSet",
+          "title": "Codes",
+          "description": "Codes defines a set of regime specific code mappings."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -249,9 +246,17 @@
           "title": "Currency",
           "description": "Currency used by the country."
         },
+        "tags": {
+          "items": {
+            "$ref": "#/$defs/KeyDefinition"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags that can be applied at the document level to identify additional\nconsiderations."
+        },
         "identity_types": {
           "items": {
-            "$ref": "#/$defs/IdentityType"
+            "$ref": "#/$defs/KeyDefinition"
           },
           "type": "array",
           "title": "Identity Types",
@@ -265,13 +270,21 @@
           "title": "Charge Types",
           "description": "Charge types specific for the regime and may be validated or used in the UI as suggestions"
         },
-        "tags": {
+        "payment_means": {
           "items": {
-            "$ref": "#/$defs/Tag"
+            "$ref": "#/$defs/KeyDefinition"
           },
           "type": "array",
-          "title": "Tags",
-          "description": "Tags that can be applied at the document level to identify additional\nconsiderations."
+          "title": "Payment Means",
+          "description": "PaymentMeansKeys specific for the regime that extend the original\nbase payment means keys."
+        },
+        "item_keys": {
+          "items": {
+            "$ref": "#/$defs/KeyDefinition"
+          },
+          "type": "array",
+          "title": "Item Keys",
+          "description": "ItemKeys specific for the regime that need to be added to `org.Item` data\nin line rows."
         },
         "scenarios": {
           "items": {
@@ -322,10 +335,20 @@
           "title": "Tag",
           "description": "Tag that was applied to the document"
         },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the scenario for further information."
+        },
         "note": {
           "$ref": "https://gobl.org/draft-0/cbc/note",
           "title": "Note",
           "description": "A note to be added to the document if the scenario is applied."
+        },
+        "codes": {
+          "$ref": "#/$defs/CodeSet",
+          "title": "Codes",
+          "description": "Codes is used to define additional codes for regime specific\nsituations."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -359,30 +382,6 @@
       ],
       "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
     },
-    "Tag": {
-      "properties": {
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Key used to identify the tag"
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name of this tag."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Additional local"
-        }
-      },
-      "type": "object",
-      "required": [
-        "key"
-      ],
-      "description": "Tag describes a tax tag that can be used to identify additional requirements in an electronic invoice."
-    },
     "Zone": {
       "properties": {
         "code": {
@@ -404,6 +403,11 @@
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Region",
           "description": "Province, county, or state which should match address data."
+        },
+        "codes": {
+          "$ref": "#/$defs/CodeSet",
+          "title": "Codes",
+          "description": "Codes defines a set of regime specific code mappings."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

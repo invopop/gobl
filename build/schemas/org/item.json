@@ -15,6 +15,11 @@
           "title": "Ref",
           "description": "Primary reference code that identifies this item.\nAdditional codes can be provided in the 'identities' property."
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Special key used to classify the item sometimes required by some regimes."
+        },
         "name": {
           "type": "string",
           "description": "Brief name of the item"

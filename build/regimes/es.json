@@ -503,58 +503,6 @@
     }
   ],
   "currency": "EUR",
-  "identity_types": [
-    {
-      "key": "fiscal",
-      "name": {
-        "en": "National Tax Identity",
-        "es": "Número de Identificación Fiscal"
-      },
-      "meta": {
-        "ticketbai-id-type": "02"
-      }
-    },
-    {
-      "key": "passport",
-      "name": {
-        "en": "Passport",
-        "es": "Pasaporte"
-      },
-      "meta": {
-        "ticketbai-id-type": "03"
-      }
-    },
-    {
-      "key": "foreign",
-      "name": {
-        "en": "National ID Card or similar from a foreign country",
-        "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
-      },
-      "meta": {
-        "ticketbai-id-type": "04"
-      }
-    },
-    {
-      "key": "resident",
-      "name": {
-        "en": "Residential permit",
-        "es": "Certificado de residencia"
-      },
-      "meta": {
-        "ticketbai-id-type": "05"
-      }
-    },
-    {
-      "key": "other",
-      "name": {
-        "en": "An other type of source not listed",
-        "es": "Otro documento probatorio"
-      },
-      "meta": {
-        "ticketbai-id-type": "06"
-      }
-    }
-  ],
   "tags": [
     {
       "key": "simplified",
@@ -641,6 +589,81 @@
       }
     }
   ],
+  "identity_types": [
+    {
+      "key": "fiscal",
+      "name": {
+        "en": "National Tax Identity",
+        "es": "Número de Identificación Fiscal"
+      },
+      "codes": {
+        "ticketbai-id-type": "02"
+      }
+    },
+    {
+      "key": "passport",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      },
+      "codes": {
+        "ticketbai-id-type": "03"
+      }
+    },
+    {
+      "key": "foreign",
+      "name": {
+        "en": "National ID Card or similar from a foreign country",
+        "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
+      },
+      "codes": {
+        "ticketbai-id-type": "04"
+      }
+    },
+    {
+      "key": "resident",
+      "name": {
+        "en": "Residential permit",
+        "es": "Certificado de residencia"
+      },
+      "codes": {
+        "ticketbai-id-type": "05"
+      }
+    },
+    {
+      "key": "other",
+      "name": {
+        "en": "An other type of source not listed",
+        "es": "Otro documento probatorio"
+      },
+      "codes": {
+        "ticketbai-id-type": "06"
+      }
+    }
+  ],
+  "item_keys": [
+    {
+      "key": "resale",
+      "name": {
+        "en": "Resale of goods without modification by vendor in the simplified regime",
+        "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
+      }
+    },
+    {
+      "key": "services",
+      "name": {
+        "en": "Provision of services",
+        "es": "Prestacion de servicios"
+      }
+    },
+    {
+      "key": "goods",
+      "name": {
+        "en": "Delivery of goods",
+        "es": "Entrega de bienes"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
@@ -650,7 +673,7 @@
             "standard",
             "corrective"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-document-type": "FC"
           }
         },
@@ -658,7 +681,7 @@
           "tags": [
             "simplified"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-document-type": "FA"
           }
         },
@@ -666,7 +689,7 @@
           "tags": [
             "self-billed"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-document-type": "AF"
           }
         },
@@ -674,7 +697,7 @@
           "type": [
             "standard"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-class": "OO"
           }
         },
@@ -682,7 +705,7 @@
           "type": [
             "corrective"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-class": "OR"
           }
         },
@@ -690,7 +713,7 @@
           "tags": [
             "summary"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-class": "OC"
           }
         },
@@ -701,7 +724,7 @@
           "tags": [
             "copy"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-class": "CO"
           }
         },
@@ -712,7 +735,7 @@
           "tags": [
             "copy"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-class": "CR"
           }
         },
@@ -724,7 +747,7 @@
             "copy",
             "summary"
           ],
-          "meta": {
+          "codes": {
             "facturae-invoice-class": "CC"
           }
         },
@@ -1222,29 +1245,6 @@
               "surcharge": "0.5%"
             }
           ]
-        }
-      ],
-      "tags": [
-        {
-          "key": "resale",
-          "name": {
-            "en": "Resale of goods without modification by vendor in the simplified regime",
-            "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
-          }
-        },
-        {
-          "key": "services",
-          "name": {
-            "en": "Provision of services",
-            "es": "Prestacion de servicios"
-          }
-        },
-        {
-          "key": "goods",
-          "name": {
-            "en": "Delivery of goods",
-            "es": "Entrega de bienes"
-          }
         },
         {
           "key": "exempt+article-20",
@@ -1252,7 +1252,9 @@
             "en": "Exempt pursuant to Article 20 of the Foral VAT Law",
             "es": "Exenta por el artículo 20 de la Norma Foral del IVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "ticketbai-causa-exencion": "E1"
           }
         },
@@ -1262,7 +1264,9 @@
             "en": "Exempt pursuant to Article 21 of the Foral VAT Law",
             "es": "Exenta por el artículo 21 de la Norma Foral del IVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "ticketbai-causa-exencion": "E2"
           }
         },
@@ -1272,7 +1276,9 @@
             "en": "Exempt pursuant to Article 22 of the Foral VAT Law",
             "es": "Exenta por el artículo 22 de la Norma Foral del IVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "ticketbai-causa-exencion": "E3"
           }
         },
@@ -1282,7 +1288,9 @@
             "en": "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
             "es": "Exenta por el artículos 23 y 24 de la Norma Foral del IVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "ticketbai-causa-exencion": "E4"
           }
         },
@@ -1292,7 +1300,9 @@
             "en": "Exempt pursuant to Article 25 of the Foral VAT law",
             "es": "Exenta por el artículo 25 de la Norma Foral del IVA"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "ticketbai-causa-exencion": "E5"
           }
         },
@@ -1302,12 +1312,14 @@
             "en": "Exempt pursuant to other reasons",
             "es": "Exenta por otra causa"
           },
-          "meta": {
+          "exempt": true,
+          "values": null,
+          "codes": {
             "ticketbai-causa-exencion": "E6"
           }
         }
       ],
-      "meta": {
+      "codes": {
         "facturae-tax-type-code": "01"
       }
     },
@@ -1359,7 +1371,7 @@
           ]
         }
       ],
-      "meta": {
+      "codes": {
         "facturae-tax-type-code": "03"
       }
     },
@@ -1374,7 +1386,7 @@
         "es": "Impuesto sobre la Producción, los Servicios y la Importación"
       },
       "rates": [],
-      "meta": {
+      "codes": {
         "facturae-tax-type-code": "02"
       }
     },
@@ -1455,7 +1467,7 @@
           ]
         }
       ],
-      "meta": {
+      "codes": {
         "facturae-tax-type-code": "04"
       }
     }
