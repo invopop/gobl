@@ -125,7 +125,7 @@ type Website struct {
 // If your country requires additional fields, please let us know.
 type Registration struct {
 	UUID     *uuid.UUID    `json:"uuid,omitempty" jsonschema:"title=UUID"`
-	Capital  *num.Amount   `json:"social_capital,omitempty" jsonschema:"title=Capital"`
+	Capital  *num.Amount   `json:"capital,omitempty" jsonschema:"title=Capital"`
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	Office   string        `json:"office,omitempty" jsonschema:"title=Office"`
 	Book     string        `json:"book,omitempty" jsonschema:"title=Book"`

@@ -106,6 +106,10 @@ type Category struct {
 	// income.
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
+	// RateRequired when true implies that when a tax combo is defined using
+	// this category that one of the rates must be defined.
+	RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
+
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 

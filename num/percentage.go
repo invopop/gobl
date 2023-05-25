@@ -80,6 +80,11 @@ func (p Percentage) StringWithoutSymbol() string {
 	return v.String()
 }
 
+// Rescale will rescale the percentage value to the provided exponent.
+func (p Percentage) Rescale(exp uint32) Percentage {
+	return Percentage{Amount: p.Amount.Rescale(exp)}
+}
+
 // Of calculates the "percent of" the provided amount. The exponent of the
 // provided amount is used.
 func (p Percentage) Of(a Amount) Amount {

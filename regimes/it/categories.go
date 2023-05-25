@@ -439,7 +439,8 @@ var categories = []*tax.Category{
 		Codes: cbc.CodeSet{
 			KeyFatturaPATipoRitenuta: "RT01",
 		},
-		Rates: retainedTaxRates,
+		Rates:        retainedTaxRates,
+		RateRequired: true,
 	},
 	{
 		Code:     TaxCategoryIRES,
@@ -455,7 +456,8 @@ var categories = []*tax.Category{
 		Codes: cbc.CodeSet{
 			KeyFatturaPATipoRitenuta: "RT02",
 		},
-		Rates: retainedTaxRates,
+		Rates:        retainedTaxRates,
+		RateRequired: true,
 	},
 	{
 		Code:     TaxCategoryINPS,
@@ -468,7 +470,8 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Social Security Institute",
 			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
 		},
-		Rates: retainedTaxRates,
+		Rates:        retainedTaxRates,
+		RateRequired: true,
 		Codes: cbc.CodeSet{
 			KeyFatturaPATipoRitenuta: "RT03",
 		},
@@ -484,7 +487,8 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Welfare Board for Sales Agents and Representatives",
 			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
 		},
-		Rates: retainedTaxRates,
+		Rates:        retainedTaxRates,
+		RateRequired: true,
 		Codes: cbc.CodeSet{
 			KeyFatturaPATipoRitenuta: "RT04",
 		},
@@ -500,7 +504,8 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Pension and Welfare Board for Doctors",
 			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
 		},
-		Rates: retainedTaxRates,
+		Rates:        retainedTaxRates,
+		RateRequired: true,
 		Codes: cbc.CodeSet{
 			KeyFatturaPATipoRitenuta: "RT05",
 		},

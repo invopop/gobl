@@ -36,10 +36,14 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	if r == nil {
 		return errors.New("tax regime not found in context")
 	}
+	cat := r.Category(c.Category)
 	rate := r.Rate(c.Category, c.Rate)
-	return validation.ValidateStructWithContext(ctx, c,
+	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
-		validation.Field(&c.Rate, r.InCategoryRates(c.Category)), // optional, but should be checked if present
+		validation.Field(&c.Rate,
+			validation.When(cat.RateRequired, validation.Required),
+			r.InCategoryRates(c.Category),
+		),
 		validation.Field(&c.Percent,
 			validation.When(rate == nil, validation.Required),
 			validation.When(rate != nil && rate.Exempt, validation.Nil),
@@ -47,6 +51,10 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&c.Surcharge), // not required, but should be valid number
 	)
+	if err != nil {
+		return err
+	}
+	return r.ValidateObject(c)
 }
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
@@ -67,18 +75,23 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 			c.Surcharge = nil
 			return nil
 		}
-		value := rate.Value(tc.Date, tc.Zone)
-		if value == nil {
-			return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
-		}
 
-		p := value.Percent // copy
-		c.Percent = &p
-		if value.Surcharge != nil {
-			s := *value.Surcharge // copy
-			c.Surcharge = &s
-		} else {
-			c.Surcharge = nil
+		// if there are not rate values, don't attempt to make a
+		// calculation.
+		if len(rate.Values) > 0 {
+			value := rate.Value(tc.Date, tc.Zone)
+			if value == nil {
+				return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
+			}
+
+			p := value.Percent // copy
+			c.Percent = &p
+			if value.Surcharge != nil {
+				s := *value.Surcharge // copy
+				c.Surcharge = &s
+			} else {
+				c.Surcharge = nil
+			}
 		}
 	}
 

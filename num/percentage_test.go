@@ -77,3 +77,17 @@ func TestPercentageFrom(t *testing.T) {
 		t.Errorf("unexpected percentage from result: %v", x.String())
 	}
 }
+
+func TestPercentageRescale(t *testing.T) {
+	p := num.MakePercentage(160, 3)
+	x := p.Rescale(4)
+	if x.String() != "16.00%" {
+		t.Errorf("unexpected percentage from result: %v", x.String())
+	}
+
+	p = num.MakePercentage(20, 3)
+	x = p.Rescale(2)
+	if x.String() != "2%" {
+		t.Errorf("unexpected percentage from result: %v", x.String())
+	}
+}
