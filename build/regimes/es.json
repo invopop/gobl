@@ -1253,7 +1253,6 @@
             "es": "Exenta por el artículo 20 de la Norma Foral del IVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "ticketbai-causa-exencion": "E1"
           }
@@ -1265,7 +1264,6 @@
             "es": "Exenta por el artículo 21 de la Norma Foral del IVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "ticketbai-causa-exencion": "E2"
           }
@@ -1277,7 +1275,6 @@
             "es": "Exenta por el artículo 22 de la Norma Foral del IVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "ticketbai-causa-exencion": "E3"
           }
@@ -1289,7 +1286,6 @@
             "es": "Exenta por el artículos 23 y 24 de la Norma Foral del IVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "ticketbai-causa-exencion": "E4"
           }
@@ -1301,7 +1297,6 @@
             "es": "Exenta por el artículo 25 de la Norma Foral del IVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "ticketbai-causa-exencion": "E5"
           }
@@ -1313,7 +1308,6 @@
             "es": "Exenta por otra causa"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "ticketbai-causa-exencion": "E6"
           }
@@ -1385,7 +1379,6 @@
         "en": "Production, Services, and Import Tax",
         "es": "Impuesto sobre la Producción, los Servicios y la Importación"
       },
-      "rates": [],
       "codes": {
         "facturae-tax-type-code": "02"
       }

@@ -14839,8 +14839,7 @@
       "desc": {
         "en": "Consumption Tax",
         "es": "Impuesto sobre Consumo"
-      },
-      "rates": []
+      }
     },
     {
       "code": "ICA",
@@ -14850,8 +14849,7 @@
       "desc": {
         "en": "Industry and Commerce Tax",
         "es": "Impuesto de Industria y Comercio"
-      },
-      "rates": []
+      }
     },
     {
       "code": "RVAT",
@@ -14861,8 +14859,7 @@
       "desc": {
         "es": "Retención en la fuente por el Impuesto al Valor Agregado"
       },
-      "retained": true,
-      "rates": []
+      "retained": true
     },
     {
       "code": "RICA",
@@ -14872,8 +14869,7 @@
       "desc": {
         "es": "Retención en la fuente por el Impuesto de Industria y Comercio"
       },
-      "retained": true,
-      "rates": []
+      "retained": true
     },
     {
       "code": "RR",
@@ -14883,8 +14879,7 @@
       "desc": {
         "es": "Retención en la fuente por el Impuesto de la Renta"
       },
-      "retained": true,
-      "rates": []
+      "retained": true
     }
   ]
 }

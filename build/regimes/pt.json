@@ -233,7 +233,6 @@
             "pt": "Artigo 16.°, n.° 6 do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M01"
           }
@@ -245,7 +244,6 @@
             "pt": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M02"
           }
@@ -257,7 +255,6 @@
             "pt": "Isento artigo 13.° do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M04"
           }
@@ -269,7 +266,6 @@
             "pt": "Isento artigo 14.° do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M05"
           }
@@ -281,7 +277,6 @@
             "pt": "Isento artigo 15.° do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M06"
           }
@@ -293,7 +288,6 @@
             "pt": "Isento artigo 9.° do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M07"
           }
@@ -305,7 +299,6 @@
             "pt": "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M09"
           }
@@ -317,7 +310,6 @@
             "pt": "IVA - regime de isenção / Artigo 57.° do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M10"
           }
@@ -329,7 +321,6 @@
             "pt": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M11"
           }
@@ -341,7 +332,6 @@
             "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M12"
           }
@@ -353,7 +343,6 @@
             "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M13"
           }
@@ -365,7 +354,6 @@
             "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M14"
           }
@@ -377,7 +365,6 @@
             "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M15"
           }
@@ -389,7 +376,6 @@
             "pt": "Isento artigo 14.° do RITI"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M16"
           }
@@ -401,7 +387,6 @@
             "pt": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M19"
           }
@@ -413,7 +398,6 @@
             "pt": "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M20"
           }
@@ -425,7 +409,6 @@
             "pt": "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M21"
           }
@@ -437,7 +420,6 @@
             "pt": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M25"
           }
@@ -449,7 +431,6 @@
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M30"
           }
@@ -461,7 +442,6 @@
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M31"
           }
@@ -473,7 +453,6 @@
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M32"
           }
@@ -485,7 +464,6 @@
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M33"
           }
@@ -497,7 +475,6 @@
             "pt": "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M40"
           }
@@ -509,7 +486,6 @@
             "pt": "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M41"
           }
@@ -521,7 +497,6 @@
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M42"
           }
@@ -533,7 +508,6 @@
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M43"
           }
@@ -545,7 +519,6 @@
             "pt": "Não sujeito ou não tributado"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "at-tax-exemption-code": "M99"
           }

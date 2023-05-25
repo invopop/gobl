@@ -1249,7 +1249,6 @@
             "it": "Escluse ex. art. 15 del D.P.R. 633/1972"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N1"
           }
@@ -1261,7 +1260,6 @@
             "it": "Non soggette (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N2"
           }
@@ -1273,7 +1271,6 @@
             "it": "Non soggette ex. art. 7 del D.P.R. 633/72"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N2.1"
           }
@@ -1285,7 +1282,6 @@
             "it": "Non soggette - altri casi"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N2.2"
           }
@@ -1297,7 +1293,6 @@
             "it": "Non imponibili (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3"
           }
@@ -1309,7 +1304,6 @@
             "it": "Non imponibili - esportazioni"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3.1"
           }
@@ -1321,7 +1315,6 @@
             "it": "Non imponibili - cessioni intracomunitarie"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3.2"
           }
@@ -1333,7 +1326,6 @@
             "it": "Non imponibili - cessioni verso San Marino"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3.3"
           }
@@ -1345,7 +1337,6 @@
             "it": "Non Imponibili - operazioni assimilate alle cessioni all'esportazione"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3.4"
           }
@@ -1357,7 +1348,6 @@
             "it": "Non imponibili - dichiarazioni d'intento"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3.5"
           }
@@ -1369,7 +1359,6 @@
             "it": "Non imponibili - altre operazioni che non concorrono alla formazione del plafond"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N3.6"
           }
@@ -1381,7 +1370,6 @@
             "it": "Esenti"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N4"
           }
@@ -1393,7 +1381,6 @@
             "it": "Regime del margine/IVA non esposta in fattura"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N5"
           }
@@ -1405,7 +1392,6 @@
             "it": "Inversione contabile (per operazioni in regime di inversione contabile o per autofattura per acquisti di servizi extra UE o per importazioni di beni solo nei casi previsti) — (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6"
           }
@@ -1417,7 +1403,6 @@
             "it": "Inversione contabile - cessione di rottami e altri materiali di recupero"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.1"
           }
@@ -1429,7 +1414,6 @@
             "it": "Inversione contabile - cessione di oro e argento ai sensi della legge 7/2000 nonché di oreficeria usata ad OPO"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.2"
           }
@@ -1441,7 +1425,6 @@
             "it": "Inversione contabile - subappalto nel settore edile"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.3"
           }
@@ -1453,7 +1436,6 @@
             "it": "Inversione contabile - cessione di fabbricati"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.4"
           }
@@ -1465,7 +1447,6 @@
             "it": "Inversione contabile - cessione di telefoni cellulari"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.5"
           }
@@ -1477,7 +1458,6 @@
             "it": "Inversione contabile - cessione di prodotti elettronici"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.6"
           }
@@ -1489,7 +1469,6 @@
             "it": "Inversione contabile - prestazioni comparto edile e settori connessi"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.7"
           }
@@ -1501,7 +1480,6 @@
             "it": "Inversione contabile - operazioni settore energetico"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.8"
           }
@@ -1513,7 +1491,6 @@
             "it": "Inversione contabile - altri casi"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N6.9"
           }
@@ -1525,7 +1502,6 @@
             "it": "IVA assolta in altro stato UE (prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-octies lett. a, b, art. 74-sexies DPR 633/72)"
           },
           "exempt": true,
-          "values": null,
           "codes": {
             "fatturapa-natura": "N7"
           }
@@ -1550,7 +1526,6 @@
             "en": "Self-employment services falling within the exercise of habitual art or profession",
             "it": "Prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "A"
           }
@@ -1561,7 +1536,6 @@
             "en": "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
             "it": "Utilizzazione economica, da parte dell'autore o dell'inventore, di opere dell'ingegno, di brevetti industriali e di processi, formule o informazioni relativi ad esperienze acquisite in campo industriale, commerciale o scientifico;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "B"
           }
@@ -1572,7 +1546,6 @@
             "en": "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
             "it": "Utili derivanti da contratti di associazione in partecipazione e da contratti di cointeressenza, quando l'apporto è costituito esclusivamente dalla prestazione di lavoro;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "C"
           }
@@ -1583,7 +1556,6 @@
             "en": "Profits due to the promoting partners and founding partners of capital companies",
             "it": "Utili spettanti ai soci promotori ed ai soci fondatori delle società di capitali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "D"
           }
@@ -1594,7 +1566,6 @@
             "en": "Bills of exchange protests levied by municipal secretaries",
             "it": "Levata di protesti cambiari da parte dei segretari comunali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "E"
           }
@@ -1605,7 +1576,6 @@
             "en": "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
             "it": "Indennità corrisposte ai giudici onorari di pace e ai vice procuratori onorari;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "F"
           }
@@ -1616,7 +1586,6 @@
             "en": "Allowances paid for the cessation of professional sports activities",
             "it": "Indennità corrisposte per la cessazione di attività sportiva professionale"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "G"
           }
@@ -1627,7 +1596,6 @@
             "en": "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
             "it": "Indennità corrisposte per la cessazione dei rapporti di agenzia delle persone fisiche e delle società di persone con esclusione delle somme maturate entro il 31 dicembre 2003, già imputate per competenza e tassate come reddito d'impresa"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "H"
           }
@@ -1638,7 +1606,6 @@
             "en": "Allowances paid for the cessation of notarial functions",
             "it": "Indennità corrisposte per la cessazione da funzioni notarili"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "I"
           }
@@ -1649,7 +1616,6 @@
             "en": "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
             "it": "Compensi corrisposti ai raccoglitori occasionali di tartufi non identificati ai fini dell'imposta sul valore aggiunto, in relazione alla cessione di tartufi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "J"
           }
@@ -1660,7 +1626,6 @@
             "en": "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
             "it": "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "K"
           }
@@ -1671,7 +1636,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti dagli aventi causa a titolo gratuito (ad es. eredi e legatari dell'autore e inventore)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L"
           }
@@ -1682,7 +1646,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L1"
           }
@@ -1693,7 +1656,6 @@
             "en": "Self-employment services not carried out habitually",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M"
           }
@@ -1704,7 +1666,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M1"
           }
@@ -1715,7 +1676,6 @@
             "en": "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l'obbligo di iscrizione alla gestione separata enpapi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M2"
           }
@@ -1726,7 +1686,6 @@
             "en": "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
             "it": "Indennità di trasferta, rimborso forfetario di spese, premi e compensi erogati: - nell'esercizio diretto di attività sportive dilettantistiche; - in relazione a rapporti di collaborazione coordinata e continuativa di carattere amministrativo-gestionale di natura non professionale resi a favore di società e associazioni sportive dilettantistiche e di cori, bande e filodrammatiche da parte del direttore e dei collaboratori tecnici;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "N"
           }
@@ -1737,7 +1696,6 @@
             "en": "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O"
           }
@@ -1748,7 +1706,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O1"
           }
@@ -1759,7 +1716,6 @@
             "en": "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
             "it": "Compensi corrisposti a soggetti non residenti privi di stabile organizzazione per l'uso o la concessione in uso di attrezzature industriali, commerciali o scientifiche che si trovano nel territorio dello stato ovvero a società svizzere o stabili organizzazioni di società svizzere che possiedono i requisiti di cui all'art. 15, comma 2 dell'accordo tra la comunità europea e la confederazione svizzera del 26 ottobre 2004 (pubblicato in g.u.c.e. del 29 dicembre 2004 n. l385/30)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "P"
           }
@@ -1770,7 +1726,6 @@
             "en": "Commissions paid to a single-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio monomandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Q"
           }
@@ -1781,7 +1736,6 @@
             "en": "Commissions paid to a multi-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio plurimandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "R"
           }
@@ -1792,7 +1746,6 @@
             "en": "Commissions paid to a commission agent",
             "it": "Provvigioni corrisposte a commissionario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "S"
           }
@@ -1803,7 +1756,6 @@
             "en": "Commissions paid to a broker",
             "it": "Provvigioni corrisposte a mediatore"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "T"
           }
@@ -1814,7 +1766,6 @@
             "en": "Commissions paid to a business finder",
             "it": "Provvigioni corrisposte a procacciatore di affari"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "U"
           }
@@ -1825,7 +1776,6 @@
             "en": "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
             "it": "Provvigioni corrisposte a incaricato per le vendite a domicilio; provvigioni corrisposte a incaricato per la vendita porta a porta e per la vendita ambulante di giornali quotidiani e periodici (l. 25 febbraio 1987, n. 67);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V"
           }
@@ -1836,7 +1786,6 @@
             "en": "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
             "it": "Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d'affari);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V1"
           }
@@ -1847,7 +1796,6 @@
             "en": "Income from non-habitual services provided by direct home sales agents",
             "it": "Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V2"
           }
@@ -1858,7 +1806,6 @@
             "en": "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
             "it": "Corrispettivi erogati nel 2021 per prestazioni relative a contratti d'appalto cui si sono resi applicabili le disposizioni contenute nell'art. 25-ter del d.p.r. n. 600 del 29 settembre 1973;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "W"
           }
@@ -1869,7 +1816,6 @@
             "en": "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti nel 2004 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "X"
           }
@@ -1880,7 +1826,6 @@
             "en": "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti dal 1° gennaio 2005 al 26 luglio 2005 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. n. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. n. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Y"
           }
@@ -1891,7 +1836,6 @@
             "en": "Different title from the previous ones",
             "it": "Titolo diverso dai precedenti;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "ZO"
           }
@@ -1919,7 +1863,6 @@
             "en": "Self-employment services falling within the exercise of habitual art or profession",
             "it": "Prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "A"
           }
@@ -1930,7 +1873,6 @@
             "en": "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
             "it": "Utilizzazione economica, da parte dell'autore o dell'inventore, di opere dell'ingegno, di brevetti industriali e di processi, formule o informazioni relativi ad esperienze acquisite in campo industriale, commerciale o scientifico;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "B"
           }
@@ -1941,7 +1883,6 @@
             "en": "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
             "it": "Utili derivanti da contratti di associazione in partecipazione e da contratti di cointeressenza, quando l'apporto è costituito esclusivamente dalla prestazione di lavoro;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "C"
           }
@@ -1952,7 +1893,6 @@
             "en": "Profits due to the promoting partners and founding partners of capital companies",
             "it": "Utili spettanti ai soci promotori ed ai soci fondatori delle società di capitali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "D"
           }
@@ -1963,7 +1903,6 @@
             "en": "Bills of exchange protests levied by municipal secretaries",
             "it": "Levata di protesti cambiari da parte dei segretari comunali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "E"
           }
@@ -1974,7 +1913,6 @@
             "en": "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
             "it": "Indennità corrisposte ai giudici onorari di pace e ai vice procuratori onorari;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "F"
           }
@@ -1985,7 +1923,6 @@
             "en": "Allowances paid for the cessation of professional sports activities",
             "it": "Indennità corrisposte per la cessazione di attività sportiva professionale"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "G"
           }
@@ -1996,7 +1933,6 @@
             "en": "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
             "it": "Indennità corrisposte per la cessazione dei rapporti di agenzia delle persone fisiche e delle società di persone con esclusione delle somme maturate entro il 31 dicembre 2003, già imputate per competenza e tassate come reddito d'impresa"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "H"
           }
@@ -2007,7 +1943,6 @@
             "en": "Allowances paid for the cessation of notarial functions",
             "it": "Indennità corrisposte per la cessazione da funzioni notarili"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "I"
           }
@@ -2018,7 +1953,6 @@
             "en": "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
             "it": "Compensi corrisposti ai raccoglitori occasionali di tartufi non identificati ai fini dell'imposta sul valore aggiunto, in relazione alla cessione di tartufi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "J"
           }
@@ -2029,7 +1963,6 @@
             "en": "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
             "it": "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "K"
           }
@@ -2040,7 +1973,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti dagli aventi causa a titolo gratuito (ad es. eredi e legatari dell'autore e inventore)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L"
           }
@@ -2051,7 +1983,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L1"
           }
@@ -2062,7 +1993,6 @@
             "en": "Self-employment services not carried out habitually",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M"
           }
@@ -2073,7 +2003,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M1"
           }
@@ -2084,7 +2013,6 @@
             "en": "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l'obbligo di iscrizione alla gestione separata enpapi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M2"
           }
@@ -2095,7 +2023,6 @@
             "en": "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
             "it": "Indennità di trasferta, rimborso forfetario di spese, premi e compensi erogati: - nell'esercizio diretto di attività sportive dilettantistiche; - in relazione a rapporti di collaborazione coordinata e continuativa di carattere amministrativo-gestionale di natura non professionale resi a favore di società e associazioni sportive dilettantistiche e di cori, bande e filodrammatiche da parte del direttore e dei collaboratori tecnici;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "N"
           }
@@ -2106,7 +2033,6 @@
             "en": "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O"
           }
@@ -2117,7 +2043,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O1"
           }
@@ -2128,7 +2053,6 @@
             "en": "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
             "it": "Compensi corrisposti a soggetti non residenti privi di stabile organizzazione per l'uso o la concessione in uso di attrezzature industriali, commerciali o scientifiche che si trovano nel territorio dello stato ovvero a società svizzere o stabili organizzazioni di società svizzere che possiedono i requisiti di cui all'art. 15, comma 2 dell'accordo tra la comunità europea e la confederazione svizzera del 26 ottobre 2004 (pubblicato in g.u.c.e. del 29 dicembre 2004 n. l385/30)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "P"
           }
@@ -2139,7 +2063,6 @@
             "en": "Commissions paid to a single-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio monomandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Q"
           }
@@ -2150,7 +2073,6 @@
             "en": "Commissions paid to a multi-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio plurimandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "R"
           }
@@ -2161,7 +2083,6 @@
             "en": "Commissions paid to a commission agent",
             "it": "Provvigioni corrisposte a commissionario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "S"
           }
@@ -2172,7 +2093,6 @@
             "en": "Commissions paid to a broker",
             "it": "Provvigioni corrisposte a mediatore"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "T"
           }
@@ -2183,7 +2103,6 @@
             "en": "Commissions paid to a business finder",
             "it": "Provvigioni corrisposte a procacciatore di affari"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "U"
           }
@@ -2194,7 +2113,6 @@
             "en": "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
             "it": "Provvigioni corrisposte a incaricato per le vendite a domicilio; provvigioni corrisposte a incaricato per la vendita porta a porta e per la vendita ambulante di giornali quotidiani e periodici (l. 25 febbraio 1987, n. 67);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V"
           }
@@ -2205,7 +2123,6 @@
             "en": "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
             "it": "Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d'affari);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V1"
           }
@@ -2216,7 +2133,6 @@
             "en": "Income from non-habitual services provided by direct home sales agents",
             "it": "Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V2"
           }
@@ -2227,7 +2143,6 @@
             "en": "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
             "it": "Corrispettivi erogati nel 2021 per prestazioni relative a contratti d'appalto cui si sono resi applicabili le disposizioni contenute nell'art. 25-ter del d.p.r. n. 600 del 29 settembre 1973;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "W"
           }
@@ -2238,7 +2153,6 @@
             "en": "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti nel 2004 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "X"
           }
@@ -2249,7 +2163,6 @@
             "en": "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti dal 1° gennaio 2005 al 26 luglio 2005 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. n. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. n. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Y"
           }
@@ -2260,7 +2173,6 @@
             "en": "Different title from the previous ones",
             "it": "Titolo diverso dai precedenti;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "ZO"
           }
@@ -2288,7 +2200,6 @@
             "en": "Self-employment services falling within the exercise of habitual art or profession",
             "it": "Prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "A"
           }
@@ -2299,7 +2210,6 @@
             "en": "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
             "it": "Utilizzazione economica, da parte dell'autore o dell'inventore, di opere dell'ingegno, di brevetti industriali e di processi, formule o informazioni relativi ad esperienze acquisite in campo industriale, commerciale o scientifico;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "B"
           }
@@ -2310,7 +2220,6 @@
             "en": "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
             "it": "Utili derivanti da contratti di associazione in partecipazione e da contratti di cointeressenza, quando l'apporto è costituito esclusivamente dalla prestazione di lavoro;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "C"
           }
@@ -2321,7 +2230,6 @@
             "en": "Profits due to the promoting partners and founding partners of capital companies",
             "it": "Utili spettanti ai soci promotori ed ai soci fondatori delle società di capitali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "D"
           }
@@ -2332,7 +2240,6 @@
             "en": "Bills of exchange protests levied by municipal secretaries",
             "it": "Levata di protesti cambiari da parte dei segretari comunali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "E"
           }
@@ -2343,7 +2250,6 @@
             "en": "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
             "it": "Indennità corrisposte ai giudici onorari di pace e ai vice procuratori onorari;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "F"
           }
@@ -2354,7 +2260,6 @@
             "en": "Allowances paid for the cessation of professional sports activities",
             "it": "Indennità corrisposte per la cessazione di attività sportiva professionale"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "G"
           }
@@ -2365,7 +2270,6 @@
             "en": "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
             "it": "Indennità corrisposte per la cessazione dei rapporti di agenzia delle persone fisiche e delle società di persone con esclusione delle somme maturate entro il 31 dicembre 2003, già imputate per competenza e tassate come reddito d'impresa"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "H"
           }
@@ -2376,7 +2280,6 @@
             "en": "Allowances paid for the cessation of notarial functions",
             "it": "Indennità corrisposte per la cessazione da funzioni notarili"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "I"
           }
@@ -2387,7 +2290,6 @@
             "en": "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
             "it": "Compensi corrisposti ai raccoglitori occasionali di tartufi non identificati ai fini dell'imposta sul valore aggiunto, in relazione alla cessione di tartufi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "J"
           }
@@ -2398,7 +2300,6 @@
             "en": "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
             "it": "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "K"
           }
@@ -2409,7 +2310,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti dagli aventi causa a titolo gratuito (ad es. eredi e legatari dell'autore e inventore)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L"
           }
@@ -2420,7 +2320,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L1"
           }
@@ -2431,7 +2330,6 @@
             "en": "Self-employment services not carried out habitually",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M"
           }
@@ -2442,7 +2340,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M1"
           }
@@ -2453,7 +2350,6 @@
             "en": "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l'obbligo di iscrizione alla gestione separata enpapi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M2"
           }
@@ -2464,7 +2360,6 @@
             "en": "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
             "it": "Indennità di trasferta, rimborso forfetario di spese, premi e compensi erogati: - nell'esercizio diretto di attività sportive dilettantistiche; - in relazione a rapporti di collaborazione coordinata e continuativa di carattere amministrativo-gestionale di natura non professionale resi a favore di società e associazioni sportive dilettantistiche e di cori, bande e filodrammatiche da parte del direttore e dei collaboratori tecnici;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "N"
           }
@@ -2475,7 +2370,6 @@
             "en": "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O"
           }
@@ -2486,7 +2380,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O1"
           }
@@ -2497,7 +2390,6 @@
             "en": "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
             "it": "Compensi corrisposti a soggetti non residenti privi di stabile organizzazione per l'uso o la concessione in uso di attrezzature industriali, commerciali o scientifiche che si trovano nel territorio dello stato ovvero a società svizzere o stabili organizzazioni di società svizzere che possiedono i requisiti di cui all'art. 15, comma 2 dell'accordo tra la comunità europea e la confederazione svizzera del 26 ottobre 2004 (pubblicato in g.u.c.e. del 29 dicembre 2004 n. l385/30)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "P"
           }
@@ -2508,7 +2400,6 @@
             "en": "Commissions paid to a single-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio monomandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Q"
           }
@@ -2519,7 +2410,6 @@
             "en": "Commissions paid to a multi-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio plurimandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "R"
           }
@@ -2530,7 +2420,6 @@
             "en": "Commissions paid to a commission agent",
             "it": "Provvigioni corrisposte a commissionario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "S"
           }
@@ -2541,7 +2430,6 @@
             "en": "Commissions paid to a broker",
             "it": "Provvigioni corrisposte a mediatore"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "T"
           }
@@ -2552,7 +2440,6 @@
             "en": "Commissions paid to a business finder",
             "it": "Provvigioni corrisposte a procacciatore di affari"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "U"
           }
@@ -2563,7 +2450,6 @@
             "en": "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
             "it": "Provvigioni corrisposte a incaricato per le vendite a domicilio; provvigioni corrisposte a incaricato per la vendita porta a porta e per la vendita ambulante di giornali quotidiani e periodici (l. 25 febbraio 1987, n. 67);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V"
           }
@@ -2574,7 +2460,6 @@
             "en": "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
             "it": "Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d'affari);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V1"
           }
@@ -2585,7 +2470,6 @@
             "en": "Income from non-habitual services provided by direct home sales agents",
             "it": "Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V2"
           }
@@ -2596,7 +2480,6 @@
             "en": "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
             "it": "Corrispettivi erogati nel 2021 per prestazioni relative a contratti d'appalto cui si sono resi applicabili le disposizioni contenute nell'art. 25-ter del d.p.r. n. 600 del 29 settembre 1973;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "W"
           }
@@ -2607,7 +2490,6 @@
             "en": "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti nel 2004 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "X"
           }
@@ -2618,7 +2500,6 @@
             "en": "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti dal 1° gennaio 2005 al 26 luglio 2005 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. n. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. n. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Y"
           }
@@ -2629,7 +2510,6 @@
             "en": "Different title from the previous ones",
             "it": "Titolo diverso dai precedenti;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "ZO"
           }
@@ -2657,7 +2537,6 @@
             "en": "Self-employment services falling within the exercise of habitual art or profession",
             "it": "Prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "A"
           }
@@ -2668,7 +2547,6 @@
             "en": "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
             "it": "Utilizzazione economica, da parte dell'autore o dell'inventore, di opere dell'ingegno, di brevetti industriali e di processi, formule o informazioni relativi ad esperienze acquisite in campo industriale, commerciale o scientifico;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "B"
           }
@@ -2679,7 +2557,6 @@
             "en": "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
             "it": "Utili derivanti da contratti di associazione in partecipazione e da contratti di cointeressenza, quando l'apporto è costituito esclusivamente dalla prestazione di lavoro;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "C"
           }
@@ -2690,7 +2567,6 @@
             "en": "Profits due to the promoting partners and founding partners of capital companies",
             "it": "Utili spettanti ai soci promotori ed ai soci fondatori delle società di capitali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "D"
           }
@@ -2701,7 +2577,6 @@
             "en": "Bills of exchange protests levied by municipal secretaries",
             "it": "Levata di protesti cambiari da parte dei segretari comunali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "E"
           }
@@ -2712,7 +2587,6 @@
             "en": "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
             "it": "Indennità corrisposte ai giudici onorari di pace e ai vice procuratori onorari;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "F"
           }
@@ -2723,7 +2597,6 @@
             "en": "Allowances paid for the cessation of professional sports activities",
             "it": "Indennità corrisposte per la cessazione di attività sportiva professionale"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "G"
           }
@@ -2734,7 +2607,6 @@
             "en": "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
             "it": "Indennità corrisposte per la cessazione dei rapporti di agenzia delle persone fisiche e delle società di persone con esclusione delle somme maturate entro il 31 dicembre 2003, già imputate per competenza e tassate come reddito d'impresa"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "H"
           }
@@ -2745,7 +2617,6 @@
             "en": "Allowances paid for the cessation of notarial functions",
             "it": "Indennità corrisposte per la cessazione da funzioni notarili"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "I"
           }
@@ -2756,7 +2627,6 @@
             "en": "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
             "it": "Compensi corrisposti ai raccoglitori occasionali di tartufi non identificati ai fini dell'imposta sul valore aggiunto, in relazione alla cessione di tartufi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "J"
           }
@@ -2767,7 +2637,6 @@
             "en": "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
             "it": "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "K"
           }
@@ -2778,7 +2647,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti dagli aventi causa a titolo gratuito (ad es. eredi e legatari dell'autore e inventore)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L"
           }
@@ -2789,7 +2657,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L1"
           }
@@ -2800,7 +2667,6 @@
             "en": "Self-employment services not carried out habitually",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M"
           }
@@ -2811,7 +2677,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M1"
           }
@@ -2822,7 +2687,6 @@
             "en": "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l'obbligo di iscrizione alla gestione separata enpapi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M2"
           }
@@ -2833,7 +2697,6 @@
             "en": "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
             "it": "Indennità di trasferta, rimborso forfetario di spese, premi e compensi erogati: - nell'esercizio diretto di attività sportive dilettantistiche; - in relazione a rapporti di collaborazione coordinata e continuativa di carattere amministrativo-gestionale di natura non professionale resi a favore di società e associazioni sportive dilettantistiche e di cori, bande e filodrammatiche da parte del direttore e dei collaboratori tecnici;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "N"
           }
@@ -2844,7 +2707,6 @@
             "en": "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O"
           }
@@ -2855,7 +2717,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O1"
           }
@@ -2866,7 +2727,6 @@
             "en": "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
             "it": "Compensi corrisposti a soggetti non residenti privi di stabile organizzazione per l'uso o la concessione in uso di attrezzature industriali, commerciali o scientifiche che si trovano nel territorio dello stato ovvero a società svizzere o stabili organizzazioni di società svizzere che possiedono i requisiti di cui all'art. 15, comma 2 dell'accordo tra la comunità europea e la confederazione svizzera del 26 ottobre 2004 (pubblicato in g.u.c.e. del 29 dicembre 2004 n. l385/30)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "P"
           }
@@ -2877,7 +2737,6 @@
             "en": "Commissions paid to a single-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio monomandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Q"
           }
@@ -2888,7 +2747,6 @@
             "en": "Commissions paid to a multi-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio plurimandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "R"
           }
@@ -2899,7 +2757,6 @@
             "en": "Commissions paid to a commission agent",
             "it": "Provvigioni corrisposte a commissionario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "S"
           }
@@ -2910,7 +2767,6 @@
             "en": "Commissions paid to a broker",
             "it": "Provvigioni corrisposte a mediatore"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "T"
           }
@@ -2921,7 +2777,6 @@
             "en": "Commissions paid to a business finder",
             "it": "Provvigioni corrisposte a procacciatore di affari"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "U"
           }
@@ -2932,7 +2787,6 @@
             "en": "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
             "it": "Provvigioni corrisposte a incaricato per le vendite a domicilio; provvigioni corrisposte a incaricato per la vendita porta a porta e per la vendita ambulante di giornali quotidiani e periodici (l. 25 febbraio 1987, n. 67);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V"
           }
@@ -2943,7 +2797,6 @@
             "en": "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
             "it": "Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d'affari);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V1"
           }
@@ -2954,7 +2807,6 @@
             "en": "Income from non-habitual services provided by direct home sales agents",
             "it": "Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V2"
           }
@@ -2965,7 +2817,6 @@
             "en": "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
             "it": "Corrispettivi erogati nel 2021 per prestazioni relative a contratti d'appalto cui si sono resi applicabili le disposizioni contenute nell'art. 25-ter del d.p.r. n. 600 del 29 settembre 1973;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "W"
           }
@@ -2976,7 +2827,6 @@
             "en": "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti nel 2004 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "X"
           }
@@ -2987,7 +2837,6 @@
             "en": "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti dal 1° gennaio 2005 al 26 luglio 2005 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. n. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. n. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Y"
           }
@@ -2998,7 +2847,6 @@
             "en": "Different title from the previous ones",
             "it": "Titolo diverso dai precedenti;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "ZO"
           }
@@ -3026,7 +2874,6 @@
             "en": "Self-employment services falling within the exercise of habitual art or profession",
             "it": "Prestazioni di lavoro autonomo rientranti nell'esercizio di arte o professione abituale;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "A"
           }
@@ -3037,7 +2884,6 @@
             "en": "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
             "it": "Utilizzazione economica, da parte dell'autore o dell'inventore, di opere dell'ingegno, di brevetti industriali e di processi, formule o informazioni relativi ad esperienze acquisite in campo industriale, commerciale o scientifico;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "B"
           }
@@ -3048,7 +2894,6 @@
             "en": "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
             "it": "Utili derivanti da contratti di associazione in partecipazione e da contratti di cointeressenza, quando l'apporto è costituito esclusivamente dalla prestazione di lavoro;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "C"
           }
@@ -3059,7 +2904,6 @@
             "en": "Profits due to the promoting partners and founding partners of capital companies",
             "it": "Utili spettanti ai soci promotori ed ai soci fondatori delle società di capitali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "D"
           }
@@ -3070,7 +2914,6 @@
             "en": "Bills of exchange protests levied by municipal secretaries",
             "it": "Levata di protesti cambiari da parte dei segretari comunali;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "E"
           }
@@ -3081,7 +2924,6 @@
             "en": "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
             "it": "Indennità corrisposte ai giudici onorari di pace e ai vice procuratori onorari;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "F"
           }
@@ -3092,7 +2934,6 @@
             "en": "Allowances paid for the cessation of professional sports activities",
             "it": "Indennità corrisposte per la cessazione di attività sportiva professionale"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "G"
           }
@@ -3103,7 +2944,6 @@
             "en": "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
             "it": "Indennità corrisposte per la cessazione dei rapporti di agenzia delle persone fisiche e delle società di persone con esclusione delle somme maturate entro il 31 dicembre 2003, già imputate per competenza e tassate come reddito d'impresa"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "H"
           }
@@ -3114,7 +2954,6 @@
             "en": "Allowances paid for the cessation of notarial functions",
             "it": "Indennità corrisposte per la cessazione da funzioni notarili"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "I"
           }
@@ -3125,7 +2964,6 @@
             "en": "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
             "it": "Compensi corrisposti ai raccoglitori occasionali di tartufi non identificati ai fini dell'imposta sul valore aggiunto, in relazione alla cessione di tartufi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "J"
           }
@@ -3136,7 +2974,6 @@
             "en": "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
             "it": "Assegni di servizio civile universale di cui all'art.16 del d.lgs. n. 40 del 6 marzo 2017"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "K"
           }
@@ -3147,7 +2984,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti dagli aventi causa a titolo gratuito (ad es. eredi e legatari dell'autore e inventore)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L"
           }
@@ -3158,7 +2994,6 @@
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
             "it": "Redditi derivanti dall'utilizzazione economica di opere dell'ingegno, di brevetti industriali e di processi, formule e informazioni relativi a esperienze acquisite in campo industriale, commerciale o scientifico, che sono percepiti da soggetti che abbiano acquistato a titolo oneroso i diritti alla loro utilizzazione"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "L1"
           }
@@ -3169,7 +3004,6 @@
             "en": "Self-employment services not carried out habitually",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M"
           }
@@ -3180,7 +3014,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M1"
           }
@@ -3191,7 +3024,6 @@
             "en": "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente per le quali sussiste l'obbligo di iscrizione alla gestione separata enpapi"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "M2"
           }
@@ -3202,7 +3034,6 @@
             "en": "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
             "it": "Indennità di trasferta, rimborso forfetario di spese, premi e compensi erogati: - nell'esercizio diretto di attività sportive dilettantistiche; - in relazione a rapporti di collaborazione coordinata e continuativa di carattere amministrativo-gestionale di natura non professionale resi a favore di società e associazioni sportive dilettantistiche e di cori, bande e filodrammatiche da parte del direttore e dei collaboratori tecnici;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "N"
           }
@@ -3213,7 +3044,6 @@
             "en": "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Prestazioni di lavoro autonomo non esercitate abitualmente, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O"
           }
@@ -3224,7 +3054,6 @@
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
             "it": "Redditi derivanti dall'assunzione di obblighi di fare, di non fare o permettere, per le quali non sussiste l'obbligo di iscrizione alla gestione separata (circ. inps n. 104/2001)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "O1"
           }
@@ -3235,7 +3064,6 @@
             "en": "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
             "it": "Compensi corrisposti a soggetti non residenti privi di stabile organizzazione per l'uso o la concessione in uso di attrezzature industriali, commerciali o scientifiche che si trovano nel territorio dello stato ovvero a società svizzere o stabili organizzazioni di società svizzere che possiedono i requisiti di cui all'art. 15, comma 2 dell'accordo tra la comunità europea e la confederazione svizzera del 26 ottobre 2004 (pubblicato in g.u.c.e. del 29 dicembre 2004 n. l385/30)"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "P"
           }
@@ -3246,7 +3074,6 @@
             "en": "Commissions paid to a single-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio monomandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Q"
           }
@@ -3257,7 +3084,6 @@
             "en": "Commissions paid to a multi-mandate agent or commercial representative",
             "it": "Provvigioni corrisposte ad agente o rappresentante di commercio plurimandatario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "R"
           }
@@ -3268,7 +3094,6 @@
             "en": "Commissions paid to a commission agent",
             "it": "Provvigioni corrisposte a commissionario"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "S"
           }
@@ -3279,7 +3104,6 @@
             "en": "Commissions paid to a broker",
             "it": "Provvigioni corrisposte a mediatore"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "T"
           }
@@ -3290,7 +3114,6 @@
             "en": "Commissions paid to a business finder",
             "it": "Provvigioni corrisposte a procacciatore di affari"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "U"
           }
@@ -3301,7 +3124,6 @@
             "en": "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
             "it": "Provvigioni corrisposte a incaricato per le vendite a domicilio; provvigioni corrisposte a incaricato per la vendita porta a porta e per la vendita ambulante di giornali quotidiani e periodici (l. 25 febbraio 1987, n. 67);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V"
           }
@@ -3312,7 +3134,6 @@
             "en": "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
             "it": "Redditi derivanti da attività commerciali non esercitate abitualmente (ad esempio, provvigioni corrisposte per prestazioni occasionali ad agente o rappresentante di commercio, mediatore, procacciatore d'affari);"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V1"
           }
@@ -3323,7 +3144,6 @@
             "en": "Income from non-habitual services provided by direct home sales agents",
             "it": "Redditi derivanti dalle prestazioni non esercitate abitualmente rese dagli incaricati alla vendita diretta a domicilio;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "V2"
           }
@@ -3334,7 +3154,6 @@
             "en": "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
             "it": "Corrispettivi erogati nel 2021 per prestazioni relative a contratti d'appalto cui si sono resi applicabili le disposizioni contenute nell'art. 25-ter del d.p.r. n. 600 del 29 settembre 1973;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "W"
           }
@@ -3345,7 +3164,6 @@
             "en": "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti nel 2004 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "X"
           }
@@ -3356,7 +3174,6 @@
             "en": "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
             "it": "Canoni corrisposti dal 1° gennaio 2005 al 26 luglio 2005 da società o enti residenti ovvero da stabili organizzazioni di società estere di cui all'art. 26-quater, comma 1, lett. a) e b) del d.p.r. n. 600 del 29 settembre 1973, a società o stabili organizzazioni di società, situate in altro stato membro dell'unione europea in presenza dei requisiti di cui al citato art. 26-quater, del d.p.r. n. 600 del 29 settembre 1973, per i quali è stato effettuato, nell'anno 2006, il rimborso della ritenuta ai sensi dell'art. 4 del d.lgs. 30 maggio 2005 n. 143;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "Y"
           }
@@ -3367,7 +3184,6 @@
             "en": "Different title from the previous ones",
             "it": "Titolo diverso dai precedenti;"
           },
-          "values": null,
           "codes": {
             "fatturapa-causale-pagamento": "ZO"
           }
