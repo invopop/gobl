@@ -2,6 +2,7 @@ package tax
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -81,6 +82,26 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 		}
 	}
 
+	return nil
+}
+
+// UnmarshalJSON is a temporary migration helper that will move the
+// first of the "tags" array used in earlier versions of GOBL into
+// the rate field.
+func (c *Combo) UnmarshalJSON(data []byte) error {
+	type Alias Combo
+	aux := &struct {
+		*Alias
+		Tags []cbc.Key `json:"tags"`
+	}{
+		Alias: (*Alias)(c),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if len(aux.Tags) > 0 && c.Rate == cbc.KeyEmpty {
+		c.Rate = aux.Tags[0]
+	}
 	return nil
 }
 
