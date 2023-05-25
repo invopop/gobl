@@ -88,3 +88,10 @@ func (cs CodeSet) Validate() error {
 	}
 	return err
 }
+
+// JSONSchemaExtend ensures the pattern property is set correctly.
+func (CodeSet) JSONSchemaExtend(schema *jsonschema.Schema) {
+	prop := schema.PatternProperties[".*"] // get default
+	delete(schema.PatternProperties, ".*") // remove default
+	schema.PatternProperties[KeyPattern] = prop
+}

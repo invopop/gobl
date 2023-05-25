@@ -31,7 +31,7 @@
           "description": "Specific tax definitions inside this category."
         },
         "codes": {
-          "$ref": "#/$defs/CodeSet",
+          "$ref": "https://gobl.org/draft-0/cbc/code-set",
           "title": "Codes",
           "description": "Codes defines a set of regime specific code mappings."
         },
@@ -44,19 +44,9 @@
       "type": "object",
       "required": [
         "code",
-        "name",
-        "rates"
+        "name"
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
-    },
-    "CodeSet": {
-      "patternProperties": {
-        ".*": {
-          "$ref": "https://gobl.org/draft-0/cbc/code"
-        }
-      },
-      "type": "object",
-      "description": "CodeSet is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
     },
     "KeyDefinition": {
       "properties": {
@@ -76,7 +66,7 @@
           "description": "Description offering more details about when the key should be used."
         },
         "codes": {
-          "$ref": "#/$defs/CodeSet",
+          "$ref": "https://gobl.org/draft-0/cbc/code-set",
           "title": "Codes",
           "description": "Codes defines a set of codes that may be used within a given regime or format\nthat will help identify which key definition to use."
         },
@@ -161,7 +151,7 @@
           "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
         },
         "codes": {
-          "$ref": "#/$defs/CodeSet",
+          "$ref": "https://gobl.org/draft-0/cbc/code-set",
           "title": "Codes",
           "description": "Codes defines a set of regime specific code mappings."
         },
@@ -174,8 +164,7 @@
       "type": "object",
       "required": [
         "key",
-        "name",
-        "values"
+        "name"
       ],
       "description": "Rate defines a single rate inside a category"
     },
@@ -346,7 +335,7 @@
           "description": "A note to be added to the document if the scenario is applied."
         },
         "codes": {
-          "$ref": "#/$defs/CodeSet",
+          "$ref": "https://gobl.org/draft-0/cbc/code-set",
           "title": "Codes",
           "description": "Codes is used to define additional codes for regime specific\nsituations."
         },
@@ -405,7 +394,7 @@
           "description": "Province, county, or state which should match address data."
         },
         "codes": {
-          "$ref": "#/$defs/CodeSet",
+          "$ref": "https://gobl.org/draft-0/cbc/code-set",
           "title": "Codes",
           "description": "Codes defines a set of regime specific code mappings."
         },

@@ -1,6 +1,9 @@
 package cbc
 
-import "github.com/invopop/validation"
+import (
+	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
+)
 
 // Meta defines a structure for data about the data being defined.
 // Typically would be used for adding additional IDs or specifications
@@ -27,4 +30,11 @@ func (m Meta) Validate() error {
 		return nil
 	}
 	return err
+}
+
+// JSONSchemaExtend ensures the meta keys are valid.
+func (Meta) JSONSchemaExtend(schema *jsonschema.Schema) {
+	prop := schema.PatternProperties[".*"] // get default
+	delete(schema.PatternProperties, ".*") // remove default
+	schema.PatternProperties[KeyPattern] = prop
 }

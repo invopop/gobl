@@ -107,7 +107,7 @@ type Category struct {
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
 	// Specific tax definitions inside this category.
-	Rates []*Rate `json:"rates" jsonschema:"title=Rates"`
+	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 
 	// Codes defines a set of regime specific code mappings.
 	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
@@ -136,7 +136,7 @@ type Rate struct {
 	// additional filters.
 	// Order is important, newer values should come before
 	// older values.
-	Values []*RateValue `json:"values" jsonschema:"title=Values"`
+	Values []*RateValue `json:"values,omitempty" jsonschema:"title=Values"`
 
 	// Codes defines a set of regime specific code mappings.
 	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
