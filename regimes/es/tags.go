@@ -20,21 +20,7 @@ const (
 	TagCashBasis        cbc.Key = "cash-basis"
 )
 
-// Tax tags which may be used by TicketBAI in the Basque Country.
-const (
-	TagResale    cbc.Key = "resale"
-	TagServices  cbc.Key = "services"
-	TagGoods     cbc.Key = "goods"
-	TagExempt    cbc.Key = "exempt"
-	TagArticle20 cbc.Key = "article-20"
-	TagArticle21 cbc.Key = "article-21"
-	TagArticle22 cbc.Key = "article-22"
-	TagArticle23 cbc.Key = "article-23"
-	TagArticle25 cbc.Key = "article-25"
-	TagOther     cbc.Key = "other"
-)
-
-var invoiceTags = []*tax.Tag{
+var invoiceTags = []*tax.KeyDefinition{
 	// Simplified Invoice
 	{
 		Key: common.TagSimplified,
@@ -130,95 +116,6 @@ var invoiceTags = []*tax.Tag{
 		Name: i18n.String{
 			i18n.EN: "Special scheme on cash basis",
 			i18n.ES: "Régimen especial del criterio de caja",
-		},
-	},
-}
-
-// Special tags required for by the TicketBAI system in the basque country
-// on a per-line basis.
-var vatTaxTags = []*tax.Tag{
-	// Common Tags
-	{
-		Key: TagResale,
-		Name: i18n.String{
-			i18n.ES: "Reventa de bienes sin modificación por vendedor en regimen simplificado",
-			i18n.EN: "Resale of goods without modification by vendor in the simplified regime",
-		},
-	},
-	{
-		Key: TagServices,
-		Name: i18n.String{
-			i18n.ES: "Prestacion de servicios",
-			i18n.EN: "Provision of services",
-		},
-	},
-	{
-		Key: TagGoods,
-		Name: i18n.String{
-			i18n.ES: "Entrega de bienes",
-			i18n.EN: "Delivery of goods",
-		},
-	},
-
-	// Exempt Tags
-	{
-		Key: TagExempt.With(TagArticle20),
-		Name: i18n.String{
-			i18n.EN: "Exempt pursuant to Article 20 of the Foral VAT Law",
-			i18n.ES: "Exenta por el artículo 20 de la Norma Foral del IVA",
-		},
-		Meta: cbc.Meta{
-			KeyTicketBAICausaExencion: "E1",
-		},
-	},
-	{
-		Key: TagExempt.With(TagArticle21),
-		Name: i18n.String{
-			i18n.EN: "Exempt pursuant to Article 21 of the Foral VAT Law",
-			i18n.ES: "Exenta por el artículo 21 de la Norma Foral del IVA",
-		},
-		Meta: cbc.Meta{
-			KeyTicketBAICausaExencion: "E2",
-		},
-	},
-	{
-		Key: TagExempt.With(TagArticle22),
-		Name: i18n.String{
-			i18n.EN: "Exempt pursuant to Article 22 of the Foral VAT Law",
-			i18n.ES: "Exenta por el artículo 22 de la Norma Foral del IVA",
-		},
-		Meta: cbc.Meta{
-			KeyTicketBAICausaExencion: "E3",
-		},
-	},
-	{
-		Key: TagExempt.With(TagArticle23),
-		Name: i18n.String{
-			i18n.EN: "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
-			i18n.ES: "Exenta por el artículos 23 y 24 de la Norma Foral del IVA",
-		},
-		Meta: cbc.Meta{
-			KeyTicketBAICausaExencion: "E4",
-		},
-	},
-	{
-		Key: TagExempt.With(TagArticle25),
-		Name: i18n.String{
-			i18n.EN: "Exempt pursuant to Article 25 of the Foral VAT law",
-			i18n.ES: "Exenta por el artículo 25 de la Norma Foral del IVA",
-		},
-		Meta: cbc.Meta{
-			KeyTicketBAICausaExencion: "E5",
-		},
-	},
-	{
-		Key: TagExempt.With(TagOther),
-		Name: i18n.String{
-			i18n.EN: "Exempt pursuant to other reasons",
-			i18n.ES: "Exenta por otra causa",
-		},
-		Meta: cbc.Meta{
-			KeyTicketBAICausaExencion: "E6",
 		},
 	},
 }

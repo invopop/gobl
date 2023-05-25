@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -15,9 +16,7 @@ import (
 // should be provided, all other details serve as a reference.
 type Instructions struct {
 	// The payment means expected or that have been arranged to be used to make the payment.
-	Key MeansKey `json:"key" jsonschema:"title=Key"`
-	// Additional code for the payment means if not defined in the standard list of keys.
-	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Optional text description of the payment method
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Remittance information or concept, a text value used to link the payment with the invoice.
@@ -102,7 +101,7 @@ func (i *Instructions) Validate() error {
 // ValidateWithContext ensures the fields provided in the instructions are valid.
 func (i *Instructions) ValidateWithContext(ctx context.Context) error {
 	err := validation.ValidateStructWithContext(ctx, i,
-		validation.Field(&i.Key, validation.Required, IsValidMeansKey),
+		validation.Field(&i.Key, validation.Required, HasValidMeansKey),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),
 		validation.Field(&i.Online),
@@ -111,4 +110,9 @@ func (i *Instructions) ValidateWithContext(ctx context.Context) error {
 		err = tax.ValidateInRegime(ctx, i)
 	}
 	return err
+}
+
+// JSONSchemaExtend extends the JSONSchema for the Instructions type.
+func (Instructions) JSONSchemaExtend(schema *jsonschema.Schema) {
+	extendJSONSchemaWithMeansKey(schema, "key")
 }

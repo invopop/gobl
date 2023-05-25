@@ -23,6 +23,8 @@ type Item struct {
 	// Primary reference code that identifies this item.
 	// Additional codes can be provided in the 'identities' property.
 	Ref string `json:"ref,omitempty" jsonschema:"title=Ref"`
+	// Special key used to classify the item sometimes required by some regimes.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Brief name of the item
 	Name string `json:"name"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
@@ -45,6 +47,7 @@ type Item struct {
 func (i *Item) Validate() error {
 	return validation.ValidateStruct(i,
 		validation.Field(&i.UUID),
+		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),
 		validation.Field(&i.Identities),
 		validation.Field(&i.Price, validation.Required),

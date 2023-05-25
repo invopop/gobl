@@ -38,16 +38,24 @@ type Regime struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
+	// Tags that can be applied at the document level to identify additional
+	// considerations.
+	Tags []*KeyDefinition `json:"tags,omitempty" jsonschema:"title=Tags"`
+
 	// Identity types specific for the regime and may be validated
 	// against.
-	IdentityTypes []*IdentityType `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
+	IdentityTypeKeys []*KeyDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
 
 	// Charge types specific for the regime and may be validated or used in the UI as suggestions
 	ChargeKeys []*KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
 
-	// Tags that can be applied at the document level to identify additional
-	// considerations.
-	Tags []*Tag `json:"tags,omitempty" jsonschema:"title=Tags"`
+	// PaymentMeansKeys specific for the regime that extend the original
+	// base payment means keys.
+	PaymentMeansKeys []*KeyDefinition `json:"payment_means,omitempty" jsonschema:"title=Payment Means"`
+
+	// ItemKeys specific for the regime that need to be added to `org.Item` data
+	// in line rows.
+	ItemKeys []*KeyDefinition `json:"item_keys,omitempty" jsonschema:"title=Item Keys"`
 
 	// Sets of scenario definitions for the regime.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
@@ -80,6 +88,8 @@ type Zone struct {
 	Locality i18n.String `json:"locality,omitempty" jsonschema:"title=Locality"`
 	// Province, county, or state which should match address data.
 	Region i18n.String `json:"region,omitempty" jsonschema:"title=Region"`
+	// Codes defines a set of regime specific code mappings.
+	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
 	// Any additional information
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -99,9 +109,8 @@ type Category struct {
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates" jsonschema:"title=Rates"`
 
-	// Tags contains a set of tag definitions that can be applied
-	// for this tax category.
-	Tags []*Tag `json:"tags,omitempty" jsonschema:"title=Tags"`
+	// Codes defines a set of regime specific code mappings.
+	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
 
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
@@ -118,12 +127,19 @@ type Rate struct {
 	// Useful description of the rate.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
+	// Exempt when true implies that the rate when used in a tax Combo should
+	// not define a percent value.
+	Exempt bool `json:"exempt,omitempty" jsonschema:"title=Exempt"`
+
 	// Values contains a list of Value objects that contain the
 	// current and historical percentage values for the rate and
 	// additional filters.
 	// Order is important, newer values should come before
 	// older values.
 	Values []*RateValue `json:"values" jsonschema:"title=Values"`
+
+	// Codes defines a set of regime specific code mappings.
+	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
 
 	// Meta contains additional information about the rate that is relevant
 	// for local frequently used implementations.
@@ -167,7 +183,10 @@ type KeyDefinition struct {
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-	// Any additional data that might be relevant in some regimes?
+	// Codes defines a set of codes that may be used within a given regime or format
+	// that will help identify which key definition to use.
+	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Any additional data that might be relevant in some regimes.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
@@ -235,8 +254,9 @@ func (r *Regime) InTags() validation.Rule {
 	return validation.In(tags...)
 }
 
-// InCategoryTags provides a list of tags for the category.
-func (r *Regime) InCategoryTags(cat cbc.Code) validation.Rule {
+// InCategoryRates is used to provide a validation rule that will
+// ensure a rate key is defined inside a category.
+func (r *Regime) InCategoryRates(cat cbc.Code) validation.Rule {
 	if r == nil {
 		return validation.In()
 	}
@@ -244,11 +264,11 @@ func (r *Regime) InCategoryTags(cat cbc.Code) validation.Rule {
 	if c == nil {
 		return validation.In()
 	}
-	tags := make([]interface{}, len(c.Tags))
-	for i, t := range c.Tags {
-		tags[i] = t.Key
+	keys := make([]interface{}, len(c.Rates))
+	for i, x := range c.Rates {
+		keys[i] = x.Key
 	}
-	return validation.In(tags...)
+	return validation.In(keys...)
 }
 
 // InCategories returns a validation rule to ensure the category code
@@ -305,7 +325,6 @@ func (c *Category) Validate() error {
 	err := validation.ValidateStruct(c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
-		validation.Field(&c.Tags),
 		validation.Field(&c.Rates),
 	)
 	return err
@@ -317,7 +336,11 @@ func (r *Rate) Validate() error {
 	err := validation.ValidateStruct(r,
 		validation.Field(&r.Key, validation.Required),
 		validation.Field(&r.Name, validation.Required),
-		validation.Field(&r.Values, validation.Required, validation.By(checkRateValuesOrder)),
+		validation.Field(&r.Values,
+			validation.When(r.Exempt, validation.Nil),
+			validation.By(checkRateValuesOrder),
+		),
+		validation.Field(&r.Meta),
 	)
 	return err
 }
@@ -358,8 +381,8 @@ func (r *Regime) Category(code cbc.Code) *Category {
 	return nil
 }
 
-// Tag returns the tag for the provided key
-func (r *Regime) Tag(key cbc.Key) *Tag {
+// Tag returns the KeyDefinition for the provided tag key
+func (r *Regime) Tag(key cbc.Key) *KeyDefinition {
 	for _, t := range r.Tags {
 		if t.Key == key {
 			return t
@@ -368,22 +391,22 @@ func (r *Regime) Tag(key cbc.Key) *Tag {
 	return nil
 }
 
+// Rate provides the rate definition for the provided category code
+// and rate key.
+func (r *Regime) Rate(cat cbc.Code, key cbc.Key) *Rate {
+	c := r.Category(cat)
+	if c == nil {
+		return nil
+	}
+	return c.Rate(key)
+}
+
 // Rate provides the rate definition with a matching key for
 // the category.
 func (c *Category) Rate(key cbc.Key) *Rate {
 	for _, r := range c.Rates {
 		if r.Key == key {
 			return r
-		}
-	}
-	return nil
-}
-
-// Tag returns the tag for the provided key in the category.
-func (c *Category) Tag(key cbc.Key) *Tag {
-	for _, t := range c.Tags {
-		if t.Key == key {
-			return t
 		}
 	}
 	return nil
@@ -420,4 +443,16 @@ func (pd *PrecedingDefinitions) HasType(t cbc.Key) bool {
 		return false // no preceding definitions
 	}
 	return t.In(pd.Types...)
+}
+
+// Validate ensures the key definition looks correct in the context of the regime.
+func (kd *KeyDefinition) Validate() error {
+	err := validation.ValidateStruct(kd,
+		validation.Field(&kd.Key, validation.Required),
+		validation.Field(&kd.Name, validation.Required),
+		validation.Field(&kd.Desc),
+		validation.Field(&kd.Codes),
+		validation.Field(&kd.Meta),
+	)
+	return err
 }

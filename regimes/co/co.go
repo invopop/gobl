@@ -36,10 +36,10 @@ func New() *tax.Regime {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
-		Validator:     Validate,
-		Calculator:    Calculate,
-		IdentityTypes: taxIdentityTypes, // see tax_identity.go
-		Zones:         zones,            // see zones.go
+		Validator:        Validate,
+		Calculator:       Calculate,
+		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
+		Zones:            zones,               // see zones.go
 		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
 			Types: []cbc.Key{
 				bill.InvoiceTypeCreditNote,

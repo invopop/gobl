@@ -49,22 +49,6 @@ func TestSetValidation(t *testing.T) {
 			},
 		},
 		{
-			desc: "success with tags",
-			set: tax.Set{
-				{
-					Category: "VAT",
-					Rate:     "standard",
-					Percent:  num.NewPercentage(20, 3),
-					Tags:     []cbc.Key{es.TagServices},
-				},
-				{
-					Category: "IRPF",
-					Rate:     "pro",
-					Percent:  num.NewPercentage(15, 3),
-				},
-			},
-		},
-		{
 			desc: "duplicate",
 			set: tax.Set{
 				{
@@ -90,11 +74,11 @@ func TestSetValidation(t *testing.T) {
 			err: "percent: cannot be blank",
 		},
 		{
-			desc: "missing percentage with tag",
+			desc: "missing percentage with exempt rate",
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Tags:     []cbc.Key{es.TagServices},
+					Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
 				},
 			},
 		},
@@ -109,26 +93,15 @@ func TestSetValidation(t *testing.T) {
 			err: "cat: must be a valid value",
 		},
 		{
-			desc: "undefined category tag",
+			desc: "undefined category rate",
 			set: tax.Set{
 				{
 					Category: "VAT",
 					Percent:  num.NewPercentage(20, 3),
-					Tags:     []cbc.Key{es.TagServices, "invalid-tag"},
+					Rate:     cbc.Key("invalid-tag"),
 				},
 			},
-			err: "tags: (1: must be a valid value.).",
-		},
-		{
-			desc: "invalid rate",
-			set: tax.Set{
-				{
-					Category: "VAT",
-					Rate:     "STD",
-					Percent:  num.NewPercentage(20, 3),
-				},
-			},
-			err: "rate: must be in a valid format",
+			err: "rate: must be a valid value.",
 		},
 	}
 	es := es.New()

@@ -25,9 +25,6 @@ type Combo struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
-	// Additional data may be required in some regimes, the tags
-	// property helps reference them.
-	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -38,23 +35,17 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	if r == nil {
 		return errors.New("tax regime not found in context")
 	}
+	rate := r.Rate(c.Category, c.Rate)
 	return validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
-		validation.Field(&c.Rate), // optional, but should be checked if present
+		validation.Field(&c.Rate, r.InCategoryRates(c.Category)), // optional, but should be checked if present
 		validation.Field(&c.Percent,
-			validation.When(len(c.Tags) == 0, validation.Required),
+			validation.When(rate == nil, validation.Required),
+			validation.When(rate != nil && rate.Exempt, validation.Nil),
+			validation.When(rate != nil && !rate.Exempt, validation.Required),
 		),
 		validation.Field(&c.Surcharge), // not required, but should be valid number
-		validation.Field(&c.Tags, validation.Each(r.InCategoryTags(c.Category))),
 	)
-}
-
-// ContainsTag returns true if the tax combo contains the given tag.
-func (c *Combo) ContainsTag(key cbc.Key) bool {
-	if c == nil {
-		return false
-	}
-	return key.In(c.Tags...)
 }
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
@@ -69,6 +60,11 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 		rate := c.category.Rate(c.Rate)
 		if rate == nil {
 			return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
+		}
+		if rate.Exempt {
+			c.Percent = nil
+			c.Surcharge = nil
+			return nil
 		}
 		value := rate.Value(tc.Date, tc.Zone)
 		if value == nil {

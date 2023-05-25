@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/it"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -16,7 +17,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	inv.Payment = &bill.Payment{
 		Advances: []*pay.Advance{
 			{
-				Key:         pay.MeansKeyOther,
+				Key:         pay.MeansKeyDirectDebit.With(it.MeansKeyRID),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
 			},
@@ -24,16 +25,19 @@ func TestPayInstructionsValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "payment: (advances: (0: (code: cannot be blank.).).).")
+	require.NoError(t, err)
 
 	inv.Payment = &bill.Payment{
-		Instructions: &pay.Instructions{
-			Key:  pay.MeansKeyOther,
-			Code: "",
+		Advances: []*pay.Advance{
+			{
+				Key:         pay.MeansKeyDirectDebit.With("fooo"),
+				Description: "Test advance",
+				Amount:      num.MakeAmount(100, 0),
+			},
 		},
 	}
+	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "payment: (instructions: (code: cannot be blank.).).")
+	assert.Contains(t, err.Error(), "key: must be a valid value")
 }

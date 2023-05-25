@@ -31,14 +31,14 @@ var (
 	nitMultipliers = []int{3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71}
 )
 
-var taxIdentityTypes = []*tax.IdentityType{
+var taxIdentityTypeDefs = []*tax.KeyDefinition{
 	{
 		Key: TaxIdentityTypeTIN, // DEFAULT!
 		Name: i18n.String{
 			i18n.EN: "TIN - Tax Identification Number",
 			i18n.ES: "NIT - Número de Identificación Tributaria",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "31",
 			KeyDIANAdditionalAccountID: "1",
 		},
@@ -49,7 +49,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.ES: "Registro Civil",
 			i18n.EN: "Civil Registry",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "11",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -60,7 +60,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Identity Card",
 			i18n.ES: "Tarjeta de Identidad",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "12",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -71,7 +71,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Citizen Identity Card",
 			i18n.ES: "Cédula de ciudadanía",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "13",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -82,7 +82,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Foreigner Identity Card",
 			i18n.ES: "Tarjeta de Extranjería",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "21",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -93,7 +93,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Foreigner Citizen Identity Card",
 			i18n.ES: "Cédula de extranjería",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "22",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -104,7 +104,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "TIN of an individual",
 			i18n.ES: "NIT de persona natural",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "31",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -115,7 +115,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Passport",
 			i18n.ES: "Pasaporte",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "41",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -126,7 +126,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Foreign Document",
 			i18n.ES: "Documento de identificación extranjero",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "42",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -137,7 +137,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "PEP - Special Permit to Stay",
 			i18n.ES: "PEP - Permiso Especial de Permanencia",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "47",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -148,7 +148,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Foreign TIN",
 			i18n.ES: "NIT de otro país",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "50",
 			KeyDIANAdditionalAccountID: "1",
 		},
@@ -159,7 +159,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "NUIP - National Unique Personal Identification Number",
 			i18n.ES: "NUIP - Número Único de Identificación Personal",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyDIANCompanyID:           "91",
 			KeyDIANAdditionalAccountID: "2",
 		},

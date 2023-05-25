@@ -12,7 +12,6 @@ type CategoryTotal struct {
 	Code      cbc.Code     `json:"code" jsonschema:"title=Code"`
 	Retained  bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
 	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
-	Base      num.Amount   `json:"base" jsonschema:"title=Base"`
 	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
 	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 }
@@ -21,12 +20,16 @@ type CategoryTotal struct {
 // a matching category and rate. The Key is optional as we may be using
 // the percentage to group rates.
 type RateTotal struct {
-	Key     cbc.Key        `json:"key,omitempty" jsonschema:"title=Key"`
-	Base    num.Amount     `json:"base" jsonschema:"title=Base"`
-	Percent num.Percentage `json:"percent" jsonschema:"title=Percent"`
-	// Total amount of rate, excluding surcharges
-	Amount    num.Amount          `json:"amount" jsonschema:"title=Amount"`
+	// Optional rate key is required when grouping.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Base amount that the percentage is applied to.
+	Base num.Amount `json:"base" jsonschema:"title=Base"`
+	// Percentage of the rate, which may be nil for exempt rates.
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Surcharge applied to the rate.
 	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+	// Total amount of rate, excluding surcharges
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 }
 
 // RateTotalSurcharge reflects the sum surcharges inside the rate.
@@ -69,7 +72,6 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct := new(CategoryTotal)
 	ct.Code = c.Category
 	ct.Rates = make([]*RateTotal, 0)
-	ct.Base = zero
 	ct.Amount = zero
 	ct.Retained = c.category.Retained
 	return ct
@@ -79,7 +81,10 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
 	rt.Key = c.Rate // may be empty!
-	rt.Percent = *c.Percent
+	if c.Percent != nil {
+		pc := *c.Percent
+		rt.Percent = &pc
+	}
 	rt.Base = zero
 	rt.Amount = zero
 	if c.Surcharge != nil {
@@ -147,8 +152,8 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 	// Go through each line and add the price to the base of each tax
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
-			if c.Percent == nil {
-				continue // implies exempt
+			if c.Percent == nil && c.Rate.IsEmpty() {
+				continue // not much to do here!
 			}
 			rt := t.rateTotalFor(c, tc.Zero)
 			rt.Base = rt.Base.MatchPrecision(tl.price)
@@ -179,12 +184,15 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 // calculate goes through each rate defined inside the category, ensures
 // the amounts are correct, and adds each to the category base.
 func (ct *CategoryTotal) calculate(zero num.Amount) {
-	ct.Base = zero
 	ct.Amount = zero
 	for _, rt := range ct.Rates {
+		if rt.Percent == nil {
+			rt.Base = rt.Base.Rescale(zero.Exp())
+			rt.Amount = zero
+			continue // exempt, nothing else to do
+		}
 		rt.Amount = rt.Percent.Of(rt.Base).Rescale(zero.Exp())
-		rt.Base = rt.Base.Rescale(zero.Exp())
-		ct.Base = ct.Base.Add(rt.Base)
+		rt.Base = rt.Base.Rescale(zero.Exp()) // after amount calculation!
 		ct.Amount = ct.Amount.Add(rt.Amount)
 		if rt.Surcharge != nil {
 			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base).Rescale(zero.Exp())
@@ -199,7 +207,8 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 
 func (rt *RateTotal) matches(c *Combo) bool {
 	if c.Percent == nil {
-		return false
+		// If there is no percent, try matching key
+		return c.Rate != cbc.KeyEmpty && c.Rate == rt.Key
 	}
 	if c.Surcharge != nil {
 		if rt.Surcharge == nil {
@@ -215,7 +224,7 @@ func (rt *RateTotal) matches(c *Combo) bool {
 }
 
 // rateTotalFor either finds of creates total objects for the category and rate.
-// May error if we detect and incorrect combination.
+// May error if we detect any incorrect combination.
 func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 	var catTotal *CategoryTotal
 	for _, ct := range t.Categories {
