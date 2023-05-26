@@ -32,6 +32,10 @@ func New() *tax.Regime {
 			i18n.EN: "France",
 			i18n.FR: "La France",
 		},
+		Tags: invoiceTags,
+		Scenarios: []*tax.ScenarioSet{
+			invoiceScenarios,
+		},
 		Preceding: &tax.PrecedingDefinitions{
 			// France supports both corrective methods
 			Types: []cbc.Key{
