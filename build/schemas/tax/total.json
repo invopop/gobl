@@ -20,10 +20,6 @@
           "type": "array",
           "title": "Rates"
         },
-        "base": {
-          "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Base"
-        },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount"
@@ -37,7 +33,6 @@
       "required": [
         "code",
         "rates",
-        "base",
         "amount"
       ],
       "description": "CategoryTotal groups together all rates inside a given category."
@@ -46,30 +41,33 @@
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key"
+          "title": "Key",
+          "description": "Optional rate key is required when grouping."
         },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Base"
+          "title": "Base",
+          "description": "Base amount that the percentage is applied to."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
-          "title": "Percent"
+          "title": "Percent",
+          "description": "Percentage of the rate, which may be nil for exempt rates."
+        },
+        "surcharge": {
+          "$ref": "#/$defs/RateTotalSurcharge",
+          "title": "Surcharge",
+          "description": "Surcharge applied to the rate."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount",
           "description": "Total amount of rate, excluding surcharges"
-        },
-        "surcharge": {
-          "$ref": "#/$defs/RateTotalSurcharge",
-          "title": "Surcharge"
         }
       },
       "type": "object",
       "required": [
         "base",
-        "percent",
         "amount"
       ],
       "description": "RateTotal contains a sum of all the tax rates in the document with a matching category and rate."

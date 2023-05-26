@@ -1,10 +1,15 @@
 package pay
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -16,6 +21,8 @@ type Advance struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// When the advance was made.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
+	// The payment means used to make the advance.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// ID or reference for the advance.
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// If this "advance" payment has come from a public grant or subsidy, set this to true.
@@ -32,10 +39,20 @@ type Advance struct {
 
 // Validate checks the advance looks okay
 func (a *Advance) Validate() error {
-	return validation.ValidateStruct(a,
+	return a.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks the advance looks okay inside the context.
+func (a *Advance) ValidateWithContext(ctx context.Context) error {
+	err := validation.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.Amount, validation.Required),
+		validation.Field(&a.Key, HasValidMeansKey),
 		validation.Field(&a.Description, validation.Required),
 	)
+	if err == nil {
+		err = tax.ValidateInRegime(ctx, a)
+	}
+	return err
 }
 
 // CalculateFrom will update the amount using the rate of the provided
@@ -44,4 +61,9 @@ func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
 	if a.Percent != nil {
 		a.Amount = a.Percent.Of(totalWithTax)
 	}
+}
+
+// JSONSchemaExtend extends the JSONSchema for the Instructions type.
+func (Advance) JSONSchemaExtend(schema *jsonschema.Schema) {
+	extendJSONSchemaWithMeansKey(schema, "key")
 }

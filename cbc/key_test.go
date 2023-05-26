@@ -41,6 +41,24 @@ func TestKey(t *testing.T) {
 
 }
 
+func TestKeyHas(t *testing.T) {
+	k := cbc.Key("standard")
+	assert.True(t, k.Has("standard"))
+	assert.False(t, k.Has("pro"))
+	k = k.With("pro")
+	assert.True(t, k.Has("standard"))
+	assert.True(t, k.Has("pro"))
+}
+
+func TestKeyHasPrefix(t *testing.T) {
+	k := cbc.Key("standard")
+	assert.True(t, k.HasPrefix("standard"))
+	assert.False(t, k.HasPrefix("pro"))
+	k = k.With("pro")
+	assert.True(t, k.HasPrefix("standard"))
+	assert.False(t, k.HasPrefix("pro"))
+}
+
 func TestKeyIn(t *testing.T) {
 	c := cbc.Key("standard")
 

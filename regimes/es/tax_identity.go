@@ -37,14 +37,14 @@ const (
 	TaxIdentityTypeOther    cbc.Key = "other"
 )
 
-var taxIdentityTypes = []*tax.IdentityType{
+var taxIdentityTypeDefinitions = []*tax.KeyDefinition{
 	{
 		Key: TaxIdentityTypeFiscal,
 		Name: i18n.String{
 			i18n.EN: "National Tax Identity",
 			i18n.ES: "Número de Identificación Fiscal",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyTicketBAIIDType: "02",
 		},
 	},
@@ -54,7 +54,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Passport",
 			i18n.ES: "Pasaporte",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyTicketBAIIDType: "03",
 		},
 	},
@@ -64,7 +64,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "National ID Card or similar from a foreign country",
 			i18n.ES: "Documento oficial de identificación expedido por el país o territorio de residencia",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyTicketBAIIDType: "04",
 		},
 	},
@@ -74,7 +74,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "Residential permit",
 			i18n.ES: "Certificado de residencia",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyTicketBAIIDType: "05",
 		},
 	},
@@ -84,7 +84,7 @@ var taxIdentityTypes = []*tax.IdentityType{
 			i18n.EN: "An other type of source not listed",
 			i18n.ES: "Otro documento probatorio",
 		},
-		Meta: cbc.Meta{
+		Codes: cbc.CodeSet{
 			KeyTicketBAIIDType: "06",
 		},
 	},

@@ -2,6 +2,7 @@ package tax_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -9,6 +10,7 @@ import (
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSetValidation(t *testing.T) {
@@ -49,22 +51,6 @@ func TestSetValidation(t *testing.T) {
 			},
 		},
 		{
-			desc: "success with tags",
-			set: tax.Set{
-				{
-					Category: "VAT",
-					Rate:     "standard",
-					Percent:  num.NewPercentage(20, 3),
-					Tags:     []cbc.Key{es.TagServices},
-				},
-				{
-					Category: "IRPF",
-					Rate:     "pro",
-					Percent:  num.NewPercentage(15, 3),
-				},
-			},
-		},
-		{
 			desc: "duplicate",
 			set: tax.Set{
 				{
@@ -90,11 +76,11 @@ func TestSetValidation(t *testing.T) {
 			err: "percent: cannot be blank",
 		},
 		{
-			desc: "missing percentage with tag",
+			desc: "missing percentage with exempt rate",
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Tags:     []cbc.Key{es.TagServices},
+					Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
 				},
 			},
 		},
@@ -109,26 +95,15 @@ func TestSetValidation(t *testing.T) {
 			err: "cat: must be a valid value",
 		},
 		{
-			desc: "undefined category tag",
+			desc: "undefined category rate",
 			set: tax.Set{
 				{
 					Category: "VAT",
 					Percent:  num.NewPercentage(20, 3),
-					Tags:     []cbc.Key{es.TagServices, "invalid-tag"},
+					Rate:     cbc.Key("invalid-tag"),
 				},
 			},
-			err: "tags: (1: must be a valid value.).",
-		},
-		{
-			desc: "invalid rate",
-			set: tax.Set{
-				{
-					Category: "VAT",
-					Rate:     "STD",
-					Percent:  num.NewPercentage(20, 3),
-				},
-			},
-			err: "rate: must be in a valid format",
+			err: "rate: must be a valid value.",
 		},
 	}
 	es := es.New()
@@ -236,4 +211,13 @@ func TestSetGet(t *testing.T) {
 	}
 	assert.NotNil(t, s.Get(cbc.Code("VAT")))
 	assert.Nil(t, s.Get(cbc.Code("FOO")))
+}
+
+func TestComboUnmarshal(t *testing.T) {
+	data := []byte(`{"cat":"VAT","tags":["standard"],"percent":"20%"}`)
+	var c tax.Combo
+	err := json.Unmarshal(data, &c)
+	require.NoError(t, err)
+	assert.Equal(t, c.Category, cbc.Code("VAT"))
+	assert.Equal(t, c.Rate, cbc.Key("standard"))
 }

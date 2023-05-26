@@ -2,6 +2,7 @@ package tax
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/validation"
 )
 
@@ -23,8 +24,15 @@ type Scenario struct {
 	// Tag that was applied to the document
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tag"`
 
+	// Name of the scenario for further information.
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+
 	// A note to be added to the document if the scenario is applied.
 	Note *cbc.Note `json:"note,omitempty" jsonschema:"title=Note"`
+
+	// Codes is used to define additional codes for regime specific
+	// situations.
+	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
 
 	// Any additional local meta data that may be useful in integrations.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -35,6 +43,7 @@ type Scenario struct {
 // are viable.
 type ScenarioSummary struct {
 	Notes []*cbc.Note
+	Codes cbc.CodeSet
 	Meta  cbc.Meta
 }
 
@@ -52,12 +61,16 @@ func (ss *ScenarioSet) Validate() error {
 func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key) *ScenarioSummary {
 	summary := &ScenarioSummary{
 		Notes: make([]*cbc.Note, 0),
+		Codes: make(cbc.CodeSet),
 		Meta:  make(cbc.Meta),
 	}
 	for _, s := range ss.List {
 		if s.match(docType, docTags) {
 			if s.Note != nil {
 				summary.Notes = append(summary.Notes, s.Note)
+			}
+			for k, v := range s.Codes {
+				summary.Codes[k] = v
 			}
 			for k, v := range s.Meta {
 				summary.Meta[k] = v
@@ -107,7 +120,9 @@ func (s *Scenario) Validate() error {
 	err := validation.ValidateStruct(s,
 		validation.Field(&s.Types),
 		validation.Field(&s.Tags),
+		validation.Field(&s.Name),
 		validation.Field(&s.Note),
+		validation.Field(&s.Codes),
 		validation.Field(&s.Meta),
 	)
 	return err

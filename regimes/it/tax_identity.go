@@ -26,27 +26,24 @@ const (
 	TaxIdentityTypeIndividual cbc.Key = "individual"
 )
 
-var taxIdentityTypes = []*tax.IdentityType{
+var taxIdentityTypeDefinitions = []*tax.KeyDefinition{
 	{
 		Key: TaxIdentityTypeBusiness,
 		Name: i18n.String{
 			i18n.EN: "Legal Person",
 		},
-		Meta: cbc.Meta{},
 	},
 	{
 		Key: TaxIdentityTypeGovernment,
 		Name: i18n.String{
 			i18n.EN: "Public Administration",
 		},
-		Meta: cbc.Meta{},
 	},
 	{
 		Key: TaxIdentityTypeIndividual,
 		Name: i18n.String{
 			i18n.EN: "Natural Person",
 		},
-		Meta: cbc.Meta{},
 	},
 }
 

@@ -52,7 +52,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Invoice code",
 			i18n.ES: "Número de la factura",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "01"},
+		Codes: cbc.CodeSet{KeyFacturaE: "01"},
 	},
 	{
 		Key: CorrectionKeySeries,
@@ -60,7 +60,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Invoice series",
 			i18n.ES: "Serie de la factura",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "02"},
+		Codes: cbc.CodeSet{KeyFacturaE: "02"},
 	},
 	{
 		Key: CorrectionKeyIssueDate,
@@ -68,7 +68,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Issue date",
 			i18n.ES: "Fecha expedición",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "03"},
+		Codes: cbc.CodeSet{KeyFacturaE: "03"},
 	},
 	{
 		Key: CorrectionKeySupplierName,
@@ -76,7 +76,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Name and surnames/Corporate name – Issuer (Sender)",
 			i18n.ES: "Nombre y apellidos/Razón Social-Emisor",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "04"},
+		Codes: cbc.CodeSet{KeyFacturaE: "04"},
 	},
 	{
 		Key: CorrectionKeyCustomerName,
@@ -84,7 +84,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Name and surnames/Corporate name - Receiver",
 			i18n.ES: "Nombre y apellidos/Razón Social-Receptor",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "05"},
+		Codes: cbc.CodeSet{KeyFacturaE: "05"},
 	},
 	{
 		Key: CorrectionKeySupplierTaxID,
@@ -92,7 +92,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Issuer's Tax Identification Number",
 			i18n.ES: "Identificación fiscal Emisor/obligado",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "06"},
+		Codes: cbc.CodeSet{KeyFacturaE: "06"},
 	},
 	{
 		Key: CorrectionKeyCustomerTaxID,
@@ -100,7 +100,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Receiver's Tax Identification Number",
 			i18n.ES: "Identificación fiscal Receptor",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "07"},
+		Codes: cbc.CodeSet{KeyFacturaE: "07"},
 	},
 	{
 		Key: CorrectionKeySupplierAddress,
@@ -108,7 +108,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Issuer's address",
 			i18n.ES: "Domicilio Emisor/Obligado",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "08"},
+		Codes: cbc.CodeSet{KeyFacturaE: "08"},
 	},
 	{
 		Key: CorrectionKeyCustomerAddress,
@@ -116,7 +116,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Receiver's address",
 			i18n.ES: "Domicilio Receptor",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "09"},
+		Codes: cbc.CodeSet{KeyFacturaE: "09"},
 	},
 	{
 		Key: CorrectionKeyLine,
@@ -124,7 +124,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Item line",
 			i18n.ES: "Detalle Operación",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "10"},
+		Codes: cbc.CodeSet{KeyFacturaE: "10"},
 	},
 	{
 		Key: CorrectionKeyTaxRate,
@@ -132,7 +132,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Applicable Tax Rate",
 			i18n.ES: "Porcentaje impositivo a aplicar",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "11"},
+		Codes: cbc.CodeSet{KeyFacturaE: "11"},
 	},
 	{
 		Key: CorrectionKeyTaxAmount,
@@ -140,7 +140,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Applicable Tax Amount",
 			i18n.ES: "Cuota tributaria a aplicar",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "12"},
+		Codes: cbc.CodeSet{KeyFacturaE: "12"},
 	},
 	{
 		Key: CorrectionKeyPeriod,
@@ -148,7 +148,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Applicable Date/Period",
 			i18n.ES: "Fecha/Periodo a aplicar",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "13"},
+		Codes: cbc.CodeSet{KeyFacturaE: "13"},
 	},
 	{
 		Key: CorrectionKeyType,
@@ -156,7 +156,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Invoice Class",
 			i18n.ES: "Clase de factura",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "14"},
+		Codes: cbc.CodeSet{KeyFacturaE: "14"},
 	},
 	{
 		Key: CorrectionKeyLegalDetails,
@@ -164,7 +164,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Legal literals",
 			i18n.ES: "Literales legales",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "15"},
+		Codes: cbc.CodeSet{KeyFacturaE: "15"},
 	},
 	{
 		Key: CorrectionKeyTaxBase,
@@ -172,7 +172,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Taxable Base",
 			i18n.ES: "Base imponible",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "16"},
+		Codes: cbc.CodeSet{KeyFacturaE: "16"},
 	},
 	{
 		Key: CorrectionKeyTax,
@@ -180,7 +180,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Calculation of tax outputs",
 			i18n.ES: "Cálculo de cuotas repercutidas",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "80"},
+		Codes: cbc.CodeSet{KeyFacturaE: "80"},
 	},
 	{
 		Key: CorrectionKeyTaxRetained,
@@ -188,7 +188,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Calculation of tax inputs",
 			i18n.ES: "Cálculo de cuotas retenidas",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "81"},
+		Codes: cbc.CodeSet{KeyFacturaE: "81"},
 	},
 	{
 		Key: CorrectionKeyRefund,
@@ -196,7 +196,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Taxable Base modified due to return of packages and packaging materials",
 			i18n.ES: "Base imponible modificada por devolución de envases / embalajes",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "82"},
+		Codes: cbc.CodeSet{KeyFacturaE: "82"},
 	},
 	{
 		Key: CorrectionKeyDiscount,
@@ -204,7 +204,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Taxable Base modified due to discounts and rebates",
 			i18n.ES: "Base imponible modificada por descuentos y bonificaciones",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "83"},
+		Codes: cbc.CodeSet{KeyFacturaE: "83"},
 	},
 	{
 		Key: CorrectionKeyJudicial,
@@ -212,7 +212,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Taxable Base modified due to firm court ruling or administrative decision",
 			i18n.ES: "Base imponible modificada por resolución firme, judicial o administrativa",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "84"},
+		Codes: cbc.CodeSet{KeyFacturaE: "84"},
 	},
 	{
 		Key: CorrectionKeyInsolvency,
@@ -220,7 +220,7 @@ var correctionList = []*tax.KeyDefinition{
 			i18n.EN: "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
 			i18n.ES: "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "85"},
+		Codes: cbc.CodeSet{KeyFacturaE: "85"},
 	},
 }
 
@@ -231,7 +231,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Complete",
 			i18n.ES: "Rectificaticón íntegra",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "01"},
+		Codes: cbc.CodeSet{KeyFacturaE: "01"},
 	},
 	{
 		Key: CorrectionMethodKeyPartial,
@@ -239,7 +239,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Corrected items only",
 			i18n.ES: "Rectificación por diferencias",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "02"},
+		Codes: cbc.CodeSet{KeyFacturaE: "02"},
 	},
 	{
 		Key: CorrectionMethodKeyDiscount,
@@ -247,7 +247,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Bulk deal in a given period",
 			i18n.ES: "Rectificación por descuento por volumen de operaciones durante un periodo",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "03"},
+		Codes: cbc.CodeSet{KeyFacturaE: "03"},
 	},
 	{
 		Key: CorrectionMethodKeyAuthorized,
@@ -255,7 +255,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Authorized by the Tax Agency",
 			i18n.ES: "Autorizadas por la Agencia Tributaria",
 		},
-		Meta: cbc.Meta{KeyFacturaE: "04"},
+		Codes: cbc.CodeSet{KeyFacturaE: "04"},
 	},
 }
 

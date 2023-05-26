@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/uuid"
 
@@ -40,6 +39,7 @@ type Identity struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+/*
 // IdentityType describes a single possible value for a tax identity type.
 type IdentityType struct {
 	// Key used to identify the type
@@ -49,6 +49,7 @@ type IdentityType struct {
 	// Additional regime specific meta data
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
+*/
 
 // RequireIdentityCode is an additional check to use alongside
 // regular validation that will ensure the tax ID has a code

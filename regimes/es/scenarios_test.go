@@ -112,8 +112,8 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	assert.Len(t, i.Notes, 0)
 
 	ss := i.ScenarioSummary()
-	assert.Contains(t, ss.Meta, es.KeyFacturaEInvoiceDocumentType)
-	assert.Equal(t, ss.Meta[es.KeyFacturaEInvoiceDocumentType], "FC")
+	assert.Contains(t, ss.Codes, es.KeyFacturaEInvoiceDocumentType)
+	assert.Equal(t, ss.Codes[es.KeyFacturaEInvoiceDocumentType], cbc.Code("FC"))
 
 	i = testInvoiceStandard(t)
 	i.Tax.Tags = []cbc.Key{es.TagTravelAgency}

@@ -13,53 +13,59 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// ** Invoice Document Types **
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCorrective},
-			Meta:  cbc.Meta{KeyFacturaEInvoiceDocumentType: "FC"}, // default
+			Codes: cbc.CodeSet{
+				KeyFacturaEInvoiceDocumentType: "FC", // default
+			},
 		},
 		{
 			Tags: []cbc.Key{common.TagSimplified},
-			Meta: cbc.Meta{KeyFacturaEInvoiceDocumentType: "FA"},
+			Codes: cbc.CodeSet{
+				KeyFacturaEInvoiceDocumentType: "FA",
+			},
 		},
 		{
 			Tags: []cbc.Key{common.TagSelfBilled},
-			Meta: cbc.Meta{KeyFacturaEInvoiceDocumentType: "AF"},
+			Codes: cbc.CodeSet{
+				KeyFacturaEInvoiceDocumentType: "AF",
+			},
 		},
 		// ** Invoice Class **
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyFacturaEInvoiceClass: "OO", // Original Invoice
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCorrective},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyFacturaEInvoiceClass: "OR", // Corrective
 			},
 		},
 		{
 			Tags: []cbc.Key{TagSummary},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyFacturaEInvoiceClass: "OC", // Summary
 			},
 		},
 		{
 			Tags:  []cbc.Key{TagCopy},
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyFacturaEInvoiceClass: "CO", // Copy of the original
 			},
 		},
 		{
 			Tags:  []cbc.Key{TagCopy},
 			Types: []cbc.Key{bill.InvoiceTypeCorrective},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyFacturaEInvoiceClass: "CR", // Copy of the corrective
 			},
 		},
 		{
 			Tags:  []cbc.Key{TagCopy, TagSummary},
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyFacturaEInvoiceClass: "CC", // Copy of the summary
 			},
 		},

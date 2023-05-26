@@ -88,7 +88,7 @@
             {
               "const": "card",
               "title": "Card",
-              "description": "Credit or debit card."
+              "description": "Payment card."
             },
             {
               "const": "credit-transfer",
@@ -111,11 +111,6 @@
               "description": "Cheque from bank."
             },
             {
-              "const": "credit",
-              "title": "Credit",
-              "description": "Using credit from previous transactions with the supplier."
-            },
-            {
               "const": "bank-draft",
               "title": "Draft",
               "description": "Bankers Draft or Bank Cheque."
@@ -129,10 +124,29 @@
               "const": "online",
               "title": "Online",
               "description": "Online or web payment."
+            },
+            {
+              "const": "promissory-note",
+              "title": "Promissory Note",
+              "description": "Promissory note contract."
+            },
+            {
+              "const": "netting",
+              "title": "Netting",
+              "description": "Intercompany clearing or clearing between partners."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Other or mutually defined means of payment."
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Regime Specific Key"
             }
           ],
           "title": "Key",
-          "description": "How payment is expected or has been arranged to be collected"
+          "description": "The payment means expected or that have been arranged to be used to make the payment."
         },
         "detail": {
           "type": "string",
@@ -141,8 +155,8 @@
         },
         "ref": {
           "type": "string",
-          "title": "Ref",
-          "description": "Remittance information, a text value used to link the payment with the invoice."
+          "title": "Reference",
+          "description": "Remittance information or concept, a text value used to link the payment with the invoice."
         },
         "credit_transfer": {
           "items": {

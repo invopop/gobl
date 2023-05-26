@@ -11,7 +11,7 @@ const (
 	ChargeKeyStampDuty cbc.Key = "stamp-duty"
 )
 
-var chargeKeys = []*tax.KeyDefinition{
+var chargeKeyDefinitions = []*tax.KeyDefinition{
 	{
 		Key: ChargeKeyStampDuty,
 		Name: i18n.String{

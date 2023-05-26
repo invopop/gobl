@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -23,18 +22,11 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func (v *invoiceValidator) validate() error {
+	if err := v.validateScenarios(); err != nil {
+		return err
+	}
+
 	inv := v.inv
-
-	err := v.validateScenarios()
-	if err != nil {
-		return err
-	}
-
-	err = v.validateRetainedTaxes()
-	if err != nil {
-		return err
-	}
-
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier, validation.By(v.supplier)),
 		validation.Field(&inv.Customer, validation.By(v.customer)),
@@ -133,63 +125,15 @@ func validateRegistration(value interface{}) error {
 func (v *invoiceValidator) validateScenarios() error {
 	ss := v.inv.ScenarioSummary()
 
-	td := ss.Meta[KeyFatturaPATipoDocumento]
+	td := ss.Codes[KeyFatturaPATipoDocumento]
 	if td == "" {
 		return errors.New("missing scenario related to TipoDocumento")
 	}
 
-	rf := ss.Meta[KeyFatturaPARegimeFiscale]
+	rf := ss.Codes[KeyFatturaPARegimeFiscale]
 	if rf == "" {
 		return errors.New("missing scenario related to RegimeFiscale")
 	}
 
 	return nil
-}
-
-// validateRetainedTaxes checks that the invoices with retained taxes has a valid
-// retained tax tag included
-func (v *invoiceValidator) validateRetainedTaxes() error {
-	inv := v.inv
-
-	for _, line := range inv.Lines {
-		for _, combo := range line.Taxes {
-			if !isRetainedTax(combo.Category) {
-				continue
-			}
-
-			if !retainedTaxTagPresent(combo.Tags) {
-				return errors.New(
-					"invoice with retained taxes must include a valid retained tax tag. " +
-						"List of tags are found under retainedTaxTags in regimes/it/tags")
-			}
-		}
-	}
-
-	return nil
-}
-
-func retainedTaxTagPresent(tags []cbc.Key) bool {
-	if len(tags) == 0 {
-		return false
-	}
-
-	for _, tag := range tags {
-		for _, retainedTag := range retainedTaxTags {
-			if tag == retainedTag.Key {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-func isRetainedTax(category cbc.Code) bool {
-	for _, c := range categories {
-		if c.Code == category {
-			return c.Retained
-		}
-	}
-
-	return false
 }

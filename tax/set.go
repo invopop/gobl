@@ -2,6 +2,7 @@ package tax
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -25,9 +26,6 @@ type Combo struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
-	// Additional data may be required in some regimes, the tags
-	// property helps reference them.
-	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -38,23 +36,25 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	if r == nil {
 		return errors.New("tax regime not found in context")
 	}
-	return validation.ValidateStructWithContext(ctx, c,
+	cat := r.Category(c.Category)
+	rate := r.Rate(c.Category, c.Rate)
+	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
-		validation.Field(&c.Rate), // optional, but should be checked if present
+		validation.Field(&c.Rate,
+			validation.When(cat != nil && cat.RateRequired, validation.Required),
+			r.InCategoryRates(c.Category),
+		),
 		validation.Field(&c.Percent,
-			validation.When(len(c.Tags) == 0, validation.Required),
+			validation.When(rate == nil, validation.Required),
+			validation.When(rate != nil && rate.Exempt, validation.Nil),
+			validation.When(rate != nil && !rate.Exempt, validation.Required),
 		),
 		validation.Field(&c.Surcharge), // not required, but should be valid number
-		validation.Field(&c.Tags, validation.Each(r.InCategoryTags(c.Category))),
 	)
-}
-
-// ContainsTag returns true if the tax combo contains the given tag.
-func (c *Combo) ContainsTag(key cbc.Key) bool {
-	if c == nil {
-		return false
+	if err != nil {
+		return err
 	}
-	return key.In(c.Tags...)
+	return r.ValidateObject(c)
 }
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
@@ -70,21 +70,51 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 		if rate == nil {
 			return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
 		}
-		value := rate.Value(tc.Date, tc.Zone)
-		if value == nil {
-			return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
+		if rate.Exempt {
+			c.Percent = nil
+			c.Surcharge = nil
+			return nil
 		}
 
-		p := value.Percent // copy
-		c.Percent = &p
-		if value.Surcharge != nil {
-			s := *value.Surcharge // copy
-			c.Surcharge = &s
-		} else {
-			c.Surcharge = nil
+		// if there are not rate values, don't attempt to make a
+		// calculation.
+		if len(rate.Values) > 0 {
+			value := rate.Value(tc.Date, tc.Zone)
+			if value == nil {
+				return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
+			}
+
+			p := value.Percent // copy
+			c.Percent = &p
+			if value.Surcharge != nil {
+				s := *value.Surcharge // copy
+				c.Surcharge = &s
+			} else {
+				c.Surcharge = nil
+			}
 		}
 	}
 
+	return nil
+}
+
+// UnmarshalJSON is a temporary migration helper that will move the
+// first of the "tags" array used in earlier versions of GOBL into
+// the rate field.
+func (c *Combo) UnmarshalJSON(data []byte) error {
+	type Alias Combo
+	aux := &struct {
+		*Alias
+		Tags []cbc.Key `json:"tags"`
+	}{
+		Alias: (*Alias)(c),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if len(aux.Tags) > 0 && c.Rate == cbc.KeyEmpty {
+		c.Rate = aux.Tags[0]
+	}
 	return nil
 }
 

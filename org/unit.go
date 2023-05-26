@@ -7,7 +7,7 @@ import (
 )
 
 // Unit is used to represent standard unit types.
-type Unit string
+type Unit cbc.Key
 
 // Set of common units based on UN/ECE recommendation 20 and 21. Some local formats
 // may define additional non-standard codes which may be added. There are so

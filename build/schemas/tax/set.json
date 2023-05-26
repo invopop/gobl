@@ -26,14 +26,6 @@
           "title": "Surcharge",
           "description": "Some countries require an additional surcharge (calculated if rate present).",
           "calculated": true
-        },
-        "tags": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Tags",
-          "description": "Additional data may be required in some regimes, the tags\nproperty helps reference them."
         }
       },
       "type": "object",

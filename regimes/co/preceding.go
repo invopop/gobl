@@ -23,7 +23,9 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Partial refund of part of the goods or services.",
 			i18n.ES: "Devolución de parte de los bienes; no aceptación de partes del servicio.",
 		},
-		Meta: cbc.Meta{KeyDIAN: "1"},
+		Codes: cbc.CodeSet{
+			KeyDIAN: "1",
+		},
 	},
 	{
 		Key: CorrectionMethodKeyRevoked,
@@ -31,7 +33,9 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Previous document has been completely cancelled.",
 			i18n.ES: "Anulación de la factura anterior.",
 		},
-		Meta: cbc.Meta{KeyDIAN: "2"},
+		Codes: cbc.CodeSet{
+			KeyDIAN: "2",
+		},
 	},
 	{
 		Key: CorrectionMethodKeyDiscount,
@@ -39,7 +43,9 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Partial or total discount.",
 			i18n.ES: "Rebaja o descuento parcial o total.",
 		},
-		Meta: cbc.Meta{KeyDIAN: "3"},
+		Codes: cbc.CodeSet{
+			KeyDIAN: "3",
+		},
 	},
 	{
 		Key: CorrectionMethodKeyPriceAdjustment,
@@ -47,7 +53,9 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Ajuste de precio.",
 			i18n.ES: "Price adjustment.",
 		},
-		Meta: cbc.Meta{KeyDIAN: "4"},
+		Codes: cbc.CodeSet{
+			KeyDIAN: "4",
+		},
 	},
 	{
 		Key: CorrectionMethodKeyOther,
@@ -55,7 +63,9 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Otros.",
 			i18n.ES: "Other.",
 		},
-		Meta: cbc.Meta{KeyDIAN: "5"},
+		Codes: cbc.CodeSet{
+			KeyDIAN: "5",
+		},
 	},
 }
 

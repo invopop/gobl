@@ -8,14 +8,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInstructionsKey(t *testing.T) {
+func TestMeansKey(t *testing.T) {
 	i := new(pay.Instructions)
 	i.Key = cbc.Key("foo")
 	err := i.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "key: must be a valid value")
+	assert.Contains(t, err.Error(), "key: must be or start with a valid key")
 
-	i.Key = pay.MethodKeyCard
+	i.Key = pay.MeansKeyCard
+	err = i.Validate()
+	assert.NoError(t, err)
+
+	// Key with an extension
+	i.Key = pay.MeansKeyCard.With("visa")
 	err = i.Validate()
 	assert.NoError(t, err)
 }
