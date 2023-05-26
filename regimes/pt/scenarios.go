@@ -16,33 +16,33 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyATInvoiceType: "FT",
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{common.TagSimplified},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyATInvoiceType: "FS",
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagInvoiceReceipt},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyATInvoiceType: "FR",
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyATInvoiceType: "ND",
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-			Meta: cbc.Meta{
+			Codes: cbc.CodeSet{
 				KeyATInvoiceType: "NC",
 			},
 		},
