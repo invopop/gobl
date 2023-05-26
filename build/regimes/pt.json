@@ -152,7 +152,7 @@
           "type": [
             "standard"
           ],
-          "meta": {
+          "codes": {
             "at-invoice-type": "FT"
           }
         },
@@ -163,7 +163,7 @@
           "tags": [
             "simplified"
           ],
-          "meta": {
+          "codes": {
             "at-invoice-type": "FS"
           }
         },
@@ -174,7 +174,7 @@
           "tags": [
             "invoice-receipt"
           ],
-          "meta": {
+          "codes": {
             "at-invoice-type": "FR"
           }
         },
@@ -182,7 +182,7 @@
           "type": [
             "debit-note"
           ],
-          "meta": {
+          "codes": {
             "at-invoice-type": "ND"
           }
         },
@@ -190,7 +190,7 @@
           "type": [
             "credit-note"
           ],
-          "meta": {
+          "codes": {
             "at-invoice-type": "NC"
           }
         }

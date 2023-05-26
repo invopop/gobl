@@ -9,7 +9,7 @@
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID"
         },
-        "social_capital": {
+        "capital": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Capital"
         },
@@ -50,5 +50,5 @@
       "description": "Registration is used in countries that require additional information to be associated with a company usually related to a specific registration office."
     }
   },
-  "$comment": "Generated with GOBL v0.42.8"
+  "$comment": "Generated with GOBL v0.50.0"
 }

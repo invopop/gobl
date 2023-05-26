@@ -1519,6 +1519,7 @@
         "it": "Imposta sul Reddito delle Persone Fisiche"
       },
       "retained": true,
+      "rate_required": true,
       "rates": [
         {
           "key": "self-employed-habitual",
@@ -1856,6 +1857,7 @@
         "it": "Imposta sul Reddito delle Società"
       },
       "retained": true,
+      "rate_required": true,
       "rates": [
         {
           "key": "self-employed-habitual",
@@ -2193,6 +2195,7 @@
         "it": "Contributo Istituto Nazionale della Previdenza Sociale"
       },
       "retained": true,
+      "rate_required": true,
       "rates": [
         {
           "key": "self-employed-habitual",
@@ -2530,6 +2533,7 @@
         "it": "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio"
       },
       "retained": true,
+      "rate_required": true,
       "rates": [
         {
           "key": "self-employed-habitual",
@@ -2867,6 +2871,7 @@
         "it": "Contributo - Ente Nazionale Previdenza e Assistenza Medici"
       },
       "retained": true,
+      "rate_required": true,
       "rates": [
         {
           "key": "self-employed-habitual",
