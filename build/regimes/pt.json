@@ -128,6 +128,75 @@
     }
   ],
   "currency": "EUR",
+  "tags": [
+    {
+      "key": "invoice-receipt",
+      "name": {
+        "en": "Invoice-receipt",
+        "pt": "Fatura-recibo"
+      }
+    },
+    {
+      "key": "simplified",
+      "name": {
+        "en": "Simplified invoice",
+        "pt": "Fatura simplificada"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "meta": {
+            "at-invoice-type": "FT"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "meta": {
+            "at-invoice-type": "FS"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "invoice-receipt"
+          ],
+          "meta": {
+            "at-invoice-type": "FR"
+          }
+        },
+        {
+          "type": [
+            "debit-note"
+          ],
+          "meta": {
+            "at-invoice-type": "ND"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "meta": {
+            "at-invoice-type": "NC"
+          }
+        }
+      ]
+    }
+  ],
   "preceding": {
     "types": [
       "credit-note"

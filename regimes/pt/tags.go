@@ -3,6 +3,7 @@ package pt
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -40,6 +41,28 @@ const (
 	TagNonTaxable    cbc.Key = "non-taxable"
 )
 
+// Invoice type tags
+const (
+	TagInvoiceReceipt cbc.Key = "invoice-receipt"
+)
+
+var invoiceTags = []*tax.Tag{
+	{
+		Key: TagInvoiceReceipt,
+		Name: i18n.String{
+			i18n.EN: "Invoice-receipt",
+			i18n.PT: "Fatura-recibo",
+		},
+	},
+	{
+		Key: common.TagSimplified,
+		Name: i18n.String{
+			i18n.EN: "Simplified invoice",
+			i18n.PT: "Fatura simplificada",
+		},
+	},
+}
+
 var vatTaxTags = []*tax.Tag{
 	{
 		Key: TagExempt.With(TagOutlay),
@@ -48,7 +71,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Artigo 16.°, n.° 6 do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M01",
+			KeyATTaxExemptionCode: "M01",
 		},
 	},
 	{
@@ -58,7 +81,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M02",
+			KeyATTaxExemptionCode: "M02",
 		},
 	},
 	{
@@ -68,7 +91,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Isento artigo 13.° do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M04",
+			KeyATTaxExemptionCode: "M04",
 		},
 	},
 	{
@@ -78,7 +101,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Isento artigo 14.° do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M05",
+			KeyATTaxExemptionCode: "M05",
 		},
 	},
 	{
@@ -88,7 +111,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Isento artigo 15.° do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M06",
+			KeyATTaxExemptionCode: "M06",
 		},
 	},
 	{
@@ -98,7 +121,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Isento artigo 9.° do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M07",
+			KeyATTaxExemptionCode: "M07",
 		},
 	},
 	{
@@ -108,7 +131,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M09",
+			KeyATTaxExemptionCode: "M09",
 		},
 	},
 	{
@@ -118,7 +141,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - regime de isenção / Artigo 57.° do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M10",
+			KeyATTaxExemptionCode: "M10",
 		},
 	},
 	{
@@ -128,7 +151,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M11",
+			KeyATTaxExemptionCode: "M11",
 		},
 	},
 	{
@@ -138,7 +161,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M12",
+			KeyATTaxExemptionCode: "M12",
 		},
 	},
 	{
@@ -148,7 +171,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M13",
+			KeyATTaxExemptionCode: "M13",
 		},
 	},
 	{
@@ -158,7 +181,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M14",
+			KeyATTaxExemptionCode: "M14",
 		},
 	},
 	{
@@ -168,7 +191,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M15",
+			KeyATTaxExemptionCode: "M15",
 		},
 	},
 	{
@@ -178,7 +201,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Isento artigo 14.° do RITI",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M16",
+			KeyATTaxExemptionCode: "M16",
 		},
 	},
 	{
@@ -188,7 +211,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Outras isenções - Isenções temporárias determinadas em diploma próprio",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M19",
+			KeyATTaxExemptionCode: "M19",
 		},
 	},
 	{
@@ -198,7 +221,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M20",
+			KeyATTaxExemptionCode: "M20",
 		},
 	},
 	{
@@ -208,7 +231,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M21",
+			KeyATTaxExemptionCode: "M21",
 		},
 	},
 	{
@@ -218,7 +241,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M25",
+			KeyATTaxExemptionCode: "M25",
 		},
 	},
 	{
@@ -228,7 +251,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M30",
+			KeyATTaxExemptionCode: "M30",
 		},
 	},
 	{
@@ -238,7 +261,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M31",
+			KeyATTaxExemptionCode: "M31",
 		},
 	},
 	{
@@ -248,7 +271,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M32",
+			KeyATTaxExemptionCode: "M32",
 		},
 	},
 	{
@@ -258,7 +281,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M33",
+			KeyATTaxExemptionCode: "M33",
 		},
 	},
 	{
@@ -268,7 +291,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M40",
+			KeyATTaxExemptionCode: "M40",
 		},
 	},
 	{
@@ -278,7 +301,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M41",
+			KeyATTaxExemptionCode: "M41",
 		},
 	},
 	{
@@ -288,7 +311,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M42",
+			KeyATTaxExemptionCode: "M42",
 		},
 	},
 	{
@@ -298,7 +321,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M43",
+			KeyATTaxExemptionCode: "M43",
 		},
 	},
 	{
@@ -308,7 +331,7 @@ var vatTaxTags = []*tax.Tag{
 			i18n.PT: "Não sujeito ou não tributado",
 		},
 		Meta: cbc.Meta{
-			KeyTaxExemptionCode: "M99",
+			KeyATTaxExemptionCode: "M99",
 		},
 	},
 }
