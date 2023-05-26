@@ -60,7 +60,7 @@ type Discount struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate checks the discount's fields.
+// ValidateWithContext checks the discount's fields.
 func (m *Discount) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
