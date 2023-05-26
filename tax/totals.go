@@ -210,6 +210,16 @@ func (rt *RateTotal) matches(c *Combo) bool {
 		// If there is no percent, try matching key
 		return c.Rate != cbc.KeyEmpty && c.Rate == rt.Key
 	}
+	if rt.Key.IsEmpty() {
+		return rt.percentagesMatch(c)
+	}
+	if c.Rate.IsEmpty() || rt.Key == c.Rate {
+		return rt.percentagesMatch(c)
+	}
+	return false
+}
+
+func (rt *RateTotal) percentagesMatch(c *Combo) bool {
 	if c.Surcharge != nil {
 		if rt.Surcharge == nil {
 			return false

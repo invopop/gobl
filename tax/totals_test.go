@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -32,6 +33,7 @@ func (tl *taxableLine) GetTotal() num.Amount {
 func TestTotalCalculate(t *testing.T) {
 	spain := es.New()
 	portugal := pt.New()
+	italy := it.New()
 	date := cal.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {
@@ -832,6 +834,77 @@ func TestTotalCalculate(t *testing.T) {
 					},
 				},
 				Sum: num.MakeAmount(1736, 2),
+			},
+		},
+		{
+			desc:   "multiple different retained rates",
+			regime: italy,
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateStandard,
+							Percent:  num.NewPercentage(220, 3),
+						},
+						{
+							Category: it.TaxCategoryIRPEF,
+							Rate:     it.TaxRateSelfEmployedHabitual,
+							Percent:  num.NewPercentage(200, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Percent:  num.NewPercentage(220, 3),
+						},
+						{
+							Category: it.TaxCategoryIRPEF,
+							Rate:     it.TaxRateTruffleGathering,
+							Percent:  num.NewPercentage(200, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code: common.TaxCategoryVAT,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     common.TaxRateStandard,
+								Base:    num.MakeAmount(20000, 2),
+								Percent: num.NewPercentage(220, 3),
+								Amount:  num.MakeAmount(4400, 2),
+							},
+						},
+						Amount: num.MakeAmount(4400, 2),
+					},
+					{
+						Code:     it.TaxCategoryIRPEF,
+						Retained: true,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     it.TaxRateSelfEmployedHabitual,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(200, 3),
+								Amount:  num.MakeAmount(2000, 2),
+							},
+							{
+								Key:     it.TaxRateTruffleGathering,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(200, 3),
+								Amount:  num.MakeAmount(2000, 2),
+							},
+						},
+						Amount: num.MakeAmount(4000, 2),
+					},
+				},
+				Sum: num.MakeAmount(400, 2),
 			},
 		},
 	}
