@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -60,8 +62,8 @@ type Charge struct {
 }
 
 // Validate checks the discount's fields.
-func (m *Charge) Validate() error {
-	return validation.ValidateStruct(m,
+func (m *Charge) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
 		validation.Field(&m.Base),
 		validation.Field(&m.Percent),
