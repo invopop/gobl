@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -58,9 +60,9 @@ type Discount struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate checks the discount's fields.
-func (m *Discount) Validate() error {
-	return validation.ValidateStruct(m,
+// ValidateWithContext checks the discount's fields.
+func (m *Discount) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
 		validation.Field(&m.Base),
 		validation.Field(&m.Percent),
