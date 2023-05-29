@@ -1,11 +1,14 @@
 package bill_test
 
 import (
+	"context"
 	"testing"
 
 	_ "github.com/invopop/gobl" // load regions
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -144,4 +147,50 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, i.Totals.Advances.String(), "285.00")
 	assert.Equal(t, i.Totals.Payable.String(), "960.00")
 	assert.Equal(t, i.Totals.Due.String(), "675.00")
+}
+
+func TestValidation(t *testing.T) {
+	inv := &bill.Invoice{
+		Currency:  currency.EUR,
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Tax: &bill.Tax{
+			PricesInclude: common.TaxCategoryVAT,
+		},
+		Supplier: &org.Party{
+			Name: "Test Supplier",
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "B98602642",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "54387763P",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	ctx := context.Background()
+	err := inv.ValidateWithContext(ctx)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "code: cannot be blank")
+	ctx = context.WithValue(ctx, internal.KeyDraft, true)
+	assert.NoError(t, inv.ValidateWithContext(ctx))
 }

@@ -20,6 +20,12 @@ var (
 	KeyPattern = `^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$`
 	// KeyValidationRegexp is used for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
+	// KeySeparator is used to separate keys join using the "With"
+	// method.
+	KeySeparator = "+"
+)
+
+const (
 	// KeyMinLength defines the minimum key length
 	KeyMinLength = 1
 	// KeyMaxLength defines the maximum key length
@@ -28,10 +34,6 @@ var (
 
 // KeyEmpty is used when no key is available.
 const KeyEmpty Key = ""
-
-// KeySeparator is used to separate keys join using the "With"
-// method.
-const KeySeparator = "+"
 
 // Validate ensures the key complies with the basic syntax
 // requirements.

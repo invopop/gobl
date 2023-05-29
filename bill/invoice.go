@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
@@ -104,7 +105,9 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	ctx = r.WithContext(ctx)
 	err := validation.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
-		validation.Field(&inv.Code, validation.Required),
+		validation.Field(&inv.Code,
+			validation.When(!internal.IsDraft(ctx), validation.Required),
+		),
 		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
 		validation.Field(&inv.Currency, validation.Required),
 		validation.Field(&inv.ExchangeRates),
