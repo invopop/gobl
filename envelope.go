@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -62,6 +63,7 @@ func (e *Envelope) Validate() error {
 
 // ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) ValidateWithContext(ctx context.Context) error {
+	ctx = context.WithValue(ctx, internal.KeyDraft, e.Head != nil && e.Head.Draft)
 	err := validation.ValidateStructWithContext(ctx, e,
 		validation.Field(&e.Schema, validation.Required),
 		validation.Field(&e.Head, validation.Required),
