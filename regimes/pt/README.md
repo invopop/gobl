@@ -21,9 +21,43 @@ Portugal doesn't have an e-invoicing format per se. Tax information is reported 
 | ND | Nota de débito | `credit-note` | |
 | NC | Nota de crédito | `debit-note` | |
 
+### `TaxCountryRegion` (País ou região do imposto)
+
+| Code | Name | GOBL Tax Identity Zone |
+| --- | --- | --- |
+| PT | Aveiro | `01` |
+| PT | Beja | `02` |
+| PT | Braga | `03` |
+| PT | Bragança | `04` |
+| PT | Castelo Branco | `05` |
+| PT | Coimbra | `06` |
+| PT | Évora | `07` |
+| PT | Faro | `08` |
+| PT | Guarda | `09` |
+| PT | Leiria | `10` |
+| PT | Lisboa | `11` |
+| PT | Portalegre | `12` |
+| PT | Porto | `13` |
+| PT | Santarém | `14` |
+| PT | Setúbal | `15` |
+| PT | Viana do Castelo | `16` |
+| PT | Vila Real | `17` |
+| PT | Viseu | `18` |
+| PT-AC | Região Autónoma dos Açores | `20` |
+| PT-MA | Região Autónoma da Madeira | `30` |
+
+### `TaxCode` (Código do imposto)
+
+| Code | Name | GOBL Tax Rate |
+| --- | --- | --- |
+| NOR | Tipo Geral | `standard` |
+| INT | Taxa Intermédia | `intermediate` |
+| RED | Taxa Reduzida | `reduced` |
+| ISE | Isenta | `exempt+*` (see `TaxExemptionCode` below) |
+
 ### `TaxExemptionCode` (Código do motivo de isenção de imposto)
 
-| Code | Description | GOBL Line Tax (VAT) Tag |
+| Code | Description | GOBL Tax Rate |
 | --- | --- | --- |
 | M01 | Artigo 16.°, n.° 6 do CIVA | `exempt+outlay` |
 | M02 | Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho | `exempt+intrastate-export` |
