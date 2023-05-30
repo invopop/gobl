@@ -6,6 +6,32 @@
   },
   "country": "FR",
   "currency": "EUR",
+  "tags": [
+    {
+      "key": "reverse-charge",
+      "name": {
+        "en": "Reverse Charge",
+        "es": "Inversión del sujeto pasivo"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge / Autoliquidation de la TVA - Article 283-1 du CGI. Le client est redevable de la TVA."
+          }
+        }
+      ]
+    }
+  ],
   "preceding": {
     "types": [
       "corrective",
