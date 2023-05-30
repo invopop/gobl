@@ -16,6 +16,8 @@ func init() {
 
 // Custom keys used typically in meta information
 const (
+	KeyATTaxCountryRegion cbc.Key = "at-tax-country-region"
+	KeyATTaxCode          cbc.Key = "at-tax-code"
 	KeyATTaxExemptionCode cbc.Key = "at-tax-exemption-code"
 	KeyATInvoiceType      cbc.Key = "at-invoice-type"
 )

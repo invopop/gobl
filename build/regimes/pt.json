@@ -10,120 +10,180 @@
       "code": "01",
       "region": {
         "pt": "Aveiro"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "02",
       "region": {
         "pt": "Beja"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "03",
       "region": {
         "pt": "Braga"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "04",
       "region": {
         "pt": "Bragança"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "05",
       "region": {
         "pt": "Castelo Branco"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "06",
       "region": {
         "pt": "Coimbra"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "07",
       "region": {
         "pt": "Évora"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "08",
       "region": {
         "pt": "Faro"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "09",
       "region": {
         "pt": "Guarda"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "10",
       "region": {
         "pt": "Leiria"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "11",
       "region": {
         "pt": "Lisboa"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "12",
       "region": {
         "pt": "Portalegre"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "13",
       "region": {
         "pt": "Porto"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "14",
       "region": {
         "pt": "Santarém"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "15",
       "region": {
         "pt": "Setúbal"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "16",
       "region": {
         "pt": "Viana do Castelo"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "17",
       "region": {
         "pt": "Vila Real"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "18",
       "region": {
         "pt": "Viseu"
+      },
+      "codes": {
+        "at-tax-country-region": "PT"
       }
     },
     {
       "code": "20",
       "region": {
         "pt": "Região Autónoma dos Açores"
+      },
+      "codes": {
+        "at-tax-country-region": "PT-AC"
       }
     },
     {
       "code": "30",
       "region": {
         "pt": "Região Autónoma da Madeira"
+      },
+      "codes": {
+        "at-tax-country-region": "PT-MA"
       }
     }
   ],
@@ -239,7 +299,10 @@
               "since": "2011-01-01",
               "percent": "23.0%"
             }
-          ]
+          ],
+          "codes": {
+            "at-tax-code": "NOR"
+          }
         },
         {
           "key": "intermediate",
@@ -266,7 +329,10 @@
               "since": "2011-01-01",
               "percent": "13.0%"
             }
-          ]
+          ],
+          "codes": {
+            "at-tax-code": "INT"
+          }
         },
         {
           "key": "reduced",
@@ -293,7 +359,10 @@
               "since": "2011-01-01",
               "percent": "6.0%"
             }
-          ]
+          ],
+          "codes": {
+            "at-tax-code": "RED"
+          }
         },
         {
           "key": "exempt+outlay",
@@ -303,6 +372,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M01"
           }
         },
@@ -314,6 +384,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M02"
           }
         },
@@ -325,6 +396,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M04"
           }
         },
@@ -336,6 +408,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M05"
           }
         },
@@ -347,6 +420,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M06"
           }
         },
@@ -358,6 +432,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M07"
           }
         },
@@ -369,6 +444,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M09"
           }
         },
@@ -380,6 +456,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M10"
           }
         },
@@ -391,6 +468,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M11"
           }
         },
@@ -402,6 +480,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M12"
           }
         },
@@ -413,6 +492,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M13"
           }
         },
@@ -424,6 +504,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M14"
           }
         },
@@ -435,6 +516,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M15"
           }
         },
@@ -446,6 +528,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M16"
           }
         },
@@ -457,6 +540,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M19"
           }
         },
@@ -468,6 +552,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M20"
           }
         },
@@ -479,6 +564,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M21"
           }
         },
@@ -490,6 +576,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M25"
           }
         },
@@ -501,6 +588,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M30"
           }
         },
@@ -512,6 +600,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M31"
           }
         },
@@ -523,6 +612,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M32"
           }
         },
@@ -534,6 +624,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M33"
           }
         },
@@ -545,6 +636,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M40"
           }
         },
@@ -556,6 +648,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M41"
           }
         },
@@ -567,6 +660,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M42"
           }
         },
@@ -578,6 +672,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M43"
           }
         },
@@ -589,6 +684,7 @@
           },
           "exempt": true,
           "codes": {
+            "at-tax-code": "ISE",
             "at-tax-exemption-code": "M99"
           }
         }
