@@ -1,2 +1,2 @@
-# Spanish GOBL Tax Definitions
+# 🇪🇸 GOBL Spain Tax Regime
 

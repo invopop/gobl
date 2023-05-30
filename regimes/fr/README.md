@@ -1,4 +1,4 @@
-# GOBL France
+# 🇫🇷 GOBL France Tax Regime
 
 ## Tax IDs
 

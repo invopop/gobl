@@ -1,4 +1,4 @@
-# IT
+# 🇮🇹 GOBL Italy Tax Regime
 
 Italy uses the FatturaPA format for their e-invoicing system.
 
