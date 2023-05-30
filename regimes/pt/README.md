@@ -13,6 +13,8 @@ Portugal doesn't have an e-invoicing format per se. Tax information is reported 
 
 ### `InvoiceType` (Tipo de documento)
 
+AT's `InvoiceType` (Tipo de document) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
+
 | Code | Name | GOBL Type | GOBL Tax Tag |
 | --- | --- | --- | --- |
 | FT | Fatura, emitida nos termos do artigo 36.o do Código do IVA | `standard` | |
@@ -22,6 +24,8 @@ Portugal doesn't have an e-invoicing format per se. Tax information is reported 
 | NC | Nota de crédito | `debit-note` | |
 
 ### `TaxCountryRegion` (País ou região do imposto)
+
+AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation (Portugal mainland, Açores or Madeira) in a Portuguese invoice. GOBL will map them using the supplier's tax identity zone (ISO 3166-2:PT codes) as per the following table:
 
 | Code | Name | GOBL Tax Identity Zone |
 | --- | --- | --- |
@@ -48,14 +52,18 @@ Portugal doesn't have an e-invoicing format per se. Tax information is reported 
 
 ### `TaxCode` (Código do imposto)
 
+AT's `TaxCode` (Código do imposto) specifies the rate type of the VAT tax in a Portugese invoice. The following table lists the supported tax codes and how GOBL will map them from tax rate codes. (Please, note that there are multiple exempt tax rates mapping to the `ISE` code; see the `TaxExemptionCode` section below for the full list):
+
 | Code | Name | GOBL Tax Rate |
 | --- | --- | --- |
 | NOR | Tipo Geral | `standard` |
 | INT | Taxa Intermédia | `intermediate` |
 | RED | Taxa Reduzida | `reduced` |
-| ISE | Isenta | `exempt+*` (see `TaxExemptionCode` below) |
+| ISE | Isenta | `exempt+*` _(see `TaxExemptionCode` below)_ |
 
 ### `TaxExemptionCode` (Código do motivo de isenção de imposto)
+
+AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. GOBL will map them from tax rate codes as per the following table (Please, note that GOBL's tax rates are also used to map to `TaxCode`; see the `TaxCode` section above for details):
 
 | Code | Description | GOBL Tax Rate |
 | --- | --- | --- |
