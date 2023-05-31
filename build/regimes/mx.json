@@ -1,0 +1,10 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Mexico",
+    "es": "México"
+  },
+  "country": "MX",
+  "currency": "MXN",
+  "categories": []
+}
