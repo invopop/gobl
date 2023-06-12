@@ -23,6 +23,8 @@ func New() *tax.Regime {
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
+		Validator:  Validate,
+		Calculator: Calculate,
 		Categories: []*tax.Category{
 			{
 				Code: common.TaxCategoryVAT,
@@ -65,4 +67,22 @@ func New() *tax.Regime {
 			},
 		},
 	}
+}
+
+// Validate validates a document against the tax regime.
+func Validate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		return validateTaxIdentity(obj)
+	}
+	return nil
+}
+
+// Calculate performs regime specific calculations.
+func Calculate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		return common.NormalizeTaxIdentity(obj)
+	}
+	return nil
 }
