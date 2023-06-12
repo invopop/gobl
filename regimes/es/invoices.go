@@ -29,13 +29,20 @@ func (v *invoiceValidator) validate() error {
 			bill.InvoiceTypeStandard,
 			bill.InvoiceTypeCorrective,
 		)),
-		validation.Field(&inv.Preceding, validation.Each(validation.By(v.preceding))),
-		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
-		validation.Field(&inv.Customer, validation.When(
-			!inv.Tax.ContainsTag(common.TagSimplified),
+		validation.Field(&inv.Preceding,
+			validation.Each(validation.By(v.preceding)),
+		),
+		validation.Field(&inv.Supplier,
 			validation.Required,
-			validation.By(v.commercialCustomer),
-		)),
+			validation.By(v.supplier),
+		),
+		validation.Field(&inv.Customer,
+			validation.When(
+				!inv.Tax.ContainsTag(common.TagSimplified),
+				validation.Required,
+				validation.By(v.commercialCustomer),
+			),
+		),
 	)
 }
 
@@ -79,7 +86,13 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Period, validation.Required),
-		validation.Field(&obj.Corrections, validation.Required, isValidCorrectionKey),
-		validation.Field(&obj.CorrectionMethod, validation.Required, isValidCorrectionMethodKey),
+		validation.Field(&obj.Corrections,
+			validation.Required,
+			validation.Each(isValidCorrectionKey),
+		),
+		validation.Field(&obj.CorrectionMethod,
+			validation.Required,
+			isValidCorrectionMethodKey,
+		),
 	)
 }
