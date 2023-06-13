@@ -2,6 +2,7 @@
 package mx
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -13,6 +14,11 @@ import (
 func init() {
 	tax.RegisterRegime(New())
 }
+
+// Tax rates specific to Mexico.
+const (
+	TaxRateExempt cbc.Key = "exempt"
+)
 
 // New provides the tax region definition
 func New() *tax.Regime {
@@ -39,6 +45,30 @@ func New() *tax.Regime {
 				Retained: false,
 				Rates: []*tax.Rate{
 					{
+						Key: common.TaxRateStandard,
+						Name: i18n.String{
+							i18n.EN: "Standard Rate",
+							i18n.ES: "Tasa General",
+						},
+						Values: []*tax.RateValue{
+							{
+								Percent: num.MakePercentage(160, 3),
+							},
+						},
+					},
+					{
+						Key: common.TaxRateReduced,
+						Name: i18n.String{
+							i18n.EN: "Reduced (Border) Rate",
+							i18n.ES: "Tasa Reducida (Fronteriza)",
+						},
+						Values: []*tax.RateValue{
+							{
+								Percent: num.MakePercentage(80, 3),
+							},
+						},
+					},
+					{
 						Key: common.TaxRateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
@@ -51,17 +81,12 @@ func New() *tax.Regime {
 						},
 					},
 					{
-						Key: common.TaxRateStandard,
+						Key: TaxRateExempt,
 						Name: i18n.String{
-							i18n.EN: "Standard Rate",
-							i18n.ES: "Tasa General",
+							i18n.EN: "Exempt",
+							i18n.ES: "Exenta",
 						},
-						Values: []*tax.RateValue{
-							{
-								Percent: num.MakePercentage(160, 3),
-							},
-							// TODO: Add reduced rate (8%) of border states
-						},
+						Exempt: true,
 					},
 				},
 			},
