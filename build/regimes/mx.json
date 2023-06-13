@@ -6,5 +6,63 @@
   },
   "country": "MX",
   "currency": "MXN",
-  "categories": []
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "desc": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "es": "Tasa General"
+          },
+          "values": [
+            {
+              "percent": "16.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced (Border) Rate",
+            "es": "Tasa Reducida (Fronteriza)"
+          },
+          "values": [
+            {
+              "percent": "8.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "es": "Tasa Cero"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt",
+            "es": "Exenta"
+          },
+          "exempt": true
+        }
+      ]
+    }
+  ]
 }
