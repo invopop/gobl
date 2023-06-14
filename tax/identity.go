@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
@@ -39,17 +40,10 @@ type Identity struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-/*
-// IdentityType describes a single possible value for a tax identity type.
-type IdentityType struct {
-	// Key used to identify the type
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// Name for the identity type
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Additional regime specific meta data
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-*/
+// Standard error responses to be used by regimes.
+var (
+	ErrIdentityCodeInvalid = errors.New("invalid tax identity code")
+)
 
 // RequireIdentityCode is an additional check to use alongside
 // regular validation that will ensure the tax ID has a code
