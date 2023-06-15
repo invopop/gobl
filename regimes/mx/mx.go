@@ -2,6 +2,7 @@
 package mx
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -31,6 +32,8 @@ func New() *tax.Regime {
 // Validate validates a document against the tax regime.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}
