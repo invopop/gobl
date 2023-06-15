@@ -2,6 +2,7 @@ package mx
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/validation"
 )
@@ -22,35 +23,35 @@ func (v *invoiceValidator) validate() error {
 			validation.Required,
 			validation.By(v.validCustomer),
 		),
-		// validation.Field(&inv.Lines,
-		// 	validation.Each(validation.By(v.validLine)),
-		// ),
+		validation.Field(&inv.Lines,
+			validation.Each(validation.By(v.validLine)),
+		),
 	)
 }
 
-// func (v *invoiceValidator) validLine(value interface{}) error {
-// 	line, _ := value.(*bill.Line)
-// 	if line == nil {
-// 		return nil
-// 	}
-// 	return validation.ValidateStruct(line,
-// 		validation.Field(&line.Quantity,
-// 			validation.By(validLineQuantity),
-// 		),
-// 	)
-// }
+func (v *invoiceValidator) validLine(value interface{}) error {
+	line, _ := value.(*bill.Line)
+	if line == nil {
+		return nil
+	}
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Quantity,
+			validation.By(validLineQuantity),
+		),
+	)
+}
 
-// func validLineQuantity(value interface{}) error {
-// 	quantity, ok := value.(num.Amount)
-// 	if !ok {
-// 		return nil
-// 	}
+func validLineQuantity(value interface{}) error {
+	quantity, ok := value.(num.Amount)
+	if !ok {
+		return nil
+	}
 
-// 	if quantity.Compare(num.MakeAmount(0, 0)) != 1 {
-// 		return validation.NewError("quantity", "must be positive")
-// 	}
-// 	return nil
-// }
+	if quantity.Compare(num.MakeAmount(0, 0)) != 1 {
+		return validation.NewError("quantity", "must be positive")
+	}
+	return nil
+}
 
 func (v *invoiceValidator) validCustomer(value interface{}) error {
 	obj, _ := value.(*org.Party)
