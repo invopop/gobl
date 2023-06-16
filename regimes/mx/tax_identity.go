@@ -42,8 +42,10 @@ var (
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
+			validation.Required,
 			validation.By(validateTaxCode),
 		),
+		validation.Field(&tID.Zone, validation.Required),
 	)
 }
 

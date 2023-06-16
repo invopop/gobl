@@ -39,48 +39,50 @@ func TestTaxIdentityNormalization(t *testing.T) {
 
 func TestTaxIdentityValidation(t *testing.T) {
 	tests := []struct {
-		Code     cbc.Code
-		Expected error
+		name string
+		code cbc.Code
+		zone l10n.Code
+		err  string
 	}{
+		{name: "foreign code", code: mx.TaxIdentityCodeForeign, zone: "21000"},
+		{name: "valid code 1", code: "MNOP8201019HJ", zone: "21000"},
+		{name: "valid code 2", code: "UVWX610715JKL", zone: "21000"},
+		{name: "valid code 3", code: "STU760612MN1", zone: "21000"},
 		{
-			Code:     "",
-			Expected: nil,
+			name: "invalid code 1",
+			code: "STU760612MN",
+			zone: "21000",
+			err:  tax.ErrIdentityCodeInvalid.Error(),
 		},
 		{
-			Code:     mx.TaxIdentityCodeForeign,
-			Expected: nil,
+			name: "invalid code 2",
+			code: "XXXX",
+			zone: "21000",
+			err:  tax.ErrIdentityCodeInvalid.Error(),
 		},
 		{
-			Code:     "MNOP8201019HJ",
-			Expected: nil,
+			name: "missing code",
+			code: "",
+			zone: "21000",
+			err:  "code: cannot be blank",
 		},
 		{
-			Code:     "UVWX610715JKL",
-			Expected: nil,
-		},
-		{
-			Code:     "STU760612MN1",
-			Expected: nil,
-		},
-		{
-			Code:     "STU760612MN",
-			Expected: tax.ErrIdentityCodeInvalid,
-		},
-		{
-			Code:     "XXXX",
-			Expected: tax.ErrIdentityCodeInvalid,
+			name: "missing zone",
+			code: "MNOP8201019HJ",
+			zone: "",
+			err:  "zone: cannot be blank",
 		},
 	}
-	r := mx.New()
+
 	for _, ts := range tests {
-		t.Run(string(ts.Code), func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.MX, Code: ts.Code}
-			err := r.ValidateObject(tID)
-			if ts.Expected == nil {
+		t.Run(ts.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: l10n.MX, Code: ts.code, Zone: ts.zone}
+			err := mx.Validate(tID)
+			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
 				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), ts.Expected.Error())
+					assert.Contains(t, err.Error(), ts.err)
 				}
 			}
 		})
