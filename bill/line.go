@@ -65,6 +65,10 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 
 // calculate figures out the totals according to quantity and discounts.
 func (l *Line) calculate() {
+	if l.Item == nil {
+		return
+	}
+
 	// First we figure out how much the item costs, and get the total
 	l.Sum = l.Item.Price.Multiply(l.Quantity)
 	l.Total = l.Sum
