@@ -63,6 +63,8 @@ func (r ThresholdRule) Exclusive() ThresholdRule {
 	return r
 }
 
+// Validate checks if the provided value confirms with the threshold
+// rule.
 func (r ThresholdRule) Validate(value interface{}) error {
 	value, isNil := validation.Indirect(value)
 	if isNil || validation.IsEmpty(value) {
