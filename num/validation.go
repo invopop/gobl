@@ -11,11 +11,30 @@ type ThresholdRule struct {
 	err       validation.Error
 }
 
+var (
+	// ErrIsZero indicates that the value is zero when it should not be.
+	ErrIsZero = validation.NewError("validation_is_zero", "must not be zero")
+)
+
 const (
 	greaterThan = iota
 	greaterEqualThan
 	lessThan
 	lessEqualThan
+	notZero
+)
+
+var (
+	// Positive validates the that value is greater than or equal to zero.
+	Positive = Min(MakeAmount(0, 0))
+	// Negative validates the value is less than or equal to zero.
+	Negative = Max(MakeAmount(0, 0))
+	// NotZero validates that the value is not zero.
+	NotZero = ThresholdRule{
+		threshold: Amount{0, 0},
+		operator:  notZero,
+		err:       ErrIsZero,
+	}
 )
 
 // Min checks if the value is greater than or equal to the provided amount or percentage
@@ -88,7 +107,9 @@ func (r ThresholdRule) compare(value Amount) bool {
 		return cmp == 1 || cmp == 0
 	case lessThan:
 		return cmp == -1
-	default:
+	case lessEqualThan:
 		return cmp == -1 || cmp == 0
+	default:
+		return cmp == -1 || cmp == 1
 	}
 }

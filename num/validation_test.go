@@ -95,3 +95,36 @@ func TestValidationMax(t *testing.T) {
 		})
 	}
 }
+
+func TestValidationFixedRules(t *testing.T) {
+	tests := []struct {
+		tag   string
+		rule  ThresholdRule
+		value interface{}
+		err   string
+	}{
+		{"t1.1", Positive, MakeAmount(10, 0), ""},
+		{"t1.2", Positive, MakeAmount(0, 0), ""},
+		{"t1.3", Positive, MakeAmount(-10, 0), "must be no less than 0"},
+		{"t2.1", Negative, MakeAmount(-10, 0), ""},
+		{"t2.2", Negative, MakeAmount(0, 0), ""},
+		{"t2.3", Negative, MakeAmount(10, 0), "must be no greater than 0"},
+		{"t3.1", NotZero, MakeAmount(10, 0), ""},
+		{"t3.2", NotZero, MakeAmount(-10, 0), ""},
+		{"t3.3", NotZero, MakeAmount(0, 0), "must not be zero"},
+		{"t3.4", NotZero, nil, ""}, // out of scope!
+	}
+
+	for _, test := range tests {
+		t.Run(test.tag, func(t *testing.T) {
+			err := test.rule.Validate(test.value)
+			if test.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), test.err)
+				}
+			}
+		})
+	}
+}
