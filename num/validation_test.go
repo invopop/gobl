@@ -104,11 +104,13 @@ func TestValidationFixedRules(t *testing.T) {
 		err   string
 	}{
 		{"t1.1", Positive, MakeAmount(10, 0), ""},
-		{"t1.2", Positive, MakeAmount(0, 0), ""},
-		{"t1.3", Positive, MakeAmount(-10, 0), "must be no less than 0"},
+		{"t1.2", Positive, MakeAmount(0, 0), "must be greater than 0"},
+		{"t1.3", Positive, MakeAmount(-10, 0), "must be greater than 0"},
+		{"t1.4", Positive, nil, ""}, // ignore empty
 		{"t2.1", Negative, MakeAmount(-10, 0), ""},
-		{"t2.2", Negative, MakeAmount(0, 0), ""},
-		{"t2.3", Negative, MakeAmount(10, 0), "must be no greater than 0"},
+		{"t2.2", Negative, MakeAmount(0, 0), "must be less than 0"},
+		{"t2.3", Negative, MakeAmount(10, 0), "must be less than 0"},
+		{"t2.4", Negative, nil, ""}, // ignore empty
 		{"t3.1", NotZero, MakeAmount(10, 0), ""},
 		{"t3.2", NotZero, MakeAmount(-10, 0), ""},
 		{"t3.3", NotZero, MakeAmount(0, 0), "must not be zero"},

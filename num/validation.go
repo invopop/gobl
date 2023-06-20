@@ -26,9 +26,9 @@ const (
 
 var (
 	// Positive validates the that value is greater than or equal to zero.
-	Positive = Min(MakeAmount(0, 0))
+	Positive = Min(MakeAmount(0, 0)).Exclusive()
 	// Negative validates the value is less than or equal to zero.
-	Negative = Max(MakeAmount(0, 0))
+	Negative = Max(MakeAmount(0, 0)).Exclusive()
 	// NotZero validates that the value is not zero.
 	NotZero = ThresholdRule{
 		threshold: Amount{0, 0},
