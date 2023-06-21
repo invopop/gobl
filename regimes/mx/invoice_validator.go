@@ -50,23 +50,11 @@ func (v *invoiceValidator) validLine(value interface{}) error {
 	}
 
 	return validation.ValidateStruct(line,
-		validation.Field(&line.Quantity, validation.By(v.validatePositiveAmount)),
-		validation.Field(&line.Total, validation.By(v.validatePositiveAmount)),
+		validation.Field(&line.Quantity, num.Positive),
+		validation.Field(&line.Total, num.Positive),
 		validation.Field(&line.Taxes,
 			validation.Required,
 			validation.Skip, // Prevents each tax's `ValidateWithContext` function from being called again.
 		),
 	)
-}
-
-func (v *invoiceValidator) validatePositiveAmount(value interface{}) error {
-	amount, ok := value.(num.Amount)
-	if !ok {
-		return nil
-	}
-
-	if amount.Compare(num.MakeAmount(0, 0)) != 1 {
-		return validation.NewError("validation_positive_amount", "must be positive")
-	}
-	return nil
 }
