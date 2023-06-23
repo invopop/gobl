@@ -5,9 +5,11 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,6 +20,11 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
+		Tax: &bill.Tax{
+			Tags: []cbc.Key{
+				"use+goods-acquisition",
+			},
+		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
@@ -47,6 +54,11 @@ func validInvoice() *bill.Invoice {
 						Rate:     "standard",
 					},
 				},
+			},
+		},
+		Payment: &bill.Payment{
+			Instructions: &pay.Instructions{
+				Key: "online+wallet",
 			},
 		},
 	}
@@ -89,6 +101,38 @@ func TestLineValidation(t *testing.T) {
 
 	inv.Lines[0].Taxes = nil
 	assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).)")
+}
+
+func TestPaymentValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Payment.Instructions.Key = "direct-debit"
+	assertValidationError(t, inv, "payment: (instructions: (key: must be a valid value.).)")
+
+	inv.Payment.Instructions.Key = "unexisting"
+	assertValidationError(t, inv, "payment: (instructions: (key: must be or start with a valid key.).)")
+
+	inv.Payment.Instructions.Key = ""
+	assertValidationError(t, inv, "payment: (instructions: (key: cannot be blank.).)")
+
+	inv.Payment.Instructions = nil
+	assertValidationError(t, inv, "payment: (instructions: cannot be blank.)")
+
+	inv.Payment = nil
+	assertValidationError(t, inv, "payment: cannot be blank")
+}
+
+func TestUsoCFDIScenarioValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Tax.Tags = make([]cbc.Key, 0)
+	assertValidationError(t, inv, "tax tags are missing or don’t map to a UsoCFDI code")
+
+	inv.Tax.Tags = nil
+	assertValidationError(t, inv, "tax tags are missing or don’t map to a UsoCFDI code")
+
+	inv.Tax = nil
+	assertValidationError(t, inv, "tax tags are missing or don’t map to a UsoCFDI code")
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

@@ -6,6 +6,597 @@
   },
   "country": "MX",
   "currency": "MXN",
+  "tags": [
+    {
+      "key": "use+goods-acquisition",
+      "name": {
+        "en": "Acquisition of goods",
+        "es": "Adquisición de mercancías"
+      }
+    },
+    {
+      "key": "use+returns",
+      "name": {
+        "en": "Returns, discounts or rebates",
+        "es": "Devoluciones, descuentos o bonificaciones"
+      }
+    },
+    {
+      "key": "use+general-expenses",
+      "name": {
+        "en": "General expenses",
+        "es": "Gastos en general"
+      }
+    },
+    {
+      "key": "use+construction",
+      "name": {
+        "en": "Construction",
+        "es": "Construcciones"
+      }
+    },
+    {
+      "key": "use+office-equipment",
+      "name": {
+        "en": "Office furniture and equipment as investmen",
+        "es": "Mobiliario y equipo de oficina por inversiones"
+      }
+    },
+    {
+      "key": "use+transport-equipment",
+      "name": {
+        "en": "Transport equipment",
+        "es": "Equipo de transporte"
+      }
+    },
+    {
+      "key": "use+computer-equipment",
+      "name": {
+        "en": "Computer equipment and accessories",
+        "es": "Equipo de computo y accesorios"
+      }
+    },
+    {
+      "key": "use+manufacturing-tooling",
+      "name": {
+        "en": "Dies, punches, molds, matrices and other toolin",
+        "es": "Dados, troqueles, moldes, matrices y herramental"
+      }
+    },
+    {
+      "key": "use+telephone-comms",
+      "name": {
+        "en": "Telephone communications",
+        "es": "Comunicaciones telefónicas"
+      }
+    },
+    {
+      "key": "use+satellite-comms",
+      "name": {
+        "en": "Satellite communications",
+        "es": "Comunicaciones satelitales"
+      }
+    },
+    {
+      "key": "use+other-machinery",
+      "name": {
+        "en": "Other machinery and equipment",
+        "es": "Otra maquinaria y equipo"
+      }
+    },
+    {
+      "key": "use+medical-expenses",
+      "name": {
+        "en": "Medical and dental fees and hospital expenses",
+        "es": "Honorarios médicos, dentales y gastos hospitalarios"
+      }
+    },
+    {
+      "key": "use+medical-expenses+disability",
+      "name": {
+        "en": "Medical expenses for disability or incapacity",
+        "es": "Gastos médicos por incapacidad o discapacidad"
+      }
+    },
+    {
+      "key": "use+funeral-expenses",
+      "name": {
+        "en": "Funeral expenses",
+        "es": "Gastos funerales"
+      }
+    },
+    {
+      "key": "use+donation",
+      "name": {
+        "en": "Donations",
+        "es": "Donativos"
+      }
+    },
+    {
+      "key": "use+mortgage-interest",
+      "name": {
+        "en": "Interest actually paid on mortgage loans (housing)",
+        "es": "Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación)"
+      }
+    },
+    {
+      "key": "use+sar-contribution",
+      "name": {
+        "en": "Voluntary contributions to the SAR",
+        "es": "Aportaciones voluntarias al SAR"
+      }
+    },
+    {
+      "key": "use+medical-insurance",
+      "name": {
+        "en": "Medical insurance premiums",
+        "es": "Primas por seguros de gastos médicos"
+      }
+    },
+    {
+      "key": "use+school-transportation",
+      "name": {
+        "en": "Mandatory school transportation expenses",
+        "es": "Gastos de transportación escolar obligatoria"
+      }
+    },
+    {
+      "key": "use+savings-deposit",
+      "name": {
+        "en": "Deposits in savings accounts, pension plans premiums",
+        "es": "Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones"
+      }
+    },
+    {
+      "key": "use+school-fees",
+      "name": {
+        "en": "Payments for educational services (school fees)",
+        "es": "Pagos por servicios educativos (colegiaturas)"
+      }
+    },
+    {
+      "key": "use+no-tax-effects",
+      "name": {
+        "en": "Without tax effects",
+        "es": "Sin efectos fiscales"
+      }
+    },
+    {
+      "key": "use+suplementary-payment",
+      "name": {
+        "en": "Payments",
+        "es": "Pagos"
+      }
+    },
+    {
+      "key": "use+payroll",
+      "name": {
+        "en": "Payroll",
+        "es": "Nómina"
+      }
+    }
+  ],
+  "payment_means": [
+    {
+      "key": "cash",
+      "name": {
+        "en": "Cash",
+        "es": "Efectivo"
+      },
+      "codes": {
+        "sat-forma-pago": "01"
+      }
+    },
+    {
+      "key": "cheque",
+      "name": {
+        "en": "Nominative cheque",
+        "es": "Cheque nominativo"
+      },
+      "codes": {
+        "sat-forma-pago": "02"
+      }
+    },
+    {
+      "key": "credit-transfer",
+      "name": {
+        "en": "Electronic funds transfer",
+        "es": "Transferencia electrónica de fondos"
+      },
+      "codes": {
+        "sat-forma-pago": "03"
+      }
+    },
+    {
+      "key": "card",
+      "name": {
+        "en": "Credit card",
+        "es": "Tarjeta de crédito"
+      },
+      "codes": {
+        "sat-forma-pago": "04"
+      }
+    },
+    {
+      "key": "online+wallet",
+      "name": {
+        "en": "Electronic wallet",
+        "es": "Monedero electrónico"
+      },
+      "codes": {
+        "sat-forma-pago": "05"
+      }
+    },
+    {
+      "key": "online",
+      "name": {
+        "en": "Online or electronic payment",
+        "es": "Dinero electrónico"
+      },
+      "codes": {
+        "sat-forma-pago": "06"
+      }
+    },
+    {
+      "key": "other+food-vouchers",
+      "name": {
+        "en": "Food vouchers",
+        "es": "Vales de despensa"
+      },
+      "codes": {
+        "sat-forma-pago": "08"
+      }
+    },
+    {
+      "key": "other+in-kind",
+      "name": {
+        "en": "Payment in kind",
+        "es": "Dación en pago"
+      },
+      "codes": {
+        "sat-forma-pago": "12"
+      }
+    },
+    {
+      "key": "other+subrogation",
+      "name": {
+        "en": "Payment by subrogation",
+        "es": "Pago por subrogación"
+      },
+      "codes": {
+        "sat-forma-pago": "13"
+      }
+    },
+    {
+      "key": "other+consignation",
+      "name": {
+        "en": "Payment by consignation",
+        "es": "Pago por consignación"
+      },
+      "codes": {
+        "sat-forma-pago": "14"
+      }
+    },
+    {
+      "key": "other+condonation",
+      "name": {
+        "en": "Debt condonation",
+        "es": "Condonación"
+      },
+      "codes": {
+        "sat-forma-pago": "15"
+      }
+    },
+    {
+      "key": "netting",
+      "name": {
+        "en": "Netting",
+        "es": "Compensación"
+      },
+      "codes": {
+        "sat-forma-pago": "17"
+      }
+    },
+    {
+      "key": "other+novation",
+      "name": {
+        "en": "Novation",
+        "es": "Novación"
+      },
+      "codes": {
+        "sat-forma-pago": "23"
+      }
+    },
+    {
+      "key": "other+conflicting",
+      "name": {
+        "en": "Conflicting",
+        "es": "Confusión"
+      },
+      "codes": {
+        "sat-forma-pago": "24"
+      }
+    },
+    {
+      "key": "other+remission",
+      "name": {
+        "en": "Debt remission",
+        "es": "Remisión de deuda"
+      },
+      "codes": {
+        "sat-forma-pago": "25"
+      }
+    },
+    {
+      "key": "other+expiration",
+      "name": {
+        "en": "Expiration of payment obligation",
+        "es": "Prescripción o caducidad"
+      },
+      "codes": {
+        "sat-forma-pago": "26"
+      }
+    },
+    {
+      "key": "other+extinguishment",
+      "name": {
+        "en": "Extinguishment of payment obligation",
+        "es": "A satisfacción del acreedor"
+      },
+      "codes": {
+        "sat-forma-pago": "27"
+      }
+    },
+    {
+      "key": "card+debit",
+      "name": {
+        "en": "Debit card",
+        "es": "Tarjeta de débito"
+      },
+      "codes": {
+        "sat-forma-pago": "28"
+      }
+    },
+    {
+      "key": "card+services",
+      "name": {
+        "en": "Services card",
+        "es": "Tarjeta de servicios"
+      },
+      "codes": {
+        "sat-forma-pago": "29"
+      }
+    },
+    {
+      "key": "other+advance",
+      "name": {
+        "en": "Advance payment",
+        "es": "Aplicación de anticipos"
+      },
+      "codes": {
+        "sat-forma-pago": "30"
+      }
+    },
+    {
+      "key": "other+intermediary",
+      "name": {
+        "en": "Payment via intermediary",
+        "es": "Intermediario pagos"
+      },
+      "codes": {
+        "sat-forma-pago": "31"
+      }
+    },
+    {
+      "key": "other+tbd",
+      "name": {
+        "en": "To be defined",
+        "es": "Por definir"
+      },
+      "codes": {
+        "sat-forma-pago": "99"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "use+goods-acquisition"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "G01"
+          }
+        },
+        {
+          "tags": [
+            "use+returns"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "G02"
+          }
+        },
+        {
+          "tags": [
+            "use+general-expenses"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "G03"
+          }
+        },
+        {
+          "tags": [
+            "use+construction"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I01"
+          }
+        },
+        {
+          "tags": [
+            "use+office-equipment"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I02"
+          }
+        },
+        {
+          "tags": [
+            "use+transport-equipment"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I03"
+          }
+        },
+        {
+          "tags": [
+            "use+computer-equipment"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I04"
+          }
+        },
+        {
+          "tags": [
+            "use+manufacturing-tooling"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I05"
+          }
+        },
+        {
+          "tags": [
+            "use+telephone-comms"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I06"
+          }
+        },
+        {
+          "tags": [
+            "use+satellite-comms"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I07"
+          }
+        },
+        {
+          "tags": [
+            "use+other-machinery"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "I08"
+          }
+        },
+        {
+          "tags": [
+            "use+medical-expenses"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D01"
+          }
+        },
+        {
+          "tags": [
+            "use+medical-expenses+disability"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D02"
+          }
+        },
+        {
+          "tags": [
+            "use+funeral-expenses"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D03"
+          }
+        },
+        {
+          "tags": [
+            "use+donation"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D04"
+          }
+        },
+        {
+          "tags": [
+            "use+mortgage-interest"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D05"
+          }
+        },
+        {
+          "tags": [
+            "use+sar-contribution"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D06"
+          }
+        },
+        {
+          "tags": [
+            "use+medical-insurance"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D07"
+          }
+        },
+        {
+          "tags": [
+            "use+school-transportation"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D08"
+          }
+        },
+        {
+          "tags": [
+            "use+savings-deposit"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D09"
+          }
+        },
+        {
+          "tags": [
+            "use+school-fees"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "D10"
+          }
+        },
+        {
+          "tags": [
+            "use+no-tax-effects"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "S01"
+          }
+        },
+        {
+          "tags": [
+            "use+suplementary-payment"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "CP01"
+          }
+        },
+        {
+          "tags": [
+            "use+payroll"
+          ],
+          "codes": {
+            "sat-uso-cfdi": "CN01"
+          }
+        }
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
