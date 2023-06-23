@@ -98,7 +98,7 @@ func (inv *Invoice) Validate() error {
 // ValidateWithContext checks to ensure the invoice is valid and contains all the
 // information we need.
 func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
-	r := taxRegimeFor(inv.Supplier)
+	r := inv.TaxRegime()
 	if r == nil {
 		return errors.New("supplier: invalid or unknown tax regime")
 	}
@@ -243,10 +243,16 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	return &i2
 }
 
+// TaxRegime determines the tax regime for the invoice based on the supplier tax
+// identity.
+func (inv *Invoice) TaxRegime() *tax.Regime {
+	return taxRegimeFor(inv.Supplier)
+}
+
 // ScenarioSummary determines a summary of the tax scenario for the invoice based on
 // the document type and tax tags.
 func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
-	r := taxRegimeFor(inv.Supplier)
+	r := inv.TaxRegime()
 	if r == nil {
 		return nil
 	}
@@ -266,7 +272,7 @@ func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
 }
 
 func (inv *Invoice) prepareTagsAndScenarios() error {
-	r := taxRegimeFor(inv.Supplier)
+	r := inv.TaxRegime()
 	if r == nil {
 		return nil
 	}
