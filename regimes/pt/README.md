@@ -13,7 +13,7 @@ Portugal doesn't have an e-invoicing format per se. Tax information is reported 
 
 ### `InvoiceType` (Tipo de documento)
 
-AT's `InvoiceType` (Tipo de document) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
+AT's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
 
 | Code | Name | GOBL Type | GOBL Tax Tag |
 | --- | --- | --- | --- |
