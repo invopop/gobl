@@ -9,22 +9,21 @@ import (
 
 // Regime Specific Payment Means Extension Keys
 const (
-	MeansKeyWallet        cbc.Key = "wallet"
-	MeansKeyFoodVouchers  cbc.Key = "food-vouchers"
-	MeansKeyInKind        cbc.Key = "in-kind"
-	MeansKeySubrogation   cbc.Key = "subrogation"
-	MeansKeyConsignation  cbc.Key = "consignation"
-	MeansKeyCondonation   cbc.Key = "condonation"
-	MeansKeyNovation      cbc.Key = "novation"
-	MeansKeyConflicting   cbc.Key = "conflicting"
-	MeansKeyRemission     cbc.Key = "remission"
-	MeansKeyExpiration    cbc.Key = "expiration"
-	MeansKeyExtingishment cbc.Key = "extinguishment"
-	MeansKeyDebit         cbc.Key = "debit"
-	MeansKeyServices      cbc.Key = "services"
-	MeansKeyAdvance       cbc.Key = "advance"
-	MeansKeyIntermediary  cbc.Key = "intermediary"
-	MeansKeyTBD           cbc.Key = "tbd"
+	MeansKeyWallet          cbc.Key = "wallet"
+	MeansKeyGroceryVouchers cbc.Key = "grocery-vouchers"
+	MeansKeyInKind          cbc.Key = "in-kind"
+	MeansKeySubrogation     cbc.Key = "subrogation"
+	MeansKeyConsignment     cbc.Key = "consignment"
+	MeansKeyDebtRelief      cbc.Key = "debt-relief"
+	MeansKeyNovation        cbc.Key = "novation"
+	MeansKeyMerger          cbc.Key = "merger"
+	MeansKeyRemission       cbc.Key = "remission"
+	MeansKeyExpiration      cbc.Key = "expiration"
+	MeansKeyExtingishment   cbc.Key = "extinguishment"
+	MeansKeyDebit           cbc.Key = "debit"
+	MeansKeyServices        cbc.Key = "services"
+	MeansKeyAdvance         cbc.Key = "advance"
+	MeansKeyIntermediary    cbc.Key = "intermediary"
 )
 
 var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
@@ -89,9 +88,9 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: pay.MeansKeyOther.With(MeansKeyFoodVouchers),
+		Key: pay.MeansKeyOther.With(MeansKeyGroceryVouchers),
 		Name: i18n.String{
-			i18n.EN: "Food vouchers",
+			i18n.EN: "Grocery vouchers",
 			i18n.ES: "Vales de despensa",
 		},
 		Codes: cbc.CodeSet{
@@ -119,9 +118,9 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: pay.MeansKeyOther.With(MeansKeyConsignation),
+		Key: pay.MeansKeyOther.With(MeansKeyConsignment),
 		Name: i18n.String{
-			i18n.EN: "Payment by consignation",
+			i18n.EN: "Payment by consignment",
 			i18n.ES: "Pago por consignación",
 		},
 		Codes: cbc.CodeSet{
@@ -129,9 +128,9 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: pay.MeansKeyOther.With(MeansKeyCondonation),
+		Key: pay.MeansKeyOther.With(MeansKeyDebtRelief),
 		Name: i18n.String{
-			i18n.EN: "Debt condonation",
+			i18n.EN: "Debt relief",
 			i18n.ES: "Condonación",
 		},
 		Codes: cbc.CodeSet{
@@ -159,9 +158,9 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: pay.MeansKeyOther.With(MeansKeyConflicting),
+		Key: pay.MeansKeyOther.With(MeansKeyMerger),
 		Name: i18n.String{
-			i18n.EN: "Conflicting",
+			i18n.EN: "Merger",
 			i18n.ES: "Confusión",
 		},
 		Codes: cbc.CodeSet{
@@ -239,7 +238,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: pay.MeansKeyOther.With(MeansKeyTBD),
+		Key: pay.MeansKeyOther,
 		Name: i18n.String{
 			i18n.EN: "To be defined",
 			i18n.ES: "Por definir",

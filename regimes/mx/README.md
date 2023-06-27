@@ -52,14 +52,14 @@ The CFDI’s `FormaPago` field specifies an invoice's means of payment. The foll
 | 04 | Tarjeta de crédito | `card` |
 | 05 | Monedero electrónico | `online+wallet` |
 | 06 | Dinero electrónico | `online` |
-| 08 | Vales de despensa | `other+food-vouchers` |
+| 08 | Vales de despensa | `other+grocery-vouchers  ` |
 | 12 | Dación en pago | `other+in-kind` |
 | 13 | Pago por subrogación | `other+subrogation` |
-| 14 | Pago por consignación | `other+consignation` |
-| 15 | Condonación | `other+condonation` |
+| 14 | Pago por consignación | `other+consignment` |
+| 15 | Condonación | `other+debt-relief` |
 | 17 | Compensación | `netting` |
 | 23 | Novación | `other+novation` |
-| 24 | Confusión | `other+conflicting` |
+| 24 | Confusión | `other+merger` |
 | 25 | Remisión de deuda | `other+remission` |
 | 26 | Prescripción o caducidad | `other+expiration` |
 | 27 | A satisfacción del acreedor | `other+extinguishment` |
@@ -67,5 +67,5 @@ The CFDI’s `FormaPago` field specifies an invoice's means of payment. The foll
 | 29 | Tarjeta de servicios | `card+services` |
 | 30 | Aplicación de anticipos | `other+advance` |
 | 31 | Intermediario pagos | `other+intermediary` |
-| 99 | Por definir | `other+tbd` |
+| 99 | Por definir | `other` |
 

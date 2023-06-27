@@ -238,9 +238,9 @@
       }
     },
     {
-      "key": "other+food-vouchers",
+      "key": "other+grocery-vouchers",
       "name": {
-        "en": "Food vouchers",
+        "en": "Grocery vouchers",
         "es": "Vales de despensa"
       },
       "codes": {
@@ -268,9 +268,9 @@
       }
     },
     {
-      "key": "other+consignation",
+      "key": "other+consignment",
       "name": {
-        "en": "Payment by consignation",
+        "en": "Payment by consignment",
         "es": "Pago por consignación"
       },
       "codes": {
@@ -278,9 +278,9 @@
       }
     },
     {
-      "key": "other+condonation",
+      "key": "other+debt-relief",
       "name": {
-        "en": "Debt condonation",
+        "en": "Debt relief",
         "es": "Condonación"
       },
       "codes": {
@@ -308,9 +308,9 @@
       }
     },
     {
-      "key": "other+conflicting",
+      "key": "other+merger",
       "name": {
-        "en": "Conflicting",
+        "en": "Merger",
         "es": "Confusión"
       },
       "codes": {
@@ -388,7 +388,7 @@
       }
     },
     {
-      "key": "other+tbd",
+      "key": "other",
       "name": {
         "en": "To be defined",
         "es": "Por definir"
