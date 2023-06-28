@@ -8,16 +8,35 @@ import (
 	"github.com/invopop/gobl/cbc"
 )
 
-// correctionOptions defines a structure used to pass configuration options
-// for certain method calls.
-type correctionOptions struct {
-	date             *cal.Date
-	stamps           []*cbc.Stamp
-	credit           bool
-	debit            bool
-	reason           string
-	correctionMethod cbc.Key
-	corrections      []cbc.Key
+// CorrectionOptions defines a structure used to pass configuration options
+// for correcting and existing invoice. Not meant to be used inside invoices,
+// but is exported to make it easier to pass options between external services.
+type CorrectionOptions struct {
+	// When the new corrective invoice's issue date should be set to.
+	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
+	// Stamps of the previous document to include in the preceding data.
+	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	// Credit when true indicates that the corrective document should cancel the previous document.
+	Credit bool `json:"credit,omitempty" jsonschema:"title=Credit"`
+	// Debit when true indicates that the corrective document should add new items to the previous document.
+	Debit bool `json:"debit,omitempty" jsonschema:"title=Debit"`
+	// Human readable reason for the corrective operation.
+	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Correction method as defined by the tax regime.
+	CorrectionMethod cbc.Key `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
+	// Correction keys that describe the specific changes according to the tax regime.
+	Corrections []cbc.Key `json:"corrections,omitempty" jsonschema:"title=Corrections"`
+}
+
+// WithOptions takes an already completed CorrectionOptions instance and
+// uses this as a base instead of passing individual options. This is useful
+// for passing options from an API, developers should use the regular option
+// methods.
+func WithOptions(opts *CorrectionOptions) cbc.Option {
+	return func(o interface{}) {
+		o2 := o.(*CorrectionOptions)
+		*o2 = *opts
+	}
 }
 
 // WithStamps provides a configuration option with stamp information
@@ -25,24 +44,24 @@ type correctionOptions struct {
 // and processed invoice document.
 func WithStamps(stamps []*cbc.Stamp) cbc.Option {
 	return func(o interface{}) {
-		opts := o.(*correctionOptions)
-		opts.stamps = stamps
+		opts := o.(*CorrectionOptions)
+		opts.Stamps = stamps
 	}
 }
 
 // WithReason allows a reason to be provided for the corrective operation.
 func WithReason(reason string) cbc.Option {
 	return func(o interface{}) {
-		opts := o.(*correctionOptions)
-		opts.reason = reason
+		opts := o.(*CorrectionOptions)
+		opts.Reason = reason
 	}
 }
 
 // WithCorrectionMethod defines the method used to correct the previous invoice.
 func WithCorrectionMethod(method cbc.Key) cbc.Option {
 	return func(o interface{}) {
-		opts := o.(*correctionOptions)
-		opts.correctionMethod = method
+		opts := o.(*CorrectionOptions)
+		opts.CorrectionMethod = method
 	}
 }
 
@@ -50,32 +69,32 @@ func WithCorrectionMethod(method cbc.Key) cbc.Option {
 // use multiple times for multiple entries.
 func WithCorrection(correction cbc.Key) cbc.Option {
 	return func(o interface{}) {
-		opts := o.(*correctionOptions)
-		opts.corrections = append(opts.corrections, correction)
+		opts := o.(*CorrectionOptions)
+		opts.Corrections = append(opts.Corrections, correction)
 	}
 }
 
-// WithDate can be used to override the date of the corrective invoice
+// WithIssueDate can be used to override the issue date of the corrective invoice
 // produced.
-func WithDate(date cal.Date) cbc.Option {
+func WithIssueDate(date cal.Date) cbc.Option {
 	return func(o interface{}) {
-		opts := o.(*correctionOptions)
-		opts.date = &date
+		opts := o.(*CorrectionOptions)
+		opts.IssueDate = &date
 	}
 }
 
 // Credit indicates that the corrective operation requires a credit note
 // or equivalent.
 var Credit cbc.Option = func(o interface{}) {
-	opts := o.(*correctionOptions)
-	opts.credit = true
+	opts := o.(*CorrectionOptions)
+	opts.Credit = true
 }
 
 // Debit indicates that the corrective operation is to append
 // new items to the previous invoice, usually as a debit note.
 var Debit cbc.Option = func(o interface{}) {
-	opts := o.(*correctionOptions)
-	opts.debit = true
+	opts := o.(*CorrectionOptions)
+	opts.Debit = true
 }
 
 // Correct moves key fields of the current invoice to the preceding
@@ -84,11 +103,11 @@ var Debit cbc.Option = func(o interface{}) {
 // If the existing document doesn't have a code, we'll raise an error, for
 // most use cases this will prevent looping over the same invoice.
 func (inv *Invoice) Correct(opts ...cbc.Option) error {
-	o := new(correctionOptions)
+	o := new(CorrectionOptions)
 	for _, row := range opts {
 		row(o)
 	}
-	if o.credit && o.debit {
+	if o.Credit && o.Debit {
 		return errors.New("cannot use both credit and debit options")
 	}
 	if inv.Code == "" {
@@ -106,21 +125,21 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 		Series:           inv.Series,
 		Code:             inv.Code,
 		IssueDate:        inv.IssueDate.Clone(),
-		Reason:           o.reason,
-		Corrections:      o.corrections,
-		CorrectionMethod: o.correctionMethod,
+		Reason:           o.Reason,
+		Corrections:      o.Corrections,
+		CorrectionMethod: o.CorrectionMethod,
 	}
 	inv.UUID = nil
 	inv.Series = ""
 	inv.Code = ""
-	if o.date != nil {
-		inv.IssueDate = *o.date
+	if o.IssueDate != nil {
+		inv.IssueDate = *o.IssueDate
 	} else {
 		inv.IssueDate = cal.Today()
 	}
 
 	// Take the regime def to figure out what needs to be copied
-	if o.credit {
+	if o.Credit {
 		if r.Preceding.HasType(InvoiceTypeCreditNote) {
 			// regular credit note
 			inv.Type = InvoiceTypeCreditNote
@@ -132,7 +151,7 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 			return errors.New("credit not supported by regime")
 		}
 		inv.Payment.ResetAdvances()
-	} else if o.debit {
+	} else if o.Debit {
 		if r.Preceding.HasType(InvoiceTypeDebitNote) {
 			// regular debit note, implies no rows as new ones
 			// will be added
@@ -153,7 +172,7 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	if r.Preceding != nil {
 		for _, k := range r.Preceding.Stamps {
 			var s *cbc.Stamp
-			for _, row := range o.stamps {
+			for _, row := range o.Stamps {
 				if row.Provider == k {
 					s = row
 					break
