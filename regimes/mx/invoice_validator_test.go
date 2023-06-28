@@ -126,13 +126,13 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
 	inv.Tax.Tags = make([]cbc.Key, 0)
-	assertValidationError(t, inv, "tax tags are missing or don’t map to a UsoCFDI code")
+	assertValidationError(t, inv, "'use' tax tags is required")
 
 	inv.Tax.Tags = nil
-	assertValidationError(t, inv, "tax tags are missing or don’t map to a UsoCFDI code")
+	assertValidationError(t, inv, "'use' tax tags is required")
 
 	inv.Tax = nil
-	assertValidationError(t, inv, "tax tags are missing or don’t map to a UsoCFDI code")
+	assertValidationError(t, inv, "'use' tax tags is required")
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

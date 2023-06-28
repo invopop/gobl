@@ -48,7 +48,7 @@ func (v *invoiceValidator) validateScenarios() error {
 	ss := v.inv.ScenarioSummary()
 
 	if ss.Codes[KeySATUsoCFDI] == "" {
-		return errors.New("tax tags are missing or don’t map to a UsoCFDI code")
+		return errors.New("'use' tax tags is required")
 	}
 
 	return nil
