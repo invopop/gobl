@@ -9,8 +9,8 @@ import (
 )
 
 // CorrectionOptions defines a structure used to pass configuration options
-// for correcting and existing invoice. Not meant to be used inside invoices,
-// but is exported to make it easier to pass options between external services.
+// to correct a previous invoice. This is made available to make it easier to
+// pass options between external services.
 type CorrectionOptions struct {
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
