@@ -19,7 +19,7 @@ const (
 	MeansKeyMerger          cbc.Key = "merger"
 	MeansKeyRemission       cbc.Key = "remission"
 	MeansKeyExpiration      cbc.Key = "expiration"
-	MeansKeyExtingishment   cbc.Key = "extinguishment"
+	MeansKeySatisfyCreditor cbc.Key = "satisfy-creditor"
 	MeansKeyDebit           cbc.Key = "debit"
 	MeansKeyServices        cbc.Key = "services"
 	MeansKeyAdvance         cbc.Key = "advance"
@@ -188,9 +188,9 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: pay.MeansKeyOther.With(MeansKeyExtingishment),
+		Key: pay.MeansKeyOther.With(MeansKeySatisfyCreditor),
 		Name: i18n.String{
-			i18n.EN: "Extinguishment of payment obligation",
+			i18n.EN: "To the creditor's satisfaction",
 			i18n.ES: "A satisfacción del acreedor",
 		},
 		Codes: cbc.CodeSet{

@@ -338,9 +338,9 @@
       }
     },
     {
-      "key": "other+extinguishment",
+      "key": "other+satisfy-creditor",
       "name": {
-        "en": "Extinguishment of payment obligation",
+        "en": "To the creditor's satisfaction",
         "es": "A satisfacción del acreedor"
       },
       "codes": {

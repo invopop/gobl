@@ -62,7 +62,7 @@ The CFDI’s `FormaPago` field specifies an invoice's means of payment. The foll
 | 24 | Confusión | `other+merger` |
 | 25 | Remisión de deuda | `other+remission` |
 | 26 | Prescripción o caducidad | `other+expiration` |
-| 27 | A satisfacción del acreedor | `other+extinguishment` |
+| 27 | A satisfacción del acreedor | `other+satisfy-creditor` |
 | 28 | Tarjeta de débito | `card+debit` |
 | 29 | Tarjeta de servicios | `card+services` |
 | 30 | Aplicación de anticipos | `other+advance` |
