@@ -40,6 +40,7 @@ func NewHeader() *Header {
 	h := new(Header)
 	h.UUID = uuid.MakeV1()
 	h.Meta = make(cbc.Meta)
+	h.Draft = true // default to draft
 	return h
 }
 
