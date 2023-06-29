@@ -54,7 +54,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	// With preset date
 	i = testInvoiceESForCorrection(t)
 	d := cal.MakeDate(2023, 6, 13)
-	err = i.Correct(bill.WithDate(d))
+	err = i.Correct(bill.WithIssueDate(d))
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
 
@@ -100,6 +100,39 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.Len(t, pre.Stamps, 1)
 	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
 	assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
+}
+
+func TestCorrectWithOptions(t *testing.T) {
+	i := testInvoiceESForCorrection(t)
+	opts := &bill.CorrectionOptions{
+		Credit: true,
+		Reason: "test refund",
+	}
+	err := i.Correct(bill.WithOptions(opts))
+	require.NoError(t, err)
+	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
+	assert.Equal(t, i.IssueDate, cal.Today())
+	pre := i.Preceding[0]
+	assert.Equal(t, pre.Series, "TEST")
+	assert.Equal(t, pre.Code, "123")
+	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
+	assert.Equal(t, pre.Reason, "test refund")
+	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
+}
+
+func TestCorrectWithData(t *testing.T) {
+	i := testInvoiceESForCorrection(t)
+	data := []byte(`{"credit":true,"reason":"test refund"}`)
+
+	err := i.Correct(bill.WithData(data))
+	assert.NoError(t, err)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "-10") // implies credit was made
+
+	data = []byte(`{"credit": true`) // invalid json
+	err = i.Correct(bill.WithData(data))
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unexpected end of JSON input")
 }
 
 func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
