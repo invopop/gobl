@@ -13,10 +13,13 @@ var (
 	IsV1 = versionRule{version: 1}
 	// IsV4 confirms the UUID is version 4
 	IsV4 = versionRule{version: 4}
+	// IsNotZero confirms the UUID is not zero
+	IsNotZero = versionRule{notZero: true}
 )
 
 type versionRule struct {
 	version uuid.Version
+	notZero bool
 	ttl     time.Duration
 }
 
@@ -32,13 +35,32 @@ func Within(ttl time.Duration) validation.Rule {
 }
 
 func (r versionRule) Validate(value interface{}) error {
-	id, ok := value.(UUID)
-	if !ok {
-		pid, ok := value.(*UUID)
-		if !ok {
-			return errors.New("not a UUID")
+	if value == nil {
+		return nil
+	}
+	var id UUID
+	switch v := value.(type) {
+	case UUID:
+		id = v
+	case *UUID:
+		id = *v
+	case string:
+		if v == "" {
+			return nil
 		}
-		id = *pid
+		var err error
+		id, err = Parse(v)
+		if err != nil {
+			return err
+		}
+	default:
+		return errors.New("not a UUID")
+	}
+	if r.notZero {
+		if id.IsZero() {
+			return errors.New("is zero")
+		}
+		return nil
 	}
 	if id.Version() != r.version {
 		return errors.New("invalid version")

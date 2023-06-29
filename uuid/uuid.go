@@ -71,6 +71,16 @@ func Parse(s string) (UUID, error) {
 	return UUID{id}, err
 }
 
+// ShouldParse will return a UUID if the string is valid, otherwise it will
+// provide a zero UUID.
+func ShouldParse(s string) UUID {
+	id, err := Parse(s)
+	if err != nil {
+		return UUID{}
+	}
+	return id
+}
+
 // MustParse will panic if the UUID does not look good.
 func MustParse(s string) UUID {
 	id, err := Parse(s)
