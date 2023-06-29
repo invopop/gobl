@@ -121,6 +121,20 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
 }
 
+func TestCorrectWithData(t *testing.T) {
+	i := testInvoiceESForCorrection(t)
+	data := []byte(`{"credit":true,"reason":"test refund"}`)
+
+	err := i.Correct(bill.WithData(data))
+	assert.NoError(t, err)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "-10") // implies credit was made
+
+	data = []byte(`{"credit": true`) // invalid json
+	err = i.Correct(bill.WithData(data))
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unexpected end of JSON input")
+}
+
 func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{

@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -26,6 +27,9 @@ type CorrectionOptions struct {
 	CorrectionMethod cbc.Key `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
 	// Correction keys that describe the specific changes according to the tax regime.
 	Corrections []cbc.Key `json:"corrections,omitempty" jsonschema:"title=Corrections"`
+
+	// In case we want to use a raw json object as a source of the options.
+	data json.RawMessage `json:"-"`
 }
 
 // WithOptions takes an already completed CorrectionOptions instance and
@@ -36,6 +40,15 @@ func WithOptions(opts *CorrectionOptions) cbc.Option {
 	return func(o interface{}) {
 		o2 := o.(*CorrectionOptions)
 		*o2 = *opts
+	}
+}
+
+// WithData expects a raw JSON object that will be marshalled into a
+// CorrectionOptions instance and used as the base for the correction.
+func WithData(data json.RawMessage) cbc.Option {
+	return func(o interface{}) {
+		opts := o.(*CorrectionOptions)
+		opts.data = data
 	}
 }
 
@@ -107,6 +120,14 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	for _, row := range opts {
 		row(o)
 	}
+
+	// If we have a raw json object, this will override any of the other options
+	if len(o.data) > 0 {
+		if err := json.Unmarshal(o.data, o); err != nil {
+			return fmt.Errorf("failed to unmarshal correction options: %w", err)
+		}
+	}
+
 	if o.Credit && o.Debit {
 		return errors.New("cannot use both credit and debit options")
 	}
