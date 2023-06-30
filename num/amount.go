@@ -254,6 +254,12 @@ func (a Amount) MinimalString() string {
 	return strings.TrimSuffix(s, ".")
 }
 
+// Float64 provides the amount as a float64 value which should be used
+// with caution!
+func (a Amount) Float64() float64 {
+	return float64(a.value) / float64(intPow(10, a.exp))
+}
+
 // MarshalText provides the byte value of the amount. See also the
 // String() method.
 // We always add quotes around values as number representations do not

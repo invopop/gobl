@@ -207,12 +207,14 @@ func (inv *Invoice) Calculate() error {
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
-// the tax included in the invoice, and remove them. The accuracy parameter is used to determine
-// the additional exponent that will be added to prices before calculation with the aim of reducing
-// rounding errors. An accuracy value of 2 is recommended.
+// the tax included in the invoice, and remove them.
+//
+// To do this we need to figure out the "accuracy" or precision to use when removing the included
+// taxes so that we can avoid rounding errors. By default we add a single decimal place to all
+// numbers, but in the case of line items we take the length (Log 10) of the *quantity*.
 //
 // A new invoice object is returned, leaving the original objects untouched.
-func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
+func (inv *Invoice) RemoveIncludedTaxes() *Invoice {
 	if inv.Tax == nil || inv.Tax.PricesInclude.IsEmpty() {
 		return inv // nothing to do!
 	}
@@ -220,19 +222,19 @@ func (inv *Invoice) RemoveIncludedTaxes(accuracy uint32) *Invoice {
 	i2 := *inv
 	i2.Lines = make([]*Line, len(inv.Lines))
 	for i, l := range inv.Lines {
-		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
 	}
 
 	if len(inv.Discounts) > 0 {
 		i2.Discounts = make([]*Discount, len(inv.Discounts))
 		for i, l := range inv.Discounts {
-			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
 		}
 	}
 	if len(i2.Charges) > 0 {
 		i2.Charges = make([]*Charge, len(inv.Charges))
 		for i, l := range inv.Charges {
-			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
 		}
 	}
 
