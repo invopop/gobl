@@ -2,6 +2,7 @@ package gobl
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/invopop/validation"
@@ -88,13 +89,14 @@ func (e *Envelope) verifyDigest() error {
 	return nil
 }
 
-// Sign uses the private key to sign the envelope headers. Validation
-// is performed automatically, and an error will be raised if still
-// in draft mode.
+// Sign uses the private key to sign the envelope headers. The header
+// draft flag will be set to false and validation is performed so that
+// only valid non-draft documents will be signed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
-	if e.Head == nil || e.Head.Draft {
-		return ErrDraft.WithErrorf("cannot sign draft envelope")
+	if e.Head == nil {
+		return ErrValidation.WithCause(errors.New("missing header"))
 	}
+	e.Head.Draft = false
 	if err := e.Validate(); err != nil {
 		return ErrValidation.WithCause(err)
 	}

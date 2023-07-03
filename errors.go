@@ -36,10 +36,6 @@ var (
 	// source data.
 	ErrUnmarshal = NewError("unmarshal")
 
-	// ErrDraft is raised when attempting to perform an operation that can only
-	// be performed on an envelope that is not a draft.
-	ErrDraft = NewError("draft")
-
 	// ErrSignature identifies an issue related to signatures.
 	ErrSignature = NewError("signature")
 

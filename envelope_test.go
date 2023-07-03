@@ -51,7 +51,8 @@ func ExampleNewEnvelope_complete() {
 	// 		"dig": {
 	// 			"alg": "sha256",
 	// 			"val": "7d539c46ca03a4ecb1fcc4cb00d2ada34275708ee326caafee04d9dcfed862ee"
-	// 		}
+	// 		},
+	//		"draft": true
 	// 	},
 	// 	"doc": {
 	// 		"$schema": "https://gobl.org/draft-0/note/message",
@@ -261,13 +262,13 @@ func TestEnvelopeValidate(t *testing.T) {
 }
 
 func TestEnvelopeSign(t *testing.T) {
-	t.Run("cannot sign draft", func(t *testing.T) {
+	t.Run("will sign draft", func(t *testing.T) {
 		env := gobl.NewEnvelope()
-		env.Head.Draft = true
-		require.NoError(t, env.Insert(&note.Message{}))
+		require.NoError(t, env.Insert(&note.Message{Content: "Foooo"}))
+		assert.True(t, env.Head.Draft)
 		err := env.Sign(testKey)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "draft: cannot sign draft envelope")
+		assert.NoError(t, err)
+		assert.False(t, env.Head.Draft)
 	})
 	t.Run("cannot sign invalid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
