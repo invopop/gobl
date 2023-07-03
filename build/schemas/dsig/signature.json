@@ -9,5 +9,5 @@
       "description": "JSON Web Signature in compact form."
     }
   },
-  "$comment": "Generated with GOBL v0.50.5"
+  "$comment": "Generated with GOBL v0.51.0"
 }
