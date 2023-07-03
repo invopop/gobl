@@ -44,7 +44,7 @@ The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the 
 
 The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` field:
 
-```json
+```js
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
 
@@ -91,7 +91,7 @@ The CFDI’s `FormaPago` field specifies an invoice's means of payment. The foll
 
 The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaPago` field:
 
-```json
+```js
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
 
