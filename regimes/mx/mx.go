@@ -3,6 +3,7 @@ package mx
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -14,6 +15,12 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
+// Custom keys used typically in meta or codes information.
+const (
+	KeySATFormaPago cbc.Key = "sat-forma-pago"
+	KeySATUsoCFDI   cbc.Key = "sat-uso-cfdi"
+)
+
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
@@ -23,9 +30,12 @@ func New() *tax.Regime {
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
-		Validator:  Validate,
-		Calculator: Calculate,
-		Categories: taxCategories,
+		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
+		Validator:        Validate,
+		Calculator:       Calculate,
+		Tags:             invoiceTags,   // scenarios.go
+		Scenarios:        scenarios,     // scenarios.go
+		Categories:       taxCategories, // categories.go
 	}
 }
 
