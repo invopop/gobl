@@ -22,28 +22,39 @@ func (ut *uuidTestStruct) Validate() error {
 func TestUUIDValidation(t *testing.T) {
 	u1 := uuid.MakeV1()
 	u4 := uuid.MakeV4()
-	if err := validation.Validate(u1, uuid.IsV1); err != nil {
-		t.Errorf("did not expect an error: %v", err)
+	assert.NoError(t, validation.Validate(u1, uuid.IsV1), "should accept UUIDv1")
+	assert.NoError(t, validation.Validate(nil, uuid.IsV1), "should ignore nil")
+	assert.NoError(t, validation.Validate("", uuid.IsV1), "should ignore empty string")
+	assert.NoError(t, validation.Validate(u1.String(), uuid.IsV1), "should accept string")
+	assert.NoError(t, validation.Validate(u4, uuid.IsV4))
+	assert.NoError(t, validation.Validate(nil, uuid.IsV4), "should ignore nil")
+	assert.NoError(t, validation.Validate("", uuid.IsV4), "should ignore empty string")
+	err := validation.Validate(u1, uuid.IsV4)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "invalid version")
 	}
-	if err := validation.Validate(u4, uuid.IsV4); err != nil {
-		t.Errorf("did not expect an error: %v", err)
+	err = validation.Validate(uuid.UUID{}, uuid.IsV1)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "invalid version")
 	}
-	if err := validation.Validate(u1, uuid.IsV4); err == nil {
-		t.Errorf("expected an error")
+	err = validation.Validate(u4, uuid.IsV1)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "invalid version")
 	}
-	if err := validation.Validate(u4, uuid.IsV1); err == nil {
-		t.Errorf("expected an error")
-	}
-	if err := validation.Validate(u1, uuid.Within(1*time.Second)); err != nil {
-		t.Errorf("did not expect an error so soon, got: %v", err.Error())
-	}
+	assert.NoError(t, validation.Validate(u1, uuid.Within(1*time.Second)))
 	time.Sleep(11 * time.Millisecond)
-	if err := validation.Validate(u1, uuid.Within(10*time.Millisecond)); err == nil {
-		t.Errorf("expected an error")
+	err = validation.Validate(u1, uuid.Within(10*time.Millisecond))
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "timestamp is outside acceptable range")
+	}
+	assert.NoError(t, validation.Validate(u1, uuid.IsNotZero))
+	err = validation.Validate(uuid.UUID{}.String(), uuid.IsNotZero)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "is zero")
 	}
 
 	pu1 := uuid.NewV1()
-	err := validation.Validate(pu1, uuid.IsV1)
+	err = validation.Validate(pu1, uuid.IsV1)
 	assert.NoError(t, err, "failed to validate pointer")
 
 	sample := new(uuidTestStruct)

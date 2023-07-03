@@ -26,6 +26,13 @@ func TestUUIDParsing(t *testing.T) {
 	if u4.Version() != 4 {
 		t.Errorf("did not parse a v4 UUID")
 	}
+
+	u1 = uuid.ShouldParse("")
+	assert.True(t, u1.IsZero())
+	u1 = uuid.ShouldParse("fooo")
+	assert.True(t, u1.IsZero())
+	u1 = uuid.ShouldParse(v1s)
+	assert.Equal(t, v1s, u1.String())
 }
 
 func TestUUIDIsZero(t *testing.T) {
