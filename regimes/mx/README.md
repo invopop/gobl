@@ -40,6 +40,24 @@ The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the 
 | CP01 | Pagos | `use+suplementary-payment` |
 | CN01 | Nómina | `use+payroll` |
 
+#### Example
+
+The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` field:
+
+```json
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "tax": {
+    "tags": [
+      "use+general-expenses"
+    ]
+  }
+}
+```
+
 ### `FormaPago`
 
 The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following list list all the supported values and how GOBL will map them from the invoice's payment instructions key:
@@ -69,3 +87,20 @@ The CFDI’s `FormaPago` field specifies an invoice's means of payment. The foll
 | 31 | Intermediario pagos | `other+intermediary` |
 | 99 | Por definir | `other` |
 
+#### Example
+
+The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaPago` field:
+
+```json
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "payment": {
+    "instructions": {
+      "key": "online+wallet"
+    }
+  },
+}
+```
