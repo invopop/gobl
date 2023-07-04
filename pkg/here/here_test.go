@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/invopop/gobl/internal/here"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 type testCase struct {
