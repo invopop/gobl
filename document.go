@@ -9,7 +9,8 @@ import (
 	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
-	"github.com/invopop/gobl/internal/here"
+	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -89,6 +90,10 @@ func (d *Document) Validate() error {
 // ValidateWithContext checks to ensure the document has everything it needs
 // and will pass on the validation call to the payload.
 func (d *Document) ValidateWithContext(ctx context.Context) error {
+	if ctx.Value(internal.KeyDraft) == nil {
+		// if draft not set previously, assume true
+		ctx = context.WithValue(ctx, internal.KeyDraft, true)
+	}
 	err := validation.ValidateStructWithContext(ctx, d,
 		validation.Field(&d.schema, validation.Required),
 	)
