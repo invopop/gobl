@@ -11,7 +11,7 @@ Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for their 
 
 ### `UsoCFDI`
 
-The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. The following table list all the supported values and how GOBL will map them from the invoice's tax tags:
+The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. The following table lists all the supported values and how GOBL will map them from the invoice's tax tags:
 
 | Code | Name | GOBL Tax Tag |
 | --- | --- | --- |
@@ -60,7 +60,7 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
 
 ### `FormaPago`
 
-The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following list list all the supported values and how GOBL will map them from the invoice's payment instructions key:
+The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following table lists all the supported values and how GOBL will map them from the invoice's payment instructions key:
 
 | Code | Name | GOBL Payment Instructions Key |
 | --- | --- | --- |
@@ -101,6 +101,6 @@ The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaP
     "instructions": {
       "key": "online+wallet"
     }
-  },
+  }
 }
 ```
