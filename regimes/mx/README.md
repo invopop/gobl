@@ -104,3 +104,31 @@ The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaP
   }
 }
 ```
+
+### `ClaveUnidad`
+
+The CFDI’s `ClaveUnidad` field specifies the unit in which the quantity of an invoice's line is given. These are UNECE codes that GOBL will map directly from the invoice's line item unit. See the [source code](../../org/unit.go) for the full list of supported units with its UNECE codes.
+
+#### Example
+
+The following GOBL maps to the `KGM` (Kilogram) value of the `ClaveUnidad` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "lines": [
+    {
+      // [...]
+
+      "item": {
+        "name": "Jasmine rice",
+        "unit": "kg",
+        "price": "1.27"
+      },
+    }
+  ]
+}
+```

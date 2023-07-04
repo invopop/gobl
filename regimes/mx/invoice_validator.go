@@ -77,6 +77,18 @@ func (v *invoiceValidator) validLine(value interface{}) error {
 			validation.Required,
 			validation.Skip, // Prevents each tax's `ValidateWithContext` function from being called again.
 		),
+		validation.Field(&line.Item, validation.By(v.validItem)),
+	)
+}
+
+func (v *invoiceValidator) validItem(value interface{}) error {
+	item, _ := value.(*org.Item)
+	if item == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(item,
+		validation.Field(&item.Unit, validation.Required),
 	)
 }
 

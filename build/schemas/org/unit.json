@@ -6,6 +6,10 @@
     "Unit": {
       "anyOf": [
         {
+          "const": "mutual",
+          "description": "Mutually defined"
+        },
+        {
           "const": "g",
           "description": "Metric grams"
         },
@@ -88,6 +92,18 @@
         {
           "const": "piece",
           "description": "Pieces"
+        },
+        {
+          "const": "each",
+          "description": "Each"
+        },
+        {
+          "const": "service",
+          "description": "Service Units"
+        },
+        {
+          "const": "activity",
+          "description": "Activity"
         },
         {
           "const": "bag",

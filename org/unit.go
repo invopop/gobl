@@ -14,7 +14,8 @@ type Unit cbc.Key
 // many different unit codes in the world, that it's impractical to try and define them
 // all, this is thus a selection of which we think are the most useful.
 const (
-	UnitEmpty Unit = `` // No unit defined
+	UnitEmpty  Unit = ``       // No unit defined
+	UnitMutual Unit = `mutual` // Unit agreed between the parties
 
 	// Measurement units
 	UnitGram         Unit = `g`
@@ -38,6 +39,9 @@ const (
 	UnitHour         Unit = `h`
 	UnitMinute       Unit = `min`
 	UnitPiece        Unit = `piece`
+	UnitEach         Unit = `each`
+	UnitActivity     Unit = `activity`
+	UnitService      Unit = `service`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -84,6 +88,7 @@ type DefUnit struct {
 var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
+	{UnitMutual, "Mutually defined", "ZZ"},
 	{UnitGram, "Metric grams", "GRM"},
 	{UnitKilogram, "Metric kilograms", "KGM"},
 	{UnitMetricTon, "Metric tons", "TNE"},
@@ -105,6 +110,9 @@ var UnitDefinitions = []DefUnit{
 	{UnitHour, "Hours", "HUR"},
 	{UnitMinute, "Minutes", "MIN"},
 	{UnitPiece, "Pieces", "H87"},
+	{UnitEach, "Each", "EA"},
+	{UnitService, "Service Units", "E48"},
+	{UnitActivity, "Activity", "ACT"},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21

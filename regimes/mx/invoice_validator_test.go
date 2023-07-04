@@ -48,6 +48,7 @@ func validInvoice() *bill.Invoice {
 				Item: &org.Item{
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
+					Unit:  "mutual",
 				},
 				Taxes: tax.Set{
 					{
@@ -102,6 +103,13 @@ func TestLineValidation(t *testing.T) {
 
 	inv.Lines[0].Taxes = nil
 	assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).)")
+}
+
+func TestItemValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Lines[0].Item.Unit = ""
+	assertValidationError(t, inv, "lines: (0: (item: (unit: cannot be blank.).).)")
 }
 
 func TestPaymentInstructionsValidation(t *testing.T) {
