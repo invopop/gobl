@@ -2,15 +2,19 @@ package gobl_test
 
 import (
 	"encoding/json"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/schema"
+	"github.com/invopop/yaml"
 )
 
 func TestDocument(t *testing.T) {
@@ -62,4 +66,22 @@ func TestDocumentValidation(t *testing.T) {
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "content: cannot be blank")
 	}
+
+	doc = new(gobl.Document)
+	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.yaml")
+	require.NoError(t, err)
+	err = yaml.Unmarshal(data, doc)
+	require.NoError(t, err)
+
+	inv := doc.Instance().(*bill.Invoice)
+	inv.Code = "" // blank, which will not be accepted if not a draft
+	require.NoError(t, doc.Calculate())
+	assert.NoError(t, doc.Validate())
+	inv.IssueDate = cal.Date{}
+	err = doc.Validate()
+	if assert.Error(t, err) {
+		// Double check to make sure validation working
+		assert.Contains(t, err.Error(), "issue_date: required")
+	}
+
 }
