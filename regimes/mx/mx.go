@@ -17,8 +17,10 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeySATFormaPago cbc.Key = "sat-forma-pago"
-	KeySATUsoCFDI   cbc.Key = "sat-uso-cfdi"
+	KeySATFormaPago cbc.Key = "sat-forma-pago" // for mapping to c_FormaPago’s codes
+	KeySATUsoCFDI   cbc.Key = "sat-uso-cfdi"   // for mapping to c_UsoCFDI’s codes
+
+	IdentityTypeSAT cbc.Code = "SAT" // for custom codes mapped from identities (e.g. c_ClaveProdServ’s codes)
 )
 
 // New provides the tax region definition

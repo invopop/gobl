@@ -132,3 +132,35 @@ The following GOBL maps to the `KGM` (Kilogram) value of the `ClaveUnidad` field
   ]
 }
 ```
+
+### `ClaveProdServ`
+
+The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item identity type `SAT` to map the identity code directly (no transformation) to the `ClaveProdServ` field.
+
+### Example
+
+The following GOBL maps to the `10101602` (Patos vivos) value of the `ClaveProdServ` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "lines": [
+    {
+      // [...]
+
+      "item": {
+        "name": "Alive ducks",
+        "identities": [
+          {
+            "type": "SAT",
+            "code": "10101602"
+          }
+        ]
+      },
+    }
+  ]
+}
+```

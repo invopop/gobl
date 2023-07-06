@@ -49,6 +49,12 @@ func validInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
 					Unit:  "mutual",
+					Identities: []*org.Identity{
+						{
+							Type: "SAT",
+							Code: "01010101",
+						},
+					},
 				},
 				Taxes: tax.Set{
 					{
@@ -110,6 +116,20 @@ func TestItemValidation(t *testing.T) {
 
 	inv.Lines[0].Item.Unit = ""
 	assertValidationError(t, inv, "lines: (0: (item: (unit: cannot be blank.).).)")
+
+	inv = validInvoice()
+
+	inv.Lines[0].Item.Identities[0].Code = "ABC123"
+	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must have 8 digits.).).)")
+
+	inv.Lines[0].Item.Identities[0].Type = "OTHER"
+	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must be present.).).)")
+
+	inv.Lines[0].Item.Identities = make([]*org.Identity, 0)
+	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must be present.).).)")
+
+	inv.Lines[0].Item.Identities = nil
+	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must be present.).).)")
 }
 
 func TestPaymentInstructionsValidation(t *testing.T) {
@@ -159,6 +179,6 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), expected)
 }
