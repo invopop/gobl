@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -28,7 +29,7 @@ func (i *Identity) Validate() error {
 
 // ValidateWithContext ensures the identity looks valid inside the provided context.
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, i,
+	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.Label),
 		validation.Field(&i.Type),
 		validation.Field(&i.Code, validation.Required),
