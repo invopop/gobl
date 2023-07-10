@@ -1,10 +1,13 @@
 package pay
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -107,7 +110,12 @@ func (t *Terms) CalculateDues(sum num.Amount) {
 
 // Validate ensures that the terms contain everything required.
 func (t *Terms) Validate() error {
-	return validation.ValidateStruct(t,
+	return t.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext ensures that the terms contain everything required.
+func (t *Terms) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithRegime(ctx, t,
 		validation.Field(&t.Key, isValidTermKey),
 		validation.Field(&t.DueDates),
 	)

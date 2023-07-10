@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -23,7 +24,7 @@ type Payment struct {
 
 // ValidateWithContext checks to make sure the payment data looks good
 func (p *Payment) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, p,
+	return tax.ValidateStructWithRegime(ctx, p,
 		validation.Field(&p.Payee),
 		validation.Field(&p.Terms),
 		validation.Field(&p.Advances),

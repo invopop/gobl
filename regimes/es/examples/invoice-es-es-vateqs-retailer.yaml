@@ -15,6 +15,7 @@ supplier:
   addresses:
     - num: "43"
       street: "Calle Mayor"
+      locality: "Madrid"
       region: "Madrid"
       code: "28003"
 

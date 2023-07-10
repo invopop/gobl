@@ -1,6 +1,8 @@
 package org
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -21,7 +23,12 @@ type Identity struct {
 
 // Validate ensures the identity looks valid.
 func (i *Identity) Validate() error {
-	return validation.ValidateStruct(i,
+	return i.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext ensures the identity looks valid inside the provided context.
+func (i *Identity) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Label),
 		validation.Field(&i.Type),
 		validation.Field(&i.Code, validation.Required),

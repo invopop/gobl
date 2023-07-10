@@ -1,8 +1,11 @@
 package org
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -58,7 +61,12 @@ type Coordinates struct {
 
 // Validate checks that an address looks okay.
 func (a *Address) Validate() error {
-	return validation.ValidateStruct(a,
+	return a.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks that an address looks okay in the given context.
+func (a *Address) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithRegime(ctx, a,
 		validation.Field(&a.UUID),
 		validation.Field(&a.Locality, validation.Required),
 		validation.Field(&a.Country),
