@@ -152,7 +152,7 @@ The following GOBL maps to the `10101602` (Patos vivos) value of the `ClaveProdS
       // [...]
 
       "item": {
-        "name": "Alive ducks",
+        "name": "Live ducks",
         "identities": [
           {
             "type": "SAT",
