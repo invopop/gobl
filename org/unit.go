@@ -14,8 +14,7 @@ type Unit cbc.Key
 // many different unit codes in the world, that it's impractical to try and define them
 // all, this is thus a selection of which we think are the most useful.
 const (
-	UnitEmpty  Unit = ``       // No unit defined
-	UnitMutual Unit = `mutual` // Unit agreed between the parties
+	UnitEmpty Unit = `` // No unit defined
 
 	// Measurement units
 	UnitGram         Unit = `g`
@@ -39,7 +38,7 @@ const (
 	UnitHour         Unit = `h`
 	UnitMinute       Unit = `min`
 	UnitPiece        Unit = `piece`
-	UnitEach         Unit = `each`
+	UnitItem         Unit = `item`
 	UnitActivity     Unit = `activity`
 	UnitService      Unit = `service`
 
@@ -88,7 +87,6 @@ type DefUnit struct {
 var UnitDefinitions = []DefUnit{
 	// Recommendations Nº 20
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec20-0
-	{UnitMutual, "Mutually defined", "ZZ"},
 	{UnitGram, "Metric grams", "GRM"},
 	{UnitKilogram, "Metric kilograms", "KGM"},
 	{UnitMetricTon, "Metric tons", "TNE"},
@@ -109,10 +107,10 @@ var UnitDefinitions = []DefUnit{
 	{UnitSecond, "Seconds", "SEC"},
 	{UnitHour, "Hours", "HUR"},
 	{UnitMinute, "Minutes", "MIN"},
-	{UnitPiece, "Pieces", "H87"},
-	{UnitEach, "Each", "EA"},
-	{UnitService, "Service Units", "E48"},
-	{UnitActivity, "Activity", "ACT"},
+	{UnitPiece, "Pieces", "H87"},          // A unit of count defining the number of pieces (piece: a single item, article or exemplar).
+	{UnitItem, "Items", "EA"},             // A unit of count defining the number of items regarded as separate units.
+	{UnitService, "Service Units", "E48"}, // A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).
+	{UnitActivity, "Activity", "ACT"},     // A unit of count defining the number of activities (activity: a unit of work or action).
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21
