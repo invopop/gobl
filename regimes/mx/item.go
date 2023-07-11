@@ -10,7 +10,8 @@ import (
 
 // SAT item identity codes (ClaveProdServ) regular expression.
 var (
-	itemIdentityValidCodeRegexp = regexp.MustCompile(`^\d{8}$`)
+	itemIdentityValidCodeRegexp        = regexp.MustCompile(`^\d{8}$`)
+	itemIdentityNormalizableCodeRegexp = regexp.MustCompile(`^\d{6}$`)
 )
 
 func validateItem(item *org.Item) error {
@@ -25,7 +26,7 @@ func validItemIdentities(value interface{}) error {
 
 	for _, id := range ids {
 		if id.Type == IdentityTypeSAT {
-			if itemIdentityCodeRegexp.MatchString(string(id.Code)) {
+			if itemIdentityValidCodeRegexp.MatchString(string(id.Code)) {
 				return nil
 			}
 			return errors.New("SAT code must have 8 digits")
@@ -33,4 +34,13 @@ func validItemIdentities(value interface{}) error {
 	}
 
 	return errors.New("SAT code must be present")
+}
+
+func normalizeItem(item *org.Item) error {
+	for _, id := range item.Identities {
+		if id.Type == IdentityTypeSAT && itemIdentityNormalizableCodeRegexp.MatchString(string(id.Code)) {
+			id.Code = id.Code + "00"
+		}
+	}
+	return nil
 }
