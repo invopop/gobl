@@ -111,27 +111,6 @@ func TestLineValidation(t *testing.T) {
 	assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).)")
 }
 
-func TestItemValidation(t *testing.T) {
-	inv := validInvoice()
-
-	inv.Lines[0].Item.Unit = ""
-	assertValidationError(t, inv, "lines: (0: (item: (unit: cannot be blank.).).)")
-
-	inv = validInvoice()
-
-	inv.Lines[0].Item.Identities[0].Code = "ABC123"
-	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must have 8 digits.).).)")
-
-	inv.Lines[0].Item.Identities[0].Type = "OTHER"
-	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must be present.).).)")
-
-	inv.Lines[0].Item.Identities = make([]*org.Identity, 0)
-	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must be present.).).)")
-
-	inv.Lines[0].Item.Identities = nil
-	assertValidationError(t, inv, "lines: (0: (item: (identities: SAT code must be present.).).)")
-}
-
 func TestPaymentInstructionsValidation(t *testing.T) {
 	inv := validInvoice()
 

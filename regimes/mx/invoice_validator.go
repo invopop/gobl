@@ -2,7 +2,6 @@ package mx
 
 import (
 	"errors"
-	"regexp"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
@@ -10,9 +9,6 @@ import (
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/validation"
 )
-
-// SAT item identity codes (ClaveProdServ) regular expression.
-var itemIdentityCodeRegexp = regexp.MustCompile(`^\d{8}$`)
 
 type invoiceValidator struct {
 	inv *bill.Invoice
@@ -81,35 +77,7 @@ func (v *invoiceValidator) validLine(value interface{}) error {
 			validation.Required,
 			validation.Skip, // Prevents each tax's `ValidateWithContext` function from being called again.
 		),
-		validation.Field(&line.Item, validation.By(v.validItem)),
 	)
-}
-
-func (v *invoiceValidator) validItem(value interface{}) error {
-	item, _ := value.(*org.Item)
-	if item == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(item,
-		validation.Field(&item.Unit, validation.Required),
-		validation.Field(&item.Identities, validation.By(v.validItemIdentities)),
-	)
-}
-
-func (v *invoiceValidator) validItemIdentities(value interface{}) error {
-	ids, _ := value.([]*org.Identity)
-
-	for _, id := range ids {
-		if id.Type == IdentityTypeSAT {
-			if itemIdentityCodeRegexp.MatchString(string(id.Code)) {
-				return nil
-			}
-			return errors.New("SAT code must have 8 digits")
-		}
-	}
-
-	return errors.New("SAT code must be present")
 }
 
 func (v *invoiceValidator) validPayment(value interface{}) error {
