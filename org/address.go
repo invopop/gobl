@@ -1,8 +1,11 @@
 package org
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -43,22 +46,14 @@ type Address struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Coordinates describes an exact geographical location in the world. We provide support
-// for a set of different options beyond regular latitude and longitude.
-type Coordinates struct {
-	// Decimal latitude coordinate.
-	Latitude float64 `json:"lat,omitempty" jsonschema:"title=Latitude"`
-	// Decimal longitude coordinate.
-	Longitude float64 `json:"lon,omitempty" jsonschema:"title=Longitude"`
-	// Text coordinates compose of three words.
-	W3W string `json:"w3w,omitempty" jsonschema:"title=What 3 Words"`
-	// Single string coordinate based on geohash standard.
-	Geohash string `json:"geohash,omitempty" jsonschema:"title=Geohash"`
-}
-
 // Validate checks that an address looks okay.
 func (a *Address) Validate() error {
-	return validation.ValidateStruct(a,
+	return a.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks that an address looks okay in the given context.
+func (a *Address) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithRegime(ctx, a,
 		validation.Field(&a.UUID),
 		validation.Field(&a.Locality, validation.Required),
 		validation.Field(&a.Country),

@@ -1,7 +1,10 @@
 package org
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
@@ -37,7 +40,12 @@ type Image struct {
 
 // Validate ensures the details on the image look okay.
 func (i *Image) Validate() error {
-	return validation.ValidateStruct(i,
+	return i.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext ensures the details on the image look okay inside the provided context.
+func (i *Image) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.URL, is.URL),
 		validation.Field(&i.Height, validation.Min(1), validation.Max(2048)),

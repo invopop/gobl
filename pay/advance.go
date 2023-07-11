@@ -44,15 +44,11 @@ func (a *Advance) Validate() error {
 
 // ValidateWithContext checks the advance looks okay inside the context.
 func (a *Advance) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, a,
+	return tax.ValidateStructWithRegime(ctx, a,
 		validation.Field(&a.Amount, validation.Required),
 		validation.Field(&a.Key, HasValidMeansKey),
 		validation.Field(&a.Description, validation.Required),
 	)
-	if err == nil {
-		err = tax.ValidateInRegime(ctx, a)
-	}
-	return err
 }
 
 // CalculateFrom will update the amount using the rate of the provided

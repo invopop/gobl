@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/internal/here"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )

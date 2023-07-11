@@ -1,7 +1,10 @@
 package org
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -28,7 +31,12 @@ type Inbox struct {
 
 // Validate ensures the inbox's fields look good.
 func (i *Inbox) Validate() error {
-	return validation.ValidateStruct(i,
+	return i.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext ensures the inbox's fields look good inside the provided context.
+func (i *Inbox) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Key, validation.Required),
 		validation.Field(&i.Role),

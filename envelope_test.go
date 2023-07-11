@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/invopop/yaml"
@@ -163,7 +164,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 func TestEnvelopeComplete(t *testing.T) {
 	e := new(gobl.Envelope)
 
-	data, err := ioutil.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
