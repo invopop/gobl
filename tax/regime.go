@@ -312,6 +312,16 @@ func ValidateInRegime(ctx context.Context, obj interface{}) error {
 	return r.ValidateObject(obj)
 }
 
+// ValidateStructWithRegime wraps around the standard validation.ValidateStructWithContext
+// method to add an additional check for the tax regime.
+func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*validation.FieldRules) error {
+	// First run regular validation
+	if err := validation.ValidateStructWithContext(ctx, obj, fields...); err != nil {
+		return err
+	}
+	return ValidateInRegime(ctx, obj)
+}
+
 // Validate ensures that the zone looks correct.
 func (z *Zone) Validate() error {
 	err := validation.ValidateStruct(z,

@@ -169,7 +169,7 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 			inv.Type = InvoiceTypeCorrective
 			inv.Invert()
 		} else {
-			return errors.New("credit not supported by regime")
+			return errors.New("credit note not supported by regime")
 		}
 		inv.Payment.ResetAdvances()
 	} else if o.Debit {
@@ -179,13 +179,13 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 			inv.Type = InvoiceTypeDebitNote
 			inv.Empty()
 		} else {
-			return errors.New("debit not supported by regime")
+			return errors.New("debit note not supported by regime")
 		}
 	} else {
 		if r.Preceding.HasType(InvoiceTypeCorrective) {
 			inv.Type = InvoiceTypeCorrective
 		} else {
-			return errors.New("correction not supported by regime")
+			return fmt.Errorf("corrective invoice type not supported by regime, try credit or debit")
 		}
 	}
 

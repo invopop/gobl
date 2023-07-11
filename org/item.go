@@ -1,9 +1,13 @@
 package org
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 
 	"github.com/invopop/validation"
@@ -32,7 +36,7 @@ type Item struct {
 	// Detailed description
 	Description string `json:"desc,omitempty"`
 	// Currency used for the item's price.
-	Currency string `json:"currency,omitempty" jsonschema:"title=Currency"`
+	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.
 	Price num.Amount `json:"price" jsonschema:"title=Price"`
 	// Unit of measure.
@@ -43,13 +47,19 @@ type Item struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate checks that an address looks okay.
+// Validate checks that the Item looks okay.
 func (i *Item) Validate() error {
-	return validation.ValidateStruct(i,
+	return i.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks that the Item looks okay inside the provided context.
+func (i *Item) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),
 		validation.Field(&i.Identities),
+		validation.Field(&i.Currency),
 		validation.Field(&i.Price, validation.Required),
 		validation.Field(&i.Unit),
 		validation.Field(&i.Origin),

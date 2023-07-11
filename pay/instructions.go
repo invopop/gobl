@@ -100,16 +100,12 @@ func (i *Instructions) Validate() error {
 
 // ValidateWithContext ensures the fields provided in the instructions are valid.
 func (i *Instructions) ValidateWithContext(ctx context.Context) error {
-	err := validation.ValidateStructWithContext(ctx, i,
+	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.Key, validation.Required, HasValidMeansKey),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),
 		validation.Field(&i.Online),
 	)
-	if err == nil {
-		err = tax.ValidateInRegime(ctx, i)
-	}
-	return err
 }
 
 // JSONSchemaExtend extends the JSONSchema for the Instructions type.

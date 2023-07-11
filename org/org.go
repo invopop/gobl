@@ -18,5 +18,6 @@ func init() {
 		Registration{},
 		Telephone{},
 		Unit(""),
+		Website{},
 	)
 }

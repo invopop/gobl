@@ -44,7 +44,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Debit, bill.WithReason("should fail"))
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "debit not supported")
+	assert.Contains(t, err.Error(), "debit note not supported by regime")
 
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct()
@@ -90,7 +90,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceCOForCorrection(t)
 	err = i.Correct(bill.WithStamps(stamps))
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "correction not supported by regime")
+	assert.Contains(t, err.Error(), "corrective invoice type not supported by regime, try credit or debit")
 
 	i = testInvoiceCOForCorrection(t)
 	err = i.Correct(bill.Credit, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
