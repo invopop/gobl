@@ -12,5 +12,5 @@
       "description": "Text identifier to be used instead of a code for a more verbose but readable identifier."
     }
   },
-  "$comment": "Generated with GOBL v0.51.0"
+  "$comment": "Generated with GOBL v0.51.2"
 }

@@ -37,7 +37,7 @@
           "description": "Detailed description"
         },
         "currency": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "Currency used for the item's price."
         },
@@ -70,5 +70,5 @@
       "description": "Item is used to describe a single product or service."
     }
   },
-  "$comment": "Generated with GOBL v0.51.0"
+  "$comment": "Generated with GOBL v0.51.2"
 }

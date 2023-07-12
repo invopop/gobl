@@ -125,5 +125,5 @@
       "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
     }
   },
-  "$comment": "Generated with GOBL v0.51.0"
+  "$comment": "Generated with GOBL v0.51.2"
 }

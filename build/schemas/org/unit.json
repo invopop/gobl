@@ -6,10 +6,6 @@
     "Unit": {
       "anyOf": [
         {
-          "const": "mutual",
-          "description": "Mutually defined"
-        },
-        {
           "const": "g",
           "description": "Metric grams"
         },
@@ -94,8 +90,8 @@
           "description": "Pieces"
         },
         {
-          "const": "each",
-          "description": "Each"
+          "const": "item",
+          "description": "Items"
         },
         {
           "const": "service",
@@ -223,5 +219,5 @@
       "description": "Unit describes how the quantity of the product should be interpreted."
     }
   },
-  "$comment": "Generated with GOBL v0.51.0"
+  "$comment": "Generated with GOBL v0.51.2"
 }
