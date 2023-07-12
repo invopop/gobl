@@ -18,32 +18,19 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
-				Unit: "kg",
 				Identities: []*org.Identity{
 					{Code: "12345678", Type: "SAT"},
 				},
 			},
-		},
-		{
-			name: "missing unit",
-			item: &org.Item{
-				Identities: []*org.Identity{
-					{Code: "12345678", Type: "SAT"},
-				},
-			},
-			err: "unit: cannot be blank",
 		},
 		{
 			name: "missing identities",
-			item: &org.Item{
-				Unit: "kg",
-			},
-			err: "identities: SAT code must be present",
+			item: &org.Item{},
+			err:  "identities: SAT code must be present",
 		},
 		{
 			name: "empty identities",
 			item: &org.Item{
-				Unit:       "kg",
 				Identities: []*org.Identity{},
 			},
 			err: "identities: SAT code must be present",
@@ -51,7 +38,6 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "missing SAT identity",
 			item: &org.Item{
-				Unit: "kg",
 				Identities: []*org.Identity{
 					{Type: "GTIN", Code: "12345678"},
 				},
@@ -61,7 +47,6 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "SAT in invalid format",
 			item: &org.Item{
-				Unit: "kg",
 				Identities: []*org.Identity{
 					{Type: "SAT", Code: "ABC2"},
 				},

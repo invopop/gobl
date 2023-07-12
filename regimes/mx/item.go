@@ -16,7 +16,6 @@ var (
 
 func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
-		validation.Field(&item.Unit, validation.Required),
 		validation.Field(&item.Identities, validation.By(validItemIdentities)),
 	)
 }
