@@ -38,6 +38,9 @@ const (
 	UnitHour         Unit = `h`
 	UnitMinute       Unit = `min`
 	UnitPiece        Unit = `piece`
+	UnitItem         Unit = `item`
+	UnitActivity     Unit = `activity`
+	UnitService      Unit = `service`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -104,7 +107,10 @@ var UnitDefinitions = []DefUnit{
 	{UnitSecond, "Seconds", "SEC"},
 	{UnitHour, "Hours", "HUR"},
 	{UnitMinute, "Minutes", "MIN"},
-	{UnitPiece, "Pieces", "H87"},
+	{UnitPiece, "Pieces", "H87"},          // A unit of count defining the number of pieces (piece: a single item, article or exemplar).
+	{UnitItem, "Items", "EA"},             // A unit of count defining the number of items regarded as separate units.
+	{UnitService, "Service Units", "E48"}, // A unit of count defining the number of service units (service unit: defined period / property / facility / utility of supply).
+	{UnitActivity, "Activity", "ACT"},     // A unit of count defining the number of activities (activity: a unit of work or action).
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21

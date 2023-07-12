@@ -90,6 +90,7 @@ func (v *invoiceValidator) validPayment(value interface{}) error {
 			validation.Required,
 			validation.By(v.validatePayInstructions),
 		),
+		validation.Field(&pay.Terms, validation.By(v.validatePayTerms)),
 	)
 }
 
@@ -101,6 +102,17 @@ func (v *invoiceValidator) validatePayInstructions(value interface{}) error {
 
 	return validation.ValidateStruct(instr,
 		validation.Field(&instr.Key, isValidPaymentMeanKey),
+	)
+}
+
+func (v *invoiceValidator) validatePayTerms(value interface{}) error {
+	terms, _ := value.(*pay.Terms)
+	if terms == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(terms,
+		validation.Field(&terms.Notes, validation.Length(0, 1000)),
 	)
 }
 

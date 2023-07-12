@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -17,8 +18,10 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeySATFormaPago cbc.Key = "sat-forma-pago"
-	KeySATUsoCFDI   cbc.Key = "sat-uso-cfdi"
+	KeySATFormaPago cbc.Key = "sat-forma-pago" // for mapping to c_FormaPago’s codes
+	KeySATUsoCFDI   cbc.Key = "sat-uso-cfdi"   // for mapping to c_UsoCFDI’s codes
+
+	IdentityTypeSAT cbc.Code = "SAT" // for custom codes mapped from identities (e.g. c_ClaveProdServ’s codes)
 )
 
 // New provides the tax region definition
@@ -46,6 +49,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Item:
+		return validateItem(obj)
 	}
 	return nil
 }
@@ -55,6 +60,8 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
+	case *org.Item:
+		return normalizeItem(obj)
 	}
 	return nil
 }

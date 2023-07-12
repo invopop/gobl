@@ -11,7 +11,7 @@ Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for their 
 
 ### `UsoCFDI`
 
-The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. The following table list all the supported values and how GOBL will map them from the invoice's tax tags:
+The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. The following table lists all the supported values and how GOBL will map them from the invoice's tax tags:
 
 | Code | Name | GOBL Tax Tag |
 | --- | --- | --- |
@@ -60,7 +60,7 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
 
 ### `FormaPago`
 
-The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following list list all the supported values and how GOBL will map them from the invoice's payment instructions key:
+The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following table lists all the supported values and how GOBL will map them from the invoice's payment instructions key:
 
 | Code | Name | GOBL Payment Instructions Key |
 | --- | --- | --- |
@@ -101,6 +101,66 @@ The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaP
     "instructions": {
       "key": "online+wallet"
     }
-  },
+  }
+}
+```
+
+### `ClaveUnidad`
+
+The CFDI’s `ClaveUnidad` field specifies the unit in which the quantity of an invoice's line is given. These are UNECE codes that GOBL will map directly from the invoice's line item unit. See the [source code](../../org/unit.go) for the full list of supported units with its UNECE codes.
+
+#### Example
+
+The following GOBL maps to the `KGM` (Kilogram) value of the `ClaveUnidad` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "lines": [
+    {
+      // [...]
+
+      "item": {
+        "name": "Jasmine rice",
+        "unit": "kg",
+        "price": "1.27"
+      },
+    }
+  ]
+}
+```
+
+### `ClaveProdServ`
+
+The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item identity type `SAT` to map the identity code directly (no transformation) to the `ClaveProdServ` field.
+
+### Example
+
+The following GOBL maps to the `10101602` (Patos vivos) value of the `ClaveProdServ` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "lines": [
+    {
+      // [...]
+
+      "item": {
+        "name": "Live ducks",
+        "identities": [
+          {
+            "type": "SAT",
+            "code": "10101602"
+          }
+        ]
+      },
+    }
+  ]
 }
 ```

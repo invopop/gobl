@@ -1,6 +1,7 @@
 package mx_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
@@ -47,6 +48,13 @@ func validInvoice() *bill.Invoice {
 				Item: &org.Item{
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
+					Unit:  "mutual",
+					Identities: []*org.Identity{
+						{
+							Type: "SAT",
+							Code: "01010101",
+						},
+					},
 				},
 				Taxes: tax.Set{
 					{
@@ -103,7 +111,7 @@ func TestLineValidation(t *testing.T) {
 	assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).)")
 }
 
-func TestPaymentValidation(t *testing.T) {
+func TestPaymentInstructionsValidation(t *testing.T) {
 	inv := validInvoice()
 
 	inv.Payment.Instructions.Key = "direct-debit"
@@ -122,6 +130,18 @@ func TestPaymentValidation(t *testing.T) {
 	assertValidationError(t, inv, "payment: cannot be blank")
 }
 
+func TestPaymentTermsValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Payment.Terms = &pay.Terms{}
+
+	inv.Payment.Terms.Notes = strings.Repeat("x", 1001)
+	assertValidationError(t, inv, "payment: (terms: (notes: the length must be no more than 1000.).)")
+
+	inv.Payment.Terms.Notes = strings.Repeat("x", 1000)
+	require.NoError(t, inv.Validate())
+}
+
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
@@ -138,6 +158,6 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), expected)
 }
