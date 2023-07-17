@@ -216,8 +216,8 @@ func TestRemoveIncludedTax3(t *testing.T) {
 
 	i2 := i.RemoveIncludedTaxes()
 	require.NoError(t, i2.Calculate())
-	l0 := i2.Lines[0]
-	assert.Equal(t, "223.2642", l0.Total.String())
+	assert.Equal(t, "223.2642", i2.Lines[0].Total.String())
+	assert.Equal(t, "106.19472", i2.Lines[2].Total.String()) // more accuracy
 
 	assert.Equal(t, "803.00", i2.Totals.Sum.String())
 	assert.Equal(t, "803.00", i2.Totals.Total.String())
