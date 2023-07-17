@@ -209,6 +209,8 @@ func (inv *Invoice) Calculate() error {
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
 // the tax included in the invoice, and remove them.
 //
+// Be sure to run the Calculate method on the results!
+//
 // To do this we need to figure out the "accuracy" or precision to use when removing the included
 // taxes so that we can avoid rounding errors. By default we add a single decimal place to all
 // numbers, but in the case of line items we take the length (Log 10) of the *quantity*.

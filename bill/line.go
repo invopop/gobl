@@ -100,6 +100,9 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 
 	// adjust the accuracy according to the line's quantity
 	ql := math.Log10(l2.Quantity.Float64()) + 1 // length of number
+	if ql < 2 {
+		ql = 2 // minimum accuracy
+	}
 	accuracy := uint32(ql)
 
 	l2i.Price = l2i.Price.Upscale(accuracy).Remove(*rate.Percent)
