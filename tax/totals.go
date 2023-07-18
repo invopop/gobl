@@ -142,22 +142,22 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 					continue
 				}
 
-				// update the price scale, add two 0s, this will be removed later.
-				tl.price = tl.price.Rescale(tl.price.Exp() + 2)
-				tl.price = tl.price.Subtract(c.Percent.From(tl.price))
+				// update the total's scale, add two 0s, this will be removed later.
+				tl.total = tl.total.Upscale(2)
+				tl.total = tl.total.Remove(*c.Percent)
 			}
 		}
 	}
 
-	// Go through each line and add the price to the base of each tax
+	// Go through each line and add the total to the base of each tax
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
 			if c.Percent == nil && c.Rate.IsEmpty() {
 				continue // not much to do here!
 			}
 			rt := t.rateTotalFor(c, tc.Zero)
-			rt.Base = rt.Base.MatchPrecision(tl.price)
-			rt.Base = rt.Base.Add(tl.price)
+			// rt.Base = rt.Base.MatchPrecision(tl.total)
+			rt.Base = rt.Base.Add(tl.total)
 		}
 	}
 
@@ -266,7 +266,7 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 
 // taxLine is used to replace
 type taxLine struct {
-	price num.Amount
+	total num.Amount
 	taxes Set
 }
 
@@ -274,7 +274,7 @@ func mapTaxLines(lines []TaxableLine) []*taxLine {
 	tls := make([]*taxLine, len(lines))
 	for i, v := range lines {
 		tls[i] = &taxLine{
-			price: v.GetTotal(),
+			total: v.GetTotal(),
 			taxes: v.GetTaxes(),
 		}
 	}

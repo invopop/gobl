@@ -338,7 +338,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		t.Sum = t.Sum.Add(l.Total)
 		tls = append(tls, l)
 	}
-	t.Total = t.Sum
+	t.Total = t.Sum.Rescale(zero.Exp())
 
 	// Subtract discounts
 	discounts := zero
@@ -354,6 +354,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		tls = append(tls, l)
 	}
 	if !discounts.IsZero() {
+		discounts = discounts.Rescale(zero.Exp())
 		t.Discount = &discounts
 		t.Total = t.Total.Subtract(discounts)
 	}
@@ -372,6 +373,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		tls = append(tls, l)
 	}
 	if !charges.IsZero() {
+		charges = charges.Rescale(zero.Exp())
 		t.Charge = &charges
 		t.Total = t.Total.Add(charges)
 	}
