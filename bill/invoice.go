@@ -351,11 +351,11 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			}
 			l.Amount = l.Percent.Of(*l.Base)
 		}
+		discounts = discounts.MatchPrecision(l.Amount)
 		discounts = discounts.Add(l.Amount)
 		tls = append(tls, l)
 	}
 	if !discounts.IsZero() {
-		discounts = discounts.Rescale(zero.Exp())
 		t.Discount = &discounts
 		t.Total = t.Total.Subtract(discounts)
 	}
@@ -370,11 +370,11 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			}
 			l.Amount = l.Percent.Of(*l.Base)
 		}
+		charges = charges.MatchPrecision(l.Amount)
 		charges = charges.Add(l.Amount)
 		tls = append(tls, l)
 	}
 	if !charges.IsZero() {
-		charges = charges.Rescale(zero.Exp())
 		t.Charge = &charges
 		t.Total = t.Total.Add(charges)
 	}
