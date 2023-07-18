@@ -81,7 +81,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 						},
@@ -149,7 +149,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(16, 2),
+								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
 							},
 						},
@@ -217,7 +217,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 						},
@@ -259,7 +259,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(25000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(5250, 2),
 							},
 						},
@@ -310,7 +310,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard.With(es.TaxRateEquivalence),
 								Base:    num.MakeAmount(20000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(4200, 2),
 								Surcharge: &tax.RateTotalSurcharge{
 									Percent: num.MakePercentage(52, 3),
@@ -320,7 +320,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(15000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(3150, 2),
 							},
 						},
@@ -404,13 +404,13 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 							{
 								Key:     common.TaxRateReduced,
 								Base:    num.MakeAmount(15000, 2),
-								Percent: num.NewPercentage(10, 2),
+								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1500, 2),
 							},
 						},
@@ -500,13 +500,13 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(826446, 4),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(173554, 4),
 							},
 							{
 								Key:     common.TaxRateReduced,
 								Base:    num.MakeAmount(1363636, 4),
-								Percent: num.NewPercentage(10, 2),
+								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(136364, 4),
 							},
 						},
@@ -598,13 +598,13 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 							{
 								Key:     common.TaxRateReduced,
 								Base:    num.MakeAmount(15000, 2),
-								Percent: num.NewPercentage(10, 2),
+								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1500, 2),
 							},
 						},
@@ -617,7 +617,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     es.TaxRatePro,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(15, 2),
+								Percent: num.NewPercentage(150, 3),
 								Amount:  num.MakeAmount(1500, 2),
 							},
 						},
@@ -664,13 +664,13 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(826446, 4),
-								Percent: num.NewPercentage(21, 2),
+								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(173554, 4),
 							},
 							{
 								Key:     common.TaxRateReduced,
 								Base:    num.MakeAmount(1363636, 4),
-								Percent: num.NewPercentage(10, 2),
+								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(136364, 4),
 							},
 						},
@@ -683,7 +683,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     es.TaxRatePro,
 								Base:    num.MakeAmount(826446, 4),
-								Percent: num.NewPercentage(15, 2),
+								Percent: num.NewPercentage(150, 3),
 								Amount:  num.MakeAmount(123967, 4),
 							},
 						},
@@ -878,7 +878,7 @@ func TestTotalCalculate(t *testing.T) {
 							{
 								Key:     common.TaxRateStandard,
 								Base:    num.MakeAmount(20000, 2),
-								Percent: num.NewPercentage(22, 2),
+								Percent: num.NewPercentage(220, 3),
 								Amount:  num.MakeAmount(4400, 2),
 							},
 						},

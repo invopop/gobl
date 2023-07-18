@@ -60,19 +60,19 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(2012, 9, 1),
-						Percent: num.MakePercentage(21, 2),
+						Percent: num.MakePercentage(210, 3),
 					},
 					{
 						Since:   cal.NewDate(2010, 7, 1),
-						Percent: num.MakePercentage(18, 2),
+						Percent: num.MakePercentage(180, 3),
 					},
 					{
 						Since:   cal.NewDate(1995, 1, 1),
-						Percent: num.MakePercentage(16, 2),
+						Percent: num.MakePercentage(160, 3),
 					},
 					{
 						Since:   cal.NewDate(1993, 1, 1),
-						Percent: num.MakePercentage(15, 2),
+						Percent: num.MakePercentage(150, 3),
 					},
 				},
 			},
@@ -85,13 +85,13 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:     cal.NewDate(2012, 9, 1),
-						Percent:   num.MakePercentage(21, 2),
+						Percent:   num.MakePercentage(210, 3),
 						Surcharge: num.NewPercentage(52, 3),
 					},
 					{
 						Since:     cal.NewDate(2010, 7, 1),
-						Percent:   num.MakePercentage(18, 2),
-						Surcharge: num.NewPercentage(4, 2),
+						Percent:   num.MakePercentage(180, 3),
+						Surcharge: num.NewPercentage(40, 3),
 					},
 				},
 			},
@@ -104,19 +104,19 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(2012, 9, 1),
-						Percent: num.MakePercentage(10, 2),
+						Percent: num.MakePercentage(100, 3),
 					},
 					{
 						Since:   cal.NewDate(2010, 7, 1),
-						Percent: num.MakePercentage(8, 2),
+						Percent: num.MakePercentage(80, 3),
 					},
 					{
 						Since:   cal.NewDate(1995, 1, 1),
-						Percent: num.MakePercentage(7, 2),
+						Percent: num.MakePercentage(70, 3),
 					},
 					{
 						Since:   cal.NewDate(1993, 1, 1),
-						Percent: num.MakePercentage(6, 2),
+						Percent: num.MakePercentage(60, 3),
 					},
 				},
 			},
@@ -129,13 +129,13 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:     cal.NewDate(2012, 9, 1),
-						Percent:   num.MakePercentage(10, 2),
+						Percent:   num.MakePercentage(100, 3),
 						Surcharge: num.NewPercentage(14, 3),
 					},
 					{
 						Since:     cal.NewDate(2010, 7, 1),
-						Percent:   num.MakePercentage(8, 2),
-						Surcharge: num.NewPercentage(1, 2),
+						Percent:   num.MakePercentage(80, 3),
+						Surcharge: num.NewPercentage(10, 3),
 					},
 				},
 			},
@@ -148,11 +148,11 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(1995, 1, 1),
-						Percent: num.MakePercentage(4, 2),
+						Percent: num.MakePercentage(40, 3),
 					},
 					{
 						Since:   cal.NewDate(1993, 1, 1),
-						Percent: num.MakePercentage(3, 2),
+						Percent: num.MakePercentage(30, 3),
 					},
 				},
 			},
@@ -165,7 +165,7 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:     cal.NewDate(1995, 1, 1),
-						Percent:   num.MakePercentage(4, 2),
+						Percent:   num.MakePercentage(40, 3),
 						Surcharge: num.NewPercentage(5, 3),
 					},
 				},
@@ -347,19 +347,19 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(2015, 7, 12),
-						Percent: num.MakePercentage(15, 2),
+						Percent: num.MakePercentage(150, 3),
 					},
 					{
 						Since:   cal.NewDate(2015, 1, 1),
-						Percent: num.MakePercentage(19, 2),
+						Percent: num.MakePercentage(190, 3),
 					},
 					{
 						Since:   cal.NewDate(2012, 9, 1),
-						Percent: num.MakePercentage(21, 2),
+						Percent: num.MakePercentage(210, 3),
 					},
 					{
 						Since:   cal.NewDate(2007, 1, 1),
-						Percent: num.MakePercentage(15, 2),
+						Percent: num.MakePercentage(150, 3),
 					},
 				},
 			},
@@ -372,7 +372,7 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(2007, 1, 1),
-						Percent: num.MakePercentage(7, 2),
+						Percent: num.MakePercentage(70, 3),
 					},
 				},
 			},
@@ -385,7 +385,7 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(2007, 1, 1),
-						Percent: num.MakePercentage(19, 2),
+						Percent: num.MakePercentage(190, 3),
 					},
 				},
 			},
@@ -398,7 +398,7 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Since:   cal.NewDate(2007, 1, 1),
-						Percent: num.MakePercentage(1, 2),
+						Percent: num.MakePercentage(10, 3),
 					},
 				},
 			},
