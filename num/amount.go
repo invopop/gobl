@@ -104,18 +104,19 @@ func (a Amount) Add(a2 Amount) Amount {
 // Subtract takes away the amount provided from the base.
 func (a Amount) Subtract(a2 Amount) Amount {
 	a2 = a2.Rescale(a.exp)
-	return Amount{value: a.value - a2.value, exp: a.exp}
+	return Amount{a.value - a2.value, a.exp}
 }
 
-// Multiply our base amount by the provided amount.
+// Multiply the amount by the provided amount.
 func (a Amount) Multiply(a2 Amount) Amount {
+	v := (float64(a.value) * float64(a2.value)) / float64(intPow(10, a2.exp))
 	return Amount{
-		value: (a.value * a2.value) / intPow(10, a2.exp),
+		value: int64(math.Round(v)),
 		exp:   a.exp,
 	}
 }
 
-// Divide our base amount by the provided amount. We use floating point to do the actual division
+// Divide the amount by the provided amount. Floating points are used for the actual division
 // and then round again to get an int. This prevents rounding errors, but if you want true division
 // with a base and a remainder, use the Split method.
 func (a Amount) Divide(a2 Amount) Amount {
@@ -189,17 +190,17 @@ func (a Amount) MatchPrecision(a2 Amount) Amount {
 
 // Upscale increases the accuracy of the amount by rescaling the exponent
 // by the provided amount.
-func (a Amount) Upscale(accuracy uint32) Amount {
-	return a.Rescale(a.Exp() + accuracy)
+func (a Amount) Upscale(increase uint32) Amount {
+	return a.Rescale(a.Exp() + increase)
 }
 
 // Downscale decreases the amount's exponent by the provided accuracy.
-func (a Amount) Downscale(accuracy uint32) Amount {
+func (a Amount) Downscale(decrease uint32) Amount {
 	var x uint32
-	if accuracy > a.Exp() {
+	if decrease > a.Exp() {
 		x = 0
 	} else {
-		x = a.Exp() - accuracy
+		x = a.Exp() - decrease
 	}
 	return a.Rescale(x)
 }
@@ -207,8 +208,7 @@ func (a Amount) Downscale(accuracy uint32) Amount {
 // Remove takes the provided percentage away from the amount assuming it was
 // already applied previously.
 func (a Amount) Remove(percent Percentage) Amount {
-	p := percent.From(a)
-	return a.Subtract(p)
+	return a.Divide(percent.Factor())
 }
 
 // Invert the value.

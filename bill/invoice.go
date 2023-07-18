@@ -335,10 +335,11 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		l.calculate()
 
 		// Basic sum
+		t.Sum = t.Sum.MatchPrecision(l.Total)
 		t.Sum = t.Sum.Add(l.Total)
 		tls = append(tls, l)
 	}
-	t.Total = t.Sum
+	t.Total = t.Sum.Rescale(zero.Exp())
 
 	// Subtract discounts
 	discounts := zero
@@ -350,6 +351,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			}
 			l.Amount = l.Percent.Of(*l.Base)
 		}
+		discounts = discounts.MatchPrecision(l.Amount)
 		discounts = discounts.Add(l.Amount)
 		tls = append(tls, l)
 	}
@@ -368,6 +370,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			}
 			l.Amount = l.Percent.Of(*l.Base)
 		}
+		charges = charges.MatchPrecision(l.Amount)
 		charges = charges.Add(l.Amount)
 		tls = append(tls, l)
 	}
@@ -397,15 +400,16 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	// Remove any included taxes from the total.
 	ct := t.Taxes.Category(pit)
 	if ct != nil {
-		t.TaxIncluded = &ct.Amount
-		t.Total = t.Total.Subtract(ct.Amount)
+		ti := ct.Amount.Rescale(zero.Exp())
+		t.TaxIncluded = &ti
+		t.Total = t.Total.Subtract(ti)
 	}
 
 	// Finally calculate the total with *all* the taxes.
 	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
 		t.Tax = zero
 	} else {
-		t.Tax = t.Taxes.Sum
+		t.Tax = t.Taxes.Sum.Rescale(zero.Exp())
 	}
 	t.TotalWithTax = t.Total.Add(t.Tax)
 	t.Payable = t.TotalWithTax
