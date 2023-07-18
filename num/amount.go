@@ -330,16 +330,6 @@ func intPow(base int, exp uint32) int64 { // nolint:unparam
 	return out
 }
 
-func maxUint32(as ...uint32) uint32 {
-	var m uint32
-	for _, a := range as {
-		if a > m {
-			m = a
-		}
-	}
-	return m
-}
-
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Amount) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
