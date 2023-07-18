@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/num"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPercentage(t *testing.T) {
@@ -55,9 +56,7 @@ func TestPercentageOf(t *testing.T) {
 	p := num.MakePercentage(170, 3)
 	a := num.MakeAmount(10000, 2)
 	r := p.Of(a)
-	if r.String() != "17.00" {
-		t.Errorf("unexpected percentage of result, got: %v", r.String())
-	}
+	assert.Equal(t, "17.000", r.String())
 }
 
 func TestFactor(t *testing.T) {
@@ -73,9 +72,7 @@ func TestPercentageFrom(t *testing.T) {
 	p := num.MakePercentage(160, 3)
 	a := num.MakeAmount(11600, 2)
 	x := p.From(a)
-	if x.String() != "16.00" {
-		t.Errorf("unexpected percentage from result: %v", x.String())
-	}
+	assert.Equal(t, "16.000", x.String())
 }
 
 func TestPercentageRescale(t *testing.T) {

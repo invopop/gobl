@@ -99,8 +99,11 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	l2i := *l.Item
 
 	// adjust the accuracy according to the line's quantity
-	ql := math.Log10(l2.Quantity.Float64()) + 2 // length of number
+	ql := math.Log10(l2.Quantity.Float64()) + 1 // length of number
 	accuracy := uint32(ql)                      // + l2.Quantity.Exp()
+	if accuracy < 2 {
+		accuracy = 2
+	}
 
 	l2.Total = l2.Total.Upscale(accuracy).Remove(*rate.Percent)
 	l2.Sum = l2.Sum.Upscale(accuracy).Remove(*rate.Percent)

@@ -187,15 +187,15 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 	ct.Amount = zero
 	for _, rt := range ct.Rates {
 		if rt.Percent == nil {
-			rt.Base = rt.Base.Rescale(zero.Exp())
+			//rt.Base = rt.Base.Rescale(zero.Exp())
 			rt.Amount = zero
 			continue // exempt, nothing else to do
 		}
-		rt.Amount = rt.Percent.Of(rt.Base).Rescale(zero.Exp())
-		rt.Base = rt.Base.Rescale(zero.Exp()) // after amount calculation!
+		rt.Amount = rt.Percent.Of(rt.Base) //.Rescale(zero.Exp())
+		//rt.Base = rt.Base.Rescale(zero.Exp()) // after amount calculation!
 		ct.Amount = ct.Amount.Add(rt.Amount)
 		if rt.Surcharge != nil {
-			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base).Rescale(zero.Exp())
+			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base) //.Rescale(zero.Exp())
 			if ct.Surcharge == nil {
 				ct.Surcharge = &zero
 			}

@@ -105,7 +105,7 @@ var categories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Percent: num.MakePercentage(0, 3),
+						Percent: num.MakePercentage(0, 2),
 					},
 				},
 			},
@@ -117,7 +117,7 @@ var categories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Percent: num.MakePercentage(40, 3),
+						Percent: num.MakePercentage(4, 2),
 					},
 				},
 			},
@@ -129,7 +129,7 @@ var categories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Percent: num.MakePercentage(50, 3),
+						Percent: num.MakePercentage(5, 2),
 					},
 				},
 			},
@@ -141,7 +141,7 @@ var categories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Percent: num.MakePercentage(100, 3),
+						Percent: num.MakePercentage(10, 2),
 					},
 				},
 			},
@@ -153,7 +153,7 @@ var categories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Percent: num.MakePercentage(220, 3),
+						Percent: num.MakePercentage(22, 2),
 					},
 				},
 			},

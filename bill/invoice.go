@@ -399,15 +399,16 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	// Remove any included taxes from the total.
 	ct := t.Taxes.Category(pit)
 	if ct != nil {
-		t.TaxIncluded = &ct.Amount
-		t.Total = t.Total.Subtract(ct.Amount)
+		ti := ct.Amount.Rescale(zero.Exp())
+		t.TaxIncluded = &ti
+		t.Total = t.Total.Subtract(ti)
 	}
 
 	// Finally calculate the total with *all* the taxes.
 	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
 		t.Tax = zero
 	} else {
-		t.Tax = t.Taxes.Sum
+		t.Tax = t.Taxes.Sum.Rescale(zero.Exp())
 	}
 	t.TotalWithTax = t.Total.Add(t.Tax)
 	t.Payable = t.TotalWithTax

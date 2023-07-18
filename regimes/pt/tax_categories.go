@@ -77,16 +77,16 @@ var taxCategories = []*tax.Category{
 					{
 						Zones:   []l10n.Code{ZoneAzores},
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(160, 3),
+						Percent: num.MakePercentage(16, 2),
 					},
 					{
 						Zones:   []l10n.Code{ZoneMadeira},
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(220, 3),
+						Percent: num.MakePercentage(22, 2),
 					},
 					{
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(230, 3),
+						Percent: num.MakePercentage(23, 2),
 					},
 				},
 				Codes: cbc.CodeSet{
@@ -103,16 +103,16 @@ var taxCategories = []*tax.Category{
 					{
 						Zones:   []l10n.Code{ZoneAzores},
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(90, 3),
+						Percent: num.MakePercentage(9, 2),
 					},
 					{
 						Zones:   []l10n.Code{ZoneMadeira},
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(120, 3),
+						Percent: num.MakePercentage(12, 2),
 					},
 					{
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(130, 3),
+						Percent: num.MakePercentage(13, 2),
 					},
 				},
 				Codes: cbc.CodeSet{
@@ -129,16 +129,16 @@ var taxCategories = []*tax.Category{
 					{
 						Zones:   []l10n.Code{ZoneAzores},
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(40, 3),
+						Percent: num.MakePercentage(4, 2),
 					},
 					{
 						Zones:   []l10n.Code{ZoneMadeira},
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(50, 3),
+						Percent: num.MakePercentage(5, 2),
 					},
 					{
 						Since:   cal.NewDate(2011, 1, 1),
-						Percent: num.MakePercentage(60, 3),
+						Percent: num.MakePercentage(6, 2),
 					},
 				},
 				Codes: cbc.CodeSet{

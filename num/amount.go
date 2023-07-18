@@ -190,6 +190,9 @@ func (a Amount) Rescale(exp uint32) Amount {
 
 // MatchPrecision will rescale the exponent value of the amount so that it
 // matches the scale of the provided amount, but *only* if it is higher.
+//
+// Deprecated: this is no longer useful as precision is always matched
+// in all calculations.
 func (a Amount) MatchPrecision(a2 Amount) Amount {
 	if a2.exp > a.exp {
 		return a.Rescale(a2.exp)
