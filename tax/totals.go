@@ -192,14 +192,14 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 			continue // exempt, nothing else to do
 		}
 		rt.Amount = rt.Percent.Of(rt.Base)
-		ct.Amount = ct.Amount.MatchPrecision(rt.Amount)
-		ct.Amount = ct.Amount.Add(rt.Amount)
+		ct.Amount = ct.Amount.MatchPrecision(rt.Amount).Add(rt.Amount)
 		if rt.Surcharge != nil {
 			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base)
 			if ct.Surcharge == nil {
 				ct.Surcharge = &zero
 			}
-			x := ct.Surcharge.Add(rt.Surcharge.Amount)
+			a := rt.Surcharge.Amount
+			x := ct.Surcharge.MatchPrecision(a).Add(a)
 			ct.Surcharge = &x
 		}
 	}

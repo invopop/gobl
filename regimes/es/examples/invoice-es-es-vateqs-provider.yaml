@@ -59,7 +59,7 @@ payment:
   advances:
     - date: "2021-09-01"
       desc: "Deposit paid upfront"
-      amount: "250.00"
+      amount: "25.00"
   instructions:
     key: credit-transfer
     credit_transfer:
