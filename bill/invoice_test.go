@@ -223,14 +223,16 @@ func TestRemoveIncludedTax3(t *testing.T) {
 	assert.Equal(t, "223.2642", i2.Lines[0].Total.String())
 	assert.Equal(t, "106.1952", i2.Lines[2].Total.String())
 
-	data, _ := json.Marshal(i.Lines)
-	t.Logf("LINES: %v", string(data))
-	data, _ = json.Marshal(i.Totals)
-	t.Logf("TOTALS: %v", string(data))
-	data, _ = json.Marshal(i2.Lines)
-	t.Logf("Lines: %v", string(data))
-	data, _ = json.Marshal(i2.Totals)
-	t.Logf("TOTALS: %v", string(data))
+	/*
+		data, _ := json.Marshal(i.Lines)
+		t.Logf("LINES: %v", string(data))
+		data, _ = json.Marshal(i.Totals)
+		t.Logf("TOTALS: %v", string(data))
+		data, _ = json.Marshal(i2.Lines)
+		t.Logf("Lines: %v", string(data))
+		data, _ = json.Marshal(i2.Totals)
+		t.Logf("TOTALS: %v", string(data))
+	*/
 	assert.Equal(t, "803.0066", i2.Totals.Sum.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
@@ -470,8 +472,8 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
-	assert.Equal(t, "48.84905", l0.Item.Price.String()) // note extra digit!
-	assert.Equal(t, "4884.85615", l0.Sum.String())
+	assert.Equal(t, "48.8491", l0.Item.Price.String())
+	assert.Equal(t, "4884.8612", l0.Sum.String())
 
 	assert.Equal(t, "4884.86", i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())

@@ -16,7 +16,7 @@ func TestAmountAdd(t *testing.T) {
 	tests := []struct {
 		a, b, e num.Amount
 	}{
-		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(3000, 3)},
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(300, 2)},
 		{num.MakeAmount(2000, 2), num.MakeAmount(100, 2), num.MakeAmount(2100, 2)},
 		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(10299, 3)},
 		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(1000, 2)},
@@ -35,7 +35,7 @@ func TestAmountSubtract(t *testing.T) {
 	tests := []struct {
 		a, b, e num.Amount
 	}{
-		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(1000, 3)},
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(100, 2)},
 		{num.MakeAmount(200, 2), num.MakeAmount(1000, 2), num.MakeAmount(-800, 2)},
 		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(-9701, 3)},
 		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(3000, 2)},
@@ -103,7 +103,7 @@ func TestMultiply(t *testing.T) {
 		a, b, e num.Amount
 	}{
 		{num.MakeAmount(10010, 2), num.MakeAmount(21, 1), num.MakeAmount(21021, 2)},
-		{num.MakeAmount(200, 0), num.MakeAmount(21, 2), num.MakeAmount(4200, 2)},
+		{num.MakeAmount(200, 0), num.MakeAmount(21, 2), num.MakeAmount(42, 0)},
 		{num.MakeAmount(1002002, 4), num.MakeAmount(150, 2), num.MakeAmount(1503003, 4)},
 		{num.MakeAmount(669099, 2), num.MakeAmount(23, 2), num.MakeAmount(153893, 2)},
 		{num.MakeAmount(101, 2), num.MakeAmount(101, 2), num.MakeAmount(102, 2)},
@@ -123,7 +123,8 @@ func TestDivide(t *testing.T) {
 		a, b, e num.Amount
 	}{
 		{num.MakeAmount(10010, 2), num.MakeAmount(22, 1), num.MakeAmount(4550, 2)},
-		{num.MakeAmount(200, 0), num.MakeAmount(21, 2), num.MakeAmount(95238, 2)},
+		{num.MakeAmount(20000, 2), num.MakeAmount(21, 2), num.MakeAmount(95238, 2)},
+		{num.MakeAmount(200, 0), num.MakeAmount(21, 2), num.MakeAmount(952, 0)},
 		{num.MakeAmount(1000, 2), num.MakeAmount(11, 0), num.MakeAmount(91, 2)},
 		{num.MakeAmount(1000, 0), num.MakeAmount(16, 0), num.MakeAmount(63, 0)},
 		{num.MakeAmount(1000, 0), num.MakeAmount(14, 0), num.MakeAmount(71, 0)},

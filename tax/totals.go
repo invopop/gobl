@@ -156,7 +156,7 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 				continue // not much to do here!
 			}
 			rt := t.rateTotalFor(c, tc.Zero)
-			// rt.Base = rt.Base.MatchPrecision(tl.total)
+			rt.Base = rt.Base.MatchPrecision(tl.total)
 			rt.Base = rt.Base.Add(tl.total)
 		}
 	}
@@ -165,6 +165,7 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 	t.Sum = tc.Zero
 	for _, ct := range t.Categories {
 		ct.calculate(tc.Zero)
+		t.Sum = t.Sum.MatchPrecision(ct.Amount)
 		if ct.Retained {
 			t.Sum = t.Sum.Subtract(ct.Amount)
 			if ct.Surcharge != nil {
@@ -187,15 +188,14 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 	ct.Amount = zero
 	for _, rt := range ct.Rates {
 		if rt.Percent == nil {
-			//rt.Base = rt.Base.Rescale(zero.Exp())
 			rt.Amount = zero
 			continue // exempt, nothing else to do
 		}
-		rt.Amount = rt.Percent.Of(rt.Base) //.Rescale(zero.Exp())
-		//rt.Base = rt.Base.Rescale(zero.Exp()) // after amount calculation!
+		rt.Amount = rt.Percent.Of(rt.Base)
+		ct.Amount = ct.Amount.MatchPrecision(rt.Amount)
 		ct.Amount = ct.Amount.Add(rt.Amount)
 		if rt.Surcharge != nil {
-			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base) //.Rescale(zero.Exp())
+			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(rt.Base)
 			if ct.Surcharge == nil {
 				ct.Surcharge = &zero
 			}

@@ -56,7 +56,7 @@ func TestPercentageOf(t *testing.T) {
 	p := num.MakePercentage(170, 3)
 	a := num.MakeAmount(10000, 2)
 	r := p.Of(a)
-	assert.Equal(t, "17.000", r.String())
+	assert.Equal(t, "17.00", r.String())
 }
 
 func TestFactor(t *testing.T) {
@@ -72,7 +72,7 @@ func TestPercentageFrom(t *testing.T) {
 	p := num.MakePercentage(160, 3)
 	a := num.MakeAmount(11600, 2)
 	x := p.From(a)
-	assert.Equal(t, "16.000", x.String())
+	assert.Equal(t, "16.00", x.String())
 }
 
 func TestPercentageRescale(t *testing.T) {

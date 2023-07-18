@@ -97,42 +97,33 @@ func (a Amount) IsZero() bool {
 // Add will add the two amounts together using the base's exponential
 // value for the resulting new amount.
 func (a Amount) Add(a2 Amount) Amount {
-	e := maxUint32(a.exp, a2.exp)
-	a = a.Rescale(e)
-	a2 = a2.Rescale(e)
-	return Amount{a.value + a2.value, e}
+	a2 = a2.Rescale(a.exp)
+	return Amount{a.value + a2.value, a.exp}
 }
 
 // Subtract takes away the amount provided from the base.
 func (a Amount) Subtract(a2 Amount) Amount {
-	e := maxUint32(a.exp, a2.exp)
-	a = a.Rescale(e)
-	a2 = a2.Rescale(e)
-	return Amount{a.value - a2.value, e}
+	a2 = a2.Rescale(a.exp)
+	return Amount{a.value - a2.value, a.exp}
 }
 
-// Multiply the amount by the provided amount. The highest exponent is maintained,
-// and the result is rescaled to that exponent.
+// Multiply the amount by the provided amount.
 func (a Amount) Multiply(a2 Amount) Amount {
-	e := maxUint32(a.exp, a2.exp)
-	a = a.Rescale(e)
-	a2 = a2.Rescale(e)
-	v := a.value * a2.value
-	return Amount{value: v, exp: e * 2}.Rescale(e)
+	v := (float64(a.value) * float64(a2.value)) / float64(intPow(10, a2.exp))
+	return Amount{
+		value: int64(math.Round(v)),
+		exp:   a.exp,
+	}
 }
 
 // Divide the amount by the provided amount. Floating points are used for the actual division
 // and then round again to get an int. This prevents rounding errors, but if you want true division
 // with a base and a remainder, use the Split method.
 func (a Amount) Divide(a2 Amount) Amount {
-	e := maxUint32(a.exp, a2.exp)
-	a = a.Rescale(e)
-	a2 = a2.Rescale(e)
-	f := intPow(10, e)
-	v := (float64(a.value) / float64(a2.value)) * float64(f)
+	v := float64(a.value*intPow(10, a2.exp)) / float64(a2.value)
 	return Amount{
 		value: int64(math.Round(v)),
-		exp:   e,
+		exp:   a.exp,
 	}
 }
 
@@ -190,9 +181,6 @@ func (a Amount) Rescale(exp uint32) Amount {
 
 // MatchPrecision will rescale the exponent value of the amount so that it
 // matches the scale of the provided amount, but *only* if it is higher.
-//
-// Deprecated: this is no longer useful as precision is always matched
-// in all calculations.
 func (a Amount) MatchPrecision(a2 Amount) Amount {
 	if a2.exp > a.exp {
 		return a.Rescale(a2.exp)

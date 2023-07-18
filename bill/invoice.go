@@ -335,6 +335,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		l.calculate()
 
 		// Basic sum
+		t.Sum = t.Sum.MatchPrecision(l.Total)
 		t.Sum = t.Sum.Add(l.Total)
 		tls = append(tls, l)
 	}
