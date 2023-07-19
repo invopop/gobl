@@ -1,6 +1,7 @@
 package gobl_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"testing"
@@ -75,7 +76,7 @@ func TestDocumentValidation(t *testing.T) {
 
 	inv := doc.Instance().(*bill.Invoice)
 	inv.Code = "" // blank, which will not be accepted if not a draft
-	require.NoError(t, doc.Calculate())
+	require.NoError(t, doc.Calculate(context.Background()))
 	assert.NoError(t, doc.Validate())
 	inv.IssueDate = cal.Date{}
 	err = doc.Validate()

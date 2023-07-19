@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -81,10 +82,10 @@ func (id *Identity) Regime() *Regime {
 
 // Calculate will attempt to perform a regional tax normalization
 // on the tax identity.
-func (id *Identity) Calculate() error {
+func (id *Identity) Calculate(ctx context.Context) error {
 	r := id.Regime()
 	if r != nil {
-		return r.CalculateObject(id)
+		return r.CalculateObject(ctx, id)
 	}
 	return nil
 }

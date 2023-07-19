@@ -23,6 +23,11 @@ const (
 	ShortSchemaInvoice = "bill/invoice"
 )
 
+// Context keys use to store and retrieve values from the context
+const (
+	CtxInvoiceCurrencyKey cbc.Key = "currency"
+)
+
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -173,18 +178,18 @@ func (inv *Invoice) Empty() {
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
-func (inv *Invoice) Calculate() error {
+func (inv *Invoice) Calculate(ctx context.Context) error {
 	if inv.Type == cbc.KeyEmpty {
 		inv.Type = InvoiceTypeStandard
 	}
 	if inv.Supplier == nil {
 		return errors.New("missing or invalid supplier tax identity")
 	}
-	if err := inv.Supplier.Calculate(); err != nil {
+	if err := inv.Supplier.Calculate(ctx); err != nil {
 		return fmt.Errorf("supplier: %w", err)
 	}
 	if inv.Customer != nil {
-		if err := inv.Customer.Calculate(); err != nil {
+		if err := inv.Customer.Calculate(ctx); err != nil {
 			return fmt.Errorf("customer: %w", err)
 		}
 	}
@@ -322,9 +327,13 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		return errors.New("issue date cannot be empty")
 	}
 
+	if inv.Currency == currency.CodeEmpty {
+		inv.Currency = r.Currency
+	}
+
 	// Prepare the totals we'll need with amounts based on currency
 	t := new(Totals)
-	zero := r.CurrencyDef().BaseAmount()
+	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
 
 	tls := make([]tax.TaxableLine, 0)
@@ -332,7 +341,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	// Ensure all the lines are up to date first
 	for i, l := range inv.Lines {
 		l.Index = i + 1
-		l.calculate()
+		l.calculate(zero)
 
 		// Basic sum
 		t.Sum = t.Sum.MatchPrecision(l.Total)
@@ -351,6 +360,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			}
 			l.Amount = l.Percent.Of(*l.Base)
 		}
+		l.Amount = l.Amount.MatchPrecision(zero)
 		discounts = discounts.MatchPrecision(l.Amount)
 		discounts = discounts.Add(l.Amount)
 		tls = append(tls, l)
@@ -370,6 +380,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			}
 			l.Amount = l.Percent.Of(*l.Base)
 		}
+		l.Amount = l.Amount.MatchPrecision(zero)
 		charges = charges.MatchPrecision(l.Amount)
 		charges = charges.Add(l.Amount)
 		tls = append(tls, l)
@@ -418,6 +429,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	if len(inv.Outlays) > 0 {
 		t.Outlays = &zero
 		for i, o := range inv.Outlays {
+			o.Amount = o.Amount.MatchPrecision(zero)
 			o.Index = i + 1
 			v := t.Outlays.Add(o.Amount)
 			t.Outlays = &v
@@ -426,7 +438,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	if inv.Payment != nil {
-		inv.Payment.calculateAdvances(t.TotalWithTax)
+		inv.Payment.calculateAdvances(zero, t.TotalWithTax)
 
 		// Deal with advances, if any
 		if t.Advances = inv.Payment.totalAdvance(zero); t.Advances != nil {
@@ -435,7 +447,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		}
 
 		// Calculate any due date amounts
-		inv.Payment.Terms.CalculateDues(t.Payable)
+		inv.Payment.Terms.CalculateDues(zero, t.Payable)
 	}
 
 	inv.Totals = t
@@ -482,4 +494,15 @@ func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 			}
 		}
 	}
+}
+
+// GetInvoiceCurrency will try to extract the currency code from the context.
+func GetInvoiceCurrency(ctx context.Context) currency.Code {
+	if ctx == nil {
+		return ""
+	}
+	if c, ok := ctx.Value(CtxInvoiceCurrencyKey).(currency.Code); ok {
+		return c
+	}
+	return ""
 }

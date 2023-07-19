@@ -65,12 +65,15 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 }
 
 // calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate() {
+func (l *Line) calculate(zero num.Amount) {
 	if l.Item == nil {
 		return
 	}
 
-	// First we figure out how much the item costs, and get the total
+	// Ensure the Price precision is set correctly according to the currency
+	l.Item.Price = l.Item.Price.MatchPrecision(zero)
+
+	// Calculate the line sum and total
 	l.Sum = l.Item.Price.Multiply(l.Quantity)
 	l.Total = l.Sum
 
@@ -78,6 +81,7 @@ func (l *Line) calculate() {
 		if d.Percent != nil && !d.Percent.IsZero() {
 			d.Amount = d.Percent.Of(l.Sum) // always override
 		}
+		d.Amount = d.Amount.MatchPrecision(zero)
 		l.Total = l.Total.Subtract(d.Amount)
 	}
 
@@ -85,6 +89,7 @@ func (l *Line) calculate() {
 		if c.Percent != nil && !c.Percent.IsZero() {
 			c.Amount = c.Percent.Of(l.Sum) // always override
 		}
+		c.Amount = c.Amount.MatchPrecision(zero)
 		l.Total = l.Total.Add(c.Amount)
 	}
 }
@@ -105,9 +110,9 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 		accuracy = 2
 	}
 
-	l2.Total = l2.Total.Upscale(accuracy).Remove(*rate.Percent)
 	l2.Sum = l2.Sum.Upscale(accuracy).Remove(*rate.Percent)
 	l2i.Price = l2.Sum.Divide(l2.Quantity)
+	l2.Total = l2.Total.Upscale(accuracy).Remove(*rate.Percent)
 
 	if len(l2.Discounts) > 0 {
 		rows := make([]*LineDiscount, len(l2.Discounts))

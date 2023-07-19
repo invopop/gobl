@@ -2,6 +2,8 @@
 package nl
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -94,7 +96,7 @@ func Validate(doc interface{}) error {
 }
 
 // Calculate performs region specific calculations on the document.
-func Calculate(doc interface{}) error {
+func Calculate(_ context.Context, doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return NormalizeTaxIdentity(obj)

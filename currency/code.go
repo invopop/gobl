@@ -9,6 +9,9 @@ import (
 // Code is the ISO currency code
 type Code string
 
+// CodeEmpty is used when there is no code.
+const CodeEmpty Code = ""
+
 // Def provides a structure for the currencies
 type Def struct {
 	Code  Code   `json:"code"`  // three-letter currency code
@@ -50,8 +53,16 @@ func Get(c Code) (Def, bool) {
 	return Def{}, false
 }
 
+// Zero provides the currency's zero amount which is pre-set with the
+// minimum precision for the currency.
+func (d Def) Zero() num.Amount {
+	return num.MakeAmount(0, d.Units)
+}
+
 // BaseAmount provides a definition's zero amount with the correct decimal
 // places so that it can be used as a base for calculating totals.
+//
+// Deprecated: please now use the Zero method instead.
 func (d Def) BaseAmount() num.Amount {
 	return num.MakeAmount(0, d.Units)
 }

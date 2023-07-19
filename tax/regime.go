@@ -72,7 +72,7 @@ type Regime struct {
 	// Calculator is used to performs regime specific calculations on data,
 	// including any normalization that might need to take place such as
 	// with tax codes and removing white-space.
-	Calculator func(doc interface{}) error `json:"-"`
+	Calculator func(ctx context.Context, doc interface{}) error `json:"-"`
 }
 
 // Zone represents an area inside a country, like a province
@@ -205,9 +205,9 @@ func (r *Regime) ValidateObject(obj interface{}) error {
 
 // CalculateObject performs any regime specific calculations on the provided
 // object.
-func (r *Regime) CalculateObject(obj interface{}) error {
+func (r *Regime) CalculateObject(ctx context.Context, obj interface{}) error {
 	if r.Calculator != nil {
-		return r.Calculator(obj)
+		return r.Calculator(ctx, obj)
 	}
 	return nil
 }

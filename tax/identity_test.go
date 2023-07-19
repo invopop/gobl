@@ -1,6 +1,7 @@
 package tax_test
 
 import (
+	"context"
 	"testing"
 
 	_ "github.com/invopop/gobl" // load all mods
@@ -34,7 +35,8 @@ func TestTaxIdentity(t *testing.T) {
 		Country: l10n.ES,
 		Code:    "  x315-7928 m",
 	}
-	err = tID.Calculate()
+	ctx := context.Background()
+	err = tID.Calculate(ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, tID.Code.String(), "X3157928M")
 }

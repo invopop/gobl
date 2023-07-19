@@ -97,7 +97,7 @@ func (t *Terms) UNTDID4279() cbc.Code {
 
 // CalculateDues goes through each DueDate. If it has a percentage
 // value set, it'll be used to calculate the amount.
-func (t *Terms) CalculateDues(sum num.Amount) {
+func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 	if t == nil {
 		return
 	}
@@ -105,6 +105,7 @@ func (t *Terms) CalculateDues(sum num.Amount) {
 		if dd.Percent != nil && !dd.Percent.IsZero() {
 			dd.Amount = dd.Percent.Of(sum)
 		}
+		dd.Amount = dd.Amount.MatchPrecision(zero)
 	}
 }
 
