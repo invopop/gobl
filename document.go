@@ -73,7 +73,7 @@ func (d *Document) Instance() interface{} {
 
 // Calculate will attempt to run the calculation method on the
 // document payload.
-func (d *Document) Calculate(ctx context.Context) error {
+func (d *Document) Calculate() error {
 	pl, ok := d.payload.(Calculable)
 	if !ok {
 		return nil

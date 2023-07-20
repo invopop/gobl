@@ -155,8 +155,7 @@ func (e *Envelope) calculate() error {
 	e.Schema = EnvelopeSchema
 
 	// arm doors and cross check
-	ctx := context.Background()
-	if err := e.Document.Calculate(ctx); err != nil {
+	if err := e.Document.Calculate(); err != nil {
 		return ErrCalculation.WithCause(err)
 	}
 
