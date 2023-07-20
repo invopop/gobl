@@ -23,11 +23,6 @@ const (
 	ShortSchemaInvoice = "bill/invoice"
 )
 
-// Context keys use to store and retrieve values from the context
-const (
-	CtxInvoiceCurrencyKey cbc.Key = "currency"
-)
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -494,15 +489,4 @@ func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 			}
 		}
 	}
-}
-
-// GetInvoiceCurrency will try to extract the currency code from the context.
-func GetInvoiceCurrency(ctx context.Context) currency.Code {
-	if ctx == nil {
-		return ""
-	}
-	if c, ok := ctx.Value(CtxInvoiceCurrencyKey).(currency.Code); ok {
-		return c
-	}
-	return ""
 }
