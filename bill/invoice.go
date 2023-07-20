@@ -421,14 +421,8 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.Payable = t.TotalWithTax
 
 	// Outlays
-	if len(inv.Outlays) > 0 {
-		t.Outlays = &zero
-		for i, o := range inv.Outlays {
-			o.Amount = o.Amount.MatchPrecision(zero)
-			o.Index = i + 1
-			v := t.Outlays.Add(o.Amount)
-			t.Outlays = &v
-		}
+	t.Outlays = totalOutlays(zero, inv.Outlays)
+	if t.Outlays != nil {
 		t.Payable = t.Payable.Add(*t.Outlays)
 	}
 
