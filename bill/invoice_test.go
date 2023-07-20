@@ -38,13 +38,12 @@ func TestInvoiceRegimeCurrency(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	assert.Equal(t, currency.EUR, i.Currency, "should set currency automatically")
 	assert.Equal(t, "10.00", i.Lines[0].Item.Price.String(), "should update price precision")
 	i.Lines[0].Item.Price = num.MakeAmount(10000, 3)
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 	assert.Equal(t, "10.000", i.Lines[0].Item.Price.String(), "should not update price precision")
 }
 
@@ -60,8 +59,7 @@ func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 	i.Currency = currency.CLP
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 	assert.Equal(t, currency.CLP, i.Currency, "should honor currency")
 	assert.Equal(t, "10", i.Lines[0].Item.Price.String(), "should not update price precision")
 }
@@ -90,11 +88,10 @@ func TestRemoveIncludedTax(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 
 	assert.Equal(t, "1000.00", i.Lines[0].Item.Price.String())
 
@@ -162,11 +159,10 @@ func TestRemoveIncludedTax2(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 	l0 := i2.Lines[0]
 	assert.Equal(t, "40.7547", l0.Item.Price.String())
 	assert.Equal(t, "40.7547", l0.Total.String())
@@ -246,11 +242,10 @@ func TestRemoveIncludedTax3(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 	assert.Equal(t, "223.2642", i2.Lines[0].Total.String())
 	assert.Equal(t, "106.1952", i2.Lines[2].Total.String())
 
@@ -311,11 +306,10 @@ func TestRemoveIncludedTax4(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 
 	data, _ := json.Marshal(i2.Lines)
 	t.Logf("TOTALS: %v", string(data))
@@ -367,11 +361,10 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -435,12 +428,11 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
 
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 
 	//data, _ := json.MarshalIndent(i2, "", "  ")
 	//t.Log(string(data))
@@ -495,12 +487,11 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 
 	i2 := i.RemoveIncludedTaxes()
 
-	require.NoError(t, i2.Calculate(ctx))
+	require.NoError(t, i2.Calculate())
 
 	//data, _ := json.MarshalIndent(i2, "", "  ")
 	//t.Log(string(data))
@@ -578,8 +569,7 @@ func TestCalculate(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
-	require.NoError(t, i.Calculate(ctx))
+	require.NoError(t, i.Calculate())
 	assert.Equal(t, i.Totals.Sum.String(), "950.00")
 	assert.Equal(t, i.Totals.Total.String(), "785.12")
 	assert.Equal(t, i.Totals.Tax.String(), "164.88")
@@ -628,7 +618,7 @@ func TestValidation(t *testing.T) {
 		},
 	}
 	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	err := inv.ValidateWithContext(ctx)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "code: cannot be blank")

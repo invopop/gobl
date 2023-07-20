@@ -1,7 +1,6 @@
 package mx_test
 
 import (
-	"context"
 	"strings"
 	"testing"
 
@@ -75,8 +74,7 @@ func validInvoice() *bill.Invoice {
 
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 }
 
@@ -158,8 +156,7 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), expected)

@@ -1,7 +1,6 @@
 package org_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,8 +31,7 @@ func TestPartyCalculate(t *testing.T) {
 			Code:    "423 429 12.G",
 		},
 	}
-	ctx := context.Background()
-	assert.NoError(t, party.Calculate(ctx))
+	assert.NoError(t, party.Calculate())
 	assert.Equal(t, l10n.ES, party.TaxID.Country)
 	assert.Equal(t, "ES42342912G", party.TaxID.String())
 
@@ -44,5 +42,5 @@ func TestPartyCalculate(t *testing.T) {
 			Code:    "423 429 12.G",
 		},
 	}
-	assert.NoError(t, party.Calculate(ctx), "unknown entry should not cause problem")
+	assert.NoError(t, party.Calculate(), "unknown entry should not cause problem")
 }

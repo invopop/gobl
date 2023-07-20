@@ -1,7 +1,6 @@
 package co_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -14,14 +13,13 @@ import (
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
-	ctx := context.Background()
 	tID := &tax.Identity{Country: l10n.CO, Code: "901.458.652-7"}
-	err := co.Calculate(ctx, tID)
+	err := co.Calculate(tID)
 	require.NoError(t, err)
 	assert.Equal(t, co.TaxIdentityTypeTIN, tID.Type, "autoassign type")
 
 	tID = &tax.Identity{Country: l10n.CO, Type: co.TaxIdentityTypeCivil, Code: "XX"}
-	err = co.Calculate(ctx, tID)
+	err = co.Calculate(tID)
 	require.NoError(t, err)
 	assert.Equal(t, co.TaxIdentityTypeCivil, tID.Type, "copy type")
 
@@ -50,7 +48,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: l10n.CO, Code: ts.Code}
-		err := co.Calculate(ctx, tID)
+		err := co.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
@@ -70,8 +68,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		},
 	}
-	ctx := context.Background()
-	err := co.Calculate(ctx, p)
+	err := co.Calculate(p)
 	assert.NoError(t, err)
 	assert.Equal(t, p.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, p.Addresses[0].Region, "Bogotá")
@@ -89,7 +86,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		},
 	}
-	err = co.Calculate(ctx, p)
+	err = co.Calculate(p)
 	require.NoError(t, err)
 	err = co.Validate(p)
 	assert.NoError(t, err)

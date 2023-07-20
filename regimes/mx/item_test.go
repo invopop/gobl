@@ -1,7 +1,6 @@
 package mx_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -89,10 +88,9 @@ func TestItemIdentityNormalization(t *testing.T) {
 			Expected: "1234567",
 		},
 	}
-	ctx := context.Background()
 	for _, ts := range tests {
 		item := &org.Item{Identities: []*org.Identity{{Code: ts.Code, Type: "SAT"}}}
-		err := r.CalculateObject(ctx, item)
+		err := r.CalculateObject(item)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, item.Identities[0].Code)
 	}

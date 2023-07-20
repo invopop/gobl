@@ -2,8 +2,6 @@
 package mx
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -58,7 +56,7 @@ func Validate(doc interface{}) error {
 }
 
 // Calculate performs regime specific calculations.
-func Calculate(_ context.Context, doc interface{}) error {
+func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)

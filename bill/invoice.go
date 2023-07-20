@@ -178,18 +178,18 @@ func (inv *Invoice) Empty() {
 
 // Calculate performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
-func (inv *Invoice) Calculate(ctx context.Context) error {
+func (inv *Invoice) Calculate() error {
 	if inv.Type == cbc.KeyEmpty {
 		inv.Type = InvoiceTypeStandard
 	}
 	if inv.Supplier == nil {
 		return errors.New("missing or invalid supplier tax identity")
 	}
-	if err := inv.Supplier.Calculate(ctx); err != nil {
+	if err := inv.Supplier.Calculate(); err != nil {
 		return fmt.Errorf("supplier: %w", err)
 	}
 	if inv.Customer != nil {
-		if err := inv.Customer.Calculate(ctx); err != nil {
+		if err := inv.Customer.Calculate(); err != nil {
 			return fmt.Errorf("customer: %w", err)
 		}
 	}

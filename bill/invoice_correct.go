@@ -1,7 +1,6 @@
 package bill
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -213,5 +212,5 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
 	// conflicting or incomplete data.
-	return inv.Calculate(context.Background())
+	return inv.Calculate()
 }

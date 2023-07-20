@@ -1,7 +1,6 @@
 package it_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
@@ -87,8 +86,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 
 func TestInvoiceValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 }
 
@@ -99,8 +97,7 @@ func TestCustomerValidation(t *testing.T) {
 		Type:    it.TaxIdentityTypeIndividual,
 		Code:    "RSSGNN60R30H501U",
 	}
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 
 }
@@ -112,8 +109,7 @@ func TestSupplierValidation(t *testing.T) {
 		Type:    it.TaxIdentityTypeIndividual,
 		Code:    "RSSGNN60R30H501U",
 	}
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "type: must be a valid value")
@@ -125,8 +121,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 		Category: "IRPEF",
 		Percent:  num.NewPercentage(20, 2),
 	})
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "lines: (0: (taxes: 1: rate: cannot be blank..).).")
@@ -137,6 +132,6 @@ func TestRetainedTaxesValidation(t *testing.T) {
 		Rate:     cbc.Key("self-employed-habitual"),
 		Percent:  num.NewPercentage(20, 2),
 	})
-	require.NoError(t, inv.Calculate(ctx))
+	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 }

@@ -27,7 +27,7 @@ type Document struct {
 // Calculable defines the methods expected of a document payload that contains a `Calculate`
 // method to be used to perform any additional calculations.
 type Calculable interface {
-	Calculate(context.Context) error
+	Calculate() error
 }
 
 // Correctable defines the expected interface of a document that can be
@@ -78,7 +78,7 @@ func (d *Document) Calculate(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	return pl.Calculate(ctx)
+	return pl.Calculate()
 }
 
 // Validate checks to ensure the document has everything it needs

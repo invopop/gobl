@@ -2,8 +2,6 @@
 package it
 
 import (
-	"context"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -64,7 +62,7 @@ func Validate(doc interface{}) error {
 }
 
 // Calculate will perform any regime specific calculations.
-func Calculate(_ context.Context, doc interface{}) error {
+func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)

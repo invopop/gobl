@@ -1,7 +1,6 @@
 package pt_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -33,10 +32,9 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			Expected: "36029785",
 		},
 	}
-	ctx := context.Background()
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: l10n.PT, Code: ts.Code}
-		err := pt.Calculate(ctx, tID)
+		err := pt.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
