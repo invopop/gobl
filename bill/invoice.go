@@ -331,58 +331,32 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
 
-	tls := make([]tax.TaxableLine, 0)
-
-	// Ensure all the lines are up to date first
-	for i, l := range inv.Lines {
-		l.Index = i + 1
-		l.calculate(zero)
-
-		// Basic sum
-		t.Sum = t.Sum.MatchPrecision(l.Total)
-		t.Sum = t.Sum.Add(l.Total)
-		tls = append(tls, l)
-	}
+	// Lines
+	t.Sum = lineTotal(zero, inv.Lines)
 	t.Total = t.Sum.Rescale(zero.Exp())
 
-	// Subtract discounts
-	discounts := zero
-	for i, l := range inv.Discounts {
-		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
-			if l.Base == nil {
-				l.Base = &t.Sum
-			}
-			l.Amount = l.Percent.Of(*l.Base)
-		}
-		l.Amount = l.Amount.MatchPrecision(zero)
-		discounts = discounts.MatchPrecision(l.Amount)
-		discounts = discounts.Add(l.Amount)
-		tls = append(tls, l)
-	}
-	if !discounts.IsZero() {
-		t.Discount = &discounts
-		t.Total = t.Total.Subtract(discounts)
+	// Discount Lines
+	if discounts := discountTotal(zero, t.Sum, inv.Discounts); discounts != nil {
+		t.Discount = discounts
+		t.Total = t.Total.Subtract(*discounts)
 	}
 
-	// Add charges
-	charges := zero
-	for i, l := range inv.Charges {
-		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
-			if l.Base == nil {
-				l.Base = &t.Sum
-			}
-			l.Amount = l.Percent.Of(*l.Base)
-		}
-		l.Amount = l.Amount.MatchPrecision(zero)
-		charges = charges.MatchPrecision(l.Amount)
-		charges = charges.Add(l.Amount)
+	// Charge Lines
+	if charges := chargeTotal(zero, t.Sum, inv.Charges); charges != nil {
+		t.Charge = charges
+		t.Total = t.Total.Add(*charges)
+	}
+
+	// Build list of taxable lines
+	tls := make([]tax.TaxableLine, 0)
+	for _, l := range inv.Lines {
 		tls = append(tls, l)
 	}
-	if !charges.IsZero() {
-		t.Charge = &charges
-		t.Total = t.Total.Add(charges)
+	for _, l := range inv.Discounts {
+		tls = append(tls, l)
+	}
+	for _, l := range inv.Charges {
+		tls = append(tls, l)
 	}
 
 	// Now figure out the tax totals (with some interface conversion)

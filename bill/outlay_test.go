@@ -26,4 +26,8 @@ func TestOutlayTotals(t *testing.T) {
 	assert.Equal(t, 2, os[1].Index)
 	assert.Equal(t, "300.00", sum.String())
 	assert.Equal(t, "200.00", os[1].Amount.String())
+
+	os = []*Outlay{}
+	sum = totalOutlays(zero, os)
+	assert.Nil(t, sum)
 }

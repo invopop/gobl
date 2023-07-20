@@ -137,3 +137,14 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	l2.Item = &l2i
 	return &l2
 }
+
+func lineTotal(zero num.Amount, lines []*Line) num.Amount {
+	sum := zero
+	for i, l := range lines {
+		l.Index = i + 1
+		l.calculate(zero)
+		sum = sum.MatchPrecision(l.Total)
+		sum = sum.Add(l.Total)
+	}
+	return sum
+}

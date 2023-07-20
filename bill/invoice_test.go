@@ -64,6 +64,35 @@ func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
 	assert.Equal(t, "10", i.Lines[0].Item.Price.String(), "should not update price precision")
 }
 
+func TestInvoiceRegimeCurrencyWithDiscounts(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	i.Lines[0].Discounts = []*bill.LineDiscount{
+		{
+			Reason: "Testing",
+			Amount: num.MakeAmount(10, 0),
+		},
+	}
+	i.Lines[0].Charges = []*bill.LineCharge{
+		{
+			Reason: "Testing",
+			Amount: num.MakeAmount(20, 0),
+		},
+	}
+	require.NoError(t, i.Calculate())
+
+	assert.Equal(t, "10.00", i.Lines[0].Discounts[0].Amount.String(), "should update discount precision")
+	assert.Equal(t, "20.00", i.Lines[0].Charges[0].Amount.String(), "should update charges precision")
+}
+
 func TestRemoveIncludedTax(t *testing.T) {
 	lines := []*bill.Line{
 		{

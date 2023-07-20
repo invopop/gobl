@@ -92,3 +92,23 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Discount 
 	m2.Amount = m2.Amount.Upscale(accuracy).Remove(*rate.Percent)
 	return &m2
 }
+
+func discountTotal(zero, sum num.Amount, discounts []*Discount) *num.Amount {
+	if len(discounts) == 0 {
+		return nil
+	}
+	total := zero
+	for i, l := range discounts {
+		l.Index = i + 1
+		if l.Percent != nil && !l.Percent.IsZero() {
+			if l.Base == nil {
+				l.Base = &sum
+			}
+			l.Amount = l.Percent.Of(*l.Base)
+		}
+		l.Amount = l.Amount.MatchPrecision(zero)
+		total = total.MatchPrecision(l.Amount)
+		total = total.Add(l.Amount)
+	}
+	return &total
+}
