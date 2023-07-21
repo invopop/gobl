@@ -93,7 +93,7 @@ func (m *Charge) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Charge {
 	return &m2
 }
 
-func chargeTotal(zero, sum num.Amount, charges []*Charge) *num.Amount {
+func calculateCharges(zero, sum num.Amount, charges []*Charge) *num.Amount {
 	if len(charges) == 0 {
 		return nil
 	}

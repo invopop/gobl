@@ -93,7 +93,7 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Discount 
 	return &m2
 }
 
-func discountTotal(zero, sum num.Amount, discounts []*Discount) *num.Amount {
+func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) *num.Amount {
 	if len(discounts) == 0 {
 		return nil
 	}

@@ -332,17 +332,17 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.reset(zero)
 
 	// Lines
-	t.Sum = lineTotal(zero, inv.Lines)
+	t.Sum = calculateLines(zero, inv.Lines)
 	t.Total = t.Sum.Rescale(zero.Exp())
 
 	// Discount Lines
-	if discounts := discountTotal(zero, t.Sum, inv.Discounts); discounts != nil {
+	if discounts := calculateDiscounts(zero, t.Sum, inv.Discounts); discounts != nil {
 		t.Discount = discounts
 		t.Total = t.Total.Subtract(*discounts)
 	}
 
 	// Charge Lines
-	if charges := chargeTotal(zero, t.Sum, inv.Charges); charges != nil {
+	if charges := calculateCharges(zero, t.Sum, inv.Charges); charges != nil {
 		t.Charge = charges
 		t.Total = t.Total.Add(*charges)
 	}
@@ -395,7 +395,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.Payable = t.TotalWithTax
 
 	// Outlays
-	t.Outlays = totalOutlays(zero, inv.Outlays)
+	t.Outlays = calculateOutlays(zero, inv.Outlays)
 	if t.Outlays != nil {
 		t.Payable = t.Payable.Add(*t.Outlays)
 	}
