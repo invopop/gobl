@@ -20,47 +20,102 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRemoveIncludedTax(t *testing.T) {
-	i := &bill.Invoice{
-		Code: "123TEST",
-		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
-		},
-		Supplier: &org.Party{
-			TaxID: &tax.Identity{
-				Country: l10n.ES,
-				Code:    "B98602642",
+func TestInvoiceRegimeCurrency(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
 			},
-		},
-		Customer: &org.Party{
-			TaxID: &tax.Identity{
-				Country: l10n.ES,
-				Code:    "54387763P",
-			},
-		},
-		IssueDate: cal.MakeDate(2022, 6, 13),
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.MakeAmount(100000, 2),
-				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Percent:  num.NewPercentage(21, 2),
-					},
-				},
-				Discounts: []*bill.LineDiscount{
-					{
-						Reason:  "Testing",
-						Percent: num.NewPercentage(10, 2),
-					},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Rate:     common.TaxRateStandard,
 				},
 			},
 		},
 	}
+	i := baseInvoice(t, lines...)
+
+	require.NoError(t, i.Calculate())
+
+	assert.Equal(t, currency.EUR, i.Currency, "should set currency automatically")
+	assert.Equal(t, "10.00", i.Lines[0].Item.Price.String(), "should update price precision")
+	i.Lines[0].Item.Price = num.MakeAmount(10000, 3)
+	require.NoError(t, i.Calculate())
+	assert.Equal(t, "10.000", i.Lines[0].Item.Price.String(), "should not update price precision")
+}
+
+func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	i.Currency = currency.CLP
+	require.NoError(t, i.Calculate())
+	assert.Equal(t, currency.CLP, i.Currency, "should honor currency")
+	assert.Equal(t, "10", i.Lines[0].Item.Price.String(), "should not update price precision")
+}
+
+func TestInvoiceRegimeCurrencyWithDiscounts(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	i.Lines[0].Discounts = []*bill.LineDiscount{
+		{
+			Reason: "Testing",
+			Amount: num.MakeAmount(10, 0),
+		},
+	}
+	i.Lines[0].Charges = []*bill.LineCharge{
+		{
+			Reason: "Testing",
+			Amount: num.MakeAmount(20, 0),
+		},
+	}
+	require.NoError(t, i.Calculate())
+
+	assert.Equal(t, "10.00", i.Lines[0].Discounts[0].Amount.String(), "should update discount precision")
+	assert.Equal(t, "20.00", i.Lines[0].Charges[0].Amount.String(), "should update charges precision")
+}
+
+func TestRemoveIncludedTax(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(100000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(21, 2),
+				},
+			},
+			Discounts: []*bill.LineDiscount{
+				{
+					Reason:  "Testing",
+					Percent: num.NewPercentage(10, 2),
+				},
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
 
 	require.NoError(t, i.Calculate())
 
@@ -591,11 +646,36 @@ func TestValidation(t *testing.T) {
 			},
 		},
 	}
-	require.NoError(t, inv.Calculate())
 	ctx := context.Background()
+	require.NoError(t, inv.Calculate())
 	err := inv.ValidateWithContext(ctx)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "code: cannot be blank")
 	ctx = context.WithValue(ctx, internal.KeyDraft, true)
 	assert.NoError(t, inv.ValidateWithContext(ctx))
+}
+
+func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
+	t.Helper()
+	i := &bill.Invoice{
+		Code: "123TEST",
+		Tax: &bill.Tax{
+			PricesInclude: common.TaxCategoryVAT,
+		},
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "B98602642",
+			},
+		},
+		Customer: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "54387763P",
+			},
+		},
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Lines:     lines,
+	}
+	return i
 }

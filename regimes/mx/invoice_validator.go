@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -26,6 +27,7 @@ func (v *invoiceValidator) validate() error {
 
 	inv := v.inv
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Currency, validation.In(currency.MXN)),
 		validation.Field(&inv.Customer,
 			validation.Required,
 			validation.By(v.validCustomer),

@@ -322,61 +322,41 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		return errors.New("issue date cannot be empty")
 	}
 
+	if inv.Currency == currency.CodeEmpty {
+		inv.Currency = r.Currency
+	}
+
 	// Prepare the totals we'll need with amounts based on currency
 	t := new(Totals)
-	zero := r.CurrencyDef().BaseAmount()
+	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
 
-	tls := make([]tax.TaxableLine, 0)
-
-	// Ensure all the lines are up to date first
-	for i, l := range inv.Lines {
-		l.Index = i + 1
-		l.calculate()
-
-		// Basic sum
-		t.Sum = t.Sum.MatchPrecision(l.Total)
-		t.Sum = t.Sum.Add(l.Total)
-		tls = append(tls, l)
-	}
+	// Lines
+	t.Sum = calculateLines(zero, inv.Lines)
 	t.Total = t.Sum.Rescale(zero.Exp())
 
-	// Subtract discounts
-	discounts := zero
-	for i, l := range inv.Discounts {
-		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
-			if l.Base == nil {
-				l.Base = &t.Sum
-			}
-			l.Amount = l.Percent.Of(*l.Base)
-		}
-		discounts = discounts.MatchPrecision(l.Amount)
-		discounts = discounts.Add(l.Amount)
-		tls = append(tls, l)
-	}
-	if !discounts.IsZero() {
-		t.Discount = &discounts
-		t.Total = t.Total.Subtract(discounts)
+	// Discount Lines
+	if discounts := calculateDiscounts(zero, t.Sum, inv.Discounts); discounts != nil {
+		t.Discount = discounts
+		t.Total = t.Total.Subtract(*discounts)
 	}
 
-	// Add charges
-	charges := zero
-	for i, l := range inv.Charges {
-		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
-			if l.Base == nil {
-				l.Base = &t.Sum
-			}
-			l.Amount = l.Percent.Of(*l.Base)
-		}
-		charges = charges.MatchPrecision(l.Amount)
-		charges = charges.Add(l.Amount)
+	// Charge Lines
+	if charges := calculateCharges(zero, t.Sum, inv.Charges); charges != nil {
+		t.Charge = charges
+		t.Total = t.Total.Add(*charges)
+	}
+
+	// Build list of taxable lines
+	tls := make([]tax.TaxableLine, 0)
+	for _, l := range inv.Lines {
 		tls = append(tls, l)
 	}
-	if !charges.IsZero() {
-		t.Charge = &charges
-		t.Total = t.Total.Add(charges)
+	for _, l := range inv.Discounts {
+		tls = append(tls, l)
+	}
+	for _, l := range inv.Charges {
+		tls = append(tls, l)
 	}
 
 	// Now figure out the tax totals (with some interface conversion)
@@ -415,18 +395,13 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.Payable = t.TotalWithTax
 
 	// Outlays
-	if len(inv.Outlays) > 0 {
-		t.Outlays = &zero
-		for i, o := range inv.Outlays {
-			o.Index = i + 1
-			v := t.Outlays.Add(o.Amount)
-			t.Outlays = &v
-		}
+	t.Outlays = calculateOutlays(zero, inv.Outlays)
+	if t.Outlays != nil {
 		t.Payable = t.Payable.Add(*t.Outlays)
 	}
 
 	if inv.Payment != nil {
-		inv.Payment.calculateAdvances(t.TotalWithTax)
+		inv.Payment.calculateAdvances(zero, t.TotalWithTax)
 
 		// Deal with advances, if any
 		if t.Advances = inv.Payment.totalAdvance(zero); t.Advances != nil {
@@ -435,7 +410,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		}
 
 		// Calculate any due date amounts
-		inv.Payment.Terms.CalculateDues(t.Payable)
+		inv.Payment.Terms.CalculateDues(zero, t.Payable)
 	}
 
 	inv.Totals = t

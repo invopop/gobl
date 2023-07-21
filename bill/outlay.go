@@ -44,3 +44,16 @@ func (o *Outlay) Validate() error {
 		validation.Field(&o.Amount, validation.Required),
 	)
 }
+
+func calculateOutlays(zero num.Amount, outlays []*Outlay) *num.Amount {
+	if len(outlays) == 0 {
+		return nil
+	}
+	total := zero
+	for i, o := range outlays {
+		o.Amount = o.Amount.MatchPrecision(zero)
+		o.Index = i + 1
+		total = total.Add(o.Amount)
+	}
+	return &total
+}
