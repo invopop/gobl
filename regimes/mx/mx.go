@@ -35,7 +35,7 @@ func New() *tax.Regime {
 		},
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Validator:        Validate,
-		Calculator:       Calculate,
+		Normalizer:       Normalize,
 		Tags:             invoiceTags,   // scenarios.go
 		Scenarios:        scenarios,     // scenarios.go
 		Categories:       taxCategories, // categories.go
@@ -55,8 +55,8 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate performs regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize performs regime specific calculations.
+func Normalize(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)

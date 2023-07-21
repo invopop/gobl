@@ -23,7 +23,7 @@ func TestEmailValidation(t *testing.T) {
 	assert.EqualError(t, invalid.Validate(), "addr: must be a valid email address.")
 }
 
-func TestPartyCalculate(t *testing.T) {
+func TestPartyNormalize(t *testing.T) {
 	party := org.Party{
 		Name: "Invopop",
 		TaxID: &tax.Identity{
@@ -31,7 +31,7 @@ func TestPartyCalculate(t *testing.T) {
 			Code:    "423 429 12.G",
 		},
 	}
-	assert.NoError(t, party.Calculate())
+	assert.NoError(t, party.Normalize())
 	assert.Equal(t, l10n.ES, party.TaxID.Country)
 	assert.Equal(t, "ES42342912G", party.TaxID.String())
 
@@ -42,5 +42,5 @@ func TestPartyCalculate(t *testing.T) {
 			Code:    "423 429 12.G",
 		},
 	}
-	assert.NoError(t, party.Calculate(), "unknown entry should not cause problem")
+	assert.NoError(t, party.Normalize(), "unknown entry should not cause problem")
 }

@@ -115,7 +115,7 @@ func creditNote() *bill.Invoice {
 
 func TestBasicInvoiceValidation(t *testing.T) {
 	inv := baseInvoice()
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	assert.Equal(t, inv.Type, bill.InvoiceTypeStandard)
 	require.NoError(t, inv.Validate())
 	assert.Equal(t, inv.Supplier.Addresses[0].Locality, "Bogotá, D.C.")
@@ -135,7 +135,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 
 	inv = baseInvoice()
 	inv.Supplier.TaxID.Type = co.TaxIdentityTypeCitizen
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	err = inv.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "supplier: (tax_id: (type: must be a valid value.).).")
@@ -144,7 +144,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	inv.Customer.TaxID.Type = co.TaxIdentityTypeCitizen
 	inv.Customer.TaxID.Code = "100100100"
 	inv.Customer.TaxID.Zone = ""
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	err = inv.Validate()
 	assert.NoError(t, err)
 }
@@ -152,7 +152,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 func TestBasicCreditNoteValidation(t *testing.T) {
 	inv := creditNote()
 	inv.Preceding[0].Reason = "Correcting an error"
-	err := inv.Calculate()
+	err := inv.Normalize()
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)

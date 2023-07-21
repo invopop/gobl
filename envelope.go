@@ -109,7 +109,7 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 }
 
 // Insert takes the provided document and inserts it into this
-// envelope. Calculate will be called automatically.
+// envelope. Normalize will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
 		return ErrInternal.WithErrorf("missing head")
@@ -128,18 +128,26 @@ func (e *Envelope) Insert(doc interface{}) error {
 		}
 	}
 
-	if err := e.calculate(); err != nil {
+	if err := e.normalize(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// Calculate is used to perform calculations on the envelope's
-// document contents to ensure everything looks correct.
-// Headers will be refreshed to ensure they have the latest valid
-// digest.
+// Calculate will perform any normalization and calculation methods on the
+// envelope and document to ensure the basic data is correct.
+//
+// Deprecated: use the Normalize method instead.
 func (e *Envelope) Calculate() error {
+	return e.Normalize()
+}
+
+// Normalize is used to normalize the envelope and document data alongside
+// any calculations required to complete the data.
+// Headers will also be refreshed to ensure they have the latest valid
+// digest data.
+func (e *Envelope) Normalize() error {
 	if e.Document == nil {
 		return ErrNoDocument
 	}
@@ -147,15 +155,15 @@ func (e *Envelope) Calculate() error {
 		return ErrNoDocument
 	}
 
-	return e.calculate()
+	return e.normalize()
 }
 
-func (e *Envelope) calculate() error {
+func (e *Envelope) normalize() error {
 	// Always set our schema version
 	e.Schema = EnvelopeSchema
 
 	// arm doors and cross check
-	if err := e.Document.Calculate(); err != nil {
+	if err := e.Document.Normalize(); err != nil {
 		return ErrCalculation.WithCause(err)
 	}
 

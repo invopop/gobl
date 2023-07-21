@@ -45,7 +45,7 @@ func (o *Outlay) Validate() error {
 	)
 }
 
-func calculateOutlays(zero num.Amount, outlays []*Outlay) *num.Amount {
+func normalizeOutlays(zero num.Amount, outlays []*Outlay) *num.Amount {
 	if len(outlays) == 0 {
 		return nil
 	}

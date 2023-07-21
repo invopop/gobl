@@ -79,12 +79,12 @@ func (id *Identity) Regime() *Regime {
 	return regimes.For(id.Country, id.Zone)
 }
 
-// Calculate will attempt to perform a regional tax normalization
+// Normalize will attempt to perform a regional tax normalization
 // on the tax identity.
-func (id *Identity) Calculate() error {
+func (id *Identity) Normalize() error {
 	r := id.Regime()
 	if r != nil {
-		return r.CalculateObject(id)
+		return r.NormalizeObject(id)
 	}
 	return nil
 }

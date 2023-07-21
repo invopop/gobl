@@ -250,7 +250,7 @@ func verifyOrgCodeMatches(m map[string]string) error {
 		}
 	}
 
-	// Calculate check digit
+	// Normalize check digit
 	cdc := (10 - (sumEven+sumOdd)%10) % 10
 
 	// Extract digit to compare against

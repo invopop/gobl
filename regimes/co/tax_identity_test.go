@@ -14,12 +14,12 @@ import (
 
 func TestNormalizeTaxIdentity(t *testing.T) {
 	tID := &tax.Identity{Country: l10n.CO, Code: "901.458.652-7"}
-	err := co.Calculate(tID)
+	err := co.Normalize(tID)
 	require.NoError(t, err)
 	assert.Equal(t, co.TaxIdentityTypeTIN, tID.Type, "autoassign type")
 
 	tID = &tax.Identity{Country: l10n.CO, Type: co.TaxIdentityTypeCivil, Code: "XX"}
-	err = co.Calculate(tID)
+	err = co.Normalize(tID)
 	require.NoError(t, err)
 	assert.Equal(t, co.TaxIdentityTypeCivil, tID.Type, "copy type")
 
@@ -48,7 +48,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: l10n.CO, Code: ts.Code}
-		err := co.Calculate(tID)
+		err := co.Normalize(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
@@ -68,7 +68,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		},
 	}
-	err := co.Calculate(p)
+	err := co.Normalize(p)
 	assert.NoError(t, err)
 	assert.Equal(t, p.Addresses[0].Locality, "Bogotá, D.C.")
 	assert.Equal(t, p.Addresses[0].Region, "Bogotá")
@@ -86,7 +86,7 @@ func TestNormalizeParty(t *testing.T) {
 			},
 		},
 	}
-	err = co.Calculate(p)
+	err = co.Normalize(p)
 	require.NoError(t, err)
 	err = co.Validate(p)
 	assert.NoError(t, err)

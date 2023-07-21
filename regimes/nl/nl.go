@@ -24,7 +24,7 @@ func New() *tax.Regime {
 			i18n.NL: "Nederland",
 		},
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Categories: []*tax.Category{
 			//
 			// VAT
@@ -93,8 +93,8 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate performs region specific calculations on the document.
-func Calculate(doc interface{}) error {
+// Normalize performs region specific calculations on the document.
+func Normalize(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return NormalizeTaxIdentity(obj)

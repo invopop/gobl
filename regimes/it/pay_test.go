@@ -23,7 +23,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 			},
 		},
 	}
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	err := inv.Validate()
 	require.NoError(t, err)
 
@@ -36,7 +36,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 			},
 		},
 	}
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	err = inv.Validate()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "key: must be a valid value")

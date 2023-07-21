@@ -127,14 +127,14 @@ func TestEnvelopeInsert(t *testing.T) {
 	})
 }
 
-func TestEnvelopeCalculate(t *testing.T) {
+func TestEnvelopeNormalize(t *testing.T) {
 	m := new(note.Message)
 	m.Content = testMessageContent
 
 	t.Run("basics", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		require.NoError(t, e.Insert(m))
-		err := e.Calculate()
+		err := e.Normalize()
 		assert.NoError(t, err)
 	})
 
@@ -142,14 +142,14 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e := gobl.NewEnvelope()
 		require.NoError(t, e.Insert(m))
 		e.Head.AddStamp(&cbc.Stamp{Provider: cbc.Key("test"), Value: "test"})
-		err := e.Calculate()
+		err := e.Normalize()
 		assert.NoError(t, err)
 		assert.NotEmpty(t, e.Head.Stamps)
 		e.Head.Draft = true
 		err = e.Validate()
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "stamps: must be blank.")
-		err = e.Calculate()
+		err = e.Normalize()
 		assert.NoError(t, err)
 		assert.Len(t, e.Head.Stamps, 1)
 		/*
@@ -169,7 +169,7 @@ func TestEnvelopeComplete(t *testing.T) {
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
 
-	err = e.Calculate()
+	err = e.Normalize()
 	require.NoError(t, err)
 
 	inv, ok := e.Extract().(*bill.Invoice)
@@ -182,13 +182,13 @@ func TestEnvelopeComplete(t *testing.T) {
 func TestEnvelopeCompleteErrors(t *testing.T) {
 	t.Run("missing document", func(t *testing.T) {
 		e := new(gobl.Envelope)
-		err := e.Calculate()
+		err := e.Normalize()
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
 	t.Run("missing document payload", func(t *testing.T) {
 		e := gobl.NewEnvelope()
-		err := e.Calculate()
+		err := e.Normalize()
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
@@ -294,7 +294,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 		require.NoError(t, err)
 		err = yaml.Unmarshal(data, env)
 		require.NoError(t, err)
-		require.NoError(t, env.Calculate())
+		require.NoError(t, env.Normalize())
 
 		_, err = env.Correct()
 		require.NoError(t, err)

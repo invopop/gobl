@@ -209,8 +209,8 @@ func (inv *Invoice) Correct(opts ...cbc.Option) error {
 	// Replace all previous preceding data
 	inv.Preceding = []*Preceding{pre}
 
-	// Running a Calculate feels a bit out of place, but not performing
+	// Running a Normalize feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
 	// conflicting or incomplete data.
-	return inv.Calculate()
+	return inv.Normalize()
 }

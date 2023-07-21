@@ -20,7 +20,7 @@ func TestOutlayTotals(t *testing.T) {
 		},
 	}
 	zero := num.MakeAmount(0, 2)
-	sum := calculateOutlays(zero, os)
+	sum := normalizeOutlays(zero, os)
 	require.NotNil(t, sum)
 	assert.Equal(t, 1, os[0].Index)
 	assert.Equal(t, 2, os[1].Index)
@@ -28,6 +28,6 @@ func TestOutlayTotals(t *testing.T) {
 	assert.Equal(t, "200.00", os[1].Amount.String())
 
 	os = []*Outlay{}
-	sum = calculateOutlays(zero, os)
+	sum = normalizeOutlays(zero, os)
 	assert.Nil(t, sum)
 }

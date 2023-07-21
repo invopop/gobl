@@ -69,10 +69,10 @@ type Regime struct {
 	// Validator is a method to use to validate a document in a given region.
 	Validator func(doc interface{}) error `json:"-"`
 
-	// Calculator is used to performs regime specific calculations on data,
+	// Normalizer is used to performs regime specific calculations on data,
 	// including any normalization that might need to take place such as
 	// with tax codes and removing white-space.
-	Calculator func(doc interface{}) error `json:"-"`
+	Normalizer func(doc interface{}) error `json:"-"`
 }
 
 // Zone represents an area inside a country, like a province
@@ -203,11 +203,11 @@ func (r *Regime) ValidateObject(obj interface{}) error {
 	return nil
 }
 
-// CalculateObject performs any regime specific calculations on the provided
+// NormalizeObject performs any regime specific calculations on the provided
 // object.
-func (r *Regime) CalculateObject(obj interface{}) error {
-	if r.Calculator != nil {
-		return r.Calculator(obj)
+func (r *Regime) NormalizeObject(obj interface{}) error {
+	if r.Normalizer != nil {
+		return r.Normalizer(obj)
 	}
 	return nil
 }

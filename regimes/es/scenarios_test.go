@@ -108,7 +108,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 
 func TestInvoiceDocumentScenarios(t *testing.T) {
 	i := testInvoiceStandard(t)
-	require.NoError(t, i.Calculate())
+	require.NoError(t, i.Normalize())
 	assert.Len(t, i.Notes, 0)
 
 	ss := i.ScenarioSummary()
@@ -117,12 +117,12 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 
 	i = testInvoiceStandard(t)
 	i.Tax.Tags = []cbc.Key{es.TagTravelAgency}
-	require.NoError(t, i.Calculate())
+	require.NoError(t, i.Normalize())
 	assert.Len(t, i.Notes, 1)
 	assert.Equal(t, i.Notes[0].Src, es.TagTravelAgency)
 	assert.Equal(t, i.Notes[0].Text, "Régimen especial de las agencias de viajes.")
 
 	i = testInvoiceSimplified(t)
-	require.NoError(t, i.Calculate())
+	require.NoError(t, i.Normalize())
 	require.NoError(t, i.Validate())
 }

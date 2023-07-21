@@ -19,7 +19,7 @@ func TestPaymentCalculations(t *testing.T) {
 			},
 		},
 	}
-	p.calculateAdvances(zero, total)
+	p.normalizeAdvances(zero, total)
 	assert.Equal(t, "20.00", p.Advances[0].Amount.String())
 
 	p = &Payment{
@@ -31,7 +31,7 @@ func TestPaymentCalculations(t *testing.T) {
 		},
 	}
 	assert.Equal(t, "10", p.Advances[0].Amount.String())
-	p.calculateAdvances(zero, total)
+	p.normalizeAdvances(zero, total)
 	assert.Equal(t, "10.00", p.Advances[0].Amount.String())
 
 	p = &Payment{
@@ -46,7 +46,7 @@ func TestPaymentCalculations(t *testing.T) {
 			},
 		},
 	}
-	p.calculateAdvances(zero, total)
+	p.normalizeAdvances(zero, total)
 	sum := p.totalAdvance(zero)
 	assert.Equal(t, "30.00", sum.String())
 }

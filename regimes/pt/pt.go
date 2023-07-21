@@ -66,7 +66,7 @@ func New() *tax.Regime {
 		Tags:       invoiceTags,
 		Scenarios:  scenarios,
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Preceding: &tax.PrecedingDefinitions{
 			Types: []cbc.Key{
 				bill.InvoiceTypeCreditNote,
@@ -87,8 +87,8 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)

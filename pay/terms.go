@@ -95,9 +95,9 @@ func (t *Terms) UNTDID4279() cbc.Code {
 	return cbc.CodeEmpty
 }
 
-// CalculateDues goes through each DueDate. If it has a percentage
+// NormalizeDues goes through each DueDate. If it has a percentage
 // value set, it'll be used to calculate the amount.
-func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
+func (t *Terms) NormalizeDues(zero num.Amount, sum num.Amount) {
 	if t == nil {
 		return
 	}

@@ -40,9 +40,9 @@ func (p *Payment) ResetAdvances() {
 	p.Advances = make([]*pay.Advance, 0)
 }
 
-func (p *Payment) calculateAdvances(zero num.Amount, totalWithTax num.Amount) {
+func (p *Payment) normalizeAdvances(zero num.Amount, totalWithTax num.Amount) {
 	for _, a := range p.Advances {
-		a.CalculateFrom(totalWithTax)
+		a.NormalizeFrom(totalWithTax)
 		a.Amount = a.Amount.MatchPrecision(zero)
 	}
 }

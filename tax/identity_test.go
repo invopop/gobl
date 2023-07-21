@@ -34,7 +34,7 @@ func TestTaxIdentity(t *testing.T) {
 		Country: l10n.ES,
 		Code:    "  x315-7928 m",
 	}
-	err = tID.Calculate()
+	err = tID.Normalize()
 	assert.NoError(t, err)
 	assert.Equal(t, tID.Code.String(), "X3157928M")
 }

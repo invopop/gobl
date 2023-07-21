@@ -37,7 +37,7 @@ func New() *tax.Regime {
 			i18n.ES: "Colombia",
 		},
 		Validator:        Validate,
-		Calculator:       Calculate,
+		Normalizer:       Normalize,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
 		Zones:            zones,               // see zones.go
 		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
@@ -64,8 +64,8 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)

@@ -51,9 +51,9 @@ func (a *Advance) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// CalculateFrom will update the amount using the rate of the provided
+// NormalizeFrom will update the amount using the rate of the provided
 // total, if defined.
-func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
+func (a *Advance) NormalizeFrom(totalWithTax num.Amount) {
 	if a.Percent != nil {
 		a.Amount = a.Percent.Of(totalWithTax)
 	}

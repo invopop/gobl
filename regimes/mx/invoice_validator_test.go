@@ -74,7 +74,7 @@ func validInvoice() *bill.Invoice {
 
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	require.NoError(t, inv.Validate())
 }
 
@@ -156,7 +156,7 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
-	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Normalize())
 	err := inv.Validate()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), expected)

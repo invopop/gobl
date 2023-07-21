@@ -28,7 +28,7 @@ func New() *tax.Regime {
 			i18n.EN: "United Kingdom",
 		},
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
 }
@@ -44,8 +44,8 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)

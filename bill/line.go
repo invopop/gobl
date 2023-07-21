@@ -64,8 +64,8 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate(zero num.Amount) {
+// normalize figures out the totals according to quantity and discounts.
+func (l *Line) normalize(zero num.Amount) {
 	if l.Item == nil {
 		return
 	}
@@ -73,7 +73,7 @@ func (l *Line) calculate(zero num.Amount) {
 	// Ensure the Price precision is set correctly according to the currency
 	l.Item.Price = l.Item.Price.MatchPrecision(zero)
 
-	// Calculate the line sum and total
+	// Normalize the line sum and total
 	l.Sum = l.Item.Price.Multiply(l.Quantity)
 	l.Total = l.Sum
 
@@ -138,11 +138,11 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	return &l2
 }
 
-func calculateLines(zero num.Amount, lines []*Line) num.Amount {
+func normalizeLines(zero num.Amount, lines []*Line) num.Amount {
 	sum := zero
 	for i, l := range lines {
 		l.Index = i + 1
-		l.calculate(zero)
+		l.normalize(zero)
 		sum = sum.MatchPrecision(l.Total)
 		sum = sum.Add(l.Total)
 	}

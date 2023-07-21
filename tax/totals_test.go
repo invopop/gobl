@@ -30,7 +30,7 @@ func (tl *taxableLine) GetTotal() num.Amount {
 	return tl.amount
 }
 
-func TestTotalCalculate(t *testing.T) {
+func TestTotalNormalize(t *testing.T) {
 	spain := es.New()
 	portugal := pt.New()
 	italy := it.New()

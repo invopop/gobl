@@ -171,20 +171,20 @@ func (inv *Invoice) Empty() {
 	inv.Payment.ResetAdvances()
 }
 
-// Calculate performs all the calculations required for the invoice totals and taxes. If the original
+// Normalize performs all the calculations required for the invoice totals and taxes. If the original
 // invoice only includes partial calculations, this will figure out what's missing.
-func (inv *Invoice) Calculate() error {
+func (inv *Invoice) Normalize() error {
 	if inv.Type == cbc.KeyEmpty {
 		inv.Type = InvoiceTypeStandard
 	}
 	if inv.Supplier == nil {
 		return errors.New("missing or invalid supplier tax identity")
 	}
-	if err := inv.Supplier.Calculate(); err != nil {
+	if err := inv.Supplier.Normalize(); err != nil {
 		return fmt.Errorf("supplier: %w", err)
 	}
 	if inv.Customer != nil {
-		if err := inv.Customer.Calculate(); err != nil {
+		if err := inv.Customer.Normalize(); err != nil {
 			return fmt.Errorf("customer: %w", err)
 		}
 	}
@@ -203,13 +203,13 @@ func (inv *Invoice) Calculate() error {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
 
-	return inv.calculate(r, tID)
+	return inv.normalize(r, tID)
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
 // the tax included in the invoice, and remove them.
 //
-// Be sure to run the Calculate method on the results!
+// Be sure to run the Normalize method on the results!
 //
 // To do this we need to figure out the "accuracy" or precision to use when removing the included
 // taxes so that we can avoid rounding errors. By default we add a single decimal place to all
@@ -313,7 +313,7 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 	return nil
 }
 
-func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
+func (inv *Invoice) normalize(r *tax.Regime, tID *tax.Identity) error {
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate
@@ -332,17 +332,17 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.reset(zero)
 
 	// Lines
-	t.Sum = calculateLines(zero, inv.Lines)
+	t.Sum = normalizeLines(zero, inv.Lines)
 	t.Total = t.Sum.Rescale(zero.Exp())
 
 	// Discount Lines
-	if discounts := calculateDiscounts(zero, t.Sum, inv.Discounts); discounts != nil {
+	if discounts := normalizeDiscounts(zero, t.Sum, inv.Discounts); discounts != nil {
 		t.Discount = discounts
 		t.Total = t.Total.Subtract(*discounts)
 	}
 
 	// Charge Lines
-	if charges := calculateCharges(zero, t.Sum, inv.Charges); charges != nil {
+	if charges := normalizeCharges(zero, t.Sum, inv.Charges); charges != nil {
 		t.Charge = charges
 		t.Total = t.Total.Add(*charges)
 	}
@@ -395,13 +395,13 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.Payable = t.TotalWithTax
 
 	// Outlays
-	t.Outlays = calculateOutlays(zero, inv.Outlays)
+	t.Outlays = normalizeOutlays(zero, inv.Outlays)
 	if t.Outlays != nil {
 		t.Payable = t.Payable.Add(*t.Outlays)
 	}
 
 	if inv.Payment != nil {
-		inv.Payment.calculateAdvances(zero, t.TotalWithTax)
+		inv.Payment.normalizeAdvances(zero, t.TotalWithTax)
 
 		// Deal with advances, if any
 		if t.Advances = inv.Payment.totalAdvance(zero); t.Advances != nil {
@@ -409,8 +409,8 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 			t.Due = &v
 		}
 
-		// Calculate any due date amounts
-		inv.Payment.Terms.CalculateDues(zero, t.Payable)
+		// Normalize any due date amounts
+		inv.Payment.Terms.NormalizeDues(zero, t.Payable)
 	}
 
 	inv.Totals = t

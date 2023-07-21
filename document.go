@@ -24,10 +24,10 @@ type Document struct {
 	payload interface{}
 }
 
-// Calculable defines the methods expected of a document payload that contains a `Calculate`
-// method to be used to perform any additional calculations.
-type Calculable interface {
-	Calculate() error
+// Normalizable defines the methods expected of a document payload that contains a `Normalize`
+// method to be used to perform any additional data normalization and calculations.
+type Normalizable interface {
+	Normalize() error
 }
 
 // Correctable defines the expected interface of a document that can be
@@ -71,14 +71,21 @@ func (d *Document) Instance() interface{} {
 	return d.payload
 }
 
-// Calculate will attempt to run the calculation method on the
+// Normalize will attempt to run the normalization method on the
 // document payload.
-func (d *Document) Calculate() error {
-	pl, ok := d.payload.(Calculable)
+func (d *Document) Normalize() error {
+	pl, ok := d.payload.(Normalizable)
 	if !ok {
 		return nil
 	}
-	return pl.Calculate()
+	return pl.Normalize()
+}
+
+// Calculate wraps around the Normalize method.
+//
+// Deprecated: use the Normalize method instead.
+func (d *Document) Calculate() error {
+	return d.Normalize()
 }
 
 // Validate checks to ensure the document has everything it needs
