@@ -1,0 +1,101 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "2f42c17792ca424df809c674ff0fa4101e69581473bbe8e9b27b93d42314c6c2"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"series": "SAMPLE",
+		"code": "001",
+		"type": "standard",
+		"currency": "USD",
+		"tax": {
+			"prices_include": "ST"
+		},
+		"issue_date": "2023-04-21",
+		"supplier": {
+			"name": "Provide One Inc.",
+			"tax_id": {
+				"country": "US"
+			},
+			"addresses": [
+				{
+					"num": "16",
+					"street": "Jessie Street",
+					"locality": "San Francisco",
+					"region": "CA",
+					"code": "94105",
+					"country": "US"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@provideone.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"emails": [
+				{
+					"addr": "email@sample.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "ST",
+						"percent": "8.5%"
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"totals": {
+			"sum": "1620.00",
+			"tax_included": "126.91",
+			"total": "1493.09",
+			"taxes": {
+				"categories": [
+					{
+						"code": "ST",
+						"rates": [
+							{
+								"base": "1493.0876",
+								"percent": "8.5%",
+								"amount": "126.9124"
+							}
+						],
+						"amount": "126.9124"
+					}
+				],
+				"sum": "126.9124"
+			},
+			"tax": "126.91",
+			"total_with_tax": "1620.00",
+			"payable": "1620.00"
+		}
+	}
+}

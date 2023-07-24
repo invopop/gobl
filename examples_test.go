@@ -2,6 +2,7 @@ package gobl_test
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/yaml"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,8 +20,11 @@ import (
 var skipExamplePaths = []string{
 	"build/",
 	".out.",
+	"/out/",
 	".github",
 }
+
+var updateExamples = flag.Bool("update", false, "Update the examples in the repository")
 
 // TestConvertExamplesToJSON finds all of the `.json` and `.yaml` files in the
 // package and attempts to convert the to JSON Envelopes.
@@ -77,20 +82,46 @@ func processFile(t *testing.T, path string) error {
 		}
 	}
 
-	if err := env.Sign(testKey); err != nil {
-		return fmt.Errorf("failed to sign the doc: %w", err)
+	// override the UUID
+	env.Head.UUID = uuid.MustParse("8a51fd30-2a27-11ee-be56-0242ac120002")
+
+	if err := env.Validate(); err != nil {
+		return fmt.Errorf("validation failed: %w", err)
 	}
 
-	// Output to the filesystem (.out.json is defined in .gitignore)
-	np := strings.TrimSuffix(path, filepath.Ext(path)) + ".out.json"
+	// Output to the filesystem in the /out/ directory
 	out, err := json.MarshalIndent(env, "", "	")
 	if err != nil {
 		return fmt.Errorf("marshalling output: %w", err)
 	}
-	if err := ioutil.WriteFile(np, out, 0644); err != nil {
-		return fmt.Errorf("saving file data: %w", err)
+
+	dir := filepath.Join(filepath.Dir(path), "out")
+	of := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path)) + ".json"
+	np := filepath.Join(dir, of)
+	if _, err := os.Stat(np); err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("checking file: %s: %w", np, err)
+		}
+		if !*updateExamples {
+			return fmt.Errorf("output file missing, run tests with `--update` flag to create")
+		}
 	}
 
-	t.Logf("wrote file: %v", np)
+	if *updateExamples {
+		if err := ioutil.WriteFile(np, out, 0644); err != nil {
+			return fmt.Errorf("saving file data: %w", err)
+		}
+		t.Logf("wrote file: %v", np)
+	} else {
+		// Compare to existing file
+		existing, err := ioutil.ReadFile(np)
+		if err != nil {
+			return fmt.Errorf("reading existing file: %w", err)
+		}
+		t.Run(np, func(t *testing.T) {
+			assert.JSONEq(t, string(existing), string(out), "output file does not match, run tests with `--update` flag to update")
+		})
+	}
+
 	return nil
 }

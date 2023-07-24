@@ -1,0 +1,135 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "315f83a516a4ca1efc18c8d31878c61a2ddcccd6dd9218e825950ccf3d4ab8c8"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"series": "SAMPLE",
+		"code": "002",
+		"type": "standard",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT"
+		},
+		"issue_date": "2023-05-21",
+		"supplier": {
+			"name": "Hotel California",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "102",
+					"street": "Via California",
+					"locality": "Palermo",
+					"region": "PA",
+					"code": "33213",
+					"country": "IT"
+				}
+			],
+			"registration": {
+				"capital": "50000.00",
+				"currency": "EUR",
+				"office": "RM",
+				"entry": "123456"
+			}
+		},
+		"customer": {
+			"name": "Mela S.r.l.",
+			"tax_id": {
+				"country": "IT",
+				"code": "13029381004"
+			},
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "M5UXCR5"
+				}
+			],
+			"addresses": [
+				{
+					"num": "23",
+					"street": "Via dei Mille",
+					"locality": "Firenze",
+					"region": "FI",
+					"code": "00100",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Tassa di Soggiorno",
+					"price": "1.00"
+				},
+				"sum": "1.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "zero",
+						"percent": "0.0%"
+					}
+				],
+				"total": "1.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Camera Matrimoniale",
+					"price": "125.00"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "intermediate",
+						"percent": "10.0%"
+					}
+				],
+				"total": "125.00"
+			}
+		],
+		"totals": {
+			"sum": "126.00",
+			"tax_included": "11.36",
+			"total": "114.64",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "zero",
+								"base": "1.0000",
+								"percent": "0.0%",
+								"amount": "0.0000"
+							},
+							{
+								"key": "intermediate",
+								"base": "113.6364",
+								"percent": "10.0%",
+								"amount": "11.3636"
+							}
+						],
+						"amount": "11.3636"
+					}
+				],
+				"sum": "11.3636"
+			},
+			"tax": "11.36",
+			"total_with_tax": "126.00",
+			"payable": "126.00"
+		}
+	}
+}
