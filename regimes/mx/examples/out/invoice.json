@@ -1,0 +1,122 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "82ee8f55fada51c77988d7a0c109930d9811de948c7316afed9f96e4bf2cd48f"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"series": "TEST",
+		"code": "00001",
+		"type": "standard",
+		"currency": "MXN",
+		"tax": {
+			"tags": [
+				"use+no-tax-effects"
+			]
+		},
+		"issue_date": "2023-07-10",
+		"supplier": {
+			"name": "ESCUELA KEMPER URGATE",
+			"tax_id": {
+				"country": "MX",
+				"zone": "21000",
+				"code": "EKU9003173C9"
+			}
+		},
+		"customer": {
+			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+			"tax_id": {
+				"country": "MX",
+				"zone": "86991",
+				"code": "URE180429TM6"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cobro por tarjetas",
+					"identities": [
+						{
+							"type": "SAT",
+							"code": "84141602"
+						}
+					],
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "10.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Porcentaje sobre GMV",
+					"identities": [
+						{
+							"type": "SAT",
+							"code": "80141628"
+						}
+					],
+					"price": "10.00",
+					"unit": "service"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "",
+				"notes": "Condiciones de pago"
+			},
+			"instructions": {
+				"key": "online+wallet"
+			}
+		},
+		"totals": {
+			"sum": "20.00",
+			"total": "20.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "20.00",
+								"percent": "16.0%",
+								"amount": "3.20"
+							}
+						],
+						"amount": "3.20"
+					}
+				],
+				"sum": "3.20"
+			},
+			"tax": "3.20",
+			"total_with_tax": "23.20",
+			"payable": "23.20"
+		}
+	}
+}

@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+issue_date: "2023-07-10"
+series: "TEST"
+code: "00001"
+tax:
+  tags:
+    - "use+no-tax-effects"
+supplier:
+  name: "ESCUELA KEMPER URGATE"
+  tax_id:
+    country: "MX"
+    code: "EKU9003173C9"
+    zone: "21000"
+customer:
+  name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
+  tax_id:
+    country: "MX"
+    code: "URE180429TM6"
+    zone: "86991"
+lines:
+  - quantity: "1"
+    item:
+      name: "Cobro por tarjetas"
+      price: "10.00"
+      identities:
+        - type: "SAT"
+          code: "84141602"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+  - quantity: "1"
+    item:
+      name: "Porcentaje sobre GMV"
+      price: "10.00"
+      unit: "service"
+      identities:
+        - type: "SAT"
+          code: "80141628"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+payment:
+  terms:
+    notes: "Condiciones de pago"
+  instructions:
+    key: "online+wallet"
