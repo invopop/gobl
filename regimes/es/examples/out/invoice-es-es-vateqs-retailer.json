@@ -1,0 +1,87 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "e12bfa758ae6fa0678f4e6e58a882fba4427f9f099bdfbb542fdb00a04e240cb"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"code": "SAMPLE-001",
+		"type": "standard",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"tags": [
+				"simplified"
+			]
+		},
+		"issue_date": "2022-02-01",
+		"supplier": {
+			"name": "Simple Goods Store",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"addresses": [
+				{
+					"num": "43",
+					"street": "Calle Mayor",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28003"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Mugs from provider",
+					"price": "16.00",
+					"meta": {
+						"source": "provider"
+					}
+				},
+				"sum": "160.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "160.00"
+			}
+		],
+		"totals": {
+			"sum": "160.00",
+			"tax_included": "27.77",
+			"total": "132.23",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "132.2314",
+								"percent": "21.0%",
+								"amount": "27.7686"
+							}
+						],
+						"amount": "27.7686"
+					}
+				],
+				"sum": "27.7686"
+			},
+			"tax": "27.77",
+			"total_with_tax": "160.00",
+			"payable": "160.00"
+		}
+	}
+}

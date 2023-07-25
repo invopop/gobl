@@ -1,0 +1,125 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "e7ecd9dd17dfb68facd7ad474b2fcfc7f5497f05b8a71e8fa4e26d5c0f6ecbc2"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"code": "SAMPLE-X-002",
+		"type": "standard",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"tags": [
+				"reverse-charge"
+			]
+		},
+		"issue_date": "2022-02-01",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "NL",
+				"code": "000099995B57"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Services exported",
+					"price": "20.00",
+					"unit": "day"
+				},
+				"sum": "200.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "200.00"
+			},
+			{
+				"i": 2,
+				"quantity": "50",
+				"item": {
+					"name": "Branded Mugs",
+					"price": "7.50",
+					"meta": {
+						"product": "goods"
+					}
+				},
+				"sum": "375.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "375.00"
+			}
+		],
+		"totals": {
+			"sum": "575.00",
+			"tax_included": "99.79",
+			"total": "475.21",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "475.2067",
+								"percent": "21.0%",
+								"amount": "99.7934"
+							}
+						],
+						"amount": "99.7934"
+					}
+				],
+				"sum": "99.7934"
+			},
+			"tax": "0.00",
+			"total_with_tax": "475.21",
+			"payable": "475.21"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "reverse-charge",
+				"text": "Reverse Charge / Inversión del sujeto pasivo."
+			}
+		]
+	}
+}

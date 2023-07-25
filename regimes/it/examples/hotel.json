@@ -65,10 +65,7 @@
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "zero",
-          "tags": [
-            "excluded"
-          ]
+          "rate": "excluded"
         }
       ],
       "sum": "1.00",

@@ -16,7 +16,7 @@ import (
 // the contents of the document.
 type Terms struct {
 	// Type of terms to be applied.
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Text detail of the chosen payment terms.
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Set of dates for agreed payments.

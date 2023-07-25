@@ -1,0 +1,168 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "be3f4ef1fe594f569535d860a7b85ba7e2fb0ee70d4deed9cf9c5761faa1e446"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"code": "SAMPLE-001",
+		"type": "standard",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT"
+		},
+		"issue_date": "2022-02-01",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Simple Goods Store",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"addresses": [
+				{
+					"num": "43",
+					"street": "Calle Mayor",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28003"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Mugs from provider",
+					"price": "10.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard+eqs",
+						"percent": "21.0%",
+						"surcharge": "5.2%"
+					}
+				],
+				"total": "100.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Delivery Costs",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2021-10-30",
+						"amount": "45.72",
+						"percent": "40%"
+					},
+					{
+						"date": "2021-11-30",
+						"amount": "68.58",
+						"percent": "60%"
+					}
+				]
+			},
+			"advances": [
+				{
+					"date": "2021-09-01",
+					"desc": "Deposit paid upfront",
+					"amount": "25.00"
+				}
+			],
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "ES06 0128 0011 3901 0008 1391",
+						"bic": "BKBKESMMXXX",
+						"name": "Bankinter"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "110.00",
+			"tax_included": "19.09",
+			"total": "90.91",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard+eqs",
+								"base": "82.6446",
+								"percent": "21.0%",
+								"surcharge": {
+									"percent": "5.2%",
+									"amount": "4.2975"
+								},
+								"amount": "17.3554"
+							},
+							{
+								"key": "standard",
+								"base": "8.2645",
+								"percent": "21.0%",
+								"amount": "1.7355"
+							}
+						],
+						"amount": "19.0909",
+						"surcharge": "4.2975"
+					}
+				],
+				"sum": "23.3884"
+			},
+			"tax": "23.39",
+			"total_with_tax": "114.30",
+			"payable": "114.30",
+			"advance": "25.00",
+			"due": "89.30"
+		}
+	}
+}
