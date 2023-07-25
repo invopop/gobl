@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5fff065413fac95076f9ee278ee219b351da74f6251244aa7accc6f6a57ae471"
+			"val": "4f57dd43293a4c781a1d3a3456cbca2199315103cbc801fe5c8b3e059264791d"
 		},
 		"draft": true
 	},
@@ -71,7 +71,6 @@
 		],
 		"payment": {
 			"terms": {
-				"key": "",
 				"due_dates": [
 					{
 						"date": "2021-01-01",
