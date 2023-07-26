@@ -155,6 +155,29 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 	assertValidationError(t, inv, "'use' tax tags is required")
 }
 
+func TestPrecedingValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Preceding = []*bill.Preceding{
+		{
+			Code: "123",
+			Stamps: []*cbc.Stamp{
+				{
+					Provider: "unexpected",
+					Value:    "1234",
+				},
+			},
+		},
+	}
+	assertValidationError(t, inv, "preceding: cannot be mapped from a `standard` type invoice")
+
+	inv.Type = bill.InvoiceTypeCreditNote
+	assertValidationError(t, inv, "preceding: (0: must have a `sat-uuid` stamp.)")
+
+	inv.Preceding[0].Stamps[0].Provider = "sat-uuid"
+	require.NoError(t, inv.Validate())
+}
+
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()

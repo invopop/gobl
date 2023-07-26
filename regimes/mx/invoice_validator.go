@@ -2,21 +2,25 @@ package mx
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
 type invoiceValidator struct {
 	inv *bill.Invoice
+	ss  *tax.ScenarioSummary
 }
 
 func validateInvoice(inv *bill.Invoice) error {
-	v := &invoiceValidator{inv: inv}
+	ss := inv.ScenarioSummary()
+	v := &invoiceValidator{inv, ss}
 	return v.validate()
 }
 
@@ -43,13 +47,15 @@ func (v *invoiceValidator) validate() error {
 			validation.Required,
 			validation.By(v.validPayment),
 		),
+		validation.Field(&inv.Preceding,
+			validation.By(v.validPrecedingList),
+			validation.Each(validation.By(v.validPrecedingEntry)),
+		),
 	)
 }
 
 func (v *invoiceValidator) validateScenarios() error {
-	ss := v.inv.ScenarioSummary()
-
-	if ss.Codes[KeySATUsoCFDI] == "" {
+	if v.ss.Codes[KeySATUsoCFDI] == "" {
 		return errors.New("'use' tax tags is required")
 	}
 
@@ -116,6 +122,34 @@ func (v *invoiceValidator) validatePayTerms(value interface{}) error {
 	return validation.ValidateStruct(terms,
 		validation.Field(&terms.Notes, validation.Length(0, 1000)),
 	)
+}
+
+func (v *invoiceValidator) validPrecedingList(value interface{}) error {
+	list, _ := value.([]*bill.Preceding)
+	if len(list) == 0 {
+		return nil
+	}
+
+	if v.ss.Codes[KeySATTipoRelacion] == "" {
+		return fmt.Errorf("cannot be mapped from a `%s` type invoice", v.inv.Type)
+	}
+
+	return nil
+}
+
+func (v *invoiceValidator) validPrecedingEntry(value interface{}) error {
+	entry, _ := value.(*bill.Preceding)
+	if entry == nil {
+		return nil
+	}
+
+	for _, s := range entry.Stamps {
+		if s.Provider == StampProviderSATUUID {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("must have a `%s` stamp", StampProviderSATUUID)
 }
 
 var isValidPaymentMeanKey = validation.In(validPaymentMeanKeys()...)
