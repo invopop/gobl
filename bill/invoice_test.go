@@ -119,8 +119,8 @@ func TestRemoveIncludedTax(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
 
 	assert.Equal(t, "1000.00", i.Lines[0].Item.Price.String())
 
@@ -190,8 +190,8 @@ func TestRemoveIncludedTax2(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
 	l0 := i2.Lines[0]
 	assert.Equal(t, "40.7547", l0.Item.Price.String())
 	assert.Equal(t, "40.7547", l0.Total.String())
@@ -273,8 +273,8 @@ func TestRemoveIncludedTax3(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
 	assert.Equal(t, "223.2642", i2.Lines[0].Total.String())
 	assert.Equal(t, "106.1952", i2.Lines[2].Total.String())
 
@@ -337,12 +337,43 @@ func TestRemoveIncludedTax4(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
 
 	data, _ := json.Marshal(i2.Lines)
 	t.Logf("TOTALS: %v", string(data))
 	assert.Equal(t, "4268.8209", i2.Totals.Sum.String())
+	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
+	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
+}
+
+func TestRemoveIncludedTax5(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(32, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(4375, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(6, 2),
+				},
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	require.NoError(t, i.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
+
+	assert.Empty(t, i2.Tax.PricesInclude)
+	l0 := i2.Lines[0]
+	assert.Equal(t, "41.27359", l0.Item.Price.String())
+
+	assert.Equal(t, "1320.75488", i2.Totals.Sum.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
@@ -392,8 +423,9 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
+	require.NotNil(t, i2)
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -459,9 +491,8 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
 
 	//data, _ := json.MarshalIndent(i2, "", "  ")
 	//t.Log(string(data))
@@ -471,8 +502,8 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 	assert.Equal(t, "48.84906", l0.Item.Price.String()) // note extra digit!
 	assert.Equal(t, "17781.05784", l0.Sum.String())
 	l1 := i2.Lines[1]
-	assert.Equal(t, "49.1321", l1.Item.Price.String())
-	assert.Equal(t, "49.1321", l1.Sum.String())
+	assert.Equal(t, "49.13208", l1.Item.Price.String())
+	assert.Equal(t, "49.13208", l1.Sum.String())
 
 	assert.Equal(t, "17830.19", i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
@@ -518,9 +549,8 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2 := i.RemoveIncludedTaxes()
-
-	require.NoError(t, i2.Calculate())
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
 
 	//data, _ := json.MarshalIndent(i2, "", "  ")
 	//t.Log(string(data))
