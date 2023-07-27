@@ -209,42 +209,60 @@ func (inv *Invoice) Calculate() error {
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
 // the tax included in the invoice, and remove them.
 //
-// Be sure to run the Calculate method on the results!
+// This method will call "Calculate" on th invoice automatically both before and after
+// to ensure that the data matches.
 //
-// To do this we need to figure out the "accuracy" or precision to use when removing the included
-// taxes so that we can avoid rounding errors. By default we add a single decimal place to all
-// numbers, but in the case of line items we take the length (Log 10) of the *quantity*.
+// In order to avoid rounding errors, we need to figure out new precisions for the line
+// items. To do this, we run a simple loop over the invoice with different precisions
+// until the totals and taxes match. This is a bit of a hack, but has proved to be the
+// most reliable solution to a very complex issue.
 //
 // A new invoice object is returned, leaving the original objects untouched.
-func (inv *Invoice) RemoveIncludedTaxes() *Invoice {
+func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	if inv.Tax == nil || inv.Tax.PricesInclude.IsEmpty() {
-		return inv // nothing to do!
+		return inv, nil // nothing to do!
 	}
 
-	i2 := *inv
-	i2.Lines = make([]*Line, len(inv.Lines))
-	for i, l := range inv.Lines {
-		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
+	if err := inv.Calculate(); err != nil {
+		return nil, err
 	}
 
-	if len(inv.Discounts) > 0 {
-		i2.Discounts = make([]*Discount, len(inv.Discounts))
-		for i, l := range inv.Discounts {
-			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
+	var i2 Invoice
+	for accuracy := uint32(2); accuracy <= 6; accuracy++ {
+
+		i2 = *inv
+		i2.Lines = make([]*Line, len(inv.Lines))
+		for i, l := range inv.Lines {
+			i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+		}
+
+		if len(inv.Discounts) > 0 {
+			i2.Discounts = make([]*Discount, len(inv.Discounts))
+			for i, l := range inv.Discounts {
+				i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
+			}
+		}
+		if len(i2.Charges) > 0 {
+			i2.Charges = make([]*Charge, len(inv.Charges))
+			for i, l := range inv.Charges {
+				i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
+			}
+		}
+
+		tx := *i2.Tax
+		tx.PricesInclude = ""
+		i2.Tax = &tx
+
+		if err := i2.Calculate(); err != nil {
+			return nil, err
+		}
+
+		if inv.Totals.Total.String() == i2.Totals.Total.String() &&
+			inv.Totals.Tax.String() == i2.Totals.Tax.String() {
+			return &i2, nil
 		}
 	}
-	if len(i2.Charges) > 0 {
-		i2.Charges = make([]*Charge, len(inv.Charges))
-		for i, l := range inv.Charges {
-			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
-		}
-	}
-
-	tx := *i2.Tax
-	tx.PricesInclude = ""
-	i2.Tax = &tx
-
-	return &i2
+	return nil, errors.New("insufficient precision, unable to remove included taxes")
 }
 
 // TaxRegime determines the tax regime for the invoice based on the supplier tax

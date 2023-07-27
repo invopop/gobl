@@ -2,7 +2,6 @@ package bill
 
 import (
 	"context"
-	"math"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
@@ -94,7 +93,7 @@ func (l *Line) calculate(zero num.Amount) {
 	}
 }
 
-func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
+func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
 	rate := l.Taxes.Get(cat)
 	if rate == nil || rate.Percent == nil {
 		return l
@@ -102,13 +101,6 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 
 	l2 := *l
 	l2i := *l.Item
-
-	// adjust the accuracy according to the line's quantity
-	ql := math.Log10(l2.Quantity.Float64()) + 1 // length of number
-	accuracy := uint32(ql)                      // + l2.Quantity.Exp()
-	if accuracy < 2 {
-		accuracy = 2
-	}
 
 	l2.Sum = l2.Sum.Upscale(accuracy).Remove(*rate.Percent)
 	l2i.Price = l2.Sum.Divide(l2.Quantity)
