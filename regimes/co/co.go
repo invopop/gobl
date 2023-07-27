@@ -36,6 +36,7 @@ func New() *tax.Regime {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
+		TimeZone:         "America/Bogota",
 		Validator:        Validate,
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go

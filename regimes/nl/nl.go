@@ -23,6 +23,7 @@ func New() *tax.Regime {
 			i18n.EN: "The Netherlands",
 			i18n.NL: "Nederland",
 		},
+		TimeZone:   "Europe/Amsterdam",
 		Validator:  Validate,
 		Calculator: Calculate,
 		Categories: []*tax.Category{

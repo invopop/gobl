@@ -314,12 +314,12 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 }
 
 func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
+	if inv.IssueDate.IsZero() {
+		inv.IssueDate = cal.TodayIn(r.TimeLocation())
+	}
 	date := inv.ValueDate
 	if date == nil {
 		date = &inv.IssueDate
-	}
-	if date == nil {
-		return errors.New("issue date cannot be empty")
 	}
 
 	if inv.Currency == currency.CodeEmpty {

@@ -73,6 +73,7 @@ func New() *tax.Regime {
 			i18n.EN: "Spain",
 			i18n.ES: "España",
 		},
+		TimeZone:         "Europe/Madrid",
 		Zones:            zones,
 		Tags:             invoiceTags,
 		IdentityTypeKeys: taxIdentityTypeDefinitions,

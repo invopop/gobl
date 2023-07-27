@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -24,6 +25,10 @@ const (
 type Regime struct {
 	// Name of the country
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
+
+	// Location name for the country's central time zone. Accepted
+	// values from IANA Time Zone Database (https://iana.org/time-zones).
+	TimeZone string `json:"time_zone" jsonschema:"title=Time Zone"`
 
 	// Country code for the region
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Code"`
@@ -238,11 +243,33 @@ func (r *Regime) Validate() error {
 	err := validation.ValidateStruct(r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
+		validation.Field(&r.TimeZone, validation.Required, validation.By(validateTimeZone)),
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Categories, validation.Required),
 		validation.Field(&r.Zones),
 	)
 	return err
+}
+
+func validateTimeZone(value interface{}) error {
+	s, ok := value.(string)
+	if !ok {
+		return errors.New("invalid time zone")
+	}
+	_, err := time.LoadLocation(s)
+	return err
+}
+
+// TimeLocation returns the time.Location for the regime.
+func (r *Regime) TimeLocation() *time.Location {
+	if r == nil {
+		return nil
+	}
+	loc, err := time.LoadLocation(r.TimeZone)
+	if err != nil {
+		return time.UTC
+	}
+	return loc
 }
 
 // InTags returns a validation rule to ensure the tag key

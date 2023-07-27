@@ -27,6 +27,7 @@ func New() *tax.Regime {
 		Name: i18n.String{
 			i18n.EN: "United Kingdom",
 		},
+		TimeZone:   "Europe/London",
 		Validator:  Validate,
 		Calculator: Calculate,
 		Categories: taxCategories,
