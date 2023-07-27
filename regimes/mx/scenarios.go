@@ -216,7 +216,22 @@ var scenarios = []*tax.ScenarioSet{
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*tax.Scenario{
+		// TipoDeComprobante / TipoRelacion
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Codes: cbc.CodeSet{
+				KeySATTipoDeComprobante: "I",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
+			Codes: cbc.CodeSet{
+				KeySATTipoDeComprobante: "E",
+				KeySATTipoRelacion:      "01",
+			},
+		},
 
+		// UsoCFDI
 		{
 			Tags: []cbc.Key{TagUse.With(TagGoodsAcquisition)},
 			Codes: cbc.CodeSet{

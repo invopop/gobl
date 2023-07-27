@@ -18,10 +18,17 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeySATFormaPago cbc.Key = "sat-forma-pago" // for mapping to c_FormaPago’s codes
-	KeySATUsoCFDI   cbc.Key = "sat-uso-cfdi"   // for mapping to c_UsoCFDI’s codes
+	KeySATFormaPago         cbc.Key = "sat-forma-pago"          // for mapping to c_FormaPago’s codes
+	KeySATTipoDeComprobante cbc.Key = "sat-tipo-de-comprobante" // for mapping to c_TipoDeComprobante’s codes
+	KeySATTipoRelacion      cbc.Key = "sat-tipo-relacion"       // for mapping to c_TipoRelacion’s codes
+	KeySATUsoCFDI           cbc.Key = "sat-uso-cfdi"            // for mapping to c_UsoCFDI’s codes
 
 	IdentityTypeSAT cbc.Code = "SAT" // for custom codes mapped from identities (e.g. c_ClaveProdServ’s codes)
+)
+
+// SAT official codes to include in stamps.
+const (
+	StampProviderSATUUID cbc.Key = "sat-uuid" // a.k.a. Folio Fiscal
 )
 
 // New provides the tax region definition
@@ -33,12 +40,13 @@ func New() *tax.Regime {
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
-		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Validator:        Validate,
 		Calculator:       Calculate,
-		Tags:             invoiceTags,   // scenarios.go
-		Scenarios:        scenarios,     // scenarios.go
-		Categories:       taxCategories, // categories.go
+		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
+		Tags:             invoiceTags,                // scenarios.go
+		Scenarios:        scenarios,                  // scenarios.go
+		Categories:       taxCategories,              // categories.go
+		Preceding:        precedingDefinitions,       // preceding.go
 	}
 }
 
