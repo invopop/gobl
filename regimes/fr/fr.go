@@ -32,7 +32,8 @@ func New() *tax.Regime {
 			i18n.EN: "France",
 			i18n.FR: "La France",
 		},
-		Tags: invoiceTags,
+		TimeZone: "Europe/Paris",
+		Tags:     invoiceTags,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

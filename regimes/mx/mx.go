@@ -40,6 +40,7 @@ func New() *tax.Regime {
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
+		TimeZone:         "America/Mexico_City",
 		Validator:        Validate,
 		Calculator:       Calculate,
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go

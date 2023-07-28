@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"testing"
+	"time"
 
 	_ "github.com/invopop/gobl" // load regions
 	"github.com/invopop/gobl/bill"
@@ -91,6 +92,27 @@ func TestInvoiceRegimeCurrencyWithDiscounts(t *testing.T) {
 
 	assert.Equal(t, "10.00", i.Lines[0].Discounts[0].Amount.String(), "should update discount precision")
 	assert.Equal(t, "20.00", i.Lines[0].Charges[0].Amount.String(), "should update charges precision")
+}
+
+func TestInvoiceAutoSetIssueDate(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	i.IssueDate = cal.Date{} // zero
+
+	require.NoError(t, i.Calculate())
+
+	loc, err := time.LoadLocation("Europe/Madrid")
+	require.NoError(t, err)
+	dn := cal.TodayIn(loc)
+	assert.Equal(t, dn.String(), i.IssueDate.String(), "should set issue date to today")
 }
 
 func TestRemoveIncludedTax(t *testing.T) {

@@ -62,6 +62,7 @@ func New() *tax.Regime {
 			i18n.EN: "Portugal",
 			i18n.PT: "Portugal",
 		},
+		TimeZone:   "Europe/Lisbon",
 		Zones:      zones,
 		Tags:       invoiceTags,
 		Scenarios:  scenarios,
