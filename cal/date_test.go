@@ -133,3 +133,34 @@ func TestDateClone(t *testing.T) {
 	d = cal.MakeDate(2021, time.May, 27)
 	assert.NotEqual(t, d.String(), d2.String())
 }
+
+func TestDateTime(t *testing.T) {
+	d := cal.MakeDate(2023, time.July, 28)
+	dt := d.Time()
+	assert.Equal(t, "2023-07-28 00:00:00 +0000 UTC", dt.String())
+
+	dp := cal.NewDate(2023, time.July, 28)
+	dt = dp.Time()
+	assert.Equal(t, "2023-07-28 00:00:00 +0000 UTC", dt.String())
+
+	loc, err := time.LoadLocation("Europe/Madrid")
+	require.NoError(t, err)
+	dt = d.TimeIn(loc)
+	assert.Equal(t, "2023-07-28 00:00:00 +0200 CEST", dt.String())
+}
+
+func TestDateOf(t *testing.T) {
+	x := time.Date(2023, time.July, 28, 0, 0, 0, 0, time.UTC)
+	d := cal.DateOf(x)
+	assert.Equal(t, "2023-07-28", d.String())
+}
+
+func TestDateAdd(t *testing.T) {
+	d := cal.MakeDate(2023, time.July, 28)
+	d2 := d.Add(0, 1, 5)
+	assert.Equal(t, "2023-09-02", d2.String())
+
+	d = cal.MakeDate(2023, time.July, 1)
+	d2 = d.Add(0, 1, -1) // last day of month
+	assert.Equal(t, "2023-07-31", d2.String())
+}

@@ -49,6 +49,13 @@ func TodayIn(loc *time.Location) Date {
 	}
 }
 
+// DateOf returns the Date in which a time occurs in the time's location.
+func DateOf(t time.Time) Date {
+	return Date{
+		civil.DateOf(t),
+	}
+}
+
 // Validate ensures the the date object looks valid.
 func (d Date) Validate() error {
 	if d.IsZero() {
@@ -64,6 +71,25 @@ func (d Date) Validate() error {
 func (d *Date) Clone() *Date {
 	d2 := *d
 	return &d2
+}
+
+// Time returns a time object for the date.
+func (d Date) Time() time.Time {
+	return d.TimeIn(time.UTC)
+}
+
+// TimeIn returns a time object for the date in the given location which
+// may be important when considering timezones and arithmetic.
+func (d Date) TimeIn(loc *time.Location) time.Time {
+	return time.Date(d.Year, d.Month, d.Day, 0, 0, 0, 0, loc)
+}
+
+// Add returns a new date with the given number of years, months and days.
+// This uses the time package to do the arithmetic.
+func (d Date) Add(years, months, days int) Date {
+	t := d.Time()
+	t = t.AddDate(years, months, days)
+	return DateOf(t)
 }
 
 // UnmarshalJSON is used to parse a date from json and ensures that
