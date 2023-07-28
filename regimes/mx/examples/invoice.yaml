@@ -25,6 +25,8 @@ lines:
       identities:
         - type: "SAT"
           code: "84141602"
+    discounts:
+      - percent: "10.0%"
     taxes:
       - cat: "VAT"
         rate: "standard"

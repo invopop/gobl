@@ -178,6 +178,17 @@ func TestPrecedingValidation(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
+func TestInvoiceDiscountValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Discounts = []*bill.Discount{
+		{
+			Percent: num.NewPercentage(20, 2),
+		},
+	}
+	assertValidationError(t, inv, "discounts: the SAT doesn't allow discounts at invoice level")
+}
+
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
