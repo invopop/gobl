@@ -51,6 +51,9 @@ func (v *invoiceValidator) validate() error {
 			validation.By(v.validPrecedingList),
 			validation.Each(validation.By(v.validPrecedingEntry)),
 		),
+		validation.Field(&inv.Discounts,
+			validation.Empty.Error("the SAT doesn't allow discounts at invoice level. Use line discounts instead."),
+		),
 	)
 }
 
