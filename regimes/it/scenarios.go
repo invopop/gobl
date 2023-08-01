@@ -11,9 +11,18 @@ import (
 // Document tag keys
 const (
 	// Tags for document type
-	TagFreelance       cbc.Key = "freelance"
-	TagCeilingExceeded cbc.Key = "ceiling-exceeded"
-	TagSanMarinoPaper  cbc.Key = "san-marino-paper"
+	TagFreelance         cbc.Key = "freelance"
+	TagCeilingExceeded   cbc.Key = "ceiling-exceeded"
+	TagSanMarinoPaper    cbc.Key = "san-marino-paper"
+	TagImport            cbc.Key = "import"
+	TagGoods             cbc.Key = "goods"
+	TagGoodsEU           cbc.Key = "goods-eu"
+	TagGoodsWithTax      cbc.Key = "goods-with-tax"
+	TagGoodsExtracted    cbc.Key = "goods-extracted"
+	TagRegularization    cbc.Key = "regularization"
+	TagDeferred          cbc.Key = "deferred"
+	TagThirdPeriod       cbc.Key = "third-period"
+	TagDepreciableAssets cbc.Key = "depreciable-assets"
 
 	// Tags for Fiscal Regime
 	TagMinimumTaxPayers cbc.Key = "minimum-tax-payers"
@@ -57,6 +66,69 @@ var invoiceTags = []*tax.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Purchases from San Marino with VAT and paper invoice",
 			i18n.IT: "Acquisti da San Marino con IVA e fattura cartacea",
+		},
+	},
+	{
+		Key: TagImport,
+		Name: i18n.String{
+			i18n.EN: "Import",
+			i18n.IT: "Importazione",
+		},
+	},
+	{
+		Key: TagGoods,
+		Name: i18n.String{
+			i18n.EN: "Goods",
+			i18n.IT: "Beni",
+		},
+	},
+	{
+		Key: TagGoodsEU,
+		Name: i18n.String{
+			i18n.EN: "Goods from EU",
+			i18n.IT: "Beni da UE",
+		},
+	},
+	{
+		Key: TagGoodsWithTax,
+		Name: i18n.String{
+			i18n.EN: "Goods with tax",
+			i18n.IT: "Beni con imposta",
+		},
+	},
+	{
+		Key: TagGoodsExtracted,
+		Name: i18n.String{
+			i18n.EN: "Goods extracted",
+			i18n.IT: "Beni estratti",
+		},
+	},
+	{
+		Key: TagDeferred,
+		Name: i18n.String{
+			i18n.EN: "Deferred",
+			i18n.IT: "Differita",
+		},
+	},
+	{
+		Key: TagRegularization,
+		Name: i18n.String{
+			i18n.EN: "Regularization",
+			i18n.IT: "Regolarizzazione",
+		},
+	},
+	{
+		Key: TagThirdPeriod,
+		Name: i18n.String{
+			i18n.EN: "Third period",
+			i18n.IT: "Terzo periodo",
+		},
+	},
+	{
+		Key: TagDepreciableAssets,
+		Name: i18n.String{
+			i18n.EN: "Depreciable assets",
+			i18n.IT: "Beni ammortizzabili",
 		},
 	},
 
@@ -176,13 +248,68 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagReverseCharge},
+			Tags:  []cbc.Key{common.TagSelfBilled},
 			Name: i18n.String{
-				i18n.EN: "Reverse charge internal invoice integration",
+				i18n.EN: "Self-billed for self consumption or for free transfer without recourse",
+				i18n.IT: "Fattura per autoconsumo o per cessioni gratuite senza rivalsa",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD27", // order is important
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, common.TagReverseCharge},
+			Name: i18n.String{
+				i18n.EN: "Reverse charge",
 				i18n.IT: "Integrazione fattura reverse charge interno",
 			},
 			Codes: cbc.CodeSet{
 				KeyFatturaPATipoDocumento: "TD16",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagImport},
+			Name: i18n.String{
+				i18n.EN: "Self-billed Import",
+				i18n.IT: "Integrazione/autofattura per acquisto servizi da estero",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD17",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagImport, TagGoodsEU},
+			Name: i18n.String{
+				i18n.EN: "Self-billed EU Goods Import",
+				i18n.IT: "Integrazione per acquisto beni intracomunitari",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD18",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagImport, TagGoods},
+			Name: i18n.String{
+				i18n.EN: "Self-billed Goods Import",
+				i18n.IT: "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD19",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagRegularization},
+			Name: i18n.String{
+				i18n.EN: "Self-billed Regularization",
+				i18n.IT: "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD20",
 			},
 		},
 		{
@@ -194,6 +321,73 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeSet{
 				KeyFatturaPATipoDocumento: "TD21",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagGoodsExtracted},
+			Name: i18n.String{
+				i18n.EN: "Self-billed for goods extracted from VAT warehouse",
+				i18n.IT: "Estrazione beni da Deposito IVA",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD22",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagGoodsWithTax},
+			Name: i18n.String{
+				i18n.EN: "Self-billed for goods extracted from VAT warehouse with VAT payment",
+				i18n.IT: "Estrazione beni da Deposito IVA con versamento IVA",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD23",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{TagDeferred},
+			Name: i18n.String{
+				i18n.EN: "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
+				i18n.IT: "Fattura differita - art.21 c.4 lett. a",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD24",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{TagDeferred, TagThirdPeriod},
+			Name: i18n.String{
+				i18n.EN: "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
+				i18n.IT: "Fattura differita - art.21 c.4 terzo periodo lett. b",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD25",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{TagDepreciableAssets},
+			Name: i18n.String{
+				i18n.EN: "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
+				i18n.IT: "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD26",
+			},
+		},
+
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Tags:  []cbc.Key{common.TagSelfBilled, TagSanMarinoPaper},
+			Name: i18n.String{
+				i18n.EN: "Purchases from San Marino with VAT (paper invoice)",
+				i18n.IT: "Acquisti da San Marino con IVA (fattura cartacea)",
+			},
+			Codes: cbc.CodeSet{
+				KeyFatturaPATipoDocumento: "TD28",
 			},
 		},
 
@@ -216,6 +410,16 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeSet{
 				KeyFatturaPARegimeFiscale: "RF02",
+			},
+		},
+
+		// **** MESSAGES ****
+		{
+			Tags: []cbc.Key{common.TagReverseCharge},
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  common.TagReverseCharge,
+				Text: "Reverse Charge / Inversione del soggetto passivo",
 			},
 		},
 	},

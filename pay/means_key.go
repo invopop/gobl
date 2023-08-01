@@ -71,19 +71,19 @@ func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string) {
 	val, _ := schema.Properties.Get(property)
 	prop, ok := val.(*jsonschema.Schema)
 	if ok {
-		oneOf := make([]*jsonschema.Schema, len(MeansKeyDefinitions))
+		anyOf := make([]*jsonschema.Schema, len(MeansKeyDefinitions))
 		for i, v := range MeansKeyDefinitions {
-			oneOf[i] = &jsonschema.Schema{
+			anyOf[i] = &jsonschema.Schema{
 				Const:       v.Key,
 				Title:       v.Title,
 				Description: v.Description,
 			}
 		}
-		oneOf = append(oneOf, &jsonschema.Schema{
+		anyOf = append(anyOf, &jsonschema.Schema{
 			Title:   "Regime Specific Key",
 			Pattern: cbc.KeyPattern, // Allow custom keys
 		})
 		prop.Pattern = ""
-		prop.OneOf = oneOf
+		prop.AnyOf = anyOf
 	}
 }

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "series": "SAMPLE",
+  "code": "003",
+  "currency": "EUR",
+  "issue_date": "2023-08-01",
+  "type": "standard",
+  "supplier": {
+    "tax_id": {
+      "country": "IT",
+      "code": "12345678903"
+    },
+    "name": "Hotel California",
+    "registration": {
+      "capital": "50000.00",
+      "currency": "EUR",
+      "entry": "123456",
+      "office": "RM"
+    },
+    "addresses": [
+      {
+        "num": "102",
+        "street": "Via California",
+        "locality": "Palermo",
+        "region": "PA",
+        "code": "33213",
+        "country": "IT"
+      }
+    ]
+  },
+  "customer": {
+    "tax_id": {
+      "country": "IT",
+      "code": "13029381004"
+    },
+    "name": "Mela S.r.l.",
+    "inboxes": [
+      {
+        "key": "codice-destinatario",
+        "code": "M5UXCR5"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "23",
+        "street": "Via dei Mille",
+        "locality": "Firenze",
+        "region": "FI",
+        "code": "00100",
+        "country": "IT"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Camera Matrimoniale",
+        "price": "125.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "intermediate"
+        }
+      ]
+    }
+  ],
+  "charges": [
+    {
+      "key": "stamp-duty",
+      "amount": "2.00",
+      "reason": "Imposta di bollo"
+    }
+  ]
+}

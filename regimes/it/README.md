@@ -6,7 +6,7 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 ### FatturaPA
 
-[Historical Documentations](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
+[Historical Documentation](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
 
 [Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - by far the most comprehensible spec doc. Since the difference between 1.2.2 and 1.2.1 is minimal, this is perfectly usable.
 
@@ -34,46 +34,127 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 ### Italy-specific Details
 
+Italy requires all invoices to comply with the [FatturaPA](https://www.fatturapa.gov.it/it/index.html) format which includes support for a specific set of fields unique to Italy. GOBL tries to guess what the best options are so that the conversion process is simple, but some data needs to be added manually.
+
+Unfortunately, the FatturaPA format adds considerable complexity as it was designed for two purposes in one format:
+
+- Regular invoices sent to customers, and,
+- Invoices received from suppliers that are not part of the Italian system, these are described as "self-billed" invoices.
+
+A better way to consider electronic invoices in Italy is perhaps to think of them as micro-tax-declarations as opposed to just a format designed to ease the communication with customers.
+
+We've tried to describe how to deal with many of the exception cases and special usages in this page, but if you find something that is not supported, please get in touch.
+
+#### Reverse Charge Mechanism
+
+The regular approach in GOBL to indicate that an invoice is subject to the "reverse charge" mechanism, is simply to include the `reverse-charge` tag inside the invoice's tax section.
+
+Unfortunately in Italy this alone is not sufficient, each line item inside the document needs to be attributed with a specific exemption reason. These are defined in the "Nature" (Natura) section below. Take the following line for example:
+
+```json
+{
+  "quantity": "20",
+  "item": {
+    "name": "Development services",
+    "price": "90.00"
+  },
+  "taxes": [
+    {
+      "cat": "VAT",
+      "rate": "reverse-charge"
+    }
+  ]
+}
+```
+
+When converting to FatturaPA the "Nature" code will be set to `N6.9`.
+
 #### Stamp Duty
 
-Add an invoice-level `bill.Charge` and use `it.ChargeKeyStampDuty` as the `bill.Charge.Key`.
+Stamp Duty ("Imposta di bollo") is a fixed priced tax applied to the production, request, or presentation of certain documents: civil, commercial, judicial and extrajudicial documents, on notices, or posters.
+
+These can be added to GOBL Invoices as "charges" (`bill.Charge`) defined with the `stamp-duty` (`it.ChargeKeyStampDuty`) key, for example:
+
+```json
+{
+  "charges": [
+    {
+      "key": "stamp-duty",
+      "amount": "2.00",
+      "reason": "Imposta di bollo"
+    }
+  ]
+}
+```
+
+See also [examples/stamp-duty.json](./examples/stamp-duty.json).
 
 #### Numero REA
 
-`Party.Registration` is used to store the Numero REA (Registro delle Imprese) of the company.
-The `Office` field is used to store the Provincia (Province) of the company, the `Entry` field is used to store the Numero REA. Additionally, the share capital is stored in the `Capital` field used in conjunction with `Currency`.
+If you need to include an REA number ("Repertorio delle notizie Economiche e Amministrative") in your invoices, you can use the `registration` ([org.Registration](https://docs.gobl.org/draft-0/org/registration) property of a [org.Part](https://docs.gobl.org/draft-0/org/party) object.
 
-#### Local Codes
+The fields used are:
 
-FatturaPA demands very specific categorization for the type of economic activity,
-document type, fund type, etc.
+- `capital` - share capital
+- `currency` - currency of the share capital, usually `EUR`
+- `office` - province code for the company
+- `entry` - registration number itself
 
-##### RegimeFiscale (Tax System)
+For example:
 
-The "Regime Fiscale" or tax system needs to be applied to all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden by specifying one of the following tax tags in the invoice document:
+```json
+{
+  "registration": {
+    "capital": "50000.00",
+    "currency": "EUR",
+    "office": "RM",
+    "entry": "123456"
+  }
+}
+```
 
-| Code | Document Tags        | Description                                                                                                                                                                    |
-| ---- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| RF01 | default              | Ordinary                                                                                                                                                                       |
-| RF02 | `minimum-tax-payers` | "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)"                                                                                                               |
-| RF04 |                      | "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)"                                                                   |
-| RF05 |                      | "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                          |
-| RF06 |                      | "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                                         |
-| RF07 |                      | "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                                          |
-| RF08 |                      | "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                             |
-| RF09 |                      | "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                    |
-| RF10 |                      | "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)" |
-| RF11 |                      | "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)"                                                                                                |
-| RF12 |                      | "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)"                                                                                                  |
-| RF13 |                      | "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)"                                                                                              |
-| RF14 |                      | "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)"                                                                            |
-| RF15 |                      | "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)"                                                                              |
-| RF16 |                      | "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)"                                                                                             |
-| RF17 |                      | "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)"                                                                 |
-| RF18 |                      | Other                                                                                                                                                                          |
-| RF19 |                      | "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)"                                                                                                                      |
+#### Tax System - "Regime Fiscale"
 
-##### ModalitaPagamento (Payment Means)
+The tax system ("Regime Fiscale") needs to be applied to all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden by specifying one of the following tax tags in the invoice document:
+
+| Code | Document Tags                 | Description                                                                                                                                                                    |
+| ---- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| RF01 | default                       | Ordinary                                                                                                                                                                       |
+| RF02 | `minimum-tax-payers`          | "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)"                                                                                                               |
+| RF04 | `agriculture`                 | "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)"                                                                   |
+| RF05 | `tobacco`                     | "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                          |
+| RF06 | `matches`                     | "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                                         |
+| RF07 | `publishing`                  | "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                                          |
+| RF08 | `telephones`                  | "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                             |
+| RF09 | `public-transport`            | "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                    |
+| RF10 | `entertainment`               | "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)" |
+| RF11 | `travel-agency`               | "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)"                                                                                                |
+| RF12 | `farmhouse`                   | "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)"                                                                                                  |
+| RF13 | `door-to-door`                | "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)"                                                                                              |
+| RF14 | `used-goods`                  | "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)"                                                                            |
+| RF15 | `antiques`                    | "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)"                                                                              |
+| RF16 | `vat-in-cash`                 | "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)"                                                                                             |
+| RF17 | `vat-in-cash`, `low-turnover` | "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)"                                                                 |
+| RF18 | `other`                       | Other                                                                                                                                                                          |
+| RF19 | `flat-rate`                   | "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)"                                                                                                                      |
+
+#### Payment Means (ModalitaPagamento)
+
+The FatturaPA format defines its own set of payment means to declare invoices with the SDI. Take the following example of the payment property inside an invoice:
+
+```json
+{
+  "payment": {
+    "instructions": {
+      "key": "credit-transfer",
+      "bank": {
+        "iban": "IT60X0542811101000000123456",
+        "bic": "ABCDITMM"
+      }
+    }
+  }
+}
+```
 
 The following table describes how to map the Italian payment means codes to those of GOBL. The list is somewhat based on the official mapping of the FatturaPA codes to EU Semantic invoice definition, more details available [here](https://www.agenziaentrate.gov.it/portale/documents/20143/288396/Technical+Rules+for+European+Invoicing+v2.1.pdf).
 
@@ -103,7 +184,7 @@ The following table describes how to map the Italian payment means codes to thos
 | MP22 | `netting`                  | Deduction on sums already collected from previous transactions. |
 | MP23 | `online+pagopa`            | PagoPA                                                          |
 
-##### TipoDocumento (Document Type)
+#### Document Type (TipoDocumento)
 
 All Italian invoices must be identified with a specific type code defined by the FatturaPA format. The following table helps identify how GOBL will map the expected Italian code with a combination of the Invoice Type and tax tags.
 
@@ -119,51 +200,48 @@ All Italian invoices must be identified with a specific type code defined by the
 | TD08 | `credit-note` | `simplified`                        | Simplified Credit Note (no customer)                                                                                                                                              |
 | TD09 | `debit-note`  | `simplified`                        | Simplified Debit Note (no customer)                                                                                                                                               |
 | TD16 | `standard`    | `self-billed`, `reverse-charge`     | reverse charge internal invoice integration                                                                                                                                       |
-| TD17 | `standard`    | `self-billled`, `import`            | integration/self invoicing for purchase services from abroad                                                                                                                      |
+| TD17 | `standard`    | `self-billed`, `import`             | integration/self invoicing for purchase services from abroad                                                                                                                      |
 | TD18 | `standard`    | `self-billed`, `import`, `goods-eu` | integration for purchase of intra UE goods                                                                                                                                        |
 | TD19 | `standard`    | `self-billed`, `import`, `goods`    | integration/self invoicing for purchase of goods ex art.17 c.2 DPR 633/72                                                                                                         |
-| TD20 | `standard`    | `self-billed`, `regularize`         | self invoicing for regularisation and integration of invoices (ex art.6 c.8 and 9-bis d.lgs 471/97 or art.46 c.5 D.L. 331/93)                                                     |
+| TD20 | `standard`    | `self-billed`, `regularization`     | self invoicing for regularisation and integration of invoices (ex art.6 c.8 and 9-bis d.lgs 471/97 or art.46 c.5 D.L. 331/93)                                                     |
 | TD21 | `standard`    | `self-billed`, `ceiling-exceeded`   | Self invoicing when goods are bought for export without VAT until a certain limit. If limit is exceeded, they must issue an invoice of type TD21. (Autofaturra per splafonamento) |
 | TD22 | `standard`    | `self-billed`, `goods-extracted`    | extractions of goods from VAT Warehouse                                                                                                                                           |
 | TD23 | `standard`    | `self-billed`, `goods-with-tax`     | extractions of goods from VAT Warehouse with payment of VAT                                                                                                                       |
 | TD24 | `standard`    | `deferred`                          | "deferred invoice ex art.21, c.4, lett. a) DPR 633/72"                                                                                                                            |
 | TD25 | `standard`    | `deferred`, `third-period`          | "deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72"                                                                                                               |
 | TD26 | `standard`    | `depreciable-assets`                | sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72)                                                                                                      |
-| TD27 | `standard`    | `self-billed`, TBD                  | self invoicing for self consumption or for free transfer without recourse                                                                                                         |
+| TD27 | `standard`    | `self-billed`                       | self invoicing for self consumption or for free transfer without recourse                                                                                                         |
 | TD28 | `standard`    | `self-billed`, `san-marino-paper`   | Purchases from San Marino with VAT (paper invoice)                                                                                                                                |
 
-##### Natura (Nature)
+#### Line Nature Code (Natura)
 
-The "Natura" code is required when identifying why a single row inside an invoice _does not_ include VAT.
+The "Natura" code is required when identifying why a single row inside an invoice _does not_ include VAT. Keys are provided in the `rate` field.
 
-| Code | Tax Rate Key                                 | Description                                                                                                                                                                                                                                              |
-| ---- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| N1   | `excluded`                                   | excluded pursuant to Art. 15, DPR 633/72                                                                                                                                                                                                                 |
-| N2   | `not-subject`                                | not subject (this code is no longer permitted to use on invoices emitted from 1 January 2021 )                                                                                                                                                           |
-| N2.1 | `not-subject+article-7`                      | not subject to VAT under the articles from 7 to 7-septies of DPR 633/72                                                                                                                                                                                  |
-| N2.2 | `not-subject+other`                          | not subject – other cases                                                                                                                                                                                                                                |
-| N3   | `not-taxable`                                | not taxable (this code is no longer permitted to use on invoices emitted from 1 January 2021 )                                                                                                                                                           |
-| N3.1 | `not-taxable+export`                         | not taxable - exportations                                                                                                                                                                                                                               |
-| N3.2 | `not-taxable+intra-community`                | not taxable - intra Community transfers                                                                                                                                                                                                                  |
-| N3.3 | `not-taxable+san-marino`                     | not taxable - transfers to San Marino                                                                                                                                                                                                                    |
-| N3.4 | `not-taxable+export-supplies`                | not taxable - transactions treated as export supplies                                                                                                                                                                                                    |
-| N3.5 | `not-taxable+declaration-of-intent`          | not taxable - for declaration of intent                                                                                                                                                                                                                  |
-| N3.6 | `not-taxable+other`                          | not taxable – other transactions that don’t contribute to the determination of ceiling                                                                                                                                                                   |
-| N4   | `exempt`                                     | exempt                                                                                                                                                                                                                                                   |
-| N5   | `margin-regime`                              | margin regime / VAT not exposed on invoice                                                                                                                                                                                                               |
-| N6   | `reverse-charge`                             | "reverse charge (for transactions in reverse charge or for self invoicing for purchase of extra UE services or for import of goods only in the cases provided for) — (this code is no longer permitted to use on invoices emitted from 1 January 2021 )" |
-| N6.1 | `reverse-charge+scrap`                       | reverse charge - transfer of scrap and of other recyclable materials                                                                                                                                                                                     |
-| N6.2 | `reverse-charge+precious-metals`             | reverse charge - transfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO                                                                                                                                                 |
-| N6.3 | `reverse-charge+construction-subcontracting` | reverse charge - subcontracting in the construction sector                                                                                                                                                                                               |
-| N6.4 | `reverse-charge+buildings`                   | reverse charge - transfer of buildings                                                                                                                                                                                                                   |
-| N6.5 | `reverse-charge+mobile`                      | reverse charge - transfer of mobile phones                                                                                                                                                                                                               |
-| N6.6 | `reverse-charge+electronics`                 | reverse charge - transfer of electronic products                                                                                                                                                                                                         |
-| N6.7 | `reverse-charge+construction`                | reverse charge - provisions in the construction and related sectors                                                                                                                                                                                      |
-| N6.8 | `reverse-charge+energy`                      | reverse charge - transactions in the energy sector                                                                                                                                                                                                       |
-| N6.9 | `reverse-charge+other`                       | reverse charge - other cases                                                                                                                                                                                                                             |
-| N7   | `vat-eu`                                     | "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)"                                                     |
+| Code | Tax Rate Key                                 | Description                                                                                                                                                                                          |
+| ---- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| N1   | `excluded`                                   | excluded pursuant to Art. 15, DPR 633/72                                                                                                                                                             |
+| N2.1 | `not-subject+article-7`                      | not subject to VAT under the articles from 7 to 7-septies of DPR 633/72                                                                                                                              |
+| N2.2 | `not-subject`                                | not subject – other cases                                                                                                                                                                            |
+| N3.1 | `not-taxable+export`                         | not taxable - exportations                                                                                                                                                                           |
+| N3.2 | `not-taxable+intra-community`                | not taxable - intra Community transfers                                                                                                                                                              |
+| N3.3 | `not-taxable+san-marino`                     | not taxable - transfers to San Marino                                                                                                                                                                |
+| N3.4 | `not-taxable+export-supplies`                | not taxable - transactions treated as export supplies                                                                                                                                                |
+| N3.5 | `not-taxable+declaration-of-intent`          | not taxable - for declaration of intent                                                                                                                                                              |
+| N3.6 | `not-taxable`                                | not taxable – other transactions that don’t contribute to the determination of ceiling                                                                                                               |
+| N4   | `exempt`                                     | exempt                                                                                                                                                                                               |
+| N5   | `margin-regime`                              | margin regime / VAT not exposed on invoice                                                                                                                                                           |
+| N6.1 | `reverse-charge+scrap`                       | reverse charge - transfer of scrap and of other recyclable materials                                                                                                                                 |
+| N6.2 | `reverse-charge+precious-metals`             | reverse charge - transfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO                                                                                             |
+| N6.3 | `reverse-charge+construction-subcontracting` | reverse charge - subcontracting in the construction sector                                                                                                                                           |
+| N6.4 | `reverse-charge+buildings`                   | reverse charge - transfer of buildings                                                                                                                                                               |
+| N6.5 | `reverse-charge+mobile`                      | reverse charge - transfer of mobile phones                                                                                                                                                           |
+| N6.6 | `reverse-charge+electronics`                 | reverse charge - transfer of electronic products                                                                                                                                                     |
+| N6.7 | `reverse-charge+construction`                | reverse charge - provisions in the construction and related sectors                                                                                                                                  |
+| N6.8 | `reverse-charge+energy`                      | reverse charge - transactions in the energy sector                                                                                                                                                   |
+| N6.9 | `reverse-charge`                             | reverse charge - other cases                                                                                                                                                                         |
+| N7   | `vat-eu`                                     | "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)" |
 
-##### TipoRitenuta (Withholding Type)
+##### Withholding Type (TipoRitenuta)
 
 Withholding types are different categories of withheld taxes that can be applied alongside VAT. The following list identifies those currently supported by GOBL:
 
@@ -176,7 +254,9 @@ Withholding types are different categories of withheld taxes that can be applied
 | RT05 | `ENPAM`           | ENPAM contribution                 |
 | RT06 | not supported     | Other social security contribution |
 
-##### TipoCassa (Fund Type)
+##### Fund Type (TipoCassa)
+
+The Fund Type field is used in very specific circumstances and is currently not supported by GOBL. The following table lists the known types for future implementation.
 
 | Code | Description                                                                                                                                    |
 | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -206,4 +286,3 @@ Withholding types are different categories of withheld taxes that can be applied
 ## TODO
 
 - Document Codice Destinatario (uses inbox codes)
-- Document how local codes are mapped
