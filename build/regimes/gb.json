@@ -3,6 +3,7 @@
   "name": {
     "en": "United Kingdom"
   },
+  "time_zone": "Europe/London",
   "country": "GB",
   "currency": "GBP",
   "categories": [

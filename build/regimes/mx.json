@@ -4,6 +4,7 @@
     "en": "Mexico",
     "es": "México"
   },
+  "time_zone": "America/Mexico_City",
   "country": "MX",
   "currency": "MXN",
   "tags": [
@@ -403,6 +404,23 @@
       "schema": "bill/invoice",
       "list": [
         {
+          "type": [
+            "standard"
+          ],
+          "codes": {
+            "sat-tipo-de-comprobante": "I"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "codes": {
+            "sat-tipo-de-comprobante": "E",
+            "sat-tipo-relacion": "01"
+          }
+        },
+        {
           "tags": [
             "use+goods-acquisition"
           ],
@@ -597,6 +615,14 @@
       ]
     }
   ],
+  "preceding": {
+    "types": [
+      "credit-note"
+    ],
+    "stamps": [
+      "sat-uuid"
+    ]
+  },
   "categories": [
     {
       "code": "VAT",

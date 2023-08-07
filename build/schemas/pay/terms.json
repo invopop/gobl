@@ -117,11 +117,8 @@
         }
       },
       "type": "object",
-      "required": [
-        "key"
-      ],
       "description": "Terms defines when we expect the customer to pay, or have paid, for the contents of the document."
     }
   },
-  "$comment": "Generated with GOBL v0.52.0"
+  "$comment": "Generated with GOBL v0.53.0"
 }

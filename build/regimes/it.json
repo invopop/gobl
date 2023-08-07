@@ -4,6 +4,7 @@
     "en": "Italy",
     "it": "Italia"
   },
+  "time_zone": "Europe/Rome",
   "country": "IT",
   "zones": [
     {
@@ -687,6 +688,69 @@
       }
     },
     {
+      "key": "import",
+      "name": {
+        "en": "Import",
+        "it": "Importazione"
+      }
+    },
+    {
+      "key": "goods",
+      "name": {
+        "en": "Goods",
+        "it": "Beni"
+      }
+    },
+    {
+      "key": "goods-eu",
+      "name": {
+        "en": "Goods from EU",
+        "it": "Beni da UE"
+      }
+    },
+    {
+      "key": "goods-with-tax",
+      "name": {
+        "en": "Goods with tax",
+        "it": "Beni con imposta"
+      }
+    },
+    {
+      "key": "goods-extracted",
+      "name": {
+        "en": "Goods extracted",
+        "it": "Beni estratti"
+      }
+    },
+    {
+      "key": "deferred",
+      "name": {
+        "en": "Deferred",
+        "it": "Differita"
+      }
+    },
+    {
+      "key": "regularization",
+      "name": {
+        "en": "Regularization",
+        "it": "Regolarizzazione"
+      }
+    },
+    {
+      "key": "third-period",
+      "name": {
+        "en": "Third period",
+        "it": "Terzo periodo"
+      }
+    },
+    {
+      "key": "depreciable-assets",
+      "name": {
+        "en": "Depreciable assets",
+        "it": "Beni ammortizzabili"
+      }
+    },
+    {
       "key": "minimum-tax-payers",
       "name": {
         "en": "Minimum Taxpayers",
@@ -1115,14 +1179,96 @@
             "standard"
           ],
           "tags": [
+            "self-billed"
+          ],
+          "name": {
+            "en": "Self-billed for self consumption or for free transfer without recourse",
+            "it": "Fattura per autoconsumo o per cessioni gratuite senza rivalsa"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD27"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
             "reverse-charge"
           ],
           "name": {
-            "en": "Reverse charge internal invoice integration",
+            "en": "Reverse charge",
             "it": "Integrazione fattura reverse charge interno"
           },
           "codes": {
             "fatturapa-tipo-documento": "TD16"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "import"
+          ],
+          "name": {
+            "en": "Self-billed Import",
+            "it": "Integrazione/autofattura per acquisto servizi da estero"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD17"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "import",
+            "goods-eu"
+          ],
+          "name": {
+            "en": "Self-billed EU Goods Import",
+            "it": "Integrazione per acquisto beni intracomunitari"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD18"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "import",
+            "goods"
+          ],
+          "name": {
+            "en": "Self-billed Goods Import",
+            "it": "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD19"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "regularization"
+          ],
+          "name": {
+            "en": "Self-billed Regularization",
+            "it": "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD20"
           }
         },
         {
@@ -1139,6 +1285,100 @@
           },
           "codes": {
             "fatturapa-tipo-documento": "TD21"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "goods-extracted"
+          ],
+          "name": {
+            "en": "Self-billed for goods extracted from VAT warehouse",
+            "it": "Estrazione beni da Deposito IVA"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD22"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "goods-with-tax"
+          ],
+          "name": {
+            "en": "Self-billed for goods extracted from VAT warehouse with VAT payment",
+            "it": "Estrazione beni da Deposito IVA con versamento IVA"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD23"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "deferred"
+          ],
+          "name": {
+            "en": "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
+            "it": "Fattura differita - art.21 c.4 lett. a"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD24"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "deferred",
+            "third-period"
+          ],
+          "name": {
+            "en": "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
+            "it": "Fattura differita - art.21 c.4 terzo periodo lett. b"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD25"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "depreciable-assets"
+          ],
+          "name": {
+            "en": "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
+            "it": "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD26"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed",
+            "san-marino-paper"
+          ],
+          "name": {
+            "en": "Purchases from San Marino with VAT (paper invoice)",
+            "it": "Acquisti da San Marino con IVA (fattura cartacea)"
+          },
+          "codes": {
+            "fatturapa-tipo-documento": "TD28"
           }
         },
         {
@@ -1165,6 +1405,16 @@
           },
           "codes": {
             "fatturapa-regime-fiscale": "RF02"
+          }
+        },
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge / Inversione del soggetto passivo"
           }
         }
       ]
@@ -1254,17 +1504,6 @@
           }
         },
         {
-          "key": "not-subject",
-          "name": {
-            "en": "Not subject (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
-            "it": "Non soggette (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
-          },
-          "exempt": true,
-          "codes": {
-            "fatturapa-natura": "N2"
-          }
-        },
-        {
           "key": "not-subject+article-7",
           "name": {
             "en": "Not subject pursuant to Art. 7, DPR 633/72",
@@ -1276,7 +1515,7 @@
           }
         },
         {
-          "key": "not-subject+other",
+          "key": "not-subject",
           "name": {
             "en": "Not subject - other",
             "it": "Non soggette - altri casi"
@@ -1284,17 +1523,6 @@
           "exempt": true,
           "codes": {
             "fatturapa-natura": "N2.2"
-          }
-        },
-        {
-          "key": "not-taxable",
-          "name": {
-            "en": "Not taxable (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
-            "it": "Non imponibili (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
-          },
-          "exempt": true,
-          "codes": {
-            "fatturapa-natura": "N3"
           }
         },
         {
@@ -1353,7 +1581,7 @@
           }
         },
         {
-          "key": "not-taxable+other",
+          "key": "not-taxable",
           "name": {
             "en": "Not taxable - other",
             "it": "Non imponibili - altre operazioni che non concorrono alla formazione del plafond"
@@ -1383,17 +1611,6 @@
           "exempt": true,
           "codes": {
             "fatturapa-natura": "N5"
-          }
-        },
-        {
-          "key": "reverse-charge",
-          "name": {
-            "en": "Reverse charge (for transactions in reverse charge or for self invoicing for purchase of extra UE services or for import of goods only in the cases provided for) — (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
-            "it": "Inversione contabile (per operazioni in regime di inversione contabile o per autofattura per acquisti di servizi extra UE o per importazioni di beni solo nei casi previsti) — (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)"
-          },
-          "exempt": true,
-          "codes": {
-            "fatturapa-natura": "N6"
           }
         },
         {
@@ -1485,7 +1702,7 @@
           }
         },
         {
-          "key": "reverse-charge+other",
+          "key": "reverse-charge",
           "name": {
             "en": "Reverse charge - other cases",
             "it": "Inversione contabile - altri casi"

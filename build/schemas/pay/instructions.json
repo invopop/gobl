@@ -79,7 +79,7 @@
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
+          "anyOf": [
             {
               "const": "any",
               "title": "Any",
@@ -221,5 +221,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.52.0"
+  "$comment": "Generated with GOBL v0.53.0"
 }
