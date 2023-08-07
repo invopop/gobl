@@ -169,17 +169,6 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateNotSubject,
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Not subject (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
-					i18n.IT: "Non soggette (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)",
-				},
-				Codes: cbc.CodeSet{
-					KeyFatturaPANatura: "N2",
-				},
-			},
-			{
 				Key:    TaxRateNotSubject.With(TaxRateArticle7),
 				Exempt: true,
 				Name: i18n.String{
@@ -191,7 +180,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateNotSubject.With(TaxRateOther),
+				Key:    TaxRateNotSubject,
 				Exempt: true,
 				Name: i18n.String{
 					i18n.EN: "Not subject - other",
@@ -199,17 +188,6 @@ var categories = []*tax.Category{
 				},
 				Codes: cbc.CodeSet{
 					KeyFatturaPANatura: "N2.2",
-				},
-			},
-			{
-				Key:    TaxRateNotTaxable,
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Not taxable (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
-					i18n.IT: "Non imponibili (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)",
-				},
-				Codes: cbc.CodeSet{
-					KeyFatturaPANatura: "N3",
 				},
 			},
 			{
@@ -268,7 +246,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateNotTaxable.With(TaxRateOther),
+				Key:    TaxRateNotTaxable,
 				Exempt: true,
 				Name: i18n.String{
 					i18n.EN: "Not taxable - other",
@@ -298,17 +276,6 @@ var categories = []*tax.Category{
 				},
 				Codes: cbc.CodeSet{
 					KeyFatturaPANatura: "N5",
-				},
-			},
-			{
-				Key:    TaxRateReverseCharge,
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Reverse charge (for transactions in reverse charge or for self invoicing for purchase of extra UE services or for import of goods only in the cases provided for) — (this code is no longer permitted to use on invoices emitted from 1 January 2021)",
-					i18n.IT: "Inversione contabile (per operazioni in regime di inversione contabile o per autofattura per acquisti di servizi extra UE o per importazioni di beni solo nei casi previsti) — (questo codice non è più utilizzabile a partire dal 1° gennaio 2021)",
-				},
-				Codes: cbc.CodeSet{
-					KeyFatturaPANatura: "N6",
 				},
 			},
 			{
@@ -400,7 +367,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateReverseCharge.With(TaxRateOther),
+				Key:    TaxRateReverseCharge,
 				Exempt: true,
 				Name: i18n.String{
 					i18n.EN: "Reverse charge - other cases",

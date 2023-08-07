@@ -1,11 +1,11 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   "series": "SAMPLE",
-  "code": "001",
+  "code": "004",
   "currency": "EUR",
-  "issue_date": "2023-03-02",
+  "issue_date": "2023-08-01",
   "tax": {
-    "tags": ["freelance"]
+    "tags": ["reverse-charge"]
   },
   "type": "standard",
   "supplier": {
@@ -58,59 +58,17 @@
   },
   "lines": [
     {
-      "i": 1,
       "quantity": "20",
       "item": {
         "name": "Development services",
-        "price": "90.00",
-        "unit": "h"
-      },
-      "discounts": [
-        {
-          "amount": "180.00",
-          "percent": "10%",
-          "reason": "Special discount"
-        }
-      ],
-      "taxes": [
-        {
-          "cat": "VAT",
-          "rate": "standard"
-        },
-        {
-          "cat": "IRPEF",
-          "percent": "20.0%",
-          "rate": "self-employed-habitual"
-        }
-      ],
-      "sum": "1800.00",
-      "total": "1800.00"
-    },
-    {
-      "i": 2,
-      "quantity": "1",
-      "item": {
-        "name": "Zero test",
-        "price": "100.00",
-        "unit": "h"
+        "price": "90.00"
       },
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "not-subject"
+          "rate": "reverse-charge"
         }
-      ],
-      "sum": "100.00",
-      "total": "100.00"
+      ]
     }
-  ],
-  "payment": {
-    "instructions": {
-      "key": "credit-transfer",
-      "bank": {
-        "iban": "IT60X0542811101000000123456",
-        "bic": "ABCDITMM"
-      }
-    }
-  }
+  ]
 }

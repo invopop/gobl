@@ -1,0 +1,117 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "809038b1055710b99faac4329989f66080918fac7e4e67041caafe134909d50e"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"series": "SAMPLE",
+		"code": "003",
+		"type": "standard",
+		"currency": "EUR",
+		"issue_date": "2023-08-01",
+		"supplier": {
+			"name": "Hotel California",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "102",
+					"street": "Via California",
+					"locality": "Palermo",
+					"region": "PA",
+					"code": "33213",
+					"country": "IT"
+				}
+			],
+			"registration": {
+				"capital": "50000.00",
+				"currency": "EUR",
+				"office": "RM",
+				"entry": "123456"
+			}
+		},
+		"customer": {
+			"name": "Mela S.r.l.",
+			"tax_id": {
+				"country": "IT",
+				"code": "13029381004"
+			},
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "M5UXCR5"
+				}
+			],
+			"addresses": [
+				{
+					"num": "23",
+					"street": "Via dei Mille",
+					"locality": "Firenze",
+					"region": "FI",
+					"code": "00100",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Camera Matrimoniale",
+					"price": "125.00"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "intermediate",
+						"percent": "10.0%"
+					}
+				],
+				"total": "125.00"
+			}
+		],
+		"charges": [
+			{
+				"key": "stamp-duty",
+				"i": 1,
+				"amount": "2.00",
+				"reason": "Imposta di bollo"
+			}
+		],
+		"totals": {
+			"sum": "125.00",
+			"charge": "2.00",
+			"total": "127.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "intermediate",
+								"base": "125.00",
+								"percent": "10.0%",
+								"amount": "12.50"
+							}
+						],
+						"amount": "12.50"
+					}
+				],
+				"sum": "12.50"
+			},
+			"tax": "12.50",
+			"total_with_tax": "139.50",
+			"payable": "139.50"
+		}
+	}
+}
