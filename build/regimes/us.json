@@ -3,6 +3,7 @@
   "name": {
     "en": "United States of America"
   },
+  "time_zone": "America/Chicago",
   "country": "US",
   "currency": "USD",
   "categories": [

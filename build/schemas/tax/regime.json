@@ -217,6 +217,11 @@
           "title": "Name",
           "description": "Name of the country"
         },
+        "time_zone": {
+          "type": "string",
+          "title": "Time Zone",
+          "description": "Location name for the country's central time zone. Accepted\nvalues from IANA Time Zone Database (https://iana.org/time-zones)."
+        },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Code",
@@ -305,6 +310,7 @@
       "type": "object",
       "required": [
         "name",
+        "time_zone",
         "country",
         "currency",
         "categories"
@@ -416,5 +422,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.52.0"
+  "$comment": "Generated with GOBL v0.53.0"
 }
