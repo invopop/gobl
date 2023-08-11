@@ -1,7 +1,6 @@
 package mx
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
@@ -25,13 +24,10 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func (v *invoiceValidator) validate() error {
-	if err := v.validateScenarios(); err != nil {
-		return err
-	}
-
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.MXN)),
+		validation.Field(&inv.Identities, org.HasIdentityKey(IdentityKeyCFDIUse)),
 		validation.Field(&inv.Customer,
 			validation.Required,
 			validation.By(v.validCustomer),
@@ -55,14 +51,6 @@ func (v *invoiceValidator) validate() error {
 			validation.Empty.Error("the SAT doesn't allow discounts at invoice level. Use line discounts instead."),
 		),
 	)
-}
-
-func (v *invoiceValidator) validateScenarios() error {
-	if v.ss.Codes[KeySATUsoCFDI] == "" {
-		return errors.New("'use' tax tags is required")
-	}
-
-	return nil
 }
 
 func (v *invoiceValidator) validCustomer(value interface{}) error {

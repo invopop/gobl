@@ -4,14 +4,14 @@ type: credit-note
 series: CN
 code: "0003"
 currency: MXN
-tax:
-  tags:
-  - use+goods-acquisition
+identities:
+  - key: "sat-cfdi-use"
+    code: "G01"
 preceding:
-- code: "0010"
-  stamps:
-  - prv: sat-uuid
-    val: 1fac4464-1111-0000-1111-cd37179db12e
+  - code: "0010"
+    stamps:
+      - prv: sat-uuid
+        val: 1fac4464-1111-0000-1111-cd37179db12e
 supplier:
   name: ESCUELA KEMPER URGATE
   tax_id:
@@ -25,18 +25,18 @@ customer:
     zone: "65000"
     code: URE180429TM6
 lines:
-- quantity: "2"
-  item:
-    name: Cigarros
-    identities:
-    - type: SAT
-      code: "50211502"
-    price: "100.1010"
-    unit: piece
-  taxes:
-  - cat: VAT
-    rate: standard
-  total: "200.2020"
+  - quantity: "2"
+    item:
+      name: Cigarros
+      identities:
+        - type: SAT
+          code: "50211502"
+      price: "100.1010"
+      unit: piece
+    taxes:
+      - cat: VAT
+        rate: standard
+    total: "200.2020"
 payment:
   terms:
     notes: Pago a 30 días.

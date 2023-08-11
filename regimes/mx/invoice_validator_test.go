@@ -21,9 +21,10 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
-		Tax: &bill.Tax{
-			Tags: []cbc.Key{
-				"use+goods-acquisition",
+		Identities: []*org.Identity{
+			{
+				Key:  "sat-cfdi-use",
+				Code: "G01",
 			},
 		},
 		Supplier: &org.Party{
@@ -145,14 +146,8 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Tax.Tags = make([]cbc.Key, 0)
-	assertValidationError(t, inv, "'use' tax tags is required")
-
-	inv.Tax.Tags = nil
-	assertValidationError(t, inv, "'use' tax tags is required")
-
-	inv.Tax = nil
-	assertValidationError(t, inv, "'use' tax tags is required")
+	inv.Identities = make([]*org.Identity, 0)
+	assertValidationError(t, inv, "identities: unable to find matching identity for sat-cfdi-use")
 }
 
 func TestPrecedingValidation(t *testing.T) {

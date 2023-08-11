@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fc163aa40798b593ecfe3c97546d82f25e2b2e4d88e0da0204db5cbf25b3fe58"
+			"val": "f9502bbbf3ace0956bdc919045cd5c17b8813145befa7b7641df97b077353e56"
 		},
 		"draft": true
 	},
@@ -14,11 +14,12 @@
 		"code": "00001",
 		"type": "standard",
 		"currency": "MXN",
-		"tax": {
-			"tags": [
-				"use+no-tax-effects"
-			]
-		},
+		"identities": [
+			{
+				"key": "sat-cfdi-use",
+				"code": "G01"
+			}
+		],
 		"issue_date": "2023-07-10",
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",

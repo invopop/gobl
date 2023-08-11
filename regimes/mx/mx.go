@@ -44,7 +44,7 @@ func New() *tax.Regime {
 		Validator:        Validate,
 		Calculator:       Calculate,
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
-		Tags:             invoiceTags,                // scenarios.go
+		Identities:       identityKeys,               // identities.go
 		Scenarios:        scenarios,                  // scenarios.go
 		Categories:       taxCategories,              // categories.go
 		Preceding:        precedingDefinitions,       // preceding.go

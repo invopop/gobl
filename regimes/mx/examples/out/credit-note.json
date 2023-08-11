@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b27227e309bd4ddfaf76c36fdcb13974e1e8d699e055d9a75d63c3bd87836e90"
+			"val": "ee91a3b04370949b6996b3612d5eba67305257aa0e1ea5dcbe0fd157f43362ef"
 		},
 		"draft": true
 	},
@@ -14,11 +14,12 @@
 		"code": "0003",
 		"type": "credit-note",
 		"currency": "MXN",
-		"tax": {
-			"tags": [
-				"use+goods-acquisition"
-			]
-		},
+		"identities": [
+			{
+				"key": "sat-cfdi-use",
+				"code": "G01"
+			}
+		],
 		"preceding": [
 			{
 				"code": "0010",

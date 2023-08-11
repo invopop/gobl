@@ -19,7 +19,7 @@ Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/mai
 GOBL, the Go Business Language library and tools, aim to:
 
 - Help developers build electronic business documents, especially invoices, anywhere in the world.
-- Define a a set of open [JSON Schema](https://json-schema.org/) with the flexibility to be used and shared.
+- Define a a set of open [JSON Schema](https://json-schema.org/).
 - Build a global database of local tax categories and, whenever practical to do so, provide current and historical tax rates in code.
 - Validate business documents according to local requirements, including tax ID validation.
 - Define the algorithms used to make tax calculations while avoiding rounding errors.
@@ -27,6 +27,18 @@ GOBL, the Go Business Language library and tools, aim to:
 - Output simple and easy to read JSON documents that emphasize the use of keys instead of abstract codes, like `credit-transfer` instead of `30` (UNTDID4461 code for sender initiated bank or wire transfer).
 - Be flexible enough to support extreme local complexity but produce output that is easily legible in other countries.
 - Build a global community of contributors tired of the complexity of current standards based on XML or EDI.
+
+## Community
+
+The complexity around invoicing and in particular electronic invoicing can quickly become overwhelming. Check out the following resources and get in touch:
+
+- [Documentation](https://docs.gobl.org) contains details on how to use GOBL, and the schema.
+- [Builder](https://build.gobl.org) helps try out GOBL and quickly figure out what is possible, all from your browser.
+- [Blog](https://gobl.org/posts/) for news and general updates about what is being worked on.
+- [Issues](https://github.com/invopop/gobl/issues) if you have a specific problem with GOBL related to code or usage.
+- [Discussions](https://github.com/invopop/gobl/discussions) for open discussions about the future of GOBL, complications with a specific country, or any open ended issues.
+- [Pull Requests](https://github.com/invopop/gobl/pulls) are very welcome, especially if you'd like to see a new local country or features.
+- [Slack](https://join.slack.com/t/goblschema/shared_invite/zt-20qu1s0cm-AUE8oYbGly681EsYdDiqxw) for real-time chat about something specific or urgent. We always encourage you to use one of the others options which are indexed and searchable, but if you'd like to bring something to attentional quickly, this is a great resource.
 
 ## Companion Projects
 
@@ -36,9 +48,10 @@ GOBL makes it easy to create business documents, like invoices, but checkout som
 - [Builder](https://github.com/invopop/gobl.builder) - Available to try at [build.gobl.org](https://build.gobl.org), this tool makes it easy to build, test, and discover the features of GOBL.
 - [Generator](https://github.com/invopop/gobl.generator) - Ruby project to convert GOBL JSON Schema into libraries for other languages or documentation.
 - [Docs](https://github.com/invopop/gobl.docs) - Content of the official GOBL Documentation Site [docs.gobl.org](https://docs.gobl.org).
-- [Ruby](https://github.com/invopop/gobl.ruby) - Easily build or read GOBL documents in Ruby.
-- [FacturaE](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
-- [FatturaPA](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
+- [GOBL for Ruby](https://github.com/invopop/gobl.ruby) - Easily build or read GOBL documents in Ruby.
+- [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
+- [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
+- [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.cfdi) - convert into the Mexican CFDI format.
 
 ## Usage
 
@@ -123,4 +136,3 @@ if err := env.Insert(inv); err != nil {
 	panic(err)
 }
 ```
-

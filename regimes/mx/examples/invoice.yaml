@@ -2,9 +2,9 @@ $schema: "https://gobl.org/draft-0/bill/invoice"
 issue_date: "2023-07-10"
 series: "TEST"
 code: "00001"
-tax:
-  tags:
-    - "use+no-tax-effects"
+identities:
+  - key: "sat-cfdi-use"
+    code: "G01"
 supplier:
   name: "ESCUELA KEMPER URGATE"
   tax_id:
