@@ -21,7 +21,6 @@ const (
 	KeySATFormaPago         cbc.Key = "sat-forma-pago"          // for mapping to c_FormaPago’s codes
 	KeySATTipoDeComprobante cbc.Key = "sat-tipo-de-comprobante" // for mapping to c_TipoDeComprobante’s codes
 	KeySATTipoRelacion      cbc.Key = "sat-tipo-relacion"       // for mapping to c_TipoRelacion’s codes
-	KeySATUsoCFDI           cbc.Key = "sat-uso-cfdi"            // for mapping to c_UsoCFDI’s codes
 
 	IdentityTypeSAT cbc.Code = "SAT" // for custom codes mapped from identities (e.g. c_ClaveProdServ’s codes)
 )

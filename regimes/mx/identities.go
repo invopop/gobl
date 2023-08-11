@@ -7,10 +7,142 @@ import (
 
 // Regime specific keys for identities.
 const (
-	IdentityKeyCFDIUse = "sat-cfdi-use"
+	IdentityKeyFiscalCode  = "sat-fiscal-code"
+	IdentityKeyCFDIUse     = "sat-cfdi-use"
+	IdentityKeyProductCode = "sat-product-code"
 )
 
 var identityKeys = []*tax.KeyDefinition{
+	{
+		Key: IdentityKeyProductCode,
+		Name: i18n.String{
+			i18n.EN: "Product or Service Code",
+			i18n.ES: "Clave de Producto o Servicio", //nolint:misspell
+		},
+	},
+	{
+		Key: IdentityKeyFiscalCode,
+		Name: i18n.String{
+			i18n.EN: "Fiscal Regime Code",
+			i18n.ES: "Código de Régimen fiscal",
+		},
+		Codes: []*tax.CodeDefinition{
+			{
+				Code: "601",
+				Name: i18n.String{
+					i18n.ES: "General de Ley Personas Morales",
+				},
+			},
+			{
+				Code: "603",
+				Name: i18n.String{
+					i18n.ES: "Personas Morales con Fines no Lucrativos",
+				},
+			},
+			{
+				Code: "605",
+				Name: i18n.String{
+					i18n.ES: "Sueldos y Salarios e Ingresos Asimilados a Salarios",
+				},
+			},
+			{
+				Code: "606",
+				Name: i18n.String{
+					i18n.ES: "Arrendamiento",
+				},
+			},
+			{
+				Code: "607",
+				Name: i18n.String{
+					i18n.ES: "Régimen de Enajenación o Adquisición de Bienes",
+				},
+			},
+			{
+				Code: "608",
+				Name: i18n.String{
+					i18n.ES: "Demás ingresos",
+				},
+			},
+			{
+				Code: "610",
+				Name: i18n.String{
+					i18n.ES: "Residentes en el Extranjero sin Establecimiento Permanente en México",
+				},
+			},
+			{
+				Code: "611",
+				Name: i18n.String{
+					i18n.ES: "Ingresos por Dividendos (socios y accionistas)", //nolint:misspell
+				},
+			},
+			{
+				Code: "612",
+				Name: i18n.String{
+					i18n.ES: "Personas Físicas con Actividades Empresariales y Profesionales",
+				},
+			},
+			{
+				Code: "614",
+				Name: i18n.String{
+					i18n.ES: "Ingresos por intereses",
+				},
+			},
+			{
+				Code: "615",
+				Name: i18n.String{
+					i18n.ES: "Régimen de los ingresos por obtención de premios",
+				},
+			},
+			{
+				Code: "616",
+				Name: i18n.String{
+					i18n.ES: "Sin obligaciones fiscales",
+				},
+			},
+			{
+				Code: "620",
+				Name: i18n.String{
+					i18n.ES: "Sociedades Cooperativas de Producción que optan por diferir sus ingresos",
+				},
+			},
+			{
+				Code: "621",
+				Name: i18n.String{
+					i18n.ES: "Incorporación Fiscal",
+				},
+			},
+			{
+				Code: "622",
+				Name: i18n.String{
+					i18n.ES: "Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras",
+				},
+			},
+			{
+				Code: "623",
+				Name: i18n.String{
+					i18n.ES: "Opcional para Grupos de Sociedades",
+				},
+			},
+			{
+				Code: "624",
+				Name: i18n.String{
+					i18n.ES: "Coordinados",
+				},
+			},
+			{
+				Code: "625",
+				Name: i18n.String{
+					i18n.ES: "Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas",
+				},
+			},
+			{
+				Code: "626",
+				Name: i18n.String{
+					i18n.ES: "Régimen Simplificado de Confianza",
+				},
+			},
+		},
+	},
 	{
 		Key: IdentityKeyCFDIUse,
 		Name: i18n.String{

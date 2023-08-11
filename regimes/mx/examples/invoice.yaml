@@ -7,12 +7,18 @@ identities:
     code: "G01"
 supplier:
   name: "ESCUELA KEMPER URGATE"
+  identities:
+    - key: "sat-fiscal-code"
+      code: "601"
   tax_id:
     country: "MX"
     code: "EKU9003173C9"
     zone: "21000"
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
+  identities:
+    - key: "sat-fiscal-code"
+      code: "601"
   tax_id:
     country: "MX"
     code: "URE180429TM6"
@@ -23,7 +29,7 @@ lines:
       name: "Cobro por tarjetas"
       price: "10.00"
       identities:
-        - type: "SAT"
+        - key: "sat-product-code"
           code: "84141602"
     discounts:
       - percent: "10.0%"
@@ -36,7 +42,7 @@ lines:
       price: "10.00"
       unit: "service"
       identities:
-        - type: "SAT"
+        - key: "sat-product-code"
           code: "80141628"
     taxes:
       - cat: "VAT"

@@ -51,8 +51,9 @@ type Regime struct {
 	// against.
 	IdentityTypeKeys []*KeyDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
 
-	// Identities
-	Identities []*KeyDefinition `json:"identities,omtiempty" jsonschema:"title=Identities"`
+	// Identities defines the keys that can be used for identities inside the regime. This
+	// will be used for additional validation.
+	Identities []*KeyDefinition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
 	// Charge types specific for the regime and may be validated or used in the UI as suggestions
 	ChargeKeys []*KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
@@ -217,9 +218,9 @@ type CodeDefinition struct {
 
 // ValidateObject performs validation on the provided object in the context
 // of the regime.
-func (r *Regime) ValidateObject(obj interface{}) error {
+func (r *Regime) ValidateObject(value interface{}) error {
 	if r.Validator != nil {
-		return r.Validator(obj)
+		return r.Validator(value)
 	}
 	return nil
 }

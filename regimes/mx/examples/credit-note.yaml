@@ -14,12 +14,18 @@ preceding:
         val: 1fac4464-1111-0000-1111-cd37179db12e
 supplier:
   name: ESCUELA KEMPER URGATE
+  identities:
+    - key: "sat-fiscal-code"
+      code: "615"
   tax_id:
     country: MX
     zone: "26015"
     code: EKU9003173C9
 customer:
   name: UNIVERSIDAD ROBOTICA ESPAÑOLA
+  identities:
+    - key: "sat-fiscal-code"
+      code: "624"
   tax_id:
     country: MX
     zone: "65000"
@@ -29,7 +35,7 @@ lines:
     item:
       name: Cigarros
       identities:
-        - type: SAT
+        - key: "sat-product-code"
           code: "50211502"
       price: "100.1010"
       unit: piece

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ee91a3b04370949b6996b3612d5eba67305257aa0e1ea5dcbe0fd157f43362ef"
+			"val": "6322928119814410f7a6f36cec38efaac687b985ced1568235403d3d266b9d96"
 		},
 		"draft": true
 	},
@@ -38,7 +38,13 @@
 				"country": "MX",
 				"zone": "26015",
 				"code": "EKU9003173C9"
-			}
+			},
+			"identities": [
+				{
+					"key": "sat-fiscal-code",
+					"code": "615"
+				}
+			]
 		},
 		"customer": {
 			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
@@ -46,7 +52,13 @@
 				"country": "MX",
 				"zone": "65000",
 				"code": "URE180429TM6"
-			}
+			},
+			"identities": [
+				{
+					"key": "sat-fiscal-code",
+					"code": "624"
+				}
+			]
 		},
 		"lines": [
 			{
@@ -56,7 +68,7 @@
 					"name": "Cigarros",
 					"identities": [
 						{
-							"type": "SAT",
+							"key": "sat-product-code",
 							"code": "50211502"
 						}
 					],

@@ -16,23 +16,28 @@ var (
 
 func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
-		validation.Field(&item.Identities, validation.By(validItemIdentities)),
+		validation.Field(&item.Identities,
+			org.HasIdentityKey(IdentityKeyProductCode),
+			validation.By(validItemIdentities),
+			validation.Skip,
+		),
 	)
 }
 
 func validItemIdentities(value interface{}) error {
-	ids, _ := value.([]*org.Identity)
-
+	ids, ok := value.([]*org.Identity)
+	if !ok {
+		return nil
+	}
 	for _, id := range ids {
-		if id.Type == IdentityTypeSAT {
+		if id.Key == IdentityKeyProductCode {
 			if itemIdentityValidCodeRegexp.MatchString(string(id.Code)) {
 				return nil
 			}
 			return errors.New("SAT code must have 8 digits")
 		}
 	}
-
-	return errors.New("SAT code must be present")
+	return nil
 }
 
 func normalizeItem(item *org.Item) error {

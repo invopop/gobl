@@ -38,9 +38,45 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.Label),
 		validation.Field(&i.Key),
-		validation.Field(&i.Type, validation.When(i.Key != "", validation.Empty)),
-		validation.Field(&i.Code, validation.Required),
+		validation.Field(&i.Type,
+			validation.When(i.Key != "", validation.Empty.Error("must be blank when key set")),
+		),
+		validation.Field(&i.Code,
+			validation.Required,
+			validation.When(i.Key != cbc.KeyEmpty,
+				validation.By(validateIdentityCodeForKeyInRegime(ctx, i.Key)),
+			),
+		),
 	)
+}
+
+func validateIdentityCodeForKeyInRegime(ctx context.Context, key cbc.Key) validation.RuleFunc {
+	return func(value interface{}) error {
+		code, ok := value.(cbc.Code)
+		if !ok || code == "" {
+			return nil
+		}
+		r := tax.RegimeFromContext(ctx)
+		if r == nil {
+			return nil // nothing to do without regime
+		}
+		var codes []*tax.CodeDefinition
+		for _, kd := range r.Identities {
+			if kd.Key == key {
+				codes = kd.Codes
+				break
+			}
+		}
+		if len(codes) == 0 {
+			return nil
+		}
+		for _, cd := range codes {
+			if cd.Code == code {
+				return nil
+			}
+		}
+		return fmt.Errorf("invalid %s", key)
+	}
 }
 
 // IdentityKeyIn returns a validation rule to help determine if the identity contains
@@ -89,7 +125,7 @@ func (v validateIdentitySet) Validate(value interface{}) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("unable to find matching identity for %s", v.key)
+	return fmt.Errorf("missing %s", v.key)
 }
 
 // IdentityForKey helps return the identity with a matching key.
