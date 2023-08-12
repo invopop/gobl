@@ -4,41 +4,51 @@ Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for their 
 
 ## Public Documentation
 
-* [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
-
+- [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
 
 ## Local Codes
 
-### `UsoCFDI`
+Mexican invoices as defined in the CFDI specification must include a set of specific codes that will either need to be known in advance by the supplier or requested from the customer during their purchase process.
 
-The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. The following table lists all the supported values and how GOBL will map them from the invoice's tax tags:
+The following sections highlight these codes and how they can be defined inside your GOBL documents.
 
-| Code | Name | GOBL Tax Tag |
-| --- | --- | --- |
-| G01 | Adquisición de mercancías | `use+goods-acquisition` |
-| G02 | Devoluciones, descuentos o bonificaciones | `use+returns` |
-| G03 | Gastos en general | `use+general-expenses` |
-| I01 | Construcciones | `use+construction` |
-| I02 | Mobiliario y equipo de oficina por inversiones | `use+office-equipment` |
-| I03 | Equipo de transporte | `use+transport-equipment` |
-| I04 | Equipo de computo y accesorios | `use+computer-equipment` |
-| I05 | Dados, troqueles, moldes, matrices y herramental | `use+manufacturing-tooling` |
-| I06 | Comunicaciones telefónicas | `use+telephone-comms` |
-| I07 | Comunicaciones satelitales | `use+satellite-comms` |
-| I08 | Otra maquinaria y equipo | `use+other-machinery` |
-| D01 | Honorarios médicos, dentales y gastos hospitalarios | `use+medical-expenses` |
-| D02 | Gastos médicos por incapacidad o discapacidad | `use+medical-expenses+disability` |
-| D03 | Gastos funerales | `use+funeral-expenses` |
-| D04 | Donativos | `use+donation` |
-| D05 | Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación) | `use+mortgage-interest` |
-| D06 | Aportaciones voluntarias al SAR | `use+sar-contribution` |
-| D07 | Primas por seguros de gastos médicos | `use+medical-insurance` |
-| D08 | Gastos de transportación escolar obligatoria | `use+school-transportation` |
-| D09 | Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones | `use+savings-deposit` |
-| D10 | Pagos por servicios educativos (colegiaturas) | `use+school-fees` |
-| S01 | Sin efectos fiscales | `use+no-tax-effects` |
-| CP01 | Pagos | `use+suplementary-payment` |
-| CN01 | Nómina | `use+payroll` |
+### `RegimenFiscal` - Fiscal Regime
+
+Every Supplier and Customer in a Mexican invoice must be associated with a fiscal regime code. You'll need to ensure this field's value is requested from customers when they require an invoice.
+
+In GOBL the `sat-fiscal-regime` identity key is used alongside the value expected by the SAT.
+
+### Example
+
+The following example will associate the supplier with the `601` fiscal regime code:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "supplier": {
+    "name": "ESCUELA KEMPER URGATE",
+    "tax_id": {
+      "country": "MX",
+      "zone": "26015",
+      "code": "EKU9003173C9"
+    },
+    "identities": [
+      {
+        "key": "sat-fiscal-regime",
+        "code": "601"
+      }
+    ]
+  }
+  // [...]
+}
+```
+
+### `UsoCFDI` - CFDI Use
+
+The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. In a GOBL Invoice, include the `sat-cfdi-use` identity in the customer.
+
+This field will be validated for presence and will be checked against the list of codes defined as part of the CFDI specification.
 
 #### Example
 
@@ -50,42 +60,57 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
 
   // [...]
 
-  "tax": {
-    "tags": [
-      "use+general-expenses"
+  "customer": {
+    "name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+    "tax_id": {
+      "country": "MX",
+      "zone": "65000",
+      "code": "URE180429TM6"
+    },
+    "identities": [
+      {
+        "key": "sat-fiscal-regime",
+        "code": "601"
+      },
+      {
+        "key": "sat-cfdi-use",
+        "code": "G01"
+      }
     ]
   }
+
+  // [...]
 }
 ```
 
-### `FormaPago`
+### `FormaPago` - Payment Means
 
 The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following table lists all the supported values and how GOBL will map them from the invoice's payment instructions key:
 
-| Code | Name | GOBL Payment Instructions Key |
-| --- | --- | --- |
-| 01 | Efectivo | `cash` |
-| 02 | Cheque nominativo | `cheque` |
-| 03 | Transferencia electrónica de fondos | `credit-transfer` |
-| 04 | Tarjeta de crédito | `card` |
-| 05 | Monedero electrónico | `online+wallet` |
-| 06 | Dinero electrónico | `online` |
-| 08 | Vales de despensa | `other+grocery-vouchers  ` |
-| 12 | Dación en pago | `other+in-kind` |
-| 13 | Pago por subrogación | `other+subrogation` |
-| 14 | Pago por consignación | `other+consignment` |
-| 15 | Condonación | `other+debt-relief` |
-| 17 | Compensación | `netting` |
-| 23 | Novación | `other+novation` |
-| 24 | Confusión | `other+merger` |
-| 25 | Remisión de deuda | `other+remission` |
-| 26 | Prescripción o caducidad | `other+expiration` |
-| 27 | A satisfacción del acreedor | `other+satisfy-creditor` |
-| 28 | Tarjeta de débito | `card+debit` |
-| 29 | Tarjeta de servicios | `card+services` |
-| 30 | Aplicación de anticipos | `other+advance` |
-| 31 | Intermediario pagos | `other+intermediary` |
-| 99 | Por definir | `other` |
+| Code | Name                                | GOBL Payment Instructions Key |
+| ---- | ----------------------------------- | ----------------------------- |
+| 01   | Efectivo                            | `cash`                        |
+| 02   | Cheque nominativo                   | `cheque`                      |
+| 03   | Transferencia electrónica de fondos | `credit-transfer`             |
+| 04   | Tarjeta de crédito                  | `card`                        |
+| 05   | Monedero electrónico                | `online+wallet`               |
+| 06   | Dinero electrónico                  | `online`                      |
+| 08   | Vales de despensa                   | `other+grocery-vouchers  `    |
+| 12   | Dación en pago                      | `other+in-kind`               |
+| 13   | Pago por subrogación                | `other+subrogation`           |
+| 14   | Pago por consignación               | `other+consignment`           |
+| 15   | Condonación                         | `other+debt-relief`           |
+| 17   | Compensación                        | `netting`                     |
+| 23   | Novación                            | `other+novation`              |
+| 24   | Confusión                           | `other+merger`                |
+| 25   | Remisión de deuda                   | `other+remission`             |
+| 26   | Prescripción o caducidad            | `other+expiration`            |
+| 27   | A satisfacción del acreedor         | `other+satisfy-creditor`      |
+| 28   | Tarjeta de débito                   | `card+debit`                  |
+| 29   | Tarjeta de servicios                | `card+services`               |
+| 30   | Aplicación de anticipos             | `other+advance`               |
+| 31   | Intermediario pagos                 | `other+intermediary`          |
+| 99   | Por definir                         | `other`                       |
 
 #### Example
 
@@ -105,9 +130,9 @@ The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaP
 }
 ```
 
-### `ClaveUnidad`
+### `ClaveUnidad` - Unit Code
 
-The CFDI’s `ClaveUnidad` field specifies the unit in which the quantity of an invoice's line is given. These are UNECE codes that GOBL will map directly from the invoice's line item unit. See the [source code](../../org/unit.go) for the full list of supported units with its UNECE codes.
+The CFDI’s `ClaveUnidad` field specifies the unit in which the quantity of an invoice's line is given. These are UNECE codes that GOBL will map directly from the invoice's line item unit. See the [source code](../../org/unit.go) for the full list of supported units with their associated UNECE codes.
 
 #### Example
 
@@ -133,13 +158,15 @@ The following GOBL maps to the `KGM` (Kilogram) value of the `ClaveUnidad` field
 }
 ```
 
-### `ClaveProdServ`
+### `ClaveProdServ` - Product or Service Code
 
-The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item identity type `SAT` to map the identity code directly (no transformation) to the `ClaveProdServ` field.
+The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item identity key `sat-prod-serv` to map the identity code directly to the `ClaveProdServ` field.
+
+The catalogue of available Product or Service codes that form part of the CFDI standard is immense with some 50.000 entries to choose from. At this time, GOBL will not validate these fields, you'll have to check with local accountants to check which code should be used for your products or services.
 
 ### Example
 
-The following GOBL maps to the `10101602` (Patos vivos) value of the `ClaveProdServ` field:
+The following GOBL maps to the `10101602` (Patos vivos) value to the `ClaveProdServ` field:
 
 ```js
 {
@@ -155,7 +182,7 @@ The following GOBL maps to the `10101602` (Patos vivos) value of the `ClaveProdS
         "name": "Live ducks",
         "identities": [
           {
-            "type": "SAT",
+            "key": "sat-prod-serv",
             "code": "10101602"
           }
         ]
