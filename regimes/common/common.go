@@ -18,6 +18,7 @@ const (
 
 // Most commonly used codes. Local regions may add their own rate codes.
 const (
+	TaxRateExempt       cbc.Key = "exempt"
 	TaxRateZero         cbc.Key = "zero"
 	TaxRateStandard     cbc.Key = "standard"
 	TaxRateIntermediate cbc.Key = "intermediate"

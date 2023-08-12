@@ -80,7 +80,7 @@
         {
           "cat": "IRPEF",
           "percent": "20.0%",
-          "rate": "self-employed-habitual"
+          "code": "A"
         }
       ],
       "sum": "1800.00",
@@ -97,7 +97,8 @@
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "not-subject"
+          "rate": "exempt",
+          "code": "N1"
         }
       ],
       "sum": "100.00",

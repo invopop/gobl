@@ -66,7 +66,8 @@
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "reverse-charge"
+          "rate": "exempt",
+          "code": "N6.9"
         }
       ]
     }

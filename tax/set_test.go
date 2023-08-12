@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -80,7 +81,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
+					Rate:     common.TaxRateExempt,
 				},
 			},
 		},

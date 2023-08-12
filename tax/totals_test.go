@@ -98,7 +98,8 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
+							Rate:     common.TaxRateExempt,
+							Code:     "E1",
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -112,7 +113,8 @@ func TestTotalCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     es.TaxRateExempt.With(es.TaxRateArticle20),
+								Key:     common.TaxRateExempt,
+								Code:    "E1",
 								Base:    num.MakeAmount(10000, 2),
 								Percent: nil,
 								Amount:  num.MakeAmount(0, 2),
@@ -767,7 +769,8 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
+							Rate:     common.TaxRateExempt,
+							Code:     "E1",
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -780,7 +783,8 @@ func TestTotalCalculate(t *testing.T) {
 						Code: common.TaxCategoryVAT,
 						Rates: []*tax.RateTotal{
 							{
-								Key:    es.TaxRateExempt.With(es.TaxRateArticle20),
+								Key:    common.TaxRateExempt,
+								Code:   "E1",
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
 							},
@@ -807,7 +811,8 @@ func TestTotalCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: common.TaxCategoryVAT,
-							Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
+							Rate:     common.TaxRateExempt,
+							Code:     "E2",
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -825,7 +830,8 @@ func TestTotalCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(173554, 4),
 							},
 							{
-								Key:    es.TaxRateExempt.With(es.TaxRateArticle20),
+								Key:    common.TaxRateExempt,
+								Code:   "E2",
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
 							},
@@ -849,7 +855,7 @@ func TestTotalCalculate(t *testing.T) {
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
-							Rate:     it.TaxRateSelfEmployedHabitual,
+							Code:     "A",
 							Percent:  num.NewPercentage(20, 2),
 						},
 					},
@@ -863,7 +869,7 @@ func TestTotalCalculate(t *testing.T) {
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
-							Rate:     it.TaxRateTruffleGathering,
+							Code:     "J", // truffles!
 							Percent:  num.NewPercentage(20, 2),
 						},
 					},
@@ -889,13 +895,13 @@ func TestTotalCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     it.TaxRateSelfEmployedHabitual,
+								Code:    "A",
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
 								Amount:  num.MakeAmount(2000, 2),
 							},
 							{
-								Key:     it.TaxRateTruffleGathering,
+								Code:    "J",
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
 								Amount:  num.MakeAmount(2000, 2),

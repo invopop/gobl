@@ -65,7 +65,8 @@
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "excluded"
+          "rate": "exempt",
+          "code": "N4"
         }
       ],
       "sum": "1.00",

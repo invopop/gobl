@@ -26,6 +26,8 @@ type Combo struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
+	// A local code that applies for a given rate or percentage that needs to be identified.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -41,8 +43,35 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
 		validation.Field(&c.Rate,
-			validation.When(cat != nil && cat.RateRequired, validation.Required),
+			validation.When(
+				(cat != nil && len(cat.RateCodes) > 0),
+				validation.Empty,
+			),
+			validation.When(
+				(cat != nil && len(cat.RateCodes) == 0) &&
+					(c.Code != cbc.CodeEmpty),
+				validation.Required.Error("required with code"),
+			),
 			r.InCategoryRates(c.Category),
+		),
+		validation.Field(&c.Code,
+			validation.When(cat != nil && len(cat.RateCodes) > 0, validation.Required),
+			validation.When(
+				(cat != nil && len(cat.RateCodes) == 0) &&
+					(rate != nil && len(rate.Codes) == 0),
+				validation.Empty,
+				validation.Skip,
+			),
+			validation.When(
+				(cat != nil && len(cat.RateCodes) > 0),
+				r.InCategoryCodes(c.Category),
+				validation.Skip,
+			),
+			validation.When(
+				(cat != nil && rate != nil && len(rate.Codes) > 0),
+				r.InCategoryRateCodes(c.Category, c.Rate),
+				validation.Skip,
+			),
 		),
 		validation.Field(&c.Percent,
 			validation.When(rate == nil, validation.Required),

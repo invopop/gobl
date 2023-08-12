@@ -9,17 +9,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Tax Rates which may be used by TicketBAI in the Basque Country.
-const (
-	TaxRateExempt    cbc.Key = "exempt"
-	TaxRateArticle20 cbc.Key = "article-20"
-	TaxRateArticle21 cbc.Key = "article-21"
-	TaxRateArticle22 cbc.Key = "article-22"
-	TaxRateArticle23 cbc.Key = "article-23"
-	TaxRateArticle25 cbc.Key = "article-25"
-	TaxRateOther     cbc.Key = "other"
-)
-
 var taxCategories = []*tax.Category{
 	//
 	// VAT
@@ -35,7 +24,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.ES: "Impuesto sobre el Valor Añadido",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyFacturaETaxTypeCode: "01",
 		},
 		Rates: []*tax.Rate{
@@ -171,69 +160,56 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateExempt.With(TaxRateArticle20),
+				Key:    common.TaxRateExempt,
 				Exempt: true,
 				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 20 of the Foral VAT Law",
-					i18n.ES: "Exenta por el artículo 20 de la Norma Foral del IVA",
+					i18n.EN: "Exempt",
+					i18n.ES: "Exenta",
 				},
-				Codes: cbc.CodeSet{
-					KeyTicketBAICausaExencion: "E1",
-				},
-			},
-			{
-				Key:    TaxRateExempt.With(TaxRateArticle21),
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 21 of the Foral VAT Law",
-					i18n.ES: "Exenta por el artículo 21 de la Norma Foral del IVA",
-				},
-				Codes: cbc.CodeSet{
-					KeyTicketBAICausaExencion: "E2",
-				},
-			},
-			{
-				Key:    TaxRateExempt.With(TaxRateArticle22),
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 22 of the Foral VAT Law",
-					i18n.ES: "Exenta por el artículo 22 de la Norma Foral del IVA",
-				},
-				Codes: cbc.CodeSet{
-					KeyTicketBAICausaExencion: "E3",
-				},
-			},
-			{
-				Key:    TaxRateExempt.With(TaxRateArticle23),
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
-					i18n.ES: "Exenta por el artículos 23 y 24 de la Norma Foral del IVA",
-				},
-				Codes: cbc.CodeSet{
-					KeyTicketBAICausaExencion: "E4",
-				},
-			},
-			{
-				Key:    TaxRateExempt.With(TaxRateArticle25),
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 25 of the Foral VAT law",
-					i18n.ES: "Exenta por el artículo 25 de la Norma Foral del IVA",
-				},
-				Codes: cbc.CodeSet{
-					KeyTicketBAICausaExencion: "E5",
-				},
-			},
-			{
-				Key:    TaxRateExempt.With(TaxRateOther),
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to other reasons",
-					i18n.ES: "Exenta por otra causa",
-				},
-				Codes: cbc.CodeSet{
-					KeyTicketBAICausaExencion: "E6",
+				// TicketBAI exemption codes
+				Codes: []*tax.CodeDefinition{
+					{
+						Code: "E1",
+						Name: i18n.String{
+							i18n.EN: "Exempt pursuant to Article 20 of the Foral VAT Law",
+							i18n.ES: "Exenta por el artículo 20 de la Norma Foral del IVA",
+						},
+					},
+					{
+						Code: "E2",
+						Name: i18n.String{
+							i18n.EN: "Exempt pursuant to Article 21 of the Foral VAT Law",
+							i18n.ES: "Exenta por el artículo 21 de la Norma Foral del IVA",
+						},
+					},
+					{
+						Code: "E3",
+						Name: i18n.String{
+							i18n.EN: "Exempt pursuant to Article 22 of the Foral VAT Law",
+							i18n.ES: "Exenta por el artículo 22 de la Norma Foral del IVA",
+						},
+					},
+					{
+						Code: "E4",
+						Name: i18n.String{
+							i18n.EN: "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
+							i18n.ES: "Exenta por el artículos 23 y 24 de la Norma Foral del IVA",
+						},
+					},
+					{
+						Code: "E5",
+						Name: i18n.String{
+							i18n.EN: "Exempt pursuant to Article 25 of the Foral VAT law",
+							i18n.ES: "Exenta por el artículo 25 de la Norma Foral del IVA",
+						},
+					},
+					{
+						Code: "E6",
+						Name: i18n.String{
+							i18n.EN: "Exempt pursuant to other reasons",
+							i18n.ES: "Exenta por otra causa",
+						},
+					},
 				},
 			},
 		},
@@ -249,7 +225,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IGIC",
 			i18n.ES: "IGIC",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyFacturaETaxTypeCode: "03",
 		},
 		Desc: i18n.String{
@@ -307,7 +283,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IPSI",
 			i18n.ES: "IPSI",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyFacturaETaxTypeCode: "02",
 		},
 		Desc: i18n.String{
@@ -330,7 +306,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IRPF",
 			i18n.ES: "IRPF",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyFacturaETaxTypeCode: "04",
 		},
 		Desc: i18n.String{

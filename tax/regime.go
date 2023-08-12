@@ -117,13 +117,17 @@ type Category struct {
 
 	// RateRequired when true implies that when a tax combo is defined using
 	// this category that one of the rates must be defined.
-	RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
+	// RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
 
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 
-	// Codes defines a set of regime specific code mappings.
-	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// RateCodes defines a list of codes to use as an alternative to choosing a
+	// rate for the tax category.
+	RateCodes []*CodeDefinition `json:"rate_codes,omitempty" jsonschema:"title=Rate Codes"`
+
+	// Map defines a set of regime specific code mappings.
+	Map cbc.CodeSet `json:"map,omitempty" jsonschema:"title=Map"`
 
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
@@ -151,8 +155,12 @@ type Rate struct {
 	// older values.
 	Values []*RateValue `json:"values,omitempty" jsonschema:"title=Values"`
 
-	// Codes defines a set of regime specific code mappings.
-	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Codes defines a list of codes of which one must be associated with the
+	// tax rate for it to be validated.
+	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
+
+	// Map is used to associate specific codes with the chosen rate.
+	Map cbc.CodeSet `json:"map,omitempty" jsonschema:"title=Map"`
 
 	// Meta contains additional information about the rate that is relevant
 	// for local frequently used implementations.
@@ -319,6 +327,44 @@ func (r *Regime) InCategoryRates(cat cbc.Code) validation.Rule {
 	return validation.In(keys...)
 }
 
+// InCategoryCodes is used to check if a "code" value provided in a rate
+// is defined in the list of acceptable codes.
+func (r *Regime) InCategoryCodes(cat cbc.Code) validation.Rule {
+	if r == nil {
+		return validation.In()
+	}
+	c := r.Category(cat)
+	if c == nil {
+		return validation.In()
+	}
+	codes := make([]interface{}, len(c.RateCodes))
+	for i, x := range c.RateCodes {
+		codes[i] = x.Code
+	}
+	return validation.In(codes...)
+}
+
+// InCategoryRateCodes is used to check if a "code" value provided in a rate
+// is defined in the list of acceptable codes.
+func (r *Regime) InCategoryRateCodes(cat cbc.Code, rate cbc.Key) validation.Rule {
+	if r == nil {
+		return validation.In()
+	}
+	c := r.Category(cat)
+	if c == nil {
+		return validation.In()
+	}
+	ro := c.Rate(rate)
+	if ro == nil {
+		return validation.In()
+	}
+	codes := make([]interface{}, len(ro.Codes))
+	for i, x := range ro.Codes {
+		codes[i] = x.Code
+	}
+	return validation.In(codes...)
+}
+
 // InCategories returns a validation rule to ensure the category code
 // is inside the list of known codes.
 func (r *Regime) InCategories() validation.Rule {
@@ -384,6 +430,10 @@ func (c *Category) Validate() error {
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
 		validation.Field(&c.Rates),
+		validation.Field(&c.RateCodes,
+			validation.When(len(c.Rates) > 0, validation.Empty.Error("cannot be used with rates")),
+		),
+		validation.Field(&c.Map),
 	)
 	return err
 }
@@ -398,6 +448,8 @@ func (r *Rate) Validate() error {
 			validation.When(r.Exempt, validation.Nil),
 			validation.By(checkRateValuesOrder),
 		),
+		validation.Field(&r.Codes),
+		validation.Field(&r.Map),
 		validation.Field(&r.Meta),
 	)
 	return err
