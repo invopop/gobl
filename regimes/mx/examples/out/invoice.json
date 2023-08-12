@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "513ddcb7adcf834076c34190c49328ed4c7f8e5a9f02e31576856de1d27e97a3"
+			"val": "241d5c8f1a6d44316a1f7bd0c02e3e6ca7dc25b65ae8cb04e9557e2aa11f374c"
 		},
 		"draft": true
 	},
@@ -14,12 +14,6 @@
 		"code": "00001",
 		"type": "standard",
 		"currency": "MXN",
-		"identities": [
-			{
-				"key": "sat-cfdi-use",
-				"code": "G01"
-			}
-		],
 		"issue_date": "2023-07-10",
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
@@ -30,7 +24,7 @@
 			},
 			"identities": [
 				{
-					"key": "sat-fiscal-code",
+					"key": "sat-fiscal-regime",
 					"code": "601"
 				}
 			]
@@ -44,8 +38,12 @@
 			},
 			"identities": [
 				{
-					"key": "sat-fiscal-code",
+					"key": "sat-fiscal-regime",
 					"code": "601"
+				},
+				{
+					"key": "sat-cfdi-use",
+					"code": "G01"
 				}
 			]
 		},
@@ -57,7 +55,7 @@
 					"name": "Cobro por tarjetas",
 					"identities": [
 						{
-							"key": "sat-product-code",
+							"key": "sat-prod-serv",
 							"code": "84141602"
 						}
 					],
@@ -86,7 +84,7 @@
 					"name": "Porcentaje sobre GMV",
 					"identities": [
 						{
-							"key": "sat-product-code",
+							"key": "sat-prod-serv",
 							"code": "80141628"
 						}
 					],

@@ -2,13 +2,10 @@ $schema: "https://gobl.org/draft-0/bill/invoice"
 issue_date: "2023-07-10"
 series: "TEST"
 code: "00001"
-identities:
-  - key: "sat-cfdi-use"
-    code: "G01"
 supplier:
   name: "ESCUELA KEMPER URGATE"
   identities:
-    - key: "sat-fiscal-code"
+    - key: "sat-fiscal-regime"
       code: "601"
   tax_id:
     country: "MX"
@@ -17,8 +14,10 @@ supplier:
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
   identities:
-    - key: "sat-fiscal-code"
+    - key: "sat-fiscal-regime"
       code: "601"
+    - key: "sat-cfdi-use"
+      code: "G01"
   tax_id:
     country: "MX"
     code: "URE180429TM6"
@@ -29,7 +28,7 @@ lines:
       name: "Cobro por tarjetas"
       price: "10.00"
       identities:
-        - key: "sat-product-code"
+        - key: "sat-prod-serv"
           code: "84141602"
     discounts:
       - percent: "10.0%"
@@ -42,7 +41,7 @@ lines:
       price: "10.00"
       unit: "service"
       identities:
-        - key: "sat-product-code"
+        - key: "sat-prod-serv"
           code: "80141628"
     taxes:
       - cat: "VAT"

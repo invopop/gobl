@@ -38,7 +38,7 @@ func TestIdentityValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "code: cannot be blank.")
 
 	id = &org.Identity{
-		Key:  mx.IdentityKeyFiscalCode,
+		Key:  mx.IdentityKeyFiscalRegime,
 		Code: "606",
 	}
 	err = id.ValidateWithContext(ctx)
@@ -47,7 +47,7 @@ func TestIdentityValidation(t *testing.T) {
 	id.Code = "500"
 	err = id.ValidateWithContext(ctx)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "code: invalid sat-fiscal-code.")
+	assert.Contains(t, err.Error(), "code: invalid sat-fiscal-regime.")
 }
 
 func TestAddIdentity(t *testing.T) {

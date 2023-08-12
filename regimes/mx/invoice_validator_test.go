@@ -22,17 +22,11 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
-		Identities: []*org.Identity{
-			{
-				Key:  mx.IdentityKeyCFDIUse,
-				Code: "G01",
-			},
-		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Identities: []*org.Identity{
 				{
-					Key:  mx.IdentityKeyFiscalCode,
+					Key:  mx.IdentityKeyFiscalRegime,
 					Code: "601",
 				},
 			},
@@ -46,8 +40,12 @@ func validInvoice() *bill.Invoice {
 			Name: "Test Customer",
 			Identities: []*org.Identity{
 				{
-					Key:  mx.IdentityKeyFiscalCode,
+					Key:  mx.IdentityKeyFiscalRegime,
 					Code: "608",
+				},
+				{
+					Key:  mx.IdentityKeyCFDIUse,
+					Code: "G01",
 				},
 			},
 			TaxID: &tax.Identity{
@@ -65,7 +63,7 @@ func validInvoice() *bill.Invoice {
 					Unit:  "mutual",
 					Identities: []*org.Identity{
 						{
-							Key:  mx.IdentityKeyProductCode,
+							Key:  mx.IdentityKeyProdServ,
 							Code: "01010101",
 						},
 					},
@@ -159,7 +157,12 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Identities = make([]*org.Identity, 0)
+	inv.Customer.Identities = []*org.Identity{
+		{
+			Key:  mx.IdentityKeyFiscalRegime,
+			Code: "601",
+		},
+	}
 	assertValidationError(t, inv, "identities: missing sat-cfdi-use")
 }
 

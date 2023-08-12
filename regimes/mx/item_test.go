@@ -19,21 +19,21 @@ func TestItemValidation(t *testing.T) {
 			name: "valid item",
 			item: &org.Item{
 				Identities: []*org.Identity{
-					{Key: mx.IdentityKeyProductCode, Code: "12345678"},
+					{Key: mx.IdentityKeyProdServ, Code: "12345678"},
 				},
 			},
 		},
 		{
 			name: "missing identities",
 			item: &org.Item{},
-			err:  "identities: missing sat-product-code",
+			err:  "identities: missing sat-prod-serv",
 		},
 		{
 			name: "empty identities",
 			item: &org.Item{
 				Identities: []*org.Identity{},
 			},
-			err: "identities: missing sat-product-code",
+			err: "identities: missing sat-prod-serv",
 		},
 		{
 			name: "missing SAT identity",
@@ -42,13 +42,13 @@ func TestItemValidation(t *testing.T) {
 					{Key: "random", Code: "12345678"},
 				},
 			},
-			err: "identities: missing sat-product-code",
+			err: "identities: missing sat-prod-serv",
 		},
 		{
 			name: "SAT in invalid format",
 			item: &org.Item{
 				Identities: []*org.Identity{
-					{Key: mx.IdentityKeyProductCode, Code: "ABC2"},
+					{Key: mx.IdentityKeyProdServ, Code: "ABC2"},
 				},
 			},
 			err: "identities: SAT code must have 8 digits",

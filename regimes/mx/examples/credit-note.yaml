@@ -4,9 +4,6 @@ type: credit-note
 series: CN
 code: "0003"
 currency: MXN
-identities:
-  - key: "sat-cfdi-use"
-    code: "G01"
 preceding:
   - code: "0010"
     stamps:
@@ -15,7 +12,7 @@ preceding:
 supplier:
   name: ESCUELA KEMPER URGATE
   identities:
-    - key: "sat-fiscal-code"
+    - key: "sat-fiscal-regime"
       code: "615"
   tax_id:
     country: MX
@@ -24,8 +21,10 @@ supplier:
 customer:
   name: UNIVERSIDAD ROBOTICA ESPAÑOLA
   identities:
-    - key: "sat-fiscal-code"
+    - key: "sat-fiscal-regime"
       code: "624"
+    - key: "sat-cfdi-use"
+      code: "G01"
   tax_id:
     country: MX
     zone: "65000"
@@ -35,7 +34,7 @@ lines:
     item:
       name: Cigarros
       identities:
-        - key: "sat-product-code"
+        - key: "sat-prod-serv"
           code: "50211502"
       price: "100.1010"
       unit: piece

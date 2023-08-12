@@ -27,7 +27,6 @@ func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.MXN)),
-		validation.Field(&inv.Identities, org.HasIdentityKey(IdentityKeyCFDIUse)),
 		validation.Field(&inv.Supplier,
 			validation.By(v.validSupplier),
 			validation.Skip,
@@ -69,7 +68,8 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID, validation.Required),
 		validation.Field(&obj.Identities,
-			org.HasIdentityKey(IdentityKeyFiscalCode),
+			org.HasIdentityKey(IdentityKeyFiscalRegime),
+			org.HasIdentityKey(IdentityKeyCFDIUse),
 			validation.Skip,
 		),
 	)
@@ -82,7 +82,7 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Identities,
-			org.HasIdentityKey(IdentityKeyFiscalCode),
+			org.HasIdentityKey(IdentityKeyFiscalRegime),
 			validation.Skip,
 		),
 	)

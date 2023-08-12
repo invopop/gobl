@@ -7,24 +7,32 @@ import (
 
 // Regime specific keys for identities.
 const (
-	IdentityKeyFiscalCode  = "sat-fiscal-code"
-	IdentityKeyCFDIUse     = "sat-cfdi-use"
-	IdentityKeyProductCode = "sat-product-code"
+	IdentityKeyFiscalRegime = "sat-fiscal-regime"
+	IdentityKeyCFDIUse      = "sat-cfdi-use"
+	IdentityKeyProdServ     = "sat-prod-serv" // name from XML field: ClaveProdServ
 )
 
 var identityKeys = []*tax.KeyDefinition{
 	{
-		Key: IdentityKeyProductCode,
+		Key: IdentityKeyProdServ,
 		Name: i18n.String{
 			i18n.EN: "Product or Service Code",
 			i18n.ES: "Clave de Producto o Servicio", //nolint:misspell
 		},
+		Desc: i18n.String{
+			i18n.EN: "Code defined in the CFDI catalogue used to identify a product or service.",
+			i18n.ES: "Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio.",
+		},
 	},
 	{
-		Key: IdentityKeyFiscalCode,
+		Key: IdentityKeyFiscalRegime,
 		Name: i18n.String{
 			i18n.EN: "Fiscal Regime Code",
-			i18n.ES: "Código de Régimen fiscal",
+			i18n.ES: "Código de Régimen Fiscal",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Fiscal regime associated with suppliers and customers.",
+			i18n.ES: "Régimen fiscal asociado con el emisor y receptor.",
 		},
 		Codes: []*tax.CodeDefinition{
 			{
@@ -150,8 +158,8 @@ var identityKeys = []*tax.KeyDefinition{
 			i18n.ES: "Código de Uso CFDI",
 		},
 		Desc: i18n.String{
-			i18n.EN: "Used at the document level to help identify how the customer will use the document.",
-			i18n.ES: "Utilizado a nivel del documento para identificar cómo el client utilizará el documento.",
+			i18n.EN: "Chosen by the customer to indicate the purpose of an invoice.",
+			i18n.ES: "Elegido por el cliente para indicar el propósito de una factura.",
 		},
 		Codes: []*tax.CodeDefinition{
 			{
