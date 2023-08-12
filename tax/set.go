@@ -55,7 +55,10 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			r.InCategoryRates(c.Category),
 		),
 		validation.Field(&c.Code,
-			validation.When(cat != nil && len(cat.RateCodes) > 0, validation.Required),
+			validation.When(
+				cat != nil && len(cat.RateCodes) > 0,
+				validation.Required,
+			),
 			validation.When(
 				(cat != nil && len(cat.RateCodes) == 0) &&
 					(rate != nil && len(rate.Codes) == 0),
@@ -64,12 +67,12 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			),
 			validation.When(
 				(cat != nil && len(cat.RateCodes) > 0),
-				r.InCategoryCodes(c.Category),
+				r.InCategoryRateCodes(c.Category),
 				validation.Skip,
 			),
 			validation.When(
-				(cat != nil && rate != nil && len(rate.Codes) > 0),
-				r.InCategoryRateCodes(c.Category, c.Rate),
+				(rate != nil && len(rate.Codes) > 0),
+				r.InRateCodes(c.Category, c.Rate),
 				validation.Skip,
 			),
 		),

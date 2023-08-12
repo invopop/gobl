@@ -327,9 +327,9 @@ func (r *Regime) InCategoryRates(cat cbc.Code) validation.Rule {
 	return validation.In(keys...)
 }
 
-// InCategoryCodes is used to check if a "code" value provided in a rate
+// InCategoryRateCodes is used to check if a "code" value provided in a rate
 // is defined in the list of acceptable codes.
-func (r *Regime) InCategoryCodes(cat cbc.Code) validation.Rule {
+func (r *Regime) InCategoryRateCodes(cat cbc.Code) validation.Rule {
 	if r == nil {
 		return validation.In()
 	}
@@ -344,9 +344,9 @@ func (r *Regime) InCategoryCodes(cat cbc.Code) validation.Rule {
 	return validation.In(codes...)
 }
 
-// InCategoryRateCodes is used to check if a "code" value provided in a rate
+// InRateCodes is used to check if a "code" value provided in a rate
 // is defined in the list of acceptable codes.
-func (r *Regime) InCategoryRateCodes(cat cbc.Code, rate cbc.Key) validation.Rule {
+func (r *Regime) InRateCodes(cat cbc.Code, rate cbc.Key) validation.Rule {
 	if r == nil {
 		return validation.In()
 	}
