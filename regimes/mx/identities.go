@@ -21,7 +21,7 @@ var identityKeys = []*tax.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: "Code defined in the CFDI catalogue used to identify a product or service.",
-			i18n.ES: "Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio.",
+			i18n.ES: "Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio.", //nolint:misspell
 		},
 	},
 	{
