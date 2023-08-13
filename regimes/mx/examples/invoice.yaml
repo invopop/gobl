@@ -5,7 +5,7 @@ code: "00001"
 supplier:
   name: "ESCUELA KEMPER URGATE"
   identities:
-    - key: "sat-fiscal-regime"
+    - key: "mx-cfdi-fiscal-regime"
       code: "601"
   tax_id:
     country: "MX"
@@ -14,9 +14,9 @@ supplier:
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
   identities:
-    - key: "sat-fiscal-regime"
+    - key: "mx-cfdi-fiscal-regime"
       code: "601"
-    - key: "sat-cfdi-use"
+    - key: "mx-cfdi-use"
       code: "G01"
   tax_id:
     country: "MX"
@@ -28,7 +28,7 @@ lines:
       name: "Cobro por tarjetas"
       price: "10.00"
       identities:
-        - key: "sat-prod-serv"
+        - key: "mx-cfdi-prod-serv"
           code: "84141602"
     discounts:
       - percent: "10.0%"
@@ -41,7 +41,7 @@ lines:
       price: "10.00"
       unit: "service"
       identities:
-        - key: "sat-prod-serv"
+        - key: "mx-cfdi-prod-serv"
           code: "80141628"
     taxes:
       - cat: "VAT"

@@ -5,16 +5,17 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Regime specific keys for identities.
+// Mexican CFDI identity keys required by the SAT (tax authority in Mexico) in all
+// invoices and cannot be determined automatically.
 const (
-	IdentityKeyFiscalRegime = "sat-fiscal-regime"
-	IdentityKeyCFDIUse      = "sat-cfdi-use"
-	IdentityKeyProdServ     = "sat-prod-serv" // name from XML field: ClaveProdServ
+	IdentityKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
+	IdentityKeyCFDIUse          = "mx-cfdi-use"
+	IdentityKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
 )
 
 var identityKeys = []*tax.KeyDefinition{
 	{
-		Key: IdentityKeyProdServ,
+		Key: IdentityKeyCFDIProdServ,
 		Name: i18n.String{
 			i18n.EN: "Product or Service Code",
 			i18n.ES: "Clave de Producto o Servicio", //nolint:misspell
@@ -25,7 +26,7 @@ var identityKeys = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: IdentityKeyFiscalRegime,
+		Key: IdentityKeyCFDIFiscalRegime,
 		Name: i18n.String{
 			i18n.EN: "Fiscal Regime Code",
 			i18n.ES: "Código de Régimen Fiscal",

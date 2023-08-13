@@ -26,7 +26,7 @@ func validInvoice() *bill.Invoice {
 			Name: "Test Supplier",
 			Identities: []*org.Identity{
 				{
-					Key:  mx.IdentityKeyFiscalRegime,
+					Key:  mx.IdentityKeyCFDIFiscalRegime,
 					Code: "601",
 				},
 			},
@@ -40,7 +40,7 @@ func validInvoice() *bill.Invoice {
 			Name: "Test Customer",
 			Identities: []*org.Identity{
 				{
-					Key:  mx.IdentityKeyFiscalRegime,
+					Key:  mx.IdentityKeyCFDIFiscalRegime,
 					Code: "608",
 				},
 				{
@@ -63,7 +63,7 @@ func validInvoice() *bill.Invoice {
 					Unit:  "mutual",
 					Identities: []*org.Identity{
 						{
-							Key:  mx.IdentityKeyProdServ,
+							Key:  mx.IdentityKeyCFDIProdServ,
 							Code: "01010101",
 						},
 					},
@@ -159,11 +159,11 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 
 	inv.Customer.Identities = []*org.Identity{
 		{
-			Key:  mx.IdentityKeyFiscalRegime,
+			Key:  mx.IdentityKeyCFDIFiscalRegime,
 			Code: "601",
 		},
 	}
-	assertValidationError(t, inv, "identities: missing sat-cfdi-use")
+	assertValidationError(t, inv, "identities: missing mx-cfdi-use")
 }
 
 func TestPrecedingValidation(t *testing.T) {

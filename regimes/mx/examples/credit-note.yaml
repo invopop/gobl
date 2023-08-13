@@ -12,7 +12,7 @@ preceding:
 supplier:
   name: ESCUELA KEMPER URGATE
   identities:
-    - key: "sat-fiscal-regime"
+    - key: "mx-cfdi-fiscal-regime"
       code: "615"
   tax_id:
     country: MX
@@ -21,9 +21,9 @@ supplier:
 customer:
   name: UNIVERSIDAD ROBOTICA ESPAÑOLA
   identities:
-    - key: "sat-fiscal-regime"
+    - key: "mx-cfdi-fiscal-regime"
       code: "624"
-    - key: "sat-cfdi-use"
+    - key: "mx-cfdi-use"
       code: "G01"
   tax_id:
     country: MX
@@ -34,7 +34,7 @@ lines:
     item:
       name: Cigarros
       identities:
-        - key: "sat-prod-serv"
+        - key: "mx-cfdi-prod-serv"
           code: "50211502"
       price: "100.1010"
       unit: piece

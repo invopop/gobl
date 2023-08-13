@@ -17,7 +17,7 @@ var (
 func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Identities,
-			org.HasIdentityKey(IdentityKeyProdServ),
+			org.HasIdentityKey(IdentityKeyCFDIProdServ),
 			validation.By(validItemIdentities),
 			validation.Skip,
 		),
@@ -30,7 +30,7 @@ func validItemIdentities(value interface{}) error {
 		return nil
 	}
 	for _, id := range ids {
-		if id.Key == IdentityKeyProdServ {
+		if id.Key == IdentityKeyCFDIProdServ {
 			if itemIdentityValidCodeRegexp.MatchString(string(id.Code)) {
 				return nil
 			}
