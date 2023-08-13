@@ -597,7 +597,7 @@
         "en": "National Tax Identity",
         "es": "Número de Identificación Fiscal"
       },
-      "codes": {
+      "map": {
         "ticketbai-id-type": "02"
       }
     },
@@ -607,7 +607,7 @@
         "en": "Passport",
         "es": "Pasaporte"
       },
-      "codes": {
+      "map": {
         "ticketbai-id-type": "03"
       }
     },
@@ -617,7 +617,7 @@
         "en": "National ID Card or similar from a foreign country",
         "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
       },
-      "codes": {
+      "map": {
         "ticketbai-id-type": "04"
       }
     },
@@ -627,7 +627,7 @@
         "en": "Residential permit",
         "es": "Certificado de residencia"
       },
-      "codes": {
+      "map": {
         "ticketbai-id-type": "05"
       }
     },
@@ -637,7 +637,7 @@
         "en": "An other type of source not listed",
         "es": "Otro documento probatorio"
       },
-      "codes": {
+      "map": {
         "ticketbai-id-type": "06"
       }
     }
@@ -846,7 +846,7 @@
           "en": "Invoice code",
           "es": "Número de la factura"
         },
-        "codes": {
+        "map": {
           "facturae": "01"
         }
       },
@@ -856,7 +856,7 @@
           "en": "Invoice series",
           "es": "Serie de la factura"
         },
-        "codes": {
+        "map": {
           "facturae": "02"
         }
       },
@@ -866,7 +866,7 @@
           "en": "Issue date",
           "es": "Fecha expedición"
         },
-        "codes": {
+        "map": {
           "facturae": "03"
         }
       },
@@ -876,7 +876,7 @@
           "en": "Name and surnames/Corporate name – Issuer (Sender)",
           "es": "Nombre y apellidos/Razón Social-Emisor"
         },
-        "codes": {
+        "map": {
           "facturae": "04"
         }
       },
@@ -886,7 +886,7 @@
           "en": "Name and surnames/Corporate name - Receiver",
           "es": "Nombre y apellidos/Razón Social-Receptor"
         },
-        "codes": {
+        "map": {
           "facturae": "05"
         }
       },
@@ -896,7 +896,7 @@
           "en": "Issuer's Tax Identification Number",
           "es": "Identificación fiscal Emisor/obligado"
         },
-        "codes": {
+        "map": {
           "facturae": "06"
         }
       },
@@ -906,7 +906,7 @@
           "en": "Receiver's Tax Identification Number",
           "es": "Identificación fiscal Receptor"
         },
-        "codes": {
+        "map": {
           "facturae": "07"
         }
       },
@@ -916,7 +916,7 @@
           "en": "Issuer's address",
           "es": "Domicilio Emisor/Obligado"
         },
-        "codes": {
+        "map": {
           "facturae": "08"
         }
       },
@@ -926,7 +926,7 @@
           "en": "Receiver's address",
           "es": "Domicilio Receptor"
         },
-        "codes": {
+        "map": {
           "facturae": "09"
         }
       },
@@ -936,7 +936,7 @@
           "en": "Item line",
           "es": "Detalle Operación"
         },
-        "codes": {
+        "map": {
           "facturae": "10"
         }
       },
@@ -946,7 +946,7 @@
           "en": "Applicable Tax Rate",
           "es": "Porcentaje impositivo a aplicar"
         },
-        "codes": {
+        "map": {
           "facturae": "11"
         }
       },
@@ -956,7 +956,7 @@
           "en": "Applicable Tax Amount",
           "es": "Cuota tributaria a aplicar"
         },
-        "codes": {
+        "map": {
           "facturae": "12"
         }
       },
@@ -966,7 +966,7 @@
           "en": "Applicable Date/Period",
           "es": "Fecha/Periodo a aplicar"
         },
-        "codes": {
+        "map": {
           "facturae": "13"
         }
       },
@@ -976,7 +976,7 @@
           "en": "Invoice Class",
           "es": "Clase de factura"
         },
-        "codes": {
+        "map": {
           "facturae": "14"
         }
       },
@@ -986,7 +986,7 @@
           "en": "Legal literals",
           "es": "Literales legales"
         },
-        "codes": {
+        "map": {
           "facturae": "15"
         }
       },
@@ -996,7 +996,7 @@
           "en": "Taxable Base",
           "es": "Base imponible"
         },
-        "codes": {
+        "map": {
           "facturae": "16"
         }
       },
@@ -1006,7 +1006,7 @@
           "en": "Calculation of tax outputs",
           "es": "Cálculo de cuotas repercutidas"
         },
-        "codes": {
+        "map": {
           "facturae": "80"
         }
       },
@@ -1016,7 +1016,7 @@
           "en": "Calculation of tax inputs",
           "es": "Cálculo de cuotas retenidas"
         },
-        "codes": {
+        "map": {
           "facturae": "81"
         }
       },
@@ -1026,7 +1026,7 @@
           "en": "Taxable Base modified due to return of packages and packaging materials",
           "es": "Base imponible modificada por devolución de envases / embalajes"
         },
-        "codes": {
+        "map": {
           "facturae": "82"
         }
       },
@@ -1036,7 +1036,7 @@
           "en": "Taxable Base modified due to discounts and rebates",
           "es": "Base imponible modificada por descuentos y bonificaciones"
         },
-        "codes": {
+        "map": {
           "facturae": "83"
         }
       },
@@ -1046,7 +1046,7 @@
           "en": "Taxable Base modified due to firm court ruling or administrative decision",
           "es": "Base imponible modificada por resolución firme, judicial o administrativa"
         },
-        "codes": {
+        "map": {
           "facturae": "84"
         }
       },
@@ -1056,7 +1056,7 @@
           "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
           "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
         },
-        "codes": {
+        "map": {
           "facturae": "85"
         }
       }
@@ -1068,7 +1068,7 @@
           "en": "Complete",
           "es": "Rectificaticón íntegra"
         },
-        "codes": {
+        "map": {
           "facturae": "01"
         }
       },
@@ -1078,7 +1078,7 @@
           "en": "Corrected items only",
           "es": "Rectificación por diferencias"
         },
-        "codes": {
+        "map": {
           "facturae": "02"
         }
       },
@@ -1088,7 +1088,7 @@
           "en": "Bulk deal in a given period",
           "es": "Rectificación por descuento por volumen de operaciones durante un periodo"
         },
-        "codes": {
+        "map": {
           "facturae": "03"
         }
       },
@@ -1098,7 +1098,7 @@
           "en": "Authorized by the Tax Agency",
           "es": "Autorizadas por la Agencia Tributaria"
         },
-        "codes": {
+        "map": {
           "facturae": "04"
         }
       }

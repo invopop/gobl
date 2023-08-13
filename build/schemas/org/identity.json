@@ -15,15 +15,25 @@
           "title": "Label",
           "description": "Optional label useful for non-standard identities to give a bit more context."
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key is used to classify the identity for a specific tax regime."
+        },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Type",
-          "description": "The type of Code being represented and usually specific for\na particular context, country, or tax regime."
+          "description": "The type of Code being represented and usually specific for\na particular context, country, or tax regime, and cannot be used\nalongside the key."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
           "description": "The actual value of the identity code."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description adds details about what the code could mean or imply"
         }
       },
       "type": "object",
@@ -33,5 +43,5 @@
       "description": "Identity is used to define a code for a specific context."
     }
   },
-  "$comment": "Generated with GOBL v0.53.0"
+  "$comment": "Generated with GOBL v0.54.0"
 }
