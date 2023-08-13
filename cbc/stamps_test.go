@@ -39,3 +39,22 @@ func TestDuplicateStamps(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "duplicate stamp 'provider'")
 }
+
+func TestAddStamp(t *testing.T) {
+	st := struct {
+		Stamps []*cbc.Stamp
+	}{
+		Stamps: []*cbc.Stamp{
+			{
+				Provider: cbc.Key("provider"),
+				Value:    "value",
+			},
+		},
+	}
+	st.Stamps = cbc.AddStamp(st.Stamps, &cbc.Stamp{
+		Provider: cbc.Key("provider"),
+		Value:    "new value",
+	})
+	assert.Len(t, st.Stamps, 1)
+	assert.Equal(t, "new value", st.Stamps[0].Value)
+}

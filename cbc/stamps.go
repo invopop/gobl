@@ -53,3 +53,18 @@ func duplicateDuplicateStamps(list interface{}) error {
 	}
 	return nil
 }
+
+// AddStamp makes it easier to add a new Stamp by replacing a previous
+// entry with a matching Key.
+func AddStamp(in []*Stamp, s *Stamp) []*Stamp {
+	if in == nil {
+		return []*Stamp{s}
+	}
+	for _, v := range in {
+		if v.Provider == s.Provider {
+			*v = *s // copy in place
+			return in
+		}
+	}
+	return append(in, s)
+}

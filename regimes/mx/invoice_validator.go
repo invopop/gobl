@@ -1,7 +1,6 @@
 package mx
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
@@ -25,16 +24,17 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func (v *invoiceValidator) validate() error {
-	if err := v.validateScenarios(); err != nil {
-		return err
-	}
-
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.MXN)),
+		validation.Field(&inv.Supplier,
+			validation.By(v.validSupplier),
+			validation.Skip,
+		),
 		validation.Field(&inv.Customer,
 			validation.Required,
 			validation.By(v.validCustomer),
+			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
@@ -46,23 +46,18 @@ func (v *invoiceValidator) validate() error {
 		validation.Field(&inv.Payment,
 			validation.Required,
 			validation.By(v.validPayment),
+			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
 			validation.By(v.validPrecedingList),
 			validation.Each(validation.By(v.validPrecedingEntry)),
+			validation.Skip,
 		),
 		validation.Field(&inv.Discounts,
 			validation.Empty.Error("the SAT doesn't allow discounts at invoice level. Use line discounts instead."),
+			validation.Skip,
 		),
 	)
-}
-
-func (v *invoiceValidator) validateScenarios() error {
-	if v.ss.Codes[KeySATUsoCFDI] == "" {
-		return errors.New("'use' tax tags is required")
-	}
-
-	return nil
 }
 
 func (v *invoiceValidator) validCustomer(value interface{}) error {
@@ -72,6 +67,24 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID, validation.Required),
+		validation.Field(&obj.Identities,
+			org.HasIdentityKey(IdentityKeyCFDIFiscalRegime),
+			org.HasIdentityKey(IdentityKeyCFDIUse),
+			validation.Skip,
+		),
+	)
+}
+
+func (v *invoiceValidator) validSupplier(value interface{}) error {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Identities,
+			org.HasIdentityKey(IdentityKeyCFDIFiscalRegime),
+			validation.Skip,
+		),
 	)
 }
 

@@ -33,7 +33,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Cash",
 			i18n.ES: "Efectivo",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "01",
 		},
 	},
@@ -43,7 +43,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Nominative cheque",
 			i18n.ES: "Cheque nominativo", // nolint:misspell
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "02",
 		},
 	},
@@ -53,7 +53,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Electronic funds transfer",
 			i18n.ES: "Transferencia electrónica de fondos",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "03",
 		},
 	},
@@ -63,7 +63,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Credit card",
 			i18n.ES: "Tarjeta de crédito",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "04",
 		},
 	},
@@ -73,7 +73,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Electronic wallet",
 			i18n.ES: "Monedero electrónico",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "05",
 		},
 	},
@@ -83,7 +83,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Online or electronic payment",
 			i18n.ES: "Dinero electrónico",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "06",
 		},
 	},
@@ -93,7 +93,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Grocery vouchers",
 			i18n.ES: "Vales de despensa",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "08",
 		},
 	},
@@ -103,7 +103,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Payment in kind",
 			i18n.ES: "Dación en pago",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "12",
 		},
 	},
@@ -113,7 +113,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Payment by subrogation",
 			i18n.ES: "Pago por subrogación",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "13",
 		},
 	},
@@ -123,7 +123,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Payment by consignment",
 			i18n.ES: "Pago por consignación",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "14",
 		},
 	},
@@ -133,7 +133,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Debt relief",
 			i18n.ES: "Condonación",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "15",
 		},
 	},
@@ -143,7 +143,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Netting",
 			i18n.ES: "Compensación",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "17",
 		},
 	},
@@ -153,7 +153,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Novation",
 			i18n.ES: "Novación",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "23",
 		},
 	},
@@ -163,7 +163,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Merger",
 			i18n.ES: "Confusión",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "24",
 		},
 	},
@@ -173,7 +173,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Debt remission",
 			i18n.ES: "Remisión de deuda",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "25",
 		},
 	},
@@ -183,7 +183,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Expiration of payment obligation",
 			i18n.ES: "Prescripción o caducidad",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "26",
 		},
 	},
@@ -193,7 +193,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "To the creditor's satisfaction",
 			i18n.ES: "A satisfacción del acreedor",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "27",
 		},
 	},
@@ -203,7 +203,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Debit card",
 			i18n.ES: "Tarjeta de débito",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "28",
 		},
 	},
@@ -213,7 +213,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Services card",
 			i18n.ES: "Tarjeta de servicios",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "29",
 		},
 	},
@@ -223,7 +223,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Advance payment",
 			i18n.ES: "Aplicación de anticipos",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "30",
 		},
 	},
@@ -233,7 +233,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Payment via intermediary",
 			i18n.ES: "Intermediario pagos",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "31",
 		},
 	},
@@ -243,7 +243,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "To be defined",
 			i18n.ES: "Por definir",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeySATFormaPago: "99",
 		},
 	},

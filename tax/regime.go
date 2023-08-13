@@ -51,6 +51,10 @@ type Regime struct {
 	// against.
 	IdentityTypeKeys []*KeyDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
 
+	// Identities defines the keys that can be used for identities inside the regime. This
+	// will be used for additional validation.
+	Identities []*KeyDefinition `json:"identities,omitempty" jsonschema:"title=Identities"`
+
 	// Charge types specific for the regime and may be validated or used in the UI as suggestions
 	ChargeKeys []*KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
 
@@ -192,18 +196,31 @@ type KeyDefinition struct {
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-	// Codes defines a set of codes that may be used within a given regime or format
-	// that will help identify which key definition to use.
-	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
-	// Any additional data that might be relevant in some regimes.
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	// Codes describes the list of codes that can be used alongside the Key,
+	// for example with identities.
+	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Map helps map local keys to specific codes, useful for converting the
+	// described key into a local code.
+	Map cbc.CodeSet `json:"map,omitempty" jsonschema:"title=Map"`
+}
+
+// CodeDefinition describes a specific code and how it maps to a human name
+// and description if appropriate. Regimes shouldn't typically do any additional
+// conversion of codes, for that, regular keys should be used.
+type CodeDefinition struct {
+	// Code for which the definition is for.
+	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	// Short name for the code, if relevant.
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Description offering more details about when the code should be used.
+	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 }
 
 // ValidateObject performs validation on the provided object in the context
 // of the regime.
-func (r *Regime) ValidateObject(obj interface{}) error {
+func (r *Regime) ValidateObject(value interface{}) error {
 	if r.Validator != nil {
-		return r.Validator(obj)
+		return r.Validator(value)
 	}
 	return nil
 }
@@ -493,7 +510,6 @@ func (kd *KeyDefinition) Validate() error {
 		validation.Field(&kd.Name, validation.Required),
 		validation.Field(&kd.Desc),
 		validation.Field(&kd.Codes),
-		validation.Field(&kd.Meta),
 	)
 	return err
 }

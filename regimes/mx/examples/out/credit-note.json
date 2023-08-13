@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b27227e309bd4ddfaf76c36fdcb13974e1e8d699e055d9a75d63c3bd87836e90"
+			"val": "0100b54c81700df543b615e7ec2bf71ad3cf8ac363657e4d8cc083af2be5a6b0"
 		},
 		"draft": true
 	},
@@ -14,11 +14,6 @@
 		"code": "0003",
 		"type": "credit-note",
 		"currency": "MXN",
-		"tax": {
-			"tags": [
-				"use+goods-acquisition"
-			]
-		},
 		"preceding": [
 			{
 				"code": "0010",
@@ -37,7 +32,13 @@
 				"country": "MX",
 				"zone": "26015",
 				"code": "EKU9003173C9"
-			}
+			},
+			"identities": [
+				{
+					"key": "mx-cfdi-fiscal-regime",
+					"code": "615"
+				}
+			]
 		},
 		"customer": {
 			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
@@ -45,7 +46,17 @@
 				"country": "MX",
 				"zone": "65000",
 				"code": "URE180429TM6"
-			}
+			},
+			"identities": [
+				{
+					"key": "mx-cfdi-fiscal-regime",
+					"code": "624"
+				},
+				{
+					"key": "mx-cfdi-use",
+					"code": "G01"
+				}
+			]
 		},
 		"lines": [
 			{
@@ -55,7 +66,7 @@
 					"name": "Cigarros",
 					"identities": [
 						{
-							"type": "SAT",
+							"key": "mx-cfdi-prod-serv",
 							"code": "50211502"
 						}
 					],

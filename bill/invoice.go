@@ -38,10 +38,12 @@ type Invoice struct {
 	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
-	// Exchange rates to be used when converting the invoices monetary values into other currencies.
-	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
+	// Identities help define local and specific data fields to classify the invoice.
+	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
+	// Exchange rates to be used when converting the invoices monetary values into other currencies.
+	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
 	// Key information regarding previous invoices and potentially details as to why they
 	// were corrected.
@@ -111,6 +113,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
 		validation.Field(&inv.Currency, validation.Required),
 		validation.Field(&inv.ExchangeRates),
+		validation.Field(&inv.Identities),
 		validation.Field(&inv.Tax),
 
 		validation.Field(&inv.Preceding),

@@ -19,36 +19,36 @@ func TestItemValidation(t *testing.T) {
 			name: "valid item",
 			item: &org.Item{
 				Identities: []*org.Identity{
-					{Code: "12345678", Type: "SAT"},
+					{Key: mx.IdentityKeyCFDIProdServ, Code: "12345678"},
 				},
 			},
 		},
 		{
 			name: "missing identities",
 			item: &org.Item{},
-			err:  "identities: SAT code must be present",
+			err:  "identities: missing mx-cfdi-prod-serv",
 		},
 		{
 			name: "empty identities",
 			item: &org.Item{
 				Identities: []*org.Identity{},
 			},
-			err: "identities: SAT code must be present",
+			err: "identities: missing mx-cfdi-prod-serv",
 		},
 		{
 			name: "missing SAT identity",
 			item: &org.Item{
 				Identities: []*org.Identity{
-					{Type: "GTIN", Code: "12345678"},
+					{Key: "random", Code: "12345678"},
 				},
 			},
-			err: "identities: SAT code must be present",
+			err: "identities: missing mx-cfdi-prod-serv",
 		},
 		{
 			name: "SAT in invalid format",
 			item: &org.Item{
 				Identities: []*org.Identity{
-					{Type: "SAT", Code: "ABC2"},
+					{Key: mx.IdentityKeyCFDIProdServ, Code: "ABC2"},
 				},
 			},
 			err: "identities: SAT code must have 8 digits",

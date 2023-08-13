@@ -38,7 +38,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "TIN - Tax Identification Number",
 			i18n.ES: "NIT - Número de Identificación Tributaria",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "31",
 			KeyDIANAdditionalAccountID: "1",
 		},
@@ -49,7 +49,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.ES: "Registro Civil",
 			i18n.EN: "Civil Registry",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "11",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -60,7 +60,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Identity Card",
 			i18n.ES: "Tarjeta de Identidad",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "12",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -71,7 +71,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Citizen Identity Card",
 			i18n.ES: "Cédula de ciudadanía",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "13",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -82,7 +82,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Foreigner Identity Card",
 			i18n.ES: "Tarjeta de Extranjería",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "21",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -93,7 +93,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Foreigner Citizen Identity Card",
 			i18n.ES: "Cédula de extranjería",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "22",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -104,7 +104,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "TIN of an individual",
 			i18n.ES: "NIT de persona natural",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "31",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -115,7 +115,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Passport",
 			i18n.ES: "Pasaporte",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "41",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -126,7 +126,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Foreign Document",
 			i18n.ES: "Documento de identificación extranjero",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "42",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -137,7 +137,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "PEP - Special Permit to Stay",
 			i18n.ES: "PEP - Permiso Especial de Permanencia",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "47",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -148,7 +148,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "Foreign TIN",
 			i18n.ES: "NIT de otro país",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "50",
 			KeyDIANAdditionalAccountID: "1",
 		},
@@ -159,7 +159,7 @@ var taxIdentityTypeDefs = []*tax.KeyDefinition{
 			i18n.EN: "NUIP - National Unique Personal Identification Number",
 			i18n.ES: "NUIP - Número Único de Identificación Personal",
 		},
-		Codes: cbc.CodeSet{
+		Map: cbc.CodeSet{
 			KeyDIANCompanyID:           "91",
 			KeyDIANAdditionalAccountID: "2",
 		},
@@ -217,9 +217,9 @@ func normalizePartyWithTaxIdentity(p *org.Party) error {
 	return nil
 }
 
-var isValidZoneCode = validation.In(validZoneCodes()...)
+var isValidZoneCode = validation.In(validZoneMap()...)
 
-func validZoneCodes() []interface{} {
+func validZoneMap() []interface{} {
 	ls := make([]interface{}, len(zones))
 	for i, v := range zones {
 		ls[i] = v.Code

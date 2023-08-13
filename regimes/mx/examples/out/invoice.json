@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fc163aa40798b593ecfe3c97546d82f25e2b2e4d88e0da0204db5cbf25b3fe58"
+			"val": "d9dcd9119801bc342e2cc32ea18732842568fcde99aa6eb8f1f48b375e51fc01"
 		},
 		"draft": true
 	},
@@ -14,11 +14,6 @@
 		"code": "00001",
 		"type": "standard",
 		"currency": "MXN",
-		"tax": {
-			"tags": [
-				"use+no-tax-effects"
-			]
-		},
 		"issue_date": "2023-07-10",
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
@@ -26,7 +21,13 @@
 				"country": "MX",
 				"zone": "21000",
 				"code": "EKU9003173C9"
-			}
+			},
+			"identities": [
+				{
+					"key": "mx-cfdi-fiscal-regime",
+					"code": "601"
+				}
+			]
 		},
 		"customer": {
 			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
@@ -34,7 +35,17 @@
 				"country": "MX",
 				"zone": "86991",
 				"code": "URE180429TM6"
-			}
+			},
+			"identities": [
+				{
+					"key": "mx-cfdi-fiscal-regime",
+					"code": "601"
+				},
+				{
+					"key": "mx-cfdi-use",
+					"code": "G01"
+				}
+			]
 		},
 		"lines": [
 			{
@@ -44,7 +55,7 @@
 					"name": "Cobro por tarjetas",
 					"identities": [
 						{
-							"type": "SAT",
+							"key": "mx-cfdi-prod-serv",
 							"code": "84141602"
 						}
 					],
@@ -73,7 +84,7 @@
 					"name": "Porcentaje sobre GMV",
 					"identities": [
 						{
-							"type": "SAT",
+							"key": "mx-cfdi-prod-serv",
 							"code": "80141628"
 						}
 					],

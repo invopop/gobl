@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,13 +22,14 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
-		Tax: &bill.Tax{
-			Tags: []cbc.Key{
-				"use+goods-acquisition",
-			},
-		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
+			Identities: []*org.Identity{
+				{
+					Key:  mx.IdentityKeyCFDIFiscalRegime,
+					Code: "601",
+				},
+			},
 			TaxID: &tax.Identity{
 				Country: l10n.MX,
 				Code:    "AAA010101AAA",
@@ -36,6 +38,16 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
+			Identities: []*org.Identity{
+				{
+					Key:  mx.IdentityKeyCFDIFiscalRegime,
+					Code: "608",
+				},
+				{
+					Key:  mx.IdentityKeyCFDIUse,
+					Code: "G01",
+				},
+			},
 			TaxID: &tax.Identity{
 				Country: l10n.MX,
 				Code:    "ZZZ010101ZZZ",
@@ -51,7 +63,7 @@ func validInvoice() *bill.Invoice {
 					Unit:  "mutual",
 					Identities: []*org.Identity{
 						{
-							Type: "SAT",
+							Key:  mx.IdentityKeyCFDIProdServ,
 							Code: "01010101",
 						},
 					},
@@ -145,14 +157,13 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Tax.Tags = make([]cbc.Key, 0)
-	assertValidationError(t, inv, "'use' tax tags is required")
-
-	inv.Tax.Tags = nil
-	assertValidationError(t, inv, "'use' tax tags is required")
-
-	inv.Tax = nil
-	assertValidationError(t, inv, "'use' tax tags is required")
+	inv.Customer.Identities = []*org.Identity{
+		{
+			Key:  mx.IdentityKeyCFDIFiscalRegime,
+			Code: "601",
+		},
+	}
+	assertValidationError(t, inv, "identities: missing mx-cfdi-use")
 }
 
 func TestPrecedingValidation(t *testing.T) {
