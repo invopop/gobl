@@ -239,6 +239,19 @@
           "title": "Currency",
           "description": "Currency for all invoice totals."
         },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities help define local and specific data fields to classify the invoice."
+        },
+        "tax": {
+          "$ref": "#/$defs/Tax",
+          "title": "Tax",
+          "description": "Special tax configuration for billing."
+        },
         "exchange_rates": {
           "items": {
             "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
@@ -246,11 +259,6 @@
           "type": "array",
           "title": "Exchange Rates",
           "description": "Exchange rates to be used when converting the invoices monetary values into other currencies."
-        },
-        "tax": {
-          "$ref": "#/$defs/Tax",
-          "title": "Tax",
-          "description": "Special tax configuration for billing."
         },
         "preceding": {
           "items": {
@@ -802,5 +810,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.53.0"
+  "$comment": "Generated with GOBL v0.54.0"
 }

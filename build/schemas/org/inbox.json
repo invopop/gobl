@@ -38,5 +38,5 @@
       "description": "Inbox is used to store data about a connection with a service that is responsible for potentially receiving copies of GOBL envelopes or other document formats defined locally."
     }
   },
-  "$comment": "Generated with GOBL v0.53.0"
+  "$comment": "Generated with GOBL v0.54.0"
 }
