@@ -36,9 +36,9 @@ func (v *invoiceValidator) validate() error {
 }
 
 func (v *invoiceValidator) supplier(value interface{}) error {
-	supplier, _ := value.(*org.Party)
-	if supplier == nil {
-		return errors.New("missing supplier details")
+	supplier, ok := value.(*org.Party)
+	if !ok {
+		return nil
 	}
 
 	return validation.ValidateStruct(supplier,
@@ -48,7 +48,8 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
 		),
 		validation.Field(&supplier.Addresses,
-			validation.By(validateAddress("supplier")),
+			validation.Length(1, 1),
+			validation.By(validateAddress),
 		),
 		validation.Field(&supplier.Registration,
 			validation.By(validateRegistration),
@@ -78,44 +79,33 @@ func (v *invoiceValidator) customer(value interface{}) error {
 			),
 		),
 		validation.Field(&customer.Addresses,
-			validation.By(validateAddress("customer")),
+			validation.Length(1, 1),
+			validation.By(validateAddress),
 		),
 	)
 }
 
-func validateAddress(partyType string) validation.RuleFunc {
-	return func(value interface{}) error {
-		v, ok := value.([]*org.Address)
-		if !ok {
-			return errors.New("value is not a slice of Address")
-		}
-
-		if len(v) != 1 {
-			return errors.New(partyType + " must have exactly one address")
-		}
-
-		address := v[0]
-
-		return validation.ValidateStruct(address,
-			validation.Field(&address.Country),
-			validation.Field(&address.Locality, validation.Required),
-			validation.Field(&address.Code, validation.Required),
-			validation.Field(&address.Street, validation.Required),
-			validation.Field(&address.Number, validation.Required),
-		)
+func validateAddress(value interface{}) error {
+	v, ok := value.([]*org.Address)
+	if v == nil || !ok {
+		return nil
 	}
+	address := v[0]
+	return validation.ValidateStruct(address,
+		validation.Field(&address.Country),
+		validation.Field(&address.Locality, validation.Required),
+		validation.Field(&address.Code, validation.Required),
+		validation.Field(&address.Street, validation.Required),
+		validation.Field(&address.Number, validation.Required),
+	)
+
 }
 
 func validateRegistration(value interface{}) error {
 	v, ok := value.(*org.Registration)
-	if !ok {
-		return errors.New("value is not a valid Registration")
-	}
-
-	if v == nil {
+	if v == nil || !ok {
 		return nil
 	}
-
 	return validation.ValidateStruct(v,
 		validation.Field(&v.Entry, validation.Required),
 		validation.Field(&v.Office, validation.Required),
@@ -130,11 +120,6 @@ func (v *invoiceValidator) validateScenarios() error {
 	td := ss.Codes[KeyFatturaPATipoDocumento]
 	if td == "" {
 		return errors.New("missing scenario related to TipoDocumento")
-	}
-
-	rf := ss.Codes[KeyFatturaPARegimeFiscale]
-	if rf == "" {
-		return errors.New("missing scenario related to RegimeFiscale")
 	}
 
 	return nil

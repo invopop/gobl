@@ -49,7 +49,7 @@ We've tried to describe how to deal with many of the exception cases and special
 
 The regular approach in GOBL to indicate that an invoice is subject to the "reverse charge" mechanism, is simply to include the `reverse-charge` tag inside the invoice's tax section.
 
-Unfortunately in Italy this alone is not sufficient, each line item inside the document needs to be attributed with a specific exemption reason. These are defined in the "Nature" (Natura) section below. Take the following line for example:
+Unfortunately in Italy this alone is not sufficient, each line item inside the document needs to be attributed with a specific exemption code. These are defined in the "Nature" (Natura) section below. Take the following line for example:
 
 ```json
 {
@@ -61,7 +61,8 @@ Unfortunately in Italy this alone is not sufficient, each line item inside the d
   "taxes": [
     {
       "cat": "VAT",
-      "rate": "reverse-charge"
+      "rate": "exempt",
+      "code": "N6.9"
     }
   ]
 }
@@ -115,28 +116,51 @@ For example:
 
 #### Tax System - "Regime Fiscale"
 
-The tax system ("Regime Fiscale") needs to be applied to all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden by specifying one of the following tax tags in the invoice document:
+The tax system ("Regime Fiscale") needs to be defined to suppliers in all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden in an identity with the `it-sdi-fiscal-regime` tag.
 
-| Code | Document Tags                 | Description                                                                                                                                                                    |
-| ---- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| RF01 | default                       | Ordinary                                                                                                                                                                       |
-| RF02 | `minimum-tax-payers`          | "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)"                                                                                                               |
-| RF04 | `agriculture`                 | "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)"                                                                   |
-| RF05 | `tobacco`                     | "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                          |
-| RF06 | `matches`                     | "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                                         |
-| RF07 | `publishing`                  | "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                                                          |
-| RF08 | `telephones`                  | "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                             |
-| RF09 | `public-transport`            | "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)"                                                                    |
-| RF10 | `entertainment`               | "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)" |
-| RF11 | `travel-agency`               | "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)"                                                                                                |
-| RF12 | `farmhouse`                   | "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)"                                                                                                  |
-| RF13 | `door-to-door`                | "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)"                                                                                              |
-| RF14 | `used-goods`                  | "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)"                                                                            |
-| RF15 | `antiques`                    | "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)"                                                                              |
-| RF16 | `vat-in-cash`                 | "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)"                                                                                             |
-| RF17 | `vat-in-cash`, `low-turnover` | "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)"                                                                 |
-| RF18 | `other`                       | Other                                                                                                                                                                          |
-| RF19 | `flat-rate`                   | "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)"                                                                                                                      |
+The following identities are defined:
+
+| Code   | Description                                                                                                                                                                  |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RF01` | Ordinary                                                                                                                                                                     |
+| `RF02` | Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)                                                                                                               |
+| `RF04` | Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)                                                                   |
+| `RF05` | Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)                                                                                          |
+| `RF06` | Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)                                                                                                         |
+| `RF07` | Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)                                                                                                          |
+| `RF08` | Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)                                                                             |
+| `RF09` | Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)                                                                    |
+| `RF10` | Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72) |
+| `RF11` | Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)                                                                                                |
+| `RF12` | Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)                                                                                                  |
+| `RF13` | Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)                                                                                              |
+| `RF14` | Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)                                                                            |
+| `RF15` | Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)                                                                              |
+| `RF16` | VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)                                                                                             |
+| `RF17` | VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)                                                                 |
+| `RF18` | Other                                                                                                                                                                        |
+| `RF19` | Flat rate (Art. 1, section 54-89, Italian Law 190/2014)                                                                                                                      |
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "supplier": {
+    "name": "MªF. Services",
+    "tax_id": {
+      "country": "IT",
+      "code": "12345678903"
+    },
+    "identities": [
+      {
+        "key": "it-sdi-fiscal-regime",
+        "code": "RF02"
+      }
+    ]
+  }
+  // [...]
+}
+```
 
 #### Payment Means (ModalitaPagamento)
 
@@ -215,31 +239,31 @@ All Italian invoices must be identified with a specific type code defined by the
 
 #### Line Nature Code (Natura)
 
-The "Natura" code is required when identifying why a single row inside an invoice _does not_ include VAT. Keys are provided in the `rate` field.
+The "Natura" code is required when identifying why a single row inside an invoice _does not_ include VAT. With the `rate` field set to `exempt`, on the of the following codes should be provided in the `code` field:
 
-| Code | Tax Rate Key                                 | Description                                                                                                                                                                                          |
-| ---- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| N1   | `excluded`                                   | excluded pursuant to Art. 15, DPR 633/72                                                                                                                                                             |
-| N2.1 | `not-subject+article-7`                      | not subject to VAT under the articles from 7 to 7-septies of DPR 633/72                                                                                                                              |
-| N2.2 | `not-subject`                                | not subject – other cases                                                                                                                                                                            |
-| N3.1 | `not-taxable+export`                         | not taxable - exportations                                                                                                                                                                           |
-| N3.2 | `not-taxable+intra-community`                | not taxable - intra Community transfers                                                                                                                                                              |
-| N3.3 | `not-taxable+san-marino`                     | not taxable - transfers to San Marino                                                                                                                                                                |
-| N3.4 | `not-taxable+export-supplies`                | not taxable - transactions treated as export supplies                                                                                                                                                |
-| N3.5 | `not-taxable+declaration-of-intent`          | not taxable - for declaration of intent                                                                                                                                                              |
-| N3.6 | `not-taxable`                                | not taxable – other transactions that don’t contribute to the determination of ceiling                                                                                                               |
-| N4   | `exempt`                                     | exempt                                                                                                                                                                                               |
-| N5   | `margin-regime`                              | margin regime / VAT not exposed on invoice                                                                                                                                                           |
-| N6.1 | `reverse-charge+scrap`                       | reverse charge - transfer of scrap and of other recyclable materials                                                                                                                                 |
-| N6.2 | `reverse-charge+precious-metals`             | reverse charge - transfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO                                                                                             |
-| N6.3 | `reverse-charge+construction-subcontracting` | reverse charge - subcontracting in the construction sector                                                                                                                                           |
-| N6.4 | `reverse-charge+buildings`                   | reverse charge - transfer of buildings                                                                                                                                                               |
-| N6.5 | `reverse-charge+mobile`                      | reverse charge - transfer of mobile phones                                                                                                                                                           |
-| N6.6 | `reverse-charge+electronics`                 | reverse charge - transfer of electronic products                                                                                                                                                     |
-| N6.7 | `reverse-charge+construction`                | reverse charge - provisions in the construction and related sectors                                                                                                                                  |
-| N6.8 | `reverse-charge+energy`                      | reverse charge - transactions in the energy sector                                                                                                                                                   |
-| N6.9 | `reverse-charge`                             | reverse charge - other cases                                                                                                                                                                         |
-| N7   | `vat-eu`                                     | "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)" |
+| Code   | Description                                                                                                                                                                                          |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `N1`   | excluded pursuant to Art. 15, DPR 633/72                                                                                                                                                             |
+| `N2.1` | not subject to VAT under the articles from 7 to 7-septies of DPR 633/72                                                                                                                              |
+| `N2.2` | not subject – other cases                                                                                                                                                                            |
+| `N3.1` | not taxable - exportations                                                                                                                                                                           |
+| `N3.2` | not taxable - intra Community transfers                                                                                                                                                              |
+| `N3.3` | not taxable - transfers to San Marino                                                                                                                                                                |
+| `N3.4` | not taxable - transactions treated as export supplies                                                                                                                                                |
+| `N3.5` | not taxable - for declaration of intent                                                                                                                                                              |
+| `N3.6` | not taxable – other transactions that don’t contribute to the determination of ceiling                                                                                                               |
+| `N4`   | exempt                                                                                                                                                                                               |
+| `N5`   | margin regime / VAT not exposed on invoice                                                                                                                                                           |
+| `N6.1` | reverse charge - transfer of scrap and of other recyclable materials                                                                                                                                 |
+| `N6.2` | reverse charge - transfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO                                                                                             |
+| `N6.3` | reverse charge - subcontracting in the construction sector                                                                                                                                           |
+| `N6.4` | reverse charge - transfer of buildings                                                                                                                                                               |
+| `N6.5` | reverse charge - transfer of mobile phones                                                                                                                                                           |
+| `N6.6` | reverse charge - transfer of electronic products                                                                                                                                                     |
+| `N6.7` | reverse charge - provisions in the construction and related sectors                                                                                                                                  |
+| `N6.8` | reverse charge - transactions in the energy sector                                                                                                                                                   |
+| `N6.9` | reverse charge - other cases                                                                                                                                                                         |
+| `N7`   | "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)" |
 
 ##### Withholding Type (TipoRitenuta)
 

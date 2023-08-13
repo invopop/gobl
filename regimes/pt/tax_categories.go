@@ -36,7 +36,8 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.PT: "Imposto sobre o Valor Acrescentado",
 		},
-		Retained: false,
+		Retained:     false,
+		RateRequired: true,
 		Rates: []*tax.Rate{
 			{
 				Key: common.TaxRateStandard,

@@ -48,6 +48,10 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 				validation.Empty,
 			),
 			validation.When(
+				(cat != nil && cat.RateRequired),
+				validation.Required,
+			),
+			validation.When(
 				(cat != nil && len(cat.RateCodes) == 0) &&
 					(c.Code != cbc.CodeEmpty),
 				validation.Required.Error("required with code"),

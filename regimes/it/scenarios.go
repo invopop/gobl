@@ -23,9 +23,6 @@ const (
 	TagDeferred          cbc.Key = "deferred"
 	TagThirdPeriod       cbc.Key = "third-period"
 	TagDepreciableAssets cbc.Key = "depreciable-assets"
-
-	// Tags for Fiscal Regime
-	TagMinimumTaxPayers cbc.Key = "minimum-tax-payers"
 )
 
 // This is only a partial list of all the potential tags that
@@ -129,15 +126,6 @@ var invoiceTags = []*tax.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Depreciable assets",
 			i18n.IT: "Beni ammortizzabili",
-		},
-	},
-
-	// **** Fiscal Regime Tags ****
-	{
-		Key: TagMinimumTaxPayers,
-		Name: i18n.String{
-			i18n.EN: "Minimum Taxpayers",
-			i18n.IT: "Contribuenti minimi",
 		},
 	},
 }
@@ -388,28 +376,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeSet{
 				KeyFatturaPATipoDocumento: "TD28",
-			},
-		},
-
-		// **** REGIME FISCALE ****
-		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote},
-			Name: i18n.String{
-				i18n.EN: "Regular regime",
-				i18n.IT: "Regime ordinario",
-			},
-			Codes: cbc.CodeSet{
-				KeyFatturaPARegimeFiscale: "RF01", // default
-			},
-		},
-		{
-			Tags: []cbc.Key{TagMinimumTaxPayers},
-			Name: i18n.String{
-				i18n.EN: "Minimum tax payers (art. 1,c.96-117, L. 244/2007)",
-				i18n.IT: "Regime dei contribuenti minimi (art. 1,c.96-117, L. 244/2007)",
-			},
-			Codes: cbc.CodeSet{
-				KeyFatturaPARegimeFiscale: "RF02",
 			},
 		},
 
