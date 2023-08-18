@@ -89,7 +89,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Identities: []*org.Identity{{Code: ts.Code, Type: "SAT"}}}
+		item := &org.Item{Identities: []*org.Identity{{Code: ts.Code, Key: mx.IdentityKeyCFDIProdServ}}}
 		err := r.CalculateObject(item)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, item.Identities[0].Code)
