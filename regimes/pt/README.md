@@ -2,6 +2,8 @@
 
 Portugal doesn't have an e-invoicing format per se. Tax information is reported electronically to the AT (Autoridade Tributária e Aduaneira) either periodically in batches via a SAF-T (PT) report or individually in real time via a web service.
 
+Example PT GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+
 ## Public Documentation
 
 * [Portaria n.o 302/2016 – SAF-T Data Structure & Taxonomies](https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/legislacao/diplomas_legislativos/Documents/Portaria_302_2016.pdf)

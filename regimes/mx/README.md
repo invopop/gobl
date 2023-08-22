@@ -2,6 +2,8 @@
 
 Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for their e-invoicing system.
 
+Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+
 ## Public Documentation
 
 - [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
