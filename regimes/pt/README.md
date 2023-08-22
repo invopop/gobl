@@ -61,7 +61,7 @@ The AT `TaxCode` (Código do imposto) is required for invoice items that apply 
 | RED  | Taxa Reduzida   | `reduced`                   |
 | ISE  | Isenta          | `exempt` + code (see below) |
 
-AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag is used, one of the following must be defined:
+AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag is used, one of the following must be defined in the `ext` map's `pt-exemption-reason` property:
 
 | Code  | Description                                                                                              |
 | ----- | -------------------------------------------------------------------------------------------------------- |
@@ -110,7 +110,9 @@ For example, you could define an invoice line exempt of tax as follows:
         {
             "cat": "VAT",
             "rate": "exempt",
-            "code": "M19"
+            "ext": {
+              "pt-exemption-reason": "M19"
+            }
         }
       ]
     }
