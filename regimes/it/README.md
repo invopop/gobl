@@ -62,7 +62,9 @@ Unfortunately in Italy this alone is not sufficient, each line item inside the d
     {
       "cat": "VAT",
       "rate": "exempt",
-      "code": "N6.9"
+      "ext": {
+        "it-sdi-nature": "N6.9"
+      }
     }
   ]
 }
@@ -116,7 +118,7 @@ For example:
 
 #### Tax System - "Regime Fiscale"
 
-The tax system ("Regime Fiscale") needs to be defined to suppliers in all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden in an identity with the `it-sdi-fiscal-regime` tag.
+The tax system ("Regime Fiscale") needs to be defined to suppliers in all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden in an extension field with the `it-sdi-fiscal-regime` tag.
 
 The following identities are defined:
 
@@ -151,12 +153,9 @@ The following identities are defined:
       "country": "IT",
       "code": "12345678903"
     },
-    "identities": [
-      {
-        "key": "it-sdi-fiscal-regime",
-        "code": "RF02"
-      }
-    ]
+    "ext": {
+      "it-sdi-fiscal-regime": "RF02"
+    }
   }
   // [...]
 }
