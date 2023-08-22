@@ -42,7 +42,7 @@ func validItemIdentities(value interface{}) error {
 
 func normalizeItem(item *org.Item) error {
 	for _, id := range item.Identities {
-		if id.Type == IdentityTypeSAT && itemIdentityNormalizableCodeRegexp.MatchString(string(id.Code)) {
+		if id.Key == IdentityKeyCFDIProdServ && itemIdentityNormalizableCodeRegexp.MatchString(string(id.Code)) {
 			id.Code = id.Code + "00"
 		}
 	}
