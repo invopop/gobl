@@ -20,7 +20,7 @@ Every Supplier and Customer in a Mexican invoice must be associated with a fisca
 
 In GOBL the `mx-cfdi-fiscal-regime` identity key is used alongside the value expected by the SAT.
 
-### Example
+#### Example
 
 The following example will associate the supplier with the `601` fiscal regime code:
 
