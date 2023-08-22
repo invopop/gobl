@@ -1,6 +1,7 @@
 package cbc
 
 import (
+	"errors"
 	"regexp"
 
 	"github.com/invopop/jsonschema"
@@ -15,9 +16,9 @@ import (
 // to separate blocks.
 type Code string
 
-// CodeSet is a map of keys to specific codes, useful to determine regime specific
+// CodeMap is a map of keys to specific codes, useful to determine regime specific
 // codes from their key counterparts.
-type CodeSet map[Key]Code
+type CodeMap map[Key]Code
 
 // Basic code constants.
 const (
@@ -74,8 +75,8 @@ func (Code) JSONSchema() *jsonschema.Schema {
 	}
 }
 
-// Validate ensures the code set data looks correct.
-func (cs CodeSet) Validate() error {
+// Validate ensures the code maps data looks correct.
+func (cs CodeMap) Validate() error {
 	err := make(validation.Errors)
 	// values are already tested
 	for k := range cs {
@@ -89,8 +90,66 @@ func (cs CodeSet) Validate() error {
 	return err
 }
 
+// Has returns true if the code map has values for all the provided keys.
+func (cs CodeMap) Has(keys ...Key) bool {
+	for _, k := range keys {
+		if _, ok := cs[k]; !ok {
+			return false
+		}
+	}
+	return true
+}
+
+// Equals returns true if the code map has the same keys and values as the provided
+// map.
+func (cs CodeMap) Equals(other CodeMap) bool {
+	if len(cs) != len(other) {
+		return false
+	}
+	for k, v := range cs {
+		v2, ok := other[k]
+		if !ok {
+			return false
+		}
+		if v2 != v {
+			return false
+		}
+	}
+	return true
+}
+
+// CodeMapHas returns a validation rule that ensures the code set contains
+// the provided keys.
+func CodeMapHas(keys ...Key) validation.Rule {
+	return validateCodeMap{keys: keys}
+}
+
+type validateCodeMap struct {
+	keys []Key
+}
+
+func (v validateCodeMap) Validate(value interface{}) error {
+	cs, ok := value.(CodeMap)
+	if !ok {
+		return nil
+	}
+	var err validation.Errors
+	for _, k := range v.keys {
+		if _, ok := cs[k]; !ok {
+			if err == nil {
+				err = make(validation.Errors)
+			}
+			err[k.String()] = errors.New("required")
+		}
+	}
+	if len(err) > 0 {
+		return err
+	}
+	return nil
+}
+
 // JSONSchemaExtend ensures the pattern property is set correctly.
-func (CodeSet) JSONSchemaExtend(schema *jsonschema.Schema) {
+func (CodeMap) JSONSchemaExtend(schema *jsonschema.Schema) {
 	prop := schema.PatternProperties[".*"] // get default
 	delete(schema.PatternProperties, ".*") // remove default
 	schema.PatternProperties[KeyPattern] = prop

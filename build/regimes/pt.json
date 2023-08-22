@@ -274,6 +274,7 @@
         "en": "Value Added Tax",
         "pt": "Imposto sobre o Valor Acrescentado"
       },
+      "rate_required": true,
       "rates": [
         {
           "key": "standard",
@@ -301,7 +302,7 @@
               "percent": "23.0%"
             }
           ],
-          "codes": {
+          "map": {
             "at-tax-code": "NOR"
           }
         },
@@ -331,7 +332,7 @@
               "percent": "13.0%"
             }
           ],
-          "codes": {
+          "map": {
             "at-tax-code": "INT"
           }
         },
@@ -361,332 +362,19 @@
               "percent": "6.0%"
             }
           ],
-          "codes": {
+          "map": {
             "at-tax-code": "RED"
           }
         },
         {
-          "key": "exempt+outlay",
-          "name": {
-            "en": "Article 16, No. 6 of the VAT code",
-            "pt": "Artigo 16.°, n.° 6 do CIVA"
-          },
+          "key": "exempt",
+          "name": null,
           "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M01"
-          }
-        },
-        {
-          "key": "exempt+intrastate-export",
-          "name": {
-            "en": "Article 6 of the Decree-Law 198/90 of 19th June",
-            "pt": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M02"
-          }
-        },
-        {
-          "key": "exempt+imports",
-          "name": {
-            "en": "Exempt pursuant to article 13 of the VAT code",
-            "pt": "Isento artigo 13.° do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M04"
-          }
-        },
-        {
-          "key": "exempt+exports",
-          "name": {
-            "en": "Exempt pursuant to article 14 of the VAT code",
-            "pt": "Isento artigo 14.° do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M05"
-          }
-        },
-        {
-          "key": "exempt+suspension-scheme",
-          "name": {
-            "en": "Exempt pursuant to article 15 of the VAT code",
-            "pt": "Isento artigo 15.° do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M06"
-          }
-        },
-        {
-          "key": "exempt+internal-operations",
-          "name": {
-            "en": "Exempt pursuant to article 9 of the VAT code",
-            "pt": "Isento artigo 9.° do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M07"
-          }
-        },
-        {
-          "key": "exempt+small-retail-scheme",
-          "name": {
-            "en": "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
-            "pt": "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M09"
-          }
-        },
-        {
-          "key": "exempt+exempt-scheme",
-          "name": {
-            "en": "VAT - exemption scheme / Article 57 of the VAT code",
-            "pt": "IVA - regime de isenção / Artigo 57.° do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M10"
-          }
-        },
-        {
-          "key": "exempt+tobacco-scheme",
-          "name": {
-            "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
-            "pt": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M11"
-          }
-        },
-        {
-          "key": "exempt+margin-scheme+travel",
-          "name": {
-            "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
-            "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M12"
-          }
-        },
-        {
-          "key": "exempt+margin-scheme+second-hand",
-          "name": {
-            "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M13"
-          }
-        },
-        {
-          "key": "exempt+margin-scheme+art",
-          "name": {
-            "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M14"
-          }
-        },
-        {
-          "key": "exempt+margin-scheme+antiques",
-          "name": {
-            "en": "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M15"
-          }
-        },
-        {
-          "key": "exempt+goods-transmission",
-          "name": {
-            "en": "Exempt pursuant to Article 14 of the RITI",
-            "pt": "Isento artigo 14.° do RITI"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M16"
-          }
-        },
-        {
-          "key": "exempt+other",
-          "name": {
-            "en": "Other exemptions - Temporary exemptions determined by specific legislation",
-            "pt": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M19"
-          }
-        },
-        {
-          "key": "exempt+flat-rate-scheme",
-          "name": {
-            "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
-            "pt": "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M20"
-          }
-        },
-        {
-          "key": "exempt+non-deductible",
-          "name": {
-            "en": "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
-            "pt": "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M21"
-          }
-        },
-        {
-          "key": "exempt+consignment-goods",
-          "name": {
-            "en": "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
-            "pt": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M25"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+waste",
-          "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M30"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+civil-eng",
-          "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M31"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+greenhouse",
-          "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M32"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+woods",
-          "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M33"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+b2b",
-          "name": {
-            "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
-            "pt": "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M40"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+intraeu",
-          "name": {
-            "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
-            "pt": "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M41"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+real-estate",
-          "name": {
-            "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
-            "pt": "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M42"
-          }
-        },
-        {
-          "key": "exempt+reverse-charge+gold",
-          "name": {
-            "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
-            "pt": "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M43"
-          }
-        },
-        {
-          "key": "exempt+non-taxable",
-          "name": {
-            "en": "Not subject to tax or not taxed",
-            "pt": "Não sujeito ou não tributado"
-          },
-          "exempt": true,
-          "codes": {
-            "at-tax-code": "ISE",
-            "at-tax-exemption-code": "M99"
+          "extensions": [
+            "pt-exemption-reason"
+          ],
+          "map": {
+            "at-tax-code": "ISE"
           }
         }
       ]

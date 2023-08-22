@@ -116,7 +116,7 @@ func (v validateTaxID) Validate(value interface{}) error {
 	if !ok {
 		return nil
 	}
-	return validation.ValidateStruct(id,
+	rules := []*validation.FieldRules{
 		validation.Field(&id.Code,
 			validation.When(v.requireCode, validation.Required),
 		),
@@ -124,5 +124,6 @@ func (v validateTaxID) Validate(value interface{}) error {
 			validation.When(v.requireType, validation.Required),
 			validation.When(len(v.typeIn) > 0, validation.In(v.typeIn...)),
 		),
-	)
+	}
+	return validation.ValidateStruct(id, rules...)
 }

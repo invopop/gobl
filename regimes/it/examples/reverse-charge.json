@@ -67,7 +67,9 @@
         {
           "cat": "VAT",
           "rate": "exempt",
-          "code": "N6.9"
+          "ext": {
+            "it-sdi-nature": "N6.9"
+          }
         }
       ]
     }

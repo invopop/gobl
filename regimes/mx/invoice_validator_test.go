@@ -24,11 +24,8 @@ func validInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Supplier: &org.Party{
 			Name: "Test Supplier",
-			Identities: []*org.Identity{
-				{
-					Key:  mx.IdentityKeyCFDIFiscalRegime,
-					Code: "601",
-				},
+			Ext: cbc.CodeMap{
+				mx.ExtKeyCFDIFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
 				Country: l10n.MX,
@@ -38,15 +35,9 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
-			Identities: []*org.Identity{
-				{
-					Key:  mx.IdentityKeyCFDIFiscalRegime,
-					Code: "608",
-				},
-				{
-					Key:  mx.IdentityKeyCFDIUse,
-					Code: "G01",
-				},
+			Ext: cbc.CodeMap{
+				mx.ExtKeyCFDIFiscalRegime: "608",
+				mx.ExtKeyCFDIUse:          "G01",
 			},
 			TaxID: &tax.Identity{
 				Country: l10n.MX,
@@ -61,11 +52,8 @@ func validInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
 					Unit:  "mutual",
-					Identities: []*org.Identity{
-						{
-							Key:  mx.IdentityKeyCFDIProdServ,
-							Code: "01010101",
-						},
+					Ext: cbc.CodeMap{
+						mx.ExtKeyCFDIProdServ: "01010101",
 					},
 				},
 				Taxes: tax.Set{
@@ -157,13 +145,10 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Customer.Identities = []*org.Identity{
-		{
-			Key:  mx.IdentityKeyCFDIFiscalRegime,
-			Code: "601",
-		},
+	inv.Customer.Ext = cbc.CodeMap{
+		mx.ExtKeyCFDIFiscalRegime: "601",
 	}
-	assertValidationError(t, inv, "identities: missing mx-cfdi-use")
+	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")
 }
 
 func TestPrecedingValidation(t *testing.T) {

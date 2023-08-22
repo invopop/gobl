@@ -18,40 +18,40 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
-				Identities: []*org.Identity{
-					{Key: mx.IdentityKeyCFDIProdServ, Code: "12345678"},
+				Ext: cbc.CodeMap{
+					mx.ExtKeyCFDIProdServ: "12345678",
 				},
 			},
 		},
 		{
-			name: "missing identities",
+			name: "missing extension",
 			item: &org.Item{},
-			err:  "identities: missing mx-cfdi-prod-serv",
+			err:  "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
-			name: "empty identities",
+			name: "empty extension",
 			item: &org.Item{
-				Identities: []*org.Identity{},
+				Ext: cbc.CodeMap{},
 			},
-			err: "identities: missing mx-cfdi-prod-serv",
+			err: "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
 			name: "missing SAT identity",
 			item: &org.Item{
-				Identities: []*org.Identity{
-					{Key: "random", Code: "12345678"},
+				Ext: cbc.CodeMap{
+					"random": "12345678",
 				},
 			},
-			err: "identities: missing mx-cfdi-prod-serv",
+			err: "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
-			name: "SAT in invalid format",
+			name: "invalid code format",
 			item: &org.Item{
-				Identities: []*org.Identity{
-					{Key: mx.IdentityKeyCFDIProdServ, Code: "ABC2"},
+				Ext: cbc.CodeMap{
+					mx.ExtKeyCFDIProdServ: "ABC2",
 				},
 			},
-			err: "identities: SAT code must have 8 digits",
+			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
 		},
 	}
 
@@ -89,9 +89,9 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Identities: []*org.Identity{{Code: ts.Code, Key: mx.IdentityKeyCFDIProdServ}}}
+		item := &org.Item{Ext: cbc.CodeMap{mx.ExtKeyCFDIProdServ: ts.Code}}
 		err := r.CalculateObject(item)
 		assert.NoError(t, err)
-		assert.Equal(t, ts.Expected, item.Identities[0].Code)
+		assert.Equal(t, ts.Expected, item.Ext[mx.ExtKeyCFDIProdServ])
 	}
 }

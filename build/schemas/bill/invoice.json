@@ -64,10 +64,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "i",
-        "amount"
-      ],
+      "required": ["i", "amount"],
       "description": "Charge represents a surchange applied to the complete document independent from the individual lines."
     },
     "Delivery": {
@@ -152,10 +149,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "i",
-        "amount"
-      ],
+      "required": ["i", "amount"],
       "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
     },
     "DocumentReference": {
@@ -238,14 +232,6 @@
           "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "Currency for all invoice totals."
-        },
-        "identities": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/identity"
-          },
-          "type": "array",
-          "title": "Identities",
-          "description": "Identities help define local and specific data fields to classify the invoice."
         },
         "tax": {
           "$ref": "#/$defs/Tax",
@@ -437,13 +423,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "i",
-        "quantity",
-        "item",
-        "sum",
-        "total"
-      ],
+      "required": ["i", "quantity", "item", "sum", "total"],
       "description": "Line is a single row in an invoice."
     },
     "LineCharge": {
@@ -471,9 +451,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "amount"
-      ],
+      "required": ["amount"],
       "description": "LineCharge represents an amount added to the line, and will be applied before taxes."
     },
     "LineDiscount": {
@@ -501,9 +479,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "amount"
-      ],
+      "required": ["amount"],
       "description": "LineDiscount represents an amount deducted from the line, and will be applied before taxes."
     },
     "Ordering": {
@@ -612,11 +588,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "i",
-        "desc",
-        "amount"
-      ],
+      "required": ["i", "desc", "amount"],
       "description": "Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."
     },
     "Payment": {
@@ -708,9 +680,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "code"
-      ],
+      "required": ["code"],
       "description": "Preceding allows for information to be provided about a previous invoice that this one will replace, subtract from, or add to."
     },
     "Tax": {
@@ -801,12 +771,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "sum",
-        "total",
-        "total_with_tax",
-        "payable"
-      ],
+      "required": ["sum", "total", "total_with_tax", "payable"],
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },

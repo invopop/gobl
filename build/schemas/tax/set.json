@@ -26,6 +26,11 @@
           "title": "Surcharge",
           "description": "Some countries require an additional surcharge (calculated if rate present).",
           "calculated": true
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Ext",
+          "description": "Local codes that apply for a given rate or percentage that need to be identified and validated."
         }
       },
       "type": "object",

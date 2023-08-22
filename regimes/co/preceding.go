@@ -23,7 +23,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Partial refund of part of the goods or services.",
 			i18n.ES: "Devolución de parte de los bienes; no aceptación de partes del servicio.",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyDIAN: "1",
 		},
 	},
@@ -33,7 +33,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Previous document has been completely cancelled.",
 			i18n.ES: "Anulación de la factura anterior.",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyDIAN: "2",
 		},
 	},
@@ -43,7 +43,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Partial or total discount.",
 			i18n.ES: "Rebaja o descuento parcial o total.",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyDIAN: "3",
 		},
 	},
@@ -53,7 +53,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Ajuste de precio.",
 			i18n.ES: "Price adjustment.",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyDIAN: "4",
 		},
 	},
@@ -63,7 +63,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 			i18n.EN: "Otros.",
 			i18n.ES: "Other.",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyDIAN: "5",
 		},
 	},

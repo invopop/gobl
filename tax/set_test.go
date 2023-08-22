@@ -84,6 +84,7 @@ func TestSetValidation(t *testing.T) {
 					Rate:     common.TaxRateExempt,
 				},
 			},
+			err: "es-tbai-exemption: required",
 		},
 		{
 			desc: "undefined category code",

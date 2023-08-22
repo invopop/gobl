@@ -22,8 +22,8 @@ type CategoryTotal struct {
 type RateTotal struct {
 	// Optional rate key is required when grouping.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// If the rate is defined with a code, it'll be used to group by also.
-	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// If the rate is defined with extensions, they'll be used to group by also.
+	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Base amount that the percentage is applied to.
 	Base num.Amount `json:"base" jsonschema:"title=Base"`
 	// Percentage of the rate, which may be nil for exempt rates.
@@ -82,8 +82,8 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 // newRateTotal returns a rate total.
 func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
-	rt.Key = c.Rate  // may be empty!
-	rt.Code = c.Code // may be empty!
+	rt.Key = c.Rate // may be empty!
+	rt.Ext = c.Ext  // may be empty!
 	if c.Percent != nil {
 		pc := *c.Percent
 		rt.Percent = &pc
@@ -210,12 +210,12 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 
 func (rt *RateTotal) matches(c *Combo) bool {
 	if c.Percent == nil {
-		return rt.Key == c.Rate && rt.Code == c.Code
+		return rt.Key == c.Rate && rt.Ext.Equals(c.Ext)
 	}
-	if (c.Rate.IsEmpty() || rt.Key == c.Rate) && rt.Code == c.Code {
+	if (c.Rate.IsEmpty() || rt.Key == c.Rate) && rt.Ext.Equals(c.Ext) {
 		return rt.percentagesMatch(c)
 	}
-	if rt.Code == c.Code {
+	if rt.Ext.Equals(c.Ext) {
 		return rt.percentagesMatch(c)
 	}
 	return false

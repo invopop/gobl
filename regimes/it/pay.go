@@ -32,7 +32,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Cash",
 			i18n.IT: "Contanti", // nolint:misspell
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP01",
 		},
 	},
@@ -42,7 +42,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Cheque",
 			i18n.IT: "Assegno",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP02",
 		},
 	},
@@ -52,7 +52,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Banker's Draft",
 			i18n.IT: "Assegno circolare",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP03",
 		},
 	},
@@ -62,7 +62,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Cash at Treasury",
 			i18n.IT: "Contanti presso Tesoreria", // nolint:misspell
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP04",
 		},
 	},
@@ -72,7 +72,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Bank Transfer",
 			i18n.IT: "Bonifico",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP05",
 		},
 	},
@@ -82,7 +82,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Promissory Note",
 			i18n.IT: "Vaglia cambiario",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP06",
 		},
 	},
@@ -92,7 +92,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Bank payment slip",
 			i18n.IT: "Bollettino bancario",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP07",
 		},
 	},
@@ -102,7 +102,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Payment card",
 			i18n.IT: "Carta di pagamento",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP08",
 		},
 	},
@@ -112,7 +112,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Direct Debit (RID)",
 			i18n.IT: "RID",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP09",
 		},
 	},
@@ -122,7 +122,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Utilities Direct Debit (RID utenze)",
 			i18n.IT: "RID utenze",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP10",
 		},
 	},
@@ -132,7 +132,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Fast Direct Debit (RID veloce)",
 			i18n.IT: "RID veloce",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP11",
 		},
 	},
@@ -142,7 +142,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Direct Debit (RIBA)",
 			i18n.IT: "RIBA",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP12",
 		},
 	},
@@ -152,7 +152,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Debit Transfer (MAV)",
 			i18n.IT: "MAV",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP13",
 		},
 	},
@@ -162,7 +162,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Tax Receipt",
 			i18n.IT: "Quietanza erario",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP14",
 		},
 	},
@@ -172,7 +172,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Transfer on special account",
 			i18n.IT: "Giroconto su conti di contabilità speciale",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP15",
 		},
 	},
@@ -182,7 +182,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Direct Debit",
 			i18n.IT: "Domiciliazione Bancaria",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP16",
 		},
 	},
@@ -192,7 +192,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Direct Debit Post Office",
 			i18n.IT: "Domiciliazione Postale",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP17",
 		},
 	},
@@ -202,7 +202,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Post Office Cheque",
 			i18n.IT: "Bollettino di c/c postale",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP18",
 		},
 	},
@@ -212,7 +212,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "SEPA Direct Debit",
 			i18n.IT: "SEPA Direct Debit",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP19",
 		},
 	},
@@ -222,7 +222,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "SEPA Core Direct Debit",
 			i18n.IT: "SEPA Direct Debit Core",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP20",
 		},
 	},
@@ -232,7 +232,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "SEPA B2B Direct Debit",
 			i18n.IT: "SEPA Direct Debit B2B",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP21",
 		},
 	},
@@ -242,7 +242,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Deductible Netting",
 			i18n.IT: "Trattenuta su somme già riscosse",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP22",
 		},
 	},
@@ -252,7 +252,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "PagoPA",
 			i18n.IT: "PagoPA",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFatturaPAModalitaPagamento: "MP23",
 		},
 	},
@@ -262,7 +262,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Online",
 			i18n.IT: "Online",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			// Using "card" code
 			KeyFatturaPAModalitaPagamento: "MP08",
 		},
@@ -273,7 +273,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.EN: "Other",
 			i18n.IT: "Altro",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			// Anything else assume is Cash
 			KeyFatturaPAModalitaPagamento: "MP01",
 		},

@@ -26,8 +26,8 @@ type Combo struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
-	// A local code that applies for a given rate or percentage that needs to be identified.
-	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// Local codes that apply for a given rate or percentage that need to be identified and validated.
+	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -44,7 +44,7 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
 		validation.Field(&c.Rate,
 			validation.When(
-				(cat != nil && len(cat.RateCodes) > 0),
+				(cat != nil && len(cat.Extensions) > 0),
 				validation.Empty,
 			),
 			validation.When(
@@ -52,31 +52,32 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 				validation.Required,
 			),
 			validation.When(
-				(cat != nil && len(cat.RateCodes) == 0) &&
-					(c.Code != cbc.CodeEmpty),
-				validation.Required.Error("required with code"),
+				(cat != nil && len(cat.Extensions) == 0) &&
+					(len(c.Ext) != 0),
+				validation.Required.Error("required with extensions"),
 			),
 			r.InCategoryRates(c.Category),
 		),
-		validation.Field(&c.Code,
+		validation.Field(&c.Ext,
+			InRegimeExtensions,
 			validation.When(
-				cat != nil && len(cat.RateCodes) > 0,
+				cat != nil && len(cat.Extensions) > 0,
 				validation.Required,
 			),
 			validation.When(
-				(cat != nil && len(cat.RateCodes) == 0) &&
-					(rate != nil && len(rate.Codes) == 0),
+				(cat != nil && len(cat.Extensions) == 0) &&
+					(rate != nil && len(rate.Extensions) == 0),
 				validation.Empty,
 				validation.Skip,
 			),
 			validation.When(
-				(cat != nil && len(cat.RateCodes) > 0),
-				r.InCategoryRateCodes(c.Category),
+				(cat != nil && len(cat.Extensions) > 0),
+				cat.InExtensions(),
 				validation.Skip,
 			),
 			validation.When(
-				(rate != nil && len(rate.Codes) > 0),
-				r.InRateCodes(c.Category, c.Rate),
+				(rate != nil && len(rate.Extensions) > 0),
+				rate.InExtensions(),
 				validation.Skip,
 			),
 		),

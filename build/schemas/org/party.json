@@ -94,6 +94,11 @@
           "title": "Logos",
           "description": "Images that can be used to identify the party visually."
         },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Ext",
+          "description": "Extension code map for any additional regime specific codes that may be required."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",

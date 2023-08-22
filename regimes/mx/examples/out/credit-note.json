@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0100b54c81700df543b615e7ec2bf71ad3cf8ac363657e4d8cc083af2be5a6b0"
+			"val": "93e5d47f732138c232f558cf9dcdfd7d750c2ada81995692322e336723ee2257"
 		},
 		"draft": true
 	},
@@ -33,12 +33,9 @@
 				"zone": "26015",
 				"code": "EKU9003173C9"
 			},
-			"identities": [
-				{
-					"key": "mx-cfdi-fiscal-regime",
-					"code": "615"
-				}
-			]
+			"ext": {
+				"mx-cfdi-fiscal-regime": "615"
+			}
 		},
 		"customer": {
 			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
@@ -47,16 +44,10 @@
 				"zone": "65000",
 				"code": "URE180429TM6"
 			},
-			"identities": [
-				{
-					"key": "mx-cfdi-fiscal-regime",
-					"code": "624"
-				},
-				{
-					"key": "mx-cfdi-use",
-					"code": "G01"
-				}
-			]
+			"ext": {
+				"mx-cfdi-fiscal-regime": "624",
+				"mx-cfdi-use": "G01"
+			}
 		},
 		"lines": [
 			{
@@ -64,14 +55,11 @@
 				"quantity": "2",
 				"item": {
 					"name": "Cigarros",
-					"identities": [
-						{
-							"key": "mx-cfdi-prod-serv",
-							"code": "50211502"
-						}
-					],
 					"price": "100.1010",
-					"unit": "piece"
+					"unit": "piece",
+					"ext": {
+						"mx-cfdi-prod-serv": "50211502"
+					}
 				},
 				"sum": "200.2020",
 				"taxes": [

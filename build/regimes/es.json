@@ -642,6 +642,59 @@
       }
     }
   ],
+  "extensions": [
+    {
+      "key": "es-tbai-exemption",
+      "name": {
+        "en": "TicketBAI Exemption code",
+        "es": "Código de Exención de TicketBAI"
+      },
+      "codes": [
+        {
+          "code": "E1",
+          "name": {
+            "en": "Exempt pursuant to Article 20 of the Foral VAT Law",
+            "es": "Exenta por el artículo 20 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "code": "E2",
+          "name": {
+            "en": "Exempt pursuant to Article 21 of the Foral VAT Law",
+            "es": "Exenta por el artículo 21 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "code": "E3",
+          "name": {
+            "en": "Exempt pursuant to Article 22 of the Foral VAT Law",
+            "es": "Exenta por el artículo 22 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "code": "E4",
+          "name": {
+            "en": "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
+            "es": "Exenta por el artículos 23 y 24 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "code": "E5",
+          "name": {
+            "en": "Exempt pursuant to Article 25 of the Foral VAT law",
+            "es": "Exenta por el artículo 25 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "code": "E6",
+          "name": {
+            "en": "Exempt pursuant to other reasons",
+            "es": "Exenta por otra causa"
+          }
+        }
+      ]
+    }
+  ],
   "item_keys": [
     {
       "key": "resale",
@@ -1248,73 +1301,18 @@
           ]
         },
         {
-          "key": "exempt+article-20",
+          "key": "exempt",
           "name": {
-            "en": "Exempt pursuant to Article 20 of the Foral VAT Law",
-            "es": "Exenta por el artículo 20 de la Norma Foral del IVA"
+            "en": "Exempt",
+            "es": "Exenta"
           },
           "exempt": true,
-          "codes": {
-            "ticketbai-causa-exencion": "E1"
-          }
-        },
-        {
-          "key": "exempt+article-21",
-          "name": {
-            "en": "Exempt pursuant to Article 21 of the Foral VAT Law",
-            "es": "Exenta por el artículo 21 de la Norma Foral del IVA"
-          },
-          "exempt": true,
-          "codes": {
-            "ticketbai-causa-exencion": "E2"
-          }
-        },
-        {
-          "key": "exempt+article-22",
-          "name": {
-            "en": "Exempt pursuant to Article 22 of the Foral VAT Law",
-            "es": "Exenta por el artículo 22 de la Norma Foral del IVA"
-          },
-          "exempt": true,
-          "codes": {
-            "ticketbai-causa-exencion": "E3"
-          }
-        },
-        {
-          "key": "exempt+article-23",
-          "name": {
-            "en": "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
-            "es": "Exenta por el artículos 23 y 24 de la Norma Foral del IVA"
-          },
-          "exempt": true,
-          "codes": {
-            "ticketbai-causa-exencion": "E4"
-          }
-        },
-        {
-          "key": "exempt+article-25",
-          "name": {
-            "en": "Exempt pursuant to Article 25 of the Foral VAT law",
-            "es": "Exenta por el artículo 25 de la Norma Foral del IVA"
-          },
-          "exempt": true,
-          "codes": {
-            "ticketbai-causa-exencion": "E5"
-          }
-        },
-        {
-          "key": "exempt+other",
-          "name": {
-            "en": "Exempt pursuant to other reasons",
-            "es": "Exenta por otra causa"
-          },
-          "exempt": true,
-          "codes": {
-            "ticketbai-causa-exencion": "E6"
-          }
+          "extensions": [
+            "es-tbai-exemption"
+          ]
         }
       ],
-      "codes": {
+      "map": {
         "facturae-tax-type-code": "01"
       }
     },
@@ -1366,7 +1364,7 @@
           ]
         }
       ],
-      "codes": {
+      "map": {
         "facturae-tax-type-code": "03"
       }
     },
@@ -1380,7 +1378,7 @@
         "en": "Production, Services, and Import Tax",
         "es": "Impuesto sobre la Producción, los Servicios y la Importación"
       },
-      "codes": {
+      "map": {
         "facturae-tax-type-code": "02"
       }
     },
@@ -1461,7 +1459,7 @@
           ]
         }
       ],
-      "codes": {
+      "map": {
         "facturae-tax-type-code": "04"
       }
     }

@@ -38,7 +38,7 @@ func New() *tax.Regime {
 		ChargeKeys:       chargeKeyDefinitions,       // charges.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		IdentityTypeKeys: taxIdentityTypeDefinitions, // tax_identity.go
-		Identities:       identityKeys,               // identities.go
+		Extensions:       extensionKeys,              // extensions.go
 		Tags:             invoiceTags,
 		Scenarios:        scenarios, // scenarios.go
 		Validator:        Validate,

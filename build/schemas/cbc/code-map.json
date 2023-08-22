@@ -1,16 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/cbc/code-set",
-  "$ref": "#/$defs/CodeSet",
+  "$id": "https://gobl.org/draft-0/cbc/code-map",
+  "$ref": "#/$defs/CodeMap",
   "$defs": {
-    "CodeSet": {
+    "CodeMap": {
       "patternProperties": {
         "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
           "$ref": "https://gobl.org/draft-0/cbc/code"
         }
       },
       "type": "object",
-      "description": "CodeSet is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
+      "description": "CodeMap is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
     }
   },
   "$comment": "Generated with GOBL v0.54.0"

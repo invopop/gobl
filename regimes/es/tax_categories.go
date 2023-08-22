@@ -24,7 +24,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.ES: "Impuesto sobre el Valor Añadido",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "01",
 		},
 		Rates: []*tax.Rate{
@@ -166,51 +166,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Exempt",
 					i18n.ES: "Exenta",
 				},
-				// TicketBAI exemption codes
-				Codes: []*tax.CodeDefinition{
-					{
-						Code: "E1",
-						Name: i18n.String{
-							i18n.EN: "Exempt pursuant to Article 20 of the Foral VAT Law",
-							i18n.ES: "Exenta por el artículo 20 de la Norma Foral del IVA",
-						},
-					},
-					{
-						Code: "E2",
-						Name: i18n.String{
-							i18n.EN: "Exempt pursuant to Article 21 of the Foral VAT Law",
-							i18n.ES: "Exenta por el artículo 21 de la Norma Foral del IVA",
-						},
-					},
-					{
-						Code: "E3",
-						Name: i18n.String{
-							i18n.EN: "Exempt pursuant to Article 22 of the Foral VAT Law",
-							i18n.ES: "Exenta por el artículo 22 de la Norma Foral del IVA",
-						},
-					},
-					{
-						Code: "E4",
-						Name: i18n.String{
-							i18n.EN: "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
-							i18n.ES: "Exenta por el artículos 23 y 24 de la Norma Foral del IVA",
-						},
-					},
-					{
-						Code: "E5",
-						Name: i18n.String{
-							i18n.EN: "Exempt pursuant to Article 25 of the Foral VAT law",
-							i18n.ES: "Exenta por el artículo 25 de la Norma Foral del IVA",
-						},
-					},
-					{
-						Code: "E6",
-						Name: i18n.String{
-							i18n.EN: "Exempt pursuant to other reasons",
-							i18n.ES: "Exenta por otra causa",
-						},
-					},
-				},
+				Extensions: []cbc.Key{ExtKeyTBAIExemption},
 			},
 		},
 	},
@@ -225,7 +181,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IGIC",
 			i18n.ES: "IGIC",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "03",
 		},
 		Desc: i18n.String{
@@ -283,7 +239,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IPSI",
 			i18n.ES: "IPSI",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "02",
 		},
 		Desc: i18n.String{
@@ -306,7 +262,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IRPF",
 			i18n.ES: "IRPF",
 		},
-		Map: cbc.CodeSet{
+		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "04",
 		},
 		Desc: i18n.String{

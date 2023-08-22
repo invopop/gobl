@@ -99,7 +99,9 @@ func TestTotalCalculate(t *testing.T) {
 						{
 							Category: common.TaxCategoryVAT,
 							Rate:     common.TaxRateExempt,
-							Code:     "E1",
+							Ext: cbc.CodeMap{
+								es.ExtKeyTBAIExemption: "E1",
+							},
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -113,8 +115,10 @@ func TestTotalCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     common.TaxRateExempt,
-								Code:    "E1",
+								Key: common.TaxRateExempt,
+								Ext: cbc.CodeMap{
+									es.ExtKeyTBAIExemption: "E1",
+								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: nil,
 								Amount:  num.MakeAmount(0, 2),
@@ -770,7 +774,9 @@ func TestTotalCalculate(t *testing.T) {
 						{
 							Category: common.TaxCategoryVAT,
 							Rate:     common.TaxRateExempt,
-							Code:     "E1",
+							Ext: cbc.CodeMap{
+								es.ExtKeyTBAIExemption: "E1",
+							},
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -783,8 +789,10 @@ func TestTotalCalculate(t *testing.T) {
 						Code: common.TaxCategoryVAT,
 						Rates: []*tax.RateTotal{
 							{
-								Key:    common.TaxRateExempt,
-								Code:   "E1",
+								Key: common.TaxRateExempt,
+								Ext: cbc.CodeMap{
+									es.ExtKeyTBAIExemption: "E1",
+								},
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
 							},
@@ -812,7 +820,9 @@ func TestTotalCalculate(t *testing.T) {
 						{
 							Category: common.TaxCategoryVAT,
 							Rate:     common.TaxRateExempt,
-							Code:     "E2",
+							Ext: cbc.CodeMap{
+								es.ExtKeyTBAIExemption: "E2",
+							},
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -830,8 +840,10 @@ func TestTotalCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(173554, 4),
 							},
 							{
-								Key:    common.TaxRateExempt,
-								Code:   "E2",
+								Key: common.TaxRateExempt,
+								Ext: cbc.CodeMap{
+									es.ExtKeyTBAIExemption: "E2",
+								},
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
 							},
@@ -855,8 +867,10 @@ func TestTotalCalculate(t *testing.T) {
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
-							Code:     "A",
-							Percent:  num.NewPercentage(20, 2),
+							Ext: cbc.CodeMap{
+								it.ExtKeySDIRetainedTax: "A",
+							},
+							Percent: num.NewPercentage(20, 2),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -869,8 +883,10 @@ func TestTotalCalculate(t *testing.T) {
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
-							Code:     "J", // truffles!
-							Percent:  num.NewPercentage(20, 2),
+							Ext: cbc.CodeMap{
+								it.ExtKeySDIRetainedTax: "J", // truffles!
+							},
+							Percent: num.NewPercentage(20, 2),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -895,13 +911,17 @@ func TestTotalCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Code:    "A",
+								Ext: cbc.CodeMap{
+									it.ExtKeySDIRetainedTax: "A",
+								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
 								Amount:  num.MakeAmount(2000, 2),
 							},
 							{
-								Code:    "J",
+								Ext: cbc.CodeMap{
+									it.ExtKeySDIRetainedTax: "J",
+								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
 								Amount:  num.MakeAmount(2000, 2),

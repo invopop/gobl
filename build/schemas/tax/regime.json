@@ -35,10 +35,18 @@
           "title": "Rates",
           "description": "Specific tax definitions inside this category."
         },
-        "codes": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-set",
-          "title": "Codes",
-          "description": "Codes defines a set of regime specific code mappings."
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Extensions",
+          "description": "Extensions defines a list of keys for codes to use as an alternative to choosing a\nrate for the tax category. Every key must be defined in the Regime's extensions\ntable."
+        },
+        "map": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Map",
+          "description": "Map defines a set of regime specific code mappings."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -47,10 +55,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "code",
-        "name"
-      ],
+      "required": ["code", "name"],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
     "CodeDefinition": {
@@ -72,9 +77,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "code"
-      ],
+      "required": ["code"],
       "description": "CodeDefinition describes a specific code and how it maps to a human name and description if appropriate."
     },
     "KeyDefinition": {
@@ -103,15 +106,13 @@
           "description": "Codes describes the list of codes that can be used alongside the Key,\nfor example with identities."
         },
         "map": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-set",
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
           "title": "Map",
           "description": "Map helps map local keys to specific codes, useful for converting the\ndescribed key into a local code."
         }
       },
       "type": "object",
-      "required": [
-        "key"
-      ],
+      "required": ["key"],
       "description": "KeyDefinition defines properties of a key that is specific for a regime."
     },
     "PrecedingDefinitions": {
@@ -182,10 +183,18 @@
           "title": "Values",
           "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
         },
-        "codes": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-set",
-          "title": "Codes",
-          "description": "Codes defines a set of regime specific code mappings."
+        "extensions": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Extensions",
+          "description": "Extensions defines a list of keys for codes that can or must be associated with the\ntax rate for it to be validated. Every key must be defined in the Regime's\nextensions."
+        },
+        "map": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Map",
+          "description": "Map is used to associate specific codes with the chosen rate."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -194,10 +203,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "key",
-        "name"
-      ],
+      "required": ["key", "name"],
       "description": "Rate defines a single rate inside a category"
     },
     "RateValue": {
@@ -232,9 +238,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "percent"
-      ],
+      "required": ["percent"],
       "description": "RateValue contains a percentage rate or fixed amount for a given date range."
     },
     "Regime": {
@@ -288,13 +292,13 @@
           "title": "Identity Types",
           "description": "Identity types specific for the regime and may be validated\nagainst."
         },
-        "identities": {
+        "extensions": {
           "items": {
             "$ref": "#/$defs/KeyDefinition"
           },
           "type": "array",
-          "title": "Identities",
-          "description": "Identities defines the keys that can be used for identities inside the regime. This\nwill be used for additional validation."
+          "title": "Extensions",
+          "description": "Extensions defines the keys that can be used for extended or extra data inside the regime that\nis specific to the regime and cannot be easily determined from other GOBL structures.\nTypically these are used to define local codes for suppliers, customers, products, or tax rates."
         },
         "charge_types": {
           "items": {
@@ -343,13 +347,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "name",
-        "time_zone",
-        "country",
-        "currency",
-        "categories"
-      ],
+      "required": ["name", "time_zone", "country", "currency", "categories"],
       "description": "Regime defines the holding structure for the definitions of taxes inside a country or territory."
     },
     "Scenario": {
@@ -381,7 +379,7 @@
           "description": "A note to be added to the document if the scenario is applied."
         },
         "codes": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-set",
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
           "title": "Codes",
           "description": "Codes is used to define additional codes for regime specific\nsituations."
         },
@@ -411,10 +409,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "schema",
-        "list"
-      ],
+      "required": ["schema", "list"],
       "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
     },
     "Zone": {
@@ -440,7 +435,7 @@
           "description": "Province, county, or state which should match address data."
         },
         "codes": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-set",
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
           "title": "Codes",
           "description": "Codes defines a set of regime specific code mappings."
         },
@@ -451,9 +446,7 @@
         }
       },
       "type": "object",
-      "required": [
-        "code"
-      ],
+      "required": ["code"],
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },

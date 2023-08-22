@@ -7,7 +7,7 @@
   "time_zone": "America/Mexico_City",
   "country": "MX",
   "currency": "MXN",
-  "identities": [
+  "extensions": [
     {
       "key": "mx-cfdi-prod-serv",
       "name": {
@@ -555,17 +555,13 @@
       "schema": "bill/invoice",
       "list": [
         {
-          "type": [
-            "standard"
-          ],
+          "type": ["standard"],
           "codes": {
             "sat-tipo-de-comprobante": "I"
           }
         },
         {
-          "type": [
-            "credit-note"
-          ],
+          "type": ["credit-note"],
           "codes": {
             "sat-tipo-de-comprobante": "E",
             "sat-tipo-relacion": "01"
@@ -575,12 +571,8 @@
     }
   ],
   "preceding": {
-    "types": [
-      "credit-note"
-    ],
-    "stamps": [
-      "sat-uuid"
-    ]
+    "types": ["credit-note"],
+    "stamps": ["sat-uuid"]
   },
   "categories": [
     {
