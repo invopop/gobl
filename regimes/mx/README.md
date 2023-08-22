@@ -8,6 +8,38 @@ Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 - [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
 
+## Zones
+
+In Mexican GOBL documents, the supplier and customer addresses are optional, however the parties’ tax identity zones must be included and contain the fiscal address’ postal code of each party. The supplier’s tax identity zone will map to the `LugarExpedicion` (Place of issue) CFDI field, and the customer’s one will map to the `DomicilioFiscalReceptor` (Recipient Fiscal Address) field in the CFDI.
+
+### Example
+
+The following example will set `21000` as the `LugarExpedicion` of the CFDI and `86991` as the `DomicilioFiscalReceptor`:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "supplier": {
+    "name": "ESCUELA KEMPER URGATE",
+    "tax_id": {
+      "country": "MX",
+      "zone": "21000",
+      "code": "EKU9003173C9"
+    },
+    // [...]
+  },
+  "customer": {
+    "name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+    "tax_id": {
+      "country": "MX",
+      "zone": "86991",
+      "code": "URE180429TM6"
+    },
+  // [...]
+}
+```
+
 ## Local Codes
 
 Mexican invoices as defined in the CFDI specification must include a set of specific codes that will either need to be known in advance by the supplier or requested from the customer during their purchase process.
