@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// Spanish regime extension codes for local electronic formats.
 const (
 	ExtKeyTBAIExemption = "es-tbai-exemption"
 )

@@ -15,11 +15,6 @@
           "title": "Label",
           "description": "Optional label useful for non-standard identities to give a bit more context."
         },
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Key is used to classify the identity for a specific tax regime."
-        },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Type",

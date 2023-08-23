@@ -64,6 +64,7 @@ func New() *tax.Regime {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Zones:      zones,
+		Extensions: extensionKeys,
 		Tags:       invoiceTags,
 		Scenarios:  scenarios,
 		Validator:  Validate,

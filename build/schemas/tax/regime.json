@@ -55,7 +55,10 @@
         }
       },
       "type": "object",
-      "required": ["code", "name"],
+      "required": [
+        "code",
+        "name"
+      ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
     "CodeDefinition": {
@@ -77,7 +80,9 @@
         }
       },
       "type": "object",
-      "required": ["code"],
+      "required": [
+        "code"
+      ],
       "description": "CodeDefinition describes a specific code and how it maps to a human name and description if appropriate."
     },
     "KeyDefinition": {
@@ -112,7 +117,9 @@
         }
       },
       "type": "object",
-      "required": ["key"],
+      "required": [
+        "key"
+      ],
       "description": "KeyDefinition defines properties of a key that is specific for a regime."
     },
     "PrecedingDefinitions": {
@@ -203,7 +210,10 @@
         }
       },
       "type": "object",
-      "required": ["key", "name"],
+      "required": [
+        "key",
+        "name"
+      ],
       "description": "Rate defines a single rate inside a category"
     },
     "RateValue": {
@@ -238,7 +248,9 @@
         }
       },
       "type": "object",
-      "required": ["percent"],
+      "required": [
+        "percent"
+      ],
       "description": "RateValue contains a percentage rate or fixed amount for a given date range."
     },
     "Regime": {
@@ -347,7 +359,13 @@
         }
       },
       "type": "object",
-      "required": ["name", "time_zone", "country", "currency", "categories"],
+      "required": [
+        "name",
+        "time_zone",
+        "country",
+        "currency",
+        "categories"
+      ],
       "description": "Regime defines the holding structure for the definitions of taxes inside a country or territory."
     },
     "Scenario": {
@@ -409,7 +427,10 @@
         }
       },
       "type": "object",
-      "required": ["schema", "list"],
+      "required": [
+        "schema",
+        "list"
+      ],
       "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
     },
     "Zone": {
@@ -446,7 +467,9 @@
         }
       },
       "type": "object",
-      "required": ["code"],
+      "required": [
+        "code"
+      ],
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
