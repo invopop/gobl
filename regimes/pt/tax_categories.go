@@ -10,11 +10,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Tax rate exemption tags
-const (
-	TaxRateExempt cbc.Key = "exempt"
-)
-
 // AT Tax Map
 const (
 	TaxCodeStandard     cbc.Code = "NOR"
@@ -118,12 +113,12 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key:    TaxRateExempt,
+				Key:    common.TaxRateExempt,
 				Exempt: true,
 				Map: cbc.CodeMap{
 					KeyATTaxCode: TaxCodeExempt,
 				},
-				Extensions: []cbc.Key{ExtKeyExemptionReason},
+				Extensions: []cbc.Key{ExtKeyExemptionCode},
 			},
 		},
 	},

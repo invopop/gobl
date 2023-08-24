@@ -92,6 +92,8 @@ func Validate(doc interface{}) error {
 // Calculate will attempt to clean the object passed to it.
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return migrateInvoiceRates(obj)
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
 	}

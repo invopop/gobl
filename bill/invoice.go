@@ -203,6 +203,11 @@ func (inv *Invoice) Calculate() error {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
 
+	// Run Regime pre-calculations first
+	if err := r.CalculateObject(inv); err != nil {
+		return err
+	}
+
 	return inv.calculate(r, tID)
 }
 

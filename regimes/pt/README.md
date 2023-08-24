@@ -54,14 +54,14 @@ AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of 
 
 The AT `TaxCode` (Código do imposto) is required for invoice items that apply VAT. GOBL helps determine this code using the `rate` field, which in Portuguese invoices is required. The following table lists the supported tax codes and how GOBL will map them:
 
-| Code |  Name           | GOBL Tax Rate               |
-| ---- | --------------- | --------------------------- |
-| NOR  | Tipo Geral      | `standard`                  |
-| INT  | Taxa Intermédia | `intermediate`              |
-| RED  | Taxa Reduzida   | `reduced`                   |
-| ISE  | Isenta          | `exempt` + code (see below) |
+| Code |  Name           | GOBL Tax Rate                         |
+| ---- | --------------- | ------------------------------------- |
+| NOR  | Tipo Geral      | `standard`                            |
+| INT  | Taxa Intermédia | `intermediate`                        |
+| RED  | Taxa Reduzida   | `reduced`                             |
+| ISE  | Isenta          | `exempt` + extension code (see below) |
 
-AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag is used, one of the following must be defined in the `ext` map's `pt-exemption-reason` property:
+AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag is used, one of the following must be defined in the `ext` map's `pt-exemption-code` property:
 
 | Code  | Description                                                                                              |
 | ----- | -------------------------------------------------------------------------------------------------------- |
@@ -111,7 +111,7 @@ For example, you could define an invoice line exempt of tax as follows:
             "cat": "VAT",
             "rate": "exempt",
             "ext": {
-              "pt-exemption-reason": "M19"
+              "pt-exemption-code": "M19"
             }
         }
       ]

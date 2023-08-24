@@ -7,14 +7,14 @@ import (
 
 // Special codes to be used inside rates.
 const (
-	ExtKeyExemptionReason = "pt-exemption-reason"
+	ExtKeyExemptionCode = "pt-exemption-code"
 )
 
 var extensionKeys = []*tax.KeyDefinition{
 	{
-		Key: ExtKeyExemptionReason,
+		Key: ExtKeyExemptionCode,
 		Name: i18n.String{
-			i18n.EN: "Tax exemption reason",
+			i18n.EN: "Tax exemption reason code",
 			i18n.PT: "Código do motivo de isenção de imposto",
 		},
 		Codes: []*tax.CodeDefinition{
