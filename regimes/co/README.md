@@ -1,5 +1,7 @@
 # 🇨🇴 GOBL Colombia Tax Regime
 
+Example CO GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+
 ## Zones
 
 Colombia requires zones to be defined in supplier and customer party's tax identity.
