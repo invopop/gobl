@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/mx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestItemValidation(t *testing.T) {
@@ -94,4 +95,27 @@ func TestItemIdentityNormalization(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, item.Ext[mx.ExtKeyCFDIProdServ])
 	}
+
+	// In context of invoice
+	inv := validInvoice()
+	inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ] = "010101"
+	err := inv.Calculate()
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Code("01010100"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
+}
+
+func TestItemIdentityMigration(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Lines[0].Item.Ext = nil
+	inv.Lines[0].Item.Identities = []*org.Identity{
+		{
+			Key:  mx.ExtKeyCFDIProdServ,
+			Code: "01010101",
+		},
+	}
+
+	err := inv.Calculate()
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
 }

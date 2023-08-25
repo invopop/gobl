@@ -43,6 +43,21 @@ func validItemExtensions(value interface{}) error {
 }
 
 func normalizeItem(item *org.Item) error {
+	// 2023-08-25: Migrate identities to extensions
+	// Pending removal after migrations completed.
+	idents := make([]*org.Identity, 0)
+	for _, v := range item.Identities {
+		if v.Key != "" {
+			if item.Ext == nil {
+				item.Ext = make(cbc.CodeMap)
+			}
+			item.Ext[v.Key] = v.Code
+		} else {
+			idents = append(idents, v)
+		}
+	}
+	item.Identities = idents
+	// end.
 	for k, v := range item.Ext {
 		if k == ExtKeyCFDIProdServ {
 			if itemExtensionNormalizableCodeRegexp.MatchString(v.String()) {

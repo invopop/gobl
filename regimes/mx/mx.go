@@ -66,6 +66,8 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
+	case *org.Party:
+		return normalizeParty(obj)
 	case *org.Item:
 		return normalizeItem(obj)
 	}

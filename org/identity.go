@@ -2,6 +2,7 @@ package org
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
@@ -24,6 +25,11 @@ type Identity struct {
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 	// Description adds details about what the code could mean or imply
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+
+	// Key was previously available, but has now been migrated to extensions.
+	// This should not appear in schemas.
+	// Deprecated: Since 2023-08-25, use extensions (ext) instead.
+	Key cbc.Key `json:"-"`
 }
 
 // Validate ensures the identity looks valid.
@@ -40,6 +46,23 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 		),
 	)
+}
+
+// UnmarshalJSON overrides the default to help extract the key value which is no
+// longer used.
+func (i *Identity) UnmarshalJSON(data []byte) error {
+	type Alias Identity
+	a := &struct {
+		*Alias
+		Key cbc.Key `json:"key,omitempty"`
+	}{
+		Alias: (*Alias)(i),
+	}
+	if err := json.Unmarshal(data, &a); err != nil {
+		return err
+	}
+	i.Key = a.Key
+	return nil
 }
 
 // HasIdentityType provides a validation rule that will determine if at least one

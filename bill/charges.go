@@ -93,11 +93,10 @@ func (m *Charge) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Charge {
 	return &m2
 }
 
-func calculateCharges(zero, sum num.Amount, charges []*Charge) *num.Amount {
+func calculateCharges(zero, sum num.Amount, charges []*Charge) error {
 	if len(charges) == 0 {
 		return nil
 	}
-	total := zero
 	for i, l := range charges {
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
@@ -107,6 +106,16 @@ func calculateCharges(zero, sum num.Amount, charges []*Charge) *num.Amount {
 			l.Amount = l.Percent.Of(*l.Base)
 		}
 		l.Amount = l.Amount.MatchPrecision(zero)
+	}
+	return nil
+}
+
+func calculateChargeSum(zero num.Amount, charges []*Charge) *num.Amount {
+	if len(charges) == 0 {
+		return nil
+	}
+	total := zero
+	for _, l := range charges {
 		total = total.MatchPrecision(l.Amount)
 		total = total.Add(l.Amount)
 	}

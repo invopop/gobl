@@ -355,17 +355,26 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	t.reset(zero)
 
 	// Lines
-	t.Sum = calculateLines(zero, inv.Lines)
+	if err := calculateLines(r, zero, inv.Lines); err != nil {
+		return validation.Errors{"lines": err}
+	}
+	t.Sum = calculateLineSum(zero, inv.Lines)
 	t.Total = t.Sum.Rescale(zero.Exp())
 
 	// Discount Lines
-	if discounts := calculateDiscounts(zero, t.Sum, inv.Discounts); discounts != nil {
+	if err := calculateDiscounts(zero, t.Sum, inv.Discounts); err != nil {
+		return validation.Errors{"discounts": err}
+	}
+	if discounts := calculateDiscountSum(zero, inv.Discounts); discounts != nil {
 		t.Discount = discounts
 		t.Total = t.Total.Subtract(*discounts)
 	}
 
 	// Charge Lines
-	if charges := calculateCharges(zero, t.Sum, inv.Charges); charges != nil {
+	if err := calculateCharges(zero, t.Sum, inv.Charges); err != nil {
+		return validation.Errors{"charges": err}
+	}
+	if charges := calculateChargeSum(zero, inv.Charges); charges != nil {
 		t.Charge = charges
 		t.Total = t.Total.Add(*charges)
 	}
