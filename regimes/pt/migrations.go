@@ -75,7 +75,7 @@ func migrateInvoiceRates(inv *bill.Invoice) error {
 }
 
 func migrateInvoiceTaxCombo(tc *tax.Combo) error {
-	if tc.Rate.HasPrefix(TaxRateExempt) {
+	if tc.Rate.HasPrefix(TaxRateExempt) && tc.Rate != TaxRateExempt {
 		for _, m := range taxRateVATExemptMigrationMap {
 			if m.Key == tc.Rate {
 				tc.Rate = common.TaxRateExempt
