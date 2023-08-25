@@ -93,7 +93,7 @@ func (m *Charge) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Charge {
 	return &m2
 }
 
-func calculateCharges(zero, sum num.Amount, charges []*Charge) error {
+func calculateCharges(zero, sum num.Amount, charges []*Charge) error { //nolint:unparam
 	if len(charges) == 0 {
 		return nil
 	}

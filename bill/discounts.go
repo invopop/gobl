@@ -93,7 +93,7 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Discount 
 	return &m2
 }
 
-func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) error {
+func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) error { //nolint:unparam
 	if len(discounts) == 0 {
 		return nil
 	}
