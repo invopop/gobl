@@ -107,6 +107,16 @@ func TestSetValidation(t *testing.T) {
 			},
 			err: "rate: must be a valid value.",
 		},
+		{
+			desc: "missing percent with surcharge",
+			set: tax.Set{
+				{
+					Category:  "VAT",
+					Surcharge: num.NewPercentage(5, 3),
+				},
+			},
+			err: "percent: cannot be blank; surcharge: required with percent.",
+		},
 	}
 	es := es.New()
 	ctx := es.WithContext(context.Background())

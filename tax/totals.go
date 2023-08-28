@@ -209,28 +209,24 @@ func (ct *CategoryTotal) calculate(zero num.Amount) {
 }
 
 func (rt *RateTotal) matches(c *Combo) bool {
-	if c.Percent == nil {
-		return rt.Key == c.Rate && rt.Ext.Equals(c.Ext)
+	if !rt.Ext.Equals(c.Ext) {
+		// Extensions, if set, should always match
+		return false
 	}
-	if (c.Rate.IsEmpty() || rt.Key == c.Rate) && rt.Ext.Equals(c.Ext) {
-		return rt.percentagesMatch(c)
+	if rt.Percent == nil || c.Percent == nil {
+		if rt.Percent == nil && c.Percent == nil {
+			// fall back to rate key comparison
+			return rt.Key == c.Rate
+		}
+		return false
 	}
-	if rt.Ext.Equals(c.Ext) {
-		return rt.percentagesMatch(c)
-	}
-	return false
-}
-
-func (rt *RateTotal) percentagesMatch(c *Combo) bool {
-	if c.Surcharge != nil {
-		if rt.Surcharge == nil {
+	if rt.Surcharge != nil || c.Surcharge != nil {
+		if rt.Surcharge == nil || c.Surcharge == nil {
 			return false
 		}
 		if !rt.Surcharge.Percent.Equals(*c.Surcharge) {
 			return false
 		}
-	} else if rt.Surcharge != nil {
-		return false
 	}
 	return rt.Percent.Equals(*c.Percent)
 }

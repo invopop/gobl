@@ -86,7 +86,9 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			validation.When(rate != nil && rate.Exempt, validation.Nil),
 			validation.When(rate != nil && !rate.Exempt, validation.Required),
 		),
-		validation.Field(&c.Surcharge), // not required, but should be valid number
+		validation.Field(&c.Surcharge,
+			validation.When(c.Percent == nil, validation.Nil.Error("required with percent")),
+		),
 	)
 	if err != nil {
 		return err
