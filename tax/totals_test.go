@@ -131,6 +131,54 @@ func TestTotalCalculate(t *testing.T) {
 			},
 		},
 		{
+			desc: "with exemption and empty ext",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateExempt,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: common.TaxCategoryVAT,
+							Rate:     common.TaxRateReduced,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     common.TaxCategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     common.TaxRateExempt,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: nil,
+								Amount:  num.MakeAmount(0, 2),
+							},
+							{
+								Key:     common.TaxRateReduced,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(100, 3),
+								Amount:  num.MakeAmount(1000, 2),
+							},
+						},
+						Amount: num.MakeAmount(1000, 2),
+					},
+				},
+				Sum: num.MakeAmount(1000, 2),
+			},
+		},
+		{
 			desc:   "with VAT in Azores",
 			regime: portugal,
 			zone:   pt.ZoneAzores,

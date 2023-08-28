@@ -232,6 +232,11 @@ func (rt *RateTotal) percentagesMatch(c *Combo) bool {
 	} else if rt.Surcharge != nil {
 		return false
 	}
+
+	if rt.Percent == nil {
+		return c.Percent == nil
+	}
+
 	return rt.Percent.Equals(*c.Percent)
 }
 
