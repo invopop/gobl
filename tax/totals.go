@@ -234,7 +234,7 @@ func (rt *RateTotal) percentagesMatch(c *Combo) bool {
 	}
 
 	if rt.Percent == nil {
-		return c.Percent == nil
+		return true
 	}
 
 	return rt.Percent.Equals(*c.Percent)
