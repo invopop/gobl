@@ -10,14 +10,14 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
-		"type": "standard",
+		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT"
 		},
-		"issue_date": "2023-05-21",
 		"supplier": {
 			"name": "Hotel California",
 			"tax_id": {

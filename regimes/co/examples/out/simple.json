@@ -10,11 +10,11 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SETT",
 		"code": "1234",
-		"type": "standard",
-		"currency": "COP",
 		"issue_date": "2021-01-01",
+		"currency": "COP",
 		"supplier": {
 			"name": "EXAMPLE SUPPLIER S.A.S.",
 			"tax_id": {

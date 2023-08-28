@@ -30,16 +30,20 @@ const (
 type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Type of invoice document subject to the requirements of the local tax regime.
+	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 	// Used as a prefix to group codes.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
-	// Type of invoice document subject to the requirements of the local tax regime.
-	Type cbc.Key `json:"type" jsonschema:"title=Type"`
+	// When the invoice was created.
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	// Date when the operation defined by the invoice became effective.
+	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
+	// When the taxes of this invoice become accountable, if none set, the issue date is used.
+	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all invoice totals.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
-	// Special tax configuration for billing.
-	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
@@ -47,12 +51,8 @@ type Invoice struct {
 	// were corrected.
 	Preceding []*Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
-	// When the invoice was created.
-	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
-	// Date when the operation defined by the invoice became effective.
-	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
-	// When the taxes of this invoice become accountable, if none set, the issue date is used.
-	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
+	// Special tax configuration for billing.
+	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
 	// The taxable entity supplying the goods or services.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
@@ -105,19 +105,20 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	ctx = r.WithContext(ctx)
 	err := validation.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
+		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
+		validation.Field(&inv.Series),
 		validation.Field(&inv.Code,
 			validation.When(!internal.IsDraft(ctx), validation.Required),
 		),
-		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
-		validation.Field(&inv.Currency, validation.Required),
-		validation.Field(&inv.ExchangeRates),
-		validation.Field(&inv.Tax),
-
-		validation.Field(&inv.Preceding),
-
 		validation.Field(&inv.IssueDate, cal.DateNotZero()),
 		validation.Field(&inv.OperationDate),
 		validation.Field(&inv.ValueDate),
+		validation.Field(&inv.Currency, validation.Required),
+		validation.Field(&inv.ExchangeRates),
+
+		validation.Field(&inv.Preceding),
+
+		validation.Field(&inv.Tax),
 
 		validation.Field(&inv.Supplier, validation.Required),
 		validation.Field(&inv.Customer),

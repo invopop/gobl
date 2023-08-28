@@ -10,8 +10,9 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "SAMPLE-001",
 		"type": "standard",
+		"code": "SAMPLE-001",
+		"issue_date": "2022-02-01",
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT",
@@ -19,7 +20,6 @@
 				"simplified"
 			]
 		},
-		"issue_date": "2022-02-01",
 		"supplier": {
 			"name": "Simple Goods Store",
 			"tax_id": {

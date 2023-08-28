@@ -10,14 +10,14 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
-		"type": "standard",
+		"issue_date": "2023-04-21",
 		"currency": "USD",
 		"tax": {
 			"prices_include": "ST"
 		},
-		"issue_date": "2023-04-21",
 		"supplier": {
 			"name": "Provide One Inc.",
 			"tax_id": {

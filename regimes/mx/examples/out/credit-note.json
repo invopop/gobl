@@ -10,9 +10,10 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "credit-note",
 		"series": "CN",
 		"code": "0003",
-		"type": "credit-note",
+		"issue_date": "2023-05-29",
 		"currency": "MXN",
 		"preceding": [
 			{
@@ -25,7 +26,6 @@
 				]
 			}
 		],
-		"issue_date": "2023-05-29",
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {

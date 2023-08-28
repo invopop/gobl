@@ -10,15 +10,15 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "SAMPLE-X-002",
 		"type": "standard",
+		"code": "SAMPLE-X-002",
+		"issue_date": "2022-02-01",
 		"currency": "EUR",
 		"tax": {
 			"tags": [
 				"customer-rates"
 			]
 		},
-		"issue_date": "2022-02-01",
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

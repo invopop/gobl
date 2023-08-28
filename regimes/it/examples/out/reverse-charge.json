@@ -10,16 +10,16 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "004",
-		"type": "standard",
+		"issue_date": "2023-08-01",
 		"currency": "EUR",
 		"tax": {
 			"tags": [
 				"reverse-charge"
 			]
 		},
-		"issue_date": "2023-08-01",
 		"supplier": {
 			"name": "MªF. Services",
 			"tax_id": {

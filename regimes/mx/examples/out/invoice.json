@@ -10,11 +10,11 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "TEST",
 		"code": "00001",
-		"type": "standard",
-		"currency": "MXN",
 		"issue_date": "2023-07-10",
+		"currency": "MXN",
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {

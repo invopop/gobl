@@ -10,11 +10,11 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
-		"type": "standard",
-		"currency": "EUR",
 		"issue_date": "2022-02-01",
+		"currency": "EUR",
 		"supplier": {
 			"name": "Provide One Inc.",
 			"tax_id": {
