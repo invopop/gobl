@@ -124,13 +124,15 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "lines: (0: (taxes: 1: rate: cannot be blank..).).")
+	assert.Contains(t, err.Error(), "lines: (0: (taxes: 1: ext: cannot be blank..).).")
 
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
-		Rate:     cbc.Key("self-employed-habitual"),
-		Percent:  num.NewPercentage(20, 2),
+		Ext: cbc.CodeMap{
+			it.ExtKeySDIRetainedTax: "A",
+		},
+		Percent: num.NewPercentage(20, 2),
 	})
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())

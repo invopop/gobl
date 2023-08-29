@@ -8,7 +8,7 @@ import "github.com/invopop/gobl/schema"
 func init() {
 	schema.Register(schema.GOBL.Add("cbc"),
 		Code(""),
-		CodeSet{},
+		CodeMap{},
 		Key(""),
 		Meta{},
 		Note{},

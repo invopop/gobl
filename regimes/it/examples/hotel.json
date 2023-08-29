@@ -65,7 +65,10 @@
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "excluded"
+          "rate": "exempt",
+          "ext": {
+            "it-sdi-nature": "N4"
+          }
         }
       ],
       "sum": "1.00",

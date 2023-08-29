@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/mx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestItemValidation(t *testing.T) {
@@ -18,40 +19,40 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
-				Identities: []*org.Identity{
-					{Key: mx.IdentityKeyCFDIProdServ, Code: "12345678"},
+				Ext: cbc.CodeMap{
+					mx.ExtKeyCFDIProdServ: "12345678",
 				},
 			},
 		},
 		{
-			name: "missing identities",
+			name: "missing extension",
 			item: &org.Item{},
-			err:  "identities: missing mx-cfdi-prod-serv",
+			err:  "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
-			name: "empty identities",
+			name: "empty extension",
 			item: &org.Item{
-				Identities: []*org.Identity{},
+				Ext: cbc.CodeMap{},
 			},
-			err: "identities: missing mx-cfdi-prod-serv",
+			err: "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
 			name: "missing SAT identity",
 			item: &org.Item{
-				Identities: []*org.Identity{
-					{Key: "random", Code: "12345678"},
+				Ext: cbc.CodeMap{
+					"random": "12345678",
 				},
 			},
-			err: "identities: missing mx-cfdi-prod-serv",
+			err: "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
-			name: "SAT in invalid format",
+			name: "invalid code format",
 			item: &org.Item{
-				Identities: []*org.Identity{
-					{Key: mx.IdentityKeyCFDIProdServ, Code: "ABC2"},
+				Ext: cbc.CodeMap{
+					mx.ExtKeyCFDIProdServ: "ABC2",
 				},
 			},
-			err: "identities: SAT code must have 8 digits",
+			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
 		},
 	}
 
@@ -89,9 +90,32 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Identities: []*org.Identity{{Code: ts.Code, Key: mx.IdentityKeyCFDIProdServ}}}
+		item := &org.Item{Ext: cbc.CodeMap{mx.ExtKeyCFDIProdServ: ts.Code}}
 		err := r.CalculateObject(item)
 		assert.NoError(t, err)
-		assert.Equal(t, ts.Expected, item.Identities[0].Code)
+		assert.Equal(t, ts.Expected, item.Ext[mx.ExtKeyCFDIProdServ])
 	}
+
+	// In context of invoice
+	inv := validInvoice()
+	inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ] = "010101"
+	err := inv.Calculate()
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Code("01010100"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
+}
+
+func TestItemIdentityMigration(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Lines[0].Item.Ext = nil
+	inv.Lines[0].Item.Identities = []*org.Identity{
+		{
+			Key:  mx.ExtKeyCFDIProdServ,
+			Code: "01010101",
+		},
+	}
+
+	err := inv.Calculate()
+	require.NoError(t, err)
+	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
 }

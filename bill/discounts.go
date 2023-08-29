@@ -93,11 +93,10 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Discount 
 	return &m2
 }
 
-func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) *num.Amount {
+func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) error { //nolint:unparam
 	if len(discounts) == 0 {
 		return nil
 	}
-	total := zero
 	for i, l := range discounts {
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
@@ -107,6 +106,16 @@ func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) *num.Amount
 			l.Amount = l.Percent.Of(*l.Base)
 		}
 		l.Amount = l.Amount.MatchPrecision(zero)
+	}
+	return nil
+}
+
+func calculateDiscountSum(zero num.Amount, discounts []*Discount) *num.Amount {
+	if len(discounts) == 0 {
+		return nil
+	}
+	total := zero
+	for _, l := range discounts {
 		total = total.MatchPrecision(l.Amount)
 		total = total.Add(l.Amount)
 	}

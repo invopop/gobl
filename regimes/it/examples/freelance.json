@@ -80,7 +80,9 @@
         {
           "cat": "IRPEF",
           "percent": "20.0%",
-          "rate": "self-employed-habitual"
+          "ext": {
+            "it-sdi-retained-tax": "A"
+          }
         }
       ],
       "sum": "1800.00",
@@ -97,7 +99,10 @@
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "not-subject"
+          "rate": "exempt",
+          "ext": {
+            "it-sdi-nature": "N1"
+          }
         }
       ],
       "sum": "100.00",

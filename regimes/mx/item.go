@@ -1,49 +1,68 @@
 package mx
 
 import (
-	"errors"
 	"regexp"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/validation"
 )
 
 // SAT item identity codes (ClaveProdServ) regular expression.
 var (
-	itemIdentityValidCodeRegexp        = regexp.MustCompile(`^\d{8}$`)
-	itemIdentityNormalizableCodeRegexp = regexp.MustCompile(`^\d{6}$`)
+	itemExtensionValidCodeRegexp        = regexp.MustCompile(`^\d{8}$`)
+	itemExtensionNormalizableCodeRegexp = regexp.MustCompile(`^\d{6}$`)
 )
 
 func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
-		validation.Field(&item.Identities,
-			org.HasIdentityKey(IdentityKeyCFDIProdServ),
-			validation.By(validItemIdentities),
+		validation.Field(&item.Ext,
+			cbc.CodeMapHas(ExtKeyCFDIProdServ),
+			validation.By(validItemExtensions),
 			validation.Skip,
 		),
 	)
 }
 
-func validItemIdentities(value interface{}) error {
-	ids, ok := value.([]*org.Identity)
+func validItemExtensions(value interface{}) error {
+	ids, ok := value.(cbc.CodeMap)
 	if !ok {
 		return nil
 	}
-	for _, id := range ids {
-		if id.Key == IdentityKeyCFDIProdServ {
-			if itemIdentityValidCodeRegexp.MatchString(string(id.Code)) {
+	for k, v := range ids {
+		if k == ExtKeyCFDIProdServ {
+			if itemExtensionValidCodeRegexp.MatchString(string(v)) {
 				return nil
 			}
-			return errors.New("SAT code must have 8 digits")
+			return validation.Errors{
+				k.String(): validation.NewError("invalid", "must have 8 digits"),
+			}
 		}
 	}
 	return nil
 }
 
 func normalizeItem(item *org.Item) error {
-	for _, id := range item.Identities {
-		if id.Key == IdentityKeyCFDIProdServ && itemIdentityNormalizableCodeRegexp.MatchString(string(id.Code)) {
-			id.Code = id.Code + "00"
+	// 2023-08-25: Migrate identities to extensions
+	// Pending removal after migrations completed.
+	idents := make([]*org.Identity, 0)
+	for _, v := range item.Identities {
+		if v.Key != "" {
+			if item.Ext == nil {
+				item.Ext = make(cbc.CodeMap)
+			}
+			item.Ext[v.Key] = v.Code
+		} else {
+			idents = append(idents, v)
+		}
+	}
+	item.Identities = idents
+	// end.
+	for k, v := range item.Ext {
+		if k == ExtKeyCFDIProdServ {
+			if itemExtensionNormalizableCodeRegexp.MatchString(v.String()) {
+				item.Ext[k] = cbc.Code(v.String() + "00")
+			}
 		}
 	}
 	return nil

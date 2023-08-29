@@ -2,6 +2,7 @@ package bill
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
@@ -64,9 +65,16 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 }
 
 // calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate(zero num.Amount) {
+func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 	if l.Item == nil {
-		return
+		return nil
+	}
+
+	if err := r.CalculateObject(l); err != nil {
+		return err
+	}
+	if err := r.CalculateObject(l.Item); err != nil {
+		return validation.Errors{"item": err}
 	}
 
 	// Ensure the Price precision is set correctly according to the currency
@@ -91,6 +99,7 @@ func (l *Line) calculate(zero num.Amount) {
 		c.Amount = c.Amount.MatchPrecision(zero)
 		l.Total = l.Total.Add(c.Amount)
 	}
+	return nil
 }
 
 func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
@@ -130,11 +139,19 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
 	return &l2
 }
 
-func calculateLines(zero num.Amount, lines []*Line) num.Amount {
-	sum := zero
+func calculateLines(r *tax.Regime, zero num.Amount, lines []*Line) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		l.calculate(zero)
+		if err := l.calculate(r, zero); err != nil {
+			return validation.Errors{strconv.Itoa(i): err}
+		}
+	}
+	return nil
+}
+
+func calculateLineSum(zero num.Amount, lines []*Line) num.Amount {
+	sum := zero
+	for _, l := range lines {
 		sum = sum.MatchPrecision(l.Total)
 		sum = sum.Add(l.Total)
 	}

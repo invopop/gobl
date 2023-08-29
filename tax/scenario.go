@@ -32,7 +32,7 @@ type Scenario struct {
 
 	// Codes is used to define additional codes for regime specific
 	// situations.
-	Codes cbc.CodeSet `json:"codes,omitempty" jsonschema:"title=Codes"`
+	Codes cbc.CodeMap `json:"codes,omitempty" jsonschema:"title=Codes"`
 
 	// Any additional local meta data that may be useful in integrations.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -43,7 +43,7 @@ type Scenario struct {
 // are viable.
 type ScenarioSummary struct {
 	Notes []*cbc.Note
-	Codes cbc.CodeSet
+	Codes cbc.CodeMap
 	Meta  cbc.Meta
 }
 
@@ -61,7 +61,7 @@ func (ss *ScenarioSet) Validate() error {
 func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key) *ScenarioSummary {
 	summary := &ScenarioSummary{
 		Notes: make([]*cbc.Note, 0),
-		Codes: make(cbc.CodeSet),
+		Codes: make(cbc.CodeMap),
 		Meta:  make(cbc.Meta),
 	}
 	for _, s := range ss.List {

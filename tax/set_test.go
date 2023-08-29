@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -80,9 +81,10 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     es.TaxRateExempt.With(es.TaxRateArticle20),
+					Rate:     common.TaxRateExempt,
 				},
 			},
+			err: "es-tbai-exemption: required",
 		},
 		{
 			desc: "undefined category code",
@@ -104,6 +106,16 @@ func TestSetValidation(t *testing.T) {
 				},
 			},
 			err: "rate: must be a valid value.",
+		},
+		{
+			desc: "missing percent with surcharge",
+			set: tax.Set{
+				{
+					Category:  "VAT",
+					Surcharge: num.NewPercentage(5, 3),
+				},
+			},
+			err: "percent: cannot be blank; surcharge: required with percent.",
 		},
 	}
 	es := es.New()

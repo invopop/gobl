@@ -50,7 +50,7 @@ The following sections highlight these codes and how they can be defined inside 
 
 Every Supplier and Customer in a Mexican invoice must be associated with a fiscal regime code. You'll need to ensure this field's value is requested from customers when they require an invoice.
 
-In GOBL the `mx-cfdi-fiscal-regime` identity key is used alongside the value expected by the SAT.
+In GOBL the `mx-cfdi-fiscal-regime` extension key is used alongside the value expected by the SAT.
 
 #### Example
 
@@ -67,12 +67,9 @@ The following example will associate the supplier with the `601` fiscal regime c
       "zone": "26015",
       "code": "EKU9003173C9"
     },
-    "identities": [
-      {
-        "key": "mx-cfdi-fiscal-regime",
-        "code": "601"
-      }
-    ]
+    "ext": {
+      "mx-cfdi-fiscal-regime": "601"
+    }
   }
   // [...]
 }
@@ -80,7 +77,7 @@ The following example will associate the supplier with the `601` fiscal regime c
 
 ### `UsoCFDI` - CFDI Use
 
-The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. In a GOBL Invoice, include the `mx-cfdi-use` identity in the customer.
+The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. In a GOBL Invoice, include the `mx-cfdi-use` extension in the customer.
 
 This field will be validated for presence and will be checked against the list of codes defined as part of the CFDI specification.
 
@@ -101,16 +98,10 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
       "zone": "65000",
       "code": "URE180429TM6"
     },
-    "identities": [
-      {
-        "key": "mx-cfdi-fiscal-regime",
-        "code": "601"
-      },
-      {
-        "key": "mx-cfdi-use",
-        "code": "G01"
-      }
-    ]
+    "ext": {
+      "mx-cfdi-fiscal-regime": "601"
+      "mx-cfdi-use": "G01"
+    }
   }
 
   // [...]
@@ -194,9 +185,9 @@ The following GOBL maps to the `KGM` (Kilogram) value of the `ClaveUnidad` field
 
 ### `ClaveProdServ` - Product or Service Code
 
-The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item identity key `mx-cfdi-prod-serv` to map the identity code directly to the `ClaveProdServ` field.
+The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item extension key `mx-cfdi-prod-serv` to map the code directly to the `ClaveProdServ` field.
 
-The catalogue of available Product or Service codes that form part of the CFDI standard is immense with some 50.000 entries to choose from. At this time, GOBL will not validate these fields, you'll have to check with local accountants to check which code should be used for your products or services.
+The catalogue of available Product or Service codes that form part of the CFDI standard is immense with some 50.000 entries to choose from. Due the huge number of codes GOBL will not validate these fields, you'll have to check with local accountants to check which code should be used for your products or services.
 
 ### Example
 
@@ -214,12 +205,9 @@ The following GOBL maps to the `10101602` ("live ducks") value to the `ClaveProd
 
       "item": {
         "name": "Selección de patos vivos",
-        "identities": [
-          {
-            "key": "mx-cfdi-prod-serv",
-            "code": "10101602"
-          }
-        ]
+        "ext": {
+          "mx-cfdi-prod-serv": "10101602"
+        }
       },
     }
   ]

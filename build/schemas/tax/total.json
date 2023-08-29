@@ -44,6 +44,11 @@
           "title": "Key",
           "description": "Optional rate key is required when grouping."
         },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Ext",
+          "description": "If the rate is defined with extensions, they'll be used to group by also."
+        },
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
@@ -113,5 +118,5 @@
       "description": "Total contains a set of Category Totals which in turn contain all the accumulated taxes contained in the document."
     }
   },
-  "$comment": "Generated with GOBL v0.54.0"
+  "$comment": "Generated with GOBL v0.55.0"
 }

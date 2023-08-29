@@ -10,10 +10,10 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "SAMPLE-001",
 		"type": "standard",
-		"currency": "EUR",
+		"code": "SAMPLE-001",
 		"issue_date": "2022-02-01",
+		"currency": "EUR",
 		"supplier": {
 			"name": "MªF. Services",
 			"tax_id": {

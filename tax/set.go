@@ -26,6 +26,8 @@ type Combo struct {
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
+	// Local codes that apply for a given rate or percentage that need to be identified and validated.
+	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Internal link back to the category object
 	category *Category
 }
@@ -41,15 +43,52 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
 		validation.Field(&c.Rate,
-			validation.When(cat != nil && cat.RateRequired, validation.Required),
+			validation.When(
+				(cat != nil && len(cat.Extensions) > 0),
+				validation.Empty,
+			),
+			validation.When(
+				(cat != nil && cat.RateRequired),
+				validation.Required,
+			),
+			validation.When(
+				(cat != nil && len(cat.Extensions) == 0) &&
+					(len(c.Ext) != 0),
+				validation.Required.Error("required with extensions"),
+			),
 			r.InCategoryRates(c.Category),
+		),
+		validation.Field(&c.Ext,
+			InRegimeExtensions,
+			validation.When(
+				cat != nil && len(cat.Extensions) > 0,
+				validation.Required,
+			),
+			validation.When(
+				(cat != nil && len(cat.Extensions) == 0) &&
+					(rate != nil && len(rate.Extensions) == 0),
+				validation.Empty,
+				validation.Skip,
+			),
+			validation.When(
+				(cat != nil && len(cat.Extensions) > 0),
+				cat.InExtensions(),
+				validation.Skip,
+			),
+			validation.When(
+				(rate != nil && len(rate.Extensions) > 0),
+				rate.InExtensions(),
+				validation.Skip,
+			),
 		),
 		validation.Field(&c.Percent,
 			validation.When(rate == nil, validation.Required),
 			validation.When(rate != nil && rate.Exempt, validation.Nil),
 			validation.When(rate != nil && !rate.Exempt, validation.Required),
 		),
-		validation.Field(&c.Surcharge), // not required, but should be valid number
+		validation.Field(&c.Surcharge,
+			validation.When(c.Percent == nil, validation.Nil.Error("required with percent")),
+		),
 	)
 	if err != nil {
 		return err

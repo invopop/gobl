@@ -56,6 +56,11 @@
           "title": "Country of Origin",
           "description": "Country code of where this item was from originally."
         },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/cbc/code-map",
+          "title": "Ext",
+          "description": "Extension code map for any additional regime specific codes that may be required."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
@@ -70,5 +75,5 @@
       "description": "Item is used to describe a single product or service."
     }
   },
-  "$comment": "Generated with GOBL v0.54.0"
+  "$comment": "Generated with GOBL v0.55.0"
 }

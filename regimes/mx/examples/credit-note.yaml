@@ -11,31 +11,28 @@ preceding:
         val: 1fac4464-1111-0000-1111-cd37179db12e
 supplier:
   name: ESCUELA KEMPER URGATE
-  identities:
-    - key: "mx-cfdi-fiscal-regime"
-      code: "615"
   tax_id:
     country: MX
     zone: "26015"
     code: EKU9003173C9
+  ext:
+    mx-cfdi-fiscal-regime: "615"
 customer:
   name: UNIVERSIDAD ROBOTICA ESPAÑOLA
-  identities:
-    - key: "mx-cfdi-fiscal-regime"
-      code: "624"
-    - key: "mx-cfdi-use"
-      code: "G01"
   tax_id:
     country: MX
     zone: "65000"
     code: URE180429TM6
+  ext:
+    mx-cfdi-fiscal-regime: "624"
+    mx-cfdi-use: "G01"
+
 lines:
   - quantity: "2"
     item:
       name: Cigarros
-      identities:
-        - key: "mx-cfdi-prod-serv"
-          code: "50211502"
+      ext:
+        mx-cfdi-prod-serv: "50211502"
       price: "100.1010"
       unit: piece
     taxes:

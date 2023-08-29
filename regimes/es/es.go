@@ -77,6 +77,7 @@ func New() *tax.Regime {
 		Zones:            zones,
 		Tags:             invoiceTags,
 		IdentityTypeKeys: taxIdentityTypeDefinitions,
+		Extensions:       extensionKeys,
 		Categories:       taxCategories,
 		ItemKeys:         itemKeyDefinitions, // items.go
 		Validator:        Validate,

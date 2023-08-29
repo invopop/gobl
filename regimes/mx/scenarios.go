@@ -16,13 +16,13 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// TipoDeComprobante / TipoRelacion
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Codes: cbc.CodeSet{
+			Codes: cbc.CodeMap{
 				KeySATTipoDeComprobante: "I",
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-			Codes: cbc.CodeSet{
+			Codes: cbc.CodeMap{
 				KeySATTipoDeComprobante: "E",
 				KeySATTipoRelacion:      "01",
 			},

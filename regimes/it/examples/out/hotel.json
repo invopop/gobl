@@ -4,20 +4,20 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "cf6c5c8927bb5a7c42a674fe3d7afb26e4cd7e08189a1541babe8e47bf10f08a"
+			"val": "46f5f50575ae743d8d7c9af40eb95e60729ea6a3c23b95aef2103b14eb72da3d"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
-		"type": "standard",
+		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT"
 		},
-		"issue_date": "2023-05-21",
 		"supplier": {
 			"name": "Hotel California",
 			"tax_id": {
@@ -76,7 +76,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "excluded"
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-nature": "N4"
+						}
 					}
 				],
 				"total": "1.00"
@@ -109,7 +112,10 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "excluded",
+								"key": "exempt",
+								"ext": {
+									"it-sdi-nature": "N4"
+								},
 								"base": "1.00",
 								"amount": "0.00"
 							},

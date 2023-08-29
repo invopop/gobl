@@ -7,7 +7,7 @@
   "time_zone": "America/Mexico_City",
   "country": "MX",
   "currency": "MXN",
-  "identities": [
+  "extensions": [
     {
       "key": "mx-cfdi-prod-serv",
       "name": {

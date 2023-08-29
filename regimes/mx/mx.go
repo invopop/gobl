@@ -41,7 +41,7 @@ func New() *tax.Regime {
 		Validator:        Validate,
 		Calculator:       Calculate,
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
-		Identities:       identityKeys,               // identities.go
+		Extensions:       extensionKeys,              // extensions.go
 		Scenarios:        scenarios,                  // scenarios.go
 		Categories:       taxCategories,              // categories.go
 		Preceding:        precedingDefinitions,       // preceding.go
@@ -66,6 +66,8 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
+	case *org.Party:
+		return normalizeParty(obj)
 	case *org.Item:
 		return normalizeItem(obj)
 	}

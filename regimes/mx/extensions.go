@@ -5,17 +5,17 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Mexican CFDI identity keys required by the SAT (tax authority in Mexico) in all
+// Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
 // invoices and cannot be determined automatically.
 const (
-	IdentityKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
-	IdentityKeyCFDIUse          = "mx-cfdi-use"
-	IdentityKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
+	ExtKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
+	ExtKeyCFDIUse          = "mx-cfdi-use"
+	ExtKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
 )
 
-var identityKeys = []*tax.KeyDefinition{
+var extensionKeys = []*tax.KeyDefinition{
 	{
-		Key: IdentityKeyCFDIProdServ,
+		Key: ExtKeyCFDIProdServ,
 		Name: i18n.String{
 			i18n.EN: "Product or Service Code",
 			i18n.ES: "Clave de Producto o Servicio", //nolint:misspell
@@ -26,7 +26,7 @@ var identityKeys = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: IdentityKeyCFDIFiscalRegime,
+		Key: ExtKeyCFDIFiscalRegime,
 		Name: i18n.String{
 			i18n.EN: "Fiscal Regime Code",
 			i18n.ES: "Código de Régimen Fiscal",
@@ -153,7 +153,7 @@ var identityKeys = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: IdentityKeyCFDIUse,
+		Key: ExtKeyCFDIUse,
 		Name: i18n.String{
 			i18n.EN: "CFDI Use Code",
 			i18n.ES: "Código de Uso CFDI",
