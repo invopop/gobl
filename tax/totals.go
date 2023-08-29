@@ -214,11 +214,7 @@ func (rt *RateTotal) matches(c *Combo) bool {
 		return false
 	}
 	if rt.Percent == nil || c.Percent == nil {
-		if rt.Percent == nil && c.Percent == nil {
-			// fall back to rate key comparison
-			return rt.Key == c.Rate
-		}
-		return false
+		return rt.Percent == nil && c.Percent == nil
 	}
 	if rt.Surcharge != nil || c.Surcharge != nil {
 		if rt.Surcharge == nil || c.Surcharge == nil {

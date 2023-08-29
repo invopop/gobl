@@ -31,19 +31,19 @@ type Invoice struct {
 	// Unique document ID. Not required, but always recommended in addition to the Code.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Type of invoice document subject to the requirements of the local tax regime.
-	Type cbc.Key `json:"type" jsonschema:"title=Type"`
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Used as a prefix to group codes.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
 	Code string `json:"code" jsonschema:"title=Code"`
 	// When the invoice was created.
-	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date"`
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all invoice totals.
-	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
+	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 

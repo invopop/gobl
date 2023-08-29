@@ -222,7 +222,8 @@
             }
           ],
           "title": "Type",
-          "description": "Type of invoice document subject to the requirements of the local tax regime."
+          "description": "Type of invoice document subject to the requirements of the local tax regime.",
+          "calculated": true
         },
         "series": {
           "type": "string",
@@ -237,7 +238,8 @@
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Issue Date",
-          "description": "When the invoice was created."
+          "description": "When the invoice was created.",
+          "calculated": true
         },
         "op_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -252,7 +254,8 @@
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
-          "description": "Currency for all invoice totals."
+          "description": "Currency for all invoice totals.",
+          "calculated": true
         },
         "exchange_rates": {
           "items": {
