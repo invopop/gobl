@@ -207,9 +207,9 @@
   ],
   "extensions": [
     {
-      "key": "pt-exemption-reason",
+      "key": "pt-exemption-code",
       "name": {
-        "en": "Tax exemption reason",
+        "en": "Tax exemption reason code",
         "pt": "Código do motivo de isenção de imposto"
       },
       "codes": [
@@ -571,7 +571,7 @@
           "name": null,
           "exempt": true,
           "extensions": [
-            "pt-exemption-reason"
+            "pt-exemption-code"
           ],
           "map": {
             "at-tax-code": "ISE"
