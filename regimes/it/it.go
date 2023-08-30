@@ -18,11 +18,8 @@ func init() {
 // Keys used for meta data from external sources.
 const (
 	KeyFatturaPATipoDocumento     cbc.Key = "fatturapa-tipo-documento"
-	KeyFatturaPARegimeFiscale     cbc.Key = "fatturapa-regime-fiscale"
-	KeyFatturaPANatura            cbc.Key = "fatturapa-natura"
 	KeyFatturaPATipoRitenuta      cbc.Key = "fatturapa-tipo-ritenuta"
 	KeyFatturaPAModalitaPagamento cbc.Key = "fatturapa-modalita-pagamento"
-	KeyFatturaPACausalePagamento  cbc.Key = "fatturapa-causale-pagamento"
 )
 
 // New instantiates a new Italian regime.
