@@ -1,4 +1,4 @@
-// GOBL Complements for Mexican invoices
+// Package complements provides GOBL Complements for Mexican invoices
 package complements
 
 import (
