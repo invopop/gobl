@@ -1,4 +1,5 @@
-package mx
+// GOBL Complements for Mexican invoices
+package complements
 
 import (
 	"cloud.google.com/go/civil"
