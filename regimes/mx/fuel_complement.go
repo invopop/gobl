@@ -9,7 +9,9 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// FuelComplement provides detailed information about fuel purchases made with
+// FuelComplement carries the data to produce the CFDI's "Complemento de Estado
+// de Cuenta de Combustibles para Monederos Electrónicos" (version 1.2 revision
+// B) which provides detailed information about fuel purchases made with
 // electronic wallets. In Mexico, e-wallet suppliers are required to report this
 // information as part of the invoices they issue to their customers.
 type FuelComplement struct {

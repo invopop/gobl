@@ -39,7 +39,7 @@
     },
     "FuelComplement": {
       "properties": {
-        "wallet-account-number": {
+        "wallet_account_number": {
           "type": "string",
           "title": "Wallet Account Number",
           "description": "Customer's e-wallet account number"
@@ -61,11 +61,11 @@
       },
       "type": "object",
       "required": [
-        "wallet-account-number",
+        "wallet_account_number",
         "lines",
         "totals"
       ],
-      "description": "FuelComplement provides detailed information about fuel purchases made with electronic wallets."
+      "description": "FuelComplement carries the data to produce the CFDI's \"Complemento de Estado de Cuenta de Combustibles para Monederos Electrónicos\" (version 1.2 revision B) which provides detailed information about fuel purchases made with electronic wallets."
     },
     "FuelItem": {
       "properties": {
@@ -100,22 +100,22 @@
     },
     "FuelLine": {
       "properties": {
-        "wallet-id": {
+        "wallet_id": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Wallet Identifier",
           "description": "Identifier of the e-wallet used to make the purchase"
         },
-        "purchase-date": {
+        "purchase_date": {
           "$ref": "#/$defs/DateTime",
           "title": "Purchase Date",
           "description": "Date and time of the purchase"
         },
-        "purchaser-tax-id": {
+        "purchaser_tax_id": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Purchaser's Tax ID",
           "description": "Tax ID (RFC) of the purchaser"
         },
-        "service-station-code": {
+        "service_station_code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Service Station Code",
           "description": "Code of the service station where the purchase was made"
@@ -130,7 +130,7 @@
           "title": "Item",
           "description": "Details about the fuel purchased"
         },
-        "purchase-id": {
+        "purchase_id": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Purchase Identifier",
           "description": "Identifier of the purchase (folio)"
@@ -149,13 +149,13 @@
       },
       "type": "object",
       "required": [
-        "wallet-id",
-        "purchase-date",
-        "purchaser-tax-id",
-        "service-station-code",
+        "wallet_id",
+        "purchase_date",
+        "purchaser_tax_id",
+        "service_station_code",
         "quantity",
         "item",
-        "purchase-id",
+        "purchase_id",
         "sum",
         "taxes"
       ],
