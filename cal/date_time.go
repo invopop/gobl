@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
+// DateTime represents a date with time but without timezone.
 type DateTime struct {
 	civil.DateTime
 }
