@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/regimes/mx/fuel-complement",
+  "$ref": "#/$defs/FuelComplement",
+  "$defs": {
+    "Date": {
+      "properties": {
+        "Year": {
+          "type": "integer"
+        },
+        "Month": {
+          "type": "integer"
+        },
+        "Day": {
+          "type": "integer"
+        }
+      },
+      "type": "object",
+      "required": [
+        "Year",
+        "Month",
+        "Day"
+      ]
+    },
+    "DateTime": {
+      "properties": {
+        "Date": {
+          "$ref": "#/$defs/Date"
+        },
+        "Time": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "type": "object",
+      "required": [
+        "Date",
+        "Time"
+      ]
+    },
+    "FuelComplement": {
+      "properties": {
+        "wallet-account-number": {
+          "type": "string",
+          "title": "Wallet Account Number",
+          "description": "Customer's e-wallet account number"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/FuelLine"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "List of fuel purchases made with the customer's e-wallets"
+        },
+        "totals": {
+          "$ref": "#/$defs/Totals",
+          "title": "Totals",
+          "description": "Summary of all the purchases totals, including taxes (calculated)",
+          "calculated": true
+        }
+      },
+      "type": "object",
+      "required": [
+        "wallet-account-number",
+        "lines",
+        "totals"
+      ],
+      "description": "FuelComplement provides detailed information about fuel purchases made with electronic wallets."
+    },
+    "FuelItem": {
+      "properties": {
+        "unit": {
+          "$ref": "https://gobl.org/draft-0/org/unit",
+          "title": "Unit",
+          "description": "Reference unit of measure used in the price and the quantity"
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Type",
+          "description": "Type of fuel (c_ClaveTipoCombustible codes)"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Name of the fuel"
+        },
+        "price": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Price",
+          "description": "Base price of a single unit of the fuel"
+        }
+      },
+      "type": "object",
+      "required": [
+        "unit",
+        "name",
+        "price"
+      ],
+      "description": "FuelItem provides the details of the fuel purchased."
+    },
+    "FuelLine": {
+      "properties": {
+        "wallet-id": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Wallet Identifier",
+          "description": "Identifier of the e-wallet used to make the purchase"
+        },
+        "purchase-date": {
+          "$ref": "#/$defs/DateTime",
+          "title": "Purchase Date",
+          "description": "Date and time of the purchase"
+        },
+        "purchaser-tax-id": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Purchaser's Tax ID",
+          "description": "Tax ID (RFC) of the purchaser"
+        },
+        "service-station-code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Service Station Code",
+          "description": "Code of the service station where the purchase was made"
+        },
+        "quantity": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Quantity",
+          "description": "Amount of fuel units purchased"
+        },
+        "item": {
+          "$ref": "#/$defs/FuelItem",
+          "title": "Item",
+          "description": "Details about the fuel purchased"
+        },
+        "purchase-id": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Purchase Identifier",
+          "description": "Identifier of the purchase (folio)"
+        },
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum",
+          "description": "Result of quantity multiplied by the item's price (calculated)",
+          "calculated": true
+        },
+        "taxes": {
+          "$ref": "https://gobl.org/draft-0/tax/set",
+          "title": "Taxes",
+          "description": "Map of taxes applied to the purchase"
+        }
+      },
+      "type": "object",
+      "required": [
+        "wallet-id",
+        "purchase-date",
+        "purchaser-tax-id",
+        "service-station-code",
+        "quantity",
+        "item",
+        "purchase-id",
+        "sum",
+        "taxes"
+      ],
+      "description": "FuelLine represents a single fuel purchase made with an e-wallet issued by the invoice's supplier to the invoice's customer."
+    },
+    "Time": {
+      "properties": {
+        "Hour": {
+          "type": "integer"
+        },
+        "Minute": {
+          "type": "integer"
+        },
+        "Second": {
+          "type": "integer"
+        },
+        "Nanosecond": {
+          "type": "integer"
+        }
+      },
+      "type": "object",
+      "required": [
+        "Hour",
+        "Minute",
+        "Second",
+        "Nanosecond"
+      ]
+    },
+    "Totals": {
+      "properties": {
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum",
+          "description": "Sum of all line item sums"
+        },
+        "discount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Discount",
+          "description": "Sum of all document level discounts"
+        },
+        "charge": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Charge",
+          "description": "Sum of all document level charges"
+        },
+        "tax_included": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax Included",
+          "description": "If prices include tax, this is the total tax included in the price."
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Sum of all line sums minus the discounts, plus the charges, without tax."
+        },
+        "taxes": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax Totals",
+          "description": "Summary of all the taxes included in the invoice."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax",
+          "description": "Total amount of tax to apply to the invoice."
+        },
+        "total_with_tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total with Tax",
+          "description": "Grand total after all taxes have been applied."
+        },
+        "outlays": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Outlay Totals",
+          "description": "Total paid in outlays that need to be reimbursed"
+        },
+        "payable": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Payable",
+          "description": "Total amount to be paid after applying taxes and outlays."
+        },
+        "advance": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Advance",
+          "description": "Total amount already paid in advance."
+        },
+        "due": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Due",
+          "description": "How much actually needs to be paid now."
+        }
+      },
+      "type": "object",
+      "required": [
+        "sum",
+        "total",
+        "total_with_tax",
+        "payable"
+      ],
+      "description": "Totals contains the summaries of all calculations for the invoice."
+    }
+  },
+  "$comment": "Generated with GOBL v0.55.0"
+}

@@ -9,11 +9,15 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegime(New())
+
+	// MX GOBL Schema Complements
+	schema.Register(schema.GOBL.Add("regimes/mx"), FuelComplement{})
 }
 
 // Custom keys used typically in meta or codes information.
