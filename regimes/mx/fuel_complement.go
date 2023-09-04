@@ -57,6 +57,7 @@ type FuelItem struct {
 	Price num.Amount `json:"price" jsonschema:"title=Price"`
 }
 
+// FuelTotals contains the summaries of all calculations for the fuel purchases.
 type FuelTotals struct {
 	// Sum of all line sums
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
