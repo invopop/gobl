@@ -1,4 +1,4 @@
-package gobl
+package base
 
 import (
 	"context"

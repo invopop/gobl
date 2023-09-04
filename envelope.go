@@ -7,8 +7,7 @@ import (
 
 	"github.com/invopop/validation"
 
-	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/schema"
@@ -23,9 +22,9 @@ type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
 	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
 	// Details on what the contents are
-	Head *Header `json:"head" jsonschema:"title=Header"`
+	Head *base.Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
-	Document *Document `json:"doc" jsonschema:"title=Document"`
+	Document *base.Document `json:"doc" jsonschema:"title=Document"`
 	// JSON Web Signatures of the header
 	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
@@ -40,8 +39,8 @@ var EnvelopeSchema = schema.GOBL.Add("envelope")
 func NewEnvelope() *Envelope {
 	e := new(Envelope)
 	e.Schema = EnvelopeSchema
-	e.Head = NewHeader()
-	e.Document = new(Document)
+	e.Head = base.NewHeader()
+	e.Document = new(base.Document)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
 }
@@ -94,15 +93,15 @@ func (e *Envelope) verifyDigest() error {
 // only valid non-draft documents will be signed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	if e.Head == nil {
-		return ErrValidation.WithCause(errors.New("missing header"))
+		return base.ErrValidation.WithCause(errors.New("missing header"))
 	}
 	e.Head.Draft = false
 	if err := e.Validate(); err != nil {
-		return ErrValidation.WithCause(err)
+		return base.ErrValidation.WithCause(err)
 	}
 	sig, err := key.Sign(e.Head)
 	if err != nil {
-		return ErrSignature.WithCause(err)
+		return base.ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
 	return nil
@@ -112,17 +111,17 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 // envelope. Calculate will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
-		return ErrInternal.WithErrorf("missing head")
+		return base.ErrInternal.WithErrorf("missing head")
 	}
 	if doc == nil {
-		return ErrNoDocument
+		return base.ErrNoDocument
 	}
 
-	if d, ok := doc.(*Document); ok {
+	if d, ok := doc.(*base.Document); ok {
 		e.Document = d
 	} else {
 		var err error
-		e.Document, err = NewDocument(doc)
+		e.Document, err = base.NewDocument(doc)
 		if err != nil {
 			return err
 		}
@@ -141,10 +140,10 @@ func (e *Envelope) Insert(doc interface{}) error {
 // digest.
 func (e *Envelope) Calculate() error {
 	if e.Document == nil {
-		return ErrNoDocument
+		return base.ErrNoDocument
 	}
 	if e.Document.IsEmpty() {
-		return ErrNoDocument
+		return base.ErrNoDocument
 	}
 
 	return e.calculate()
@@ -156,12 +155,12 @@ func (e *Envelope) calculate() error {
 
 	// arm doors and cross check
 	if err := e.Document.Calculate(); err != nil {
-		return ErrCalculation.WithCause(err)
+		return base.ErrCalculation.WithCause(err)
 	}
 
 	// Double check the header looks okay
 	if e.Head == nil {
-		e.Head = NewHeader()
+		e.Head = base.NewHeader()
 	}
 	if e.Head.UUID.IsZero() {
 		e.Head.UUID = uuid.MakeV1()
@@ -185,15 +184,9 @@ func (e *Envelope) Extract() interface{} {
 
 // Correct will attempt to build a new envelope as a correction of the
 // current envelope contents, if possible.
-func (e *Envelope) Correct(opts ...cbc.Option) (*Envelope, error) {
-	// Determine any extra options
-	switch e.Document.Instance().(type) {
-	case *bill.Invoice:
-		// Special case for invoices so that we copy over
-		// the stamps from the original invoice headers.
-		if len(e.Head.Stamps) > 0 {
-			opts = append(opts, bill.WithStamps(e.Head.Stamps))
-		}
+func (e *Envelope) Correct(opts ...base.Option) (*Envelope, error) {
+	if e.Head != nil && len(e.Head.Stamps) > 0 {
+		opts = append(opts, base.WithHead(e.Head))
 	}
 
 	nd, err := e.Document.Clone()

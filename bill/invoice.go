@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -86,6 +87,10 @@ type Invoice struct {
 	// Unstructured information that is relevant to the invoice, such as correction or additional
 	// legal details.
 	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Additional complementary documents that add relevant information to the invoice.
+	Complements []*base.Document `json:"complements,omitempty" jsonschema:"title=Complements"`
+
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }

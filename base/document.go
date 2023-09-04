@@ -1,4 +1,4 @@
-package gobl
+package base
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/c14n"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
@@ -33,7 +32,7 @@ type Calculable interface {
 // Correctable defines the expected interface of a document that can be
 // corrected.
 type Correctable interface {
-	Correct(...cbc.Option) error
+	Correct(...Option) error
 }
 
 // NewDocument instantiates a Document wrapper around the provided object.
@@ -107,7 +106,7 @@ func (d *Document) ValidateWithContext(ctx context.Context) error {
 
 // Correct will attempt to run the correction method on the document
 // using some of the provided options.
-func (d *Document) Correct(opts ...cbc.Option) error {
+func (d *Document) Correct(opts ...Option) error {
 	pl, ok := d.payload.(Correctable)
 	if !ok {
 		return errors.New("document cannot be corrected")
@@ -183,9 +182,7 @@ func (Document) JSONSchema() *jsonschema.Schema {
 		Type:  "object",
 		Title: "Document",
 		Description: here.Doc(`
-			Contains the document payload to be included inside an Envelope.
-			
-			The document must contain a ` + "`" + `$schema` + "`" + ` property that identifies
-			the data's structure otherwise it will be rejected.`),
+			Data object whose type is determined from the <code>$schema</code> property.
+		`),
 	}
 }

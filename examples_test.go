@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/yaml"
 	"github.com/stretchr/testify/assert"
@@ -55,7 +56,7 @@ func processFile(t *testing.T, path string) error {
 	t.Logf("processing file: %v", path)
 
 	// attempt to load and convert
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("reading file: %w", err)
 	}
@@ -72,7 +73,7 @@ func processFile(t *testing.T, path string) error {
 		}
 	} else {
 		// Handle documents
-		doc := new(gobl.Document)
+		doc := new(base.Document)
 		if err := yaml.Unmarshal(data, doc); err != nil {
 			return fmt.Errorf("invalid contents: %w", err)
 		}

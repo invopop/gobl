@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
@@ -184,13 +185,13 @@ func TestEnvelopeCompleteErrors(t *testing.T) {
 		e := new(gobl.Envelope)
 		err := e.Calculate()
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, gobl.ErrNoDocument)
+		assert.ErrorIs(t, err, base.ErrNoDocument)
 	})
 	t.Run("missing document payload", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		err := e.Calculate()
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, gobl.ErrNoDocument)
+		assert.ErrorIs(t, err, base.ErrNoDocument)
 	})
 }
 

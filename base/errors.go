@@ -1,4 +1,4 @@
-package gobl
+package base
 
 import (
 	"errors"
@@ -14,9 +14,6 @@ type Error struct {
 }
 
 var (
-	// ErrNoRegion is used when the envelope is missing a region.
-	ErrNoRegion = NewError("no-region")
-
 	// ErrNoDocument is provided when the envelope does not contain a
 	// document payload.
 	ErrNoDocument = NewError("no-document")

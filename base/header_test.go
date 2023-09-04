@@ -1,15 +1,15 @@
-package gobl_test
+package base_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/cbc"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewHeader(t *testing.T) {
-	h := gobl.NewHeader()
+	h := base.NewHeader()
 	assert.False(t, h.UUID.IsZero())
 	assert.True(t, h.UUID.Version() == 1)
 	assert.NotPanics(t, func() {
@@ -20,7 +20,7 @@ func TestNewHeader(t *testing.T) {
 }
 
 func TestHeaderAddStamp(t *testing.T) {
-	h := gobl.NewHeader()
+	h := base.NewHeader()
 	h.AddStamp(&cbc.Stamp{Provider: "foo", Value: "bar"})
 	assert.Len(t, h.Stamps, 1)
 	h.AddStamp(&cbc.Stamp{Provider: "foo", Value: "baz"})

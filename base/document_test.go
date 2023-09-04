@@ -1,4 +1,4 @@
-package gobl_test
+package base_test
 
 import (
 	"encoding/json"
@@ -8,7 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/invopop/gobl"
+	_ "github.com/invopop/gobl" // make sure its loaded!
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/dsig"
@@ -22,7 +23,7 @@ func TestDocument(t *testing.T) {
 		Content: "test message",
 	}
 
-	doc, err := gobl.NewDocument(msg)
+	doc, err := base.NewDocument(msg)
 	require.NoError(t, err)
 
 	id := schema.Lookup(&note.Message{})
@@ -42,7 +43,7 @@ func TestDocument(t *testing.T) {
 	digest := dsig.NewSHA256Digest(data) // this works as the JSON is very simple!
 	assert.Equal(t, dig, digest.Value)
 
-	doc = new(gobl.Document)
+	doc = new(base.Document)
 	err = json.Unmarshal(data, doc)
 	require.NoError(t, err)
 
@@ -59,7 +60,7 @@ func TestDocument(t *testing.T) {
 func TestDocumentValidation(t *testing.T) {
 	msg := &note.Message{}
 
-	doc, err := gobl.NewDocument(msg)
+	doc, err := base.NewDocument(msg)
 	require.NoError(t, err)
 
 	err = doc.Validate()
@@ -67,8 +68,8 @@ func TestDocumentValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "content: cannot be blank")
 	}
 
-	doc = new(gobl.Document)
-	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.yaml")
+	doc = new(base.Document)
+	data, err := os.ReadFile("../regimes/es/examples/invoice-es-es.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, doc)
 	require.NoError(t, err)
