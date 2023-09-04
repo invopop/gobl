@@ -1,7 +1,7 @@
 package mx
 
 import (
-	"cloud.google.com/go/civil"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -28,7 +28,7 @@ type FuelLine struct {
 	// Identifier of the e-wallet used to make the purchase
 	WalletID cbc.Code `json:"wallet_id" jsonschema:"title=Wallet Identifier"`
 	// Date and time of the purchase
-	PurchaseDateTime civil.DateTime `json:"purchase_date" jsonschema:"title=Purchase Date"`
+	PurchaseDateTime cal.DateTime `json:"purchase_date" jsonschema:"title=Purchase Date"`
 	// Tax ID (RFC) of the purchaser
 	PurchaserTaxID cbc.Code `json:"purchaser_tax_id" jsonschema:"title=Purchaser's Tax ID"`
 	// Code of the service station where the purchase was made

@@ -3,40 +3,6 @@
   "$id": "https://gobl.org/draft-0/regimes/mx/fuel-complement",
   "$ref": "#/$defs/FuelComplement",
   "$defs": {
-    "Date": {
-      "properties": {
-        "Year": {
-          "type": "integer"
-        },
-        "Month": {
-          "type": "integer"
-        },
-        "Day": {
-          "type": "integer"
-        }
-      },
-      "type": "object",
-      "required": [
-        "Year",
-        "Month",
-        "Day"
-      ]
-    },
-    "DateTime": {
-      "properties": {
-        "Date": {
-          "$ref": "#/$defs/Date"
-        },
-        "Time": {
-          "$ref": "#/$defs/Time"
-        }
-      },
-      "type": "object",
-      "required": [
-        "Date",
-        "Time"
-      ]
-    },
     "FuelComplement": {
       "properties": {
         "wallet_account_number": {
@@ -106,7 +72,7 @@
           "description": "Identifier of the e-wallet used to make the purchase"
         },
         "purchase_date": {
-          "$ref": "#/$defs/DateTime",
+          "$ref": "https://gobl.org/draft-0/cal/date-time",
           "title": "Purchase Date",
           "description": "Date and time of the purchase"
         },
@@ -178,30 +144,8 @@
       "required": [
         "total",
         "total_with_tax"
-      ]
-    },
-    "Time": {
-      "properties": {
-        "Hour": {
-          "type": "integer"
-        },
-        "Minute": {
-          "type": "integer"
-        },
-        "Second": {
-          "type": "integer"
-        },
-        "Nanosecond": {
-          "type": "integer"
-        }
-      },
-      "type": "object",
-      "required": [
-        "Hour",
-        "Minute",
-        "Second",
-        "Nanosecond"
-      ]
+      ],
+      "description": "FuelTotals contains the summaries of all calculations for the fuel purchases."
     }
   },
   "$comment": "Generated with GOBL v0.55.0"
