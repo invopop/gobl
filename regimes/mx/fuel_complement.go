@@ -2,7 +2,6 @@ package mx
 
 import (
 	"cloud.google.com/go/civil"
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -20,7 +19,7 @@ type FuelComplement struct {
 	// List of fuel purchases made with the customer's e-wallets
 	Lines []*FuelLine `json:"lines" jsonschema:"title=Lines"`
 	// Summary of all the purchases totals, including taxes (calculated)
-	Totals bill.Totals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
+	Totals *FuelTotals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
 }
 
 // FuelLine represents a single fuel purchase made with an e-wallet issued by
@@ -41,7 +40,7 @@ type FuelLine struct {
 	// Identifier of the purchase (folio)
 	PurchaseID cbc.Code `json:"purchase_id" jsonschema:"title=Purchase Identifier"`
 	// Result of quantity multiplied by the item's price (calculated)
-	Sum num.Amount `json:"sum" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
+	Total num.Amount `json:"total" jsonschema:"title=Total" jsonschema_extras:"calculated=true"`
 	// Map of taxes applied to the purchase
 	Taxes tax.Set `json:"taxes" jsonschema:"title=Taxes"`
 }
@@ -56,4 +55,11 @@ type FuelItem struct {
 	Name string `json:"name" jsonschema:"title=Name"`
 	// Base price of a single unit of the fuel
 	Price num.Amount `json:"price" jsonschema:"title=Price"`
+}
+
+type FuelTotals struct {
+	// Sum of all line sums
+	Total num.Amount `json:"total" jsonschema:"title=Total"`
+	// Grand total after taxes have been applied.
+	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
 }
