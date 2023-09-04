@@ -20,7 +20,7 @@ type Header struct {
 
 	// Seals of approval from other organisations that can only be added to
 	// non-draft envelopes.
-	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
 	// Set of labels that describe but have no influence on the data.
 	Tags []string `json:"tags,omitempty" jsonschema:"title=Tags"`
@@ -56,13 +56,13 @@ func (h *Header) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&h.Digest, validation.Required),
 		validation.Field(&h.Stamps,
 			validation.When(h.Draft, validation.Empty),
-			cbc.DetectDuplicateStamps,
+			DetectDuplicateStamps,
 		),
 	)
 }
 
 // AddStamp adds a new stamp to the header. If the stamp already exists,
 // it will be overwritten.
-func (h *Header) AddStamp(s *cbc.Stamp) {
-	h.Stamps = cbc.AddStamp(h.Stamps, s)
+func (h *Header) AddStamp(s *Stamp) {
+	h.Stamps = AddStamp(h.Stamps, s)
 }

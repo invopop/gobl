@@ -48,6 +48,14 @@
           "title": "Map",
           "description": "Map defines a set of regime specific code mappings."
         },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/Source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "List of sources for the information contained in this category."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
@@ -432,6 +440,26 @@
         "list"
       ],
       "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
+    },
+    "Source": {
+      "properties": {
+        "title": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Title",
+          "description": "Title of the linked source to help distinguish between this and other links."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "URL for the website."
+        }
+      },
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "description": "Source describes where the information for the taxes comes from."
     },
     "Zone": {
       "properties": {

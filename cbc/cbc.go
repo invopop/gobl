@@ -12,6 +12,5 @@ func init() {
 		Key(""),
 		Meta{},
 		Note{},
-		Stamp{},
 	)
 }

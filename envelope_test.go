@@ -142,7 +142,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 	t.Run("handle stamps", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		require.NoError(t, e.Insert(m))
-		e.Head.AddStamp(&cbc.Stamp{Provider: cbc.Key("test"), Value: "test"})
+		e.Head.AddStamp(&base.Stamp{Provider: cbc.Key("test"), Value: "test"})
 		err := e.Calculate()
 		assert.NoError(t, err)
 		assert.NotEmpty(t, e.Head.Stamps)

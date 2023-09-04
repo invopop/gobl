@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/uuid"
@@ -22,7 +23,7 @@ type Preceding struct {
 	// Human readable description on why the preceding invoice is being replaced.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Seals of approval from other organisations that may need to be listed.
-	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*base.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Tax regime specific keys reflecting why the preceding invoice is being replaced.
 	Corrections []cbc.Key `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 	// Tax regime specific keys reflecting the method used to correct the preceding invoice.

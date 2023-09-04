@@ -19,7 +19,7 @@ type CorrectionOptions struct {
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Stamps of the previous document to include in the preceding data.
-	Stamps []*cbc.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*base.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Credit when true indicates that the corrective document should cancel the previous document.
 	Credit bool `json:"credit,omitempty" jsonschema:"title=Credit"`
 	// Debit when true indicates that the corrective document should add new items to the previous document.
@@ -58,7 +58,7 @@ func WithData(data json.RawMessage) base.Option {
 // WithStamps provides a configuration option with stamp information
 // usually included in the envelope header for a previously generated
 // and processed invoice document.
-func WithStamps(stamps []*cbc.Stamp) base.Option {
+func WithStamps(stamps []*base.Stamp) base.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Stamps = stamps
@@ -200,7 +200,7 @@ func (inv *Invoice) Correct(opts ...base.Option) error {
 	// Make sure the stamps are there too
 	if r.Preceding != nil {
 		for _, k := range r.Preceding.Stamps {
-			var s *cbc.Stamp
+			var s *base.Stamp
 			for _, row := range o.Stamps {
 				if row.Provider == k {
 					s = row

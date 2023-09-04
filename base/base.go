@@ -8,5 +8,6 @@ func init() {
 	schema.Register(schema.GOBL,
 		Header{},
 		Document{},
+		Stamp{},
 	)
 }

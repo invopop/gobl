@@ -3,9 +3,9 @@ package bill_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -76,7 +76,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "missing stamp")
 
-	stamps := []*cbc.Stamp{
+	stamps := []*base.Stamp{
 		{
 			Provider: co.StampProviderDIANCUDE,
 			Value:    "FOOO",
