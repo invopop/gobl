@@ -1,5 +1,5 @@
-// Package base contains the main structural elements of GOBL in a single
-// place so that they can be re-used inside the other packages.
+// Package head defines the contents to be used in envelope
+// headers.
 package head
 
 import "github.com/invopop/gobl/schema"
