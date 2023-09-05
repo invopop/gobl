@@ -129,8 +129,8 @@ func TestDateTimeValidation(t *testing.T) {
 	})
 }
 
-func TestDateTimeNow(t *testing.T) {
-	d := cal.Now()
+func TestDateTimeThisSecond(t *testing.T) {
+	d := cal.ThisSecond()
 	tn := time.Now()
 	// note: this test may fail if minute changes between
 	// the two "Now()" calls
@@ -143,7 +143,7 @@ func TestDateTimeNow(t *testing.T) {
 	l, err := time.LoadLocation("America/New_York")
 	require.NoError(t, err)
 	tn = time.Now().In(l)
-	d = cal.NowIn(l)
+	d = cal.ThisSecondIn(l)
 	assert.Equal(t, d.Date.Year, tn.Year())
 	assert.Equal(t, d.Date.Month, tn.Month())
 	assert.Equal(t, d.Date.Day, tn.Day())

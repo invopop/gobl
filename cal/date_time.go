@@ -41,17 +41,18 @@ func MakeDateTime(year int, month time.Month, day, hour, minute, second int) Dat
 	}
 }
 
-// Now produces a new date time instance for the current UTC time.
-func Now() DateTime {
+// ThisSecond produces a new date time instance for the current UTC time
+// to the nearest second.
+func ThisSecond() DateTime {
 	t := time.Now().UTC()
 	return DateTime{
 		civil.DateTimeOf(t),
 	}
 }
 
-// NowIn provides a new date time using the time from the provided
-// location.
-func NowIn(loc *time.Location) DateTime {
+// ThisSecondIn provides a new date time using the current time from the provided
+// location as a reference.
+func ThisSecondIn(loc *time.Location) DateTime {
 	t := time.Now().In(loc)
 	return DateTime{
 		civil.DateTimeOf(t),
