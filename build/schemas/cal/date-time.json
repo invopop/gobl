@@ -7,7 +7,7 @@
       "type": "string",
       "format": "date-time",
       "title": "Date Time",
-      "description": "Civil date time in simplified ISO format with no time zone\ninformation, for example: 2021-05-26T13:45:00\n"
+      "description": "Civil date time in simplified ISO format with no time zone\ninformation, for example: 2021-05-26T13:45:00"
     }
   },
   "$comment": "Generated with GOBL v0.55.0"
