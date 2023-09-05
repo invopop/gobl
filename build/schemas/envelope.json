@@ -11,12 +11,12 @@
           "description": "Schema identifies the schema that should be used to understand this document"
         },
         "head": {
-          "$ref": "https://gobl.org/draft-0/header",
+          "$ref": "https://gobl.org/draft-0/head/header",
           "title": "Header",
           "description": "Details on what the contents are"
         },
         "doc": {
-          "$ref": "https://gobl.org/draft-0/document",
+          "$ref": "https://gobl.org/draft-0/schema/document",
           "title": "Document",
           "description": "The data inside the envelope"
         },

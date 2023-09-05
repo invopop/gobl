@@ -12,7 +12,7 @@
         },
         "stamps": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/stamp"
+            "$ref": "https://gobl.org/draft-0/head/stamp"
           },
           "type": "array",
           "title": "Stamps",
