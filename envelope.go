@@ -1,14 +1,17 @@
 package gobl
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/invopop/validation"
 
-	"github.com/invopop/gobl/base"
+	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
@@ -22,9 +25,9 @@ type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
 	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
 	// Details on what the contents are
-	Head *base.Header `json:"head" jsonschema:"title=Header"`
+	Head *head.Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
-	Document *base.Document `json:"doc" jsonschema:"title=Document"`
+	Document *schema.Document `json:"doc" jsonschema:"title=Document"`
 	// JSON Web Signatures of the header
 	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
@@ -39,8 +42,8 @@ var EnvelopeSchema = schema.GOBL.Add("envelope")
 func NewEnvelope() *Envelope {
 	e := new(Envelope)
 	e.Schema = EnvelopeSchema
-	e.Head = base.NewHeader()
-	e.Document = new(base.Document)
+	e.Head = head.NewHeader()
+	e.Document = new(schema.Document)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
 }
@@ -78,7 +81,7 @@ func (e *Envelope) ValidateWithContext(ctx context.Context) error {
 
 func (e *Envelope) verifyDigest() error {
 	d1 := e.Head.Digest
-	d2, err := e.Document.Digest()
+	d2, err := e.Digest()
 	if err != nil {
 		return err
 	}
@@ -93,15 +96,15 @@ func (e *Envelope) verifyDigest() error {
 // only valid non-draft documents will be signed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	if e.Head == nil {
-		return base.ErrValidation.WithCause(errors.New("missing header"))
+		return schema.ErrValidation.WithCause(errors.New("missing header"))
 	}
 	e.Head.Draft = false
 	if err := e.Validate(); err != nil {
-		return base.ErrValidation.WithCause(err)
+		return schema.ErrValidation.WithCause(err)
 	}
 	sig, err := key.Sign(e.Head)
 	if err != nil {
-		return base.ErrSignature.WithCause(err)
+		return schema.ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
 	return nil
@@ -111,17 +114,17 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 // envelope. Calculate will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
-		return base.ErrInternal.WithErrorf("missing head")
+		return schema.ErrInternal.WithErrorf("missing head")
 	}
 	if doc == nil {
-		return base.ErrNoDocument
+		return schema.ErrNoDocument
 	}
 
-	if d, ok := doc.(*base.Document); ok {
+	if d, ok := doc.(*schema.Document); ok {
 		e.Document = d
 	} else {
 		var err error
-		e.Document, err = base.NewDocument(doc)
+		e.Document, err = schema.NewDocument(doc)
 		if err != nil {
 			return err
 		}
@@ -140,10 +143,10 @@ func (e *Envelope) Insert(doc interface{}) error {
 // digest.
 func (e *Envelope) Calculate() error {
 	if e.Document == nil {
-		return base.ErrNoDocument
+		return schema.ErrNoDocument
 	}
 	if e.Document.IsEmpty() {
-		return base.ErrNoDocument
+		return schema.ErrNoDocument
 	}
 
 	return e.calculate()
@@ -155,23 +158,37 @@ func (e *Envelope) calculate() error {
 
 	// arm doors and cross check
 	if err := e.Document.Calculate(); err != nil {
-		return base.ErrCalculation.WithCause(err)
+		return schema.ErrCalculation.WithCause(err)
 	}
 
 	// Double check the header looks okay
 	if e.Head == nil {
-		e.Head = base.NewHeader()
+		e.Head = head.NewHeader()
 	}
 	if e.Head.UUID.IsZero() {
 		e.Head.UUID = uuid.MakeV1()
 	}
 	var err error
-	e.Head.Digest, err = e.Document.Digest()
+	e.Head.Digest, err = e.Digest()
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Digest calculates a digital digest using the canonical JSON of the document.
+func (e *Envelope) Digest() (*dsig.Digest, error) {
+	data, err := json.Marshal(e.Document)
+	if err != nil {
+		return nil, schema.ErrMarshal.WithCause(err)
+	}
+	r := bytes.NewReader(data)
+	cd, err := c14n.CanonicalJSON(r)
+	if err != nil {
+		return nil, schema.ErrInternal.WithErrorf("canonical JSON error: %w", err)
+	}
+	return dsig.NewSHA256Digest(cd), nil
 }
 
 // Extract the contents of the envelope into the provided document type.
@@ -184,9 +201,9 @@ func (e *Envelope) Extract() interface{} {
 
 // Correct will attempt to build a new envelope as a correction of the
 // current envelope contents, if possible.
-func (e *Envelope) Correct(opts ...base.Option) (*Envelope, error) {
+func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
 	if e.Head != nil && len(e.Head.Stamps) > 0 {
-		opts = append(opts, base.WithHead(e.Head))
+		opts = append(opts, head.WithHead(e.Head))
 	}
 
 	nd, err := e.Document.Clone()

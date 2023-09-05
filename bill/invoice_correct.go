@@ -5,21 +5,22 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/schema"
 )
 
 // CorrectionOptions defines a structure used to pass configuration options
 // to correct a previous invoice. This is made available to make it easier to
 // pass options between external services.
 type CorrectionOptions struct {
-	base.CorrectionOptions
+	head.CorrectionOptions
 
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Stamps of the previous document to include in the preceding data.
-	Stamps []*base.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Credit when true indicates that the corrective document should cancel the previous document.
 	Credit bool `json:"credit,omitempty" jsonschema:"title=Credit"`
 	// Debit when true indicates that the corrective document should add new items to the previous document.
@@ -39,7 +40,7 @@ type CorrectionOptions struct {
 // uses this as a base instead of passing individual options. This is useful
 // for passing options from an API, developers should use the regular option
 // methods.
-func WithOptions(opts *CorrectionOptions) base.Option {
+func WithOptions(opts *CorrectionOptions) schema.Option {
 	return func(o interface{}) {
 		o2 := o.(*CorrectionOptions)
 		*o2 = *opts
@@ -48,7 +49,7 @@ func WithOptions(opts *CorrectionOptions) base.Option {
 
 // WithData expects a raw JSON object that will be marshalled into a
 // CorrectionOptions instance and used as the base for the correction.
-func WithData(data json.RawMessage) base.Option {
+func WithData(data json.RawMessage) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.data = data
@@ -58,7 +59,7 @@ func WithData(data json.RawMessage) base.Option {
 // WithStamps provides a configuration option with stamp information
 // usually included in the envelope header for a previously generated
 // and processed invoice document.
-func WithStamps(stamps []*base.Stamp) base.Option {
+func WithStamps(stamps []*head.Stamp) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Stamps = stamps
@@ -66,7 +67,7 @@ func WithStamps(stamps []*base.Stamp) base.Option {
 }
 
 // WithReason allows a reason to be provided for the corrective operation.
-func WithReason(reason string) base.Option {
+func WithReason(reason string) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Reason = reason
@@ -74,7 +75,7 @@ func WithReason(reason string) base.Option {
 }
 
 // WithCorrectionMethod defines the method used to correct the previous invoice.
-func WithCorrectionMethod(method cbc.Key) base.Option {
+func WithCorrectionMethod(method cbc.Key) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.CorrectionMethod = method
@@ -83,7 +84,7 @@ func WithCorrectionMethod(method cbc.Key) base.Option {
 
 // WithCorrection adds a single correction key to the invoice preceding data,
 // use multiple times for multiple entries.
-func WithCorrection(correction cbc.Key) base.Option {
+func WithCorrection(correction cbc.Key) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Corrections = append(opts.Corrections, correction)
@@ -92,7 +93,7 @@ func WithCorrection(correction cbc.Key) base.Option {
 
 // WithIssueDate can be used to override the issue date of the corrective invoice
 // produced.
-func WithIssueDate(date cal.Date) base.Option {
+func WithIssueDate(date cal.Date) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.IssueDate = &date
@@ -101,14 +102,14 @@ func WithIssueDate(date cal.Date) base.Option {
 
 // Credit indicates that the corrective operation requires a credit note
 // or equivalent.
-var Credit base.Option = func(o interface{}) {
+var Credit schema.Option = func(o interface{}) {
 	opts := o.(*CorrectionOptions)
 	opts.Credit = true
 }
 
 // Debit indicates that the corrective operation is to append
 // new items to the previous invoice, usually as a debit note.
-var Debit base.Option = func(o interface{}) {
+var Debit schema.Option = func(o interface{}) {
 	opts := o.(*CorrectionOptions)
 	opts.Debit = true
 }
@@ -118,7 +119,7 @@ var Debit base.Option = func(o interface{}) {
 // regime's configuration.
 // If the existing document doesn't have a code, we'll raise an error, for
 // most use cases this will prevent looping over the same invoice.
-func (inv *Invoice) Correct(opts ...base.Option) error {
+func (inv *Invoice) Correct(opts ...schema.Option) error {
 	o := new(CorrectionOptions)
 	for _, row := range opts {
 		row(o)
@@ -200,7 +201,7 @@ func (inv *Invoice) Correct(opts ...base.Option) error {
 	// Make sure the stamps are there too
 	if r.Preceding != nil {
 		for _, k := range r.Preceding.Stamps {
-			var s *base.Stamp
+			var s *head.Stamp
 			for _, row := range o.Stamps {
 				if row.Provider == k {
 					s = row

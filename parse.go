@@ -3,7 +3,6 @@ package gobl
 import (
 	"encoding/json"
 
-	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/schema"
 )
 
@@ -14,15 +13,15 @@ import (
 func Parse(data []byte) (interface{}, error) {
 	id, err := schema.Extract(data)
 	if err != nil {
-		return nil, base.ErrUnmarshal.WithCause(err)
+		return nil, schema.ErrUnmarshal.WithCause(err)
 	}
 	if id == schema.UnknownID {
-		return nil, base.ErrUnknownSchema
+		return nil, schema.ErrUnknownSchema
 	}
 
 	obj := id.Interface()
 	if err := json.Unmarshal(data, obj); err != nil {
-		return nil, base.ErrUnmarshal.WithCause(err)
+		return nil, schema.ErrUnmarshal.WithCause(err)
 	}
 
 	return obj, nil

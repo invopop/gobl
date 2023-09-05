@@ -1,8 +1,6 @@
-package base
+package head
 
-// Option is a generic single function intended to be used
-// for handling options to method calls.
-type Option func(o interface{})
+import "github.com/invopop/gobl/schema"
 
 // CorrectionOptions is used to define base correction options that can
 // be shared between documents.
@@ -12,7 +10,7 @@ type CorrectionOptions struct {
 
 // WithHead ensures the original envelope's header is included in the set
 // of correction options.
-func WithHead(header *Header) Option {
+func WithHead(header *Header) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Head = header

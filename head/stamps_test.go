@@ -1,19 +1,19 @@
-package base_test
+package head_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/base"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDuplicateStamps(t *testing.T) {
 	st := struct {
-		Stamps []*base.Stamp
+		Stamps []*head.Stamp
 	}{
-		Stamps: []*base.Stamp{
+		Stamps: []*head.Stamp{
 			{
 				Provider: cbc.Key("provider"),
 				Value:    "value",
@@ -26,16 +26,16 @@ func TestDuplicateStamps(t *testing.T) {
 	}
 
 	err := validation.ValidateStruct(&st,
-		validation.Field(&st.Stamps, base.DetectDuplicateStamps),
+		validation.Field(&st.Stamps, head.DetectDuplicateStamps),
 	)
 	assert.NoError(t, err)
 
-	st.Stamps = append(st.Stamps, &base.Stamp{
+	st.Stamps = append(st.Stamps, &head.Stamp{
 		Provider: cbc.Key("provider"),
 		Value:    "value3",
 	})
 	err = validation.ValidateStruct(&st,
-		validation.Field(&st.Stamps, base.DetectDuplicateStamps),
+		validation.Field(&st.Stamps, head.DetectDuplicateStamps),
 	)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "duplicate stamp 'provider'")
@@ -43,16 +43,16 @@ func TestDuplicateStamps(t *testing.T) {
 
 func TestAddStamp(t *testing.T) {
 	st := struct {
-		Stamps []*base.Stamp
+		Stamps []*head.Stamp
 	}{
-		Stamps: []*base.Stamp{
+		Stamps: []*head.Stamp{
 			{
 				Provider: cbc.Key("provider"),
 				Value:    "value",
 			},
 		},
 	}
-	st.Stamps = base.AddStamp(st.Stamps, &base.Stamp{
+	st.Stamps = head.AddStamp(st.Stamps, &head.Stamp{
 		Provider: cbc.Key("provider"),
 		Value:    "new value",
 	})

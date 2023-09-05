@@ -4,13 +4,13 @@ package internal
 
 import (
 	"context"
-
-	"github.com/invopop/gobl/cbc"
 )
+
+type contextKey string
 
 const (
 	// KeyDraft is used for extract the draft status from the context.
-	KeyDraft cbc.Key = "draft"
+	KeyDraft contextKey = "draft"
 )
 
 // IsDraft returns true if the context indicates we're working with an

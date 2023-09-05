@@ -1,16 +1,12 @@
-package base
+package schema
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 
-	"github.com/invopop/gobl/c14n"
-	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -19,7 +15,7 @@ import (
 // the contents and ensuring that a `$schema` property is added automatically when
 // marshalling into JSON.
 type Document struct {
-	schema  schema.ID
+	schema  ID
 	payload interface{}
 }
 
@@ -41,27 +37,13 @@ func NewDocument(payload interface{}) (*Document, error) {
 	return d, d.insert(payload)
 }
 
-// Digest calculates a digital digest using the canonical JSON of the document.
-func (d *Document) Digest() (*dsig.Digest, error) {
-	data, err := json.Marshal(d)
-	if err != nil {
-		return nil, ErrMarshal.WithCause(err)
-	}
-	r := bytes.NewReader(data)
-	cd, err := c14n.CanonicalJSON(r)
-	if err != nil {
-		return nil, ErrInternal.WithErrorf("canonical JSON error: %w", err)
-	}
-	return dsig.NewSHA256Digest(cd), nil
-}
-
 // IsEmpty returns true if no payload has been set yet.
 func (d *Document) IsEmpty() bool {
 	return d.payload == nil
 }
 
 // Schema provides the document's schema.
-func (d *Document) Schema() schema.ID {
+func (d *Document) Schema() ID {
 	return d.schema
 }
 
@@ -120,8 +102,8 @@ func (d *Document) Correct(opts ...Option) error {
 // Insert places the provided object inside the document and looks up the schema
 // information to ensure it is known.
 func (d *Document) insert(payload interface{}) error {
-	d.schema = schema.Lookup(payload)
-	if d.schema == schema.UnknownID {
+	d.schema = Lookup(payload)
+	if d.schema == UnknownID {
 		return ErrMarshal.WithErrorf("unregistered or invalid schema")
 	}
 	d.payload = payload
@@ -145,7 +127,7 @@ func (d *Document) Clone() (*Document, error) {
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 func (d *Document) UnmarshalJSON(data []byte) error {
 	var err error
-	if d.schema, err = schema.Extract(data); err != nil {
+	if d.schema, err = Extract(data); err != nil {
 		return ErrUnknownSchema.WithCause(err)
 	}
 
@@ -168,7 +150,7 @@ func (d *Document) MarshalJSON() ([]byte, error) {
 		return nil, ErrMarshal.WithCause(err)
 	}
 
-	data, err = schema.Insert(d.schema, data)
+	data, err = Insert(d.schema, data)
 	if err != nil {
 		return nil, ErrMarshal.WithCause(err)
 	}

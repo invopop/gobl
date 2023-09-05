@@ -1,4 +1,4 @@
-package base
+package schema
 
 import (
 	"errors"
