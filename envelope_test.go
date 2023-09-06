@@ -187,13 +187,13 @@ func TestEnvelopeCompleteErrors(t *testing.T) {
 		e := new(gobl.Envelope)
 		err := e.Calculate()
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, schema.ErrNoDocument)
+		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
 	t.Run("missing document payload", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		err := e.Calculate()
 		assert.Error(t, err)
-		assert.ErrorIs(t, err, schema.ErrNoDocument)
+		assert.ErrorIs(t, err, gobl.ErrNoDocument)
 	})
 }
 

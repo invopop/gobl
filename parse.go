@@ -13,15 +13,15 @@ import (
 func Parse(data []byte) (interface{}, error) {
 	id, err := schema.Extract(data)
 	if err != nil {
-		return nil, schema.ErrUnmarshal.WithCause(err)
+		return nil, ErrUnmarshal.WithCause(err)
 	}
 	if id == schema.UnknownID {
-		return nil, schema.ErrUnknownSchema
+		return nil, ErrUnknownSchema
 	}
 
 	obj := id.Interface()
 	if err := json.Unmarshal(data, obj); err != nil {
-		return nil, schema.ErrUnmarshal.WithCause(err)
+		return nil, ErrUnmarshal.WithCause(err)
 	}
 
 	return obj, nil

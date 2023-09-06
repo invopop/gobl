@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/invopop/validation"
@@ -96,15 +95,15 @@ func (e *Envelope) verifyDigest() error {
 // only valid non-draft documents will be signed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	if e.Head == nil {
-		return schema.ErrValidation.WithCause(errors.New("missing header"))
+		return ErrValidation.WithReason("header: required")
 	}
 	e.Head.Draft = false
 	if err := e.Validate(); err != nil {
-		return schema.ErrValidation.WithCause(err)
+		return ErrValidation.WithCause(err)
 	}
 	sig, err := key.Sign(e.Head)
 	if err != nil {
-		return schema.ErrSignature.WithCause(err)
+		return ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
 	return nil
@@ -114,10 +113,10 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 // envelope. Calculate will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
-		return schema.ErrInternal.WithErrorf("missing head")
+		return ErrInternal.WithErrorf("missing head")
 	}
 	if doc == nil {
-		return schema.ErrNoDocument
+		return ErrNoDocument
 	}
 
 	if d, ok := doc.(*schema.Document); ok {
@@ -126,12 +125,12 @@ func (e *Envelope) Insert(doc interface{}) error {
 		var err error
 		e.Document, err = schema.NewDocument(doc)
 		if err != nil {
-			return err
+			return wrapError(err)
 		}
 	}
 
 	if err := e.calculate(); err != nil {
-		return err
+		return wrapError(err)
 	}
 
 	return nil
@@ -143,10 +142,10 @@ func (e *Envelope) Insert(doc interface{}) error {
 // digest.
 func (e *Envelope) Calculate() error {
 	if e.Document == nil {
-		return schema.ErrNoDocument
+		return ErrNoDocument
 	}
 	if e.Document.IsEmpty() {
-		return schema.ErrNoDocument
+		return ErrNoDocument
 	}
 
 	return e.calculate()
@@ -158,7 +157,7 @@ func (e *Envelope) calculate() error {
 
 	// arm doors and cross check
 	if err := e.Document.Calculate(); err != nil {
-		return schema.ErrCalculation.WithCause(err)
+		return ErrCalculation.WithCause(err)
 	}
 
 	// Double check the header looks okay
@@ -181,12 +180,12 @@ func (e *Envelope) calculate() error {
 func (e *Envelope) Digest() (*dsig.Digest, error) {
 	data, err := json.Marshal(e.Document)
 	if err != nil {
-		return nil, schema.ErrMarshal.WithCause(err)
+		return nil, ErrMarshal.WithCause(err)
 	}
 	r := bytes.NewReader(data)
 	cd, err := c14n.CanonicalJSON(r)
 	if err != nil {
-		return nil, schema.ErrInternal.WithErrorf("canonical JSON error: %w", err)
+		return nil, ErrInternal.WithErrorf("canonical JSON error: %w", err)
 	}
 	return dsig.NewSHA256Digest(cd), nil
 }

@@ -4,11 +4,25 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
+)
+
+// Error is used to define schema errors
+type Error string
+
+// Error provides the error code
+func (e Error) Error() string {
+	return string(e)
+}
+
+const (
+	// ErrUnknownSchema is returned when the schema has not been registered.
+	ErrUnknownSchema Error = "unknown-schema"
 )
 
 // Document helps us handle the document's contents by essentially wrapping around
@@ -104,7 +118,7 @@ func (d *Document) Correct(opts ...Option) error {
 func (d *Document) insert(payload interface{}) error {
 	d.schema = Lookup(payload)
 	if d.schema == UnknownID {
-		return ErrMarshal.WithErrorf("unregistered or invalid schema")
+		return ErrUnknownSchema
 	}
 	d.payload = payload
 	return nil
@@ -128,13 +142,13 @@ func (d *Document) Clone() (*Document, error) {
 func (d *Document) UnmarshalJSON(data []byte) error {
 	var err error
 	if d.schema, err = Extract(data); err != nil {
-		return ErrUnknownSchema.WithCause(err)
+		return fmt.Errorf("%w: %s", ErrUnknownSchema, err.Error())
 	}
 
 	// Map the schema to an instance of the payload, or fail if we don't know what it is
 	d.payload = d.schema.Interface()
 	if d.payload == nil {
-		return ErrMarshal.WithErrorf("unregistered or invalid schema")
+		return err
 	}
 	if err := json.Unmarshal(data, d.payload); err != nil {
 		return err
@@ -147,12 +161,12 @@ func (d *Document) UnmarshalJSON(data []byte) error {
 func (d *Document) MarshalJSON() ([]byte, error) {
 	data, err := json.Marshal(d.payload)
 	if err != nil {
-		return nil, ErrMarshal.WithCause(err)
+		return nil, err
 	}
 
 	data, err = Insert(d.schema, data)
 	if err != nil {
-		return nil, ErrMarshal.WithCause(err)
+		return nil, err
 	}
 
 	return data, nil

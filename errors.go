@@ -1,8 +1,11 @@
-package schema
+package gobl
 
 import (
 	"errors"
 	"fmt"
+
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/validation"
 )
 
 // Error provides a structure to better be able to make error comparisons.
@@ -50,6 +53,23 @@ func NewError(key string) *Error {
 	return &Error{Key: key}
 }
 
+// wrapError is used to wrap around an error
+func wrapError(err error) error {
+	if err == nil {
+		return nil
+	}
+	if _, ok := err.(*Error); ok {
+		return err // nothing to do
+	}
+	if errors.Is(err, schema.ErrUnknownSchema) {
+		return ErrUnknownSchema
+	}
+	if _, ok := err.(validation.Error); ok {
+		return ErrValidation.WithCause(err)
+	}
+	return err
+}
+
 // Error provides a string representation of the error.
 func (e *Error) Error() string {
 	if e.Cause != nil {
@@ -62,6 +82,13 @@ func (e *Error) Error() string {
 func (e *Error) WithCause(err error) *Error {
 	ne := e.copy()
 	ne.Cause = err
+	return ne
+}
+
+// WithReason returns an error with a reason attached.
+func (e *Error) WithReason(msg string) *Error {
+	ne := e.copy()
+	ne.Cause = errors.New(msg)
 	return ne
 }
 
