@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
@@ -29,7 +28,7 @@ const (
 // the contents and ensuring that a `$schema` property is added automatically when
 // marshalling into JSON.
 type Document struct {
-	schema  ID
+	Schema  ID `json:"$schema"`
 	payload interface{}
 }
 
@@ -54,11 +53,6 @@ func NewDocument(payload interface{}) (*Document, error) {
 // IsEmpty returns true if no payload has been set yet.
 func (d *Document) IsEmpty() bool {
 	return d.payload == nil
-}
-
-// Schema provides the document's schema.
-func (d *Document) Schema() ID {
-	return d.schema
 }
 
 // Instance returns a prepared version of the document's content.
@@ -90,7 +84,7 @@ func (d *Document) ValidateWithContext(ctx context.Context) error {
 		ctx = context.WithValue(ctx, internal.KeyDraft, true)
 	}
 	err := validation.ValidateStructWithContext(ctx, d,
-		validation.Field(&d.schema, validation.Required),
+		validation.Field(&d.Schema, validation.Required),
 	)
 	if err != nil {
 		return err
@@ -116,8 +110,8 @@ func (d *Document) Correct(opts ...Option) error {
 // Insert places the provided object inside the document and looks up the schema
 // information to ensure it is known.
 func (d *Document) insert(payload interface{}) error {
-	d.schema = Lookup(payload)
-	if d.schema == UnknownID {
+	d.Schema = Lookup(payload)
+	if d.Schema == UnknownID {
 		return ErrUnknownSchema
 	}
 	d.payload = payload
@@ -141,14 +135,17 @@ func (d *Document) Clone() (*Document, error) {
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
 func (d *Document) UnmarshalJSON(data []byte) error {
 	var err error
-	if d.schema, err = Extract(data); err != nil {
-		return fmt.Errorf("%w: %s", ErrUnknownSchema, err.Error())
+	if d.Schema, err = Extract(data); err != nil {
+		return err
+	}
+	if d.Schema == UnknownID {
+		return nil // return silently
 	}
 
 	// Map the schema to an instance of the payload, or fail if we don't know what it is
-	d.payload = d.schema.Interface()
+	d.payload = d.Schema.Interface()
 	if d.payload == nil {
-		return err
+		return ErrUnknownSchema
 	}
 	if err := json.Unmarshal(data, d.payload); err != nil {
 		return err
@@ -164,7 +161,7 @@ func (d *Document) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	data, err = Insert(d.schema, data)
+	data, err = Insert(d.Schema, data)
 	if err != nil {
 		return nil, err
 	}

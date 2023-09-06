@@ -326,7 +326,7 @@ func TestDocument(t *testing.T) {
 	assert.Contains(t, id.String(), "/note/message")
 
 	dig := "82a5cddc56f069ff17705f310161dd17cd8b00d94728e6be3fafdad980522a27"
-	assert.Equal(t, id, doc.Schema())
+	assert.Equal(t, id, doc.Schema)
 	sha, err := env.Digest()
 	require.NoError(t, err)
 	assert.Equal(t, dig, sha.Value)
@@ -342,7 +342,7 @@ func TestDocument(t *testing.T) {
 	err = json.Unmarshal(data, doc)
 	require.NoError(t, err)
 
-	assert.Equal(t, doc.Schema(), id)
+	assert.Equal(t, doc.Schema, id)
 	sha, err = env.Digest()
 	require.NoError(t, err)
 	assert.Equal(t, dig, sha.Value)
