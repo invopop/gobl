@@ -29,8 +29,8 @@ type FuelLine struct {
 	WalletID cbc.Code `json:"wallet_id" jsonschema:"title=Wallet Identifier"`
 	// Date and time of the purchase
 	PurchaseDateTime cal.DateTime `json:"purchase_date" jsonschema:"title=Purchase Date"`
-	// Tax ID (RFC) of the purchaser
-	PurchaserTaxID cbc.Code `json:"purchaser_tax_id" jsonschema:"title=Purchaser's Tax ID"`
+	// Tax ID (RFC) of the fuel seller
+	SellerTaxID cbc.Code `json:"seller_tax_id" jsonschema:"title=Seller's Tax ID"`
 	// Code of the service station where the purchase was made
 	ServiceStationCode cbc.Code `json:"service_station_code" jsonschema:"title=Service Station Code"`
 	// Amount of fuel units purchased
