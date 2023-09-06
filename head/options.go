@@ -8,11 +8,22 @@ type CorrectionOptions struct {
 	Head *Header `json:"-"` // copy of the original document header
 }
 
+func (co *CorrectionOptions) setHeader(header *Header) {
+	co.Head = header
+}
+
+type correctionOptionsPtr interface {
+	setHeader(*Header)
+}
+
 // WithHead ensures the original envelope's header is included in the set
-// of correction options.
+// of correction options. If the head.CorrectionOptions is not defined
+// in the options, this will be ignored.
 func WithHead(header *Header) schema.Option {
 	return func(o interface{}) {
-		opts := o.(*CorrectionOptions)
-		opts.Head = header
+		opts, ok := o.(correctionOptionsPtr)
+		if ok {
+			opts.setHeader(header)
+		}
 	}
 }
