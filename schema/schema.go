@@ -26,7 +26,7 @@ const (
 func init() {
 	schemas = newRegistry()
 	Register(GOBL.Add("schema"),
-		Document{},
+		Object{},
 	)
 }
 

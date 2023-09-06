@@ -26,7 +26,7 @@ type Envelope struct {
 	// Details on what the contents are
 	Head *head.Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
-	Document *schema.Document `json:"doc" jsonschema:"title=Document"`
+	Document *schema.Object `json:"doc" jsonschema:"title=Document"`
 	// JSON Web Signatures of the header
 	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
@@ -42,7 +42,7 @@ func NewEnvelope() *Envelope {
 	e := new(Envelope)
 	e.Schema = EnvelopeSchema
 	e.Head = head.NewHeader()
-	e.Document = new(schema.Document)
+	e.Document = new(schema.Object)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
 }
@@ -119,11 +119,11 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return ErrNoDocument
 	}
 
-	if d, ok := doc.(*schema.Document); ok {
+	if d, ok := doc.(*schema.Object); ok {
 		e.Document = d
 	} else {
 		var err error
-		e.Document, err = schema.NewDocument(doc)
+		e.Document, err = schema.NewObject(doc)
 		if err != nil {
 			return wrapError(err)
 		}

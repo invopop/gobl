@@ -88,8 +88,8 @@ type Invoice struct {
 	// legal details.
 	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
-	// Additional complementary documents that add relevant information to the invoice.
-	Complements []*schema.Document `json:"complements,omitempty" jsonschema:"title=Complements"`
+	// Additional complementary objects that add relevant information to the invoice.
+	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
 
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`

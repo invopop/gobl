@@ -338,7 +338,7 @@ func TestDocument(t *testing.T) {
 	digest := dsig.NewSHA256Digest(data) // this works as the JSON is very simple!
 	assert.Equal(t, dig, digest.Value)
 
-	doc = new(schema.Document)
+	doc = new(schema.Object)
 	err = json.Unmarshal(data, doc)
 	require.NoError(t, err)
 
@@ -355,7 +355,7 @@ func TestDocument(t *testing.T) {
 func TestDocumentValidation(t *testing.T) {
 	msg := &note.Message{}
 
-	doc, err := schema.NewDocument(msg)
+	doc, err := schema.NewObject(msg)
 	require.NoError(t, err)
 
 	err = doc.Validate()
@@ -363,7 +363,7 @@ func TestDocumentValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "content: cannot be blank")
 	}
 
-	doc = new(schema.Document)
+	doc = new(schema.Object)
 	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, doc)

@@ -72,7 +72,7 @@ func processFile(t *testing.T, path string) error {
 		}
 	} else {
 		// Handle documents
-		doc := new(schema.Document)
+		doc := new(schema.Object)
 		if err := yaml.Unmarshal(data, doc); err != nil {
 			return fmt.Errorf("invalid contents: %w", err)
 		}

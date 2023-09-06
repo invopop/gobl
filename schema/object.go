@@ -24,10 +24,10 @@ const (
 	ErrUnknownSchema Error = "unknown-schema"
 )
 
-// Document helps us handle the document's contents by essentially wrapping around
+// Object helps handle json objects that must contain a schema to correctly identify
 // the contents and ensuring that a `$schema` property is added automatically when
-// marshalling into JSON.
-type Document struct {
+// marshalling back into JSON.
+type Object struct {
 	Schema  ID `json:"$schema"`
 	payload interface{}
 }
@@ -44,25 +44,25 @@ type Correctable interface {
 	Correct(...Option) error
 }
 
-// NewDocument instantiates a Document wrapper around the provided object.
-func NewDocument(payload interface{}) (*Document, error) {
-	d := new(Document)
+// NewObject instantiates an Object wrapper around the provided payload.
+func NewObject(payload interface{}) (*Object, error) {
+	d := new(Object)
 	return d, d.insert(payload)
 }
 
 // IsEmpty returns true if no payload has been set yet.
-func (d *Document) IsEmpty() bool {
+func (d *Object) IsEmpty() bool {
 	return d.payload == nil
 }
 
 // Instance returns a prepared version of the document's content.
-func (d *Document) Instance() interface{} {
+func (d *Object) Instance() interface{} {
 	return d.payload
 }
 
 // Calculate will attempt to run the calculation method on the
 // document payload.
-func (d *Document) Calculate() error {
+func (d *Object) Calculate() error {
 	pl, ok := d.payload.(Calculable)
 	if !ok {
 		return nil
@@ -72,13 +72,13 @@ func (d *Document) Calculate() error {
 
 // Validate checks to ensure the document has everything it needs
 // and will pass on the validation call to the payload.
-func (d *Document) Validate() error {
+func (d *Object) Validate() error {
 	return d.ValidateWithContext(context.Background())
 }
 
 // ValidateWithContext checks to ensure the document has everything it needs
 // and will pass on the validation call to the payload.
-func (d *Document) ValidateWithContext(ctx context.Context) error {
+func (d *Object) ValidateWithContext(ctx context.Context) error {
 	if ctx.Value(internal.KeyDraft) == nil {
 		// if draft not set previously, assume true
 		ctx = context.WithValue(ctx, internal.KeyDraft, true)
@@ -96,7 +96,7 @@ func (d *Document) ValidateWithContext(ctx context.Context) error {
 
 // Correct will attempt to run the correction method on the document
 // using some of the provided options.
-func (d *Document) Correct(opts ...Option) error {
+func (d *Object) Correct(opts ...Option) error {
 	pl, ok := d.payload.(Correctable)
 	if !ok {
 		return errors.New("document cannot be corrected")
@@ -109,7 +109,7 @@ func (d *Document) Correct(opts ...Option) error {
 
 // Insert places the provided object inside the document and looks up the schema
 // information to ensure it is known.
-func (d *Document) insert(payload interface{}) error {
+func (d *Object) insert(payload interface{}) error {
 	d.Schema = Lookup(payload)
 	if d.Schema == UnknownID {
 		return ErrUnknownSchema
@@ -120,8 +120,8 @@ func (d *Document) insert(payload interface{}) error {
 
 // Clone makes a copy of the document by serializing and deserializing it.
 // the contents into a new document instance.
-func (d *Document) Clone() (*Document, error) {
-	d2 := new(Document)
+func (d *Object) Clone() (*Object, error) {
+	d2 := new(Object)
 	data, err := json.Marshal(d)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (d *Document) Clone() (*Document, error) {
 }
 
 // UnmarshalJSON satisfies the json.Unmarshaler interface.
-func (d *Document) UnmarshalJSON(data []byte) error {
+func (d *Object) UnmarshalJSON(data []byte) error {
 	var err error
 	if d.Schema, err = Extract(data); err != nil {
 		return err
@@ -155,7 +155,7 @@ func (d *Document) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON satisfies the json.Marshaler interface.
-func (d *Document) MarshalJSON() ([]byte, error) {
+func (d *Object) MarshalJSON() ([]byte, error) {
 	data, err := json.Marshal(d.payload)
 	if err != nil {
 		return nil, err
@@ -170,10 +170,10 @@ func (d *Document) MarshalJSON() ([]byte, error) {
 }
 
 // JSONSchema returns a jsonschema.Schema instance.
-func (Document) JSONSchema() *jsonschema.Schema {
+func (Object) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:  "object",
-		Title: "Document",
+		Title: "Object",
 		Description: here.Doc(`
 			Data object whose type is determined from the <code>$schema</code> property.
 		`),
