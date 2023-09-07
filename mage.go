@@ -24,7 +24,7 @@ func Schema() error {
 // Regimes generates JSON version of each regimes's data.
 func Regimes() error {
 	for _, r := range tax.AllRegimes() {
-		doc, err := schema.NewDocument(r)
+		doc, err := schema.NewObject(r)
 		if err != nil {
 			return err
 		}

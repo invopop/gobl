@@ -16,7 +16,7 @@
           "description": "Details on what the contents are"
         },
         "doc": {
-          "$ref": "https://gobl.org/draft-0/schema/document",
+          "$ref": "https://gobl.org/draft-0/schema/object",
           "title": "Document",
           "description": "The data inside the envelope"
         },
