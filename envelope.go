@@ -1,15 +1,16 @@
 package gobl
 
 import (
+	"bytes"
 	"context"
-	"errors"
+	"encoding/json"
 	"fmt"
 
 	"github.com/invopop/validation"
 
-	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/c14n"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
@@ -23,9 +24,9 @@ type Envelope struct {
 	// Schema identifies the schema that should be used to understand this document
 	Schema schema.ID `json:"$schema" jsonschema:"title=JSON Schema ID"`
 	// Details on what the contents are
-	Head *Header `json:"head" jsonschema:"title=Header"`
+	Head *head.Header `json:"head" jsonschema:"title=Header"`
 	// The data inside the envelope
-	Document *Document `json:"doc" jsonschema:"title=Document"`
+	Document *schema.Object `json:"doc" jsonschema:"title=Document"`
 	// JSON Web Signatures of the header
 	Signatures []*dsig.Signature `json:"sigs,omitempty" jsonschema:"title=Signatures"`
 }
@@ -40,8 +41,8 @@ var EnvelopeSchema = schema.GOBL.Add("envelope")
 func NewEnvelope() *Envelope {
 	e := new(Envelope)
 	e.Schema = EnvelopeSchema
-	e.Head = NewHeader()
-	e.Document = new(Document)
+	e.Head = head.NewHeader()
+	e.Document = new(schema.Object)
 	e.Signatures = make([]*dsig.Signature, 0)
 	return e
 }
@@ -79,7 +80,7 @@ func (e *Envelope) ValidateWithContext(ctx context.Context) error {
 
 func (e *Envelope) verifyDigest() error {
 	d1 := e.Head.Digest
-	d2, err := e.Document.Digest()
+	d2, err := e.Digest()
 	if err != nil {
 		return err
 	}
@@ -94,7 +95,7 @@ func (e *Envelope) verifyDigest() error {
 // only valid non-draft documents will be signed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	if e.Head == nil {
-		return ErrValidation.WithCause(errors.New("missing header"))
+		return ErrValidation.WithReason("header: required")
 	}
 	e.Head.Draft = false
 	if err := e.Validate(); err != nil {
@@ -118,18 +119,18 @@ func (e *Envelope) Insert(doc interface{}) error {
 		return ErrNoDocument
 	}
 
-	if d, ok := doc.(*Document); ok {
+	if d, ok := doc.(*schema.Object); ok {
 		e.Document = d
 	} else {
 		var err error
-		e.Document, err = NewDocument(doc)
+		e.Document, err = schema.NewObject(doc)
 		if err != nil {
-			return err
+			return wrapError(err)
 		}
 	}
 
 	if err := e.calculate(); err != nil {
-		return err
+		return wrapError(err)
 	}
 
 	return nil
@@ -161,18 +162,32 @@ func (e *Envelope) calculate() error {
 
 	// Double check the header looks okay
 	if e.Head == nil {
-		e.Head = NewHeader()
+		e.Head = head.NewHeader()
 	}
 	if e.Head.UUID.IsZero() {
 		e.Head.UUID = uuid.MakeV1()
 	}
 	var err error
-	e.Head.Digest, err = e.Document.Digest()
+	e.Head.Digest, err = e.Digest()
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Digest calculates a digital digest using the canonical JSON of the document.
+func (e *Envelope) Digest() (*dsig.Digest, error) {
+	data, err := json.Marshal(e.Document)
+	if err != nil {
+		return nil, ErrMarshal.WithCause(err)
+	}
+	r := bytes.NewReader(data)
+	cd, err := c14n.CanonicalJSON(r)
+	if err != nil {
+		return nil, ErrInternal.WithErrorf("canonical JSON error: %w", err)
+	}
+	return dsig.NewSHA256Digest(cd), nil
 }
 
 // Extract the contents of the envelope into the provided document type.
@@ -185,15 +200,9 @@ func (e *Envelope) Extract() interface{} {
 
 // Correct will attempt to build a new envelope as a correction of the
 // current envelope contents, if possible.
-func (e *Envelope) Correct(opts ...cbc.Option) (*Envelope, error) {
-	// Determine any extra options
-	switch e.Document.Instance().(type) {
-	case *bill.Invoice:
-		// Special case for invoices so that we copy over
-		// the stamps from the original invoice headers.
-		if len(e.Head.Stamps) > 0 {
-			opts = append(opts, bill.WithStamps(e.Head.Stamps))
-		}
+func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
+	if e.Head != nil && len(e.Head.Stamps) > 0 {
+		opts = append(opts, head.WithHead(e.Head))
 	}
 
 	nd, err := e.Document.Clone()

@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/internal/currency"
 	"github.com/invopop/gobl/internal/schemas"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -24,7 +24,7 @@ func Schema() error {
 // Regimes generates JSON version of each regimes's data.
 func Regimes() error {
 	for _, r := range tax.AllRegimes() {
-		doc, err := gobl.NewDocument(r)
+		doc, err := schema.NewDocument(r)
 		if err != nil {
 			return err
 		}

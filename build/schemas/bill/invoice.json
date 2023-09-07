@@ -349,6 +349,14 @@
           "title": "Notes",
           "description": "Unstructured information that is relevant to the invoice, such as correction or additional\nlegal details."
         },
+        "complements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/schema/document"
+          },
+          "type": "array",
+          "title": "Complements",
+          "description": "Additional complementary documents that add relevant information to the invoice."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
@@ -672,7 +680,7 @@
         },
         "stamps": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/stamp"
+            "$ref": "https://gobl.org/draft-0/head/stamp"
           },
           "type": "array",
           "title": "Stamps",

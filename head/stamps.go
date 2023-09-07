@@ -1,9 +1,10 @@
-package cbc
+package head
 
 import (
 	"errors"
 	"fmt"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/validation"
 )
 
@@ -11,7 +12,7 @@ import (
 // or intermediary and should thus be included in any official envelopes.
 type Stamp struct {
 	// Identity of the agency used to create the stamp usually defined by each region.
-	Provider Key `json:"prv" jsonschema:"title=Provider"`
+	Provider cbc.Key `json:"prv" jsonschema:"title=Provider"`
 	// The serialized stamp value generated for or by the external agency
 	Value string `json:"val" jsonschema:"title=Value"`
 }

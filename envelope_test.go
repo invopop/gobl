@@ -13,9 +13,12 @@ import (
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
 
@@ -141,7 +144,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 	t.Run("handle stamps", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		require.NoError(t, e.Insert(m))
-		e.Head.AddStamp(&cbc.Stamp{Provider: cbc.Key("test"), Value: "test"})
+		e.Head.AddStamp(&head.Stamp{Provider: cbc.Key("test"), Value: "test"})
 		err := e.Calculate()
 		assert.NoError(t, err)
 		assert.NotEmpty(t, e.Head.Stamps)
@@ -307,4 +310,74 @@ func TestEnvelopeCorrect(t *testing.T) {
 		doc = e2.Extract().(*bill.Invoice)
 		assert.Equal(t, doc.Type, bill.InvoiceTypeCorrective, "corrected")
 	})
+}
+
+func TestDocument(t *testing.T) {
+	msg := &note.Message{
+		Content: "test message",
+	}
+	env := gobl.NewEnvelope()
+	err := env.Insert(msg)
+	require.NoError(t, err)
+	doc := env.Document
+
+	id := schema.Lookup(&note.Message{})
+	assert.Contains(t, id.String(), "https://gobl.org/")
+	assert.Contains(t, id.String(), "/note/message")
+
+	dig := "82a5cddc56f069ff17705f310161dd17cd8b00d94728e6be3fafdad980522a27"
+	assert.Equal(t, id, doc.Schema)
+	sha, err := env.Digest()
+	require.NoError(t, err)
+	assert.Equal(t, dig, sha.Value)
+	assert.Equal(t, doc.Instance(), msg)
+
+	data, err := json.Marshal(doc)
+	require.NoError(t, err)
+	assert.Equal(t, `{"$schema":"`+id.String()+`","content":"test message"}`, string(data))
+	digest := dsig.NewSHA256Digest(data) // this works as the JSON is very simple!
+	assert.Equal(t, dig, digest.Value)
+
+	doc = new(schema.Object)
+	err = json.Unmarshal(data, doc)
+	require.NoError(t, err)
+
+	assert.Equal(t, doc.Schema, id)
+	sha, err = env.Digest()
+	require.NoError(t, err)
+	assert.Equal(t, dig, sha.Value)
+
+	obj, ok := doc.Instance().(*note.Message)
+	assert.True(t, ok)
+	assert.Equal(t, msg.Content, obj.Content)
+}
+
+func TestDocumentValidation(t *testing.T) {
+	msg := &note.Message{}
+
+	doc, err := schema.NewObject(msg)
+	require.NoError(t, err)
+
+	err = doc.Validate()
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "content: cannot be blank")
+	}
+
+	doc = new(schema.Object)
+	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.yaml")
+	require.NoError(t, err)
+	err = yaml.Unmarshal(data, doc)
+	require.NoError(t, err)
+
+	inv := doc.Instance().(*bill.Invoice)
+	inv.Code = "" // blank, which will not be accepted if not a draft
+	require.NoError(t, doc.Calculate())
+	assert.NoError(t, doc.Validate())
+	inv.IssueDate = cal.Date{}
+	err = doc.Validate()
+	if assert.Error(t, err) {
+		// Double check to make sure validation working
+		assert.Contains(t, err.Error(), "issue_date: required")
+	}
+
 }
