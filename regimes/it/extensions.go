@@ -21,24 +21,78 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.IT: "Codice Regime Fiscale",
 		},
 		Codes: []*tax.CodeDefinition{
-			{Code: "RF01", Name: i18n.String{i18n.EN: "Ordinary"}},
-			{Code: "RF02", Name: i18n.String{i18n.EN: "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)"}},
-			{Code: "RF04", Name: i18n.String{i18n.EN: "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)"}},
-			{Code: "RF05", Name: i18n.String{i18n.EN: "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)"}},
-			{Code: "RF06", Name: i18n.String{i18n.EN: "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)"}},
-			{Code: "RF07", Name: i18n.String{i18n.EN: "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)"}},
-			{Code: "RF08", Name: i18n.String{i18n.EN: "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)"}},
-			{Code: "RF09", Name: i18n.String{i18n.EN: "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)"}},
-			{Code: "RF10", Name: i18n.String{i18n.EN: "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)"}},
-			{Code: "RF11", Name: i18n.String{i18n.EN: "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)"}},
-			{Code: "RF12", Name: i18n.String{i18n.EN: "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)"}},
-			{Code: "RF13", Name: i18n.String{i18n.EN: "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)"}},
-			{Code: "RF14", Name: i18n.String{i18n.EN: "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)"}},
-			{Code: "RF15", Name: i18n.String{i18n.EN: "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)"}},
-			{Code: "RF16", Name: i18n.String{i18n.EN: "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)"}},
-			{Code: "RF17", Name: i18n.String{i18n.EN: "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)"}},
-			{Code: "RF18", Name: i18n.String{i18n.EN: "Other"}},
-			{Code: "RF19", Name: i18n.String{i18n.EN: "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)"}},
+			{Code: "RF01", Name: i18n.String{
+				i18n.EN: "Ordinary",
+				i18n.IT: "Regime Ordinario",
+			}},
+			{Code: "RF02", Name: i18n.String{
+				i18n.EN: "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)",
+				i18n.IT: "Regime dei contribuenti minimi (art. 1,c.96-117, L. 244/2007)",
+			}},
+			{Code: "RF04", Name: i18n.String{
+				i18n.EN: "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)",
+				i18n.IT: "Agricoltura e attività connesse e pesca (artt. 34 e 34-bis, D.P.R. 633/1972)",
+			}},
+			{Code: "RF05", Name: i18n.String{
+				i18n.EN: "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)",
+				i18n.IT: "Vendita sali e tabacchi (art. 74, c.1, D.P.R. 633/1972)",
+			}},
+			{Code: "RF06", Name: i18n.String{
+				i18n.EN: "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)",
+				i18n.IT: "Commercio dei fiammiferi (art. 74, c.1, D.P.R. 633/1972)",
+			}},
+			{Code: "RF07", Name: i18n.String{
+				i18n.EN: "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)",
+				i18n.IT: "Editoria (art. 74, c.1, D.P.R. 633/1972)",
+			}},
+			{Code: "RF08", Name: i18n.String{
+				i18n.EN: "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)",
+				i18n.IT: "Gestione di servizi di telefonia pubblica (art. 74, c.1, D.P.R. 633/1972)",
+			}},
+			{Code: "RF09", Name: i18n.String{
+				i18n.EN: "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)",
+				i18n.IT: "Rivendita di documenti di trasporto pubblico e di sosta (art. 74, c.1, D.P.R. 633/1972)",
+			}},
+			{Code: "RF10", Name: i18n.String{
+				i18n.EN: "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)",
+				i18n.IT: "Intrattenimenti, giochi e altre attività di cui alla tariffa allegata al D.P.R. 640/72 (art. 74, c.6, D.P.R. 633/1972)",
+			}},
+			{Code: "RF11", Name: i18n.String{
+				i18n.EN: "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)",
+				i18n.IT: "Agenzie di viaggi e turismo (art. 74-ter, D.P.R. 633/1972)",
+			}},
+			{Code: "RF12", Name: i18n.String{
+				i18n.EN: "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)",
+				i18n.IT: "Agriturismo (art. 5, c.2, L. 413/1991)",
+			}},
+			{Code: "RF13", Name: i18n.String{
+				i18n.EN: "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)",
+				i18n.IT: "Vendite a domicilio (art. 25-bis, c.6, D.P.R. 600/1973)",
+			}},
+			{Code: "RF14", Name: i18n.String{
+				i18n.EN: "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)",
+				i18n.IT: "Rivendita di beni usati, di oggetti d’arte, d’antiquariato o da collezione (art. 36, D.L. 41/1995)",
+			}},
+			{Code: "RF15", Name: i18n.String{
+				i18n.EN: "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)",
+				i18n.IT: "Agenzie di vendite all’asta di oggetti d’arte, antiquariato o da collezione (art. 40-bis, D.L. 41/1995)",
+			}},
+			{Code: "RF16", Name: i18n.String{
+				i18n.EN: "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)",
+				i18n.IT: "IVA per cassa P.A. (art. 6, c.5, D.P.R. 633/1972)",
+			}},
+			{Code: "RF17", Name: i18n.String{
+				i18n.EN: "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)",
+				i18n.IT: "IVA per cassa (art. 32-bis, D.L. 83/2012)",
+			}},
+			{Code: "RF19", Name: i18n.String{
+				i18n.EN: "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)",
+				i18n.IT: "Regime forfettario",
+			}},
+			{Code: "RF18", Name: i18n.String{
+				i18n.EN: "Other",
+				i18n.IT: "Altro",
+			}},
 		},
 	},
 
