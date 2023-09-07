@@ -38,5 +38,5 @@
       "description": "Envelope wraps around a document adding headers and digital signatures."
     }
   },
-  "$comment": "Generated with GOBL v0.55.0"
+  "$comment": "Generated with GOBL v0.56.0"
 }
