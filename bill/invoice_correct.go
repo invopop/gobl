@@ -28,9 +28,9 @@ type CorrectionOptions struct {
 	// Human readable reason for the corrective operation.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Correction method as defined by the tax regime.
-	CorrectionMethod cbc.Key `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
-	// Correction keys that describe the specific changes according to the tax regime.
-	Corrections []cbc.Key `json:"corrections,omitempty" jsonschema:"title=Corrections"`
+	Method cbc.Key `json:"method,omitempty" jsonschema:"title=Method"`
+	// Changes keys that describe the specific changes according to the tax regime.
+	Changes []cbc.Key `json:"changes,omitempty" jsonschema:"title=Changes"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
@@ -74,20 +74,20 @@ func WithReason(reason string) schema.Option {
 	}
 }
 
-// WithCorrectionMethod defines the method used to correct the previous invoice.
-func WithCorrectionMethod(method cbc.Key) schema.Option {
+// WithMethod defines the method used to correct the previous invoice.
+func WithMethod(method cbc.Key) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
-		opts.CorrectionMethod = method
+		opts.Method = method
 	}
 }
 
-// WithCorrection adds a single correction key to the invoice preceding data,
-// use multiple times for multiple entries.
-func WithCorrection(correction cbc.Key) schema.Option {
+// WithChanges adds the set of change keys to the invoice's preceding data,
+// can be called multiple times.
+func WithChanges(changes ...cbc.Key) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
-		opts.Corrections = append(opts.Corrections, correction)
+		opts.Changes = append(opts.Changes, changes...)
 	}
 }
 
@@ -151,13 +151,13 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 
 	// Copy and prepare the basic fields
 	pre := &Preceding{
-		UUID:             inv.UUID,
-		Series:           inv.Series,
-		Code:             inv.Code,
-		IssueDate:        inv.IssueDate.Clone(),
-		Reason:           o.Reason,
-		Corrections:      o.Corrections,
-		CorrectionMethod: o.CorrectionMethod,
+		UUID:      inv.UUID,
+		Series:    inv.Series,
+		Code:      inv.Code,
+		IssueDate: inv.IssueDate.Clone(),
+		Reason:    o.Reason,
+		Method:    o.Method,
+		Changes:   o.Changes,
 	}
 	inv.UUID = nil
 	inv.Series = ""
@@ -217,21 +217,21 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		}
 
 		if len(cd.Methods) > 0 {
-			if pre.CorrectionMethod == "" {
+			if pre.Method == cbc.KeyEmpty {
 				return errors.New("missing correction method")
 			}
-			if !cd.HasMethod(pre.CorrectionMethod) {
-				return fmt.Errorf("invalid correction method: %v", pre.CorrectionMethod)
+			if !cd.HasMethod(pre.Method) {
+				return fmt.Errorf("invalid correction method: %v", pre.Method)
 			}
 		}
 
 		if len(cd.Keys) > 0 {
-			if len(pre.Corrections) == 0 {
-				return errors.New("missing correction keys")
+			if len(pre.Changes) == 0 {
+				return errors.New("missing changes")
 			}
-			for _, k := range pre.Corrections {
+			for _, k := range pre.Changes {
 				if !cd.HasKey(k) {
-					return fmt.Errorf("invalid correction key: %v", k)
+					return fmt.Errorf("invalid change key: '%v'", k)
 				}
 			}
 		}

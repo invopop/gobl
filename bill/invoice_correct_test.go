@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -27,8 +28,8 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Credit,
 		bill.WithReason("test refund"),
-		bill.WithCorrectionMethod(es.CorrectionMethodKeyComplete),
-		bill.WithCorrection(es.CorrectionKeyLine),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
@@ -53,8 +54,8 @@ func TestInvoiceCorrect(t *testing.T) {
 
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(
-		bill.WithCorrection(es.CorrectionKeyLine),
-		bill.WithCorrectionMethod(es.CorrectionMethodKeyComplete),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
@@ -64,8 +65,8 @@ func TestInvoiceCorrect(t *testing.T) {
 	d := cal.MakeDate(2023, 6, 13)
 	err = i.Correct(
 		bill.WithIssueDate(d),
-		bill.WithCorrection(es.CorrectionKeyLine),
-		bill.WithCorrectionMethod(es.CorrectionMethodKeyComplete),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
@@ -108,7 +109,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	err = i.Correct(
 		bill.Credit,
 		bill.WithStamps(stamps),
-		bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked),
+		bill.WithMethod(co.CorrectionMethodKeyRevoked),
 		bill.WithReason("test refund"),
 	)
 	require.NoError(t, err)
@@ -116,14 +117,16 @@ func TestInvoiceCorrect(t *testing.T) {
 	pre = i.Preceding[0]
 	require.Len(t, pre.Stamps, 1)
 	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
-	assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
+	assert.Equal(t, pre.Method, co.CorrectionMethodKeyRevoked)
 }
 
 func TestCorrectWithOptions(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
 	opts := &bill.CorrectionOptions{
-		Credit: true,
-		Reason: "test refund",
+		Credit:  true,
+		Reason:  "test refund",
+		Method:  es.CorrectionMethodKeyComplete,
+		Changes: []cbc.Key{es.CorrectionKeyLine},
 	}
 	err := i.Correct(bill.WithOptions(opts))
 	require.NoError(t, err)
@@ -142,7 +145,11 @@ func TestCorrectWithData(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
 	data := []byte(`{"credit":true,"reason":"test refund"}`)
 
-	err := i.Correct(bill.WithData(data))
+	err := i.Correct(
+		bill.WithData(data),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
+	)
 	assert.NoError(t, err)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "-10") // implies credit was made
 
