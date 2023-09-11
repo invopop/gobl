@@ -69,9 +69,12 @@ func New() *tax.Regime {
 		Scenarios:  scenarios,
 		Validator:  Validate,
 		Calculator: Calculate,
-		Preceding: &tax.PrecedingDefinitions{
-			Types: []cbc.Key{
-				bill.InvoiceTypeCreditNote,
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
 			},
 		},
 		Categories: taxCategories,

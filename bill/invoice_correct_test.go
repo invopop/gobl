@@ -11,6 +11,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -24,7 +25,11 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Contains(t, err.Error(), "cannot use both credit and debit options")
 
 	i = testInvoiceESForCorrection(t)
-	err = i.Correct(bill.Credit, bill.WithReason("test refund"))
+	err = i.Correct(bill.Credit,
+		bill.WithReason("test refund"),
+		bill.WithCorrectionMethod(es.CorrectionMethodKeyComplete),
+		bill.WithCorrection(es.CorrectionKeyLine),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
@@ -47,14 +52,21 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Contains(t, err.Error(), "debit note not supported by regime")
 
 	i = testInvoiceESForCorrection(t)
-	err = i.Correct()
+	err = i.Correct(
+		bill.WithCorrection(es.CorrectionKeyLine),
+		bill.WithCorrectionMethod(es.CorrectionMethodKeyComplete),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
 
 	// With preset date
 	i = testInvoiceESForCorrection(t)
 	d := cal.MakeDate(2023, 6, 13)
-	err = i.Correct(bill.WithIssueDate(d))
+	err = i.Correct(
+		bill.WithIssueDate(d),
+		bill.WithCorrection(es.CorrectionKeyLine),
+		bill.WithCorrectionMethod(es.CorrectionMethodKeyComplete),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
 
@@ -93,7 +105,12 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Contains(t, err.Error(), "corrective invoice type not supported by regime, try credit or debit")
 
 	i = testInvoiceCOForCorrection(t)
-	err = i.Correct(bill.Credit, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
+	err = i.Correct(
+		bill.Credit,
+		bill.WithStamps(stamps),
+		bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked),
+		bill.WithReason("test refund"),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 	pre = i.Preceding[0]

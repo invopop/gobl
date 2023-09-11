@@ -37,9 +37,9 @@ func New() *tax.Regime {
 			{
 				Code: common.TaxCategoryST,
 				Name: i18n.String{
-					i18n.EN: "Sales Tax",
+					i18n.EN: "ST",
 				},
-				Desc: i18n.String{
+				Title: i18n.String{
 					i18n.EN: "Sales Tax",
 				},
 				Retained: false,

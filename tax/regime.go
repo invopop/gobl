@@ -28,6 +28,9 @@ type Regime struct {
 	// Name of the country
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
+	// Introductory details about the regime.
+	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
+
 	// Location name for the country's central time zone. Accepted
 	// values from IANA Time Zone Database (https://iana.org/time-zones).
 	TimeZone string `json:"time_zone" jsonschema:"title=Time Zone"`
@@ -72,8 +75,8 @@ type Regime struct {
 	// Sets of scenario definitions for the regime.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
-	// Configuration details for preceding options.
-	Preceding *PrecedingDefinitions `json:"preceding,omitempty" jsonschema:"title=Preceding"`
+	// Configuration details for corrections to be used with correction options.
+	Corrections []*CorrectionDefinition `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
@@ -108,9 +111,17 @@ type Zone struct {
 
 // Category contains the definition of a general type of tax inside a region.
 type Category struct {
-	Code cbc.Code    `json:"code" jsonschema:"title=Code"`
+	// Code to be used in documents
+	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+
+	// Short name of the category to be used instead of code in output
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
-	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
+
+	// Human name for the code to use for titles
+	Title i18n.String `json:"title,omitempty" jsonschema:"title=Title"`
+
+	// Useful description of the category.
+	Description *i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
 	// Retained when true implies that the tax amount will be retained
 	// by the buyer on behalf of the supplier, and thus subtracted from
@@ -157,7 +168,7 @@ type Rate struct {
 	// Human name of the rate
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Useful description of the rate.
-	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
+	Description i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 
 	// Exempt when true implies that the rate when used in a tax Combo should
 	// not define a percent value.
@@ -199,25 +210,28 @@ type RateValue struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
-// PrecedingDefinitions contains details about what can be defined in Invoice
-// preceding document data.
-type PrecedingDefinitions struct {
+// CorrectionDefinition contains details about what can be defined in .
+type CorrectionDefinition struct {
+	// Partial or complete schema URL for the document type supported by correction.
+	Schema string `json:"schema" jsonschema:"title=Schema"`
 	// The types of sub-documents supported by the regime
 	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
+	// List of all the keys that can be used to identify a correction.
+	Keys []*KeyDefinition `json:"keys,omitempty" jsonschema:"title=Keys"`
+	// Methods describe the methods used to correct an invoice.
+	Methods []*KeyDefinition `json:"methods,omitempty" jsonschema:"title=Methods"`
+	// ReasonRequired when true implies that a reason must be provided
+	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
 	// Stamps that must be copied from the preceding document.
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-	// Corrections contains a list of all the keys that can be used to identify a correction.
-	Corrections []*KeyDefinition `json:"corrections,omitempty" jsonschema:"title=Corrections"`
-	// CorrectionMethods describe the methods used to correct an invoice.
-	CorrectionMethods []*KeyDefinition `json:"correction_methods,omitempty" jsonschema:"title=Correction Methods"`
 }
 
 // KeyDefinition defines properties of a key that is specific for a regime.
 type KeyDefinition struct {
 	// Actual key value.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// Short name for the key, if relevant.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Short name for the key.
+	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 	// Codes describes the list of codes that can be used alongside the Key,
@@ -278,6 +292,16 @@ func (r *Regime) ScenarioSet(schema string) *ScenarioSet {
 	return nil
 }
 
+// CorrectionDefinitionFor provides the correction definition for the matching schema.
+func (r *Regime) CorrectionDefinitionFor(schema string) *CorrectionDefinition {
+	for _, c := range r.Corrections {
+		if strings.HasSuffix(schema, c.Schema) {
+			return c
+		}
+	}
+	return nil
+}
+
 // Validate enures the region definition is valid, including all
 // subsequent categories.
 func (r *Regime) Validate() error {
@@ -288,6 +312,7 @@ func (r *Regime) Validate() error {
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Categories, validation.Required),
 		validation.Field(&r.Zones),
+		validation.Field(&r.Corrections),
 	)
 	return err
 }
@@ -456,7 +481,8 @@ func (c *Category) Validate() error {
 	err := validation.ValidateStruct(c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
-		validation.Field(&c.Desc),
+		validation.Field(&c.Title, validation.Required),
+		validation.Field(&c.Description),
 		validation.Field(&c.Sources),
 		validation.Field(&c.Rates),
 		validation.Field(&c.Extensions,
@@ -612,12 +638,51 @@ func (rv *RateValue) HasZone(zone l10n.Code) bool {
 	return false
 }
 
-// HasType returns true if the preceding definitions has a type that matches the one provided.
-func (pd *PrecedingDefinitions) HasType(t cbc.Key) bool {
-	if pd == nil {
+// HasType returns true if the correction definition has a type that matches the one provided.
+func (cd *CorrectionDefinition) HasType(t cbc.Key) bool {
+	if cd == nil {
 		return false // no preceding definitions
 	}
-	return t.In(pd.Types...)
+	return t.In(cd.Types...)
+}
+
+// HasKey returns true if the correction definition has the keys provided.
+func (cd *CorrectionDefinition) HasKey(key cbc.Key) bool {
+	if cd == nil {
+		return false // no correction definitions
+	}
+
+	for _, kd := range cd.Keys {
+		if kd.Key == key {
+			return true
+		}
+	}
+	return false
+}
+
+// HasMethod returns true if the correction definition has the method provided.
+func (cd *CorrectionDefinition) HasMethod(key cbc.Key) bool {
+	if cd == nil {
+		return false // no correction definitions
+	}
+	for _, kd := range cd.Methods {
+		if kd.Key == key {
+			return true
+		}
+	}
+	return false
+}
+
+// Validate ensures the key definition looks correct in the context of the regime.
+func (cd *CorrectionDefinition) Validate() error {
+	err := validation.ValidateStruct(cd,
+		validation.Field(&cd.Schema, validation.Required),
+		validation.Field(&cd.Types),
+		validation.Field(&cd.Stamps),
+		validation.Field(&cd.Keys),
+		validation.Field(&cd.Methods),
+	)
+	return err
 }
 
 // Validate ensures the key definition looks correct in the context of the regime.

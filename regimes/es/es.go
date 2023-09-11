@@ -85,12 +85,15 @@ func New() *tax.Regime {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
-		Preceding: &tax.PrecedingDefinitions{
-			Types: []cbc.Key{
-				bill.InvoiceTypeCorrective,
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCorrective,
+				},
+				Keys:    correctionList,
+				Methods: correctionMethodList,
 			},
-			Corrections:       correctionList,
-			CorrectionMethods: correctionMethodList,
 		},
 	}
 }

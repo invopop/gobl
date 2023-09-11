@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -20,9 +21,18 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "VAT",
 			i18n.ES: "IVA",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 			i18n.ES: "Impuesto sobre el Valor Añadido",
+		},
+		Description: &i18n.String{
+			i18n.EN: here.Doc(`
+				Known in Spanish as "Impuesto sobre el Valor Añadido" (IVA), is a consumption tax
+				applied to the purchase of goods and services. It's a tax on the value added at
+				each stage of production or distribution. Spain, as a member of the European Union,
+				follows the EU's VAT Directive, but with specific rates and exemptions tailored
+				to its local needs.
+			`),
 		},
 		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "01",
@@ -33,6 +43,9 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
+				},
+				Description: i18n.String{
+					i18n.EN: "May be applied to exports and intra-community supplies.",
 				},
 				Values: []*tax.RateValue{
 					{
@@ -184,7 +197,7 @@ var taxCategories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "03",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Canary Island General Indirect Tax",
 			i18n.ES: "Impuesto General Indirecto Canario",
 		},
@@ -242,7 +255,7 @@ var taxCategories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "02",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Production, Services, and Import Tax",
 			i18n.ES: "Impuesto sobre la Producción, los Servicios y la Importación",
 		},
@@ -265,7 +278,7 @@ var taxCategories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "04",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Personal income tax.",
 			i18n.ES: "Impuesto sobre la renta de las personas físicas.",
 		},

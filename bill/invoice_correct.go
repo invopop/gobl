@@ -168,12 +168,14 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
+	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
+
 	// Take the regime def to figure out what needs to be copied
 	if o.Credit {
-		if r.Preceding.HasType(InvoiceTypeCreditNote) {
+		if cd.HasType(InvoiceTypeCreditNote) {
 			// regular credit note
 			inv.Type = InvoiceTypeCreditNote
-		} else if r.Preceding.HasType(InvoiceTypeCorrective) {
+		} else if cd.HasType(InvoiceTypeCorrective) {
 			// corrective invoice with negative values
 			inv.Type = InvoiceTypeCorrective
 			inv.Invert()
@@ -182,7 +184,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		}
 		inv.Payment.ResetAdvances()
 	} else if o.Debit {
-		if r.Preceding.HasType(InvoiceTypeDebitNote) {
+		if cd.HasType(InvoiceTypeDebitNote) {
 			// regular debit note, implies no rows as new ones
 			// will be added
 			inv.Type = InvoiceTypeDebitNote
@@ -191,7 +193,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 			return errors.New("debit note not supported by regime")
 		}
 	} else {
-		if r.Preceding.HasType(InvoiceTypeCorrective) {
+		if cd.HasType(InvoiceTypeCorrective) {
 			inv.Type = InvoiceTypeCorrective
 		} else {
 			return fmt.Errorf("corrective invoice type not supported by regime, try credit or debit")
@@ -199,8 +201,8 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	// Make sure the stamps are there too
-	if r.Preceding != nil {
-		for _, k := range r.Preceding.Stamps {
+	if cd != nil {
+		for _, k := range cd.Stamps {
 			var s *head.Stamp
 			for _, row := range o.Stamps {
 				if row.Provider == k {
@@ -212,6 +214,30 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 				return fmt.Errorf("missing stamp: %v", k)
 			}
 			pre.Stamps = append(pre.Stamps, s)
+		}
+
+		if len(cd.Methods) > 0 {
+			if pre.CorrectionMethod == "" {
+				return errors.New("missing correction method")
+			}
+			if !cd.HasMethod(pre.CorrectionMethod) {
+				return fmt.Errorf("invalid correction method: %v", pre.CorrectionMethod)
+			}
+		}
+
+		if len(cd.Keys) > 0 {
+			if len(pre.Corrections) == 0 {
+				return errors.New("missing correction keys")
+			}
+			for _, k := range pre.Corrections {
+				if !cd.HasKey(k) {
+					return fmt.Errorf("invalid correction key: %v", k)
+				}
+			}
+		}
+
+		if cd.ReasonRequired && pre.Reason == "" {
+			return errors.New("missing corrective reason")
 		}
 	}
 

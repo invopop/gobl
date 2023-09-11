@@ -34,7 +34,6 @@ The complexity around invoicing and in particular electronic invoicing can quick
 
 - [Documentation](https://docs.gobl.org) contains details on how to use GOBL, and the schema.
 - [Builder](https://build.gobl.org) helps try out GOBL and quickly figure out what is possible, all from your browser.
-- [Blog](https://gobl.org/posts/) for news and general updates about what is being worked on.
 - [Issues](https://github.com/invopop/gobl/issues) if you have a specific problem with GOBL related to code or usage.
 - [Discussions](https://github.com/invopop/gobl/discussions) for open discussions about the future of GOBL, complications with a specific country, or any open ended issues.
 - [Pull Requests](https://github.com/invopop/gobl/pulls) are very welcome, especially if you'd like to see a new local country or features.

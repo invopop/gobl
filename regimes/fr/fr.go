@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -32,16 +33,24 @@ func New() *tax.Regime {
 			i18n.EN: "France",
 			i18n.FR: "La France",
 		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				The French tax regime covers the basics.
+			`),
+		},
 		TimeZone: "Europe/Paris",
 		Tags:     invoiceTags,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
-		Preceding: &tax.PrecedingDefinitions{
-			// France supports both corrective methods
-			Types: []cbc.Key{
-				bill.InvoiceTypeCorrective, // Code 384
-				bill.InvoiceTypeCreditNote, // Code 381
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				// France supports both corrective methods
+				Types: []cbc.Key{
+					bill.InvoiceTypeCorrective, // Code 384
+					bill.InvoiceTypeCreditNote, // Code 381
+				},
 			},
 		},
 		Validator:  Validate,
