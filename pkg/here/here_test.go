@@ -22,7 +22,7 @@ var tests = []testCase{
 		Foo
 		Bar
 		`,
-		"Foo\nBar\n"},
+		"Foo\nBar"},
 	{`Foo
 		Bar`,
 		"Foo\nBar"},
@@ -30,7 +30,7 @@ var tests = []testCase{
 			
 		Bar
 		`,
-		"Foo\n\t\nBar\n"}, // Second line contains two tabs.
+		"Foo\n\t\nBar"}, // Second line contains two tabs.
 	{`
 		Foo
 			Bar
@@ -42,7 +42,7 @@ var tests = []testCase{
 		`
 		Foo
 		Bar
-	`, "Foo\nBar\n"},
+	`, "Foo\nBar"},
 	{"\n\u3000zenkaku space", "\x80\x80zenkaku space"},
 }
 
@@ -71,7 +71,7 @@ func TestDocf(t *testing.T) {
 	`
 	i := 42
 	s := "Hello"
-	expect := "int:  42\nstring: Hello\n"
+	expect := "int:  42\nstring: Hello"
 
 	result := here.Docf(tc, i, s)
 	if result != expect {

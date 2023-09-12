@@ -51,6 +51,7 @@ func Doc(raw string) string {
 
 	minIndentSize := getMinIndent(lines, skipFirstLine)
 	lines = removeIndentation(lines, minIndentSize, skipFirstLine)
+	lines = removeEmptyTailLines(lines)
 
 	return strings.Join(lines, "\n")
 }
@@ -100,6 +101,17 @@ func removeIndentation(lines []string, n int, skipFirstLine bool) []string {
 		if len(lines[i]) >= n {
 			lines[i] = line[n:]
 		}
+	}
+	return lines
+}
+
+// removeEmptyTailLines removes empty lines from the end of the lines array.
+func removeEmptyTailLines(lines []string) []string {
+	for i := len(lines) - 1; i >= 0; i-- {
+		if lines[i] != "" {
+			break
+		}
+		lines = lines[:i]
 	}
 	return lines
 }

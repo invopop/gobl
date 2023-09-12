@@ -5,10 +5,10 @@
   "$defs": {
     "DateTime": {
       "type": "string",
-      "format": "datetime",
-      "title": "DateTime",
-      "description": "Civil datetime in ISO 8601 format, like 2021-05-26T12:00:00"
+      "format": "date-time",
+      "title": "Date Time",
+      "description": "Civil date time in simplified ISO format with no time zone\ninformation, for example: 2021-05-26T13:45:00"
     }
   },
-  "$comment": "Generated with GOBL v0.55.0"
+  "$comment": "Generated with GOBL v0.56.0"
 }

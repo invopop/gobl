@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/yaml"
 	"github.com/stretchr/testify/assert"
@@ -55,7 +55,7 @@ func processFile(t *testing.T, path string) error {
 	t.Logf("processing file: %v", path)
 
 	// attempt to load and convert
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("reading file: %w", err)
 	}
@@ -72,7 +72,7 @@ func processFile(t *testing.T, path string) error {
 		}
 	} else {
 		// Handle documents
-		doc := new(gobl.Document)
+		doc := new(schema.Object)
 		if err := yaml.Unmarshal(data, doc); err != nil {
 			return fmt.Errorf("invalid contents: %w", err)
 		}
@@ -108,13 +108,13 @@ func processFile(t *testing.T, path string) error {
 	}
 
 	if *updateExamples {
-		if err := ioutil.WriteFile(np, out, 0644); err != nil {
+		if err := os.WriteFile(np, out, 0644); err != nil {
 			return fmt.Errorf("saving file data: %w", err)
 		}
 		t.Logf("wrote file: %v", np)
 	} else {
 		// Compare to existing file
-		existing, err := ioutil.ReadFile(np)
+		existing, err := os.ReadFile(np)
 		if err != nil {
 			return fmt.Errorf("reading existing file: %w", err)
 		}

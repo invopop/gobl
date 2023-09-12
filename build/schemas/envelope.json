@@ -3,11 +3,6 @@
   "$id": "https://gobl.org/draft-0/envelope",
   "$ref": "#/$defs/Envelope",
   "$defs": {
-    "Document": {
-      "type": "object",
-      "title": "Document",
-      "description": "Contains the document payload to be included inside an Envelope.\n\nThe document must contain a `$schema` property that identifies\nthe data's structure otherwise it will be rejected."
-    },
     "Envelope": {
       "properties": {
         "$schema": {
@@ -16,12 +11,12 @@
           "description": "Schema identifies the schema that should be used to understand this document"
         },
         "head": {
-          "$ref": "#/$defs/Header",
+          "$ref": "https://gobl.org/draft-0/head/header",
           "title": "Header",
           "description": "Details on what the contents are"
         },
         "doc": {
-          "$ref": "#/$defs/Document",
+          "$ref": "https://gobl.org/draft-0/schema/object",
           "title": "Document",
           "description": "The data inside the envelope"
         },
@@ -41,58 +36,7 @@
         "doc"
       ],
       "description": "Envelope wraps around a document adding headers and digital signatures."
-    },
-    "Header": {
-      "properties": {
-        "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
-          "title": "UUID",
-          "description": "Unique UUIDv1 identifier for the envelope."
-        },
-        "dig": {
-          "$ref": "https://gobl.org/draft-0/dsig/digest",
-          "title": "Digest",
-          "description": "Digest of the canonical JSON body."
-        },
-        "stamps": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/stamp"
-          },
-          "type": "array",
-          "title": "Stamps",
-          "description": "Seals of approval from other organisations that can only be added to\nnon-draft envelopes."
-        },
-        "tags": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "title": "Tags",
-          "description": "Set of labels that describe but have no influence on the data."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Additional semi-structured information about this envelope."
-        },
-        "notes": {
-          "type": "string",
-          "title": "Notes",
-          "description": "Any information that may be relevant to other humans about this envelope"
-        },
-        "draft": {
-          "type": "boolean",
-          "title": "Draft",
-          "description": "When true, implies that this document should not be considered final. Digital signatures are optional."
-        }
-      },
-      "type": "object",
-      "required": [
-        "uuid",
-        "dig"
-      ],
-      "description": "Header defines the metadata of the body."
     }
   },
-  "$comment": "Generated with GOBL v0.55.0"
+  "$comment": "Generated with GOBL v0.56.0"
 }

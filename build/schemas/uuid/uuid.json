@@ -10,5 +10,5 @@
       "description": "Universally Unique Identifier. We only recommend using versions 1 and 4 within GOBL."
     }
   },
-  "$comment": "Generated with GOBL v0.55.0"
+  "$comment": "Generated with GOBL v0.56.0"
 }

@@ -10,8 +10,9 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "",
 		"type": "credit-note",
+		"code": "",
+		"issue_date": "2023-01-30",
 		"currency": "EUR",
 		"preceding": [
 			{
@@ -19,7 +20,6 @@
 				"issue_date": "2023-01-20"
 			}
 		],
-		"issue_date": "2023-01-30",
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
 			"name": "Hotelzinho",

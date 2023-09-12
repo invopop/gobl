@@ -17,5 +17,7 @@ import (
 )
 
 func init() {
-	schema.Register(schema.GOBL, Envelope{})
+	schema.Register(schema.GOBL,
+		Envelope{},
+	)
 }

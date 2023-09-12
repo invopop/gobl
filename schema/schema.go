@@ -25,6 +25,9 @@ const (
 
 func init() {
 	schemas = newRegistry()
+	Register(GOBL.Add("schema"),
+		Object{},
+	)
 }
 
 // ID contains the official schema URL.

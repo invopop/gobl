@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -157,7 +158,7 @@ func TestPrecedingValidation(t *testing.T) {
 	inv.Preceding = []*bill.Preceding{
 		{
 			Code: "123",
-			Stamps: []*cbc.Stamp{
+			Stamps: []*head.Stamp{
 				{
 					Provider: "unexpected",
 					Value:    "1234",

@@ -4,7 +4,6 @@ package schemas
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -59,7 +58,7 @@ func Generate() error {
 			return fmt.Errorf("unable to create directories: %w", err)
 		}
 
-		if err := ioutil.WriteFile(f, d, 0644); err != nil {
+		if err := os.WriteFile(f, d, 0644); err != nil {
 			return fmt.Errorf("unable to write file '%v': %w", f, err)
 		}
 

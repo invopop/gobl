@@ -14,6 +14,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
+	"github.com/invopop/validation/is"
 )
 
 const (
@@ -132,9 +133,20 @@ type Category struct {
 	// Map defines a set of regime specific code mappings.
 	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
 
+	// List of sources for the information contained in this category.
+	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// Source describes where the information for the taxes comes from.
+type Source struct {
+	// Title of the linked source to help distinguish between this and other links.
+	Title i18n.String `json:"title,omitempty" jsonschema:"title=Title"`
+	// URL for the website.
+	URL string `json:"url" jsonschema:"title=URL,format=uri"`
 }
 
 // Rate defines a single rate inside a category
@@ -444,6 +456,8 @@ func (c *Category) Validate() error {
 	err := validation.ValidateStruct(c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
+		validation.Field(&c.Desc),
+		validation.Field(&c.Sources),
 		validation.Field(&c.Rates),
 		validation.Field(&c.Extensions,
 			validation.When(len(c.Rates) > 0, validation.Empty.Error("cannot be defined alongside rates")),
@@ -460,6 +474,14 @@ func (c *Category) InExtensions() validation.Rule {
 		return nil
 	}
 	return cbc.CodeMapHas(c.Extensions...)
+}
+
+// Validate ensures the Source's contents are correct.
+func (s *Source) Validate() error {
+	return validation.ValidateStruct(s,
+		validation.Field(&s.Title),
+		validation.Field(&s.URL, validation.Required, is.URL),
+	)
 }
 
 // Validate checks that our tax definition is valid. This is only really

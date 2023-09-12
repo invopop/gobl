@@ -10,10 +10,10 @@
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"code": "",
 		"type": "standard",
-		"currency": "EUR",
+		"code": "",
 		"issue_date": "2023-01-30",
+		"currency": "EUR",
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
 			"name": "Hotelzinho",

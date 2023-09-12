@@ -782,109 +782,127 @@
         {
           "code": "RF01",
           "name": {
-            "en": "Ordinary"
+            "en": "Ordinary",
+            "it": "Regime Ordinario"
           }
         },
         {
           "code": "RF02",
           "name": {
-            "en": "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)"
+            "en": "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)",
+            "it": "Regime dei contribuenti minimi (art. 1,c.96-117, L. 244/2007)"
           }
         },
         {
           "code": "RF04",
           "name": {
-            "en": "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)"
+            "en": "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)",
+            "it": "Agricoltura e attività connesse e pesca (artt. 34 e 34-bis, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF05",
           "name": {
-            "en": "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)"
+            "en": "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)",
+            "it": "Vendita sali e tabacchi (art. 74, c.1, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF06",
           "name": {
-            "en": "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)"
+            "en": "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)",
+            "it": "Commercio dei fiammiferi (art. 74, c.1, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF07",
           "name": {
-            "en": "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)"
+            "en": "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)",
+            "it": "Editoria (art. 74, c.1, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF08",
           "name": {
-            "en": "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)"
+            "en": "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)",
+            "it": "Gestione di servizi di telefonia pubblica (art. 74, c.1, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF09",
           "name": {
-            "en": "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)"
+            "en": "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)",
+            "it": "Rivendita di documenti di trasporto pubblico e di sosta (art. 74, c.1, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF10",
           "name": {
-            "en": "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)"
+            "en": "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)",
+            "it": "Intrattenimenti, giochi e altre attività di cui alla tariffa allegata al D.P.R. 640/72 (art. 74, c.6, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF11",
           "name": {
-            "en": "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)"
+            "en": "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)",
+            "it": "Agenzie di viaggi e turismo (art. 74-ter, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF12",
           "name": {
-            "en": "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)"
+            "en": "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)",
+            "it": "Agriturismo (art. 5, c.2, L. 413/1991)"
           }
         },
         {
           "code": "RF13",
           "name": {
-            "en": "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)"
+            "en": "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)",
+            "it": "Vendite a domicilio (art. 25-bis, c.6, D.P.R. 600/1973)"
           }
         },
         {
           "code": "RF14",
           "name": {
-            "en": "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)"
+            "en": "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)",
+            "it": "Rivendita di beni usati, di oggetti d’arte, d’antiquariato o da collezione (art. 36, D.L. 41/1995)"
           }
         },
         {
           "code": "RF15",
           "name": {
-            "en": "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)"
+            "en": "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)",
+            "it": "Agenzie di vendite all’asta di oggetti d’arte, antiquariato o da collezione (art. 40-bis, D.L. 41/1995)"
           }
         },
         {
           "code": "RF16",
           "name": {
-            "en": "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)"
+            "en": "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)",
+            "it": "IVA per cassa P.A. (art. 6, c.5, D.P.R. 633/1972)"
           }
         },
         {
           "code": "RF17",
           "name": {
-            "en": "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)"
-          }
-        },
-        {
-          "code": "RF18",
-          "name": {
-            "en": "Other"
+            "en": "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)",
+            "it": "IVA per cassa (art. 32-bis, D.L. 83/2012)"
           }
         },
         {
           "code": "RF19",
           "name": {
-            "en": "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)"
+            "en": "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)",
+            "it": "Regime forfettario"
+          }
+        },
+        {
+          "code": "RF18",
+          "name": {
+            "en": "Other",
+            "it": "Altro"
           }
         }
       ]
