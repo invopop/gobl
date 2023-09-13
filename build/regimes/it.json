@@ -1920,7 +1920,7 @@
         "en": "VAT",
         "it": "IVA"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "it": "Imposta sul Valore Aggiunto"
       },
@@ -2004,7 +2004,7 @@
         "en": "IRPEF",
         "it": "IRPEF"
       },
-      "desc": {
+      "title": {
         "en": "Personal Income Tax",
         "it": "Imposta sul Reddito delle Persone Fisiche"
       },
@@ -2022,7 +2022,7 @@
         "en": "IRES",
         "it": "IRES"
       },
-      "desc": {
+      "title": {
         "en": "Corporate Income Tax",
         "it": "Imposta sul Reddito delle Società"
       },
@@ -2040,7 +2040,7 @@
         "en": "INPS Contribution",
         "it": "Contributo INPS"
       },
-      "desc": {
+      "title": {
         "en": "Contribution to the National Social Security Institute",
         "it": "Contributo Istituto Nazionale della Previdenza Sociale"
       },
@@ -2058,7 +2058,7 @@
         "en": "ENASARCO Contribution",
         "it": "Contributo ENASARCO"
       },
-      "desc": {
+      "title": {
         "en": "Contribution to the National Welfare Board for Sales Agents and Representatives",
         "it": "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio"
       },
@@ -2076,7 +2076,7 @@
         "en": "ENPAM Contribution",
         "it": "Contributo ENPAM"
       },
-      "desc": {
+      "title": {
         "en": "Contribution to the National Pension and Welfare Board for Doctors",
         "it": "Contributo - Ente Nazionale Previdenza e Assistenza Medici"
       },

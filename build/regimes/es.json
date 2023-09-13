@@ -888,275 +888,278 @@
       ]
     }
   ],
-  "preceding": {
-    "types": [
-      "corrective"
-    ],
-    "corrections": [
-      {
-        "key": "code",
-        "desc": {
-          "en": "Invoice code",
-          "es": "Número de la factura"
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "corrective"
+      ],
+      "keys": [
+        {
+          "key": "code",
+          "name": {
+            "en": "Invoice code",
+            "es": "Número de la factura"
+          },
+          "map": {
+            "facturae": "01"
+          }
         },
-        "map": {
-          "facturae": "01"
-        }
-      },
-      {
-        "key": "series",
-        "desc": {
-          "en": "Invoice series",
-          "es": "Serie de la factura"
+        {
+          "key": "series",
+          "name": {
+            "en": "Invoice series",
+            "es": "Serie de la factura"
+          },
+          "map": {
+            "facturae": "02"
+          }
         },
-        "map": {
-          "facturae": "02"
-        }
-      },
-      {
-        "key": "issue-date",
-        "desc": {
-          "en": "Issue date",
-          "es": "Fecha expedición"
+        {
+          "key": "issue-date",
+          "name": {
+            "en": "Issue date",
+            "es": "Fecha expedición"
+          },
+          "map": {
+            "facturae": "03"
+          }
         },
-        "map": {
-          "facturae": "03"
-        }
-      },
-      {
-        "key": "supplier-name",
-        "desc": {
-          "en": "Name and surnames/Corporate name – Issuer (Sender)",
-          "es": "Nombre y apellidos/Razón Social-Emisor"
+        {
+          "key": "supplier-name",
+          "name": {
+            "en": "Name and surnames/Corporate name - Issuer (Sender)",
+            "es": "Nombre y apellidos/Razón Social-Emisor"
+          },
+          "map": {
+            "facturae": "04"
+          }
         },
-        "map": {
-          "facturae": "04"
-        }
-      },
-      {
-        "key": "customer-name",
-        "desc": {
-          "en": "Name and surnames/Corporate name - Receiver",
-          "es": "Nombre y apellidos/Razón Social-Receptor"
+        {
+          "key": "customer-name",
+          "name": {
+            "en": "Name and surnames/Corporate name - Receiver",
+            "es": "Nombre y apellidos/Razón Social-Receptor"
+          },
+          "map": {
+            "facturae": "05"
+          }
         },
-        "map": {
-          "facturae": "05"
-        }
-      },
-      {
-        "key": "supplier-tax-id",
-        "desc": {
-          "en": "Issuer's Tax Identification Number",
-          "es": "Identificación fiscal Emisor/obligado"
+        {
+          "key": "supplier-tax-id",
+          "name": {
+            "en": "Issuer's Tax Identification Number",
+            "es": "Identificación fiscal Emisor/obligado"
+          },
+          "map": {
+            "facturae": "06"
+          }
         },
-        "map": {
-          "facturae": "06"
-        }
-      },
-      {
-        "key": "customer-tax-id",
-        "desc": {
-          "en": "Receiver's Tax Identification Number",
-          "es": "Identificación fiscal Receptor"
+        {
+          "key": "customer-tax-id",
+          "name": {
+            "en": "Receiver's Tax Identification Number",
+            "es": "Identificación fiscal Receptor"
+          },
+          "map": {
+            "facturae": "07"
+          }
         },
-        "map": {
-          "facturae": "07"
-        }
-      },
-      {
-        "key": "supplier-addr",
-        "desc": {
-          "en": "Issuer's address",
-          "es": "Domicilio Emisor/Obligado"
+        {
+          "key": "supplier-addr",
+          "name": {
+            "en": "Issuer's address",
+            "es": "Domicilio Emisor/Obligado"
+          },
+          "map": {
+            "facturae": "08"
+          }
         },
-        "map": {
-          "facturae": "08"
-        }
-      },
-      {
-        "key": "customer-addr",
-        "desc": {
-          "en": "Receiver's address",
-          "es": "Domicilio Receptor"
+        {
+          "key": "customer-addr",
+          "name": {
+            "en": "Receiver's address",
+            "es": "Domicilio Receptor"
+          },
+          "map": {
+            "facturae": "09"
+          }
         },
-        "map": {
-          "facturae": "09"
-        }
-      },
-      {
-        "key": "line",
-        "desc": {
-          "en": "Item line",
-          "es": "Detalle Operación"
+        {
+          "key": "line",
+          "name": {
+            "en": "Item line",
+            "es": "Detalle Operación"
+          },
+          "map": {
+            "facturae": "10"
+          }
         },
-        "map": {
-          "facturae": "10"
-        }
-      },
-      {
-        "key": "tax-rate",
-        "desc": {
-          "en": "Applicable Tax Rate",
-          "es": "Porcentaje impositivo a aplicar"
+        {
+          "key": "tax-rate",
+          "name": {
+            "en": "Applicable Tax Rate",
+            "es": "Porcentaje impositivo a aplicar"
+          },
+          "map": {
+            "facturae": "11"
+          }
         },
-        "map": {
-          "facturae": "11"
-        }
-      },
-      {
-        "key": "tax-amount",
-        "desc": {
-          "en": "Applicable Tax Amount",
-          "es": "Cuota tributaria a aplicar"
+        {
+          "key": "tax-amount",
+          "name": {
+            "en": "Applicable Tax Amount",
+            "es": "Cuota tributaria a aplicar"
+          },
+          "map": {
+            "facturae": "12"
+          }
         },
-        "map": {
-          "facturae": "12"
-        }
-      },
-      {
-        "key": "period",
-        "desc": {
-          "en": "Applicable Date/Period",
-          "es": "Fecha/Periodo a aplicar"
+        {
+          "key": "period",
+          "name": {
+            "en": "Applicable Date/Period",
+            "es": "Fecha/Periodo a aplicar"
+          },
+          "map": {
+            "facturae": "13"
+          }
         },
-        "map": {
-          "facturae": "13"
-        }
-      },
-      {
-        "key": "type",
-        "desc": {
-          "en": "Invoice Class",
-          "es": "Clase de factura"
+        {
+          "key": "type",
+          "name": {
+            "en": "Invoice Class",
+            "es": "Clase de factura"
+          },
+          "map": {
+            "facturae": "14"
+          }
         },
-        "map": {
-          "facturae": "14"
-        }
-      },
-      {
-        "key": "legal-details",
-        "desc": {
-          "en": "Legal literals",
-          "es": "Literales legales"
+        {
+          "key": "legal-details",
+          "name": {
+            "en": "Legal literals",
+            "es": "Literales legales"
+          },
+          "map": {
+            "facturae": "15"
+          }
         },
-        "map": {
-          "facturae": "15"
-        }
-      },
-      {
-        "key": "tax-base",
-        "desc": {
-          "en": "Taxable Base",
-          "es": "Base imponible"
+        {
+          "key": "tax-base",
+          "name": {
+            "en": "Taxable Base",
+            "es": "Base imponible"
+          },
+          "map": {
+            "facturae": "16"
+          }
         },
-        "map": {
-          "facturae": "16"
-        }
-      },
-      {
-        "key": "tax",
-        "desc": {
-          "en": "Calculation of tax outputs",
-          "es": "Cálculo de cuotas repercutidas"
+        {
+          "key": "tax",
+          "name": {
+            "en": "Calculation of tax outputs",
+            "es": "Cálculo de cuotas repercutidas"
+          },
+          "map": {
+            "facturae": "80"
+          }
         },
-        "map": {
-          "facturae": "80"
-        }
-      },
-      {
-        "key": "tax-retained",
-        "desc": {
-          "en": "Calculation of tax inputs",
-          "es": "Cálculo de cuotas retenidas"
+        {
+          "key": "tax-retained",
+          "name": {
+            "en": "Calculation of tax inputs",
+            "es": "Cálculo de cuotas retenidas"
+          },
+          "map": {
+            "facturae": "81"
+          }
         },
-        "map": {
-          "facturae": "81"
-        }
-      },
-      {
-        "key": "refund",
-        "desc": {
-          "en": "Taxable Base modified due to return of packages and packaging materials",
-          "es": "Base imponible modificada por devolución de envases / embalajes"
+        {
+          "key": "refund",
+          "name": {
+            "en": "Taxable Base modified due to return of packages and packaging materials",
+            "es": "Base imponible modificada por devolución de envases / embalajes"
+          },
+          "map": {
+            "facturae": "82"
+          }
         },
-        "map": {
-          "facturae": "82"
-        }
-      },
-      {
-        "key": "discount",
-        "desc": {
-          "en": "Taxable Base modified due to discounts and rebates",
-          "es": "Base imponible modificada por descuentos y bonificaciones"
+        {
+          "key": "discount",
+          "name": {
+            "en": "Taxable Base modified due to discounts and rebates",
+            "es": "Base imponible modificada por descuentos y bonificaciones"
+          },
+          "map": {
+            "facturae": "83"
+          }
         },
-        "map": {
-          "facturae": "83"
-        }
-      },
-      {
-        "key": "judicial",
-        "desc": {
-          "en": "Taxable Base modified due to firm court ruling or administrative decision",
-          "es": "Base imponible modificada por resolución firme, judicial o administrativa"
+        {
+          "key": "judicial",
+          "name": {
+            "en": "Taxable Base modified due to firm court ruling or administrative decision",
+            "es": "Base imponible modificada por resolución firme, judicial o administrativa"
+          },
+          "map": {
+            "facturae": "84"
+          }
         },
-        "map": {
-          "facturae": "84"
+        {
+          "key": "insolvency",
+          "name": {
+            "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
+            "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
+          },
+          "map": {
+            "facturae": "85"
+          }
         }
-      },
-      {
-        "key": "insolvency",
-        "desc": {
-          "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
-          "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
+      ],
+      "methods": [
+        {
+          "key": "complete",
+          "name": {
+            "en": "Complete",
+            "es": "Rectificaticón íntegra"
+          },
+          "map": {
+            "facturae": "01"
+          }
         },
-        "map": {
-          "facturae": "85"
-        }
-      }
-    ],
-    "correction_methods": [
-      {
-        "key": "complete",
-        "desc": {
-          "en": "Complete",
-          "es": "Rectificaticón íntegra"
+        {
+          "key": "partial",
+          "name": {
+            "en": "Corrected items only",
+            "es": "Rectificación por diferencias"
+          },
+          "map": {
+            "facturae": "02"
+          }
         },
-        "map": {
-          "facturae": "01"
-        }
-      },
-      {
-        "key": "partial",
-        "desc": {
-          "en": "Corrected items only",
-          "es": "Rectificación por diferencias"
+        {
+          "key": "discount",
+          "name": {
+            "en": "Bulk deal in a given period",
+            "es": "Rectificación por descuento por volumen de operaciones durante un periodo"
+          },
+          "map": {
+            "facturae": "03"
+          }
         },
-        "map": {
-          "facturae": "02"
+        {
+          "key": "authorized",
+          "name": {
+            "en": "Authorized by the Tax Agency",
+            "es": "Autorizadas por la Agencia Tributaria"
+          },
+          "map": {
+            "facturae": "04"
+          }
         }
-      },
-      {
-        "key": "discount",
-        "desc": {
-          "en": "Bulk deal in a given period",
-          "es": "Rectificación por descuento por volumen de operaciones durante un periodo"
-        },
-        "map": {
-          "facturae": "03"
-        }
-      },
-      {
-        "key": "authorized",
-        "desc": {
-          "en": "Authorized by the Tax Agency",
-          "es": "Autorizadas por la Agencia Tributaria"
-        },
-        "map": {
-          "facturae": "04"
-        }
-      }
-    ]
-  },
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
@@ -1164,9 +1167,12 @@
         "en": "VAT",
         "es": "IVA"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "es": "Impuesto sobre el Valor Añadido"
+      },
+      "desc": {
+        "en": "Known in Spanish as \"Impuesto sobre el Valor Añadido\" (IVA), is a consumption tax\napplied to the purchase of goods and services. It's a tax on the value added at\neach stage of production or distribution. Spain, as a member of the European Union,\nfollows the EU's VAT Directive, but with specific rates and exemptions tailored\nto its local needs."
       },
       "rates": [
         {
@@ -1174,6 +1180,9 @@
           "name": {
             "en": "Zero Rate",
             "es": "Tipo Cero"
+          },
+          "desc": {
+            "en": "May be applied to exports and intra-community supplies."
           },
           "values": [
             {
@@ -1322,7 +1331,7 @@
         "en": "IGIC",
         "es": "IGIC"
       },
-      "desc": {
+      "title": {
         "en": "Canary Island General Indirect Tax",
         "es": "Impuesto General Indirecto Canario"
       },
@@ -1374,7 +1383,7 @@
         "en": "IPSI",
         "es": "IPSI"
       },
-      "desc": {
+      "title": {
         "en": "Production, Services, and Import Tax",
         "es": "Impuesto sobre la Producción, los Servicios y la Importación"
       },
@@ -1388,7 +1397,7 @@
         "en": "IRPF",
         "es": "IRPF"
       },
-      "desc": {
+      "title": {
         "en": "Personal income tax.",
         "es": "Impuesto sobre la renta de las personas físicas."
       },

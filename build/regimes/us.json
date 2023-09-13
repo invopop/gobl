@@ -10,9 +10,9 @@
     {
       "code": "ST",
       "name": {
-        "en": "Sales Tax"
+        "en": "ST"
       },
-      "desc": {
+      "title": {
         "en": "Sales Tax"
       }
     }

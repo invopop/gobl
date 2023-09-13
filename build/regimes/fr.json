@@ -4,6 +4,9 @@
     "en": "France",
     "fr": "La France"
   },
+  "description": {
+    "en": "The French tax regime covers the basics."
+  },
   "time_zone": "Europe/Paris",
   "country": "FR",
   "currency": "EUR",
@@ -33,12 +36,15 @@
       ]
     }
   ],
-  "preceding": {
-    "types": [
-      "corrective",
-      "credit-note"
-    ]
-  },
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "corrective",
+        "credit-note"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
@@ -46,7 +52,7 @@
         "en": "VAT",
         "fr": "TVA"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "fr": "Taxe sur la Valeur Ajoutée"
       },
