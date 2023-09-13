@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/schema"
+	"github.com/invopop/gobl/tax"
 )
 
 // CorrectionOptions defines a structure used to pass configuration options
@@ -121,24 +122,8 @@ var Debit schema.Option = func(o interface{}) {
 // most use cases this will prevent looping over the same invoice.
 func (inv *Invoice) Correct(opts ...schema.Option) error {
 	o := new(CorrectionOptions)
-	for _, row := range opts {
-		row(o)
-	}
-
-	// Copy over the stamps from the previous header
-	if o.Head != nil && len(o.Head.Stamps) > 0 {
-		o.Stamps = append(o.Stamps, o.Head.Stamps...)
-	}
-
-	// If we have a raw json object, this will override any of the other options
-	if len(o.data) > 0 {
-		if err := json.Unmarshal(o.data, o); err != nil {
-			return fmt.Errorf("failed to unmarshal correction options: %w", err)
-		}
-	}
-
-	if o.Credit && o.Debit {
-		return errors.New("cannot use both credit and debit options")
+	if err := prepareCorrectionOptions(o, opts...); err != nil {
+		return err
 	}
 	if inv.Code == "" {
 		return errors.New("cannot correct an invoice without a code")
@@ -170,6 +155,47 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 
+	if err := inv.prepareCorrectionType(o, cd); err != nil {
+		return err
+	}
+
+	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
+		return err
+	}
+
+	// Replace all previous preceding data
+	inv.Preceding = []*Preceding{pre}
+
+	// Running a Calculate feels a bit out of place, but not performing
+	// this operation on the corrected invoice results in potentially
+	// conflicting or incomplete data.
+	return inv.Calculate()
+}
+
+func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error {
+	for _, row := range opts {
+		row(o)
+	}
+
+	// Copy over the stamps from the previous header
+	if o.Head != nil && len(o.Head.Stamps) > 0 {
+		o.Stamps = append(o.Stamps, o.Head.Stamps...)
+	}
+
+	// If we have a raw json object, this will override any of the other options
+	if len(o.data) > 0 {
+		if err := json.Unmarshal(o.data, o); err != nil {
+			return fmt.Errorf("failed to unmarshal correction options: %w", err)
+		}
+	}
+
+	if o.Credit && o.Debit {
+		return errors.New("cannot use both credit and debit options")
+	}
+	return nil
+}
+
+func (inv *Invoice) prepareCorrectionType(o *CorrectionOptions, cd *tax.CorrectionDefinition) error {
 	// Take the regime def to figure out what needs to be copied
 	if o.Credit {
 		if cd.HasType(InvoiceTypeCreditNote) {
@@ -199,53 +225,50 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 			return fmt.Errorf("corrective invoice type not supported by regime, try credit or debit")
 		}
 	}
+	return nil
+}
 
-	// Make sure the stamps are there too
-	if cd != nil {
-		for _, k := range cd.Stamps {
-			var s *head.Stamp
-			for _, row := range o.Stamps {
-				if row.Provider == k {
-					s = row
-					break
-				}
-			}
-			if s == nil {
-				return fmt.Errorf("missing stamp: %v", k)
-			}
-			pre.Stamps = append(pre.Stamps, s)
-		}
-
-		if len(cd.Methods) > 0 {
-			if pre.Method == cbc.KeyEmpty {
-				return errors.New("missing correction method")
-			}
-			if !cd.HasMethod(pre.Method) {
-				return fmt.Errorf("invalid correction method: %v", pre.Method)
+func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *Preceding) error {
+	if cd == nil {
+		return nil
+	}
+	for _, k := range cd.Stamps {
+		var s *head.Stamp
+		for _, row := range o.Stamps {
+			if row.Provider == k {
+				s = row
+				break
 			}
 		}
-
-		if len(cd.Keys) > 0 {
-			if len(pre.Changes) == 0 {
-				return errors.New("missing changes")
-			}
-			for _, k := range pre.Changes {
-				if !cd.HasKey(k) {
-					return fmt.Errorf("invalid change key: '%v'", k)
-				}
-			}
+		if s == nil {
+			return fmt.Errorf("missing stamp: %v", k)
 		}
+		pre.Stamps = append(pre.Stamps, s)
+	}
 
-		if cd.ReasonRequired && pre.Reason == "" {
-			return errors.New("missing corrective reason")
+	if len(cd.Methods) > 0 {
+		if pre.Method == cbc.KeyEmpty {
+			return errors.New("missing correction method")
+		}
+		if !cd.HasMethod(pre.Method) {
+			return fmt.Errorf("invalid correction method: %v", pre.Method)
 		}
 	}
 
-	// Replace all previous preceding data
-	inv.Preceding = []*Preceding{pre}
+	if len(cd.Keys) > 0 {
+		if len(pre.Changes) == 0 {
+			return errors.New("missing changes")
+		}
+		for _, k := range pre.Changes {
+			if !cd.HasKey(k) {
+				return fmt.Errorf("invalid change key: '%v'", k)
+			}
+		}
+	}
 
-	// Running a Calculate feels a bit out of place, but not performing
-	// this operation on the corrected invoice results in potentially
-	// conflicting or incomplete data.
-	return inv.Calculate()
+	if cd.ReasonRequired && pre.Reason == "" {
+		return errors.New("missing corrective reason")
+	}
+
+	return nil
 }
