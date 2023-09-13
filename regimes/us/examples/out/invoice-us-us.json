@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2f42c17792ca424df809c674ff0fa4101e69581473bbe8e9b27b93d42314c6c2"
+			"val": "30657e44d176895a82b015a475f8bfcc750a49781adb8f1330cc74699e6879bf"
 		},
 		"draft": true
 	},
@@ -83,15 +83,15 @@
 						"code": "ST",
 						"rates": [
 							{
-								"base": "1493.0876",
+								"base": "1493.09",
 								"percent": "8.5%",
-								"amount": "126.9124"
+								"amount": "126.91"
 							}
 						],
-						"amount": "126.9124"
+						"amount": "126.91"
 					}
 				],
-				"sum": "126.9124"
+				"sum": "126.91"
 			},
 			"tax": "126.91",
 			"total_with_tax": "1620.00",

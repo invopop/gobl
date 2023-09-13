@@ -102,7 +102,8 @@ func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 	return nil
 }
 
-func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
+func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
+	accuracy := defaultTaxRemovalAccuracy
 	rate := l.Taxes.Get(cat)
 	if rate == nil || rate.Percent == nil {
 		return l
@@ -111,9 +112,8 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Line {
 	l2 := *l
 	l2i := *l.Item
 
-	l2.Sum = l2.Sum.Upscale(accuracy).Remove(*rate.Percent)
-	l2i.Price = l2.Sum.Divide(l2.Quantity)
-	l2.Total = l2.Total.Upscale(accuracy).Remove(*rate.Percent)
+	l2i.Price = l.Item.Price.Upscale(accuracy).Remove(*rate.Percent)
+	// assume sum and total will be calculated automatically
 
 	if len(l2.Discounts) > 0 {
 		rows := make([]*LineDiscount, len(l2.Discounts))

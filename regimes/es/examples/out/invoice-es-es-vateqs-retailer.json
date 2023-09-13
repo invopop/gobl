@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e12bfa758ae6fa0678f4e6e58a882fba4427f9f099bdfbb542fdb00a04e240cb"
+			"val": "e9e412c44df3f2e82e76f7ecba88891b3bab9e58adc3edb23ff37894b543855b"
 		},
 		"draft": true
 	},
@@ -69,15 +69,15 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "132.2314",
+								"base": "132.23",
 								"percent": "21.0%",
-								"amount": "27.7686"
+								"amount": "27.77"
 							}
 						],
-						"amount": "27.7686"
+						"amount": "27.77"
 					}
 				],
-				"sum": "27.7686"
+				"sum": "27.77"
 			},
 			"tax": "27.77",
 			"total_with_tax": "160.00",

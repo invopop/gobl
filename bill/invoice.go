@@ -24,6 +24,10 @@ const (
 	ShortSchemaInvoice = "bill/invoice"
 )
 
+const (
+	defaultTaxRemovalAccuracy uint32 = 2
+)
+
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -238,42 +242,45 @@ func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 		return nil, err
 	}
 
-	var i2 Invoice
-	for accuracy := uint32(2); accuracy <= 6; accuracy++ {
+	i2 := *inv
+	i2.Totals = new(Totals)
+	i2.Lines = make([]*Line, len(inv.Lines))
+	for i, l := range inv.Lines {
+		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
+	}
 
-		i2 = *inv
-		i2.Lines = make([]*Line, len(inv.Lines))
-		for i, l := range inv.Lines {
-			i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, accuracy)
+	if len(inv.Discounts) > 0 {
+		i2.Discounts = make([]*Discount, len(inv.Discounts))
+		for i, l := range inv.Discounts {
+			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
 		}
-
-		if len(inv.Discounts) > 0 {
-			i2.Discounts = make([]*Discount, len(inv.Discounts))
-			for i, l := range inv.Discounts {
-				i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
-			}
+	}
+	if len(i2.Charges) > 0 {
+		i2.Charges = make([]*Charge, len(inv.Charges))
+		for i, l := range inv.Charges {
+			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
 		}
-		if len(i2.Charges) > 0 {
-			i2.Charges = make([]*Charge, len(inv.Charges))
-			for i, l := range inv.Charges {
-				i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude, 1)
-			}
-		}
+	}
 
-		tx := *i2.Tax
-		tx.PricesInclude = ""
-		i2.Tax = &tx
+	tx := *i2.Tax
+	tx.PricesInclude = ""
+	i2.Tax = &tx
 
+	if err := i2.Calculate(); err != nil {
+		return nil, err
+	}
+
+	// Account for any rounding errors that we just can't handle
+	if !inv.Totals.TotalWithTax.Equals(i2.Totals.TotalWithTax) {
+		rnd := inv.Totals.TotalWithTax.Subtract(i2.Totals.TotalWithTax)
+		fmt.Printf("A: %s B: %s C: %s\n", inv.Totals.TotalWithTax.String(), i2.Totals.TotalWithTax.String(), rnd.String())
+		i2.Totals.Rounding = &rnd
 		if err := i2.Calculate(); err != nil {
 			return nil, err
 		}
-
-		if inv.Totals.Total.String() == i2.Totals.Total.String() &&
-			inv.Totals.Tax.String() == i2.Totals.Tax.String() {
-			return &i2, nil
-		}
 	}
-	return nil, errors.New("insufficient precision, unable to remove included taxes")
+
+	return &i2, nil
 }
 
 // TaxRegime determines the tax regime for the invoice based on the supplier tax
@@ -356,7 +363,10 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	// Prepare the totals we'll need with amounts based on currency
-	t := new(Totals)
+	if inv.Totals == nil {
+		inv.Totals = new(Totals)
+	}
+	t := inv.Totals
 	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
 
@@ -365,7 +375,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		return validation.Errors{"lines": err}
 	}
 	t.Sum = calculateLineSum(zero, inv.Lines)
-	t.Total = t.Sum.Rescale(zero.Exp())
+	t.Total = t.Sum
 
 	// Discount Lines
 	if err := calculateDiscounts(zero, t.Sum, inv.Discounts); err != nil {
@@ -408,8 +418,12 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		Regime:   r,
 		Zone:     tID.Zone,
 		Date:     *date,
-		Includes: pit,
 		Lines:    tls,
+		Includes: pit,
+	}
+	if inv.Tax != nil {
+		tc.Calculator = inv.Tax.Calculator
+		tc.Rounding = inv.Tax.Rounding
 	}
 	if err := tc.Calculate(t.Taxes); err != nil {
 		return err
@@ -418,7 +432,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	// Remove any included taxes from the total.
 	ct := t.Taxes.Category(pit)
 	if ct != nil {
-		ti := ct.Amount.Rescale(zero.Exp())
+		ti := ct.Amount
 		t.TaxIncluded = &ti
 		t.Total = t.Total.Subtract(ti)
 	}
@@ -427,10 +441,14 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
 		t.Tax = zero
 	} else {
-		t.Tax = t.Taxes.Sum.Rescale(zero.Exp())
+		t.Tax = t.Taxes.PreciseSum()
 	}
 	t.TotalWithTax = t.Total.Add(t.Tax)
 	t.Payable = t.TotalWithTax
+	if t.Rounding != nil {
+		// BT-144 in EN16931
+		t.Payable = t.Payable.Add(*t.Rounding)
+	}
 
 	// Outlays
 	t.Outlays = calculateOutlays(zero, inv.Outlays)
@@ -451,7 +469,8 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		inv.Payment.Terms.CalculateDues(zero, t.Payable)
 	}
 
-	inv.Totals = t
+	t.round(zero)
+
 	return nil
 }
 

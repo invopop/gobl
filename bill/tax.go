@@ -5,7 +5,9 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -22,6 +24,13 @@ type Tax struct {
 
 	// Special tax tags that apply to this invoice according to local requirements.
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
+
+	// Calculator defines the rule to use when calculating the taxes.
+	// Currently supported options: `line`, or `total` (default).
+	Calculator cbc.Key `json:"calculator,omitempty" jsonschema:"title=Calculator"`
+
+	// Rounding defines the rounding rule to use when calculating the invoice sums.
+	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding"`
 
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
@@ -47,4 +56,31 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&t.Tags, validation.Each(r.InTags())),
 		validation.Field(&t.Meta),
 	)
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
+	props := schema.Properties
+	if val, ok := props.Get("calculator"); ok {
+		its := val.(*jsonschema.Schema)
+		its.OneOf = make([]*jsonschema.Schema, len(tax.TotalCalculatorDefs))
+		for i, v := range tax.TotalCalculatorDefs {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       v.Key.String(),
+				Title:       v.Name.String(i18n.EN),
+				Description: v.Desc.String(i18n.EN),
+			}
+		}
+	}
+	if val, ok := props.Get("rounding"); ok {
+		its := val.(*jsonschema.Schema)
+		its.OneOf = make([]*jsonschema.Schema, len(tax.TotalRoundingDefs))
+		for i, v := range tax.TotalRoundingDefs {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       v.Key.String(),
+				Title:       v.Name.String(i18n.EN),
+				Description: v.Desc.String(i18n.EN),
+			}
+		}
+	}
 }

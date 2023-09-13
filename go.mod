@@ -12,7 +12,7 @@ require (
 	github.com/invopop/validation v0.3.0
 	github.com/invopop/yaml v0.1.0
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto v0.9.0 // indirect
 )
 

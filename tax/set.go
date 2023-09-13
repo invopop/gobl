@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
 )
@@ -28,8 +30,14 @@ type Combo struct {
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
 	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+
 	// Internal link back to the category object
 	category *Category
+
+	// base and amount used for line-by-line calculations
+	base      num.Amount
+	amount    num.Amount
+	surcharge *num.Amount
 }
 
 // ValidateWithContext ensures the Combo has the correct details.
@@ -98,8 +106,8 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
-func (c *Combo) prepare(tc *TotalCalculator) error {
-	c.category = tc.Regime.Category(c.Category)
+func (c *Combo) prepare(r *Regime, zone l10n.Code, date cal.Date) error {
+	c.category = r.Category(c.Category)
 	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
 	}
@@ -118,9 +126,9 @@ func (c *Combo) prepare(tc *TotalCalculator) error {
 		// if there are not rate values, don't attempt to make a
 		// calculation.
 		if len(rate.Values) > 0 {
-			value := rate.Value(tc.Date, tc.Zone)
+			value := rate.Value(date, zone)
 			if value == nil {
-				return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), tc.Date.String())
+				return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 			}
 
 			p := value.Percent // copy

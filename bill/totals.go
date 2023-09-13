@@ -26,6 +26,9 @@ type Totals struct {
 	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Grand total after all taxes have been applied.
 	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
+	// Rounding amount to apply to the invoice in case the total and payable
+	// amounts don't quite match.
+	Rounding *num.Amount `json:"rounding,omitempty" jsonschema:"title=Rounding"`
 	// Total paid in outlays that need to be reimbursed
 	Outlays *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals"`
 	// Total amount to be paid after applying taxes and outlays.
@@ -47,6 +50,7 @@ func (t *Totals) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&t.Taxes),
 		validation.Field(&t.Tax),
 		validation.Field(&t.TotalWithTax),
+		validation.Field(&t.Rounding),
 		validation.Field(&t.Outlays),
 		validation.Field(&t.Payable),
 		validation.Field(&t.Advances),
@@ -65,8 +69,38 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Taxes = nil
 	t.Tax = zero
 	t.TotalWithTax = zero
+	// t.Rounding = nil // may have been provided externally
 	t.Outlays = nil
 	t.Payable = zero
 	t.Advances = nil
 	t.Due = nil
+}
+
+// round goes through each value that is set and rescales to match
+// the zero's exponent
+func (t *Totals) round(zero num.Amount) {
+	e := zero.Exp()
+	t.Sum = t.Sum.Rescale(e)
+	if t.Discount != nil {
+		*t.Discount = t.Discount.Rescale(e)
+	}
+	if t.Charge != nil {
+		*t.Charge = t.Charge.Rescale(e)
+	}
+	if t.TaxIncluded != nil {
+		*t.TaxIncluded = t.TaxIncluded.Rescale(e)
+	}
+	t.Total = t.Total.Rescale(e)
+	t.Tax = t.Tax.Rescale(e)
+	t.TotalWithTax = t.TotalWithTax.Rescale(e)
+	if t.Outlays != nil {
+		*t.Outlays = t.Outlays.Rescale(e)
+	}
+	t.Payable = t.Payable.Rescale(e)
+	if t.Advances != nil {
+		*t.Advances = t.Advances.Rescale(e)
+	}
+	if t.Due != nil {
+		*t.Due = t.Due.Rescale(e)
+	}
 }

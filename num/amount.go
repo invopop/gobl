@@ -179,13 +179,19 @@ func (a Amount) Rescale(exp uint32) Amount {
 	return a
 }
 
+// RescaleUp will rescale the exponent value of the amount, but only if it is
+// lower than the current exponent.
+func (a Amount) RescaleUp(exp uint32) Amount {
+	if exp > a.exp {
+		return a.Rescale(exp)
+	}
+	return a
+}
+
 // MatchPrecision will rescale the exponent value of the amount so that it
 // matches the scale of the provided amount, but *only* if it is higher.
 func (a Amount) MatchPrecision(a2 Amount) Amount {
-	if a2.exp > a.exp {
-		return a.Rescale(a2.exp)
-	}
-	return a
+	return a.RescaleUp(a2.exp)
 }
 
 // Upscale increases the accuracy of the amount by rescaling the exponent
@@ -235,12 +241,18 @@ func (a Amount) String() string {
 		return "NA"
 	}
 	p := intPow(10, a.exp)
-	v1 := a.value / p
-	v2 := a.value - (v1 * p)
+	v := a.value
+	s := ""
+	if v < 0 {
+		s = "-"
+		v = -v
+	}
+	v1 := v / p
+	v2 := v - (v1 * p)
 	if v2 < 0 {
 		v2 = -v2
 	}
-	return fmt.Sprintf("%d.%0*d", v1, a.exp, v2)
+	return fmt.Sprintf("%s%d.%0*d", s, v1, a.exp, v2)
 }
 
 // MinimalString provides the amount without any tailing 0s or '.'
