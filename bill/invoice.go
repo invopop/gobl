@@ -422,7 +422,6 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 	if inv.Tax != nil {
 		tc.Calculator = inv.Tax.Calculator
-		tc.Rounding = inv.Tax.Rounding
 	}
 	if err := tc.Calculate(t.Taxes); err != nil {
 		return err

@@ -30,7 +30,6 @@ func TestTotalByLineCalculate(t *testing.T) {
 		lines       []tax.TaxableLine
 		date        *cal.Date
 		taxIncluded cbc.Code
-		rounding    cbc.Key
 		want        *tax.Total
 		err         error
 		errContent  string
@@ -594,55 +593,6 @@ func TestTotalByLineCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(1364, 2),
 							},
 						},
-						Amount: num.MakeAmount(3100, 2),
-					},
-				},
-				Sum: num.MakeAmount(3100, 2),
-			},
-		},
-		{
-			desc: "with multirate VAT included in price and post rounding",
-			lines: []tax.TaxableLine{
-				&taxableLine{
-					taxes: tax.Set{
-						{
-							Category: common.TaxCategoryVAT,
-							Rate:     common.TaxRateStandard,
-						},
-					},
-					amount: num.MakeAmount(10000, 2),
-				},
-				&taxableLine{
-					taxes: tax.Set{
-						{
-							Category: common.TaxCategoryVAT,
-							Rate:     common.TaxRateReduced,
-						},
-					},
-					amount: num.MakeAmount(15000, 2),
-				},
-			},
-			taxIncluded: common.TaxCategoryVAT,
-			rounding:    tax.TotalRoundingPost,
-			want: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code:     common.TaxCategoryVAT,
-						Retained: false,
-						Rates: []*tax.RateTotal{
-							{
-								Key:     common.TaxRateStandard,
-								Base:    num.MakeAmount(8264, 2),
-								Percent: num.NewPercentage(210, 3),
-								Amount:  num.MakeAmount(1736, 2),
-							},
-							{
-								Key:     common.TaxRateReduced,
-								Base:    num.MakeAmount(13636, 2),
-								Percent: num.NewPercentage(100, 3),
-								Amount:  num.MakeAmount(1364, 2),
-							},
-						},
 						Amount: num.MakeAmount(3099, 2),
 					},
 				},
@@ -689,10 +639,10 @@ func TestTotalByLineCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(1364, 2),
 							},
 						},
-						Amount: num.MakeAmount(3100, 2),
+						Amount: num.MakeAmount(3099, 2),
 					},
 				},
-				Sum: num.MakeAmount(3100, 2),
+				Sum: num.MakeAmount(3099, 2),
 			},
 		},
 		{
@@ -807,7 +757,7 @@ func TestTotalByLineCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(1364, 2),
 							},
 						},
-						Amount: num.MakeAmount(3100, 2),
+						Amount: num.MakeAmount(3099, 2),
 					},
 					{
 						Code:     es.TaxCategoryIRPF,
@@ -1084,7 +1034,6 @@ func TestTotalByLineCalculate(t *testing.T) {
 				Lines:      test.lines,
 				Includes:   test.taxIncluded,
 				Calculator: tax.TotalCalculatorLine,
-				Rounding:   test.rounding,
 			}
 			tot := new(tax.Total)
 			err := tc.Calculate(tot)

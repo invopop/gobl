@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bddc4e05d939270038e36f82f14389aa051fb3fe02379990d6024d9e4738023c"
+			"val": "72e81bc4530fcd56154953690b56d170d3de5109a833642876e1dc33399f8d6e"
 		},
 		"draft": true
 	},
@@ -128,8 +128,8 @@
 		},
 		"totals": {
 			"sum": "110.00",
-			"tax_included": "19.08",
-			"total": "90.92",
+			"tax_included": "19.09",
+			"total": "90.91",
 			"taxes": {
 				"categories": [
 					{
@@ -143,22 +143,22 @@
 									"percent": "5.2%",
 									"amount": "4.30"
 								},
-								"amount": "17.35"
+								"amount": "17.36"
 							},
 							{
 								"key": "standard",
 								"base": "8.26",
 								"percent": "21.0%",
-								"amount": "1.73"
+								"amount": "1.74"
 							}
 						],
-						"amount": "19.08",
+						"amount": "19.09",
 						"surcharge": "4.30"
 					}
 				],
-				"sum": "23.38"
+				"sum": "23.39"
 			},
-			"tax": "23.38",
+			"tax": "23.39",
 			"total_with_tax": "114.30",
 			"payable": "114.30",
 			"advance": "25.00",

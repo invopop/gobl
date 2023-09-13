@@ -120,6 +120,5 @@ func calculateChargeSum(zero num.Amount, charges []*Charge) *num.Amount {
 		total = total.MatchPrecision(l.Amount)
 		total = total.Add(l.Amount)
 	}
-	total = total.Rescale(zero.Exp())
 	return &total
 }

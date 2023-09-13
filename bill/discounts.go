@@ -120,6 +120,5 @@ func calculateDiscountSum(zero num.Amount, discounts []*Discount) *num.Amount {
 		total = total.MatchPrecision(l.Amount)
 		total = total.Add(l.Amount)
 	}
-	total = total.Rescale(zero.Exp())
 	return &total
 }

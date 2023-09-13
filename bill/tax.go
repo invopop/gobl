@@ -29,9 +29,6 @@ type Tax struct {
 	// Currently supported options: `line`, or `total` (default).
 	Calculator cbc.Key `json:"calculator,omitempty" jsonschema:"title=Calculator"`
 
-	// Rounding defines the rounding rule to use when calculating the invoice sums.
-	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding"`
-
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -54,6 +51,7 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
 		validation.Field(&t.Tags, validation.Each(r.InTags())),
+		validation.Field(&t.Calculator),
 		validation.Field(&t.Meta),
 	)
 }
@@ -65,17 +63,6 @@ func (Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
 		its := val.(*jsonschema.Schema)
 		its.OneOf = make([]*jsonschema.Schema, len(tax.TotalCalculatorDefs))
 		for i, v := range tax.TotalCalculatorDefs {
-			its.OneOf[i] = &jsonschema.Schema{
-				Const:       v.Key.String(),
-				Title:       v.Name.String(i18n.EN),
-				Description: v.Desc.String(i18n.EN),
-			}
-		}
-	}
-	if val, ok := props.Get("rounding"); ok {
-		its := val.(*jsonschema.Schema)
-		its.OneOf = make([]*jsonschema.Schema, len(tax.TotalRoundingDefs))
-		for i, v := range tax.TotalRoundingDefs {
 			its.OneOf[i] = &jsonschema.Schema{
 				Const:       v.Key.String(),
 				Title:       v.Name.String(i18n.EN),
