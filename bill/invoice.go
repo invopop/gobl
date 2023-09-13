@@ -273,7 +273,6 @@ func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	// Account for any rounding errors that we just can't handle
 	if !inv.Totals.TotalWithTax.Equals(i2.Totals.TotalWithTax) {
 		rnd := inv.Totals.TotalWithTax.Subtract(i2.Totals.TotalWithTax)
-		fmt.Printf("A: %s B: %s C: %s\n", inv.Totals.TotalWithTax.String(), i2.Totals.TotalWithTax.String(), rnd.String())
 		i2.Totals.Rounding = &rnd
 		if err := i2.Calculate(); err != nil {
 			return nil, err
