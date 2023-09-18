@@ -51,7 +51,7 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
 		validation.Field(&t.Tags, validation.Each(r.InTags())),
-		validation.Field(&t.Calculator),
+		validation.Field(&t.Calculator, tax.InKeyDefs(tax.TotalCalculatorDefs)),
 		validation.Field(&t.Meta),
 	)
 }

@@ -24,7 +24,7 @@ var TotalCalculatorDefs = []*KeyDefinition{
 			i18n.EN: "Total",
 		},
 		Desc: i18n.String{
-			i18n.EN: "Calculate the taxes based on the sum of all the line items.",
+			i18n.EN: "Calculate the taxes based on the sum of all the line items (default).",
 		},
 	},
 	{
