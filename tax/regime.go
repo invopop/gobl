@@ -695,3 +695,13 @@ func (kd *KeyDefinition) Validate() error {
 	)
 	return err
 }
+
+// InKeyDefs prepares a validation to provide a rule that will determine
+// if the keys are in the provided set.
+func InKeyDefs(list []*KeyDefinition) validation.Rule {
+	defs := make([]interface{}, len(list))
+	for i, item := range list {
+		defs[i] = item.Key
+	}
+	return validation.In(defs...)
+}

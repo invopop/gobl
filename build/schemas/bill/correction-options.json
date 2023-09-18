@@ -33,23 +33,23 @@
           "title": "Reason",
           "description": "Human readable reason for the corrective operation."
         },
-        "correction_method": {
+        "method": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Correction Method",
+          "title": "Method",
           "description": "Correction method as defined by the tax regime."
         },
-        "corrections": {
+        "changes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Corrections",
-          "description": "Correction keys that describe the specific changes according to the tax regime."
+          "title": "Changes",
+          "description": "Changes keys that describe the specific changes according to the tax regime."
         }
       },
       "type": "object",
       "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.56.0"
+  "$comment": "Generated with GOBL v0.57.0"
 }

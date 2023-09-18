@@ -686,18 +686,18 @@
           "title": "Stamps",
           "description": "Seals of approval from other organisations that may need to be listed."
         },
-        "corrections": {
+        "correction_method": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Correction Method",
+          "description": "Tax regime specific key reflecting the method used to correct the preceding invoice."
+        },
+        "changes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Corrections",
-          "description": "Tax regime specific keys reflecting why the preceding invoice is being replaced."
-        },
-        "correction_method": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Correction Method",
-          "description": "Tax regime specific keys reflecting the method used to correct the preceding invoice."
+          "title": "Changes",
+          "description": "Tax regime specific keys reflecting what has been changed from the previous invoice."
         },
         "period": {
           "$ref": "https://gobl.org/draft-0/cal/period",
@@ -730,6 +730,23 @@
           "type": "array",
           "title": "Tags",
           "description": "Special tax tags that apply to this invoice according to local requirements."
+        },
+        "calculator": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "total",
+              "title": "Total",
+              "description": "Calculate the taxes based on the sum of all the line items (default)."
+            },
+            {
+              "const": "line",
+              "title": "Line",
+              "description": "Calculate the taxes based on each line item."
+            }
+          ],
+          "title": "Calculator",
+          "description": "Calculator defines the rule to use when calculating the taxes.\nCurrently supported options: `line`, or `total` (default)."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -782,6 +799,11 @@
           "title": "Total with Tax",
           "description": "Grand total after all taxes have been applied."
         },
+        "rounding": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Rounding",
+          "description": "Rounding amount to apply to the invoice in case the total and payable\namounts don't quite match."
+        },
         "outlays": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Outlay Totals",
@@ -813,5 +835,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.56.0"
+  "$comment": "Generated with GOBL v0.57.0"
 }
