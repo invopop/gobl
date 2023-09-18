@@ -36,7 +36,7 @@ type Preceding struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// UnmarshalJSON is used to handle the refactor away from corrections and corrections methods
+// UnmarshalJSON is used to handle the refactor away from "corrections" to "changes"
 func (p *Preceding) UnmarshalJSON(data []byte) error {
 	type Alias Preceding
 	aux := &struct {
