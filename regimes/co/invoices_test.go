@@ -69,9 +69,9 @@ func creditNote() *bill.Invoice {
 		IssueDate: cal.MakeDate(2022, 12, 29),
 		Preceding: []*bill.Preceding{
 			{
-				Code:      "TEST",
-				IssueDate: cal.NewDate(2022, 12, 27),
-				Method:    co.CorrectionMethodKeyRevoked,
+				Code:             "TEST",
+				IssueDate:        cal.NewDate(2022, 12, 27),
+				CorrectionMethod: co.CorrectionMethodKeyRevoked,
 			},
 		},
 		Supplier: &org.Party{
@@ -156,9 +156,9 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, inv.Preceding[0].Method, co.CorrectionMethodKeyRevoked)
+	assert.Equal(t, inv.Preceding[0].CorrectionMethod, co.CorrectionMethodKeyRevoked)
 
-	inv.Preceding[0].Method = "fooo"
+	inv.Preceding[0].CorrectionMethod = "fooo"
 	err = inv.Validate()
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "method: must be a valid value")

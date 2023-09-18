@@ -22,6 +22,6 @@ func TestPrecedingJSONMigration(t *testing.T) {
 	p := new(bill.Preceding)
 	err := p.UnmarshalJSON(data)
 	assert.NoError(t, err)
-	assert.Equal(t, "foo", p.Method.String())
+	assert.Equal(t, "foo", p.CorrectionMethod.String())
 	assert.Equal(t, "bar", p.Changes[0].String())
 }

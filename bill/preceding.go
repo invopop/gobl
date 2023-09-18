@@ -27,7 +27,7 @@ type Preceding struct {
 	// Seals of approval from other organisations that may need to be listed.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Tax regime specific key reflecting the method used to correct the preceding invoice.
-	Method cbc.Key `json:"method,omitempty" jsonschema:"title=Method"`
+	CorrectionMethod cbc.Key `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
 	// Tax regime specific keys reflecting what has been changed from the previous invoice.
 	Changes []cbc.Key `json:"changes,omitempty" jsonschema:"title=Changes"`
 	// Tax period in which the previous invoice had an effect required by some tax regimes and formats.
@@ -40,17 +40,13 @@ type Preceding struct {
 func (p *Preceding) UnmarshalJSON(data []byte) error {
 	type Alias Preceding
 	aux := &struct {
-		CorrectionMethod cbc.Key   `json:"correction_method,omitempty"`
-		Corrections      []cbc.Key `json:"corrections,omitempty"`
+		Corrections []cbc.Key `json:"corrections,omitempty"`
 		*Alias
 	}{
 		Alias: (*Alias)(p),
 	}
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
-	}
-	if aux.CorrectionMethod != cbc.KeyEmpty {
-		p.Method = aux.CorrectionMethod
 	}
 	if len(aux.Corrections) != 0 {
 		p.Changes = aux.Corrections
@@ -66,7 +62,7 @@ func (p *Preceding) Validate() error {
 		validation.Field(&p.Code, validation.Required),
 		validation.Field(&p.IssueDate, cal.DateNotZero()),
 		validation.Field(&p.Stamps),
-		validation.Field(&p.Method),
+		validation.Field(&p.CorrectionMethod),
 		validation.Field(&p.Changes),
 		validation.Field(&p.Period),
 		validation.Field(&p.Meta),

@@ -136,13 +136,13 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 
 	// Copy and prepare the basic fields
 	pre := &Preceding{
-		UUID:      inv.UUID,
-		Series:    inv.Series,
-		Code:      inv.Code,
-		IssueDate: inv.IssueDate.Clone(),
-		Reason:    o.Reason,
-		Method:    o.Method,
-		Changes:   o.Changes,
+		UUID:             inv.UUID,
+		Series:           inv.Series,
+		Code:             inv.Code,
+		IssueDate:        inv.IssueDate.Clone(),
+		Reason:           o.Reason,
+		CorrectionMethod: o.Method,
+		Changes:          o.Changes,
 	}
 	inv.UUID = nil
 	inv.Series = ""
@@ -247,11 +247,11 @@ func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.Correcti
 	}
 
 	if len(cd.Methods) > 0 {
-		if pre.Method == cbc.KeyEmpty {
+		if pre.CorrectionMethod == cbc.KeyEmpty {
 			return errors.New("missing correction method")
 		}
-		if !cd.HasMethod(pre.Method) {
-			return fmt.Errorf("invalid correction method: %v", pre.Method)
+		if !cd.HasMethod(pre.CorrectionMethod) {
+			return fmt.Errorf("invalid correction method: %v", pre.CorrectionMethod)
 		}
 	}
 

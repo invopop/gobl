@@ -117,7 +117,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	pre = i.Preceding[0]
 	require.Len(t, pre.Stamps, 1)
 	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
-	assert.Equal(t, pre.Method, co.CorrectionMethodKeyRevoked)
+	assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
 }
 
 func TestCorrectWithOptions(t *testing.T) {
