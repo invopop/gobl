@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"encoding/json"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
@@ -24,14 +26,32 @@ type Preceding struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Seals of approval from other organisations that may need to be listed.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-	// Tax regime specific keys reflecting why the preceding invoice is being replaced.
-	Corrections []cbc.Key `json:"corrections,omitempty" jsonschema:"title=Corrections"`
-	// Tax regime specific keys reflecting the method used to correct the preceding invoice.
+	// Tax regime specific key reflecting the method used to correct the preceding invoice.
 	CorrectionMethod cbc.Key `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
+	// Tax regime specific keys reflecting what has been changed from the previous invoice.
+	Changes []cbc.Key `json:"changes,omitempty" jsonschema:"title=Changes"`
 	// Tax period in which the previous invoice had an effect required by some tax regimes and formats.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Additional semi-structured data that may be useful in specific regions
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// UnmarshalJSON is used to handle the refactor away from "corrections" to "changes"
+func (p *Preceding) UnmarshalJSON(data []byte) error {
+	type Alias Preceding
+	aux := &struct {
+		Corrections []cbc.Key `json:"corrections,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(p),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if len(aux.Corrections) != 0 {
+		p.Changes = aux.Corrections
+	}
+	return nil
 }
 
 // Validate ensures the preceding details look okay
@@ -42,8 +62,8 @@ func (p *Preceding) Validate() error {
 		validation.Field(&p.Code, validation.Required),
 		validation.Field(&p.IssueDate, cal.DateNotZero()),
 		validation.Field(&p.Stamps),
-		validation.Field(&p.Corrections),
 		validation.Field(&p.CorrectionMethod),
+		validation.Field(&p.Changes),
 		validation.Field(&p.Period),
 		validation.Field(&p.Meta),
 	)

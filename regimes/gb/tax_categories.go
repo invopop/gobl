@@ -17,7 +17,7 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.EN: "VAT",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 		},
 		Retained: false,

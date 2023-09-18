@@ -29,7 +29,7 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "VAT",
 			i18n.ES: "IVA",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 			i18n.ES: "Impuesto al Valor Agregado",
 		},
@@ -87,7 +87,7 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.ES: "IC",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Consumption Tax",
 			i18n.ES: "Impuesto sobre Consumo",
 		},
@@ -102,7 +102,7 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.ES: "ICA",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Industry and Commerce Tax",
 			i18n.ES: "Impuesto de Industria y Comercio",
 		},
@@ -117,7 +117,7 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.ES: "ReteIVA",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.ES: "Retención en la fuente por el Impuesto al Valor Agregado",
 		},
 		Retained: true,
@@ -131,7 +131,7 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.ES: "ReteICA",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.ES: "Retención en la fuente por el Impuesto de Industria y Comercio",
 		},
 		Retained: true,
@@ -145,7 +145,7 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.ES: "Retefuente",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.ES: "Retención en la fuente por el Impuesto de la Renta",
 		},
 		Retained: true,

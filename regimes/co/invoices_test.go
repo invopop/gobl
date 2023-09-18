@@ -161,7 +161,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	inv.Preceding[0].CorrectionMethod = "fooo"
 	err = inv.Validate()
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "correction_method: must be a valid value")
+		assert.Contains(t, err.Error(), "method: must be a valid value")
 	}
 
 }

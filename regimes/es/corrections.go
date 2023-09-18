@@ -48,7 +48,7 @@ const (
 var correctionList = []*tax.KeyDefinition{
 	{
 		Key: CorrectionKeyCode,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Invoice code",
 			i18n.ES: "Número de la factura",
 		},
@@ -56,7 +56,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeySeries,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Invoice series",
 			i18n.ES: "Serie de la factura",
 		},
@@ -64,7 +64,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyIssueDate,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Issue date",
 			i18n.ES: "Fecha expedición",
 		},
@@ -72,15 +72,15 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeySupplierName,
-		Desc: i18n.String{
-			i18n.EN: "Name and surnames/Corporate name – Issuer (Sender)",
+		Name: i18n.String{
+			i18n.EN: "Name and surnames/Corporate name - Issuer (Sender)",
 			i18n.ES: "Nombre y apellidos/Razón Social-Emisor",
 		},
 		Map: cbc.CodeMap{KeyFacturaE: "04"},
 	},
 	{
 		Key: CorrectionKeyCustomerName,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Name and surnames/Corporate name - Receiver",
 			i18n.ES: "Nombre y apellidos/Razón Social-Receptor",
 		},
@@ -88,7 +88,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeySupplierTaxID,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Issuer's Tax Identification Number",
 			i18n.ES: "Identificación fiscal Emisor/obligado",
 		},
@@ -96,7 +96,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyCustomerTaxID,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Receiver's Tax Identification Number",
 			i18n.ES: "Identificación fiscal Receptor",
 		},
@@ -104,7 +104,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeySupplierAddress,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Issuer's address",
 			i18n.ES: "Domicilio Emisor/Obligado",
 		},
@@ -112,7 +112,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyCustomerAddress,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Receiver's address",
 			i18n.ES: "Domicilio Receptor",
 		},
@@ -120,7 +120,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyLine,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Item line",
 			i18n.ES: "Detalle Operación",
 		},
@@ -128,7 +128,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyTaxRate,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Applicable Tax Rate",
 			i18n.ES: "Porcentaje impositivo a aplicar",
 		},
@@ -136,7 +136,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyTaxAmount,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Applicable Tax Amount",
 			i18n.ES: "Cuota tributaria a aplicar",
 		},
@@ -144,7 +144,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyPeriod,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Applicable Date/Period",
 			i18n.ES: "Fecha/Periodo a aplicar",
 		},
@@ -152,7 +152,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyType,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Invoice Class",
 			i18n.ES: "Clase de factura",
 		},
@@ -160,7 +160,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyLegalDetails,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Legal literals",
 			i18n.ES: "Literales legales",
 		},
@@ -168,7 +168,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyTaxBase,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Taxable Base",
 			i18n.ES: "Base imponible",
 		},
@@ -176,7 +176,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyTax,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Calculation of tax outputs",
 			i18n.ES: "Cálculo de cuotas repercutidas",
 		},
@@ -184,7 +184,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyTaxRetained,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Calculation of tax inputs",
 			i18n.ES: "Cálculo de cuotas retenidas",
 		},
@@ -192,7 +192,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyRefund,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Taxable Base modified due to return of packages and packaging materials",
 			i18n.ES: "Base imponible modificada por devolución de envases / embalajes",
 		},
@@ -200,7 +200,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyDiscount,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Taxable Base modified due to discounts and rebates",
 			i18n.ES: "Base imponible modificada por descuentos y bonificaciones",
 		},
@@ -208,7 +208,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyJudicial,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Taxable Base modified due to firm court ruling or administrative decision",
 			i18n.ES: "Base imponible modificada por resolución firme, judicial o administrativa",
 		},
@@ -216,7 +216,7 @@ var correctionList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionKeyInsolvency,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
 			i18n.ES: "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso",
 		},
@@ -227,7 +227,7 @@ var correctionList = []*tax.KeyDefinition{
 var correctionMethodList = []*tax.KeyDefinition{
 	{
 		Key: CorrectionMethodKeyComplete,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Complete",
 			i18n.ES: "Rectificaticón íntegra",
 		},
@@ -235,7 +235,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionMethodKeyPartial,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Corrected items only",
 			i18n.ES: "Rectificación por diferencias",
 		},
@@ -243,7 +243,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionMethodKeyDiscount,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Bulk deal in a given period",
 			i18n.ES: "Rectificación por descuento por volumen de operaciones durante un periodo",
 		},
@@ -251,7 +251,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionMethodKeyAuthorized,
-		Desc: i18n.String{
+		Name: i18n.String{
 			i18n.EN: "Authorized by the Tax Agency",
 			i18n.ES: "Autorizadas por la Agencia Tributaria",
 		},

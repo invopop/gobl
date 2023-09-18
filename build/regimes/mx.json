@@ -574,14 +574,17 @@
       ]
     }
   ],
-  "preceding": {
-    "types": [
-      "credit-note"
-    ],
-    "stamps": [
-      "sat-uuid"
-    ]
-  },
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ],
+      "stamps": [
+        "sat-uuid"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
@@ -589,7 +592,7 @@
         "en": "VAT",
         "es": "IVA"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "es": "Impuesto al Valor Agregado"
       },

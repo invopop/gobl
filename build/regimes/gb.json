@@ -12,7 +12,7 @@
       "name": {
         "en": "VAT"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax"
       },
       "rates": [

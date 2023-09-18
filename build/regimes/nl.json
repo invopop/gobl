@@ -14,7 +14,7 @@
         "en": "VAT",
         "nl": "BTW"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "nl": "Belasting Toegevoegde Waarde"
       },

@@ -28,7 +28,7 @@ var categories = []*tax.Category{
 			i18n.EN: "VAT",
 			i18n.IT: "IVA",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 			i18n.IT: "Imposta sul Valore Aggiunto",
 		},
@@ -115,7 +115,7 @@ var categories = []*tax.Category{
 			i18n.EN: "IRPEF",
 			i18n.IT: "IRPEF",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Personal Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Persone Fisiche",
 		},
@@ -131,7 +131,7 @@ var categories = []*tax.Category{
 			i18n.EN: "IRES",
 			i18n.IT: "IRES",
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Corporate Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Società",
 		},
@@ -147,7 +147,7 @@ var categories = []*tax.Category{
 			i18n.EN: "INPS Contribution",
 			i18n.IT: "Contributo INPS", // nolint:misspell
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Contribution to the National Social Security Institute",
 			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
 		},
@@ -163,7 +163,7 @@ var categories = []*tax.Category{
 			i18n.EN: "ENASARCO Contribution",
 			i18n.IT: "Contributo ENASARCO", // nolint:misspell
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Contribution to the National Welfare Board for Sales Agents and Representatives",
 			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
 		},
@@ -179,7 +179,7 @@ var categories = []*tax.Category{
 			i18n.EN: "ENPAM Contribution",
 			i18n.IT: "Contributo ENPAM", // nolint:misspell
 		},
-		Desc: i18n.String{
+		Title: i18n.String{
 			i18n.EN: "Contribution to the National Pension and Welfare Board for Doctors",
 			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
 		},

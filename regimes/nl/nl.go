@@ -36,7 +36,7 @@ func New() *tax.Regime {
 					i18n.EN: "VAT",
 					i18n.NL: "BTW",
 				},
-				Desc: i18n.String{
+				Title: i18n.String{
 					i18n.EN: "Value Added Tax",
 					i18n.NL: "Belasting Toegevoegde Waarde",
 				},

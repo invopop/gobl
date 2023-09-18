@@ -5,12 +5,14 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -24,7 +26,11 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Contains(t, err.Error(), "cannot use both credit and debit options")
 
 	i = testInvoiceESForCorrection(t)
-	err = i.Correct(bill.Credit, bill.WithReason("test refund"))
+	err = i.Correct(bill.Credit,
+		bill.WithReason("test refund"),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
@@ -47,14 +53,21 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Contains(t, err.Error(), "debit note not supported by regime")
 
 	i = testInvoiceESForCorrection(t)
-	err = i.Correct()
+	err = i.Correct(
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
 
 	// With preset date
 	i = testInvoiceESForCorrection(t)
 	d := cal.MakeDate(2023, 6, 13)
-	err = i.Correct(bill.WithIssueDate(d))
+	err = i.Correct(
+		bill.WithIssueDate(d),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
 
@@ -93,7 +106,12 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Contains(t, err.Error(), "corrective invoice type not supported by regime, try credit or debit")
 
 	i = testInvoiceCOForCorrection(t)
-	err = i.Correct(bill.Credit, bill.WithStamps(stamps), bill.WithCorrectionMethod(co.CorrectionMethodKeyRevoked))
+	err = i.Correct(
+		bill.Credit,
+		bill.WithStamps(stamps),
+		bill.WithMethod(co.CorrectionMethodKeyRevoked),
+		bill.WithReason("test refund"),
+	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 	pre = i.Preceding[0]
@@ -105,8 +123,10 @@ func TestInvoiceCorrect(t *testing.T) {
 func TestCorrectWithOptions(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
 	opts := &bill.CorrectionOptions{
-		Credit: true,
-		Reason: "test refund",
+		Credit:  true,
+		Reason:  "test refund",
+		Method:  es.CorrectionMethodKeyComplete,
+		Changes: []cbc.Key{es.CorrectionKeyLine},
 	}
 	err := i.Correct(bill.WithOptions(opts))
 	require.NoError(t, err)
@@ -125,7 +145,11 @@ func TestCorrectWithData(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
 	data := []byte(`{"credit":true,"reason":"test refund"}`)
 
-	err := i.Correct(bill.WithData(data))
+	err := i.Correct(
+		bill.WithData(data),
+		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.WithChanges(es.CorrectionKeyLine),
+	)
 	assert.NoError(t, err)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "-10") // implies credit was made
 

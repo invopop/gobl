@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -36,19 +37,29 @@ func New() *tax.Regime {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
+		Description: i18n.String{
+			i18n.EN: here.Doc(`
+				The Colombian tax regime is based on the DIAN (Dirección de Impuestos y Aduanas Nacionales)
+				specifications for electronic invoicing.
+			`),
+		},
 		TimeZone:         "America/Bogota",
 		Validator:        Validate,
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
 		Zones:            zones,               // see zones.go
-		Preceding: &tax.PrecedingDefinitions{ // see preceding.go
-			Types: []cbc.Key{
-				bill.InvoiceTypeCreditNote,
+		Corrections: []*tax.CorrectionDefinition{ // see preceding.go
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+				ReasonRequired: true,
+				Stamps: []cbc.Key{
+					StampProviderDIANCUDE,
+				},
+				Methods: correctionMethodList,
 			},
-			Stamps: []cbc.Key{
-				StampProviderDIANCUDE,
-			},
-			CorrectionMethods: correctionMethodList,
 		},
 		Categories: taxCategories,
 	}

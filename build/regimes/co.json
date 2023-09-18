@@ -4,6 +4,9 @@
     "en": "Colombia",
     "es": "Colombia"
   },
+  "description": {
+    "en": "The Colombian tax regime is based on the DIAN (Dirección de Impuestos y Aduanas Nacionales)\nspecifications for electronic invoicing."
+  },
   "time_zone": "America/Bogota",
   "country": "CO",
   "zones": [
@@ -14716,66 +14719,75 @@
       }
     }
   ],
-  "preceding": {
-    "types": [
-      "credit-note"
-    ],
-    "stamps": [
-      "dian-cude"
-    ],
-    "correction_methods": [
-      {
-        "key": "partial",
-        "desc": {
-          "en": "Partial refund of part of the goods or services.",
-          "es": "Devolución de parte de los bienes; no aceptación de partes del servicio."
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ],
+      "methods": [
+        {
+          "key": "partial",
+          "name": null,
+          "desc": {
+            "en": "Partial refund of part of the goods or services.",
+            "es": "Devolución de parte de los bienes; no aceptación de partes del servicio."
+          },
+          "map": {
+            "dian": "1"
+          }
         },
-        "map": {
-          "dian": "1"
-        }
-      },
-      {
-        "key": "revoked",
-        "desc": {
-          "en": "Previous document has been completely cancelled.",
-          "es": "Anulación de la factura anterior."
+        {
+          "key": "revoked",
+          "name": null,
+          "desc": {
+            "en": "Previous document has been completely cancelled.",
+            "es": "Anulación de la factura anterior."
+          },
+          "map": {
+            "dian": "2"
+          }
         },
-        "map": {
-          "dian": "2"
-        }
-      },
-      {
-        "key": "discount",
-        "desc": {
-          "en": "Partial or total discount.",
-          "es": "Rebaja o descuento parcial o total."
+        {
+          "key": "discount",
+          "name": null,
+          "desc": {
+            "en": "Partial or total discount.",
+            "es": "Rebaja o descuento parcial o total."
+          },
+          "map": {
+            "dian": "3"
+          }
         },
-        "map": {
-          "dian": "3"
-        }
-      },
-      {
-        "key": "price-adjustment",
-        "desc": {
-          "en": "Ajuste de precio.",
-          "es": "Price adjustment."
+        {
+          "key": "price-adjustment",
+          "name": null,
+          "desc": {
+            "en": "Ajuste de precio.",
+            "es": "Price adjustment."
+          },
+          "map": {
+            "dian": "4"
+          }
         },
-        "map": {
-          "dian": "4"
+        {
+          "key": "other",
+          "name": null,
+          "desc": {
+            "en": "Otros.",
+            "es": "Other."
+          },
+          "map": {
+            "dian": "5"
+          }
         }
-      },
-      {
-        "key": "other",
-        "desc": {
-          "en": "Otros.",
-          "es": "Other."
-        },
-        "map": {
-          "dian": "5"
-        }
-      }
-    ]
-  },
+      ],
+      "reason_required": true,
+      "stamps": [
+        "dian-cude"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
@@ -14783,7 +14795,7 @@
         "en": "VAT",
         "es": "IVA"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "es": "Impuesto al Valor Agregado"
       },
@@ -14837,7 +14849,7 @@
       "name": {
         "es": "IC"
       },
-      "desc": {
+      "title": {
         "en": "Consumption Tax",
         "es": "Impuesto sobre Consumo"
       }
@@ -14847,7 +14859,7 @@
       "name": {
         "es": "ICA"
       },
-      "desc": {
+      "title": {
         "en": "Industry and Commerce Tax",
         "es": "Impuesto de Industria y Comercio"
       }
@@ -14857,7 +14869,7 @@
       "name": {
         "es": "ReteIVA"
       },
-      "desc": {
+      "title": {
         "es": "Retención en la fuente por el Impuesto al Valor Agregado"
       },
       "retained": true
@@ -14867,7 +14879,7 @@
       "name": {
         "es": "ReteICA"
       },
-      "desc": {
+      "title": {
         "es": "Retención en la fuente por el Impuesto de Industria y Comercio"
       },
       "retained": true
@@ -14877,7 +14889,7 @@
       "name": {
         "es": "Retefuente"
       },
-      "desc": {
+      "title": {
         "es": "Retención en la fuente por el Impuesto de la Renta"
       },
       "retained": true

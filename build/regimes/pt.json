@@ -458,11 +458,14 @@
       ]
     }
   ],
-  "preceding": {
-    "types": [
-      "credit-note"
-    ]
-  },
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",
@@ -470,7 +473,7 @@
         "en": "VAT",
         "pt": "IVA"
       },
-      "desc": {
+      "title": {
         "en": "Value Added Tax",
         "pt": "Imposto sobre o Valor Acrescentado"
       },

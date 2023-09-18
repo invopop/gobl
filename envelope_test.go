@@ -3,7 +3,6 @@ package gobl_test
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -18,6 +17,7 @@ import (
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -293,19 +293,25 @@ func TestEnvelopeCorrect(t *testing.T) {
 	t.Run("correct invoice", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 
-		data, err := ioutil.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+		data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
 		require.NoError(t, err)
 		err = yaml.Unmarshal(data, env)
 		require.NoError(t, err)
 		require.NoError(t, env.Calculate())
 
-		_, err = env.Correct()
+		_, err = env.Correct(
+			bill.WithChanges(es.CorrectionKeyLine),
+			bill.WithMethod(es.CorrectionMethodKeyComplete),
+		)
 		require.NoError(t, err)
 
 		doc := env.Extract().(*bill.Invoice)
 		assert.Equal(t, doc.Type, bill.InvoiceTypeStandard, "no change")
 
-		e2, err := env.Correct()
+		e2, err := env.Correct(
+			bill.WithMethod(es.CorrectionMethodKeyComplete),
+			bill.WithChanges(es.CorrectionKeyLine),
+		)
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)
 		assert.Equal(t, doc.Type, bill.InvoiceTypeCorrective, "corrected")
