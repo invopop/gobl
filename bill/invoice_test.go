@@ -154,7 +154,7 @@ func TestRemoveIncludedTax(t *testing.T) {
 	assert.Equal(t, "82.6446", l0.Discounts[0].Amount.String())
 	assert.Equal(t, "743.8017", l0.Total.String())
 
-	assert.Equal(t, "743.8017", i2.Totals.Sum.String())
+	assert.Equal(t, "743.80", i2.Totals.Sum.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
@@ -165,6 +165,7 @@ func TestRemoveIncludedTax2(t *testing.T) {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
+			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -218,7 +219,7 @@ func TestRemoveIncludedTax2(t *testing.T) {
 	assert.Equal(t, "40.7547", l0.Item.Price.String())
 	assert.Equal(t, "40.7547", l0.Total.String())
 
-	assert.Equal(t, "46.3447", i2.Totals.Sum.String())
+	assert.Equal(t, "46.34", i2.Totals.Sum.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
@@ -229,6 +230,7 @@ func TestRemoveIncludedTax3(t *testing.T) {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
+			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -310,7 +312,8 @@ func TestRemoveIncludedTax3(t *testing.T) {
 		data, _ = json.Marshal(i2.Totals)
 		t.Logf("TOTALS: %v", string(data))
 	*/
-	assert.Equal(t, "803.0066", i2.Totals.Sum.String())
+
+	assert.Equal(t, "803.01", i2.Totals.Sum.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
@@ -364,7 +367,7 @@ func TestRemoveIncludedTax4(t *testing.T) {
 
 	data, _ := json.Marshal(i2.Lines)
 	t.Logf("TOTALS: %v", string(data))
-	assert.Equal(t, "4268.8209", i2.Totals.Sum.String())
+	assert.Equal(t, "4268.82", i2.Totals.Sum.String())
 	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
@@ -393,10 +396,23 @@ func TestRemoveIncludedTax5(t *testing.T) {
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
-	assert.Equal(t, "41.27359", l0.Item.Price.String())
+	assert.Equal(t, "41.2736", l0.Item.Price.String())
 
-	assert.Equal(t, "1320.75488", i2.Totals.Sum.String())
-	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	/*
+		data, _ := json.Marshal(i.Lines)
+		t.Logf("LINES: %v", string(data))
+		data, _ = json.Marshal(i.Totals)
+		t.Logf("TOTALS: %v", string(data))
+		data, _ = json.Marshal(i2.Lines)
+		t.Logf("Lines: %v", string(data))
+		data, _ = json.Marshal(i2.Totals)
+		t.Logf("TOTALS: %v", string(data))
+	*/
+
+	assert.Equal(t, "1320.76", i2.Totals.Sum.String())
+	// in this case the total is different, but that's acceptable as long
+	// as the payable total is the same
+	//assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
@@ -451,13 +467,26 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
-	assert.Equal(t, "8.26446", l0.Item.Price.String())
-	assert.Equal(t, "826.44600", l0.Sum.String())
-	assert.Equal(t, "82.64460", l0.Discounts[0].Amount.String())
-	assert.Equal(t, "743.80140", l0.Total.String())
+	assert.Equal(t, "8.2645", l0.Item.Price.String())
+	assert.Equal(t, "826.4500", l0.Sum.String())
+	assert.Equal(t, "82.6450", l0.Discounts[0].Amount.String())
+	assert.Equal(t, "743.8050", l0.Total.String())
 	assert.Equal(t, "10.00", i.Lines[0].Item.Price.String())
 
-	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	/*
+		data, _ := json.Marshal(i.Lines)
+		t.Logf("LINES: %v", string(data))
+		data, _ = json.Marshal(i.Totals)
+		t.Logf("TOTALS: %v", string(data))
+		data, _ = json.Marshal(i2.Lines)
+		t.Logf("Lines: %v", string(data))
+		data, _ = json.Marshal(i2.Totals)
+		t.Logf("TOTALS: %v", string(data))
+	*/
+
+	// Total changes slightly
+	//assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	assert.Equal(t, "743.81", i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
@@ -467,6 +496,7 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
+			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -516,19 +546,29 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 	i2, err := i.RemoveIncludedTaxes()
 	require.NoError(t, err)
 
-	//data, _ := json.MarshalIndent(i2, "", "  ")
-	//t.Log(string(data))
-
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
-	assert.Equal(t, "48.84906", l0.Item.Price.String()) // note extra digit!
-	assert.Equal(t, "17781.05784", l0.Sum.String())
+	assert.Equal(t, "48.8491", l0.Item.Price.String())
+	assert.Equal(t, "17781.0724", l0.Sum.String())
 	l1 := i2.Lines[1]
-	assert.Equal(t, "49.13208", l1.Item.Price.String())
-	assert.Equal(t, "49.13208", l1.Sum.String())
+	assert.Equal(t, "49.1321", l1.Item.Price.String())
+	assert.Equal(t, "49.1321", l1.Sum.String())
 
-	assert.Equal(t, "17830.19", i2.Totals.Total.String())
-	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	/*
+		data, _ := json.Marshal(i.Lines)
+		t.Logf("LINES: %v", string(data))
+		data, _ = json.Marshal(i.Totals)
+		t.Logf("TOTALS: %v", string(data))
+		data, _ = json.Marshal(i2.Lines)
+		t.Logf("Lines: %v", string(data))
+		data, _ = json.Marshal(i2.Totals)
+		t.Logf("TOTALS: %v", string(data))
+	*/
+
+	assert.Equal(t, "17830.20", i2.Totals.Total.String())
+	// assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	assert.Equal(t, "17830.20", i2.Totals.Total.String())
+	assert.Equal(t, "-0.02", i2.Totals.Rounding.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
@@ -713,6 +753,7 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
+			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{

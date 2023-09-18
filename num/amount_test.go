@@ -39,6 +39,7 @@ func TestAmountSubtract(t *testing.T) {
 		{num.MakeAmount(200, 2), num.MakeAmount(1000, 2), num.MakeAmount(-800, 2)},
 		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(-9701, 3)},
 		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(3000, 2)},
+		{num.MakeAmount(1890000, 2), num.MakeAmount(1890002, 2), num.MakeAmount(-2, 2)},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v - %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
@@ -167,6 +168,8 @@ func TestAmountString(t *testing.T) {
 	if a.String() != "-50.25" {
 		t.Errorf("unexpected string result, got: %v", a.String())
 	}
+	a = num.MakeAmount(-2, 2)
+	assert.Equal(t, "-0.02", a.String())
 }
 
 func TestAmountMinimalString(t *testing.T) {
@@ -231,6 +234,14 @@ func TestAmountDownscale(t *testing.T) {
 	assert.Equal(t, "22", b.String())
 	b = a.Downscale(5)
 	assert.Equal(t, "22", b.String())
+}
+
+func TestAmountRescaleUp(t *testing.T) {
+	a := num.MakeAmount(123456, 2)
+	r := a.RescaleUp(4)
+	assert.Equal(t, uint32(4), r.Exp(), "expected precision match")
+	r = a.RescaleUp(2)
+	assert.Equal(t, uint32(2), r.Exp(), "expected no precision change")
 }
 
 func TestAmountMatchPrecision(t *testing.T) {

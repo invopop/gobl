@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "be3f4ef1fe594f569535d860a7b85ba7e2fb0ee70d4deed9cf9c5761faa1e446"
+			"val": "72e81bc4530fcd56154953690b56d170d3de5109a833642876e1dc33399f8d6e"
 		},
 		"draft": true
 	},
@@ -137,26 +137,26 @@
 						"rates": [
 							{
 								"key": "standard+eqs",
-								"base": "82.6446",
+								"base": "82.64",
 								"percent": "21.0%",
 								"surcharge": {
 									"percent": "5.2%",
-									"amount": "4.2975"
+									"amount": "4.30"
 								},
-								"amount": "17.3554"
+								"amount": "17.36"
 							},
 							{
 								"key": "standard",
-								"base": "8.2645",
+								"base": "8.26",
 								"percent": "21.0%",
-								"amount": "1.7355"
+								"amount": "1.74"
 							}
 						],
-						"amount": "19.0909",
-						"surcharge": "4.2975"
+						"amount": "19.09",
+						"surcharge": "4.30"
 					}
 				],
-				"sum": "23.3884"
+				"sum": "23.39"
 			},
 			"tax": "23.39",
 			"total_with_tax": "114.30",

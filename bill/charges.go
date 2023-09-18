@@ -83,7 +83,8 @@ func (m *Charge) GetTotal() num.Amount {
 	return m.Amount
 }
 
-func (m *Charge) removeIncludedTaxes(cat cbc.Code, accuracy uint32) *Charge {
+func (m *Charge) removeIncludedTaxes(cat cbc.Code) *Charge {
+	accuracy := defaultTaxRemovalAccuracy
 	rate := m.Taxes.Get(cat)
 	if rate == nil || rate.Percent == nil {
 		return m
