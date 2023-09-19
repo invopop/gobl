@@ -531,5 +531,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.57.0"
+  "$comment": "Generated with GOBL v0.58.0"
 }
