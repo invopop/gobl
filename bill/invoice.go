@@ -420,9 +420,6 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 		Lines:    tls,
 		Includes: pit,
 	}
-	if inv.Tax != nil {
-		tc.Calculator = inv.Tax.Calculator
-	}
 	if err := tc.Calculate(t.Taxes); err != nil {
 		return err
 	}

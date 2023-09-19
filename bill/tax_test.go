@@ -25,15 +25,4 @@ func TestTaxValidation(t *testing.T) {
 	err = tx.ValidateWithContext(ctx)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "must be a valid value")
-
-	tx = &bill.Tax{
-		Calculator: "line",
-	}
-	err = tx.ValidateWithContext(ctx)
-	require.NoError(t, err)
-
-	tx.Calculator = "invalid"
-	err = tx.ValidateWithContext(ctx)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "calculator: must be a valid value")
 }

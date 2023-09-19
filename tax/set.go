@@ -33,11 +33,6 @@ type Combo struct {
 
 	// Internal link back to the category object
 	category *Category
-
-	// base and amount used for line-by-line calculations
-	base      num.Amount
-	amount    num.Amount
-	surcharge *num.Amount
 }
 
 // ValidateWithContext ensures the Combo has the correct details.

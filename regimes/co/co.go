@@ -44,6 +44,7 @@ func New() *tax.Regime {
 			`),
 		},
 		TimeZone:         "America/Bogota",
+		Tags:             invoiceTags,
 		Validator:        Validate,
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go

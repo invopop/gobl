@@ -1,53 +1,21 @@
 package tax
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 )
 
-// Tax total calculator options
-const (
-	TotalCalculatorTotal cbc.Key = "total" // default
-	TotalCalculatorLine  cbc.Key = "line"
-)
-
-// TotalCalculatorDefs to use in the schema
-var TotalCalculatorDefs = []*KeyDefinition{
-	{
-		Key: TotalCalculatorTotal,
-		Name: i18n.String{
-			i18n.EN: "Total",
-		},
-		Desc: i18n.String{
-			i18n.EN: "Calculate the taxes based on the sum of all the line items (default).",
-		},
-	},
-	{
-		Key: TotalCalculatorLine,
-		Name: i18n.String{
-			i18n.EN: "Line",
-		},
-		Desc: i18n.String{
-			i18n.EN: "Calculate the taxes based on each line item.",
-		},
-	},
-}
-
 // TotalCalculator defines the base structure with the available
 // data for calculating tax totals.
 type TotalCalculator struct {
-	Regime     *Regime
-	Zone       l10n.Code
-	Zero       num.Amount
-	Date       cal.Date
-	Lines      []TaxableLine
-	Includes   cbc.Code // Tax included in price
-	Calculator cbc.Key  // Calculation model to use
+	Regime   *Regime
+	Zone     l10n.Code
+	Zero     num.Amount
+	Date     cal.Date
+	Lines    []TaxableLine
+	Includes cbc.Code // Tax included in price
 }
 
 // TaxableLine defines what we expect from a line in order to subsequently calculate
@@ -62,9 +30,6 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 	if tc.Regime == nil {
 		return ErrMissingRegime
 	}
-	if tc.Calculator == cbc.KeyEmpty {
-		tc.Calculator = TotalCalculatorTotal
-	}
 
 	// reset
 	t.Categories = make([]*CategoryTotal, 0)
@@ -77,28 +42,12 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 		return err
 	}
 
-	// Pre-Process each line for tax calculations
-	var err error
-	switch tc.Calculator {
-	case TotalCalculatorLine:
-		err = tc.calculateLineTaxes(taxLines)
-	case TotalCalculatorTotal:
-		err = tc.removeIncludedTaxes(taxLines)
-	default:
-		err = errors.New("unknown tax calculator type")
-	}
-	if err != nil {
+	// Remove included taxes
+	if err := tc.removeIncludedTaxes(taxLines); err != nil {
 		return err
 	}
 
-	// Go through each line to calculate rate totals
-	switch tc.Calculator {
-	case TotalCalculatorLine:
-		tc.calculateLineRateTotals(taxLines, t)
-	case TotalCalculatorTotal:
-		tc.calculateBaseRateTotals(taxLines, t)
-	}
-
+	tc.calculateBaseRateTotals(taxLines, t)
 	tc.calculateFinalSum(t)
 	tc.round(t)
 
@@ -114,34 +63,6 @@ func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
 			}
 			// always add 2 decimal places for all tax calculations
 			tl.total = tl.total.RescaleUp(tc.Zero.Exp() + 2)
-		}
-	}
-	return nil
-}
-
-func (tc *TotalCalculator) calculateLineTaxes(taxLines []*taxLine) error {
-	// Go through each line, and figure out the totals for each tax combo
-	for _, tl := range taxLines {
-		// prepare included taxes first so we can update the total
-		if tc.Includes != cbc.CodeEmpty {
-			if combo := tl.taxes.Get(tc.Includes); combo != nil && combo.Percent != nil {
-				if combo.category.Retained {
-					return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
-				}
-				tl.total = tl.total.Remove(*combo.Percent)
-			}
-		}
-
-		// Make calculations
-		for _, c := range tl.taxes {
-			c.base = tl.total
-			if c.Percent != nil {
-				c.amount = c.Percent.Of(c.base)
-			}
-			if c.Surcharge != nil {
-				sc := c.Surcharge.Of(tl.total)
-				c.surcharge = &sc
-			}
 		}
 	}
 	return nil
@@ -168,30 +89,6 @@ func (tc *TotalCalculator) removeIncludedTaxes(taxLines []*taxLine) error {
 	return nil
 }
 
-// calculateLineRateTotals goes through each line to sum the rate totals.
-// This is when the rounding method starts to become important. If we're doing
-// post rounding, then then accuracy will be maintained, otherwise each step
-// will perform rounding.
-func (tc *TotalCalculator) calculateLineRateTotals(taxLines []*taxLine, t *Total) {
-	for _, tl := range taxLines {
-		for _, combo := range tl.taxes {
-			rt := t.rateTotalFor(combo, tc.Zero)
-			rt.Base = rt.Base.MatchPrecision(combo.base)
-			rt.Base = rt.Base.Add(combo.base)
-			if combo.Percent == nil && combo.Rate.IsEmpty() {
-				continue // not much to do here!
-			}
-
-			rt.Amount = rt.Amount.MatchPrecision(combo.amount)
-			rt.Amount = rt.Amount.Add(combo.amount)
-			if combo.surcharge != nil {
-				rt.Surcharge.Amount = rt.Surcharge.Amount.MatchPrecision(*combo.surcharge)
-				rt.Surcharge.Amount = rt.Surcharge.Amount.Add(*combo.surcharge)
-			}
-		}
-	}
-}
-
 func (tc *TotalCalculator) calculateBaseRateTotals(taxLines []*taxLine, t *Total) {
 	// Go through each line and add the total to the base of each tax
 	for _, tl := range taxLines {
@@ -210,11 +107,7 @@ func (tc *TotalCalculator) calculateFinalSum(t *Total) {
 	// Now go through each category to apply the percentage and calculate the final sums
 	t.Sum = tc.Zero
 	for _, ct := range t.Categories {
-		if tc.Calculator == TotalCalculatorLine {
-			tc.calculateLineCategoryTotal(ct)
-		} else {
-			tc.calculateBaseCategoryTotal(ct)
-		}
+		tc.calculateBaseCategoryTotal(ct)
 
 		t.Sum = t.Sum.MatchPrecision(ct.Amount)
 		if ct.Retained {
@@ -227,29 +120,6 @@ func (tc *TotalCalculator) calculateFinalSum(t *Total) {
 			if ct.Surcharge != nil {
 				t.Sum = t.Sum.Add(*ct.Surcharge)
 			}
-		}
-	}
-}
-
-func (tc *TotalCalculator) calculateLineCategoryTotal(ct *CategoryTotal) {
-	zero := tc.Zero
-	ct.Amount = zero
-	for _, rt := range ct.Rates {
-		if rt.Percent == nil {
-			rt.Amount = zero
-			continue // exempt, nothing else to do
-		}
-		ct.Amount = ct.Amount.MatchPrecision(rt.Amount)
-		ct.Amount = ct.Amount.Add(rt.Amount)
-		if rt.Surcharge != nil {
-			if ct.Surcharge == nil {
-				ct.Surcharge = &zero
-			}
-			a := rt.Surcharge.Amount
-			x := *ct.Surcharge
-			x = x.MatchPrecision(a)
-			x = x.Add(a)
-			ct.Surcharge = &x
 		}
 	}
 }

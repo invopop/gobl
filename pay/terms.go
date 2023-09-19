@@ -105,7 +105,7 @@ func (t *Terms) CalculateDues(zero num.Amount, sum num.Amount) {
 		if dd.Percent != nil && !dd.Percent.IsZero() {
 			dd.Amount = dd.Percent.Of(sum)
 		}
-		dd.Amount = dd.Amount.MatchPrecision(zero)
+		dd.Amount = dd.Amount.Rescale(zero.Exp())
 	}
 }
 

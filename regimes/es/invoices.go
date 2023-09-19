@@ -30,6 +30,7 @@ func (v *invoiceValidator) validate() error {
 		validation.Field(&inv.Type, validation.In(
 			bill.InvoiceTypeStandard,
 			bill.InvoiceTypeCorrective,
+			bill.InvoiceTypeProforma,
 		)),
 		validation.Field(&inv.Preceding,
 			validation.Each(validation.By(v.preceding)),

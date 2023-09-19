@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTotalByLineCalculate(t *testing.T) {
+func TestTotalBySumCalculate(t *testing.T) {
 	spain := es.New()
 	portugal := pt.New()
 	italy := it.New()
@@ -1027,13 +1027,12 @@ func TestTotalByLineCalculate(t *testing.T) {
 				zone = test.zone
 			}
 			tc := &tax.TotalCalculator{
-				Regime:     reg,
-				Zone:       zone,
-				Zero:       zero,
-				Date:       d,
-				Lines:      test.lines,
-				Includes:   test.taxIncluded,
-				Calculator: tax.TotalCalculatorLine,
+				Regime:   reg,
+				Zone:     zone,
+				Zero:     zero,
+				Date:     d,
+				Lines:    test.lines,
+				Includes: test.taxIncluded,
 			}
 			tot := new(tax.Total)
 			err := tc.Calculate(tot)

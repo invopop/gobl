@@ -35,6 +35,9 @@ type Line struct {
 	// Set of specific notes for this line that may be required for
 	// clarification.
 	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// internal amount provided with greater precision
+	total num.Amount
 }
 
 // GetTaxes responds with the array of tax rates applied to this line.
@@ -44,7 +47,7 @@ func (l *Line) GetTaxes() tax.Set {
 
 // GetTotal provides the final total for this line, excluding any tax calculations.
 func (l *Line) GetTotal() num.Amount {
-	return l.Total
+	return l.total
 }
 
 // ValidateWithContext ensures the line contains everything required using
@@ -79,17 +82,19 @@ func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 
 	// Ensure the Price precision is set correctly according to the currency
 	l.Item.Price = l.Item.Price.MatchPrecision(zero)
+	price := l.Item.Price.RescaleUp(zero.Exp() + 2)
 
 	// Calculate the line sum and total
-	l.Sum = l.Item.Price.Multiply(l.Quantity)
-	l.Total = l.Sum
+	l.Sum = price.Multiply(l.Quantity)
+	l.total = l.Sum
 
 	for _, d := range l.Discounts {
 		if d.Percent != nil && !d.Percent.IsZero() {
 			d.Amount = d.Percent.Of(l.Sum) // always override
 		}
 		d.Amount = d.Amount.MatchPrecision(zero)
-		l.Total = l.Total.Subtract(d.Amount)
+		l.total = l.total.Subtract(d.Amount)
+		d.Amount = d.Amount.Rescale(l.Item.Price.Exp())
 	}
 
 	for _, c := range l.Charges {
@@ -97,8 +102,14 @@ func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 			c.Amount = c.Percent.Of(l.Sum) // always override
 		}
 		c.Amount = c.Amount.MatchPrecision(zero)
-		l.Total = l.Total.Add(c.Amount)
+		l.total = l.total.Add(c.Amount)
+		c.Amount = c.Amount.Rescale(l.Item.Price.Exp())
 	}
+
+	// Rescale the final sum and total
+	l.Sum = l.Sum.Rescale(l.Item.Price.Exp())
+	l.Total = l.total.Rescale(l.Item.Price.Exp())
+
 	return nil
 }
 
@@ -152,8 +163,8 @@ func calculateLines(r *tax.Regime, zero num.Amount, lines []*Line) error {
 func calculateLineSum(zero num.Amount, lines []*Line) num.Amount {
 	sum := zero
 	for _, l := range lines {
-		sum = sum.MatchPrecision(l.Total)
-		sum = sum.Add(l.Total)
+		sum = sum.MatchPrecision(l.total)
+		sum = sum.Add(l.total)
 	}
 	return sum
 }
