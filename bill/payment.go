@@ -54,6 +54,7 @@ func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
 	sum := zero
 	for _, a := range p.Advances {
 		sum = sum.Add(a.Amount)
+		a.Amount = a.Amount.Rescale(zero.Exp())
 	}
 	return &sum
 }

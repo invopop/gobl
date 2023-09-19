@@ -165,7 +165,6 @@ func TestRemoveIncludedTax2(t *testing.T) {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
-			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -230,7 +229,6 @@ func TestRemoveIncludedTax3(t *testing.T) {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
-			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -496,7 +494,6 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
-			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -628,6 +625,63 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
 
+func TestCalculateTotalsWithFractions(t *testing.T) {
+	i := &bill.Invoice{
+		Code: "123TEST",
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "B98602642",
+			},
+		},
+		Customer: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "54387763P",
+			},
+		},
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(2010, 2),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(305, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(230, 3),
+					},
+				},
+			},
+			{
+				Quantity: num.MakeAmount(2010, 2),
+				Item: &org.Item{
+					Name:  "Test Item 2",
+					Price: num.MakeAmount(305, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(230, 3),
+					},
+				},
+			},
+		},
+	}
+
+	require.NoError(t, i.Calculate())
+
+	//data, _ := json.MarshalIndent(i, "", "  ")
+	//t.Log(string(data))
+
+	l0 := i.Lines[0]
+	assert.Equal(t, "3.05", l0.Item.Price.String())
+	assert.Equal(t, "61.31", l0.Sum.String())
+	assert.Equal(t, "122.61", i.Totals.Total.String())
+}
+
 func TestCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
@@ -753,7 +807,6 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 		Code: "123TEST",
 		Tax: &bill.Tax{
 			PricesInclude: common.TaxCategoryVAT,
-			Calculator:    tax.TotalCalculatorLine,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "code": "1234",
+  "series": "SETT",
+  "currency": "COP",
+  "issue_date": "2021-01-01",
+  "tax": {
+    "tags": ["simplified"]
+  },
+  "supplier": {
+    "tax_id": {
+      "country": "CO",
+      "code": "9014514812",
+      "zone": "11001"
+    },
+    "name": "EXAMPLE SUPPLIER S.A.S."
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Useful service",
+        "price": "200000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "percent": "19%"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "advances": [
+      {
+        "desc": "Prepaid",
+        "percent": "100%"
+      }
+    ]
+  }
+}
