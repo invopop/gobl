@@ -731,23 +731,6 @@
           "title": "Tags",
           "description": "Special tax tags that apply to this invoice according to local requirements."
         },
-        "calculator": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
-            {
-              "const": "total",
-              "title": "Total",
-              "description": "Calculate the taxes based on the sum of all the line items (default)."
-            },
-            {
-              "const": "line",
-              "title": "Line",
-              "description": "Calculate the taxes based on each line item."
-            }
-          ],
-          "title": "Calculator",
-          "description": "Calculator defines the rule to use when calculating the taxes.\nCurrently supported options: `line`, or `total` (default)."
-        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
@@ -835,5 +818,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.57.0"
+  "$comment": "Generated with GOBL v0.58.0"
 }

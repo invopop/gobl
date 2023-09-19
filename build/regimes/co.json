@@ -14585,6 +14585,19 @@
     }
   ],
   "currency": "COP",
+  "tags": [
+    {
+      "key": "simplified",
+      "name": {
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada"
+      },
+      "desc": {
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites."
+      }
+    }
+  ],
   "identity_types": [
     {
       "key": "tin",
