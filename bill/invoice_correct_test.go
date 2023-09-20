@@ -159,7 +159,7 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	pm := mtd.(orderedmap.OrderedMap)
 	assert.Len(t, pm.Keys(), 4)
 
-	exp := `{"$ref":"https://gobl.org/draft-0/cbc/key","title":"Method","description":"Correction method as defined by the tax regime.","oneOf":[{"const":"complete","title":"Complete"},{"const":"partial","title":"Corrected items only"},{"const":"discount","title":"Bulk deal in a given period"},{"const":"authorized","title":"Authorized by the Tax Agency"}]`
+	exp := `{"$ref":"https://gobl.org/draft-0/cbc/key","title":"Method","description":"Correction method as defined by the tax regime.","oneOf":[{"const":"complete","title":"Complete"},{"const":"partial","title":"Corrected items only"},{"const":"discount","title":"Bulk deal in a given period"},{"const":"authorized","title":"Authorized by the Tax Agency"}]}`
 
 	data, err := json.Marshal(pm)
 	require.NoError(t, err)
