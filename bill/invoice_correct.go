@@ -126,7 +126,6 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	if r == nil {
 		return nil, nil
 	}
-	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 
 	schema := new(jsonschema.Schema)
 
@@ -143,53 +142,57 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	// Improve the quality of the schema
 	schema.Required = append(schema.Required, "credit")
-	if cd != nil {
-		if cd.ReasonRequired {
-			schema.Required = append(schema.Required, "reason")
-		}
 
-		// These methods are quite ugly as the jsonschema was not designed
-		// for being able to load documents.
-		if len(cd.Methods) > 0 {
-			schema.Required = append(schema.Required, "method")
-			if prop, ok := schema.Properties.Get("method"); ok {
-				ps := prop.(orderedmap.OrderedMap)
-				oneOf := make([]*jsonschema.Schema, len(cd.Methods))
-				for i, v := range cd.Methods {
-					oneOf[i] = &jsonschema.Schema{
-						Const: v.Key.String(),
-						Title: v.Name.String(),
-					}
-					if !v.Desc.IsEmpty() {
-						oneOf[i].Description = v.Desc.String()
-					}
+	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
+	if cd == nil {
+		return schema, nil
+	}
+
+	if cd.ReasonRequired {
+		schema.Required = append(schema.Required, "reason")
+	}
+
+	// These methods are quite ugly as the jsonschema was not designed
+	// for being able to load documents.
+	if len(cd.Methods) > 0 {
+		schema.Required = append(schema.Required, "method")
+		if prop, ok := schema.Properties.Get("method"); ok {
+			ps := prop.(orderedmap.OrderedMap)
+			oneOf := make([]*jsonschema.Schema, len(cd.Methods))
+			for i, v := range cd.Methods {
+				oneOf[i] = &jsonschema.Schema{
+					Const: v.Key.String(),
+					Title: v.Name.String(),
 				}
-				ps.Set("oneOf", oneOf)
-				schema.Properties.Set("method", ps)
-			}
-		}
-
-		if len(cd.Keys) > 0 {
-			schema.Required = append(schema.Required, "changes")
-			if prop, ok := schema.Properties.Get("changes"); ok {
-				ps := prop.(orderedmap.OrderedMap)
-				items, _ := ps.Get("items")
-				pi := items.(orderedmap.OrderedMap)
-
-				oneOf := make([]*jsonschema.Schema, len(cd.Keys))
-				for i, v := range cd.Keys {
-					oneOf[i] = &jsonschema.Schema{
-						Const: v.Key.String(),
-						Title: v.Name.String(),
-					}
-					if !v.Desc.IsEmpty() {
-						oneOf[i].Description = v.Desc.String()
-					}
+				if !v.Desc.IsEmpty() {
+					oneOf[i].Description = v.Desc.String()
 				}
-				pi.Set("oneOf", oneOf)
-				ps.Set("items", pi)
-				schema.Properties.Set("changes", ps)
 			}
+			ps.Set("oneOf", oneOf)
+			schema.Properties.Set("method", ps)
+		}
+	}
+
+	if len(cd.Keys) > 0 {
+		schema.Required = append(schema.Required, "changes")
+		if prop, ok := schema.Properties.Get("changes"); ok {
+			ps := prop.(orderedmap.OrderedMap)
+			items, _ := ps.Get("items")
+			pi := items.(orderedmap.OrderedMap)
+
+			oneOf := make([]*jsonschema.Schema, len(cd.Keys))
+			for i, v := range cd.Keys {
+				oneOf[i] = &jsonschema.Schema{
+					Const: v.Key.String(),
+					Title: v.Name.String(),
+				}
+				if !v.Desc.IsEmpty() {
+					oneOf[i].Description = v.Desc.String()
+				}
+			}
+			pi.Set("oneOf", oneOf)
+			ps.Set("items", pi)
+			schema.Properties.Set("changes", ps)
 		}
 	}
 
