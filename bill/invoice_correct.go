@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/iancoleman/orderedmap"
 	"github.com/invopop/gobl/build"
@@ -138,10 +139,16 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	if err := json.Unmarshal(data, schema); err != nil {
 		return nil, fmt.Errorf("unmarshalling options schema: %w", err)
 	}
-	schema = schema.Definitions["CorrectionOptions"]
+
+	// Add our regime to the schema ID
+	code := strings.ToLower(r.Code().String())
+	id := fmt.Sprintf("%s?tax_regime=%s", schema.ID.String(), code)
+	schema.ID = jsonschema.ID(id)
+
+	cos := schema.Definitions["CorrectionOptions"]
 
 	// Improve the quality of the schema
-	schema.Required = append(schema.Required, "credit")
+	cos.Required = append(cos.Required, "credit")
 
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 	if cd == nil {
@@ -149,14 +156,14 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	}
 
 	if cd.ReasonRequired {
-		schema.Required = append(schema.Required, "reason")
+		cos.Required = append(cos.Required, "reason")
 	}
 
 	// These methods are quite ugly as the jsonschema was not designed
 	// for being able to load documents.
 	if len(cd.Methods) > 0 {
-		schema.Required = append(schema.Required, "method")
-		if prop, ok := schema.Properties.Get("method"); ok {
+		cos.Required = append(cos.Required, "method")
+		if prop, ok := cos.Properties.Get("method"); ok {
 			ps := prop.(orderedmap.OrderedMap)
 			oneOf := make([]*jsonschema.Schema, len(cd.Methods))
 			for i, v := range cd.Methods {
@@ -169,13 +176,13 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 				}
 			}
 			ps.Set("oneOf", oneOf)
-			schema.Properties.Set("method", ps)
+			cos.Properties.Set("method", ps)
 		}
 	}
 
 	if len(cd.Keys) > 0 {
-		schema.Required = append(schema.Required, "changes")
-		if prop, ok := schema.Properties.Get("changes"); ok {
+		cos.Required = append(cos.Required, "changes")
+		if prop, ok := cos.Properties.Get("changes"); ok {
 			ps := prop.(orderedmap.OrderedMap)
 			items, _ := ps.Get("items")
 			pi := items.(orderedmap.OrderedMap)
@@ -192,7 +199,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 			}
 			pi.Set("oneOf", oneOf)
 			ps.Set("items", pi)
-			schema.Properties.Set("changes", ps)
+			cos.Properties.Set("changes", ps)
 		}
 	}
 

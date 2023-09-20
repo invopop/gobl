@@ -152,20 +152,24 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	schema, ok := out.(*jsonschema.Schema)
 	require.True(t, ok)
 
-	assert.Len(t, schema.Properties.Keys(), 7)
+	cos := schema.Definitions["CorrectionOptions"]
+	assert.Len(t, cos.Properties.Keys(), 7)
 
-	mtd, ok := schema.Properties.Get("method")
+	mtd, ok := cos.Properties.Get("method")
 	require.True(t, ok)
 	pm := mtd.(orderedmap.OrderedMap)
 	assert.Len(t, pm.Keys(), 4)
 
 	exp := `{"$ref":"https://gobl.org/draft-0/cbc/key","title":"Method","description":"Correction method as defined by the tax regime.","oneOf":[{"const":"complete","title":"Complete"},{"const":"partial","title":"Corrected items only"},{"const":"discount","title":"Bulk deal in a given period"},{"const":"authorized","title":"Authorized by the Tax Agency"}]}`
-
 	data, err := json.Marshal(pm)
 	require.NoError(t, err)
 	if !assert.JSONEq(t, exp, string(data)) {
 		t.Log(string(data))
 	}
+
+	data, err = json.Marshal(schema)
+	require.NoError(t, err)
+	assert.Contains(t, string(data), `"$id":"https://gobl.org/draft-0/bill/correction-options?tax_regime=es"`)
 }
 
 func TestCorrectWithData(t *testing.T) {
