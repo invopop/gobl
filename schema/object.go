@@ -42,6 +42,7 @@ type Calculable interface {
 // corrected.
 type Correctable interface {
 	Correct(...Option) error
+	CorrectionOptionsSchema() (interface{}, error)
 }
 
 // NewObject instantiates an Object wrapper around the provided payload.
@@ -105,6 +106,20 @@ func (d *Object) Correct(opts ...Option) error {
 		return err
 	}
 	return nil
+}
+
+// CorrectionOptionsSchema provides a schema with the correction options available
+// for the schema, if available.
+func (d *Object) CorrectionOptionsSchema() (interface{}, error) {
+	pl, ok := d.payload.(Correctable)
+	if !ok {
+		return nil, nil
+	}
+	res, err := pl.CorrectionOptionsSchema()
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 // Insert places the provided object inside the document and looks up the schema

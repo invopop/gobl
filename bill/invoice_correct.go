@@ -5,11 +5,14 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/iancoleman/orderedmap"
+	"github.com/invopop/gobl/build"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 )
 
 // CorrectionOptions defines a structure used to pass configuration options
@@ -113,6 +116,84 @@ var Credit schema.Option = func(o interface{}) {
 var Debit schema.Option = func(o interface{}) {
 	opts := o.(*CorrectionOptions)
 	opts.Debit = true
+}
+
+// CorrectionOptionsSchema provides a dynamic JSON schema of the options
+// that can be used on the invoice in order to correct it. Data is
+// extracted from the tax regime associated with the supplier.
+func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
+	r := taxRegimeFor(inv.Supplier)
+	if r == nil {
+		return nil, nil
+	}
+	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
+
+	schema := new(jsonschema.Schema)
+
+	// try to load the pre-generated schema, this is just way more efficient
+	// than trying to generate the configuration options manually.
+	data, err := build.Content.ReadFile("schemas/bill/correction-options.json")
+	if err != nil {
+		return nil, fmt.Errorf("loading schema option data: %w", err)
+	}
+	if err := json.Unmarshal(data, schema); err != nil {
+		return nil, fmt.Errorf("unmarshalling options schema: %w", err)
+	}
+	schema = schema.Definitions["CorrectionOptions"]
+
+	// Improve the quality of the schema
+	schema.Required = append(schema.Required, "credit")
+	if cd != nil {
+		if cd.ReasonRequired {
+			schema.Required = append(schema.Required, "reason")
+		}
+
+		// These methods are quite ugly as the jsonschema was not designed
+		// for being able to load documents.
+		if len(cd.Methods) > 0 {
+			schema.Required = append(schema.Required, "method")
+			if prop, ok := schema.Properties.Get("method"); ok {
+				ps := prop.(orderedmap.OrderedMap)
+				oneOf := make([]*jsonschema.Schema, len(cd.Methods))
+				for i, v := range cd.Methods {
+					oneOf[i] = &jsonschema.Schema{
+						Const: v.Key.String(),
+						Title: v.Name.String(),
+					}
+					if !v.Desc.IsEmpty() {
+						oneOf[i].Description = v.Desc.String()
+					}
+				}
+				ps.Set("oneOf", oneOf)
+				schema.Properties.Set("method", ps)
+			}
+		}
+
+		if len(cd.Keys) > 0 {
+			schema.Required = append(schema.Required, "changes")
+			if prop, ok := schema.Properties.Get("changes"); ok {
+				ps := prop.(orderedmap.OrderedMap)
+				items, _ := ps.Get("items")
+				pi := items.(orderedmap.OrderedMap)
+
+				oneOf := make([]*jsonschema.Schema, len(cd.Keys))
+				for i, v := range cd.Keys {
+					oneOf[i] = &jsonschema.Schema{
+						Const: v.Key.String(),
+						Title: v.Name.String(),
+					}
+					if !v.Desc.IsEmpty() {
+						oneOf[i].Description = v.Desc.String()
+					}
+				}
+				pi.Set("oneOf", oneOf)
+				ps.Set("items", pi)
+				schema.Properties.Set("changes", ps)
+			}
+		}
+	}
+
+	return schema, nil
 }
 
 // Correct moves key fields of the current invoice to the preceding
