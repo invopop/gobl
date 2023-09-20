@@ -254,6 +254,11 @@ type CodeDefinition struct {
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 }
 
+// Code provides a unique code for this tax regime based on the country.
+func (r *Regime) Code() cbc.Code {
+	return cbc.Code(r.Country)
+}
+
 // ValidateObject performs validation on the provided object in the context
 // of the regime.
 func (r *Regime) ValidateObject(value interface{}) error {

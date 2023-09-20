@@ -216,3 +216,17 @@ func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
 	// Create a completely new envelope with a new set of data.
 	return Envelop(nd)
 }
+
+// CorrectionOptionsSchema will attempt to provide a corrective options JSON Schema
+// that can be used to generate a JSON object to send when correcting a document.
+// If none are available, the result will be nil.
+func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
+	if e.Document == nil {
+		return nil, ErrNoDocument
+	}
+	opts, err := e.Document.CorrectionOptionsSchema()
+	if err != nil {
+		return nil, err
+	}
+	return opts, nil
+}

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/i18n"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestI18nString(t *testing.T) {
@@ -12,20 +13,14 @@ func TestI18nString(t *testing.T) {
 		"es": "Prueba",
 	}
 
-	if x := s.String("en"); x != "Test" {
-		t.Errorf("Unexpected string result: %v", x)
-	}
-	if x := s.String("es"); x != "Prueba" {
-		t.Errorf("Unexpected string result: %v", x)
-	}
-	if x := s.String("fo"); x != "Test" {
-		t.Errorf("Unexpected string result: %v", x)
-	}
+	assert.Equal(t, "Test", s.In("en"))
+	assert.Equal(t, "Prueba", s.In("es"))
+	assert.Equal(t, "Test", s.In("fo"))
+	assert.Equal(t, "Test", s.String())
 
 	snd := i18n.String{
 		i18n.AA: "Foo",
 	}
-	if x := snd.String("en"); x != "Foo" {
-		t.Errorf("Unexpected string result: %v", x)
-	}
+	assert.Equal(t, "Foo", snd.In("en"))
+	assert.Equal(t, "Foo", snd.String())
 }

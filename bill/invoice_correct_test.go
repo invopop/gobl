@@ -1,8 +1,10 @@
 package bill_test
 
 import (
+	"encoding/json"
 	"testing"
 
+	"github.com/iancoleman/orderedmap"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -14,6 +16,7 @@ import (
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -139,6 +142,34 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
 	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
+}
+
+func TestCorrectionOptionsSchema(t *testing.T) {
+	inv := testInvoiceESForCorrection(t)
+	out, err := inv.CorrectionOptionsSchema()
+	require.NoError(t, err)
+
+	schema, ok := out.(*jsonschema.Schema)
+	require.True(t, ok)
+
+	cos := schema.Definitions["CorrectionOptions"]
+	assert.Len(t, cos.Properties.Keys(), 7)
+
+	mtd, ok := cos.Properties.Get("method")
+	require.True(t, ok)
+	pm := mtd.(orderedmap.OrderedMap)
+	assert.Len(t, pm.Keys(), 4)
+
+	exp := `{"$ref":"https://gobl.org/draft-0/cbc/key","title":"Method","description":"Correction method as defined by the tax regime.","oneOf":[{"const":"complete","title":"Complete"},{"const":"partial","title":"Corrected items only"},{"const":"discount","title":"Bulk deal in a given period"},{"const":"authorized","title":"Authorized by the Tax Agency"}]}`
+	data, err := json.Marshal(pm)
+	require.NoError(t, err)
+	if !assert.JSONEq(t, exp, string(data)) {
+		t.Log(string(data))
+	}
+
+	data, err = json.Marshal(schema)
+	require.NoError(t, err)
+	assert.Contains(t, string(data), `"$id":"https://gobl.org/draft-0/bill/correction-options?tax_regime=es"`)
 }
 
 func TestCorrectWithData(t *testing.T) {
