@@ -34,7 +34,9 @@ func (m Meta) Validate() error {
 
 // JSONSchemaExtend ensures the meta keys are valid.
 func (Meta) JSONSchemaExtend(schema *jsonschema.Schema) {
-	prop := schema.PatternProperties[".*"] // get default
-	delete(schema.PatternProperties, ".*") // remove default
-	schema.PatternProperties[KeyPattern] = prop
+	prop := schema.AdditionalProperties
+	schema.AdditionalProperties = nil
+	schema.PatternProperties = map[string]*jsonschema.Schema{
+		KeyPattern: prop,
+	}
 }

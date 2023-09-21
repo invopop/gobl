@@ -68,8 +68,7 @@ func validBaseMeansKeys() []cbc.Key {
 }
 
 func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string) {
-	val, _ := schema.Properties.Get(property)
-	prop, ok := val.(*jsonschema.Schema)
+	prop, ok := schema.Properties.Get(property)
 	if ok {
 		anyOf := make([]*jsonschema.Schema, len(MeansKeyDefinitions))
 		for i, v := range MeansKeyDefinitions {

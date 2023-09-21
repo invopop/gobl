@@ -287,8 +287,7 @@ func (n *Note) WithSrc(src Key) *Note {
 
 // JSONSchemaExtend adds the list of definitions for the notes.
 func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
-	ksv, _ := schema.Properties.Get("key")
-	ks := ksv.(*jsonschema.Schema)
+	ks, _ := schema.Properties.Get("key")
 	ks.OneOf = make([]*jsonschema.Schema, len(NoteKeyDefinitions))
 	for i, v := range NoteKeyDefinitions {
 		ks.OneOf[i] = &jsonschema.Schema{

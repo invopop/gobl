@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/iancoleman/orderedmap"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -153,12 +152,11 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	require.True(t, ok)
 
 	cos := schema.Definitions["CorrectionOptions"]
-	assert.Len(t, cos.Properties.Keys(), 7)
+	assert.Equal(t, cos.Properties.Len(), 7)
 
-	mtd, ok := cos.Properties.Get("method")
+	pm, ok := cos.Properties.Get("method")
 	require.True(t, ok)
-	pm := mtd.(orderedmap.OrderedMap)
-	assert.Len(t, pm.Keys(), 4)
+	assert.Len(t, pm.OneOf, 4)
 
 	exp := `{"$ref":"https://gobl.org/draft-0/cbc/key","title":"Method","description":"Correction method as defined by the tax regime.","oneOf":[{"const":"complete","title":"Complete"},{"const":"partial","title":"Corrected items only"},{"const":"discount","title":"Bulk deal in a given period"},{"const":"authorized","title":"Authorized by the Tax Agency"}]}`
 	data, err := json.Marshal(pm)
