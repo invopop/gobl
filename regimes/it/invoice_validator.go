@@ -48,7 +48,6 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
 		),
 		validation.Field(&supplier.Addresses,
-			validation.Length(1, 1),
 			validation.By(validateAddress),
 		),
 		validation.Field(&supplier.Registration,
@@ -68,7 +67,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.TaxID,
 			validation.When(
-				customer.TaxID.Country.In(l10n.IT),
+				isItalianParty(customer),
 				validation.Required,
 				tax.RequireIdentityCode,
 				tax.IdentityTypeIn(
@@ -79,10 +78,19 @@ func (v *invoiceValidator) customer(value interface{}) error {
 			),
 		),
 		validation.Field(&customer.Addresses,
-			validation.Length(1, 1),
-			validation.By(validateAddress),
+			validation.When(
+				isItalianParty(customer),
+				validation.By(validateAddress),
+			),
 		),
 	)
+}
+
+func isItalianParty(party *org.Party) bool {
+	if party == nil || party.TaxID == nil {
+		return false
+	}
+	return party.TaxID.Country.In(l10n.IT)
 }
 
 func validateAddress(value interface{}) error {
@@ -90,13 +98,11 @@ func validateAddress(value interface{}) error {
 	if v == nil || !ok {
 		return nil
 	}
+	// Post code and street in addition to the locality are required in Italian invoices.
 	address := v[0]
 	return validation.ValidateStruct(address,
-		validation.Field(&address.Country),
-		validation.Field(&address.Locality, validation.Required),
-		validation.Field(&address.Code, validation.Required),
 		validation.Field(&address.Street, validation.Required),
-		validation.Field(&address.Number, validation.Required),
+		validation.Field(&address.Code, validation.Required),
 	)
 
 }

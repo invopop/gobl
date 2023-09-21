@@ -45,7 +45,7 @@ const (
 
 // correctionList contains an array of Key Definitions describing each of the acceptable
 // correction keys, descriptions, and their "code" as determined by the FacturaE specifications.
-var correctionList = []*tax.KeyDefinition{
+var correctionChangesList = []*tax.KeyDefinition{
 	{
 		Key: CorrectionKeyCode,
 		Name: i18n.String{
@@ -259,10 +259,10 @@ var correctionMethodList = []*tax.KeyDefinition{
 	},
 }
 
-func correctionKeys() []interface{} {
-	keys := make([]interface{}, len(correctionList))
+func correctionChangeKeys() []interface{} {
+	keys := make([]interface{}, len(correctionChangesList))
 	i := 0
-	for _, v := range correctionList {
+	for _, v := range correctionChangesList {
 		keys[i] = v.Key
 		i++
 	}
@@ -279,6 +279,6 @@ func correctionMethodKeys() []interface{} {
 	return keys
 }
 
-var isValidCorrectionKey = validation.In(correctionKeys()...)
+var isValidCorrectionChangeKey = validation.In(correctionChangeKeys()...)
 
 var isValidCorrectionMethodKey = validation.In(correctionMethodKeys()...)

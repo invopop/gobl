@@ -180,15 +180,15 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		}
 	}
 
-	if len(cd.Keys) > 0 {
+	if len(cd.Changes) > 0 {
 		cos.Required = append(cos.Required, "changes")
 		if prop, ok := cos.Properties.Get("changes"); ok {
 			ps := prop.(orderedmap.OrderedMap)
 			items, _ := ps.Get("items")
 			pi := items.(orderedmap.OrderedMap)
 
-			oneOf := make([]*jsonschema.Schema, len(cd.Keys))
-			for i, v := range cd.Keys {
+			oneOf := make([]*jsonschema.Schema, len(cd.Changes))
+			for i, v := range cd.Changes {
 				oneOf[i] = &jsonschema.Schema{
 					Const: v.Key.String(),
 					Title: v.Name.String(),
@@ -346,12 +346,12 @@ func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.Correcti
 		}
 	}
 
-	if len(cd.Keys) > 0 {
+	if len(cd.Changes) > 0 {
 		if len(pre.Changes) == 0 {
 			return errors.New("missing changes")
 		}
 		for _, k := range pre.Changes {
-			if !cd.HasKey(k) {
+			if !cd.HasChange(k) {
 				return fmt.Errorf("invalid change key: '%v'", k)
 			}
 		}
