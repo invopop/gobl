@@ -12,5 +12,5 @@
       "description": "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols."
     }
   },
-  "$comment": "Generated with GOBL v0.58.0"
+  "$comment": "Generated with GOBL v0.58.2"
 }

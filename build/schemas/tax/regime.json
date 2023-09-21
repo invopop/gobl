@@ -116,14 +116,6 @@
           "title": "Types",
           "description": "The types of sub-documents supported by the regime"
         },
-        "keys": {
-          "items": {
-            "$ref": "#/$defs/KeyDefinition"
-          },
-          "type": "array",
-          "title": "Keys",
-          "description": "List of all the keys that can be used to identify a correction."
-        },
         "methods": {
           "items": {
             "$ref": "#/$defs/KeyDefinition"
@@ -131,6 +123,14 @@
           "type": "array",
           "title": "Methods",
           "description": "Methods describe the methods used to correct an invoice."
+        },
+        "changes": {
+          "items": {
+            "$ref": "#/$defs/KeyDefinition"
+          },
+          "type": "array",
+          "title": "Changes",
+          "description": "List of change keys that can be used to describe what has been corrected."
         },
         "reason_required": {
           "type": "boolean",
@@ -531,5 +531,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.58.0"
+  "$comment": "Generated with GOBL v0.58.2"
 }
