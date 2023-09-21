@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/iancoleman/orderedmap"
 	"github.com/invopop/gobl/build"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -144,6 +143,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	code := strings.ToLower(r.Code().String())
 	id := fmt.Sprintf("%s?tax_regime=%s", schema.ID.String(), code)
 	schema.ID = jsonschema.ID(id)
+	schema.Comments = fmt.Sprintf("Generated dynamically for %s", code)
 
 	cos := schema.Definitions["CorrectionOptions"]
 
@@ -159,47 +159,36 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		cos.Required = append(cos.Required, "reason")
 	}
 
-	// These methods are quite ugly as the jsonschema was not designed
-	// for being able to load documents.
 	if len(cd.Methods) > 0 {
 		cos.Required = append(cos.Required, "method")
-		if prop, ok := cos.Properties.Get("method"); ok {
-			ps := prop.(orderedmap.OrderedMap)
-			oneOf := make([]*jsonschema.Schema, len(cd.Methods))
+		if ps, ok := cos.Properties.Get("method"); ok {
+			ps.OneOf = make([]*jsonschema.Schema, len(cd.Methods))
 			for i, v := range cd.Methods {
-				oneOf[i] = &jsonschema.Schema{
+				ps.OneOf[i] = &jsonschema.Schema{
 					Const: v.Key.String(),
 					Title: v.Name.String(),
 				}
 				if !v.Desc.IsEmpty() {
-					oneOf[i].Description = v.Desc.String()
+					ps.OneOf[i].Description = v.Desc.String()
 				}
 			}
-			ps.Set("oneOf", oneOf)
-			cos.Properties.Set("method", ps)
 		}
 	}
 
 	if len(cd.Changes) > 0 {
 		cos.Required = append(cos.Required, "changes")
-		if prop, ok := cos.Properties.Get("changes"); ok {
-			ps := prop.(orderedmap.OrderedMap)
-			items, _ := ps.Get("items")
-			pi := items.(orderedmap.OrderedMap)
-
-			oneOf := make([]*jsonschema.Schema, len(cd.Changes))
+		if ps, ok := cos.Properties.Get("changes"); ok {
+			items := ps.Items
+			items.OneOf = make([]*jsonschema.Schema, len(cd.Changes))
 			for i, v := range cd.Changes {
-				oneOf[i] = &jsonschema.Schema{
+				items.OneOf[i] = &jsonschema.Schema{
 					Const: v.Key.String(),
 					Title: v.Name.String(),
 				}
 				if !v.Desc.IsEmpty() {
-					oneOf[i].Description = v.Desc.String()
+					items.OneOf[i].Description = v.Desc.String()
 				}
 			}
-			pi.Set("oneOf", oneOf)
-			ps.Set("items", pi)
-			cos.Properties.Set("changes", ps)
 		}
 	}
 

@@ -144,8 +144,7 @@ func (dd *DueDate) Validate() error {
 
 // JSONSchemaExtend adds the payment terms key list to the schema.
 func (Terms) JSONSchemaExtend(schema *jsonschema.Schema) {
-	val, _ := schema.Properties.Get("key")
-	prop, ok := val.(*jsonschema.Schema)
+	prop, ok := schema.Properties.Get("key")
 	if ok {
 		prop.OneOf = make([]*jsonschema.Schema, len(TermKeyDefinitions))
 		for i, v := range TermKeyDefinitions {

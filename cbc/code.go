@@ -150,7 +150,9 @@ func (v validateCodeMap) Validate(value interface{}) error {
 
 // JSONSchemaExtend ensures the pattern property is set correctly.
 func (CodeMap) JSONSchemaExtend(schema *jsonschema.Schema) {
-	prop := schema.PatternProperties[".*"] // get default
-	delete(schema.PatternProperties, ".*") // remove default
-	schema.PatternProperties[KeyPattern] = prop
+	prop := schema.AdditionalProperties
+	schema.AdditionalProperties = nil
+	schema.PatternProperties = map[string]*jsonschema.Schema{
+		KeyPattern: prop,
+	}
 }

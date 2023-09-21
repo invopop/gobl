@@ -498,8 +498,7 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 // JSONSchemaExtend extends the schema with additional property details
 func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 	props := schema.Properties
-	if val, ok := props.Get("type"); ok {
-		its := val.(*jsonschema.Schema)
+	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
 		for i, v := range InvoiceTypes {
 			its.OneOf[i] = &jsonschema.Schema{
