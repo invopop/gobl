@@ -894,7 +894,49 @@
       "types": [
         "corrective"
       ],
-      "keys": [
+      "methods": [
+        {
+          "key": "complete",
+          "name": {
+            "en": "Complete",
+            "es": "Rectificaticón íntegra"
+          },
+          "map": {
+            "facturae": "01"
+          }
+        },
+        {
+          "key": "partial",
+          "name": {
+            "en": "Corrected items only",
+            "es": "Rectificación por diferencias"
+          },
+          "map": {
+            "facturae": "02"
+          }
+        },
+        {
+          "key": "discount",
+          "name": {
+            "en": "Bulk deal in a given period",
+            "es": "Rectificación por descuento por volumen de operaciones durante un periodo"
+          },
+          "map": {
+            "facturae": "03"
+          }
+        },
+        {
+          "key": "authorized",
+          "name": {
+            "en": "Authorized by the Tax Agency",
+            "es": "Autorizadas por la Agencia Tributaria"
+          },
+          "map": {
+            "facturae": "04"
+          }
+        }
+      ],
+      "changes": [
         {
           "key": "code",
           "name": {
@@ -1113,48 +1155,6 @@
           },
           "map": {
             "facturae": "85"
-          }
-        }
-      ],
-      "methods": [
-        {
-          "key": "complete",
-          "name": {
-            "en": "Complete",
-            "es": "Rectificaticón íntegra"
-          },
-          "map": {
-            "facturae": "01"
-          }
-        },
-        {
-          "key": "partial",
-          "name": {
-            "en": "Corrected items only",
-            "es": "Rectificación por diferencias"
-          },
-          "map": {
-            "facturae": "02"
-          }
-        },
-        {
-          "key": "discount",
-          "name": {
-            "en": "Bulk deal in a given period",
-            "es": "Rectificación por descuento por volumen de operaciones durante un periodo"
-          },
-          "map": {
-            "facturae": "03"
-          }
-        },
-        {
-          "key": "authorized",
-          "name": {
-            "en": "Authorized by the Tax Agency",
-            "es": "Autorizadas por la Agencia Tributaria"
-          },
-          "map": {
-            "facturae": "04"
           }
         }
       ]
