@@ -90,7 +90,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Changes,
 			validation.Required,
-			validation.Each(isValidCorrectionKey),
+			validation.Each(isValidCorrectionChangeKey),
 		),
 		validation.Field(&obj.CorrectionMethod,
 			validation.Required,
