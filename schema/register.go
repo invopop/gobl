@@ -1,6 +1,8 @@
 package schema
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // registry contains all the schemas that we can possibly know about from either
 // inside or outside GOBL.
@@ -17,7 +19,7 @@ var schemas *registry
 
 func newRegistry() *registry {
 	return &registry{
-		entries: make([]*entry, 0),
+		entries: make([]*entry, 0, 100),
 	}
 }
 

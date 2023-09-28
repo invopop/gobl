@@ -22,7 +22,7 @@ var (
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)),
-		validation.Field(&tID.Zone, isValidZoneCode),
+		validation.Field(&tID.Zone, tax.ZoneIn(zones)),
 	)
 }
 
@@ -30,16 +30,6 @@ func validateTaxIdentity(tID *tax.Identity) error {
 // the tax code.
 func normalizeTaxIdentity(tID *tax.Identity) error {
 	return common.NormalizeTaxIdentity(tID)
-}
-
-var isValidZoneCode = validation.In(validZoneCodes()...)
-
-func validZoneCodes() []interface{} {
-	ls := make([]interface{}, len(zones))
-	for i, v := range zones {
-		ls[i] = v.Code
-	}
-	return ls
 }
 
 // based on example provided by https://pt.wikipedia.org/wiki/N%C3%BAmero_de_identifica%C3%A7%C3%A3o_fiscal

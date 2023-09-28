@@ -42,8 +42,8 @@ type Regime struct {
 	// the country, if needed.
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
 
-	// List of sub-zones inside a country.
-	Zones []Zone `json:"zones,omitempty" jsonschema:"title=Zones"`
+	// Store of zones for the region.
+	Zones ZoneStore `json:"-"`
 
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
@@ -88,25 +88,6 @@ type Regime struct {
 	// including any normalization that might need to take place such as
 	// with tax codes and removing white-space.
 	Calculator func(doc interface{}) error `json:"-"`
-}
-
-// Zone represents an area inside a country, like a province
-// or a state, which shares the basic definitions of the country, but
-// may vary in some validation rules.
-type Zone struct {
-	// Unique zone code.
-	Code l10n.Code `json:"code" jsonschema:"title=Code"`
-	// Name of the zone to be use if a locality or region is not applicable.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Village, town, district, or city name which should coincide with
-	// address data.
-	Locality i18n.String `json:"locality,omitempty" jsonschema:"title=Locality"`
-	// Province, county, or state which should match address data.
-	Region i18n.String `json:"region,omitempty" jsonschema:"title=Region"`
-	// Codes defines a set of regime specific code mappings.
-	Codes cbc.CodeMap `json:"codes,omitempty" jsonschema:"title=Codes"`
-	// Any additional information
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Category contains the definition of a general type of tax inside a region.
@@ -316,7 +297,6 @@ func (r *Regime) Validate() error {
 		validation.Field(&r.TimeZone, validation.Required, validation.By(validateTimeZone)),
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Categories, validation.Required),
-		validation.Field(&r.Zones),
 		validation.Field(&r.Corrections),
 	)
 	return err
@@ -467,18 +447,6 @@ func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*v
 		return err
 	}
 	return ValidateInRegime(ctx, obj)
-}
-
-// Validate ensures that the zone looks correct.
-func (z *Zone) Validate() error {
-	err := validation.ValidateStruct(z,
-		validation.Field(&z.Code, validation.Required),
-		validation.Field(&z.Name),
-		validation.Field(&z.Locality),
-		validation.Field(&z.Region),
-		validation.Field(&z.Meta),
-	)
-	return err
 }
 
 // Validate ensures the Category's contents are correct.
