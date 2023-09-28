@@ -55,5 +55,5 @@
       "description": "Header defines the metadata of the body."
     }
   },
-  "$comment": "Generated with GOBL v0.58.2"
+  "$comment": "Generated with GOBL v0.59.0"
 }
