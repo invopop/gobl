@@ -48,7 +48,7 @@ func New() *tax.Regime {
 		Validator:        Validate,
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
-		Zones:            zones,               // see zones.go
+		// Zones:            zones,               // see zones.go
 		Corrections: []*tax.CorrectionDefinition{ // see preceding.go
 			{
 				Schema: bill.ShortSchemaInvoice,

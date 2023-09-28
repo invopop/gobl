@@ -179,7 +179,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 		validation.Field(&tID.Zone,
 			validation.When(tID.Type.In(TaxIdentityTypeTIN),
 				validation.Required,
-				isValidZoneCode,
+				tax.ZoneIn(zones),
 			),
 		),
 	)
@@ -204,7 +204,7 @@ func normalizePartyWithTaxIdentity(p *org.Party) error {
 	// override the party's locality and region using the tax identity zone data.
 	tID := p.TaxID
 	if tID != nil && tID.Zone != "" {
-		z := zoneForCode(tID.Zone)
+		z := zones.Get(tID.Zone)
 		if z != nil {
 			if len(p.Addresses) == 0 {
 				return nil
@@ -215,16 +215,6 @@ func normalizePartyWithTaxIdentity(p *org.Party) error {
 		}
 	}
 	return nil
-}
-
-var isValidZoneCode = validation.In(validZoneMap()...)
-
-func validZoneMap() []interface{} {
-	ls := make([]interface{}, len(zones))
-	for i, v := range zones {
-		ls[i] = v.Code
-	}
-	return ls
 }
 
 func validateTaxCode(value interface{}) error {
