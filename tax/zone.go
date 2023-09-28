@@ -62,7 +62,7 @@ func (v *validateZoneCode) Validate(value interface{}) error {
 		return nil
 	}
 	if z := v.store.Get(code); z == nil {
-		return errors.New("invalid zone code")
+		return errors.New("must be a valid value")
 	}
 	return nil
 }
@@ -82,6 +82,8 @@ type ZoneStoreEmbedded struct {
 	zones []*Zone
 }
 
+// NewZoneStoreEmbedded instantiates a new zone store that will use and embedded
+// file system for loading the data.
 func NewZoneStoreEmbedded(fs embed.FS, filename string) *ZoneStoreEmbedded {
 	return &ZoneStoreEmbedded{src: fs, fn: filename}
 }

@@ -21,6 +21,7 @@ var skipExamplePaths = []string{
 	"build/",
 	".out.",
 	"/out/",
+	"data/",
 	".github",
 }
 
