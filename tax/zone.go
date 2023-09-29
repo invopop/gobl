@@ -17,7 +17,12 @@ import (
 // get pretty big, it is more efficient to store them off-disk. Each region should
 // decide what to do.
 type ZoneStore interface {
+	// Get provides the specific tax zone object for the provided code.
 	Get(code l10n.Code) *Zone
+	// Codes provides a list of zone codes.
+	Codes() []l10n.Code
+	// List provides the complete list of codes
+	List() []*Zone
 }
 
 // Zone represents an area inside a country, like a province
@@ -115,4 +120,19 @@ func (s *ZoneStoreEmbedded) Get(code l10n.Code) *Zone {
 		}
 	}
 	return nil
+}
+
+// Codes provides the list of available zone codes.
+func (s *ZoneStoreEmbedded) Codes() []l10n.Code {
+	s.load()
+	codes := make([]l10n.Code, len(s.data.Zones))
+	for i, z := range s.data.Zones {
+		codes[i] = z.Code
+	}
+	return codes
+}
+
+// List provides the complete zone list.
+func (s *ZoneStoreEmbedded) List() []*Zone {
+	return s.data.Zones
 }
