@@ -14,7 +14,7 @@ import (
 	"github.com/invopop/jsonschema"
 )
 
-const outPath = "./build/schemas"
+const outPath = "./data/schemas"
 
 // Generate is used to generate a set of schema files from the GOBL bases.
 func Generate() error {

@@ -1,6 +1,7 @@
 package pt
 
 import (
+	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -11,4 +12,4 @@ const (
 	TaxCountryRegionMA = "PT-MA"
 )
 
-var zones = tax.NewZoneStoreEmbedded(Data, "data/zones.json")
+var zones = tax.NewZoneStoreEmbedded(data.Content, "regimes/pt/zones.json")

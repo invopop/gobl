@@ -1,0 +1,499 @@
+{
+  "zones": [
+    {
+      "code": "VI",
+      "region": {
+        "es": "Ávila"
+      },
+      "codes": {
+        "post": "01"
+      }
+    },
+    {
+      "code": "AB",
+      "region": {
+        "es": "Albacete"
+      },
+      "codes": {
+        "post": "02"
+      }
+    },
+    {
+      "code": "A",
+      "region": {
+        "es": "Alicante"
+      },
+      "codes": {
+        "post": "03"
+      }
+    },
+    {
+      "code": "AL",
+      "region": {
+        "es": "Almería"
+      },
+      "codes": {
+        "post": "04"
+      }
+    },
+    {
+      "code": "AV",
+      "region": {
+        "es": "Ávila"
+      },
+      "codes": {
+        "post": "05"
+      }
+    },
+    {
+      "code": "BA",
+      "region": {
+        "es": "Badajoz"
+      },
+      "codes": {
+        "post": "06"
+      }
+    },
+    {
+      "code": "PM",
+      "region": {
+        "es": "Baleares"
+      },
+      "codes": {
+        "post": "07"
+      }
+    },
+    {
+      "code": "IB",
+      "region": {
+        "es": "Baleares"
+      },
+      "codes": {
+        "post": "07"
+      }
+    },
+    {
+      "code": "B",
+      "region": {
+        "es": "Barcelona"
+      },
+      "codes": {
+        "post": "08"
+      }
+    },
+    {
+      "code": "BU",
+      "region": {
+        "es": "Burgos"
+      },
+      "codes": {
+        "post": "09"
+      }
+    },
+    {
+      "code": "CC",
+      "region": {
+        "es": "Cáceres"
+      },
+      "codes": {
+        "post": "10"
+      }
+    },
+    {
+      "code": "CA",
+      "region": {
+        "es": "Cadiz"
+      },
+      "codes": {
+        "post": "11"
+      }
+    },
+    {
+      "code": "CS",
+      "region": {
+        "es": "Castellón"
+      },
+      "codes": {
+        "post": "12"
+      }
+    },
+    {
+      "code": "CR",
+      "region": {
+        "es": "Ciudad Real"
+      },
+      "codes": {
+        "post": "13"
+      }
+    },
+    {
+      "code": "CO",
+      "region": {
+        "es": "Cordoba"
+      },
+      "codes": {
+        "post": "14"
+      }
+    },
+    {
+      "code": "C",
+      "region": {
+        "es": "La Coruña"
+      },
+      "codes": {
+        "post": "15"
+      }
+    },
+    {
+      "code": "CU",
+      "region": {
+        "es": "Cuenca"
+      },
+      "codes": {
+        "post": "16"
+      }
+    },
+    {
+      "code": "GE",
+      "region": {
+        "es": "Gerona"
+      },
+      "codes": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "GI",
+      "region": {
+        "es": "Girona"
+      },
+      "codes": {
+        "post": "17"
+      }
+    },
+    {
+      "code": "GR",
+      "region": {
+        "es": "Granada"
+      },
+      "codes": {
+        "post": "18"
+      }
+    },
+    {
+      "code": "GU",
+      "region": {
+        "es": "Guadalajara"
+      },
+      "codes": {
+        "post": "19"
+      }
+    },
+    {
+      "code": "SS",
+      "region": {
+        "es": "Guipúzcoa"
+      },
+      "codes": {
+        "post": "20"
+      }
+    },
+    {
+      "code": "H",
+      "region": {
+        "es": "Huelva"
+      },
+      "codes": {
+        "post": "21"
+      }
+    },
+    {
+      "code": "HU",
+      "region": {
+        "es": "Huesca"
+      },
+      "codes": {
+        "post": "22"
+      }
+    },
+    {
+      "code": "J",
+      "region": {
+        "es": "Jaén"
+      },
+      "codes": {
+        "post": "23"
+      }
+    },
+    {
+      "code": "LE",
+      "region": {
+        "es": "León"
+      },
+      "codes": {
+        "post": "24"
+      }
+    },
+    {
+      "code": "L",
+      "region": {
+        "es": "Lérida / Lleida"
+      },
+      "codes": {
+        "post": "25"
+      }
+    },
+    {
+      "code": "LO",
+      "region": {
+        "es": "La Rioja"
+      },
+      "codes": {
+        "post": "26"
+      }
+    },
+    {
+      "code": "LU",
+      "region": {
+        "es": "Lugo"
+      },
+      "codes": {
+        "post": "27"
+      }
+    },
+    {
+      "code": "M",
+      "region": {
+        "es": "Madrid"
+      },
+      "codes": {
+        "post": "28"
+      }
+    },
+    {
+      "code": "MA",
+      "region": {
+        "es": "Málaga"
+      },
+      "codes": {
+        "post": "29"
+      }
+    },
+    {
+      "code": "MU",
+      "region": {
+        "es": "Murcia"
+      },
+      "codes": {
+        "post": "30"
+      }
+    },
+    {
+      "code": "NA",
+      "region": {
+        "es": "Navarra"
+      },
+      "codes": {
+        "post": "31"
+      }
+    },
+    {
+      "code": "OR",
+      "region": {
+        "es": "Orense"
+      },
+      "codes": {
+        "post": "32"
+      }
+    },
+    {
+      "code": "OU",
+      "region": {
+        "es": "Orense"
+      },
+      "codes": {
+        "post": "32"
+      }
+    },
+    {
+      "code": "O",
+      "region": {
+        "es": "Asturias"
+      },
+      "codes": {
+        "post": "33"
+      }
+    },
+    {
+      "code": "P",
+      "region": {
+        "es": "Palencia"
+      },
+      "codes": {
+        "post": "34"
+      }
+    },
+    {
+      "code": "GC",
+      "region": {
+        "es": "Las Palmas"
+      },
+      "codes": {
+        "post": "35"
+      }
+    },
+    {
+      "code": "PO",
+      "region": {
+        "es": "Pontevedra"
+      },
+      "codes": {
+        "post": "36"
+      }
+    },
+    {
+      "code": "SA",
+      "region": {
+        "es": "Salamanca"
+      },
+      "codes": {
+        "post": "37"
+      }
+    },
+    {
+      "code": "TF",
+      "region": {
+        "es": "Santa Cruz de Tenerife"
+      },
+      "codes": {
+        "post": "38"
+      }
+    },
+    {
+      "code": "S",
+      "region": {
+        "es": "Cantabria"
+      },
+      "codes": {
+        "post": "39"
+      }
+    },
+    {
+      "code": "SG",
+      "region": {
+        "es": "Segovia"
+      },
+      "codes": {
+        "post": "40"
+      }
+    },
+    {
+      "code": "SE",
+      "region": {
+        "es": "Sevilla"
+      },
+      "codes": {
+        "post": "41"
+      }
+    },
+    {
+      "code": "SO",
+      "region": {
+        "es": "Soria"
+      },
+      "codes": {
+        "post": "42"
+      }
+    },
+    {
+      "code": "T",
+      "region": {
+        "es": "Tarragona"
+      },
+      "codes": {
+        "post": "43"
+      }
+    },
+    {
+      "code": "TE",
+      "region": {
+        "es": "Teruel"
+      },
+      "codes": {
+        "post": "44"
+      }
+    },
+    {
+      "code": "TO",
+      "region": {
+        "es": "Toledo"
+      },
+      "codes": {
+        "post": "45"
+      }
+    },
+    {
+      "code": "V",
+      "region": {
+        "es": "Valencia"
+      },
+      "codes": {
+        "post": "46"
+      }
+    },
+    {
+      "code": "VA",
+      "region": {
+        "es": "Valladolid"
+      },
+      "codes": {
+        "post": "47"
+      }
+    },
+    {
+      "code": "BI",
+      "region": {
+        "es": "Vizcaya"
+      },
+      "codes": {
+        "post": "48"
+      }
+    },
+    {
+      "code": "ZA",
+      "region": {
+        "es": "Zamora"
+      },
+      "codes": {
+        "post": "49"
+      }
+    },
+    {
+      "code": "Z",
+      "region": {
+        "es": "Zaragoza"
+      },
+      "codes": {
+        "post": "50"
+      }
+    },
+    {
+      "code": "CE",
+      "region": {
+        "es": "Ceuta"
+      },
+      "codes": {
+        "post": "51"
+      }
+    },
+    {
+      "code": "ML",
+      "region": {
+        "es": "Melilla"
+      },
+      "codes": {
+        "post": "52"
+      }
+    }
+  ]
+}

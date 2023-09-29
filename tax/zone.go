@@ -77,9 +77,11 @@ func ZoneIn(store ZoneStore) validation.Rule {
 // implementation for loading the embedded data on demand.
 type ZoneStoreEmbedded struct {
 	sync.Mutex
-	src   embed.FS
-	fn    string
-	zones []*Zone
+	src  embed.FS
+	fn   string
+	data struct {
+		Zones []*Zone `json:"zones"`
+	}
 }
 
 // NewZoneStoreEmbedded instantiates a new zone store that will use and embedded
@@ -92,13 +94,13 @@ func (s *ZoneStoreEmbedded) load() {
 	s.Lock()
 	defer s.Unlock()
 
-	if len(s.zones) == 0 {
+	if len(s.data.Zones) == 0 {
 		data, err := s.src.ReadFile(s.fn)
 		if err != nil {
 			panic(fmt.Sprintf("expected to find zone data: %s", err))
 		}
-		s.zones = make([]*Zone, 0)
-		if err := json.Unmarshal(data, &s.zones); err != nil {
+		s.data.Zones = make([]*Zone, 0)
+		if err := json.Unmarshal(data, &s.data); err != nil {
 			panic(fmt.Sprintf("parsing zone data: %s", err))
 		}
 	}
@@ -107,7 +109,7 @@ func (s *ZoneStoreEmbedded) load() {
 // Get will load the zone object from the JSON data.
 func (s *ZoneStoreEmbedded) Get(code l10n.Code) *Zone {
 	s.load()
-	for _, z := range s.zones {
+	for _, z := range s.data.Zones {
 		if z.Code == code {
 			return z
 		}

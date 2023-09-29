@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/invopop/gobl/build"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -131,7 +131,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	// try to load the pre-generated schema, this is just way more efficient
 	// than trying to generate the configuration options manually.
-	data, err := build.Content.ReadFile("schemas/bill/correction-options.json")
+	data, err := data.Content.ReadFile("schemas/bill/correction-options.json")
 	if err != nil {
 		return nil, fmt.Errorf("loading schema option data: %w", err)
 	}

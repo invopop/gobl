@@ -1,5 +1,5 @@
-// Package build is used to embed the generated regimes and schemas.
-package build
+// Package data contains both generated and embedded data.
+package data
 
 import "embed"
 

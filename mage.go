@@ -37,7 +37,7 @@ func Regimes() error {
 			n = n + "_" + string(r.Zone)
 		}
 		n = strings.ToLower(n)
-		f := filepath.Join("build", "regimes", n+".json")
+		f := filepath.Join("data", "regimes", n+".json")
 		if err := ioutil.WriteFile(f, data, 0644); err != nil {
 			return err
 		}
