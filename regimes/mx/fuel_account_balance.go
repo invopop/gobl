@@ -8,14 +8,23 @@ import (
 	"github.com/invopop/validation"
 )
 
+// Constants for the precision of complement's amounts
 const (
 	FuelAccountInterimPrecision = 3
 	FuelAccountFinalPrecision   = 2
 	FuelAccountRatePrecision    = 6
+)
 
+// Constants for the complement's allowed tax codes
+const (
 	FuelAccountTaxCodeVAT  = cbc.Code("IVA")
 	FuelAccountTaxCodeIEPS = cbc.Code("IEPS")
 )
+
+var validTaxCodes = []interface{}{
+	FuelAccountTaxCodeVAT,
+	FuelAccountTaxCodeIEPS,
+}
 
 // FuelAccountBalance carries the data to produce a CFDI's "Complemento de
 // Estado de Cuenta de Combustibles para Monederos Electrónicos" (version 1.2
@@ -77,6 +86,7 @@ type FuelAccountTax struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 }
 
+// Validate ensures that the complement's data is valid.
 func (comp *FuelAccountBalance) Validate() error {
 	return validation.ValidateStruct(comp,
 		validation.Field(&comp.AccountNumber,
@@ -128,11 +138,6 @@ func validateFuelAccountLine(value interface{}) error {
 	)
 }
 
-var validTaxCodes = []interface{}{
-	FuelAccountTaxCodeVAT,
-	FuelAccountTaxCodeIEPS,
-}
-
 func validateFuelAccountTax(value interface{}) error {
 	tax, _ := value.(*FuelAccountTax)
 	if tax == nil {
@@ -155,6 +160,7 @@ func isValidLineTotal(line *FuelAccountLine) validation.Rule {
 	return validation.In(expected).Error("must be quantity x unit_price")
 }
 
+// Calculate performs the complement's calculations and normalisations.
 func (comp *FuelAccountBalance) Calculate() error {
 	var subtotal, taxtotal num.Amount
 
