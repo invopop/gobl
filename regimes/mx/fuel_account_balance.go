@@ -95,62 +95,48 @@ func (fab *FuelAccountBalance) Validate() error {
 		),
 		validation.Field(&fab.Subtotal, validation.Required),
 		validation.Field(&fab.Total, validation.Required),
-		validation.Field(&fab.Lines,
-			validation.Required,
-			validation.Each(validation.By(validateFuelAccountLine)),
-		),
+		validation.Field(&fab.Lines, validation.Required),
 	)
 }
 
-func validateFuelAccountLine(value interface{}) error {
-	line, _ := value.(*FuelAccountLine)
-	if line == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(line,
-		validation.Field(&line.EWalletID, validation.Required),
-		validation.Field(&line.PurchaseDateTime, cal.DateTimeNotZero()),
-		validation.Field(&line.VendorTaxCode,
+// Validate ensures that the line's data is valid.
+func (fal *FuelAccountLine) Validate() error {
+	return validation.ValidateStruct(fal,
+		validation.Field(&fal.EWalletID, validation.Required),
+		validation.Field(&fal.PurchaseDateTime, cal.DateTimeNotZero()),
+		validation.Field(&fal.VendorTaxCode,
 			validation.Required,
 			validation.By(validateTaxCode),
 		),
-		validation.Field(&line.ServiceStationCode,
+		validation.Field(&fal.ServiceStationCode,
 			validation.Required,
 			validation.Length(1, 20),
 		),
-		validation.Field(&line.Quantity, num.Positive),
-		validation.Field(&line.FuelType, validation.Required),
-		validation.Field(&line.FuelName,
+		validation.Field(&fal.Quantity, num.Positive),
+		validation.Field(&fal.FuelType, validation.Required),
+		validation.Field(&fal.FuelName,
 			validation.Required,
 			validation.Length(1, 300),
 		),
-		validation.Field(&line.PurchaseCode,
+		validation.Field(&fal.PurchaseCode,
 			validation.Required,
 			validation.Length(1, 50),
 		),
-		validation.Field(&line.UnitPrice, num.Positive),
-		validation.Field(&line.Total, isValidLineTotal(line)),
-		validation.Field(&line.Taxes,
-			validation.Required,
-			validation.Each(validation.By(validateFuelAccountTax)),
-		),
+		validation.Field(&fal.UnitPrice, num.Positive),
+		validation.Field(&fal.Total, isValidLineTotal(fal)),
+		validation.Field(&fal.Taxes, validation.Required),
 	)
 }
 
-func validateFuelAccountTax(value interface{}) error {
-	tax, _ := value.(*FuelAccountTax)
-	if tax == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(tax,
-		validation.Field(&tax.Code,
+// Validate ensures that the tax's data is valid.
+func (fat *FuelAccountTax) Validate() error {
+	return validation.ValidateStruct(fat,
+		validation.Field(&fat.Code,
 			validation.Required,
 			validation.In(validTaxCodes...),
 		),
-		validation.Field(&tax.Rate, num.Positive),
-		validation.Field(&tax.Amount, num.Positive),
+		validation.Field(&fat.Rate, num.Positive),
+		validation.Field(&fat.Amount, num.Positive),
 	)
 }
 
