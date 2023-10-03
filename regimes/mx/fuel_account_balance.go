@@ -87,15 +87,15 @@ type FuelAccountTax struct {
 }
 
 // Validate ensures that the complement's data is valid.
-func (comp *FuelAccountBalance) Validate() error {
-	return validation.ValidateStruct(comp,
-		validation.Field(&comp.AccountNumber,
+func (fab *FuelAccountBalance) Validate() error {
+	return validation.ValidateStruct(fab,
+		validation.Field(&fab.AccountNumber,
 			validation.Required,
 			validation.Length(1, 50),
 		),
-		validation.Field(&comp.Subtotal, validation.Required),
-		validation.Field(&comp.Total, validation.Required),
-		validation.Field(&comp.Lines,
+		validation.Field(&fab.Subtotal, validation.Required),
+		validation.Field(&fab.Total, validation.Required),
+		validation.Field(&fab.Lines,
 			validation.Required,
 			validation.Each(validation.By(validateFuelAccountLine)),
 		),
@@ -161,28 +161,28 @@ func isValidLineTotal(line *FuelAccountLine) validation.Rule {
 }
 
 // Calculate performs the complement's calculations and normalisations.
-func (comp *FuelAccountBalance) Calculate() error {
+func (fab *FuelAccountBalance) Calculate() error {
 	var subtotal, taxtotal num.Amount
 
-	for _, line := range comp.Lines {
+	for _, l := range fab.Lines {
 		// Normalise amounts to the expected precision
-		line.Quantity = line.Quantity.Rescale(FuelAccountInterimPrecision)
-		line.UnitPrice = line.UnitPrice.Rescale(FuelAccountInterimPrecision)
-		line.Total = line.Total.Rescale(FuelAccountFinalPrecision)
+		l.Quantity = l.Quantity.Rescale(FuelAccountInterimPrecision)
+		l.UnitPrice = l.UnitPrice.Rescale(FuelAccountInterimPrecision)
+		l.Total = l.Total.Rescale(FuelAccountFinalPrecision)
 
-		subtotal = line.Total.Add(subtotal)
+		subtotal = l.Total.Add(subtotal)
 
-		for _, tax := range line.Taxes {
+		for _, t := range l.Taxes {
 			// Normalise amounts to the expected precision
-			tax.Rate = tax.Rate.Rescale(FuelAccountRatePrecision)
-			tax.Amount = tax.Amount.Rescale(FuelAccountFinalPrecision)
+			t.Rate = t.Rate.Rescale(FuelAccountRatePrecision)
+			t.Amount = t.Amount.Rescale(FuelAccountFinalPrecision)
 
-			taxtotal = tax.Amount.Add(taxtotal)
+			taxtotal = t.Amount.Add(taxtotal)
 		}
 	}
 
-	comp.Subtotal = subtotal.Rescale(FuelAccountFinalPrecision)
-	comp.Total = subtotal.Add(taxtotal).Rescale(FuelAccountFinalPrecision)
+	fab.Subtotal = subtotal.Rescale(FuelAccountFinalPrecision)
+	fab.Total = subtotal.Add(taxtotal).Rescale(FuelAccountFinalPrecision)
 
 	return nil
 }

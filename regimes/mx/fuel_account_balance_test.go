@@ -10,9 +10,9 @@ import (
 )
 
 func TestInvalidComplement(t *testing.T) {
-	comp := &mx.FuelAccountBalance{}
+	fab := &mx.FuelAccountBalance{}
 
-	err := comp.Validate()
+	err := fab.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "account_number: cannot be blank")
@@ -20,9 +20,9 @@ func TestInvalidComplement(t *testing.T) {
 }
 
 func TestInvalidLine(t *testing.T) {
-	comp := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{{}}}
+	fab := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{{}}}
 
-	err := comp.Validate()
+	err := fab.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "e_wallet_id: cannot be blank")
@@ -36,11 +36,11 @@ func TestInvalidLine(t *testing.T) {
 	assert.Contains(t, err.Error(), "unit_price: must be greater than 0")
 	assert.Contains(t, err.Error(), "taxes: cannot be blank")
 
-	comp.Lines[0].VendorTaxCode = "1234"
-	comp.Lines[0].Quantity = num.MakeAmount(1, 0)
-	comp.Lines[0].UnitPrice = num.MakeAmount(1, 0)
+	fab.Lines[0].VendorTaxCode = "1234"
+	fab.Lines[0].Quantity = num.MakeAmount(1, 0)
+	fab.Lines[0].UnitPrice = num.MakeAmount(1, 0)
 
-	err = comp.Validate()
+	err = fab.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "vendor_tax_code: invalid tax identity code")
@@ -48,27 +48,27 @@ func TestInvalidLine(t *testing.T) {
 }
 
 func TestInvalidTax(t *testing.T) {
-	comp := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{
+	fab := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{
 		{Taxes: []*mx.FuelAccountTax{{}}}},
 	}
 
-	err := comp.Validate()
+	err := fab.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "code: cannot be blank")
 	assert.Contains(t, err.Error(), "rate: must be greater than 0")
 	assert.Contains(t, err.Error(), "amount: must be greater than 0")
 
-	comp.Lines[0].Taxes[0].Code = "IRPF"
+	fab.Lines[0].Taxes[0].Code = "IRPF"
 
-	err = comp.Validate()
+	err = fab.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "code: must be a valid value")
 }
 
 func TestCalculate(t *testing.T) {
-	comp := &mx.FuelAccountBalance{
+	fab := &mx.FuelAccountBalance{
 		Lines: []*mx.FuelAccountLine{
 			{
 				Quantity:  num.MakeAmount(11, 1),
@@ -92,16 +92,16 @@ func TestCalculate(t *testing.T) {
 		},
 	}
 
-	err := comp.Calculate()
+	err := fab.Calculate()
 
 	require.NoError(t, err)
-	assert.Equal(t, num.MakeAmount(20001, 2), comp.Subtotal)
-	assert.Equal(t, num.MakeAmount(24337, 2), comp.Total)
+	assert.Equal(t, num.MakeAmount(20001, 2), fab.Subtotal)
+	assert.Equal(t, num.MakeAmount(24337, 2), fab.Total)
 
-	assert.Equal(t, num.MakeAmount(1100, 3), comp.Lines[0].Quantity)
-	assert.Equal(t, num.MakeAmount(90910, 3), comp.Lines[0].UnitPrice)
-	assert.Equal(t, num.MakeAmount(10000, 2), comp.Lines[0].Total)
+	assert.Equal(t, num.MakeAmount(1100, 3), fab.Lines[0].Quantity)
+	assert.Equal(t, num.MakeAmount(90910, 3), fab.Lines[0].UnitPrice)
+	assert.Equal(t, num.MakeAmount(10000, 2), fab.Lines[0].Total)
 
-	assert.Equal(t, num.MakeAmount(160000, 6), comp.Lines[0].Taxes[0].Rate)
-	assert.Equal(t, num.MakeAmount(1600, 2), comp.Lines[0].Taxes[0].Amount)
+	assert.Equal(t, num.MakeAmount(160000, 6), fab.Lines[0].Taxes[0].Rate)
+	assert.Equal(t, num.MakeAmount(1600, 2), fab.Lines[0].Taxes[0].Amount)
 }
