@@ -84,6 +84,7 @@ func (fvc *FoodVouchersComplement) Validate() error {
 	)
 }
 
+// Validate checks the FoodVouchersLine data is valid.
 func (fvl *FoodVouchersLine) Validate() error {
 	return validation.ValidateStruct(fvl,
 		validation.Field(&fvl.EWalletID,
@@ -96,6 +97,7 @@ func (fvl *FoodVouchersLine) Validate() error {
 	)
 }
 
+// Validate checks the FoodVouchersEmployee data is valid.
 func (fve *FoodVouchersEmployee) Validate() error {
 	return validation.ValidateStruct(fve,
 		validation.Field(&fve.TaxCode,
