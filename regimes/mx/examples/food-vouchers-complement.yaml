@@ -1,0 +1,54 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+issue_date: "2023-07-10"
+series: "TEST"
+code: "00002"
+supplier:
+  name: "ESCUELA KEMPER URGATE"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+  tax_id:
+    country: "MX"
+    code: "EKU9003173C9"
+    zone: "21000"
+customer:
+  name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+    mx-cfdi-use: "G01"
+  tax_id:
+    country: "MX"
+    code: "URE180429TM6"
+    zone: "86991"
+lines:
+  - quantity: "1"
+    item:
+      name: "Comisión servicio de monedero electrónico"
+      price: "10.00"
+      ext:
+        mx-cfdi-prod-serv: "84141602"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+payment:
+  terms:
+    notes: "Condiciones de pago"
+  instructions:
+    key: "online+wallet"
+complements:
+  - $schema: "https://gobl.org/draft-0/regimes/mx/food-vouchers-complement"
+    employer_registration: "12345678901234567890"
+    account_number: "0123456789"
+    lines:
+      - e_wallet_id: "ABC1234"
+        issue_date_time: "2022-07-19T10:20:30"
+        employee_tax_code: "JUFA7608212V6"
+        employee_curp: "JUFA760821MDFRRR00"
+        employee_name: "Adriana Juarez Fernández"
+        employee_social_security: "12345678901"
+        amount: 10.123
+      - e_wallet_id: "BCD4321"
+        issue_date_time: "2022-08-20T11:20:30"
+        employee_tax_code: "KAHO641101B39"
+        employee_curp: "KAHO641101HDFRRR00"
+        employee_name: "Oscar Kala Haak"
+        amount: 20.4

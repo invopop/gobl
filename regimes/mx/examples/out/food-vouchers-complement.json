@@ -1,0 +1,123 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "51b99ed26d97e48f28365eed31e5166c8ed8a68f52c9db47c1e7708e53592c56"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
+		"series": "TEST",
+		"code": "00002",
+		"issue_date": "2023-07-10",
+		"currency": "MXN",
+		"supplier": {
+			"name": "ESCUELA KEMPER URGATE",
+			"tax_id": {
+				"country": "MX",
+				"zone": "21000",
+				"code": "EKU9003173C9"
+			},
+			"ext": {
+				"mx-cfdi-fiscal-regime": "601"
+			}
+		},
+		"customer": {
+			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+			"tax_id": {
+				"country": "MX",
+				"zone": "86991",
+				"code": "URE180429TM6"
+			},
+			"ext": {
+				"mx-cfdi-fiscal-regime": "601",
+				"mx-cfdi-use": "G01"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Comisión servicio de monedero electrónico",
+					"price": "10.00",
+					"ext": {
+						"mx-cfdi-prod-serv": "84141602"
+					}
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Condiciones de pago"
+			},
+			"instructions": {
+				"key": "online+wallet"
+			}
+		},
+		"totals": {
+			"sum": "10.00",
+			"total": "10.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "10.00",
+								"percent": "16.0%",
+								"amount": "1.60"
+							}
+						],
+						"amount": "1.60"
+					}
+				],
+				"sum": "1.60"
+			},
+			"tax": "1.60",
+			"total_with_tax": "11.60",
+			"payable": "11.60"
+		},
+		"complements": [
+			{
+				"$schema": "https://gobl.org/draft-0/regimes/mx/food-vouchers-complement",
+				"employer_registration": "12345678901234567890",
+				"account_number": "0123456789",
+				"total": "30.52",
+				"lines": [
+					{
+						"e_wallet_id": "ABC1234",
+						"issue_date_time": "2022-07-19T10:20:30",
+						"employee_tax_code": "JUFA7608212V6",
+						"employee_curp": "JUFA760821MDFRRR00",
+						"employee_name": "Adriana Juarez Fernández",
+						"employee_social_security": "12345678901",
+						"amount": "10.12"
+					},
+					{
+						"e_wallet_id": "BCD4321",
+						"issue_date_time": "2022-08-20T11:20:30",
+						"employee_tax_code": "KAHO641101B39",
+						"employee_curp": "KAHO641101HDFRRR00",
+						"employee_name": "Oscar Kala Haak",
+						"amount": "20.40"
+					}
+				]
+			}
+		]
+	}
+}

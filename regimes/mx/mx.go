@@ -17,7 +17,10 @@ func init() {
 	tax.RegisterRegime(New())
 
 	// MX GOBL Schema Complements
-	schema.Register(schema.GOBL.Add("regimes/mx"), FuelAccountBalance{})
+	schema.Register(schema.GOBL.Add("regimes/mx"),
+		FuelAccountBalance{},
+		FoodVouchersComplement{},
+	)
 }
 
 // Custom keys used typically in meta or codes information.
