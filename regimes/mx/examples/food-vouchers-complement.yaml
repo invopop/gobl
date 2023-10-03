@@ -41,14 +41,16 @@ complements:
     lines:
       - e_wallet_id: "ABC1234"
         issue_date_time: "2022-07-19T10:20:30"
-        employee_tax_code: "JUFA7608212V6"
-        employee_curp: "JUFA760821MDFRRR00"
-        employee_name: "Adriana Juarez Fernández"
-        employee_social_security: "12345678901"
+        employee:
+          tax_code: "JUFA7608212V6"
+          curp: "JUFA760821MDFRRR00"
+          name: "Adriana Juarez Fernández"
+          social_security: "12345678901"
         amount: 10.123
       - e_wallet_id: "BCD4321"
         issue_date_time: "2022-08-20T11:20:30"
-        employee_tax_code: "KAHO641101B39"
-        employee_curp: "KAHO641101HDFRRR00"
-        employee_name: "Oscar Kala Haak"
+        employee:
+          tax_code: "KAHO641101B39"
+          curp: "KAHO641101HDFRRR00"
+          name: "Oscar Kala Haak"
         amount: 20.4

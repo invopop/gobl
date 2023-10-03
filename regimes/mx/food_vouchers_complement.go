@@ -50,16 +50,24 @@ type FoodVouchersLine struct {
 	EWalletID cbc.Code `json:"e_wallet_id" jsonschema:"title=E-wallet Identifier"`
 	// Date and time of the food voucher's issue (maps to `Fecha`).
 	IssueDateTime cal.DateTime `json:"issue_date_time" jsonschema:"title=Issue Date and Time"`
-	// Employee's tax identity code (maps to `rfc`).
-	EmployeeTaxCode cbc.Code `json:"employee_tax_code" jsonschema:"title=Employee's Tax Identity Code"`
-	// Employee's CURP ("Clave Única de Registro de Población", maps to `curp`).
-	EmployeeCURP cbc.Code `json:"employee_curp" jsonschema:"title=Employee's CURP"`
-	// Employee's name (maps to `nombre`).
-	EmployeeName string `json:"employee_name" jsonschema:"title=Employee's Name"`
-	// Employee's Social Security Number (maps to `numSeguridadSocial`).
-	EmployeeSocialSecurity cbc.Code `json:"employee_social_security,omitempty" jsonschema:"title=Employee's Social Security Number"`
+	// Employee that received the food voucher.
+	Employee *FoodVouchersEmployee `json:"employee,omitempty" jsonschema:"title=Employee"`
 	// Amount of the food voucher (maps to `importe`).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+}
+
+// FoodVouchersEmployee represents an employee that received a food voucher. It
+// groups employee related field that appears under the `Concepto` node in the
+// CFDI's complement.
+type FoodVouchersEmployee struct {
+	// Employee's tax identity code (maps to `rfc`).
+	TaxCode cbc.Code `json:"tax_code" jsonschema:"title=Employee's Tax Identity Code"`
+	// Employee's CURP ("Clave Única de Registro de Población", maps to `curp`).
+	CURP cbc.Code `json:"curp" jsonschema:"title=Employee's CURP"`
+	// Employee's name (maps to `nombre`).
+	Name string `json:"name" jsonschema:"title=Employee's Name"`
+	// Employee's Social Security Number (maps to `numSeguridadSocial`).
+	SocialSecurity cbc.Code `json:"social_security,omitempty" jsonschema:"title=Employee's Social Security Number"`
 }
 
 // Validate checks the FoodVouchersComplement data according to the SAT's
@@ -91,20 +99,35 @@ func validateFoodVouchersLine(value interface{}) error {
 			validation.Length(0, 20),
 		),
 		validation.Field(&line.IssueDateTime, cal.DateTimeNotZero()),
-		validation.Field(&line.EmployeeTaxCode,
+		validation.Field(&line.Employee,
+			validation.Required,
+			validation.By(validateFoodVouchersEmployee)),
+		validation.Field(&line.Amount, validation.Required),
+	)
+}
+
+func validateFoodVouchersEmployee(value interface{}) error {
+	employee := value.(*FoodVouchersEmployee)
+	if employee == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(employee,
+		validation.Field(&employee.TaxCode,
 			validation.Required,
 			validation.By(validateTaxCode),
 		),
-		validation.Field(&line.EmployeeCURP,
+		validation.Field(&employee.CURP,
 			validation.Required,
 			validation.Match(CURPRegexp),
 		),
-		validation.Field(&line.EmployeeName,
+		validation.Field(&employee.Name,
 			validation.Required,
 			validation.Length(0, 100),
 		),
-		validation.Field(&line.EmployeeSocialSecurity, validation.Match(SocialSecurityRegexp)),
-		validation.Field(&line.Amount, validation.Required),
+		validation.Field(&employee.SocialSecurity,
+			validation.Match(SocialSecurityRegexp),
+		),
 	)
 }
 

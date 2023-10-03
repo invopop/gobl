@@ -36,22 +36,36 @@ func TestInvalidFoodVouchersLine(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "e_wallet_id: cannot be blank")
 	assert.Contains(t, err.Error(), "issue_date_time: required")
-	assert.Contains(t, err.Error(), "employee_tax_code: cannot be blank")
-	assert.Contains(t, err.Error(), "employee_curp: cannot be blank")
-	assert.Contains(t, err.Error(), "employee_name: cannot be blank")
+	assert.Contains(t, err.Error(), "employee: cannot be blank")
 
 	fvc.Lines[0].EWalletID = "123456789012345678901"
-	fvc.Lines[0].EmployeeTaxCode = "INVALID1"
-	fvc.Lines[0].EmployeeCURP = "INVALID2"
-	fvc.Lines[0].EmployeeSocialSecurity = "INVALID3"
 
 	err = fvc.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "e_wallet_id: the length must be no more than 20")
-	assert.Contains(t, err.Error(), "employee_tax_code: invalid tax identity code")
-	assert.Contains(t, err.Error(), "employee_curp: must be in a valid format")
-	assert.Contains(t, err.Error(), "employee_social_security: must be in a valid format")
+}
+
+func TestInvalidFoodVouchersEmployee(t *testing.T) {
+	fvc := &mx.FoodVouchersComplement{Lines: []*mx.FoodVouchersLine{{Employee: &mx.FoodVouchersEmployee{}}}}
+
+	err := fvc.Validate()
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "tax_code: cannot be blank")
+	assert.Contains(t, err.Error(), "curp: cannot be blank")
+	assert.Contains(t, err.Error(), "name: cannot be blank")
+
+	fvc.Lines[0].Employee.TaxCode = "INVALID1"
+	fvc.Lines[0].Employee.CURP = "INVALID2"
+	fvc.Lines[0].Employee.SocialSecurity = "INVALID3"
+
+	err = fvc.Validate()
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "tax_code: invalid tax identity code")
+	assert.Contains(t, err.Error(), "curp: must be in a valid format")
+	assert.Contains(t, err.Error(), "social_security: must be in a valid format")
 }
 
 func TestCalculateFoodVouchersComplement(t *testing.T) {

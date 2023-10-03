@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "51b99ed26d97e48f28365eed31e5166c8ed8a68f52c9db47c1e7708e53592c56"
+			"val": "91514018429e4d46deb1f689658d361ae4870ac5e5aa76133018086fb923e31b"
 		},
 		"draft": true
 	},
@@ -102,18 +102,22 @@
 					{
 						"e_wallet_id": "ABC1234",
 						"issue_date_time": "2022-07-19T10:20:30",
-						"employee_tax_code": "JUFA7608212V6",
-						"employee_curp": "JUFA760821MDFRRR00",
-						"employee_name": "Adriana Juarez Fernández",
-						"employee_social_security": "12345678901",
+						"employee": {
+							"tax_code": "JUFA7608212V6",
+							"curp": "JUFA760821MDFRRR00",
+							"name": "Adriana Juarez Fernández",
+							"social_security": "12345678901"
+						},
 						"amount": "10.12"
 					},
 					{
 						"e_wallet_id": "BCD4321",
 						"issue_date_time": "2022-08-20T11:20:30",
-						"employee_tax_code": "KAHO641101B39",
-						"employee_curp": "KAHO641101HDFRRR00",
-						"employee_name": "Oscar Kala Haak",
+						"employee": {
+							"tax_code": "KAHO641101B39",
+							"curp": "KAHO641101HDFRRR00",
+							"name": "Oscar Kala Haak"
+						},
 						"amount": "20.40"
 					}
 				]
