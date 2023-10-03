@@ -80,52 +80,37 @@ func (fvc *FoodVouchersComplement) Validate() error {
 			validation.Length(0, 20),
 		),
 		validation.Field(&fvc.Total, validation.Required),
-		validation.Field(&fvc.Lines,
-			validation.Required,
-			validation.Each(validation.By(validateFoodVouchersLine)),
-		),
+		validation.Field(&fvc.Lines, validation.Required),
 	)
 }
 
-func validateFoodVouchersLine(value interface{}) error {
-	line := value.(*FoodVouchersLine)
-	if line == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(line,
-		validation.Field(&line.EWalletID,
+func (fvl *FoodVouchersLine) Validate() error {
+	return validation.ValidateStruct(fvl,
+		validation.Field(&fvl.EWalletID,
 			validation.Required,
 			validation.Length(0, 20),
 		),
-		validation.Field(&line.IssueDateTime, cal.DateTimeNotZero()),
-		validation.Field(&line.Employee,
-			validation.Required,
-			validation.By(validateFoodVouchersEmployee)),
-		validation.Field(&line.Amount, validation.Required),
+		validation.Field(&fvl.IssueDateTime, cal.DateTimeNotZero()),
+		validation.Field(&fvl.Employee, validation.Required),
+		validation.Field(&fvl.Amount, validation.Required),
 	)
 }
 
-func validateFoodVouchersEmployee(value interface{}) error {
-	employee := value.(*FoodVouchersEmployee)
-	if employee == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(employee,
-		validation.Field(&employee.TaxCode,
+func (fve *FoodVouchersEmployee) Validate() error {
+	return validation.ValidateStruct(fve,
+		validation.Field(&fve.TaxCode,
 			validation.Required,
 			validation.By(validateTaxCode),
 		),
-		validation.Field(&employee.CURP,
+		validation.Field(&fve.CURP,
 			validation.Required,
 			validation.Match(CURPRegexp),
 		),
-		validation.Field(&employee.Name,
+		validation.Field(&fve.Name,
 			validation.Required,
 			validation.Length(0, 100),
 		),
-		validation.Field(&employee.SocialSecurity,
+		validation.Field(&fve.SocialSecurity,
 			validation.Match(SocialSecurityRegexp),
 		),
 	)
