@@ -145,6 +145,8 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 
 		validation.Field(&inv.Notes),
 		validation.Field(&inv.Meta),
+
+		validation.Field(&inv.Complements, validation.Each()),
 	)
 	if err == nil {
 		err = r.ValidateObject(inv)
@@ -466,6 +468,20 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 
 	t.round(zero)
 
+	// Complements
+	if err := calculateComplements(inv.Complements); err != nil {
+		return validation.Errors{"complements": err}
+	}
+
+	return nil
+}
+
+func calculateComplements(comps []*schema.Object) error {
+	for _, c := range comps {
+		if err := c.Calculate(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

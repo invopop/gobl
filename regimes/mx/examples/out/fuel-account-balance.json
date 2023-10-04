@@ -1,0 +1,159 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "1451d94f4ab432342eb1cf5721e978ff88bf45a90835c0538a917b58b9d59224"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
+		"series": "TEST",
+		"code": "00002",
+		"issue_date": "2023-07-10",
+		"currency": "MXN",
+		"supplier": {
+			"name": "ESCUELA KEMPER URGATE",
+			"tax_id": {
+				"country": "MX",
+				"zone": "21000",
+				"code": "EKU9003173C9"
+			},
+			"ext": {
+				"mx-cfdi-fiscal-regime": "601"
+			}
+		},
+		"customer": {
+			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+			"tax_id": {
+				"country": "MX",
+				"zone": "86991",
+				"code": "URE180429TM6"
+			},
+			"ext": {
+				"mx-cfdi-fiscal-regime": "601",
+				"mx-cfdi-use": "G01"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Comisión servicio de monedero electrónico",
+					"price": "10.00",
+					"ext": {
+						"mx-cfdi-prod-serv": "84141602"
+					}
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Condiciones de pago"
+			},
+			"instructions": {
+				"key": "online+wallet"
+			}
+		},
+		"totals": {
+			"sum": "10.00",
+			"total": "10.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "10.00",
+								"percent": "16.0%",
+								"amount": "1.60"
+							}
+						],
+						"amount": "1.60"
+					}
+				],
+				"sum": "1.60"
+			},
+			"tax": "1.60",
+			"total_with_tax": "11.60",
+			"payable": "11.60"
+		},
+		"complements": [
+			{
+				"$schema": "https://gobl.org/draft-0/regimes/mx/fuel-account-balance",
+				"account_number": "0123456789",
+				"subtotal": "246.13",
+				"total": "400.00",
+				"lines": [
+					{
+						"e_wallet_id": "1234",
+						"purchase_date_time": "2022-07-19T10:20:30",
+						"vendor_tax_code": "RWT860605OF5",
+						"service_station_code": "8171650",
+						"quantity": "9.661",
+						"item": {
+							"type": "3",
+							"unit": "l",
+							"name": "Diesel",
+							"price": "12.743"
+						},
+						"purchase_code": "2794668",
+						"total": "123.11",
+						"taxes": [
+							{
+								"code": "IVA",
+								"rate": "0.160000",
+								"amount": "19.70"
+							},
+							{
+								"code": "IEPS",
+								"rate": "5.919500",
+								"amount": "57.19"
+							}
+						]
+					},
+					{
+						"e_wallet_id": "1234",
+						"purchase_date_time": "2022-08-19T10:20:30",
+						"vendor_tax_code": "DJV320816JT1",
+						"service_station_code": "8171667",
+						"quantity": "9.680",
+						"item": {
+							"type": "1",
+							"name": "Gasolina Magna",
+							"price": "12.709"
+						},
+						"purchase_code": "2794669",
+						"total": "123.02",
+						"taxes": [
+							{
+								"code": "IVA",
+								"rate": "0.160000",
+								"amount": "19.68"
+							},
+							{
+								"code": "IEPS",
+								"rate": "5.919500",
+								"amount": "57.30"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

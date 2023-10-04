@@ -1,0 +1,78 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+issue_date: "2023-07-10"
+series: "TEST"
+code: "00002"
+supplier:
+  name: "ESCUELA KEMPER URGATE"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+  tax_id:
+    country: "MX"
+    code: "EKU9003173C9"
+    zone: "21000"
+customer:
+  name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+    mx-cfdi-use: "G01"
+  tax_id:
+    country: "MX"
+    code: "URE180429TM6"
+    zone: "86991"
+lines:
+  - quantity: "1"
+    item:
+      name: "Comisión servicio de monedero electrónico"
+      price: "10.00"
+      ext:
+        mx-cfdi-prod-serv: "84141602"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+payment:
+  terms:
+    notes: "Condiciones de pago"
+  instructions:
+    key: "online+wallet"
+complements:
+  - $schema: "https://gobl.org/draft-0/regimes/mx/fuel-account-balance"
+    account_number: "0123456789"
+    lines:
+      - e_wallet_id: "1234"
+        purchase_date_time: "2022-07-19T10:20:30"
+        vendor_tax_code: "RWT860605OF5"
+        service_station_code: "8171650"
+        quantity: "9.6613"
+        item:
+          unit: "l"
+          type: "3"
+          name: "Diesel"
+          price: "12.7428"
+        purchase_code: "2794668"
+        total: "123.11"
+        taxes:
+          - code: "IVA"
+            rate: "0.16"
+            amount: "19.70"
+          - code: "IEPS"
+            rate: "5.9195"
+            amount: "57.19"
+      - e_wallet_id: "1234"
+        purchase_date_time: "2022-08-19T10:20:30"
+        vendor_tax_code: "DJV320816JT1"
+        service_station_code: "8171667"
+        quantity: "9.68"
+        item:
+          type: "1"
+          name: "Gasolina Magna"
+          price: "12.709"
+        purchase_code: "2794669"
+        total: "123.02"
+        taxes:
+          - code: "IVA"
+            rate: "0.16"
+            amount: "19.68"
+          - code: "IEPS"
+            rate: "5.9195"
+            amount: "57.30"
+
