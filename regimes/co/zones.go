@@ -19,4 +19,4 @@ const (
 	KeyZoneDep cbc.Key = "dep"
 )
 
-var zones = tax.NewZoneStoreEmbedded(data.Content, "regimes/co/zones.json")
+var zones = tax.NewZoneStore(data.Content, "regimes/co.json")

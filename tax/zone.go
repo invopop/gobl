@@ -13,18 +13,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// ZoneStore defines what is expected of a zone store, given that these database can
-// get pretty big, it is more efficient to store them off-disk. Each region should
-// decide what to do.
-type ZoneStore interface {
-	// Get provides the specific tax zone object for the provided code.
-	Get(code l10n.Code) *Zone
-	// Codes provides a list of zone codes.
-	Codes() []l10n.Code
-	// List provides the complete list of codes
-	List() []*Zone
-}
-
 // Zone represents an area inside a country, like a province
 // or a state, which shares the basic definitions of the country, but
 // may vary in some validation rules.
@@ -57,7 +45,7 @@ func (z *Zone) Validate() error {
 }
 
 type validateZoneCode struct {
-	store ZoneStore
+	store *ZoneStore
 }
 
 // Validate checks to see if the provided zone appears in the store.
@@ -74,13 +62,13 @@ func (v *validateZoneCode) Validate(value interface{}) error {
 
 // ZoneIn returns a validation rule that checks to see if the provided
 // zone is in the store.
-func ZoneIn(store ZoneStore) validation.Rule {
+func ZoneIn(store *ZoneStore) validation.Rule {
 	return &validateZoneCode{store}
 }
 
-// ZoneStoreEmbedded implements the ZoneStore interface and provides a standard
-// implementation for loading the embedded data on demand.
-type ZoneStoreEmbedded struct {
+// ZoneStore makes it easier to load zone information dynamically from
+// source data.
+type ZoneStore struct {
 	sync.Mutex
 	src  embed.FS
 	fn   string
@@ -89,13 +77,18 @@ type ZoneStoreEmbedded struct {
 	}
 }
 
-// NewZoneStoreEmbedded instantiates a new zone store that will use and embedded
+// NewZoneStore instantiates a new zone store that will use and embedded
 // file system for loading the data.
-func NewZoneStoreEmbedded(fs embed.FS, filename string) *ZoneStoreEmbedded {
-	return &ZoneStoreEmbedded{src: fs, fn: filename}
+func NewZoneStore(fs embed.FS, filename string) *ZoneStore {
+	return &ZoneStore{src: fs, fn: filename}
 }
 
-func (s *ZoneStoreEmbedded) load() {
+// JSONSchemaAlias provides the real object that should be defined in the schemas.
+func (ZoneStore) JSONSchemaAlias() any { //nolint:copylocks
+	return []*Zone{}
+}
+
+func (s *ZoneStore) load() {
 	s.Lock()
 	defer s.Unlock()
 
@@ -112,7 +105,7 @@ func (s *ZoneStoreEmbedded) load() {
 }
 
 // Get will load the zone object from the JSON data.
-func (s *ZoneStoreEmbedded) Get(code l10n.Code) *Zone {
+func (s *ZoneStore) Get(code l10n.Code) *Zone {
 	s.load()
 	for _, z := range s.data.Zones {
 		if z.Code == code {
@@ -123,7 +116,7 @@ func (s *ZoneStoreEmbedded) Get(code l10n.Code) *Zone {
 }
 
 // Codes provides the list of available zone codes.
-func (s *ZoneStoreEmbedded) Codes() []l10n.Code {
+func (s *ZoneStore) Codes() []l10n.Code {
 	s.load()
 	codes := make([]l10n.Code, len(s.data.Zones))
 	for i, z := range s.data.Zones {
@@ -133,6 +126,11 @@ func (s *ZoneStoreEmbedded) Codes() []l10n.Code {
 }
 
 // List provides the complete zone list.
-func (s *ZoneStoreEmbedded) List() []*Zone {
+func (s *ZoneStore) List() []*Zone {
 	return s.data.Zones
+}
+
+func (s *ZoneStore) MarshalJSON() ([]byte, error) {
+	s.load()
+	return json.Marshal(s.data.Zones)
 }

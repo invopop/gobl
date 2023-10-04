@@ -7,4 +7,4 @@ import (
 
 // source: https://www1.agenziaentrate.gov.it/servizi/codici/ricerca/VisualizzaTabella.php?ArcName=ENTI-T2
 
-var zones = tax.NewZoneStoreEmbedded(data.Content, "regimes/it/zones.json")
+var zones = tax.NewZoneStore(data.Content, "regimes/it.json")

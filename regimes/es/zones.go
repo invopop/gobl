@@ -65,4 +65,4 @@ const (
 	ZoneML l10n.Code = "ML" // (52) Melilla
 )
 
-var zones = tax.NewZoneStoreEmbedded(data.Content, "regimes/es/zones.json")
+var zones = tax.NewZoneStore(data.Content, "regimes/es.json")

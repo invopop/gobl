@@ -12,4 +12,4 @@ const (
 	TaxCountryRegionMA = "PT-MA"
 )
 
-var zones = tax.NewZoneStoreEmbedded(data.Content, "regimes/pt/zones.json")
+var zones = tax.NewZoneStore(data.Content, "regimes/pt.json")

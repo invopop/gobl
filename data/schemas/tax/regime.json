@@ -386,6 +386,13 @@
           "type": "array",
           "title": "Categories",
           "description": "List of tax categories."
+        },
+        "zones": {
+          "items": {
+            "$ref": "#/$defs/Zone"
+          },
+          "type": "array",
+          "description": "List of zones to identify specific areas, regions, or provinces inside a country\ntha may be required for tax purposes."
         }
       },
       "type": "object",
