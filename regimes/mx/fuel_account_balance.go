@@ -21,7 +21,8 @@ const (
 	FuelAccountTaxCodeIEPS = cbc.Code("IEPS")
 )
 
-var validTaxCodes = []interface{}{
+// FuelAccountValidTaxCodes lists of the complement's allowed tax codes
+var FuelAccountValidTaxCodes = []interface{}{
 	FuelAccountTaxCodeVAT,
 	FuelAccountTaxCodeIEPS,
 }
@@ -149,7 +150,7 @@ func (fat *FuelAccountTax) Validate() error {
 	return validation.ValidateStruct(fat,
 		validation.Field(&fat.Code,
 			validation.Required,
-			validation.In(validTaxCodes...),
+			validation.In(FuelAccountValidTaxCodes...),
 		),
 		validation.Field(&fat.Rate, num.Positive),
 		validation.Field(&fat.Amount, num.Positive),
