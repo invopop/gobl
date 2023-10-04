@@ -43,10 +43,11 @@ complements:
         vendor_tax_code: "RWT860605OF5"
         service_station_code: "8171650"
         quantity: "9.6613"
-        unit: "l"
-        fuel_type: "3"
-        fuel_name: "Diesel"
-        unit_price: "12.7428"
+        item:
+          unit: "l"
+          type: "3"
+          name: "Diesel"
+          price: "12.7428"
         purchase_code: "2794668"
         total: "123.11"
         taxes:
@@ -61,9 +62,10 @@ complements:
         vendor_tax_code: "DJV320816JT1"
         service_station_code: "8171667"
         quantity: "9.68"
-        fuel_type: "1"
-        fuel_name: "Gasolina Magna"
-        unit_price: "12.709"
+        item:
+          type: "1"
+          name: "Gasolina Magna"
+          price: "12.709"
         purchase_code: "2794669"
         total: "123.02"
         taxes:

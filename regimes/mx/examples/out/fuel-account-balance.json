@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c0a43b719859e1f656b6a3bf6cc500703f1536240a110522a7f3f7fbeb566ef4"
+			"val": "1451d94f4ab432342eb1cf5721e978ff88bf45a90835c0538a917b58b9d59224"
 		},
 		"draft": true
 	},
@@ -105,10 +105,12 @@
 						"vendor_tax_code": "RWT860605OF5",
 						"service_station_code": "8171650",
 						"quantity": "9.661",
-						"fuel_type": "3",
-						"unit": "l",
-						"fuel_name": "Diesel",
-						"unit_price": "12.743",
+						"item": {
+							"type": "3",
+							"unit": "l",
+							"name": "Diesel",
+							"price": "12.743"
+						},
 						"purchase_code": "2794668",
 						"total": "123.11",
 						"taxes": [
@@ -130,9 +132,11 @@
 						"vendor_tax_code": "DJV320816JT1",
 						"service_station_code": "8171667",
 						"quantity": "9.680",
-						"fuel_type": "1",
-						"fuel_name": "Gasolina Magna",
-						"unit_price": "12.709",
+						"item": {
+							"type": "1",
+							"name": "Gasolina Magna",
+							"price": "12.709"
+						},
 						"purchase_code": "2794669",
 						"total": "123.02",
 						"taxes": [

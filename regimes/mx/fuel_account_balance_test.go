@@ -30,21 +30,32 @@ func TestInvalidLine(t *testing.T) {
 	assert.Contains(t, err.Error(), "vendor_tax_code: cannot be blank")
 	assert.Contains(t, err.Error(), "service_station_code: cannot be blank")
 	assert.Contains(t, err.Error(), "quantity: must be greater than 0")
-	assert.Contains(t, err.Error(), "fuel_type: cannot be blank")
-	assert.Contains(t, err.Error(), "fuel_name: cannot be blank")
+	assert.Contains(t, err.Error(), "item: cannot be blank")
 	assert.Contains(t, err.Error(), "purchase_code: cannot be blank")
-	assert.Contains(t, err.Error(), "unit_price: must be greater than 0")
 	assert.Contains(t, err.Error(), "taxes: cannot be blank")
 
 	fab.Lines[0].VendorTaxCode = "1234"
 	fab.Lines[0].Quantity = num.MakeAmount(1, 0)
-	fab.Lines[0].UnitPrice = num.MakeAmount(1, 0)
+	fab.Lines[0].Item = &mx.FuelAccountItem{Price: num.MakeAmount(1, 0)}
 
 	err = fab.Validate()
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "vendor_tax_code: invalid tax identity code")
 	assert.Contains(t, err.Error(), "total: must be quantity x unit_price")
+}
+
+func TestInvalidItem(t *testing.T) {
+	fab := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{
+		{Item: &mx.FuelAccountItem{}}},
+	}
+
+	err := fab.Validate()
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "type: cannot be blank")
+	assert.Contains(t, err.Error(), "name: cannot be blank")
+	assert.Contains(t, err.Error(), "price: must be greater than 0")
 }
 
 func TestInvalidTax(t *testing.T) {
@@ -71,9 +82,9 @@ func TestCalculate(t *testing.T) {
 	fab := &mx.FuelAccountBalance{
 		Lines: []*mx.FuelAccountLine{
 			{
-				Quantity:  num.MakeAmount(11, 1),
-				UnitPrice: num.MakeAmount(9091, 2),
-				Total:     num.MakeAmount(100, 0),
+				Quantity: num.MakeAmount(11, 1),
+				Item:     &mx.FuelAccountItem{Price: num.MakeAmount(9091, 2)},
+				Total:    num.MakeAmount(100, 0),
 				Taxes: []*mx.FuelAccountTax{
 					{
 						Rate:   num.MakeAmount(16, 2),
@@ -99,7 +110,7 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, num.MakeAmount(24337, 2), fab.Total)
 
 	assert.Equal(t, num.MakeAmount(1100, 3), fab.Lines[0].Quantity)
-	assert.Equal(t, num.MakeAmount(90910, 3), fab.Lines[0].UnitPrice)
+	assert.Equal(t, num.MakeAmount(90910, 3), fab.Lines[0].Item.Price)
 	assert.Equal(t, num.MakeAmount(10000, 2), fab.Lines[0].Total)
 
 	assert.Equal(t, num.MakeAmount(160000, 6), fab.Lines[0].Taxes[0].Rate)

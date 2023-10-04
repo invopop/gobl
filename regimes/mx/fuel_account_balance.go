@@ -59,20 +59,28 @@ type FuelAccountLine struct {
 	ServiceStationCode cbc.Code `json:"service_station_code" jsonschema:"title=Service Station Code"`
 	// Amount of fuel units purchased (maps to `Cantidad`)
 	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
-	// Type of fuel (one of `c_ClaveTipoCombustible` codes, maps to `TipoCombustible`).
-	FuelType cbc.Code `json:"fuel_type" jsonschema:"title=Fuel Type"`
-	// Reference unit of measure used in the price and the quantity (maps to `Unidad`).
-	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
-	// Name of the fuel (maps to `NombreCombustible`).
-	FuelName string `json:"fuel_name" jsonschema:"title=Fuel Name"`
-	// Base price of a single unit of the fuel without taxes (maps to `ValorUnitario`).
-	UnitPrice num.Amount `json:"unit_price" jsonschema:"title=Unit Price"`
+	// Details of the fuel purchased.
+	Item *FuelAccountItem `json:"item" jsonschema:"title=Item"`
 	// Identifier of the purchase (maps to `FolioOperacion`).
 	PurchaseCode cbc.Code `json:"purchase_code" jsonschema:"title=Purchase Code"`
 	// Result of quantity multiplied by the unit price (maps to `Importe`).
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
 	// Map of taxes applied to the purchase (maps to `Traslados`).
 	Taxes []*FuelAccountTax `json:"taxes" jsonschema:"title=Taxes"`
+}
+
+// FuelAccountItem provides the details of a fuel purchase. Its fields map to
+// attributes of the `ConceptoEstadoDeCuentaCombustible` node in the CFDI's
+// complement.
+type FuelAccountItem struct {
+	// Type of fuel (one of `c_ClaveTipoCombustible` codes, maps to `TipoCombustible`).
+	Type cbc.Code `json:"type" jsonschema:"title=Type"`
+	// Reference unit of measure used in the price and the quantity (maps to `Unidad`).
+	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	// Name of the fuel (maps to `NombreCombustible`).
+	Name string `json:"name" jsonschema:"title=Name"`
+	// Base price of a single unit of the fuel without taxes (maps to `ValorUnitario`).
+	Price num.Amount `json:"price" jsonschema:"title=Price"`
 }
 
 // FuelAccountTax represents a single tax applied to a fuel purchase. It maps to
@@ -113,18 +121,26 @@ func (fal *FuelAccountLine) Validate() error {
 			validation.Length(1, 20),
 		),
 		validation.Field(&fal.Quantity, num.Positive),
-		validation.Field(&fal.FuelType, validation.Required),
-		validation.Field(&fal.FuelName,
-			validation.Required,
-			validation.Length(1, 300),
-		),
+		validation.Field(&fal.Item, validation.Required),
+
 		validation.Field(&fal.PurchaseCode,
 			validation.Required,
 			validation.Length(1, 50),
 		),
-		validation.Field(&fal.UnitPrice, num.Positive),
 		validation.Field(&fal.Total, isValidLineTotal(fal)),
 		validation.Field(&fal.Taxes, validation.Required),
+	)
+}
+
+// Validate ensures that the item's data is valid.
+func (fai *FuelAccountItem) Validate() error {
+	return validation.ValidateStruct(fai,
+		validation.Field(&fai.Type, validation.Required),
+		validation.Field(&fai.Name,
+			validation.Required,
+			validation.Length(1, 300),
+		),
+		validation.Field(&fai.Price, num.Positive),
 	)
 }
 
@@ -141,7 +157,11 @@ func (fat *FuelAccountTax) Validate() error {
 }
 
 func isValidLineTotal(line *FuelAccountLine) validation.Rule {
-	expected := line.Quantity.Multiply(line.UnitPrice).Rescale(2)
+	if line.Item == nil {
+		return validation.Skip
+	}
+
+	expected := line.Quantity.Multiply(line.Item.Price).Rescale(2)
 
 	return validation.In(expected).Error("must be quantity x unit_price")
 }
@@ -152,8 +172,10 @@ func (fab *FuelAccountBalance) Calculate() error {
 
 	for _, l := range fab.Lines {
 		// Normalise amounts to the expected precision
+		if l.Item != nil {
+			l.Item.Price = l.Item.Price.Rescale(FuelAccountInterimPrecision)
+		}
 		l.Quantity = l.Quantity.Rescale(FuelAccountInterimPrecision)
-		l.UnitPrice = l.UnitPrice.Rescale(FuelAccountInterimPrecision)
 		l.Total = l.Total.Rescale(FuelAccountFinalPrecision)
 
 		subtotal = l.Total.Add(subtotal)
