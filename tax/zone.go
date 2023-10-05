@@ -84,7 +84,7 @@ func NewZoneStore(fs embed.FS, filename string) *ZoneStore {
 }
 
 // JSONSchemaAlias provides the real object that should be defined in the schemas.
-func (ZoneStore) JSONSchemaAlias() any { //nolint:copylocks
+func (ZoneStore) JSONSchemaAlias() any { //nolint:govet
 	return []*Zone{}
 }
 
@@ -130,6 +130,7 @@ func (s *ZoneStore) List() []*Zone {
 	return s.data.Zones
 }
 
+// MarshalJSON ensures the zone data is loaded before marshaling.
 func (s *ZoneStore) MarshalJSON() ([]byte, error) {
 	s.load()
 	return json.Marshal(s.data.Zones)
