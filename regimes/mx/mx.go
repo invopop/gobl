@@ -19,7 +19,7 @@ func init() {
 	// MX GOBL Schema Complements
 	schema.Register(schema.GOBL.Add("regimes/mx"),
 		FuelAccountBalance{},
-		FoodVouchersComplement{},
+		FoodVouchers{},
 	)
 }
 

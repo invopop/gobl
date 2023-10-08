@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "91514018429e4d46deb1f689658d361ae4870ac5e5aa76133018086fb923e31b"
+			"val": "bc378697655dd1cdceed09d095ebcded06d86bfc091dd711eb8e6f34df5b759c"
 		},
 		"draft": true
 	},
@@ -94,7 +94,7 @@
 		},
 		"complements": [
 			{
-				"$schema": "https://gobl.org/draft-0/regimes/mx/food-vouchers-complement",
+				"$schema": "https://gobl.org/draft-0/regimes/mx/food-vouchers",
 				"employer_registration": "12345678901234567890",
 				"account_number": "0123456789",
 				"total": "30.52",

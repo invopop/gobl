@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInvalidFoodVouchersComplement(t *testing.T) {
-	fvc := &mx.FoodVouchersComplement{}
+func TestInvalidFoodVouchers(t *testing.T) {
+	fvc := &mx.FoodVouchers{}
 
 	err := fvc.Validate()
 
@@ -29,7 +29,7 @@ func TestInvalidFoodVouchersComplement(t *testing.T) {
 }
 
 func TestInvalidFoodVouchersLine(t *testing.T) {
-	fvc := &mx.FoodVouchersComplement{Lines: []*mx.FoodVouchersLine{{}}}
+	fvc := &mx.FoodVouchers{Lines: []*mx.FoodVouchersLine{{}}}
 
 	err := fvc.Validate()
 
@@ -47,7 +47,7 @@ func TestInvalidFoodVouchersLine(t *testing.T) {
 }
 
 func TestInvalidFoodVouchersEmployee(t *testing.T) {
-	fvc := &mx.FoodVouchersComplement{Lines: []*mx.FoodVouchersLine{{Employee: &mx.FoodVouchersEmployee{}}}}
+	fvc := &mx.FoodVouchers{Lines: []*mx.FoodVouchersLine{{Employee: &mx.FoodVouchersEmployee{}}}}
 
 	err := fvc.Validate()
 
@@ -68,8 +68,8 @@ func TestInvalidFoodVouchersEmployee(t *testing.T) {
 	assert.Contains(t, err.Error(), "social_security: must be in a valid format")
 }
 
-func TestCalculateFoodVouchersComplement(t *testing.T) {
-	fvc := &mx.FoodVouchersComplement{
+func TestCalculateFoodVouchers(t *testing.T) {
+	fvc := &mx.FoodVouchers{
 		Lines: []*mx.FoodVouchersLine{
 			{Amount: num.MakeAmount(1234, 3)},
 			{Amount: num.MakeAmount(4321, 3)},

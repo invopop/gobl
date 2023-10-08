@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/regimes/mx/food-vouchers-complement",
-  "$ref": "#/$defs/FoodVouchersComplement",
+  "$id": "https://gobl.org/draft-0/regimes/mx/food-vouchers",
+  "$ref": "#/$defs/FoodVouchers",
   "$defs": {
-    "FoodVouchersComplement": {
+    "FoodVouchers": {
       "properties": {
         "employer_registration": {
           "type": "string",
@@ -36,7 +36,7 @@
         "total",
         "lines"
       ],
-      "description": "FoodVouchersComplement carries the data to produce a CFDI's \"Complemento de Vales de Despensa\" (version 1.0) providing detailed information about food vouchers issued by an e-wallet supplier to its customer's employees."
+      "description": "FoodVouchers carries the data to produce a CFDI's \"Complemento de Vales de Despensa\" (version 1.0) providing detailed information about food vouchers issued by an e-wallet supplier to its customer's employees."
     },
     "FoodVouchersEmployee": {
       "properties": {

@@ -227,7 +227,7 @@ Complements let you include additional complementary information to your GOBL do
 
 ### Fuel Account Balance
 
-The _Fuel Account Balance_ carries the data to produce a CFDI’s [“Complemento de Estado de Cuenta de Combustibles para Monederos Electrónicos” (version 1.2 revision B)](https://www.sat.gob.mx/consulta/21885/genera-tus-facturas-electronicas-con-el-complemento-para-el-estado-de-cuenta-de-combustibles-para-monederos-electronicos) providing detailed information about fuel purchases made with electronic wallets.
+The _Fuel Account Balance_ complement carries the data to produce a CFDI’s [“Complemento de Estado de Cuenta de Combustibles para Monederos Electrónicos” (version 1.2 revision B)](https://www.sat.gob.mx/consulta/21885/genera-tus-facturas-electronicas-con-el-complemento-para-el-estado-de-cuenta-de-combustibles-para-monederos-electronicos) providing detailed information about fuel purchases made with electronic wallets.
 
 In Mexico, e-wallet suppliers use this complement to report this information in the invoices to their customers.
 
@@ -235,12 +235,12 @@ Learn more about this complement here:
 * [Schema Documentation](https://docs.gobl.org/draft-0/regimes/mx/fuel_account_balance)
 * [Example GOBL document](./examples/out/fuel-account-balance.json)
 
-### Food Vouchers Complement
+### Food Vouchers
 
-The _Food Vouchers Complement_ carries the data to produce a CFDI's [“Complemento de Vales de Despensa” (version 1.0)](https://docs.gobl.org/draft-0/regimes/mx/food_vouchers_complement) providing detailed information about food vouchers issued by an e-wallet supplier to its customer's employees.
+The _Food Vouchers_ complement carries the data to produce a CFDI's [“Complemento de Vales de Despensa” (version 1.0)](https://docs.gobl.org/draft-0/regimes/mx/food_vouchers) providing detailed information about food vouchers issued by an e-wallet supplier to its customer's employees.
 
 In Mexico, e-wallet suppliers use this complement to report this information in the invoices to their customers.
 
 Learn more about this complement here:
-* [Schema Documentation](https://docs.gobl.org/draft-0/regimes/mx/food_vouchers_complement)
-* [Example GOBL document](./examples/out/food-vouchers-complement.json)
+* [Schema Documentation](https://docs.gobl.org/draft-0/regimes/mx/food_vouchers)
+* [Example GOBL document](./examples/out/food-vouchers.json)

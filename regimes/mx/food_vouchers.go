@@ -26,12 +26,12 @@ var (
 	SocialSecurityRegexp = regexp.MustCompile(SocialSecurityPattern)
 )
 
-// FoodVouchersComplement carries the data to produce a CFDI's "Complemento de
+// FoodVouchers carries the data to produce a CFDI's "Complemento de
 // Vales de Despensa" (version 1.0) providing detailed information about food
 // vouchers issued by an e-wallet supplier to its customer's employees.
 //
 // This struct maps to the `ValesDeDespensa` root node in the CFDI's complement.
-type FoodVouchersComplement struct {
+type FoodVouchers struct {
 	// Customer's employer registration number (maps to `registroPatronal`).
 	EmployerRegistration string `json:"employer_registration,omitempty" jsonschema:"title=Employer Registration"`
 	// Customer's account number (maps to `numeroDeCuenta`).
@@ -70,9 +70,9 @@ type FoodVouchersEmployee struct {
 	SocialSecurity cbc.Code `json:"social_security,omitempty" jsonschema:"title=Employee's Social Security Number"`
 }
 
-// Validate checks the FoodVouchersComplement data according to the SAT's
+// Validate checks the FoodVouchers data according to the SAT's
 // rules for the "Complemento de Vales de Despensa".
-func (fvc *FoodVouchersComplement) Validate() error {
+func (fvc *FoodVouchers) Validate() error {
 	return validation.ValidateStruct(fvc,
 		validation.Field(&fvc.EmployerRegistration, validation.Length(0, 20)),
 		validation.Field(&fvc.AccountNumber,
@@ -119,7 +119,7 @@ func (fve *FoodVouchersEmployee) Validate() error {
 }
 
 // Calculate performs the complement's calculations and normalisations.
-func (fvc *FoodVouchersComplement) Calculate() error {
+func (fvc *FoodVouchers) Calculate() error {
 	fvc.Total = num.MakeAmount(0, FoodVouchersFinalPrecision)
 
 	for _, l := range fvc.Lines {
