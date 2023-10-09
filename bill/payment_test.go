@@ -66,7 +66,7 @@ func TestPaymentCalculations(t *testing.T) {
 		p.calculateAdvances(zero, total)
 		a := p.totalAdvance(zero)
 
+		assert.Equal(t, "20.85", p.Advances[0].Amount.String())
 		assert.Equal(t, "20.845", a.String())
-
 	})
 }
