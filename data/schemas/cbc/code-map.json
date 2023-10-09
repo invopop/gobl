@@ -13,5 +13,5 @@
       "description": "CodeMap is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
     }
   },
-  "$comment": "Generated with GOBL v0.61.0"
+  "$comment": "Generated with GOBL v0.62.0"
 }
