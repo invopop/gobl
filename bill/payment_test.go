@@ -51,4 +51,22 @@ func TestPaymentCalculations(t *testing.T) {
 	p.calculateAdvances(zero, total)
 	sum := p.totalAdvance(zero)
 	assert.Equal(t, "30.00", sum.String())
+
+	t.Run("maintains precision", func(t *testing.T) {
+		zero := num.MakeAmount(0, 2)
+		total := num.MakeAmount(20845, 3)
+		p := &Payment{
+			Advances: []*pay.Advance{
+				{
+					Description: "Paid in advance",
+					Percent:     num.NewPercentage(100, 2),
+				},
+			},
+		}
+		p.calculateAdvances(zero, total)
+		a := p.totalAdvance(zero)
+
+		assert.Equal(t, "20.85", p.Advances[0].Amount.String())
+		assert.Equal(t, "20.845", a.String())
+	})
 }
