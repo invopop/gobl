@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/regimes/mx/food-vouchers",
+  "$ref": "#/$defs/FoodVouchers",
+  "$defs": {
+    "FoodVouchers": {
+      "properties": {
+        "employer_registration": {
+          "type": "string",
+          "title": "Employer Registration",
+          "description": "Customer's employer registration number (maps to `registroPatronal`)."
+        },
+        "account_number": {
+          "type": "string",
+          "title": "Account Number",
+          "description": "Customer's account number (maps to `numeroDeCuenta`)."
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Sum of all line amounts (calculated, maps to `total`).",
+          "calculated": true
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/FoodVouchersLine"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "List of food vouchers issued to the customer's employees (maps to `Conceptos`)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "account_number",
+        "total",
+        "lines"
+      ],
+      "description": "FoodVouchers carries the data to produce a CFDI's \"Complemento de Vales de Despensa\" (version 1.0) providing detailed information about food vouchers issued by an e-wallet supplier to its customer's employees."
+    },
+    "FoodVouchersEmployee": {
+      "properties": {
+        "tax_code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Employee's Tax Identity Code",
+          "description": "Employee's tax identity code (maps to `rfc`)."
+        },
+        "curp": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Employee's CURP",
+          "description": "Employee's CURP (\"Clave Única de Registro de Población\", maps to `curp`)."
+        },
+        "name": {
+          "type": "string",
+          "title": "Employee's Name",
+          "description": "Employee's name (maps to `nombre`)."
+        },
+        "social_security": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Employee's Social Security Number",
+          "description": "Employee's Social Security Number (maps to `numSeguridadSocial`)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "tax_code",
+        "curp",
+        "name"
+      ],
+      "description": "FoodVouchersEmployee represents an employee that received a food voucher."
+    },
+    "FoodVouchersLine": {
+      "properties": {
+        "e_wallet_id": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "E-wallet Identifier",
+          "description": "Identifier of the e-wallet that received the food voucher (maps to `Identificador`)."
+        },
+        "issue_date_time": {
+          "$ref": "https://gobl.org/draft-0/cal/date-time",
+          "title": "Issue Date and Time",
+          "description": "Date and time of the food voucher's issue (maps to `Fecha`)."
+        },
+        "employee": {
+          "$ref": "#/$defs/FoodVouchersEmployee",
+          "title": "Employee",
+          "description": "Employee that received the food voucher."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "Amount of the food voucher (maps to `importe`)."
+        }
+      },
+      "type": "object",
+      "required": [
+        "e_wallet_id",
+        "issue_date_time",
+        "amount"
+      ],
+      "description": "FoodVouchersLine represents a single food voucher issued to the e-wallet of one of the customer's employees."
+    }
+  },
+  "$comment": "Generated with GOBL v0.62.0"
+}
