@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go v0.110.2
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/google/uuid v1.3.0
-	github.com/invopop/jsonschema v0.9.0
+	github.com/invopop/jsonschema v0.12.0
 	github.com/invopop/validation v0.3.0
 	github.com/invopop/yaml v0.1.0
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693
@@ -26,4 +26,5 @@ require (
 )
 
 // replace github.com/invopop/jsonschema => ../jsonschema
+
 // replace github.com/invopop/validation => ../validation

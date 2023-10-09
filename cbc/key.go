@@ -25,11 +25,11 @@ var (
 	KeySeparator = "+"
 )
 
-const (
+var (
 	// KeyMinLength defines the minimum key length
-	KeyMinLength = 1
+	KeyMinLength uint64 = 1
 	// KeyMaxLength defines the maximum key length
-	KeyMaxLength = 64
+	KeyMaxLength uint64 = 64
 )
 
 // KeyEmpty is used when no key is available.
@@ -40,7 +40,7 @@ const KeyEmpty Key = ""
 func (k Key) Validate() error {
 	return validation.Validate(string(k),
 		validation.Match(KeyValidationRegexp),
-		validation.Length(KeyMinLength, KeyMaxLength),
+		validation.Length(int(KeyMinLength), int(KeyMaxLength)),
 	)
 }
 
@@ -121,8 +121,8 @@ func (Key) JSONSchema() *jsonschema.Schema {
 		Type:        "string",
 		Pattern:     KeyPattern,
 		Title:       "Key",
-		MinLength:   KeyMinLength,
-		MaxLength:   KeyMaxLength,
+		MinLength:   &KeyMinLength,
+		MaxLength:   &KeyMaxLength,
 		Description: "Text identifier to be used instead of a code for a more verbose but readable identifier.",
 	}
 }

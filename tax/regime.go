@@ -42,9 +42,6 @@ type Regime struct {
 	// the country, if needed.
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
 
-	// Store of zones for the region.
-	Zones ZoneStore `json:"-"`
-
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
@@ -80,6 +77,10 @@ type Regime struct {
 
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
+
+	// List of zones to identify specific areas, regions, or provinces inside a country
+	// tha may be required for tax purposes.
+	Zones *ZoneStore `json:"zones,omitempty"`
 
 	// Validator is a method to use to validate a document in a given region.
 	Validator func(doc interface{}) error `json:"-"`

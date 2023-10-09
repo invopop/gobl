@@ -21,10 +21,10 @@ type Code string
 type CodeMap map[Key]Code
 
 // Basic code constants.
-const (
-	CodePattern   = `^[A-Z0-9]+(\.?[A-Z0-9]+)*$`
-	CodeMinLength = 1
-	CodeMaxLength = 24
+var (
+	CodePattern          = `^[A-Z0-9]+(\.?[A-Z0-9]+)*$`
+	CodeMinLength uint64 = 1
+	CodeMaxLength uint64 = 24
 )
 
 var (
@@ -37,7 +37,7 @@ const CodeEmpty Code = ""
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
 	return validation.Validate(string(c),
-		validation.Length(1, CodeMaxLength),
+		validation.Length(1, int(CodeMaxLength)),
 		validation.Match(codeValidationRegexp),
 	)
 }
@@ -69,8 +69,8 @@ func (Code) JSONSchema() *jsonschema.Schema {
 		Type:        "string",
 		Pattern:     CodePattern,
 		Title:       "Code",
-		MinLength:   CodeMinLength,
-		MaxLength:   CodeMaxLength,
+		MinLength:   &CodeMinLength,
+		MaxLength:   &CodeMaxLength,
 		Description: "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols.",
 	}
 }

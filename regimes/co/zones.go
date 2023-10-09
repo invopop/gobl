@@ -2,6 +2,7 @@ package co
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,4 +19,4 @@ const (
 	KeyZoneDep cbc.Key = "dep"
 )
 
-var zones = tax.NewZoneStoreEmbedded(Data, "data/zones.json")
+var zones = tax.NewZoneStore(data.Content, "regimes/co.json")

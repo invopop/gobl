@@ -1,6 +1,7 @@
 package es
 
 import (
+	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 )
@@ -64,4 +65,4 @@ const (
 	ZoneML l10n.Code = "ML" // (52) Melilla
 )
 
-var zones = tax.NewZoneStoreEmbedded(Data, "data/zones.json")
+var zones = tax.NewZoneStore(data.Content, "regimes/es.json")
