@@ -3,6 +3,7 @@ package org
 import (
 	"context"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -36,6 +37,8 @@ type Image struct {
 	// Digest can be used to ensure the image contained at the URL
 	// is the same one as originally intended.
 	Digest *dsig.Digest `json:"digest,omitempty" jsonschema:"title=Digest"`
+	// Meta contains additional information about the image.
+	Meta *cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate ensures the details on the image look okay.
@@ -48,8 +51,9 @@ func (i *Image) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.URL, is.URL),
-		validation.Field(&i.Height, validation.Min(1), validation.Max(2048)),
-		validation.Field(&i.Width, validation.Min(1), validation.Max(2048)),
+		validation.Field(&i.Height, validation.Min(64), validation.Max(2048)),
+		validation.Field(&i.Width, validation.Min(64), validation.Max(2048)),
 		validation.Field(&i.Digest),
+		validation.Field(&i.Meta),
 	)
 }
