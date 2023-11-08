@@ -127,7 +127,7 @@ The CFDI’s `FormaPago` field specifies an invoice's means of payment. The foll
 | 04   | Tarjeta de crédito                  | `card`                        |
 | 05   | Monedero electrónico                | `online+wallet`               |
 | 06   | Dinero electrónico                  | `online`                      |
-| 08   | Vales de despensa                   | `other+grocery-vouchers  `    |
+| 08   | Vales de despensa                   | `other+grocery-vouchers`      |
 | 12   | Dación en pago                      | `other+in-kind`               |
 | 13   | Pago por subrogación                | `other+subrogation`           |
 | 14   | Pago por consignación               | `other+consignment`           |
