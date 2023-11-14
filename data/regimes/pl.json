@@ -1,0 +1,228 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Poland",
+    "pl": "Polska"
+  },
+  "time_zone": "Europe/Warsaw",
+  "country": "PL",
+  "currency": "PLN",
+  "extensions": [
+  ],
+  "payment_means": [
+    {
+      "key": "cash",
+      "name": {
+        "en": "Cash",
+        "pl": "Gotówka"
+      },
+      "map": {
+        "sat-forma-pago": "1"
+      }
+    },
+    {
+      "key": "card",
+      "name": {
+        "en": "Card",
+        "pl": "Karta"
+      },
+      "map": {
+        "sat-forma-pago": "2"
+      }
+    },
+    {
+      "key": "coupon",
+      "name": {
+        "en": "Coupon",
+        "pl": "Bon"
+      },
+      "map": {
+        "sat-forma-pago": "3"
+      }
+    },
+    {
+      "key": "cheque",
+      "name": {
+        "en": "Cheque",
+        "pl": "Czek"
+      },
+      "map": {
+        "sat-forma-pago": "4"
+      }
+    },
+    {
+      "key": "loan",
+      "name": {
+        "en": "Loan",
+        "pl": "Kredyt"
+      },
+      "map": {
+        "sat-forma-pago": "5"
+      }
+    },
+    {
+      "key": "credit-transfer",
+      "name": {
+        "en": "Wire transfer",
+        "pl": "Przelew"
+      },
+      "map": {
+        "sat-forma-pago": "6"
+      }
+    },
+    {
+      "key": "mobile",
+      "name": {
+        "en": "Mobile",
+        "pl": "Mobilna"
+      },
+      "map": {
+        "sat-forma-pago": "7"
+      }
+    }
+  ],
+  "scenarios": [
+  ],
+  "corrections": [
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "pl": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "pl": "Podatek od wartości dodanej"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "pl": "Stawka Podstawowa"
+          },
+          "values": [
+            {
+              "percent": "23.0%"
+            },
+            {
+              "percent": "22.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced-first",
+          "name": {
+            "en": "First Reduced Rate",
+            "pl": "Stawka Obniżona Pierwsza"
+          },
+          "values": [
+            {
+              "percent": "8.0%"
+            },
+            {
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced-second",
+          "name": {
+            "en": "Second Reduced Rate",
+            "pl": "Stawka Obniżona Druga"
+          },
+          "values": [
+            {
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "key": "taxi-lump-sum",
+          "name": {
+            "en": "Lump sum taxi rate",
+            "pl": "Ryczałt dla taksówek"
+          },
+          "values": [
+            {
+              "percent": "4.0%"
+            },
+            {
+              "percent": "3.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero-wdt",
+          "name": {
+            "en": "Zero Rate - WDT",
+            "pl": "Stawka zerowa - WDT"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero-domestic",
+          "name": {
+            "en": "Zero Rate - domestic",
+            "pl": "Stawka zerowa - krajowe"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero-export",
+          "name": {
+            "en": "Zero Rate - export",
+            "pl": "Stawka zerowa - export"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt",
+            "pl": "Zwolnione z opodatkowania"
+          },
+          "exempt": true
+        },
+        {
+          "key": "np-art100sec1point4",
+          "name": {
+            "en": "Not pursuant, pursuant to art100 section 1 point4",
+            "pl": "Niepodlegające opodatkowaniu na postawie wyłączeniem art100 sekcja 1 punkt 4"
+          },
+          "exempt": true
+        },
+        {
+          "key": "np",
+          "name": {
+            "en": "Not pursuant excluding art100 section 1 point4",
+            "pl": "Niepodlegające opodatkowaniu z wyłączeniem art100 sekcja 1 punkt 4"
+          },
+          "exempt": true
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse Charge",
+            "pl": "Odwrotne obciążenie"
+          },
+          "exempt": true
+        }
+      ]
+    }
+  ]
+}

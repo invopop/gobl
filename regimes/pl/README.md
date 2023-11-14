@@ -21,13 +21,13 @@ The FA_VAT `TFormaPlatnosci` field specifies an invoice's means of payment. The 
 
 | Code | Name                                | GOBL Payment Instructions Key |
 | ---- | ----------------------------------- | ----------------------------- |
-| 1    | gotówka                             | `cash`                        |
-| 2    | karta                               | `card`                        |
-| 3    | bon                                 | `credit-transfer`             |
-| 4    | czek                                | `cheque`                      |
-| 5    | kredyt                              | `loan`                        |
-| 6    | przelew                             | `credit-transfer`             |
-| 7    | mobilna                             | `online`                      |
+| 1    | Gotówka                             | `cash`                        |
+| 2    | Karta                               | `card`                        |
+| 3    | Bon                                 | `coupon`                      |
+| 4    | Czek                                | `cheque`                      |
+| 5    | Kredyt                              | `loan`                        |
+| 6    | Przelew                             | `credit-transfer`             |
+| 7    | Mobilna                             | `mobile`                      |
 
 #### Example
 
@@ -46,3 +46,17 @@ The following GOBL maps to the `1` (gotówka) value of the `TFormaPlatnosci` fie
   }
 }
 ```
+
+#### Document Type (TRodzajFaktury)
+
+All Polish invoices must be identified with a specific type code defined by the FA_VAT format. The following table helps identify how GOBL will map the expected Polish code with a combination of the Invoice Type and tax tags.
+
+| Code    | Type          | Tax Tags                            | Description                                           |
+| ------- | ------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VAT     | `standard`    |                                     | Regular invoice                                       |
+| UPR     | `standard`    | `simplified`                        | Simplified (no customer)                              |
+| ZAL     | `standard`    | `partial`                           | Advance invioce                                       |
+| ROZ     | `standard`    | `settlement`                        | Settlement invoice                                    |
+| KOR     | `corrective`  |                                     | Corrective (regular)                                  |
+| KOR_ZAL | `corrective`  | `partial`                           | Corrective (advance)                                  |
+| KOR_ROZ | `corrective`  | `settlement`                        | Corrective (settlement)                               |
