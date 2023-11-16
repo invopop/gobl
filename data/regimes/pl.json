@@ -7,8 +7,6 @@
   "time_zone": "Europe/Warsaw",
   "country": "PL",
   "currency": "PLN",
-  "extensions": [
-  ],
   "payment_means": [
     {
       "key": "cash",
@@ -17,7 +15,7 @@
         "pl": "Gotówka"
       },
       "map": {
-        "sat-forma-pago": "1"
+        "favat-forma-platnosci": "1"
       }
     },
     {
@@ -27,17 +25,17 @@
         "pl": "Karta"
       },
       "map": {
-        "sat-forma-pago": "2"
+        "favat-forma-platnosci": "2"
       }
     },
     {
-      "key": "coupon",
+      "key": "other+coupon",
       "name": {
         "en": "Coupon",
         "pl": "Bon"
       },
       "map": {
-        "sat-forma-pago": "3"
+        "favat-forma-platnosci": "3"
       }
     },
     {
@@ -47,43 +45,39 @@
         "pl": "Czek"
       },
       "map": {
-        "sat-forma-pago": "4"
+        "favat-forma-platnosci": "4"
       }
     },
     {
-      "key": "loan",
+      "key": "online+loan",
       "name": {
         "en": "Loan",
         "pl": "Kredyt"
       },
       "map": {
-        "sat-forma-pago": "5"
+        "favat-forma-platnosci": "5"
       }
     },
     {
       "key": "credit-transfer",
       "name": {
-        "en": "Wire transfer",
+        "en": "Wire Transfer",
         "pl": "Przelew"
       },
       "map": {
-        "sat-forma-pago": "6"
+        "favat-forma-platnosci": "6"
       }
     },
     {
-      "key": "mobile",
+      "key": "other+mobile",
       "name": {
         "en": "Mobile",
         "pl": "Mobilna"
       },
       "map": {
-        "sat-forma-pago": "7"
+        "favat-forma-platnosci": "7"
       }
     }
-  ],
-  "scenarios": [
-  ],
-  "corrections": [
   ],
   "categories": [
     {
@@ -113,7 +107,7 @@
           ]
         },
         {
-          "key": "reduced-first",
+          "key": "reduced",
           "name": {
             "en": "First Reduced Rate",
             "pl": "Stawka Obniżona Pierwsza"
@@ -128,7 +122,7 @@
           ]
         },
         {
-          "key": "reduced-second",
+          "key": "super-reduced",
           "name": {
             "en": "Second Reduced Rate",
             "pl": "Stawka Obniżona Druga"
@@ -140,7 +134,7 @@
           ]
         },
         {
-          "key": "taxi-lump-sum",
+          "key": "special",
           "name": {
             "en": "Lump sum taxi rate",
             "pl": "Ryczałt dla taksówek"
@@ -158,7 +152,7 @@
           "key": "zero-wdt",
           "name": {
             "en": "Zero Rate - WDT",
-            "pl": "Stawka zerowa - WDT"
+            "pl": "Stawka Zerowa - WDT"
           },
           "values": [
             {
@@ -170,7 +164,7 @@
           "key": "zero-domestic",
           "name": {
             "en": "Zero Rate - domestic",
-            "pl": "Stawka zerowa - krajowe"
+            "pl": "Stawka Zerowa - krajowe"
           },
           "values": [
             {
@@ -182,7 +176,7 @@
           "key": "zero-export",
           "name": {
             "en": "Zero Rate - export",
-            "pl": "Stawka zerowa - export"
+            "pl": "Stawka Zerowa - export"
           },
           "values": [
             {
@@ -199,7 +193,7 @@
           "exempt": true
         },
         {
-          "key": "np-art100sec1point4",
+          "key": "np",
           "name": {
             "en": "Not pursuant, pursuant to art100 section 1 point4",
             "pl": "Niepodlegające opodatkowaniu na postawie wyłączeniem art100 sekcja 1 punkt 4"
@@ -207,7 +201,7 @@
           "exempt": true
         },
         {
-          "key": "np",
+          "key": "np-art100sec1point4",
           "name": {
             "en": "Not pursuant excluding art100 section 1 point4",
             "pl": "Niepodlegające opodatkowaniu z wyłączeniem art100 sekcja 1 punkt 4"
