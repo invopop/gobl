@@ -1,0 +1,40 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+issue_date: "2023-07-10"
+series: "TEST"
+code: "00001"
+supplier:
+  name: "KARLA FUENTE NOLASCO"
+  ext:
+    mx-cfdi-fiscal-regime: "612"
+  tax_id:
+    country: "MX"
+    code: "FUNK671228PH6"
+    zone: "01160"
+customer:
+  name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+    mx-cfdi-use: "G01"
+  tax_id:
+    country: "MX"
+    code: "URE180429TM6"
+    zone: "86991"
+lines:
+  - quantity: "1"
+    item:
+      name: "Honorarios de notario"
+      price: "1230.00"
+      ext:
+        mx-cfdi-prod-serv: "80121603"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+      - cat: "RVAT"
+        percent: "10.6667%"
+      - cat: "ISR"
+        percent: "10.00%"
+payment:
+  terms:
+    notes: "Condiciones de pago"
+  instructions:
+    key: "credit-transfer"
