@@ -1007,5 +1007,5 @@
       "description": "Defines an ISO 3166-2 country code"
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.62.1"
 }

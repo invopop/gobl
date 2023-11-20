@@ -69,6 +69,10 @@ type Regime struct {
 	// in line rows.
 	ItemKeys []*KeyDefinition `json:"item_keys,omitempty" jsonschema:"title=Item Keys"`
 
+	// InboxKeys specific to the regime that can be used to identify where a document
+	// should be forwarded to.
+	InboxKeys []*KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
+
 	// Sets of scenario definitions for the regime.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
@@ -295,10 +299,22 @@ func (r *Regime) Validate() error {
 	err := validation.ValidateStruct(r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
+		validation.Field(&r.Description),
 		validation.Field(&r.TimeZone, validation.Required, validation.By(validateTimeZone)),
+		validation.Field(&r.Country),
+		validation.Field(&r.Zone),
+		validation.Field(&r.Currency),
+		validation.Field(&r.Tags),
+		validation.Field(&r.IdentityTypeKeys),
+		validation.Field(&r.Extensions),
+		validation.Field(&r.ChargeKeys),
+		validation.Field(&r.PaymentMeansKeys),
+		validation.Field(&r.ItemKeys),
+		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),
-		validation.Field(&r.Categories, validation.Required),
 		validation.Field(&r.Corrections),
+		validation.Field(&r.Categories, validation.Required),
+		validation.Field(&r.Zones),
 	)
 	return err
 }

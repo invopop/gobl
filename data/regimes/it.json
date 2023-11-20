@@ -918,6 +918,22 @@
       }
     }
   ],
+  "inbox_keys": [
+    {
+      "key": "it-sdi-code",
+      "name": {
+        "en": "SDI Destination Code",
+        "it": "Codice Destinatario SDI"
+      }
+    },
+    {
+      "key": "it-sdi-pec",
+      "name": {
+        "en": "SDI PEC Destination",
+        "it": "PEC Destinatario SDI"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
