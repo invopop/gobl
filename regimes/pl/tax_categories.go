@@ -1,6 +1,7 @@
 package pl
 
 import (
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
@@ -28,7 +29,7 @@ var taxCategories = []*tax.Category{
 		},
 		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
-			i18n.PL: "Podatek od wartości dodanej",
+			i18n.PL: "Podatek od Wartości Dodanej",
 		},
 		Retained: false,
 		Rates: []*tax.Rate{
@@ -41,9 +42,11 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Percent: num.MakePercentage(230, 3),
+						Since:   cal.NewDate(2011, 1, 1),
 					},
 					{
 						Percent: num.MakePercentage(220, 3),
+						Since:   cal.NewDate(1993, 7, 8),
 					},
 				},
 			},
@@ -56,9 +59,11 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Percent: num.MakePercentage(80, 3),
+						Since:   cal.NewDate(2011, 1, 1),
 					},
 					{
 						Percent: num.MakePercentage(70, 3),
+						Since:   cal.NewDate(2000, 9, 4),
 					},
 				},
 			},
@@ -71,9 +76,37 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Percent: num.MakePercentage(50, 3),
+						Since:   cal.NewDate(2011, 1, 1),
+					},
+					{
+						Percent: num.MakePercentage(30, 3),
+						Since:   cal.NewDate(2000, 9, 4),
 					},
 				},
 			},
+			{
+				Key: common.TaxRateZero,
+				Name: i18n.String{
+					i18n.EN: "Zero Rate",
+					i18n.PL: "Stawka Zerowa",
+				},
+				Values: []*tax.RateValue{
+					{
+						Percent: num.MakePercentage(0, 3),
+					},
+				},
+				Extensions: []cbc.Key{},
+			},
+			{
+				Key: common.TaxRateExempt,
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.PL: "Zwolnione",
+				},
+				Exempt:     true,
+				Extensions: []cbc.Key{},
+			},
+
 			{
 				Key: common.TaxRateSpecial,
 				Name: i18n.String{
@@ -89,6 +122,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 			},
+
 			{
 				Key: TaxRateZeroWDT,
 				Name: i18n.String{
@@ -129,9 +163,10 @@ var taxCategories = []*tax.Category{
 				Key: TaxRateExempt,
 				Name: i18n.String{
 					i18n.EN: "Exempt",
-					i18n.PL: "Zwolnione z opodatkowania",
+					i18n.PL: "Zwolnione",
 				},
-				Exempt: true,
+				Exempt:     true,
+				Extensions: []cbc.Key{},
 			},
 			{
 				Key: TaxRateNotPursuant,
