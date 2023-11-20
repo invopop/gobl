@@ -69,8 +69,8 @@ type Regime struct {
 	// in line rows.
 	ItemKeys []*KeyDefinition `json:"item_keys,omitempty" jsonschema:"title=Item Keys"`
 
-	// InboxKeys specific for a region that can be used to identify where a document
-	// should be forwarded too.
+	// InboxKeys specific to the regime that can be used to identify where a document
+	// should be forwarded to.
 	InboxKeys []*KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
 	// Sets of scenario definitions for the regime.
