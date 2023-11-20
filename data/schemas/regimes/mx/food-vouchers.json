@@ -101,5 +101,5 @@
       "description": "FoodVouchersLine represents a single food voucher issued to the e-wallet of one of the customer's employees."
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.62.1"
 }
