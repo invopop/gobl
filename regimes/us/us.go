@@ -30,6 +30,7 @@ func New() *tax.Regime {
 		},
 		TimeZone:  "America/Chicago", // Around the middle
 		Validator: Validate,
+		Tags:      common.InvoiceTags(),
 		Categories: []*tax.Category{
 			//
 			// Sales Tax

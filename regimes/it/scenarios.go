@@ -28,27 +28,13 @@ const (
 // This is only a partial list of all the potential tags that
 // could be available for use in Italy. Given the complexity
 // involved, we've focussed here on the most useful.
-var invoiceTags = []*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
 	// *** Document Type Tags ***
 	{
 		Key: TagFreelance,
 		Name: i18n.String{
 			i18n.EN: "Freelancer",
 			i18n.IT: "Parcella",
-		},
-	},
-	{
-		Key: common.TagReverseCharge,
-		Name: i18n.String{
-			i18n.EN: "Reverse Charge",
-			i18n.IT: "Inversione del soggetto passivo",
-		},
-	},
-	{
-		Key: common.TagSelfBilled,
-		Name: i18n.String{
-			i18n.EN: "Self-billed",
-			i18n.IT: "Autofattura",
 		},
 	},
 	{
@@ -128,7 +114,7 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.IT: "Beni ammortizzabili",
 		},
 	},
-}
+})
 
 var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,

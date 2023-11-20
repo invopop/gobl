@@ -17,7 +17,7 @@ var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,
 }
 
-var invoiceTags = []*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
 	{
 		Key: TagInvoiceReceipt,
 		Name: i18n.String{
@@ -25,14 +25,7 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.PT: "Fatura-recibo",
 		},
 	},
-	{
-		Key: common.TagSimplified,
-		Name: i18n.String{
-			i18n.EN: "Simplified invoice",
-			i18n.PT: "Fatura simplificada",
-		},
-	},
-}
+})
 
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,

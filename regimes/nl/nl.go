@@ -26,6 +26,7 @@ func New() *tax.Regime {
 		TimeZone:   "Europe/Amsterdam",
 		Validator:  Validate,
 		Calculator: Calculate,
+		Tags:       common.InvoiceTags(),
 		Categories: []*tax.Category{
 			//
 			// VAT

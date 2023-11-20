@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -23,13 +22,15 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Currency, validation.In(currency.EUR)),
-		validation.Field(&inv.Supplier, validation.Required, validation.By(v.supplier)),
-		validation.Field(&inv.Customer, validation.When(
-			!inv.Tax.ContainsTag(common.TagSimplified),
-			validation.Required,
+		validation.Field(&inv.Currency,
+			validation.In(currency.EUR),
+		),
+		validation.Field(&inv.Supplier,
+			validation.By(v.supplier),
+		),
+		validation.Field(&inv.Customer,
 			validation.By(v.customer),
-		)),
+		),
 	)
 }
 
