@@ -42,12 +42,20 @@ func validItemExtensions(value interface{}) error {
 	return nil
 }
 
+// extension keys that have been migrated from identities to
+// extensions.
+var migratedExtensionKeys = []cbc.Key{
+	ExtKeyCFDIProdServ,
+	ExtKeyCFDIFiscalRegime,
+	ExtKeyCFDIUse,
+}
+
 func normalizeItem(item *org.Item) error {
 	// 2023-08-25: Migrate identities to extensions
 	// Pending removal after migrations completed.
 	idents := make([]*org.Identity, 0)
 	for _, v := range item.Identities {
-		if v.Key != "" {
+		if v.Key.In(migratedExtensionKeys...) {
 			if item.Ext == nil {
 				item.Ext = make(cbc.CodeMap)
 			}

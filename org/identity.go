@@ -2,7 +2,6 @@ package org
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/invopop/gobl/cbc"
@@ -17,6 +16,8 @@ type Identity struct {
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Uniquely classify this identity using a key instead of a code.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
 	// a particular context, country, or tax regime, and cannot be used
 	// alongside the key.
@@ -25,11 +26,6 @@ type Identity struct {
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 	// Description adds details about what the code could mean or imply
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
-
-	// Key was previously available, but has now been migrated to extensions.
-	// This should not appear in schemas.
-	// Deprecated: Since 2023-08-25, use extensions (ext) instead.
-	Key cbc.Key `json:"-"`
 }
 
 // Validate ensures the identity looks valid.
@@ -41,28 +37,16 @@ func (i *Identity) Validate() error {
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, i,
 		validation.Field(&i.Label),
-		validation.Field(&i.Type),
+		validation.Field(&i.Key),
+		validation.Field(&i.Type,
+			validation.When(i.Key != "",
+				validation.Empty,
+			),
+		),
 		validation.Field(&i.Code,
 			validation.Required,
 		),
 	)
-}
-
-// UnmarshalJSON overrides the default to help extract the key value which is no
-// longer used.
-func (i *Identity) UnmarshalJSON(data []byte) error {
-	type Alias Identity
-	a := &struct {
-		*Alias
-		Key cbc.Key `json:"key,omitempty"`
-	}{
-		Alias: (*Alias)(i),
-	}
-	if err := json.Unmarshal(data, &a); err != nil {
-		return err
-	}
-	i.Key = a.Key
-	return nil
 }
 
 // HasIdentityType provides a validation rule that will determine if at least one
