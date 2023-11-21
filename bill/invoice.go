@@ -95,6 +95,9 @@ type Invoice struct {
 	// Additional complementary objects that add relevant information to the invoice.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
 
+	// Extension code map for any additional regime specific codes that may be required.
+	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -144,6 +147,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Totals, validation.Required),
 
 		validation.Field(&inv.Notes),
+		validation.Field(&inv.Ext, tax.InRegimeExtensions),
 		validation.Field(&inv.Meta),
 
 		validation.Field(&inv.Complements, validation.Each()),

@@ -1,0 +1,59 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+type: standard
+series: LMC
+code: '0010'
+issue_date: '2023-05-29'
+currency: MXN
+supplier:
+  name: ESCUELA KEMPER URGATE
+  tax_id:
+    country: MX
+    zone: '26015'
+    code: EKU9003173C9
+  ext:
+    mx-cfdi-fiscal-regime: '601'
+    mx-mabe-provider-code: '123456'
+customer:
+  name: UNIVERSIDAD ROBOTICA ESPAÑOLA
+  tax_id:
+    country: MX
+    zone: '65000'
+    code: URE180429TM6
+  ext:
+    mx-cfdi-fiscal-regime: '601'
+    mx-cfdi-use: G01
+lines:
+- i: 1
+  quantity: '2'
+  item:
+    name: Cigarros
+    price: '100.00'
+    ext:
+      mx-cfdi-prod-serv: '50211502'
+      mx-mabe-item-code: CODE123
+  discounts:
+  - percent: 10.0%
+  taxes:
+  - cat: VAT
+    rate: standard
+  - cat: RVAT
+    percent: 10.6667%
+  - cat: ISR
+    percent: 10%
+payment:
+  instructions:
+    key: credit-transfer
+delivery:
+  receiver:
+    name: ESTUFAS 30
+    addresses:
+    - street: Calle 1
+      locality: Mexico D.F.
+      code: '12345'
+    ext:
+      mx-mabe-delivery-plant: S001
+ordering:
+  code: '9100000000'
+ext:
+  mx-mabe-reference-1: '123456'
+  mx-mabe-reference-2: '789'

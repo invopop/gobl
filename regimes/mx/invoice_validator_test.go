@@ -186,6 +186,48 @@ func TestInvoiceDiscountValidation(t *testing.T) {
 	assertValidationError(t, inv, "discounts: the SAT doesn't allow discounts at invoice level")
 }
 
+func TestMabeValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Supplier.Ext[mx.ExtKeyMabeProviderCode] = "12345" // Marks it as a Mabe supplier
+
+	assertValidationError(t, inv, "delivery: cannot be blank")
+
+	inv.Delivery = &bill.Delivery{}
+
+	assertValidationError(t, inv, "delivery: (receiver: cannot be blank")
+
+	inv.Delivery.Receiver = &org.Party{
+		Name: "Test Receiver",
+	}
+
+	assertValidationError(t, inv, "delivery: (receiver: (ext: (mx-mabe-delivery-plant: required")
+
+	inv.Delivery.Receiver.Ext = cbc.CodeMap{
+		mx.ExtKeyMabeDeliveryPlant: "S001",
+	}
+
+	assertValidationError(t, inv, "lines: (0: (item: (ext: (mx-mabe-item-code: required")
+
+	inv.Lines[0].Item.Ext[mx.ExtKeyMabeItemCode] = "12345"
+
+	assertValidationError(t, inv, "ordering: cannot be blank")
+
+	inv.Ordering = &bill.Ordering{}
+
+	assertValidationError(t, inv, "ordering: (code: cannot be blank")
+
+	inv.Ordering.Code = "12345"
+
+	assertValidationError(t, inv, "ext: (mx-mabe-reference-1: required")
+
+	inv.Ext = cbc.CodeMap{
+		mx.ExtKeyMabeReference1: "12345",
+	}
+
+	require.NoError(t, inv.Validate())
+}
+
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()

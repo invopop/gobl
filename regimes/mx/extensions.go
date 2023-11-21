@@ -1,6 +1,7 @@
 package mx
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
@@ -11,6 +12,15 @@ const (
 	ExtKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
 	ExtKeyCFDIUse          = "mx-cfdi-use"
 	ExtKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
+)
+
+// Mabe Addendum extension keys
+const (
+	ExtKeyMabeProviderCode  = "mx-mabe-provider-code"
+	ExtKeyMabeDeliveryPlant = "mx-mabe-delivery-plant"
+	ExtKeyMabeItemCode      = "mx-mabe-item-code"
+	ExtKeyMabeReference1    = "mx-mabe-reference-1"
+	ExtKeyMabeReference2    = "mx-mabe-reference-2"
 )
 
 var extensionKeys = []*tax.KeyDefinition{
@@ -333,4 +343,66 @@ var extensionKeys = []*tax.KeyDefinition{
 			},
 		},
 	},
+
+	// Mabe Addendum Extension Key Definitions
+	{
+		Key: ExtKeyMabeProviderCode,
+		Name: i18n.String{
+			i18n.EN: "Mabe’s Provider Code",
+			i18n.ES: "Código de Proveedor de Mabe", //nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Code used by Mabe to identify the supplier.",
+			i18n.ES: "Código con el que Mabe identifica al proveedor.", //nolint:misspell
+		},
+	},
+	{
+		Key: ExtKeyMabeDeliveryPlant,
+		Name: i18n.String{
+			i18n.EN: "Mabe’s Delivery Plant ID",
+			i18n.ES: "ID de Planta de Entrega de Mabe", //nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "ID identifying the plant to which the invoice is addressed.",
+			i18n.ES: "ID con el que se identifica la planta a la cual está dirigida la factura.", //nolint:misspell
+		},
+	},
+	{
+		Key: ExtKeyMabeItemCode,
+		Name: i18n.String{
+			i18n.EN: "Mabe’s Item Code",
+			i18n.ES: "Código de Artículo de Mabe", //nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Code used by Mabe to identify the item.",
+			i18n.ES: "Código con el que Mabe identifica el artículo.", //nolint:misspell
+		},
+	},
+	{
+		Key: ExtKeyMabeReference1,
+		Name: i18n.String{
+			i18n.EN: "Mabe’s Reference 1",
+			i18n.ES: "Referencia 1 de Mabe", //nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Reference 1 used by Mabe.",
+			i18n.ES: "Referencia 1 utilizada por Mabe.", //nolint:misspell
+		},
+	},
+	{
+		Key: ExtKeyMabeReference2,
+		Name: i18n.String{
+			i18n.EN: "Mabe’s Reference 2",
+			i18n.ES: "Referencia 2 de Mabe", //nolint:misspell
+		},
+		Desc: i18n.String{
+			i18n.EN: "Reference 2 used by Mabe.",
+			i18n.ES: "Referencia 2 utilizada por Mabe.", //nolint:misspell
+		},
+	},
+}
+
+// IsMabeSupplier returns true if the invoice is from a Mabe supplier.
+func IsMabeSupplier(inv *bill.Invoice) bool {
+	return inv != nil && inv.Supplier != nil && inv.Supplier.Ext.Has(ExtKeyMabeProviderCode)
 }

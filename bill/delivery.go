@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -20,9 +22,14 @@ type Delivery struct {
 	Meta *cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Validate the delivery details
+// Validate checks the delivery details
 func (d *Delivery) Validate() error {
-	return validation.ValidateStruct(d,
+	return d.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext checks the delivery details
+func (d *Delivery) ValidateWithContext(ctx context.Context) error {
+	return validation.ValidateStructWithContext(ctx, d,
 		validation.Field(&d.Receiver),
 		validation.Field(&d.Date),
 		validation.Field(&d.Period),

@@ -58,6 +58,17 @@ func (v *invoiceValidator) validate() error {
 			validation.Empty.Error("the SAT doesn't allow discounts at invoice level. Use line discounts instead."),
 			validation.Skip,
 		),
+		validation.Field(&inv.Delivery,
+			validation.When(IsMabeSupplier(inv), validation.Required),
+			validation.By(v.validDelivery),
+		),
+		validation.Field(&inv.Ordering,
+			validation.When(IsMabeSupplier(inv), validation.Required),
+			validation.By(v.validOrdering),
+		),
+		validation.Field(&inv.Ext,
+			validation.When(IsMabeSupplier(inv), cbc.CodeMapHas(ExtKeyMabeReference1)),
+		),
 	)
 }
 
@@ -89,6 +100,10 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			cbc.CodeMapHas(ExtKeyCFDIFiscalRegime),
+			validation.When(
+				IsMabeSupplier(v.inv),
+				cbc.CodeMapHas(ExtKeyMabeProviderCode),
+			),
 		),
 	)
 }
@@ -105,6 +120,20 @@ func (v *invoiceValidator) validLine(value interface{}) error {
 		validation.Field(&line.Taxes,
 			validation.Required,
 			validation.Skip, // Prevents each tax's `ValidateWithContext` function from being called again.
+		),
+		validation.Field(&line.Item, validation.By(v.validItem)),
+	)
+}
+
+func (v *invoiceValidator) validItem(value interface{}) error {
+	item, _ := value.(*org.Item)
+	if item == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(item,
+		validation.Field(&item.Ext,
+			validation.When(IsMabeSupplier(v.inv), cbc.CodeMapHas(ExtKeyMabeItemCode)),
 		),
 	)
 }
@@ -171,6 +200,49 @@ func (v *invoiceValidator) validPrecedingEntry(value interface{}) error {
 	}
 
 	return fmt.Errorf("must have a `%s` stamp", StampProviderSATUUID)
+}
+
+func (v *invoiceValidator) validDelivery(value interface{}) error {
+	del, _ := value.(*bill.Delivery)
+	if del == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(del,
+		validation.Field(&del.Receiver,
+			validation.When(IsMabeSupplier(v.inv), validation.Required),
+			validation.By(v.validDeliveryReceiver),
+		),
+	)
+}
+
+func (v *invoiceValidator) validDeliveryReceiver(value interface{}) error {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			validation.When(
+				IsMabeSupplier(v.inv),
+				cbc.CodeMapHas(ExtKeyMabeDeliveryPlant),
+			),
+		),
+	)
+}
+
+func (v *invoiceValidator) validOrdering(value interface{}) error {
+	ord, _ := value.(*bill.Ordering)
+	if ord == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(ord,
+		validation.Field(&ord.Code,
+			validation.When(IsMabeSupplier(v.inv), validation.Required),
+		),
+	)
 }
 
 var isValidPaymentMeanKey = validation.In(validPaymentMeanKeys()...)
