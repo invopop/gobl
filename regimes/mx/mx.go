@@ -28,6 +28,7 @@ const (
 	KeySATFormaPago         cbc.Key = "sat-forma-pago"          // for mapping to c_FormaPago’s codes
 	KeySATTipoDeComprobante cbc.Key = "sat-tipo-de-comprobante" // for mapping to c_TipoDeComprobante’s codes
 	KeySATTipoRelacion      cbc.Key = "sat-tipo-relacion"       // for mapping to c_TipoRelacion’s codes
+	KeySATImpuesto          cbc.Key = "sat-impuesto"            // for mapping to c_Impuesto’s codes
 )
 
 // SAT official codes to include in stamps.
