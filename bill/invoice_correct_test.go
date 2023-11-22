@@ -12,7 +12,6 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
@@ -194,7 +193,7 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -283,7 +282,7 @@ func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{

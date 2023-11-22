@@ -26,13 +26,16 @@ func New() *tax.Regime {
 		TimeZone:   "Europe/Amsterdam",
 		Validator:  Validate,
 		Calculator: Calculate,
-		Tags:       common.InvoiceTags(),
+		Scenarios: []*tax.ScenarioSet{
+			common.InvoiceScenarios(),
+		},
+		Tags: common.InvoiceTags(),
 		Categories: []*tax.Category{
 			//
 			// VAT
 			//
 			{
-				Code: common.TaxCategoryVAT,
+				Code: tax.CategoryVAT,
 				Name: i18n.String{
 					i18n.EN: "VAT",
 					i18n.NL: "BTW",
@@ -44,7 +47,7 @@ func New() *tax.Regime {
 				Retained: false,
 				Rates: []*tax.Rate{
 					{
-						Key: common.TaxRateZero,
+						Key: tax.RateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 							i18n.NL: `0%-tarief`,
@@ -56,7 +59,7 @@ func New() *tax.Regime {
 						},
 					},
 					{
-						Key: common.TaxRateStandard,
+						Key: tax.RateStandard,
 						Name: i18n.String{
 							i18n.EN: "Standard Rate",
 							i18n.NL: "Standaardtarief",
@@ -68,7 +71,7 @@ func New() *tax.Regime {
 						},
 					},
 					{
-						Key: common.TaxRateReduced,
+						Key: tax.RateReduced,
 						Name: i18n.String{
 							i18n.EN: "Reduced Rate",
 							i18n.NL: "Gereduceerd Tarief",

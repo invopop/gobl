@@ -9,7 +9,7 @@ var invoiceTags = []*tax.KeyDefinition{
 	// Simplified invoices are issued when the complete fiscal details of
 	// a customer are not available.
 	{
-		Key: TagSimplified,
+		Key: tax.TagSimplified,
 		Name: i18n.String{
 			i18n.EN: "Simplified Invoice",
 			i18n.ES: "Factura Simplificada",
@@ -26,7 +26,7 @@ var invoiceTags = []*tax.KeyDefinition{
 	// required to charge VAT on the invoice and the customer is
 	// responsible for paying the VAT to the tax authorities.
 	{
-		Key: TagReverseCharge,
+		Key: tax.TagReverseCharge,
 		Name: i18n.String{
 			i18n.EN: "Reverse Charge",
 			i18n.ES: "Inversión del Sujeto Pasivo",
@@ -38,7 +38,7 @@ var invoiceTags = []*tax.KeyDefinition{
 	// supplier. This is usually done when the customer is a large
 	// company and the supplier is a small company.
 	{
-		Key: TagSelfBilled,
+		Key: tax.TagSelfBilled,
 		Name: i18n.String{
 			i18n.EN: "Self-billed",
 			i18n.ES: "Facturación por el destinatario",
@@ -48,7 +48,7 @@ var invoiceTags = []*tax.KeyDefinition{
 
 	// Customer rates (mainly for digital goods inside EU)
 	{
-		Key: TagCustomerRates,
+		Key: tax.TagCustomerRates,
 		Name: i18n.String{
 			i18n.EN: "Customer rates",
 			i18n.ES: "Tarifas aplicables al destinatario",

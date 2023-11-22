@@ -100,13 +100,13 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			Tags: []cbc.Key{common.TagSimplified},
+			Tags: []cbc.Key{tax.TagSimplified},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceDocumentType: "FA",
 			},
 		},
 		{
-			Tags: []cbc.Key{common.TagSelfBilled},
+			Tags: []cbc.Key{tax.TagSelfBilled},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceDocumentType: "AF",
 			},
@@ -154,10 +154,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// ** Special Messages **
 		// Reverse Charges
 		{
-			Tags: []cbc.Key{common.TagReverseCharge},
+			Tags: []cbc.Key{tax.TagReverseCharge},
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  common.TagReverseCharge,
+				Src:  tax.TagReverseCharge,
 				Text: "Reverse Charge / Inversión del sujeto pasivo.",
 			},
 		},
@@ -172,10 +172,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		// Customer issued invoices
 		{
-			Tags: []cbc.Key{common.TagSelfBilled},
+			Tags: []cbc.Key{tax.TagSelfBilled},
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  common.TagSelfBilled,
+				Src:  tax.TagSelfBilled,
 				Text: "Facturación por el destinatario.",
 			},
 		},

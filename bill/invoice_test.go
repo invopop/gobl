@@ -15,7 +15,6 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -32,7 +31,7 @@ func TestInvoiceRegimeCurrency(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     common.TaxRateStandard,
+					Rate:     tax.RateStandard,
 				},
 			},
 		},
@@ -164,7 +163,7 @@ func TestRemoveIncludedTax2(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -228,7 +227,7 @@ func TestRemoveIncludedTax3(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -321,7 +320,7 @@ func TestRemoveIncludedTax4(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -419,7 +418,7 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -493,7 +492,7 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -574,7 +573,7 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -686,7 +685,7 @@ func TestCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
@@ -760,7 +759,7 @@ func TestValidation(t *testing.T) {
 		Currency:  currency.EUR,
 		IssueDate: cal.MakeDate(2022, 6, 13),
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -806,7 +805,7 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{

@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -59,7 +58,7 @@ func main() {
 				},
 				Taxes: []*tax.Combo{
 					{
-						Category: common.TaxCategoryST,
+						Category: tax.CategoryST,
 						Percent:  num.NewPercentage(85, 3),
 					},
 				},

@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -142,7 +141,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Customer,
 			// Customer is not required for simplified invoices.
 			validation.When(
-				!inv.Tax.ContainsTag(common.TagSimplified),
+				!inv.Tax.ContainsTag(tax.TagSimplified),
 				validation.Required,
 			),
 		),
@@ -449,7 +448,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
+	if inv.Tax != nil && inv.Tax.ContainsTag(tax.TagReverseCharge) {
 		t.Tax = zero
 	} else {
 		t.Tax = t.Taxes.PreciseSum()
@@ -501,7 +500,7 @@ func calculateComplements(comps []*schema.Object) error {
 
 func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 	if inv.Tax != nil {
-		if inv.Tax.ContainsTag(common.TagCustomerRates) {
+		if inv.Tax.ContainsTag(tax.TagCustomerRates) {
 			if inv.Customer == nil {
 				return nil
 			}

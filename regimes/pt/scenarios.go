@@ -38,7 +38,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSimplified},
+			Tags:  []cbc.Key{tax.TagSimplified},
 			Codes: cbc.CodeMap{
 				KeyATInvoiceType: "FS",
 			},
@@ -60,6 +60,16 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Codes: cbc.CodeMap{
 				KeyATInvoiceType: "NC",
+			},
+		},
+
+		// Reverse Charges
+		{
+			Tags: []cbc.Key{tax.TagReverseCharge},
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  tax.TagReverseCharge,
+				Text: "Reverse charge / Autoliquidação - Artigo 2.º n.º 1 alínea j) do Código do IVA",
 			},
 		},
 	},

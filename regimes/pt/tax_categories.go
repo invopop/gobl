@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -22,7 +21,7 @@ const (
 var taxCategories = []*tax.Category{
 	// VAT
 	{
-		Code: common.TaxCategoryVAT,
+		Code: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "VAT",
 			i18n.PT: "IVA",
@@ -35,7 +34,7 @@ var taxCategories = []*tax.Category{
 		RateRequired: true,
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateStandard,
+				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PT: "Tipo Geral",
@@ -61,7 +60,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateIntermediate,
+				Key: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate Rate",
 					i18n.PT: "Taxa Intermédia", //nolint:misspell
@@ -87,7 +86,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced,
+				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.PT: "Taxa Reduzida",
@@ -113,7 +112,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key:    common.TaxRateExempt,
+				Key:    tax.RateExempt,
 				Exempt: true,
 				Map: cbc.CodeMap{
 					KeyATTaxCode: TaxCodeExempt,

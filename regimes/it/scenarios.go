@@ -136,7 +136,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagPartial},
+			Tags:  []cbc.Key{tax.TagPartial},
 			Name: i18n.String{
 				i18n.EN: "Advance or down payment on invoice",
 				i18n.IT: "Acconto / anticipo su fattura",
@@ -178,7 +178,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagPartial, TagFreelance},
+			Tags:  []cbc.Key{tax.TagPartial, TagFreelance},
 			Name: i18n.String{
 				i18n.EN: "Advance or down payment on freelance invoice",
 				i18n.IT: "Acconto / anticipo su parcella",
@@ -189,7 +189,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSimplified},
+			Tags:  []cbc.Key{tax.TagSimplified},
 			Name: i18n.String{
 				i18n.EN: "Simplified Invoice",
 				i18n.IT: "Fattura Semplificata",
@@ -200,7 +200,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
-			Tags:  []cbc.Key{common.TagSimplified},
+			Tags:  []cbc.Key{tax.TagSimplified},
 			Name: i18n.String{
 				i18n.EN: "Simplified Credit Note",
 				i18n.IT: "Nota di credito semplificata",
@@ -211,7 +211,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
-			Tags:  []cbc.Key{common.TagSimplified},
+			Tags:  []cbc.Key{tax.TagSimplified},
 			Name: i18n.String{
 				i18n.EN: "Simplified Debit Note",
 				i18n.IT: "Nota di debito semplificata",
@@ -222,7 +222,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled},
+			Tags:  []cbc.Key{tax.TagSelfBilled},
 			Name: i18n.String{
 				i18n.EN: "Self-billed for self consumption or for free transfer without recourse",
 				i18n.IT: "Fattura per autoconsumo o per cessioni gratuite senza rivalsa",
@@ -233,7 +233,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, common.TagReverseCharge},
+			Tags:  []cbc.Key{tax.TagSelfBilled, tax.TagReverseCharge},
 			Name: i18n.String{
 				i18n.EN: "Reverse charge",
 				i18n.IT: "Integrazione fattura reverse charge interno",
@@ -244,7 +244,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagImport},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagImport},
 			Name: i18n.String{
 				i18n.EN: "Self-billed Import",
 				i18n.IT: "Integrazione/autofattura per acquisto servizi da estero",
@@ -255,7 +255,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagImport, TagGoodsEU},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagImport, TagGoodsEU},
 			Name: i18n.String{
 				i18n.EN: "Self-billed EU Goods Import",
 				i18n.IT: "Integrazione per acquisto beni intracomunitari",
@@ -266,7 +266,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagImport, TagGoods},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagImport, TagGoods},
 			Name: i18n.String{
 				i18n.EN: "Self-billed Goods Import",
 				i18n.IT: "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72",
@@ -277,7 +277,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagRegularization},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagRegularization},
 			Name: i18n.String{
 				i18n.EN: "Self-billed Regularization",
 				i18n.IT: "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93",
@@ -288,7 +288,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagCeilingExceeded},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagCeilingExceeded},
 			Name: i18n.String{
 				i18n.EN: "Self-billed invoice when ceiling exceeded",
 				i18n.IT: "Autofattura per splafonamento",
@@ -299,7 +299,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagGoodsExtracted},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagGoodsExtracted},
 			Name: i18n.String{
 				i18n.EN: "Self-billed for goods extracted from VAT warehouse",
 				i18n.IT: "Estrazione beni da Deposito IVA",
@@ -310,7 +310,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagGoodsWithTax},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagGoodsWithTax},
 			Name: i18n.String{
 				i18n.EN: "Self-billed for goods extracted from VAT warehouse with VAT payment",
 				i18n.IT: "Estrazione beni da Deposito IVA con versamento IVA",
@@ -355,7 +355,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSelfBilled, TagSanMarinoPaper},
+			Tags:  []cbc.Key{tax.TagSelfBilled, TagSanMarinoPaper},
 			Name: i18n.String{
 				i18n.EN: "Purchases from San Marino with VAT (paper invoice)",
 				i18n.IT: "Acquisti da San Marino con IVA (fattura cartacea)",
@@ -367,10 +367,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 
 		// **** MESSAGES ****
 		{
-			Tags: []cbc.Key{common.TagReverseCharge},
+			Tags: []cbc.Key{tax.TagReverseCharge},
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  common.TagReverseCharge,
+				Src:  tax.TagReverseCharge,
 				Text: "Reverse Charge / Inversione del soggetto passivo",
 			},
 		},
