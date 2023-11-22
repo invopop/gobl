@@ -13,7 +13,7 @@ import (
 // Payment contains details as to how the invoice should be paid.
 type Payment struct {
 	// The party responsible for receiving payment of the invoice, if not the supplier.
-	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payer"`
+	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 	// Payment terms or conditions.
 	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
 	// Any amounts that have been paid in advance and should be deducted from the amount due.
