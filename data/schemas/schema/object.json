@@ -9,5 +9,5 @@
       "description": "Data object whose type is determined from the \u003ccode\u003e$schema\u003c/code\u003e property."
     }
   },
-  "$comment": "Generated with GOBL v0.62.1"
+  "$comment": "Generated with GOBL v0.63.0"
 }

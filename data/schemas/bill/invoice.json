@@ -77,6 +77,14 @@
           "title": "Receiver",
           "description": "The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."
         },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities is used to define specific codes or IDs that may be used to\nidentify the delivery."
+        },
         "date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Date",
@@ -516,6 +524,14 @@
           "title": "Code",
           "description": "Identifier assigned by the customer or buyer for internal routing purposes."
         },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Any additional Codes, IDs, SKUs, or other regional or custom\nidentifiers that may be used to identify the order."
+        },
         "period": {
           "$ref": "https://gobl.org/draft-0/cal/period",
           "title": "Period",
@@ -626,7 +642,7 @@
       "properties": {
         "payee": {
           "$ref": "https://gobl.org/draft-0/org/party",
-          "title": "Payer",
+          "title": "Payee",
           "description": "The party responsible for receiving payment of the invoice, if not the supplier."
         },
         "terms": {
@@ -818,5 +834,5 @@
       "description": "Totals contains the summaries of all calculations for the invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.62.1"
+  "$comment": "Generated with GOBL v0.63.0"
 }
