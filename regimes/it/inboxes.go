@@ -16,7 +16,7 @@ var inboxKeyDefinitions = []*tax.KeyDefinition{
 	{
 		Key: KeyInboxSDICode,
 		Name: i18n.String{
-			i18n.EN: "SDI Desination Code",
+			i18n.EN: "SDI Destination Code",
 			i18n.IT: "Codice Destinatario SDI",
 		},
 	},
