@@ -9,16 +9,23 @@
   "currency": "EUR",
   "tags": [
     {
-      "key": "freelance",
+      "key": "simplified",
       "name": {
-        "en": "Freelancer",
-        "it": "Parcella"
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada",
+        "it": "Fattura Semplificata"
+      },
+      "desc": {
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+        "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
       }
     },
     {
       "key": "reverse-charge",
       "name": {
         "en": "Reverse Charge",
+        "es": "Inversión del Sujeto Pasivo",
         "it": "Inversione del soggetto passivo"
       }
     },
@@ -26,7 +33,22 @@
       "key": "self-billed",
       "name": {
         "en": "Self-billed",
+        "es": "Facturación por el destinatario",
         "it": "Autofattura"
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "en": "Customer rates",
+        "es": "Tarifas aplicables al destinatario"
+      }
+    },
+    {
+      "key": "freelance",
+      "name": {
+        "en": "Freelancer",
+        "it": "Parcella"
       }
     },
     {
