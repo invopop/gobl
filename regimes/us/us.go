@@ -36,7 +36,7 @@ func New() *tax.Regime {
 			// Sales Tax
 			//
 			{
-				Code: common.TaxCategoryST,
+				Code: tax.CategoryST,
 				Name: i18n.String{
 					i18n.EN: "ST",
 				},
