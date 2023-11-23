@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +21,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Code:     "123TEST",
 		Currency: "EUR",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{

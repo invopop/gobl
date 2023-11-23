@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -39,7 +40,7 @@ func New() *tax.Regime {
 			`),
 		},
 		TimeZone: "Europe/Paris",
-		Tags:     invoiceTags,
+		Tags:     common.InvoiceTags(),
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

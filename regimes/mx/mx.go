@@ -48,6 +48,7 @@ func New() *tax.Regime {
 		TimeZone:         "America/Mexico_City",
 		Validator:        Validate,
 		Calculator:       Calculate,
+		Tags:             common.InvoiceTags(),
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Extensions:       extensionKeys,              // extensions.go
 		Scenarios:        scenarios,                  // scenarios.go

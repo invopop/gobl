@@ -21,39 +21,7 @@ const (
 	TagCashBasis        cbc.Key = "cash-basis"
 )
 
-var invoiceTags = []*tax.KeyDefinition{
-	// Simplified Invoice
-	{
-		Key: common.TagSimplified,
-		Name: i18n.String{
-			i18n.EN: "Simplified Invoice",
-			i18n.ES: "Factura Simplificada",
-		},
-	},
-	// Customer rates (mainly for digital goods inside EU)
-	{
-		Key: common.TagCustomerRates,
-		Name: i18n.String{
-			i18n.EN: "Customer rates",
-			i18n.ES: "Tarifas aplicables al destinatario",
-		},
-	},
-	// Reverse Charge Mechanism
-	{
-		Key: common.TagReverseCharge,
-		Name: i18n.String{
-			i18n.EN: "Reverse Charge",
-			i18n.ES: "Inversión del sujeto pasivo",
-		},
-	},
-	// Customer issued invoices
-	{
-		Key: common.TagSelfBilled,
-		Name: i18n.String{
-			i18n.EN: "Customer issued invoice",
-			i18n.ES: "Facturación por el destinatario",
-		},
-	},
+var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
 	// Copy of the original document
 	{
 		Key: TagCopy,
@@ -119,7 +87,7 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.ES: "Régimen especial del criterio de caja",
 		},
 	},
-}
+})
 
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
@@ -132,13 +100,13 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			Tags: []cbc.Key{common.TagSimplified},
+			Tags: []cbc.Key{tax.TagSimplified},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceDocumentType: "FA",
 			},
 		},
 		{
-			Tags: []cbc.Key{common.TagSelfBilled},
+			Tags: []cbc.Key{tax.TagSelfBilled},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceDocumentType: "AF",
 			},
@@ -186,10 +154,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// ** Special Messages **
 		// Reverse Charges
 		{
-			Tags: []cbc.Key{common.TagReverseCharge},
+			Tags: []cbc.Key{tax.TagReverseCharge},
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  common.TagReverseCharge,
+				Src:  tax.TagReverseCharge,
 				Text: "Reverse Charge / Inversión del sujeto pasivo.",
 			},
 		},
@@ -204,10 +172,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		// Customer issued invoices
 		{
-			Tags: []cbc.Key{common.TagSelfBilled},
+			Tags: []cbc.Key{tax.TagSelfBilled},
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  common.TagSelfBilled,
+				Src:  tax.TagSelfBilled,
 				Text: "Facturación por el destinatario.",
 			},
 		},

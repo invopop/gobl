@@ -29,9 +29,15 @@ func (v *invoiceValidator) validate() error {
 
 	inv := v.inv
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Currency, validation.In(currency.EUR)),
-		validation.Field(&inv.Supplier, validation.By(v.supplier)),
-		validation.Field(&inv.Customer, validation.By(v.customer)),
+		validation.Field(&inv.Currency,
+			validation.In(currency.EUR),
+		),
+		validation.Field(&inv.Supplier,
+			validation.By(v.supplier),
+		),
+		validation.Field(&inv.Customer,
+			validation.By(v.customer),
+		),
 	)
 }
 
@@ -59,7 +65,7 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 func (v *invoiceValidator) customer(value interface{}) error {
 	customer, _ := value.(*org.Party)
 	if customer == nil {
-		return errors.New("missing customer details")
+		return nil
 	}
 
 	// Customers must have a tax ID (PartitaIVA) if they are Italian legal entities

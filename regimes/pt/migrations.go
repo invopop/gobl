@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -78,7 +77,7 @@ func migrateInvoiceTaxCombo(tc *tax.Combo) error {
 	if tc.Rate.HasPrefix(TaxRateExempt) && tc.Rate != TaxRateExempt {
 		for _, m := range taxRateVATExemptMigrationMap {
 			if m.Key == tc.Rate {
-				tc.Rate = common.TaxRateExempt
+				tc.Rate = tax.RateExempt
 				tc.Ext = m.Ext
 				return nil
 			}

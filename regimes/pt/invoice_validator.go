@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/validation"
 )
 
@@ -22,11 +21,6 @@ func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.EUR)),
-		validation.Field(&inv.Supplier, validation.Required),
-		validation.Field(&inv.Customer, validation.When(
-			!inv.Tax.ContainsTag(common.TagSimplified),
-			validation.Required,
-		)),
 		validation.Field(&inv.Lines,
 			validation.Each(
 				validation.By(v.validLine),

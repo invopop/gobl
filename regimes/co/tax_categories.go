@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -24,7 +23,7 @@ var taxCategories = []*tax.Category{
 	// VAT
 	//
 	{
-		Code: common.TaxCategoryVAT,
+		Code: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "VAT",
 			i18n.ES: "IVA",
@@ -36,7 +35,7 @@ var taxCategories = []*tax.Category{
 		Retained: false,
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateZero,
+				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Cero",
@@ -48,7 +47,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateStandard,
+				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Estándar",
@@ -65,7 +64,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced,
+				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Reducido",
