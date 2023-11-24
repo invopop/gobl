@@ -7,7 +7,7 @@ code: "001"
 supplier:
   tax_id:
     country: "DE"
-    code: "44732829320" # random
+    code: "111111125" # random
   name: "Provide One GmbH"
   emails:
     - addr: "billing@example.com"
@@ -21,7 +21,7 @@ supplier:
 customer:
   tax_id:
     country: "DE"
-    code: "356000000"
+    code: "282741168"
   name: "Sample Consumer"
   emails:
     - addr: "email@sample.com"

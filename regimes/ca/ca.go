@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,9 +16,10 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
-// Identification codes unique to the United States.
+// Tax categories specific for Canada.
 const (
-	IdentityTypeEIN cbc.Code = "EIN" // Employer Identification Number
+	TaxCategoryHST cbc.Code = "HST"
+	TaxCategoryPST cbc.Code = "PST"
 )
 
 // New provides the tax region definition
@@ -37,7 +37,7 @@ func New() *tax.Regime {
 			// General Sales Tax (GST)
 			//
 			{
-				Code: common.TaxCategoryGST,
+				Code: tax.CategoryGST,
 				Name: i18n.String{
 					i18n.EN: "GST",
 				},
@@ -55,7 +55,7 @@ func New() *tax.Regime {
 				Retained: false,
 				Rates: []*tax.Rate{
 					{
-						Key: common.TaxRateZero,
+						Key: tax.RateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 						},
@@ -69,7 +69,7 @@ func New() *tax.Regime {
 						},
 					},
 					{
-						Key: common.TaxRateStandard,
+						Key: tax.RateStandard,
 						Name: i18n.String{
 							i18n.EN: "Standard rate",
 						},
@@ -87,12 +87,34 @@ func New() *tax.Regime {
 				},
 			},
 			//
-			// [TODO] Harmonized Sales Tax (HST)
+			// Harmonized Sales Tax (HST)
 			//
+			{
+				Code: TaxCategoryHST,
+				Name: i18n.String{
+					i18n.EN: "HST",
+				},
+				Title: i18n.String{
+					i18n.EN: "Harmonized Sales Tax",
+				},
+				// TODO: determine local rates
+				Rates: []*tax.Rate{},
+			},
 
 			//
-			// [TODO] Provincial Sales Tax (PST)
+			// Provincial Sales Tax (PST)
 			//
+			{
+				Code: TaxCategoryPST,
+				Name: i18n.String{
+					i18n.EN: "PST",
+				},
+				Title: i18n.String{
+					i18n.EN: "Provincial Sales Tax",
+				},
+				// TODO: determine local rates
+				Rates: []*tax.Rate{},
+			},
 		},
 	}
 }

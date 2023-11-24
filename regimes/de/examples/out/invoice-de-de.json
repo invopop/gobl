@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2f42047d1a3af0dd5a1ba9c62a74340b128f8d7bf3d628fe3c16e89e972199fe"
+			"val": "fb3e81ee5d0964fa423dcfb62309a7a5c5150dc62cdd81427a68a2c85e893a66"
 		},
 		"draft": true
 	},
@@ -19,7 +19,7 @@
 			"name": "Provide One GmbH",
 			"tax_id": {
 				"country": "DE",
-				"code": "44732829320"
+				"code": "111111125"
 			},
 			"addresses": [
 				{
@@ -40,7 +40,7 @@
 			"name": "Sample Consumer",
 			"tax_id": {
 				"country": "DE",
-				"code": "39356000000"
+				"code": "282741168"
 			},
 			"addresses": [
 				{

@@ -14,11 +14,13 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.EN: "Simplified Invoice",
 			i18n.ES: "Factura Simplificada",
 			i18n.IT: "Fattura Semplificata",
+			i18n.DE: "Vereinfachte Rechnung",
 		},
 		Desc: i18n.String{
 			i18n.EN: "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
 			i18n.ES: "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
 			i18n.IT: "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti.",
+			i18n.DE: "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
 		},
 	},
 
@@ -31,6 +33,7 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.EN: "Reverse Charge",
 			i18n.ES: "Inversión del Sujeto Pasivo",
 			i18n.IT: "Inversione del soggetto passivo",
+			i18n.DE: "Umkehr der Steuerschuld",
 		},
 	},
 
@@ -43,6 +46,7 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.EN: "Self-billed",
 			i18n.ES: "Facturación por el destinatario",
 			i18n.IT: "Autofattura",
+			i18n.DE: "Rechnung durch den Leistungsempfänger",
 		},
 	},
 
@@ -52,6 +56,8 @@ var invoiceTags = []*tax.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Customer rates",
 			i18n.ES: "Tarifas aplicables al destinatario",
+			i18n.IT: "Aliquote applicabili al destinatario",
+			i18n.DE: "Kundensätze",
 		},
 	},
 }
