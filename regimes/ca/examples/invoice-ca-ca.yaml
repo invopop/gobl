@@ -1,0 +1,37 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "CAD"
+issue_date: "2023-04-21"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "CA"
+  name: "Provide One Inc."
+  emails:
+    - addr: "billing@provideone.com"
+  addresses:
+    - num: "151"
+      street: "O'Connor Street"
+      locality: "Ottawa"
+      region: "ON"
+      code: "K2P 2L8"
+      country: "CA"
+
+customer:
+  name: "Sample Consumer"
+  emails:
+    - addr: "email@sample.com"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: GST
+        percent: "8.5%"
