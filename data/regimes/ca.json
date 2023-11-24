@@ -1,0 +1,77 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Canada"
+  },
+  "time_zone": "America/Toronto",
+  "country": "CA",
+  "currency": "CAD",
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "General Sales Tax"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Some supplies are zero-rated under the GST, mainly: basic groceries, agricultural products, farm livestock, most fishery products such, prescription drugs and drug-dispensing services, certain medical devices, feminine hygiene products, exports, many transportation services where the origin or destination is outside Canada"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard rate"
+          },
+          "desc": {
+            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."
+          },
+          "values": [
+            {
+              "since": "2022-01-01",
+              "percent": "5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "GST/HST provincial rates table"
+          },
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate/calculator.html"
+        }
+      ]
+    },
+    {
+      "code": "HST",
+      "name": {
+        "en": "HST"
+      },
+      "title": {
+        "en": "Harmonized Sales Tax"
+      }
+    },
+    {
+      "code": "PST",
+      "name": {
+        "en": "PST"
+      },
+      "title": {
+        "en": "Provincial Sales Tax"
+      }
+    }
+  ]
+}
