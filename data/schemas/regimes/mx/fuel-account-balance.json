@@ -163,5 +163,5 @@
       "description": "FuelAccountTax represents a single tax applied to a fuel purchase."
     }
   },
-  "$comment": "Generated with GOBL v0.63.0"
+  "$comment": "Generated with GOBL v0.63.1"
 }

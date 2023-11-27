@@ -28,5 +28,5 @@
       "description": "Telephone describes what is expected for a telephone number."
     }
   },
-  "$comment": "Generated with GOBL v0.63.0"
+  "$comment": "Generated with GOBL v0.63.1"
 }
