@@ -16,7 +16,8 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeyFA_VATFormaPlatnosci cbc.Key = "favat-forma-platnosci" // for mapping to TFormaPlatnosci's codes
+	KeyFA_VATPaymentType cbc.Key = "favat-forma-platnosci" // for mapping to TFormaPlatnosci's codes
+	KeyFA_VATInvoiceType cbc.Key = "favat-rodzaj-faktury"  // for mapping to TRodzajFaktury's codes
 )
 
 // New instantiates a new Polish regime.
@@ -32,8 +33,8 @@ func New() *tax.Regime {
 		// ChargeKeys:       chargeKeyDefinitions,       // charges.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		// Extensions:       extensionKeys,              // extensions.go
-		// Tags:             invoiceTags,
-		// Scenarios:        scenarios, // scenarios.go
+		Tags:      invoiceTags,
+		Scenarios: scenarios, // scenarios.go
 		Validator: Validate,
 		// Calculator:       Calculate,
 		Categories: taxCategories, // tax_categories.go
