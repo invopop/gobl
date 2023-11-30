@@ -52,7 +52,7 @@ func validInvoice() *bill.Invoice {
 				Item: &org.Item{
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
-					Unit:  "mutual",
+					Unit:  org.UnitPackage,
 					Ext: cbc.CodeMap{
 						mx.ExtKeyCFDIProdServ: "01010101",
 					},
