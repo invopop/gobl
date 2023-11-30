@@ -13,7 +13,7 @@ import (
 type Unit string
 
 const (
-	// UnitPatterUNECE is a regular expression for UN/ECE unit codes when a unit is not covered by GOBL.
+	// UnitPatternUNECE is a regular expression for UN/ECE unit codes when a unit is not covered by GOBL.
 	UnitPatternUNECE = `^[A-Z0-9]{2,3}$`
 	// UnitUNECEMutuallyDefined is the UN/ECE code for mutually defined units.
 	UnitUNECEMutuallyDefined cbc.Code = `ZZ`
