@@ -12,10 +12,19 @@ func TestUnitValidation(t *testing.T) {
 	u := org.Unit("h")
 	assert.NoError(t, u.Validate())
 
-	u = org.Unit("FOO")
+	u = org.Unit("XUN")
+	assert.NoError(t, u.Validate())
+
+	u = org.Unit("X")
 	err := u.Validate()
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "valid format")
+		assert.Contains(t, err.Error(), "must be a valid value or UN/ECE code")
+	}
+
+	u = org.Unit("XUNX")
+	err = u.Validate()
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "must be a valid value or UN/ECE code")
 	}
 }
 
@@ -26,6 +35,6 @@ func TestUnitUNECE(t *testing.T) {
 	u = org.UnitTetraBrik
 	assert.Equal(t, u.UNECE(), cbc.CodeEmpty, "valid but no code")
 
-	u = org.Unit("FOO")
-	assert.Equal(t, u.UNECE(), cbc.CodeEmpty)
+	u = org.Unit("XUN")
+	assert.Equal(t, u.UNECE(), cbc.Code("XUN"))
 }
