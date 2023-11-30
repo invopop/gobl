@@ -13,9 +13,9 @@ import (
 type Unit string
 
 const (
-	// Regular expression for UN/ECE unit codes when a unit is not covered by GOBL.
+	// UnitPatterUNECE is a regular expression for UN/ECE unit codes when a unit is not covered by GOBL.
 	UnitPatternUNECE = `^[A-Z0-9]{2,3}$`
-	// UN/ECE code for mutually defined
+	// UnitUNECEMutuallyDefined is the UN/ECE code for mutually defined units.
 	UnitUNECEMutuallyDefined cbc.Code = `ZZ`
 )
 
@@ -224,7 +224,7 @@ func (u Unit) UNECE() cbc.Code {
 			return def.UNECE
 		}
 	}
-	return cbc.Code(UnitUNECEMutuallyDefined) // Assume something else.
+	return UnitUNECEMutuallyDefined // Assume something else.
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

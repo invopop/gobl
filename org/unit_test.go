@@ -37,4 +37,7 @@ func TestUnitUNECE(t *testing.T) {
 
 	u = org.Unit("XUN")
 	assert.Equal(t, u.UNECE(), cbc.Code("XUN"))
+
+	u = org.Unit("random-something")
+	assert.Equal(t, u.UNECE(), cbc.Code("ZZ"))
 }
