@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -114,39 +113,53 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	ctx = r.WithContext(ctx)
 	err := validation.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
-		validation.Field(&inv.Type, validation.Required, isValidInvoiceType),
+		validation.Field(&inv.Type,
+			validation.Required,
+			isValidInvoiceType,
+		),
 		validation.Field(&inv.Series),
 		validation.Field(&inv.Code,
-			validation.When(!internal.IsDraft(ctx), validation.Required),
+			validation.When(
+				!internal.IsDraft(ctx),
+				validation.Required,
+			),
 		),
-		validation.Field(&inv.IssueDate, cal.DateNotZero()),
+		validation.Field(&inv.IssueDate,
+			cal.DateNotZero(),
+		),
 		validation.Field(&inv.OperationDate),
 		validation.Field(&inv.ValueDate),
-		validation.Field(&inv.Currency, validation.Required),
+		validation.Field(&inv.Currency,
+			validation.Required,
+		),
 		validation.Field(&inv.ExchangeRates),
-
 		validation.Field(&inv.Preceding),
-
 		validation.Field(&inv.Tax),
-
-		validation.Field(&inv.Supplier, validation.Required),
-		validation.Field(&inv.Customer),
-
-		validation.Field(&inv.Lines, validation.Required),
+		validation.Field(&inv.Supplier,
+			validation.Required,
+		),
+		validation.Field(&inv.Customer,
+			// Customer is not required for simplified invoices.
+			validation.When(
+				!inv.Tax.ContainsTag(tax.TagSimplified),
+				validation.Required,
+			),
+		),
+		validation.Field(&inv.Lines,
+			validation.Required,
+		),
 		validation.Field(&inv.Discounts),
 		validation.Field(&inv.Charges),
 		validation.Field(&inv.Outlays),
-
 		validation.Field(&inv.Ordering),
 		validation.Field(&inv.Payment),
 		validation.Field(&inv.Delivery),
-
-		validation.Field(&inv.Totals, validation.Required),
-
+		validation.Field(&inv.Totals,
+			validation.Required,
+		),
 		validation.Field(&inv.Notes),
+		validation.Field(&inv.Complements),
 		validation.Field(&inv.Meta),
-
-		validation.Field(&inv.Complements, validation.Each()),
 	)
 	if err == nil {
 		err = r.ValidateObject(inv)
@@ -435,7 +448,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	if inv.Tax != nil && inv.Tax.ContainsTag(common.TagReverseCharge) {
+	if inv.Tax != nil && inv.Tax.ContainsTag(tax.TagReverseCharge) {
 		t.Tax = zero
 	} else {
 		t.Tax = t.Taxes.PreciseSum()
@@ -487,7 +500,7 @@ func calculateComplements(comps []*schema.Object) error {
 
 func (inv *Invoice) determineTaxIdentity() *tax.Identity {
 	if inv.Tax != nil {
-		if inv.Tax.ContainsTag(common.TagCustomerRates) {
+		if inv.Tax.ContainsTag(tax.TagCustomerRates) {
 			if inv.Customer == nil {
 				return nil
 			}

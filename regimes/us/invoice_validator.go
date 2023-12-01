@@ -22,6 +22,5 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.USD)),
 		validation.Field(&inv.Supplier, validation.Required),
-		validation.Field(&inv.Customer),
 	)
 }

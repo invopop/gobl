@@ -30,12 +30,13 @@ func New() *tax.Regime {
 		},
 		TimeZone:  "America/Chicago", // Around the middle
 		Validator: Validate,
+		Tags:      common.InvoiceTags(),
 		Categories: []*tax.Category{
 			//
 			// Sales Tax
 			//
 			{
-				Code: common.TaxCategoryST,
+				Code: tax.CategoryST,
 				Name: i18n.String{
 					i18n.EN: "ST",
 				},

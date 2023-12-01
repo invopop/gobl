@@ -43,5 +43,5 @@
       "description": "Identity stores the details required to identify an entity for tax purposes."
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.64.0"
 }

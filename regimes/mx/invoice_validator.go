@@ -33,7 +33,6 @@ func (v *invoiceValidator) validate() error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.Required,
 			validation.By(v.validCustomer),
 			validation.Skip,
 		),

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "809038b1055710b99faac4329989f66080918fac7e4e67041caafe134909d50e"
+			"val": "7f4f5ef772529bb005f0214a90cb3a4ac3c17efaad5b00beeb430654a890d85e"
 		},
 		"draft": true
 	},
@@ -46,7 +46,7 @@
 			},
 			"inboxes": [
 				{
-					"key": "codice-destinatario",
+					"key": "it-sdi-code",
 					"code": "M5UXCR5"
 				}
 			],

@@ -30,6 +30,10 @@ func New() *tax.Regime {
 		TimeZone:   "Europe/London",
 		Validator:  Validate,
 		Calculator: Calculate,
+		Scenarios: []*tax.ScenarioSet{
+			common.InvoiceScenarios(),
+		},
+		Tags:       common.InvoiceTags(),
 		Categories: taxCategories,
 	}
 }

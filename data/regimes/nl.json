@@ -7,6 +7,67 @@
   "time_zone": "Europe/Amsterdam",
   "country": "NL",
   "currency": "EUR",
+  "tags": [
+    {
+      "key": "simplified",
+      "name": {
+        "de": "Vereinfachte Rechnung",
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada",
+        "it": "Fattura Semplificata"
+      },
+      "desc": {
+        "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+        "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+      }
+    },
+    {
+      "key": "reverse-charge",
+      "name": {
+        "de": "Umkehr der Steuerschuld",
+        "en": "Reverse Charge",
+        "es": "Inversión del Sujeto Pasivo",
+        "it": "Inversione del soggetto passivo"
+      }
+    },
+    {
+      "key": "self-billed",
+      "name": {
+        "de": "Rechnung durch den Leistungsempfänger",
+        "en": "Self-billed",
+        "es": "Facturación por el destinatario",
+        "it": "Autofattura"
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "de": "Kundensätze",
+        "en": "Customer rates",
+        "es": "Tarifas aplicables al destinatario",
+        "it": "Aliquote applicabili al destinatario"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",

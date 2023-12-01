@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 
@@ -24,7 +23,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Code:     "123TEST",
 		Currency: "EUR",
 		Tax: &bill.Tax{
-			PricesInclude: common.TaxCategoryVAT,
+			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -71,7 +70,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Code:     "123TEST",
 		Tax: &bill.Tax{
-			Tags: []cbc.Key{common.TagSimplified},
+			Tags: []cbc.Key{tax.TagSimplified},
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",

@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -15,7 +14,7 @@ var taxCategories = []*tax.Category{
 	// VAT
 	//
 	{
-		Code:     common.TaxCategoryVAT,
+		Code:     tax.CategoryVAT,
 		Retained: false,
 		Name: i18n.String{
 			i18n.EN: "VAT",
@@ -39,7 +38,7 @@ var taxCategories = []*tax.Category{
 		},
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateZero,
+				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
@@ -54,7 +53,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateStandard,
+				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tipo General",
@@ -79,7 +78,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateStandard.With(TaxRateEquivalence),
+				Key: tax.RateStandard.With(TaxRateEquivalence),
 				Name: i18n.String{
 					i18n.EN: "Standard Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo General + Recargo de Equivalencia",
@@ -98,7 +97,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced,
+				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Tipo Reducido",
@@ -123,7 +122,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced.With(TaxRateEquivalence),
+				Key: tax.RateReduced.With(TaxRateEquivalence),
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
@@ -142,7 +141,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateSuperReduced,
+				Key: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Super-Reduced Rate",
 					i18n.ES: "Tipo Superreducido",
@@ -159,7 +158,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateSuperReduced.With(TaxRateEquivalence),
+				Key: tax.RateSuperReduced.With(TaxRateEquivalence),
 				Name: i18n.String{
 					i18n.EN: "Super-Reduced Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
@@ -173,7 +172,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key:    common.TaxRateExempt,
+				Key:    tax.RateExempt,
 				Exempt: true,
 				Name: i18n.String{
 					i18n.EN: "Exempt",
@@ -204,7 +203,7 @@ var taxCategories = []*tax.Category{
 		// This is a subset of the possible rates.
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateZero,
+				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
@@ -216,7 +215,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateStandard,
+				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tipo General",
@@ -228,7 +227,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced,
+				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Tipo Reducido",

@@ -7,6 +7,50 @@
   "time_zone": "America/Mexico_City",
   "country": "MX",
   "currency": "MXN",
+  "tags": [
+    {
+      "key": "simplified",
+      "name": {
+        "de": "Vereinfachte Rechnung",
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada",
+        "it": "Fattura Semplificata"
+      },
+      "desc": {
+        "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+        "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+      }
+    },
+    {
+      "key": "reverse-charge",
+      "name": {
+        "de": "Umkehr der Steuerschuld",
+        "en": "Reverse Charge",
+        "es": "Inversión del Sujeto Pasivo",
+        "it": "Inversione del soggetto passivo"
+      }
+    },
+    {
+      "key": "self-billed",
+      "name": {
+        "de": "Rechnung durch den Leistungsempfänger",
+        "en": "Self-billed",
+        "es": "Facturación por el destinatario",
+        "it": "Autofattura"
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "de": "Kundensätze",
+        "en": "Customer rates",
+        "es": "Tarifas aplicables al destinatario",
+        "it": "Aliquote applicabili al destinatario"
+      }
+    }
+  ],
   "extensions": [
     {
       "key": "mx-cfdi-prod-serv",
@@ -641,7 +685,69 @@
           },
           "exempt": true
         }
-      ]
+      ],
+      "map": {
+        "sat-impuesto": "002"
+      }
+    },
+    {
+      "code": "RVAT",
+      "name": {
+        "en": "Retained VAT",
+        "es": "IVA Retenido"
+      },
+      "title": {
+        "en": "Retained Value Added Tax",
+        "es": "Impuesto al Valor Agregado Retenido"
+      },
+      "retained": true,
+      "map": {
+        "sat-impuesto": "002"
+      }
+    },
+    {
+      "code": "IEPS",
+      "name": {
+        "en": "IEPS",
+        "es": "IEPS"
+      },
+      "title": {
+        "en": "Special Tax on Production and Services",
+        "es": "Impuesto Especial sobre Producción y Servicios"
+      },
+      "map": {
+        "sat-impuesto": "003"
+      }
+    },
+    {
+      "code": "RIEPS",
+      "name": {
+        "en": "Retained IEPS",
+        "es": "IEPS Retenido"
+      },
+      "title": {
+        "en": "Retained Special Tax on Production and Services",
+        "es": "Impuesto Especial sobre Producción y Servicios Retenido"
+      },
+      "retained": true,
+      "map": {
+        "sat-impuesto": "003"
+      }
+    },
+    {
+      "code": "ISR",
+      "name": {
+        "en": "ISR",
+        "es": "ISR"
+      },
+      "title": {
+        "en": "Income Tax",
+        "es": "Impuesto Sobre la Renta"
+      },
+      "retained": true,
+      "map": {
+        "sat-impuesto": "001"
+      }
     }
   ]
 }

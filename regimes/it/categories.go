@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -22,7 +21,7 @@ const (
 
 var categories = []*tax.Category{
 	{
-		Code:     common.TaxCategoryVAT,
+		Code:     tax.CategoryVAT,
 		Retained: false,
 		Name: i18n.String{
 			i18n.EN: "VAT",
@@ -34,7 +33,7 @@ var categories = []*tax.Category{
 		},
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateZero,
+				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.IT: "Aliquota Zero",
@@ -46,7 +45,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateSuperReduced,
+				Key: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Minimum Rate",
 					i18n.IT: "Aliquota Minima",
@@ -58,7 +57,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced,
+				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.IT: "Aliquota Ridotta",
@@ -70,7 +69,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateIntermediate,
+				Key: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate Rate",
 					i18n.IT: "Aliquota Intermedia",
@@ -82,7 +81,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateStandard,
+				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Ordinary Rate",
 					i18n.IT: "Aliquota Ordinaria",
@@ -94,7 +93,7 @@ var categories = []*tax.Category{
 				},
 			},
 			{
-				Key:    common.TaxRateExempt,
+				Key:    tax.RateExempt,
 				Exempt: true,
 				Name: i18n.String{
 					i18n.EN: "None",

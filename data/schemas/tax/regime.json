@@ -363,6 +363,14 @@
           "title": "Item Keys",
           "description": "ItemKeys specific for the regime that need to be added to `org.Item` data\nin line rows."
         },
+        "inbox_keys": {
+          "items": {
+            "$ref": "#/$defs/KeyDefinition"
+          },
+          "type": "array",
+          "title": "Inbox Keys",
+          "description": "InboxKeys specific to the regime that can be used to identify where a document\nshould be forwarded to."
+        },
         "scenarios": {
           "items": {
             "$ref": "#/$defs/ScenarioSet"
@@ -530,5 +538,5 @@
       "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.64.0"
 }

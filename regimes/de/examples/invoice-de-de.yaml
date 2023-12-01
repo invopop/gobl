@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "EUR"
+issue_date: "2022-02-01"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "DE"
+    code: "111111125" # random
+  name: "Provide One GmbH"
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "16"
+      street: "Dietmar-Hopp-Allee"
+      locality: "Walldorf"
+      code: "69190"
+      country: "DE"
+
+customer:
+  tax_id:
+    country: "DE"
+    code: "282741168"
+  name: "Sample Consumer"
+  emails:
+    - addr: "email@sample.com"
+  addresses:
+    - num: "25"
+      street: "Werner-Heisenberg-Allee"
+      locality: "München"
+      code: "80939"
+      country": "DE"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard

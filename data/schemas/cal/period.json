@@ -29,5 +29,5 @@
       "description": "Period represents two dates with a start and finish."
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.64.0"
 }

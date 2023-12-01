@@ -13,6 +13,10 @@ import (
 type Ordering struct {
 	// Identifier assigned by the customer or buyer for internal routing purposes.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	// Any additional Codes, IDs, SKUs, or other regional or custom
+	// identifiers that may be used to identify the order.
+	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+
 	// Period of time that the invoice document refers to often used in addition to the details
 	// provided in the individual line items.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
@@ -54,6 +58,7 @@ type DocumentReference struct {
 // Validate the ordering details.
 func (o *Ordering) Validate() error {
 	return validation.ValidateStruct(o,
+		validation.Field(&o.Identities),
 		validation.Field(&o.Project),
 		validation.Field(&o.Contract),
 		validation.Field(&o.Purchase),

@@ -88,5 +88,5 @@
       "description": "Address defines a globally acceptable set of attributes that describes a postal or fiscal address."
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.64.0"
 }

@@ -15,6 +15,11 @@
           "title": "Label",
           "description": "Optional label useful for non-standard identities to give a bit more context."
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Uniquely classify this identity using a key instead of a code."
+        },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Type",
@@ -38,5 +43,5 @@
       "description": "Identity is used to define a code for a specific context."
     }
   },
-  "$comment": "Generated with GOBL v0.62.0"
+  "$comment": "Generated with GOBL v0.64.0"
 }
