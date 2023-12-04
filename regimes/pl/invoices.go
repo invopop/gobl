@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -41,7 +40,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!inv.Tax.ContainsTag(common.TagSimplified),
+				!inv.Tax.ContainsTag(tax.TagSimplified),
 				validation.Required,
 				validation.By(v.commercialCustomer),
 			),

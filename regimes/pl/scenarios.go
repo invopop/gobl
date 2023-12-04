@@ -4,13 +4,12 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 // Document tag keys
 const (
-	TagSettlement cbc.Key = "partial"
+	TagSettlement cbc.Key = "settlement"
 )
 
 var invoiceTags = []*tax.KeyDefinition{
@@ -43,7 +42,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagPartial},
+			Tags:  []cbc.Key{tax.TagPartial},
 			Name: i18n.String{
 				i18n.EN: "Prepayment Invoice",
 				i18n.PL: `Faktura Zaliczkowa`,
@@ -65,7 +64,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{common.TagSimplified},
+			Tags:  []cbc.Key{tax.TagSimplified},
 			Name: i18n.String{
 				i18n.EN: "Simplified Invoice",
 				i18n.PL: "Faktura Uproszczona",
@@ -86,7 +85,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCorrective},
-			Tags:  []cbc.Key{common.TagPartial},
+			Tags:  []cbc.Key{tax.TagPartial},
 			Name: i18n.String{
 				i18n.EN: "Corrective Prepayment Invoice",
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,

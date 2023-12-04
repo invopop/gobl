@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -22,7 +21,7 @@ const (
 
 var taxCategories = []*tax.Category{
 	{
-		Code: common.TaxCategoryVAT,
+		Code: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "VAT",
 			i18n.PL: "VAT",
@@ -34,7 +33,7 @@ var taxCategories = []*tax.Category{
 		Retained: false,
 		Rates: []*tax.Rate{
 			{
-				Key: common.TaxRateStandard,
+				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PL: "Stawka Podstawowa",
@@ -51,7 +50,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateReduced,
+				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "First Reduced Rate",
 					i18n.PL: "Stawka Obniżona Pierwsza",
@@ -68,7 +67,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateSuperReduced,
+				Key: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Second Reduced Rate",
 					i18n.PL: "Stawka Obniżona Druga",
@@ -85,7 +84,7 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key: common.TaxRateZero,
+				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.PL: "Stawka Zerowa",
@@ -98,7 +97,7 @@ var taxCategories = []*tax.Category{
 				Extensions: []cbc.Key{},
 			},
 			{
-				Key: common.TaxRateExempt,
+				Key: tax.RateExempt,
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.PL: "Zwolnione",
@@ -108,7 +107,7 @@ var taxCategories = []*tax.Category{
 			},
 
 			{
-				Key: common.TaxRateSpecial,
+				Key: tax.RateSpecial,
 				Name: i18n.String{
 					i18n.EN: "Lump sum taxi rate",
 					i18n.PL: "Ryczałt dla taksówek",
