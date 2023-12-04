@@ -296,7 +296,14 @@ func (r *Regime) CorrectionDefinitionFor(schema string) *CorrectionDefinition {
 // Validate enures the region definition is valid, including all
 // subsequent categories.
 func (r *Regime) Validate() error {
-	err := validation.ValidateStruct(r,
+	return r.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext enures the region definition is valid, including all
+// subsequent categories, and passes through the context.
+func (r *Regime) ValidateWithContext(ctx context.Context) error {
+	ctx = context.WithValue(ctx, KeyRegime, r)
+	err := validation.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Description),
@@ -542,6 +549,10 @@ func checkRateValuesOrder(list interface{}) error {
 	// loop through and check order of Since value
 	for i := range values {
 		v := values[i]
+		if len(v.Zones) > 0 {
+			// TODO: check zone order also
+			continue
+		}
 		if date != nil && date.IsValid() {
 			if v.Since.IsValid() && !v.Since.Before(date.Date) {
 				return errors.New("invalid date order")

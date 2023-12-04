@@ -1,6 +1,8 @@
 package tax
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/validation"
@@ -47,9 +49,9 @@ type ScenarioSummary struct {
 	Meta  cbc.Meta
 }
 
-// Validate checks the scenario set for errors.
-func (ss *ScenarioSet) Validate() error {
-	err := validation.ValidateStruct(ss,
+// ValidateWithContext checks the scenario set for errors.
+func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
+	err := validation.ValidateStructWithContext(ctx, ss,
 		validation.Field(&ss.Schema, validation.Required),
 		validation.Field(&ss.List, validation.Required),
 	)
@@ -116,10 +118,11 @@ func (s *Scenario) hasTags(docTags []cbc.Key) bool {
 }
 
 // Validate checks the scenario for errors.
-func (s *Scenario) Validate() error {
-	err := validation.ValidateStruct(s,
+func (s *Scenario) ValidateWithContext(ctx context.Context) error {
+	r := ctx.Value(KeyRegime).(*Regime)
+	err := validation.ValidateStructWithContext(ctx, s,
 		validation.Field(&s.Types),
-		validation.Field(&s.Tags),
+		validation.Field(&s.Tags, validation.Each(InKeyDefs(r.Tags))),
 		validation.Field(&s.Name),
 		validation.Field(&s.Note),
 		validation.Field(&s.Codes),

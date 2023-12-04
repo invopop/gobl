@@ -75,9 +75,9 @@ var correctionMethodList = []*tax.KeyDefinition{
 	},
 	{
 		Key: CorrectionMethodKeyOther,
-		Desc: i18n.String{
-			i18n.EN: "Otros.",
-			i18n.ES: "Other.",
+		Name: i18n.String{
+			i18n.EN: "Other",
+			i18n.ES: "Otros",
 		},
 		Map: cbc.CodeMap{
 			KeyDIAN: "5",
