@@ -24,7 +24,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Gotówka",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "1",
+			KeyFAVATPaymentType: "1",
 		},
 	},
 	{
@@ -34,7 +34,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Karta",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "2",
+			KeyFAVATPaymentType: "2",
 		},
 	},
 	{
@@ -44,7 +44,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Bon",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "3",
+			KeyFAVATPaymentType: "3",
 		},
 	},
 	{
@@ -54,7 +54,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Czek",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "4",
+			KeyFAVATPaymentType: "4",
 		},
 	},
 	{
@@ -64,7 +64,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Kredyt",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "5",
+			KeyFAVATPaymentType: "5",
 		},
 	},
 	{
@@ -74,7 +74,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Przelew",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "6",
+			KeyFAVATPaymentType: "6",
 		},
 	},
 	{
@@ -84,7 +84,7 @@ var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
 			i18n.PL: "Mobilna",
 		},
 		Map: cbc.CodeMap{
-			KeyFA_VATPaymentType: "7",
+			KeyFAVATPaymentType: "7",
 		},
 	},
 }

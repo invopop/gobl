@@ -1,4 +1,4 @@
-// Package it provides the Polish tax regime.
+// Package pl provides the Polish tax regime.
 package pl
 
 import (
@@ -16,8 +16,8 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeyFA_VATPaymentType cbc.Key = "favat-forma-platnosci" // for mapping to TFormaPlatnosci's codes
-	KeyFA_VATInvoiceType cbc.Key = "favat-rodzaj-faktury"  // for mapping to TRodzajFaktury's codes
+	KeyFAVATPaymentType cbc.Key = "favat-forma-platnosci" // for mapping to TFormaPlatnosci's codes
+	KeyFAVATInvoiceType cbc.Key = "favat-rodzaj-faktury"  // for mapping to TRodzajFaktury's codes
 )
 
 // New instantiates a new Polish regime.

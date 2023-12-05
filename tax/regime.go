@@ -408,7 +408,7 @@ func (kd *KeyDefinition) HasCode(code cbc.Code) bool {
 	return false
 }
 
-// HasKeys loops through the key definitions keys and determines if there
+// HasKey loops through the key definitions keys and determines if there
 // is a match.
 func (kd *KeyDefinition) HasKey(key cbc.Key) bool {
 	for _, c := range kd.Keys {

@@ -38,7 +38,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Podstawowa",
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "VAT",
+				KeyFAVATInvoiceType: "VAT",
 			},
 		},
 		{
@@ -49,7 +49,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: `Faktura Zaliczkowa`,
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "ZAL",
+				KeyFAVATInvoiceType: "ZAL",
 			},
 		},
 		{
@@ -60,7 +60,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Rozliczeniowa",
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "ROZ",
+				KeyFAVATInvoiceType: "ROZ",
 			},
 		},
 		{
@@ -71,7 +71,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Uproszczona",
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "UPR",
+				KeyFAVATInvoiceType: "UPR",
 			},
 		},
 		{
@@ -81,7 +81,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Korygująca",
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "KOR",
+				KeyFAVATInvoiceType: "KOR",
 			},
 		},
 		{
@@ -92,7 +92,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "KOR_ZAL",
+				KeyFAVATInvoiceType: "KOR_ZAL",
 			},
 		},
 		{
@@ -103,7 +103,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura korygująca fakturę rozliczeniową",
 			},
 			Codes: cbc.CodeMap{
-				KeyFA_VATInvoiceType: "KOR_ROZ",
+				KeyFAVATInvoiceType: "KOR_ROZ",
 			},
 		},
 	},

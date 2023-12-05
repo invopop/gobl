@@ -25,6 +25,10 @@ var extensionKeys = []*tax.KeyDefinition{
 					i18n.EN: "Taxi Rate",
 					i18n.PL: "Ryczałt dla taksówek",
 				},
+				Desc: i18n.String{
+					i18n.EN: "Special flat rate for taxi drivers.",
+					i18n.PL: "Specjalna stawka ryczałtu dla taksówkarzy.",
+				},
 			},
 		},
 	},
@@ -40,6 +44,7 @@ var extensionKeys = []*tax.KeyDefinition{
 					i18n.EN: "WDT",
 					i18n.PL: "WDT",
 				},
+				// TODO: description required
 			},
 			{
 				Key: "domestic",
@@ -47,6 +52,7 @@ var extensionKeys = []*tax.KeyDefinition{
 					i18n.EN: "Domestic",
 					i18n.PL: "Krajowy",
 				},
+				// TODO: description required
 			},
 			{
 				Key: "export",
@@ -54,6 +60,7 @@ var extensionKeys = []*tax.KeyDefinition{
 					i18n.EN: "Export",
 					i18n.PL: "Eksport",
 				},
+				// TODO: description required
 			},
 		},
 	},

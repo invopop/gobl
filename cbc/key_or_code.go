@@ -46,6 +46,8 @@ func (kc KeyOrCode) Validate() error {
 	return errors.New("value is not a key or code")
 }
 
+// JSONSchemaExtend adds to the json schema definition of the
+// KeyOrCode type to ensure both key and code patterns are present.
 func (KeyOrCode) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.OneOf = []*jsonschema.Schema{
 		KeyEmpty.JSONSchema(),

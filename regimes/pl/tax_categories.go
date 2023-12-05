@@ -10,13 +10,8 @@ import (
 
 // Tax rates specific to Poland.
 const (
-	TaxRateExempt            cbc.Key = "exempt"
 	TaxRateNotPursuant       cbc.Key = "np"
 	TaxRateNotPursuantArt100 cbc.Key = "np-art100sec1point4"
-	TaxRateReverseCharge     cbc.Key = "reverse-charge"
-	TaxRateZeroWDT           cbc.Key = "zero-wdt"
-	TaxRateZeroDomestic      cbc.Key = "zero-domestic"
-	TaxRateZeroExport        cbc.Key = "zero-export"
 )
 
 var taxCategories = []*tax.Category{
