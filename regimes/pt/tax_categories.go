@@ -112,7 +112,11 @@ var taxCategories = []*tax.Category{
 				},
 			},
 			{
-				Key:    tax.RateExempt,
+				Key: tax.RateExempt,
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.PT: "Isento",
+				},
 				Exempt: true,
 				Map: cbc.CodeMap{
 					KeyATTaxCode: TaxCodeExempt,

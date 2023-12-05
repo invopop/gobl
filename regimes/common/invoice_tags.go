@@ -60,6 +60,19 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.DE: "Kundensätze",
 		},
 	},
+
+	// Partial invoice document, implying that this is only a first part
+	// and a final invoice for the remaining amount will be made later.
+	// A few regimes use this tag to classify invoices, notably Italy.
+	{
+		Key: tax.TagPartial,
+		Name: i18n.String{
+			i18n.EN: "Partial",
+			i18n.ES: "Parcial",
+			i18n.IT: "Parziale",
+			i18n.DE: "Teilweise",
+		},
+	},
 }
 
 // InvoiceTags returns a list of common invoice tag key

@@ -296,7 +296,14 @@ func (r *Regime) CorrectionDefinitionFor(schema string) *CorrectionDefinition {
 // Validate enures the region definition is valid, including all
 // subsequent categories.
 func (r *Regime) Validate() error {
-	err := validation.ValidateStruct(r,
+	return r.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext enures the region definition is valid, including all
+// subsequent categories, and passes through the context.
+func (r *Regime) ValidateWithContext(ctx context.Context) error {
+	ctx = context.WithValue(ctx, KeyRegime, r)
+	err := validation.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Description),
@@ -466,9 +473,9 @@ func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*v
 	return ValidateInRegime(ctx, obj)
 }
 
-// Validate ensures the Category's contents are correct.
-func (c *Category) Validate() error {
-	err := validation.ValidateStruct(c,
+// ValidateWithContext ensures the Category's contents are correct.
+func (c *Category) ValidateWithContext(ctx context.Context) error {
+	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
 		validation.Field(&c.Title, validation.Required),
@@ -500,17 +507,20 @@ func (s *Source) Validate() error {
 	)
 }
 
-// Validate checks that our tax definition is valid. This is only really
+// ValidateWithContext checks that our tax definition is valid. This is only really
 // meant to be used when testing new regional tax definitions.
-func (r *Rate) Validate() error {
-	err := validation.ValidateStruct(r,
+func (r *Rate) ValidateWithContext(ctx context.Context) error {
+	reg := ctx.Value(KeyRegime).(*Regime)
+	err := validation.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.Key, validation.Required),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Values,
 			validation.When(r.Exempt, validation.Nil),
 			validation.By(checkRateValuesOrder),
 		),
-		validation.Field(&r.Extensions),
+		validation.Field(&r.Extensions,
+			validation.Each(InKeyDefs(reg.Extensions)),
+		),
 		validation.Field(&r.Map),
 		validation.Field(&r.Meta),
 	)
@@ -542,6 +552,10 @@ func checkRateValuesOrder(list interface{}) error {
 	// loop through and check order of Since value
 	for i := range values {
 		v := values[i]
+		if len(v.Zones) > 0 {
+			// TODO: check zone order also
+			continue
+		}
 		if date != nil && date.IsValid() {
 			if v.Since.IsValid() && !v.Since.Before(date.Date) {
 				return errors.New("invalid date order")
