@@ -44,7 +44,7 @@ type Item struct {
 	// Country code of where this item was from originally.
 	Origin l10n.CountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Additional meta information that may be useful
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }

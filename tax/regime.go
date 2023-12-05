@@ -73,7 +73,6 @@ type Regime struct {
 	// should be forwarded to.
 	InboxKeys []*KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
-	// Sets of scenario definitions for the regime.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for corrections to be used with correction options.
@@ -223,6 +222,9 @@ type KeyDefinition struct {
 	// Codes describes the list of codes that can be used alongside the Key,
 	// for example with identities.
 	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Keys is used instead of codes to define a further sub-set of keys that
+	// can be used alongside this one.
+	Keys []*KeyDefinition `json:"keys,omitempty" jsonschema:"title=Keys"`
 	// Map helps map local keys to specific codes, useful for converting the
 	// described key into a local code.
 	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
@@ -406,6 +408,17 @@ func (kd *KeyDefinition) HasCode(code cbc.Code) bool {
 	return false
 }
 
+// HasKeys loops through the key definitions keys and determines if there
+// is a match.
+func (kd *KeyDefinition) HasKey(key cbc.Key) bool {
+	for _, c := range kd.Keys {
+		if c.Key == key {
+			return true
+		}
+	}
+	return false
+}
+
 // RegimeFromContext returns the regime from the given context, or nil.
 func RegimeFromContext(ctx context.Context) *Regime {
 	r, ok := ctx.Value(KeyRegime).(*Regime)
@@ -438,7 +451,7 @@ func (validateRegimeExtensions) Validate(_ interface{}) error {
 }
 
 func (validateRegimeExtensions) ValidateWithContext(ctx context.Context, value interface{}) error {
-	ext, ok := value.(cbc.CodeMap)
+	ext, ok := value.(ExtMap)
 	if !ok || len(ext) == 0 {
 		return nil
 	}
@@ -447,14 +460,17 @@ func (validateRegimeExtensions) ValidateWithContext(ctx context.Context, value i
 		return nil
 	}
 	err := make(validation.Errors)
-	for k, c := range ext {
+	for k, kc := range ext {
 		kd := r.ExtensionDef(k)
 		if kd == nil {
 			err[k.String()] = errors.New("undefined")
 			continue
 		}
-		if len(kd.Codes) > 0 && !kd.HasCode(c) {
-			err[k.String()] = fmt.Errorf("code '%s' invalid", c)
+		if len(kd.Codes) > 0 && !kd.HasCode(kc.Code()) {
+			err[k.String()] = fmt.Errorf("code '%s' invalid", kc)
+		}
+		if len(kd.Keys) > 0 && !kd.HasKey(kc.Key()) {
+			err[k.String()] = fmt.Errorf("key '%s' invalid", kc)
 		}
 	}
 	if len(err) == 0 {
@@ -496,7 +512,7 @@ func (c *Category) InExtensions() validation.Rule {
 	if c == nil || len(c.Extensions) == 0 {
 		return nil
 	}
-	return cbc.CodeMapHas(c.Extensions...)
+	return ExtMapHas(c.Extensions...)
 }
 
 // Validate ensures the Source's contents are correct.
@@ -533,7 +549,7 @@ func (r *Rate) InExtensions() validation.Rule {
 	if r == nil || len(r.Extensions) == 0 {
 		return nil
 	}
-	return cbc.CodeMapHas(r.Extensions...)
+	return ExtMapHas(r.Extensions...)
 }
 
 // Validate ensures the tax rate contains all the required fields.
@@ -696,6 +712,11 @@ func (kd *KeyDefinition) Validate() error {
 		validation.Field(&kd.Name, validation.Required),
 		validation.Field(&kd.Desc),
 		validation.Field(&kd.Codes),
+		validation.Field(&kd.Keys,
+			validation.When(len(kd.Codes) > 0,
+				validation.Empty,
+			),
+		),
 	)
 	return err
 }

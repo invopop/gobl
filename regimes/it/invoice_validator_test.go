@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -128,7 +127,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			it.ExtKeySDIRetainedTax: "A",
 		},
 		Percent: num.NewPercentage(20, 2),

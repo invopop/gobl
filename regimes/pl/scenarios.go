@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -12,7 +13,7 @@ const (
 	TagSettlement cbc.Key = "settlement"
 )
 
-var invoiceTags = []*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
 	{
 		Key: TagSettlement,
 		Name: i18n.String{
@@ -20,7 +21,7 @@ var invoiceTags = []*tax.KeyDefinition{
 			i18n.PL: "Faktura Rozliczeniowa",
 		},
 	},
-}
+})
 
 var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,

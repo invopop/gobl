@@ -29,7 +29,7 @@ type Combo struct {
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
-	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
 
 	// Internal link back to the category object
 	category *Category

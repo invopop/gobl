@@ -32,10 +32,10 @@ func New() *tax.Regime {
 		TimeZone: "Europe/Warsaw",
 		// ChargeKeys:       chargeKeyDefinitions,       // charges.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
-		// Extensions:       extensionKeys,              // extensions.go
-		Tags:      invoiceTags,
-		Scenarios: scenarios, // scenarios.go
-		Validator: Validate,
+		Extensions:       extensionKeys,              // extensions.go
+		Tags:             invoiceTags,
+		Scenarios:        scenarios, // scenarios.go
+		Validator:        Validate,
 		// Calculator:       Calculate,
 		Categories: taxCategories, // tax_categories.go
 	}

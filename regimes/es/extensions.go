@@ -8,9 +8,33 @@ import (
 // Spanish regime extension codes for local electronic formats.
 const (
 	ExtKeyTBAIExemption = "es-tbai-exemption"
+	ExtKeyTBAIProduct   = "es-tbai-product"
 )
 
 var extensionKeys = []*tax.KeyDefinition{
+	{
+		Key: ExtKeyTBAIProduct,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI Product Key",
+			i18n.ES: "Clave de Producto TicketBAI",
+		},
+		Keys: []*tax.KeyDefinition{
+			{
+				Key: "goods",
+				Name: i18n.String{
+					i18n.ES: "Entrega de bienes",
+					i18n.EN: "Delivery of goods",
+				},
+			},
+			{
+				Key: "services",
+				Name: i18n.String{
+					i18n.ES: "Prestacion de servicios",
+					i18n.EN: "Provision of services",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyTBAIExemption,
 		Name: i18n.String{

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -17,7 +18,7 @@ var (
 func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Ext,
-			cbc.CodeMapHas(ExtKeyCFDIProdServ),
+			tax.ExtMapHas(ExtKeyCFDIProdServ),
 			validation.By(validItemExtensions),
 			validation.Skip,
 		),
@@ -25,7 +26,7 @@ func validateItem(item *org.Item) error {
 }
 
 func validItemExtensions(value interface{}) error {
-	ids, ok := value.(cbc.CodeMap)
+	ids, ok := value.(tax.ExtMap)
 	if !ok {
 		return nil
 	}
@@ -57,9 +58,9 @@ func normalizeItem(item *org.Item) error {
 	for _, v := range item.Identities {
 		if v.Key.In(migratedExtensionKeys...) {
 			if item.Ext == nil {
-				item.Ext = make(cbc.CodeMap)
+				item.Ext = make(tax.ExtMap)
 			}
-			item.Ext[v.Key] = v.Code
+			item.Ext[v.Key] = cbc.KeyOrCode(v.Code)
 		} else {
 			idents = append(idents, v)
 		}
@@ -69,7 +70,7 @@ func normalizeItem(item *org.Item) error {
 	for k, v := range item.Ext {
 		if k == ExtKeyCFDIProdServ {
 			if itemExtensionNormalizableCodeRegexp.MatchString(v.String()) {
-				item.Ext[k] = cbc.Code(v.String() + "00")
+				item.Ext[k] = cbc.KeyOrCode(v.String() + "00")
 			}
 		}
 	}

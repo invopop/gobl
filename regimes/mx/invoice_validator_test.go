@@ -6,7 +6,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -25,7 +24,7 @@ func validInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Supplier: &org.Party{
 			Name: "Test Supplier",
-			Ext: cbc.CodeMap{
+			Ext: tax.ExtMap{
 				mx.ExtKeyCFDIFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
@@ -36,7 +35,7 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
-			Ext: cbc.CodeMap{
+			Ext: tax.ExtMap{
 				mx.ExtKeyCFDIFiscalRegime: "608",
 				mx.ExtKeyCFDIUse:          "G01",
 			},
@@ -53,7 +52,7 @@ func validInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
 					Unit:  org.UnitPackage,
-					Ext: cbc.CodeMap{
+					Ext: tax.ExtMap{
 						mx.ExtKeyCFDIProdServ: "01010101",
 					},
 				},
@@ -146,7 +145,7 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Customer.Ext = cbc.CodeMap{
+	inv.Customer.Ext = tax.ExtMap{
 		mx.ExtKeyCFDIFiscalRegime: "601",
 	}
 	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")

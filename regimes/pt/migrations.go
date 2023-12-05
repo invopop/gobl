@@ -89,169 +89,169 @@ func migrateInvoiceTaxCombo(tc *tax.Combo) error {
 
 var taxRateVATExemptMigrationMap = []struct {
 	Key cbc.Key
-	Ext cbc.CodeMap
+	Ext tax.ExtMap
 }{
 	{
 		Key: TaxRateExempt.With(TaxRateOutlay),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M01",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateIntrastate),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M02",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateImports),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M04",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateExports),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M05",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateSuspension),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M06",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateInternalOps),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M07",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateSmallRetail),
-		Ext: cbc.CodeMap{
-			KeyATTaxCode:        TaxCodeExempt,
+		Ext: tax.ExtMap{
+			KeyATTaxCode:        cbc.KeyOrCode(TaxCodeExempt),
 			ExtKeyExemptionCode: "M09",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateExemptScheme),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M10",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateTobacco),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M11",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateTravel),
-		Ext: cbc.CodeMap{
-			KeyATTaxCode:        TaxCodeExempt,
+		Ext: tax.ExtMap{
+			KeyATTaxCode:        cbc.KeyOrCode(TaxCodeExempt),
 			ExtKeyExemptionCode: "M12",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateSecondHand),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M13",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateArt),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M14",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateAntiques),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M15",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateTransmission),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M16",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateOther),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M19",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateFlatRate),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M20",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateNonDeductible),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M21",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateConsignment),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M25",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWaste),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M30",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateCivilEng),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M31",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGreenhouse),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M32",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWoods),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M33",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateB2B),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M40",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateIntraEU),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M41",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateRealEstate),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M42",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGold),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M43",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateNonTaxable),
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			ExtKeyExemptionCode: "M99",
 		},
 	},

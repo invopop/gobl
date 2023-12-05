@@ -94,7 +94,9 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(0, 3),
 					},
 				},
-				Extensions: []cbc.Key{},
+				Extensions: []cbc.Key{
+					ExtKeyKSeFVATZero,
+				},
 			},
 			{
 				Key: tax.RateExempt,
@@ -105,92 +107,36 @@ var taxCategories = []*tax.Category{
 				Exempt:     true,
 				Extensions: []cbc.Key{},
 			},
-
 			{
 				Key: tax.RateSpecial,
 				Name: i18n.String{
-					i18n.EN: "Lump sum taxi rate",
-					i18n.PL: "Ryczałt dla taksówek",
+					i18n.EN: "Special Rate",
+					i18n.PL: "Stawka Specjalna",
 				},
-				Values: []*tax.RateValue{
-					{
-						Percent: num.MakePercentage(40, 3),
-					},
-					{
-						Percent: num.MakePercentage(30, 3),
-					},
+				Extensions: []cbc.Key{
+					ExtKeyKSeFVATSpecial,
 				},
 			},
 
-			{
-				Key: TaxRateZeroWDT,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate - WDT",
-					i18n.PL: "Stawka Zerowa - WDT",
-				},
-				Values: []*tax.RateValue{
-					{
-						Percent: num.MakePercentage(0, 3),
+			/*
+				 * Still working on refactoring these...
+				{
+					Key: TaxRateNotPursuant,
+					Name: i18n.String{
+						i18n.EN: "Not pursuant, pursuant to art100 section 1 point4",
+						i18n.PL: "Niepodlegające opodatkowaniu na postawie wyłączeniem art100 sekcja 1 punkt 4",
 					},
+					Exempt: true,
 				},
-			},
-			{
-				Key: TaxRateZeroDomestic,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate - domestic",
-					i18n.PL: "Stawka Zerowa - krajowe",
-				},
-				Values: []*tax.RateValue{
-					{
-						Percent: num.MakePercentage(0, 3),
+				{
+					Key: TaxRateNotPursuantArt100,
+					Name: i18n.String{
+						i18n.EN: "Not pursuant excluding art100 section 1 point4",
+						i18n.PL: "Niepodlegające opodatkowaniu z wyłączeniem art100 sekcja 1 punkt 4",
 					},
+					Exempt: true,
 				},
-			},
-			{
-				Key: TaxRateZeroExport,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate - export",
-					i18n.PL: "Stawka Zerowa - export",
-				},
-				Values: []*tax.RateValue{
-					{
-						Percent: num.MakePercentage(0, 3),
-					},
-				},
-			},
-			{
-				Key: TaxRateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.PL: "Zwolnione",
-				},
-				Exempt:     true,
-				Extensions: []cbc.Key{},
-			},
-			{
-				Key: TaxRateNotPursuant,
-				Name: i18n.String{
-					i18n.EN: "Not pursuant, pursuant to art100 section 1 point4",
-					i18n.PL: "Niepodlegające opodatkowaniu na postawie wyłączeniem art100 sekcja 1 punkt 4",
-				},
-				Exempt: true,
-			},
-			{
-				Key: TaxRateNotPursuantArt100,
-				Name: i18n.String{
-					i18n.EN: "Not pursuant excluding art100 section 1 point4",
-					i18n.PL: "Niepodlegające opodatkowaniu z wyłączeniem art100 sekcja 1 punkt 4",
-				},
-				Exempt: true,
-			},
-			{
-				Key: TaxRateReverseCharge,
-				Name: i18n.String{
-					i18n.EN: "Reverse Charge",
-					i18n.PL: "Odwrotne obciążenie",
-				},
-				Exempt: true,
-			},
+			*/
 		},
 	},
 }
