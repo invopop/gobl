@@ -51,6 +51,15 @@
       }
     },
     {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
+    },
+    {
       "key": "copy",
       "name": {
         "en": "Copy",
@@ -160,6 +169,29 @@
     }
   ],
   "extensions": [
+    {
+      "key": "es-tbai-product",
+      "name": {
+        "en": "TicketBAI Product Key",
+        "es": "Clave de Producto TicketBAI"
+      },
+      "keys": [
+        {
+          "key": "goods",
+          "name": {
+            "en": "Delivery of goods",
+            "es": "Entrega de bienes"
+          }
+        },
+        {
+          "key": "services",
+          "name": {
+            "en": "Provision of services",
+            "es": "Prestacion de servicios"
+          }
+        }
+      ]
+    },
     {
       "key": "es-tbai-exemption",
       "name": {

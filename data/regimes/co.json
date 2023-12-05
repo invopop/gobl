@@ -52,6 +52,15 @@
         "es": "Tarifas aplicables al destinatario",
         "it": "Aliquote applicabili al destinatario"
       }
+    },
+    {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
     }
   ],
   "identity_types": [
@@ -253,10 +262,9 @@
         },
         {
           "key": "other",
-          "name": null,
-          "desc": {
-            "en": "Otros.",
-            "es": "Other."
+          "name": {
+            "en": "Other",
+            "es": "Otros"
           },
           "map": {
             "dian": "5"

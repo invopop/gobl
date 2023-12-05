@@ -51,6 +51,15 @@
       }
     },
     {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
+    },
+    {
       "key": "invoice-receipt",
       "name": {
         "en": "Invoice-receipt",
@@ -434,7 +443,10 @@
         },
         {
           "key": "exempt",
-          "name": null,
+          "name": {
+            "en": "Exempt",
+            "pt": "Isento"
+          },
           "exempt": true,
           "extensions": [
             "pt-exemption-code"
