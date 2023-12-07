@@ -22,15 +22,22 @@ var extensionKeys = []*tax.KeyDefinition{
 			{
 				Key: "goods",
 				Name: i18n.String{
-					i18n.ES: "Entrega de bienes",
 					i18n.EN: "Delivery of goods",
+					i18n.ES: "Entrega de bienes",
 				},
 			},
 			{
 				Key: "services",
 				Name: i18n.String{
-					i18n.ES: "Prestacion de servicios",
 					i18n.EN: "Provision of services",
+					i18n.ES: "Prestacion de servicios",
+				},
+			},
+			{
+				Key: "resale",
+				Name: i18n.String{
+					i18n.EN: "Resale of goods without modification by vendor in the simplified regime",
+					i18n.ES: "Reventa de bienes sin modificación por vendedor en regimen simplificado",
 				},
 			},
 		},

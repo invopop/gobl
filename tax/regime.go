@@ -65,10 +65,6 @@ type Regime struct {
 	// base payment means keys.
 	PaymentMeansKeys []*KeyDefinition `json:"payment_means,omitempty" jsonschema:"title=Payment Means"`
 
-	// ItemKeys specific for the regime that need to be added to `org.Item` data
-	// in line rows.
-	ItemKeys []*KeyDefinition `json:"item_keys,omitempty" jsonschema:"title=Item Keys"`
-
 	// InboxKeys specific to the regime that can be used to identify where a document
 	// should be forwarded to.
 	InboxKeys []*KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
@@ -318,7 +314,6 @@ func (r *Regime) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Extensions),
 		validation.Field(&r.ChargeKeys),
 		validation.Field(&r.PaymentMeansKeys),
-		validation.Field(&r.ItemKeys),
 		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Corrections),
