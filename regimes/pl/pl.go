@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -36,8 +37,8 @@ func New() *tax.Regime {
 		Tags:             invoiceTags,
 		Scenarios:        scenarios, // scenarios.go
 		Validator:        Validate,
-		// Calculator:       Calculate,
-		Categories: taxCategories, // tax_categories.go
+		Calculator:       Calculate,
+		Categories:       taxCategories, // tax_categories.go
 	}
 }
 
@@ -57,10 +58,10 @@ func Validate(doc interface{}) error {
 }
 
 // Calculate will perform any regime specific calculations.
-// func Calculate(doc interface{}) error {
-// 	switch obj := doc.(type) {
-// 	case *tax.Identity:
-// 		return normalizeTaxIdentity(obj)
-// 	}
-// 	return nil
-// }
+func Calculate(doc interface{}) error {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		return common.NormalizeTaxIdentity(obj)
+	}
+	return nil
+}

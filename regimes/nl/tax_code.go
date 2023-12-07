@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/validation"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -18,11 +17,7 @@ const (
 
 var errInvalidVAT = errors.New("invalid VAT number")
 
-// ValidateTaxIdentity looks at the provided code, determines the type, and performs
-// the calculations required to determine if it is valid.
-// These methods assume the code has already been cleaned and only
-// contains upper-case letters and numbers.
-func ValidateTaxIdentity(tID *tax.Identity) error {
+func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
@@ -43,13 +38,6 @@ func validateTaxCode(value interface{}) error {
 		return errors.New("invalid company code")
 	}
 	return validateDigits(code[0:9], code[10:12])
-}
-
-// NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
-// uppercase. It'll also remove the "NL" part at beginning if present such as required
-// for EU VIES system which is redundant and not used in the validation process.
-func NormalizeTaxIdentity(tID *tax.Identity) error {
-	return common.NormalizeTaxIdentity(tID)
 }
 
 func validateDigits(code, check cbc.Code) error {

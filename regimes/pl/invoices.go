@@ -3,7 +3,6 @@ package pl
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -56,7 +55,6 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
-			validation.By(validatePolishTaxIdentity),
 		),
 	)
 }
@@ -73,10 +71,6 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
 			validation.Required,
-			validation.When(
-				obj.TaxID.Country.In(l10n.PL),
-				validation.By(validatePolishTaxIdentity),
-			), // TODO check if id is valid when other entity
 		),
 	)
 }
