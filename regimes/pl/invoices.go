@@ -58,18 +58,6 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			tax.RequireIdentityCode,
 			validation.By(validatePolishTaxIdentity),
 		),
-		validation.Field(&obj.Name,
-			validation.When(
-				len(obj.People) == 0,
-				validation.Required,
-			),
-		),
-		validation.Field(&obj.People[0].Name,
-			validation.When(
-				obj.Name == "",
-				validation.Required,
-			),
-		),
 	)
 }
 
@@ -89,18 +77,6 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 				obj.TaxID.Country.In(l10n.PL),
 				validation.By(validatePolishTaxIdentity),
 			), // TODO check if id is valid when other entity
-		),
-		validation.Field(&obj.Name,
-			validation.When(
-				len(obj.People) == 0,
-				validation.Required,
-			),
-		),
-		validation.Field(&obj.People[0].Name,
-			validation.When(
-				obj.Name == "",
-				validation.Required,
-			),
 		),
 	)
 }
