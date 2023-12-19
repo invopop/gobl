@@ -53,12 +53,14 @@ func (em ExtMap) Equals(other ExtMap) bool {
 	return true
 }
 
-// ExtMapHas returns a validation rule that ensures the extension map contains
-// the provided keys.
+// ExtMapHas returns a validation rule that ensures the extension map's
+// keys match those provided.
 func ExtMapHas(keys ...cbc.Key) validation.Rule {
 	return validateCodeMap{keys: keys}
 }
 
+// ExtMapRequires returns a validation rule that ensures all the
+// extension map's keys match those provided in the list.
 func ExtMapRequires(keys ...cbc.Key) validation.Rule {
 	return validateCodeMap{
 		required: true,
@@ -77,7 +79,7 @@ func (v validateCodeMap) Validate(value interface{}) error {
 		return nil
 	}
 	err := make(validation.Errors)
-	for k, _ := range em {
+	for k := range em {
 		if !k.In(v.keys...) {
 			err[k.String()] = errors.New("invalid")
 		}
