@@ -70,7 +70,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
-			tax.ExtMapHas(ExtKeyCFDIFiscalRegime, ExtKeyCFDIUse),
+			tax.ExtMapRequires(ExtKeyCFDIFiscalRegime, ExtKeyCFDIUse),
 		),
 	)
 }
@@ -86,7 +86,7 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
-			tax.ExtMapHas(ExtKeyCFDIFiscalRegime),
+			tax.ExtMapRequires(ExtKeyCFDIFiscalRegime),
 		),
 	)
 }

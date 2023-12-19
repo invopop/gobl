@@ -111,15 +111,21 @@ type Category struct {
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
 	// RateRequired when true implies that when a tax combo is defined using
-	// this category that one of the rates must be defined.
+	// this category that one of the rate's keys must be defined. This is
+	// normally needed for regimes that categorize taxes in local document
+	// formats as opposed to grouping by percentage values.
 	RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
 
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 
-	// Extensions defines a list of keys for codes to use as an alternative to choosing a
-	// rate for the tax category. Every key must be defined in the Regime's extensions
-	// table.
+	// When true, the ExtensionsRequired flag will ensure that all
+	// the mentioned extensions are defined in the combo.
+	ExtensionsRequired bool `json:"extensions_required,omitempty" jsonschema:"title=Extensions Required"`
+
+	// Extensions defines a list of keys for codes that may be used use as an alternative
+	// or alongside choosing a rate for the tax category.
+	// Every key must be defined in the Regime's extensions table.
 	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
 	// Map defines a set of regime specific code mappings.
@@ -486,6 +492,7 @@ func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*v
 
 // ValidateWithContext ensures the Category's contents are correct.
 func (c *Category) ValidateWithContext(ctx context.Context) error {
+	reg := ctx.Value(KeyRegime).(*Regime)
 	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
@@ -494,20 +501,11 @@ func (c *Category) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Sources),
 		validation.Field(&c.Rates),
 		validation.Field(&c.Extensions,
-			validation.When(len(c.Rates) > 0, validation.Empty.Error("cannot be defined alongside rates")),
+			validation.Each(InKeyDefs(reg.Extensions)),
 		),
 		validation.Field(&c.Map),
 	)
 	return err
-}
-
-// InExtensions provides a validation rule to check if the extension
-// code maps keys match those expected of the category.
-func (c *Category) InExtensions() validation.Rule {
-	if c == nil || len(c.Extensions) == 0 {
-		return nil
-	}
-	return ExtMapHas(c.Extensions...)
 }
 
 // Validate ensures the Source's contents are correct.
@@ -536,15 +534,6 @@ func (r *Rate) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Meta),
 	)
 	return err
-}
-
-// InExtensions provides a validation rule to check if the extension
-// code maps keys match those expected of the rate.
-func (r *Rate) InExtensions() validation.Rule {
-	if r == nil || len(r.Extensions) == 0 {
-		return nil
-	}
-	return ExtMapHas(r.Extensions...)
 }
 
 // Validate ensures the tax rate contains all the required fields.

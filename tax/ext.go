@@ -59,8 +59,16 @@ func ExtMapHas(keys ...cbc.Key) validation.Rule {
 	return validateCodeMap{keys: keys}
 }
 
+func ExtMapRequires(keys ...cbc.Key) validation.Rule {
+	return validateCodeMap{
+		required: true,
+		keys:     keys,
+	}
+}
+
 type validateCodeMap struct {
-	keys []cbc.Key
+	keys     []cbc.Key
+	required bool
 }
 
 func (v validateCodeMap) Validate(value interface{}) error {
@@ -68,13 +76,17 @@ func (v validateCodeMap) Validate(value interface{}) error {
 	if !ok {
 		return nil
 	}
-	var err validation.Errors
-	for _, k := range v.keys {
-		if _, ok := em[k]; !ok {
-			if err == nil {
-				err = make(validation.Errors)
+	err := make(validation.Errors)
+	for k, _ := range em {
+		if !k.In(v.keys...) {
+			err[k.String()] = errors.New("invalid")
+		}
+	}
+	if v.required {
+		for _, k := range v.keys {
+			if _, ok := em[k]; !ok {
+				err[k.String()] = errors.New("required")
 			}
-			err[k.String()] = errors.New("required")
 		}
 	}
 	if len(err) > 0 {

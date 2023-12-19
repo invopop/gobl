@@ -47,26 +47,14 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Category, validation.Required, r.InCategories()),
 		validation.Field(&c.Rate,
 			validation.When(
-				(cat != nil && len(cat.Extensions) > 0),
-				validation.Empty,
-			),
-			validation.When(
 				(cat != nil && cat.RateRequired),
 				validation.Required,
-			),
-			validation.When(
-				(cat != nil && len(cat.Extensions) == 0) &&
-					(len(c.Ext) != 0),
-				validation.Required.Error("required with extensions"),
 			),
 			r.InCategoryRates(c.Category),
 		),
 		validation.Field(&c.Ext,
 			InRegimeExtensions,
-			validation.When(
-				cat != nil && len(cat.Extensions) > 0,
-				validation.Required,
-			),
+			ExtMapHas(combineExtKeys(cat, rate)...),
 			validation.When(
 				(cat != nil && len(cat.Extensions) == 0) &&
 					(rate != nil && len(rate.Extensions) == 0),
@@ -74,14 +62,8 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 				validation.Skip,
 			),
 			validation.When(
-				(cat != nil && len(cat.Extensions) > 0),
-				cat.InExtensions(),
-				validation.Skip,
-			),
-			validation.When(
-				(rate != nil && len(rate.Extensions) > 0),
-				rate.InExtensions(),
-				validation.Skip,
+				(cat != nil && cat.ExtensionsRequired),
+				ExtMapRequires(categoryExtKeys(cat)...),
 			),
 		),
 		validation.Field(&c.Percent,
@@ -97,6 +79,25 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 		return err
 	}
 	return r.ValidateObject(c)
+}
+
+func categoryExtKeys(cat *Category) []cbc.Key {
+	keys := make([]cbc.Key, 0)
+	if cat != nil {
+		keys = append(keys, cat.Extensions...)
+	}
+	return keys
+}
+
+func combineExtKeys(cat *Category, rate *Rate) []cbc.Key {
+	keys := make([]cbc.Key, 0)
+	if cat != nil {
+		keys = append(keys, cat.Extensions...)
+	}
+	if rate != nil {
+		keys = append(keys, rate.Extensions...)
+	}
+	return keys
 }
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals

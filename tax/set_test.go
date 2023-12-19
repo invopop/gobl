@@ -83,7 +83,7 @@ func TestSetValidation(t *testing.T) {
 					Rate:     tax.RateExempt,
 				},
 			},
-			err: "es-tbai-exemption: required",
+			err: nil, // this is okay
 		},
 		{
 			desc: "undefined category code",
@@ -115,6 +115,45 @@ func TestSetValidation(t *testing.T) {
 				},
 			},
 			err: "percent: cannot be blank; surcharge: required with percent.",
+		},
+		{
+			desc: "exempt rate with reason",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Rate:     tax.RateExempt,
+					Ext: tax.ExtMap{
+						es.ExtKeyTBAIExemption: "E1",
+					},
+				},
+			},
+			err: nil,
+		},
+		{
+			desc: "exempt rate with invalid reason",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Rate:     tax.RateExempt,
+					Ext: tax.ExtMap{
+						"foo": "E1",
+					},
+				},
+			},
+			err: "0: ext: (foo: undefined.)",
+		},
+		{
+			desc: "category extension",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Rate:     tax.RateExempt,
+					Ext: tax.ExtMap{
+						es.ExtKeyTBAIProduct: "services",
+					},
+				},
+			},
+			err: nil,
 		},
 	}
 	es := es.New()

@@ -1,0 +1,45 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "EUR"
+issue_date: "2023-12-18"
+series: "EXPORT-X"
+code: "0002"
+tax:
+  tags:
+    - customer-rates
+
+supplier:
+  tax_id:
+    country: "ES"
+    zone: "BI"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "San Frantzisko"
+      locality: "Bilbo"
+      region: "Bizkaia"
+      code: "48003"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "NL"
+  name: "Sample End-Consumer"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
+        ext:
+          es-tbai-product: "services"
+          # es-tbai-not-subject: "RL" # set automatically

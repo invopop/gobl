@@ -44,7 +44,7 @@ func TestItemValidation(t *testing.T) {
 					"random": "12345678",
 				},
 			},
-			err: "ext: (mx-cfdi-prod-serv: required.)",
+			err: "ext: (mx-cfdi-prod-serv: required; random: invalid.).",
 		},
 		{
 			name: "invalid code format",

@@ -7,8 +7,9 @@ import (
 
 // Spanish regime extension codes for local electronic formats.
 const (
-	ExtKeyTBAIExemption = "es-tbai-exemption"
-	ExtKeyTBAIProduct   = "es-tbai-product"
+	ExtKeyTBAIExemption  = "es-tbai-exemption"
+	ExtKeyTBAINotSubject = "es-tbai-not-subject"
+	ExtKeyTBAIProduct    = "es-tbai-product"
 )
 
 var extensionKeys = []*tax.KeyDefinition{
@@ -89,6 +90,29 @@ var extensionKeys = []*tax.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Exempt pursuant to other reasons",
 					i18n.ES: "Exenta por otra causa",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTBAINotSubject,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI Not Subject Cause",
+			i18n.ES: "Causa no-sujeta de TicketBAI",
+		},
+		Codes: []*tax.CodeDefinition{
+			{
+				Code: "OT",
+				Name: i18n.String{
+					i18n.EN: "Not subject pursuant to Article 7 of the VAT Law. Other cases of non-subject.",
+					i18n.ES: "No sujeto por el artículo 7 de la Ley del IVA. Otros supuestos de no sujeción.",
+				},
+			},
+			{
+				Code: "RL",
+				Name: i18n.String{
+					i18n.EN: "Not subject pursuant to localization rules.",
+					i18n.ES: "No sujeto por reglas de localización.",
 				},
 			},
 		},

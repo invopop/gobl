@@ -18,7 +18,7 @@ var (
 func validateItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Ext,
-			tax.ExtMapHas(ExtKeyCFDIProdServ),
+			tax.ExtMapRequires(ExtKeyCFDIProdServ),
 			validation.By(validItemExtensions),
 			validation.Skip,
 		),
