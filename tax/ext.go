@@ -13,7 +13,7 @@ import (
 // ExtMap is a map of extension keys to either a code or a key.
 type ExtMap map[cbc.Key]cbc.KeyOrCode
 
-// Validate ensures the extension map data looks correct.
+// ValidateWithContext ensures the extension map data looks correct.
 func (em ExtMap) ValidateWithContext(ctx context.Context) error {
 	err := make(validation.Errors)
 	// Validate key format
