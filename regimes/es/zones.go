@@ -65,4 +65,13 @@ const (
 	ZoneML l10n.Code = "ML" // (52) Melilla
 )
 
+// ZonesBasqueCountry is used to identify the Basque Country
+// zones that use the TicketBAI system and require additional
+// validations.
+var ZonesBasqueCountry = []l10n.Code{
+	ZoneVI,
+	ZoneBI,
+	ZoneSS,
+}
+
 var zones = tax.NewZoneStore(data.Content, "regimes/es.json")

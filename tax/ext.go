@@ -1,7 +1,9 @@
 package tax
 
 import (
+	"context"
 	"errors"
+	"fmt"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
@@ -12,17 +14,39 @@ import (
 type ExtMap map[cbc.Key]cbc.KeyOrCode
 
 // Validate ensures the extension map data looks correct.
-func (em ExtMap) Validate() error {
+func (em ExtMap) ValidateWithContext(ctx context.Context) error {
 	err := make(validation.Errors)
+	// Validate key format
 	for k := range em {
 		if e := k.Validate(); e != nil {
 			err[k.String()] = e
 		}
 	}
-	if len(err) == 0 {
+	if len(err) > 0 {
+		return err
+	}
+	r := RegimeFromContext(ctx)
+	if r == nil {
 		return nil
 	}
-	return err
+	// Validate keys are defined in regime
+	for k, kc := range em {
+		kd := r.ExtensionDef(k)
+		if kd == nil {
+			err[k.String()] = errors.New("undefined")
+			continue
+		}
+		if len(kd.Codes) > 0 && !kd.HasCode(kc.Code()) {
+			err[k.String()] = fmt.Errorf("code '%s' invalid", kc)
+		}
+		if len(kd.Keys) > 0 && !kd.HasKey(kc.Key()) {
+			err[k.String()] = fmt.Errorf("key '%s' invalid", kc)
+		}
+	}
+	if len(err) > 0 {
+		return err
+	}
+	return nil
 }
 
 // Has returns true if the code map has values for all the provided keys.
@@ -79,18 +103,21 @@ func (v validateCodeMap) Validate(value interface{}) error {
 		return nil
 	}
 	err := make(validation.Errors)
-	for k := range em {
-		if !k.In(v.keys...) {
-			err[k.String()] = errors.New("invalid")
-		}
-	}
+
 	if v.required {
 		for _, k := range v.keys {
 			if _, ok := em[k]; !ok {
 				err[k.String()] = errors.New("required")
 			}
 		}
+	} else {
+		for k := range em {
+			if !k.In(v.keys...) {
+				err[k.String()] = errors.New("invalid")
+			}
+		}
 	}
+
 	if len(err) > 0 {
 		return err
 	}

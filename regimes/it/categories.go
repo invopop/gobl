@@ -121,8 +121,7 @@ var categories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT01",
 		},
-		Extensions:         []cbc.Key{ExtKeySDIRetainedTax},
-		ExtensionsRequired: true,
+		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
 	},
 	{
 		Code:     TaxCategoryIRES,
@@ -138,8 +137,7 @@ var categories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT02",
 		},
-		Extensions:         []cbc.Key{ExtKeySDIRetainedTax},
-		ExtensionsRequired: true,
+		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
 	},
 	{
 		Code:     TaxCategoryINPS,
@@ -152,8 +150,7 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Social Security Institute",
 			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
 		},
-		Extensions:         []cbc.Key{ExtKeySDIRetainedTax},
-		ExtensionsRequired: true,
+		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT03",
 		},
@@ -169,8 +166,7 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Welfare Board for Sales Agents and Representatives",
 			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
 		},
-		Extensions:         []cbc.Key{ExtKeySDIRetainedTax},
-		ExtensionsRequired: true,
+		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT04",
 		},
@@ -186,8 +182,7 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Pension and Welfare Board for Doctors",
 			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
 		},
-		Extensions:         []cbc.Key{ExtKeySDIRetainedTax},
-		ExtensionsRequired: true,
+		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT05",
 		},

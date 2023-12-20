@@ -38,7 +38,6 @@ var taxCategories = []*tax.Category{
 		},
 		Extensions: []cbc.Key{
 			ExtKeyTBAIProduct,
-			ExtKeyTBAINotSubject,
 		},
 		Rates: []*tax.Rate{
 			{

@@ -53,17 +53,12 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			r.InCategoryRates(c.Category),
 		),
 		validation.Field(&c.Ext,
-			InRegimeExtensions,
 			ExtMapHas(combineExtKeys(cat, rate)...),
 			validation.When(
 				(cat != nil && len(cat.Extensions) == 0) &&
 					(rate != nil && len(rate.Extensions) == 0),
 				validation.Empty,
 				validation.Skip,
-			),
-			validation.When(
-				(cat != nil && cat.ExtensionsRequired),
-				ExtMapRequires(categoryExtKeys(cat)...),
 			),
 		),
 		validation.Field(&c.Percent,
@@ -79,14 +74,6 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 		return err
 	}
 	return r.ValidateObject(c)
-}
-
-func categoryExtKeys(cat *Category) []cbc.Key {
-	keys := make([]cbc.Key, 0)
-	if cat != nil {
-		keys = append(keys, cat.Extensions...)
-	}
-	return keys
 }
 
 func combineExtKeys(cat *Category, rate *Rate) []cbc.Key {

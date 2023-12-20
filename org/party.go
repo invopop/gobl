@@ -79,7 +79,7 @@ func (p *Party) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Telephones),
 		validation.Field(&p.Registration),
 		validation.Field(&p.Logos),
-		validation.Field(&p.Ext, tax.InRegimeExtensions),
+		validation.Field(&p.Ext),
 		validation.Field(&p.Meta),
 	)
 }

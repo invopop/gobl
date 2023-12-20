@@ -3,7 +3,6 @@ package tax
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -119,12 +118,8 @@ type Category struct {
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 
-	// When true, the ExtensionsRequired flag will ensure that all
-	// the mentioned extensions are defined in the combo.
-	ExtensionsRequired bool `json:"extensions_required,omitempty" jsonschema:"title=Extensions Required"`
-
-	// Extensions defines a list of keys for codes that may be used use as an alternative
-	// or alongside choosing a rate for the tax category.
+	// Extensions defines a list of extension keys that may be used or required
+	// as an alternative or alongside choosing a rate for the tax category.
 	// Every key must be defined in the Regime's extensions table.
 	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
@@ -437,47 +432,6 @@ func ValidateInRegime(ctx context.Context, obj interface{}) error {
 		return nil
 	}
 	return r.ValidateObject(obj)
-}
-
-// InRegimeExtensions will check that the extensions code map's keys contain
-// valid codes for the regime.
-var InRegimeExtensions = validateRegimeExtensions{}
-
-type validateRegimeExtensions struct {
-}
-
-func (validateRegimeExtensions) Validate(_ interface{}) error {
-	// Cannot work without a context
-	return nil
-}
-
-func (validateRegimeExtensions) ValidateWithContext(ctx context.Context, value interface{}) error {
-	ext, ok := value.(ExtMap)
-	if !ok || len(ext) == 0 {
-		return nil
-	}
-	r := RegimeFromContext(ctx)
-	if r == nil {
-		return nil
-	}
-	err := make(validation.Errors)
-	for k, kc := range ext {
-		kd := r.ExtensionDef(k)
-		if kd == nil {
-			err[k.String()] = errors.New("undefined")
-			continue
-		}
-		if len(kd.Codes) > 0 && !kd.HasCode(kc.Code()) {
-			err[k.String()] = fmt.Errorf("code '%s' invalid", kc)
-		}
-		if len(kd.Keys) > 0 && !kd.HasKey(kc.Key()) {
-			err[k.String()] = fmt.Errorf("key '%s' invalid", kc)
-		}
-	}
-	if len(err) == 0 {
-		return nil
-	}
-	return err
 }
 
 // ValidateStructWithRegime wraps around the standard validation.ValidateStructWithContext

@@ -122,7 +122,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "lines: (0: (taxes: 1: ext: (it-sdi-retained-tax: required.)..).).")
+		assert.Contains(t, err.Error(), "lines: (0: (taxes: (1: (ext: (it-sdi-retained-tax: required.).).).).).")
 	}
 
 	inv = testInvoiceStandard(t)

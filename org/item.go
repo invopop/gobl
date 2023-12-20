@@ -65,7 +65,7 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&i.Price, validation.Required),
 		validation.Field(&i.Unit),
 		validation.Field(&i.Origin),
-		validation.Field(&i.Ext, tax.InRegimeExtensions),
+		validation.Field(&i.Ext),
 		validation.Field(&i.Meta),
 	)
 }

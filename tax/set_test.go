@@ -140,7 +140,7 @@ func TestSetValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "0: ext: (foo: undefined.)",
+			err: "0: ext: (foo: invalid.)",
 		},
 		{
 			desc: "category extension",
