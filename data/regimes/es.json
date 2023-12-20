@@ -175,6 +175,9 @@
         "en": "TicketBAI Product Key",
         "es": "Clave de Producto TicketBAI"
       },
+      "desc": {
+        "en": "Product keys are used by TicketBAI to differentiate between -exported- goods\nand services. It may be useful to classify all products regardless of wether\nthey are exported or not.\n\nThere is an additional exception case for goods that are resold without modification\nwhen the supplier is in the simplified tax regime. For must purposes this special\ncase can be ignored."
+      },
       "keys": [
         {
           "key": "goods",
@@ -189,6 +192,13 @@
             "en": "Provision of services",
             "es": "Prestacion de servicios"
           }
+        },
+        {
+          "key": "resale",
+          "name": {
+            "en": "Resale of goods without modification by vendor in the simplified regime",
+            "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
+          }
         }
       ]
     },
@@ -198,73 +208,67 @@
         "en": "TicketBAI Exemption code",
         "es": "Código de Exención de TicketBAI"
       },
+      "desc": {
+        "en": "Codes used by TicketBAI for both \"exempt\" and \"not-subject\"\ntransactions. In the TicketBAI format these are separated,\nbut in order to simplify GOBL and be more closely aligned with\nother countries we've combined them into one."
+      },
       "codes": [
         {
           "code": "E1",
           "name": {
-            "en": "Exempt pursuant to Article 20 of the Foral VAT Law",
-            "es": "Exenta por el artículo 20 de la Norma Foral del IVA"
+            "en": "Exempt: pursuant to Article 20 of the Foral VAT Law",
+            "es": "Exenta: por el artículo 20 de la Norma Foral del IVA"
           }
         },
         {
           "code": "E2",
           "name": {
-            "en": "Exempt pursuant to Article 21 of the Foral VAT Law",
-            "es": "Exenta por el artículo 21 de la Norma Foral del IVA"
+            "en": "Exempt: pursuant to Article 21 of the Foral VAT Law",
+            "es": "Exenta: por el artículo 21 de la Norma Foral del IVA"
           }
         },
         {
           "code": "E3",
           "name": {
-            "en": "Exempt pursuant to Article 22 of the Foral VAT Law",
-            "es": "Exenta por el artículo 22 de la Norma Foral del IVA"
+            "en": "Exempt: pursuant to Article 22 of the Foral VAT Law",
+            "es": "Exenta: por el artículo 22 de la Norma Foral del IVA"
           }
         },
         {
           "code": "E4",
           "name": {
-            "en": "Exempt pursuant to Articles 23 and 24 of the Foral VAT Law",
-            "es": "Exenta por el artículos 23 y 24 de la Norma Foral del IVA"
+            "en": "Exempt: pursuant to Articles 23 and 24 of the Foral VAT Law",
+            "es": "Exenta: por el artículos 23 y 24 de la Norma Foral del IVA"
           }
         },
         {
           "code": "E5",
           "name": {
-            "en": "Exempt pursuant to Article 25 of the Foral VAT law",
-            "es": "Exenta por el artículo 25 de la Norma Foral del IVA"
+            "en": "Exempt: pursuant to Article 25 of the Foral VAT law",
+            "es": "Exenta: por el artículo 25 de la Norma Foral del IVA"
           }
         },
         {
           "code": "E6",
           "name": {
-            "en": "Exempt pursuant to other reasons",
-            "es": "Exenta por otra causa"
+            "en": "Exempt: pursuant to other reasons",
+            "es": "Exenta: por otra causa"
+          }
+        },
+        {
+          "code": "OT",
+          "name": {
+            "en": "Not subject: pursuant to Article 7 of the VAT Law. Other cases of non-subject.",
+            "es": "No sujeto: por el artículo 7 de la Ley del IVA. Otros supuestos de no sujeción."
+          }
+        },
+        {
+          "code": "RL",
+          "name": {
+            "en": "Not subject: pursuant to localization rules.",
+            "es": "No sujeto: por reglas de localización."
           }
         }
       ]
-    }
-  ],
-  "item_keys": [
-    {
-      "key": "resale",
-      "name": {
-        "en": "Resale of goods without modification by vendor in the simplified regime",
-        "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
-      }
-    },
-    {
-      "key": "services",
-      "name": {
-        "en": "Provision of services",
-        "es": "Prestacion de servicios"
-      }
-    },
-    {
-      "key": "goods",
-      "name": {
-        "en": "Delivery of goods",
-        "es": "Entrega de bienes"
-      }
     }
   ],
   "scenarios": [
@@ -869,6 +873,9 @@
             "es-tbai-exemption"
           ]
         }
+      ],
+      "extensions": [
+        "es-tbai-product"
       ],
       "map": {
         "facturae-tax-type-code": "01"

@@ -80,6 +80,10 @@
           "name": {
             "en": "Taxi Rate",
             "pl": "Ryczałt dla taksówek"
+          },
+          "desc": {
+            "en": "Special flat rate for taxi drivers.",
+            "pl": "Specjalna stawka ryczałtu dla taksówkarzy."
           }
         }
       ]

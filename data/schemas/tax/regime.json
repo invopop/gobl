@@ -33,7 +33,7 @@
         "rate_required": {
           "type": "boolean",
           "title": "Rate Required",
-          "description": "RateRequired when true implies that when a tax combo is defined using\nthis category that one of the rates must be defined."
+          "description": "RateRequired when true implies that when a tax combo is defined using\nthis category that one of the rate's keys must be defined. This is\nnormally needed for regimes that categorize taxes in local document\nformats as opposed to grouping by percentage values."
         },
         "rates": {
           "items": {
@@ -49,7 +49,7 @@
           },
           "type": "array",
           "title": "Extensions",
-          "description": "Extensions defines a list of keys for codes to use as an alternative to choosing a\nrate for the tax category. Every key must be defined in the Regime's extensions\ntable."
+          "description": "Extensions defines a list of extension keys that may be used or required\nas an alternative or alongside choosing a rate for the tax category.\nEvery key must be defined in the Regime's extensions table."
         },
         "map": {
           "$ref": "https://gobl.org/draft-0/cbc/code-map",
@@ -362,14 +362,6 @@
           "type": "array",
           "title": "Payment Means",
           "description": "PaymentMeansKeys specific for the regime that extend the original\nbase payment means keys."
-        },
-        "item_keys": {
-          "items": {
-            "$ref": "#/$defs/KeyDefinition"
-          },
-          "type": "array",
-          "title": "Item Keys",
-          "description": "ItemKeys specific for the regime that need to be added to `org.Item` data\nin line rows."
         },
         "inbox_keys": {
           "items": {
