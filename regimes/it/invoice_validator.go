@@ -34,9 +34,18 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(v.supplier),
+			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
 			validation.By(v.customer),
+			validation.Skip,
+		),
+		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(validateLine),
+				validation.Skip,
+			),
+			validation.Skip,
 		),
 	)
 }
@@ -110,7 +119,46 @@ func validateAddress(value interface{}) error {
 		validation.Field(&address.Street, validation.Required),
 		validation.Field(&address.Code, validation.Required),
 	)
+}
 
+func validateLine(value interface{}) error {
+	v, ok := value.(*bill.Line)
+	if v == nil || !ok {
+		return nil
+	}
+	return validation.ValidateStruct(v,
+		validation.Field(&v.Taxes,
+			validation.Each(
+				validation.By(validateLineTax),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateLineTax(value interface{}) error {
+	v, ok := value.(*tax.Combo)
+	if v == nil || !ok {
+		return nil
+	}
+	return validation.ValidateStruct(v,
+		validation.Field(&v.Ext,
+			validation.When(
+				v.Category.In(
+					TaxCategoryIRPEF,
+					TaxCategoryIRES,
+					TaxCategoryINPS,
+					TaxCategoryENASARCO,
+					TaxCategoryENPAM,
+				),
+				tax.ExtMapRequires(
+					ExtKeySDIRetainedTax,
+				),
+			),
+			validation.Skip,
+		),
+	)
 }
 
 func validateRegistration(value interface{}) error {

@@ -92,6 +92,8 @@ func New() *tax.Regime {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *tax.Identity:
+		return validateTaxIdentity(obj)
 	case *bill.Invoice:
 		return validateInvoice(obj)
 	}
@@ -102,7 +104,7 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return NormalizeTaxIdentity(obj)
+		return common.NormalizeTaxIdentity(obj)
 	}
 	return nil
 }

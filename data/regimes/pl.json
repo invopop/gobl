@@ -1,0 +1,398 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Poland",
+    "pl": "Polska"
+  },
+  "time_zone": "Europe/Warsaw",
+  "country": "PL",
+  "currency": "PLN",
+  "tags": [
+    {
+      "key": "simplified",
+      "name": {
+        "de": "Vereinfachte Rechnung",
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada",
+        "it": "Fattura Semplificata"
+      },
+      "desc": {
+        "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+        "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+      }
+    },
+    {
+      "key": "reverse-charge",
+      "name": {
+        "de": "Umkehr der Steuerschuld",
+        "en": "Reverse Charge",
+        "es": "Inversión del Sujeto Pasivo",
+        "it": "Inversione del soggetto passivo"
+      }
+    },
+    {
+      "key": "self-billed",
+      "name": {
+        "de": "Rechnung durch den Leistungsempfänger",
+        "en": "Self-billed",
+        "es": "Facturación por el destinatario",
+        "it": "Autofattura"
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "de": "Kundensätze",
+        "en": "Customer rates",
+        "es": "Tarifas aplicables al destinatario",
+        "it": "Aliquote applicabili al destinatario"
+      }
+    },
+    {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
+    },
+    {
+      "key": "settlement",
+      "name": {
+        "en": "Settlement Invoice",
+        "pl": "Faktura Rozliczeniowa"
+      }
+    }
+  ],
+  "extensions": [
+    {
+      "key": "pl-ksef-vat-special",
+      "name": {
+        "en": "Special VAT Extensions for KSeF",
+        "pl": "Rozszerzenia specjalne dla KSeF"
+      },
+      "keys": [
+        {
+          "key": "taxi",
+          "name": {
+            "en": "Taxi Rate",
+            "pl": "Ryczałt dla taksówek"
+          },
+          "desc": {
+            "en": "Special flat rate for taxi drivers.",
+            "pl": "Specjalna stawka ryczałtu dla taksówkarzy."
+          }
+        }
+      ]
+    },
+    {
+      "key": "pl-ksef-vat-zero",
+      "name": {
+        "en": "Zero VAT Extensions for KSeF"
+      },
+      "keys": [
+        {
+          "key": "wdt",
+          "name": {
+            "en": "WDT",
+            "pl": "WDT"
+          }
+        },
+        {
+          "key": "domestic",
+          "name": {
+            "en": "Domestic",
+            "pl": "Krajowy"
+          }
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export",
+            "pl": "Eksport"
+          }
+        }
+      ]
+    }
+  ],
+  "payment_means": [
+    {
+      "key": "cash",
+      "name": {
+        "en": "Cash",
+        "pl": "Gotówka"
+      },
+      "map": {
+        "favat-forma-platnosci": "1"
+      }
+    },
+    {
+      "key": "card",
+      "name": {
+        "en": "Card",
+        "pl": "Karta"
+      },
+      "map": {
+        "favat-forma-platnosci": "2"
+      }
+    },
+    {
+      "key": "other+coupon",
+      "name": {
+        "en": "Coupon",
+        "pl": "Bon"
+      },
+      "map": {
+        "favat-forma-platnosci": "3"
+      }
+    },
+    {
+      "key": "cheque",
+      "name": {
+        "en": "Cheque",
+        "pl": "Czek"
+      },
+      "map": {
+        "favat-forma-platnosci": "4"
+      }
+    },
+    {
+      "key": "online+loan",
+      "name": {
+        "en": "Loan",
+        "pl": "Kredyt"
+      },
+      "map": {
+        "favat-forma-platnosci": "5"
+      }
+    },
+    {
+      "key": "credit-transfer",
+      "name": {
+        "en": "Wire Transfer",
+        "pl": "Przelew"
+      },
+      "map": {
+        "favat-forma-platnosci": "6"
+      }
+    },
+    {
+      "key": "other+mobile",
+      "name": {
+        "en": "Mobile",
+        "pl": "Mobilna"
+      },
+      "map": {
+        "favat-forma-platnosci": "7"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "name": {
+            "en": "Regular Invoice",
+            "pl": "Faktura Podstawowa"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "VAT"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "name": {
+            "en": "Prepayment Invoice",
+            "pl": "Faktura Zaliczkowa"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "ZAL"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "settlement"
+          ],
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "ROZ"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "name": {
+            "en": "Simplified Invoice",
+            "pl": "Faktura Uproszczona"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "UPR"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "name": {
+            "en": "Corrective Invoice",
+            "pl": "Faktura Korygująca"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "KOR"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "name": {
+            "en": "Corrective Prepayment Invoice",
+            "pl": "Faktura korygująca fakturę zaliczkową"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "KOR_ZAL"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "tags": [
+            "settlement"
+          ],
+          "name": {
+            "en": "Corrective Settlement Invoice",
+            "pl": "Faktura korygująca fakturę rozliczeniową"
+          },
+          "codes": {
+            "favat-rodzaj-faktury": "KOR_ROZ"
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "pl": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "pl": "Podatek od Wartości Dodanej"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "pl": "Stawka Podstawowa"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "23.0%"
+            },
+            {
+              "since": "1993-07-08",
+              "percent": "22.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "First Reduced Rate",
+            "pl": "Stawka Obniżona Pierwsza"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "2000-09-04",
+              "percent": "7.0%"
+            }
+          ]
+        },
+        {
+          "key": "super-reduced",
+          "name": {
+            "en": "Second Reduced Rate",
+            "pl": "Stawka Obniżona Druga"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "5.0%"
+            },
+            {
+              "since": "2000-09-04",
+              "percent": "3.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "pl": "Stawka Zerowa"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ],
+          "extensions": [
+            "pl-ksef-vat-zero"
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt",
+            "pl": "Zwolnione"
+          },
+          "exempt": true
+        },
+        {
+          "key": "special",
+          "name": {
+            "en": "Special Rate",
+            "pl": "Stawka Specjalna"
+          },
+          "extensions": [
+            "pl-ksef-vat-special"
+          ]
+        }
+      ]
+    }
+  ]
+}

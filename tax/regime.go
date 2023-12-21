@@ -3,7 +3,6 @@ package tax
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -65,15 +64,10 @@ type Regime struct {
 	// base payment means keys.
 	PaymentMeansKeys []*KeyDefinition `json:"payment_means,omitempty" jsonschema:"title=Payment Means"`
 
-	// ItemKeys specific for the regime that need to be added to `org.Item` data
-	// in line rows.
-	ItemKeys []*KeyDefinition `json:"item_keys,omitempty" jsonschema:"title=Item Keys"`
-
 	// InboxKeys specific to the regime that can be used to identify where a document
 	// should be forwarded to.
 	InboxKeys []*KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
-	// Sets of scenario definitions for the regime.
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for corrections to be used with correction options.
@@ -116,15 +110,17 @@ type Category struct {
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
 	// RateRequired when true implies that when a tax combo is defined using
-	// this category that one of the rates must be defined.
+	// this category that one of the rate's keys must be defined. This is
+	// normally needed for regimes that categorize taxes in local document
+	// formats as opposed to grouping by percentage values.
 	RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
 
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 
-	// Extensions defines a list of keys for codes to use as an alternative to choosing a
-	// rate for the tax category. Every key must be defined in the Regime's extensions
-	// table.
+	// Extensions defines a list of extension keys that may be used or required
+	// as an alternative or alongside choosing a rate for the tax category.
+	// Every key must be defined in the Regime's extensions table.
 	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
 	// Map defines a set of regime specific code mappings.
@@ -223,6 +219,9 @@ type KeyDefinition struct {
 	// Codes describes the list of codes that can be used alongside the Key,
 	// for example with identities.
 	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
+	// Keys is used instead of codes to define a further sub-set of keys that
+	// can be used alongside this one.
+	Keys []*KeyDefinition `json:"keys,omitempty" jsonschema:"title=Keys"`
 	// Map helps map local keys to specific codes, useful for converting the
 	// described key into a local code.
 	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
@@ -316,7 +315,6 @@ func (r *Regime) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Extensions),
 		validation.Field(&r.ChargeKeys),
 		validation.Field(&r.PaymentMeansKeys),
-		validation.Field(&r.ItemKeys),
 		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Corrections),
@@ -406,6 +404,17 @@ func (kd *KeyDefinition) HasCode(code cbc.Code) bool {
 	return false
 }
 
+// HasKey loops through the key definitions keys and determines if there
+// is a match.
+func (kd *KeyDefinition) HasKey(key cbc.Key) bool {
+	for _, c := range kd.Keys {
+		if c.Key == key {
+			return true
+		}
+	}
+	return false
+}
+
 // RegimeFromContext returns the regime from the given context, or nil.
 func RegimeFromContext(ctx context.Context) *Regime {
 	r, ok := ctx.Value(KeyRegime).(*Regime)
@@ -425,44 +434,6 @@ func ValidateInRegime(ctx context.Context, obj interface{}) error {
 	return r.ValidateObject(obj)
 }
 
-// InRegimeExtensions will check that the extensions code map's keys contain
-// valid codes for the regime.
-var InRegimeExtensions = validateRegimeExtensions{}
-
-type validateRegimeExtensions struct {
-}
-
-func (validateRegimeExtensions) Validate(_ interface{}) error {
-	// Cannot work without a context
-	return nil
-}
-
-func (validateRegimeExtensions) ValidateWithContext(ctx context.Context, value interface{}) error {
-	ext, ok := value.(cbc.CodeMap)
-	if !ok || len(ext) == 0 {
-		return nil
-	}
-	r := RegimeFromContext(ctx)
-	if r == nil {
-		return nil
-	}
-	err := make(validation.Errors)
-	for k, c := range ext {
-		kd := r.ExtensionDef(k)
-		if kd == nil {
-			err[k.String()] = errors.New("undefined")
-			continue
-		}
-		if len(kd.Codes) > 0 && !kd.HasCode(c) {
-			err[k.String()] = fmt.Errorf("code '%s' invalid", c)
-		}
-	}
-	if len(err) == 0 {
-		return nil
-	}
-	return err
-}
-
 // ValidateStructWithRegime wraps around the standard validation.ValidateStructWithContext
 // method to add an additional check for the tax regime.
 func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*validation.FieldRules) error {
@@ -475,6 +446,7 @@ func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*v
 
 // ValidateWithContext ensures the Category's contents are correct.
 func (c *Category) ValidateWithContext(ctx context.Context) error {
+	reg := ctx.Value(KeyRegime).(*Regime)
 	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
@@ -483,20 +455,11 @@ func (c *Category) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Sources),
 		validation.Field(&c.Rates),
 		validation.Field(&c.Extensions,
-			validation.When(len(c.Rates) > 0, validation.Empty.Error("cannot be defined alongside rates")),
+			validation.Each(InKeyDefs(reg.Extensions)),
 		),
 		validation.Field(&c.Map),
 	)
 	return err
-}
-
-// InExtensions provides a validation rule to check if the extension
-// code maps keys match those expected of the category.
-func (c *Category) InExtensions() validation.Rule {
-	if c == nil || len(c.Extensions) == 0 {
-		return nil
-	}
-	return cbc.CodeMapHas(c.Extensions...)
 }
 
 // Validate ensures the Source's contents are correct.
@@ -525,15 +488,6 @@ func (r *Rate) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Meta),
 	)
 	return err
-}
-
-// InExtensions provides a validation rule to check if the extension
-// code maps keys match those expected of the rate.
-func (r *Rate) InExtensions() validation.Rule {
-	if r == nil || len(r.Extensions) == 0 {
-		return nil
-	}
-	return cbc.CodeMapHas(r.Extensions...)
 }
 
 // Validate ensures the tax rate contains all the required fields.
@@ -696,6 +650,11 @@ func (kd *KeyDefinition) Validate() error {
 		validation.Field(&kd.Name, validation.Required),
 		validation.Field(&kd.Desc),
 		validation.Field(&kd.Codes),
+		validation.Field(&kd.Keys,
+			validation.When(len(kd.Codes) > 0,
+				validation.Empty,
+			),
+		),
 	)
 	return err
 }

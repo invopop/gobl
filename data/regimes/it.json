@@ -51,6 +51,15 @@
       }
     },
     {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
+    },
+    {
       "key": "freelance",
       "name": {
         "en": "Freelancer",

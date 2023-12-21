@@ -33,13 +33,23 @@ func (v *invoiceValidator) validate() error {
 		)),
 		validation.Field(&inv.Preceding,
 			validation.Each(validation.By(v.preceding)),
+			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
 			validation.Required,
 			validation.By(v.supplier),
+			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
 			validation.By(v.commercialCustomer),
+			validation.Skip,
+		),
+		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(v.validateLine),
+				validation.Skip,
+			),
+			validation.Skip,
 		),
 	)
 }
@@ -90,6 +100,43 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		validation.Field(&obj.CorrectionMethod,
 			validation.Required,
 			isValidCorrectionMethodKey,
+		),
+	)
+}
+
+func (v *invoiceValidator) validateLine(value interface{}) error {
+	obj, _ := value.(*bill.Line)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Taxes,
+			validation.Each(
+				validation.By(v.validateLineTax),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func (v *invoiceValidator) validateLineTax(value interface{}) error {
+	obj, ok := value.(*tax.Combo)
+	if obj == nil || !ok {
+		return nil
+	}
+	zone := l10n.CodeEmpty
+	if v.inv.Supplier != nil && v.inv.Supplier.TaxID != nil {
+		zone = v.inv.Supplier.TaxID.Zone
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			validation.When(
+				zone.In(ZonesBasqueCountry...) &&
+					obj.Rate == tax.RateExempt,
+				tax.ExtMapRequires(ExtKeyTBAIExemption),
+			),
+			validation.Skip,
 		),
 	)
 }

@@ -52,6 +52,15 @@
         "es": "Tarifas aplicables al destinatario",
         "it": "Aliquote applicabili al destinatario"
       }
+    },
+    {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
     }
   ],
   "scenarios": [

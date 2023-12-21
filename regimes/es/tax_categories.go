@@ -36,6 +36,9 @@ var taxCategories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFacturaETaxTypeCode: "01",
 		},
+		Extensions: []cbc.Key{
+			ExtKeyTBAIProduct,
+		},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateZero,
@@ -178,7 +181,9 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Exempt",
 					i18n.ES: "Exenta",
 				},
-				Extensions: []cbc.Key{ExtKeyTBAIExemption},
+				Extensions: []cbc.Key{
+					ExtKeyTBAIExemption,
+				},
 			},
 		},
 	},

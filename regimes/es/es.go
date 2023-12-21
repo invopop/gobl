@@ -79,7 +79,6 @@ func New() *tax.Regime {
 		IdentityTypeKeys: taxIdentityTypeDefinitions,
 		Extensions:       extensionKeys,
 		Categories:       taxCategories,
-		ItemKeys:         itemKeyDefinitions, // items.go
 		Validator:        Validate,
 		Calculator:       Calculate,
 		Scenarios: []*tax.ScenarioSet{

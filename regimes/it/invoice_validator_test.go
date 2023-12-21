@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -122,13 +121,14 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	})
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "lines: (0: (taxes: 1: ext: cannot be blank..).).")
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "lines: (0: (taxes: (1: (ext: (it-sdi-retained-tax: required.).).).).).")
+	}
 
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
-		Ext: cbc.CodeMap{
+		Ext: tax.ExtMap{
 			it.ExtKeySDIRetainedTax: "A",
 		},
 		Percent: num.NewPercentage(20, 2),

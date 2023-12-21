@@ -39,7 +39,7 @@ type Party struct {
 	// Images that can be used to identify the party visually.
 	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext cbc.CodeMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -79,7 +79,7 @@ func (p *Party) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Telephones),
 		validation.Field(&p.Registration),
 		validation.Field(&p.Logos),
-		validation.Field(&p.Ext, tax.InRegimeExtensions),
+		validation.Field(&p.Ext),
 		validation.Field(&p.Meta),
 	)
 }

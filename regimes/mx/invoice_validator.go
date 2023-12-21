@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -71,7 +70,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
-			cbc.CodeMapHas(ExtKeyCFDIFiscalRegime, ExtKeyCFDIUse),
+			tax.ExtMapRequires(ExtKeyCFDIFiscalRegime, ExtKeyCFDIUse),
 		),
 	)
 }
@@ -87,7 +86,7 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
-			cbc.CodeMapHas(ExtKeyCFDIFiscalRegime),
+			tax.ExtMapRequires(ExtKeyCFDIFiscalRegime),
 		),
 	)
 }
