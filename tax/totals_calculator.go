@@ -163,6 +163,7 @@ func (tc *TotalCalculator) round(t *Total) {
 				rt.Surcharge.Amount = rt.Surcharge.Amount.Rescale(zero.Exp())
 			}
 		}
+		ct.amount = ct.Amount
 		ct.Amount = ct.Amount.Rescale(zero.Exp())
 		if ct.Surcharge != nil {
 			*ct.Surcharge = ct.Surcharge.Rescale(zero.Exp())

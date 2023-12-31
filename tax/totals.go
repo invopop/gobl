@@ -12,6 +12,8 @@ type CategoryTotal struct {
 	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
 	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
 	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+
+	amount num.Amount // internal amount with greater accuracy
 }
 
 // RateTotal contains a sum of all the tax rates in the document with
@@ -30,6 +32,8 @@ type RateTotal struct {
 	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// Total amount of rate, excluding surcharges
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+
+	amount num.Amount // internal amount with greater precision
 }
 
 // RateTotalSurcharge reflects the sum surcharges inside the rate.
@@ -51,6 +55,24 @@ type Total struct {
 	sum num.Amount
 }
 
+// PreciseAmount is used internally to provide a more precise amount that maintains
+// the accuracy provided by the original category total.
+func (ct *CategoryTotal) PreciseAmount() num.Amount {
+	if !ct.amount.IsZero() {
+		return ct.amount
+	}
+	return ct.Amount
+}
+
+// PreciseAmount is used internally to provide a more precise amount that maintains
+// the accuracy provided by the original rate total.
+func (rt *RateTotal) PreciseAmount() num.Amount {
+	if !rt.amount.IsZero() {
+		return rt.amount
+	}
+	return rt.Amount
+}
+
 // PreciseSum is used internally to provide a more precise sum that maintains
 // the accuracy provided by the original line totals.
 func (t *Total) PreciseSum() num.Amount {
@@ -66,6 +88,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct.Code = c.Category
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Amount = zero
+	ct.amount = zero
 	ct.Retained = c.category.Retained
 	return ct
 }

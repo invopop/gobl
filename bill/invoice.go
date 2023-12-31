@@ -442,7 +442,7 @@ func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
 	// Remove any included taxes from the total.
 	ct := t.Taxes.Category(pit)
 	if ct != nil {
-		ti := ct.Amount
+		ti := ct.PreciseAmount()
 		t.TaxIncluded = &ti
 		t.Total = t.Total.Subtract(ti)
 	}
