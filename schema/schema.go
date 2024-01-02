@@ -15,7 +15,7 @@ const (
 	// Version of the current version of the schema
 	Version = "draft-0"
 	// BaseURL is the base URL for all GOBL schemas
-	BaseURL = "https://gobl.org"
+	BaseURL = "https://gobl.org/"
 	// GOBL stores the base schema ID for GOBL, including current schema version.
 	GOBL ID = BaseURL + Version
 )

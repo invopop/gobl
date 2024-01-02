@@ -64,8 +64,8 @@ func (ct *CategoryTotal) PreciseAmount() num.Amount {
 }
 
 // PreciseSum contains an intermediary sum generated from the calculator
-// with the original precision. If Calculate was not called on the totals, such
-// as when loading, the original sum will be provided instead.
+// with the original precision. If no calculations were made on the totals,
+// such as when loading, the original sum will be provided instead.
 func (t *Total) PreciseSum() num.Amount {
 	if !t.sum.IsZero() {
 		return t.sum
