@@ -83,9 +83,9 @@ func AmountFromString(val string) (Amount, error) {
 	return a, nil
 }
 
-// AmountFromHumanString removes an excess decimal places, commas, or
+// AmountFromHumanString removes any excess decimal places, commas, or
 // other symbols so that we end up with a simple string that can be parsed.
-func AmountFromHumanString(val string) (Amount, error) {
+func AmountFromHumanString(_ string) (Amount, error) {
 	return Amount{}, errors.New("not yet implemented")
 }
 

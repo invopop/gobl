@@ -44,6 +44,6 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 	)
 }
 
-func (v *invoiceValidator) customer(value interface{}) error {
-	return nil
+func (v *invoiceValidator) customer(_ interface{}) error {
+	return nil // nothing to do yet
 }
