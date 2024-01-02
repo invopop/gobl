@@ -32,8 +32,6 @@ type RateTotal struct {
 	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// Total amount of rate, excluding surcharges
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
-
-	amount num.Amount // internal amount with greater precision
 }
 
 // RateTotalSurcharge reflects the sum surcharges inside the rate.
@@ -55,8 +53,9 @@ type Total struct {
 	sum num.Amount
 }
 
-// PreciseAmount is used internally to provide a more precise amount that maintains
-// the accuracy provided by the original category total.
+// PreciseAmount contains the intermediary amount generated from the calculator
+// with the original precision. This is useful when a Category Total needs
+// to be used for further calculations, such as when an invoice includes taxes.
 func (ct *CategoryTotal) PreciseAmount() num.Amount {
 	if !ct.amount.IsZero() {
 		return ct.amount
@@ -64,17 +63,9 @@ func (ct *CategoryTotal) PreciseAmount() num.Amount {
 	return ct.Amount
 }
 
-// PreciseAmount is used internally to provide a more precise amount that maintains
-// the accuracy provided by the original rate total.
-func (rt *RateTotal) PreciseAmount() num.Amount {
-	if !rt.amount.IsZero() {
-		return rt.amount
-	}
-	return rt.Amount
-}
-
-// PreciseSum is used internally to provide a more precise sum that maintains
-// the accuracy provided by the original line totals.
+// PreciseSum contains an intermediary sum generated from the calculator
+// with the original precision. If Calculate was not called on the totals, such
+// as when loading, the original sum will be provided instead.
 func (t *Total) PreciseSum() num.Amount {
 	if !t.sum.IsZero() {
 		return t.sum
