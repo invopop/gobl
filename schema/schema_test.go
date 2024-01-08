@@ -9,7 +9,7 @@ import (
 
 func TestID(t *testing.T) {
 	id := schema.GOBL.Add("test/bar")
-	base := "https://gobl.org/" + schema.VERSION
+	base := schema.BaseURL + schema.Version
 
 	assert.EqualValues(t, base+"/test/bar", id)
 
@@ -27,7 +27,7 @@ func TestID(t *testing.T) {
 }
 
 func TestExtract(t *testing.T) {
-	base := `https://gobl.org/` + schema.VERSION + ``
+	base := schema.BaseURL + schema.Version + ``
 	data := []byte(`{"$schema":"` + base + `/test/bar","random":"message"}`)
 
 	id, err := schema.Extract(data)
@@ -45,7 +45,7 @@ func TestExtract(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	id := schema.ID(`https://gobl.org/` + schema.VERSION + `/test/bar`)
+	id := schema.ID(schema.BaseURL + schema.Version + `/test/bar`)
 	data := []byte(`{"random":"message"}`)
 	var err error
 	data, err = schema.Insert(id, data)

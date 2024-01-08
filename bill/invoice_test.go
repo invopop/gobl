@@ -414,6 +414,60 @@ func TestRemoveIncludedTax5(t *testing.T) {
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
 
+func TestRemoveIncludedTax6WithDiscount(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(9338, 2),
+			},
+			Discounts: []*bill.LineDiscount{
+				{
+					Percent: num.NewPercentage(40009, 5),
+				},
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(23, 2),
+				},
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	require.NoError(t, i.Calculate())
+
+	assert.Equal(t, "56.02", i.Totals.Sum.String())
+	assert.Equal(t, i.Totals.Sum.String(), i.Totals.Payable.String())
+
+	/*
+		data, _ := json.Marshal(i.Lines)
+		t.Logf("LINES: %v", string(data))
+		data, _ = json.Marshal(i.Totals)
+		t.Logf("TOTALS: %v", string(data))
+	*/
+
+	i2, err := i.RemoveIncludedTaxes()
+	require.NoError(t, err)
+
+	assert.Empty(t, i2.Tax.PricesInclude)
+	l0 := i2.Lines[0]
+	assert.Equal(t, "75.9187", l0.Item.Price.String())
+
+	/*
+		data, _ = json.Marshal(i2.Lines)
+		t.Logf("Lines: %v", string(data))
+		data, _ = json.Marshal(i2.Totals)
+		t.Logf("TOTALS: %v", string(data))
+	*/
+
+	assert.Equal(t, "45.54", i2.Totals.Sum.String())
+	assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
+	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
+}
+
 func TestRemoveIncludedTaxQuantity(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",

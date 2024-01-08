@@ -12,6 +12,8 @@ type CategoryTotal struct {
 	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
 	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
 	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+
+	amount num.Amount // internal amount with greater accuracy
 }
 
 // RateTotal contains a sum of all the tax rates in the document with
@@ -51,8 +53,19 @@ type Total struct {
 	sum num.Amount
 }
 
-// PreciseSum is used internally to provide a more precise sum that maintains
-// the accuracy provided by the original line totals.
+// PreciseAmount contains the intermediary amount generated from the calculator
+// with the original precision. This is useful when a Category Total needs
+// to be used for further calculations, such as when an invoice includes taxes.
+func (ct *CategoryTotal) PreciseAmount() num.Amount {
+	if !ct.amount.IsZero() {
+		return ct.amount
+	}
+	return ct.Amount
+}
+
+// PreciseSum contains an intermediary sum generated from the calculator
+// with the original precision. If no calculations were made on the totals,
+// such as when loading, the original sum will be provided instead.
 func (t *Total) PreciseSum() num.Amount {
 	if !t.sum.IsZero() {
 		return t.sum
@@ -66,6 +79,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct.Code = c.Category
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Amount = zero
+	ct.amount = zero
 	ct.Retained = c.category.Retained
 	return ct
 }
