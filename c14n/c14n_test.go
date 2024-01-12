@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/c14n"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestJSONToArray(t *testing.T) {
@@ -68,4 +69,20 @@ func TestJSONToArray(t *testing.T) {
 		t.Logf("marshaled data:\n%v\n", string(d))
 		t.Errorf("unexpected sum, please check marshaled data, got: %v", s)
 	}
+}
+
+func TestMarshalJSON(t *testing.T) {
+	obj := struct {
+		Title string `json:"title"`
+		Idx   int64  `json:"idx"`
+		Body  string `json:"body,omitempty"`
+	}{
+		Title: "test",
+		Idx:   1,
+		Body:  "Test body to play around with",
+	}
+	d, err := c14n.MarshalJSON(obj)
+	assert.NoError(t, err)
+	out := `{"body":"Test body to play around with","idx":1,"title":"test"}`
+	assert.Contains(t, string(d), out)
 }
