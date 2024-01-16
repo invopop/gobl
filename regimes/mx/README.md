@@ -119,9 +119,9 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
 
 The CFDI’s `MetodoPago` field specifies whether the invoice has been fully paid at the moment of issuing the invoice (`PUE` - Pago en una sola exhibición) or whether it will be paid in one or several instalments after that (`PPD` – Pago en parcialidades o diferido).
 
-In GOBL, the presence or absence of payment advances covering for the invoice’s total payable amount will denote whether the `MetodoPago` will be set to `PUE` or `PPD`.
+In GOBL, the presence or absence of payment advances covering the invoice’s total payable amount will determine whether the `MetodoPago` will be set to `PUE` or `PPD`.
 
-Please note that if you don't include any advances in your GOBL invoice, it will be assumed that the payment of the invoice is outstanding (`MetodoPago = PPD`). This implies that the invoice supplier will have to issue “CFDI de Complemento de Pago” documents at a later stage when receiving the invoice payments.
+Please note that if you don't include any advances in your GOBL invoice, it will be assumed that the payment of the invoice is outstanding (`MetodoPago = PPD`). This implies that the invoice supplier will have to issue “CFDI de Complemento de Pago” (remittance advice) documents at a later stage when receiving the invoice payments.
 
 #### Examples
 
