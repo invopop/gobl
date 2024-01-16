@@ -42,5 +42,3 @@ lines:
 payment:
   terms:
     notes: Pago a 30 días.
-  instructions:
-    key: credit-transfer

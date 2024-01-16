@@ -64,11 +64,6 @@ func validInvoice() *bill.Invoice {
 				},
 			},
 		},
-		Payment: &bill.Payment{
-			Instructions: &pay.Instructions{
-				Key: "online+wallet",
-			},
-		},
 	}
 }
 
@@ -113,27 +108,42 @@ func TestLineValidation(t *testing.T) {
 
 func TestPaymentInstructionsValidation(t *testing.T) {
 	inv := validInvoice()
+	inv.Payment = &bill.Payment{
+		Instructions: &pay.Instructions{},
+	}
 
 	inv.Payment.Instructions.Key = "direct-debit"
 	assertValidationError(t, inv, "payment: (instructions: (key: must be a valid value.).)")
 
 	inv.Payment.Instructions.Key = "unexisting"
 	assertValidationError(t, inv, "payment: (instructions: (key: must be or start with a valid key.).)")
+}
 
-	inv.Payment.Instructions.Key = ""
-	assertValidationError(t, inv, "payment: (instructions: (key: cannot be blank.).)")
+func TestPaymentAdvancesValidation(t *testing.T) {
+	inv := validInvoice()
+	inv.Payment = &bill.Payment{
+		Advances: []*pay.Advance{
+			{
+				Description: "A prepayment",
+			},
+		},
+	}
 
-	inv.Payment.Instructions = nil
-	assertValidationError(t, inv, "payment: (instructions: cannot be blank.)")
+	inv.Payment.Advances[0].Key = "direct-debit"
+	assertValidationError(t, inv, "payment: (advances: (0: (key: must be a valid value.).).)")
 
-	inv.Payment = nil
-	assertValidationError(t, inv, "payment: cannot be blank")
+	inv.Payment.Advances[0].Key = "unexisting"
+	assertValidationError(t, inv, "payment: (advances: (0: (key: must be or start with a valid key.).).)")
+
+	inv.Payment.Advances[0].Key = ""
+	assertValidationError(t, inv, "payment: (advances: (0: (key: cannot be blank.).).)")
 }
 
 func TestPaymentTermsValidation(t *testing.T) {
 	inv := validInvoice()
-
-	inv.Payment.Terms = &pay.Terms{}
+	inv.Payment = &bill.Payment{
+		Terms: &pay.Terms{},
+	}
 
 	inv.Payment.Terms.Notes = strings.Repeat("x", 1001)
 	assertValidationError(t, inv, "payment: (terms: (notes: the length must be no more than 1000.).)")

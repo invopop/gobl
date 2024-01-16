@@ -32,8 +32,6 @@ lines:
 payment:
   terms:
     notes: "Condiciones de pago"
-  instructions:
-    key: "online+wallet"
 complements:
   - $schema: "https://gobl.org/draft-0/regimes/mx/food-vouchers"
     employer_registration: "12345678901234567890"

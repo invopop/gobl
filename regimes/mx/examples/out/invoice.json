@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0c24c5c856dbf4bd1ab3486edd129727e08866e3b12505eb80bde1d2a3189861"
+			"val": "dd3199d4be79445bebd22fbbb9e17e92cd4dc6b465fda4eb6c744073b8ed97c8"
 		},
 		"draft": true
 	},
@@ -90,9 +90,6 @@
 		"payment": {
 			"terms": {
 				"notes": "Condiciones de pago"
-			},
-			"instructions": {
-				"key": "online+wallet"
 			}
 		},
 		"totals": {
