@@ -44,3 +44,10 @@ lines:
 payment:
   terms:
     notes: "Condiciones de pago"
+  advances:
+    - percent: "10.0%"
+      desc: "Anticipo"
+      key: "cash"
+    - percent: "90.0%"
+      desc: "Saldo"
+      key: "card"

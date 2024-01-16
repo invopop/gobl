@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -43,7 +44,6 @@ func (v *invoiceValidator) validate() error {
 			validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
 		),
 		validation.Field(&inv.Payment,
-			validation.Required,
 			validation.By(v.validPayment),
 			validation.Skip,
 		),
@@ -112,11 +112,10 @@ func (v *invoiceValidator) validPayment(value interface{}) error {
 	if pay == nil {
 		return nil
 	}
+
 	return validation.ValidateStruct(pay,
-		validation.Field(&pay.Instructions,
-			validation.Required,
-			validation.By(v.validatePayInstructions),
-		),
+		validation.Field(&pay.Instructions, validation.By(v.validatePayInstructions)),
+		validation.Field(&pay.Advances, validation.Each(validation.By(v.validateAdvance))),
 		validation.Field(&pay.Terms, validation.By(v.validatePayTerms)),
 	)
 }
@@ -130,6 +129,26 @@ func (v *invoiceValidator) validatePayInstructions(value interface{}) error {
 	return validation.ValidateStruct(instr,
 		validation.Field(&instr.Key, isValidPaymentMeanKey),
 	)
+}
+
+func (v *invoiceValidator) validateAdvance(value interface{}) error {
+	adv, _ := value.(*pay.Advance)
+	if adv == nil {
+		return nil
+	}
+
+	fields := []*validation.FieldRules{
+		validation.Field(&adv.Key, isValidPaymentMeanKey),
+	}
+
+	// Temporary hack necessary to help transition users from using the instructions key to use
+	// the advance key. TODO: Expect the payment means key always to be present in every
+	// advance (and not the instructions) once users have transitioned.
+	if v.inv.Payment.Instructions == nil || v.inv.Payment.Instructions.Key == cbc.KeyEmpty {
+		fields = append(fields, validation.Field(&adv.Key, validation.Required))
+	}
+
+	return validation.ValidateStruct(adv, fields...)
 }
 
 func (v *invoiceValidator) validatePayTerms(value interface{}) error {

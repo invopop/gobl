@@ -36,5 +36,3 @@ lines:
 payment:
   terms:
     notes: "Condiciones de pago"
-  instructions:
-    key: "credit-transfer"

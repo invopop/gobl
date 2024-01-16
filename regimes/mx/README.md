@@ -115,11 +115,94 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
 }
 ```
 
+### `MetodoPago` – Payment Method
+
+The CFDI’s `MetodoPago` field specifies whether the invoice has been fully paid at the moment of issuing the invoice (`PUE` - Pago en una sola exhibición) or whether it will be paid in one or several instalments after that (`PPD` – Pago en parcialidades o diferido).
+
+In GOBL, the presence or absence of payment advances covering the invoice’s total payable amount will determine whether the `MetodoPago` will be set to `PUE` or `PPD`.
+
+Please note that if you don't include any advances in your GOBL invoice, it will be assumed that the payment of the invoice is outstanding (`MetodoPago = PPD`). This implies that the invoice supplier will have to issue “CFDI de Complemento de Pago” (remittance advice) documents at a later stage when receiving the invoice payments.
+
+#### Examples
+
+The following GOBL will map to the `PUE` (Pago en una sola exhibición) value of the `MetodoPago` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "payment": {
+    "advances": [
+      {
+        "key": "credit-transfer",
+        "desc": "Full credit card payment",
+        "amount": "232.00"
+      }
+    ]
+  },
+
+  "totals": {
+    "payable": "232.00",
+    "advance": "232.00",
+    "due": "0.00"
+    // [...]
+  }
+}
+```
+
+The following GOBL will map to the `PPD` (Pago en parcialidades o diferido) value of the `MetodoPago` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "payment": {
+    "advances": [
+      {
+        "key": "credit-transfer",
+        "desc": "Partial credit card payment",
+        "amount": "100.00"
+      }
+    ]
+  },
+
+  "totals": {
+    "payable": "232.00",
+    "advance": "100.00",
+    "due": "132.00"
+    // [...]
+  }
+}
+```
+
+The following GOBL will map to the `PPD` (Pago en parcialidades o diferido) value of the `MetodoPago` field:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // No "payment" key [...]
+
+  "totals": {
+    "payable": "232.00",
+    // [...]
+  }
+}
+```
+
 ### `FormaPago` - Payment Means
 
-The CFDI’s `FormaPago` field specifies an invoice's means of payment. The following table lists all the supported values and how GOBL will map them from the invoice's payment instructions key:
+The CFDI’s `FormaPago` field specifies an invoice's means of payment.
 
-| Code | Name                                | GOBL Payment Instructions Key |
+If the invoice hasn't been fully paid at the time of issuing the invoice (`MetodoPago = PPD`, see [the previous section](#metodopago-–-payment-method)) the value of `FormaPago` will always be set to `99` (Por definir).
+
+Otherwise (`MetodoPago = PUE`), the `FormaPago` value will be mapped from the key of the largest payment advance in the GOBL invoice. The following table lists all the supported values and how GOBL will map them:
+
+| Code | Name                                | GOBL Payment Advance Key      |
 | ---- | ----------------------------------- | ----------------------------- |
 | 01   | Efectivo                            | `cash`                        |
 | 02   | Cheque nominativo                   | `cheque`                      |
@@ -155,9 +238,13 @@ The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaP
   // [...]
 
   "payment": {
-    "instructions": {
-      "key": "online+wallet"
-    }
+    "advances": [
+      {
+        "key": "online+wallet",
+        "desc": "Prepago con monedero electrónico",
+        "amount": "100.00"
+      }
+    ]
   }
 }
 ```
