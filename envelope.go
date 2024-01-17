@@ -79,7 +79,7 @@ func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 
 	ve := make(validation.Errors)
 	for i, s := range e.Signatures {
-		if err := e.verifySignature(keys, s); err != nil {
+		if err := e.VerifySignature(s, keys...); err != nil {
 			ve[strconv.Itoa(i)] = err
 		}
 	}
@@ -92,11 +92,16 @@ func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 	return nil
 }
 
-func (e *Envelope) verifySignature(keys []*dsig.PublicKey, s *dsig.Signature) error {
+// VerifySignature checks a specific signature with the envelope to see if its
+// contents are still valid.
+// If a list of public keys are provided, they will be used to ensure that the
+// signature was signed by at least one of them. If no keys are provided, only
+// the contents will be checked.
+func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 	if len(keys) == 0 {
 		// no keys provided, only check the contents
 		h := new(head.Header)
-		if err := s.UnsafePayload(h); err != nil {
+		if err := sig.UnsafePayload(h); err != nil {
 			return errors.New("invalid signature payload")
 		}
 		if !e.Head.Contains(h) {
@@ -106,7 +111,7 @@ func (e *Envelope) verifySignature(keys []*dsig.PublicKey, s *dsig.Signature) er
 	}
 	for _, k := range keys {
 		h := new(head.Header)
-		if err := s.VerifyPayload(k, h); err != nil {
+		if err := sig.VerifyPayload(k, h); err != nil {
 			continue
 		}
 		if e.Head.Contains(h) {
