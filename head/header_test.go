@@ -48,16 +48,16 @@ func TestHeaderContains(t *testing.T) {
 	assert.True(t, h1.Contains(h2))
 
 	// Stamps
-	h1.AddStamp(&head.Stamp{Provider: "foo", Value: "bar"})
-	h1.AddStamp(&head.Stamp{Provider: "foo2", Value: "bar"})
+	h1.AddStamp(&head.Stamp{Provider: "foo", Value: "boo"})
+	h1.AddStamp(&head.Stamp{Provider: "foo2", Value: "bling"})
 	assert.True(t, h1.Contains(h2))
-	h2.AddStamp(&head.Stamp{Provider: "foo", Value: "bar"})
+	h2.AddStamp(&head.Stamp{Provider: "foo", Value: "boo"})
 	assert.True(t, h1.Contains(h2))
-	h2.AddStamp(&head.Stamp{Provider: "foo2", Value: "bar"})
+	h2.AddStamp(&head.Stamp{Provider: "foo2", Value: "bling"})
 	assert.True(t, h1.Contains(h2))
-	h2.AddStamp(&head.Stamp{Provider: "foo3", Value: "bar"})
+	h2.AddStamp(&head.Stamp{Provider: "foo3", Value: "bow"})
 	assert.False(t, h1.Contains(h2))
-	h1.AddStamp(&head.Stamp{Provider: "foo3", Value: "bar"})
+	h1.AddStamp(&head.Stamp{Provider: "foo3", Value: "bow"})
 	assert.True(t, h1.Contains(h2))
 
 	// Tags
@@ -71,13 +71,13 @@ func TestHeaderContains(t *testing.T) {
 	assert.True(t, h1.Contains(h2))
 
 	// Meta
-	h1.Meta["foo"] = "bar"
+	h1.Meta["foo"] = "bang"
 	assert.True(t, h1.Contains(h2))
-	h2.Meta["foo"] = "bar"
+	h2.Meta["foo"] = "bang"
 	assert.True(t, h1.Contains(h2))
-	h2.Meta["foo2"] = "bar"
+	h2.Meta["foo2"] = "bo2"
 	assert.False(t, h1.Contains(h2))
-	h1.Meta["foo2"] = "bar"
+	h1.Meta["foo2"] = "bo2"
 	assert.True(t, h1.Contains(h2))
 
 	// Notes
