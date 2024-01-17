@@ -385,5 +385,55 @@ func TestDocumentValidation(t *testing.T) {
 		// Double check to make sure validation working
 		assert.Contains(t, err.Error(), "issue_date: required")
 	}
+}
+
+func TestEnvelopeVerify(t *testing.T) {
+	t.Run("invalid situations", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Verify()
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "cannot verify draft document")
+		env.Head.Draft = false
+		err = env.Verify()
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "no signatures to verify")
+	})
+
+	t.Run("valid signature", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		require.NoError(t, err)
+		err = env.Verify()
+		assert.NoError(t, err)
+		err = env.Verify(testKey.Public())
+		assert.NoError(t, err)
+		rk := dsig.NewES256Key()
+		err = env.Verify(rk.Public(), testKey.Public())
+		assert.NoError(t, err)
+		err = env.Verify(rk.Public())
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
+	})
+
+	t.Run("changes", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		require.NoError(t, err)
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message 2"}))
+		err = env.Verify()
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "signatures: (0: header mismatch.)")
+		err = env.Verify(testKey.Public())
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "signatures: (0: header mismatch.)")
+
+		rk := dsig.NewES256Key()
+		err = env.Verify(rk.Public())
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
+	})
 
 }
