@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/invopop/validation"
 
@@ -63,6 +65,63 @@ func (e *Envelope) Validate() error {
 	return e.ValidateWithContext(context.Background())
 }
 
+// Verify checks the envelope's signatures to ensure the headers they contain
+// still matches with the current headers. If a list of public keys are provided,
+// they will be used to ensure that the signatures we're signed by at least
+// one of them. If no keys are provided, only the contents will be checked.
+func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
+	if e.Head == nil || e.Head.Draft {
+		return errors.New("cannot verify draft document")
+	}
+	if len(e.Signatures) == 0 {
+		return errors.New("no signatures to verify")
+	}
+
+	ve := make(validation.Errors)
+	for i, s := range e.Signatures {
+		if err := e.VerifySignature(s, keys...); err != nil {
+			ve[strconv.Itoa(i)] = err
+		}
+	}
+	if len(ve) > 0 {
+		return ErrValidation.WithCause(validation.Errors{
+			"signatures": ve,
+		})
+	}
+
+	return nil
+}
+
+// VerifySignature checks a specific signature with the envelope to see if its
+// contents are still valid.
+// If a list of public keys are provided, they will be used to ensure that the
+// signature was signed by at least one of them. If no keys are provided, only
+// the contents will be checked.
+func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	if len(keys) == 0 {
+		// no keys provided, only check the contents
+		h := new(head.Header)
+		if err := sig.UnsafePayload(h); err != nil {
+			return errors.New("invalid signature payload")
+		}
+		if !e.Head.Contains(h) {
+			return errors.New("header mismatch")
+		}
+		return nil
+	}
+	for _, k := range keys {
+		h := new(head.Header)
+		if err := sig.VerifyPayload(k, h); err != nil {
+			continue
+		}
+		if e.Head.Contains(h) {
+			return nil
+		}
+		return errors.New("header mismatch")
+	}
+	return errors.New("no key match found")
+}
+
 // ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) ValidateWithContext(ctx context.Context) error {
 	ctx = context.WithValue(ctx, internal.KeyDraft, e.Head != nil && e.Head.Draft)
@@ -70,7 +129,12 @@ func (e *Envelope) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&e.Schema, validation.Required),
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures, validation.When(e.Head == nil || e.Head.Draft, validation.Empty)),
+		validation.Field(&e.Signatures,
+			validation.When(
+				e.Head == nil || e.Head.Draft,
+				validation.Empty,
+			),
+		),
 	)
 	if err != nil {
 		return err
