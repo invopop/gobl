@@ -32,9 +32,10 @@
           "title": "Identities",
           "description": "List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer."
         },
-        "desc": {
+        "description": {
           "type": "string",
-          "description": "Detailed description"
+          "title": "Description",
+          "description": "Detailed description of the item."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",

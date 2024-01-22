@@ -614,7 +614,7 @@
           "title": "Series",
           "description": "Series of the outlay invoice."
         },
-        "desc": {
+        "description": {
           "type": "string",
           "title": "Description",
           "description": "Details on what the outlay was."
@@ -633,7 +633,7 @@
       "type": "object",
       "required": [
         "i",
-        "desc",
+        "description",
         "amount"
       ],
       "description": "Outlay represents a reimbursable expense that was paid for by the supplier and invoiced separately by the third party directly to the customer."

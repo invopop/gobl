@@ -96,7 +96,7 @@
           "title": "Grant",
           "description": "If this \"advance\" payment has come from a public grant or subsidy, set this to true."
         },
-        "desc": {
+        "description": {
           "type": "string",
           "title": "Description",
           "description": "Details about the advance."
@@ -119,7 +119,7 @@
       },
       "type": "object",
       "required": [
-        "desc",
+        "description",
         "amount"
       ],
       "description": "Advance represents a single payment that has been made already, such as a deposit on an intent to purchase, or as credit from a previous invoice which was later corrected or cancelled."
