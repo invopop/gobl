@@ -2,6 +2,7 @@ package pay
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -28,7 +29,7 @@ type Advance struct {
 	// If this "advance" payment has come from a public grant or subsidy, set this to true.
 	Grant bool `json:"grant,omitempty" jsonschema:"title=Grant"`
 	// Details about the advance.
-	Description string `json:"desc" jsonschema:"title=Description"`
+	Description string `json:"description" jsonschema:"title=Description"`
 	// How much as a percentage of the total with tax was paid
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// How much was paid.
@@ -57,6 +58,24 @@ func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
 	if a.Percent != nil {
 		a.Amount = a.Percent.Of(totalWithTax)
 	}
+}
+
+// JSONUnmarshal helps migrate the desc field to description.
+func (a *Advance) JSONUnmarshal(data []byte) error {
+	type Alias Advance
+	aux := &struct {
+		Desc string `json:"desc,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(a),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.Desc != "" {
+		a.Description = aux.Desc
+	}
+	return nil
 }
 
 // JSONSchemaExtend extends the JSONSchema for the Instructions type.

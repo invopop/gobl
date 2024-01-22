@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"encoding/json"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -26,7 +28,7 @@ type Outlay struct {
 	// Series of the outlay invoice.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Details on what the outlay was.
-	Description string `json:"desc" jsonschema:"title=Description"`
+	Description string `json:"description" jsonschema:"title=Description"`
 	// Who was the supplier of the outlay
 	Supplier *org.Party `json:"supplier,omitempty" jsonschema:"title=Supplier"`
 	// Amount paid by the supplier.
@@ -43,6 +45,22 @@ func (o *Outlay) Validate() error {
 		validation.Field(&o.Supplier),
 		validation.Field(&o.Amount, validation.Required),
 	)
+}
+
+// JSONUnmarshal helps migrate the desc field to description.
+func (o *Outlay) JSONUnmarshal(data []byte) error {
+	type Alias Outlay
+	aux := &struct {
+		Desc string `json:"desc"`
+		*Alias
+	}{
+		Alias: (*Alias)(o),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	o.Description = aux.Desc
+	return nil
 }
 
 func calculateOutlays(zero num.Amount, outlays []*Outlay) *num.Amount {

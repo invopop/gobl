@@ -8,6 +8,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestOutlayUnmarshal(t *testing.T) {
+	o := new(Outlay)
+	err := o.JSONUnmarshal([]byte(`{"desc":"foo"}`))
+	require.NoError(t, err)
+	assert.Equal(t, "foo", o.Description)
+}
+
 func TestOutlayTotals(t *testing.T) {
 	os := []*Outlay{
 		{
