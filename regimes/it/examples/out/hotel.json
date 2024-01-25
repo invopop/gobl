@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9464c96c31ea3e8b8c85b04273629a2867ca3326b7eeaf9edae63e4df896e8ed"
+			"val": "841053b409009c4ddaff3162ee942a02c3bfb6f545ce534dbba0723161a3d435"
 		},
 		"draft": true
 	},
@@ -22,6 +22,7 @@
 			"name": "Hotel California",
 			"tax_id": {
 				"country": "IT",
+				"type": "business",
 				"code": "12345678903"
 			},
 			"addresses": [
@@ -45,6 +46,7 @@
 			"name": "Mela S.r.l.",
 			"tax_id": {
 				"country": "IT",
+				"type": "business",
 				"code": "13029381004"
 			},
 			"inboxes": [
