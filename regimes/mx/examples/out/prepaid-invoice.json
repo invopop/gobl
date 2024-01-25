@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d8defb2c2e8f823f3ee18d3b75516cd38532f735a6f2635ceb7950af3fa7c150"
+			"val": "e87b2b2acf012c7fa3b9d9eda0046943b173b98ce47fa9bd27144f27b157b1b0"
 		},
 		"draft": true
 	},
@@ -94,13 +94,13 @@
 			"advances": [
 				{
 					"key": "cash",
-					"desc": "Anticipo",
+					"description": "Anticipo",
 					"percent": "10.0%",
 					"amount": "2.20"
 				},
 				{
 					"key": "card",
-					"desc": "Saldo",
+					"description": "Saldo",
 					"percent": "90.0%",
 					"amount": "19.84"
 				}

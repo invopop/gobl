@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/num"
@@ -10,7 +11,7 @@ import (
 
 func TestOutlayUnmarshal(t *testing.T) {
 	o := new(Outlay)
-	err := o.JSONUnmarshal([]byte(`{"desc":"foo"}`))
+	err := json.Unmarshal([]byte(`{"desc":"foo"}`), o)
 	require.NoError(t, err)
 	assert.Equal(t, "foo", o.Description)
 }

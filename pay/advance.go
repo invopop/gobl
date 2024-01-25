@@ -60,8 +60,8 @@ func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
 	}
 }
 
-// JSONUnmarshal helps migrate the desc field to description.
-func (a *Advance) JSONUnmarshal(data []byte) error {
+// UnmarshalJSON helps migrate the desc field to description.
+func (a *Advance) UnmarshalJSON(data []byte) error {
 	type Alias Advance
 	aux := &struct {
 		Desc string `json:"desc,omitempty"`

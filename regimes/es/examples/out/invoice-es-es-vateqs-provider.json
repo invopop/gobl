@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "72e81bc4530fcd56154953690b56d170d3de5109a833642876e1dc33399f8d6e"
+			"val": "43f53d3728f1840ae9a652d616a7af90f827a937e375e9bf68d2e5d61c986ddc"
 		},
 		"draft": true
 	},
@@ -111,7 +111,7 @@
 			"advances": [
 				{
 					"date": "2021-09-01",
-					"desc": "Deposit paid upfront",
+					"description": "Deposit paid upfront",
 					"amount": "25.00"
 				}
 			],

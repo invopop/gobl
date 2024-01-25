@@ -1,6 +1,7 @@
 package pay_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/pay"
@@ -10,7 +11,7 @@ import (
 
 func TestAdvanceUnmarshal(t *testing.T) {
 	a := new(pay.Advance)
-	err := a.JSONUnmarshal([]byte(`{"desc":"foo"}`))
+	err := json.Unmarshal([]byte(`{"desc":"foo"}`), a)
 	require.NoError(t, err)
 	assert.Equal(t, "foo", a.Description)
 }
