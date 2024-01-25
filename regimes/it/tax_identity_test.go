@@ -14,22 +14,37 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	tests := []struct {
 		code     cbc.Code
 		expected cbc.Code
+		typ      cbc.Key
 	}{
 		{
 			code:     "12345678901",
 			expected: "12345678901",
+			typ:      it.TaxIdentityTypeBusiness,
 		},
 		{
 			code:     "123-456-789-01",
 			expected: "12345678901",
+			typ:      it.TaxIdentityTypeBusiness,
 		},
 		{
 			code:     "123456 789 01",
 			expected: "12345678901",
+			typ:      it.TaxIdentityTypeBusiness,
 		},
 		{
 			code:     "IT 12345678901",
 			expected: "12345678901",
+			typ:      it.TaxIdentityTypeBusiness,
+		},
+		{
+			code:     "RSSMRA74D22A001Q",
+			expected: "RSSMRA74D22A001Q",
+			typ:      it.TaxIdentityTypeIndividual,
+		},
+		{
+			code:     " RSS-MRA 74D22 A00 1Q ",
+			expected: "RSSMRA74D22A001Q",
+			typ:      it.TaxIdentityTypeIndividual,
 		},
 	}
 	for _, ts := range tests {
@@ -37,6 +52,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		err := it.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.expected, tID.Code)
+		assert.Equal(t, ts.typ, tID.Type)
 	}
 }
 

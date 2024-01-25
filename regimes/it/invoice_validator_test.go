@@ -98,6 +98,10 @@ func TestCustomerValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 
+	inv.Customer.TaxID = nil
+	err := inv.Validate()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "customer: (tax_id: cannot be blank.)")
 }
 
 func TestSupplierValidation(t *testing.T) {
