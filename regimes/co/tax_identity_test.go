@@ -113,9 +113,9 @@ func TestValidateTaxIdentity(t *testing.T) {
 			err:  "code: cannot be blank",
 		},
 		{
-			name: "missing zone for citizen",
+			name: "missing zone for final customer",
 			typ:  co.TaxIdentityTypeCitizen,
-			code: "100100100",
+			code: co.TaxCodeFinalCustomer,
 			zone: "",
 			err:  "",
 		},

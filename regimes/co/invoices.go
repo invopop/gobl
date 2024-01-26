@@ -48,21 +48,17 @@ func (v *invoiceValidator) validate() error {
 
 func (v *invoiceValidator) validParty(value interface{}) error {
 	obj, _ := value.(*org.Party)
-	if obj == nil || obj.TaxID == nil {
+	if obj == nil {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
 			validation.Required,
-			validation.When(
-				obj.TaxID.Country.In(l10n.CO),
-				tax.RequireIdentityCode,
-				validation.By(v.validTaxIdentity),
-			),
+			validation.By(v.validTaxIdentity),
 		),
 		validation.Field(&obj.Addresses,
 			validation.When(
-				obj.TaxID.Country.In(l10n.CO),
+				obj.TaxID != nil && obj.TaxID.Country.In(l10n.CO),
 				validation.Length(1, 0),
 			),
 		),
@@ -87,11 +83,13 @@ func (v *invoiceValidator) validTaxIdentity(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Zone,
-			tax.ZoneIn(zones),
-			validation.When(
-				obj.Type.In(TaxIdentityTypeTIN),
-				validation.Required,
+		validation.Field(&obj.Code, validation.Required),
+		validation.Field(&obj.Type,
+			validation.Required,
+			isValidTaxIdentityTypeKey,
+			validation.When(!obj.Country.In(l10n.CO),
+				// Certain types are exclusive of CO identities
+				validation.NotIn(TaxIdentityTypeTIN, TaxIdentityTypeCitizen),
 			),
 		),
 	)

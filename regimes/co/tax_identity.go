@@ -25,6 +25,8 @@ const (
 	TaxIdentityTypeForeigner  cbc.Key = "foreigner"
 	TaxIdentityTypePEP        cbc.Key = "pep"
 	TaxIdentityTypeNUIP       cbc.Key = "nuip"
+
+	TaxCodeFinalCustomer cbc.Code = "222222222222"
 )
 
 var (
@@ -177,12 +179,19 @@ func validateTaxIdentity(tID *tax.Identity) error {
 			),
 		),
 		validation.Field(&tID.Zone,
-			validation.When(tID.Type.In(TaxIdentityTypeTIN),
+			validation.When(!isFinalCustomer(tID),
 				validation.Required,
 				tax.ZoneIn(zones),
 			),
 		),
 	)
+}
+
+func isFinalCustomer(tID *tax.Identity) bool {
+	if tID == nil {
+		return false
+	}
+	return tID.Type == TaxIdentityTypeCitizen && tID.Code == TaxCodeFinalCustomer
 }
 
 // normalizeTaxIdentity will remove any whitespace or separation characters from
@@ -265,3 +274,15 @@ func validateDigits(code, check cbc.Code) error {
 
 	return nil
 }
+
+func taxIdentityTypeKeys() []interface{} {
+	keys := make([]interface{}, len(taxIdentityTypeDefs))
+	i := 0
+	for _, v := range taxIdentityTypeDefs {
+		keys[i] = v.Key
+		i++
+	}
+	return keys
+}
+
+var isValidTaxIdentityTypeKey = validation.In(taxIdentityTypeKeys()...)
