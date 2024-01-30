@@ -12,7 +12,7 @@ import (
 )
 
 func TestTemplateExecute(t *testing.T) {
-	data, err := os.ReadFile("./examples/invoice.yaml")
+	data, err := os.ReadFile("./examples/invoice.yaml.tmpl")
 	require.NoError(t, err)
 
 	row := map[string]any{
