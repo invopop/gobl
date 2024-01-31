@@ -39,10 +39,10 @@ func (d *Digest) Validate() error {
 // digest object. This will fail if the algorithms are different.
 func (d *Digest) Equals(d2 *Digest) error {
 	if d.Algorithm != d2.Algorithm {
-		return errors.New("digest algorithm mismatch")
+		return errors.New("algorithm mismatch")
 	}
 	if d.Value != d2.Value {
-		return errors.New("digest mismatch")
+		return errors.New("mismatch")
 	}
 	return nil
 }

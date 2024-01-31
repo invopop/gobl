@@ -209,7 +209,7 @@ func TestEnvelopeValidate(t *testing.T) {
 			env: func() *gobl.Envelope {
 				return &gobl.Envelope{}
 			},
-			want: "$schema: cannot be blank; doc: cannot be blank; head: cannot be blank.",
+			want: "validation: ($schema: cannot be blank; doc: cannot be blank; head: cannot be blank.).",
 		},
 		{
 			name: "missing message body, draft",
@@ -219,7 +219,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
-			want: "doc: (content: cannot be blank.).",
+			want: "validation: (doc: (content: cannot be blank.).).",
 		},
 		{
 			name: "missing sig, draft",
@@ -249,7 +249,7 @@ func TestEnvelopeValidate(t *testing.T) {
 				msg.Content = "bar"
 				return env
 			},
-			want: "document: digest mismatch",
+			want: "digest: mismatch",
 		},
 	}
 
@@ -279,7 +279,7 @@ func TestEnvelopeSign(t *testing.T) {
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "validation: doc: (content: cannot be blank.).")
+		assert.Contains(t, err.Error(), "validation: (doc: (content: cannot be blank.).).")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
@@ -385,6 +385,25 @@ func TestDocumentValidation(t *testing.T) {
 		// Double check to make sure validation working
 		assert.Contains(t, err.Error(), "issue_date: required")
 	}
+}
+
+func TestDocumentValidationOutput(t *testing.T) {
+	msg := &note.Message{}
+
+	doc, err := schema.NewObject(msg)
+	require.NoError(t, err)
+
+	err = doc.Validate()
+	data, err := json.Marshal(err)
+	require.NoError(t, err)
+	assert.Equal(t, `{"content":"cannot be blank"}`, string(data))
+
+	env := gobl.NewEnvelope()
+	require.NoError(t, env.Insert(msg))
+	err = env.Validate()
+	data, err = json.Marshal(err)
+	require.NoError(t, err)
+	assert.Equal(t, `{"key":"validation","cause":{"doc":{"content":"cannot be blank"}}}`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {

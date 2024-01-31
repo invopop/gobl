@@ -36,6 +36,12 @@ type Advance struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 	// If different from the parent document's base currency.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
+	// Details of the payment that was made via a credit or debit card.
+	Card *Card `json:"card,omitempty" jsonschema:"title=Card"`
+	// Details about how the payment was made by credit (bank) transfer.
+	CreditTransfer *CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer"`
+	// Additional details useful for the parties involved.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // Validate checks the advance looks okay
@@ -49,6 +55,11 @@ func (a *Advance) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&a.Amount, validation.Required),
 		validation.Field(&a.Key, HasValidMeansKey),
 		validation.Field(&a.Description, validation.Required),
+		validation.Field(&a.Percent),
+		validation.Field(&a.Amount),
+		validation.Field(&a.Card),
+		validation.Field(&a.CreditTransfer),
+		validation.Field(&a.Meta),
 	)
 }
 
