@@ -133,7 +133,7 @@ func (c *Combo) prepare(r *Regime, zone l10n.Code, date cal.Date) error {
 // the rate field.
 func (c *Combo) UnmarshalJSON(data []byte) error {
 	type Alias Combo
-	aux := &struct {
+	aux := struct {
 		*Alias
 		Tags []cbc.Key `json:"tags"`
 	}{
