@@ -35,14 +35,6 @@ const (
 	CorrectionKeyInsolvency      cbc.Key = "insolvency"   // the customer is insolvent and cannot pay
 )
 
-// List of correction methods derived from the Spanish FacturaE format.
-const (
-	CorrectionMethodKeyComplete   cbc.Key = "complete"   // everything has changed
-	CorrectionMethodKeyPartial    cbc.Key = "partial"    // only differences corrected
-	CorrectionMethodKeyDiscount   cbc.Key = "discount"   // deducted from future invoices
-	CorrectionMethodKeyAuthorized cbc.Key = "authorized" // Permitted by tax agency
-)
-
 // correctionList contains an array of Key Definitions describing each of the acceptable
 // correction keys, descriptions, and their "code" as determined by the FacturaE specifications.
 var correctionChangesList = []*tax.KeyDefinition{
@@ -224,41 +216,6 @@ var correctionChangesList = []*tax.KeyDefinition{
 	},
 }
 
-var correctionMethodList = []*tax.KeyDefinition{
-	{
-		Key: CorrectionMethodKeyComplete,
-		Name: i18n.String{
-			i18n.EN: "Complete",
-			i18n.ES: "Rectificaticón íntegra",
-		},
-		Map: cbc.CodeMap{KeyFacturaE: "01"},
-	},
-	{
-		Key: CorrectionMethodKeyPartial,
-		Name: i18n.String{
-			i18n.EN: "Corrected items only",
-			i18n.ES: "Rectificación por diferencias",
-		},
-		Map: cbc.CodeMap{KeyFacturaE: "02"},
-	},
-	{
-		Key: CorrectionMethodKeyDiscount,
-		Name: i18n.String{
-			i18n.EN: "Bulk deal in a given period",
-			i18n.ES: "Rectificación por descuento por volumen de operaciones durante un periodo",
-		},
-		Map: cbc.CodeMap{KeyFacturaE: "03"},
-	},
-	{
-		Key: CorrectionMethodKeyAuthorized,
-		Name: i18n.String{
-			i18n.EN: "Authorized by the Tax Agency",
-			i18n.ES: "Autorizadas por la Agencia Tributaria",
-		},
-		Map: cbc.CodeMap{KeyFacturaE: "04"},
-	},
-}
-
 func correctionChangeKeys() []interface{} {
 	keys := make([]interface{}, len(correctionChangesList))
 	i := 0
@@ -269,16 +226,4 @@ func correctionChangeKeys() []interface{} {
 	return keys
 }
 
-func correctionMethodKeys() []interface{} {
-	keys := make([]interface{}, len(correctionMethodList))
-	i := 0
-	for _, v := range correctionMethodList {
-		keys[i] = v.Key
-		i++
-	}
-	return keys
-}
-
 var isValidCorrectionChangeKey = validation.In(correctionChangeKeys()...)
-
-var isValidCorrectionMethodKey = validation.In(correctionMethodKeys()...)

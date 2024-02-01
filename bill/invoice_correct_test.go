@@ -21,41 +21,47 @@ import (
 
 func TestInvoiceCorrect(t *testing.T) {
 	// Spanish Case (only corrective)
+
+	// debit note not supported in Spain
 	i := testInvoiceESForCorrection(t)
-	err := i.Correct(bill.Credit, bill.Debit)
+	err := i.Correct(bill.Debit)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "cannot use both credit and debit options")
+	assert.Contains(t, err.Error(), "invalid correction type: debit-note")
 
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Credit,
 		bill.WithReason("test refund"),
-		bill.WithMethod(es.CorrectionMethodKeyComplete),
 		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	require.NoError(t, err)
-	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
-	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
+	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "10")
 	assert.Equal(t, i.IssueDate, cal.Today())
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series, "TEST")
 	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
-	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
+	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 
 	// can't run twice
-	err = i.Correct()
+	err = i.Correct(bill.Corrective)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "cannot correct an invoice without a code")
 
 	i = testInvoiceESForCorrection(t)
+	err = i.Correct()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "missing correction type")
+
+	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Debit, bill.WithReason("should fail"))
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "debit note not supported by regime")
+	assert.Contains(t, err.Error(), "invalid correction type: debit-note")
 
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(
-		bill.WithMethod(es.CorrectionMethodKeyComplete),
+		bill.Corrective,
 		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	require.NoError(t, err)
@@ -65,8 +71,8 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	d := cal.MakeDate(2023, 6, 13)
 	err = i.Correct(
+		bill.Credit,
 		bill.WithIssueDate(d),
-		bill.WithMethod(es.CorrectionMethodKeyComplete),
 		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	require.NoError(t, err)
@@ -74,7 +80,7 @@ func TestInvoiceCorrect(t *testing.T) {
 
 	// France case (both corrective and credit note)
 	i = testInvoiceFRForCorrection(t)
-	err = i.Correct()
+	err = i.Correct(bill.Corrective)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
 
@@ -102,44 +108,43 @@ func TestInvoiceCorrect(t *testing.T) {
 	}
 
 	i = testInvoiceCOForCorrection(t)
-	err = i.Correct(bill.WithStamps(stamps))
+	err = i.Correct(bill.Corrective, bill.WithStamps(stamps))
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "corrective invoice type not supported by regime, try credit or debit")
+	assert.Contains(t, err.Error(), "invalid correction type: corrective")
 
 	i = testInvoiceCOForCorrection(t)
 	err = i.Correct(
 		bill.Credit,
 		bill.WithStamps(stamps),
-		bill.WithMethod(co.CorrectionMethodKeyRevoked),
 		bill.WithReason("test refund"),
+		bill.WithChanges(co.CorrectionKeyRevoked),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 	pre = i.Preceding[0]
 	require.Len(t, pre.Stamps, 1)
 	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
-	assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
+	// assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
 }
 
 func TestCorrectWithOptions(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
 	opts := &bill.CorrectionOptions{
-		Credit:  true,
+		Type:    bill.InvoiceTypeCreditNote,
 		Reason:  "test refund",
-		Method:  es.CorrectionMethodKeyComplete,
 		Changes: []cbc.Key{es.CorrectionKeyLine},
 	}
 	err := i.Correct(bill.WithOptions(opts))
 	require.NoError(t, err)
-	assert.Equal(t, bill.InvoiceTypeCorrective, i.Type)
-	assert.Equal(t, i.Lines[0].Quantity.String(), "-10")
+	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "10")
 	assert.Equal(t, i.IssueDate, cal.Today())
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series, "TEST")
 	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
-	assert.Equal(t, i.Totals.Payable.String(), "-900.00")
+	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 }
 
 func TestCorrectionOptionsSchema(t *testing.T) {
@@ -151,13 +156,13 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	require.True(t, ok)
 
 	cos := schema.Definitions["CorrectionOptions"]
-	assert.Equal(t, cos.Properties.Len(), 7)
+	assert.Equal(t, cos.Properties.Len(), 5)
 
-	pm, ok := cos.Properties.Get("method")
+	pm, ok := cos.Properties.Get("changes")
 	require.True(t, ok)
-	assert.Len(t, pm.OneOf, 4)
+	assert.Len(t, pm.Items.OneOf, 22)
 
-	exp := `{"$ref":"https://gobl.org/draft-0/cbc/key","title":"Method","description":"Correction method as defined by the tax regime.","oneOf":[{"const":"complete","title":"Complete"},{"const":"partial","title":"Corrected items only"},{"const":"discount","title":"Bulk deal in a given period"},{"const":"authorized","title":"Authorized by the Tax Agency"}]}`
+	exp := `{"items":{"$ref":"https://gobl.org/draft-0/cbc/key","oneOf":[{"const":"code","title":"Invoice code"},{"const":"series","title":"Invoice series"},{"const":"issue-date","title":"Issue date"},{"const":"supplier-name","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"customer-name","title":"Name and surnames/Corporate name - Receiver"},{"const":"supplier-tax-id","title":"Issuer's Tax Identification Number"},{"const":"customer-tax-id","title":"Receiver's Tax Identification Number"},{"const":"supplier-addr","title":"Issuer's address"},{"const":"customer-addr","title":"Receiver's address"},{"const":"line","title":"Item line"},{"const":"tax-rate","title":"Applicable Tax Rate"},{"const":"tax-amount","title":"Applicable Tax Amount"},{"const":"period","title":"Applicable Date/Period"},{"const":"type","title":"Invoice Class"},{"const":"legal-details","title":"Legal literals"},{"const":"tax-base","title":"Taxable Base"},{"const":"tax","title":"Calculation of tax outputs"},{"const":"tax-retained","title":"Calculation of tax inputs"},{"const":"refund","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"discount","title":"Taxable Base modified due to discounts and rebates"},{"const":"judicial","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"insolvency","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}]},"type":"array","title":"Changes","description":"Changes keys that describe the specific changes according to the tax regime."}`
 	data, err := json.Marshal(pm)
 	require.NoError(t, err)
 	if !assert.JSONEq(t, exp, string(data)) {
@@ -171,15 +176,15 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 
 func TestCorrectWithData(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
-	data := []byte(`{"credit":true,"reason":"test refund"}`)
+	data := []byte(`{"type":"credit-note","reason":"test refund"}`)
 
 	err := i.Correct(
 		bill.WithData(data),
-		bill.WithMethod(es.CorrectionMethodKeyComplete),
 		bill.WithChanges(es.CorrectionKeyLine),
 	)
 	assert.NoError(t, err)
-	assert.Equal(t, i.Lines[0].Quantity.String(), "-10") // implies credit was made
+	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
+	assert.Equal(t, i.Lines[0].Quantity.String(), "10") // implies credit was made
 
 	data = []byte(`{"credit": true`) // invalid json
 	err = i.Correct(bill.WithData(data))

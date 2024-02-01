@@ -16,6 +16,8 @@ import (
 type Preceding struct {
 	// Preceding document's UUID if available can be useful for tracing.
 	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Type of the preceding document
+	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 	// Series identification code
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Code of the previous document.
@@ -26,8 +28,6 @@ type Preceding struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Seals of approval from other organisations that may need to be listed.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-	// Tax regime specific key reflecting the method used to correct the preceding invoice.
-	CorrectionMethod cbc.Key `json:"correction_method,omitempty" jsonschema:"title=Correction Method"`
 	// Tax regime specific keys reflecting what has been changed from the previous invoice.
 	Changes []cbc.Key `json:"changes,omitempty" jsonschema:"title=Changes"`
 	// Tax period in which the previous invoice had an effect required by some tax regimes and formats.
@@ -58,11 +58,11 @@ func (p *Preceding) UnmarshalJSON(data []byte) error {
 func (p *Preceding) Validate() error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.UUID),
+		validation.Field(&p.Type),
 		validation.Field(&p.Series),
 		validation.Field(&p.Code, validation.Required),
 		validation.Field(&p.IssueDate, cal.DateNotZero()),
 		validation.Field(&p.Stamps),
-		validation.Field(&p.CorrectionMethod),
 		validation.Field(&p.Changes),
 		validation.Field(&p.Period),
 		validation.Field(&p.Meta),

@@ -97,10 +97,6 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 			validation.Required,
 			validation.Each(isValidCorrectionChangeKey),
 		),
-		validation.Field(&obj.CorrectionMethod,
-			validation.Required,
-			isValidCorrectionMethodKey,
-		),
 	)
 }
 

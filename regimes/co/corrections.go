@@ -9,16 +9,16 @@ import (
 
 // Preceding document correction method constants.
 const (
-	CorrectionMethodKeyPartial         cbc.Key = "partial"
-	CorrectionMethodKeyRevoked         cbc.Key = "revoked"
-	CorrectionMethodKeyDiscount        cbc.Key = "discount"
-	CorrectionMethodKeyPriceAdjustment cbc.Key = "price-adjustment"
-	CorrectionMethodKeyOther           cbc.Key = "other"
+	CorrectionKeyPartial         cbc.Key = "partial"
+	CorrectionKeyRevoked         cbc.Key = "revoked"
+	CorrectionKeyDiscount        cbc.Key = "discount"
+	CorrectionKeyPriceAdjustment cbc.Key = "price-adjustment"
+	CorrectionKeyOther           cbc.Key = "other"
 )
 
-var correctionMethodList = []*tax.KeyDefinition{
+var correctionList = []*tax.KeyDefinition{
 	{
-		Key: CorrectionMethodKeyPartial,
+		Key: CorrectionKeyPartial,
 		Name: i18n.String{
 			i18n.EN: "Partial refund",
 			i18n.ES: "Devolución parcial",
@@ -32,7 +32,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: CorrectionMethodKeyRevoked,
+		Key: CorrectionKeyRevoked,
 		Name: i18n.String{
 			i18n.EN: "Revoked",
 			i18n.ES: "Anulación",
@@ -46,7 +46,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: CorrectionMethodKeyDiscount,
+		Key: CorrectionKeyDiscount,
 		Name: i18n.String{
 			i18n.EN: "Discount",
 			i18n.ES: "Descuento",
@@ -60,7 +60,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: CorrectionMethodKeyPriceAdjustment,
+		Key: CorrectionKeyPriceAdjustment,
 		Name: i18n.String{
 			i18n.EN: "Adjustment",
 			i18n.ES: "Ajuste",
@@ -74,7 +74,7 @@ var correctionMethodList = []*tax.KeyDefinition{
 		},
 	},
 	{
-		Key: CorrectionMethodKeyOther,
+		Key: CorrectionKeyOther,
 		Name: i18n.String{
 			i18n.EN: "Other",
 			i18n.ES: "Otros",
@@ -85,12 +85,12 @@ var correctionMethodList = []*tax.KeyDefinition{
 	},
 }
 
-func correctionMethodKeys() []interface{} {
-	keys := make([]interface{}, len(correctionMethodList))
-	for i, v := range correctionMethodList {
+func correctionKeys() []interface{} {
+	keys := make([]interface{}, len(correctionList))
+	for i, v := range correctionList {
 		keys[i] = v.Key
 	}
 	return keys
 }
 
-var isValidCorrectionMethodKey = validation.In(correctionMethodKeys()...)
+var isValidCorrectionKey = validation.In(correctionKeys()...)

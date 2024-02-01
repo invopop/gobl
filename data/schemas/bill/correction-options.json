@@ -5,6 +5,11 @@
   "$defs": {
     "CorrectionOptions": {
       "properties": {
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Type",
+          "description": "The type of corrective invoice to produce."
+        },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Issue Date",
@@ -18,25 +23,10 @@
           "title": "Stamps",
           "description": "Stamps of the previous document to include in the preceding data."
         },
-        "credit": {
-          "type": "boolean",
-          "title": "Credit",
-          "description": "Credit when true indicates that the corrective document should cancel the previous document."
-        },
-        "debit": {
-          "type": "boolean",
-          "title": "Debit",
-          "description": "Debit when true indicates that the corrective document should add new items to the previous document."
-        },
         "reason": {
           "type": "string",
           "title": "Reason",
           "description": "Human readable reason for the corrective operation."
-        },
-        "method": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Method",
-          "description": "Correction method as defined by the tax regime."
         },
         "changes": {
           "items": {
@@ -48,6 +38,9 @@
         }
       },
       "type": "object",
+      "required": [
+        "type"
+      ],
       "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice."
     }
   },

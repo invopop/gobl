@@ -89,8 +89,8 @@ func New() *tax.Regime {
 				Schema: bill.ShortSchemaInvoice,
 				Types: []cbc.Key{
 					bill.InvoiceTypeCorrective,
+					bill.InvoiceTypeCreditNote,
 				},
-				Methods: correctionMethodList,
 				Changes: correctionChangesList,
 			},
 		},

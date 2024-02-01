@@ -116,14 +116,6 @@
           "title": "Types",
           "description": "The types of sub-documents supported by the regime"
         },
-        "methods": {
-          "items": {
-            "$ref": "#/$defs/KeyDefinition"
-          },
-          "type": "array",
-          "title": "Methods",
-          "description": "Methods describe the methods used to correct an invoice."
-        },
         "changes": {
           "items": {
             "$ref": "#/$defs/KeyDefinition"

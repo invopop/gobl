@@ -26,5 +26,11 @@ func TestInvoiceType(t *testing.T) {
 
 	assert.True(t, c.In("bar", "foo"))
 	assert.False(t, c.In("bar", "dom"))
+}
 
+func TestInvoiceUNTDID1001(t *testing.T) {
+	inv := testInvoiceESForCorrection(t)
+	assert.Equal(t, cbc.CodeEmpty, inv.UNTDID1001())
+	inv.Type = bill.InvoiceTypeStandard
+	assert.Equal(t, cbc.Code("380"), inv.UNTDID1001())
 }

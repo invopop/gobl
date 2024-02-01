@@ -103,7 +103,11 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.CorrectionMethod, validation.Required, isValidCorrectionMethodKey),
+		validation.Field(&obj.Changes,
+			validation.Required,
+			validation.Length(1, 1), // only one change expected in Colombia
+			validation.Each(isValidCorrectionKey),
+		),
 		validation.Field(&obj.Reason, validation.Required),
 	)
 }

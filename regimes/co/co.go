@@ -60,7 +60,7 @@ func New() *tax.Regime {
 				Stamps: []cbc.Key{
 					StampProviderDIANCUDE,
 				},
-				Methods: correctionMethodList,
+				Changes: correctionList,
 			},
 		},
 		Categories: taxCategories,
