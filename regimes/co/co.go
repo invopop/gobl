@@ -49,6 +49,7 @@ func New() *tax.Regime {
 		Validator:        Validate,
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
+		Extensions:       extensionKeys,       // see extensions.go
 		Zones:            zones,               // see zones.go
 		Corrections: []*tax.CorrectionDefinition{ // see preceding.go
 			{
@@ -56,11 +57,13 @@ func New() *tax.Regime {
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
+				Extensions: []cbc.Key{
+					ExtKeyDIANCorrection,
+				},
 				ReasonRequired: true,
 				Stamps: []cbc.Key{
 					StampProviderDIANCUDE,
 				},
-				Changes: correctionList,
 			},
 		},
 		Categories: taxCategories,

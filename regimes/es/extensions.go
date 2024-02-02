@@ -8,11 +8,181 @@ import (
 
 // Spanish regime extension codes for local electronic formats.
 const (
-	ExtKeyTBAIExemption = "es-tbai-exemption"
-	ExtKeyTBAIProduct   = "es-tbai-product"
+	ExtKeyTBAIExemption      = "es-tbai-exemption"
+	ExtKeyTBAIProduct        = "es-tbai-product"
+	ExtKeyTBAICorrection     = "es-tbai-correction"
+	ExtKeyFacturaECorrection = "es-facturae-correction"
 )
 
 var extensionKeys = []*tax.KeyDefinition{
+	{
+		Key: ExtKeyFacturaECorrection,
+		Name: i18n.String{
+			i18n.EN: "FacturaE Change",
+			i18n.ES: "Cambio de FacturaE",
+		},
+		Desc: i18n.String{
+			i18n.EN: "FacturaE requires a specific and single code that explains why the previous invoice is being corrected.",
+			i18n.ES: "FacturaE requiere un código específico y único que explique por qué se está corrigiendo la factura anterior.",
+		},
+		// Codes take from FacturaE XSD
+		Codes: []*tax.CodeDefinition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "Invoice code",
+					i18n.ES: "Número de la factura",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "Invoice series",
+					i18n.ES: "Serie de la factura",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "Issue date",
+					i18n.ES: "Fecha expedición",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "Name and surnames/Corporate name - Issuer (Sender)",
+					i18n.ES: "Nombre y apellidos/Razón Social-Emisor",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "Name and surnames/Corporate name - Receiver",
+					i18n.ES: "Nombre y apellidos/Razón Social-Receptor",
+				},
+			},
+			{
+				Code: "06",
+				Name: i18n.String{
+					i18n.EN: "Issuer's Tax Identification Number",
+					i18n.ES: "Identificación fiscal Emisor/obligado",
+				},
+			},
+			{
+				Code: "07",
+				Name: i18n.String{
+					i18n.EN: "Receiver's Tax Identification Number",
+					i18n.ES: "Identificación fiscal Receptor",
+				},
+			},
+			{
+				Code: "08",
+				Name: i18n.String{
+					i18n.EN: "Supplier's address",
+					i18n.ES: "Domicilio Emisor/Obligado",
+				},
+			},
+			{
+				Code: "09",
+				Name: i18n.String{
+					i18n.EN: "Customer's address",
+					i18n.ES: "Domicilio Receptor",
+				},
+			},
+			{
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Item line",
+					i18n.ES: "Detalle Operación",
+				},
+			},
+			{
+				Code: "11",
+				Name: i18n.String{
+					i18n.EN: "Applicable Tax Rate",
+					i18n.ES: "Porcentaje impositivo a aplicar",
+				},
+			},
+			{
+				Code: "12",
+				Name: i18n.String{
+					i18n.EN: "Applicable Tax Amount",
+					i18n.ES: "Cuota tributaria a aplicar",
+				},
+			},
+			{
+				Code: "13",
+				Name: i18n.String{
+					i18n.EN: "Applicable Date/Period",
+					i18n.ES: "Fecha/Periodo a aplicar",
+				},
+			},
+			{
+				Code: "14",
+				Name: i18n.String{
+					i18n.EN: "Invoice Class",
+					i18n.ES: "Clase de factura",
+				},
+			},
+			{
+				Code: "15",
+				Name: i18n.String{
+					i18n.EN: "Legal literals",
+					i18n.ES: "Literales legales",
+				},
+			},
+			{
+				Code: "16",
+				Name: i18n.String{
+					i18n.EN: "Taxable Base",
+					i18n.ES: "Base imponible",
+				},
+			},
+			{
+				Code: "80",
+				Name: i18n.String{
+					i18n.EN: "Calculation of tax outputs",
+					i18n.ES: "Cálculo de cuotas repercutidas",
+				},
+			},
+			{
+				Code: "81",
+				Name: i18n.String{
+					i18n.EN: "Calculation of tax inputs",
+					i18n.ES: "Cálculo de cuotas retenidas",
+				},
+			},
+			{
+				Code: "82",
+				Name: i18n.String{
+					i18n.EN: "Taxable Base modified due to return of packages and packaging materials",
+					i18n.ES: "Base imponible modificada por devolución de envases / embalajes",
+				},
+			},
+			{
+				Code: "83",
+				Name: i18n.String{
+					i18n.EN: "Taxable Base modified due to discounts and rebates",
+					i18n.ES: "Base imponible modificada por descuentos y bonificaciones",
+				},
+			},
+			{
+				Code: "84",
+				Name: i18n.String{
+					i18n.EN: "Taxable Base modified due to firm court ruling or administrative decision",
+					i18n.ES: "Base imponible modificada por resolución firme, judicial o administrativa",
+				},
+			},
+			{
+				Code: "85",
+				Name: i18n.String{
+					i18n.EN: "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
+					i18n.ES: "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyTBAIProduct,
 		Name: i18n.String{
@@ -123,6 +293,63 @@ var extensionKeys = []*tax.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Not subject: pursuant to localization rules.",
 					i18n.ES: "No sujeto: por reglas de localización.",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTBAICorrection,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI Rectification Type Code",
+			i18n.ES: "TicketBAI Código de Factura Rectificativa",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Corrected or rectified invoices that need to be sent in the TicketBAI format
+				require a specific type code to be defined alongside the preceding invoice
+				data.
+			`),
+		},
+		// Codes taken from TicketBAI XSD
+		Codes: []*tax.CodeDefinition{
+			{
+				Code: "R1",
+				Name: i18n.String{
+					i18n.EN: "Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT",
+					i18n.ES: "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis de la Norma Foral del IVA",
+					i18n.EU: "Faktura zuzentzailea: zuzenbidean oinarritutako akatsa eta BEZaren Foru Arauaren 80.artikuluko Bat, Bi eta Sei",
+				},
+			},
+			{
+				Code: "R2",
+				Name: i18n.String{
+					i18n.ES: "Factura rectificativa: artículo 80 Tres de la Norma Foral del IVA",
+					i18n.EN: "Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT",
+					i18n.EU: "Faktura zuzentzailea: BEZari buruzko Foru Arauko 80. artikuluko Hiru",
+				},
+			},
+			{
+				Code: "R3",
+				Name: i18n.String{
+					i18n.ES: "Factura rectificativa: artículo 80 Cuatro de la Norma Foral del IVA",
+					i18n.EN: "Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT",
+					i18n.EU: "Faktura zuzentzailea: BEZari buruzko Foru Arauko 80. artikuluko Lau",
+				},
+			},
+			{
+				Code: "R4",
+				Name: i18n.String{
+					i18n.ES: "Factura rectificativa: Resto",
+					i18n.EN: "Rectified invoice: Other",
+					i18n.EU: "Faktura zuzentzailea: Gainerakoak",
+				},
+			},
+			{
+				Code: "R5",
+				Name: i18n.String{
+					i18n.ES: "Factura rectificativa: facturas simplificadas",
+					i18n.EN: "Rectified invoice: simplified invoices",
+					i18n.EU: "Faktura zuzentzaile: faktura erraztuetan",
 				},
 			},
 		},

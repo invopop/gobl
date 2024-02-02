@@ -16,11 +16,3 @@ func TestPrecedingValidation(t *testing.T) {
 	err := p.Validate()
 	assert.NoError(t, err)
 }
-
-func TestPrecedingJSONMigration(t *testing.T) {
-	data := []byte(`{"corrections":["bar"]}`)
-	p := new(bill.Preceding)
-	err := p.UnmarshalJSON(data)
-	assert.NoError(t, err)
-	assert.Equal(t, "bar", p.Changes[0].String())
-}

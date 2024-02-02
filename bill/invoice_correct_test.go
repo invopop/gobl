@@ -6,7 +6,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -30,7 +29,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Credit,
 		bill.WithReason("test refund"),
-		bill.WithChanges(es.CorrectionKeyLine),
+		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
@@ -61,7 +60,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(
 		bill.Corrective,
-		bill.WithChanges(es.CorrectionKeyLine),
+		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
@@ -72,7 +71,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	err = i.Correct(
 		bill.Credit,
 		bill.WithIssueDate(d),
-		bill.WithChanges(es.CorrectionKeyLine),
+		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
@@ -116,7 +115,7 @@ func TestInvoiceCorrect(t *testing.T) {
 		bill.Credit,
 		bill.WithStamps(stamps),
 		bill.WithReason("test refund"),
-		bill.WithChanges(co.CorrectionKeyRevoked),
+		bill.WithExtension(co.ExtKeyDIANCorrection, "2"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
@@ -129,9 +128,11 @@ func TestInvoiceCorrect(t *testing.T) {
 func TestCorrectWithOptions(t *testing.T) {
 	i := testInvoiceESForCorrection(t)
 	opts := &bill.CorrectionOptions{
-		Type:    bill.InvoiceTypeCreditNote,
-		Reason:  "test refund",
-		Changes: []cbc.Key{es.CorrectionKeyLine},
+		Type:   bill.InvoiceTypeCreditNote,
+		Reason: "test refund",
+		Ext: tax.ExtMap{
+			es.ExtKeyFacturaECorrection: "01",
+		},
 	}
 	err := i.Correct(bill.WithOptions(opts))
 	require.NoError(t, err)
@@ -143,6 +144,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
+	assert.Equal(t, pre.Ext[es.ExtKeyFacturaECorrection], "01")
 	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 }
 
@@ -179,7 +181,7 @@ func TestCorrectWithData(t *testing.T) {
 
 	err := i.Correct(
 		bill.WithData(data),
-		bill.WithChanges(es.CorrectionKeyLine),
+		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
 	)
 	assert.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)

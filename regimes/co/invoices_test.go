@@ -72,7 +72,9 @@ func creditNote() *bill.Invoice {
 			{
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
-				Changes:   []cbc.Key{co.CorrectionKeyRevoked},
+				Ext: tax.ExtMap{
+					co.ExtKeyDIANCorrection: "2", // revoked
+				},
 			},
 		},
 		Supplier: &org.Party{
@@ -157,18 +159,13 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Contains(t, inv.Preceding[0].Changes, co.CorrectionKeyRevoked)
+	assert.Contains(t, inv.Preceding[0].Ext, co.ExtKeyDIANCorrection)
+	assert.Equal(t, inv.Preceding[0].Ext[co.ExtKeyDIANCorrection], cbc.KeyOrCode("2"))
 
-	inv.Preceding[0].Changes = []cbc.Key{co.CorrectionKeyDiscount, co.CorrectionKeyOther}
+	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "changes: the length must be exactly 1.")
-	}
-
-	inv.Preceding[0].Changes = []cbc.Key{"fooo"}
-	err = inv.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "changes: (0: must be a valid value.)")
+		assert.Contains(t, err.Error(), "preceding: (0: (ext: (foo: undefined.).).)")
 	}
 
 }

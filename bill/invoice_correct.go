@@ -29,8 +29,8 @@ type CorrectionOptions struct {
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Human readable reason for the corrective operation.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Changes keys that describe the specific changes according to the tax regime.
-	Changes []cbc.Key `json:"changes,omitempty" jsonschema:"title=Changes"`
+	// Extensions for region specific requirements.
+	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
@@ -74,12 +74,15 @@ func WithReason(reason string) schema.Option {
 	}
 }
 
-// WithChanges adds the set of change keys to the invoice's preceding data,
+// WithExtension adds a specific extension combination to the invoice's preceding data,
 // can be called multiple times.
-func WithChanges(changes ...cbc.Key) schema.Option {
+func WithExtension(key cbc.Key, code cbc.KeyOrCode) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
-		opts.Changes = append(opts.Changes, changes...)
+		if opts.Ext == nil {
+			opts.Ext = make(tax.ExtMap)
+		}
+		opts.Ext[key] = code
 	}
 }
 
@@ -159,22 +162,24 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		}
 	}
 
-	if len(cd.Changes) > 0 {
-		cos.Required = append(cos.Required, "changes")
-		if ps, ok := cos.Properties.Get("changes"); ok {
-			items := ps.Items
-			items.OneOf = make([]*jsonschema.Schema, len(cd.Changes))
-			for i, v := range cd.Changes {
-				items.OneOf[i] = &jsonschema.Schema{
-					Const: v.Key.String(),
-					Title: v.Name.String(),
-				}
-				if !v.Desc.IsEmpty() {
-					items.OneOf[i].Description = v.Desc.String()
+	/*
+		if len(cd.Extensions) > 0 {
+			cos.Required = append(cos.Required, "ext")
+			if ps, ok := cos.Properties.Get("ext"); ok {
+				items := ps.Items
+				items.OneOf = make([]*jsonschema.Schema, len(cd.Changes))
+				for i, v := range cd.Changes {
+					items.OneOf[i] = &jsonschema.Schema{
+						Const: v.Key.String(),
+						Title: v.Name.String(),
+					}
+					if !v.Desc.IsEmpty() {
+						items.OneOf[i].Description = v.Desc.String()
+					}
 				}
 			}
 		}
-	}
+	*/
 
 	if cd.ReasonRequired {
 		cos.Required = append(cos.Required, "reason")
@@ -210,7 +215,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		Code:      inv.Code,
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
-		Changes:   o.Changes,
+		Ext:       o.Ext,
 	}
 	inv.UUID = nil
 	inv.Type = o.Type
@@ -281,17 +286,6 @@ func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.Correcti
 
 	if !o.Type.In(cd.Types...) {
 		return fmt.Errorf("invalid correction type: %v", o.Type.String())
-	}
-
-	if len(cd.Changes) > 0 {
-		if len(pre.Changes) == 0 {
-			return errors.New("missing correction changes")
-		}
-		for _, k := range pre.Changes {
-			if !cd.HasChange(k) {
-				return fmt.Errorf("invalid correction change key: '%v'", k)
-			}
-		}
 	}
 
 	if cd.ReasonRequired && pre.Reason == "" {
