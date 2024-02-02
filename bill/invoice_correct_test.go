@@ -22,11 +22,10 @@ import (
 func TestInvoiceCorrect(t *testing.T) {
 	// Spanish Case (only corrective)
 
-	// debit note not supported in Spain
-	i := testInvoiceESForCorrection(t)
-	err := i.Correct(bill.Debit)
+	i := testInvoicePTForCorrection(t)
+	err := i.Correct(bill.Corrective)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "invalid correction type: debit-note")
+	assert.Contains(t, err.Error(), "invalid correction type: corrective")
 
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Credit,
@@ -54,10 +53,10 @@ func TestInvoiceCorrect(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "missing correction type")
 
-	i = testInvoiceESForCorrection(t)
-	err = i.Correct(bill.Debit, bill.WithReason("should fail"))
+	i = testInvoicePTForCorrection(t)
+	err = i.Correct(bill.Corrective, bill.WithReason("should fail"))
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "invalid correction type: debit-note")
+	assert.Contains(t, err.Error(), "invalid correction type: corrective")
 
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(
@@ -210,6 +209,52 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "54387763P",
+			},
+		},
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+				Discounts: []*bill.LineDiscount{
+					{
+						Reason:  "Testing",
+						Percent: num.NewPercentage(10, 2),
+					},
+				},
+			},
+		},
+	}
+	return i
+}
+
+func testInvoicePTForCorrection(t *testing.T) *bill.Invoice {
+	t.Helper()
+	i := &bill.Invoice{
+		Series: "TEST",
+		Code:   "123",
+		Tax: &bill.Tax{
+			PricesInclude: tax.CategoryVAT,
+		},
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.PT,
+				Code:    "545259045",
+			},
+		},
+		Customer: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.PT,
+				Code:    "503504030",
 			},
 		},
 		IssueDate: cal.MakeDate(2022, 6, 13),

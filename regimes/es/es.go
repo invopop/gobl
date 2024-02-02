@@ -90,6 +90,7 @@ func New() *tax.Regime {
 				Types: []cbc.Key{
 					bill.InvoiceTypeCorrective,
 					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
 				},
 				Changes: correctionChangesList,
 			},
