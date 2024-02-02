@@ -707,18 +707,15 @@
           "title": "Stamps",
           "description": "Seals of approval from other organisations that may need to be listed."
         },
-        "changes": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Changes",
-          "description": "Tax regime specific keys reflecting what has been changed from the previous invoice."
-        },
         "period": {
           "$ref": "https://gobl.org/draft-0/cal/period",
           "title": "Period",
           "description": "Tax period in which the previous invoice had an effect required by some tax regimes and formats."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/ext-map",
+          "title": "Ext",
+          "description": "Extensions for region specific requirements."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",

@@ -162,24 +162,54 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		}
 	}
 
-	/*
-		if len(cd.Extensions) > 0 {
-			cos.Required = append(cos.Required, "ext")
-			if ps, ok := cos.Properties.Get("ext"); ok {
-				items := ps.Items
-				items.OneOf = make([]*jsonschema.Schema, len(cd.Changes))
-				for i, v := range cd.Changes {
-					items.OneOf[i] = &jsonschema.Schema{
-						Const: v.Key.String(),
-						Title: v.Name.String(),
+	// Try to add all the specific options for the extensions
+	if len(cd.Extensions) > 0 {
+		if ext, ok := cos.Properties.Get("ext"); ok {
+			ext.Properties = jsonschema.NewProperties()
+			for _, pk := range cd.Extensions {
+				re := r.ExtensionDef(pk)
+				if re != nil {
+					prop := &jsonschema.Schema{
+						Title: re.Name.String(),
+						Type:  "string",
 					}
-					if !v.Desc.IsEmpty() {
-						items.OneOf[i].Description = v.Desc.String()
+					if !re.Desc.IsEmpty() {
+						prop.Description = re.Desc.String()
 					}
+					var oneOf []*jsonschema.Schema
+					if len(re.Codes) > 0 {
+						oneOf = make([]*jsonschema.Schema, len(re.Codes))
+						for i, c := range re.Codes {
+							ci := &jsonschema.Schema{
+								Const: c.Code.String(),
+								Title: c.Name.String(),
+							}
+							if len(c.Desc) > 0 {
+								ci.Description = c.Desc.String()
+							}
+							oneOf[i] = ci
+						}
+					} else if len(re.Keys) > 0 {
+						oneOf = make([]*jsonschema.Schema, len(re.Keys))
+						for i, c := range re.Codes {
+							ci := &jsonschema.Schema{
+								Const: c.Code.String(),
+								Title: c.Name.String(),
+							}
+							if len(c.Desc) > 0 {
+								ci.Description = c.Desc.String()
+							}
+							oneOf[i] = ci
+						}
+					}
+					if oneOf != nil {
+						prop.OneOf = oneOf
+					}
+					ext.Properties.Set(pk.String(), prop)
 				}
 			}
 		}
-	*/
+	}
 
 	if cd.ReasonRequired {
 		cos.Required = append(cos.Required, "reason")

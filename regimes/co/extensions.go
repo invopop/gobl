@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// Extension keys used in Colombia.
 const (
 	ExtKeyDIANCorrection cbc.Key = "co-dian-correction"
 )

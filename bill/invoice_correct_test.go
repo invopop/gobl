@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -144,7 +145,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
-	assert.Equal(t, pre.Ext[es.ExtKeyFacturaECorrection], "01")
+	assert.Equal(t, pre.Ext[es.ExtKeyFacturaECorrection], cbc.KeyOrCode("01"))
 	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 }
 
@@ -159,11 +160,14 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	cos := schema.Definitions["CorrectionOptions"]
 	assert.Equal(t, cos.Properties.Len(), 5)
 
-	pm, ok := cos.Properties.Get("changes")
+	pm, ok := cos.Properties.Get("ext")
 	require.True(t, ok)
-	assert.Len(t, pm.Items.OneOf, 22)
+	pmp, ok := pm.Properties.Get(string(es.ExtKeyFacturaECorrection))
+	require.True(t, ok)
+	assert.Len(t, pmp.OneOf, 22)
 
-	exp := `{"items":{"$ref":"https://gobl.org/draft-0/cbc/key","oneOf":[{"const":"code","title":"Invoice code"},{"const":"series","title":"Invoice series"},{"const":"issue-date","title":"Issue date"},{"const":"supplier-name","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"customer-name","title":"Name and surnames/Corporate name - Receiver"},{"const":"supplier-tax-id","title":"Issuer's Tax Identification Number"},{"const":"customer-tax-id","title":"Receiver's Tax Identification Number"},{"const":"supplier-addr","title":"Issuer's address"},{"const":"customer-addr","title":"Receiver's address"},{"const":"line","title":"Item line"},{"const":"tax-rate","title":"Applicable Tax Rate"},{"const":"tax-amount","title":"Applicable Tax Amount"},{"const":"period","title":"Applicable Date/Period"},{"const":"type","title":"Invoice Class"},{"const":"legal-details","title":"Legal literals"},{"const":"tax-base","title":"Taxable Base"},{"const":"tax","title":"Calculation of tax outputs"},{"const":"tax-retained","title":"Calculation of tax inputs"},{"const":"refund","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"discount","title":"Taxable Base modified due to discounts and rebates"},{"const":"judicial","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"insolvency","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}]},"type":"array","title":"Changes","description":"Changes keys that describe the specific changes according to the tax regime."}`
+	// Sorry, this is copied and pasted from the test output!
+	exp := `{"$ref":"https://gobl.org/draft-0/tax/ext-map","properties":{"es-facturae-correction":{"oneOf":[{"const":"01","title":"Invoice code"},{"const":"02","title":"Invoice series"},{"const":"03","title":"Issue date"},{"const":"04","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"05","title":"Name and surnames/Corporate name - Receiver"},{"const":"06","title":"Issuer's Tax Identification Number"},{"const":"07","title":"Receiver's Tax Identification Number"},{"const":"08","title":"Supplier's address"},{"const":"09","title":"Customer's address"},{"const":"10","title":"Item line"},{"const":"11","title":"Applicable Tax Rate"},{"const":"12","title":"Applicable Tax Amount"},{"const":"13","title":"Applicable Date/Period"},{"const":"14","title":"Invoice Class"},{"const":"15","title":"Legal literals"},{"const":"16","title":"Taxable Base"},{"const":"80","title":"Calculation of tax outputs"},{"const":"81","title":"Calculation of tax inputs"},{"const":"82","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"83","title":"Taxable Base modified due to discounts and rebates"},{"const":"84","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"85","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}],"type":"string","title":"FacturaE Change","description":"FacturaE requires a specific and single code that explains why the previous invoice is being corrected."},"es-tbai-correction":{"oneOf":[{"const":"R1","title":"Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT"},{"const":"R2","title":"Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT"},{"const":"R3","title":"Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT"},{"const":"R4","title":"Rectified invoice: Other"},{"const":"R5","title":"Rectified invoice: simplified invoices"}],"type":"string","title":"TicketBAI Rectification Type Code","description":"Corrected or rectified invoices that need to be sent in the TicketBAI format\nrequire a specific type code to be defined alongside the preceding invoice\ndata."}},"title":"Extensions","description":"Extensions for region specific requirements."}`
 	data, err := json.Marshal(pm)
 	require.NoError(t, err)
 	if !assert.JSONEq(t, exp, string(data)) {

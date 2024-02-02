@@ -301,7 +301,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		_, err = env.Correct(
 			bill.Corrective,
-			bill.WithExtension(es.ExtKeyFacturaEChange, "01"),
+			bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
 		)
 		require.NoError(t, err)
 
@@ -310,7 +310,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		e2, err := env.Correct(
 			bill.Corrective,
-			bill.WithExtension(es.ExtKeyFacturaEChange, "02"),
+			bill.WithExtension(es.ExtKeyFacturaECorrection, "02"),
 		)
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)

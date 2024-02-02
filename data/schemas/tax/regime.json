@@ -116,13 +116,13 @@
           "title": "Types",
           "description": "The types of sub-documents supported by the regime"
         },
-        "changes": {
+        "extensions": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Changes",
-          "description": "List of change keys that can be used to describe what has been corrected."
+          "title": "Extensions",
+          "description": "Extension keys that can be included"
         },
         "reason_required": {
           "type": "boolean",
