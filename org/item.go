@@ -33,8 +33,8 @@ type Item struct {
 	Name string `json:"name"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
-	// Detailed description
-	Description string `json:"desc,omitempty"`
+	// Detailed description of the item.
+	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2346991aab5ee704bd2b0ad14a06260aaf81fa7baca32c2bcd211cbc177aa6a2"
+			"val": "f23f62eb0cf68db88a55bd391e5410bfba7bf06c24e1a7a863191346b07b644c"
 		},
 		"draft": true
 	},
@@ -50,7 +50,7 @@
 		"payment": {
 			"advances": [
 				{
-					"desc": "Prepaid",
+					"description": "Prepaid",
 					"percent": "100%",
 					"amount": "238000.00"
 				}

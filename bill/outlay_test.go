@@ -1,12 +1,20 @@
 package bill
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/num"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestOutlayUnmarshal(t *testing.T) {
+	o := new(Outlay)
+	err := json.Unmarshal([]byte(`{"desc":"foo"}`), o)
+	require.NoError(t, err)
+	assert.Equal(t, "foo", o.Description)
+}
 
 func TestOutlayTotals(t *testing.T) {
 	os := []*Outlay{
