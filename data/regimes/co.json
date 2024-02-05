@@ -197,15 +197,16 @@
       }
     }
   ],
-  "corrections": [
+  "extensions": [
     {
-      "schema": "bill/invoice",
-      "types": [
-        "credit-note"
-      ],
-      "methods": [
+      "key": "co-dian-correction",
+      "name": {
+        "en": "DIAN Correction Code",
+        "es": "Código de corrección DIAN"
+      },
+      "codes": [
         {
-          "key": "partial",
+          "code": "1",
           "name": {
             "en": "Partial refund",
             "es": "Devolución parcial"
@@ -213,13 +214,10 @@
           "desc": {
             "en": "Partial refund of part of the goods or services.",
             "es": "Devolución de parte de los bienes; no aceptación de partes del servicio."
-          },
-          "map": {
-            "dian": "1"
           }
         },
         {
-          "key": "revoked",
+          "code": "2",
           "name": {
             "en": "Revoked",
             "es": "Anulación"
@@ -227,13 +225,10 @@
           "desc": {
             "en": "Previous document has been completely cancelled.",
             "es": "Anulación de la factura anterior."
-          },
-          "map": {
-            "dian": "2"
           }
         },
         {
-          "key": "discount",
+          "code": "3",
           "name": {
             "en": "Discount",
             "es": "Descuento"
@@ -241,13 +236,10 @@
           "desc": {
             "en": "Partial or total discount.",
             "es": "Rebaja o descuento parcial o total."
-          },
-          "map": {
-            "dian": "3"
           }
         },
         {
-          "key": "price-adjustment",
+          "code": "4",
           "name": {
             "en": "Adjustment",
             "es": "Ajuste"
@@ -255,21 +247,26 @@
           "desc": {
             "en": "Price adjustment.",
             "es": "Ajuste de precio."
-          },
-          "map": {
-            "dian": "4"
           }
         },
         {
-          "key": "other",
+          "code": "5",
           "name": {
             "en": "Other",
             "es": "Otros"
-          },
-          "map": {
-            "dian": "5"
           }
         }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ],
+      "extensions": [
+        "co-dian-correction"
       ],
       "reason_required": true,
       "stamps": [
