@@ -14,6 +14,9 @@ func TestOutlayUnmarshal(t *testing.T) {
 	err := json.Unmarshal([]byte(`{"desc":"foo"}`), o)
 	require.NoError(t, err)
 	assert.Equal(t, "foo", o.Description)
+	err = json.Unmarshal([]byte(`{"description":"foo"}`), o)
+	require.NoError(t, err)
+	assert.Equal(t, "foo", o.Description)
 }
 
 func TestOutlayTotals(t *testing.T) {

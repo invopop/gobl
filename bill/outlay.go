@@ -59,7 +59,9 @@ func (o *Outlay) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
-	o.Description = aux.Desc
+	if aux.Desc != "" {
+		o.Description = aux.Desc
+	}
 	return nil
 }
 
