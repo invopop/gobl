@@ -50,7 +50,7 @@ func (o *Outlay) Validate() error {
 // UnmarshalJSON helps migrate the desc field to description.
 func (o *Outlay) UnmarshalJSON(data []byte) error {
 	type Alias Outlay
-	aux := &struct {
+	aux := struct {
 		Desc string `json:"desc"`
 		*Alias
 	}{

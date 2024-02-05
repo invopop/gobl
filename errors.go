@@ -3,7 +3,9 @@ package gobl
 import (
 	"errors"
 	"fmt"
+	"reflect"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/validation"
 )
@@ -12,8 +14,8 @@ import (
 // The contents can also be serialised as JSON ready to send to a client
 // if needed.
 type Error struct {
-	Key   string `json:"key"`
-	Cause error  `json:"cause"`
+	Key   cbc.Key `json:"key"`
+	Cause error   `json:"cause"`
 }
 
 var (
@@ -39,6 +41,9 @@ var (
 	// ErrSignature identifies an issue related to signatures.
 	ErrSignature = NewError("signature")
 
+	// ErrDigest identifies an issue related to the digest.
+	ErrDigest = NewError("digest")
+
 	// ErrInternal is a "catch-all" for errors that are not expected.
 	ErrInternal = NewError("internal")
 
@@ -49,11 +54,12 @@ var (
 
 // NewError provides a new error with a code that is meant to provide
 // a context.
-func NewError(key string) *Error {
+func NewError(key cbc.Key) *Error {
 	return &Error{Key: key}
 }
 
-// wrapError is used to wrap around an error
+// wrapError is used to ensure that errors are wrapped around the GOBL standard
+// error so they can be output in a consistent manner.
 func wrapError(err error) error {
 	if err == nil {
 		return nil
@@ -64,18 +70,22 @@ func wrapError(err error) error {
 	if errors.Is(err, schema.ErrUnknownSchema) {
 		return ErrUnknownSchema
 	}
-	if _, ok := err.(validation.Error); ok {
+	if _, ok := err.(validation.Errors); ok {
 		return ErrValidation.WithCause(err)
 	}
-	return err
+	return ErrInternal.WithCause(err)
 }
 
 // Error provides a string representation of the error.
 func (e *Error) Error() string {
 	if e.Cause != nil {
-		return fmt.Sprintf("%s: %s", e.Key, e.Cause.Error())
+		cause := e.Cause.Error()
+		if reflect.TypeOf(e.Cause).Kind() == reflect.Map {
+			cause = fmt.Sprintf("(%s).", cause)
+		}
+		return fmt.Sprintf("%s: %s", e.Key.String(), cause)
 	}
-	return e.Key
+	return e.Key.String()
 }
 
 // WithCause is used to copy and add an underlying error to this one.

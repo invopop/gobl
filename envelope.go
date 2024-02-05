@@ -79,7 +79,7 @@ func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 
 	ve := make(validation.Errors)
 	for i, s := range e.Signatures {
-		if err := e.VerifySignature(s, keys...); err != nil {
+		if err := e.verifySignature(s, keys...); err != nil {
 			ve[strconv.Itoa(i)] = err
 		}
 	}
@@ -98,6 +98,10 @@ func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
 // signature was signed by at least one of them. If no keys are provided, only
 // the contents will be checked.
 func (e *Envelope) VerifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
+	return wrapError(e.verifySignature(sig, keys...))
+}
+
+func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey) error {
 	if len(keys) == 0 {
 		// no keys provided, only check the contents
 		h := new(head.Header)
@@ -137,9 +141,10 @@ func (e *Envelope) ValidateWithContext(ctx context.Context) error {
 		),
 	)
 	if err != nil {
-		return err
+		fmt.Printf("TYPE: %T\n", err)
+		return wrapError(err)
 	}
-	return e.verifyDigest()
+	return wrapError(e.verifyDigest())
 }
 
 func (e *Envelope) verifyDigest() error {
@@ -149,7 +154,7 @@ func (e *Envelope) verifyDigest() error {
 		return err
 	}
 	if err := d1.Equals(d2); err != nil {
-		return fmt.Errorf("document: %w", err)
+		return ErrDigest.WithCause(err)
 	}
 	return nil
 }
@@ -159,11 +164,11 @@ func (e *Envelope) verifyDigest() error {
 // only valid non-draft documents will be signed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	if e.Head == nil {
-		return ErrValidation.WithReason("header: required")
+		return ErrValidation.WithReason("header required")
 	}
 	e.Head.Draft = false
 	if err := e.Validate(); err != nil {
-		return ErrValidation.WithCause(err)
+		return err
 	}
 	sig, err := key.Sign(e.Head)
 	if err != nil {
@@ -271,10 +276,10 @@ func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
 
 	nd, err := e.Document.Clone()
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err)
 	}
 	if err := nd.Correct(opts...); err != nil {
-		return nil, err
+		return nil, wrapError(err)
 	}
 
 	// Create a completely new envelope with a new set of data.
@@ -290,7 +295,7 @@ func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
 	}
 	opts, err := e.Document.CorrectionOptionsSchema()
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err)
 	}
 	return opts, nil
 }
