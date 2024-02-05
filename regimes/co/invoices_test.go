@@ -145,7 +145,16 @@ func TestBasicInvoiceValidation(t *testing.T) {
 
 	inv = baseInvoice()
 	inv.Customer.TaxID.Type = co.TaxIdentityTypeCitizen
-	inv.Customer.TaxID.Code = "100100100"
+	inv.Customer.TaxID.Code = co.TaxCodeFinalCustomer
+	inv.Customer.TaxID.Zone = ""
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.NoError(t, err)
+
+	inv = baseInvoice()
+	inv.Customer.TaxID.Country = l10n.ES
+	inv.Customer.TaxID.Code = "A13180492"
+	inv.Customer.TaxID.Type = co.TaxIdentityTypeForeign
 	inv.Customer.TaxID.Zone = ""
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
