@@ -14,4 +14,4 @@ To figure out how to map GOBL correction types to Spanish requirements, we've us
 
 The FacturaE format defines two other correction methods which are currently considered out of scope for GOBL.
 
-Previous versions of GOBL attempted to automatically invert corrective invoices instead of issuing credit notes, however, this was deemed to be confusing and not compatible with internationally recognized credit notes. The [GOBL to FacturaE convertor](https://github.com/invopop/gobl.facturae) will automatically invert quantities in a Credit Note.
+Previous versions of GOBL attempted to automatically invert corrective invoices instead of issuing credit notes, however, this was deemed to be confusing and not compatible with internationally recognized credit notes. The [GOBL to FacturaE](https://github.com/invopop/gobl.facturae) and [GOBL to TicketBAI](https://github.com/invopop/gobl.tickebai) convertors will automatically invert quantities in a Credit Note.

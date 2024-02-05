@@ -1,0 +1,69 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "EUR"
+issue_date: "2022-02-01"
+series: "FR"
+code: "012"
+type: "credit-note"
+
+preceding:
+  - type: "standard"
+    series: "SAMPLE"
+    code: "085"
+    issue_date: "2022-01-10"
+    ext:
+      es-tbai-correction: "R2"
+
+supplier:
+  tax_id:
+    country: "ES"
+    zone: "BI"
+    code: "B98602642"
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "San Frantzisko"
+      locality: "Bilbo"
+      region: "Bizkaia"
+      code: "48003"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Customer"
+  emails:
+    - addr: "customer@example.com"
+  addresses:
+    - num: "13"
+      street: "Calle del Barro"
+      locality: "Alcañiz"
+      region: "Teruel"
+      code: "44600"
+      country: "ES"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Financial service"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: zero
+
+notes:
+  - key: "general"
+    text: "Some random description"

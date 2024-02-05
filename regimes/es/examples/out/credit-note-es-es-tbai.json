@@ -1,0 +1,155 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9bd2f35c2c847f01f2450a5604211a33d1ed03ee91bb06a3de197a50713af0a7"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "credit-note",
+		"series": "FR",
+		"code": "012",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"preceding": [
+			{
+				"type": "standard",
+				"series": "SAMPLE",
+				"code": "085",
+				"issue_date": "2022-01-10",
+				"ext": {
+					"es-tbai-correction": "R2"
+				}
+			}
+		],
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"zone": "BI",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "San Frantzisko",
+					"locality": "Bilbo",
+					"region": "Bizkaia",
+					"code": "48003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Customer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			},
+			"addresses": [
+				{
+					"num": "13",
+					"street": "Calle del Barro",
+					"locality": "Alcañiz",
+					"region": "Teruel",
+					"code": "44600",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "customer@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Financial service",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "zero",
+						"percent": "0.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"totals": {
+			"sum": "1630.00",
+			"total": "1630.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "21.0%",
+								"amount": "340.20"
+							},
+							{
+								"key": "zero",
+								"base": "10.00",
+								"percent": "0.0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "340.20"
+					}
+				],
+				"sum": "340.20"
+			},
+			"tax": "340.20",
+			"total_with_tax": "1970.20",
+			"payable": "1970.20"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Some random description"
+			}
+		]
+	}
+}
