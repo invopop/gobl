@@ -58,6 +58,12 @@ func NewError(key cbc.Key) *Error {
 	return &Error{Key: key}
 }
 
+// WrapError is useful for wrapping errors that are not already prepared, such as when
+// parsing Schema Objects directly.
+func WrapError(err error) error {
+	return wrapError(err)
+}
+
 // wrapError is used to ensure that errors are wrapped around the GOBL standard
 // error so they can be output in a consistent manner.
 func wrapError(err error) error {

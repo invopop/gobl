@@ -23,14 +23,9 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Currency, validation.In(currency.EUR)),
-		// Only commercial and simplified supported at this time for spain.
-		// Rectification state determined by Preceding value.
-		validation.Field(&inv.Type, validation.In(
-			bill.InvoiceTypeStandard,
-			bill.InvoiceTypeCorrective,
-			bill.InvoiceTypeProforma,
-		)),
+		validation.Field(&inv.Currency,
+			validation.In(currency.EUR),
+		),
 		validation.Field(&inv.Preceding,
 			validation.Each(validation.By(v.preceding)),
 			validation.Skip,
@@ -93,14 +88,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Changes,
-			validation.Required,
-			validation.Each(isValidCorrectionChangeKey),
-		),
-		validation.Field(&obj.CorrectionMethod,
-			validation.Required,
-			isValidCorrectionMethodKey,
-		),
+		validation.Field(&obj.Ext), // TODO validate the extensions according to region
 	)
 }
 

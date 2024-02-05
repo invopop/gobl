@@ -14,7 +14,7 @@ const (
 	InvoiceTypeDebitNote  cbc.Key = "debit-note"
 )
 
-type invoiceTypeDefs []InvoiceTypeDef
+type invoiceTypeDefs []*InvoiceTypeDef
 
 // InvoiceTypeDef is used to describe a type definition.
 type InvoiceTypeDef struct {
@@ -45,6 +45,17 @@ func (l invoiceTypeDefs) UNTDID1001(key cbc.Key) cbc.Code {
 		}
 	}
 	return cbc.CodeEmpty
+}
+
+// Get fetches the invoice type definition for the provided key or
+// returns nil if no match is found.
+func (l invoiceTypeDefs) Get(key cbc.Key) *InvoiceTypeDef {
+	for _, it := range l {
+		if it.Key == key {
+			return it
+		}
+	}
+	return nil
 }
 
 func validInvoiceTypes() []interface{} {

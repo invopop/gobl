@@ -21,20 +21,16 @@ import (
 type CorrectionOptions struct {
 	head.CorrectionOptions
 
+	// The type of corrective invoice to produce.
+	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Stamps of the previous document to include in the preceding data.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-	// Credit when true indicates that the corrective document should cancel the previous document.
-	Credit bool `json:"credit,omitempty" jsonschema:"title=Credit"`
-	// Debit when true indicates that the corrective document should add new items to the previous document.
-	Debit bool `json:"debit,omitempty" jsonschema:"title=Debit"`
 	// Human readable reason for the corrective operation.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Correction method as defined by the tax regime.
-	Method cbc.Key `json:"method,omitempty" jsonschema:"title=Method"`
-	// Changes keys that describe the specific changes according to the tax regime.
-	Changes []cbc.Key `json:"changes,omitempty" jsonschema:"title=Changes"`
+	// Extensions for region specific requirements.
+	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
@@ -78,20 +74,15 @@ func WithReason(reason string) schema.Option {
 	}
 }
 
-// WithMethod defines the method used to correct the previous invoice.
-func WithMethod(method cbc.Key) schema.Option {
-	return func(o interface{}) {
-		opts := o.(*CorrectionOptions)
-		opts.Method = method
-	}
-}
-
-// WithChanges adds the set of change keys to the invoice's preceding data,
+// WithExtension adds a specific extension combination to the invoice's preceding data,
 // can be called multiple times.
-func WithChanges(changes ...cbc.Key) schema.Option {
+func WithExtension(key cbc.Key, code cbc.KeyOrCode) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
-		opts.Changes = append(opts.Changes, changes...)
+		if opts.Ext == nil {
+			opts.Ext = make(tax.ExtMap)
+		}
+		opts.Ext[key] = code
 	}
 }
 
@@ -104,18 +95,25 @@ func WithIssueDate(date cal.Date) schema.Option {
 	}
 }
 
+// Corrective is used for creating corrective or rectified invoices
+// that completely replace a previous document.
+var Corrective schema.Option = func(o interface{}) {
+	opts := o.(*CorrectionOptions)
+	opts.Type = InvoiceTypeCorrective
+}
+
 // Credit indicates that the corrective operation requires a credit note
 // or equivalent.
 var Credit schema.Option = func(o interface{}) {
 	opts := o.(*CorrectionOptions)
-	opts.Credit = true
+	opts.Type = InvoiceTypeCreditNote
 }
 
 // Debit indicates that the corrective operation is to append
 // new items to the previous invoice, usually as a debit note.
 var Debit schema.Option = func(o interface{}) {
 	opts := o.(*CorrectionOptions)
-	opts.Debit = true
+	opts.Type = InvoiceTypeDebitNote
 }
 
 // CorrectionOptionsSchema provides a dynamic JSON schema of the options
@@ -147,49 +145,76 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	cos := schema.Definitions["CorrectionOptions"]
 
-	// Improve the quality of the schema
-	cos.Required = append(cos.Required, "credit")
-
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 	if cd == nil {
 		return schema, nil
 	}
 
+	if len(cd.Types) > 0 {
+		if ps, ok := cos.Properties.Get("type"); ok {
+			ps.OneOf = make([]*jsonschema.Schema, len(cd.Types))
+			for i, v := range cd.Types {
+				td := InvoiceTypes.Get(v)
+				ps.OneOf[i] = &jsonschema.Schema{
+					Const:       v.String(),
+					Title:       td.Title,
+					Description: td.Description,
+				}
+			}
+		}
+	}
+
+	// Try to add all the specific options for the extensions
+	if len(cd.Extensions) > 0 {
+		if ext, ok := cos.Properties.Get("ext"); ok {
+			ext.Properties = jsonschema.NewProperties()
+			for _, pk := range cd.Extensions {
+				re := r.ExtensionDef(pk)
+				if re != nil {
+					prop := &jsonschema.Schema{
+						Title: re.Name.String(),
+						Type:  "string",
+					}
+					if !re.Desc.IsEmpty() {
+						prop.Description = re.Desc.String()
+					}
+					var oneOf []*jsonschema.Schema
+					if len(re.Codes) > 0 {
+						oneOf = make([]*jsonschema.Schema, len(re.Codes))
+						for i, c := range re.Codes {
+							ci := &jsonschema.Schema{
+								Const: c.Code.String(),
+								Title: c.Name.String(),
+							}
+							if len(c.Desc) > 0 {
+								ci.Description = c.Desc.String()
+							}
+							oneOf[i] = ci
+						}
+					} else if len(re.Keys) > 0 {
+						oneOf = make([]*jsonschema.Schema, len(re.Keys))
+						for i, c := range re.Codes {
+							ci := &jsonschema.Schema{
+								Const: c.Code.String(),
+								Title: c.Name.String(),
+							}
+							if len(c.Desc) > 0 {
+								ci.Description = c.Desc.String()
+							}
+							oneOf[i] = ci
+						}
+					}
+					if oneOf != nil {
+						prop.OneOf = oneOf
+					}
+					ext.Properties.Set(pk.String(), prop)
+				}
+			}
+		}
+	}
+
 	if cd.ReasonRequired {
 		cos.Required = append(cos.Required, "reason")
-	}
-
-	if len(cd.Methods) > 0 {
-		cos.Required = append(cos.Required, "method")
-		if ps, ok := cos.Properties.Get("method"); ok {
-			ps.OneOf = make([]*jsonschema.Schema, len(cd.Methods))
-			for i, v := range cd.Methods {
-				ps.OneOf[i] = &jsonschema.Schema{
-					Const: v.Key.String(),
-					Title: v.Name.String(),
-				}
-				if !v.Desc.IsEmpty() {
-					ps.OneOf[i].Description = v.Desc.String()
-				}
-			}
-		}
-	}
-
-	if len(cd.Changes) > 0 {
-		cos.Required = append(cos.Required, "changes")
-		if ps, ok := cos.Properties.Get("changes"); ok {
-			items := ps.Items
-			items.OneOf = make([]*jsonschema.Schema, len(cd.Changes))
-			for i, v := range cd.Changes {
-				items.OneOf[i] = &jsonschema.Schema{
-					Const: v.Key.String(),
-					Title: v.Name.String(),
-				}
-				if !v.Desc.IsEmpty() {
-					items.OneOf[i].Description = v.Desc.String()
-				}
-			}
-		}
 	}
 
 	return schema, nil
@@ -216,15 +241,16 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 
 	// Copy and prepare the basic fields
 	pre := &Preceding{
-		UUID:             inv.UUID,
-		Series:           inv.Series,
-		Code:             inv.Code,
-		IssueDate:        inv.IssueDate.Clone(),
-		Reason:           o.Reason,
-		CorrectionMethod: o.Method,
-		Changes:          o.Changes,
+		UUID:      inv.UUID,
+		Type:      inv.Type,
+		Series:    inv.Series,
+		Code:      inv.Code,
+		IssueDate: inv.IssueDate.Clone(),
+		Reason:    o.Reason,
+		Ext:       o.Ext,
 	}
 	inv.UUID = nil
+	inv.Type = o.Type
 	inv.Series = ""
 	inv.Code = ""
 	if o.IssueDate != nil {
@@ -234,10 +260,6 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
-
-	if err := inv.prepareCorrectionType(o, cd); err != nil {
-		return err
-	}
 
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
 		return err
@@ -269,42 +291,10 @@ func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error
 		}
 	}
 
-	if o.Credit && o.Debit {
-		return errors.New("cannot use both credit and debit options")
+	if o.Type == cbc.KeyEmpty {
+		return errors.New("missing correction type")
 	}
-	return nil
-}
 
-func (inv *Invoice) prepareCorrectionType(o *CorrectionOptions, cd *tax.CorrectionDefinition) error {
-	// Take the regime def to figure out what needs to be copied
-	if o.Credit {
-		if cd.HasType(InvoiceTypeCreditNote) {
-			// regular credit note
-			inv.Type = InvoiceTypeCreditNote
-		} else if cd.HasType(InvoiceTypeCorrective) {
-			// corrective invoice with negative values
-			inv.Type = InvoiceTypeCorrective
-			inv.Invert()
-		} else {
-			return errors.New("credit note not supported by regime")
-		}
-		inv.Payment.ResetAdvances()
-	} else if o.Debit {
-		if cd.HasType(InvoiceTypeDebitNote) {
-			// regular debit note, implies no rows as new ones
-			// will be added
-			inv.Type = InvoiceTypeDebitNote
-			inv.Empty()
-		} else {
-			return errors.New("debit note not supported by regime")
-		}
-	} else {
-		if cd.HasType(InvoiceTypeCorrective) {
-			inv.Type = InvoiceTypeCorrective
-		} else {
-			return fmt.Errorf("corrective invoice type not supported by regime, try credit or debit")
-		}
-	}
 	return nil
 }
 
@@ -326,24 +316,8 @@ func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.Correcti
 		pre.Stamps = append(pre.Stamps, s)
 	}
 
-	if len(cd.Methods) > 0 {
-		if pre.CorrectionMethod == cbc.KeyEmpty {
-			return errors.New("missing correction method")
-		}
-		if !cd.HasMethod(pre.CorrectionMethod) {
-			return fmt.Errorf("invalid correction method: %v", pre.CorrectionMethod)
-		}
-	}
-
-	if len(cd.Changes) > 0 {
-		if len(pre.Changes) == 0 {
-			return errors.New("missing changes")
-		}
-		for _, k := range pre.Changes {
-			if !cd.HasChange(k) {
-				return fmt.Errorf("invalid change key: '%v'", k)
-			}
-		}
+	if !o.Type.In(cd.Types...) {
+		return fmt.Errorf("invalid correction type: %v", o.Type.String())
 	}
 
 	if cd.ReasonRequired && pre.Reason == "" {

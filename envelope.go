@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/invopop/validation"
@@ -141,7 +140,6 @@ func (e *Envelope) ValidateWithContext(ctx context.Context) error {
 		),
 	)
 	if err != nil {
-		fmt.Printf("TYPE: %T\n", err)
 		return wrapError(err)
 	}
 	return wrapError(e.verifyDigest())

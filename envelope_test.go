@@ -300,17 +300,17 @@ func TestEnvelopeCorrect(t *testing.T) {
 		require.NoError(t, env.Calculate())
 
 		_, err = env.Correct(
-			bill.WithChanges(es.CorrectionKeyLine),
-			bill.WithMethod(es.CorrectionMethodKeyComplete),
+			bill.Corrective,
+			bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
 		)
 		require.NoError(t, err)
 
 		doc := env.Extract().(*bill.Invoice)
-		assert.Equal(t, doc.Type, bill.InvoiceTypeStandard, "no change")
+		assert.Equal(t, doc.Type, bill.InvoiceTypeStandard, "should not update in place")
 
 		e2, err := env.Correct(
-			bill.WithMethod(es.CorrectionMethodKeyComplete),
-			bill.WithChanges(es.CorrectionKeyLine),
+			bill.Corrective,
+			bill.WithExtension(es.ExtKeyFacturaECorrection, "02"),
 		)
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)

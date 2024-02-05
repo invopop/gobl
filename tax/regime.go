@@ -198,10 +198,8 @@ type CorrectionDefinition struct {
 	Schema string `json:"schema" jsonschema:"title=Schema"`
 	// The types of sub-documents supported by the regime
 	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
-	// Methods describe the methods used to correct an invoice.
-	Methods []*KeyDefinition `json:"methods,omitempty" jsonschema:"title=Methods"`
-	// List of change keys that can be used to describe what has been corrected.
-	Changes []*KeyDefinition `json:"changes,omitempty" jsonschema:"title=Changes"`
+	// Extension keys that can be included
+	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 	// ReasonRequired when true implies that a reason must be provided
 	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
 	// Stamps that must be copied from the preceding document.
@@ -604,31 +602,12 @@ func (cd *CorrectionDefinition) HasType(t cbc.Key) bool {
 	return t.In(cd.Types...)
 }
 
-// HasChange returns true if the correction definition has the change key provided.
-func (cd *CorrectionDefinition) HasChange(key cbc.Key) bool {
+// HasExtension returns true if the correction definition has the change key provided.
+func (cd *CorrectionDefinition) HasExtension(key cbc.Key) bool {
 	if cd == nil {
 		return false // no correction definitions
 	}
-
-	for _, kd := range cd.Changes {
-		if kd.Key == key {
-			return true
-		}
-	}
-	return false
-}
-
-// HasMethod returns true if the correction definition has the method provided.
-func (cd *CorrectionDefinition) HasMethod(key cbc.Key) bool {
-	if cd == nil {
-		return false // no correction definitions
-	}
-	for _, kd := range cd.Methods {
-		if kd.Key == key {
-			return true
-		}
-	}
-	return false
+	return key.In(cd.Extensions...)
 }
 
 // Validate ensures the key definition looks correct in the context of the regime.
@@ -637,8 +616,7 @@ func (cd *CorrectionDefinition) Validate() error {
 		validation.Field(&cd.Schema, validation.Required),
 		validation.Field(&cd.Types),
 		validation.Field(&cd.Stamps),
-		validation.Field(&cd.Methods),
-		validation.Field(&cd.Changes),
+		validation.Field(&cd.Extensions),
 	)
 	return err
 }
