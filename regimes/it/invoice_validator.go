@@ -77,13 +77,12 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		return nil
 	}
 
-	// Customers must have a tax ID (PartitaIVA) if they are Italian legal entities
-	// like government offices and companies.
+	// Customers must have a tax ID (PartitaIVA)
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.TaxID,
+			validation.Required,
 			validation.When(
 				isItalianParty(customer),
-				validation.Required,
 				tax.RequireIdentityCode,
 				tax.IdentityTypeIn(
 					TaxIdentityTypeBusiness,
@@ -95,6 +94,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		validation.Field(&customer.Addresses,
 			validation.When(
 				isItalianParty(customer),
+				// TODO: address not required for simplified invoices
 				validation.By(validateAddress),
 			),
 		),

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "affbab362e16adf513ee74bfb9267015aeee2edbadb515dca4da15d3e0ca9f30"
+			"val": "bc9753f607a332195a754f4541c32f97724f362ec73b4dae400959cb3c564823"
 		},
 		"draft": true
 	},
@@ -24,6 +24,7 @@
 			"name": "MªF. Services",
 			"tax_id": {
 				"country": "IT",
+				"type": "business",
 				"code": "12345678903"
 			},
 			"people": [
@@ -55,6 +56,7 @@
 			"name": "David Bowie",
 			"tax_id": {
 				"country": "IT",
+				"type": "business",
 				"code": "13029381004"
 			},
 			"addresses": [
