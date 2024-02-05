@@ -170,6 +170,173 @@
   ],
   "extensions": [
     {
+      "key": "es-facturae-correction",
+      "name": {
+        "en": "FacturaE Change",
+        "es": "Cambio de FacturaE"
+      },
+      "desc": {
+        "en": "FacturaE requires a specific and single code that explains why the previous invoice is being corrected.",
+        "es": "FacturaE requiere un código específico y único que explique por qué se está corrigiendo la factura anterior."
+      },
+      "codes": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Invoice code",
+            "es": "Número de la factura"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Invoice series",
+            "es": "Serie de la factura"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Issue date",
+            "es": "Fecha expedición"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Name and surnames/Corporate name - Issuer (Sender)",
+            "es": "Nombre y apellidos/Razón Social-Emisor"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Name and surnames/Corporate name - Receiver",
+            "es": "Nombre y apellidos/Razón Social-Receptor"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Issuer's Tax Identification Number",
+            "es": "Identificación fiscal Emisor/obligado"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Receiver's Tax Identification Number",
+            "es": "Identificación fiscal Receptor"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "Supplier's address",
+            "es": "Domicilio Emisor/Obligado"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "Customer's address",
+            "es": "Domicilio Receptor"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Item line",
+            "es": "Detalle Operación"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Applicable Tax Rate",
+            "es": "Porcentaje impositivo a aplicar"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "Applicable Tax Amount",
+            "es": "Cuota tributaria a aplicar"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Applicable Date/Period",
+            "es": "Fecha/Periodo a aplicar"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "en": "Invoice Class",
+            "es": "Clase de factura"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Legal literals",
+            "es": "Literales legales"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "Taxable Base",
+            "es": "Base imponible"
+          }
+        },
+        {
+          "code": "80",
+          "name": {
+            "en": "Calculation of tax outputs",
+            "es": "Cálculo de cuotas repercutidas"
+          }
+        },
+        {
+          "code": "81",
+          "name": {
+            "en": "Calculation of tax inputs",
+            "es": "Cálculo de cuotas retenidas"
+          }
+        },
+        {
+          "code": "82",
+          "name": {
+            "en": "Taxable Base modified due to return of packages and packaging materials",
+            "es": "Base imponible modificada por devolución de envases / embalajes"
+          }
+        },
+        {
+          "code": "83",
+          "name": {
+            "en": "Taxable Base modified due to discounts and rebates",
+            "es": "Base imponible modificada por descuentos y bonificaciones"
+          }
+        },
+        {
+          "code": "84",
+          "name": {
+            "en": "Taxable Base modified due to firm court ruling or administrative decision",
+            "es": "Base imponible modificada por resolución firme, judicial o administrativa"
+          }
+        },
+        {
+          "code": "85",
+          "name": {
+            "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
+            "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
+          }
+        }
+      ]
+    },
+    {
       "key": "es-tbai-product",
       "name": {
         "en": "TicketBAI Product Key",
@@ -266,6 +433,58 @@
           "name": {
             "en": "Not subject: pursuant to localization rules.",
             "es": "No sujeto: por reglas de localización."
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-tbai-correction",
+      "name": {
+        "en": "TicketBAI Rectification Type Code",
+        "es": "TicketBAI Código de Factura Rectificativa"
+      },
+      "desc": {
+        "en": "Corrected or rectified invoices that need to be sent in the TicketBAI format\nrequire a specific type code to be defined alongside the preceding invoice\ndata."
+      },
+      "codes": [
+        {
+          "code": "R1",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT",
+            "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis de la Norma Foral del IVA",
+            "eu": "Faktura zuzentzailea: zuzenbidean oinarritutako akatsa eta BEZaren Foru Arauaren 80.artikuluko Bat, Bi eta Sei"
+          }
+        },
+        {
+          "code": "R2",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT",
+            "es": "Factura rectificativa: artículo 80 Tres de la Norma Foral del IVA",
+            "eu": "Faktura zuzentzailea: BEZari buruzko Foru Arauko 80. artikuluko Hiru"
+          }
+        },
+        {
+          "code": "R3",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT",
+            "es": "Factura rectificativa: artículo 80 Cuatro de la Norma Foral del IVA",
+            "eu": "Faktura zuzentzailea: BEZari buruzko Foru Arauko 80. artikuluko Lau"
+          }
+        },
+        {
+          "code": "R4",
+          "name": {
+            "en": "Rectified invoice: Other",
+            "es": "Factura rectificativa: Resto",
+            "eu": "Faktura zuzentzailea: Gainerakoak"
+          }
+        },
+        {
+          "code": "R5",
+          "name": {
+            "en": "Rectified invoice: simplified invoices",
+            "es": "Factura rectificativa: facturas simplificadas",
+            "eu": "Faktura zuzentzaile: faktura erraztuetan"
           }
         }
       ]
@@ -445,271 +664,13 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "corrective"
+        "corrective",
+        "credit-note",
+        "debit-note"
       ],
-      "methods": [
-        {
-          "key": "complete",
-          "name": {
-            "en": "Complete",
-            "es": "Rectificaticón íntegra"
-          },
-          "map": {
-            "facturae": "01"
-          }
-        },
-        {
-          "key": "partial",
-          "name": {
-            "en": "Corrected items only",
-            "es": "Rectificación por diferencias"
-          },
-          "map": {
-            "facturae": "02"
-          }
-        },
-        {
-          "key": "discount",
-          "name": {
-            "en": "Bulk deal in a given period",
-            "es": "Rectificación por descuento por volumen de operaciones durante un periodo"
-          },
-          "map": {
-            "facturae": "03"
-          }
-        },
-        {
-          "key": "authorized",
-          "name": {
-            "en": "Authorized by the Tax Agency",
-            "es": "Autorizadas por la Agencia Tributaria"
-          },
-          "map": {
-            "facturae": "04"
-          }
-        }
-      ],
-      "changes": [
-        {
-          "key": "code",
-          "name": {
-            "en": "Invoice code",
-            "es": "Número de la factura"
-          },
-          "map": {
-            "facturae": "01"
-          }
-        },
-        {
-          "key": "series",
-          "name": {
-            "en": "Invoice series",
-            "es": "Serie de la factura"
-          },
-          "map": {
-            "facturae": "02"
-          }
-        },
-        {
-          "key": "issue-date",
-          "name": {
-            "en": "Issue date",
-            "es": "Fecha expedición"
-          },
-          "map": {
-            "facturae": "03"
-          }
-        },
-        {
-          "key": "supplier-name",
-          "name": {
-            "en": "Name and surnames/Corporate name - Issuer (Sender)",
-            "es": "Nombre y apellidos/Razón Social-Emisor"
-          },
-          "map": {
-            "facturae": "04"
-          }
-        },
-        {
-          "key": "customer-name",
-          "name": {
-            "en": "Name and surnames/Corporate name - Receiver",
-            "es": "Nombre y apellidos/Razón Social-Receptor"
-          },
-          "map": {
-            "facturae": "05"
-          }
-        },
-        {
-          "key": "supplier-tax-id",
-          "name": {
-            "en": "Issuer's Tax Identification Number",
-            "es": "Identificación fiscal Emisor/obligado"
-          },
-          "map": {
-            "facturae": "06"
-          }
-        },
-        {
-          "key": "customer-tax-id",
-          "name": {
-            "en": "Receiver's Tax Identification Number",
-            "es": "Identificación fiscal Receptor"
-          },
-          "map": {
-            "facturae": "07"
-          }
-        },
-        {
-          "key": "supplier-addr",
-          "name": {
-            "en": "Issuer's address",
-            "es": "Domicilio Emisor/Obligado"
-          },
-          "map": {
-            "facturae": "08"
-          }
-        },
-        {
-          "key": "customer-addr",
-          "name": {
-            "en": "Receiver's address",
-            "es": "Domicilio Receptor"
-          },
-          "map": {
-            "facturae": "09"
-          }
-        },
-        {
-          "key": "line",
-          "name": {
-            "en": "Item line",
-            "es": "Detalle Operación"
-          },
-          "map": {
-            "facturae": "10"
-          }
-        },
-        {
-          "key": "tax-rate",
-          "name": {
-            "en": "Applicable Tax Rate",
-            "es": "Porcentaje impositivo a aplicar"
-          },
-          "map": {
-            "facturae": "11"
-          }
-        },
-        {
-          "key": "tax-amount",
-          "name": {
-            "en": "Applicable Tax Amount",
-            "es": "Cuota tributaria a aplicar"
-          },
-          "map": {
-            "facturae": "12"
-          }
-        },
-        {
-          "key": "period",
-          "name": {
-            "en": "Applicable Date/Period",
-            "es": "Fecha/Periodo a aplicar"
-          },
-          "map": {
-            "facturae": "13"
-          }
-        },
-        {
-          "key": "type",
-          "name": {
-            "en": "Invoice Class",
-            "es": "Clase de factura"
-          },
-          "map": {
-            "facturae": "14"
-          }
-        },
-        {
-          "key": "legal-details",
-          "name": {
-            "en": "Legal literals",
-            "es": "Literales legales"
-          },
-          "map": {
-            "facturae": "15"
-          }
-        },
-        {
-          "key": "tax-base",
-          "name": {
-            "en": "Taxable Base",
-            "es": "Base imponible"
-          },
-          "map": {
-            "facturae": "16"
-          }
-        },
-        {
-          "key": "tax",
-          "name": {
-            "en": "Calculation of tax outputs",
-            "es": "Cálculo de cuotas repercutidas"
-          },
-          "map": {
-            "facturae": "80"
-          }
-        },
-        {
-          "key": "tax-retained",
-          "name": {
-            "en": "Calculation of tax inputs",
-            "es": "Cálculo de cuotas retenidas"
-          },
-          "map": {
-            "facturae": "81"
-          }
-        },
-        {
-          "key": "refund",
-          "name": {
-            "en": "Taxable Base modified due to return of packages and packaging materials",
-            "es": "Base imponible modificada por devolución de envases / embalajes"
-          },
-          "map": {
-            "facturae": "82"
-          }
-        },
-        {
-          "key": "discount",
-          "name": {
-            "en": "Taxable Base modified due to discounts and rebates",
-            "es": "Base imponible modificada por descuentos y bonificaciones"
-          },
-          "map": {
-            "facturae": "83"
-          }
-        },
-        {
-          "key": "judicial",
-          "name": {
-            "en": "Taxable Base modified due to firm court ruling or administrative decision",
-            "es": "Base imponible modificada por resolución firme, judicial o administrativa"
-          },
-          "map": {
-            "facturae": "84"
-          }
-        },
-        {
-          "key": "insolvency",
-          "name": {
-            "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
-            "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
-          },
-          "map": {
-            "facturae": "85"
-          }
-        }
+      "extensions": [
+        "es-facturae-correction",
+        "es-tbai-correction"
       ]
     }
   ],

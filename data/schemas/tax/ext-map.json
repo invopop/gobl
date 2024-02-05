@@ -31,5 +31,5 @@
       "description": "ExtMap is a map of extension keys to either a code or a key."
     }
   },
-  "$comment": "Generated with GOBL v0.65.0"
+  "$comment": "Generated with GOBL v0.67.0"
 }
