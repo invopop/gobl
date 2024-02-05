@@ -156,8 +156,8 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 			for i, v := range cd.Types {
 				td := InvoiceTypes.Get(v)
 				ps.OneOf[i] = &jsonschema.Schema{
-					Const: v.String(),
-					Title: td.Title,
+					Const:       v.String(),
+					Title:       td.Title,
 					Description: td.Description,
 				}
 			}
