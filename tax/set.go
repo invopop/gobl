@@ -200,3 +200,25 @@ func (s Set) Rate(cat cbc.Code) cbc.Key {
 	}
 	return ""
 }
+
+type setValidation struct {
+	categories []cbc.Code
+}
+
+// SetHasCategory validates that the set contains the given category.
+func SetHasCategory(categories ...cbc.Code) validation.Rule {
+	return &setValidation{categories: categories}
+}
+
+func (sv *setValidation) Validate(value interface{}) error {
+	s, ok := value.(Set)
+	if !ok {
+		return nil
+	}
+	for _, c := range sv.categories {
+		if s.Get(c) == nil {
+			return fmt.Errorf("missing category %s", c.String())
+		}
+	}
+	return nil
+}
