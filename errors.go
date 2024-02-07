@@ -76,7 +76,7 @@ func wrapError(err error) error {
 	if _, ok := err.(validation.Errors); ok {
 		return ErrValidation.WithCause(err)
 	}
-	return ErrInternal.WithReason(err.Error())
+	return ErrInternal.WithCause(err)
 }
 
 // Error provides a string representation of the error.
