@@ -504,8 +504,17 @@ func (inv *Invoice) determineTaxIdentity() (*tax.Identity, error) {
 			if inv.Customer == nil {
 				return nil, fmt.Errorf("missing customer for %s", tax.TagCustomerRates.String())
 			}
+			if inv.Customer.TaxID == nil {
+				return nil, fmt.Errorf("missing customer tax ID for %s", tax.TagCustomerRates.String())
+			}
 			return inv.Customer.TaxID, nil
 		}
+	}
+	if inv.Supplier == nil {
+		return nil, errors.New("missing supplier")
+	}
+	if inv.Supplier.TaxID == nil {
+		return nil, errors.New("missing supplier tax ID")
 	}
 	return inv.Supplier.TaxID, nil
 }
