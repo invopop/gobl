@@ -13,12 +13,12 @@ import (
 
 // Error provides a structure to better be able to make error comparisons.
 // The contents can also be serialised as JSON ready to send to a client
-// if needed.
+// if needed, see MarshalJSON method.
 type Error struct {
 	// Key describes the area of concern for the error
-	Key cbc.Key `json:"key"`
+	Key cbc.Key
 	// What was the cause of the error when GOBL is used as a library.
-	Cause error `json:"cause,omitempty"`
+	Cause error
 }
 
 var (
@@ -139,10 +139,12 @@ func (e *Error) MarshalJSON() ([]byte, error) {
 	}{
 		Key: e.Key,
 	}
-	if ms, ok := e.Cause.(json.Marshaler); ok {
-		err.Cause = ms
-	} else {
-		err.Cause = e.Cause.Error()
+	if e.Cause != nil {
+		if ms, ok := e.Cause.(json.Marshaler); ok {
+			err.Cause = ms
+		} else {
+			err.Cause = e.Cause.Error()
+		}
 	}
 	return json.Marshal(err)
 }
