@@ -203,7 +203,7 @@ func (inv *Invoice) Calculate() error {
 		inv.Type = InvoiceTypeStandard
 	}
 	if inv.Supplier == nil {
-		return errors.New("missing or invalid supplier tax identity")
+		return errors.New("missing supplier")
 	}
 	if err := inv.Supplier.Calculate(); err != nil {
 		return fmt.Errorf("supplier: %w", err)
@@ -218,10 +218,10 @@ func (inv *Invoice) Calculate() error {
 		return err
 	}
 
-	// Should we use the customers identity for calculations?
-	tID := inv.determineTaxIdentity()
-	if tID == nil {
-		return errors.New("unable to determine tax identity")
+	// Should we use the customer's identity for calculations?
+	tID, err := inv.determineTaxIdentity()
+	if err != nil {
+		return err
 	}
 	r := tax.RegimeFor(tID.Country, tID.Zone)
 	if r == nil {
@@ -498,19 +498,16 @@ func calculateComplements(comps []*schema.Object) error {
 	return nil
 }
 
-func (inv *Invoice) determineTaxIdentity() *tax.Identity {
+func (inv *Invoice) determineTaxIdentity() (*tax.Identity, error) {
 	if inv.Tax != nil {
 		if inv.Tax.ContainsTag(tax.TagCustomerRates) {
 			if inv.Customer == nil {
-				return nil
+				return nil, fmt.Errorf("missing customer for %s", tax.TagCustomerRates.String())
 			}
-			return inv.Customer.TaxID
+			return inv.Customer.TaxID, nil
 		}
 	}
-	if inv.Supplier == nil {
-		return nil
-	}
-	return inv.Supplier.TaxID
+	return inv.Supplier.TaxID, nil
 }
 
 func taxRegimeFor(party *org.Party) *tax.Regime {

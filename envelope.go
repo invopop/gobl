@@ -180,7 +180,7 @@ func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 // envelope. Calculate will be called automatically.
 func (e *Envelope) Insert(doc interface{}) error {
 	if e.Head == nil {
-		return ErrInternal.WithErrorf("missing head")
+		return ErrInternal.WithReason("missing head")
 	}
 	if doc == nil {
 		return ErrNoDocument
@@ -252,7 +252,7 @@ func (e *Envelope) Digest() (*dsig.Digest, error) {
 	r := bytes.NewReader(data)
 	cd, err := c14n.CanonicalJSON(r)
 	if err != nil {
-		return nil, ErrInternal.WithErrorf("canonical JSON error: %w", err)
+		return nil, ErrInternal.WithReason("canonical JSON error: %w", err)
 	}
 	return dsig.NewSHA256Digest(cd), nil
 }
