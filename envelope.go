@@ -252,7 +252,7 @@ func (e *Envelope) Digest() (*dsig.Digest, error) {
 	r := bytes.NewReader(data)
 	cd, err := c14n.CanonicalJSON(r)
 	if err != nil {
-		return nil, ErrInternal.WithReason("canonical JSON error: %s", err.Error())
+		return nil, ErrInternal.WithReason("canonical JSON error: %w", err)
 	}
 	return dsig.NewSHA256Digest(cd), nil
 }
