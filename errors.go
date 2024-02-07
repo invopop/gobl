@@ -1,6 +1,7 @@
 package gobl
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -14,8 +15,10 @@ import (
 // The contents can also be serialised as JSON ready to send to a client
 // if needed.
 type Error struct {
-	Key   cbc.Key `json:"key"`
-	Cause error   `json:"cause"`
+	// Key describes the area of concern for the error
+	Key cbc.Key `json:"key"`
+	// What was the cause of the error when GOBL is used as a library.
+	Cause error `json:"cause,omitempty"`
 }
 
 var (
@@ -58,12 +61,6 @@ func NewError(key cbc.Key) *Error {
 	return &Error{Key: key}
 }
 
-// WrapError is useful for wrapping errors that are not already prepared, such as when
-// parsing Schema Objects directly.
-func WrapError(err error) error {
-	return wrapError(err)
-}
-
 // wrapError is used to ensure that errors are wrapped around the GOBL standard
 // error so they can be output in a consistent manner.
 func wrapError(err error) error {
@@ -79,40 +76,37 @@ func wrapError(err error) error {
 	if _, ok := err.(validation.Errors); ok {
 		return ErrValidation.WithCause(err)
 	}
-	return ErrInternal.WithCause(err)
+	return ErrInternal.WithReason(err.Error())
 }
 
 // Error provides a string representation of the error.
 func (e *Error) Error() string {
 	if e.Cause != nil {
-		cause := e.Cause.Error()
+		msg := e.Cause.Error()
 		if reflect.TypeOf(e.Cause).Kind() == reflect.Map {
-			cause = fmt.Sprintf("(%s).", cause)
+			msg = fmt.Sprintf("(%s).", msg)
 		}
-		return fmt.Sprintf("%s: %s", e.Key.String(), cause)
+		return fmt.Sprintf("%s: %s", e.Key, msg)
 	}
 	return e.Key.String()
 }
 
-// WithCause is used to copy and add an underlying error to this one.
+// WithCause is used to copy and add an underlying error to this one,
+// unless the errors is already of type *Error, in which case it will
+// be returned as is.
 func (e *Error) WithCause(err error) *Error {
 	ne := e.copy()
+	if eo, ok := err.(*Error); ok {
+		return eo
+	}
 	ne.Cause = err
 	return ne
 }
 
-// WithReason returns an error with a reason attached.
-func (e *Error) WithReason(msg string) *Error {
+// WithReason returns the error with a specific reason.
+func (e *Error) WithReason(msg string, a ...interface{}) *Error {
 	ne := e.copy()
-	ne.Cause = errors.New(msg)
-	return ne
-}
-
-// WithErrorf wraps around the `fmt.Errorf` call to provide a more meaningful
-// error in the context.
-func (e *Error) WithErrorf(format string, a ...interface{}) *Error {
-	ne := e.copy()
-	ne.Cause = fmt.Errorf(format, a...)
+	ne.Cause = fmt.Errorf(msg, a...)
 	return ne
 }
 
@@ -130,4 +124,25 @@ func (e *Error) Is(target error) bool {
 		return errors.Is(e.Cause, target)
 	}
 	return e.Key == t.Key
+}
+
+// MarshalJSON converts the Error into a valid JSON, correctly
+// handling mashalling for cause objects that might not have a
+// valid MarhsalJSON method.
+func (e *Error) MarshalJSON() ([]byte, error) {
+	if e == nil {
+		return nil, nil
+	}
+	err := struct {
+		Key   cbc.Key `json:"key"`
+		Cause any     `json:"cause,omitempty"`
+	}{
+		Key: e.Key,
+	}
+	if ms, ok := e.Cause.(json.Marshaler); ok {
+		err.Cause = ms
+	} else {
+		err.Cause = e.Cause.Error()
+	}
+	return json.Marshal(err)
 }
