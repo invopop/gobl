@@ -167,6 +167,8 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	// Try to add all the specific options for the extensions
 	if len(cd.Extensions) > 0 {
 		if ext, ok := cos.Properties.Get("ext"); ok {
+			ext.Ref = "" // remove the ref
+			ext.Type = "object"
 			ext.Properties = jsonschema.NewProperties()
 			for _, pk := range cd.Extensions {
 				re := r.ExtensionDef(pk)
@@ -180,8 +182,12 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 					}
 					var oneOf []*jsonschema.Schema
 					if len(re.Codes) > 0 {
-						oneOf = make([]*jsonschema.Schema, len(re.Codes))
-						for i, c := range re.Codes {
+						oneOf = make([]*jsonschema.Schema, 1, len(re.Codes)+1)
+						oneOf[0] = &jsonschema.Schema{ // empty option validated later
+							Const: "",
+							Title: "None",
+						}
+						for _, c := range re.Codes {
 							ci := &jsonschema.Schema{
 								Const: c.Code.String(),
 								Title: c.Name.String(),
@@ -189,11 +195,15 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 							if len(c.Desc) > 0 {
 								ci.Description = c.Desc.String()
 							}
-							oneOf[i] = ci
+							oneOf = append(oneOf, ci)
 						}
 					} else if len(re.Keys) > 0 {
-						oneOf = make([]*jsonschema.Schema, len(re.Keys))
-						for i, c := range re.Codes {
+						oneOf = make([]*jsonschema.Schema, 1, len(re.Keys)+1)
+						oneOf[0] = &jsonschema.Schema{
+							Const: "",
+							Title: "None",
+						}
+						for _, c := range re.Codes {
 							ci := &jsonschema.Schema{
 								Const: c.Code.String(),
 								Title: c.Name.String(),
@@ -201,16 +211,21 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 							if len(c.Desc) > 0 {
 								ci.Description = c.Desc.String()
 							}
-							oneOf[i] = ci
+							oneOf = append(oneOf, ci)
 						}
 					}
 					if oneOf != nil {
 						prop.OneOf = oneOf
 					}
 					ext.Properties.Set(pk.String(), prop)
+					ext.Required = append(ext.Required, pk.String())
 				}
 			}
 		}
+		cos.Required = append(cos.Required, "ext")
+	} else {
+		// Remove extensions, they're not needed if not defined
+		cos.Properties.Delete("ext")
 	}
 
 	if cd.ReasonRequired {
