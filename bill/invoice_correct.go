@@ -125,7 +125,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, nil
 	}
 
-	schema := new(jsonschema.Schema)
+	js := new(jsonschema.Schema)
 
 	// try to load the pre-generated schema, this is just way more efficient
 	// than trying to generate the configuration options manually.
@@ -133,21 +133,21 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	if err != nil {
 		return nil, fmt.Errorf("loading schema option data: %w", err)
 	}
-	if err := json.Unmarshal(data, schema); err != nil {
+	if err := json.Unmarshal(data, js); err != nil {
 		return nil, fmt.Errorf("unmarshalling options schema: %w", err)
 	}
 
 	// Add our regime to the schema ID
 	code := strings.ToLower(r.Code().String())
-	id := fmt.Sprintf("%s?tax_regime=%s", schema.ID.String(), code)
-	schema.ID = jsonschema.ID(id)
-	schema.Comments = fmt.Sprintf("Generated dynamically for %s", code)
+	id := fmt.Sprintf("%s?tax_regime=%s", js.ID.String(), code)
+	js.ID = jsonschema.ID(id)
+	js.Comments = fmt.Sprintf("Generated dynamically for %s", code)
 
-	cos := schema.Definitions["CorrectionOptions"]
+	cos := js.Definitions["CorrectionOptions"]
 
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 	if cd == nil {
-		return schema, nil
+		return js, nil
 	}
 
 	if len(cd.Types) > 0 {
@@ -170,55 +170,55 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 			ext.Ref = "" // remove the ref
 			ext.Type = "object"
 			ext.Properties = jsonschema.NewProperties()
+			rcmd := make([]string, 0)
 			for _, pk := range cd.Extensions {
 				re := r.ExtensionDef(pk)
-				if re != nil {
-					prop := &jsonschema.Schema{
-						Title: re.Name.String(),
-						Type:  "string",
-					}
-					if !re.Desc.IsEmpty() {
-						prop.Description = re.Desc.String()
-					}
-					var oneOf []*jsonschema.Schema
-					if len(re.Codes) > 0 {
-						oneOf = make([]*jsonschema.Schema, 1, len(re.Codes)+1)
-						oneOf[0] = &jsonschema.Schema{ // empty option validated later
-							Const: "",
-							Title: "None",
+				if re == nil {
+					continue
+				}
+				prop := &jsonschema.Schema{
+					Title: re.Name.String(),
+					Type:  "string",
+				}
+				if !re.Desc.IsEmpty() {
+					prop.Description = re.Desc.String()
+				}
+				var oneOf []*jsonschema.Schema
+				if len(re.Codes) > 0 {
+					oneOf = make([]*jsonschema.Schema, 0, len(re.Codes))
+					for _, c := range re.Codes {
+						ci := &jsonschema.Schema{
+							Const: c.Code.String(),
+							Title: c.Name.String(),
 						}
-						for _, c := range re.Codes {
-							ci := &jsonschema.Schema{
-								Const: c.Code.String(),
-								Title: c.Name.String(),
-							}
-							if len(c.Desc) > 0 {
-								ci.Description = c.Desc.String()
-							}
-							oneOf = append(oneOf, ci)
+						if len(c.Desc) > 0 {
+							ci.Description = c.Desc.String()
 						}
-					} else if len(re.Keys) > 0 {
-						oneOf = make([]*jsonschema.Schema, 1, len(re.Keys)+1)
-						oneOf[0] = &jsonschema.Schema{
-							Const: "",
-							Title: "None",
-						}
-						for _, c := range re.Codes {
-							ci := &jsonschema.Schema{
-								Const: c.Code.String(),
-								Title: c.Name.String(),
-							}
-							if len(c.Desc) > 0 {
-								ci.Description = c.Desc.String()
-							}
-							oneOf = append(oneOf, ci)
-						}
+						oneOf = append(oneOf, ci)
 					}
-					if oneOf != nil {
-						prop.OneOf = oneOf
+				} else if len(re.Keys) > 0 {
+					oneOf = make([]*jsonschema.Schema, 0, len(re.Keys))
+					for _, c := range re.Keys {
+						ci := &jsonschema.Schema{
+							Const: c.Key.String(),
+							Title: c.Name.String(),
+						}
+						if len(c.Desc) > 0 {
+							ci.Description = c.Desc.String()
+						}
+						oneOf = append(oneOf, ci)
 					}
-					ext.Properties.Set(pk.String(), prop)
-					ext.Required = append(ext.Required, pk.String())
+				}
+				if oneOf != nil {
+					prop.OneOf = oneOf
+				}
+				ext.Properties.Set(pk.String(), prop)
+				rcmd = append(rcmd, pk.String())
+			}
+			if len(rcmd) > 0 {
+				// Add the "recommended" extensions as extras
+				ext.Extras = map[string]any{
+					schema.Recommended: rcmd,
 				}
 			}
 		}
@@ -232,7 +232,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		cos.Required = append(cos.Required, "reason")
 	}
 
-	return schema, nil
+	return js, nil
 }
 
 // Correct moves key fields of the current invoice to the preceding
