@@ -12,11 +12,17 @@ import (
 // invoiceValidator adds validation checks to invoices which are relevant
 // for the region.
 type invoiceValidator struct {
-	inv *bill.Invoice
+	inv  *bill.Invoice
+	zone l10n.Code
 }
 
 func validateInvoice(inv *bill.Invoice) error {
 	v := &invoiceValidator{inv: inv}
+
+	if inv.Supplier != nil && inv.Supplier.TaxID != nil {
+		v.zone = inv.Supplier.TaxID.Zone
+	}
+
 	return v.validate()
 }
 
@@ -27,6 +33,10 @@ func (v *invoiceValidator) validate() error {
 			validation.In(currency.EUR),
 		),
 		validation.Field(&inv.Preceding,
+			validation.When(
+				v.zone.In(ZonesBasqueCountry...) && inv.Type.In(correctionTypes...),
+				validation.Required,
+			),
 			validation.Each(validation.By(v.preceding)),
 			validation.Skip,
 		),
@@ -87,9 +97,15 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	if obj == nil {
 		return nil
 	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Ext), // TODO validate the extensions according to region
-	)
+
+	if v.zone.In(ZonesBasqueCountry...) {
+		return validation.ValidateStruct(obj,
+			validation.Field(&obj.IssueDate, validation.Required),
+			validation.Field(&obj.Ext, tax.ExtMapRequires(ExtKeyTBAICorrection)),
+		)
+	}
+
+	return nil
 }
 
 func (v *invoiceValidator) validateLine(value interface{}) error {
@@ -113,15 +129,10 @@ func (v *invoiceValidator) validateLineTax(value interface{}) error {
 	if obj == nil || !ok {
 		return nil
 	}
-	zone := l10n.CodeEmpty
-	if v.inv.Supplier != nil && v.inv.Supplier.TaxID != nil {
-		zone = v.inv.Supplier.TaxID.Zone
-	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
 			validation.When(
-				zone.In(ZonesBasqueCountry...) &&
-					obj.Rate == tax.RateExempt,
+				v.zone.In(ZonesBasqueCountry...) && obj.Rate == tax.RateExempt,
 				tax.ExtMapRequires(ExtKeyTBAIExemption),
 			),
 			validation.Skip,
