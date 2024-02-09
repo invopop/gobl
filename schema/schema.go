@@ -25,6 +25,14 @@ const (
 	UnknownID ID = ""
 )
 
+const (
+	// Recommended defines the constant used in JSON Schema extensions
+	// to define a list of recommended but not required fields.
+	// This is leveraged in UIs to determine fields that should be show
+	// by default but not required if left empty.
+	Recommended = "recommended"
+)
+
 func init() {
 	schemas = newRegistry()
 	Register(GOBL.Add("schema"),
