@@ -128,6 +128,7 @@ func validateLine(value interface{}) error {
 	}
 	return validation.ValidateStruct(v,
 		validation.Field(&v.Taxes,
+			tax.SetHasCategory(tax.CategoryVAT),
 			validation.Each(
 				validation.By(validateLineTax),
 				validation.Skip,
