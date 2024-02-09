@@ -223,7 +223,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 			}
 		}
 		cos.Extras = map[string]any{
-			schema.Recommended: "ext",
+			schema.Recommended: []string{"ext"},
 		}
 	} else {
 		// Remove extensions, they're not needed if not defined
