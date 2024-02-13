@@ -403,7 +403,7 @@ func TestDocumentValidationOutput(t *testing.T) {
 	err = env.Validate()
 	data, err = json.Marshal(err)
 	require.NoError(t, err)
-	assert.Equal(t, `{"key":"validation","cause":{"doc":{"content":"cannot be blank"}}}`, string(data))
+	assert.Equal(t, `{"key":"validation","fields":{"doc":{"content":"cannot be blank"}}}`, string(data))
 }
 
 func TestEnvelopeVerify(t *testing.T) {
