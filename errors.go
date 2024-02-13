@@ -4,22 +4,25 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
+	"sort"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/validation"
 )
 
-// Error provides a structure to better be able to make error comparisons.
+// An Error provides a structure to better be able to make error comparisons.
 // The contents can also be serialised as JSON ready to send to a client
-// if needed, see MarshalJSON method.
+// if needed, see [MarshalJSON] method.
 type Error struct {
-	// Key describes the area of concern for the error
-	Key cbc.Key
-	// What was the cause of the error when GOBL is used as a library.
-	Cause error
+	key   cbc.Key
+	cause error // the underlying error
 }
+
+// FieldErrors is a map of field names to errors, which is provided when it
+// was possible to determine that the error was related to a specific field.
+type FieldErrors map[string]error
 
 var (
 	// ErrNoDocument is provided when the envelope does not contain a
@@ -58,7 +61,7 @@ var (
 // NewError provides a new error with a code that is meant to provide
 // a context.
 func NewError(key cbc.Key) *Error {
-	return &Error{Key: key}
+	return &Error{key: key}
 }
 
 // wrapError is used to ensure that errors are wrapped around the GOBL standard
@@ -73,7 +76,8 @@ func wrapError(err error) error {
 	if errors.Is(err, schema.ErrUnknownSchema) {
 		return ErrUnknownSchema
 	}
-	if _, ok := err.(validation.Errors); ok {
+	switch err.(type) {
+	case validation.Errors:
 		return ErrValidation.WithCause(err)
 	}
 	return ErrInternal.WithCause(err)
@@ -81,33 +85,59 @@ func wrapError(err error) error {
 
 // Error provides a string representation of the error.
 func (e *Error) Error() string {
-	if e.Cause != nil {
-		msg := e.Cause.Error()
-		if reflect.TypeOf(e.Cause).Kind() == reflect.Map {
+	if e.cause != nil {
+		msg := e.cause.Error()
+		if e.Fields() != nil {
 			msg = fmt.Sprintf("(%s).", msg)
 		}
-		return fmt.Sprintf("%s: %s", e.Key, msg)
+		return fmt.Sprintf("%s: %s", e.key, msg)
 	}
-	return e.Key.String()
+	return e.key.String()
 }
 
 // WithCause is used to copy and add an underlying error to this one,
-// unless the errors is already of type *Error, in which case it will
+// unless the errors is already of type [*Error], in which case it will
 // be returned as is.
 func (e *Error) WithCause(err error) *Error {
 	ne := e.copy()
-	if eo, ok := err.(*Error); ok {
-		return eo
+	switch te := err.(type) {
+	case *Error:
+		return te
+	case validation.Errors:
+		ne.cause = fieldErrorsFromValidation(te)
+	default:
+		ne.cause = err
 	}
-	ne.Cause = err
 	return ne
 }
 
 // WithReason returns the error with a specific reason.
 func (e *Error) WithReason(msg string, a ...interface{}) *Error {
 	ne := e.copy()
-	ne.Cause = fmt.Errorf(msg, a...)
+	ne.cause = fmt.Errorf(msg, a...)
 	return ne
+}
+
+// Fields returns the errors that are associated with specific fields
+// or nil if there are no field errors available.
+func (e *Error) Fields() FieldErrors {
+	if fe, ok := e.cause.(FieldErrors); ok {
+		return fe
+	}
+	return nil
+}
+
+// Message returns a string representation of the error if it cannot
+// be serialised as a map of field names to sub-errors, see also the
+// [Fields] method.
+func (e *Error) Message() string {
+	if e.cause == nil {
+		return ""
+	}
+	if e.Fields() != nil {
+		return ""
+	}
+	return e.cause.Error()
 }
 
 func (e *Error) copy() *Error {
@@ -121,30 +151,76 @@ func (e *Error) copy() *Error {
 func (e *Error) Is(target error) bool {
 	t, ok := target.(*Error)
 	if !ok {
-		return errors.Is(e.Cause, target)
+		return errors.Is(e.cause, target)
 	}
-	return e.Key == t.Key
+	return e.key == t.key
 }
 
 // MarshalJSON converts the Error into a valid JSON, correctly
-// handling mashalling for cause objects that might not have a
+// handling mashaling of cause objects that might not have a
 // valid MarhsalJSON method.
 func (e *Error) MarshalJSON() ([]byte, error) {
-	if e == nil {
-		return nil, nil
-	}
 	err := struct {
-		Key   cbc.Key `json:"key"`
-		Cause any     `json:"cause,omitempty"`
+		Key     cbc.Key     `json:"key"`
+		Fields  FieldErrors `json:"fields,omitempty"`
+		Message string      `json:"message,omitempty"`
 	}{
-		Key: e.Key,
-	}
-	if e.Cause != nil {
-		if ms, ok := e.Cause.(json.Marshaler); ok {
-			err.Cause = ms
-		} else {
-			err.Cause = e.Cause.Error()
-		}
+		Key:     e.key,
+		Fields:  e.Fields(),
+		Message: e.Message(),
 	}
 	return json.Marshal(err)
+}
+
+// Error returns the error string of FieldErrors. This is based on the
+// implementation of [validation.Errors].
+func (fe FieldErrors) Error() string {
+	if len(fe) == 0 {
+		return ""
+	}
+
+	keys := make([]string, len(fe))
+	i := 0
+	for key := range fe {
+		keys[i] = key
+		i++
+	}
+	sort.Strings(keys)
+
+	var s strings.Builder
+	for i, key := range keys {
+		if i > 0 {
+			s.WriteString("; ")
+		}
+		switch errs := fe[key].(type) {
+		case FieldErrors, validation.Errors:
+			_, _ = fmt.Fprintf(&s, "%v: (%v)", key, errs)
+		default:
+			_, _ = fmt.Fprintf(&s, "%v: %v", key, fe[key].Error())
+		}
+	}
+	s.WriteString(".")
+	return s.String()
+}
+
+// MarshalJSON converts the FieldErrors into a valid JSON. Based on the
+// implementation of [validation.Errors].
+func (fe FieldErrors) MarshalJSON() ([]byte, error) {
+	errs := map[string]any{}
+	for key, err := range fe {
+		if ms, ok := err.(json.Marshaler); ok {
+			errs[key] = ms
+		} else {
+			errs[key] = err.Error()
+		}
+	}
+	return json.Marshal(errs)
+}
+
+func fieldErrorsFromValidation(errs validation.Errors) FieldErrors {
+	fe := make(FieldErrors)
+	for key, err := range errs {
+		fe[key] = err
+	}
+	return fe
 }
