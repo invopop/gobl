@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -16,6 +17,7 @@ func TestError(t *testing.T) {
 	err := gobl.ErrNoDocument
 
 	assert.Equal(t, "no-document", err.Error())
+	assert.Equal(t, cbc.Key("no-document"), err.Key())
 	assert.Equal(t, "", err.Message())
 	assert.Nil(t, err.Fields())
 	data, _ := json.Marshal(err)

@@ -118,6 +118,11 @@ func (e *Error) WithReason(msg string, a ...interface{}) *Error {
 	return ne
 }
 
+// Key provides the error's key.
+func (e *Error) Key() cbc.Key {
+	return e.key
+}
+
 // Fields returns the errors that are associated with specific fields
 // or nil if there are no field errors available.
 func (e *Error) Fields() FieldErrors {
