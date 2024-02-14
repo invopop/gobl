@@ -117,6 +117,15 @@ func TestSupplierValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "type: must be a valid value")
 }
 
+func TestSupplierAddressesValidation(t *testing.T) {
+	inv := testInvoiceStandard(t)
+	inv.Supplier.Addresses = nil
+	require.NoError(t, inv.Calculate())
+	err := inv.Validate()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "addresses: cannot be blank.")
+}
+
 func TestRetainedTaxesValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
