@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9a1042a71017b44d5881c95d6089a52e4b438ec4341ce4064abbbe1aceb343d8"
+			"val": "53c4a481055e59a7b696c439e705840f2430294b726f229f7bb54d8994806aa5"
 		},
 		"draft": true
 	},
@@ -17,7 +17,9 @@
 		"currency": "MXN",
 		"preceding": [
 			{
-				"code": "0010",
+				"series": "TEST",
+				"code": "0001",
+				"issue_date": "2023-07-10",
 				"stamps": [
 					{
 						"prv": "sat-uuid",

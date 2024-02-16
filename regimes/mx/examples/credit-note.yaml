@@ -5,7 +5,9 @@ series: CN
 code: "0003"
 currency: MXN
 preceding:
-  - code: "0010"
+  - series: "TEST"
+    code: "0001"
+    issue_date: "2023-07-10"
     stamps:
       - prv: sat-uuid
         val: 1fac4464-1111-0000-1111-cd37179db12e
