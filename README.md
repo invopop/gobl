@@ -48,9 +48,13 @@ GOBL makes it easy to create business documents, like invoices, but checkout som
 - [Generator](https://github.com/invopop/gobl.generator) - Ruby project to convert GOBL JSON Schema into libraries for other languages or documentation.
 - [Docs](https://github.com/invopop/gobl.docs) - Content of the official GOBL Documentation Site [docs.gobl.org](https://docs.gobl.org).
 - [GOBL for Ruby](https://github.com/invopop/gobl.ruby) - Easily build or read GOBL documents in Ruby.
+
+Conversion to local formats
 - [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
-- [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
 - [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.cfdi) - convert into the Mexican CFDI format.
+- [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
+- [GOBL to FA_VAT / KSeF](https://github.com/invopop/gobl.ksef) - convert to the Polish FA_VAT format and send to [KSeF](https://www.podatki.gov.pl/ksef/)
+- [GOBL to TicketBAI (Spain/Euskadi)](https://github.com/invopop/gobl.ticketbai) - convert into [TicketBAI](https://www.batuz.eus/fitxategiak/batuz/ticketbai/ticketBaiV1-2.xsd) documents, required in the Euskadi (northern region of Spain)
 
 ## Usage
 
