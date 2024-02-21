@@ -1,0 +1,51 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "series": "HS2022",
+  "code": "071201",
+  "currency": "EUR",
+  "issue_date": "2022-07-12",
+  "supplier": {
+    "tax_id": {
+      "country": "NL",
+      "code": "000099995B57"
+    },
+    "name": "Foobar BV",
+    "addresses": [
+      {
+        "num": "1",
+        "street": "Dam",
+        "locality": "Amsterdam",
+        "region": "Noord-Holland",
+        "code": "1000AA",
+        "country": "NL"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "foobar@example.com"
+      }
+    ]
+  },
+  "customer": {
+    "tax_id": {
+      "country": "NL",
+      "code": "808661863B01"
+    },
+    "name": "Lorem Ipsum BV"
+  },
+  "lines": [
+    {
+      "quantity": "5",
+      "item": {
+        "name": "Oranje tulpen",
+        "price": "13.50"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "standard"
+        }
+      ]
+    }
+  ]
+}
