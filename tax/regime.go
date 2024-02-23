@@ -394,23 +394,35 @@ func (r *Regime) WithContext(ctx context.Context) context.Context {
 // HasCode loops through the key definitions codes and determines if there
 // is a match.
 func (kd *KeyDefinition) HasCode(code cbc.Code) bool {
+	cd := kd.CodeDef(code)
+	return cd != nil
+}
+
+// CodeDef returns the code definition for the provided code, or nil.
+func (kd *KeyDefinition) CodeDef(code cbc.Code) *CodeDefinition {
 	for _, c := range kd.Codes {
 		if c.Code == code {
-			return true
+			return c
 		}
 	}
-	return false
+	return nil
 }
 
 // HasKey loops through the key definitions keys and determines if there
 // is a match.
 func (kd *KeyDefinition) HasKey(key cbc.Key) bool {
-	for _, c := range kd.Keys {
-		if c.Key == key {
-			return true
+	skd := kd.KeyDef(key)
+	return skd != nil
+}
+
+// KeyDef returns the key definition for the provided key, or nil.
+func (kd *KeyDefinition) KeyDef(key cbc.Key) *KeyDefinition {
+	for _, skd := range kd.Keys {
+		if skd.Key == key {
+			return skd
 		}
 	}
-	return false
+	return nil
 }
 
 // RegimeFromContext returns the regime from the given context, or nil.
