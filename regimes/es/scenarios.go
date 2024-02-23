@@ -94,7 +94,12 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		// ** Invoice Document Types **
 		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCorrective},
+			Types: []cbc.Key{
+				bill.InvoiceTypeStandard,
+				bill.InvoiceTypeCorrective,
+				bill.InvoiceTypeCreditNote,
+				bill.InvoiceTypeDebitNote,
+			},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceDocumentType: "FC", // default
 			},
@@ -113,13 +118,19 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		// ** Invoice Class **
 		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Types: []cbc.Key{
+				bill.InvoiceTypeStandard,
+			},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceClass: "OO", // Original Invoice
 			},
 		},
 		{
-			Types: []cbc.Key{bill.InvoiceTypeCorrective},
+			Types: []cbc.Key{
+				bill.InvoiceTypeCorrective,
+				bill.InvoiceTypeCreditNote,
+				bill.InvoiceTypeDebitNote,
+			},
 			Codes: cbc.CodeMap{
 				KeyFacturaEInvoiceClass: "OR", // Corrective
 			},
