@@ -42,6 +42,16 @@ func (p *Preceding) Validate() error {
 	return p.ValidateWithContext(context.Background())
 }
 
+// Calculate tries to normalize the preceding data
+func (p *Preceding) Calculate() error {
+	if p == nil {
+		return nil
+	}
+	p.Stamps = head.NormalizeStamps(p.Stamps)
+	p.Ext = tax.NormalizeExtMap(p.Ext)
+	return nil
+}
+
 // ValidateWithContext ensures the preceding details look okay
 func (p *Preceding) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, p,

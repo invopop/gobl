@@ -77,6 +77,25 @@ func (em ExtMap) Equals(other ExtMap) bool {
 	return true
 }
 
+// NormalizeExtMap will try to clean the extension map removing empty values
+// and will potentially return a nil if there only keys with no values.
+func NormalizeExtMap(em map[cbc.Key]cbc.KeyOrCode) ExtMap {
+	if em == nil {
+		return nil
+	}
+	nem := make(ExtMap)
+	for k, v := range em {
+		if v == "" {
+			continue
+		}
+		nem[k] = v
+	}
+	if len(nem) == 0 {
+		return nil
+	}
+	return nem
+}
+
 // ExtMapHas returns a validation rule that ensures the extension map's
 // keys match those provided.
 func ExtMapHas(keys ...cbc.Key) validation.Rule {

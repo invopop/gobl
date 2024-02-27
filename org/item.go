@@ -54,6 +54,12 @@ func (i *Item) Validate() error {
 	return i.ValidateWithContext(context.Background())
 }
 
+// Calculate performs any required calculations on the Item.
+func (i *Item) Calculate() error {
+	i.Ext = tax.NormalizeExtMap(i.Ext)
+	return nil
+}
+
 // ValidateWithContext checks that the Item looks okay inside the provided context.
 func (i *Item) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, i,

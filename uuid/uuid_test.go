@@ -47,6 +47,22 @@ func TestUUIDIsZero(t *testing.T) {
 	assert.False(t, u1.IsZero())
 }
 
+func TestNormalizeUUID(t *testing.T) {
+	var u *uuid.UUID
+	u2 := uuid.Normalize(u)
+	assert.Nil(t, u2)
+
+	u = &uuid.UUID{}
+	assert.Equal(t, "00000000-0000-0000-0000-000000000000", u.String())
+
+	u2 = uuid.Normalize(u)
+	assert.Nil(t, u2)
+
+	u3 := uuid.MustParse("03907310-8daa-11eb-8dcd-0242ac130003")
+	u2 = uuid.Normalize(&u3)
+	assert.Equal(t, u3.String(), u2.String())
+}
+
 func TestUUIDJSON(t *testing.T) {
 	v1s := "03907310-8daa-11eb-8dcd-0242ac130003"
 	type testJSON struct {

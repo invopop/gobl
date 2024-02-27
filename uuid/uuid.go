@@ -108,6 +108,18 @@ func NodeID() string {
 	return fmt.Sprintf("%x", uuid.NodeID())
 }
 
+// Normalize looks at the provided UUID and tries to return a consistent
+// value, which may be nil. Only works with pointers to UUID.
+func Normalize(u *UUID) *UUID {
+	if u == nil {
+		return nil
+	}
+	if u.IsZero() {
+		return nil
+	}
+	return u
+}
+
 // JSONSchema returns the jsonschema schema object for the UUID.
 func (UUID) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{

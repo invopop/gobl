@@ -196,8 +196,9 @@ func (inv *Invoice) Empty() {
 	inv.Payment.ResetAdvances()
 }
 
-// Calculate performs all the calculations required for the invoice totals and taxes. If the original
-// invoice only includes partial calculations, this will figure out what's missing.
+// Calculate performs all the calculations and normalizations required for the invoice
+// totals and taxes. If the original invoice only includes partial calculations, this
+// will figure out what's missing.
 func (inv *Invoice) Calculate() error {
 	if inv.Type == cbc.KeyEmpty {
 		inv.Type = InvoiceTypeStandard
@@ -211,6 +212,15 @@ func (inv *Invoice) Calculate() error {
 	if inv.Customer != nil {
 		if err := inv.Customer.Calculate(); err != nil {
 			return fmt.Errorf("customer: %w", err)
+		}
+	}
+
+	// Preceding entries
+	if inv.Preceding != nil {
+		for _, p := range inv.Preceding {
+			if err := p.Calculate(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -233,7 +243,7 @@ func (inv *Invoice) Calculate() error {
 		return err
 	}
 
-	return inv.calculate(r, tID)
+	return inv.calculateWithRegime(r, tID)
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
@@ -363,7 +373,8 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 	return nil
 }
 
-func (inv *Invoice) calculate(r *tax.Regime, tID *tax.Identity) error {
+func (inv *Invoice) calculateWithRegime(r *tax.Regime, tID *tax.Identity) error {
+	// Normalize data
 	if inv.IssueDate.IsZero() {
 		inv.IssueDate = cal.TodayIn(r.TimeLocation())
 	}

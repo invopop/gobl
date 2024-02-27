@@ -76,6 +76,15 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	return r.ValidateObject(c)
 }
 
+// NormalizeCombo tries to normalize the data inside the tax combo.
+func NormalizeCombo(c *Combo) *Combo {
+	if c == nil {
+		return nil
+	}
+	c.Ext = NormalizeExtMap(c.Ext)
+	return c
+}
+
 func combineExtKeys(cat *Category, rate *Rate) []cbc.Key {
 	keys := make([]cbc.Key, 0)
 	if cat != nil {
@@ -146,6 +155,26 @@ func (c *Combo) UnmarshalJSON(data []byte) error {
 		c.Rate = aux.Tags[0]
 	}
 	return nil
+}
+
+// NormalizeSet tries to normalize the tax set by normalizing combos
+// and returning nil if empty.
+func NormalizeSet(s Set) Set {
+	if s == nil {
+		return nil
+	}
+	ns := make(Set, 0)
+	for _, c := range s {
+		c = NormalizeCombo(c)
+		if c == nil {
+			continue
+		}
+		ns = append(ns, c)
+	}
+	if len(ns) == 0 {
+		return nil
+	}
+	return ns
 }
 
 // ValidateWithContext ensures the set of tax combos looks correct

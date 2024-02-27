@@ -72,9 +72,13 @@ func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 	if l.Item == nil {
 		return nil
 	}
-
 	if err := r.CalculateObject(l); err != nil {
 		return err
+	}
+
+	// Ensure Item looks good
+	if err := l.Item.Calculate(); err != nil { // Normalizes
+		return validation.Errors{"item": err}
 	}
 	if err := r.CalculateObject(l.Item); err != nil {
 		return validation.Errors{"item": err}
