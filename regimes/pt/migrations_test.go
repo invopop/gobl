@@ -3,7 +3,6 @@ package pt_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,7 +18,7 @@ func TestTaxRateMigration(t *testing.T) {
 
 	t0 := inv.Lines[0].Taxes[0]
 	assert.Equal(t, tax.RateExempt, t0.Rate)
-	assert.Equal(t, cbc.KeyOrCode("M01"), t0.Ext["pt-exemption-code"])
+	assert.Equal(t, tax.ExtValue("M01"), t0.Ext["pt-exemption-code"])
 
 	// Invalid old rate
 	inv = validInvoice()
@@ -32,12 +31,12 @@ func TestTaxRateMigration(t *testing.T) {
 	// Valid new rate
 	inv = validInvoice()
 	inv.Lines[0].Taxes[0].Rate = "exempt"
-	inv.Lines[0].Taxes[0].Ext = tax.ExtMap{"pt-exemption-code": "M02"}
+	inv.Lines[0].Taxes[0].Ext = tax.Extensions{"pt-exemption-code": "M02"}
 
 	err = inv.Calculate()
 	require.NoError(t, err)
 
 	t0 = inv.Lines[0].Taxes[0]
 	assert.Equal(t, tax.RateExempt, t0.Rate)
-	assert.Equal(t, cbc.KeyOrCode("M02"), t0.Ext["pt-exemption-code"])
+	assert.Equal(t, tax.ExtValue("M02"), t0.Ext["pt-exemption-code"])
 }

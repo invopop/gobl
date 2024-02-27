@@ -102,7 +102,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtMapRequires(ExtKeyDIANCorrection),
+			tax.ExtensionsRequires(ExtKeyDIANCorrection),
 		),
 		validation.Field(&obj.Reason, validation.Required),
 	)

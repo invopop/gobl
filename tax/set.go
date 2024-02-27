@@ -29,7 +29,7 @@ type Combo struct {
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
-	Ext ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 
 	// Internal link back to the category object
 	category *Category
@@ -53,7 +53,7 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			r.InCategoryRates(c.Category),
 		),
 		validation.Field(&c.Ext,
-			ExtMapHas(combineExtKeys(cat, rate)...),
+			ExtensionsHas(combineExtKeys(cat, rate)...),
 			validation.When(
 				(cat != nil && len(cat.Extensions) == 0) &&
 					(rate != nil && len(rate.Extensions) == 0),
@@ -81,7 +81,7 @@ func NormalizeCombo(c *Combo) *Combo {
 	if c == nil {
 		return nil
 	}
-	c.Ext = NormalizeExtMap(c.Ext)
+	c.Ext = NormalizeExtensions(c.Ext)
 	return c
 }
 

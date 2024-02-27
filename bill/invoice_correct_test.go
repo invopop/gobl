@@ -6,7 +6,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -131,7 +130,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	opts := &bill.CorrectionOptions{
 		Type:   bill.InvoiceTypeCreditNote,
 		Reason: "test refund",
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			es.ExtKeyFacturaECorrection: "01",
 		},
 	}
@@ -145,7 +144,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
-	assert.Equal(t, pre.Ext[es.ExtKeyFacturaECorrection], cbc.KeyOrCode("01"))
+	assert.Equal(t, pre.Ext[es.ExtKeyFacturaECorrection], tax.ExtValue("01"))
 	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 }
 

@@ -153,7 +153,7 @@ func validateLineTax(value interface{}) error {
 					TaxCategoryENASARCO,
 					TaxCategoryENPAM,
 				),
-				tax.ExtMapRequires(
+				tax.ExtensionsRequires(
 					ExtKeySDIRetainedTax,
 				),
 			),

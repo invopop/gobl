@@ -44,7 +44,7 @@ func validBasqueInvoice() *bill.Invoice {
 					{
 						Category: "VAT",
 						Rate:     "exempt",
-						Ext: tax.ExtMap{
+						Ext: tax.Extensions{
 							es.ExtKeyTBAIExemption: "E1",
 						},
 					},

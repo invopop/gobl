@@ -85,7 +85,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateExempt,
-							Ext: tax.ExtMap{
+							Ext: tax.Extensions{
 								es.ExtKeyTBAIExemption: "E1",
 							},
 						},
@@ -102,7 +102,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Key: tax.RateExempt,
-								Ext: tax.ExtMap{
+								Ext: tax.Extensions{
 									es.ExtKeyTBAIExemption: "E1",
 								},
 								Base:    num.MakeAmount(10000, 2),
@@ -850,7 +850,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateExempt,
-							Ext: tax.ExtMap{
+							Ext: tax.Extensions{
 								es.ExtKeyTBAIExemption: "E1",
 							},
 						},
@@ -866,7 +866,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Key: tax.RateExempt,
-								Ext: tax.ExtMap{
+								Ext: tax.Extensions{
 									es.ExtKeyTBAIExemption: "E1",
 								},
 								Base:   num.MakeAmount(10000, 2),
@@ -896,7 +896,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateExempt,
-							Ext: tax.ExtMap{
+							Ext: tax.Extensions{
 								es.ExtKeyTBAIExemption: "E2",
 							},
 						},
@@ -917,7 +917,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Key: tax.RateExempt,
-								Ext: tax.ExtMap{
+								Ext: tax.Extensions{
 									es.ExtKeyTBAIExemption: "E2",
 								},
 								Base:   num.MakeAmount(10000, 2),
@@ -943,7 +943,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
-							Ext: tax.ExtMap{
+							Ext: tax.Extensions{
 								it.ExtKeySDIRetainedTax: "A",
 							},
 							Percent: num.NewPercentage(20, 2),
@@ -959,7 +959,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
-							Ext: tax.ExtMap{
+							Ext: tax.Extensions{
 								it.ExtKeySDIRetainedTax: "J", // truffles!
 							},
 							Percent: num.NewPercentage(20, 2),
@@ -987,7 +987,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Ext: tax.ExtMap{
+								Ext: tax.Extensions{
 									it.ExtKeySDIRetainedTax: "A",
 								},
 								Base:    num.MakeAmount(10000, 2),
@@ -995,7 +995,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Amount:  num.MakeAmount(2000, 2),
 							},
 							{
-								Ext: tax.ExtMap{
+								Ext: tax.Extensions{
 									it.ExtKeySDIRetainedTax: "J",
 								},
 								Base:    num.MakeAmount(10000, 2),
