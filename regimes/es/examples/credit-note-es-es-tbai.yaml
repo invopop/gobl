@@ -12,6 +12,7 @@ preceding:
     issue_date: "2022-01-10"
     ext:
       es-tbai-correction: "R2"
+      es-facturae-correction: "" # empty
 
 supplier:
   tax_id:

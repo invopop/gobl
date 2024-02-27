@@ -271,3 +271,45 @@ func TestComboUnmarshal(t *testing.T) {
 	assert.Equal(t, c.Category, cbc.Code("VAT"))
 	assert.Equal(t, c.Rate, cbc.Key("standard"))
 }
+
+func TestNormalizeSet(t *testing.T) {
+	s := tax.NormalizeSet(nil)
+	assert.Nil(t, s)
+
+	s = tax.Set{
+		{
+			Category: "VAT",
+			Rate:     "standard",
+		},
+		{
+			Category: "IRPF",
+			Rate:     "pro",
+		},
+	}
+	s = tax.NormalizeSet(s)
+	assert.Equal(t, s[0].Category, cbc.Code("VAT"))
+	assert.Equal(t, s[1].Category, cbc.Code("IRPF"))
+
+	s = tax.Set{
+		{
+			Category: "VAT",
+			Rate:     "standard",
+			Ext: tax.ExtMap{
+				es.ExtKeyFacturaECorrection: "",
+			},
+		},
+		nil,
+	}
+	assert.NotNil(t, s[0].Ext)
+	assert.Len(t, s, 2)
+	s = tax.NormalizeSet(s)
+	assert.Nil(t, s[0].Ext)
+	assert.Len(t, s, 1)
+
+	s = tax.Set{
+		nil,
+	}
+	assert.Len(t, s, 1)
+	s = tax.NormalizeSet(s)
+	assert.Nil(t, s)
+}

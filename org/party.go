@@ -47,6 +47,11 @@ type Party struct {
 // Calculate performs any calculations required on the Party or
 // it's properties, like the tax identity.
 func (p *Party) Calculate() error {
+	if p == nil {
+		return nil
+	}
+	p.UUID = uuid.Normalize(p.UUID)
+	p.Ext = tax.NormalizeExtMap(p.Ext)
 	if p.TaxID == nil {
 		return nil
 	}

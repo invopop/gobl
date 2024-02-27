@@ -69,3 +69,22 @@ func AddStamp(in []*Stamp, s *Stamp) []*Stamp {
 	}
 	return append(in, s)
 }
+
+// NormalizeStamps will try to clean the stamps by removing rows with empty
+// providers or values. If empty, the function will return nil.
+func NormalizeStamps(in []*Stamp) []*Stamp {
+	if in == nil {
+		return nil
+	}
+	out := make([]*Stamp, 0)
+	for _, v := range in {
+		if v.Value == "" || v.Provider == "" {
+			continue
+		}
+		out = append(out, v)
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
