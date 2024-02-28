@@ -497,7 +497,9 @@
         {
           "type": [
             "standard",
-            "corrective"
+            "corrective",
+            "credit-note",
+            "debit-note"
           ],
           "codes": {
             "facturae-invoice-document-type": "FC"
@@ -529,7 +531,9 @@
         },
         {
           "type": [
-            "corrective"
+            "corrective",
+            "credit-note",
+            "debit-note"
           ],
           "codes": {
             "facturae-invoice-class": "OR"
