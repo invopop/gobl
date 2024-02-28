@@ -30,7 +30,7 @@ type Item struct {
 	// Special key used to classify the item sometimes required by some regimes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Brief name of the item
-	Name string `json:"name"`
+	Name string `json:"name" jsonschema:"title=Name"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Detailed description of the item.
