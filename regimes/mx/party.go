@@ -1,7 +1,6 @@
 package mx
 
 import (
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
@@ -13,9 +12,9 @@ func normalizeParty(p *org.Party) error {
 	for _, v := range p.Identities {
 		if v.Key.In(migratedExtensionKeys...) {
 			if p.Ext == nil {
-				p.Ext = make(tax.ExtMap)
+				p.Ext = make(tax.Extensions)
 			}
-			p.Ext[v.Key] = cbc.KeyOrCode(v.Code)
+			p.Ext[v.Key] = tax.ExtValue(v.Code)
 		} else {
 			idents = append(idents, v)
 		}

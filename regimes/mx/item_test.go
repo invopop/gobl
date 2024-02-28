@@ -3,7 +3,6 @@ package mx_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
@@ -20,7 +19,7 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "valid item",
 			item: &org.Item{
-				Ext: tax.ExtMap{
+				Ext: tax.Extensions{
 					mx.ExtKeyCFDIProdServ: "12345678",
 				},
 			},
@@ -33,14 +32,14 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "empty extension",
 			item: &org.Item{
-				Ext: tax.ExtMap{},
+				Ext: tax.Extensions{},
 			},
 			err: "ext: (mx-cfdi-prod-serv: required.)",
 		},
 		{
 			name: "missing SAT identity",
 			item: &org.Item{
-				Ext: tax.ExtMap{
+				Ext: tax.Extensions{
 					"random": "12345678",
 				},
 			},
@@ -49,7 +48,7 @@ func TestItemValidation(t *testing.T) {
 		{
 			name: "invalid code format",
 			item: &org.Item{
-				Ext: tax.ExtMap{
+				Ext: tax.Extensions{
 					mx.ExtKeyCFDIProdServ: "AbC2",
 				},
 			},
@@ -74,8 +73,8 @@ func TestItemValidation(t *testing.T) {
 func TestItemIdentityNormalization(t *testing.T) {
 	r := mx.New()
 	tests := []struct {
-		Code     cbc.KeyOrCode
-		Expected cbc.KeyOrCode
+		Code     tax.ExtValue
+		Expected tax.ExtValue
 	}{
 		{
 			Code:     "123456",
@@ -91,7 +90,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Ext: tax.ExtMap{mx.ExtKeyCFDIProdServ: ts.Code}}
+		item := &org.Item{Ext: tax.Extensions{mx.ExtKeyCFDIProdServ: ts.Code}}
 		err := r.CalculateObject(item)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, item.Ext[mx.ExtKeyCFDIProdServ])
@@ -102,7 +101,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 	inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ] = "010101"
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, cbc.KeyOrCode("01010100"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
+	assert.Equal(t, tax.ExtValue("01010100"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
 }
 
 func TestItemIdentityMigration(t *testing.T) {
@@ -118,5 +117,5 @@ func TestItemIdentityMigration(t *testing.T) {
 
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, cbc.KeyOrCode("01010101"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
+	assert.Equal(t, tax.ExtValue("01010101"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
 }

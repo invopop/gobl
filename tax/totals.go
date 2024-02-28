@@ -23,7 +23,7 @@ type RateTotal struct {
 	// Optional rate key is required when grouping.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// If the rate is defined with extensions, they'll be used to group by also.
-	Ext ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Base amount that the percentage is applied to.
 	Base num.Amount `json:"base" jsonschema:"title=Base"`
 	// Percentage of the rate, which may be nil for exempt rates.

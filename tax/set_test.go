@@ -122,7 +122,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     tax.RateExempt,
-					Ext: tax.ExtMap{
+					Ext: tax.Extensions{
 						es.ExtKeyTBAIExemption: "E1",
 					},
 				},
@@ -135,7 +135,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     tax.RateExempt,
-					Ext: tax.ExtMap{
+					Ext: tax.Extensions{
 						"foo": "E1",
 					},
 				},
@@ -148,7 +148,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     tax.RateExempt,
-					Ext: tax.ExtMap{
+					Ext: tax.Extensions{
 						es.ExtKeyTBAIProduct: "services",
 					},
 				},
@@ -294,7 +294,7 @@ func TestNormalizeSet(t *testing.T) {
 		{
 			Category: "VAT",
 			Rate:     "standard",
-			Ext: tax.ExtMap{
+			Ext: tax.Extensions{
 				es.ExtKeyFacturaECorrection: "",
 			},
 		},

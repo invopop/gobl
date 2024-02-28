@@ -89,169 +89,169 @@ func migrateInvoiceTaxCombo(tc *tax.Combo) error {
 
 var taxRateVATExemptMigrationMap = []struct {
 	Key cbc.Key
-	Ext tax.ExtMap
+	Ext tax.Extensions
 }{
 	{
 		Key: TaxRateExempt.With(TaxRateOutlay),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M01",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateIntrastate),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M02",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateImports),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M04",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateExports),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M05",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateSuspension),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M06",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateInternalOps),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M07",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateSmallRetail),
-		Ext: tax.ExtMap{
-			KeyATTaxCode:        cbc.KeyOrCode(TaxCodeExempt),
+		Ext: tax.Extensions{
+			KeyATTaxCode:        tax.ExtValue(TaxCodeExempt),
 			ExtKeyExemptionCode: "M09",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateExemptScheme),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M10",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateTobacco),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M11",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateTravel),
-		Ext: tax.ExtMap{
-			KeyATTaxCode:        cbc.KeyOrCode(TaxCodeExempt),
+		Ext: tax.Extensions{
+			KeyATTaxCode:        tax.ExtValue(TaxCodeExempt),
 			ExtKeyExemptionCode: "M12",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateSecondHand),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M13",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateArt),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M14",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateAntiques),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M15",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateTransmission),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M16",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateOther),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M19",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateFlatRate),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M20",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateNonDeductible),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M21",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateConsignment),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M25",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWaste),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M30",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateCivilEng),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M31",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGreenhouse),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M32",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWoods),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M33",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateB2B),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M40",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateIntraEU),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M41",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateRealEstate),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M42",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGold),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M43",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateNonTaxable),
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			ExtKeyExemptionCode: "M99",
 		},
 	},

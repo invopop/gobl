@@ -32,7 +32,7 @@ type Preceding struct {
 	// Tax period in which the previous invoice had an effect required by some tax regimes and formats.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
 	// Extensions for region specific requirements.
-	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Additional semi-structured data that may be useful in specific regions
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -48,7 +48,7 @@ func (p *Preceding) Calculate() error {
 		return nil
 	}
 	p.Stamps = head.NormalizeStamps(p.Stamps)
-	p.Ext = tax.NormalizeExtMap(p.Ext)
+	p.Ext = tax.NormalizeExtensions(p.Ext)
 	return nil
 }
 

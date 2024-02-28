@@ -141,7 +141,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
-		Ext: tax.ExtMap{
+		Ext: tax.Extensions{
 			it.ExtKeySDIRetainedTax: "A",
 		},
 		Percent: num.NewPercentage(20, 2),

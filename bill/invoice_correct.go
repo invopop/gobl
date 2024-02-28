@@ -30,7 +30,7 @@ type CorrectionOptions struct {
 	// Human readable reason for the corrective operation.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Extensions for region specific requirements.
-	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
@@ -76,11 +76,11 @@ func WithReason(reason string) schema.Option {
 
 // WithExtension adds a specific extension combination to the invoice's preceding data,
 // can be called multiple times.
-func WithExtension(key cbc.Key, code cbc.KeyOrCode) schema.Option {
+func WithExtension(key cbc.Key, code tax.ExtValue) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		if opts.Ext == nil {
-			opts.Ext = make(tax.ExtMap)
+			opts.Ext = make(tax.Extensions)
 		}
 		opts.Ext[key] = code
 	}

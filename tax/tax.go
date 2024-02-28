@@ -8,7 +8,7 @@ import (
 func init() {
 	schema.Register(schema.GOBL.Add("tax"),
 		Set{},
-		ExtMap{},
+		Extensions{},
 		Total{},
 		Regime{},
 		Identity{},

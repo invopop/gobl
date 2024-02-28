@@ -101,7 +101,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	if v.zone.In(ZonesBasqueCountry...) {
 		return validation.ValidateStruct(obj,
 			validation.Field(&obj.IssueDate, validation.Required),
-			validation.Field(&obj.Ext, tax.ExtMapRequires(ExtKeyTBAICorrection)),
+			validation.Field(&obj.Ext, tax.ExtensionsRequires(ExtKeyTBAICorrection)),
 		)
 	}
 
@@ -133,7 +133,7 @@ func (v *invoiceValidator) validateLineTax(value interface{}) error {
 		validation.Field(&obj.Ext,
 			validation.When(
 				v.zone.In(ZonesBasqueCountry...) && obj.Rate == tax.RateExempt,
-				tax.ExtMapRequires(ExtKeyTBAIExemption),
+				tax.ExtensionsRequires(ExtKeyTBAIExemption),
 			),
 			validation.Skip,
 		),

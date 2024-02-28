@@ -10,11 +10,15 @@ import (
 	"github.com/invopop/validation"
 )
 
-// ExtMap is a map of extension keys to either a code or a key.
-type ExtMap map[cbc.Key]cbc.KeyOrCode
+// Extensions is a map of extension keys to values.
+type Extensions map[cbc.Key]ExtValue
+
+// ExtValue is a string value that has helper methods to help determine
+// if it is a code, key, or regular string.
+type ExtValue string
 
 // ValidateWithContext ensures the extension map data looks correct.
-func (em ExtMap) ValidateWithContext(ctx context.Context) error {
+func (em Extensions) ValidateWithContext(ctx context.Context) error {
 	err := make(validation.Errors)
 	// Validate key format
 	for k := range em {
@@ -30,17 +34,17 @@ func (em ExtMap) ValidateWithContext(ctx context.Context) error {
 		return nil
 	}
 	// Validate keys are defined in regime
-	for k, kc := range em {
+	for k, ev := range em {
 		kd := r.ExtensionDef(k)
 		if kd == nil {
 			err[k.String()] = errors.New("undefined")
 			continue
 		}
-		if len(kd.Codes) > 0 && !kd.HasCode(kc.Code()) {
-			err[k.String()] = fmt.Errorf("code '%s' invalid", kc)
+		if len(kd.Codes) > 0 && !kd.HasCode(ev.Code()) {
+			err[k.String()] = fmt.Errorf("code '%s' invalid", ev)
 		}
-		if len(kd.Keys) > 0 && !kd.HasKey(kc.Key()) {
-			err[k.String()] = fmt.Errorf("key '%s' invalid", kc)
+		if len(kd.Keys) > 0 && !kd.HasKey(ev.Key()) {
+			err[k.String()] = fmt.Errorf("key '%s' invalid", ev)
 		}
 	}
 	if len(err) > 0 {
@@ -50,7 +54,7 @@ func (em ExtMap) ValidateWithContext(ctx context.Context) error {
 }
 
 // Has returns true if the code map has values for all the provided keys.
-func (em ExtMap) Has(keys ...cbc.Key) bool {
+func (em Extensions) Has(keys ...cbc.Key) bool {
 	for _, k := range keys {
 		if _, ok := em[k]; !ok {
 			return false
@@ -61,7 +65,7 @@ func (em ExtMap) Has(keys ...cbc.Key) bool {
 
 // Equals returns true if the code map has the same keys and values as the provided
 // map.
-func (em ExtMap) Equals(other ExtMap) bool {
+func (em Extensions) Equals(other Extensions) bool {
 	if len(em) != len(other) {
 		return false
 	}
@@ -77,13 +81,13 @@ func (em ExtMap) Equals(other ExtMap) bool {
 	return true
 }
 
-// NormalizeExtMap will try to clean the extension map removing empty values
+// NormalizeExtensions will try to clean the extension map removing empty values
 // and will potentially return a nil if there only keys with no values.
-func NormalizeExtMap(em map[cbc.Key]cbc.KeyOrCode) ExtMap {
+func NormalizeExtensions(em Extensions) Extensions {
 	if em == nil {
 		return nil
 	}
-	nem := make(ExtMap)
+	nem := make(Extensions)
 	for k, v := range em {
 		if v == "" {
 			continue
@@ -96,15 +100,15 @@ func NormalizeExtMap(em map[cbc.Key]cbc.KeyOrCode) ExtMap {
 	return nem
 }
 
-// ExtMapHas returns a validation rule that ensures the extension map's
+// ExtensionsHas returns a validation rule that ensures the extension map's
 // keys match those provided.
-func ExtMapHas(keys ...cbc.Key) validation.Rule {
+func ExtensionsHas(keys ...cbc.Key) validation.Rule {
 	return validateCodeMap{keys: keys}
 }
 
-// ExtMapRequires returns a validation rule that ensures all the
+// ExtensionsRequires returns a validation rule that ensures all the
 // extension map's keys match those provided in the list.
-func ExtMapRequires(keys ...cbc.Key) validation.Rule {
+func ExtensionsRequires(keys ...cbc.Key) validation.Rule {
 	return validateCodeMap{
 		required: true,
 		keys:     keys,
@@ -117,7 +121,7 @@ type validateCodeMap struct {
 }
 
 func (v validateCodeMap) Validate(value interface{}) error {
-	em, ok := value.(ExtMap)
+	em, ok := value.(Extensions)
 	if !ok {
 		return nil
 	}
@@ -146,10 +150,33 @@ func (v validateCodeMap) Validate(value interface{}) error {
 // JSONSchemaExtend provides extra details about the extension map which are
 // not automatically determined. In this case we add validation for the map's
 // keys.
-func (ExtMap) JSONSchemaExtend(schema *jsonschema.Schema) {
+func (Extensions) JSONSchemaExtend(schema *jsonschema.Schema) {
 	prop := schema.AdditionalProperties
 	schema.AdditionalProperties = nil
 	schema.PatternProperties = map[string]*jsonschema.Schema{
 		cbc.KeyPattern: prop,
 	}
+}
+
+// String provides the string representation.
+func (ev ExtValue) String() string {
+	return string(ev)
+}
+
+// Key returns the key value or empty if the value is a Code.
+func (ev ExtValue) Key() cbc.Key {
+	k := cbc.Key(ev)
+	if err := k.Validate(); err == nil {
+		return k
+	}
+	return cbc.KeyEmpty
+}
+
+// Code returns the code value or empty if the value is a Key.
+func (ev ExtValue) Code() cbc.Code {
+	c := cbc.Code(ev)
+	if err := c.Validate(); err == nil {
+		return c
+	}
+	return cbc.CodeEmpty
 }

@@ -6,7 +6,6 @@ import (
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -72,7 +71,7 @@ func creditNote() *bill.Invoice {
 			{
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
-				Ext: tax.ExtMap{
+				Ext: tax.Extensions{
 					co.ExtKeyDIANCorrection: "2", // revoked
 				},
 			},
@@ -169,7 +168,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	err = inv.Validate()
 	assert.NoError(t, err)
 	assert.Contains(t, inv.Preceding[0].Ext, co.ExtKeyDIANCorrection)
-	assert.Equal(t, inv.Preceding[0].Ext[co.ExtKeyDIANCorrection], cbc.KeyOrCode("2"))
+	assert.Equal(t, inv.Preceding[0].Ext[co.ExtKeyDIANCorrection], tax.ExtValue("2"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()

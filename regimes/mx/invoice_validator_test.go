@@ -24,7 +24,7 @@ func validInvoice() *bill.Invoice {
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Supplier: &org.Party{
 			Name: "Test Supplier",
-			Ext: tax.ExtMap{
+			Ext: tax.Extensions{
 				mx.ExtKeyCFDIFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
@@ -35,7 +35,7 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
-			Ext: tax.ExtMap{
+			Ext: tax.Extensions{
 				mx.ExtKeyCFDIFiscalRegime: "608",
 				mx.ExtKeyCFDIUse:          "G01",
 			},
@@ -52,7 +52,7 @@ func validInvoice() *bill.Invoice {
 					Name:  "bogus",
 					Price: num.MakeAmount(10000, 2),
 					Unit:  org.UnitPackage,
-					Ext: tax.ExtMap{
+					Ext: tax.Extensions{
 						mx.ExtKeyCFDIProdServ: "01010101",
 					},
 				},
@@ -155,7 +155,7 @@ func TestPaymentTermsValidation(t *testing.T) {
 func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Customer.Ext = tax.ExtMap{
+	inv.Customer.Ext = tax.Extensions{
 		mx.ExtKeyCFDIFiscalRegime: "601",
 	}
 	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")

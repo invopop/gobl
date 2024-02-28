@@ -39,7 +39,7 @@ type Party struct {
 	// Images that can be used to identify the party visually.
 	Logos []*Image `json:"logos,omitempty" jsonschema:"title=Logos"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext tax.ExtMap `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Any additional semi-structured information that does not fit into the rest of the party.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -51,7 +51,7 @@ func (p *Party) Calculate() error {
 		return nil
 	}
 	p.UUID = uuid.Normalize(p.UUID)
-	p.Ext = tax.NormalizeExtMap(p.Ext)
+	p.Ext = tax.NormalizeExtensions(p.Ext)
 	if p.TaxID == nil {
 		return nil
 	}
