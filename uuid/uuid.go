@@ -25,6 +25,11 @@ func MakeV1() UUID {
 	return UUID{uuid.Must(uuid.NewUUID())}
 }
 
+// MakeV3 generates a new MD5 UUID using the provided namespace and data.
+func MakeV3(space UUID, data []byte) UUID {
+	return UUID{uuid.NewMD5(space.UUID, data)}
+}
+
 // MakeV4 generates a new completely random UUIDv4.
 func MakeV4() UUID {
 	return UUID{uuid.Must(uuid.NewRandom())}
@@ -33,6 +38,12 @@ func MakeV4() UUID {
 // NewV1 generates a version 1 UUID.
 func NewV1() *UUID {
 	u := MakeV1()
+	return &u
+}
+
+// NewV3 creates a new MD5 UUID using the provided namespace and data.
+func NewV3(space UUID, data []byte) *UUID {
+	u := MakeV3(space, data)
 	return &u
 }
 
