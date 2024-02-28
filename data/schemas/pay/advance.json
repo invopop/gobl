@@ -191,5 +191,5 @@
       "description": "CreditTransfer contains fields that can be used for making payments via a bank transfer or wire."
     }
   },
-  "$comment": "Generated with GOBL v0.67.0"
+  "$comment": "Generated with GOBL v0.68.0"
 }

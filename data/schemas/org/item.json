@@ -58,7 +58,7 @@
           "description": "Country code of where this item was from originally."
         },
         "ext": {
-          "$ref": "https://gobl.org/draft-0/tax/ext-map",
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Ext",
           "description": "Extension code map for any additional regime specific codes that may be required."
         },
@@ -76,5 +76,5 @@
       "description": "Item is used to describe a single product or service."
     }
   },
-  "$comment": "Generated with GOBL v0.67.0"
+  "$comment": "Generated with GOBL v0.68.0"
 }
