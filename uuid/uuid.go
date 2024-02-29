@@ -29,9 +29,8 @@ func MakeV1() UUID {
 // deterministic, that is, the same inputs will always generate the same UUID. This is handy to
 // transform any other types of IDs into UUIDs, among other uses.
 //
-// In UUIDv3, the data is hashed using MD5 which is a performant algorithm, but it can be broken. If
-// you need to ensure an attacker can't reverse the UUID to the original data used to generate it,
-// use UUIDv5 instead.
+// In UUIDv3, the data is hashed using MD5 which is a performant algorithm, but it's subject to
+// collision attacks and other vulnerabilities. If security is a concern, use UUIDv5 instead.
 func MakeV3(space UUID, data []byte) UUID {
 	return UUID{uuid.NewMD5(space.UUID, data)}
 }
