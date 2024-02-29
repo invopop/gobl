@@ -95,3 +95,19 @@ func TestUUIDJSON(t *testing.T) {
 		t.Errorf("did not get same string back, got: %v", v2.ID.String())
 	}
 }
+
+func TestUUIDv3(t *testing.T) {
+	ns := uuid.MustParse("0654a3f4-8ad5-44c8-828e-c25f7ccd6550")
+	u := uuid.NewV3(ns, []byte("hello, world"))
+
+	assert.Equal(t, 3, int(u.Version()))
+	assert.Equal(t, "61cfb897-b1bb-382b-bab9-a7ba465a27fa", u.String())
+}
+
+func TestUUIDv5(t *testing.T) {
+	ns := uuid.MustParse("0654a3f4-8ad5-44c8-828e-c25f7ccd6550")
+	u := uuid.NewV5(ns, []byte("hello, world"))
+
+	assert.Equal(t, 5, int(u.Version()))
+	assert.Equal(t, "1f53a310-2a17-5acb-b76a-c39495e5356f", u.String())
+}

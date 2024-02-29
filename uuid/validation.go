@@ -9,10 +9,14 @@ import (
 )
 
 var (
-	// IsV1 is used to ensure value is a UUIDv1
+	// IsV1 confirms the UUID is version 1
 	IsV1 = versionRule{version: 1}
+	// IsV3 confirms the UUID is version 3
+	IsV3 = versionRule{version: 3}
 	// IsV4 confirms the UUID is version 4
 	IsV4 = versionRule{version: 4}
+	// IsV5 confirms the UUID is version 5
+	IsV5 = versionRule{version: 5}
 	// IsNotZero confirms the UUID is not zero
 	IsNotZero = versionRule{notZero: true}
 )
