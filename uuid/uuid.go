@@ -25,7 +25,13 @@ func MakeV1() UUID {
 	return UUID{uuid.Must(uuid.NewUUID())}
 }
 
-// MakeV3 generates a new MD5 UUID using the provided namespace and data.
+// MakeV3 generates a new UUIDv3 using the provided namespace and data. The behaviour is
+// deterministic, that is, the same inputs will always generate the same UUID. This is handy to
+// transform any other types of IDs into UUIDs, among other uses.
+//
+// In UUIDv3, the data is hashed using MD5 which is a performant algorithm, but it can be broken. If
+// you need to ensure an attacker can't reverse the UUID to the original data used to generate it,
+// use UUIDv5 instead.
 func MakeV3(space UUID, data []byte) UUID {
 	return UUID{uuid.NewMD5(space.UUID, data)}
 }
@@ -35,13 +41,23 @@ func MakeV4() UUID {
 	return UUID{uuid.Must(uuid.NewRandom())}
 }
 
+// MakeV5 generates a new UUIDv5 using the provided namespace and data. The behaviour is
+// deterministic, that is, the same inputs will always generate the same UUID. This is handy to
+// transform any other types of IDs into UUIDs, among other uses.
+//
+// In UUIDv5, the data is hashed using SHA1, a secure algorithm but slower than MD5. If you
+// don't need the security of SHA1 and perfomance is a concern, use UUIDv3 instead.
+func MakeV5(space UUID, data []byte) UUID {
+	return UUID{uuid.NewSHA1(space.UUID, data)}
+}
+
 // NewV1 generates a version 1 UUID.
 func NewV1() *UUID {
 	u := MakeV1()
 	return &u
 }
 
-// NewV3 creates a new MD5 UUID using the provided namespace and data.
+// NewV3 creates a new MD5 UUID using the provided namespace and data. See MakeV3 for more details.
 func NewV3(space UUID, data []byte) *UUID {
 	u := MakeV3(space, data)
 	return &u
@@ -50,6 +66,12 @@ func NewV3(space UUID, data []byte) *UUID {
 // NewV4 creates a pointer a new completely random UUIDv4.
 func NewV4() *UUID {
 	u := MakeV4()
+	return &u
+}
+
+// NewV5 creates a new SHA1 UUID using the provided namespace and data. See MakeV5 for more details.
+func NewV5(space UUID, data []byte) *UUID {
+	u := MakeV5(space, data)
 	return &u
 }
 

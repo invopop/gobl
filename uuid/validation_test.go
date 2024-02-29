@@ -61,4 +61,12 @@ func TestUUIDValidation(t *testing.T) {
 	sample.UUID = uuid.NewV1()
 	err = sample.Validate()
 	assert.NoError(t, err)
+
+	// Additional checks for other UUID versions
+	u3 := uuid.MakeV3(u1, []byte("test"))
+	u5 := uuid.MakeV5(u1, []byte("test"))
+	assert.NoError(t, validation.Validate(u3, uuid.IsV3))
+	assert.NoError(t, validation.Validate(u5, uuid.IsV5))
+	assert.Error(t, validation.Validate(u1, uuid.IsV3))
+	assert.Error(t, validation.Validate(u1, uuid.IsV5))
 }
