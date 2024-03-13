@@ -62,14 +62,26 @@
   ],
   "extensions": [
     {
+      "key": "mx-cfdi-post-code",
+      "name": {
+        "en": "Post Code",
+        "es": "Código Postal"
+      },
+      "desc": {
+        "en": "Post code of where the invoice was issued.\nIn CFDI, this translates to the 'LugarExpedicion' in the case of the supplier\nand 'DomicilioFiscalReceptor' for customers.\nExample value: '01000'.",
+        "es": "Código postal de donde se emitió la factura.\nEn CFDI se traduce a 'LugarExpedicion' en el caso del emisor, y\n'DomicilioFiscalReceptor' para el receptor.\nValor de ejemplor: '01000'."
+      },
+      "pattern": "^[0-9]{5}$"
+    },
+    {
       "key": "mx-cfdi-prod-serv",
       "name": {
         "en": "Product or Service Code",
         "es": "Clave de Producto o Servicio"
       },
       "desc": {
-        "en": "Code defined in the CFDI catalogue used to identify a product or service.",
-        "es": "Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio."
+        "en": "Code defined in the CFDI catalogue used to identify a product or service.\nMapped to the 'ClaveProdServ' CFDI field.",
+        "es": "Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio.\nMapeado al campo del CFDI 'ClaveProdServ'."
       }
     },
     {

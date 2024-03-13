@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9bd2f35c2c847f01f2450a5604211a33d1ed03ee91bb06a3de197a50713af0a7"
+			"val": "6753961215cba52695dd53f4c3573628abef72b8b781425d7242cb1cf073508e"
 		},
 		"draft": true
 	},
@@ -26,6 +26,11 @@
 				}
 			}
 		],
+		"tax": {
+			"tags": [
+				"ticketbai"
+			]
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

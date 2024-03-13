@@ -19,6 +19,8 @@ const (
 	TagArt              cbc.Key = "art"
 	TagAntiques         cbc.Key = "antiques"
 	TagCashBasis        cbc.Key = "cash-basis"
+	TagFacturaE         cbc.Key = "facturae"
+	TagTicketBAI        cbc.Key = "ticketbai"
 )
 
 var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
@@ -44,6 +46,28 @@ var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Simplified tax scheme",
 			i18n.ES: "Contribuyente en régimen simplificado",
+		},
+	},
+	{
+		Key: TagFacturaE,
+		Name: i18n.String{
+			i18n.EN: "FacturaE",
+			i18n.ES: "FacturaE",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Invoice must comply with the FacturaE standard.",
+			i18n.ES: "La factura debe cumplir con el estándar FacturaE.",
+		},
+	},
+	{
+		Key: TagTicketBAI,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI",
+			i18n.ES: "TicketBAI",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Invoice must comply with the TicketBAI specifications.",
+			i18n.ES: "La factura debe cumplir con el estándar TicketBAI.",
 		},
 	},
 

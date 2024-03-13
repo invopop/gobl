@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -14,14 +15,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func validBasqueInvoice() *bill.Invoice {
+func validTicketBAIInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Code: "123",
+		Tax: &bill.Tax{
+			Tags: []cbc.Key{es.TagTicketBAI},
+		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
-				Zone:    es.ZoneBI,
 				Code:    "B98602642",
 			},
 		},
@@ -55,7 +58,7 @@ func validBasqueInvoice() *bill.Invoice {
 }
 
 func TestBasqueLineValidation(t *testing.T) {
-	inv := validBasqueInvoice()
+	inv := validTicketBAIInvoice()
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 
