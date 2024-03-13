@@ -180,8 +180,8 @@ type Rate struct {
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
 type RateValue struct {
-	// Only use this value if one of the zones matches.
-	Zones []l10n.Code `json:"zones,omitempty" jsonschema:"title=Zones"`
+	// Only apply this rate if one of the tags is present in the invoice.
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
 	// Percent rate that should be applied
@@ -463,8 +463,8 @@ func checkRateValuesOrder(list interface{}) error {
 	// loop through and check order of Since value
 	for i := range values {
 		v := values[i]
-		if len(v.Zones) > 0 {
-			// TODO: check zone order also
+		if len(v.Tags) > 0 {
+			// TODO: check tagged order also
 			continue
 		}
 		if date != nil && date.IsValid() {
@@ -529,10 +529,10 @@ func (c *Category) Rate(key cbc.Key) *Rate {
 }
 
 // Value determines the tax rate value for the provided date and zone, if applicable.
-func (r *Rate) Value(date cal.Date, zone l10n.Code) *RateValue {
+func (r *Rate) Value(date cal.Date, tags []cbc.Key) *RateValue {
 	for _, rv := range r.Values {
-		if len(rv.Zones) > 0 {
-			if !rv.HasZone(zone) {
+		if len(rv.Tags) > 0 {
+			if !rv.HasATag(tags) {
 				continue
 			}
 		}
@@ -543,11 +543,14 @@ func (r *Rate) Value(date cal.Date, zone l10n.Code) *RateValue {
 	return nil
 }
 
-// HasZone returns true if the rate value has a zone that matches the one provided.
-func (rv *RateValue) HasZone(zone l10n.Code) bool {
-	for _, z := range rv.Zones {
-		if z == zone {
-			return true
+// HasATag returns true if the rate value has a tag that matches
+// one of those provided.
+func (rv *RateValue) HasATag(tags []cbc.Key) bool {
+	for _, t := range rv.Tags {
+		for _, tag := range tags {
+			if t == tag {
+				return true
+			}
 		}
 	}
 	return false

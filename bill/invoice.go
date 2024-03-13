@@ -454,10 +454,14 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime, tID *tax.Identity) error 
 		pit = inv.Tax.PricesInclude
 	}
 	t.Taxes = new(tax.Total)
+	var tags []cbc.Key
+	if inv.Tax != nil {
+		tags = inv.Tax.Tags
+	}
 	tc := &tax.TotalCalculator{
 		Zero:     zero,
 		Regime:   r,
-		Zone:     tID.Zone,
+		Tags:     tags,
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,

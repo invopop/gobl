@@ -8,7 +8,6 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
 )
@@ -98,7 +97,7 @@ func combineExtKeys(cat *Category, rate *Rate) []cbc.Key {
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
-func (c *Combo) prepare(r *Regime, zone l10n.Code, date cal.Date) error {
+func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 	c.category = r.Category(c.Category)
 	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
@@ -118,7 +117,7 @@ func (c *Combo) prepare(r *Regime, zone l10n.Code, date cal.Date) error {
 		// if there are not rate values, don't attempt to make a
 		// calculation.
 		if len(rate.Values) > 0 {
-			value := rate.Value(date, zone)
+			value := rate.Value(date, tags)
 			if value == nil {
 				return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 			}
