@@ -2,12 +2,14 @@ package mx
 
 import (
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
 // Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
 // invoices and cannot be determined automatically.
 const (
+	ExtKeyCFDIPostCode     = "mx-cfdi-post-code"
 	ExtKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
 	ExtKeyCFDIUse          = "mx-cfdi-use"
 	ExtKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
@@ -15,14 +17,42 @@ const (
 
 var extensionKeys = []*tax.KeyDefinition{
 	{
+		Key: ExtKeyCFDIPostCode,
+		Name: i18n.String{
+			i18n.EN: "Post Code",
+			i18n.ES: "Código Postal",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Post code of where the invoice was issued.
+				In CFDI, this translates to the 'LugarExpedicion' in the case of the supplier
+				and 'DomicilioFiscalReceptor' for customers.
+				Example value: '01000'.
+			`),
+			i18n.ES: here.Doc(`
+				Código postal de donde se emitió la factura.
+				En CFDI se traduce a 'LugarExpedicion' en el caso del emisor, y
+				'DomicilioFiscalReceptor' para el receptor.
+				Valor de ejemplor: '01000'.
+			`),
+		},
+		Pattern: "^[0-9]{5}$",
+	},
+	{
 		Key: ExtKeyCFDIProdServ,
 		Name: i18n.String{
 			i18n.EN: "Product or Service Code",
 			i18n.ES: "Clave de Producto o Servicio", //nolint:misspell
 		},
 		Desc: i18n.String{
-			i18n.EN: "Code defined in the CFDI catalogue used to identify a product or service.",
-			i18n.ES: "Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio.", //nolint:misspell
+			i18n.EN: here.Doc(`
+				Code defined in the CFDI catalogue used to identify a product or service.
+				Mapped to the 'ClaveProdServ' CFDI field.
+			`),
+			i18n.ES: here.Doc(`
+				Código definido en el catálogo del CFDI utilizado para identificar un producto o servicio.
+				Mapeado al campo del CFDI 'ClaveProdServ'.
+			`),
 		},
 	},
 	{

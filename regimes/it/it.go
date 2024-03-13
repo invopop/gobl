@@ -43,6 +43,15 @@ func New() *tax.Regime {
 		Calculator:       Calculate,
 		Zones:            zones,      // zones.go
 		Categories:       categories, // categories.go
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				},
+			},
+		},
 	}
 }
 

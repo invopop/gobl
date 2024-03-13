@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -25,6 +26,18 @@ const (
 
 const (
 	defaultTaxRemovalAccuracy uint32 = 2
+)
+
+const (
+	// InvoiceCodePattern defines what we expect from codes
+	// and series in an invoice.
+	InvoiceCodePattern = `^([A-Za-z0-9][A-Za-z0-9 /\._-]?)*[A-Za-z0-9]$`
+)
+
+var (
+	// InvoiceCodeRegexp is used to validate invoice codes and series
+	// to something that is compatible with most tax regimes.
+	InvoiceCodeRegexp = regexp.MustCompile(InvoiceCodePattern)
 )
 
 // Invoice represents a payment claim for goods or services supplied under
@@ -117,8 +130,11 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			isValidInvoiceType,
 		),
-		validation.Field(&inv.Series),
+		validation.Field(&inv.Series,
+			validation.Match(InvoiceCodeRegexp),
+		),
 		validation.Field(&inv.Code,
+			validation.Match(InvoiceCodeRegexp),
 			validation.When(
 				!internal.IsDraft(ctx),
 				validation.Required,
@@ -544,6 +560,13 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 // JSONSchemaExtend extends the schema with additional property details
 func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 	props := schema.Properties
+	if prop, ok := props.Get("series"); ok {
+		prop.Pattern = InvoiceCodePattern
+	}
+	if prop, ok := props.Get("code"); ok {
+		prop.Pattern = InvoiceCodePattern
+	}
+	// Extend type list
 	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
 		for i, v := range InvoiceTypes {

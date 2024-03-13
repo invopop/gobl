@@ -20,6 +20,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestInvoiceCodeRegexp(t *testing.T) {
+	tests := []struct {
+		code string
+		ok   bool
+	}{
+		// Good
+		{"1", true},
+		{"A", true},
+		{"123", true},
+		{"123TEST", true},
+		{"123-TEST", true},
+		{"FR F-01/37", true},
+		{"MultiCase", true},
+		{"F.01_21", true},
+		// Bad
+		{"F101-", false},
+		{" 123 ", false},
+		{"F--01", false},
+		{"\n", false},
+		{"FOO\n", false},
+	}
+	for _, ts := range tests {
+		t.Run(ts.code, func(t *testing.T) {
+			assert.Equal(t, ts.ok, bill.InvoiceCodeRegexp.MatchString(ts.code))
+		})
+	}
+}
+
 func TestInvoiceRegimeCurrency(t *testing.T) {
 	lines := []*bill.Line{
 		{

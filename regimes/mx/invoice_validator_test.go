@@ -25,24 +25,24 @@ func validInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Ext: tax.Extensions{
+				mx.ExtKeyCFDIPostCode:     "21000",
 				mx.ExtKeyCFDIFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
 				Country: l10n.MX,
 				Code:    "AAA010101AAA",
-				Zone:    "21000",
 			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			Ext: tax.Extensions{
+				mx.ExtKeyCFDIPostCode:     "65000",
 				mx.ExtKeyCFDIFiscalRegime: "608",
 				mx.ExtKeyCFDIUse:          "G01",
 			},
 			TaxID: &tax.Identity{
 				Country: l10n.MX,
 				Code:    "ZZZ010101ZZZ",
-				Zone:    "65000",
 			},
 		},
 		Lines: []*bill.Line{
@@ -157,6 +157,7 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 
 	inv.Customer.Ext = tax.Extensions{
 		mx.ExtKeyCFDIFiscalRegime: "601",
+		mx.ExtKeyCFDIPostCode:     "21000",
 	}
 	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")
 }

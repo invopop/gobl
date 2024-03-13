@@ -70,7 +70,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 			name: "missing zone",
 			code: "MNOP8201019HJ",
 			zone: "",
-			err:  "zone: cannot be blank",
+			// deprecated. err:  "zone: cannot be blank",
 		},
 	}
 
