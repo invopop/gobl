@@ -11,6 +11,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// KSeF official codes to include.
+const (
+	StampProviderKSeF cbc.Key = "ksef-id"
+	CorrectionType    cbc.Key = "cor-type"
+)
+
 func init() {
 	tax.RegisterRegime(New())
 }
@@ -39,6 +45,21 @@ func New() *tax.Regime {
 		Validator:        Validate,
 		Calculator:       Calculate,
 		Categories:       taxCategories, // tax_categories.go
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCorrective,
+				},
+				ReasonRequired: true,
+				Stamps: []cbc.Key{
+					StampProviderKSeF,
+				},
+				Extensions: []cbc.Key{
+					ExtKeyKSEFCorrection,
+				},
+			},
+		},
 	}
 }
 
