@@ -27,7 +27,7 @@ func (v *invoiceValidator) validate() error {
 		// Rectification state determined by Preceding value.
 		validation.Field(&inv.Type, validation.In(
 			bill.InvoiceTypeStandard,
-			bill.InvoiceTypeCorrective,
+			bill.InvoiceTypeCreditNote,
 		)),
 		// validation.Field(&inv.Preceding,
 		// 	validation.Each(validation.By(v.preceding)),

@@ -68,7 +68,8 @@ var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyKSEFCorrection,
 		Name: i18n.String{
-			i18n.EN: "Zero VAT Extensions for KSeF",
+			i18n.EN: "Correction type extension for KSeF credit notes",
+			i18n.PL: "Typ korekty dla faktur korygujących w KSeF",
 		},
 		Codes: []*cbc.CodeDefinition{
 			{

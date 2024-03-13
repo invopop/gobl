@@ -14,7 +14,6 @@ import (
 // KSeF official codes to include.
 const (
 	StampProviderKSeF cbc.Key = "ksef-id"
-	CorrectionType    cbc.Key = "cor-type"
 )
 
 func init() {
