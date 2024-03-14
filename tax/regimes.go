@@ -7,9 +7,11 @@ import (
 var regimes = newRegimeCollection()
 
 // RegimeCollection defines how to access details about all the regimes
-// currently stored.
+// currently stored. Currently only a single tax regime per country is
+// supported as we've not yet come across situations where multiple
+// regimes exist within a single country.
 type RegimeCollection struct {
-	list map[l10n.CountryCode][]*Regime
+	list map[l10n.CountryCode]*Regime
 }
 
 // Regimes provides the current global regime collection object.
@@ -19,46 +21,31 @@ func Regimes() *RegimeCollection {
 
 func newRegimeCollection() *RegimeCollection {
 	c := new(RegimeCollection)
-	c.list = make(map[l10n.CountryCode][]*Regime)
+	c.list = make(map[l10n.CountryCode]*Regime)
 	return c
 }
 
 func (c *RegimeCollection) add(r *Regime) {
-	if _, ok := c.list[r.Country]; !ok {
-		c.list[r.Country] = make([]*Regime, 0)
-	}
-	c.list[r.Country] = append(c.list[r.Country], r)
+	c.list[r.Country] = r
 }
 
 // For provides a single matching regime from the collection, or nil if
 // no match is found.
-func (c *RegimeCollection) For(country l10n.CountryCode, zone l10n.Code) *Regime {
-	set, ok := c.list[country]
+func (c *RegimeCollection) For(country l10n.CountryCode) *Regime {
+	r, ok := c.list[country]
 	if !ok {
 		return nil
 	}
-	// First sweep
-	for _, r := range set {
-		if r.Zone == zone {
-			return r
-		}
-	}
-	// Second sweep in case there are multiple regimes
-	// in a given country, with a main regime that does
-	// not define a locality.
-	for _, r := range set {
-		if r.Zone == "" {
-			return r
-		}
-	}
-	return nil
+	return r
 }
 
 // All provides a list of all the registered Regimes.
 func (c *RegimeCollection) All() []*Regime {
-	all := make([]*Regime, 0)
-	for _, set := range c.list {
-		all = append(all, set...)
+	all := make([]*Regime, len(c.list))
+	i := 0
+	for _, r := range c.list {
+		all[i] = r
+		i++
 	}
 	return all
 }
@@ -70,8 +57,8 @@ func RegisterRegime(regime *Regime) {
 
 // RegimeFor returns the regime definition for country and locality combination
 // or nil if no match was found.
-func RegimeFor(country l10n.CountryCode, locality l10n.Code) *Regime {
-	return regimes.For(country, locality)
+func RegimeFor(country l10n.CountryCode) *Regime {
+	return regimes.For(country)
 }
 
 // AllRegimes provides an array of all the regime codes to definitions.

@@ -249,7 +249,7 @@ func (inv *Invoice) Calculate() error {
 	if err != nil {
 		return err
 	}
-	r := tax.RegimeFor(tID.Country, tID.Zone)
+	r := tax.RegimeFor(tID.Country)
 	if r == nil {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
@@ -259,21 +259,19 @@ func (inv *Invoice) Calculate() error {
 		return err
 	}
 
-	return inv.calculateWithRegime(r, tID)
+	return inv.calculateWithRegime(r)
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
 // the tax included in the invoice, and remove them.
 //
-// This method will call "Calculate" on th invoice automatically both before and after
+// This method will call "Calculate" on the invoice automatically both before and after
 // to ensure that the data matches.
 //
-// In order to avoid rounding errors, we need to figure out new precisions for the line
-// items. To do this, we run a simple loop over the invoice with different precisions
-// until the totals and taxes match. This is a bit of a hack, but has proved to be the
-// most reliable solution to a very complex issue.
+// If after removing taxes the totals don't match, a rounding error will be added to the
+// invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
-// A new invoice object is returned, leaving the original objects untouched.
+// A new invoice object is returned, leaving the original instance untouched.
 func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	if inv.Tax == nil || inv.Tax.PricesInclude.IsEmpty() {
 		return inv, nil // nothing to do!
@@ -389,7 +387,7 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 	return nil
 }
 
-func (inv *Invoice) calculateWithRegime(r *tax.Regime, tID *tax.Identity) error {
+func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	// Normalize data
 	if inv.IssueDate.IsZero() {
 		inv.IssueDate = cal.TodayIn(r.TimeLocation())
@@ -558,7 +556,7 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 	if tID == nil {
 		return nil
 	}
-	return tax.RegimeFor(tID.Country, tID.Zone)
+	return tax.RegimeFor(tID.Country)
 }
 
 // JSONSchemaExtend extends the schema with additional property details

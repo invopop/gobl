@@ -76,7 +76,7 @@ func (id *Identity) String() string {
 
 // Regime provides the regime object for this tax identity.
 func (id *Identity) Regime() *Regime {
-	return regimes.For(id.Country, id.Zone)
+	return regimes.For(id.Country)
 }
 
 // Calculate will attempt to perform a regional tax normalization
@@ -104,7 +104,7 @@ func (id *Identity) Validate() error {
 	if err != nil {
 		return err
 	}
-	r := regimes.For(id.Country, id.Zone)
+	r := regimes.For(id.Country)
 	if r != nil {
 		return r.ValidateObject(id)
 	}
