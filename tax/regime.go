@@ -76,10 +76,6 @@ type Regime struct {
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
-	// List of zones to identify specific areas, regions, or provinces inside a country
-	// tha may be required for tax purposes.
-	Zones *ZoneStore `json:"zones,omitempty"`
-
 	// Validator is a method to use to validate a document in a given region.
 	Validator func(doc interface{}) error `json:"-"`
 
@@ -206,18 +202,6 @@ type CorrectionDefinition struct {
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 }
 
-// CodeDefinition describes a specific code and how it maps to a human name
-// and description if appropriate. Regimes shouldn't typically do any additional
-// conversion of codes, for that, regular keys should be used.
-type CodeDefinition struct {
-	// Code for which the definition is for.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Short name for the code, if relevant.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Description offering more details about when the code should be used.
-	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-}
-
 // Code provides a unique code for this tax regime based on the country.
 func (r *Regime) Code() cbc.Code {
 	return cbc.Code(r.Country)
@@ -298,7 +282,6 @@ func (r *Regime) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Corrections),
 		validation.Field(&r.Categories, validation.Required),
-		validation.Field(&r.Zones),
 	)
 	return err
 }

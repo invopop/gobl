@@ -62,7 +62,27 @@ func (v *invoiceValidator) validParty(value interface{}) error {
 				validation.Length(1, 0),
 			),
 		),
+		validation.Field(&obj.Ext,
+			validation.When(
+				municipalityCodeRequired(obj.TaxID),
+				validation.Required,
+				tax.ExtensionsRequires(ExtKeyDIANMunicipality),
+			),
+		),
 	)
+}
+
+func municipalityCodeRequired(tID *tax.Identity) bool {
+	if tID == nil {
+		return false
+	}
+	if !tID.Country.In(l10n.CO) {
+		return false
+	}
+	if tID.Type == TaxIdentityTypeCitizen || tID.Code == TaxCodeFinalCustomer {
+		return false
+	}
+	return true
 }
 
 func (v *invoiceValidator) validSupplier(value interface{}) error {
@@ -106,4 +126,16 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		),
 		validation.Field(&obj.Reason, validation.Required),
 	)
+}
+
+func normalizeParty(p *org.Party) error {
+	// 2024-03-14: Migrate Tax ID Zone to extensions "mx-dian-municipality"
+	if p.TaxID != nil && p.TaxID.Zone != "" {
+		if p.Ext == nil {
+			p.Ext = make(tax.Extensions)
+		}
+		p.Ext[ExtKeyDIANMunicipality] = tax.ExtValue(p.TaxID.Zone)
+		p.TaxID.Zone = ""
+	}
+	return nil
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -178,20 +177,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 				validation.By(validateTaxCode),
 			),
 		),
-		validation.Field(&tID.Zone,
-			validation.When(!isFinalCustomer(tID),
-				validation.Required,
-				tax.ZoneIn(zones),
-			),
-		),
 	)
-}
-
-func isFinalCustomer(tID *tax.Identity) bool {
-	if tID == nil {
-		return false
-	}
-	return tID.Type == TaxIdentityTypeCitizen && tID.Code == TaxCodeFinalCustomer
 }
 
 // normalizeTaxIdentity will remove any whitespace or separation characters from
@@ -205,23 +191,6 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 	}
 	if err := common.NormalizeTaxIdentity(tID); err != nil {
 		return err
-	}
-	return nil
-}
-
-func normalizePartyWithTaxIdentity(p *org.Party) error {
-	// override the party's locality and region using the tax identity zone data.
-	tID := p.TaxID
-	if tID != nil && tID.Zone != "" {
-		z := zones.Get(tID.Zone)
-		if z != nil {
-			if len(p.Addresses) == 0 {
-				return nil
-			}
-			a := p.Addresses[0]
-			a.Locality = z.Locality.In(i18n.ES)
-			a.Region = z.Region.In(i18n.ES)
-		}
 	}
 	return nil
 }

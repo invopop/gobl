@@ -22,31 +22,6 @@ const (
 	KeyATInvoiceType      cbc.Key = "at-invoice-type"
 )
 
-// Zone code definitions for Portugal based on districts and
-// autonomous regions based on ISO 3166-2:PT.
-const (
-	ZoneAveiro         l10n.Code = "01"
-	ZoneBeja           l10n.Code = "02"
-	ZoneBraga          l10n.Code = "03"
-	ZoneBraganca       l10n.Code = "04"
-	ZoneCasteloBranco  l10n.Code = "05"
-	ZoneCoimbra        l10n.Code = "06"
-	ZoneEvora          l10n.Code = "07"
-	ZoneFaro           l10n.Code = "08"
-	ZoneGuarda         l10n.Code = "09"
-	ZoneLeiria         l10n.Code = "10"
-	ZoneLisboa         l10n.Code = "11"
-	ZonePortalegre     l10n.Code = "12"
-	ZonePorto          l10n.Code = "13"
-	ZoneSantarem       l10n.Code = "14"
-	ZoneSetubal        l10n.Code = "15"
-	ZoneVianaDoCastelo l10n.Code = "16"
-	ZoneVilaReal       l10n.Code = "17"
-	ZoneViseu          l10n.Code = "18"
-	ZoneAzores         l10n.Code = "20" // Autonomous Region
-	ZoneMadeira        l10n.Code = "30" // Autonomous Region
-)
-
 // AT official codes to include in stamps.
 const (
 	StampProviderATATCUD cbc.Key = "at-atcud"
@@ -63,7 +38,6 @@ func New() *tax.Regime {
 			i18n.PT: "Portugal",
 		},
 		TimeZone:   "Europe/Lisbon",
-		Zones:      zones,
 		Extensions: extensionKeys,
 		Tags:       invoiceTags,
 		Scenarios:  scenarios,

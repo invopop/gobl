@@ -27,30 +27,13 @@ AT's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax do
 
 ### `TaxCountryRegion` (País ou região do imposto)
 
-AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation (Portugal mainland, Açores or Madeira) in a Portuguese invoice. GOBL will map them using the supplier's tax identity zone (ISO 3166-2:PT codes) as per the following table:
+AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation (Portugal mainland, Açores or Madeira) in a Portuguese invoice. Each region has their own tax rates which can be determined automatically.
 
-| Code  | Name                       | GOBL Tax Identity Zone |
-| ----- | -------------------------- | ---------------------- |
-| PT    | Aveiro                     | `01`                   |
-| PT    | Beja                       | `02`                   |
-| PT    | Braga                      | `03`                   |
-| PT    | Bragança                   | `04`                   |
-| PT    | Castelo Branco             | `05`                   |
-| PT    | Coimbra                    | `06`                   |
-| PT    | Évora                      | `07`                   |
-| PT    | Faro                       | `08`                   |
-| PT    | Guarda                     | `09`                   |
-| PT    | Leiria                     | `10`                   |
-| PT    | Lisboa                     | `11`                   |
-| PT    | Portalegre                 | `12`                   |
-| PT    | Porto                      | `13`                   |
-| PT    | Santarém                   | `14`                   |
-| PT    | Setúbal                    | `15`                   |
-| PT    | Viana do Castelo           | `16`                   |
-| PT    | Vila Real                  | `17`                   |
-| PT    | Viseu                      | `18`                   |
-| PT-AC | Região Autónoma dos Açores | `20`                   |
-| PT-MA | Região Autónoma da Madeira | `30`                   |
+To set the specific region inside an invoice, add one of the following tax tags:
+
+- no tag - implies default Portugal zone with `PT` code.
+- `azores` - for the Azores region, which will use `PT-AC` code.
+- `madeira` - For the Madeira region, which will use `PT-MA` code.
 
 ### VAT Tax Rates
 

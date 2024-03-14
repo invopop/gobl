@@ -41,7 +41,6 @@ func New() *tax.Regime {
 		Scenarios:        scenarios, // scenarios.go
 		Validator:        Validate,
 		Calculator:       Calculate,
-		Zones:            zones,      // zones.go
 		Categories:       categories, // categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{

@@ -31,7 +31,8 @@ func baseInvoice() *bill.Invoice {
 			},
 			Addresses: []*org.Address{
 				{
-					Locality: "Foo",
+					Locality: "Bogotá, D.C.",
+					Region:   "Bogotá",
 				},
 			},
 		},
@@ -44,7 +45,8 @@ func baseInvoice() *bill.Invoice {
 			},
 			Addresses: []*org.Address{
 				{
-					Locality: "Foo",
+					Locality: "Sabanalarga",
+					Region:   "Atlántico",
 				},
 			},
 		},
@@ -85,7 +87,8 @@ func creditNote() *bill.Invoice {
 			},
 			Addresses: []*org.Address{
 				{
-					Locality: "Foo",
+					Locality: "Bogotá, D.C.",
+					Region:   "Bogotá",
 				},
 			},
 		},
@@ -98,7 +101,8 @@ func creditNote() *bill.Invoice {
 			},
 			Addresses: []*org.Address{
 				{
-					Locality: "Foo",
+					Locality: "Sabanalarga",
+					Region:   "Atlántico",
 				},
 			},
 		},
@@ -125,15 +129,15 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.Equal(t, inv.Customer.Addresses[0].Locality, "Sabanalarga")
 	assert.Equal(t, inv.Customer.Addresses[0].Region, "Atlántico")
 
-	inv.Supplier.TaxID.Zone = ""
+	delete(inv.Supplier.Ext, co.ExtKeyDIANMunicipality)
 	err := inv.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "zone: cannot be blank")
+	assert.Contains(t, err.Error(), "supplier: (ext: cannot be blank.).")
 
-	inv.Supplier.TaxID.Zone = "1100X"
+	inv.Supplier.Ext[co.ExtKeyDIANMunicipality] = "110011"
 	err = inv.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "zone: must be a valid value")
+	assert.Contains(t, err.Error(), "supplier: (ext: (co-dian-municipality: does not match pattern.).")
 
 	inv = baseInvoice()
 	inv.Supplier.TaxID.Type = co.TaxIdentityTypeCitizen
@@ -176,4 +180,19 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "preceding: (0: (ext: (foo: undefined.).).)")
 	}
 
+}
+
+func TestNormalizeParty(t *testing.T) {
+	p := &org.Party{
+		Name: "Test Party",
+		TaxID: &tax.Identity{
+			Country: l10n.CO,
+			Code:    "412615332",
+			Zone:    "11001",
+		},
+	}
+	err := co.Calculate(p)
+	assert.NoError(t, err)
+	assert.Empty(t, p.TaxID.Zone)
+	assert.Equal(t, p.Ext[co.ExtKeyDIANMunicipality].String(), "11001")
 }

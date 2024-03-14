@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4f57dd43293a4c781a1d3a3456cbca2199315103cbc801fe5c8b3e059264791d"
+			"val": "b8812cf2a55e0bc293299a82a7006987a45d7aaa4fb7d9d81e6520c3da3179a9"
 		},
 		"draft": true
 	},
@@ -19,16 +19,25 @@
 			"name": "EXAMPLE SUPPLIER S.A.S.",
 			"tax_id": {
 				"country": "CO",
-				"zone": "11001",
 				"type": "tin",
 				"code": "9014514812"
+			},
+			"addresses": [
+				{
+					"street": "CRA 8 113 31 OF 703",
+					"locality": "Bogotá, D.C.",
+					"region": "Bogotá",
+					"country": "CO"
+				}
+			],
+			"ext": {
+				"co-dian-municipality": "11001"
 			}
 		},
 		"customer": {
 			"name": "EXAMPLE CUSTOMER S.A.S.",
 			"tax_id": {
 				"country": "CO",
-				"zone": "11001",
 				"type": "tin",
 				"code": "9014514805"
 			},
@@ -49,7 +58,10 @@
 				{
 					"num": "3114131811"
 				}
-			]
+			],
+			"ext": {
+				"co-dian-municipality": "11001"
+			}
 		},
 		"lines": [
 			{

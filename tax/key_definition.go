@@ -27,7 +27,22 @@ type KeyDefinition struct {
 	Pattern string `json:"pattern,omitempty" jsonschema:"title=Pattern"`
 	// Map helps map local keys to specific codes, useful for converting the
 	// described key into a local code.
-	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
+	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
+}
+
+// CodeDefinition describes a specific code and how it maps to a human name
+// and description if appropriate. Regimes shouldn't typically do any additional
+// conversion of codes, for that, regular keys should be used.
+type CodeDefinition struct {
+	// Code for which the definition is for.
+	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	// Short name for the code, if relevant.
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Description offering more details about when the code should be used.
+	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
+	// Meta defines any additional details that may be useful or associated
+	// with the code.
+	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
 // HasCode loops through the key definitions codes and determines if there
@@ -79,6 +94,15 @@ func (kd *KeyDefinition) Validate() error {
 		validation.Field(&kd.Pattern, validation.By(patternMustCompile)),
 	)
 	return err
+}
+
+// Validate ensures the contents of the code definition are valid.
+func (cd *CodeDefinition) Validate() error {
+	return validation.ValidateStruct(cd,
+		validation.Field(&cd.Code, validation.Required),
+		validation.Field(&cd.Name, validation.Required),
+		validation.Field(&cd.Desc),
+	)
 }
 
 // InKeyDefs prepares a validation to provide a rule that will determine

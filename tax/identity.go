@@ -1,6 +1,7 @@
 package tax
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -23,12 +24,6 @@ type Identity struct {
 	// ISO country code for Where the tax identity was issued.
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
 
-	// Where inside the country the tax identity holder is based for tax purposes
-	// like a village, town, district, city, county, state or province. For some
-	// areas, this could be a regular post or zip code. See the regime packages
-	// for specific validation rules.
-	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone Code"`
-
 	// Type is set according the requirements of each regime, some have a single
 	// tax document type code, others require a choice to be made.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
@@ -38,6 +33,10 @@ type Identity struct {
 
 	// Additional details that may be required.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	// Zone was removed 2024-03-14 in favour of using tax tags
+	// and extensions with local data when required.
+	Zone l10n.Code `json:"-"`
 }
 
 // Standard error responses to be used by regimes.
@@ -108,6 +107,23 @@ func (id *Identity) Validate() error {
 	if r != nil {
 		return r.ValidateObject(id)
 	}
+	return nil
+}
+
+// UnmarshalJSON parses the JSON and will extract any old fields
+// from data that will be migrated away.
+func (id *Identity) UnmarshalJSON(data []byte) error {
+	type Alias Identity
+	aux := &struct {
+		Zone l10n.Code `json:"zone"`
+		*Alias
+	}{
+		Alias: (*Alias)(id),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	id.Zone = aux.Zone
 	return nil
 }
 
