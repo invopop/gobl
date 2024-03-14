@@ -93,6 +93,11 @@
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Description",
           "description": "Description offering more details about when the code should be used."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta defines any additional details that may be useful or associated\nwith the code."
         }
       },
       "type": "object",
@@ -177,9 +182,14 @@
           "title": "Keys",
           "description": "Keys is used instead of codes to define a further sub-set of keys that\ncan be used alongside this one."
         },
+        "pattern": {
+          "type": "string",
+          "title": "Pattern",
+          "description": "Pattern is used to validate the key value instead of using a fixed value\nfrom the code or key definitions."
+        },
         "map": {
           "$ref": "https://gobl.org/draft-0/cbc/code-map",
-          "title": "Map",
+          "title": "Code Map",
           "description": "Map helps map local keys to specific codes, useful for converting the\ndescribed key into a local code."
         }
       },
@@ -248,13 +258,13 @@
     },
     "RateValue": {
       "properties": {
-        "zones": {
+        "tags": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/l10n/code"
+            "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Zones",
-          "description": "Only use this value if one of the zones matches."
+          "title": "Tags",
+          "description": "Only apply this rate if one of the tags is present in the invoice."
         },
         "since": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -385,13 +395,6 @@
           "type": "array",
           "title": "Categories",
           "description": "List of tax categories."
-        },
-        "zones": {
-          "items": {
-            "$ref": "#/$defs/Zone"
-          },
-          "type": "array",
-          "description": "List of zones to identify specific areas, regions, or provinces inside a country\ntha may be required for tax purposes."
         }
       },
       "type": "object",
@@ -488,45 +491,6 @@
         "url"
       ],
       "description": "Source describes where the information for the taxes comes from."
-    },
-    "Zone": {
-      "properties": {
-        "code": {
-          "$ref": "https://gobl.org/draft-0/l10n/code",
-          "title": "Code",
-          "description": "Unique zone code."
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name of the zone to be use if a locality or region is not applicable."
-        },
-        "locality": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Locality",
-          "description": "Village, town, district, or city name which should coincide with\naddress data."
-        },
-        "region": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Region",
-          "description": "Province, county, or state which should match address data."
-        },
-        "codes": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-map",
-          "title": "Codes",
-          "description": "Codes defines a set of regime specific code mappings."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Any additional information"
-        }
-      },
-      "type": "object",
-      "required": [
-        "code"
-      ],
-      "description": "Zone represents an area inside a country, like a province or a state, which shares the basic definitions of the country, but may vary in some validation rules."
     }
   },
   "$comment": "Generated with GOBL v0.68.0"

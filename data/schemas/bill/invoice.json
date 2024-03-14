@@ -235,11 +235,13 @@
         },
         "series": {
           "type": "string",
+          "pattern": "^([A-Za-z0-9][A-Za-z0-9 /\\._-]?)*[A-Za-z0-9]$",
           "title": "Series",
           "description": "Used as a prefix to group codes."
         },
         "code": {
           "type": "string",
+          "pattern": "^([A-Za-z0-9][A-Za-z0-9 /\\._-]?)*[A-Za-z0-9]$",
           "title": "Code",
           "description": "Sequential code used to identify this invoice in tax declarations."
         },

@@ -8,8 +8,7 @@
     "name": "EXAMPLE SUPPLIER S.A.S.",
     "tax_id": {
       "country": "CO",
-      "code": "9014514812",
-      "zone": "11001"
+      "code": "9014514812"
     },
     "ext": {
       "co-dian-municipality": "11001"
@@ -27,8 +26,10 @@
     "name": "EXAMPLE CUSTOMER S.A.S.",
     "tax_id": {
       "country": "CO",
-      "code": "9014514805",
-      "zone": "11001"
+      "code": "9014514805"
+    },
+    "ext": {
+      "co-dian-municipality": "11001"
     },
     "addresses": [
       {
