@@ -26,7 +26,7 @@ const (
 	TaxIdentityTypeIndividual cbc.Key = "individual"
 )
 
-var taxIdentityTypeDefinitions = []*tax.KeyDefinition{
+var taxIdentityTypeDefinitions = []*cbc.KeyDefinition{
 	{
 		Key: TaxIdentityTypeBusiness,
 		Name: i18n.String{

@@ -32,7 +32,7 @@ var (
 	nitMultipliers = []int{3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71}
 )
 
-var taxIdentityTypeDefs = []*tax.KeyDefinition{
+var taxIdentityTypeDefs = []*cbc.KeyDefinition{
 	{
 		Key: TaxIdentityTypeTIN, // DEFAULT!
 		Name: i18n.String{

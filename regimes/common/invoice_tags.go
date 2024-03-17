@@ -1,11 +1,12 @@
 package common
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
-var invoiceTags = []*tax.KeyDefinition{
+var invoiceTags = []*cbc.KeyDefinition{
 	// Simplified invoices are issued when the complete fiscal details of
 	// a customer are not available.
 	{
@@ -77,12 +78,12 @@ var invoiceTags = []*tax.KeyDefinition{
 
 // InvoiceTags returns a list of common invoice tag key
 // definitions.
-func InvoiceTags() []*tax.KeyDefinition {
+func InvoiceTags() []*cbc.KeyDefinition {
 	return invoiceTags
 }
 
 // InvoiceTagsWith appends the list of provided key definitions
 // to the base list of tags and returns a new array.
-func InvoiceTagsWith(tags []*tax.KeyDefinition) []*tax.KeyDefinition {
+func InvoiceTagsWith(tags []*cbc.KeyDefinition) []*cbc.KeyDefinition {
 	return append(InvoiceTags(), tags...)
 }

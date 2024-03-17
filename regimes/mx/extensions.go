@@ -1,9 +1,9 @@
 package mx
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/tax"
 )
 
 // Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
@@ -15,7 +15,7 @@ const (
 	ExtKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
 )
 
-var extensionKeys = []*tax.KeyDefinition{
+var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyCFDIPostCode,
 		Name: i18n.String{
@@ -65,7 +65,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.EN: "Fiscal regime associated with suppliers and customers.",
 			i18n.ES: "Régimen fiscal asociado con el emisor y receptor.",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "601",
 				Name: i18n.String{
@@ -192,7 +192,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.EN: "Chosen by the customer to indicate the purpose of an invoice.",
 			i18n.ES: "Elegido por el cliente para indicar el propósito de una factura.",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "G01",
 				Name: i18n.String{

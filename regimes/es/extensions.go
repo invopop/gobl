@@ -1,9 +1,9 @@
 package es
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/tax"
 )
 
 // Spanish regime extension codes for local electronic formats.
@@ -14,7 +14,7 @@ const (
 	ExtKeyFacturaECorrection = "es-facturae-correction"
 )
 
-var extensionKeys = []*tax.KeyDefinition{
+var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyFacturaECorrection,
 		Name: i18n.String{
@@ -26,7 +26,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.ES: "FacturaE requiere un código específico y único que explique por qué se está corrigiendo la factura anterior.",
 		},
 		// Codes take from FacturaE XSD
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "01",
 				Name: i18n.String{
@@ -200,7 +200,7 @@ var extensionKeys = []*tax.KeyDefinition{
 				case can be ignored.
 			`),
 		},
-		Keys: []*tax.KeyDefinition{
+		Keys: []*cbc.KeyDefinition{
 			{
 				Key: "goods",
 				Name: i18n.String{
@@ -238,7 +238,7 @@ var extensionKeys = []*tax.KeyDefinition{
 				other countries we've combined them into one.
 			`),
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "E1",
 				Name: i18n.String{
@@ -311,7 +311,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			`),
 		},
 		// Codes taken from TicketBAI XSD
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "R1",
 				Name: i18n.String{

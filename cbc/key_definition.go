@@ -1,9 +1,8 @@
-package tax
+package cbc
 
 import (
 	"regexp"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/validation"
 )
@@ -11,7 +10,7 @@ import (
 // KeyDefinition defines properties of a key that is specific for a regime.
 type KeyDefinition struct {
 	// Actual key value.
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	Key Key `json:"key" jsonschema:"title=Key"`
 	// Short name for the key.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
@@ -27,33 +26,18 @@ type KeyDefinition struct {
 	Pattern string `json:"pattern,omitempty" jsonschema:"title=Pattern"`
 	// Map helps map local keys to specific codes, useful for converting the
 	// described key into a local code.
-	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
-}
-
-// CodeDefinition describes a specific code and how it maps to a human name
-// and description if appropriate. Regimes shouldn't typically do any additional
-// conversion of codes, for that, regular keys should be used.
-type CodeDefinition struct {
-	// Code for which the definition is for.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Short name for the code, if relevant.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Description offering more details about when the code should be used.
-	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-	// Meta defines any additional details that may be useful or associated
-	// with the code.
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	Map CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
 }
 
 // HasCode loops through the key definitions codes and determines if there
 // is a match.
-func (kd *KeyDefinition) HasCode(code cbc.Code) bool {
+func (kd *KeyDefinition) HasCode(code Code) bool {
 	cd := kd.CodeDef(code)
 	return cd != nil
 }
 
 // CodeDef returns the code definition for the provided code, or nil.
-func (kd *KeyDefinition) CodeDef(code cbc.Code) *CodeDefinition {
+func (kd *KeyDefinition) CodeDef(code Code) *CodeDefinition {
 	for _, c := range kd.Codes {
 		if c.Code == code {
 			return c
@@ -64,13 +48,13 @@ func (kd *KeyDefinition) CodeDef(code cbc.Code) *CodeDefinition {
 
 // HasKey loops through the key definitions keys and determines if there
 // is a match.
-func (kd *KeyDefinition) HasKey(key cbc.Key) bool {
+func (kd *KeyDefinition) HasKey(key Key) bool {
 	skd := kd.KeyDef(key)
 	return skd != nil
 }
 
 // KeyDef returns the key definition for the provided key, or nil.
-func (kd *KeyDefinition) KeyDef(key cbc.Key) *KeyDefinition {
+func (kd *KeyDefinition) KeyDef(key Key) *KeyDefinition {
 	for _, skd := range kd.Keys {
 		if skd.Key == key {
 			return skd
@@ -96,13 +80,14 @@ func (kd *KeyDefinition) Validate() error {
 	return err
 }
 
-// Validate ensures the contents of the code definition are valid.
-func (cd *CodeDefinition) Validate() error {
-	return validation.ValidateStruct(cd,
-		validation.Field(&cd.Code, validation.Required),
-		validation.Field(&cd.Name, validation.Required),
-		validation.Field(&cd.Desc),
-	)
+// GetKeyDefinition helps fetch the key definition instance from a list.
+func GetKeyDefinition(key Key, list []*KeyDefinition) *KeyDefinition {
+	for _, item := range list {
+		if item.Key == key {
+			return item
+		}
+	}
+	return nil
 }
 
 // InKeyDefs prepares a validation to provide a rule that will determine

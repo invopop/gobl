@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/gobl/tax"
 )
 
 // Extension keys used in Colombia.
@@ -13,7 +12,7 @@ const (
 	ExtKeyDIANCorrection   cbc.Key = "co-dian-correction"
 )
 
-var extensionKeys = []*tax.KeyDefinition{
+var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyDIANMunicipality,
 		Name: i18n.String{
@@ -38,7 +37,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.EN: "DIAN Correction Code",
 			i18n.ES: "Código de corrección DIAN",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "1",
 				Name: i18n.String{

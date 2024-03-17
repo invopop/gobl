@@ -19,7 +19,7 @@ var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,
 }
 
-var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	{
 		Key: TagInvoiceReceipt,
 		Name: i18n.String{

@@ -13,7 +13,7 @@ const (
 	TagSettlement cbc.Key = "settlement"
 )
 
-var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	{
 		Key: TagSettlement,
 		Name: i18n.String{
