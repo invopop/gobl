@@ -571,11 +571,11 @@ func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 	// Extend type list
 	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
-		for i, v := range InvoiceTypes {
+		for i, kd := range InvoiceTypes {
 			its.OneOf[i] = &jsonschema.Schema{
-				Const:       v.Key.String(),
-				Title:       v.Title,
-				Description: v.Description,
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
 			}
 		}
 	}

@@ -28,7 +28,7 @@ const (
 // This is only a partial list of all the potential tags that
 // could be available for use in Italy. Given the complexity
 // involved, we've focussed here on the most useful.
-var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	// *** Document Type Tags ***
 	{
 		Key: TagFreelance,

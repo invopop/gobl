@@ -46,27 +46,27 @@ type Regime struct {
 
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
-	Tags []*KeyDefinition `json:"tags,omitempty" jsonschema:"title=Tags"`
+	Tags []*cbc.KeyDefinition `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Identity types specific for the regime and may be validated
 	// against.
-	IdentityTypeKeys []*KeyDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
+	IdentityTypeKeys []*cbc.KeyDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
 
 	// Extensions defines the keys that can be used for extended or extra data inside the regime that
 	// is specific to the regime and cannot be easily determined from other GOBL structures.
 	// Typically these are used to define local codes for suppliers, customers, products, or tax rates.
-	Extensions []*KeyDefinition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
+	Extensions []*cbc.KeyDefinition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
 	// Charge types specific for the regime and may be validated or used in the UI as suggestions
-	ChargeKeys []*KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
+	ChargeKeys []*cbc.KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
 
 	// PaymentMeansKeys specific for the regime that extend the original
 	// base payment means keys.
-	PaymentMeansKeys []*KeyDefinition `json:"payment_means,omitempty" jsonschema:"title=Payment Means"`
+	PaymentMeansKeys []*cbc.KeyDefinition `json:"payment_means,omitempty" jsonschema:"title=Payment Means"`
 
 	// InboxKeys specific to the regime that can be used to identify where a document
 	// should be forwarded to.
-	InboxKeys []*KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
+	InboxKeys []*cbc.KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
@@ -395,7 +395,7 @@ func (c *Category) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Sources),
 		validation.Field(&c.Rates),
 		validation.Field(&c.Extensions,
-			validation.Each(InKeyDefs(reg.Extensions)),
+			validation.Each(cbc.InKeyDefs(reg.Extensions)),
 		),
 		validation.Field(&c.Map),
 	)
@@ -422,7 +422,7 @@ func (r *Rate) ValidateWithContext(ctx context.Context) error {
 			validation.By(checkRateValuesOrder),
 		),
 		validation.Field(&r.Extensions,
-			validation.Each(InKeyDefs(reg.Extensions)),
+			validation.Each(cbc.InKeyDefs(reg.Extensions)),
 		),
 		validation.Field(&r.Map),
 		validation.Field(&r.Meta),
@@ -471,7 +471,7 @@ func (r *Regime) Category(code cbc.Code) *Category {
 }
 
 // Tag returns the KeyDefinition for the provided tag key
-func (r *Regime) Tag(key cbc.Key) *KeyDefinition {
+func (r *Regime) Tag(key cbc.Key) *cbc.KeyDefinition {
 	for _, t := range r.Tags {
 		if t.Key == key {
 			return t
@@ -491,7 +491,7 @@ func (r *Regime) Rate(cat cbc.Code, key cbc.Key) *Rate {
 }
 
 // ExtensionDef provides the extension definition with a matching key.
-func (r *Regime) ExtensionDef(key cbc.Key) *KeyDefinition {
+func (r *Regime) ExtensionDef(key cbc.Key) *cbc.KeyDefinition {
 	for _, e := range r.Extensions {
 		if e.Key == key {
 			return e

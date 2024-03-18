@@ -23,7 +23,7 @@ const (
 	TagTicketBAI        cbc.Key = "ticketbai"
 )
 
-var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
+var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	// Copy of the original document
 	{
 		Key: TagCopy,

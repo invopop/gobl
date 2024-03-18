@@ -1,8 +1,8 @@
 package pl
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/tax"
 )
 
 // Regime extension codes for local electronic formats.
@@ -11,14 +11,14 @@ const (
 	ExtKeyKSeFVATSpecial = "pl-ksef-vat-special"
 )
 
-var extensionKeys = []*tax.KeyDefinition{
+var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyKSeFVATSpecial,
 		Name: i18n.String{
 			i18n.EN: "Special VAT Extensions for KSeF",
 			i18n.PL: "Rozszerzenia specjalne dla KSeF",
 		},
-		Keys: []*tax.KeyDefinition{
+		Keys: []*cbc.KeyDefinition{
 			{
 				Key: "taxi",
 				Name: i18n.String{
@@ -37,7 +37,7 @@ var extensionKeys = []*tax.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Zero VAT Extensions for KSeF",
 		},
-		Keys: []*tax.KeyDefinition{
+		Keys: []*cbc.KeyDefinition{
 			{
 				Key: "wdt",
 				Name: i18n.String{

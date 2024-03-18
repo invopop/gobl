@@ -1,8 +1,8 @@
 package it
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/tax"
 )
 
 // Italian extension keys required by the Italian tax authority (SDI)
@@ -13,14 +13,14 @@ const (
 	ExtKeySDIRetainedTax  = "it-sdi-retained-tax"
 )
 
-var extensionKeys = []*tax.KeyDefinition{
+var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeySDIFiscalRegime,
 		Name: i18n.String{
 			i18n.EN: "Fiscal Regime Code",
 			i18n.IT: "Codice Regime Fiscale",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{Code: "RF01", Name: i18n.String{
 				i18n.EN: "Ordinary",
 				i18n.IT: "Regime Ordinario",
@@ -102,7 +102,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.EN: "Nature",
 			i18n.IT: "Natura",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "N1",
 				Name: i18n.String{
@@ -262,7 +262,7 @@ var extensionKeys = []*tax.KeyDefinition{
 			i18n.EN: "Retained Tax",
 			i18n.IT: "Ritenuta",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "A",
 				Name: i18n.String{

@@ -1,17 +1,16 @@
-package tax_test
+package cbc_test
 
 import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestKeyDefinitionsWithCodes(t *testing.T) {
-	kd := &tax.KeyDefinition{
+	kd := &cbc.KeyDefinition{
 		Key: "key",
 		Name: i18n.String{
 			i18n.EN: "Name",
@@ -21,7 +20,7 @@ func TestKeyDefinitionsWithCodes(t *testing.T) {
 			i18n.EN: "Description",
 			i18n.ES: "Descripción",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: cbc.Code("CODE"),
 				Name: i18n.String{
@@ -39,7 +38,7 @@ func TestKeyDefinitionsWithCodes(t *testing.T) {
 }
 
 func TestKeyDefinitionsWithKeys(t *testing.T) {
-	kd := &tax.KeyDefinition{
+	kd := &cbc.KeyDefinition{
 		Key: "key",
 		Name: i18n.String{
 			i18n.EN: "Name",
@@ -49,7 +48,7 @@ func TestKeyDefinitionsWithKeys(t *testing.T) {
 			i18n.EN: "Description",
 			i18n.ES: "Descripción",
 		},
-		Keys: []*tax.KeyDefinition{
+		Keys: []*cbc.KeyDefinition{
 			{
 				Key: cbc.Key("code"),
 				Name: i18n.String{
@@ -67,7 +66,7 @@ func TestKeyDefinitionsWithKeys(t *testing.T) {
 }
 
 func TestKeyDefinitionWithPattern(t *testing.T) {
-	kd := &tax.KeyDefinition{
+	kd := &cbc.KeyDefinition{
 		Key: "key",
 		Name: i18n.String{
 			i18n.EN: "Name",

@@ -77,35 +77,6 @@
       ],
       "description": "Category contains the definition of a general type of tax inside a region."
     },
-    "CodeDefinition": {
-      "properties": {
-        "code": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Code",
-          "description": "Code for which the definition is for."
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Short name for the code, if relevant."
-        },
-        "desc": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Description",
-          "description": "Description offering more details about when the code should be used."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Meta defines any additional details that may be useful or associated\nwith the code."
-        }
-      },
-      "type": "object",
-      "required": [
-        "code"
-      ],
-      "description": "CodeDefinition describes a specific code and how it maps to a human name and description if appropriate."
-    },
     "CorrectionDefinition": {
       "properties": {
         "schema": {
@@ -148,57 +119,6 @@
         "schema"
       ],
       "description": "CorrectionDefinition contains details about what can be defined in ."
-    },
-    "KeyDefinition": {
-      "properties": {
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Actual key value."
-        },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Short name for the key."
-        },
-        "desc": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Description",
-          "description": "Description offering more details about when the key should be used."
-        },
-        "codes": {
-          "items": {
-            "$ref": "#/$defs/CodeDefinition"
-          },
-          "type": "array",
-          "title": "Codes",
-          "description": "Codes describes the list of codes that can be used alongside the Key,\nfor example with identities."
-        },
-        "keys": {
-          "items": {
-            "$ref": "#/$defs/KeyDefinition"
-          },
-          "type": "array",
-          "title": "Keys",
-          "description": "Keys is used instead of codes to define a further sub-set of keys that\ncan be used alongside this one."
-        },
-        "pattern": {
-          "type": "string",
-          "title": "Pattern",
-          "description": "Pattern is used to validate the key value instead of using a fixed value\nfrom the code or key definitions."
-        },
-        "map": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-map",
-          "title": "Code Map",
-          "description": "Map helps map local keys to specific codes, useful for converting the\ndescribed key into a local code."
-        }
-      },
-      "type": "object",
-      "required": [
-        "key",
-        "name"
-      ],
-      "description": "KeyDefinition defines properties of a key that is specific for a regime."
     },
     "Rate": {
       "properties": {
@@ -327,7 +247,7 @@
         },
         "tags": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
           "title": "Tags",
@@ -335,7 +255,7 @@
         },
         "identity_types": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
           "title": "Identity Types",
@@ -343,7 +263,7 @@
         },
         "extensions": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
           "title": "Extensions",
@@ -351,7 +271,7 @@
         },
         "charge_types": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
           "title": "Charge Types",
@@ -359,7 +279,7 @@
         },
         "payment_means": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
           "title": "Payment Means",
@@ -367,7 +287,7 @@
         },
         "inbox_keys": {
           "items": {
-            "$ref": "#/$defs/KeyDefinition"
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
           "title": "Inbox Keys",

@@ -88,3 +88,9 @@ func TestPercentageRescale(t *testing.T) {
 		t.Errorf("unexpected percentage from result: %v", x.String())
 	}
 }
+
+func TestPercentageInvert(t *testing.T) {
+	p := num.MakePercentage(160, 3)
+	x := p.Invert()
+	assert.Equal(t, "-16.0%", x.String())
+}

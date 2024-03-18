@@ -3,7 +3,6 @@ package it
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/tax"
 )
 
 // List of charge types specific to the italian regime.
@@ -11,7 +10,7 @@ const (
 	ChargeKeyStampDuty cbc.Key = "stamp-duty"
 )
 
-var chargeKeyDefinitions = []*tax.KeyDefinition{
+var chargeKeyDefinitions = []*cbc.KeyDefinition{
 	{
 		Key: ChargeKeyStampDuty,
 		Name: i18n.String{

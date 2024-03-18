@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -25,7 +24,7 @@ const (
 	MeansKeyPagoPA         cbc.Key = "pagopa"
 )
 
-var paymentMeansKeyDefinitions = []*tax.KeyDefinition{
+var paymentMeansKeyDefinitions = []*cbc.KeyDefinition{
 	{
 		Key: pay.MeansKeyCash,
 		Name: i18n.String{

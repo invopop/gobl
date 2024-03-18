@@ -123,7 +123,7 @@ func (s *Scenario) ValidateWithContext(ctx context.Context) error {
 	r := ctx.Value(KeyRegime).(*Regime)
 	err := validation.ValidateStructWithContext(ctx, s,
 		validation.Field(&s.Types),
-		validation.Field(&s.Tags, validation.Each(InKeyDefs(r.Tags))),
+		validation.Field(&s.Tags, validation.Each(cbc.InKeyDefs(r.Tags))),
 		validation.Field(&s.Name),
 		validation.Field(&s.Note),
 		validation.Field(&s.Codes),

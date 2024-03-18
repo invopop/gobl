@@ -1,8 +1,8 @@
 package pt
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/tax"
 )
 
 // Special codes to be used inside rates.
@@ -10,14 +10,14 @@ const (
 	ExtKeyExemptionCode = "pt-exemption-code"
 )
 
-var extensionKeys = []*tax.KeyDefinition{
+var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyExemptionCode,
 		Name: i18n.String{
 			i18n.EN: "Tax exemption reason code",
 			i18n.PT: "Código do motivo de isenção de imposto",
 		},
-		Codes: []*tax.CodeDefinition{
+		Codes: []*cbc.CodeDefinition{
 			{
 				Code: "M01",
 				Name: i18n.String{

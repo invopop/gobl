@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -65,4 +66,26 @@ func (p *Preceding) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Ext),
 		validation.Field(&p.Meta),
 	)
+}
+
+// JSONSchemaExtend extends the schema with additional property details
+func (Preceding) JSONSchemaExtend(schema *jsonschema.Schema) {
+	props := schema.Properties
+	if prop, ok := props.Get("series"); ok {
+		prop.Pattern = InvoiceCodePattern
+	}
+	if prop, ok := props.Get("code"); ok {
+		prop.Pattern = InvoiceCodePattern
+	}
+	// Extend type list
+	if its, ok := props.Get("type"); ok {
+		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
+		for i, kd := range InvoiceTypes {
+			its.OneOf[i] = &jsonschema.Schema{
+				Const:       kd.Key.String(),
+				Title:       kd.Name.String(),
+				Description: kd.Desc.String(),
+			}
+		}
+	}
 }
