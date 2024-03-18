@@ -15,6 +15,10 @@ type KeyDefinition struct {
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 	// Description offering more details about when the key should be used.
 	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
+	// Meta defines any additional details that may be useful or associated
+	// with the key.
+	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
 	// Codes describes the list of codes that can be used alongside the Key,
 	// for example with identities.
 	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
@@ -24,6 +28,7 @@ type KeyDefinition struct {
 	// Pattern is used to validate the key value instead of using a fixed value
 	// from the code or key definitions.
 	Pattern string `json:"pattern,omitempty" jsonschema:"title=Pattern"`
+
 	// Map helps map local keys to specific codes, useful for converting the
 	// described key into a local code.
 	Map CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
@@ -75,7 +80,7 @@ func (kd *KeyDefinition) Validate() error {
 				validation.Empty,
 			),
 		),
-		validation.Field(&kd.Pattern, validation.By(patternMustCompile)),
+		validation.Field(&kd.Pattern, validation.By(validRegexpPattern)),
 	)
 	return err
 }
@@ -100,7 +105,7 @@ func InKeyDefs(list []*KeyDefinition) validation.Rule {
 	return validation.In(defs...)
 }
 
-func patternMustCompile(value any) error {
+func validRegexpPattern(value any) error {
 	pattern, ok := value.(string)
 	if !ok || pattern == "" {
 		return nil
