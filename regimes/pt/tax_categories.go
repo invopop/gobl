@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 )
@@ -41,12 +40,12 @@ var taxCategories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Zones:   []l10n.Code{ZoneAzores},
+						Tags:    []cbc.Key{TagAzores},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(160, 3),
 					},
 					{
-						Zones:   []l10n.Code{ZoneMadeira},
+						Tags:    []cbc.Key{TagMadeira},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(220, 3),
 					},
@@ -67,12 +66,12 @@ var taxCategories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Zones:   []l10n.Code{ZoneAzores},
+						Tags:    []cbc.Key{TagAzores},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(90, 3),
 					},
 					{
-						Zones:   []l10n.Code{ZoneMadeira},
+						Tags:    []cbc.Key{TagMadeira},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(120, 3),
 					},
@@ -93,12 +92,12 @@ var taxCategories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Zones:   []l10n.Code{ZoneAzores},
+						Tags:    []cbc.Key{TagAzores},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
-						Zones:   []l10n.Code{ZoneMadeira},
+						Tags:    []cbc.Key{TagMadeira},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(50, 3),
 					},

@@ -15,11 +15,6 @@
           "title": "Country Code",
           "description": "ISO country code for Where the tax identity was issued."
         },
-        "zone": {
-          "$ref": "https://gobl.org/draft-0/l10n/code",
-          "title": "Zone Code",
-          "description": "Where inside the country the tax identity holder is based for tax purposes\nlike a village, town, district, city, county, state or province. For some\nareas, this could be a regular post or zip code. See the regime packages\nfor specific validation rules."
-        },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Type",

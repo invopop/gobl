@@ -4,6 +4,9 @@ issue_date: "2022-02-01"
 series: "FR"
 code: "012"
 type: "credit-note"
+tax:
+  tags:
+    - "ticketbai"
 
 preceding:
   - type: "standard"

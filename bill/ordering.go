@@ -75,7 +75,9 @@ func (o *Ordering) Validate() error {
 func (dr *DocumentReference) Validate() error {
 	return validation.ValidateStruct(dr,
 		validation.Field(&dr.UUID),
-		validation.Field(&dr.Code),
+		validation.Field(&dr.Code,
+			validation.Match(InvoiceCodeRegexp),
+		),
 		validation.Field(&dr.URL, is.URL),
 	)
 }

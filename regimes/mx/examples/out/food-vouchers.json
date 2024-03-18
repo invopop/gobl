@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ec81cc1dda378cd71a25b5a455dc40c9bc284bb8b6fac43d544182a902c4ef5b"
+			"val": "57fe15647975876b88b4f160b174a415b47ae5165b07cb04121f7164b9430d08"
 		},
 		"draft": true
 	},
@@ -19,22 +19,22 @@
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {
 				"country": "MX",
-				"zone": "21000",
 				"code": "EKU9003173C9"
 			},
 			"ext": {
-				"mx-cfdi-fiscal-regime": "601"
+				"mx-cfdi-fiscal-regime": "601",
+				"mx-cfdi-post-code": "21000"
 			}
 		},
 		"customer": {
 			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
 			"tax_id": {
 				"country": "MX",
-				"zone": "86991",
 				"code": "URE180429TM6"
 			},
 			"ext": {
 				"mx-cfdi-fiscal-regime": "601",
+				"mx-cfdi-post-code": "86991",
 				"mx-cfdi-use": "G01"
 			}
 		},

@@ -11,6 +11,8 @@ import (
 // Invoice type tags
 const (
 	TagInvoiceReceipt cbc.Key = "invoice-receipt"
+	TagAzores         cbc.Key = "azores"
+	TagMadeira        cbc.Key = "madeira"
 )
 
 var scenarios = []*tax.ScenarioSet{
@@ -23,6 +25,28 @@ var invoiceTags = common.InvoiceTagsWith([]*tax.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Invoice-receipt",
 			i18n.PT: "Fatura-recibo",
+		},
+	},
+	{
+		Key: TagAzores,
+		Name: i18n.String{
+			i18n.EN: "Azores",
+			i18n.PT: "Açores",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Tag for use when the invoice is issued in the Azores region with special local rates.",
+			i18n.PT: "Tag para uso quando a fatura é emitida na região dos Açores com taxas locais especiais.",
+		},
+	},
+	{
+		Key: TagMadeira,
+		Name: i18n.String{
+			i18n.EN: "Madeira",
+			i18n.PT: "Madeira",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Tag for use when the invoice is issued in the Madeira region with special local rates.",
+			i18n.PT: "Tag para uso quando a fatura é emitida na região da Madeira com taxas locais especiais.",
 		},
 	},
 })

@@ -3,15 +3,35 @@ package co
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
 // Extension keys used in Colombia.
 const (
-	ExtKeyDIANCorrection cbc.Key = "co-dian-correction"
+	ExtKeyDIANMunicipality cbc.Key = "co-dian-municipality"
+	ExtKeyDIANCorrection   cbc.Key = "co-dian-correction"
 )
 
 var extensionKeys = []*tax.KeyDefinition{
+	{
+		Key: ExtKeyDIANMunicipality,
+		Name: i18n.String{
+			i18n.EN: "DIAN Municipality Code",
+			i18n.ES: "Código de municipio DIAN",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The municipality code as defined by the DIAN.
+
+				For further details on the list of possible codes, see:
+
+				 * https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf
+				 * https://github.com/ALAxHxC/MunicipiosDane
+			`),
+		},
+		Pattern: `^\d{5}$`,
+	},
 	{
 		Key: ExtKeyDIANCorrection,
 		Name: i18n.String{

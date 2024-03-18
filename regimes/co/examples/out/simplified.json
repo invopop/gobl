@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f23f62eb0cf68db88a55bd391e5410bfba7bf06c24e1a7a863191346b07b644c"
+			"val": "03aa29cb9b8f9e343c3a488acbae206eb0f5770d99e96e62ee6369188f0b11ce"
 		},
 		"draft": true
 	},
@@ -24,9 +24,11 @@
 			"name": "EXAMPLE SUPPLIER S.A.S.",
 			"tax_id": {
 				"country": "CO",
-				"zone": "11001",
 				"type": "tin",
 				"code": "9014514812"
+			},
+			"ext": {
+				"co-dian-municipality": "11001"
 			}
 		},
 		"lines": [

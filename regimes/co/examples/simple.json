@@ -5,24 +5,36 @@
   "currency": "COP",
   "issue_date": "2021-01-01",
   "supplier": {
+    "name": "EXAMPLE SUPPLIER S.A.S.",
     "tax_id": {
       "country": "CO",
-      "code": "9014514812",
-      "zone": "11001"
+      "code": "9014514812"
     },
-    "name": "EXAMPLE SUPPLIER S.A.S."
-  },
-  "customer": {
-    "tax_id": {
-      "country": "CO",
-      "code": "9014514805",
-      "zone": "11001"
+    "ext": {
+      "co-dian-municipality": "11001"
     },
-    "name": "EXAMPLE CUSTOMER S.A.S.",
     "addresses": [
       {
         "street": "CRA 8 113 31 OF 703",
-        "zone": "Bogotá, D.C.",
+        "locality": "Bogotá, D.C.",
+        "region": "Bogotá",
+        "country": "CO"
+      }
+    ]
+  },
+  "customer": {
+    "name": "EXAMPLE CUSTOMER S.A.S.",
+    "tax_id": {
+      "country": "CO",
+      "code": "9014514805"
+    },
+    "ext": {
+      "co-dian-municipality": "11001"
+    },
+    "addresses": [
+      {
+        "street": "CRA 8 113 31 OF 703",
+        "locality": "Bogotá, D.C.",
         "region": "Bogotá",
         "country": "CO"
       }

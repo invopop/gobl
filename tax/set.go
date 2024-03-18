@@ -8,7 +8,6 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
 )
@@ -98,39 +97,50 @@ func combineExtKeys(cat *Category, rate *Rate) []cbc.Key {
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
-func (c *Combo) prepare(r *Regime, zone l10n.Code, date cal.Date) error {
+func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 	c.category = r.Category(c.Category)
 	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
 	}
 
-	if c.Rate != cbc.KeyEmpty {
-		rate := c.category.Rate(c.Rate)
-		if rate == nil {
-			return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
-		}
-		if rate.Exempt {
-			c.Percent = nil
+	// If there is no rate for the combo, there isn't much else we can do.
+	if c.Rate == cbc.KeyEmpty {
+		return nil
+	}
+
+	rate := c.category.Rate(c.Rate)
+	if rate == nil {
+		return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
+	}
+	if rate.Exempt {
+		c.Percent = nil
+		c.Surcharge = nil
+		return nil
+	}
+
+	// if there are no rate values, don't attempt to prepare anything else.
+	if len(rate.Values) == 0 {
+		return nil
+	}
+
+	value := rate.Value(date, tags)
+	if value == nil {
+		return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
+	}
+
+	// 2024-03-14: only update the percentage if none previous set.
+	// This means that custom percentages can be used even if the
+	// rate classification is required by a regime (like PT).
+	if c.Percent == nil {
+		p := value.Percent // copy
+		c.Percent = &p
+	}
+	if c.Surcharge == nil {
+		if value.Surcharge != nil {
+			s := *value.Surcharge // copy
+			c.Surcharge = &s
+		} else {
 			c.Surcharge = nil
-			return nil
-		}
-
-		// if there are not rate values, don't attempt to make a
-		// calculation.
-		if len(rate.Values) > 0 {
-			value := rate.Value(date, zone)
-			if value == nil {
-				return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
-			}
-
-			p := value.Percent // copy
-			c.Percent = &p
-			if value.Surcharge != nil {
-				s := *value.Surcharge // copy
-				c.Surcharge = &s
-			} else {
-				c.Surcharge = nil
-			}
 		}
 	}
 

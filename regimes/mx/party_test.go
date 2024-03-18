@@ -35,7 +35,9 @@ func TestMigratePartyIdentities(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Empty(t, customer.Identities)
-	assert.Len(t, customer.Ext, 2)
+	assert.Len(t, customer.Ext, 3)
 	assert.Equal(t, "608", customer.Ext[mx.ExtKeyCFDIFiscalRegime].String())
 	assert.Equal(t, "G01", customer.Ext[mx.ExtKeyCFDIUse].String())
+	assert.Equal(t, "65000", customer.Ext[mx.ExtKeyCFDIPostCode].String())
+	assert.Empty(t, customer.TaxID.Zone)
 }

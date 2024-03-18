@@ -45,7 +45,6 @@ func validateTaxIdentity(tID *tax.Identity) error {
 			validation.Required,
 			validation.By(validateTaxCode),
 		),
-		validation.Field(&tID.Zone, validation.Required),
 	)
 }
 

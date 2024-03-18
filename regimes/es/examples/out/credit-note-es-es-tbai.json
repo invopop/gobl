@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9bd2f35c2c847f01f2450a5604211a33d1ed03ee91bb06a3de197a50713af0a7"
+			"val": "f769b2b747055f1416f330ceca4367006f83454b7ebc618039f38a2d601b2b5a"
 		},
 		"draft": true
 	},
@@ -26,11 +26,15 @@
 				}
 			}
 		],
+		"tax": {
+			"tags": [
+				"ticketbai"
+			]
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
 				"country": "ES",
-				"zone": "BI",
 				"code": "B98602642"
 			},
 			"addresses": [

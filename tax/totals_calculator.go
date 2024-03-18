@@ -3,7 +3,6 @@ package tax
 import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 )
 
@@ -11,7 +10,7 @@ import (
 // data for calculating tax totals.
 type TotalCalculator struct {
 	Regime   *Regime
-	Zone     l10n.Code
+	Tags     []cbc.Key
 	Zero     num.Amount
 	Date     cal.Date
 	Lines    []TaxableLine
@@ -58,7 +57,7 @@ func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
 	// First, prepare all tax combos using the regime, zone, and date
 	for _, tl := range taxLines {
 		for _, combo := range tl.taxes {
-			if err := combo.prepare(tc.Regime, tc.Zone, tc.Date); err != nil {
+			if err := combo.prepare(tc.Regime, tc.Tags, tc.Date); err != nil {
 				return err
 			}
 			// always add 2 decimal places for all tax calculations

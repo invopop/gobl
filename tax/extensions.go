@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/jsonschema"
@@ -35,16 +36,27 @@ func (em Extensions) ValidateWithContext(ctx context.Context) error {
 	}
 	// Validate keys are defined in regime
 	for k, ev := range em {
+		ks := k.String()
 		kd := r.ExtensionDef(k)
 		if kd == nil {
-			err[k.String()] = errors.New("undefined")
+			err[ks] = errors.New("undefined")
 			continue
 		}
 		if len(kd.Codes) > 0 && !kd.HasCode(ev.Code()) {
-			err[k.String()] = fmt.Errorf("code '%s' invalid", ev)
+			err[ks] = fmt.Errorf("code '%s' invalid", ev)
 		}
 		if len(kd.Keys) > 0 && !kd.HasKey(ev.Key()) {
-			err[k.String()] = fmt.Errorf("key '%s' invalid", ev)
+			err[ks] = fmt.Errorf("key '%s' invalid", ev)
+		}
+		if kd.Pattern != "" {
+			re, rerr := regexp.Compile(kd.Pattern)
+			if rerr != nil {
+				err[ks] = rerr
+				continue
+			}
+			if !re.MatchString(string(ev)) {
+				err[ks] = errors.New("does not match pattern")
+			}
 		}
 	}
 	if len(err) > 0 {

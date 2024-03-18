@@ -12,17 +12,11 @@ import (
 // invoiceValidator adds validation checks to invoices which are relevant
 // for the region.
 type invoiceValidator struct {
-	inv  *bill.Invoice
-	zone l10n.Code
+	inv *bill.Invoice
 }
 
 func validateInvoice(inv *bill.Invoice) error {
 	v := &invoiceValidator{inv: inv}
-
-	if inv.Supplier != nil && inv.Supplier.TaxID != nil {
-		v.zone = inv.Supplier.TaxID.Zone
-	}
-
 	return v.validate()
 }
 
@@ -34,7 +28,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Preceding,
 			validation.When(
-				v.zone.In(ZonesBasqueCountry...) && inv.Type.In(correctionTypes...),
+				inv.Tax.ContainsTag(TagTicketBAI) && inv.Type.In(correctionTypes...),
 				validation.Required,
 			),
 			validation.Each(validation.By(v.preceding)),
@@ -98,10 +92,16 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		return nil
 	}
 
-	if v.zone.In(ZonesBasqueCountry...) {
+	if v.inv.Tax.ContainsTag(TagTicketBAI) {
 		return validation.ValidateStruct(obj,
 			validation.Field(&obj.IssueDate, validation.Required),
 			validation.Field(&obj.Ext, tax.ExtensionsRequires(ExtKeyTBAICorrection)),
+		)
+	}
+	if v.inv.Tax.ContainsTag(TagFacturaE) {
+		return validation.ValidateStruct(obj,
+			validation.Field(&obj.IssueDate, validation.Required),
+			validation.Field(&obj.Ext, tax.ExtensionsRequires(ExtKeyFacturaECorrection)),
 		)
 	}
 
@@ -132,7 +132,7 @@ func (v *invoiceValidator) validateLineTax(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
 			validation.When(
-				v.zone.In(ZonesBasqueCountry...) && obj.Rate == tax.RateExempt,
+				v.inv.Tax.ContainsTag(TagTicketBAI) && obj.Rate == tax.RateExempt,
 				tax.ExtensionsRequires(ExtKeyTBAIExemption),
 			),
 			validation.Skip,

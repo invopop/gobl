@@ -44,13 +44,12 @@ func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
-		zone l10n.Code
 		err  string
 	}{
 		{name: "good 1", code: "999999990"},
 		{name: "good 2", code: "287024008"},
 		{name: "good 3", code: "501442600"},
-		{name: "good 4", code: "501442600", zone: pt.ZoneLisboa},
+		{name: "good 4", code: "501442600"},
 		{
 			name: "empty",
 			code: "",
@@ -60,12 +59,6 @@ func TestValidateTaxIdentity(t *testing.T) {
 			name: "invalid zone",
 			code: "420000000",
 			err:  "invalid prefix",
-		},
-		{
-			name: "invalid zone",
-			code: "287024008",
-			zone: "XX",
-			err:  "zone: must be a valid value",
 		},
 		{
 			name: "too long",
@@ -91,7 +84,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.PT, Code: tt.code, Zone: tt.zone}
+			tID := &tax.Identity{Country: l10n.PT, Code: tt.code}
 			err := pt.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)

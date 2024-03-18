@@ -6,7 +6,6 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/regimes/it"
@@ -25,7 +24,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 	var tests = []struct {
 		desc        string
 		regime      *tax.Regime // default, spain
-		zone        l10n.Code   // default empty
+		tags        []cbc.Key   // default empty
 		lines       []tax.TaxableLine
 		date        *cal.Date
 		taxIncluded cbc.Code
@@ -209,7 +208,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 		{
 			desc:   "with VAT in Azores",
 			regime: portugal,
-			zone:   pt.ZoneAzores,
+			tags:   []cbc.Key{pt.TagAzores},
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -276,7 +275,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 		},
 
 		{
-			desc: "with VAT percents defined, rate override",
+			desc: "with VAT percents defined, do not override rate",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -299,14 +298,14 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key:     tax.RateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(210, 3),
-								Amount:  num.MakeAmount(2100, 2),
+								Percent: num.NewPercentage(20, 2),
+								Amount:  num.MakeAmount(2000, 2),
 							},
 						},
-						Amount: num.MakeAmount(2100, 2),
+						Amount: num.MakeAmount(2000, 2),
 					},
 				},
-				Sum: num.MakeAmount(2100, 2),
+				Sum: num.MakeAmount(2000, 2),
 			},
 		},
 		{
@@ -939,7 +938,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateStandard,
-							Percent:  num.NewPercentage(22, 2),
+							Percent:  num.NewPercentage(220, 3),
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
@@ -955,7 +954,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Percent:  num.NewPercentage(22, 2),
+							Percent:  num.NewPercentage(220, 3),
 						},
 						{
 							Category: it.TaxCategoryIRPEF,
@@ -1021,13 +1020,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 			if test.regime != nil {
 				reg = test.regime
 			}
-			zone := l10n.CodeEmpty
-			if test.zone != l10n.CodeEmpty {
-				zone = test.zone
-			}
 			tc := &tax.TotalCalculator{
 				Regime:   reg,
-				Zone:     zone,
+				Tags:     test.tags,
 				Zero:     zero,
 				Date:     d,
 				Lines:    test.lines,

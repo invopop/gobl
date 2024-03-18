@@ -6,19 +6,19 @@ supplier:
   name: "ESCUELA KEMPER URGATE"
   ext:
     mx-cfdi-fiscal-regime: "601"
+    mx-cfdi-post-code: "21000"
   tax_id:
     country: "MX"
     code: "EKU9003173C9"
-    zone: "21000"
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
   ext:
+    mx-cfdi-post-code: "86991"
     mx-cfdi-fiscal-regime: "601"
     mx-cfdi-use: "G01"
   tax_id:
     country: "MX"
     code: "URE180429TM6"
-    zone: "86991"
 lines:
   - quantity: "1"
     item:

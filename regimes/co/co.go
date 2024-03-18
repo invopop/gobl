@@ -50,7 +50,6 @@ func New() *tax.Regime {
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
 		Extensions:       extensionKeys,       // see extensions.go
-		Zones:            zones,               // see zones.go
 		Corrections: []*tax.CorrectionDefinition{ // see preceding.go
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -87,7 +86,7 @@ func Calculate(doc interface{}) error {
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
 	case *org.Party:
-		return normalizePartyWithTaxIdentity(obj)
+		return normalizeParty(obj)
 	}
 	return nil
 }

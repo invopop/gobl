@@ -76,10 +76,6 @@ type Regime struct {
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
-	// List of zones to identify specific areas, regions, or provinces inside a country
-	// tha may be required for tax purposes.
-	Zones *ZoneStore `json:"zones,omitempty"`
-
 	// Validator is a method to use to validate a document in a given region.
 	Validator func(doc interface{}) error `json:"-"`
 
@@ -180,8 +176,8 @@ type Rate struct {
 // Fiscal policy changes mean that rates are not static so we need to
 // be able to apply the correct rate for a given period.
 type RateValue struct {
-	// Only use this value if one of the zones matches.
-	Zones []l10n.Code `json:"zones,omitempty" jsonschema:"title=Zones"`
+	// Only apply this rate if one of the tags is present in the invoice.
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 	// Date from which this value should be applied.
 	Since *cal.Date `json:"since,omitempty" jsonschema:"title=Since"`
 	// Percent rate that should be applied
@@ -204,37 +200,6 @@ type CorrectionDefinition struct {
 	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
 	// Stamps that must be copied from the preceding document.
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-}
-
-// KeyDefinition defines properties of a key that is specific for a regime.
-type KeyDefinition struct {
-	// Actual key value.
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// Short name for the key.
-	Name i18n.String `json:"name" jsonschema:"title=Name"`
-	// Description offering more details about when the key should be used.
-	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
-	// Codes describes the list of codes that can be used alongside the Key,
-	// for example with identities.
-	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
-	// Keys is used instead of codes to define a further sub-set of keys that
-	// can be used alongside this one.
-	Keys []*KeyDefinition `json:"keys,omitempty" jsonschema:"title=Keys"`
-	// Map helps map local keys to specific codes, useful for converting the
-	// described key into a local code.
-	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
-}
-
-// CodeDefinition describes a specific code and how it maps to a human name
-// and description if appropriate. Regimes shouldn't typically do any additional
-// conversion of codes, for that, regular keys should be used.
-type CodeDefinition struct {
-	// Code for which the definition is for.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Short name for the code, if relevant.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
-	// Description offering more details about when the code should be used.
-	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
 }
 
 // Code provides a unique code for this tax regime based on the country.
@@ -317,7 +282,6 @@ func (r *Regime) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Scenarios),
 		validation.Field(&r.Corrections),
 		validation.Field(&r.Categories, validation.Required),
-		validation.Field(&r.Zones),
 	)
 	return err
 }
@@ -389,40 +353,6 @@ func (r *Regime) InCategories() validation.Rule {
 // WithContext adds this regime to the given context.
 func (r *Regime) WithContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, KeyRegime, r)
-}
-
-// HasCode loops through the key definitions codes and determines if there
-// is a match.
-func (kd *KeyDefinition) HasCode(code cbc.Code) bool {
-	cd := kd.CodeDef(code)
-	return cd != nil
-}
-
-// CodeDef returns the code definition for the provided code, or nil.
-func (kd *KeyDefinition) CodeDef(code cbc.Code) *CodeDefinition {
-	for _, c := range kd.Codes {
-		if c.Code == code {
-			return c
-		}
-	}
-	return nil
-}
-
-// HasKey loops through the key definitions keys and determines if there
-// is a match.
-func (kd *KeyDefinition) HasKey(key cbc.Key) bool {
-	skd := kd.KeyDef(key)
-	return skd != nil
-}
-
-// KeyDef returns the key definition for the provided key, or nil.
-func (kd *KeyDefinition) KeyDef(key cbc.Key) *KeyDefinition {
-	for _, skd := range kd.Keys {
-		if skd.Key == key {
-			return skd
-		}
-	}
-	return nil
 }
 
 // RegimeFromContext returns the regime from the given context, or nil.
@@ -516,8 +446,8 @@ func checkRateValuesOrder(list interface{}) error {
 	// loop through and check order of Since value
 	for i := range values {
 		v := values[i]
-		if len(v.Zones) > 0 {
-			// TODO: check zone order also
+		if len(v.Tags) > 0 {
+			// TODO: check tagged order also
 			continue
 		}
 		if date != nil && date.IsValid() {
@@ -582,10 +512,10 @@ func (c *Category) Rate(key cbc.Key) *Rate {
 }
 
 // Value determines the tax rate value for the provided date and zone, if applicable.
-func (r *Rate) Value(date cal.Date, zone l10n.Code) *RateValue {
+func (r *Rate) Value(date cal.Date, tags []cbc.Key) *RateValue {
 	for _, rv := range r.Values {
-		if len(rv.Zones) > 0 {
-			if !rv.HasZone(zone) {
+		if len(rv.Tags) > 0 {
+			if !rv.HasATag(tags) {
 				continue
 			}
 		}
@@ -596,11 +526,14 @@ func (r *Rate) Value(date cal.Date, zone l10n.Code) *RateValue {
 	return nil
 }
 
-// HasZone returns true if the rate value has a zone that matches the one provided.
-func (rv *RateValue) HasZone(zone l10n.Code) bool {
-	for _, z := range rv.Zones {
-		if z == zone {
-			return true
+// HasATag returns true if the rate value has a tag that matches
+// one of those provided.
+func (rv *RateValue) HasATag(tags []cbc.Key) bool {
+	for _, t := range rv.Tags {
+		for _, tag := range tags {
+			if t == tag {
+				return true
+			}
 		}
 	}
 	return false
@@ -631,30 +564,4 @@ func (cd *CorrectionDefinition) Validate() error {
 		validation.Field(&cd.Extensions),
 	)
 	return err
-}
-
-// Validate ensures the key definition looks correct in the context of the regime.
-func (kd *KeyDefinition) Validate() error {
-	err := validation.ValidateStruct(kd,
-		validation.Field(&kd.Key, validation.Required),
-		validation.Field(&kd.Name, validation.Required),
-		validation.Field(&kd.Desc),
-		validation.Field(&kd.Codes),
-		validation.Field(&kd.Keys,
-			validation.When(len(kd.Codes) > 0,
-				validation.Empty,
-			),
-		),
-	)
-	return err
-}
-
-// InKeyDefs prepares a validation to provide a rule that will determine
-// if the keys are in the provided set.
-func InKeyDefs(list []*KeyDefinition) validation.Rule {
-	defs := make([]interface{}, len(list))
-	for i, item := range list {
-		defs[i] = item.Key
-	}
-	return validation.In(defs...)
 }

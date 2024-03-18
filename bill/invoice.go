@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -25,6 +26,18 @@ const (
 
 const (
 	defaultTaxRemovalAccuracy uint32 = 2
+)
+
+const (
+	// InvoiceCodePattern defines what we expect from codes
+	// and series in an invoice.
+	InvoiceCodePattern = `^([A-Za-z0-9][A-Za-z0-9 /\._-]?)*[A-Za-z0-9]$`
+)
+
+var (
+	// InvoiceCodeRegexp is used to validate invoice codes and series
+	// to something that is compatible with most tax regimes.
+	InvoiceCodeRegexp = regexp.MustCompile(InvoiceCodePattern)
 )
 
 // Invoice represents a payment claim for goods or services supplied under
@@ -117,8 +130,11 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			isValidInvoiceType,
 		),
-		validation.Field(&inv.Series),
+		validation.Field(&inv.Series,
+			validation.Match(InvoiceCodeRegexp),
+		),
 		validation.Field(&inv.Code,
+			validation.Match(InvoiceCodeRegexp),
 			validation.When(
 				!internal.IsDraft(ctx),
 				validation.Required,
@@ -233,7 +249,7 @@ func (inv *Invoice) Calculate() error {
 	if err != nil {
 		return err
 	}
-	r := tax.RegimeFor(tID.Country, tID.Zone)
+	r := tax.RegimeFor(tID.Country)
 	if r == nil {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
@@ -243,21 +259,19 @@ func (inv *Invoice) Calculate() error {
 		return err
 	}
 
-	return inv.calculateWithRegime(r, tID)
+	return inv.calculateWithRegime(r)
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
 // the tax included in the invoice, and remove them.
 //
-// This method will call "Calculate" on th invoice automatically both before and after
+// This method will call "Calculate" on the invoice automatically both before and after
 // to ensure that the data matches.
 //
-// In order to avoid rounding errors, we need to figure out new precisions for the line
-// items. To do this, we run a simple loop over the invoice with different precisions
-// until the totals and taxes match. This is a bit of a hack, but has proved to be the
-// most reliable solution to a very complex issue.
+// If after removing taxes the totals don't match, a rounding error will be added to the
+// invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
-// A new invoice object is returned, leaving the original objects untouched.
+// A new invoice object is returned, leaving the original instance untouched.
 func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	if inv.Tax == nil || inv.Tax.PricesInclude.IsEmpty() {
 		return inv, nil // nothing to do!
@@ -373,7 +387,7 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 	return nil
 }
 
-func (inv *Invoice) calculateWithRegime(r *tax.Regime, tID *tax.Identity) error {
+func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	// Normalize data
 	if inv.IssueDate.IsZero() {
 		inv.IssueDate = cal.TodayIn(r.TimeLocation())
@@ -438,10 +452,14 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime, tID *tax.Identity) error 
 		pit = inv.Tax.PricesInclude
 	}
 	t.Taxes = new(tax.Total)
+	var tags []cbc.Key
+	if inv.Tax != nil {
+		tags = inv.Tax.Tags
+	}
 	tc := &tax.TotalCalculator{
 		Zero:     zero,
 		Regime:   r,
-		Zone:     tID.Zone,
+		Tags:     tags,
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,
@@ -538,12 +556,19 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 	if tID == nil {
 		return nil
 	}
-	return tax.RegimeFor(tID.Country, tID.Zone)
+	return tax.RegimeFor(tID.Country)
 }
 
 // JSONSchemaExtend extends the schema with additional property details
 func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 	props := schema.Properties
+	if prop, ok := props.Get("series"); ok {
+		prop.Pattern = InvoiceCodePattern
+	}
+	if prop, ok := props.Get("code"); ok {
+		prop.Pattern = InvoiceCodePattern
+	}
+	// Extend type list
 	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
 		for i, v := range InvoiceTypes {
