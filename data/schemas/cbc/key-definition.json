@@ -60,5 +60,5 @@
       "description": "KeyDefinition defines properties of a key that is specific for a regime."
     }
   },
-  "$comment": "Generated with GOBL v0.68.0"
+  "$comment": "Generated with GOBL v0.69.0"
 }
