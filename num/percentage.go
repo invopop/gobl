@@ -126,6 +126,12 @@ func (p Percentage) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// Invert provides a new percentage value that is the inverse of the
+// current percentage.
+func (p Percentage) Invert() Percentage {
+	return Percentage{Amount: p.Amount.Invert()}
+}
+
 // UnmarshalText will decode the percentage value, even if it is quoted
 // as a string.
 func (p *Percentage) UnmarshalText(value []byte) error {
