@@ -836,6 +836,77 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, i.Totals.Due.String(), "675.00")
 }
 
+func TestCalculateInverted(t *testing.T) {
+	i := &bill.Invoice{
+		Code: "123TEST",
+		Tax: &bill.Tax{
+			PricesInclude: tax.CategoryVAT,
+		},
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "B98602642",
+			},
+		},
+		Customer: &org.Party{
+			TaxID: &tax.Identity{
+				Country: l10n.ES,
+				Code:    "54387763P",
+			},
+		},
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+				Discounts: []*bill.LineDiscount{
+					{
+						Reason: "Testing",
+						Amount: num.MakeAmount(10000, 2),
+					},
+				},
+				Charges: []*bill.LineCharge{
+					{
+						Reason: "Testing Charge",
+						Amount: num.MakeAmount(5000, 2),
+					},
+				},
+			},
+		},
+		Outlays: []*bill.Outlay{
+			{
+				Description: "Something paid in advance",
+				Amount:      num.MakeAmount(1000, 2),
+			},
+		},
+		Payment: &bill.Payment{
+			Advances: []*pay.Advance{
+				{
+					Description: "Test Advance",
+					Amount:      num.MakeAmount(25000, 2),
+				},
+			},
+		},
+	}
+
+	require.NoError(t, i.Calculate())
+	assert.Equal(t, i.Totals.Sum.String(), "950.00")
+	assert.Equal(t, i.Totals.Due.String(), "710.00")
+
+	require.NoError(t, i.Invert())
+	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
+	assert.Equal(t, i.Totals.Due.String(), "-710.00")
+}
+
 func TestValidation(t *testing.T) {
 	inv := &bill.Invoice{
 		Currency:  currency.EUR,

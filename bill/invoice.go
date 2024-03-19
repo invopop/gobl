@@ -184,10 +184,22 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 }
 
 // Invert effectively reverses the invoice by inverting the sign of all quantity
-// or amount values.
-func (inv *Invoice) Invert() {
+// or amount values. Caution should be taken when using this method as
+// advances will also be inverted, while payment terms will remain the same,
+// which could be confusing if no further modifications are made.
+// After inverting the invoice is recalculated and any differences will raise
+// an error.
+func (inv *Invoice) Invert() error {
+	payable := inv.Totals.Payable.Invert()
+
 	for _, row := range inv.Lines {
 		row.Quantity = row.Quantity.Invert()
+		for _, d := range row.Discounts {
+			d.Amount = d.Amount.Invert()
+		}
+		for _, c := range row.Charges {
+			c.Amount = c.Amount.Invert()
+		}
 	}
 	for _, row := range inv.Charges {
 		row.Amount = row.Amount.Invert()
@@ -198,7 +210,24 @@ func (inv *Invoice) Invert() {
 	for _, row := range inv.Outlays {
 		row.Amount = row.Amount.Invert()
 	}
+	if inv.Payment != nil {
+		for _, row := range inv.Payment.Advances {
+			row.Amount = row.Amount.Invert()
+		}
+	}
 	inv.Totals = nil
+
+	if err := inv.Calculate(); err != nil {
+		return err
+	}
+
+	// The following check tries to ensure that any future fields do not cause
+	// unexpected results.
+	if !payable.Equals(inv.Totals.Payable) {
+		return fmt.Errorf("inverted invoice totals do not match %s != %s", payable.String(), inv.Totals.Payable.String())
+	}
+
+	return nil
 }
 
 // Empty is a convenience method that will empty all the lines and
