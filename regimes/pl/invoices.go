@@ -29,9 +29,12 @@ func (v *invoiceValidator) validate() error {
 			bill.InvoiceTypeStandard,
 			bill.InvoiceTypeCreditNote,
 		)),
-		// validation.Field(&inv.Preceding,
-		// 	validation.Each(validation.By(v.preceding)),
-		// ),
+		validation.Field(&inv.Preceding,
+			validation.When(
+				inv.Type.In(bill.InvoiceTypeCreditNote),
+				validation.Required,
+			),
+			validation.Each(validation.By(v.preceding))),
 		validation.Field(&inv.Supplier,
 			validation.Required,
 			validation.By(v.supplier),
@@ -75,19 +78,15 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 	)
 }
 
-// func (v *invoiceValidator) preceding(value interface{}) error {
-// 	obj, _ := value.(*bill.Preceding)
-// 	if obj == nil {
-// 		return nil
-// 	}
-// 	return validation.ValidateStruct(obj,
-// 		validation.Field(&obj.Changes,
-// 			validation.Required,
-// 			validation.Each(isValidCorrectionChangeKey),
-// 		),
-// 		validation.Field(&obj.CorrectionMethod,
-// 			validation.Required,
-// 			isValidCorrectionMethodKey,
-// 		),
-// 	)
-// }
+func (v *invoiceValidator) preceding(value interface{}) error {
+	obj, ok := value.(*bill.Preceding)
+	if !ok || obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			tax.ExtensionsRequires(ExtKeyKSEFCorrection),
+		),
+		validation.Field(&obj.Reason, validation.Required),
+	)
+}
