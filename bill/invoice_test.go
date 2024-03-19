@@ -902,8 +902,7 @@ func TestCalculateInverted(t *testing.T) {
 	assert.Equal(t, i.Totals.Sum.String(), "950.00")
 	assert.Equal(t, i.Totals.Due.String(), "710.00")
 
-	i.Invert()
-	require.NoError(t, i.Calculate())
+	require.NoError(t, i.Invert())
 	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
 	assert.Equal(t, i.Totals.Due.String(), "-710.00")
 }
