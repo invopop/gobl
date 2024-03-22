@@ -156,7 +156,7 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 	if err := common.NormalizeTaxIdentity(tID); err != nil {
 		return err
 	}
-	// Removethe Zone
+	// Remove the Zone
 	tID.Zone = ""
 	return nil
 }
