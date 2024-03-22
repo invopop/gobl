@@ -33,5 +33,5 @@
       "description": "CodeDefinition describes a specific code and how it maps to a human name and description if appropriate."
     }
   },
-  "$comment": "Generated with GOBL v0.69.0"
+  "$comment": "Generated with GOBL v0.70.0"
 }

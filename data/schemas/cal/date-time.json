@@ -10,5 +10,5 @@
       "description": "Civil date time in simplified ISO format with no time zone\ninformation, for example: 2021-05-26T13:45:00"
     }
   },
-  "$comment": "Generated with GOBL v0.69.0"
+  "$comment": "Generated with GOBL v0.70.0"
 }

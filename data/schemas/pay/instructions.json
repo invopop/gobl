@@ -221,5 +221,5 @@
       "description": "Online provides the details required to make a payment online using a website"
     }
   },
-  "$comment": "Generated with GOBL v0.69.0"
+  "$comment": "Generated with GOBL v0.70.0"
 }

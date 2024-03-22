@@ -41,5 +41,5 @@
       "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice."
     }
   },
-  "$comment": "Generated with GOBL v0.69.0"
+  "$comment": "Generated with GOBL v0.70.0"
 }
