@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -108,23 +107,6 @@ func (id *Identity) Validate() error {
 	if r != nil {
 		return r.ValidateObject(id)
 	}
-	return nil
-}
-
-// UnmarshalJSON parses the JSON and will extract any old fields
-// from data that will be migrated away.
-func (id *Identity) UnmarshalJSON(data []byte) error {
-	type Alias Identity
-	aux := &struct {
-		Zone l10n.Code `json:"zone"`
-		*Alias
-	}{
-		Alias: (*Alias)(id),
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	id.Zone = aux.Zone
 	return nil
 }
 
