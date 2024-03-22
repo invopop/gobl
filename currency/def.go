@@ -94,10 +94,17 @@ func (d *Def) Formatter(opts ...FormatOption) num.Formatter {
 	return f
 }
 
-// Format takes the provided amount and formats it according
+// FormatAmount takes the provided amount and formats it according
 // to the default rules of the currency definition.
-func (d *Def) Format(amount num.Amount) string {
-	return d.Formatter().Format(amount)
+func (d *Def) FormatAmount(amount num.Amount) string {
+	return d.Formatter().Amount(amount)
+}
+
+// FormatPercentage takes the provided percentage and formats it
+// according to the decimal and thousands rules of the currency
+// definition.
+func (d *Def) FormatPercentage(percentage num.Percentage) string {
+	return d.Formatter().Percentage(percentage)
 }
 
 // Zero provides the currency's zero amount which is pre-set with the

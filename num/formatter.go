@@ -25,10 +25,44 @@ type Formatter struct {
 	Template string
 }
 
-// Format takes the provided amount and formats it according to
+// MakeFormatter prepares a new formatter with the two main configuration
+// options, decimal and thousands separators.
+func MakeFormatter(decimalMark, thousandsSeparator string) Formatter {
+	return Formatter{
+		DecimalMark:        decimalMark,
+		ThousandsSeparator: thousandsSeparator,
+	}
+}
+
+// WithUnit providers a formatter with a unit set.
+func (f Formatter) WithUnit(unit string) Formatter {
+	f.Unit = unit
+	return f
+}
+
+// WithTemplate sets the template for use with formatting with
+// units.
+func (f Formatter) WithTemplate(template string) Formatter {
+	f.Template = template
+	return f
+}
+
+// Amount takes the provided amount and formats it according to
 // the rules of the formatter.
-func (f Formatter) Format(amount Amount) string {
+func (f Formatter) Amount(amount Amount) string {
 	n := f.formatNumber(amount.String())
+	return f.formatWithUnits(n)
+}
+
+// Percentage tries to format the percentage value according to the
+// rules of the formatter, but replacing the unit with a percentage
+// symbol, and using the default template.
+func (f Formatter) Percentage(percent Percentage) string {
+	n := f.formatNumber(percent.StringWithoutSymbol())
+	return f.WithUnit("%").WithTemplate("").formatWithUnits(n)
+}
+
+func (f Formatter) formatWithUnits(n string) string {
 	t := f.Template
 	if t == "" {
 		t = DefaultFormatterTemplate
