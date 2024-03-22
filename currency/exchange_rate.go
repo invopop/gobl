@@ -32,6 +32,6 @@ type ExchangeRate struct {
 func (er *ExchangeRate) Validate() error {
 	return validation.ValidateStruct(er,
 		validation.Field(&er.Currency, validation.Required),
-		validation.Field(&er.Amount, validation.Required),
+		validation.Field(&er.Amount, num.NotZero),
 	)
 }

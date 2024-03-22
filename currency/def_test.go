@@ -67,9 +67,54 @@ func TestDefAmount(t *testing.T) {
 	}
 }
 
+func TestDefinitions(t *testing.T) {
+	list := currency.Definitions()
+	assert.NotEmpty(t, list)
+	assert.Equal(t, currency.USD, list[0].ISOCode)
+}
+
 func TestDefFormat(t *testing.T) {
-	d := currency.USD.Def()
-	f := d.Formatter(currency.WithDisambiguateSymbol())
-	a := num.MakeAmount(123456, 2)
-	assert.Equal(t, "US$1,234.56", f.Format(a))
+	t.Run("with USD", func(t *testing.T) {
+		d := currency.USD.Def()
+		f := d.Formatter(currency.WithDisambiguateSymbol())
+		a := num.MakeAmount(123456, 2)
+		assert.Equal(t, "US$1,234.56", f.Format(a))
+	})
+
+	t.Run("with EUR", func(t *testing.T) {
+		d := currency.EUR.Def()
+		f := d.Formatter(currency.WithDisambiguateSymbol())
+		a := num.MakeAmount(123456, 2)
+		assert.Equal(t, "€1.234,56", f.Format(a))
+	})
+}
+
+func TestDefZero(t *testing.T) {
+	t.Run("with zero USD", func(t *testing.T) {
+		d := currency.USD.Def()
+		assert.Equal(t, "0.00", d.Zero().String())
+	})
+	t.Run("with zero CLP", func(t *testing.T) {
+		d := currency.CLP.Def()
+		assert.Equal(t, "0", d.Zero().String())
+	})
+	t.Run("with zero BTC", func(t *testing.T) {
+		d := currency.BTC.Def()
+		assert.Equal(t, "0.00000000", d.Zero().String())
+	})
+}
+
+func TestDefByISONumber(t *testing.T) {
+	t.Run("with 978", func(t *testing.T) {
+		d := currency.ByISONumber("978")
+		assert.Equal(t, currency.EUR, d.ISOCode)
+	})
+	t.Run("with 152", func(t *testing.T) {
+		d := currency.ByISONumber("152")
+		assert.Equal(t, currency.CLP, d.ISOCode)
+	})
+	t.Run("with 0", func(t *testing.T) {
+		d := currency.ByISONumber("0")
+		assert.Nil(t, d)
+	})
 }
