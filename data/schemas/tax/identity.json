@@ -29,6 +29,11 @@
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
           "description": "Additional details that may be required."
+        },
+        "zone": {
+          "$ref": "https://gobl.org/draft-0/l10n/code",
+          "title": "Zone",
+          "description": "DEPRECATED. Zone was removed 2024-03-14 in favour of using tax tags\nand extensions with local data when required. Maintained here to support\ndata migration."
         }
       },
       "type": "object",
