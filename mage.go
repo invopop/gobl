@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/invopop/gobl/internal/currency"
 	"github.com/invopop/gobl/internal/schemas"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -44,12 +43,6 @@ func Regimes() error {
 		fmt.Printf("Processed %v\n", f)
 	}
 	return nil
-}
-
-// Currencies generates the Go definition files from the raw list of
-// XML ISO data.
-func Currencies() error {
-	return currency.GenerateCodes()
 }
 
 // Samples runs through all the `.yaml` samples and generates complete GOBL

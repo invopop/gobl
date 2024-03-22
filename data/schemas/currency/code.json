@@ -6,56 +6,56 @@
     "Code": {
       "oneOf": [
         {
-          "const": "AED",
-          "title": "UAE Dirham"
+          "const": "USD",
+          "title": "United States Dollar"
         },
         {
-          "const": "AFN",
-          "title": "Afghani"
+          "const": "EUR",
+          "title": "Euro"
         },
         {
-          "const": "ALL",
-          "title": "Lek"
-        },
-        {
-          "const": "AMD",
-          "title": "Armenian Dram"
-        },
-        {
-          "const": "ANG",
-          "title": "Netherlands Antillean Guilder"
-        },
-        {
-          "const": "AOA",
-          "title": "Kwanza"
-        },
-        {
-          "const": "ARS",
-          "title": "Argentine Peso"
+          "const": "GBP",
+          "title": "British Pound"
         },
         {
           "const": "AUD",
           "title": "Australian Dollar"
         },
         {
-          "const": "AWG",
-          "title": "Aruban Florin"
+          "const": "CAD",
+          "title": "Canadian Dollar"
+        },
+        {
+          "const": "JPY",
+          "title": "Japanese Yen"
+        },
+        {
+          "const": "BYR",
+          "title": "Belarusian Ruble"
+        },
+        {
+          "const": "MOP",
+          "title": "Macanese Pataca"
+        },
+        {
+          "const": "HTG",
+          "title": "Haitian Gourde"
         },
         {
           "const": "AZN",
-          "title": "Azerbaijan Manat"
+          "title": "Azerbaijani Manat"
         },
         {
           "const": "BAM",
-          "title": "Convertible Mark"
+          "title": "Bosnia and Herzegovina Convertible Mark"
         },
         {
           "const": "BBD",
-          "title": "Barbados Dollar"
+          "title": "Barbadian Dollar"
         },
         {
           "const": "BDT",
-          "title": "Taka"
+          "title": "Bangladeshi Taka"
         },
         {
           "const": "BGN",
@@ -67,7 +67,7 @@
         },
         {
           "const": "BIF",
-          "title": "Burundi Franc"
+          "title": "Burundian Franc"
         },
         {
           "const": "BMD",
@@ -79,11 +79,7 @@
         },
         {
           "const": "BOB",
-          "title": "Boliviano"
-        },
-        {
-          "const": "BOV",
-          "title": "Mvdol"
+          "title": "Bolivian Boliviano"
         },
         {
           "const": "BRL",
@@ -95,39 +91,35 @@
         },
         {
           "const": "BTN",
-          "title": "Ngultrum"
+          "title": "Bhutanese Ngultrum"
         },
         {
           "const": "BWP",
-          "title": "Pula"
+          "title": "Botswana Pula"
         },
         {
           "const": "BYN",
           "title": "Belarusian Ruble"
         },
         {
+          "const": "ARS",
+          "title": "Argentine Peso"
+        },
+        {
           "const": "BZD",
           "title": "Belize Dollar"
         },
         {
-          "const": "CAD",
-          "title": "Canadian Dollar"
+          "const": "AOA",
+          "title": "Angolan Kwanza"
         },
         {
           "const": "CDF",
           "title": "Congolese Franc"
         },
         {
-          "const": "CHE",
-          "title": "WIR Euro"
-        },
-        {
           "const": "CHF",
           "title": "Swiss Franc"
-        },
-        {
-          "const": "CHW",
-          "title": "WIR Franc"
         },
         {
           "const": "CLF",
@@ -139,23 +131,19 @@
         },
         {
           "const": "CNY",
-          "title": "Yuan Renminbi"
+          "title": "Chinese Renminbi Yuan"
         },
         {
           "const": "COP",
           "title": "Colombian Peso"
         },
         {
-          "const": "COU",
-          "title": "Unidad de Valor Real"
-        },
-        {
           "const": "CRC",
-          "title": "Costa Rican Colon"
+          "title": "Costa Rican Colón"
         },
         {
           "const": "CUC",
-          "title": "Peso Convertible"
+          "title": "Cuban Convertible Peso"
         },
         {
           "const": "CUP",
@@ -163,7 +151,7 @@
         },
         {
           "const": "CVE",
-          "title": "Cabo Verde Escudo"
+          "title": "Cape Verdean Escudo"
         },
         {
           "const": "CZK",
@@ -171,15 +159,15 @@
         },
         {
           "const": "DJF",
-          "title": "Djibouti Franc"
+          "title": "Djiboutian Franc"
         },
         {
           "const": "DKK",
           "title": "Danish Krone"
         },
         {
-          "const": "DOP",
-          "title": "Dominican Peso"
+          "const": "MXN",
+          "title": "Mexican Peso"
         },
         {
           "const": "DZD",
@@ -191,35 +179,35 @@
         },
         {
           "const": "ERN",
-          "title": "Nakfa"
+          "title": "Eritrean Nakfa"
         },
         {
           "const": "ETB",
           "title": "Ethiopian Birr"
         },
         {
-          "const": "EUR",
-          "title": "Euro"
+          "const": "ANG",
+          "title": "Netherlands Antillean Gulden"
         },
         {
           "const": "FJD",
-          "title": "Fiji Dollar"
+          "title": "Fijian Dollar"
         },
         {
           "const": "FKP",
-          "title": "Falkland Islands Pound"
+          "title": "Falkland Pound"
         },
         {
-          "const": "GBP",
-          "title": "Pound Sterling"
+          "const": "AMD",
+          "title": "Armenian Dram"
         },
         {
           "const": "GEL",
-          "title": "Lari"
+          "title": "Georgian Lari"
         },
         {
           "const": "GHS",
-          "title": "Ghana Cedi"
+          "title": "Ghanaian Cedi"
         },
         {
           "const": "GIP",
@@ -227,7 +215,7 @@
         },
         {
           "const": "GMD",
-          "title": "Dalasi"
+          "title": "Gambian Dalasi"
         },
         {
           "const": "GNF",
@@ -235,11 +223,11 @@
         },
         {
           "const": "GTQ",
-          "title": "Quetzal"
+          "title": "Guatemalan Quetzal"
         },
         {
           "const": "GYD",
-          "title": "Guyana Dollar"
+          "title": "Guyanese Dollar"
         },
         {
           "const": "HKD",
@@ -247,27 +235,23 @@
         },
         {
           "const": "HNL",
-          "title": "Lempira"
+          "title": "Honduran Lempira"
         },
         {
-          "const": "HRK",
-          "title": "Kuna"
-        },
-        {
-          "const": "HTG",
-          "title": "Gourde"
+          "const": "MWK",
+          "title": "Malawian Kwacha"
         },
         {
           "const": "HUF",
-          "title": "Forint"
+          "title": "Hungarian Forint"
         },
         {
           "const": "IDR",
-          "title": "Rupiah"
+          "title": "Indonesian Rupiah"
         },
         {
           "const": "ILS",
-          "title": "New Israeli Sheqel"
+          "title": "Israeli New Sheqel"
         },
         {
           "const": "INR",
@@ -283,7 +267,7 @@
         },
         {
           "const": "ISK",
-          "title": "Iceland Krona"
+          "title": "Icelandic Króna"
         },
         {
           "const": "JMD",
@@ -294,8 +278,8 @@
           "title": "Jordanian Dinar"
         },
         {
-          "const": "JPY",
-          "title": "Yen"
+          "const": "ALL",
+          "title": "Albanian Lek"
         },
         {
           "const": "KES",
@@ -303,15 +287,15 @@
         },
         {
           "const": "KGS",
-          "title": "Som"
+          "title": "Kyrgyzstani Som"
         },
         {
           "const": "KHR",
-          "title": "Riel"
+          "title": "Cambodian Riel"
         },
         {
           "const": "KMF",
-          "title": "Comorian Franc "
+          "title": "Comorian Franc"
         },
         {
           "const": "KPW",
@@ -319,7 +303,7 @@
         },
         {
           "const": "KRW",
-          "title": "Won"
+          "title": "South Korean Won"
         },
         {
           "const": "KWD",
@@ -331,7 +315,7 @@
         },
         {
           "const": "KZT",
-          "title": "Tenge"
+          "title": "Kazakhstani Tenge"
         },
         {
           "const": "LAK",
@@ -343,7 +327,7 @@
         },
         {
           "const": "LKR",
-          "title": "Sri Lanka Rupee"
+          "title": "Sri Lankan Rupee"
         },
         {
           "const": "LRD",
@@ -351,7 +335,7 @@
         },
         {
           "const": "LSL",
-          "title": "Loti"
+          "title": "Lesotho Loti"
         },
         {
           "const": "LYD",
@@ -371,43 +355,39 @@
         },
         {
           "const": "MKD",
-          "title": "Denar"
+          "title": "Macedonian Denar"
         },
         {
           "const": "MMK",
-          "title": "Kyat"
+          "title": "Myanmar Kyat"
         },
         {
           "const": "MNT",
-          "title": "Tugrik"
+          "title": "Mongolian Tögrög"
         },
         {
-          "const": "MOP",
-          "title": "Pataca"
+          "const": "AED",
+          "title": "United Arab Emirates Dirham"
         },
         {
           "const": "MRU",
-          "title": "Ouguiya"
+          "title": "Mauritanian Ouguiya"
         },
         {
           "const": "MUR",
-          "title": "Mauritius Rupee"
+          "title": "Mauritian Rupee"
         },
         {
-          "const": "MVR",
-          "title": "Rufiyaa"
+          "const": "PLN",
+          "title": "Polish Złoty"
         },
         {
-          "const": "MWK",
-          "title": "Malawi Kwacha"
+          "const": "AWG",
+          "title": "Aruban Florin"
         },
         {
-          "const": "MXN",
-          "title": "Mexican Peso"
-        },
-        {
-          "const": "MXV",
-          "title": "Mexican Unidad de Inversion (UDI)"
+          "const": "DOP",
+          "title": "Dominican Peso"
         },
         {
           "const": "MYR",
@@ -415,19 +395,19 @@
         },
         {
           "const": "MZN",
-          "title": "Mozambique Metical"
+          "title": "Mozambican Metical"
         },
         {
           "const": "NAD",
-          "title": "Namibia Dollar"
+          "title": "Namibian Dollar"
         },
         {
           "const": "NGN",
-          "title": "Naira"
+          "title": "Nigerian Naira"
         },
         {
           "const": "NIO",
-          "title": "Cordoba Oro"
+          "title": "Nicaraguan Córdoba"
         },
         {
           "const": "NOK",
@@ -443,19 +423,19 @@
         },
         {
           "const": "OMR",
-          "title": "Rial Omani"
+          "title": "Omani Rial"
         },
         {
           "const": "PAB",
-          "title": "Balboa"
+          "title": "Panamanian Balboa"
         },
         {
           "const": "PEN",
-          "title": "Sol"
+          "title": "Peruvian Sol"
         },
         {
           "const": "PGK",
-          "title": "Kina"
+          "title": "Papua New Guinean Kina"
         },
         {
           "const": "PHP",
@@ -463,19 +443,19 @@
         },
         {
           "const": "PKR",
-          "title": "Pakistan Rupee"
+          "title": "Pakistani Rupee"
         },
         {
-          "const": "PLN",
-          "title": "Zloty"
+          "const": "MVR",
+          "title": "Maldivian Rufiyaa"
         },
         {
           "const": "PYG",
-          "title": "Guarani"
+          "title": "Paraguayan Guaraní"
         },
         {
           "const": "QAR",
-          "title": "Qatari Rial"
+          "title": "Qatari Riyal"
         },
         {
           "const": "RON",
@@ -491,7 +471,7 @@
         },
         {
           "const": "RWF",
-          "title": "Rwanda Franc"
+          "title": "Rwandan Franc"
         },
         {
           "const": "SAR",
@@ -503,7 +483,7 @@
         },
         {
           "const": "SCR",
-          "title": "Seychelles Rupee"
+          "title": "Seychellois Rupee"
         },
         {
           "const": "SDG",
@@ -519,11 +499,19 @@
         },
         {
           "const": "SHP",
-          "title": "Saint Helena Pound"
+          "title": "Saint Helenian Pound"
+        },
+        {
+          "const": "SKK",
+          "title": "Slovak Koruna"
+        },
+        {
+          "const": "SLE",
+          "title": "New Leone"
         },
         {
           "const": "SLL",
-          "title": "Leone"
+          "title": "Sierra Leonean Leone"
         },
         {
           "const": "SOS",
@@ -531,19 +519,23 @@
         },
         {
           "const": "SRD",
-          "title": "Surinam Dollar"
+          "title": "Surinamese Dollar"
         },
         {
           "const": "SSP",
           "title": "South Sudanese Pound"
         },
         {
+          "const": "STD",
+          "title": "São Tomé and Príncipe Dobra"
+        },
+        {
           "const": "STN",
-          "title": "Dobra"
+          "title": "São Tomé and Príncipe Second Dobra"
         },
         {
           "const": "SVC",
-          "title": "El Salvador Colon"
+          "title": "Salvadoran Colón"
         },
         {
           "const": "SYP",
@@ -551,19 +543,19 @@
         },
         {
           "const": "SZL",
-          "title": "Lilangeni"
+          "title": "Swazi Lilangeni"
         },
         {
           "const": "THB",
-          "title": "Baht"
+          "title": "Thai Baht"
         },
         {
           "const": "TJS",
-          "title": "Somoni"
+          "title": "Tajikistani Somoni"
         },
         {
           "const": "TMT",
-          "title": "Turkmenistan New Manat"
+          "title": "Turkmenistani Manat"
         },
         {
           "const": "TND",
@@ -571,7 +563,7 @@
         },
         {
           "const": "TOP",
-          "title": "Pa’anga"
+          "title": "Tongan Paʻanga"
         },
         {
           "const": "TRY",
@@ -591,67 +583,95 @@
         },
         {
           "const": "UAH",
-          "title": "Hryvnia"
+          "title": "Ukrainian Hryvnia"
         },
         {
           "const": "UGX",
-          "title": "Uganda Shilling"
+          "title": "Ugandan Shilling"
         },
         {
-          "const": "USD",
-          "title": "US Dollar"
-        },
-        {
-          "const": "USN",
-          "title": "US Dollar (Next day)"
-        },
-        {
-          "const": "UYI",
-          "title": "Uruguay Peso en Unidades Indexadas (UI)"
+          "const": "AFN",
+          "title": "Afghan Afghani"
         },
         {
           "const": "UYU",
-          "title": "Peso Uruguayo"
-        },
-        {
-          "const": "UYW",
-          "title": "Unidad Previsional"
+          "title": "Uruguayan Peso"
         },
         {
           "const": "UZS",
-          "title": "Uzbekistan Sum"
+          "title": "Uzbekistan Som"
         },
         {
           "const": "VES",
-          "title": "Bolívar Soberano"
+          "title": "Venezuelan Bolívar Soberano"
         },
         {
           "const": "VND",
-          "title": "Dong"
+          "title": "Vietnamese Đồng"
         },
         {
           "const": "VUV",
-          "title": "Vatu"
+          "title": "Vanuatu Vatu"
         },
         {
           "const": "WST",
-          "title": "Tala"
+          "title": "Samoan Tala"
         },
         {
           "const": "XAF",
-          "title": "CFA Franc BEAC"
+          "title": "Central African Cfa Franc"
+        },
+        {
+          "const": "XAG",
+          "title": "Silver (Troy Ounce)"
+        },
+        {
+          "const": "XAU",
+          "title": "Gold (Troy Ounce)"
+        },
+        {
+          "const": "XBA",
+          "title": "European Composite Unit"
+        },
+        {
+          "const": "XBB",
+          "title": "European Monetary Unit"
+        },
+        {
+          "const": "XBC",
+          "title": "European Unit of Account 9"
+        },
+        {
+          "const": "XBD",
+          "title": "European Unit of Account 17"
         },
         {
           "const": "XCD",
           "title": "East Caribbean Dollar"
         },
         {
+          "const": "XDR",
+          "title": "Special Drawing Rights"
+        },
+        {
           "const": "XOF",
-          "title": "CFA Franc BCEAO"
+          "title": "West African Cfa Franc"
+        },
+        {
+          "const": "XPD",
+          "title": "Palladium"
         },
         {
           "const": "XPF",
-          "title": "CFP Franc"
+          "title": "Cfp Franc"
+        },
+        {
+          "const": "XPT",
+          "title": "Platinum"
+        },
+        {
+          "const": "XTS",
+          "title": "Codes specifically reserved for testing purposes"
         },
         {
           "const": "YER",
@@ -659,20 +679,56 @@
         },
         {
           "const": "ZAR",
-          "title": "Rand"
+          "title": "South African Rand"
+        },
+        {
+          "const": "ZMK",
+          "title": "Zambian Kwacha"
         },
         {
           "const": "ZMW",
           "title": "Zambian Kwacha"
         },
         {
-          "const": "ZWL",
-          "title": "Zimbabwe Dollar"
+          "const": "BCH",
+          "title": "Bitcoin Cash"
+        },
+        {
+          "const": "BTC",
+          "title": "Bitcoin"
+        },
+        {
+          "const": "JEP",
+          "title": "Jersey Pound"
+        },
+        {
+          "const": "GGP",
+          "title": "Guernsey Pound"
+        },
+        {
+          "const": "IMP",
+          "title": "Isle of Man Pound"
+        },
+        {
+          "const": "XFU",
+          "title": "UIC Franc"
+        },
+        {
+          "const": "GBX",
+          "title": "British Penny"
+        },
+        {
+          "const": "CNH",
+          "title": "Chinese Renminbi Yuan Offshore"
+        },
+        {
+          "const": "USDC",
+          "title": "USD Coin"
         }
       ],
       "type": "string",
       "title": "Currency Code",
-      "description": "ISO Currency Code"
+      "description": "Currency Code as defined in the GOBL source which is expected to be ISO or commonly used alternative."
     }
   },
   "$comment": "Generated with GOBL v0.70.0"

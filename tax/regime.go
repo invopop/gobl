@@ -227,11 +227,7 @@ func (r *Regime) CalculateObject(obj interface{}) error {
 
 // CurrencyDef provides the currency definition object for the region.
 func (r *Regime) CurrencyDef() *currency.Def {
-	d, ok := currency.Get(r.Currency)
-	if !ok {
-		return nil
-	}
-	return &d
+	return currency.Get(r.Currency)
 }
 
 // ScenarioSet returns a single scenario set instance for the provided
