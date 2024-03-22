@@ -34,6 +34,16 @@ func TestTaxIdentity(t *testing.T) {
 
 	tID = &tax.Identity{
 		Country: l10n.ES,
+		Code:    "X3157928M",
+		Zone:    "XX",
+	}
+	err = tID.Validate()
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "zone: must be blank.")
+	}
+
+	tID = &tax.Identity{
+		Country: l10n.ES,
 		Code:    "  x315-7928 m",
 	}
 	err = tID.Calculate()

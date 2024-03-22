@@ -34,9 +34,10 @@ type Identity struct {
 	// Additional details that may be required.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Zone was removed 2024-03-14 in favour of using tax tags
-	// and extensions with local data when required.
-	Zone l10n.Code `json:"-"`
+	// DEPRECATED. Zone was removed 2024-03-14 in favour of using tax tags
+	// and extensions with local data when required. Maintained here to support
+	// data migration.
+	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
 }
 
 // Standard error responses to be used by regimes.
@@ -95,7 +96,7 @@ func (id *Identity) Validate() error {
 	err := validation.ValidateStruct(id,
 		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required),
-		validation.Field(&id.Zone),
+		validation.Field(&id.Zone, validation.Empty),
 		validation.Field(&id.Type),
 		validation.Field(&id.Code),
 		validation.Field(&id.Meta),
