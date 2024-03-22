@@ -12,6 +12,5 @@
       "type": "object",
       "description": "Extensions is a map of extension keys to values."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

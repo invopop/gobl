@@ -27,7 +27,7 @@ type Formatter struct {
 
 // Format takes the provided amount and formats it according to
 // the rules of the formatter.
-func (f *Formatter) Format(amount Amount) string {
+func (f Formatter) Format(amount Amount) string {
 	n := f.formatNumber(amount.String())
 	t := f.Template
 	if t == "" {
@@ -39,7 +39,7 @@ func (f *Formatter) Format(amount Amount) string {
 	return t
 }
 
-func (f *Formatter) formatNumber(n string) string {
+func (f Formatter) formatNumber(n string) string {
 	p := strings.Split(n, ".")
 	n = p[0]
 	// split the main part with thousands separator

@@ -9,6 +9,5 @@
       "title": "UUID",
       "description": "Universally Unique Identifier. We only recommend using versions 1 and 4 within GOBL."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

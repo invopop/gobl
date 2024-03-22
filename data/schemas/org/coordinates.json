@@ -29,6 +29,5 @@
       "type": "object",
       "description": "Coordinates describes an exact geographical location in the world."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

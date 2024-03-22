@@ -9,6 +9,5 @@
       "title": "Date",
       "description": "Civil date in simplified ISO format, like 2021-05-26"
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

@@ -6,8 +6,6 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
-//go:generate go run ./generate.go
-
 func init() {
 	definitions = new(defs)
 	if err := definitions.load(data.Content, "currency"); err != nil {

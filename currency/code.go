@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/invopop/jsonschema"
-	"github.com/invopop/validation"
 )
 
 // Code is the ISO currency code
@@ -16,15 +15,13 @@ const CodeEmpty Code = ""
 // Validate ensures the currency code is valid according
 // to the ISO 4217 three-letter list.
 func (c Code) Validate() error {
-	return validation.Validate(string(c), validation.By(inDefinitions))
+	return inDefinitions(c)
 }
 
-func inDefinitions(value any) error {
-	code, ok := value.(Code)
-	if !ok || code == "" {
+func inDefinitions(code Code) error {
+	if code == CodeEmpty {
 		return nil
 	}
-
 	if d := Get(code); d == nil {
 		return fmt.Errorf("currency code %s not defined", code)
 	}

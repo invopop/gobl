@@ -412,6 +412,5 @@
       ],
       "description": "Source describes where the information for the taxes comes from."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

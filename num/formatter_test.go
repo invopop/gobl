@@ -9,10 +9,6 @@ import (
 
 func TestFormatter(t *testing.T) {
 	// make a test table
-	f := &num.Formatter{
-		DecimalMark:        ".",
-		ThousandsSeparator: ",",
-	}
 	tests := []struct {
 		name string
 		f    *num.Formatter
@@ -67,10 +63,28 @@ func TestFormatter(t *testing.T) {
 			amt:  num.MakeAmount(123456789, 2),
 			exp:  "1,234,567.89%",
 		},
+		{
+			name: "with custom template format zero",
+			f:    &num.Formatter{".", ",", "$", "%u%n"},
+			amt:  num.MakeAmount(0, 2),
+			exp:  "$0.00",
+		},
+		{
+			name: "with custom template format thousands",
+			f:    &num.Formatter{".", ",", "$", "%u%n"},
+			amt:  num.MakeAmount(123456, 2),
+			exp:  "$1,234.56",
+		},
+		{
+			name: "with custom template format millions",
+			f:    &num.Formatter{",", ".", "€", "%n %u"},
+			amt:  num.MakeAmount(123456789, 2),
+			exp:  "1.234.567,89 €",
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			assert.Equal(t, test.exp, f.Format(test.amt))
+			assert.Equal(t, test.exp, test.f.Format(test.amt))
 		})
 	}
 }

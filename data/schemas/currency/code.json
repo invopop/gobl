@@ -730,6 +730,5 @@
       "title": "Currency Code",
       "description": "Currency Code as defined in the GOBL source which is expected to be ISO or commonly used alternative."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

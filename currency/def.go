@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/yaml"
@@ -19,6 +18,12 @@ type defs struct {
 	byCode     map[Code]*Def
 	byPriority []*Def
 }
+
+const (
+	// DefaultCurrencyTemplate defines how to output currencies for most
+	// common use cases.
+	DefaultCurrencyTemplate = "%u%n"
+)
 
 // Def helps define how to format a currency as is based on the
 // [Ruby Money Gem's](https://rubymoney.github.io/money/) Currency model.
@@ -43,10 +48,8 @@ type Def struct {
 	SubunitName string `json:"subunit_name"`
 	// Conversion amount to subunit
 	Subunits uint32 `json:"subunits"`
-	// Format determines how to layout the units and number
-	Format string `json:"format"`
-	// HTML entity code for the symbol
-	HTMLEntity string `json:"html_entity"`
+	// Template determines how to layout the units and number
+	Template string `json:"template"`
 	// Decimal mark normally expected in output
 	DecimalMark string `json:"decimal_mark"`
 	// Thousands separator normally expected in output
@@ -55,37 +58,46 @@ type Def struct {
 	SmallestDenomination int `json:"smallest_denomination"`
 }
 
-// Amount takes the provided amount and formats it according
-// to the rules of the currency definition.
-func (d *Def) Amount(amount num.Amount) string {
-	n := d.formatNumber(amount.String())
-	f := d.Format
-	if f == "" {
-		f = "%u%n"
+// FormatOption defines how to configure the formatter for common
+// use cases and custom options.
+type FormatOption func(*Def, num.Formatter) num.Formatter
+
+// WithDisambiguateSymbol will override the default symbol to use with one that
+// is unique for the context. Lots of countries for example use "$" as their
+// main currency symbol, using this option will ensure that `US$` is used
+// in output instead.
+func WithDisambiguateSymbol() FormatOption {
+	return func(d *Def, f num.Formatter) num.Formatter {
+		f.Unit = d.DisambiguateSymbol
+		if f.Unit == "" {
+			// fall back to symbol
+			f.Unit = d.Symbol
+		}
+		return f
 	}
-	f = strings.Replace(f, "%u", d.Symbol, 1)
-	f = strings.Replace(f, "%n", n, 1)
+}
+
+// Formatter provides a number formatter for the currency definition.
+func (d *Def) Formatter(opts ...FormatOption) num.Formatter {
+	f := num.Formatter{
+		DecimalMark:        d.DecimalMark,
+		ThousandsSeparator: d.ThousandsSeparator,
+		Unit:               d.Symbol,
+		Template:           d.Template,
+	}
+	if d.Template == "" {
+		f.Template = DefaultCurrencyTemplate
+	}
+	for _, opt := range opts {
+		f = opt(d, f)
+	}
 	return f
 }
 
-// Percentage formats a percentage according to the rules
-// of the currency, but without a currency symbol.
-func (d *Def) Percentage(percent num.Percentage) string {
-	n := d.formatNumber(percent.StringWithoutSymbol())
-	return n + "%"
-}
-
-func (d *Def) formatNumber(n string) string {
-	p := strings.Split(n, ".")
-	n = p[0]
-	// split the main part with thousands separator
-	for i := len(n) - 3; i > 0; i = i - 3 {
-		n = n[:i] + d.ThousandsSeparator + n[i:]
-	}
-	if len(p) == 2 {
-		n = n + d.DecimalMark + p[1]
-	}
-	return n
+// Format takes the provided amount and formats it according
+// to the default rules of the currency definition.
+func (d *Def) Format(amount num.Amount) string {
+	return d.Formatter().Format(amount)
 }
 
 // Zero provides the currency's zero amount which is pre-set with the
@@ -94,7 +106,7 @@ func (d *Def) Zero() num.Amount {
 	return num.MakeAmount(0, d.Subunits)
 }
 
-// Defs provides an array of all currency definitions
+// Definitions provides an array of all currency definitions
 // ordered by priority.
 func Definitions() []*Def {
 	return definitions.all()

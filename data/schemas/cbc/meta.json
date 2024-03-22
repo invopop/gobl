@@ -12,6 +12,5 @@
       "type": "object",
       "description": "Meta defines a structure for data about the data being defined."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

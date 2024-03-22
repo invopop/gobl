@@ -16,6 +16,10 @@ import (
 	"github.com/invopop/gobl/schema"
 )
 
+//go:generate go run ./schema/generate.go
+//go:generate go run ./regimes/generate.go
+//go:generate go run ./currency/generate.go
+
 func init() {
 	schema.Register(schema.GOBL,
 		Envelope{},

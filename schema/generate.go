@@ -1,5 +1,6 @@
-// Package schemas helps generate JSON Schema files from the main GOBL packages.
-package schemas
+//go:build ignore
+
+package main
 
 import (
 	"encoding/json"
@@ -9,7 +10,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/invopop/gobl"
+	_ "github.com/invopop/gobl" // load everything
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/jsonschema"
 )
@@ -17,7 +18,13 @@ import (
 const outPath = "./data/schemas"
 
 // Generate is used to generate a set of schema files from the GOBL bases.
-func Generate() error {
+func main() {
+	if err := generate(); err != nil {
+		panic(err)
+	}
+}
+
+func generate() error {
 	r := new(jsonschema.Reflector)
 	r.AllowAdditionalProperties = true
 
@@ -34,8 +41,6 @@ func Generate() error {
 		return jsonschema.EmptyID
 	}
 
-	comment := fmt.Sprintf("Generated with GOBL %v", gobl.VERSION)
-
 	// Cleanup the old
 	if err := os.RemoveAll(outPath); err != nil {
 		return fmt.Errorf("unable to remove old data: %w", err)
@@ -44,7 +49,6 @@ func Generate() error {
 	for t, id := range schema.Types() {
 		fmt.Printf("processing %v... ", id)
 		s := r.ReflectFromType(t)
-		s.Comments = comment
 
 		f := strings.TrimPrefix(id.String(), schema.GOBL.String()) + ".json"
 		f = filepath.Join(outPath, f)
