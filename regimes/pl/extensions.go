@@ -7,9 +7,9 @@ import (
 
 // Regime extension codes for local electronic formats.
 const (
-	ExtKeyKSeFVATZero    = "pl-ksef-vat-zero"
-	ExtKeyKSeFVATSpecial = "pl-ksef-vat-special"
-	ExtKeyKSEFCorrection = "pl-ksef-correction"
+	ExtKeyKSeFVATZero       = "pl-ksef-vat-zero"
+	ExtKeyKSeFVATSpecial    = "pl-ksef-vat-special"
+	ExtKeyKSEFEffectiveDate = "pl-ksef-effective-date"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -66,10 +66,10 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyKSEFCorrection,
+		Key: ExtKeyKSEFEffectiveDate,
 		Name: i18n.String{
-			i18n.EN: "Correction type extension for KSeF credit notes",
-			i18n.PL: "Typ korekty dla faktur korygujących w KSeF",
+			i18n.EN: "Effective date code.",
+			i18n.PL: "Kod daty wejścia w życie.",
 		},
 		Codes: []*cbc.CodeDefinition{
 			{
@@ -79,8 +79,8 @@ var extensionKeys = []*cbc.KeyDefinition{
 					i18n.PL: "Pierwotna",
 				},
 				Desc: i18n.String{
-					i18n.EN: "Correction has legal consequences in the date of the original invoice",
-					i18n.PL: "Faktura skutkująca w dacie ujęcia faktury pierwotnej",
+					i18n.EN: "Effective according to date of the original invoice.",
+					i18n.PL: "Faktura skutkująca w dacie ujęcia faktury pierwotnej.",
 				},
 			},
 			{
@@ -90,8 +90,8 @@ var extensionKeys = []*cbc.KeyDefinition{
 					i18n.PL: "Korygująca",
 				},
 				Desc: i18n.String{
-					i18n.EN: "Correction has legal consequences in the date of the correction invoice",
-					i18n.PL: "Faktura skutkująca w dacie ujęcia faktury korygującej",
+					i18n.EN: "Effective according to date of correction.",
+					i18n.PL: "Faktura skutkująca w dacie ujęcia faktury korygującej.",
 				},
 			},
 			{

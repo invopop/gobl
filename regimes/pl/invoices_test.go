@@ -26,7 +26,7 @@ func creditNote() *bill.Invoice {
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
 				Ext: tax.Extensions{
-					pl.ExtKeyKSEFCorrection: "1",
+					pl.ExtKeyKSEFEffectiveDate: "1",
 				},
 			},
 		},
@@ -74,7 +74,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, inv.Preceding[0].Ext[pl.ExtKeyKSEFCorrection], tax.ExtValue("1"))
+	assert.Equal(t, inv.Preceding[0].Ext[pl.ExtKeyKSEFEffectiveDate], tax.ExtValue("1"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()
