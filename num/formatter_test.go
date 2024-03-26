@@ -89,6 +89,18 @@ func TestFormatterAmount(t *testing.T) {
 			amt:  num.MakeAmount(123456789, 2),
 			exp:  "1.234.567,89",
 		},
+		{
+			name: "with arabic numbers",
+			f:    num.MakeFormatter(",", ".").WithNumeralSystem(num.NumeralArabic),
+			amt:  num.MakeAmount(123456, 2),
+			exp:  "١.٢٣٤,٥٦",
+		},
+		{
+			name: "with arabic numbers and unit",
+			f:    num.MakeFormatter(",", ".").WithNumeralSystem(num.NumeralArabic).WithUnit("د.إ"),
+			amt:  num.MakeAmount(123456, 2),
+			exp:  `١.٢٣٤,٥٦د.إ`,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

@@ -8,6 +8,18 @@ const (
 	DefaultFormatterTemplate = "%n%u" // e.g. "12%"
 )
 
+// NumeralSystem describes how to output numbers.
+type NumeralSystem string
+
+const (
+	// NumeralWestern defines the Western Arabic numeral
+	// system, and is the default.
+	NumeralWestern NumeralSystem = "western"
+	// NumeralArabic can be used to output numbers using the
+	// Arabic numeral system.
+	NumeralArabic NumeralSystem = "arabic"
+)
+
 // Formatter is used to define how an amount should be formatted
 // alongside a unit if necessary.
 type Formatter struct {
@@ -23,7 +35,25 @@ type Formatter struct {
 	// together with two simple placeholders, `%n` for the number and
 	// `%u` for the unit.
 	Template string
+	// NumeralSystem determines how numbers should be output. By default
+	// this is 'western'.
+	NumeralSystem NumeralSystem
 }
+
+var (
+	formatArabicReplacer = strings.NewReplacer(
+		"0", "٠",
+		"1", "١",
+		"2", "٢",
+		"3", "٣",
+		"4", "٤",
+		"5", "٥",
+		"6", "٦",
+		"7", "٧",
+		"8", "٨",
+		"9", "٩",
+	)
+)
 
 // MakeFormatter prepares a new formatter with the two main configuration
 // options, decimal and thousands separators.
@@ -50,6 +80,13 @@ func (f Formatter) WithoutUnit() Formatter {
 // units.
 func (f Formatter) WithTemplate(template string) Formatter {
 	f.Template = template
+	return f
+}
+
+// WithNumeralSystem overrides the default western numeral system
+// with that defined.
+func (f Formatter) WithNumeralSystem(ns NumeralSystem) Formatter {
+	f.NumeralSystem = ns
 	return f
 }
 
@@ -91,5 +128,16 @@ func (f Formatter) formatNumber(n string) string {
 	if len(p) == 2 {
 		n = n + f.DecimalMark + p[1]
 	}
+	n = f.formatNumberForSystem(n)
 	return n
+}
+
+func (f Formatter) formatNumberForSystem(n string) string {
+	switch f.NumeralSystem {
+	case NumeralArabic:
+		// Support for Arabic numbers is somewhat experimental, feedback welcome!
+		return formatArabicReplacer.Replace(n)
+	default:
+		return n
+	}
 }

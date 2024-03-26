@@ -62,7 +62,7 @@ func TestDefAmount(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			d := test.currency.Def()
-			assert.Equal(t, test.exp, d.Format(test.amt))
+			assert.Equal(t, test.exp, d.FormatAmount(test.amt))
 		})
 	}
 }
@@ -78,14 +78,14 @@ func TestDefFormat(t *testing.T) {
 		d := currency.USD.Def()
 		f := d.Formatter(currency.WithDisambiguateSymbol())
 		a := num.MakeAmount(123456, 2)
-		assert.Equal(t, "US$1,234.56", f.Format(a))
+		assert.Equal(t, "US$1,234.56", f.Amount(a))
 	})
 
 	t.Run("with EUR", func(t *testing.T) {
 		d := currency.EUR.Def()
 		f := d.Formatter(currency.WithDisambiguateSymbol())
 		a := num.MakeAmount(123456, 2)
-		assert.Equal(t, "€1.234,56", f.Format(a))
+		assert.Equal(t, "€1.234,56", f.Amount(a))
 	})
 }
 

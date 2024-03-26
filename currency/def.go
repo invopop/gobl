@@ -56,6 +56,9 @@ type Def struct {
 	ThousandsSeparator string `json:"thousands_separator"`
 	// Smallest acceptable amount of the currency
 	SmallestDenomination int `json:"smallest_denomination"`
+	// NumeralSystem defines how numbers should be printed out, by default this
+	// is 'western'.
+	NumeralSystem num.NumeralSystem `json:"numeral_system"`
 }
 
 // FormatOption defines how to configure the formatter for common
@@ -73,6 +76,15 @@ func WithDisambiguateSymbol() FormatOption {
 			// fall back to symbol
 			f.Unit = d.Symbol
 		}
+		return f
+	}
+}
+
+// WithNumeralSystem will override the default numeral system used to output
+// numbers.
+func WithNumeralSystem(ns num.NumeralSystem) FormatOption {
+	return func(d *Def, f num.Formatter) num.Formatter {
+		f.NumeralSystem = ns
 		return f
 	}
 }
