@@ -11,6 +11,10 @@ import (
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
+	var tID *tax.Identity
+	err := ch.Calculate(tID)
+	assert.NoError(t, err, "nil tax identity")
+
 	tests := []struct {
 		Code     cbc.Code
 		Expected cbc.Code

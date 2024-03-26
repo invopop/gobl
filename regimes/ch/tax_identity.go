@@ -73,7 +73,7 @@ func validateTaxCode(value interface{}) error {
 }
 
 func commercialCheck(val string) error {
-	var total float64 = 0
+	var total float64
 	for i, m := range taxCodeMultipliers {
 		num := int(val[i+1] - '0')
 		x := float64(num * m)
