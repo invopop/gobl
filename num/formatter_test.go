@@ -83,6 +83,12 @@ func TestFormatterAmount(t *testing.T) {
 			amt:  num.MakeAmount(123456789, 2),
 			exp:  "1.234.567,89 €",
 		},
+		{
+			name: "with custom template format millions",
+			f:    num.MakeFormatter(",", ".").WithUnit("€").WithTemplate("%n %u").WithoutUnit(),
+			amt:  num.MakeAmount(123456789, 2),
+			exp:  "1.234.567,89",
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

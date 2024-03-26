@@ -40,6 +40,12 @@ func (f Formatter) WithUnit(unit string) Formatter {
 	return f
 }
 
+// WithoutUnit provides a formatter without a unit set.
+func (f Formatter) WithoutUnit() Formatter {
+	f.Unit = ""
+	return f
+}
+
 // WithTemplate sets the template for use with formatting with
 // units.
 func (f Formatter) WithTemplate(template string) Formatter {
@@ -63,13 +69,15 @@ func (f Formatter) Percentage(percent Percentage) string {
 }
 
 func (f Formatter) formatWithUnits(n string) string {
+	if f.Unit == "" {
+		return n
+	}
 	t := f.Template
 	if t == "" {
 		t = DefaultFormatterTemplate
 	}
 	t = strings.Replace(t, "%u", f.Unit, 1)
 	t = strings.Replace(t, "%n", n, 1)
-	t = strings.TrimSpace(t)
 	return t
 }
 
