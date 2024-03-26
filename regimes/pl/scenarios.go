@@ -75,20 +75,20 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			Types: []cbc.Key{bill.InvoiceTypeCorrective},
+			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Name: i18n.String{
-				i18n.EN: "Corrective Invoice",
-				i18n.PL: "Faktura Korygująca",
+				i18n.EN: "Credit note",
+				i18n.PL: "Faktura korygująca",
 			},
 			Codes: cbc.CodeMap{
 				KeyFAVATInvoiceType: "KOR",
 			},
 		},
 		{
-			Types: []cbc.Key{bill.InvoiceTypeCorrective},
+			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Tags:  []cbc.Key{tax.TagPartial},
 			Name: i18n.String{
-				i18n.EN: "Corrective Prepayment Invoice",
+				i18n.EN: "Prepayment credit note",
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 			},
 			Codes: cbc.CodeMap{
@@ -96,10 +96,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			Types: []cbc.Key{bill.InvoiceTypeCorrective},
+			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Tags:  []cbc.Key{TagSettlement},
 			Name: i18n.String{
-				i18n.EN: "Corrective Settlement Invoice",
+				i18n.EN: "Settlement credit note",
 				i18n.PL: "Faktura korygująca fakturę rozliczeniową",
 			},
 			Codes: cbc.CodeMap{
