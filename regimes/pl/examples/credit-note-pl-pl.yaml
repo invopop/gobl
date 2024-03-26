@@ -1,9 +1,9 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 currency: "PLN"
 issue_date: "2023-12-21"
-series: "COR"
+series: "CN"
 code: "002"
-type: "corrective"
+type: "credit-note"
 
 preceding:
   - type: "standard"
@@ -12,7 +12,7 @@ preceding:
     issue_date: "2023-12-20"
     reason: "Special Discount"
     ext:
-      pl-ksef-correction: "2"
+      pl-ksef-effective-date: "2"
     stamps:
       - prv: "ksef-id"
         val: "9876543210-20231220-107FDF72DB53-F7"
@@ -49,7 +49,7 @@ lines:
   - quantity: 20
     item:
       name: "Development services"
-      price: "-10.00"
+      price: "10.00"
       unit: "h"
     taxes:
       - cat: VAT
