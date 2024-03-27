@@ -55,7 +55,7 @@ func New() *tax.Regime {
 					StampProviderKSeF,
 				},
 				Extensions: []cbc.Key{
-					ExtKeyKSEFEffectiveDate,
+					ExtKeyKSeFEffectiveDate,
 				},
 			},
 		},

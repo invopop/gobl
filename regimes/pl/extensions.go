@@ -9,7 +9,7 @@ import (
 const (
 	ExtKeyKSeFVATZero       = "pl-ksef-vat-zero"
 	ExtKeyKSeFVATSpecial    = "pl-ksef-vat-special"
-	ExtKeyKSEFEffectiveDate = "pl-ksef-effective-date"
+	ExtKeyKSeFEffectiveDate = "pl-ksef-effective-date"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -66,7 +66,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyKSEFEffectiveDate,
+		Key: ExtKeyKSeFEffectiveDate,
 		Name: i18n.String{
 			i18n.EN: "Effective date code.",
 			i18n.PL: "Kod daty wejścia w życie.",

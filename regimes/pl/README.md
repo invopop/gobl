@@ -53,12 +53,12 @@ The following GOBL maps to the `1` (gotówka) value of the `TFormaPlatnosci` fie
 
 All Polish invoices must be identified with a specific type code defined by the FA_VAT format. The following table helps identify how GOBL will map the expected Polish code with a combination of the Invoice Type and tax tags.
 
-| Code    | Type          | Tax Tags     | Description               |
-| ------- | ------------- | ------------ | ------------------------- |
-| VAT     | `standard`    |              | Regular invoice           |
-| UPR     | `standard`    | `simplified` | Simplified (no customer)  |
-| ZAL     | `standard`    | `partial`    | Advance invioce           |
-| ROZ     | `standard`    | `settlement` | Settlement invoice        |
-| KOR     | `credit-note` |              | Credit note (regular)     |
-| KOR_ZAL | `credit-note` | `partial`    | Credit note (advance)     |
-| KOR_ROZ | `credit-note` | `settlement` | Credit note (settlement)  |
+| Code    | Type          | Tax Tags     | Description                        |
+| ------- | ------------- | ------------ | ---------------------------------- |
+| VAT     | `standard`    |              | Regular invoice                    |
+| UPR     | `standard`    | `simplified` | Simplified (no customer)           |
+| ZAL     | `standard`    | `partial`    | Advance invioce                    |
+| ROZ     | `standard`    | `settlement` | Settlement invoice                 |
+| KOR     | `credit-note` |              | Credit note for regular invoice    |
+| KOR_ZAL | `credit-note` | `partial`    | Credit note for advance invoice    |
+| KOR_ROZ | `credit-note` | `settlement` | Credit note for settlement invoice |
