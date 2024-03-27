@@ -124,6 +124,18 @@ func TestSupplierAddressesValidation(t *testing.T) {
 	err := inv.Validate()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "addresses: cannot be blank.")
+
+	inv = testInvoiceStandard(t)
+	inv.Supplier.Addresses[0].Code = "123456"
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.ErrorContains(t, err, "supplier: (addresses: (0: (code: must be in a valid format.).).)")
+
+	inv = testInvoiceStandard(t)
+	inv.Customer.Addresses[0].Code = "123456"
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.ErrorContains(t, err, "customer: (addresses: (0: (code: must be in a valid format.).).)")
 }
 
 func TestRetainedTaxesValidation(t *testing.T) {

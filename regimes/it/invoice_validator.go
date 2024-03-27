@@ -2,6 +2,7 @@ package it
 
 import (
 	"errors"
+	"regexp"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
@@ -117,7 +118,10 @@ func validateAddress(value interface{}) error {
 	// Post code and street in addition to the locality are required in Italian invoices.
 	return validation.ValidateStruct(v,
 		validation.Field(&v.Street, validation.Required),
-		validation.Field(&v.Code, validation.Required),
+		validation.Field(&v.Code,
+			validation.Required,
+			validation.Match(regexp.MustCompile(`^\d{5}$`)),
+		),
 	)
 }
 
