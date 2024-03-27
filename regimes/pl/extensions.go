@@ -7,8 +7,9 @@ import (
 
 // Regime extension codes for local electronic formats.
 const (
-	ExtKeyKSeFVATZero    = "pl-ksef-vat-zero"
-	ExtKeyKSeFVATSpecial = "pl-ksef-vat-special"
+	ExtKeyKSeFVATZero       = "pl-ksef-vat-zero"
+	ExtKeyKSeFVATSpecial    = "pl-ksef-vat-special"
+	ExtKeyKSeFEffectiveDate = "pl-ksef-effective-date"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -61,6 +62,48 @@ var extensionKeys = []*cbc.KeyDefinition{
 					i18n.PL: "Eksport",
 				},
 				// TODO: description required
+			},
+		},
+	},
+	{
+		Key: ExtKeyKSeFEffectiveDate,
+		Name: i18n.String{
+			i18n.EN: "Effective date code.",
+			i18n.PL: "Kod daty wejścia w życie.",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Original",
+					i18n.PL: "Pierwotna",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Effective according to date of the original invoice.",
+					i18n.PL: "Faktura skutkująca w dacie ujęcia faktury pierwotnej.",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Correction",
+					i18n.PL: "Korygująca",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Effective according to date of correction.",
+					i18n.PL: "Faktura skutkująca w dacie ujęcia faktury korygującej.",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.PL: "Inna",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Correction has legal consequences in another date or the dates are different for different position on the invoice",
+					i18n.PL: "Faktura skutkująca w innej dacie. W tym gdy dla różnych pozycji faktury korygującej data jest różna.",
+				},
 			},
 		},
 	},

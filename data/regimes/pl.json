@@ -253,10 +253,10 @@
         },
         {
           "type": [
-            "corrective"
+            "credit-note"
           ],
           "name": {
-            "en": "Corrective Invoice",
+            "en": "Credit note",
             "pl": "Faktura Korygująca"
           },
           "codes": {
@@ -265,13 +265,13 @@
         },
         {
           "type": [
-            "corrective"
+            "credit-note"
           ],
           "tags": [
             "partial"
           ],
           "name": {
-            "en": "Corrective Prepayment Invoice",
+            "en": "Prepayment credit note",
             "pl": "Faktura korygująca fakturę zaliczkową"
           },
           "codes": {
@@ -280,7 +280,7 @@
         },
         {
           "type": [
-            "corrective"
+            "credit-note"
           ],
           "tags": [
             "settlement"
