@@ -1,5 +1,5 @@
-// Package de provides the tax region definition for Germany.
-package de
+// Package at provides the Austrian tax regime.
+package at
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -18,35 +18,35 @@ func init() {
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.DE,
+		Country:  l10n.AT,
 		Currency: currency.EUR,
 		Name: i18n.String{
-			i18n.EN: "Germany",
-			i18n.FR: "Deutschland",
+			i18n.EN: "Austria",
 		},
-		TimeZone: "Europe/Berlin",
-		Tags:     common.InvoiceTags(),
+		TimeZone:   "Europe/Vienna",
+		Validator:  Validate,
+		Calculator: Calculate,
 		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
+			common.InvoiceScenarios(),
 		},
+		Tags:       common.InvoiceTags(),
+		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
-				// Germany only supports credit notes to correct an invoice
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
 			},
 		},
-		Validator:  Validate,
-		Calculator: Calculate,
-		Categories: taxCategories,
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}

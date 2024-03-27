@@ -35,6 +35,14 @@ func New() *tax.Regime {
 		},
 		Tags:       common.InvoiceTags(),
 		Categories: taxCategories,
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+			},
+		},
 	}
 }
 

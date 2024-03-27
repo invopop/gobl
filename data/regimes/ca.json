@@ -6,6 +6,15 @@
   "time_zone": "America/Toronto",
   "country": "CA",
   "currency": "CAD",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "GST",

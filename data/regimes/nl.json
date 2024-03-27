@@ -77,6 +77,14 @@
       ]
     }
   ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "VAT",

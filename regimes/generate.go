@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )

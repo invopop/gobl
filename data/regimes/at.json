@@ -1,11 +1,11 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/regime",
   "name": {
-    "en": "United Kingdom"
+    "en": "Austria"
   },
-  "time_zone": "Europe/London",
-  "country": "GB",
-  "currency": "GBP",
+  "time_zone": "Europe/Vienna",
+  "country": "AT",
+  "currency": "EUR",
   "tags": [
     {
       "key": "simplified",
@@ -118,6 +118,18 @@
           ]
         },
         {
+          "key": "intermediate",
+          "name": {
+            "en": "Intermediate Rate"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "13.0%"
+            }
+          ]
+        },
+        {
           "key": "reduced",
           "name": {
             "en": "Reduced Rate"
@@ -125,9 +137,17 @@
           "values": [
             {
               "since": "2011-01-04",
-              "percent": "5.0%"
+              "percent": "10.0%"
             }
           ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Business Service Portal - Rates of VAT"
+          },
+          "url": "https://www.usp.gv.at/en/steuern-finanzen/umsatzsteuer/steuersaetze-der-umsatzsteuer.html"
         }
       ]
     }

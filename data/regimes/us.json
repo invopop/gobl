@@ -59,6 +59,15 @@
       }
     }
   ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
   "categories": [
     {
       "code": "ST",

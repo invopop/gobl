@@ -32,6 +32,15 @@ func New() *tax.Regime {
 		},
 		TimeZone:  "America/Toronto", // Toronto
 		Validator: Validate,
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				},
+			},
+		},
 		Categories: []*tax.Category{
 			//
 			// General Sales Tax (GST)
