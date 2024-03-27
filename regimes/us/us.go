@@ -47,6 +47,15 @@ func New() *tax.Regime {
 				Rates:    []*tax.Rate{},
 			},
 		},
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				},
+			},
+		},
 	}
 }
 

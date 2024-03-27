@@ -4,6 +4,7 @@ package de
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/common"
@@ -18,7 +19,7 @@ func init() {
 func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.DE,
-		Currency: "EUR",
+		Currency: currency.EUR,
 		Name: i18n.String{
 			i18n.EN: "Germany",
 			i18n.FR: "Deutschland",

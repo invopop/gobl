@@ -50,7 +50,7 @@ func New() *tax.Regime {
 		Calculator:       Calculate,
 		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
 		Extensions:       extensionKeys,       // see extensions.go
-		Corrections: []*tax.CorrectionDefinition{ // see preceding.go
+		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
 				Types: []cbc.Key{

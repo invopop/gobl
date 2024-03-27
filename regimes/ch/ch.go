@@ -3,6 +3,8 @@ package ch
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/common"
@@ -16,12 +18,12 @@ func init() {
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.GB,
-		Currency: "GBP",
+		Country:  l10n.CH,
+		Currency: currency.CHF,
 		Name: i18n.String{
-			i18n.EN: "Austria",
+			i18n.EN: "Switzerland",
 		},
-		TimeZone:   "Europe/Vienna",
+		TimeZone:   "Europe/Zurich",
 		Validator:  Validate,
 		Calculator: Calculate,
 		Scenarios: []*tax.ScenarioSet{
@@ -29,6 +31,14 @@ func New() *tax.Regime {
 		},
 		Tags:       common.InvoiceTags(),
 		Categories: taxCategories,
+		Corrections: []*tax.CorrectionDefinition{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+			},
+		},
 	}
 }
 
