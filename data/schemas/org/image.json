@@ -65,6 +65,5 @@
       "type": "object",
       "description": "Image describes a logo or photo that represents an entity."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

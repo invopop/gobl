@@ -50,6 +50,7 @@ GOBL makes it easy to create business documents, like invoices, but checkout som
 - [GOBL for Ruby](https://github.com/invopop/gobl.ruby) - Easily build or read GOBL documents in Ruby.
 
 Conversion to local formats
+
 - [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
 - [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.cfdi) - convert into the Mexican CFDI format.
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
@@ -138,4 +139,12 @@ env := gobl.NewEnvelope()
 if err := env.Insert(inv); err != nil {
 	panic(err)
 }
+```
+
+## Development
+
+GOBL uses the `go generate` command to automatically generate JSON schemas, definitions, and some Go code output. After any changes, be sure to run:
+
+```bash
+go generate .
 ```

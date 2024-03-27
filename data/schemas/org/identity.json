@@ -42,6 +42,5 @@
       ],
       "description": "Identity is used to define a code for a specific context."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

@@ -9,6 +9,5 @@
       "title": "Percentage",
       "description": "Similar to an Amount, but designed for percentages and includes % symbol in JSON output."
     }
-  },
-  "$comment": "Generated with GOBL v0.70.0"
+  }
 }

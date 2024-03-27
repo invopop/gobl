@@ -1,6 +1,9 @@
 package currency
 
-import "github.com/invopop/gobl/num"
+import (
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/validation"
+)
 
 // ExchangeRate contains data on the rate to be used when converting amounts from
 // the document's base currency to whatever is defined.
@@ -12,8 +15,8 @@ import "github.com/invopop/gobl/num"
 // ExchangeRate instance may be defined and used as:
 //
 //	  rate := &currency.ExchangeRate{
-//		   Currency: currency.USD,
-//	    Amount: "0.875967",
+//		Currency: currency.USD,
+//		Amount: "0.875967",
 //	  }
 //
 //	  val := "100.00" // USD
@@ -23,4 +26,12 @@ type ExchangeRate struct {
 	Currency Code `json:"currency" jsonschema:"title=Currency"`
 	// How much is 1.00 of this currency worth in the documents currency.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+}
+
+// Validate ensures the content of the exchange rate looks good.
+func (er *ExchangeRate) Validate() error {
+	return validation.ValidateStruct(er,
+		validation.Field(&er.Currency, validation.Required),
+		validation.Field(&er.Amount, num.NotZero),
+	)
 }
