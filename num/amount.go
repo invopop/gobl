@@ -1,7 +1,6 @@
 package num
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"math"
@@ -87,11 +86,6 @@ func AmountFromString(val string) (Amount, error) {
 // other symbols so that we end up with a simple string that can be parsed.
 func AmountFromHumanString(_ string) (Amount, error) {
 	return Amount{}, errors.New("not yet implemented")
-}
-
-// IsZero returns true if the value of the amount is 0.
-func (a Amount) IsZero() bool {
-	return a.value == 0
 }
 
 // Add will add the two amounts together using the base's exponential
@@ -232,6 +226,29 @@ func (a Amount) Exp() uint32 {
 	return a.exp
 }
 
+// IsZero returns true if the value of the amount is 0.
+func (a Amount) IsZero() bool {
+	return a.value == 0
+}
+
+// IsNegative returns true if the amount is less than zero.
+func (a Amount) IsNegative() bool {
+	return a.value < 0
+}
+
+// IsPositive returns true if the amount is greater than zero.
+func (a Amount) IsPositive() bool {
+	return a.value > 0
+}
+
+// Abs provides the absolute value of the amount
+func (a Amount) Abs() Amount {
+	if a.value < 0 {
+		return a.Invert()
+	}
+	return a
+}
+
 // String returns the simplified string amount.
 func (a Amount) String() string {
 	if a.exp == 0 {
@@ -249,9 +266,9 @@ func (a Amount) String() string {
 	}
 	v1 := v / p
 	v2 := v - (v1 * p)
-	if v2 < 0 {
-		v2 = -v2
-	}
+	//if v2 < 0 {
+	//	v2 = -v2
+	//}
 	return fmt.Sprintf("%s%d.%0*d", s, v1, a.exp, v2)
 }
 
@@ -282,16 +299,6 @@ func (a Amount) MarshalText() ([]byte, error) {
 	return []byte(a.String()), nil
 }
 
-// MarshalJSON takes string value of the text and adds quotes around
-// it ready to be used in a JSON object.
-func (a Amount) MarshalJSON() ([]byte, error) {
-	buf := new(bytes.Buffer)
-	buf.WriteByte('"')
-	buf.WriteString(a.String())
-	buf.WriteByte('"')
-	return buf.Bytes(), nil
-}
-
 // UnmarshalText will decode the amount value, even if it is quoted
 // as a string and will be used for JSON, XML, or any other text
 // unmarshaling.
@@ -299,11 +306,9 @@ func (a *Amount) UnmarshalText(value []byte) error {
 	if string(value) == "null" {
 		return nil
 	}
-
-	str := unquote(value)
-	amount, err := AmountFromString(string(str))
+	amount, err := AmountFromString(string(value))
 	if err != nil {
-		return fmt.Errorf("decoding string `%s`: %w", str, err)
+		return err
 	}
 	*a = amount
 
@@ -313,7 +318,7 @@ func (a *Amount) UnmarshalText(value []byte) error {
 // UnmarshalJSON ensures amounts will be parsed even if defined as
 // numbers in the source JSON.
 func (a *Amount) UnmarshalJSON(value []byte) error {
-	return a.UnmarshalText(value)
+	return a.UnmarshalText(unquote(value))
 }
 
 func unquote(value []byte) []byte {
