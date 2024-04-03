@@ -1,11 +1,11 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/regime",
   "name": {
-    "en": "United Kingdom"
+    "en": "Switzerland"
   },
-  "time_zone": "Europe/London",
-  "country": "GB",
-  "currency": "GBP",
+  "time_zone": "Europe/Zurich",
+  "country": "CH",
+  "currency": "CHF",
   "tags": [
     {
       "key": "simplified",
@@ -95,25 +95,32 @@
       },
       "rates": [
         {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
-        {
           "key": "standard",
           "name": {
             "en": "Standard Rate"
           },
+          "desc": {
+            "en": "Applies to most goods and services."
+          },
           "values": [
             {
-              "since": "2011-01-04",
-              "percent": "20.0%"
+              "since": "2024-01-01",
+              "percent": "8.1%"
+            }
+          ]
+        },
+        {
+          "key": "intermediate",
+          "name": {
+            "en": "Intermediate Rate"
+          },
+          "desc": {
+            "en": "Applies to accommodation services."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "3.8%"
             }
           ]
         },
@@ -122,12 +129,23 @@
           "name": {
             "en": "Reduced Rate"
           },
+          "desc": {
+            "en": "Applies to food, books, newspapers, and public transport."
+          },
           "values": [
             {
-              "since": "2011-01-04",
-              "percent": "5.0%"
+              "since": "2024-01-01",
+              "percent": "2.6%"
             }
           ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Current Swiss VAT rates | FTA"
+          },
+          "url": "https://www.estv.admin.ch/estv/en/home/value-added-tax/vat-rates-switzerland.html"
         }
       ]
     }

@@ -1,5 +1,5 @@
-// Package de provides the tax region definition for Germany.
-package de
+// Package ch provides the Swiss tax regime.
+package ch
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -18,35 +18,35 @@ func init() {
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.DE,
-		Currency: currency.EUR,
+		Country:  l10n.CH,
+		Currency: currency.CHF,
 		Name: i18n.String{
-			i18n.EN: "Germany",
-			i18n.FR: "Deutschland",
+			i18n.EN: "Switzerland",
 		},
-		TimeZone: "Europe/Berlin",
-		Tags:     common.InvoiceTags(),
+		TimeZone:   "Europe/Zurich",
+		Validator:  Validate,
+		Calculator: Calculate,
 		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
+			common.InvoiceScenarios(),
 		},
+		Tags:       common.InvoiceTags(),
+		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
-				// Germany only supports credit notes to correct an invoice
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
 			},
 		},
-		Validator:  Validate,
-		Calculator: Calculate,
-		Categories: taxCategories,
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}
@@ -57,7 +57,7 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj)
+		return normalizeTaxIdentity(obj)
 	}
 	return nil
 }

@@ -116,6 +116,48 @@
           }
         }
       ]
+    },
+    {
+      "key": "pl-ksef-effective-date",
+      "name": {
+        "en": "Effective date code.",
+        "pl": "Kod daty wejścia w życie."
+      },
+      "codes": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Original",
+            "pl": "Pierwotna"
+          },
+          "desc": {
+            "en": "Effective according to date of the original invoice.",
+            "pl": "Faktura skutkująca w dacie ujęcia faktury pierwotnej."
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Correction",
+            "pl": "Korygująca"
+          },
+          "desc": {
+            "en": "Effective according to date of correction.",
+            "pl": "Faktura skutkująca w dacie ujęcia faktury korygującej."
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Other",
+            "pl": "Inna"
+          },
+          "desc": {
+            "en": "Correction has legal consequences in another date or the dates are different for different position on the invoice",
+            "pl": "Faktura skutkująca w innej dacie. W tym gdy dla różnych pozycji faktury korygującej data jest różna."
+          }
+        }
+      ]
     }
   ],
   "payment_means": [
@@ -257,7 +299,7 @@
           ],
           "name": {
             "en": "Credit note",
-            "pl": "Faktura Korygująca"
+            "pl": "Faktura korygująca"
           },
           "codes": {
             "favat-rodzaj-faktury": "KOR"
@@ -286,13 +328,28 @@
             "settlement"
           ],
           "name": {
-            "en": "Corrective Settlement Invoice",
+            "en": "Settlement credit note",
             "pl": "Faktura korygująca fakturę rozliczeniową"
           },
           "codes": {
             "favat-rodzaj-faktury": "KOR_ROZ"
           }
         }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ],
+      "extensions": [
+        "pl-ksef-effective-date"
+      ],
+      "reason_required": true,
+      "stamps": [
+        "ksef-id"
       ]
     }
   ],
