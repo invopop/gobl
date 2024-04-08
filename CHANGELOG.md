@@ -32,6 +32,7 @@ New number formatting support! Expect some possible breaking SDK changes with th
 - `num` package now provides advanced number formatting.
 - `currency` provides "definitions" loaded from JSON with support for formatting.
 - Polish (PL) correction and preceding validation.
+- Polish (PL) header stamps for QR code.
 
 ### Changed
 
