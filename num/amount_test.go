@@ -56,6 +56,12 @@ func TestAmountCompare(t *testing.T) {
 	assert.Equal(t, 0, a.Compare(a))
 	assert.Equal(t, -1, a.Compare(b))
 	assert.Equal(t, 1, b.Compare(a))
+
+	a = num.MakeAmount(1000, 2)
+	b = num.MakeAmount(200000, 4)
+	assert.Equal(t, 0, a.Compare(a))
+	assert.Equal(t, -1, a.Compare(b))
+	assert.Equal(t, 1, b.Compare(a))
 }
 
 func TestAmountNewFromString(t *testing.T) {
@@ -153,21 +159,15 @@ func TestSplit(t *testing.T) {
 
 func TestAmountString(t *testing.T) {
 	a := num.MakeAmount(12345670, 3)
-	if a.String() != "12345.670" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "12345.670", a.String())
 	a = num.MakeAmount(2, 0)
-	if a.String() != "2" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "2", a.String())
 	a = num.MakeAmount(50, 0)
-	if a.String() != "50" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "50", a.String())
 	a = num.MakeAmount(-5025, 2)
-	if a.String() != "-50.25" {
-		t.Errorf("unexpected string result, got: %v", a.String())
-	}
+	assert.Equal(t, "-50.25", a.String())
+	a = num.MakeAmount(-5025, 0)
+	assert.Equal(t, "-5025", a.String())
 	a = num.MakeAmount(-2, 2)
 	assert.Equal(t, "-0.02", a.String())
 }
@@ -266,17 +266,84 @@ func TestAmountInvert(t *testing.T) {
 	assert.Equal(t, "12.34", a.String())
 }
 
-func TestAmountUnmarshalJSON(t *testing.T) {
+func TestAmountIsZero(t *testing.T) {
+	a := num.MakeAmount(0, 0)
+	assert.True(t, a.IsZero())
+	a = num.MakeAmount(0, 2)
+	assert.True(t, a.IsZero())
+	a = num.MakeAmount(1234, 2)
+	assert.False(t, a.IsZero())
+	a = num.MakeAmount(-1234, 2)
+	assert.False(t, a.IsZero())
+}
+
+func TestAmountIsNegative(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	assert.False(t, a.IsNegative())
+	a = num.MakeAmount(-1234, 2)
+	assert.True(t, a.IsNegative())
+	a = num.MakeAmount(0, 2)
+	assert.False(t, a.IsNegative())
+}
+
+func TestAmountIsPositive(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	assert.True(t, a.IsPositive())
+	a = num.MakeAmount(-1234, 2)
+	assert.False(t, a.IsPositive())
+	a = num.MakeAmount(0, 2)
+	assert.False(t, a.IsPositive())
+}
+
+func TestAmountAbs(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	r := a.Abs()
+	assert.Equal(t, "12.34", r.String())
+	a = num.MakeAmount(-1234, 2)
+	r = a.Abs()
+	assert.Equal(t, "12.34", r.String())
+}
+
+func TestAmountUnmarshalJSONBasic(t *testing.T) {
 	d := []byte(`{"amount":"12.43"}`)
 	o := struct {
 		Amount num.Amount
 	}{}
-	if err := json.Unmarshal(d, &o); err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-	if o.Amount.Compare(num.MakeAmount(1243, 2)) != 0 {
-		t.Errorf("got back unexpected response: %+v", o)
-	}
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, 0, o.Amount.Compare(num.MakeAmount(1243, 2)))
+
+	d = []byte(`{"amount":10}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, int64(10), o.Amount.Value())
+	assert.Equal(t, uint32(0), o.Amount.Exp())
+
+	d = []byte(`{"amount":10.10}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, int64(1010), o.Amount.Value())
+	assert.Equal(t, uint32(2), o.Amount.Exp())
+
+	o.Amount = num.MakeAmount(0, 0)
+	d = []byte(`{"amount":null}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, int64(0), o.Amount.Value())
+
+	d = []byte(`{"amount":"bad"}`)
+	require.ErrorContains(t, json.Unmarshal(d, &o), "invalid major number 'bad', strconv.ParseInt: parsing \"bad\": invalid syntax")
+}
+
+func TestAmountUnmarshalJSONPointer(t *testing.T) {
+	d := []byte(`{"amount":"12.43"}`)
+	o := struct {
+		Amount *num.Amount
+	}{}
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Equal(t, 0, o.Amount.Compare(num.MakeAmount(1243, 2)))
+	d = []byte(`{"amount":null}`)
+	require.NoError(t, json.Unmarshal(d, &o))
+	assert.Nil(t, o.Amount)
+
+	d = []byte(`{"amount":"bad"}`)
+	require.ErrorContains(t, json.Unmarshal(d, &o), "invalid major number 'bad', strconv.ParseInt: parsing \"bad\": invalid syntax")
 }
 
 func TestNegativeAmountUnmarshalJSON(t *testing.T) {

@@ -64,7 +64,7 @@ func interfaceToAmount(val interface{}) Amount {
 	case Amount:
 		return a
 	case Percentage:
-		return a.Amount
+		return a.amount
 	default:
 		return Amount{}
 	}

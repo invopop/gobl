@@ -4,7 +4,7 @@ import "strings"
 
 const (
 	// DefaultFormatterTemplate is the default template used to
-	// format numbers for output.
+	// format numbers for output with their symbols.
 	DefaultFormatterTemplate = "%n%u" // e.g. "12%"
 )
 
@@ -35,6 +35,12 @@ type Formatter struct {
 	// together with two simple placeholders, `%n` for the number and
 	// `%u` for the unit.
 	Template string
+	// NegativeTemplate is the string used to present the number and
+	// optional unit together when the number is negative. It might be useful
+	// for example to format numbers with brackets around them to represent
+	// negative amounts, e.g. `(12)€` instead of `-12€`. By default, the negative
+	// symbol is prepended to the number, e.g. `$-12`.
+	NegativeTemplate string
 	// NumeralSystem determines how numbers should be output. By default
 	// this is 'western'.
 	NumeralSystem NumeralSystem
@@ -83,6 +89,13 @@ func (f Formatter) WithTemplate(template string) Formatter {
 	return f
 }
 
+// WithNegativeTemplate sets the template for use with formatting
+// negative amounts with units.
+func (f Formatter) WithNegativeTemplate(template string) Formatter {
+	f.NegativeTemplate = template
+	return f
+}
+
 // WithNumeralSystem overrides the default western numeral system
 // with that defined.
 func (f Formatter) WithNumeralSystem(ns NumeralSystem) Formatter {
@@ -93,32 +106,37 @@ func (f Formatter) WithNumeralSystem(ns NumeralSystem) Formatter {
 // Amount takes the provided amount and formats it according to
 // the rules of the formatter.
 func (f Formatter) Amount(amount Amount) string {
-	n := f.formatNumber(amount.String())
-	return f.formatWithUnits(n)
+	return f.formatWithUnits(amount)
 }
 
 // Percentage tries to format the percentage value according to the
 // rules of the formatter, but replacing the unit with a percentage
 // symbol, and using the default template.
 func (f Formatter) Percentage(percent Percentage) string {
-	n := f.formatNumber(percent.StringWithoutSymbol())
-	return f.WithUnit("%").WithTemplate("").formatWithUnits(n)
+	return f.WithUnit("%").WithTemplate("").formatWithUnits(percent.Amount())
 }
 
-func (f Formatter) formatWithUnits(n string) string {
-	if f.Unit == "" {
-		return n
-	}
+func (f Formatter) formatWithUnits(a Amount) string {
+	n := f.formatNumber(a.Abs())
 	t := f.Template
 	if t == "" {
 		t = DefaultFormatterTemplate
 	}
+	if a.IsNegative() {
+		if f.NegativeTemplate != "" {
+			t = f.NegativeTemplate
+		} else {
+			n = "-" + n
+		}
+	}
 	t = strings.Replace(t, "%u", f.Unit, 1)
 	t = strings.Replace(t, "%n", n, 1)
+	t = strings.TrimSpace(t)
 	return t
 }
 
-func (f Formatter) formatNumber(n string) string {
+func (f Formatter) formatNumber(a Amount) string {
+	n := a.String()
 	p := strings.Split(n, ".")
 	n = p[0]
 	// split the main part with thousands separator

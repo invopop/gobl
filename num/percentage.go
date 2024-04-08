@@ -1,9 +1,6 @@
 package num
 
 import (
-	"bytes"
-	"fmt"
-
 	"github.com/invopop/jsonschema"
 )
 
@@ -15,7 +12,7 @@ var (
 // Percentage wraps around the regular Amount handler to provide support
 // for percentage values, especially useful for tax rates.
 type Percentage struct {
-	Amount
+	amount Amount
 }
 
 // NewPercentage provides a new pointer to a Percentage value.
@@ -52,16 +49,32 @@ func PercentageFromString(str string) (Percentage, error) {
 	}
 
 	var err error
-	p.Amount, err = AmountFromString(str)
+	p.amount, err = AmountFromString(str)
 	if err != nil {
 		return p, err
 	}
 	if rescale {
-		e := p.exp
-		p.Amount = p.Amount.Rescale(e + 2).Divide(factor100)
+		return PercentageFromAmount(p.amount), nil
 	}
 
 	return p, nil
+}
+
+// PercentageFromAmount provides the percentage value of the amount ensuring it
+// is correctly scaled.
+func PercentageFromAmount(a Amount) Percentage {
+	a2 := a.Rescale(a.exp + 2).Divide(factor100)
+	return Percentage{amount: a2}
+}
+
+// Value provides the percentage amount's value
+func (p Percentage) Value() int64 {
+	return p.amount.value
+}
+
+// Exp provides the percentage amount's exponent value.
+func (p Percentage) Exp() uint32 {
+	return p.amount.exp
 }
 
 // String outputs the percentage value in a human readable way including
@@ -72,23 +85,28 @@ func (p Percentage) String() string {
 
 // StringWithoutSymbol provides the percent value without a percent symbol.
 func (p Percentage) StringWithoutSymbol() string {
-	e := int64(p.Amount.exp) - 2
+	return p.Amount().String()
+}
+
+// Amount provides an amount for the percentage that has been rescaled
+// from the underlying value mainly to be used for formatting.
+func (p Percentage) Amount() Amount {
+	e := int64(p.amount.exp) - 2
 	if e < 0 {
 		e = 0
 	}
-	v := p.Amount.Multiply(factor100).Rescale(uint32(e))
-	return v.String()
+	return p.amount.Multiply(factor100).Rescale(uint32(e))
 }
 
 // Rescale will rescale the percentage value to the provided exponent.
 func (p Percentage) Rescale(exp uint32) Percentage {
-	return Percentage{Amount: p.Amount.Rescale(exp)}
+	return Percentage{amount: p.amount.Rescale(exp)}
 }
 
 // Of calculates the "percent of" the provided amount. The exponent of the
 // provided amount is used.
 func (p Percentage) Of(a Amount) Amount {
-	return a.Multiply(p.Amount)
+	return a.Multiply(p.amount)
 }
 
 // From calculates what "percent from" the provided amount would result
@@ -101,13 +119,38 @@ func (p Percentage) From(a Amount) Amount {
 // Factor returns the percentage amount as a factor, essentially
 // adding 1 to the rate.
 func (p Percentage) Factor() Amount {
-	return p.Amount.Add(factor1)
+	return p.amount.Add(factor1)
 }
 
 // Equals wraps around the amount comparison to see if the two percentages
 // have the same value.
 func (p Percentage) Equals(p2 Percentage) bool {
-	return p.Amount.Equals(p2.Amount)
+	return p.amount.Equals(p2.amount)
+}
+
+// Compare two percentages and return an integer value according to the
+// sign of the difference:
+//
+//	-1 if a <  a2
+//	 0 if a == a2
+//	 1 if a >  a2
+func (p Percentage) Compare(p2 Percentage) int {
+	return p.amount.Compare(p2.amount)
+}
+
+// IsZero checks if the percentage is zero.
+func (p Percentage) IsZero() bool {
+	return p.amount.IsZero()
+}
+
+// IsPositive checks if the percentage is positive.
+func (p Percentage) IsPositive() bool {
+	return p.amount.IsPositive()
+}
+
+// IsNegative checks if the percentage is negative.
+func (p Percentage) IsNegative() bool {
+	return p.amount.IsNegative()
 }
 
 // MarshalText provides the byte value of the amount. See also the
@@ -116,20 +159,10 @@ func (p Percentage) MarshalText() ([]byte, error) {
 	return []byte(p.String()), nil
 }
 
-// MarshalJSON provides the text value of percentage wrapped in
-// quotes ready to be included in a JSON object.
-func (p Percentage) MarshalJSON() ([]byte, error) {
-	buf := new(bytes.Buffer)
-	buf.WriteByte('"')
-	buf.WriteString(p.String())
-	buf.WriteByte('"')
-	return buf.Bytes(), nil
-}
-
 // Invert provides a new percentage value that is the inverse of the
 // current percentage.
 func (p Percentage) Invert() Percentage {
-	return Percentage{Amount: p.Amount.Invert()}
+	return Percentage{amount: p.amount.Invert()}
 }
 
 // UnmarshalText will decode the percentage value, even if it is quoted
@@ -138,21 +171,18 @@ func (p *Percentage) UnmarshalText(value []byte) error {
 	if string(value) == "null" {
 		return nil
 	}
-
-	str := unquote(value)
-	result, err := PercentageFromString(string(str))
+	result, err := PercentageFromString(string(value))
 	if err != nil {
-		return fmt.Errorf("decoding string `%s`: %w", str, err)
+		return err
 	}
 	*p = result
-
 	return nil
 }
 
-// UnmarshalJSON ensures we parse percentage numbers correctly from a JSON
-// source.
+// UnmarshalJSON ensures percentages will be parsed even if defined as
+// numbers in the source JSON.
 func (p *Percentage) UnmarshalJSON(value []byte) error {
-	return p.UnmarshalText(value)
+	return p.UnmarshalText(unquote(value))
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

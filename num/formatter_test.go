@@ -46,6 +46,18 @@ func TestFormatterAmount(t *testing.T) {
 			exp:  "1,234,567.89",
 		},
 		{
+			name: "no unit: negative millions",
+			f:    num.MakeFormatter(".", ","),
+			amt:  num.MakeAmount(-123456789, 2),
+			exp:  "-1,234,567.89",
+		},
+		{
+			name: "no unit: negative millions with negative format",
+			f:    num.MakeFormatter(".", ",").WithNegativeTemplate("(%n)%u"),
+			amt:  num.MakeAmount(-123456789, 2),
+			exp:  "(1,234,567.89)",
+		},
+		{
 			name: "with unit default format zero",
 			f:    num.MakeFormatter(".", ",").WithUnit("%"),
 			amt:  num.MakeAmount(0, 2),
@@ -82,6 +94,18 @@ func TestFormatterAmount(t *testing.T) {
 			f:    num.MakeFormatter(",", ".").WithUnit("€").WithTemplate("%n %u"),
 			amt:  num.MakeAmount(123456789, 2),
 			exp:  "1.234.567,89 €",
+		},
+		{
+			name: "with custom negative template format millions",
+			f:    num.MakeFormatter(",", ".").WithUnit("€").WithTemplate("%n %u"),
+			amt:  num.MakeAmount(-123456789, 2),
+			exp:  "-1.234.567,89 €",
+		},
+		{
+			name: "with custom negative template format millions",
+			f:    num.MakeFormatter(",", ".").WithUnit("€").WithTemplate("%n %u").WithNegativeTemplate("(%n) %u"),
+			amt:  num.MakeAmount(-123456789, 2),
+			exp:  "(1.234.567,89) €",
 		},
 		{
 			name: "with custom template format millions",
