@@ -13,7 +13,7 @@ import (
 
 // KSeF official codes to include.
 const (
-	StampProviderKSeF     cbc.Key = "ksef-id"
+	StampProviderKSeFID   cbc.Key = "ksef-id"
 	StampProviderKSeFHash cbc.Key = "ksef-hash"
 	StampProviderKSeFQR   cbc.Key = "ksef-qr"
 )
