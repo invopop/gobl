@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/invopop/jsonschema v0.12.0
 	github.com/invopop/validation v0.3.0
-	github.com/invopop/yaml v0.1.0
+	github.com/invopop/yaml v0.3.1
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693
 	github.com/stretchr/testify v1.8.4
 )

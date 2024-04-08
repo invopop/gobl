@@ -1,0 +1,40 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "EUR"
+issue_date: "2022-02-01"
+code: "SAMPLE-001"
+tax:
+  tags:
+    - "simplified"
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Main product"
+      price: "90.00"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Something else"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: standard
