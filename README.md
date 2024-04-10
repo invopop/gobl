@@ -56,6 +56,7 @@ Conversion to local formats
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
 - [GOBL to FA_VAT / KSeF](https://github.com/invopop/gobl.ksef) - convert to the Polish FA_VAT format and send to [KSeF](https://www.podatki.gov.pl/ksef/)
 - [GOBL to TicketBAI (Spain/Euskadi)](https://github.com/invopop/gobl.ticketbai) - convert into [TicketBAI](https://www.batuz.eus/fitxategiak/batuz/ticketbai/ticketBaiV1-2.xsd) documents, required in the Euskadi (northern region of Spain)
+- [GOBL to Factur-X (FR) and XRechnung/ZUGFeRD (DE)](https://github.com/invopop/gobl.xinvoice/tree/ec3b2b40ee7462d1c8f82c1a5f780c7f92eeece9) - convert into into Factur-X (FR) and [XRechnung/ZUGFeRD](https://xeinkauf.de/xrechnung) (DE) formats.
 
 ## Usage
 
