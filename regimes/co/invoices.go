@@ -129,7 +129,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 }
 
 func normalizeParty(p *org.Party) error {
-	// 2024-03-14: Migrate Tax ID Zone to extensions "mx-dian-municipality"
+	// 2024-03-14: Migrate Tax ID Zone to extensions "co-dian-municipality"
 	if p.TaxID != nil && p.TaxID.Zone != "" {
 		if p.Ext == nil {
 			p.Ext = make(tax.Extensions)

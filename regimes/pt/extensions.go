@@ -8,7 +8,7 @@ import (
 // Special codes to be used inside rates.
 const (
 	ExtKeyRegion        = "pt-region"
-	ExtKeyExemptionCode = "pt-exemption-code"
+	ExtKeyExemptionCode = "pt-exemption-code" // note: avoid redundant prefixes like `-code`
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
