@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -47,6 +48,14 @@ const (
 	TaxRateGold          cbc.Key = "gold"
 	TaxRateNonTaxable    cbc.Key = "non-taxable"
 )
+
+func migrateInvoice(inv *bill.Invoice) error {
+	if err := migrateInvoiceRates(inv); err != nil {
+		return err
+	}
+
+	return migrateTaxZone(inv)
+}
 
 func migrateInvoiceRates(inv *bill.Invoice) error {
 	for _, line := range inv.Lines {
@@ -255,4 +264,35 @@ var taxRateVATExemptMigrationMap = []struct {
 			ExtKeyExemptionCode: "M99",
 		},
 	},
+}
+
+func migrateTaxZone(inv *bill.Invoice) error {
+	// 2024-03-14: Migrate supplier's Tax ID Zone to tax tags
+	if inv.Supplier == nil || inv.Supplier.TaxID == nil {
+		return nil
+	}
+
+	zone := inv.Supplier.TaxID.Zone
+	if zone == "" {
+		return nil
+	}
+
+	tag := taxZoneMigrationMap[zone]
+	if tag == "" {
+		return nil
+	}
+
+	if inv.Tax == nil {
+		inv.Tax = &bill.Tax{}
+	}
+
+	inv.Tax.Tags = append(inv.Tax.Tags, tag)
+	inv.Supplier.TaxID.Zone = ""
+
+	return nil
+}
+
+var taxZoneMigrationMap = map[l10n.Code]cbc.Key{
+	"20": TagAzores,
+	"30": TagMadeira,
 }

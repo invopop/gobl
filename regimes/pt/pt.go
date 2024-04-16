@@ -70,7 +70,7 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return migrateInvoiceRates(obj)
+		return migrateInvoice(obj)
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
 	}
