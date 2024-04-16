@@ -31,6 +31,7 @@ var taxCategories = []*tax.Category{
 		},
 		Retained:     false,
 		RateRequired: true,
+		Extensions:   []cbc.Key{ExtKeyRegion},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateStandard,
@@ -41,14 +42,14 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Ext: tax.Extensions{
-							ExtKeyACTUDRegion: "PT-AC",
+							ExtKeyRegion: "PT-AC",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(160, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyACTUDRegion: "PT-MA",
+							ExtKeyRegion: "PT-MA",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(220, 3),
@@ -71,14 +72,14 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Ext: tax.Extensions{
-							ExtKeyACTUDRegion: "PT-AC",
+							ExtKeyRegion: "PT-AC",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(90, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyACTUDRegion: "PT-MA",
+							ExtKeyRegion: "PT-MA",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(120, 3),
@@ -101,14 +102,14 @@ var taxCategories = []*tax.Category{
 				Values: []*tax.RateValue{
 					{
 						Ext: tax.Extensions{
-							ExtKeyACTUDRegion: "PT-AC",
+							ExtKeyRegion: "PT-AC",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyACTUDRegion: "PT-MA",
+							ExtKeyRegion: "PT-MA",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(50, 3),

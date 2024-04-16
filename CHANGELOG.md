@@ -11,12 +11,12 @@ Pending release notes...
 ### Added
 
 - `cbc.Code`: Now supports `-` symbol alongside `.` as a separator. We have mixed feelings on this as we wanted to avoid normalization complications, but it became clear with the PT changes that a bit more flexibility here is useful. (Side note: the original intent here was to avoid dashes in tax IDs, but these are now normalized automatically.)
-- Regimes: Extensions can now be used to match tax rate values.
+- Regimes: Extensions can now be used to match tax rates.
 - Tax: Extensions helper methods added: `Merge` and `Contains`.
 
 ### Changed
 
-- PT: moving from tax tags `azores` and `madeir` to `pt-actud-region` extension provided in the supplier.
+- PT: moving from tax tags `azores` and `madeir` to `pt-region` extension provided in taxes combo for each line.
 
 ### Fixed
 

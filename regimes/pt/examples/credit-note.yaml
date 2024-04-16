@@ -15,8 +15,6 @@ supplier:
     - street: Rua do Hotelzinho
       code: 1000-000
       locality: Lisboa
-  ext:
-    pt-actud-region: PT
 customer:
   name: Maria Santos Silva
 lines:
@@ -28,4 +26,6 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+        ext:
+          pt-region: PT
     total: "0"

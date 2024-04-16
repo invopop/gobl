@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -49,21 +48,6 @@ func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
-}
-
-func TestInvoiceRegion(t *testing.T) {
-	inv := validInvoice()
-	inv.Supplier.Ext = tax.Extensions{
-		pt.ExtKeyACTUDRegion: "PT-AC",
-	}
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-	inv = validInvoice()
-	inv.Supplier.Ext = tax.Extensions{
-		pt.ExtKeyACTUDRegion: "PT-BAD",
-	}
-	require.NoError(t, inv.Calculate())
-	require.ErrorContains(t, inv.Validate(), "supplier: (ext: (pt-actud-region: code 'PT-BAD' invalid.).)")
 }
 
 func TestLineValidation(t *testing.T) {

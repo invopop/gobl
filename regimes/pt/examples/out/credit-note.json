@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0581f944e63344dffdf6548364df00ba4c39057c44b3677fd5210f4ef91133e7"
+			"val": "c217553e1a35107cea1cb6cb6565e7e474b797da6443c0a01d4392c4c3c2f788"
 		},
 		"draft": true
 	},
@@ -33,10 +33,7 @@
 					"locality": "Lisboa",
 					"code": "1000-000"
 				}
-			],
-			"ext": {
-				"pt-actud-region": "PT"
-			}
+			]
 		},
 		"customer": {
 			"name": "Maria Santos Silva"
@@ -54,7 +51,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "23.0%"
+						"percent": "23.0%",
+						"ext": {
+							"pt-region": "PT"
+						}
 					}
 				],
 				"total": "200.00"
@@ -70,6 +70,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"pt-region": "PT"
+								},
 								"base": "200.00",
 								"percent": "23.0%",
 								"amount": "46.00"

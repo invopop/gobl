@@ -209,15 +209,15 @@ func TestTotalBySumCalculate(t *testing.T) {
 		{
 			desc:   "with VAT in Azores",
 			regime: portugal,
-			ext: tax.Extensions{
-				pt.ExtKeyACTUDRegion: "PT-AC",
-			},
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateStandard,
+							Ext: tax.Extensions{
+								pt.ExtKeyRegion: "PT-AC",
+							},
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -235,6 +235,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
+								Ext: tax.Extensions{
+									pt.ExtKeyRegion: "PT-AC",
+								},
 							},
 						},
 						Amount: num.MakeAmount(1600, 2),
@@ -1026,7 +1029,6 @@ func TestTotalBySumCalculate(t *testing.T) {
 			tc := &tax.TotalCalculator{
 				Regime:   reg,
 				Tags:     test.tags,
-				Ext:      test.ext,
 				Zero:     zero,
 				Date:     d,
 				Lines:    test.lines,

@@ -12,8 +12,6 @@ supplier:
     - street: Rua do Hotelzinho
       code: 1000-000
       locality: Azores
-  ext:
-    pt-actud-region: "PT-AC"
 customer:
   name: Maria Santos Silva
 lines:
@@ -26,3 +24,5 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+        ext:
+          pt-region: "PT-AC"

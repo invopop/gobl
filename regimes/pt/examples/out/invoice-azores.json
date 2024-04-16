@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "dca0289dd5af1824ae0c4ad47ec0ad588be881228ef714ca1bca6c5b335f927f"
+			"val": "c3415553e0de03cba77c1ada490724416b9a09a881028e3f5c651eadefcdb5b2"
 		},
 		"draft": true
 	},
@@ -27,10 +27,7 @@
 					"locality": "Azores",
 					"code": "1000-000"
 				}
-			],
-			"ext": {
-				"pt-actud-region": "PT-AC"
-			}
+			]
 		},
 		"customer": {
 			"name": "Maria Santos Silva"
@@ -48,7 +45,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"pt-region": "PT-AC"
+						}
 					}
 				],
 				"total": "100.00"
@@ -64,6 +64,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"pt-region": "PT-AC"
+								},
 								"base": "100.00",
 								"percent": "16.0%",
 								"amount": "16.00"
