@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -21,6 +22,7 @@ func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.EUR)),
+		validation.Field(&inv.Supplier, validation.By(v.validSupplier)),
 		validation.Field(&inv.Lines,
 			validation.Each(
 				validation.By(v.validLine),
@@ -28,6 +30,16 @@ func (v *invoiceValidator) validate() error {
 			),
 			validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
 		),
+	)
+}
+
+func (v *invoiceValidator) validSupplier(value interface{}) error {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext, tax.ExtensionsHas(ExtKeyACTUDRegion)),
 	)
 }
 

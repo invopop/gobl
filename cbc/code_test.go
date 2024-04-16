@@ -33,8 +33,16 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code("B3.12"),
 		},
 		{
+			name: "valid with dash",
+			code: cbc.Code("B3-12"),
+		},
+		{
 			name: "valid with multiple dots",
 			code: cbc.Code("B3.1.2"),
+		},
+		{
+			name: "valid with multiple dashes",
+			code: cbc.Code("B3-1-2"),
 		},
 		{
 			name: "empty",
@@ -51,13 +59,18 @@ func TestCode_Validate(t *testing.T) {
 			wantErr: "valid format",
 		},
 		{
-			name:    "lower case",
-			code:    cbc.Code("ab"),
+			name:    "dash at start",
+			code:    cbc.Code("-B123"),
 			wantErr: "valid format",
 		},
 		{
-			name:    "invalid dash",
-			code:    cbc.Code("B-1234567"),
+			name:    "dash at end",
+			code:    cbc.Code("B123-"),
+			wantErr: "valid format",
+		},
+		{
+			name:    "lower case",
+			code:    cbc.Code("ab"),
 			wantErr: "valid format",
 		},
 		{

@@ -75,14 +75,26 @@ func (em Extensions) Has(keys ...cbc.Key) bool {
 	return true
 }
 
-// Equals returns true if the code map has the same keys and values as the provided
+// Equals returns true if the extension map has the same keys and values as the provided
 // map.
 func (em Extensions) Equals(other Extensions) bool {
 	if len(em) != len(other) {
 		return false
 	}
-	for k, v := range em {
-		v2, ok := other[k]
+	if len(em) == 0 {
+		return true // empty extensions are equal!
+	}
+	return em.Contains(other)
+}
+
+// Contains returns true if the extension map contains the same keys and values as the provided
+// map, but may have additional keys.
+func (em Extensions) Contains(other Extensions) bool {
+	if len(em) == 0 {
+		return false
+	}
+	for k, v := range other {
+		v2, ok := em[k]
 		if !ok {
 			return false
 		}
@@ -91,6 +103,25 @@ func (em Extensions) Equals(other Extensions) bool {
 		}
 	}
 	return true
+}
+
+// Merge will merge the provided extensions map with the current one generating
+// a new map. Duplicate keys will be overwritten by the other map's values.
+func (em Extensions) Merge(other Extensions) Extensions {
+	if em == nil {
+		return other
+	}
+	if other == nil {
+		return em
+	}
+	nem := make(Extensions)
+	for k, v := range em {
+		nem[k] = v
+	}
+	for k, v := range other {
+		nem[k] = v
+	}
+	return nem
 }
 
 // NormalizeExtensions will try to clean the extension map removing empty values

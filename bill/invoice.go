@@ -475,7 +475,7 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 		tls = append(tls, l)
 	}
 
-	// Now figure out the tax totals (with some interface conversion)
+	// Now figure out the tax totals
 	var pit cbc.Code
 	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
 		pit = inv.Tax.PricesInclude
@@ -485,10 +485,15 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	if inv.Tax != nil {
 		tags = inv.Tax.Tags
 	}
+	// Add any extensions from the supplier to use as a base
+	ext := make(tax.Extensions)
+	ext = ext.Merge(inv.Supplier.Ext)
+
 	tc := &tax.TotalCalculator{
 		Zero:     zero,
 		Regime:   r,
 		Tags:     tags,
+		Ext:      ext,
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,

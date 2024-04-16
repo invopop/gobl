@@ -137,3 +137,163 @@ func TestExtensionsHas(t *testing.T) {
 	assert.True(t, em.Has("key"))
 	assert.False(t, em.Has("invalid"))
 }
+
+func TestExtensionsEquals(t *testing.T) {
+	tests := []struct {
+		name string
+		em1  tax.Extensions
+		em2  tax.Extensions
+		want bool
+	}{
+		{
+			name: "empty",
+			em1:  tax.Extensions{},
+			em2:  tax.Extensions{},
+			want: true,
+		},
+		{
+			name: "same",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value"},
+			want: true,
+		},
+		{
+			name: "different",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value2"},
+			want: false,
+		},
+		{
+			name: "different keys",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key2": "value"},
+			want: false,
+		},
+		{
+			name: "different lengths",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value", "key2": "value"},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.em1.Equals(tt.em2))
+		})
+	}
+}
+
+func TestExtensionsContains(t *testing.T) {
+	tests := []struct {
+		name string
+		em1  tax.Extensions
+		em2  tax.Extensions
+		want bool
+	}{
+		{
+			name: "empty",
+			em1:  tax.Extensions{},
+			em2:  tax.Extensions{},
+			want: false,
+		},
+		{
+			name: "same",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value"},
+			want: true,
+		},
+		{
+			name: "different",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value2"},
+			want: false,
+		},
+		{
+			name: "different keys",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key2": "value"},
+			want: false,
+		},
+		{
+			name: "different lengths",
+			em1:  tax.Extensions{"key": "value", "key2": "value"},
+			em2:  tax.Extensions{"key": "value"},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.em1.Contains(tt.em2))
+		})
+	}
+}
+
+func TestExtensionsMerge(t *testing.T) {
+	tests := []struct {
+		name string
+		em1  tax.Extensions
+		em2  tax.Extensions
+		want tax.Extensions
+	}{
+		{
+			name: "empty",
+			em1:  tax.Extensions{},
+			em2:  tax.Extensions{},
+			want: tax.Extensions{},
+		},
+		{
+			name: "same",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value"},
+			want: tax.Extensions{"key": "value"},
+		},
+		{
+			name: "nil source",
+			em1:  nil,
+			em2:  tax.Extensions{"key": "value"},
+			want: tax.Extensions{"key": "value"},
+		},
+		{
+			name: "nil destination",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  nil,
+			want: tax.Extensions{"key": "value"},
+		},
+		{
+			name: "different",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value2"},
+			want: tax.Extensions{"key": "value2"},
+		},
+		{
+			name: "different keys",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key2": "value"},
+			want: tax.Extensions{"key": "value", "key2": "value"},
+		},
+		{
+			name: "different lengths",
+			em1:  tax.Extensions{"key": "value"},
+			em2:  tax.Extensions{"key": "value", "key2": "value"},
+			want: tax.Extensions{"key": "value", "key2": "value"},
+		},
+		{
+			name: "different lengths 2",
+			em1:  tax.Extensions{"key": "value", "key2": "value"},
+			em2:  tax.Extensions{"key": "value"},
+			want: tax.Extensions{"key": "value", "key2": "value"},
+		},
+		{
+			name: "different lengths 3",
+			em1:  tax.Extensions{"key": "value2"},
+			em2:  tax.Extensions{"key": "value", "key2": "value"},
+			want: tax.Extensions{"key": "value", "key2": "value"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.em1.Merge(tt.em2))
+		})
+	}
+
+}

@@ -12,8 +12,8 @@ import (
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 1 and 24 inclusive upper-case letters or numbers with optional periods
-// to separate blocks.
+// 1 and 24 inclusive upper-case letters or numbers with optional periods (`.`)
+// or dashes (`-`) to separate blocks.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -22,7 +22,7 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern          = `^[A-Z0-9]+(\.?[A-Z0-9]+)*$`
+	CodePattern          = `^[A-Z0-9]+([\.\-]?[A-Z0-9]+)*$`
 	CodeMinLength uint64 = 1
 	CodeMaxLength uint64 = 24
 )

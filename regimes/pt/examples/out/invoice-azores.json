@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a54b459ac6c6b44eeb15248bb9763360f671ab40e448e12985bed9854c1ef9ef"
+			"val": "dca0289dd5af1824ae0c4ad47ec0ad588be881228ef714ca1bca6c5b335f927f"
 		},
 		"draft": true
 	},
@@ -14,11 +14,6 @@
 		"code": "",
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"azores"
-			]
-		},
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
 			"name": "Hotelzinho",
@@ -32,7 +27,10 @@
 					"locality": "Azores",
 					"code": "1000-000"
 				}
-			]
+			],
+			"ext": {
+				"pt-actud-region": "PT-AC"
+			}
 		},
 		"customer": {
 			"name": "Maria Santos Silva"

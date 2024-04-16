@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ae7f4128e7316c57015fe4eb9cb3286e44c4e2df1f64170470f0bff134dd062a"
+			"val": "0581f944e63344dffdf6548364df00ba4c39057c44b3677fd5210f4ef91133e7"
 		},
 		"draft": true
 	},
@@ -33,7 +33,10 @@
 					"locality": "Lisboa",
 					"code": "1000-000"
 				}
-			]
+			],
+			"ext": {
+				"pt-actud-region": "PT"
+			}
 		},
 		"customer": {
 			"name": "Maria Santos Silva"

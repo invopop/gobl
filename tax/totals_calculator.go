@@ -11,6 +11,7 @@ import (
 type TotalCalculator struct {
 	Regime   *Regime
 	Tags     []cbc.Key
+	Ext      Extensions
 	Zero     num.Amount
 	Date     cal.Date
 	Lines    []TaxableLine
@@ -57,7 +58,7 @@ func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
 	// First, prepare all tax combos using the regime, zone, and date
 	for _, tl := range taxLines {
 		for _, combo := range tl.taxes {
-			if err := combo.prepare(tc.Regime, tc.Tags, tc.Date); err != nil {
+			if err := combo.prepare(tc.Regime, tc.Tags, tc.Ext, tc.Date); err != nil {
 				return err
 			}
 			// always add 2 decimal places for all tax calculations
