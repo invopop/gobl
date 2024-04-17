@@ -17,6 +17,7 @@ Pending release notes...
 
 - `cbc.Code`: Now supports `-` symbol alongside `.` as a separator. Mixed feelings on this as we wanted to avoid normalization complications, but it became clear with the PT changes that a bit more flexibility here is useful. (Side note: the original intent of `cbc.Code` was to avoid dashes in tax IDs, but these are now normalized automatically.)
 - PT: moving from tax tags `azores` and `madeira` to `pt-region` extension provided in taxes combo for each line.
+- PT: auto-migrate invoice supplier tax ID zone to appropriate line tax combo extension.
 
 ### Fixed
 
