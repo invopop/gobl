@@ -1,0 +1,27 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+type: standard
+currency: EUR
+issue_date: "2023-01-30"
+supplier:
+  uuid: 9de7584f-ea5c-42a7-b159-5e4c6a280a5c
+  tax_id:
+    country: PT
+    zone: "20"
+    code: "545259045"
+  name: Hotelzinho
+  addresses:
+    - street: Rua do Hotelzinho
+      code: 1000-000
+      locality: Azores
+customer:
+  name: Maria Santos Silva
+lines:
+  - i: 1
+    quantity: 1
+    item:
+      name: Noite em quarto duplo
+      price: 100.00
+    sum: 100.00
+    taxes:
+      - cat: VAT
+        rate: standard
