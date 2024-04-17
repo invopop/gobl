@@ -12,6 +12,7 @@ Refactoring region handling for Portugal VAT and now supporting `-` in `cbc.Code
 
 - Regimes: Extensions can now be used to match tax rates.
 - Tax: Extensions helper methods: `Merge` and `Contains`.
+- MX: stamps for `cfdi`, `sat`, `sat-chain`, `sat-url`.
 
 ### Changed
 

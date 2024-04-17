@@ -189,12 +189,12 @@ func (v *invoiceValidator) validPrecedingEntry(value interface{}) error {
 	}
 
 	for _, s := range entry.Stamps {
-		if s.Provider == StampProviderSATUUID {
+		if s.Provider == StampSATUUID {
 			return nil
 		}
 	}
 
-	return fmt.Errorf("must have a `%s` stamp", StampProviderSATUUID)
+	return fmt.Errorf("must have a `%s` stamp", StampSATUUID)
 }
 
 var isValidPaymentMeanKey = validation.In(validPaymentMeanKeys()...)

@@ -33,7 +33,11 @@ const (
 
 // SAT official codes to include in stamps.
 const (
-	StampProviderSATUUID cbc.Key = "sat-uuid" // a.k.a. Folio Fiscal
+	StampCFDI     cbc.Key = "cfdi"      // Sello Digital del CFDI
+	StampSAT      cbc.Key = "sat"       // Sello Digital del SAT
+	StampSATUUID  cbc.Key = "sat-uuid"  // Folio Fiscal
+	StampSATURL   cbc.Key = "sat-url"   // URL QR Code
+	StampSATChain cbc.Key = "sat-chain" // Cadena original del complemento de certificación digital del SAT
 )
 
 // New provides the tax region definition
