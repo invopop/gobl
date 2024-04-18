@@ -123,7 +123,7 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		return nil
 	}
 
-	value := rate.Value(date, tags)
+	value := rate.Value(date, tags, c.Ext)
 	if value == nil {
 		return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 	}

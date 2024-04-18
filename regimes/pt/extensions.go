@@ -7,10 +7,41 @@ import (
 
 // Special codes to be used inside rates.
 const (
-	ExtKeyExemptionCode = "pt-exemption-code"
+	ExtKeyRegion        = "pt-region"
+	ExtKeyExemptionCode = "pt-exemption-code" // note: avoid redundant prefixes like `-code`
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
+	{
+		Key: ExtKeyRegion,
+		Name: i18n.String{
+			i18n.EN: "Region Code",
+			i18n.PT: "Código da Região",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "PT",
+				Name: i18n.String{
+					i18n.EN: "Mainland Portugal",
+					i18n.PT: "Portugal Continental",
+				},
+			},
+			{
+				Code: "PT-AC",
+				Name: i18n.String{
+					i18n.EN: "Azores",
+					i18n.PT: "Açores",
+				},
+			},
+			{
+				Code: "PT-MA",
+				Name: i18n.String{
+					i18n.EN: "Madeira",
+					i18n.PT: "Madeira",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyExemptionCode,
 		Name: i18n.String{

@@ -70,6 +70,9 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
+		if err := migrateTaxIDZoneToLines(obj); err != nil {
+			return err
+		}
 		return migrateInvoiceRates(obj)
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)

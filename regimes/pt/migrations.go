@@ -256,3 +256,46 @@ var taxRateVATExemptMigrationMap = []struct {
 		},
 	},
 }
+
+// 2024-04-17: Migrate zone to VAT tax rows
+func migrateTaxIDZoneToLines(inv *bill.Invoice) error {
+	if inv.Supplier == nil || inv.Supplier.TaxID == nil || inv.Supplier.TaxID.Zone == "" {
+		return nil
+	}
+
+	ext := make(tax.Extensions)
+	zone := inv.Supplier.TaxID.Zone
+	inv.Supplier.TaxID.Zone = ""
+	switch zone {
+	case "20":
+		ext[ExtKeyRegion] = "PT-AC"
+	case "30":
+		ext[ExtKeyRegion] = "PT-MA"
+	default:
+		// nothing to do
+		return nil
+	}
+
+	for _, line := range inv.Lines {
+		for _, tc := range line.Taxes {
+			if tc.Category == tax.CategoryVAT {
+				tc.Ext = ext
+			}
+		}
+	}
+	for _, line := range inv.Discounts {
+		for _, tc := range line.Taxes {
+			if tc.Category == tax.CategoryVAT {
+				tc.Ext = ext
+			}
+		}
+	}
+	for _, line := range inv.Charges {
+		for _, tc := range line.Taxes {
+			if tc.Category == tax.CategoryVAT {
+				tc.Ext = ext
+			}
+		}
+	}
+	return nil
+}

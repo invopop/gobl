@@ -475,7 +475,7 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 		tls = append(tls, l)
 	}
 
-	// Now figure out the tax totals (with some interface conversion)
+	// Now figure out the tax totals
 	var pit cbc.Code
 	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
 		pit = inv.Tax.PricesInclude

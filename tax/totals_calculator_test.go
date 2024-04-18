@@ -23,8 +23,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {
 		desc        string
-		regime      *tax.Regime // default, spain
-		tags        []cbc.Key   // default empty
+		regime      *tax.Regime    // default, spain
+		tags        []cbc.Key      // default empty
+		ext         tax.Extensions // default empty
 		lines       []tax.TaxableLine
 		date        *cal.Date
 		taxIncluded cbc.Code
@@ -208,13 +209,15 @@ func TestTotalBySumCalculate(t *testing.T) {
 		{
 			desc:   "with VAT in Azores",
 			regime: portugal,
-			tags:   []cbc.Key{pt.TagAzores},
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateStandard,
+							Ext: tax.Extensions{
+								pt.ExtKeyRegion: "PT-AC",
+							},
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -232,6 +235,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
+								Ext: tax.Extensions{
+									pt.ExtKeyRegion: "PT-AC",
+								},
 							},
 						},
 						Amount: num.MakeAmount(1600, 2),
