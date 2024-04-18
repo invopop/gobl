@@ -31,15 +31,18 @@ const (
 	KeySATImpuesto          cbc.Key = "sat-impuesto"            // for mapping to c_Impuesto’s codes
 )
 
-// SAT official codes to include in stamps.
+// CFDI and SAT official details to include in stamps. These are produced after sending
+// a document to the SAT and later presented on printed material. Unfortunately, these
+// details cannot be later used to generate a valid CFDI document.
 const (
-	StampCFDI       cbc.Key = "cfdi"        // Sello Digital del CFDI
-	StampCFDISerial cbc.Key = "cfdi-serial" // Número de Certificado del CFDI
-	StampSAT        cbc.Key = "sat"         // Sello Digital del SAT (optional)
-	StampSATSerial  cbc.Key = "sat-serial"  // Número de Certificado SAT
-	StampSATUUID    cbc.Key = "sat-uuid"    // Folio Fiscal
-	StampSATURL     cbc.Key = "sat-url"     // URL QR Code
-	StampSATChain   cbc.Key = "sat-chain"   // Cadena original del complemento de certificación digital del SAT
+	StampCFDISignature cbc.Key = "cfdi-sig"    // Sello Digital del CFDI
+	StampCFDISerial    cbc.Key = "cfdi-serial" // Número de Certificado del CFDI
+	StampSATSignature  cbc.Key = "sat-sig"     // Sello Digital del SAT (optional)
+	StampSATSerial     cbc.Key = "sat-serial"  // Número de Certificado SAT
+	StampSATAt         cbc.Key = "sat-at"      // Fecha y hora de certificación del SAT
+	StampSATUUID       cbc.Key = "sat-uuid"    // Folio Fiscal
+	StampSATURL        cbc.Key = "sat-url"     // URL QR Code
+	StampSATChain      cbc.Key = "sat-chain"   // Cadena original del complemento de certificación digital del SAT
 )
 
 // New provides the tax region definition
