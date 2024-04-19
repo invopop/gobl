@@ -5,7 +5,7 @@ go 1.18
 require (
 	cloud.google.com/go v0.110.2
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.6.0
 	github.com/invopop/jsonschema v0.12.0
 	github.com/invopop/validation v0.3.0
 	github.com/invopop/yaml v0.3.1

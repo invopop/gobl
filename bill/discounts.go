@@ -37,8 +37,8 @@ func (ld *LineDiscount) Validate() error {
 // Invoice Lines than anything else, as each discount must have the
 // correct taxes defined.
 type Discount struct {
-	// Unique identifying for the discount entry
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Unique identifier
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Line number inside the list of discounts (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Reference or ID for this Discount

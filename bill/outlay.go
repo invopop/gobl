@@ -18,7 +18,7 @@ import (
 // customer.
 type Outlay struct {
 	// Unique identity for this outlay.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Outlay number index inside the invoice for ordering (calculated).
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// When was the outlay made.

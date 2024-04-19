@@ -14,7 +14,7 @@ import (
 // Identity is used to define a code for a specific context.
 type Identity struct {
 	// Unique identity for this identity object.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Uniquely classify this identity using a key instead of a code.

@@ -7,6 +7,7 @@
       "properties": {
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "title": "UUID",
           "description": "Unique identity code"
         },
         "label": {

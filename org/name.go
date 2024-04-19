@@ -14,7 +14,7 @@ import (
 // https://www.w3.org/International/questions/qa-personal-names
 type Name struct {
 	// Unique identity code
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// What the person would like to be called
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
 	// Additional prefix to add to name, like Mrs. or Mr.

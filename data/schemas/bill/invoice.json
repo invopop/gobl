@@ -8,7 +8,7 @@
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
-          "description": "Unique identifying for the discount entry"
+          "description": "Unique identifier"
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -18,7 +18,7 @@
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the list of discounts (calculated).",
+          "description": "Line number inside the list of charges (calculated).",
           "calculated": true
         },
         "ref": {
@@ -109,7 +109,7 @@
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
-          "description": "Unique identifying for the discount entry"
+          "description": "Unique identifier"
         },
         "i": {
           "type": "integer",
@@ -198,7 +198,7 @@
         "uuid": {
           "$ref": "https://gobl.org/draft-0/uuid/uuid",
           "title": "UUID",
-          "description": "Unique document ID. Not required, but always recommended in addition to the Code."
+          "description": "Universally unique invoice ID."
         },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

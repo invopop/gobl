@@ -45,8 +45,8 @@ var (
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
-	// Unique document ID. Not required, but always recommended in addition to the Code.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Universally unique invoice ID.
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Type of invoice document subject to the requirements of the local tax regime.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Used as a prefix to group codes.

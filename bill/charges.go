@@ -35,11 +35,11 @@ func (lc *LineCharge) Validate() error {
 // Charge represents a surchange applied to the complete document
 // independent from the individual lines.
 type Charge struct {
-	// Unique identifying for the discount entry
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Unique identifier
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Key for grouping or identifying charges for tax purposes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Line number inside the list of discounts (calculated).
+	// Line number inside the list of charges (calculated).
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Code to used to refer to the this charge
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
@@ -61,7 +61,7 @@ type Charge struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// ValidateWithContext checks the discount's fields.
+// ValidateWithContext checks the charge's fields.
 func (m *Charge) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),

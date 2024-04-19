@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -38,6 +39,9 @@ func init() {
 	Register(GOBL.Add("schema"),
 		Object{},
 	)
+	// Specifically register UUID here as an exception case as we need
+	// to be able to use it from this schema package.
+	Register(GOBL.Add("uuid"), uuid.Empty)
 }
 
 // ID contains the official schema URL.
@@ -112,7 +116,7 @@ func (id ID) String() string {
 
 // Interface attempts to determine the type by looking up the ID in the
 // registered list of schemas, and providing an empty instance.
-func (id ID) Interface() interface{} {
+func (id ID) Interface() any {
 	typ := Type(id)
 	if typ == nil {
 		return nil

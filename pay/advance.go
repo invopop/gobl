@@ -19,7 +19,7 @@ import (
 // invoice which was later corrected or cancelled.
 type Advance struct {
 	// Unique identifier for this advance.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// When the advance was made.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// The payment means used to make the advance.

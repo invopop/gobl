@@ -4,6 +4,23 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [pending] - XXXX-XX-XX
+
+Upcoming changes...
+
+### Added
+
+- Schema Object can now extract a UUID without having to know what the type is.
+
+### Changed
+
+- UUID: refactored to use underlying string type instead of external package. This makes it easier to manage empty values, and avoids usage of pointers.
+- Removed all pointers to UUIDs.
+
+### Fixed
+
+- none
+
 ## [v0.72.0] - 2024-04-18
 
 Refactoring region handling for Portugal VAT and now supporting `-` in `cbc.Code`.

@@ -14,7 +14,7 @@ import (
 // defined locally.
 type Inbox struct {
 	// Unique ID. Useful if inbox is stored in a database.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
 	// Type of inbox being defined.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`

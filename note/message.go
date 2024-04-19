@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -12,6 +13,8 @@ import (
 // Message represents a simple message object with a title and some
 // content meant.
 type Message struct {
+	// UUID of the message.
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Summary of the message content
 	Title string `json:"title,omitempty" jsonschema:"title=Title"`
 	// Details of what exactly this message wants to communicate.
@@ -23,6 +26,7 @@ type Message struct {
 // Validate ensures the message contains everything it should.
 func (m *Message) Validate() error {
 	return validation.ValidateStruct(m,
+		validation.Field(&m.UUID),
 		validation.Field(&m.Content, validation.Required),
 		validation.Field(&m.Meta),
 	)

@@ -15,7 +15,7 @@ import (
 // Attribute names loosely based on the xCard file format.
 type Address struct {
 	// Internal ID used to identify the party inside a document.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Useful identifier, such as home, work, etc.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Box number or code for the post office box located at the address.

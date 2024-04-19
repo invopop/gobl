@@ -13,7 +13,7 @@ import (
 // Party represents a person or business entity.
 type Party struct {
 	// Unique identity code
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Legal name or representation of the organization.
 	Name string `json:"name" jsonschema:"title=Name"`
 	// Alternate short name.
@@ -50,7 +50,7 @@ func (p *Party) Calculate() error {
 	if p == nil {
 		return nil
 	}
-	p.UUID = uuid.Normalize(p.UUID)
+	uuid.Normalize(&p.UUID)
 	p.Ext = tax.NormalizeExtensions(p.Ext)
 	if p.TaxID == nil {
 		return nil

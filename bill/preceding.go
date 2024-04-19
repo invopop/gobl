@@ -17,7 +17,7 @@ import (
 // to be set to `corrective`, `credit-note`, or similar.
 type Preceding struct {
 	// Preceding document's UUID if available can be useful for tracing.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Type of the preceding document
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 	// Series identification code

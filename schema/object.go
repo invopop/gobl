@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"reflect"
 
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -29,7 +31,7 @@ const (
 // marshalling back into JSON.
 type Object struct {
 	Schema  ID `json:"$schema"`
-	payload interface{}
+	payload any
 }
 
 // Calculable defines the methods expected of a document payload that contains a `Calculate`
@@ -133,7 +135,20 @@ func (d *Object) insert(payload interface{}) error {
 	return nil
 }
 
-// Clone makes a copy of the document by serializing and deserializing it.
+// UUID extracts the UUID from the payload, if available.
+func (d *Object) UUID() uuid.UUID {
+	rv := reflect.ValueOf(d.payload)
+	if rv.Kind() == reflect.Ptr {
+		rv = rv.Elem()
+	}
+	id := rv.FieldByName("UUID")
+	if !id.IsValid() {
+		return uuid.Empty
+	}
+	return id.Interface().(uuid.UUID)
+}
+
+// Clone makes a copy of the document by serializing and deserializing
 // the contents into a new document instance.
 func (d *Object) Clone() (*Object, error) {
 	d2 := new(Object)
