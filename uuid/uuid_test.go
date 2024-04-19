@@ -37,15 +37,17 @@ func TestUUIDParsing(t *testing.T) {
 }
 
 func TestUUIDIsZero(t *testing.T) {
-	var up1 *uuid.UUID
-	assert.True(t, up1.IsZero())
 	var u1 uuid.UUID
 	assert.True(t, u1.IsZero())
+	var up1 *uuid.UUID
+	assert.True(t, up1.IsZero())
+	u1 = uuid.Zero
+	assert.True(t, u1.IsZero())
 
-	up1 = uuid.NewV1()
-	assert.False(t, up1.IsZero())
-	u1 = uuid.MakeV1()
+	u1 = uuid.V1()
 	assert.False(t, u1.IsZero())
+	up1 = &u1
+	assert.False(t, up1.IsZero())
 }
 
 /*

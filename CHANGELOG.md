@@ -10,7 +10,7 @@ Upcoming changes...
 
 ### Added
 
-- Schema Object can now extract a UUID without having to know what the type is.
+- Schema Object: `InjectUUID` and `UUID` methods to manipulate uuids on payloads without knowing what the underlying type is.
 
 ### Changed
 

@@ -135,7 +135,30 @@ func (d *Object) insert(payload interface{}) error {
 	return nil
 }
 
-// UUID extracts the UUID from the payload, if available.
+// InjectUUID sets the UUID of the document to the provided value
+// via reflection on the payload so that we don't need to know what
+// the underlying type is. If the payload does not have a UUID field,
+// this method will do nothing.
+//
+// Reflection is used, so avoid using this in high-performance scenarios.
+func (d *Object) InjectUUID(id uuid.UUID) {
+	rv := reflect.ValueOf(d.payload)
+	if rv.Kind() == reflect.Ptr {
+		rv = rv.Elem()
+	}
+	val := rv.FieldByName("UUID")
+	if !val.IsValid() {
+		return
+	}
+	_, ok := val.Interface().(uuid.UUID)
+	if !ok {
+		return
+	}
+	val.Set(reflect.ValueOf(id))
+}
+
+// UUID extracts the UUID from the payload using reflection. An empty
+// id is returned if the payload does not have a UUID field.
 func (d *Object) UUID() uuid.UUID {
 	rv := reflect.ValueOf(d.payload)
 	if rv.Kind() == reflect.Ptr {
@@ -145,7 +168,8 @@ func (d *Object) UUID() uuid.UUID {
 	if !id.IsValid() {
 		return uuid.Empty
 	}
-	return id.Interface().(uuid.UUID)
+	out := id.Interface().(uuid.UUID)
+	return out
 }
 
 // Clone makes a copy of the document by serializing and deserializing
