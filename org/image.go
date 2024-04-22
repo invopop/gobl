@@ -15,8 +15,7 @@ import (
 // details except the URL are optional, but are potentially useful
 // for validation if that's a requirement for the use case.
 type Image struct {
-	// Unique ID of the image
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Label to help identify the image.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// URL of the image

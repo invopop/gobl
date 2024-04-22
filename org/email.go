@@ -12,8 +12,7 @@ import (
 
 // Email describes the electronic mailing details.
 type Email struct {
-	// Unique identity code
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Identifier for the email.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Electronic mailing address.

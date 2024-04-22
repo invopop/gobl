@@ -4,12 +4,13 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fb3e81ee5d0964fa423dcfb62309a7a5c5150dc62cdd81427a68a2c85e893a66"
+			"val": "efe60c3d5ddfa24f32da719bf53eef07b42350da59fd43e7e6cc0eac9eb73def"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",

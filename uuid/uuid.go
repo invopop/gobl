@@ -16,6 +16,9 @@ import (
 // UUID defines a string wrapper for dealing with UUIDs using the google uuid
 // package for parsing and specific method support. This implementation has
 // been optimized for convenience and JSON conversion as opposed to performance.
+//
+// Note that this package is not registered inside its own schema. We
+// instead rely on the `"format"` parameter already included in JSON Schema.
 type UUID string
 
 // Version represents the version number of the UUID
@@ -238,12 +241,8 @@ func (u *UUID) UnmarshalText(txt []byte) error {
 	return nil
 }
 
-// JSONSchema returns the jsonschema schema object for the UUID.
-func (UUID) JSONSchema() *jsonschema.Schema {
-	return &jsonschema.Schema{
-		Type:        "string",
-		Format:      "uuid",
-		Title:       "UUID",
-		Description: "Universally Unique Identifier. Versions 1, 3, 4, and 5 supported.",
-	}
+// JSONSchemaExtend ensures the schema contains the additional UUID format
+// wherever it is used.
+func (UUID) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.Format = "uuid"
 }

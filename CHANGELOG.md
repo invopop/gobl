@@ -8,14 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 Upcoming changes...
 
+**IMPORTANT:** When running `Calculate()`, a uuid will now be assigned automatically to the document embedded in an Envelope if not already set. This is important to ensure that links between documents can always be maintained, no matter the source.
+
 ### Added
 
-- Schema Object: `InjectUUID` and `UUID` methods to manipulate uuids on payloads without knowing what the underlying type is.
+- Schema Object: `Calculate()` will now inject UUIDs.
+- Schema Object: `UUID()` method will provide the UUID of the underlying document.
+- `schema.Identifiable` interface to be able to read and set UUIDs on documents.
+- `uuid.Identify` that makes it easier to embed UUIDs into documents with helper methods.
 
 ### Changed
 
 - UUID: refactored to use underlying string type instead of external package. This makes it easier to manage empty values, and avoids usage of pointers.
-- Removed all pointers to UUIDs.
+- Removed all pointers to UUIDs and many cases replaced with `uuid.Identify` embedded structure.
 
 ### Fixed
 

@@ -6,9 +6,10 @@
     "Message": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "UUID of the message."
+          "description": "Universally Unique Identifier."
         },
         "title": {
           "type": "string",

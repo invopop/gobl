@@ -4,12 +4,13 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "06b5812258b4ea63f20b385f7de2035f03dbef9d45621d92721dd4f6043e5945"
+			"val": "c66644e68b25ab60d778df7551f6d70d78f7724cd38b5bdad06ef92bd995effb"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-X-002",
 		"issue_date": "2022-02-01",

@@ -13,8 +13,7 @@ import (
 // Message represents a simple message object with a title and some
 // content meant.
 type Message struct {
-	// UUID of the message.
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Summary of the message content
 	Title string `json:"title,omitempty" jsonschema:"title=Title"`
 	// Details of what exactly this message wants to communicate.

@@ -15,7 +15,7 @@ import (
 // The definition found here is based on the details required for spain.
 // If your country requires additional fields, please let us know.
 type Registration struct {
-	UUID     uuid.UUID     `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	Capital  *num.Amount   `json:"capital,omitempty" jsonschema:"title=Capital"`
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	Office   string        `json:"office,omitempty" jsonschema:"title=Office"`

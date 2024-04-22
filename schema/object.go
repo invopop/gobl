@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"reflect"
 
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
@@ -47,6 +46,13 @@ type Correctable interface {
 	CorrectionOptionsSchema() (interface{}, error)
 }
 
+// Identifiable defines the methods expected of a document payload that contains a UUID.
+// The `uuid` packages `Identify` struct can be embedded to satisfy this.
+type Identifiable interface {
+	GetUUID() uuid.UUID
+	SetUUID(uuid.UUID)
+}
+
 // NewObject instantiates an Object wrapper around the provided payload.
 func NewObject(payload interface{}) (*Object, error) {
 	d := new(Object)
@@ -64,8 +70,15 @@ func (d *Object) Instance() interface{} {
 }
 
 // Calculate will attempt to run the calculation method on the
-// document payload.
+// document payload. If the object implements the Identifiable
+// interface, it will also ensure the UUID is set.
 func (d *Object) Calculate() error {
+	if ident, ok := d.payload.(Identifiable); ok {
+		id := ident.GetUUID()
+		if id.IsZero() {
+			ident.SetUUID(uuid.V1())
+		}
+	}
 	pl, ok := d.payload.(Calculable)
 	if !ok {
 		return nil
@@ -135,41 +148,14 @@ func (d *Object) insert(payload interface{}) error {
 	return nil
 }
 
-// InjectUUID sets the UUID of the document to the provided value
-// via reflection on the payload so that we don't need to know what
-// the underlying type is. If the payload does not have a UUID field,
-// this method will do nothing.
-//
-// Reflection is used, so avoid using this in high-performance scenarios.
-func (d *Object) InjectUUID(id uuid.UUID) {
-	rv := reflect.ValueOf(d.payload)
-	if rv.Kind() == reflect.Ptr {
-		rv = rv.Elem()
-	}
-	val := rv.FieldByName("UUID")
-	if !val.IsValid() {
-		return
-	}
-	_, ok := val.Interface().(uuid.UUID)
-	if !ok {
-		return
-	}
-	val.Set(reflect.ValueOf(id))
-}
-
 // UUID extracts the UUID from the payload using reflection. An empty
 // id is returned if the payload does not have a UUID field.
 func (d *Object) UUID() uuid.UUID {
-	rv := reflect.ValueOf(d.payload)
-	if rv.Kind() == reflect.Ptr {
-		rv = rv.Elem()
-	}
-	id := rv.FieldByName("UUID")
-	if !id.IsValid() {
+	obj, ok := d.payload.(Identifiable)
+	if !ok {
 		return uuid.Empty
 	}
-	out := id.Interface().(uuid.UUID)
-	return out
+	return obj.GetUUID()
 }
 
 // Clone makes a copy of the document by serializing and deserializing

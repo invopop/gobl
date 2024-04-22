@@ -1,4 +1,5 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 issue_date: "2023-07-10"
 series: "TEST"
 code: "00002"
@@ -73,4 +74,3 @@ complements:
           - code: "IEPS"
             rate: "5.9195"
             amount: "57.30"
-

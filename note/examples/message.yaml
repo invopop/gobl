@@ -1,4 +1,5 @@
 $schema: "https://gobl.org/draft-0/note/message"
+uuid: "cfefe56a-9812-4b97-9b86-23eb6e9fb15a"
 title: "Test Message"
 content: |-
   We hope you like this test message!

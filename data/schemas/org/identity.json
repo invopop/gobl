@@ -6,9 +6,10 @@
     "Identity": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique identity for this identity object."
+          "description": "Universally Unique Identifier."
         },
         "label": {
           "type": "string",

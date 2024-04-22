@@ -22,8 +22,7 @@ import (
 // supplier and customer.
 // For general purpose use, the Item's `Ref` property is easier to use.
 type Item struct {
-	// Unique identity of this item
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Primary reference code that identifies this item.
 	// Additional codes can be provided in the 'identities' property.
 	Ref string `json:"ref,omitempty" jsonschema:"title=Ref"`

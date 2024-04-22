@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -39,9 +38,7 @@ func init() {
 	Register(GOBL.Add("schema"),
 		Object{},
 	)
-	// Specifically register UUID here as an exception case as we need
-	// to be able to use it from this schema package.
-	Register(GOBL.Add("uuid"), uuid.Empty)
+
 }
 
 // ID contains the official schema URL.

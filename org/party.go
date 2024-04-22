@@ -12,8 +12,7 @@ import (
 
 // Party represents a person or business entity.
 type Party struct {
-	// Unique identity code
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Legal name or representation of the organization.
 	Name string `json:"name" jsonschema:"title=Name"`
 	// Alternate short name.

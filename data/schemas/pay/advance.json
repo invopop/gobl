@@ -6,9 +6,10 @@
     "Advance": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique identifier for this advance."
+          "description": "Universally Unique Identifier."
         },
         "date": {
           "$ref": "https://gobl.org/draft-0/cal/date",

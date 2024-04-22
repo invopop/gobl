@@ -35,6 +35,7 @@ func ExampleNewEnvelope_complete() {
 	msg := &note.Message{
 		Content: "sample message content",
 	}
+	msg.SetUUID(uuid.MustParse("e8c70516-0098-11ef-92c8-0242ac120002"))
 	if err := env.Insert(msg); err != nil {
 		panic(err.Error())
 	}
@@ -54,29 +55,32 @@ func ExampleNewEnvelope_complete() {
 	// 		"uuid": "871c1e6a-8b5c-11ec-af5f-3e7e00ce5635",
 	// 		"dig": {
 	// 			"alg": "sha256",
-	// 			"val": "7d539c46ca03a4ecb1fcc4cb00d2ada34275708ee326caafee04d9dcfed862ee"
+	// 			"val": "6854b999501883c478f0dbcb929ea1cb33e0e738fd0e74ac8194d1e5b7991980"
 	// 		},
 	//		"draft": true
 	// 	},
 	// 	"doc": {
 	// 		"$schema": "https://gobl.org/draft-0/note/message",
+	//		"uuid": "e8c70516-0098-11ef-92c8-0242ac120002",
 	// 		"content": "sample message content"
 	// 	}
 	// }
 }
 
 func TestEnvelop(t *testing.T) {
-	msg := &note.Message{Content: testMessageContent}
+	msg := &note.Message{
+		Content: testMessageContent,
+	}
+	msg.UUID = uuid.MustParse("871c1e6a-8b5c-11ec-af5f-3e7e00ce5635")
 	e, err := gobl.Envelop(msg)
 	require.NoError(t, err)
 	if assert.NotNil(t, e) {
-		assert.Equal(t, "c6a5148ce90f70c24ebfe6de1abed0d0aafde4323a9bcf47cc4a5d544af9ea19", e.Head.Digest.Value)
+		assert.Equal(t, "cf75a55f8f00e57201685aebfa5765c908c1d22520858024610bbc2f6a494824", e.Head.Digest.Value)
 	}
 }
 
 func TestEnvelopeDocument(t *testing.T) {
-	m := new(note.Message)
-	m.Content = testMessageContent
+	m := testNoteExample()
 
 	e := gobl.NewEnvelope()
 	if assert.NotNil(t, e.Head) {
@@ -91,7 +95,7 @@ func TestEnvelopeDocument(t *testing.T) {
 
 	if assert.NotNil(t, e.Head.Digest) {
 		assert.Equal(t, e.Head.Digest.Algorithm, dsig.DigestSHA256, "unexpected digest algorithm")
-		assert.Equal(t, "c6a5148ce90f70c24ebfe6de1abed0d0aafde4323a9bcf47cc4a5d544af9ea19", e.Head.Digest.Value, "digest should be the same")
+		assert.Equal(t, "54eb5ac433e82575b554dc21a8e53b291479dab188dffaabc97e8141d1cdfc65", e.Head.Digest.Value, "digest should be the same")
 	}
 
 	assert.Empty(t, e.Signatures)
@@ -112,8 +116,7 @@ func TestEnvelopeExtract(t *testing.T) {
 }
 
 func TestEnvelopeInsert(t *testing.T) {
-	m := new(note.Message)
-	m.Content = testMessageContent
+	m := testNoteExample()
 
 	t.Run("missing head", func(t *testing.T) {
 		e := new(gobl.Envelope)
@@ -131,8 +134,7 @@ func TestEnvelopeInsert(t *testing.T) {
 }
 
 func TestEnvelopeCalculate(t *testing.T) {
-	m := new(note.Message)
-	m.Content = testMessageContent
+	m := testNoteExample()
 
 	t.Run("basics", func(t *testing.T) {
 		e := gobl.NewEnvelope()
@@ -319,9 +321,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 }
 
 func TestDocument(t *testing.T) {
-	msg := &note.Message{
-		Content: "test message",
-	}
+	msg := testNoteExample()
 	env := gobl.NewEnvelope()
 	err := env.Insert(msg)
 	require.NoError(t, err)
@@ -331,7 +331,7 @@ func TestDocument(t *testing.T) {
 	assert.Contains(t, id.String(), "https://gobl.org/")
 	assert.Contains(t, id.String(), "/note/message")
 
-	dig := "82a5cddc56f069ff17705f310161dd17cd8b00d94728e6be3fafdad980522a27"
+	dig := "54eb5ac433e82575b554dc21a8e53b291479dab188dffaabc97e8141d1cdfc65"
 	assert.Equal(t, id, doc.Schema)
 	sha, err := env.Digest()
 	require.NoError(t, err)
@@ -340,9 +340,7 @@ func TestDocument(t *testing.T) {
 
 	data, err := json.Marshal(doc)
 	require.NoError(t, err)
-	assert.Equal(t, `{"$schema":"`+id.String()+`","content":"test message"}`, string(data))
-	digest := dsig.NewSHA256Digest(data) // this works as the JSON is very simple!
-	assert.Equal(t, dig, digest.Value)
+	assert.Equal(t, `{"$schema":"`+id.String()+`","uuid":"e8c70516-0098-11ef-92c8-0242ac120002","content":"This is test content."}`, string(data))
 
 	doc = new(schema.Object)
 	err = json.Unmarshal(data, doc)
@@ -455,4 +453,11 @@ func TestEnvelopeVerify(t *testing.T) {
 		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
 	})
 
+}
+
+func testNoteExample() *note.Message {
+	m := new(note.Message)
+	m.Content = testMessageContent
+	m.UUID = uuid.MustParse("e8c70516-0098-11ef-92c8-0242ac120002")
+	return m
 }

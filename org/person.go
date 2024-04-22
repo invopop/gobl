@@ -11,8 +11,7 @@ import (
 
 // Person represents a human, and how to contact them electronically.
 type Person struct {
-	// Unique identity code
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Complete details on the name of the person
 	Name Name `json:"name" jsonschema:"title=Name"`
 	// What they do within an organization
