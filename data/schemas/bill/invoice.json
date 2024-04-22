@@ -9,7 +9,7 @@
           "type": "string",
           "format": "uuid",
           "title": "UUID",
-          "description": "Unique identifier"
+          "description": "Universally Unique Identifier."
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -111,7 +111,7 @@
           "type": "string",
           "format": "uuid",
           "title": "UUID",
-          "description": "Unique identifier"
+          "description": "Universally Unique Identifier."
         },
         "i": {
           "type": "integer",
@@ -394,7 +394,7 @@
           "type": "string",
           "format": "uuid",
           "title": "UUID",
-          "description": "Unique identifier for this line"
+          "description": "Universally Unique Identifier."
         },
         "i": {
           "type": "integer",
@@ -599,7 +599,7 @@
           "type": "string",
           "format": "uuid",
           "title": "UUID",
-          "description": "Unique identity for this outlay."
+          "description": "Universally Unique Identifier."
         },
         "i": {
           "type": "integer",
@@ -681,7 +681,7 @@
           "type": "string",
           "format": "uuid",
           "title": "UUID",
-          "description": "Preceding document's UUID if available can be useful for tracing."
+          "description": "Preceding document's UUID."
         },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
