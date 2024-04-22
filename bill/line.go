@@ -14,8 +14,7 @@ import (
 
 // Line is a single row in an invoice.
 type Line struct {
-	// Unique identifier for this line
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Line number inside the parent (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Number of items

@@ -35,8 +35,7 @@ func (lc *LineCharge) Validate() error {
 // Charge represents a surchange applied to the complete document
 // independent from the individual lines.
 type Charge struct {
-	// Unique identifier
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Key for grouping or identifying charges for tax purposes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Line number inside the list of charges (calculated).
