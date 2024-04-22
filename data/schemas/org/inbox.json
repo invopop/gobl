@@ -6,9 +6,10 @@
     "Inbox": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique ID. Useful if inbox is stored in a database."
+          "description": "Universally Unique Identifier."
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

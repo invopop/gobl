@@ -46,7 +46,7 @@ type Ordering struct {
 // DocumentReference provides a link to a existing document.
 type DocumentReference struct {
 	// Unique ID copied from the source document.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Series the reference document belongs to.
 	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Source document's code or other identifier.

@@ -6,7 +6,8 @@
     "Identity": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
           "description": "Unique universal identity code for this tax identity."
         },
@@ -18,7 +19,7 @@
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Type",
-          "description": "Type is set according the requirements of each regime, some have a single\ntax document type code, others require a choice to be made."
+          "description": "Type is set according to the requirements of each regime, some have a single\ntax document type code, others require a choice to be made."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

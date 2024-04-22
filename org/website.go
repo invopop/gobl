@@ -11,8 +11,7 @@ import (
 
 // Website describes what is expected for a web address.
 type Website struct {
-	// Unique identity code
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Identifier for this number.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Title of the website to help distinguish between this and other links.

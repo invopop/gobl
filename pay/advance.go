@@ -18,8 +18,7 @@ import (
 // as a deposit on an intent to purchase, or as credit from a previous
 // invoice which was later corrected or cancelled.
 type Advance struct {
-	// Unique identifier for this advance.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// When the advance was made.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date"`
 	// The payment means used to make the advance.

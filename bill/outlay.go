@@ -17,8 +17,7 @@ import (
 // for an accountant or lawyer to pay for notary fees, but forward the invoice to the
 // customer.
 type Outlay struct {
-	// Unique identity for this outlay.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Outlay number index inside the invoice for ordering (calculated).
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// When was the outlay made.

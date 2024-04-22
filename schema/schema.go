@@ -38,6 +38,7 @@ func init() {
 	Register(GOBL.Add("schema"),
 		Object{},
 	)
+
 }
 
 // ID contains the official schema URL.
@@ -112,7 +113,7 @@ func (id ID) String() string {
 
 // Interface attempts to determine the type by looking up the ID in the
 // registered list of schemas, and providing an empty instance.
-func (id ID) Interface() interface{} {
+func (id ID) Interface() any {
 	typ := Type(id)
 	if typ == nil {
 		return nil

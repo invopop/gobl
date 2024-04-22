@@ -66,7 +66,7 @@ func (r versionRule) Validate(value interface{}) error {
 		}
 		return nil
 	}
-	if id.Version() != r.version {
+	if id.Version() != Version(r.version) {
 		return errors.New("invalid version")
 	}
 	if r.ttl == 0 {

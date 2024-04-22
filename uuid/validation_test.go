@@ -33,14 +33,12 @@ func TestUUIDValidation(t *testing.T) {
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "invalid version")
 	}
-	err = validation.Validate(uuid.UUID{}, uuid.IsV1)
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "invalid version")
-	}
+	err = validation.Validate("", uuid.IsV1)
+	assert.NoError(t, err)
+
 	err = validation.Validate(u4, uuid.IsV1)
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "invalid version")
-	}
+	assert.ErrorContains(t, err, "invalid version")
+
 	assert.NoError(t, validation.Validate(u1, uuid.Within(1*time.Second)))
 	time.Sleep(11 * time.Millisecond)
 	err = validation.Validate(u1, uuid.Within(10*time.Millisecond))
@@ -48,10 +46,8 @@ func TestUUIDValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "timestamp is outside acceptable range")
 	}
 	assert.NoError(t, validation.Validate(u1, uuid.IsNotZero))
-	err = validation.Validate(uuid.UUID{}.String(), uuid.IsNotZero)
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "is zero")
-	}
+	err = validation.Validate(uuid.Zero, uuid.IsNotZero)
+	assert.ErrorContains(t, err, "is zero")
 
 	pu1 := uuid.NewV1()
 	err = validation.Validate(pu1, uuid.IsV1)

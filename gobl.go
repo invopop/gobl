@@ -11,7 +11,6 @@ import (
 	_ "github.com/invopop/gobl/num"
 	_ "github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
-	_ "github.com/invopop/gobl/uuid"
 
 	"github.com/invopop/gobl/schema"
 )

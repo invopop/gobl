@@ -5,6 +5,12 @@
   "$defs": {
     "Message": {
       "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
         "title": {
           "type": "string",
           "title": "Title",

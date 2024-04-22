@@ -16,8 +16,8 @@ import (
 // will replace, subtract from, or add to. If this is used, the invoice type code will most likely need
 // to be set to `corrective`, `credit-note`, or similar.
 type Preceding struct {
-	// Preceding document's UUID if available can be useful for tracing.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	// Preceding document's UUID.
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 	// Type of the preceding document
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 	// Series identification code

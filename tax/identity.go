@@ -18,12 +18,12 @@ import (
 // rules of a given tax jurisdiction.
 type Identity struct {
 	// Unique universal identity code for this tax identity.
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
 
 	// ISO country code for Where the tax identity was issued.
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
 
-	// Type is set according the requirements of each regime, some have a single
+	// Type is set according to the requirements of each regime, some have a single
 	// tax document type code, others require a choice to be made.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 

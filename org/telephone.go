@@ -11,8 +11,7 @@ import (
 
 // Telephone describes what is expected for a telephone number.
 type Telephone struct {
-	// Unique identity code
-	UUID *uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
+	uuid.Identify
 	// Identifier for this number.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// The number to be dialed in ITU E.164 international format.

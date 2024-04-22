@@ -266,7 +266,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		Reason:    o.Reason,
 		Ext:       o.Ext,
 	}
-	inv.UUID = nil
+	inv.UUID = ""
 	inv.Type = o.Type
 	inv.Series = ""
 	inv.Code = ""

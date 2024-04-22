@@ -6,9 +6,10 @@
     "Person": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique identity code"
+          "description": "Universally Unique Identifier."
         },
         "name": {
           "$ref": "https://gobl.org/draft-0/org/name",

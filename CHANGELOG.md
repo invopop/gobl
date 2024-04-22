@@ -4,6 +4,28 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [pending] - XXXX-XX-XX
+
+Upcoming changes...
+
+**IMPORTANT:** When running `Calculate()`, a uuid will now be assigned automatically to the document embedded in an Envelope if not already set. This is important to ensure that links between documents can always be maintained, no matter the source.
+
+### Added
+
+- Schema Object: `Calculate()` will now inject UUIDs.
+- Schema Object: `UUID()` method will provide the UUID of the underlying document.
+- `schema.Identifiable` interface to be able to read and set UUIDs on documents.
+- `uuid.Identify` that makes it easier to embed UUIDs into documents with helper methods.
+
+### Changed
+
+- UUID: refactored to use underlying string type instead of external package. This makes it easier to manage empty values, and avoids usage of pointers.
+- Removed all pointers to UUIDs and many cases replaced with `uuid.Identify` embedded structure.
+
+### Fixed
+
+- none
+
 ## [v0.72.0] - 2024-04-18
 
 Refactoring region handling for Portugal VAT and now supporting `-` in `cbc.Code`.

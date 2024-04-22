@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -29,7 +30,7 @@ const (
 // marshalling back into JSON.
 type Object struct {
 	Schema  ID `json:"$schema"`
-	payload interface{}
+	payload any
 }
 
 // Calculable defines the methods expected of a document payload that contains a `Calculate`
@@ -43,6 +44,13 @@ type Calculable interface {
 type Correctable interface {
 	Correct(...Option) error
 	CorrectionOptionsSchema() (interface{}, error)
+}
+
+// Identifiable defines the methods expected of a document payload that contains a UUID.
+// The `uuid` packages `Identify` struct can be embedded to satisfy this.
+type Identifiable interface {
+	GetUUID() uuid.UUID
+	SetUUID(uuid.UUID)
 }
 
 // NewObject instantiates an Object wrapper around the provided payload.
@@ -62,8 +70,15 @@ func (d *Object) Instance() interface{} {
 }
 
 // Calculate will attempt to run the calculation method on the
-// document payload.
+// document payload. If the object implements the Identifiable
+// interface, it will also ensure the UUID is set.
 func (d *Object) Calculate() error {
+	if ident, ok := d.payload.(Identifiable); ok {
+		id := ident.GetUUID()
+		if id.IsZero() {
+			ident.SetUUID(uuid.V1())
+		}
+	}
 	pl, ok := d.payload.(Calculable)
 	if !ok {
 		return nil
@@ -133,7 +148,17 @@ func (d *Object) insert(payload interface{}) error {
 	return nil
 }
 
-// Clone makes a copy of the document by serializing and deserializing it.
+// UUID extracts the UUID from the payload using reflection. An empty
+// id is returned if the payload does not have a UUID field.
+func (d *Object) UUID() uuid.UUID {
+	obj, ok := d.payload.(Identifiable)
+	if !ok {
+		return uuid.Empty
+	}
+	return obj.GetUUID()
+}
+
+// Clone makes a copy of the document by serializing and deserializing
 // the contents into a new document instance.
 func (d *Object) Clone() (*Object, error) {
 	d2 := new(Object)

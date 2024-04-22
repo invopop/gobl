@@ -6,9 +6,10 @@
     "Charge": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique identifying for the discount entry"
+          "description": "Unique identifier"
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -18,7 +19,7 @@
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the list of discounts (calculated).",
+          "description": "Line number inside the list of charges (calculated).",
           "calculated": true
         },
         "ref": {
@@ -107,9 +108,10 @@
     "Discount": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique identifying for the discount entry"
+          "description": "Unique identifier"
         },
         "i": {
           "type": "integer",
@@ -169,7 +171,8 @@
     "DocumentReference": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
           "description": "Unique ID copied from the source document."
         },
@@ -196,9 +199,10 @@
     "Invoice": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
-          "description": "Unique document ID. Not required, but always recommended in addition to the Code."
+          "description": "Universally Unique Identifier."
         },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
@@ -387,7 +391,8 @@
     "Line": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
           "description": "Unique identifier for this line"
         },
@@ -591,7 +596,8 @@
     "Outlay": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
           "description": "Unique identity for this outlay."
         },
@@ -672,7 +678,8 @@
     "Preceding": {
       "properties": {
         "uuid": {
-          "$ref": "https://gobl.org/draft-0/uuid/uuid",
+          "type": "string",
+          "format": "uuid",
           "title": "UUID",
           "description": "Preceding document's UUID if available can be useful for tracing."
         },
