@@ -232,7 +232,7 @@ func (e *Envelope) calculate() error {
 		e.Head = head.NewHeader()
 	}
 	if e.Head.UUID.IsZero() {
-		e.Head.UUID = uuid.V1()
+		e.Head.UUID = uuid.V7()
 	}
 	var err error
 	e.Head.Digest, err = e.Digest()

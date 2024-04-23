@@ -17,24 +17,37 @@ var (
 	IsV4 = versionRule{version: 4}
 	// IsV5 confirms the UUID is version 5
 	IsV5 = versionRule{version: 5}
+	// IsV6 confirms the UUID is version 6
+	IsV6 = versionRule{version: 6}
+	// IsV7 confirms the UUID is version 7
+	IsV7 = versionRule{version: 7}
+	// HasTimestamp confirms the UUID is based on a timestamp version
+	HasTimestamp = versionRule{hasTimestamp: true}
+	// Timeless confirms the UUID is not based on a timestamp version
+	Timeless = versionRule{timeless: true}
 	// IsNotZero confirms the UUID is not zero
 	IsNotZero = versionRule{notZero: true}
 )
 
 type versionRule struct {
-	version uuid.Version
-	notZero bool
-	ttl     time.Duration
+	version      uuid.Version
+	hasTimestamp bool
+	timeless     bool
+	notZero      bool
+	ttl          time.Duration
 }
 
+const (
+	maxFutureDuration = -10 * time.Second
+)
+
 // Within is a validation method that can be used to determine if the UUID
-// corresponds do UUIDv1 standard and was timestamped within the acceptable
-// time to live from now. If time checks are enabled, future UUIDs will not
-// be allowed, this could be a problem.
+// is version 1, 6, or 7 and contains a timestamp that is greater than the
+// current time minus the ttl. A tolerance is allowed for future timestamps.
 func Within(ttl time.Duration) validation.Rule {
 	return versionRule{
-		version: 1,
-		ttl:     ttl,
+		hasTimestamp: true,
+		ttl:          ttl,
 	}
 }
 
@@ -66,8 +79,26 @@ func (r versionRule) Validate(value interface{}) error {
 		}
 		return nil
 	}
-	if id.Version() != Version(r.version) {
-		return errors.New("invalid version")
+	if r.version != 0 {
+		if id.Version() != Version(r.version) {
+			return errors.New("invalid version")
+		}
+	}
+	if r.hasTimestamp {
+		switch id.Version() {
+		case 1, 6, 7:
+			// good
+		default:
+			return errors.New("not timestamped")
+		}
+	}
+	if r.timeless {
+		switch id.Version() {
+		case 3, 4, 5:
+			// good
+		default:
+			return errors.New("has timestamp")
+		}
 	}
 	if r.ttl == 0 {
 		// don't check empty duration
@@ -78,7 +109,7 @@ func (r versionRule) Validate(value interface{}) error {
 	tn := time.Now()
 	ti := id.Timestamp()
 	d := tn.Sub(ti)
-	if d < 0 {
+	if d < maxFutureDuration {
 		return errors.New("timestamp cannot be in the future")
 	}
 	if d > r.ttl {

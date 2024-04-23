@@ -4,7 +4,21 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [v0.73.0]] - 2024-04-22
+## [v0.xx.x] - xxxx-xx-xx
+
+### Added
+
+- Additional UUID validation rules: `IsV6`, `Isv7`, `HasTimestamp`, and `Timeless`.
+
+### Changed
+
+- Using Version 7 UUIDs as default in GOBL.
+
+### Fixed
+
+- Parsing empty UUIDs now returns an empty UUID instead of an error.
+
+## [v0.73.0] - 2024-04-22
 
 Refactoring UUID support.
 

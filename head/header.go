@@ -38,7 +38,7 @@ type Header struct {
 // NewHeader creates a new header and automatically assigns a UUIDv1.
 func NewHeader() *Header {
 	h := new(Header)
-	h.UUID = uuid.V1()
+	h.UUID = uuid.V7()
 	h.Meta = make(cbc.Meta)
 	h.Draft = true // default to draft
 	return h
@@ -52,7 +52,7 @@ func (h *Header) Validate() error {
 // ValidateWithContext checks that the header contains the basic information we need to function.
 func (h *Header) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, h,
-		validation.Field(&h.UUID, validation.Required, uuid.IsV1),
+		validation.Field(&h.UUID, validation.Required, uuid.HasTimestamp),
 		validation.Field(&h.Digest, validation.Required),
 		validation.Field(&h.Stamps,
 			validation.When(h.Draft, validation.Empty),

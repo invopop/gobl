@@ -3,6 +3,7 @@ package uuid_test
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
@@ -15,18 +16,19 @@ func TestUUIDParsing(t *testing.T) {
 
 	u1, err := uuid.Parse(v1s)
 	assert.NoError(t, err)
-
-	if u1.Version() != 1 {
-		t.Errorf("did not parse a v1 UUID")
-	}
+	assert.Equal(t, uuid.Version(1), u1.Version())
 
 	u4, err := uuid.Parse(v4s)
-	if err != nil {
-		t.Errorf("did not expect error, got: %v", err.Error())
-	}
-	if u4.Version() != 4 {
-		t.Errorf("did not parse a v4 UUID")
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, uuid.Version(4), u4.Version())
+
+	u1, err = uuid.Parse("")
+	assert.NoError(t, err)
+	assert.Equal(t, u1, uuid.Empty)
+
+	u1, err = uuid.Parse("fooo")
+	assert.ErrorContains(t, err, "invalid UUID length: 4")
+	assert.Equal(t, u1, uuid.Empty)
 
 	u1 = uuid.ShouldParse("")
 	assert.True(t, u1.IsZero())
@@ -50,23 +52,26 @@ func TestUUIDIsZero(t *testing.T) {
 	assert.False(t, up1.IsZero())
 }
 
-/*
-func TestNormalizeUUID(t *testing.T) {
-	var u *uuid.UUID
-	u2 := uuid.Normalize(u)
-	assert.Nil(t, u2)
+func TestUUIDTimestasmp(t *testing.T) {
+	u := uuid.V1()
+	ts := u.Timestamp()
+	assert.False(t, ts.IsZero())
+	assert.WithinDuration(t, ts, time.Now(), 10*time.Second)
 
-	u = &uuid.UUID{}
-	assert.Equal(t, "00000000-0000-0000-0000-000000000000", u.String())
+	u = uuid.V6()
+	ts = u.Timestamp()
+	assert.False(t, ts.IsZero())
+	assert.WithinDuration(t, ts, time.Now(), 10*time.Second)
 
-	u2 = uuid.Normalize(u)
-	assert.Nil(t, u2)
+	u = uuid.V7()
+	ts = u.Timestamp()
+	assert.False(t, ts.IsZero())
+	assert.WithinDuration(t, ts, time.Now(), 10*time.Second)
 
-	u3 := uuid.MustParse("03907310-8daa-11eb-8dcd-0242ac130003")
-	u2 = uuid.Normalize(&u3)
-	assert.Equal(t, u3.String(), u2.String())
+	u = uuid.V4()
+	ts = u.Timestamp()
+	assert.True(t, ts.IsZero())
 }
-*/
 
 func TestUUIDJSON(t *testing.T) {
 	v1s := "03907310-8daa-11eb-8dcd-0242ac130003"
@@ -128,12 +133,6 @@ func TestUUIDUnmarshalJSON(t *testing.T) {
 			data: `{"id":""}`,
 			want: m{},
 			err:  "invalid UUID length: 0",
-		},
-		{
-			name: "invalid version",
-			data: `{"id":"016b1eb4-cfb6-6731-928c-ecf3b3904e1e"}`, // v6
-			want: m{},
-			err:  "unsupported version",
 		},
 		{
 			name: "null",

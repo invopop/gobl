@@ -20,49 +20,170 @@ func (ut *uuidTestStruct) Validate() error {
 }
 
 func TestUUIDValidation(t *testing.T) {
-	u1 := uuid.MakeV1()
-	u4 := uuid.MakeV4()
-	assert.NoError(t, validation.Validate(u1, uuid.IsV1), "should accept UUIDv1")
-	assert.NoError(t, validation.Validate(nil, uuid.IsV1), "should ignore nil")
-	assert.NoError(t, validation.Validate("", uuid.IsV1), "should ignore empty string")
-	assert.NoError(t, validation.Validate(u1.String(), uuid.IsV1), "should accept string")
-	assert.NoError(t, validation.Validate(u4, uuid.IsV4))
-	assert.NoError(t, validation.Validate(nil, uuid.IsV4), "should ignore nil")
-	assert.NoError(t, validation.Validate("", uuid.IsV4), "should ignore empty string")
-	err := validation.Validate(u1, uuid.IsV4)
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "invalid version")
+	base := uuid.UUID("03907310-8daa-11eb-8dcd-0242ac130003")
+	tests := []struct {
+		name string
+		uuid any
+		rule validation.Rule
+		err  string
+	}{
+		{
+			name: "valid v1",
+			uuid: uuid.V1(),
+			rule: uuid.IsV1,
+		},
+		{
+			name: "valid v1 pointer",
+			uuid: &base,
+			rule: uuid.IsV1,
+		},
+		{
+			name: "not uuid v1",
+			uuid: uuid.V4(),
+			rule: uuid.IsV1,
+			err:  "invalid version",
+		},
+		{
+			name: "ignore nil",
+			uuid: nil,
+			rule: uuid.IsV1,
+		},
+		{
+			name: "ignore empty",
+			uuid: "",
+			rule: uuid.IsV1,
+		},
+		{
+			name: "validate string",
+			uuid: uuid.V1().String(),
+			rule: uuid.IsV1,
+		},
+		{
+			name: "reject invalid string",
+			uuid: uuid.V4().String(),
+			rule: uuid.IsV1,
+			err:  "invalid version",
+		},
+		{
+			name: "valid v4",
+			uuid: uuid.V4(),
+			rule: uuid.IsV4,
+		},
+		{
+			name: "not uuid v4",
+			uuid: uuid.V1(),
+			rule: uuid.IsV4,
+			err:  "invalid version",
+		},
+		{
+			name: "valid v3",
+			uuid: uuid.V3(base, []byte("test")),
+			rule: uuid.IsV3,
+		},
+		{
+			name: "invalid v3",
+			uuid: uuid.V5(base, []byte("test")),
+			rule: uuid.IsV3,
+			err:  "invalid version",
+		},
+		{
+			name: "valid v5",
+			uuid: uuid.V5(base, []byte("test")),
+			rule: uuid.IsV5,
+		},
+		{
+			name: "valid v7",
+			uuid: uuid.V7(),
+			rule: uuid.IsV7,
+		},
+		{
+			name: "not uuid v7",
+			uuid: uuid.V1(),
+			rule: uuid.IsV7,
+			err:  "invalid version",
+		},
+		{
+			name: "has timestamp v1",
+			uuid: uuid.V1(),
+			rule: uuid.HasTimestamp,
+		},
+		{
+			name: "has timestamp v6",
+			uuid: uuid.V6(),
+			rule: uuid.HasTimestamp,
+		},
+		{
+			name: "has timestamp v7",
+			uuid: uuid.V7(),
+			rule: uuid.HasTimestamp,
+		},
+		{
+			name: "no timestamp v4",
+			uuid: uuid.V4(),
+			rule: uuid.HasTimestamp,
+			err:  "not timestamped",
+		},
+		{
+			name: "timeless",
+			uuid: uuid.V4(),
+			rule: uuid.Timeless,
+		},
+		{
+			name: "not timeless",
+			uuid: uuid.V7(),
+			rule: uuid.Timeless,
+			err:  "has timestamp",
+		},
+		{
+			name: "not zero",
+			uuid: uuid.V7(),
+			rule: uuid.IsNotZero,
+		},
+		{
+			name: "zero",
+			uuid: uuid.UUID("00000000-0000-0000-0000-000000000000"),
+			rule: uuid.IsNotZero,
+			err:  "is zero",
+		},
+		{
+			name: "zero empty",
+			uuid: "",
+			rule: uuid.IsNotZero,
+		},
 	}
-	err = validation.Validate("", uuid.IsV1)
-	assert.NoError(t, err)
-
-	err = validation.Validate(u4, uuid.IsV1)
-	assert.ErrorContains(t, err, "invalid version")
-
-	assert.NoError(t, validation.Validate(u1, uuid.Within(1*time.Second)))
-	time.Sleep(11 * time.Millisecond)
-	err = validation.Validate(u1, uuid.Within(10*time.Millisecond))
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "timestamp is outside acceptable range")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validation.Validate(tt.uuid, tt.rule)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				assert.ErrorContains(t, err, tt.err)
+			}
+		})
 	}
-	assert.NoError(t, validation.Validate(u1, uuid.IsNotZero))
-	err = validation.Validate(uuid.Zero, uuid.IsNotZero)
-	assert.ErrorContains(t, err, "is zero")
 
-	pu1 := uuid.NewV1()
-	err = validation.Validate(pu1, uuid.IsV1)
-	assert.NoError(t, err, "failed to validate pointer")
+	// Timestamp within tests
+	id := uuid.V1()
+	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
+	time.Sleep(12 * time.Millisecond)
+	err := validation.Validate(id, uuid.Within(10*time.Millisecond))
+	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
+
+	id = uuid.V6()
+	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
+	time.Sleep(12 * time.Millisecond)
+	err = validation.Validate(id, uuid.Within(10*time.Millisecond))
+	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
+
+	id = uuid.V7()
+	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
+	time.Sleep(12 * time.Millisecond)
+	err = validation.Validate(id, uuid.Within(10*time.Millisecond))
+	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
 
 	sample := new(uuidTestStruct)
 	sample.UUID = uuid.NewV1()
 	err = sample.Validate()
 	assert.NoError(t, err)
 
-	// Additional checks for other UUID versions
-	u3 := uuid.MakeV3(u1, []byte("test"))
-	u5 := uuid.MakeV5(u1, []byte("test"))
-	assert.NoError(t, validation.Validate(u3, uuid.IsV3))
-	assert.NoError(t, validation.Validate(u5, uuid.IsV5))
-	assert.Error(t, validation.Validate(u1, uuid.IsV3))
-	assert.Error(t, validation.Validate(u1, uuid.IsV5))
 }

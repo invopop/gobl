@@ -3,7 +3,6 @@ package uuid
 
 import (
 	"crypto/rand"
-	"errors"
 	"fmt"
 	"time"
 
@@ -30,7 +29,8 @@ const (
 	Zero  UUID = "00000000-0000-0000-0000-000000000000"
 )
 
-// V1 generates a version 1 UUID.
+// V1 generates a version 1 UUID. We strongly recommend using V7 now as an alternative
+// as it provides the same functionality with a more secure random node ID.
 func V1() UUID {
 	return UUID(uuid.Must(uuid.NewUUID()).String())
 }
@@ -58,6 +58,21 @@ func V4() UUID {
 // don't need the security of SHA1 and performance is a concern, use UUIDv3 instead.
 func V5(space UUID, data []byte) UUID {
 	return UUID(uuid.NewSHA1(parse(space), data).String())
+}
+
+// V6 generates a version 6 UUID, a drop-in replaced for V1 UUIDs that uses random
+// data instead of node. It maintains a similar structure to V1 UUIDs with the
+// timestamp, so no ordering is maintained.
+func V6() UUID {
+	return UUID(uuid.Must(uuid.NewV6()).String())
+}
+
+// V7 generates a new UUIDv7, a replacement for V1 or V6 UUIDs which
+// combines the Unix timestamp with millisecond precision and random data.
+// An important difference with other versions is that order is maintained,
+// making this a great option for primary keys in databases.
+func V7() UUID {
+	return UUID(uuid.Must(uuid.NewV7()).String())
 }
 
 // MakeV1 generates a version 1 UUID.
@@ -131,11 +146,14 @@ func NewV5(space UUID, data []byte) *UUID {
 }
 
 // Timestamp extracts the time.
-// Anything other than a v1 UUID will provide zero time without an error,
+// Anything other than a version 1, 6, or 7 UUID will provide zero time without an error,
 // so ensure your error checks are performed previously.
 func (u UUID) Timestamp() time.Time {
 	id := parse(u)
-	if id.Version() != 1 {
+	switch id.Version() {
+	case 1, 6, 7:
+		// good
+	default:
 		return time.Time{}
 	}
 	return time.Unix(id.Time().UnixTime())
@@ -148,13 +166,7 @@ func (u UUID) Version() Version {
 
 // IsZero returns true if the UUID is all zeros or empty.
 func (u *UUID) IsZero() bool {
-	if u == nil {
-		return true
-	}
-	if *u == "" {
-		return true
-	}
-	return *u == Zero
+	return u == nil || *u == Empty || *u == Zero
 }
 
 // String provides the string representation of the UUID.
@@ -169,7 +181,13 @@ func (u UUID) Validate() error {
 
 // Parse decodes s into a UUID or provides an error.
 func Parse(s string) (UUID, error) {
+	if s == "" {
+		return Empty, nil
+	}
 	id, err := uuid.Parse(s)
+	if err != nil {
+		return Empty, err
+	}
 	return UUID(id.String()), err
 }
 
@@ -217,7 +235,7 @@ func NodeID() string {
 // Normalize will ensure that zero value UUIDs will be empty strings
 // instead of zeros.
 func Normalize(u *UUID) {
-	if u == nil || *u == Empty {
+	if u == nil {
 		return
 	}
 	if u.IsZero() {
@@ -230,12 +248,6 @@ func (u *UUID) UnmarshalText(txt []byte) error {
 	id, err := uuid.Parse(string(txt))
 	if err != nil {
 		return err
-	}
-	switch id.Version() {
-	case 0, 1, 3, 4, 5:
-		// good
-	default:
-		return errors.New("unsupported version")
 	}
 	*u = UUID(id.String())
 	return nil

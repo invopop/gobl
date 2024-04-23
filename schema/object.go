@@ -76,7 +76,7 @@ func (d *Object) Calculate() error {
 	if ident, ok := d.payload.(Identifiable); ok {
 		id := ident.GetUUID()
 		if id.IsZero() {
-			ident.SetUUID(uuid.V1())
+			ident.SetUUID(uuid.V7())
 		}
 	}
 	pl, ok := d.payload.(Calculable)
