@@ -242,13 +242,14 @@ func Normalize(u *UUID) {
 	}
 }
 
-// UnmarshalText will ensure the UUID is always a valid UUID when unmarshalling.
+// UnmarshalText will ensure the UUID is always a valid UUID when unmarshalling
+// and just return an empty value if incorrect.
 func (u *UUID) UnmarshalText(txt []byte) error {
-	id, err := uuid.Parse(string(txt))
+	id, err := Parse(string(txt))
 	if err != nil {
 		return err
 	}
-	*u = UUID(id.String())
+	*u = id
 	return nil
 }
 

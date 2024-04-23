@@ -132,7 +132,7 @@ func TestUUIDUnmarshalJSON(t *testing.T) {
 			name: "empty string",
 			data: `{"id":""}`,
 			want: m{},
-			err:  "invalid UUID length: 0",
+			err:  "",
 		},
 		{
 			name: "null",
