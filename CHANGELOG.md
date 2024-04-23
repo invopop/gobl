@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- Using Version 7 UUIDs as default in GOBL.
+- Using Version 7 UUIDs as default in GOBL. This version enables ordering by UUID and uses random extra data instead of a node ID.
 
 ### Fixed
 
