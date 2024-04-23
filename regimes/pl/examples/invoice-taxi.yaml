@@ -1,0 +1,42 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+currency: "PLN"
+issue_date: "2023-12-20"
+code: "SAMPLE-001"
+
+supplier:
+  tax_id:
+    country: "PL"
+    code: "9876543210"
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "00-015"
+      country: "PL"
+
+customer:
+  tax_id:
+    country: "PL"
+    code: "1234567788"
+  name: "Sample Consumer"
+  addresses:
+    - num: "43"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "00-015"
+      country: "PL"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Transport service"
+      price: "1.00"
+      unit: "trip"
+    taxes:
+      - cat: VAT
+        rate: special
