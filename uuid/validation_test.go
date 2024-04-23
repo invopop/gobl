@@ -153,39 +153,39 @@ func TestUUIDValidation(t *testing.T) {
 		{
 			name: "general good v1",
 			uuid: uuid.V1(),
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 		},
 		{
 			name: "general good v4",
 			uuid: uuid.V4(),
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 		},
 		{
 			name: "general good v7",
 			uuid: uuid.V7(),
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 		},
 		{
 			name: "general empty",
 			uuid: "",
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 		},
 		{
 			name: "general bad string",
 			uuid: "fooo",
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 			err:  "invalid UUID length: 4",
 		},
 		{
 			name: "general bad uuid",
 			uuid: uuid.UUID("fooo"),
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 			err:  "invalid UUID length: 4",
 		},
 		{
 			name: "other type",
 			uuid: 123,
-			rule: uuid.IsValid,
+			rule: uuid.Valid,
 			err:  "not a UUID",
 		},
 	}

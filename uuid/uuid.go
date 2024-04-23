@@ -175,7 +175,7 @@ func (u UUID) String() string {
 
 // Validate checks to ensure the value is a UUID
 func (u UUID) Validate() error {
-	return validation.Validate(string(u), IsValid)
+	return validation.Validate(string(u), Valid)
 }
 
 // Parse decodes s into a UUID or provides an error.

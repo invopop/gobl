@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	// IsValid confirms the UUID is valid
-	IsValid = versionRule{}
+	// Valid confirms the UUID is valid
+	Valid = versionRule{}
 	// IsV1 confirms the UUID is version 1
 	IsV1 = versionRule{version: 1}
 	// IsV3 confirms the UUID is version 3

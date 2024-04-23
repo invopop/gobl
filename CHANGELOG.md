@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- Additional UUID validation rules: `IsV6`, `Isv7`, `HasTimestamp`, and `Timeless`.
+- Additional UUID validation rules: `Valid`, `IsV6`, `Isv7`, `HasTimestamp`, and `Timeless`.
 
 ### Changed
 
