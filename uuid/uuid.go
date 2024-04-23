@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 // UUID defines a string wrapper for dealing with UUIDs using the google uuid
@@ -176,7 +175,7 @@ func (u UUID) String() string {
 
 // Validate checks to ensure the value is a UUID
 func (u UUID) Validate() error {
-	return validation.Validate(string(u), is.UUID)
+	return validation.Validate(string(u), IsValid)
 }
 
 // Parse decodes s into a UUID or provides an error.
