@@ -5,13 +5,14 @@ import (
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewHeader(t *testing.T) {
 	h := head.NewHeader()
 	assert.False(t, h.UUID.IsZero())
-	assert.True(t, h.UUID.Version() == 1)
+	assert.Equal(t, uuid.Version(7), h.UUID.Version())
 	assert.NotPanics(t, func() {
 		h.Meta["foo"] = "bar"
 		h.Tags = append(h.Tags, "foo")

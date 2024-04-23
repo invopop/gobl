@@ -39,6 +39,7 @@ func TestIdentifyV1(t *testing.T) {
 		Name:     "test",
 	}
 	assert.NotEmpty(t, doc.GetUUID())
+	assert.False(t, doc.UUID.Timestamp().IsZero())
 }
 
 func TestIdentifyV4(t *testing.T) {
@@ -78,4 +79,28 @@ func TestIdentifyV5(t *testing.T) {
 	}
 	assert.NotEmpty(t, doc.GetUUID())
 	assert.Equal(t, doc.GetUUID(), uuid.UUID("1f53a310-2a17-5acb-b76a-c39495e5356f"))
+}
+
+func TestIdentifyV6(t *testing.T) {
+	doc := struct {
+		uuid.Identify
+		Name string
+	}{
+		Identify: uuid.IdentifyV6(),
+		Name:     "test",
+	}
+	assert.NotEmpty(t, doc.GetUUID())
+	assert.False(t, doc.UUID.Timestamp().IsZero())
+}
+
+func TestIdentifyV7(t *testing.T) {
+	doc := struct {
+		uuid.Identify
+		Name string
+	}{
+		Identify: uuid.IdentifyV7(),
+		Name:     "test",
+	}
+	assert.NotEmpty(t, doc.GetUUID())
+	assert.False(t, doc.UUID.Timestamp().IsZero())
 }
