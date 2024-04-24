@@ -244,6 +244,7 @@ func Normalize(u *UUID) {
 
 // UnmarshalText will ensure the UUID is always a valid UUID when unmarshalling
 // and just return an empty value if incorrect.
+// TODO: Remove this and instead depend on validation to provide more readable errors.
 func (u *UUID) UnmarshalText(txt []byte) error {
 	id, err := Parse(string(txt))
 	if err != nil {

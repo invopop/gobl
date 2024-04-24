@@ -64,9 +64,6 @@ func (r versionRule) Validate(value interface{}) error {
 	case *UUID:
 		id = *v
 	case string:
-		if v == "" {
-			return nil
-		}
 		var err error
 		id, err = Parse(v)
 		if err != nil {
@@ -74,6 +71,10 @@ func (r versionRule) Validate(value interface{}) error {
 		}
 	default:
 		return errors.New("not a UUID")
+	}
+	// always ignore empty
+	if id == Empty {
+		return nil
 	}
 	if r.notZero {
 		if id.IsZero() {
