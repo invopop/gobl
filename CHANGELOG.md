@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vXXXX] - XXXX-XX-XX
 
+### Added
+
+- MX Stamps for signatures from CFDI and SAT.
+- `head` package now has `GetStamp` method to find a stamp by its provider from an array.
+- `num.Percentage` has `Base()` method to access base amount.
+
 ### Fixed
 
 - UUID `IsNotZero` will not raise error for empty UUIDs.
