@@ -60,6 +60,28 @@ func TestAddStamp(t *testing.T) {
 	assert.Equal(t, "new value", st.Stamps[0].Value)
 }
 
+func TestGetStamp(t *testing.T) {
+	st := struct {
+		Stamps []*head.Stamp
+	}{
+		Stamps: []*head.Stamp{
+			{
+				Provider: cbc.Key("provider"),
+				Value:    "value",
+			},
+			{
+				Provider: cbc.Key("foo"),
+				Value:    "bar",
+			},
+		},
+	}
+	x := head.GetStamp(st.Stamps, cbc.Key("foo"))
+	assert.Equal(t, "bar", x.Value)
+
+	x = head.GetStamp(st.Stamps, cbc.Key("bad"))
+	assert.Nil(t, x)
+}
+
 func TestNormalizeStamp(t *testing.T) {
 	st := head.NormalizeStamps(nil)
 	assert.Nil(t, st)

@@ -70,6 +70,19 @@ func AddStamp(in []*Stamp, s *Stamp) []*Stamp {
 	return append(in, s)
 }
 
+// GetStamp provides the matching stamp for the given provider.
+func GetStamp(in []*Stamp, provider cbc.Key) *Stamp {
+	if in == nil {
+		return nil
+	}
+	for _, v := range in {
+		if v.Provider == provider {
+			return v
+		}
+	}
+	return nil
+}
+
 // NormalizeStamps will try to clean the stamps by removing rows with empty
 // providers or values. If empty, the function will return nil.
 func NormalizeStamps(in []*Stamp) []*Stamp {

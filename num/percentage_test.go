@@ -73,6 +73,12 @@ func TestFactor(t *testing.T) {
 	}
 }
 
+func TestPercentageAmountAndBase(t *testing.T) {
+	p := num.MakePercentage(160, 3)
+	assert.Equal(t, "16.0", p.Amount().String())
+	assert.Equal(t, "0.160", p.Base().String())
+}
+
 func TestPercentageFrom(t *testing.T) {
 	p := num.MakePercentage(160, 3)
 	a := num.MakeAmount(11600, 2)
