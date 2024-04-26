@@ -505,11 +505,7 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	if inv.Tax != nil && inv.Tax.ContainsTag(tax.TagReverseCharge) {
-		t.Tax = zero
-	} else {
-		t.Tax = t.Taxes.PreciseSum()
-	}
+	t.Tax = t.Taxes.PreciseSum()
 	t.TotalWithTax = t.Total.Add(t.Tax)
 	t.Payable = t.TotalWithTax
 	if t.Rounding != nil {

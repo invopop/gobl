@@ -284,15 +284,43 @@ var extensionKeys = []*cbc.KeyDefinition{
 			{
 				Code: "OT",
 				Name: i18n.String{
-					i18n.EN: "Not subject: pursuant to Article 7 of the VAT Law. Other cases of non-subject.",
-					i18n.ES: "No sujeto: por el artículo 7 de la Ley del IVA. Otros supuestos de no sujeción.",
+					i18n.EN: "Not subject: pursuant to Article 7 of the VAT Law - other cases of non-subject",
+					i18n.ES: "No sujeto: por el artículo 7 de la Ley del IVA - otros supuestos de no sujeción",
 				},
 			},
 			{
 				Code: "RL",
 				Name: i18n.String{
-					i18n.EN: "Not subject: pursuant to localization rules.",
-					i18n.ES: "No sujeto: por reglas de localización.",
+					i18n.EN: "Not subject: pursuant to localization rules",
+					i18n.ES: "No sujeto: por reglas de localización",
+				},
+			},
+			{
+				Code: "VT",
+				Name: i18n.String{
+					i18n.EN: "Not subject: sales made on behalf of third parties (amount not computable for VAT or IRPF purposes)",
+					i18n.ES: "No sujeto: ventas realizadas por cuenta de terceros (importe no computable a efectos de IVA ni de IRPF)",
+				},
+			},
+			{
+				Code: "IE",
+				Name: i18n.String{
+					i18n.EN: "Not subject in the TAI due to localization rules, but foreign tax, IPS/IGIC or VAT from another EU member state is passed on",
+					i18n.ES: "No sujeto en el TAI por reglas de localización, pero repercute impuesto extranjero, IPS/IGIC o IVA de otro estado miembro UE",
+				},
+			},
+			{
+				Code: "S1",
+				Name: i18n.String{
+					i18n.EN: "Subject and not exempt: without reverse charge",
+					i18n.ES: "Sujeto y no exenta: sin inversión del sujeto pasivo",
+				},
+			},
+			{
+				Code: "S2",
+				Name: i18n.String{
+					i18n.EN: "Subject and not exempt: with reverse charge",
+					i18n.ES: "Sujeto y no exenta: con inversión del sujeto pasivo",
 				},
 			},
 		},
