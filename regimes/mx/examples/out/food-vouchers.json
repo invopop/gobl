@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e9b1d08c814fef6c152b3b922e24b0296d3123eb8b432624ef85f53e664b4409"
+			"val": "1ac7227b5de7e6e8f1d6daf20eae81613164a69c813aeeef473946e0c0ad8ebd"
 		},
 		"draft": true
 	},
@@ -16,6 +16,11 @@
 		"code": "00002",
 		"issue_date": "2023-07-10",
 		"currency": "MXN",
+		"tax": {
+			"ext": {
+				"mx-cfdi-issue-place": "21000"
+			}
+		},
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {

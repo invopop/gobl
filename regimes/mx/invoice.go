@@ -28,6 +28,10 @@ func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.MXN)),
+		validation.Field(&inv.Tax,
+			validation.By(v.validTax),
+			validation.Skip,
+		),
 		validation.Field(&inv.Supplier,
 			validation.By(v.validSupplier),
 			validation.Skip,
@@ -54,6 +58,21 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Discounts,
 			validation.Empty.Error("the SAT doesn't allow discounts at invoice level. Use line discounts instead."),
+			validation.Skip,
+		),
+	)
+}
+
+func (v *invoiceValidator) validTax(value any) error {
+	obj, _ := value.(*bill.Tax)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			tax.ExtensionsRequires(
+				ExtKeyCFDIIssuePlace,
+			),
 			validation.Skip,
 		),
 	)
@@ -91,7 +110,6 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequires(
-				ExtKeyCFDIPostCode,
 				ExtKeyCFDIFiscalRegime,
 			),
 		),
@@ -206,4 +224,29 @@ func validPaymentMeanKeys() []interface{} {
 	}
 
 	return keys
+}
+
+func normalizeInvoice(inv *bill.Invoice) error {
+	// 2024-04-26: copy suppliers post code to invoice, if not already
+	// set.
+	if inv.Tax == nil {
+		inv.Tax = new(bill.Tax)
+	}
+	if inv.Tax.Ext == nil {
+		inv.Tax.Ext = make(tax.Extensions)
+	}
+	if inv.Tax.Ext.Has(ExtKeyCFDIIssuePlace) {
+		return nil
+	}
+	if inv.Supplier.Ext.Has(ExtKeyCFDIPostCode) {
+		inv.Tax.Ext[ExtKeyCFDIIssuePlace] = inv.Supplier.Ext[ExtKeyCFDIPostCode]
+		return nil
+	}
+	if len(inv.Supplier.Addresses) > 0 {
+		addr := inv.Supplier.Addresses[0]
+		if addr.Code != "" {
+			inv.Tax.Ext[ExtKeyCFDIIssuePlace] = tax.ExtValue(addr.Code)
+		}
+	}
+	return nil
 }

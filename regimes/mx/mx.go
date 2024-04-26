@@ -81,6 +81,8 @@ func Validate(doc interface{}) error {
 // Calculate performs regime specific calculations.
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return normalizeInvoice(obj)
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
 	case *org.Party:

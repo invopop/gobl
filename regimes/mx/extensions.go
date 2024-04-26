@@ -9,6 +9,7 @@ import (
 // Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
 // invoices and cannot be determined automatically.
 const (
+	ExtKeyCFDIIssuePlace   = "mx-cfdi-issue-place"
 	ExtKeyCFDIPostCode     = "mx-cfdi-post-code"
 	ExtKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
 	ExtKeyCFDIUse          = "mx-cfdi-use"
@@ -17,6 +18,22 @@ const (
 
 var extensionKeys = []*cbc.KeyDefinition{
 	{
+		Key: ExtKeyCFDIIssuePlace,
+		Name: i18n.String{
+			i18n.EN: "Place of Issue",
+			i18n.ES: "Lugar de Expedición",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Post code of where the invoice was issued. In CFDI, this translates to the 'LugarExpedicion'.
+			`),
+			i18n.ES: here.Doc(`
+				Código postal de donde se emitió la factura. En CFDI se traduce a 'LugarExpedicion'.
+			`),
+		},
+		Pattern: "^[0-9]{5}$",
+	},
+	{
 		Key: ExtKeyCFDIPostCode,
 		Name: i18n.String{
 			i18n.EN: "Post Code",
@@ -24,16 +41,10 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Post code of where the invoice was issued.
-				In CFDI, this translates to the 'LugarExpedicion' in the case of the supplier
-				and 'DomicilioFiscalReceptor' for customers.
-				Example value: '01000'.
+				Post code of a supplier or customer to use instead of an address. Example: "01000".
 			`),
 			i18n.ES: here.Doc(`
-				Código postal de donde se emitió la factura.
-				En CFDI se traduce a 'LugarExpedicion' en el caso del emisor, y
-				'DomicilioFiscalReceptor' para el receptor.
-				Valor de ejemplor: '01000'.
+				Código postal de un emisor o receptor para usar en lugar de una dirección. Ejemplo: "01000".
 			`),
 		},
 		Pattern: "^[0-9]{5}$",

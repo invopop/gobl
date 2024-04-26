@@ -16,8 +16,13 @@ supplier:
   name: ESCUELA KEMPER URGATE
   tax_id:
     country: MX
-    zone: "26015"
     code: EKU9003173C9
+  addresses:
+    - street: "Calle 1"
+      locality: "Ciudad de México"
+      region: "CDMX"
+      code: "21000"
+      country: MX
   ext:
     mx-cfdi-fiscal-regime: "615"
 customer:

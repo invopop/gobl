@@ -22,6 +22,11 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
+		Tax: &bill.Tax{
+			Ext: tax.Extensions{
+				mx.ExtKeyCFDIIssuePlace: "21000",
+			},
+		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Ext: tax.Extensions{
@@ -71,6 +76,32 @@ func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
+}
+
+func TestNormalizeInvoice(t *testing.T) {
+	t.Run("no tax", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Tax)
+		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[mx.ExtKeyCFDIIssuePlace])
+	})
+	t.Run("with supplier address code", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = nil
+		delete(inv.Supplier.Ext, mx.ExtKeyCFDIPostCode)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
+			&org.Address{
+				Locality: "Mexico",
+				Code:     "21000",
+			},
+		)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Tax)
+		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[mx.ExtKeyCFDIIssuePlace])
+	})
 }
 
 func TestCustomerValidation(t *testing.T) {
