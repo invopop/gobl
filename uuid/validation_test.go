@@ -151,6 +151,11 @@ func TestUUIDValidation(t *testing.T) {
 			rule: uuid.IsNotZero,
 		},
 		{
+			name: "zero empty value",
+			uuid: uuid.UUID(""),
+			rule: uuid.IsNotZero,
+		},
+		{
 			name: "general good v1",
 			uuid: uuid.V1(),
 			rule: uuid.Valid,
