@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/mx"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -70,49 +71,104 @@ func TestInvalidTax(t *testing.T) {
 	assert.Contains(t, err.Error(), "rate: must be greater than 0")
 	assert.Contains(t, err.Error(), "amount: must be greater than 0")
 
-	fab.Lines[0].Taxes[0].Code = "IRPF"
+	fab.Lines[0].Taxes[0].Category = "IRPF"
 
 	err = fab.Validate()
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "code: must be a valid value")
+	assert.Contains(t, err.Error(), "cat: must be a valid value")
 }
 
 func TestCalculate(t *testing.T) {
-	fab := &mx.FuelAccountBalance{
-		Lines: []*mx.FuelAccountLine{
-			{
-				Quantity: num.MakeAmount(11, 1),
-				Item:     &mx.FuelAccountItem{Price: num.MakeAmount(9091, 2)},
-				Total:    num.MakeAmount(100, 0),
-				Taxes: []*mx.FuelAccountTax{
-					{
-						Rate:   num.MakeAmount(16, 2),
-						Amount: num.MakeAmount(16, 0),
+	t.Run("example 1", func(t *testing.T) {
+		fab := &mx.FuelAccountBalance{
+			Lines: []*mx.FuelAccountLine{
+				{
+					Quantity: num.MakeAmount(11, 1),
+					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(9091, 2)},
+					Total:    num.MakeAmount(100, 0),
+					Taxes: []*mx.FuelAccountTax{
+						{
+							Percent: num.NewPercentage(160, 3),
+						},
+						{
+							Rate: num.NewAmount(56789, 4),
+						},
 					},
-					{Amount: num.MakeAmount(56789, 4)},
+				},
+				{
+					Total: num.MakeAmount(100009, 3),
+					Taxes: []*mx.FuelAccountTax{
+						{
+							Amount: num.MakeAmount(16, 0),
+						},
+						{
+							Amount: num.MakeAmount(56789, 4),
+						},
+					},
 				},
 			},
-			{
-				Total: num.MakeAmount(100009, 3),
-				Taxes: []*mx.FuelAccountTax{
-					{Amount: num.MakeAmount(16, 0)},
-					{Amount: num.MakeAmount(56789, 4)},
+		}
+
+		err := fab.Calculate()
+		require.NoError(t, err)
+
+		assert.Equal(t, "200.01", fab.Subtotal.String())
+		assert.Equal(t, "343.94", fab.Total.String())
+
+		assert.Equal(t, num.MakeAmount(1100, 3), fab.Lines[0].Quantity)
+		assert.Equal(t, num.MakeAmount(90910, 3), fab.Lines[0].Item.Price)
+		assert.Equal(t, num.MakeAmount(10000, 2), fab.Lines[0].Total)
+
+		assert.Equal(t, "16.00%", fab.Lines[0].Taxes[0].Percent.String())
+		assert.Equal(t, "116.00", fab.Lines[0].Taxes[0].Amount.String())
+	})
+
+	t.Run("example 2", func(t *testing.T) {
+		fab := &mx.FuelAccountBalance{
+			Lines: []*mx.FuelAccountLine{
+				{
+					Quantity: num.MakeAmount(9661, 3),
+					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(12743, 3)},
+					Taxes: []*mx.FuelAccountTax{
+						{
+							Category: tax.CategoryVAT,
+							Percent:  num.NewPercentage(16, 2),
+						},
+						{
+							Category: mx.TaxCategoryIEPS,
+							Rate:     num.NewAmount(59195, 4),
+						},
+					},
+				},
+				{
+					Quantity: num.MakeAmount(9680, 3),
+					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(12709, 3)},
+					Taxes: []*mx.FuelAccountTax{
+						{
+							Category: tax.CategoryVAT,
+							Percent:  num.NewPercentage(16, 2),
+						},
+						{
+							Category: mx.TaxCategoryIEPS,
+							Rate:     num.NewAmount(59195, 4),
+						},
+					},
 				},
 			},
-		},
-	}
+		}
 
-	err := fab.Calculate()
+		err := fab.Calculate()
+		require.NoError(t, err)
 
-	require.NoError(t, err)
-	assert.Equal(t, num.MakeAmount(20001, 2), fab.Subtotal)
-	assert.Equal(t, num.MakeAmount(24337, 2), fab.Total)
+		assert.Equal(t, "123.11", fab.Lines[0].Total.String())
+		assert.Equal(t, "19.70", fab.Lines[0].Taxes[0].Amount.String())
+		assert.Equal(t, "57.19", fab.Lines[0].Taxes[1].Amount.String())
 
-	assert.Equal(t, num.MakeAmount(1100, 3), fab.Lines[0].Quantity)
-	assert.Equal(t, num.MakeAmount(90910, 3), fab.Lines[0].Item.Price)
-	assert.Equal(t, num.MakeAmount(10000, 2), fab.Lines[0].Total)
+		assert.Equal(t, "57.30", fab.Lines[1].Taxes[1].Amount.String())
+		assert.Equal(t, "123.02", fab.Lines[1].Total.String())
 
-	assert.Equal(t, num.MakeAmount(160000, 6), fab.Lines[0].Taxes[0].Rate)
-	assert.Equal(t, num.MakeAmount(1600, 2), fab.Lines[0].Taxes[0].Amount)
+		assert.Equal(t, "246.13", fab.Subtotal.String())
+		assert.Equal(t, "400.00", fab.Total.String())
+	})
 }
