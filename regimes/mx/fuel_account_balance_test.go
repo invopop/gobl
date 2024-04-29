@@ -67,8 +67,8 @@ func TestInvalidTax(t *testing.T) {
 	err := fab.Validate()
 
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "code: cannot be blank")
-	assert.Contains(t, err.Error(), "rate: must be greater than 0")
+	assert.Contains(t, err.Error(), "cat: cannot be blank")
+	assert.Contains(t, err.Error(), "rate: cannot be blank")
 	assert.Contains(t, err.Error(), "amount: must be greater than 0")
 
 	fab.Lines[0].Taxes[0].Category = "IRPF"
@@ -114,14 +114,14 @@ func TestCalculate(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, "200.01", fab.Subtotal.String())
-		assert.Equal(t, "343.94", fab.Total.String())
+		assert.Equal(t, "243.94", fab.Total.String())
 
 		assert.Equal(t, num.MakeAmount(1100, 3), fab.Lines[0].Quantity)
 		assert.Equal(t, num.MakeAmount(90910, 3), fab.Lines[0].Item.Price)
 		assert.Equal(t, num.MakeAmount(10000, 2), fab.Lines[0].Total)
 
 		assert.Equal(t, "16.00%", fab.Lines[0].Taxes[0].Percent.String())
-		assert.Equal(t, "116.00", fab.Lines[0].Taxes[0].Amount.String())
+		assert.Equal(t, "16.00", fab.Lines[0].Taxes[0].Amount.String())
 	})
 
 	t.Run("example 2", func(t *testing.T) {

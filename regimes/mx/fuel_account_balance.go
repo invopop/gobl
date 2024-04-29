@@ -149,13 +149,14 @@ func (fat *FuelAccountTax) Validate() error {
 			validation.Required,
 			validation.In(FuelAccountValidTaxCodes...),
 		),
-		validation.Field(&fat.Percent,
+		validation.Field(&fat.Rate,
+			num.Positive,
 			validation.When(
-				fat.Rate == nil,
+				fat.Percent == nil,
 				validation.Required,
 			),
 		),
-		validation.Field(&fat.Rate, num.Positive),
+		validation.Field(&fat.Percent),
 		validation.Field(&fat.Amount, num.Positive),
 	)
 }
