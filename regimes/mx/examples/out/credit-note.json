@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "dfb62e2b8779fc6c9333c6eeb2aaafaa653b6c957b4a69c4bd78e9ea692f7c61"
+			"val": "94764fa558c99a777b6cd73dc97cc8601e72bb767102206385abf069c7aa7c6a"
 		},
 		"draft": true
 	},
@@ -29,15 +29,28 @@
 				]
 			}
 		],
+		"tax": {
+			"ext": {
+				"mx-cfdi-issue-place": "21000"
+			}
+		},
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {
 				"country": "MX",
 				"code": "EKU9003173C9"
 			},
+			"addresses": [
+				{
+					"street": "Calle 1",
+					"locality": "Ciudad de México",
+					"region": "CDMX",
+					"code": "21000",
+					"country": "MX"
+				}
+			],
 			"ext": {
-				"mx-cfdi-fiscal-regime": "615",
-				"mx-cfdi-post-code": "26015"
+				"mx-cfdi-fiscal-regime": "615"
 			}
 		},
 		"customer": {

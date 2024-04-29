@@ -23,6 +23,10 @@ type Tax struct {
 	// Special tax tags that apply to this invoice according to local requirements.
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
+	// Additional extensions that are applied to the invoice as a whole as opposed to specific
+	// sections.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
@@ -45,6 +49,7 @@ func (t *Tax) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
 		validation.Field(&t.Tags, validation.Each(r.InTags())),
+		validation.Field(&t.Ext),
 		validation.Field(&t.Meta),
 	)
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -12,19 +13,13 @@ import (
 const (
 	FuelAccountInterimPrecision = 3
 	FuelAccountFinalPrecision   = 2
-	FuelAccountRatePrecision    = 6
-)
-
-// Constants for the complement's allowed tax codes
-const (
-	FuelAccountTaxCodeVAT  = cbc.Code("IVA")
-	FuelAccountTaxCodeIEPS = cbc.Code("IEPS")
+	FuelAccountTaxPrecision     = 4
 )
 
 // FuelAccountValidTaxCodes lists of the complement's allowed tax codes
-var FuelAccountValidTaxCodes = []interface{}{
-	FuelAccountTaxCodeVAT,
-	FuelAccountTaxCodeIEPS,
+var FuelAccountValidTaxCodes = []any{
+	tax.CategoryVAT,
+	TaxCategoryIEPS,
 }
 
 // FuelAccountBalance carries the data to produce a CFDI's "Complemento de
@@ -65,7 +60,7 @@ type FuelAccountLine struct {
 	// Identifier of the purchase (maps to `FolioOperacion`).
 	PurchaseCode cbc.Code `json:"purchase_code" jsonschema:"title=Purchase Code"`
 	// Result of quantity multiplied by the unit price (maps to `Importe`).
-	Total num.Amount `json:"total" jsonschema:"title=Total"`
+	Total num.Amount `json:"total" jsonschema:"title=Total" jsonschema_extras:"calculated=true"`
 	// Map of taxes applied to the purchase (maps to `Traslados`).
 	Taxes []*FuelAccountTax `json:"taxes" jsonschema:"title=Taxes"`
 }
@@ -87,12 +82,14 @@ type FuelAccountItem struct {
 // FuelAccountTax represents a single tax applied to a fuel purchase. It maps to
 // one `Traslado` node in the CFDI's complement.
 type FuelAccountTax struct {
-	// Code that identifies the tax ("IVA" or "IEPS", maps to `Impuesto`)
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Rate applicable to either the line total (tasa) or the line quantity (cuota) (maps to `TasaOCuota`).
-	Rate num.Amount `json:"rate" jsonschema:"title=Rate"`
-	// Total amount of the tax once the rate has been applied (maps to `Importe`).
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+	// Category that identifies the tax ("VAT" or "IEPS", maps to `Impuesto`)
+	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
+	// Percent applicable to the line total (tasa) to use instead of Rate (maps to `TasaoCuota`)
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Rate is a fixed fee to apply to the line quantity (cuota) (maps to `TasaOCuota`)
+	Rate *num.Amount `json:"rate,omitempty" jsonschema:"title=Rate"`
+	// Total amount of the tax once the percent or rate has been applied (maps to `Importe`).
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 }
 
 // Validate ensures that the complement's data is valid.
@@ -148,11 +145,18 @@ func (fai *FuelAccountItem) Validate() error {
 // Validate ensures that the tax's data is valid.
 func (fat *FuelAccountTax) Validate() error {
 	return validation.ValidateStruct(fat,
-		validation.Field(&fat.Code,
+		validation.Field(&fat.Category,
 			validation.Required,
 			validation.In(FuelAccountValidTaxCodes...),
 		),
-		validation.Field(&fat.Rate, num.Positive),
+		validation.Field(&fat.Rate,
+			num.Positive,
+			validation.When(
+				fat.Percent == nil,
+				validation.Required,
+			),
+		),
+		validation.Field(&fat.Percent),
 		validation.Field(&fat.Amount, num.Positive),
 	)
 }
@@ -173,19 +177,32 @@ func (fab *FuelAccountBalance) Calculate() error {
 
 	for _, l := range fab.Lines {
 		// Normalise amounts to the expected precision
+		l.Quantity = l.Quantity.Rescale(FuelAccountInterimPrecision)
 		if l.Item != nil {
 			l.Item.Price = l.Item.Price.Rescale(FuelAccountInterimPrecision)
+			l.Total = l.Item.Price.Multiply(l.Quantity)
 		}
-		l.Quantity = l.Quantity.Rescale(FuelAccountInterimPrecision)
 		l.Total = l.Total.Rescale(FuelAccountFinalPrecision)
 
 		subtotal = l.Total.Add(subtotal)
 
 		for _, t := range l.Taxes {
-			// Normalise amounts to the expected precision
-			t.Rate = t.Rate.Rescale(FuelAccountRatePrecision)
+			// Rescale and calculate totals if needed for each tax
+			if t.Rate != nil {
+				nr := t.Rate.Rescale(FuelAccountTaxPrecision)
+				t.Rate = &nr
+				if t.Amount.IsZero() {
+					t.Amount = l.Quantity.Multiply(nr)
+				}
+			}
+			if t.Percent != nil {
+				np := t.Percent.Rescale(FuelAccountTaxPrecision)
+				t.Percent = &np
+				if t.Amount.IsZero() {
+					t.Amount = np.Of(l.Total)
+				}
+			}
 			t.Amount = t.Amount.Rescale(FuelAccountFinalPrecision)
-
 			taxtotal = t.Amount.Add(taxtotal)
 		}
 	}

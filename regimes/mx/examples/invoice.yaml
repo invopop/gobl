@@ -3,11 +3,13 @@ uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 issue_date: "2023-07-10"
 series: "TEST"
 code: "00001"
+tax:
+  ext:
+    mx-cfdi-issue-place: "21000"
 supplier:
   name: "ESCUELA KEMPER URGATE"
   ext:
     mx-cfdi-fiscal-regime: "601"
-    mx-cfdi-post-code: "21000"
   tax_id:
     country: "MX"
     code: "EKU9003173C9"

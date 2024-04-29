@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f8604e18090d8a5a795cadd1ff603bb69b8fb2d28d6a518841132765c993d162"
+			"val": "3cad9cb031d10d84e598a601e7668f88f7c2fc3cb83bab94b9d74efd13cd51c1"
 		},
 		"draft": true
 	},
@@ -16,6 +16,11 @@
 		"code": "00002",
 		"issue_date": "2023-07-10",
 		"currency": "MXN",
+		"tax": {
+			"ext": {
+				"mx-cfdi-issue-place": "21000"
+			}
+		},
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {
@@ -113,13 +118,13 @@
 						"total": "123.11",
 						"taxes": [
 							{
-								"code": "IVA",
-								"rate": "0.160000",
+								"cat": "VAT",
+								"percent": "16.00%",
 								"amount": "19.70"
 							},
 							{
-								"code": "IEPS",
-								"rate": "5.919500",
+								"cat": "IEPS",
+								"rate": "5.9195",
 								"amount": "57.19"
 							}
 						]
@@ -139,13 +144,13 @@
 						"total": "123.02",
 						"taxes": [
 							{
-								"code": "IVA",
-								"rate": "0.160000",
+								"cat": "VAT",
+								"percent": "16.00%",
 								"amount": "19.68"
 							},
 							{
-								"code": "IEPS",
-								"rate": "5.919500",
+								"cat": "IEPS",
+								"rate": "5.9195",
 								"amount": "57.30"
 							}
 						]

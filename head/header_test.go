@@ -32,6 +32,17 @@ func TestHeaderAddStamp(t *testing.T) {
 	assert.Equal(t, "bax", h.Stamps[1].Value)
 }
 
+func TestHeaderGetStamp(t *testing.T) {
+	h := head.NewHeader()
+	h.AddStamp(&head.Stamp{Provider: "foo", Value: "boo"})
+	h.AddStamp(&head.Stamp{Provider: "foo2", Value: "bling"})
+	st := h.GetStamp("foo")
+	assert.NotNil(t, st)
+	assert.Equal(t, "boo", st.Value)
+	st = h.GetStamp("bad")
+	assert.Nil(t, st)
+}
+
 func TestHeaderContains(t *testing.T) {
 	h1 := head.NewHeader()
 	h2 := head.NewHeader()

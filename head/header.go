@@ -67,6 +67,11 @@ func (h *Header) AddStamp(s *Stamp) {
 	h.Stamps = AddStamp(h.Stamps, s)
 }
 
+// GetStamp provides the stamp for the given provider or nil.
+func (h *Header) GetStamp(provider cbc.Key) *Stamp {
+	return GetStamp(h.Stamps, provider)
+}
+
 // Contains compares the provided header to ensure that all the fields
 // and properties are contained within the base header. Only a subset of
 // the most important fields are compared.

@@ -88,6 +88,12 @@ func (p Percentage) StringWithoutSymbol() string {
 	return p.Amount().String()
 }
 
+// Base provides the underlying amount value of the percentage which is stored
+// internally without any factors applied.
+func (p Percentage) Base() Amount {
+	return p.amount
+}
+
 // Amount provides an amount for the percentage that has been rescaled
 // from the underlying value mainly to be used for formatting.
 func (p Percentage) Amount() Amount {

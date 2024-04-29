@@ -13,7 +13,7 @@ var correctionDefinitions = []*tax.CorrectionDefinition{
 			bill.InvoiceTypeCreditNote,
 		},
 		Stamps: []cbc.Key{
-			StampProviderSATUUID,
+			StampSATUUID,
 		},
 	},
 }

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vXXXX] - XXXX-XX-XX
 
+### Added
+
+- Bill Invoice Tax objects now support tax extensions.
+- MX Stamps for signatures from CFDI and SAT.
+- MX: extension for Place of Issue code: `mx-cfdi-issue-place` that replaces previous post code option in the supplier. Automatic normalization added.
+- `head` package now has `GetStamp` method to find a stamp by its provider from an array.
+- `num.Percentage` has `Base()` method to access base amount.
+- MX: FuelAccountBalance complement now supports `percent` as an alternative to `rate`.
+
+### Change
+
+- Renaming `mx.StampProviderSATUUID` constant to just `mx.StampSATUUID`.
+- MX: FuelAccountBalance complement renamed tax `code` to `cat` (Category) with explicit usage of regular tax codes to be more aligned with other usage of tax categories.
+
 ### Fixed
 
 - UUID `IsNotZero` will not raise error for empty UUIDs.
