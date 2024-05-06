@@ -43,7 +43,12 @@ type Calculable interface {
 // corrected.
 type Correctable interface {
 	Correct(...Option) error
-	CorrectionOptionsSchema() (interface{}, error)
+	CorrectionOptionsSchema() (any, error)
+}
+
+// Replicable defines the methods expected of a document payload that can be replicated.
+type Replicable interface {
+	Replicate() error
 }
 
 // Identifiable defines the methods expected of a document payload that contains a UUID.
@@ -125,7 +130,7 @@ func (d *Object) Correct(opts ...Option) error {
 
 // CorrectionOptionsSchema provides a schema with the correction options available
 // for the schema, if available.
-func (d *Object) CorrectionOptionsSchema() (interface{}, error) {
+func (d *Object) CorrectionOptionsSchema() (any, error) {
 	pl, ok := d.payload.(Correctable)
 	if !ok {
 		return nil, nil
@@ -135,6 +140,24 @@ func (d *Object) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+// Replicate will attempt to clone and run the Replicate method of the object
+// if it has one.
+func (d *Object) Replicate() error {
+	obj, ok := d.payload.(Replicable)
+	if ok {
+		if err := obj.Replicate(); err != nil {
+			return err
+		}
+	}
+	if ident, ok := d.payload.(Identifiable); ok {
+		id := ident.GetUUID()
+		if id.IsZero() {
+			ident.SetUUID(uuid.V7())
+		}
+	}
+	return nil
 }
 
 // Insert places the provided object inside the document and looks up the schema

@@ -59,20 +59,34 @@ func TestObjectCalculate(t *testing.T) {
 	assert.Equal(t, obj.UUID(), inv.UUID)
 }
 
+func TestObjectReplicate(t *testing.T) {
+	inv := exampleInvoice()
+	obj, err := schema.NewObject(inv)
+	require.NoError(t, err)
+	require.NoError(t, obj.Calculate())
+	ou := obj.UUID()
+	require.NoError(t, obj.Replicate())
+	assert.NotEqual(t, ou, obj.UUID())
+	assert.Empty(t, inv.Code, "should remove code")
+}
+
 // exampleInvoice defines a simple invoice example pre-calculations.
 func exampleInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Code: "123TEST",
+		Series: "TEST",
+		Code:   "000123",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
+			Name: "Test Supplier",
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
+			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "54387763P",

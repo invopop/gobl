@@ -284,6 +284,23 @@ func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
 	return Envelop(nd)
 }
 
+// Replicate will create a new envelope with the same contents as the current,
+// but with schema specific options applied to remove information that must
+// change between documents, such as stamps, invoice code, date, UUID, etc.
+// The intention here is for users to be able to get a new copy of the original
+// document so that they can issue a new version with updated details, or
+// simply use the original as a template.
+func (e *Envelope) Replicate() (*Envelope, error) {
+	nd, err := e.Document.Clone()
+	if err != nil {
+		return nil, wrapError(err)
+	}
+	if err := nd.Replicate(); err != nil {
+		return nil, wrapError(err)
+	}
+	return Envelop(nd)
+}
+
 // CorrectionOptionsSchema will attempt to provide a corrective options JSON Schema
 // that can be used to generate a JSON object to send when correcting a document.
 // If none are available, the result will be nil.
