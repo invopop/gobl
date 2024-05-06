@@ -109,6 +109,8 @@ type Category struct {
 	// this category that one of the rate's keys must be defined. This is
 	// normally needed for regimes that categorize taxes in local document
 	// formats as opposed to grouping by percentage values.
+	// Try to avoid using this. It is better for rates to be determined
+	// by the percentage and conditions, not the rate key.
 	RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
 
 	// Specific tax definitions inside this category.

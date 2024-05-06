@@ -26,7 +26,7 @@ type RateTotal struct {
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Base amount that the percentage is applied to.
 	Base num.Amount `json:"base" jsonschema:"title=Base"`
-	// Percentage of the rate, which may be nil for exempt rates.
+	// Percentage of the rate. Will be nil when taxes are **exempt**.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Surcharge applied to the rate.
 	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`

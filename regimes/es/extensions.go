@@ -232,8 +232,8 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Codes used by TicketBAI for both "exempt" and "not-subject"
-				transactions. In the TicketBAI format these are separated,
+				Codes used by TicketBAI for both "exempt", "not-subject", and reverse
+				charge transactions. In the TicketBAI format these are separated,
 				but in order to simplify GOBL and be more closely aligned with
 				other countries we've combined them into one.
 			`),
@@ -309,13 +309,17 @@ var extensionKeys = []*cbc.KeyDefinition{
 					i18n.ES: "No sujeto en el TAI por reglas de localización, pero repercute impuesto extranjero, IPS/IGIC o IVA de otro estado miembro UE",
 				},
 			},
-			{
-				Code: "S1",
-				Name: i18n.String{
-					i18n.EN: "Subject and not exempt: without reverse charge",
-					i18n.ES: "Sujeto y no exenta: sin inversión del sujeto pasivo",
+			/*
+				// S1 is the default value for regular invoices, so we don't need to include it here
+				// alongside the exemption codes.
+				{
+					Code: "S1",
+					Name: i18n.String{
+						i18n.EN: "Subject and not exempt: without reverse charge",
+						i18n.ES: "Sujeto y no exenta: sin inversión del sujeto pasivo",
+					},
 				},
-			},
+			*/
 			{
 				Code: "S2",
 				Name: i18n.String{
