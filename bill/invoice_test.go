@@ -956,17 +956,20 @@ func TestValidation(t *testing.T) {
 func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
-		Code: "123TEST",
+		Series: "TEST",
+		Code:   "00123",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
+			Name: "Test Supplier",
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
+			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: l10n.ES,
 				Code:    "54387763P",

@@ -320,6 +320,29 @@ func TestEnvelopeCorrect(t *testing.T) {
 	})
 }
 
+func TestEnvelopeReplicate(t *testing.T) {
+	t.Run("replicate invoice", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+
+		data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		err = yaml.Unmarshal(data, env)
+		require.NoError(t, err)
+		require.NoError(t, env.Calculate())
+
+		_, err = env.Replicate()
+		require.NoError(t, err)
+
+		doc := env.Extract().(*bill.Invoice)
+		assert.Equal(t, "SAMPLE-001", doc.Code, "should not update in place")
+
+		e2, err := env.Replicate()
+		require.NoError(t, err)
+		doc = e2.Extract().(*bill.Invoice)
+		assert.Empty(t, doc.Code)
+	})
+}
+
 func TestDocument(t *testing.T) {
 	msg := testNoteExample()
 	env := gobl.NewEnvelope()
