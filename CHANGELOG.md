@@ -4,7 +4,7 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [vXXXX] - XXXX-XX-XX
+## [v0.75.0] - 2024-05-06
 
 ### Added
 
