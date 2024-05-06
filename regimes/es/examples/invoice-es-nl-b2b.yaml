@@ -4,9 +4,6 @@ currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-X-002"
 tax:
-  # this is a bit random, but demos that prices may include tax
-  # that will be deducted from final price correctly.
-  prices_include: "VAT"
   tags:
     - reverse-charge
 
@@ -39,13 +36,11 @@ lines:
       unit: "day"
     taxes:
       - cat: VAT
-        rate: standard
+        rate: exempt
   - quantity: 50
     item:
       name: "Branded Mugs"
       price: "7.50"
-      meta:
-        product: "goods"
     taxes:
       - cat: VAT
-        rate: standard
+        rate: exempt

@@ -79,7 +79,7 @@ func (tc *TotalCalculator) removeIncludedTaxes(taxLines []*taxLine) error {
 				return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 			}
 			if c.Percent == nil {
-				// can't work without a percent value, just skip
+				// no taxes, skip
 				continue
 			}
 			tl.total = tl.total.Remove(*c.Percent)

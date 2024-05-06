@@ -23,7 +23,9 @@ type Combo struct {
 	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
 	// Rate within a category to apply.
 	Rate cbc.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
-	// Percent defines the percentage set manually or determined from the rate key (calculated if rate present).
+	// Percent defines the percentage set manually or determined from the rate
+	// key (calculated if rate present). A nil percent implies that this tax combo
+	// is **exempt** from tax.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
@@ -128,7 +130,7 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 	}
 
-	// 2024-03-14: only update the percentage if none previous set.
+	// 2024-03-14: only update the percentage if none previously set.
 	// This means that custom percentages can be used even if the
 	// rate classification is required by a regime (like PT).
 	if c.Percent == nil {

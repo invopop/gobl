@@ -38,6 +38,7 @@ var taxCategories = []*tax.Category{
 		},
 		Extensions: []cbc.Key{
 			ExtKeyTBAIProduct,
+			ExtKeyTBAIExemption, // may be added to any rate
 		},
 		Rates: []*tax.Rate{
 			{
@@ -45,9 +46,6 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
-				},
-				Description: i18n.String{
-					i18n.EN: "May be applied to exports and intra-community supplies.",
 				},
 				Values: []*tax.RateValue{
 					{
