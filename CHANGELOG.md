@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `num.Percentage` has `Base()` method to access base amount.
 - MX: FuelAccountBalance complement now supports `percent` as an alternative to `rate`.
 - ES: added extra TicketBAI exemption reasons
+- Envelope `Replicate()` and supporting methods to be able to clone/replicate an envelope or document without any potentially conflicting data.
 
 ### Change
 
