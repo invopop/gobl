@@ -125,10 +125,6 @@ func (v *invoiceValidator) validLine(value interface{}) error {
 	return validation.ValidateStruct(line,
 		validation.Field(&line.Quantity, num.Positive),
 		validation.Field(&line.Total, num.Positive),
-		validation.Field(&line.Taxes,
-			validation.Required,
-			validation.Skip, // Prevents each tax's `ValidateWithContext` function from being called again.
-		),
 	)
 }
 

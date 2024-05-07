@@ -130,11 +130,6 @@ func TestLineValidation(t *testing.T) {
 
 	inv.Lines[0].Item.Price = num.MakeAmount(-1, 0)
 	assertValidationError(t, inv, "lines: (0: (total: must be greater than 0.).)")
-
-	inv = validInvoice()
-
-	inv.Lines[0].Taxes = nil
-	assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).)")
 }
 
 func TestPaymentInstructionsValidation(t *testing.T) {
@@ -228,6 +223,7 @@ func TestInvoiceDiscountValidation(t *testing.T) {
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
+	t.Helper()
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	require.Error(t, err)
