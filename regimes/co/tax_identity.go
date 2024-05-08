@@ -170,10 +170,9 @@ var taxIdentityTypeDefs = []*cbc.KeyDefinition{
 // validateTaxIdentity checks to ensure the NIT code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Type, validation.Required),
 		validation.Field(&tID.Code,
-			validation.When(tID.Type.In(TaxIdentityTypeTIN),
-				validation.Required,
+			validation.When(
+				tID.Type == cbc.KeyEmpty || tID.Type.In(TaxIdentityTypeTIN),
 				validation.By(validateTaxCode),
 			),
 		),

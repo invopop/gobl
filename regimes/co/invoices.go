@@ -28,21 +28,28 @@ func (v *invoiceValidator) validate() error {
 				bill.InvoiceTypeCreditNote,
 				bill.InvoiceTypeProforma,
 			),
+			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(v.validParty),
 			validation.By(v.validSupplier),
+			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
 			validation.By(v.validParty),
+			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
 			validation.When(
 				inv.Type.In(bill.InvoiceTypeCreditNote),
 				validation.Required,
 			),
-			validation.Each(validation.By(v.preceding))),
-		validation.Field(&inv.Outlays, validation.Empty),
+			validation.Each(validation.By(v.preceding)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Outlays,
+			validation.Empty,
+		),
 	)
 }
 
@@ -55,12 +62,14 @@ func (v *invoiceValidator) validParty(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			validation.By(v.validTaxIdentity),
+			validation.Skip,
 		),
 		validation.Field(&obj.Addresses,
 			validation.When(
 				obj.TaxID != nil && obj.TaxID.Country.In(l10n.CO),
 				validation.Length(1, 0),
 			),
+			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
 			validation.When(
@@ -68,6 +77,7 @@ func (v *invoiceValidator) validParty(value interface{}) error {
 				validation.Required,
 				tax.ExtensionsRequires(ExtKeyDIANMunicipality),
 			),
+			validation.Skip,
 		),
 	)
 }
@@ -92,7 +102,10 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
+			tax.RequireIdentityType,
 			tax.IdentityTypeIn(TaxIdentityTypeTIN),
+			tax.RequireIdentityCode,
+			validation.Skip,
 		),
 	)
 }

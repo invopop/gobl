@@ -53,7 +53,6 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{
 			name: "empty",
 			code: "",
-			err:  "code: cannot be blank",
 		},
 		{
 			name: "invalid zone",

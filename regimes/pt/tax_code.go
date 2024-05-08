@@ -21,7 +21,7 @@ var (
 // validateTaxIdentity checks to ensure the NIT code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.Required, validation.By(validateTaxCode)),
+		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
 }
 

@@ -34,10 +34,13 @@ func (v *invoiceValidator) validate() error {
 				inv.Type.In(bill.InvoiceTypeCreditNote),
 				validation.Required,
 			),
-			validation.Each(validation.By(v.preceding))),
+			validation.Each(validation.By(v.preceding)),
+			validation.Skip,
+		),
 		validation.Field(&inv.Supplier,
 			validation.Required,
 			validation.By(v.supplier),
+			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
@@ -45,6 +48,7 @@ func (v *invoiceValidator) validate() error {
 				validation.Required,
 				validation.By(v.commercialCustomer),
 			),
+			validation.Skip,
 		),
 	)
 }
@@ -58,6 +62,7 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
+			validation.Skip,
 		),
 	)
 }
@@ -74,6 +79,7 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
 			validation.Required,
+			validation.Skip,
 		),
 	)
 }

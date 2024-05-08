@@ -40,7 +40,7 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 // validateTaxIdentity checks to ensure the SIRET code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.Required, validation.By(validateVATTaxCode)),
+		validation.Field(&tID.Code, validation.By(validateVATTaxCode)),
 	)
 }
 
