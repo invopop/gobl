@@ -64,34 +64,52 @@ func TestExchangeRateValidation(t *testing.T) {
 func TestMatchExchangeRate(t *testing.T) {
 	rates := sampleRates()
 	a := currency.MatchExchangeRate(rates, currency.USD, currency.EUR)
-	assert.Equal(t, "0.875967", a.String())
+	assert.Equal(t, rates[0], a)
 
 	a = currency.MatchExchangeRate(rates, currency.EUR, currency.USD)
-	assert.Equal(t, "1.141860", a.String())
+	assert.Equal(t, rates[1], a)
 
 	a = currency.MatchExchangeRate(rates, currency.USD, currency.USD)
-	assert.Equal(t, "1", a.String())
+	assert.Nil(t, a)
 
 	a = currency.MatchExchangeRate(rates, currency.USD, currency.GBP)
 	assert.Nil(t, a)
 }
 
-func TestExchange(t *testing.T) {
+func TestExchangeRateConvert(t *testing.T) {
+	er := &currency.ExchangeRate{
+		From:   currency.USD,
+		To:     currency.EUR,
+		Amount: num.MakeAmount(875967, 6),
+	}
+	a := er.Convert(num.MakeAmount(10000, 2))
+	assert.Equal(t, "87.60", a.String())
+
+	er = &currency.ExchangeRate{
+		From:   currency.EUR,
+		To:     currency.CLP,
+		Amount: num.MakeAmount(100629, 2),
+	}
+	a = er.Convert(num.MakeAmount(10000, 2))
+	assert.Equal(t, "100629", a.String())
+}
+
+func TestConvert(t *testing.T) {
 	rates := sampleRates()
 	a := num.MakeAmount(10000, 2)
-	b := currency.Exchange(rates, currency.USD, currency.EUR, a)
+	b := currency.Convert(rates, currency.USD, currency.EUR, a)
 	assert.Equal(t, "87.60", b.String())
 
-	b = currency.Exchange(rates, currency.EUR, currency.USD, *b)
+	b = currency.Convert(rates, currency.EUR, currency.USD, *b)
 	assert.Equal(t, "100.03", b.String())
 
-	b = currency.Exchange(rates, currency.USD, currency.USD, *b)
+	b = currency.Convert(rates, currency.USD, currency.USD, *b)
 	assert.Equal(t, "100.03", b.String())
 
-	b = currency.Exchange(rates, currency.USD, currency.GBP, *b)
+	b = currency.Convert(rates, currency.USD, currency.GBP, *b)
 	assert.Nil(t, b)
 
-	b = currency.Exchange(rates, currency.EUR, currency.CLP, a)
+	b = currency.Convert(rates, currency.EUR, currency.CLP, a)
 	assert.Equal(t, "100629", b.String())
 }
 

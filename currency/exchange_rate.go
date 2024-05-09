@@ -46,37 +46,40 @@ func (er *ExchangeRate) Validate() error {
 	)
 }
 
+// Convert performs the currency conversion defined by the exchange rate.
+func (er *ExchangeRate) Convert(amount num.Amount) num.Amount {
+	a := amount.Multiply(er.Amount)
+	z := er.To.Def().Zero()
+	return a.Rescale(z.Exp()) // ensure scale always matches destination currency
+}
+
 // MatchExchangeRate will attempt to find the matching exchange rate that
-// will convert from one currency into another. If no match is found,
-// nil is returned. If the "from" and "to" parameters are the same, `1` will
-// be provided instead.
-func MatchExchangeRate(rates []*ExchangeRate, from, to Code) *num.Amount {
+// will convert from one currency into another. Will return nil if no
+// match is found or the currencies are the same.
+func MatchExchangeRate(rates []*ExchangeRate, from, to Code) *ExchangeRate {
 	if from == to {
-		return num.NewAmount(1, 0)
+		return nil
 	}
 	for _, rate := range rates {
 		if rate.From == from && rate.To == to {
-			a := rate.Amount
-			return &a
+			return rate
 		}
 	}
 	return nil
 }
 
-// Exchange will convert the provided amount from one currency into another or return
-// nil if no match can be found.
-func Exchange(rates []*ExchangeRate, from, to Code, amount num.Amount) *num.Amount {
+// Convert will convert the provided amount from one currency into another or return
+// nil if no match can be found. If the currencies are the same, the original
+// amount will be returned.
+func Convert(rates []*ExchangeRate, from, to Code, amount num.Amount) *num.Amount {
 	if from == to {
 		return &amount
 	}
-	rate := MatchExchangeRate(rates, from, to)
-	if rate == nil {
-		return nil
+	if rate := MatchExchangeRate(rates, from, to); rate != nil {
+		a := rate.Convert(amount)
+		return &a
 	}
-	a := amount.Multiply(*rate)
-	z := to.Def().Zero()
-	a = a.Rescale(z.Exp()) // ensure scale always matches destination currency
-	return &a
+	return nil
 }
 
 type exchangeRateValidation struct {

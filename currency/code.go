@@ -33,6 +33,11 @@ func (c Code) Def() *Def {
 	return Get(c)
 }
 
+// Strings provides the currency code as a string.
+func (c Code) String() string {
+	return string(c)
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Code) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{

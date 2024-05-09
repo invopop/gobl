@@ -159,7 +159,7 @@ func (l *Line) normalizeItemPrice(cur currency.Code, rates []*currency.ExchangeR
 	}
 
 	// Try to perform a currency exchange
-	np := currency.Exchange(rates, item.Currency, cur, item.Price)
+	np := currency.Convert(rates, item.Currency, cur, item.Price)
 	if np == nil {
 		return fmt.Errorf("no exchange rate found from '%v' to '%v'", item.Currency, cur)
 	}

@@ -12,6 +12,8 @@ func TestCode(t *testing.T) {
 	c := currency.EUR
 	assert.NoError(t, c.Validate())
 
+	assert.Equal(t, "EUR", c.String())
+
 	d := c.Def()
 	assert.Equal(t, d.Name, "Euro")
 
