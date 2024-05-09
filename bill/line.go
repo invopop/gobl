@@ -2,9 +2,11 @@ package bill
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -66,8 +68,10 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
+// calculate figures out the totals according to quantity and discounts
+// always using the currency of the item if different from the parents
+// currency.
+func (l *Line) calculate(r *tax.Regime, cur currency.Code) error {
 	if l.Item == nil {
 		return nil
 	}
@@ -83,9 +87,17 @@ func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 		return validation.Errors{"item": err}
 	}
 
-	// Ensure the Price precision is set correctly according to the currency
+	// Perform currency manipulation to ensure item's price is
+	// in local currency.
+	zero := cur.Def().Zero()
+	if l.Item.Currency != currency.CodeEmpty {
+		zero = l.Item.Currency.Def().Zero()
+	}
 	l.Item.Price = l.Item.Price.MatchPrecision(zero)
-	price := l.Item.Price.RescaleUp(zero.Exp() + 2)
+
+	// Increase price accuracy for calculations
+	price := l.Item.Price
+	price = price.RescaleUp(zero.Exp() + 2)
 
 	// Calculate the line sum and total
 	l.Sum = price.Multiply(l.Quantity)
@@ -111,6 +123,9 @@ func (l *Line) calculate(r *tax.Regime, zero num.Amount) error {
 
 	// Rescale the final sum and total
 	l.Sum = l.Sum.Rescale(l.Item.Price.Exp())
+
+	// Perform currency conversion on the total
+
 	l.Total = l.total.Rescale(l.Item.Price.Exp())
 
 	return nil
@@ -153,21 +168,33 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	return &l2
 }
 
-func calculateLines(r *tax.Regime, zero num.Amount, lines []*Line) error {
+func calculateLines(r *tax.Regime, lines []*Line, cur currency.Code) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		if err := l.calculate(r, zero); err != nil {
+		if err := l.calculate(r, cur); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
 		}
 	}
 	return nil
 }
 
-func calculateLineSum(zero num.Amount, lines []*Line) num.Amount {
-	sum := zero
-	for _, l := range lines {
-		sum = sum.MatchPrecision(l.total)
-		sum = sum.Add(l.total)
+func calculateLineSum(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) (num.Amount, error) {
+	sum := cur.Def().Zero()
+	for i, l := range lines {
+		total := l.total
+		lc := l.Item.Currency
+		if lc != currency.CodeEmpty {
+			np := currency.Exchange(rates, lc, cur, total)
+			if np == nil {
+				err := validation.Errors{
+					strconv.Itoa(i): fmt.Errorf("no exchange rate found from '%v' into '%v'", lc, cur),
+				}
+				return sum, err
+			}
+			total = *np
+		}
+		sum = sum.MatchPrecision(total)
+		sum = sum.Add(total)
 	}
-	return sum
+	return sum, nil
 }

@@ -438,10 +438,14 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	t.reset(zero)
 
 	// Lines
-	if err := calculateLines(r, zero, inv.Lines); err != nil {
+	if err := calculateLines(r, inv.Lines, inv.Currency); err != nil {
 		return validation.Errors{"lines": err}
 	}
-	t.Sum = calculateLineSum(zero, inv.Lines)
+	var err error
+	t.Sum, err = calculateLineSum(inv.Lines, inv.Currency, inv.ExchangeRates)
+	if err != nil {
+		return validation.Errors{"lines": err}
+	}
 	t.Total = t.Sum
 
 	// Discount Lines
