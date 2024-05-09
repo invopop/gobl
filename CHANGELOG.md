@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XX.X] - XXXX-XX-XX
 
+### Changed
+
+- MX: removed line validation for positive amounts.
+
 ### Fixed
 
 - Removing code requirement from Tax ID validation in all regimes so that when issuing a document to another country, the customers tax ID code will be validated if present, but will **not** be required. Any local rules for the issuing country for foreign IDs will continue to be applied.
@@ -29,7 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - ES: added extra TicketBAI exemption reasons
 - Envelope `Replicate()` and supporting methods to be able to clone/replicate an envelope or document without any potentially conflicting data.
 
-### Change
+### Changed
 
 - `reverse-charge` tag will no longer have impact on tax calculations, each tax combo per line should define if taxes are exempt or not.
 - Renaming `mx.StampProviderSATUUID` constant to just `mx.StampSATUUID`.
