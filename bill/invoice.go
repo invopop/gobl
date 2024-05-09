@@ -146,7 +146,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.ValueDate),
 		validation.Field(&inv.Currency,
 			validation.Required,
-			currency.CanExchangeTo(inv.ExchangeRates, r.Currency),
+			currency.CanConvertInto(inv.ExchangeRates, r.Currency),
 		),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Preceding),

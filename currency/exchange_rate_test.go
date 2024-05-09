@@ -116,16 +116,16 @@ func TestConvert(t *testing.T) {
 func TestExchangeRateValidationRule(t *testing.T) {
 	rates := sampleRates()
 	cur := currency.USD
-	err := validation.Validate(cur, currency.CanExchangeTo(rates, currency.EUR))
+	err := validation.Validate(cur, currency.CanConvertInto(rates, currency.EUR))
 	assert.NoError(t, err)
 
-	err = validation.Validate(cur, currency.CanExchangeTo(rates, currency.MXN))
+	err = validation.Validate(cur, currency.CanConvertInto(rates, currency.MXN))
 	assert.ErrorContains(t, err, "no exchange rate defined for 'USD' to 'MXN")
 
-	err = validation.Validate(currency.CodeEmpty, currency.CanExchangeTo(rates, currency.EUR))
+	err = validation.Validate(currency.CodeEmpty, currency.CanConvertInto(rates, currency.EUR))
 	assert.NoError(t, err)
 
-	err = validation.Validate(currency.CodeEmpty, currency.CanExchangeTo(rates, currency.USD))
+	err = validation.Validate(currency.CodeEmpty, currency.CanConvertInto(rates, currency.USD))
 	assert.NoError(t, err)
 }
 

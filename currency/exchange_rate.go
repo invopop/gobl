@@ -14,20 +14,18 @@ import (
 // - Exchange from USD to EUR.
 // - Convert from USD into EUR.
 //
-// It should be possible to take any amount in the matching currency and multiply it
-// by the amount defined in the exchange rate to determine the value.
-//
-// For example, our document is in EUR and some amounts are defined in USD. Our
-// ExchangeRate instance may be defined and used as:
+// If the destination or document's currency is EUR and some amounts
+// are defined in USD, the `ExchangeRate` instance may be defined and used
+// as follows:
 //
 //	  rate := &currency.ExchangeRate{
-//		From: currency.USD,
-//		To: currency.EUR,
+//		From:   currency.USD,
+//		To:     currency.EUR,
 //		Amount: "0.875967",
 //	  }
 //
 //	  val := MakeAmount(100, 2) // 100.00 USD
-//	  val.Multiply(rate.Amount) // 87.60 EUR
+//	  rate.Convert(val)         // 87.60 EUR
 type ExchangeRate struct {
 	// Currency code this will be converted from.
 	From Code `json:"from" jsonschema:"title=From"`
@@ -105,9 +103,9 @@ func (erv *exchangeRateValidation) Validate(val any) error {
 	return fmt.Errorf("no exchange rate defined for '%v' to '%v'", cur, erv.to)
 }
 
-// CanExchangeTo will check to see if the currency to be validated can
-// be converted into one of the provided rates.
-func CanExchangeTo(rates []*ExchangeRate, to Code) validation.Rule {
+// CanConvertInto will check to see if the currency to be validated can
+// be converted using one of the provided exchange rates.
+func CanConvertInto(rates []*ExchangeRate, to Code) validation.Rule {
 	return &exchangeRateValidation{
 		rates: rates,
 		to:    to,
