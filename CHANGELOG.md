@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- MX: removed line validation for positive amounts.
+- MX: invoice line totals validated to be **zero** or more, instead of positive.
 
 ### Fixed
 
