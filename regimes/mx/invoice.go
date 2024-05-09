@@ -29,31 +29,31 @@ func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Currency, validation.In(currency.MXN)),
 		validation.Field(&inv.Tax,
-			validation.By(v.validTax),
+			validation.By(v.tax),
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(v.validSupplier),
+			validation.By(v.supplier),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(v.validCustomer),
+			validation.By(v.customer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(v.validLine),
-				validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
+				validation.By(v.line),
+				validation.Skip,
 			),
-			validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
+			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
-			validation.By(v.validPayment),
+			validation.By(v.payment),
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
-			validation.By(v.validPrecedingList),
-			validation.Each(validation.By(v.validPrecedingEntry)),
+			validation.By(v.precedingList),
+			validation.Each(validation.By(v.precedingEntry)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Discounts,
@@ -63,7 +63,7 @@ func (v *invoiceValidator) validate() error {
 	)
 }
 
-func (v *invoiceValidator) validTax(value any) error {
+func (v *invoiceValidator) tax(value any) error {
 	obj, _ := value.(*bill.Tax)
 	if obj == nil {
 		return nil
@@ -78,7 +78,7 @@ func (v *invoiceValidator) validTax(value any) error {
 	)
 }
 
-func (v *invoiceValidator) validCustomer(value interface{}) error {
+func (v *invoiceValidator) customer(value interface{}) error {
 	obj, _ := value.(*org.Party)
 	if obj == nil {
 		return nil
@@ -99,7 +99,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 	)
 }
 
-func (v *invoiceValidator) validSupplier(value interface{}) error {
+func (v *invoiceValidator) supplier(value interface{}) error {
 	obj, _ := value.(*org.Party)
 	if obj == nil {
 		return nil
@@ -118,7 +118,7 @@ func (v *invoiceValidator) validSupplier(value interface{}) error {
 	)
 }
 
-func (v *invoiceValidator) validLine(value interface{}) error {
+func (v *invoiceValidator) line(value interface{}) error {
 	line, _ := value.(*bill.Line)
 	if line == nil {
 		return nil
@@ -126,24 +126,24 @@ func (v *invoiceValidator) validLine(value interface{}) error {
 
 	return validation.ValidateStruct(line,
 		validation.Field(&line.Quantity, num.Positive),
-		validation.Field(&line.Total, num.Positive),
+		validation.Field(&line.Total, num.Min(num.AmountZero)),
 	)
 }
 
-func (v *invoiceValidator) validPayment(value interface{}) error {
+func (v *invoiceValidator) payment(value interface{}) error {
 	pay, _ := value.(*bill.Payment)
 	if pay == nil {
 		return nil
 	}
 
 	return validation.ValidateStruct(pay,
-		validation.Field(&pay.Instructions, validation.By(v.validatePayInstructions)),
-		validation.Field(&pay.Advances, validation.Each(validation.By(v.validateAdvance))),
-		validation.Field(&pay.Terms, validation.By(v.validatePayTerms)),
+		validation.Field(&pay.Instructions, validation.By(v.payInstructions)),
+		validation.Field(&pay.Advances, validation.Each(validation.By(v.payAdvance))),
+		validation.Field(&pay.Terms, validation.By(v.payTerms)),
 	)
 }
 
-func (v *invoiceValidator) validatePayInstructions(value interface{}) error {
+func (v *invoiceValidator) payInstructions(value interface{}) error {
 	instr, _ := value.(*pay.Instructions)
 	if instr == nil {
 		return nil
@@ -154,7 +154,7 @@ func (v *invoiceValidator) validatePayInstructions(value interface{}) error {
 	)
 }
 
-func (v *invoiceValidator) validateAdvance(value interface{}) error {
+func (v *invoiceValidator) payAdvance(value interface{}) error {
 	adv, _ := value.(*pay.Advance)
 	if adv == nil {
 		return nil
@@ -174,7 +174,7 @@ func (v *invoiceValidator) validateAdvance(value interface{}) error {
 	return validation.ValidateStruct(adv, fields...)
 }
 
-func (v *invoiceValidator) validatePayTerms(value interface{}) error {
+func (v *invoiceValidator) payTerms(value interface{}) error {
 	terms, _ := value.(*pay.Terms)
 	if terms == nil {
 		return nil
@@ -185,7 +185,7 @@ func (v *invoiceValidator) validatePayTerms(value interface{}) error {
 	)
 }
 
-func (v *invoiceValidator) validPrecedingList(value interface{}) error {
+func (v *invoiceValidator) precedingList(value interface{}) error {
 	list, _ := value.([]*bill.Preceding)
 	if len(list) == 0 {
 		return nil
@@ -198,7 +198,7 @@ func (v *invoiceValidator) validPrecedingList(value interface{}) error {
 	return nil
 }
 
-func (v *invoiceValidator) validPrecedingEntry(value interface{}) error {
+func (v *invoiceValidator) precedingEntry(value interface{}) error {
 	entry, _ := value.(*bill.Preceding)
 	if entry == nil {
 		return nil

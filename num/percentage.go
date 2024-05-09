@@ -15,6 +15,11 @@ type Percentage struct {
 	amount Amount
 }
 
+var (
+	// PercentageZero is a convenience variable for testing against zero percentages.
+	PercentageZero = MakePercentage(0, 0)
+)
+
 // NewPercentage provides a new pointer to a Percentage value.
 // Using MakePercentage is recommend, but this is useful for handling
 // nil values.

@@ -118,18 +118,15 @@ func TestLineValidation(t *testing.T) {
 	inv := validInvoice()
 
 	inv.Lines[0].Quantity = num.MakeAmount(0, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0; total: must be greater than 0.).)")
+	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0.).)")
 
 	inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0; total: must be greater than 0.).)")
+	assertValidationError(t, inv, "lines: (0: (quantity: must be greater than 0; total: must be no less than 0.).)")
 
 	inv = validInvoice()
 
-	inv.Lines[0].Item.Price = num.MakeAmount(0, 0)
-	assertValidationError(t, inv, "lines: (0: (total: must be greater than 0.).)")
-
 	inv.Lines[0].Item.Price = num.MakeAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (total: must be greater than 0.).)")
+	assertValidationError(t, inv, "lines: (0: (total: must be no less than 0.).)")
 }
 
 func TestPaymentInstructionsValidation(t *testing.T) {
