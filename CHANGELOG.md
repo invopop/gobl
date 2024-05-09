@@ -6,15 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XX.X] - XXXX-XX-XX
 
+Finally, invoice multi-currency support! It's been a very long time coming, but we've finalized the details on how to handle currency conversion in invoices and potentially other documents.
+
 ### Added
 
-- Invoice multi-currency support!
-- Invoice Line Item alternative pricing added to be able to define custom prices per currency.
-- Automatic conversion of invoice line item prices into invoice currency based on exchange rates defined in invoice.
-- Validate invoice has defined exchange rates into tax regimes currency.
+- Invoice Line Item alternative pricing added to be able to define custom prices in different currencies: `line.AltPrices`
+- Automatic conversion of invoice line item prices into invoice currency based on exchange rates defined in invoice if no alternative prices provided.
+- If an invoice has a currency that is different from that of the tax regime, a validation rule ensures that an exchange rate is defined.
+- `currency.Amount` - new model that combines a currency with an amount.
 
 ### Changed
 
+- _BREAKING_: refactor of `currency.ExchangeRate` to clearly define `from` and `to` currencies (this was never supported, so we're not expecting anything to actually break).
 - Removed all regime specific currency validation, this is now performed by the invoice and depends on the available exchange rates.
 - MX: invoice line totals validated to be **zero** or more, instead of positive.
 
