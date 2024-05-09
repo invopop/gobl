@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
@@ -37,6 +38,13 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Customer,
 			validation.By(v.customer),
+			validation.Skip,
+		),
+		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(v.line),
+				validation.Skip,
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
@@ -107,6 +115,18 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 				ExtKeyCFDIFiscalRegime,
 			),
 		),
+	)
+}
+
+func (v *invoiceValidator) line(value interface{}) error {
+	line, _ := value.(*bill.Line)
+	if line == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Quantity, num.Positive),
+		validation.Field(&line.Total, num.Min(num.AmountZero)),
 	)
 }
 

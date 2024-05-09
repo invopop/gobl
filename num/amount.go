@@ -21,6 +21,11 @@ type Amount struct {
 	exp   uint32
 }
 
+var (
+	// AmountZero is a convenience variable for testing against zero amounts.
+	AmountZero = MakeAmount(0, 0)
+)
+
 // NewAmount provides a pointer to an Amount instance. Normally we'd recommend
 // using the `MakeAmount` method.
 func NewAmount(val int64, exp uint32) *Amount {
