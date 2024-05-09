@@ -57,7 +57,6 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{
 			name: "empty",
 			code: "",
-			err:  "code: cannot be blank",
 		},
 		{
 			name: "too long",

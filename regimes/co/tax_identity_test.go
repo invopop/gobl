@@ -65,24 +65,8 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good 3", typ: "tin", code: "124499654"},
 		{name: "good 4", typ: "tin", code: "8300801501"},
 		{name: "good 5", typ: "tin", code: "700602703"},
-		{
-			name: "missing code",
-			typ:  "tin",
-			code: "",
-			err:  "code: cannot be blank",
-		},
-		{
-			name: "missing zone for final customer",
-			typ:  co.TaxIdentityTypeCitizen,
-			code: co.TaxCodeFinalCustomer,
-			err:  "",
-		},
-		{
-			name: "missing type",
-			typ:  "",
-			code: "100100100",
-			err:  "type: cannot be blank",
-		},
+		{name: "good no tin", code: "700602703"},
+		{name: "ignore other typ", typ: "passport", code: "1234"},
 		{
 			name: "too long",
 			typ:  "tin",

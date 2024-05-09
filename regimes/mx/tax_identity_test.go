@@ -45,26 +45,24 @@ func TestTaxIdentityValidation(t *testing.T) {
 		err  string
 	}{
 		{name: "foreign code", code: mx.TaxIdentityCodeForeign, zone: "21000"},
-		{name: "valid code 1", code: "MNOP8201019HJ", zone: "21000"},
-		{name: "valid code 2", code: "UVWX610715JKL", zone: "21000"},
-		{name: "valid code 3", code: "STU760612MN1", zone: "21000"},
+		{name: "valid code 1", code: "MNOP8201019HJ"},
+		{name: "valid code 2", code: "UVWX610715JKL"},
+		{name: "valid code 3", code: "STU760612MN1"},
 		{
 			name: "invalid code 1",
 			code: "STU760612MN",
-			zone: "21000",
 			err:  tax.ErrIdentityCodeInvalid.Error(),
 		},
 		{
 			name: "invalid code 2",
 			code: "XXXX",
-			zone: "21000",
 			err:  tax.ErrIdentityCodeInvalid.Error(),
 		},
 		{
-			name: "missing code",
+			name: "empty",
 			code: "",
-			zone: "21000",
-			err:  "code: cannot be blank",
+			// empty is allowed
+			// err:  "code: cannot be blank",
 		},
 		{
 			name: "missing zone",
