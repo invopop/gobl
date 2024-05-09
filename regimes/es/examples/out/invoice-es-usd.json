@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5c5a09f8360b9518a83834a396aa2c8db114a8adfdc38d4b8da85b22997bc6ad"
+			"val": "b4e373834c0deb0f03739ff40a38e029bc6f915fde62c44f2f739ebbdfd013ab"
 		},
 		"draft": true
 	},
@@ -21,6 +21,11 @@
 				"from": "USD",
 				"to": "EUR",
 				"amount": "0.875967"
+			},
+			{
+				"from": "MXN",
+				"to": "USD",
+				"amount": "0.059197"
 			}
 		],
 		"supplier": {
@@ -56,7 +61,7 @@
 				"i": 1,
 				"quantity": "20",
 				"item": {
-					"name": "Development services",
+					"name": "Development services from Spain",
 					"currency": "USD",
 					"price": "100.00",
 					"alt_prices": [
@@ -86,6 +91,31 @@
 			},
 			{
 				"i": 2,
+				"quantity": "10",
+				"item": {
+					"name": "Development services from Mexico",
+					"currency": "USD",
+					"price": "88.80",
+					"alt_prices": [
+						{
+							"currency": "MXN",
+							"value": "1500.00"
+						}
+					],
+					"unit": "h"
+				},
+				"sum": "888.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "888.00"
+			},
+			{
+				"i": 3,
 				"quantity": "1",
 				"item": {
 					"name": "Financial service",
@@ -103,8 +133,8 @@
 			}
 		],
 		"totals": {
-			"sum": "1810.00",
-			"total": "1810.00",
+			"sum": "2698.00",
+			"total": "2698.00",
 			"taxes": {
 				"categories": [
 					{
@@ -112,9 +142,9 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "1800.00",
+								"base": "2688.00",
 								"percent": "21.0%",
-								"amount": "378.00"
+								"amount": "564.48"
 							},
 							{
 								"key": "zero",
@@ -123,14 +153,14 @@
 								"amount": "0.00"
 							}
 						],
-						"amount": "378.00"
+						"amount": "564.48"
 					}
 				],
-				"sum": "378.00"
+				"sum": "564.48"
 			},
-			"tax": "378.00",
-			"total_with_tax": "2188.00",
-			"payable": "2188.00"
+			"tax": "564.48",
+			"total_with_tax": "3262.48",
+			"payable": "3262.48"
 		}
 	}
 }

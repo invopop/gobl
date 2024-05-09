@@ -8,6 +8,9 @@ exchange_rates:
   - from: "USD"
     to: "EUR"
     amount: "0.875967"
+  - from: "MXN"
+    to: "USD"
+    amount: "0.059197"
 
 supplier:
   tax_id:
@@ -32,7 +35,7 @@ customer:
 lines:
   - quantity: 20
     item:
-      name: "Development services"
+      name: "Development services from Spain"
       currency: "EUR"
       price: "90.00"
       alt_prices:
@@ -42,6 +45,15 @@ lines:
     discounts:
       - percent: "10%"
         reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 10
+    item:
+      name: "Development services from Mexico"
+      currency: "MXN"
+      price: "1500.00"
+      unit: "h"
     taxes:
       - cat: VAT
         rate: standard
