@@ -68,10 +68,8 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// calculate figures out the totals according to quantity and discounts
-// always using the currency of the item if different from the parents
-// currency.
-func (l *Line) calculate(r *tax.Regime, cur currency.Code) error {
+// calculate figures out the totals according to quantity and discounts.
+func (l *Line) calculate(r *tax.Regime, cur currency.Code, rates []*currency.ExchangeRate) error {
 	if l.Item == nil {
 		return nil
 	}
@@ -88,14 +86,13 @@ func (l *Line) calculate(r *tax.Regime, cur currency.Code) error {
 	}
 
 	// Perform currency manipulation to ensure item's price is
-	// in local currency.
-	zero := cur.Def().Zero()
-	if l.Item.Currency != currency.CodeEmpty {
-		zero = l.Item.Currency.Def().Zero()
+	// in the document's currency.
+	if err := l.normalizeItemPrice(cur, rates); err != nil {
+		return err
 	}
-	l.Item.Price = l.Item.Price.MatchPrecision(zero)
 
 	// Increase price accuracy for calculations
+	zero := cur.Def().Zero()
 	price := l.Item.Price
 	price = price.RescaleUp(zero.Exp() + 2)
 
@@ -131,6 +128,47 @@ func (l *Line) calculate(r *tax.Regime, cur currency.Code) error {
 	return nil
 }
 
+// normalizeItemPrice will attempt to perform any currency conversion process on
+// the line item's data so that the currency always matches that of the
+// document.
+func (l *Line) normalizeItemPrice(cur currency.Code, rates []*currency.ExchangeRate) error {
+	item := l.Item
+	icur := item.Currency
+	if icur == currency.CodeEmpty {
+		icur = cur
+	}
+	item.Price = item.Price.MatchPrecision(icur.Def().Zero())
+	if item.Currency == currency.CodeEmpty || item.Currency == cur {
+		return nil
+	}
+
+	// Grab a copy of the base price
+	nap := &currency.Amount{
+		Currency: item.Currency,
+		Value:    item.Price,
+	}
+
+	// First check the alt prices
+	for _, ap := range item.AltPrices {
+		if ap.Currency == cur {
+			item.Currency = ap.Currency
+			item.Price = ap.Value.MatchPrecision(ap.Currency.Def().Zero())
+			item.AltPrices = []*currency.Amount{nap}
+			return nil
+		}
+	}
+
+	// Try to perform a currency exchange
+	np := currency.Exchange(rates, item.Currency, cur, item.Price)
+	if np == nil {
+		return fmt.Errorf("no exchange rate found from '%v' to '%v'", item.Currency, cur)
+	}
+	item.Price = *np
+	item.Currency = cur
+	item.AltPrices = []*currency.Amount{nap}
+	return nil
+}
+
 func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	accuracy := defaultTaxRemovalAccuracy
 	rate := l.Taxes.Get(cat)
@@ -141,6 +179,7 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	l2 := *l
 	l2i := *l.Item
 
+	l2i.AltPrices = nil // empty alternative prices
 	l2i.Price = l.Item.Price.Upscale(accuracy).Remove(*rate.Percent)
 	// assume sum and total will be calculated automatically
 
@@ -168,33 +207,21 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	return &l2
 }
 
-func calculateLines(r *tax.Regime, lines []*Line, cur currency.Code) error {
+func calculateLines(r *tax.Regime, lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		if err := l.calculate(r, cur); err != nil {
+		if err := l.calculate(r, cur, rates); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
 		}
 	}
 	return nil
 }
 
-func calculateLineSum(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) (num.Amount, error) {
+func calculateLineSum(lines []*Line, cur currency.Code) num.Amount {
 	sum := cur.Def().Zero()
-	for i, l := range lines {
-		total := l.total
-		lc := l.Item.Currency
-		if lc != currency.CodeEmpty {
-			np := currency.Exchange(rates, lc, cur, total)
-			if np == nil {
-				err := validation.Errors{
-					strconv.Itoa(i): fmt.Errorf("no exchange rate found from '%v' into '%v'", lc, cur),
-				}
-				return sum, err
-			}
-			total = *np
-		}
-		sum = sum.MatchPrecision(total)
-		sum = sum.Add(total)
+	for _, l := range lines {
+		sum = sum.MatchPrecision(l.total)
+		sum = sum.Add(l.total)
 	}
-	return sum, nil
+	return sum
 }

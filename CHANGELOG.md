@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XX.X] - XXXX-XX-XX
 
+### Added
+
+- Invoice multi-currency support!
+- Invoice Line Item alternative pricing added to be able to define custom prices per currency.
+- Automatic conversion of invoice line item prices into invoice currency based on exchange rates defined in invoice.
+- Validate invoice has defined exchange rates into tax regimes currency.
+
 ### Changed
 
+- Removed all regime specific currency validation, this is now performed by the invoice and depends on the available exchange rates.
 - MX: invoice line totals validated to be **zero** or more, instead of positive.
 
 ### Fixed

@@ -38,6 +38,9 @@ type Item struct {
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.
 	Price num.Amount `json:"price" jsonschema:"title=Price"`
+	// AltPrices defines a list of prices with their currencies that may be used
+	// as an alternative to the item's base price.
+	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
 	// Unit of measure.
 	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Country code of where this item was from originally.
@@ -68,6 +71,7 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&i.Identities),
 		validation.Field(&i.Currency),
 		validation.Field(&i.Price, validation.Required),
+		validation.Field(&i.AltPrices),
 		validation.Field(&i.Unit),
 		validation.Field(&i.Origin),
 		validation.Field(&i.Ext),

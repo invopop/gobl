@@ -2,7 +2,6 @@ package ca
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/currency"
 	"github.com/invopop/validation"
 )
 
@@ -20,7 +19,6 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Currency, validation.In(currency.CAD)),
 		validation.Field(&inv.Supplier, validation.Required),
 		validation.Field(&inv.Customer),
 	)
