@@ -2,8 +2,6 @@ package at
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/currency"
-	"github.com/invopop/validation"
 )
 
 // invoiceValidator adds validation checks to invoices which are relevant
@@ -18,10 +16,5 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func (v *invoiceValidator) validate() error {
-	inv := v.inv
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Currency,
-			validation.In(currency.EUR),
-		),
-	)
+	return nil // nothing to do yet!
 }
