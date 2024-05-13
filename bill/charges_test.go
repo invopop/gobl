@@ -21,9 +21,9 @@ func TestChargeTotals(t *testing.T) {
 	}
 	zero := num.MakeAmount(0, 2)
 	base := num.MakeAmount(30000, 2)
-	err := calculateCharges(zero, base, ls)
+	err := calculateCharges(ls, base, zero)
 	require.NoError(t, err)
-	sum := calculateChargeSum(zero, ls)
+	sum := calculateChargeSum(ls, zero)
 	require.NotNil(t, sum)
 	assert.Equal(t, 1, ls[0].Index)
 	assert.Equal(t, 2, ls[1].Index)
@@ -34,7 +34,7 @@ func TestChargeTotals(t *testing.T) {
 	assert.Equal(t, "60.00", ls[1].Amount.String())
 
 	ls = []*Charge{}
-	require.NoError(t, calculateCharges(zero, base, ls))
-	sum = calculateChargeSum(zero, ls)
+	require.NoError(t, calculateCharges(ls, base, zero))
+	sum = calculateChargeSum(ls, zero)
 	assert.Nil(t, sum)
 }
