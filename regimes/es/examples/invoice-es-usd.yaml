@@ -1,0 +1,66 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "USD"
+issue_date: "2024-05-09"
+series: "EXPORT"
+code: "001"
+exchange_rates:
+  - from: "USD"
+    to: "EUR"
+    amount: "0.875967"
+  - from: "MXN"
+    to: "USD"
+    amount: "0.059197"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "US"
+  name: "Sample Consumer Inc."
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services from Spain"
+      currency: "EUR"
+      price: "90.00"
+      alt_prices:
+        - currency: "USD"
+          value: "100.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 10
+    item:
+      name: "Development services from Mexico"
+      currency: "MXN"
+      price: "1500.00"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Financial service"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: zero

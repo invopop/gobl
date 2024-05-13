@@ -1,0 +1,166 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "b4e373834c0deb0f03739ff40a38e029bc6f915fde62c44f2f739ebbdfd013ab"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "EXPORT",
+		"code": "001",
+		"issue_date": "2024-05-09",
+		"currency": "USD",
+		"exchange_rates": [
+			{
+				"from": "USD",
+				"to": "EUR",
+				"amount": "0.875967"
+			},
+			{
+				"from": "MXN",
+				"to": "USD",
+				"amount": "0.059197"
+			}
+		],
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer Inc.",
+			"tax_id": {
+				"country": "US"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services from Spain",
+					"currency": "USD",
+					"price": "100.00",
+					"alt_prices": [
+						{
+							"currency": "EUR",
+							"value": "90.00"
+						}
+					],
+					"unit": "h"
+				},
+				"sum": "2000.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "200.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "1800.00"
+			},
+			{
+				"i": 2,
+				"quantity": "10",
+				"item": {
+					"name": "Development services from Mexico",
+					"currency": "USD",
+					"price": "88.80",
+					"alt_prices": [
+						{
+							"currency": "MXN",
+							"value": "1500.00"
+						}
+					],
+					"unit": "h"
+				},
+				"sum": "888.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "888.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Financial service",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "zero",
+						"percent": "0.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"totals": {
+			"sum": "2698.00",
+			"total": "2698.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "2688.00",
+								"percent": "21.0%",
+								"amount": "564.48"
+							},
+							{
+								"key": "zero",
+								"base": "10.00",
+								"percent": "0.0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "564.48"
+					}
+				],
+				"sum": "564.48"
+			},
+			"tax": "564.48",
+			"total_with_tax": "3262.48",
+			"payable": "3262.48"
+		}
+	}
+}

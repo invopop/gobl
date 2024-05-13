@@ -121,6 +121,32 @@ func TestInvoiceRegimeCurrencyWithDiscounts(t *testing.T) {
 	assert.Equal(t, "20.00", i.Lines[0].Charges[0].Amount.String(), "should update charges precision")
 }
 
+func TestInvoiceCurrencyValidation(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	inv := baseInvoice(t, lines...)
+	inv.Currency = currency.USD
+	require.NoError(t, inv.Calculate())
+
+	assert.ErrorContains(t, inv.Validate(), "currency: no exchange rate defined for 'USD' to 'EUR'")
+
+	inv.ExchangeRates = []*currency.ExchangeRate{
+		{
+			From:   currency.USD,
+			To:     currency.EUR,
+			Amount: num.MakeAmount(875967, 6),
+		},
+	}
+	assert.NoError(t, inv.Validate())
+}
+
 func TestInvoiceAutoSetIssueDate(t *testing.T) {
 	lines := []*bill.Line{
 		{

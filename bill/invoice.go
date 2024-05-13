@@ -146,6 +146,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.ValueDate),
 		validation.Field(&inv.Currency,
 			validation.Required,
+			currency.CanConvertInto(inv.ExchangeRates, r.Currency),
 		),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Preceding),
@@ -438,10 +439,10 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	t.reset(zero)
 
 	// Lines
-	if err := calculateLines(r, zero, inv.Lines); err != nil {
+	if err := calculateLines(r, inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
 		return validation.Errors{"lines": err}
 	}
-	t.Sum = calculateLineSum(zero, inv.Lines)
+	t.Sum = calculateLineSum(inv.Lines, inv.Currency)
 	t.Total = t.Sum
 
 	// Discount Lines
