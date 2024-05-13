@@ -31,7 +31,9 @@ var taxCategories = []*tax.Category{
 		},
 		Retained:     false,
 		RateRequired: true,
-		Extensions:   []cbc.Key{ExtKeyRegion},
+		Extensions: []cbc.Key{
+			ExtKeyRegion,
+		},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateStandard,
@@ -133,7 +135,9 @@ var taxCategories = []*tax.Category{
 				Map: cbc.CodeMap{
 					KeyATTaxCode: TaxCodeExempt,
 				},
-				Extensions: []cbc.Key{ExtKeyExemptionCode},
+				Extensions: []cbc.Key{
+					ExtKeyExemptionCode,
+				},
 			},
 		},
 	},

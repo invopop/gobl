@@ -73,7 +73,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 				},
 			},
-			err: "percent: cannot be blank",
+			err: nil, // no percent implies exempt
 		},
 		{
 			desc: "missing percentage with exempt rate",
@@ -114,7 +114,7 @@ func TestSetValidation(t *testing.T) {
 					Surcharge: num.NewPercentage(5, 3),
 				},
 			},
-			err: "percent: cannot be blank; surcharge: required with percent.",
+			err: "surcharge: required with percent.",
 		},
 		{
 			desc: "exempt rate with reason",
@@ -122,6 +122,18 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Rate:     tax.RateExempt,
+					Ext: tax.Extensions{
+						es.ExtKeyTBAIExemption: "E1",
+					},
+				},
+			},
+			err: nil,
+		},
+		{
+			desc: "exempt, no rate, with extension",
+			set: tax.Set{
+				{
+					Category: "VAT",
 					Ext: tax.Extensions{
 						es.ExtKeyTBAIExemption: "E1",
 					},

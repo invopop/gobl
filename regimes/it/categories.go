@@ -96,8 +96,8 @@ var categories = []*tax.Category{
 				Key:    tax.RateExempt,
 				Exempt: true,
 				Name: i18n.String{
-					i18n.EN: "None",
-					i18n.IT: "Natura",
+					i18n.EN: "Exempt",
+					i18n.IT: "Esente",
 				},
 				Extensions: []cbc.Key{
 					ExtKeySDINature,
