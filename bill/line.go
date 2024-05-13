@@ -120,9 +120,6 @@ func (l *Line) calculate(r *tax.Regime, cur currency.Code, rates []*currency.Exc
 
 	// Rescale the final sum and total
 	l.Sum = l.Sum.Rescale(l.Item.Price.Exp())
-
-	// Perform currency conversion on the total
-
 	l.Total = l.total.Rescale(l.Item.Price.Exp())
 
 	return nil
