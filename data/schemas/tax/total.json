@@ -57,7 +57,7 @@
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percentage of the rate, which may be nil for exempt rates."
+          "description": "Percentage of the rate. Will be nil when taxes are **exempt**."
         },
         "surcharge": {
           "$ref": "#/$defs/RateTotalSurcharge",

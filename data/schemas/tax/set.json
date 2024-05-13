@@ -18,7 +18,7 @@
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percent defines the percentage set manually or determined from the rate key (calculated if rate present).",
+          "description": "Percent defines the percentage set manually or determined from the rate\nkey (calculated if rate present). A nil percent implies that this tax combo\nis **exempt** from tax.",
           "calculated": true
         },
         "surcharge": {

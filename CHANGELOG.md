@@ -4,7 +4,7 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [vX.XX.X] - XXXX-XX-XX
+## [v0.76.0] - 2024-05-13
 
 Finally, invoice multi-currency support! It's been a very long time coming, but we've finalized the details on how to handle currency conversion in invoices and potentially other documents.
 
@@ -14,6 +14,7 @@ Finally, invoice multi-currency support! It's been a very long time coming, but 
 - Automatic conversion of invoice line item prices into invoice currency based on exchange rates defined in invoice if no alternative prices provided.
 - If an invoice has a currency that is different from that of the tax regime, a validation rule ensures that an exchange rate is defined.
 - `currency.Amount` - new model that combines a currency with an amount.
+- BE: added Belgium regime.
 
 ### Changed
 

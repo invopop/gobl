@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/currency/amount",
+  "$ref": "#/$defs/Amount",
+  "$defs": {
+    "Amount": {
+      "properties": {
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label allows for additional information to be added to the\ncurrency Amount that may be useful."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Code defines the currency for this amount."
+        },
+        "value": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Value",
+          "description": "Value is the amount in the currency."
+        }
+      },
+      "type": "object",
+      "required": [
+        "currency",
+        "value"
+      ],
+      "description": "An Amount represents a monetary value in a specific currency."
+    }
+  }
+}

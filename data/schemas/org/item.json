@@ -49,6 +49,14 @@
           "title": "Price",
           "description": "Base price of a single unit to be sold."
         },
+        "alt_prices": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/amount"
+          },
+          "type": "array",
+          "title": "Alternative Prices",
+          "description": "AltPrices defines a list of prices with their currencies that may be used\nas an alternative to the item's base price."
+        },
         "unit": {
           "$ref": "https://gobl.org/draft-0/org/unit",
           "title": "Unit",
