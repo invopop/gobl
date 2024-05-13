@@ -111,7 +111,8 @@
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Total",
-          "description": "Result of quantity multiplied by the unit price (maps to `Importe`)."
+          "description": "Result of quantity multiplied by the unit price (maps to `Importe`).",
+          "calculated": true
         },
         "taxes": {
           "items": {
@@ -138,26 +139,31 @@
     },
     "FuelAccountTax": {
       "properties": {
-        "code": {
+        "cat": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Code",
-          "description": "Code that identifies the tax (\"IVA\" or \"IEPS\", maps to `Impuesto`)"
+          "title": "Category",
+          "description": "Category that identifies the tax (\"VAT\" or \"IEPS\", maps to `Impuesto`)"
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percent applicable to the line total (tasa) to use instead of Rate (maps to `TasaoCuota`)"
         },
         "rate": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Rate",
-          "description": "Rate applicable to either the line total (tasa) or the line quantity (cuota) (maps to `TasaOCuota`)."
+          "description": "Rate is a fixed fee to apply to the line quantity (cuota) (maps to `TasaOCuota`)"
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount",
-          "description": "Total amount of the tax once the rate has been applied (maps to `Importe`)."
+          "description": "Total amount of the tax once the percent or rate has been applied (maps to `Importe`).",
+          "calculated": true
         }
       },
       "type": "object",
       "required": [
-        "code",
-        "rate",
+        "cat",
         "amount"
       ],
       "description": "FuelAccountTax represents a single tax applied to a fuel purchase."

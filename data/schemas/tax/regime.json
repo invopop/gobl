@@ -33,7 +33,7 @@
         "rate_required": {
           "type": "boolean",
           "title": "Rate Required",
-          "description": "RateRequired when true implies that when a tax combo is defined using\nthis category that one of the rate's keys must be defined. This is\nnormally needed for regimes that categorize taxes in local document\nformats as opposed to grouping by percentage values."
+          "description": "RateRequired when true implies that when a tax combo is defined using\nthis category that one of the rate's keys must be defined. This is\nnormally needed for regimes that categorize taxes in local document\nformats as opposed to grouping by percentage values.\nTry to avoid using this. It is better for rates to be determined\nby the percentage and conditions, not the rate key."
         },
         "rates": {
           "items": {

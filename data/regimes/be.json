@@ -1,0 +1,164 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "en": "Belgium"
+  },
+  "time_zone": "Europe/Brussels",
+  "country": "BE",
+  "currency": "EUR",
+  "tags": [
+    {
+      "key": "simplified",
+      "name": {
+        "de": "Vereinfachte Rechnung",
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada",
+        "it": "Fattura Semplificata"
+      },
+      "desc": {
+        "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+        "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+      }
+    },
+    {
+      "key": "reverse-charge",
+      "name": {
+        "de": "Umkehr der Steuerschuld",
+        "en": "Reverse Charge",
+        "es": "Inversión del Sujeto Pasivo",
+        "it": "Inversione del soggetto passivo"
+      }
+    },
+    {
+      "key": "self-billed",
+      "name": {
+        "de": "Rechnung durch den Leistungsempfänger",
+        "en": "Self-billed",
+        "es": "Facturación por el destinatario",
+        "it": "Autofattura"
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "de": "Kundensätze",
+        "en": "Customer rates",
+        "es": "Tarifas aplicables al destinatario",
+        "it": "Aliquote applicabili al destinatario"
+      }
+    },
+    {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT"
+      },
+      "title": {
+        "en": "Value Added Tax"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "de": "Standardsatz",
+            "en": "Standard Rate",
+            "fr": "Taux standard",
+            "nl": "Standaardtarief"
+          },
+          "values": [
+            {
+              "since": "2011-01-04",
+              "percent": "21.0%"
+            }
+          ]
+        },
+        {
+          "key": "intermediate",
+          "name": {
+            "de": "Mittlerer Satz",
+            "en": "Intermediate Rate",
+            "fr": "Taux intermédiaire",
+            "nl": "Tussentarief"
+          },
+          "values": [
+            {
+              "since": "2011-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "de": "Ermäßigter Satz",
+            "en": "Reduced Rate",
+            "fr": "Taux réduit",
+            "nl": "Verlaagd Tarief"
+          },
+          "values": [
+            {
+              "since": "2011-01-04",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "VAT rates | FPS Finance"
+          },
+          "url": "https://finance.belgium.be/en/enterprises/vat/vat-obligation/rates-and-calculation/vat-rates#q1"
+        }
+      ]
+    }
+  ]
+}

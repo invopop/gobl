@@ -62,14 +62,26 @@
   ],
   "extensions": [
     {
+      "key": "mx-cfdi-issue-place",
+      "name": {
+        "en": "Place of Issue",
+        "es": "Lugar de Expedición"
+      },
+      "desc": {
+        "en": "Post code of where the invoice was issued. In CFDI, this translates to the 'LugarExpedicion'.",
+        "es": "Código postal de donde se emitió la factura. En CFDI se traduce a 'LugarExpedicion'."
+      },
+      "pattern": "^[0-9]{5}$"
+    },
+    {
       "key": "mx-cfdi-post-code",
       "name": {
         "en": "Post Code",
         "es": "Código Postal"
       },
       "desc": {
-        "en": "Post code of where the invoice was issued.\nIn CFDI, this translates to the 'LugarExpedicion' in the case of the supplier\nand 'DomicilioFiscalReceptor' for customers.\nExample value: '01000'.",
-        "es": "Código postal de donde se emitió la factura.\nEn CFDI se traduce a 'LugarExpedicion' en el caso del emisor, y\n'DomicilioFiscalReceptor' para el receptor.\nValor de ejemplor: '01000'."
+        "en": "Post code of a supplier or customer to use instead of an address. Example: \"01000\".",
+        "es": "Código postal de un emisor o receptor para usar en lugar de una dirección. Ejemplo: \"01000\"."
       },
       "pattern": "^[0-9]{5}$"
     },

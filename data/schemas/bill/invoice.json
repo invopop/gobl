@@ -782,6 +782,11 @@
           "title": "Tags",
           "description": "Special tax tags that apply to this invoice according to local requirements."
         },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Additional extensions that are applied to the invoice as a whole as opposed to specific\nsections."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",
