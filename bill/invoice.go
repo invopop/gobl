@@ -446,18 +446,14 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	t.Total = t.Sum
 
 	// Discount Lines
-	if err := calculateDiscounts(inv.Discounts, t.Sum, zero); err != nil {
-		return validation.Errors{"discounts": err}
-	}
+	calculateDiscounts(inv.Discounts, t.Sum, zero)
 	if discounts := calculateDiscountSum(inv.Discounts, zero); discounts != nil {
 		t.Discount = discounts
 		t.Total = t.Total.Subtract(*discounts)
 	}
 
 	// Charge Lines
-	if err := calculateCharges(inv.Charges, t.Sum, zero); err != nil {
-		return validation.Errors{"charges": err}
-	}
+	calculateCharges(inv.Charges, t.Sum, zero)
 	if charges := calculateChargeSum(inv.Charges, zero); charges != nil {
 		t.Charge = charges
 		t.Total = t.Total.Add(*charges)

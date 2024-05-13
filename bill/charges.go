@@ -100,10 +100,10 @@ func (m *Charge) removeIncludedTaxes(cat cbc.Code) *Charge {
 	return &m2
 }
 
-func calculateCharges(lines []*Charge, sum, zero num.Amount) error {
+func calculateCharges(lines []*Charge, sum, zero num.Amount) {
 	// COPIED FROM discount.go
 	if len(lines) == 0 {
-		return nil
+		return
 	}
 	for i, l := range lines {
 		l.Index = i + 1
@@ -122,7 +122,6 @@ func calculateCharges(lines []*Charge, sum, zero num.Amount) error {
 			l.amount = l.Amount
 		}
 	}
-	return nil
 }
 
 func calculateChargeSum(charges []*Charge, zero num.Amount) *num.Amount {

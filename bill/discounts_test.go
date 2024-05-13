@@ -27,8 +27,7 @@ func TestDiscountTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30000, 2)
-		err := calculateDiscounts(ls, base, zero)
-		require.NoError(t, err)
+		calculateDiscounts(ls, base, zero)
 		sum := calculateDiscountSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, 1, ls[0].Index)
@@ -43,7 +42,7 @@ func TestDiscountTotals(t *testing.T) {
 		assert.Equal(t, "40.00", ls[2].Amount.String())
 
 		ls = []*Discount{}
-		require.NoError(t, calculateDiscounts(ls, base, zero))
+		calculateDiscounts(ls, base, zero)
 		sum = calculateDiscountSum(ls, zero)
 		assert.Nil(t, sum)
 	})
@@ -61,8 +60,7 @@ func TestDiscountTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30844212, 6)
-		err := calculateDiscounts(ls, base, zero)
-		require.NoError(t, err)
+		calculateDiscounts(ls, base, zero)
 		sum := calculateDiscountSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, "6.17", ls[1].Amount.String())
@@ -79,8 +77,7 @@ func TestDiscountTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30844212, 6)
-		err := calculateDiscounts(ls, base, zero)
-		require.NoError(t, err)
+		calculateDiscounts(ls, base, zero)
 		sum := calculateDiscountSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, "10.02", ls[0].Amount.String())
@@ -97,8 +94,7 @@ func TestDiscountTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30844212, 6)
-		err := calculateDiscounts(ls, base, zero)
-		require.NoError(t, err)
+		calculateDiscounts(ls, base, zero)
 		sum := calculateDiscountSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, "10.0247", ls[0].Amount.String())

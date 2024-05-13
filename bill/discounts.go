@@ -101,9 +101,9 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code) *Discount {
 	return &m2
 }
 
-func calculateDiscounts(lines []*Discount, sum, zero num.Amount) error {
+func calculateDiscounts(lines []*Discount, sum, zero num.Amount) {
 	if len(lines) == 0 {
-		return nil
+		return
 	}
 	for i, l := range lines {
 		l.Index = i + 1
@@ -122,7 +122,6 @@ func calculateDiscounts(lines []*Discount, sum, zero num.Amount) error {
 			l.amount = l.Amount
 		}
 	}
-	return nil
 }
 
 func calculateDiscountSum(discounts []*Discount, zero num.Amount) *num.Amount {
