@@ -29,7 +29,7 @@ func TestChargeTotals(t *testing.T) {
 	assert.Equal(t, 2, ls[1].Index)
 	assert.Equal(t, "160.00", sum.String())
 	assert.Equal(t, "100.00", ls[0].Amount.String())
-	assert.Equal(t, "300.00", ls[1].Base.String())
+	assert.Nil(t, ls[1].Base)
 	assert.Equal(t, "20%", ls[1].Percent.String())
 	assert.Equal(t, "60.00", ls[1].Amount.String())
 
