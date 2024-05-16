@@ -1,4 +1,4 @@
-package nl
+package de
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -16,13 +16,13 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
-func validateInvoiceSupplier(value interface{}) error {
-	obj, ok := value.(*org.Party)
-	if !ok {
+func validateInvoiceSupplier(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
 		return nil
 	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
+	return validation.ValidateStruct(p,
+		validation.Field(&p.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
 			validation.Skip,
