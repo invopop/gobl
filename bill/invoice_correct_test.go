@@ -140,6 +140,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	opts := &bill.CorrectionOptions{
 		Type:   bill.InvoiceTypeCreditNote,
 		Reason: "test refund",
+		Series: "R-TEST",
 		Ext: tax.Extensions{
 			es.ExtKeyFacturaECorrection: "01",
 		},
@@ -149,6 +150,8 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "10")
 	assert.Equal(t, i.IssueDate, cal.Today())
+	assert.Equal(t, i.Series, "R-TEST")
+	assert.Empty(t, i.Code)
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series, "TEST")
 	assert.Equal(t, pre.Code, "123")
