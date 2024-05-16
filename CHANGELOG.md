@@ -6,14 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [XXXXXX] - XXXX-XX-XX
 
+### Added
+
+- `series` property added to bill Correction Options to allow a series for a credit note to be added.
+- `label` property added to `org.Party`.
+
 ### Changed
 
 - Invoice Discounts and Charges will no longer update the `base` property according to the document's sum.
 - Exempt rate in `tax.Combo` no longer required when percent is empty.
+- When correcting an invoice, if no new series is provided, the previous document's series will be maintained.
 
 ### Fixed
 
 - Precision handling of calculated invoice discounts and charges.
+- Multiple tax regime were not validating the presence of supplier identity code.
 
 ## [v0.76.0] - 2024-05-13
 

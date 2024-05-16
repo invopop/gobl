@@ -25,6 +25,8 @@ type CorrectionOptions struct {
 	Type cbc.Key `json:"type" jsonschema:"title=Type"`
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
+	// Series to assign to the new corrective invoice.
+	Series string `json:"series,omitempty" jsonschema:"title=Series"`
 	// Stamps of the previous document to include in the preceding data.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Human readable reason for the corrective operation.
@@ -63,6 +65,14 @@ func WithStamps(stamps []*head.Stamp) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Stamps = stamps
+	}
+}
+
+// WithSeries assigns a new series to the corrective document.
+func WithSeries(value string) schema.Option {
+	return func(o interface{}) {
+		opts := o.(*CorrectionOptions)
+		opts.Series = value
 	}
 }
 
@@ -145,6 +155,9 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	cos := js.Definitions["CorrectionOptions"]
 
+	// Always recommend the series
+	recommended := []string{"series"}
+
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 	if cd == nil {
 		return js, nil
@@ -222,9 +235,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 				}
 			}
 		}
-		cos.Extras = map[string]any{
-			schema.Recommended: []string{"ext"},
-		}
+		recommended = append(recommended, "ext")
 	} else {
 		// Remove extensions, they're not needed if not defined
 		cos.Properties.Delete("ext")
@@ -232,6 +243,12 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	if cd.ReasonRequired {
 		cos.Required = append(cos.Required, "reason")
+	}
+
+	if len(recommended) > 0 {
+		cos.Extras = map[string]any{
+			schema.Recommended: recommended,
+		}
 	}
 
 	return js, nil
@@ -268,7 +285,9 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 	inv.UUID = ""
 	inv.Type = o.Type
-	inv.Series = ""
+	if o.Series != "" {
+		inv.Series = o.Series
+	}
 	inv.Code = ""
 	if o.IssueDate != nil {
 		inv.IssueDate = *o.IssueDate

@@ -35,6 +35,8 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "10")
 	assert.Equal(t, i.IssueDate, cal.Today())
+	assert.Equal(t, i.Series, "TEST")
+	assert.Empty(t, i.Code)
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series, "TEST")
 	assert.Equal(t, pre.Code, "123")
@@ -75,6 +77,14 @@ func TestInvoiceCorrect(t *testing.T) {
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
+
+	t.Run("with series", func(t *testing.T) {
+		inv := testInvoiceESForCorrection(t)
+		err := inv.Correct(bill.Credit, bill.WithSeries("R-TEST"))
+		require.NoError(t, err)
+		assert.Equal(t, inv.Series, "R-TEST")
+		assert.Equal(t, inv.Preceding[0].Series, "TEST")
+	})
 
 	// France case (both corrective and credit note)
 	i = testInvoiceFRForCorrection(t)

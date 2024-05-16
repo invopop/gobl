@@ -17,6 +17,9 @@ type Party struct {
 	Name string `json:"name" jsonschema:"title=Name"`
 	// Alternate short name.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
+	// Label can be used to provide a custom label for the party in a given
+	// context in a single language, for example "Supplier", "Host", or similar.
+	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Supplier"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
 	TaxID *tax.Identity `json:"tax_id,omitempty" jsonschema:"title=Tax Identity"`
 	// Set of codes used to identify the party in other systems.
