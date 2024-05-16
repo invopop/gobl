@@ -1406,8 +1406,8 @@
         {
           "key": "exempt",
           "name": {
-            "en": "None",
-            "it": "Natura"
+            "en": "Exempt",
+            "it": "Esente"
           },
           "exempt": true,
           "extensions": [
