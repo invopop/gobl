@@ -45,7 +45,10 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	cat := r.Category(c.Category)
 	rate := r.Rate(c.Category, c.Rate)
 	err := validation.ValidateStructWithContext(ctx, c,
-		validation.Field(&c.Category, validation.Required, r.InCategories()),
+		validation.Field(&c.Category,
+			validation.Required,
+			r.InCategories(),
+		),
 		validation.Field(&c.Rate,
 			validation.When(
 				(cat != nil && cat.RateRequired),
@@ -62,13 +65,12 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 				validation.Skip,
 			),
 		),
-		validation.Field(&c.Percent,
-			validation.When(rate == nil, validation.Required),
-			validation.When(rate != nil && rate.Exempt, validation.Nil),
-			validation.When(rate != nil && !rate.Exempt, validation.Required),
-		),
+		validation.Field(&c.Percent),
 		validation.Field(&c.Surcharge,
-			validation.When(c.Percent == nil, validation.Nil.Error("required with percent")),
+			validation.When(
+				c.Percent == nil,
+				validation.Nil.Error("required with percent"),
+			),
 		),
 	)
 	if err != nil {

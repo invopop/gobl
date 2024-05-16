@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Invoice Discounts and Charges will no longer update the `base` property according to the document's sum.
+- Exempt rate in `tax.Combo` no longer required when percent is empty.
 
 ### Fixed
 
