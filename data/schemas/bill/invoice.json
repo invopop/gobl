@@ -30,12 +30,12 @@
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
-          "description": "Base represents the value used as a base for percent calculations.\nIf not already provided, we'll take the invoices sum before\ndiscounts."
+          "description": "Base represents the value used as a base for percent calculations instead\nof the invoice's sum of lines."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percentage to apply to the invoice's Sum"
+          "description": "Percentage to apply to the Base or Invoice Sum"
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
@@ -127,12 +127,12 @@
         "base": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Base",
-          "description": "Base represents the value used as a base for percent calculations.\nIf not already provided, we'll take the invoices sum."
+          "description": "Base represents the value used as a base for percent calculations instead\nof the invoice's sum of lines."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percentage to apply to the invoice's Sum."
+          "description": "Percentage to apply to the base or invoice's sum."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
