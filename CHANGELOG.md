@@ -4,6 +4,16 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [XXXXXX] - XXXX-XX-XX
+
+### Changed
+
+- Invoice Discounts and Charges will no longer update the `base` property according to the document's sum.
+
+### Fixed
+
+- Precision handling of calculated invoice discounts and charges.
+
 ## [v0.76.0] - 2024-05-13
 
 Finally, invoice multi-currency support! It's been a very long time coming, but we've finalized the details on how to handle currency conversion in invoices and potentially other documents.

@@ -42,10 +42,10 @@ type Discount struct {
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Reference or ID for this Discount
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
-	// Base represents the value used as a base for percent calculations.
-	// If not already provided, we'll take the invoices sum.
+	// Base represents the value used as a base for percent calculations instead
+	// of the invoice's sum of lines.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage to apply to the invoice's Sum.
+	// Percentage to apply to the base or invoice's sum.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
@@ -57,6 +57,9 @@ type Discount struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	// internal amount for calculations
+	amount num.Amount
 }
 
 // ValidateWithContext checks the discount's fields.
@@ -64,7 +67,12 @@ func (m *Discount) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
 		validation.Field(&m.Base),
-		validation.Field(&m.Percent),
+		validation.Field(&m.Percent,
+			validation.When(
+				m.Base != nil,
+				validation.Required,
+			),
+		),
 		validation.Field(&m.Amount, validation.Required),
 		validation.Field(&m.Taxes),
 		validation.Field(&m.Meta),
@@ -93,31 +101,37 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code) *Discount {
 	return &m2
 }
 
-func calculateDiscounts(zero, sum num.Amount, discounts []*Discount) error { //nolint:unparam
-	if len(discounts) == 0 {
-		return nil
+func calculateDiscounts(lines []*Discount, sum, zero num.Amount) {
+	if len(lines) == 0 {
+		return
 	}
-	for i, l := range discounts {
+	for i, l := range lines {
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
-			if l.Base == nil {
-				l.Base = &sum
+			base := sum
+			exp := zero.Exp()
+			if l.Base != nil {
+				base = l.Base.RescaleUp(exp)
+				exp = base.Exp()
 			}
-			l.Amount = l.Percent.Of(*l.Base)
+			l.Amount = l.Percent.Of(base)
+			l.amount = l.Amount
+			l.Amount = l.Amount.Rescale(exp)
+		} else {
+			l.Amount = l.Amount.MatchPrecision(zero)
+			l.amount = l.Amount
 		}
-		l.Amount = l.Amount.MatchPrecision(zero)
 	}
-	return nil
 }
 
-func calculateDiscountSum(zero num.Amount, discounts []*Discount) *num.Amount {
+func calculateDiscountSum(discounts []*Discount, zero num.Amount) *num.Amount {
 	if len(discounts) == 0 {
 		return nil
 	}
 	total := zero
 	for _, l := range discounts {
-		total = total.MatchPrecision(l.Amount)
-		total = total.Add(l.Amount)
+		total = total.MatchPrecision(l.amount)
+		total = total.Add(l.amount)
 	}
 	return &total
 }

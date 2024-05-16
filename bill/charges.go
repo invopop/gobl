@@ -42,11 +42,10 @@ type Charge struct {
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Code to used to refer to the this charge
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
-	// Base represents the value used as a base for percent calculations.
-	// If not already provided, we'll take the invoices sum before
-	// discounts.
+	// Base represents the value used as a base for percent calculations instead
+	// of the invoice's sum of lines.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
-	// Percentage to apply to the invoice's Sum
+	// Percentage to apply to the Base or Invoice Sum
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Amount to apply (calculated if percent present)
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
@@ -58,6 +57,9 @@ type Charge struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	//
+	amount num.Amount
 }
 
 // ValidateWithContext checks the charge's fields.
@@ -65,7 +67,12 @@ func (m *Charge) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
 		validation.Field(&m.Base),
-		validation.Field(&m.Percent),
+		validation.Field(&m.Percent,
+			validation.When(
+				m.Base != nil,
+				validation.Required,
+			),
+		),
 		validation.Field(&m.Amount, validation.Required),
 		validation.Field(&m.Taxes),
 		validation.Field(&m.Meta),
@@ -93,31 +100,38 @@ func (m *Charge) removeIncludedTaxes(cat cbc.Code) *Charge {
 	return &m2
 }
 
-func calculateCharges(zero, sum num.Amount, charges []*Charge) error { //nolint:unparam
-	if len(charges) == 0 {
-		return nil
+func calculateCharges(lines []*Charge, sum, zero num.Amount) {
+	// COPIED FROM discount.go
+	if len(lines) == 0 {
+		return
 	}
-	for i, l := range charges {
+	for i, l := range lines {
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
-			if l.Base == nil {
-				l.Base = &sum
+			base := sum
+			exp := zero.Exp()
+			if l.Base != nil {
+				base = l.Base.RescaleUp(exp)
+				exp = base.Exp()
 			}
-			l.Amount = l.Percent.Of(*l.Base)
+			l.Amount = l.Percent.Of(base)
+			l.amount = l.Amount
+			l.Amount = l.Amount.Rescale(exp)
+		} else {
+			l.Amount = l.Amount.MatchPrecision(zero)
+			l.amount = l.Amount
 		}
-		l.Amount = l.Amount.MatchPrecision(zero)
 	}
-	return nil
 }
 
-func calculateChargeSum(zero num.Amount, charges []*Charge) *num.Amount {
+func calculateChargeSum(charges []*Charge, zero num.Amount) *num.Amount {
 	if len(charges) == 0 {
 		return nil
 	}
 	total := zero
 	for _, l := range charges {
-		total = total.MatchPrecision(l.Amount)
-		total = total.Add(l.Amount)
+		total = total.MatchPrecision(l.amount)
+		total = total.Add(l.amount)
 	}
 	return &total
 }

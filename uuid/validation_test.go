@@ -214,7 +214,7 @@ func TestUUIDValidation(t *testing.T) {
 
 	id = uuid.V6()
 	assert.NoError(t, validation.Validate(id, uuid.Within(1*time.Second)))
-	time.Sleep(12 * time.Millisecond)
+	time.Sleep(20 * time.Millisecond)
 	err = validation.Validate(id, uuid.Within(10*time.Millisecond))
 	assert.ErrorContains(t, err, "timestamp is outside acceptable range")
 
