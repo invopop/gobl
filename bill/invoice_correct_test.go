@@ -167,7 +167,7 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 	require.True(t, ok)
 
 	cos := schema.Definitions["CorrectionOptions"]
-	assert.Equal(t, cos.Properties.Len(), 5)
+	assert.Equal(t, cos.Properties.Len(), 6)
 
 	pm, ok := cos.Properties.Get("ext")
 	require.True(t, ok)
