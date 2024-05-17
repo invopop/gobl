@@ -49,8 +49,8 @@ func New() *tax.Regime {
 				Schema: bill.ShortSchemaInvoice,
 				// France supports both corrective methods
 				Types: []cbc.Key{
-					bill.InvoiceTypeCorrective, // Code 384
 					bill.InvoiceTypeCreditNote, // Code 381
+					bill.InvoiceTypeCorrective, // Code 384
 				},
 			},
 		},

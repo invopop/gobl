@@ -165,6 +165,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	if len(cd.Types) > 0 {
 		if ps, ok := cos.Properties.Get("type"); ok {
+			ps.Default = cd.Types[0].String() // pick first one
 			ps.OneOf = make([]*jsonschema.Schema, len(cd.Types))
 			for i, v := range cd.Types {
 				kd := cbc.GetKeyDefinition(v, InvoiceTypes)
@@ -174,6 +175,12 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 					Description: kd.Desc.String(),
 				}
 			}
+		}
+	}
+
+	if inv.Series != "" {
+		if ps, ok := cos.Properties.Get("series"); ok {
+			ps.Default = inv.Series // copy series from invoice
 		}
 	}
 
