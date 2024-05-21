@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Default values added to correction options schema based on values from previous invoice.
 
+### Fixed
+
+- `bill.Invoice`: fixed issue with invalid currency codes that don't have a definition, will always resort to Tax Regime's currency.
+
 ## [v0.77.0] - 2024-05-16
 
 Fixing important bugs with some tax regimes and tax identity code validation, along with a new 'series' property for correction options.

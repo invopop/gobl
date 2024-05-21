@@ -4,6 +4,7 @@ package gb
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/common"
@@ -23,7 +24,7 @@ const (
 func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  l10n.GB,
-		Currency: "GBP",
+		Currency: currency.GBP,
 		Name: i18n.String{
 			i18n.EN: "United Kingdom",
 		},

@@ -426,7 +426,8 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 		date = &inv.IssueDate
 	}
 
-	if inv.Currency == currency.CodeEmpty {
+	// Convert empty or invalid currency to the regime's currency
+	if inv.Currency == currency.CodeEmpty || inv.Currency.Def() == nil {
 		inv.Currency = r.Currency
 	}
 
