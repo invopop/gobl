@@ -92,6 +92,22 @@ func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
 	assert.Equal(t, "10", i.Lines[0].Item.Price.String(), "should not update price precision")
 }
 
+func TestInvoiceInvalidCurrency(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	i.Currency = "MX"
+	require.NoError(t, i.Calculate())
+	assert.Equal(t, currency.EUR, i.Currency, "should correct currency")
+}
+
 func TestInvoiceRegimeCurrencyWithDiscounts(t *testing.T) {
 	lines := []*bill.Line{
 		{
