@@ -7,8 +7,8 @@ import (
 )
 
 var correctionTypes = []cbc.Key{
-	bill.InvoiceTypeCorrective,
 	bill.InvoiceTypeCreditNote,
+	bill.InvoiceTypeCorrective,
 	bill.InvoiceTypeDebitNote,
 }
 
