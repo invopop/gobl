@@ -102,7 +102,7 @@ func (u *Online) Validate() error {
 // properties to Label and URL.
 func (u *Online) UnmarshalJSON(data []byte) error {
 	type Alias Online
-	aux := &struct {
+	aux := struct {
 		*Alias
 		Name    string `json:"name"`
 		Address string `json:"addr"`

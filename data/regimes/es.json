@@ -711,8 +711,8 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "corrective",
         "credit-note",
+        "corrective",
         "debit-note"
       ],
       "extensions": [

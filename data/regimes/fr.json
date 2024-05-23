@@ -84,8 +84,8 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "corrective",
-        "credit-note"
+        "credit-note",
+        "corrective"
       ]
     }
   ],
