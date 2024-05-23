@@ -203,20 +203,25 @@
     },
     "Online": {
       "properties": {
-        "name": {
-          "type": "string",
-          "title": "Name",
-          "description": "Descriptive name given to the online provider."
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key identifier for this online payment method."
         },
-        "addr": {
+        "label": {
           "type": "string",
-          "title": "Address",
-          "description": "Full URL to be used for payment."
+          "title": "Label",
+          "description": "Descriptive label for the online provider."
+        },
+        "url": {
+          "type": "string",
+          "title": "URL",
+          "description": "URL to be used for payment."
         }
       },
       "type": "object",
       "required": [
-        "addr"
+        "url"
       ],
       "description": "Online provides the details required to make a payment online using a website"
     }
