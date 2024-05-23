@@ -2,6 +2,7 @@ package pay
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -70,10 +71,12 @@ type CreditTransfer struct {
 
 // Online provides the details required to make a payment online using a website
 type Online struct {
-	// Descriptive name given to the online provider.
-	Name string `json:"name,omitempty" jsonschema:"title=Name"`
-	// Full URL to be used for payment.
-	Address string `json:"addr" jsonschema:"title=Address"`
+	// Key identifier for this online payment method.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Descriptive label for the online provider.
+	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// URL to be used for payment.
+	URL string `json:"url" jsonschema:"title=URL"`
 }
 
 // UNTDID4461 provides the standard UNTDID 4461 code for the instruction's key.
@@ -89,8 +92,33 @@ func (i *Instructions) UNTDID4461() cbc.Code {
 // Validate ensures the Online method details look correct.
 func (u *Online) Validate() error {
 	return validation.ValidateStruct(u,
-		validation.Field(&u.Address, validation.Required, is.URL),
+		validation.Field(&u.Key),
+		validation.Field(&u.Label),
+		validation.Field(&u.URL, validation.Required, is.URL),
 	)
+}
+
+// UnmarshalJSON is used to handle the migration of the Online's
+// properties to Label and URL.
+func (u *Online) UnmarshalJSON(data []byte) error {
+	type Alias Online
+	aux := &struct {
+		*Alias
+		Name    string `json:"name"`
+		Address string `json:"addr"`
+	}{
+		Alias: (*Alias)(u),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.Name != "" {
+		u.Label = aux.Name
+	}
+	if aux.Address != "" {
+		u.URL = aux.Address
+	}
+	return nil
 }
 
 // Validate ensures the fields provided in the instructions are valid.
