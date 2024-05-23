@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Default values added to correction options schema based on values from previous invoice.
 
+### Changed
+
+- In `pay.Online`, renamed `name` property to `label`, and `addr` to `URL`. Also added `key` property. Auto-migration included.
+
 ### Fixed
 
 - `bill.Invoice`: fixed issue with invalid currency codes that don't have a definition, will always resort to Tax Regime's currency.

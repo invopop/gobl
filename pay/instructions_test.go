@@ -1,0 +1,32 @@
+package pay_test
+
+import (
+	"encoding/json"
+	"testing"
+
+	"github.com/invopop/gobl/pay"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestOnline(t *testing.T) {
+	instr := &pay.Instructions{
+		Key: pay.MeansKeyOnline,
+		Online: []*pay.Online{
+			{
+				Label: "Test",
+				URL:   "https://example.com",
+			},
+		},
+	}
+	require.NoError(t, instr.Validate())
+	assert.Equal(t, "Test", instr.Online[0].Label)
+	assert.Equal(t, "https://example.com", instr.Online[0].URL)
+
+	inst := &pay.Instructions{}
+	data := `{"key":"online","online":[{"name":"Test","addr":"https://example.com"}]}`
+	require.NoError(t, json.Unmarshal([]byte(data), inst))
+
+	assert.Equal(t, "Test", inst.Online[0].Label)
+	assert.Equal(t, "https://example.com", inst.Online[0].URL)
+}
