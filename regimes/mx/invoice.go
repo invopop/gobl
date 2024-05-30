@@ -133,7 +133,7 @@ func (v *invoiceValidator) line(value interface{}) error {
 }
 
 func (v *invoiceValidator) payment(value interface{}) error {
-	pay, _ := value.(*bill.Payment)
+	pay, _ := value.(*bill.InvoicePayment)
 	if pay == nil {
 		return nil
 	}
