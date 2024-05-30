@@ -344,6 +344,26 @@ In MX, CFDI invoices to final consumers are required to use the generic RFC (`XA
 }
 ```
 
+Similarly, CFDI invoices to foreign customers are required to use the foreign generic RFC (`XEXX010101000`) along with some specific values for the extensions. The country and the local tax code of the supplier are included in separated CFDI fields. And again, in GOBL, you just need to provide the actual country and tax code of the supplier (without extensions), and the GOBL to CFDI conversor will take care of producing the correct document:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "customer": {
+    "name": "Almuerzos Colombianos SAS",
+    "tax_id": {
+      "country": "CO",
+      "code": "9014514805"
+    }
+  }
+
+  // [...]
+}
+```
+
 ## Complements
 
 Complements let you include additional complementary information to your GOBL documents. The following sections describe the complements made available by the MX regime, their purpose and how you can use them.
