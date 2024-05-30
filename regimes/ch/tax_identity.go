@@ -84,6 +84,9 @@ func commercialCheck(val string) error {
 	if total == 10 {
 		return errors.New("invalid code")
 	}
+	if total == 11 {
+		total = 0
+	}
 
 	lastNum := int(val[9] - '0')
 	if lastNum != int(total) {
