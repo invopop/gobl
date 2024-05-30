@@ -12,7 +12,9 @@ type CountryCode Code
 // definition.
 type CountryDef struct {
 	// ISO 3166-2 Country code
-	Code CountryCode `json:"code" jsonschema:"ISO Country Code"`
+	Code CountryCode `json:"code" jsonschema:"ISO 3166-2 Country Code"`
+	// ISO 3166-1 alpha-3 Country code
+	Alpha3 string `json:"alpha3" jsonschema:"ISO 3166-1 Alpha-3 Country Code"`
 	// English name of the country
 	Name string `json:"name" jsonschema:"Name"`
 	// Internet Top-Level-Domain
@@ -74,6 +76,16 @@ func (c CountryCode) Name() string {
 	for _, v := range CountryDefinitions {
 		if v.Code == c {
 			return v.Name
+		}
+	}
+	return ""
+}
+
+// Alpha3 provides the ISO 3166-1 alpha-3 country code
+func (c CountryCode) Alpha3() string {
+	for _, v := range CountryDefinitions {
+		if v.Code == c {
+			return v.Alpha3
 		}
 	}
 	return ""
