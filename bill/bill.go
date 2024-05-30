@@ -8,6 +8,13 @@ import (
 func init() {
 	schema.Register(schema.GOBL.Add("bill"),
 		Invoice{},
+		Payment{},
 		CorrectionOptions{},
 	)
 }
+
+// Constants used to help identify document schemas
+const (
+	ShortSchemaInvoice = "bill/invoice"
+	ShortSchemaPayment = "bill/payment"
+)

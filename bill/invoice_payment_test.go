@@ -11,7 +11,7 @@ import (
 func TestPaymentCalculations(t *testing.T) {
 	zero := num.MakeAmount(0, 2)
 	total := num.MakeAmount(20000, 2)
-	p := &Payment{
+	p := &InvoicePayment{
 		Advances: []*pay.Advance{
 			{
 				Description: "Paid in advance",
@@ -22,7 +22,7 @@ func TestPaymentCalculations(t *testing.T) {
 	p.calculateAdvances(zero, total)
 	assert.Equal(t, "20.00", p.Advances[0].Amount.String())
 
-	p = &Payment{
+	p = &InvoicePayment{
 		Advances: []*pay.Advance{
 			{
 				Description: "Paid in advance",
@@ -36,7 +36,7 @@ func TestPaymentCalculations(t *testing.T) {
 	ta := p.totalAdvance(zero)
 	assert.Equal(t, "10.00", ta.String())
 
-	p = &Payment{
+	p = &InvoicePayment{
 		Advances: []*pay.Advance{
 			{
 				Description: "Paid in advance",
@@ -55,7 +55,7 @@ func TestPaymentCalculations(t *testing.T) {
 	t.Run("maintains precision", func(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
 		total := num.MakeAmount(20845, 3)
-		p := &Payment{
+		p := &InvoicePayment{
 			Advances: []*pay.Advance{
 				{
 					Description: "Paid in advance",

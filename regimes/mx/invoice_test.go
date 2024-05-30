@@ -131,7 +131,7 @@ func TestLineValidation(t *testing.T) {
 
 func TestPaymentInstructionsValidation(t *testing.T) {
 	inv := validInvoice()
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.InvoicePayment{
 		Instructions: &pay.Instructions{},
 	}
 
@@ -144,7 +144,7 @@ func TestPaymentInstructionsValidation(t *testing.T) {
 
 func TestPaymentAdvancesValidation(t *testing.T) {
 	inv := validInvoice()
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.InvoicePayment{
 		Advances: []*pay.Advance{
 			{
 				Description: "A prepayment",
@@ -164,7 +164,7 @@ func TestPaymentAdvancesValidation(t *testing.T) {
 
 func TestPaymentTermsValidation(t *testing.T) {
 	inv := validInvoice()
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.InvoicePayment{
 		Terms: &pay.Terms{},
 	}
 

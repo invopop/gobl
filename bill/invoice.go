@@ -19,11 +19,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Constants used to help identify invoices
-const (
-	ShortSchemaInvoice = "bill/invoice"
-)
-
 const (
 	defaultTaxRemovalAccuracy uint32 = 2
 )
@@ -87,7 +82,7 @@ type Invoice struct {
 	// Ordering details including document references and buyer or seller parties.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
 	// Information on when, how, and to whom the invoice should be paid.
-	Payment *Payment `json:"payment,omitempty" jsonschema:"title=Payment Details"`
+	Payment *InvoicePayment `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	// Specific details on delivery of the goods referenced in the invoice.
 	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
 

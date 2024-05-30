@@ -14,7 +14,7 @@ import (
 func TestPayInstructionsValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.InvoicePayment{
 		Advances: []*pay.Advance{
 			{
 				Key:         pay.MeansKeyDirectDebit.With(it.MeansKeyRID),
@@ -27,7 +27,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	err := inv.Validate()
 	require.NoError(t, err)
 
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.InvoicePayment{
 		Advances: []*pay.Advance{
 			{
 				Key:         pay.MeansKeyDirectDebit.With("fooo"),
