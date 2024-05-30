@@ -7,7 +7,6 @@ Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 ## Table of contents
 
 * [Public Documentation](#public-documentation)
-* [Zones](#zones)
 * [Local Codes](#local-codes)
 * [Complements](#complements)
 
@@ -15,43 +14,30 @@ Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 - [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
 
-## Zones
-
-In Mexican GOBL documents, the supplier and customer addresses are optional, however the parties’ tax identity zones must be included and contain the fiscal address’ postal code of each party. The supplier’s tax identity zone will map to the `LugarExpedicion` (Place of issue) CFDI field, and the customer’s one will map to the `DomicilioFiscalReceptor` (Recipient Fiscal Address) field in the CFDI.
-
-### Example
-
-The following example will set `21000` as the `LugarExpedicion` of the CFDI and `86991` as the `DomicilioFiscalReceptor`:
-
-```js
-{
-  "$schema": "https://gobl.org/draft-0/bill/invoice",
-  // [...]
-  "supplier": {
-    "name": "ESCUELA KEMPER URGATE",
-    "tax_id": {
-      "country": "MX",
-      "zone": "21000",
-      "code": "EKU9003173C9"
-    },
-    // [...]
-  },
-  "customer": {
-    "name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
-    "tax_id": {
-      "country": "MX",
-      "zone": "86991",
-      "code": "URE180429TM6"
-    },
-  // [...]
-}
-```
-
 ## Local Codes
 
 Mexican invoices as defined in the CFDI specification must include a set of specific codes that will either need to be known in advance by the supplier or requested from the customer during their purchase process.
 
 The following sections highlight these codes and how they can be defined inside your GOBL documents.
+
+### `LugarExpedicion` - Issue Place
+
+Every MX invoice needs to specify the postal code of place where it was issued. In a GOBL Invoice, you can provide this value using the `mx-cfdi-issue-place` extension under the `tax` of the invoice.
+
+#### Example
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "tax": {
+    "ext": {
+      "mx-cfdi-issue-place": "26015"
+    }
+  },
+  // [...]
+}
+```
 
 ### `RegimenFiscal` - Fiscal Regime
 
@@ -71,13 +57,41 @@ The following example will associate the supplier with the `601` fiscal regime c
     "name": "ESCUELA KEMPER URGATE",
     "tax_id": {
       "country": "MX",
-      "zone": "26015",
       "code": "EKU9003173C9"
     },
     "ext": {
       "mx-cfdi-fiscal-regime": "601"
     }
   }
+  // [...]
+}
+```
+
+### `DomicilioFiscalReceptor` - Receipt's Tax Address
+
+In CFDI, `DomicilioFiscalReceptor` is a mandatory field that specifies the postal code of the recepient's tax address. In a GOBL Invoice, you can provide this value setting the `mx-cfdi-post-code` extension of the invoice's customer.
+
+#### Example
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "customer": {
+    "name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+    "tax_id": {
+      "country": "MX",
+      "code": "URE180429TM6"
+    },
+    "ext": {
+      "mx-cfdi-fiscal-regime": "601",
+      "mx-cfdi-use": "G01",
+      "mx-cfdi-post-code": "65000"
+    }
+  }
+
   // [...]
 }
 ```
@@ -102,12 +116,12 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
     "name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
     "tax_id": {
       "country": "MX",
-      "zone": "65000",
       "code": "URE180429TM6"
     },
     "ext": {
-      "mx-cfdi-fiscal-regime": "601"
-      "mx-cfdi-use": "G01"
+      "mx-cfdi-fiscal-regime": "601",
+      "mx-cfdi-use": "G01",
+      "mx-cfdi-post-code": "65000"
     }
   }
 
@@ -283,7 +297,7 @@ The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item.
 
 The catalogue of available Product or Service codes that form part of the CFDI standard is immense with some 50.000 entries to choose from. Due the huge number of codes GOBL will not validate these fields, you'll have to check with local accountants to check which code should be used for your products or services.
 
-### Example
+#### Example
 
 The following GOBL maps to the `10101602` ("live ducks") value to the `ClaveProdServ` field:
 
