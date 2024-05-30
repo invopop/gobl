@@ -57,9 +57,12 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good 1", code: "E100416306"},
 		{name: "good 2", code: "E284156502"},
 		{name: "good 3", code: "E432825998"},
+		{name: "good 4", code: "E115400550"},
+		{name: "good 5", code: "E424414541"},
+		{name: "good 6", code: "E123456788"},
 		{
 			name: "zeros",
-			code: "E000000000",
+			code: "E000000001",
 			err:  "checksum mismatch",
 		},
 		{
@@ -84,8 +87,13 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			name: "bad checksum",
-			code: "E116276850",
+			code: "E116276851",
 			err:  "checksum mismatch",
+		},
+		{
+			name: "invalid code",
+			code: "E100426306",
+			err:  "invalid code",
 		},
 	}
 
