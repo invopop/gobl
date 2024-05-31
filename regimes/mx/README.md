@@ -8,6 +8,7 @@ Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 * [Public Documentation](#public-documentation)
 * [Local Codes](#local-codes)
+* [Generic RFCs](#generic-rfcs)
 * [Complements](#complements)
 
 ## Public Documentation
@@ -319,6 +320,27 @@ The following GOBL maps to the `10101602` ("live ducks") value to the `ClaveProd
       },
     }
   ]
+}
+```
+
+## Generic RFCs
+
+In MX, CFDI invoices to final consumers are required to use the generic RFC (`XAXX010101000`) in the documenta's `Receptor` and some specific values for the suppliers extensions. In GOBL, you don't need to enter those values explicitly. Just to set the `simplified` tax tag in your invoice and exclude the customer, and the GOBL to CFDI conversor will take care of the rest:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+
+  // [...]
+
+  "tax": {
+    "tags": [
+      "simplified"
+    ]
+  }
+
+  // No "customer" entry
+
 }
 ```
 
