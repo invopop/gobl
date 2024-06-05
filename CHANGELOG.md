@@ -4,6 +4,17 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [vX.XX.X] - 2024-XX-XX
+
+### Added
+
+- ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions (`l10n.CountryDef`)
+- MX: `mx.TaxIdentityCodeGeneric` constant added with the generic RFC for final consumers
+
+## Changed
+
+- MX: customer extensions no longer required for foreign customers
+
 ## [v0.78.1] - 2024-05-30
 
 ### Fixed
