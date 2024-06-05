@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3cad9cb031d10d84e598a601e7668f88f7c2fc3cb83bab94b9d74efd13cd51c1"
+			"val": "2558dfc5500dbe94f60deb2cf08619f657a565f00e3b2616bc08cf1969444a6d"
 		},
 		"draft": true
 	},
@@ -107,19 +107,19 @@
 						"purchase_date_time": "2022-07-19T10:20:30",
 						"vendor_tax_code": "RWT860605OF5",
 						"service_station_code": "8171650",
-						"quantity": "9.661",
+						"quantity": "9.6613",
 						"item": {
 							"type": "3",
 							"unit": "l",
 							"name": "Diesel",
-							"price": "12.743"
+							"price": "12.7428"
 						},
 						"purchase_code": "2794668",
 						"total": "123.11",
 						"taxes": [
 							{
 								"cat": "VAT",
-								"percent": "16.00%",
+								"percent": "16.0%",
 								"amount": "19.70"
 							},
 							{
@@ -145,7 +145,7 @@
 						"taxes": [
 							{
 								"cat": "VAT",
-								"percent": "16.00%",
+								"percent": "16.0%",
 								"amount": "19.68"
 							},
 							{
