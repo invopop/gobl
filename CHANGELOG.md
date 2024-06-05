@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XX.X] - 2024-XX-XX
 
+## [v0.79.0] - 2024-06-05
+
 ### Added
 
 - ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions (`l10n.CountryDef`)
