@@ -18,6 +18,7 @@ import (
 
 // Constants used to specific tax identity codes.
 const (
+	TaxIdentityCodeGeneric cbc.Code = "XAXX010101000"
 	TaxIdentityCodeForeign cbc.Code = "XEXX010101000"
 )
 
