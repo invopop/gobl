@@ -1,6 +1,8 @@
 package mx_test
 
 import (
+	"encoding/json"
+	"math"
 	"testing"
 
 	"github.com/invopop/gobl/num"
@@ -220,5 +222,83 @@ func TestCalculate(t *testing.T) {
 
 		assert.Equal(t, "16.43", fab.Subtotal.String())
 		assert.Equal(t, "19.51", fab.Total.String())
+	})
+
+	t.Run("example 4", func(t *testing.T) {
+		// reverse calculate the item price based on the expected total and
+		// price per litre on the day.
+
+		total := 12.35
+		price := 23.774
+		ieps := 0.5451
+		vat := 0.16
+
+		// quantity = total_with_taxes / precio_litro_with_tax
+		// item_price = ((total_with_taxes / quantity) - ieps_rate) / (1 + vat_rate)
+		q := math.Round((total/price)*1000) / 1000
+		ip := ((total / q) - ieps) / (1 + vat)
+
+		fab := &mx.FuelAccountBalance{
+			Lines: []*mx.FuelAccountLine{
+				{
+					Quantity: num.MakeAmount(int64(q*1000), 3),
+					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(int64(ip*10000), 4)},
+					Taxes: []*mx.FuelAccountTax{
+						{
+							Category: tax.CategoryVAT,
+							Percent:  num.NewPercentage(int64(vat*1000), 3),
+						},
+						{
+							Category: mx.TaxCategoryIEPS,
+							Rate:     num.NewAmount(int64(ieps*10000), 4),
+						},
+					},
+				},
+			},
+		}
+
+		err := fab.Calculate()
+		require.NoError(t, err)
+
+		data, err := json.MarshalIndent(fab, "", "  ")
+		require.NoError(t, err)
+		exp := `
+			{
+				"account_number": "",
+				"subtotal": "10.40",
+				"total": "12.35",
+				"lines": [
+				  {
+					"e_wallet_id": "",
+					"purchase_date_time": "0000-00-00T00:00:00",
+					"vendor_tax_code": "",
+					"service_station_code": "",
+					"quantity": "0.519",
+					"item": {
+					  "type": "",
+					  "name": "",
+					  "price": "20.0436"
+					},
+					"purchase_code": "",
+					"total": "10.40",
+					"taxes": [
+					  {
+						"cat": "VAT",
+						"percent": "16.0%",
+						"amount": "1.66"
+					  },
+					  {
+						"cat": "IEPS",
+						"rate": "0.5451",
+						"amount": "0.28"
+					  }
+					]
+				  }
+				]
+			  }
+		`
+		assert.JSONEq(t, exp, string(data))
+
+		assert.Equal(t, total, fab.Total.Float64())
 	})
 }

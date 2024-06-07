@@ -182,6 +182,7 @@ func (fab *FuelAccountBalance) Calculate() error {
 			l.Item.Price = l.Item.Price.RescaleUp(FuelAccountPriceMinimumPrecision)
 			l.Total = l.Item.Price.Multiply(l.Quantity)
 		}
+		fab.Subtotal = fab.Subtotal.MatchPrecision(l.Total)
 		fab.Subtotal = fab.Subtotal.Add(l.Total)
 
 		for _, t := range l.Taxes {
@@ -191,6 +192,7 @@ func (fab *FuelAccountBalance) Calculate() error {
 			} else if t.Rate != nil {
 				t.Amount = l.Quantity.Multiply(*t.Rate)
 			}
+			taxtotal = taxtotal.MatchPrecision(t.Amount)
 			taxtotal = taxtotal.Add(t.Amount)
 			t.Amount = t.Amount.Rescale(FuelAccountTotalsPrecision)
 		}
@@ -198,7 +200,8 @@ func (fab *FuelAccountBalance) Calculate() error {
 		l.Total = l.Total.Rescale(FuelAccountTotalsPrecision)
 	}
 
-	fab.Total = fab.Subtotal.Add(taxtotal)
+	fab.Total = fab.Subtotal.Add(taxtotal).Rescale(FuelAccountTotalsPrecision)
+	fab.Subtotal = fab.Subtotal.Rescale(FuelAccountTotalsPrecision)
 
 	return nil
 }
