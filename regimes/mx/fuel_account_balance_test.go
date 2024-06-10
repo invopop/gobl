@@ -301,4 +301,81 @@ func TestCalculate(t *testing.T) {
 
 		assert.Equal(t, total, fab.Total.Float64())
 	})
+
+	t.Run("example 5", func(t *testing.T) {
+		// reverse calculate the item price based on the expected total and
+		// price per litre on the day.
+
+		total := 3832.93
+		price := 23.774
+		ieps := 0.5451
+		vat := 0.16
+
+		q := math.Round((total/price)*1000) / 1000
+		ip := ((total / q) - ieps) / (1 + vat)
+
+		fab := &mx.FuelAccountBalance{
+			Lines: []*mx.FuelAccountLine{
+				{
+					Quantity: num.MakeAmount(int64(q*1000), 3),
+					// This case needs 5 decimal places to work due to large quantity:
+					Item: &mx.FuelAccountItem{Price: num.MakeAmount(int64(ip*100000), 5)},
+					Taxes: []*mx.FuelAccountTax{
+						{
+							Category: tax.CategoryVAT,
+							Percent:  num.NewPercentage(int64(vat*1000), 3),
+						},
+						{
+							Category: mx.TaxCategoryIEPS,
+							Rate:     num.NewAmount(int64(ieps*10000), 4),
+						},
+					},
+				},
+			},
+		}
+
+		err := fab.Calculate()
+		require.NoError(t, err)
+
+		data, err := json.MarshalIndent(fab, "", "  ")
+		require.NoError(t, err)
+		exp := `
+			{
+				"account_number": "",
+				"subtotal": "3228.49",
+				"total": "3832.93",
+				"lines": [
+				  {
+					"e_wallet_id": "",
+					"purchase_date_time": "0000-00-00T00:00:00",
+					"vendor_tax_code": "",
+					"service_station_code": "",
+					"quantity": "161.224",
+					"item": {
+					  "type": "",
+					  "name": "",
+					  "price": "20.02486"
+					},
+					"purchase_code": "",
+					"total": "3228.49",
+					"taxes": [
+					  {
+						"cat": "VAT",
+						"percent": "16.0%",
+						"amount": "516.56"
+					  },
+					  {
+						"cat": "IEPS",
+						"rate": "0.5451",
+						"amount": "87.88"
+					  }
+					]
+				  }
+				]
+			  }
+		`
+		assert.JSONEq(t, exp, string(data))
+
+		assert.Equal(t, total, fab.Total.Float64())
+	})
 }
