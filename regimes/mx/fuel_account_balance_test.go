@@ -308,7 +308,7 @@ func TestCalculate(t *testing.T) {
 
 		total := 3832.93
 		price := 23.774
-		ieps := 0.5451
+		ieps := 5.451
 		vat := 0.16
 
 		q := math.Round((total/price)*1000) / 1000
@@ -327,7 +327,7 @@ func TestCalculate(t *testing.T) {
 						},
 						{
 							Category: mx.TaxCategoryIEPS,
-							Rate:     num.NewAmount(int64(ieps*10000), 4),
+							Rate:     num.NewAmount(int64(ieps*1000), 3),
 						},
 					},
 				},
@@ -342,7 +342,7 @@ func TestCalculate(t *testing.T) {
 		exp := `
 			{
 				"account_number": "",
-				"subtotal": "3228.49",
+				"subtotal": "2546.63",
 				"total": "3832.93",
 				"lines": [
 				  {
@@ -354,20 +354,20 @@ func TestCalculate(t *testing.T) {
 					"item": {
 					  "type": "",
 					  "name": "",
-					  "price": "20.02486"
+					  "price": "15.79563"
 					},
 					"purchase_code": "",
-					"total": "3228.49",
+					"total": "2546.63",
 					"taxes": [
 					  {
 						"cat": "VAT",
 						"percent": "16.0%",
-						"amount": "516.56"
+						"amount": "407.46"
 					  },
 					  {
 						"cat": "IEPS",
-						"rate": "0.5451",
-						"amount": "87.88"
+						"rate": "5.451",
+						"amount": "878.83"
 					  }
 					]
 				  }

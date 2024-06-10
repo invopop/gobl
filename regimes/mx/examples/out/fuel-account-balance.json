@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2558dfc5500dbe94f60deb2cf08619f657a565f00e3b2616bc08cf1969444a6d"
+			"val": "c53ebde4d35fe89384c2b1a1eb043a2a70ee90aa6da8f5ab335c209a1fefc8ce"
 		},
 		"draft": true
 	},
@@ -107,7 +107,7 @@
 						"purchase_date_time": "2022-07-19T10:20:30",
 						"vendor_tax_code": "RWT860605OF5",
 						"service_station_code": "8171650",
-						"quantity": "9.6613",
+						"quantity": "9.661",
 						"item": {
 							"type": "3",
 							"unit": "l",
