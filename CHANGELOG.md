@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - MX: Fuel account balance totals calculated maintaining item price precision.
 
+## [v0.79.0] - 2024-06-05
+
+### Added
+
+- ISO 3166-1 alpha-3 codes (and a function to access them) added to the country definitions (`l10n.CountryDef`)
+- MX: `mx.TaxIdentityCodeGeneric` constant added with the generic RFC for final consumers
+
+## Changed
+
+- MX: customer extensions no longer required for foreign customers
+
 ## [v0.78.1] - 2024-05-30
 
 ### Fixed
