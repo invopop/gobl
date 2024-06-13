@@ -41,7 +41,7 @@ complements:
         purchase_date_time: "2022-07-19T10:20:30"
         vendor_tax_code: "RWT860605OF5"
         service_station_code: "8171650"
-        quantity: "9.6613"
+        quantity: "9.661"
         item:
           unit: "l"
           type: "3"
@@ -52,7 +52,6 @@ complements:
         taxes:
           - cat: "VAT"
             percent: "16.0%"
-            amount: "19.70"
           - cat: "IEPS"
             rate: "5.9195"
       - e_wallet_id: "1234"
