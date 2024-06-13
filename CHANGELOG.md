@@ -9,14 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `num.AmountFromFloat64` method helps avoid rounding issues when using floats.
+- PT: `at-hash` stamp to store the AT's hash of an invoice
 
 ### Changed
 
 - MX: Fuel account balance totals calculated maintaining item price precision.
-
-### Added
-
-- PT: `at-hash` stamp to store the AT's hash of an invoice
 
 ## [v0.79.0] - 2024-06-05
 
