@@ -241,8 +241,8 @@ func TestCalculate(t *testing.T) {
 		fab := &mx.FuelAccountBalance{
 			Lines: []*mx.FuelAccountLine{
 				{
-					Quantity: num.MakeAmount(int64(q*1000), 3),
-					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(int64(ip*10000), 4)},
+					Quantity: num.AmountFromFloat64(q, 3),
+					Item:     &mx.FuelAccountItem{Price: num.AmountFromFloat64(ip, 4)},
 					Taxes: []*mx.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
@@ -277,7 +277,7 @@ func TestCalculate(t *testing.T) {
 					"item": {
 					  "type": "",
 					  "name": "",
-					  "price": "20.0436"
+					  "price": "20.0437"
 					},
 					"purchase_code": "",
 					"total": "10.40",
@@ -317,9 +317,9 @@ func TestCalculate(t *testing.T) {
 		fab := &mx.FuelAccountBalance{
 			Lines: []*mx.FuelAccountLine{
 				{
-					Quantity: num.MakeAmount(int64(q*1000), 3),
+					Quantity: num.AmountFromFloat64(q, 3),
 					// This case needs 5 decimal places to work due to large quantity:
-					Item: &mx.FuelAccountItem{Price: num.MakeAmount(int64(ip*100000), 5)},
+					Item: &mx.FuelAccountItem{Price: num.AmountFromFloat64(ip, 5)},
 					Taxes: []*mx.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
@@ -342,7 +342,7 @@ func TestCalculate(t *testing.T) {
 		exp := `
 			{
 				"account_number": "",
-				"subtotal": "2546.63",
+				"subtotal": "2546.64",
 				"total": "3832.93",
 				"lines": [
 				  {
@@ -354,10 +354,10 @@ func TestCalculate(t *testing.T) {
 					"item": {
 					  "type": "",
 					  "name": "",
-					  "price": "15.79563"
+					  "price": "15.79564"
 					},
 					"purchase_code": "",
-					"total": "2546.63",
+					"total": "2546.64",
 					"taxes": [
 					  {
 						"cat": "VAT",

@@ -100,6 +100,18 @@ func TestAmountNewFromString(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestAmountFromFloat64(t *testing.T) {
+	a := num.AmountFromFloat64(123.45, 2)
+	assert.Equal(t, "123.45", a.String())
+
+	a = num.AmountFromFloat64(123.45123, 4)
+	assert.Equal(t, "123.4512", a.String())
+
+	// without math rounding, this would be 129.336
+	a = num.AmountFromFloat64(129.337000, 3)
+	assert.Equal(t, "129.337", a.String())
+}
+
 func TestMultiply(t *testing.T) {
 	a := num.MakeAmount(10010, 2)
 	x := num.MakeAmount(21, 1)

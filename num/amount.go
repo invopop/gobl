@@ -39,6 +39,17 @@ func MakeAmount(val int64, exp uint32) Amount {
 	return Amount{value: val, exp: exp}
 }
 
+// AmountFromFloat64 takes a float64 value and converts it into an amount
+// object. The exponential value is used to determine the accuracy of the
+// amount. For example, if you have a float value of `12.345` and an exp
+// of `3`, the resulting amount's underlying value will be `12345`.
+// This method also takes steps to ensure that numbers are rounded
+// correctly as dealing with Floats can have unexpected consequences.
+func AmountFromFloat64(val float64, exp uint32) Amount {
+	v := int64(math.Round(val * float64(intPow(10, exp))))
+	return Amount{value: v, exp: exp}
+}
+
 // AmountFromString takes the provided string and tries to convert it
 // into an amount object. Strings must be in a simplified format with no
 // commas and a single `.` to separate the decimal places. Numbers are

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XX.X] - XXXX-XX-XX
 
+### Added
+
+- `num.AmountFromFloat64` method helps avoid rounding issues when using floats.
+
 ### Changed
 
 - MX: Fuel account balance totals calculated maintaining item price precision.
