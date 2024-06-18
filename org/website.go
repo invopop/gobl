@@ -12,7 +12,7 @@ import (
 // Website describes what is expected for a web address.
 type Website struct {
 	uuid.Identify
-	// Identifier for this number.
+	// Label for the website to show alongside the URL.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Title of the website to help distinguish between this and other links.
 	Title string `json:"title,omitempty" jsonschema:"title=Title"`
