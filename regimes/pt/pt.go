@@ -27,6 +27,7 @@ const (
 	StampProviderATATCUD cbc.Key = "at-atcud"
 	StampProviderATQR    cbc.Key = "at-qr"
 	StampProviderATHash  cbc.Key = "at-hash"
+	StampProviderATAppID cbc.Key = "at-app-id"
 )
 
 // New instantiates a new Portugal regime for the given zone.
