@@ -25,6 +25,7 @@ type Registration struct {
 	Section  string        `json:"section,omitempty" jsonschema:"title=Section"`
 	Page     string        `json:"page,omitempty" jsonschema:"title=Page"`
 	Entry    string        `json:"entry,omitempty" jsonschema:"title=Entry"`
+	Other    string        `json:"other,omitempty" jsonschema:"title=Other"`
 }
 
 // Validate ensures the registration looks valid.

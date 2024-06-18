@@ -4,6 +4,16 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [v0.79.3] - 2024-06-18
+
+### Added
+
+- `org.Registration`: added `other` field.
+
+### Fixes
+
+- Field descriptions of `org.Website`
+
 ## [v0.79.2] - 2024-06-18
 
 ### Added
