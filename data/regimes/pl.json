@@ -89,30 +89,42 @@
       ]
     },
     {
-      "key": "pl-ksef-vat-zero",
+      "key": "pl-ksef-vat-region",
       "name": {
-        "en": "Zero VAT Extensions for KSeF"
+        "en": "Region VAT Extensions for KSeF"
       },
-      "keys": [
+      "codes": [
         {
-          "key": "wdt",
+          "code": "EU",
           "name": {
-            "en": "WDT",
-            "pl": "WDT"
+            "en": "EU",
+            "pl": "EU"
+          },
+          "desc": {
+            "en": "Intra-EU Transactions",
+            "pl": "Transakcje wewnątrzwspólnotowe"
           }
         },
         {
-          "key": "domestic",
+          "code": "domestic",
           "name": {
             "en": "Domestic",
             "pl": "Krajowy"
+          },
+          "desc": {
+            "en": "Domestic trade",
+            "pl": "Handel wewnątrzkrajowy."
           }
         },
         {
-          "key": "export",
+          "code": "non-EU",
           "name": {
-            "en": "Export",
-            "pl": "Eksport"
+            "en": "non-EU",
+            "pl": "Poza UE"
+          },
+          "desc": {
+            "en": "Trading with countries outside the EU",
+            "pl": "Handel z krajami z poza Unii Europejskiej"
           }
         }
       ]
@@ -428,7 +440,7 @@
             }
           ],
           "extensions": [
-            "pl-ksef-vat-zero"
+            "pl-ksef-vat-region"
           ]
         },
         {
@@ -445,8 +457,24 @@
             "en": "Special Rate",
             "pl": "Stawka Specjalna"
           },
+          "values": [
+            {
+              "percent": "4.0%"
+            }
+          ],
           "extensions": [
             "pl-ksef-vat-special"
+          ]
+        },
+        {
+          "key": "np",
+          "name": {
+            "en": "Not pursuant",
+            "pl": "Niepodlegające opodatkowaniu"
+          },
+          "exempt": true,
+          "extensions": [
+            "pl-ksef-vat-region"
           ]
         }
       ]
