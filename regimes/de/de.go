@@ -22,7 +22,7 @@ func New() *tax.Regime {
 		Currency: currency.EUR,
 		Name: i18n.String{
 			i18n.EN: "Germany",
-			i18n.FR: "Deutschland",
+			i18n.DE: "Deutschland",
 		},
 		TimeZone: "Europe/Berlin",
 		Tags:     common.InvoiceTags(),
