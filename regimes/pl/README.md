@@ -1,21 +1,16 @@
-# pl GOBL Polish Tax Regime
+# 🇵🇱 GOBL Polish Tax Regime
 
 Poland uses the FA_VAT format for their e-invoicing system.
 
 Example PL GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
-
-## Table of contents
-
-- [Public Documentation](#public-documentation)
-- [Zones](#zones)
-- [Local Codes](#local-codes)
-- [Complements](#complements)
 
 ## Public Documentation
 
 - [XML XSD Source - KSeF](https://www.podatki.gov.pl/e-deklaracje/dokumentacja-it/struktury-dokumentow-xml/#ksef)
 - [Invoice Templates (Wzór faktury) FA(1)](http://crd.gov.pl/wzor/2021/11/29/11089/)
 - [Invoice Templates (Wzór faktury) FA(2)](http://crd.gov.pl/wzor/2023/06/29/12648/)
+
+## Poland specifics
 
 ### `TFormaPlatnosci` - Payment Means
 

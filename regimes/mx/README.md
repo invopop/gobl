@@ -4,18 +4,11 @@ Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for their 
 
 Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
 
-## Table of contents
-
-* [Public Documentation](#public-documentation)
-* [Local Codes](#local-codes)
-* [Generic RFCs](#generic-rfcs)
-* [Complements](#complements)
-
 ## Public Documentation
 
 - [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
 
-## Local Codes
+## Mexico specifics
 
 Mexican invoices as defined in the CFDI specification must include a set of specific codes that will either need to be known in advance by the supplier or requested from the customer during their purchase process.
 
@@ -323,7 +316,7 @@ The following GOBL maps to the `10101602` ("live ducks") value to the `ClaveProd
 }
 ```
 
-## Generic RFCs
+### Generic RFCs
 
 In MX, CFDI invoices to end consumers need to use a generic RFC code (`XAXX010101000`) in the document's `Receptor` and some specific values for the supplier extensions. In GOBL, you don't need to enter those values explicitly. Just set the `simplified` tax tag in your invoice and exclude the customer, the GOBL to CFDI conversor will take care of the rest:
 
@@ -364,11 +357,11 @@ Similarly, CFDI invoices to foreign customers are required to use the foreign ge
 }
 ```
 
-## Complements
+### Complements
 
 Complements let you include additional complementary information to your GOBL documents. The following sections describe the complements made available by the MX regime, their purpose and how you can use them.
 
-### Fuel Account Balance
+#### Fuel Account Balance
 
 The _Fuel Account Balance_ complement carries the data to produce a CFDI’s [“Complemento de Estado de Cuenta de Combustibles para Monederos Electrónicos” (version 1.2 revision B)](https://www.sat.gob.mx/consulta/21885/genera-tus-facturas-electronicas-con-el-complemento-para-el-estado-de-cuenta-de-combustibles-para-monederos-electronicos) providing detailed information about fuel purchases made with electronic wallets.
 
@@ -378,7 +371,7 @@ Learn more about this complement here:
 * [Schema Documentation](https://docs.gobl.org/draft-0/regimes/mx/fuel_account_balance)
 * [Example GOBL document](./examples/out/fuel-account-balance.json)
 
-### Food Vouchers
+#### Food Vouchers
 
 The _Food Vouchers_ complement carries the data to produce a CFDI's [“Complemento de Vales de Despensa” (version 1.0)](https://docs.gobl.org/draft-0/regimes/mx/food_vouchers) providing detailed information about food vouchers issued by an e-wallet supplier to its customer's employees.
 
