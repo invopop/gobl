@@ -48,8 +48,8 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory:       "1",
-					KeyIAPRVatCategoryIsland: "4",
+					KeyIAPRVatCategory:        "1",
+					KeyIAPRVatCategoryIslands: "4",
 				},
 			},
 			{
@@ -68,8 +68,8 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory:       "2",
-					KeyIAPRVatCategoryIsland: "5",
+					KeyIAPRVatCategory:        "2",
+					KeyIAPRVatCategoryIslands: "5",
 				},
 			},
 			{
@@ -88,8 +88,8 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory:       "3",
-					KeyIAPRVatCategoryIsland: "6",
+					KeyIAPRVatCategory:        "3",
+					KeyIAPRVatCategoryIslands: "6",
 				},
 			},
 			{

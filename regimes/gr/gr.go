@@ -17,8 +17,8 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeyIAPRVatCategory       cbc.Key = "iapr-vat-category"
-	KeyIAPRVatCategoryIsland cbc.Key = "iapr-vat-category-island"
+	KeyIAPRVatCategory        cbc.Key = "iapr-vat-category"
+	KeyIAPRVatCategoryIslands cbc.Key = "iapr-vat-category-islands"
 )
 
 // Official IAPR codes to include in stamps.
