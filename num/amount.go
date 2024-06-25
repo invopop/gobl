@@ -198,6 +198,16 @@ func (a Amount) RescaleUp(exp uint32) Amount {
 	return a
 }
 
+// RescaleDown rescales the exponent to the value provided, but only if the
+// amount's exponent is higher. This is useful to ensure that a number has
+// a maximum accuracy.
+func (a Amount) RescaleDown(exp uint32) Amount {
+	if exp < a.exp {
+		return a.Rescale(exp)
+	}
+	return a
+}
+
 // MatchPrecision will rescale the exponent value of the amount so that it
 // matches the scale of the provided amount, but *only* if it is higher.
 func (a Amount) MatchPrecision(a2 Amount) Amount {

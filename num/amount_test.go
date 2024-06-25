@@ -251,9 +251,21 @@ func TestAmountDownscale(t *testing.T) {
 func TestAmountRescaleUp(t *testing.T) {
 	a := num.MakeAmount(123456, 2)
 	r := a.RescaleUp(4)
-	assert.Equal(t, uint32(4), r.Exp(), "expected precision match")
+	assert.Equal(t, "1234.5600", r.String())
 	r = a.RescaleUp(2)
-	assert.Equal(t, uint32(2), r.Exp(), "expected no precision change")
+	assert.Equal(t, "1234.56", r.String())
+	r = a.RescaleUp(0)
+	assert.Equal(t, "1234.56", r.String())
+}
+
+func TestAmountRescaleDown(t *testing.T) {
+	a := num.MakeAmount(123456, 4)
+	r := a.RescaleDown(4)
+	assert.Equal(t, "12.3456", r.String())
+	r = a.RescaleDown(2)
+	assert.Equal(t, "12.35", r.String())
+	r = a.RescaleDown(6)
+	assert.Equal(t, "12.3456", r.String())
 }
 
 func TestAmountMatchPrecision(t *testing.T) {
