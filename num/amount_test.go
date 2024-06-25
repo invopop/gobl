@@ -268,6 +268,23 @@ func TestAmountRescaleDown(t *testing.T) {
 	assert.Equal(t, "12.3456", r.String())
 }
 
+func TestAmountRescaleRange(t *testing.T) {
+	a := num.MakeAmount(123456, 2)
+	r := a.RescaleRange(2, 4)
+	assert.Equal(t, "1234.56", r.String())
+	r = a.RescaleRange(2, 0) // nonsense, but should work
+	assert.Equal(t, "1235", r.String())
+	r = a.RescaleRange(2, 6)
+	assert.Equal(t, "1234.56", r.String())
+
+	a = num.MakeAmount(12345678, 6)
+	r = a.RescaleRange(1, 3)
+	assert.Equal(t, "12.346", r.String())
+	a = num.MakeAmount(12, 0)
+	r = a.RescaleRange(1, 3)
+	assert.Equal(t, "12.0", r.String())
+}
+
 func TestAmountMatchPrecision(t *testing.T) {
 	a := num.MakeAmount(123456, 2)
 	a2 := num.MakeAmount(12345678, 4)

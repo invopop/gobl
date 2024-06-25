@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `num.Amount` - added `RescaleDown` method, that helps reduce accuracy from a number if higher.
+- `num.Amount` - added `RescaleRange` method, ensures that the exponent is within a specific range.
 
 ## [v0.79.3] - 2024-06-18
 
