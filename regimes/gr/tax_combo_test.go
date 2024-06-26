@@ -41,7 +41,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			err := gr.Calculate(tc)
 			require.NoError(t, err)
 
-			vcat := tc.Ext[gr.ExtKeyIAPRVATCategory]
+			vcat := tc.Ext[gr.ExtKeyIAPRVATCat]
 			assert.Equal(t, tt.vcat, vcat)
 		})
 	}
@@ -57,7 +57,7 @@ func TestValidateTaxCombo(t *testing.T) {
 		err = gr.Validate(tc)
 		require.Error(t, err)
 
-		assert.Contains(t, err.Error(), "gr-iapr-vat-category: required")
+		assert.Contains(t, err.Error(), "gr-iapr-vat-cat: required")
 	})
 
 	t.Run("exemption presence", func(t *testing.T) {

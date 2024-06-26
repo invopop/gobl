@@ -10,7 +10,7 @@ import (
 func validateTaxCombo(tc *tax.Combo) error {
 	return validation.ValidateStruct(tc,
 		validation.Field(&tc.Ext,
-			tax.ExtensionsRequires(ExtKeyIAPRVATCategory),
+			tax.ExtensionsRequires(ExtKeyIAPRVATCat),
 			validation.When(
 				tc.Percent == nil,
 				tax.ExtensionsRequires(ExtKeyIAPRExemption),
@@ -35,12 +35,12 @@ func normalizeTaxCombo(tc *tax.Combo) error {
 		tc.Ext = make(tax.Extensions)
 	}
 
-	if tc.Ext.Has(ExtKeyIAPRVATCategory) {
+	if tc.Ext.Has(ExtKeyIAPRVATCat) {
 		return nil
 	}
 
 	vcat := rate.Map[KeyIAPRVATCategory]
-	tc.Ext[ExtKeyIAPRVATCategory] = tax.ExtValue(vcat)
+	tc.Ext[ExtKeyIAPRVATCat] = tax.ExtValue(vcat)
 
 	return nil
 }

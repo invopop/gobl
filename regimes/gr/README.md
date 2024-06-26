@@ -29,7 +29,7 @@ In GOBL, the IAPR VAT category code must be set using the `iapr-gr-vat-category`
 | `7`  | Without VAT            | `exempt`        |
 | `8`  | Records without VAT    |                 |
 
-Please, note that GOBL will automatically set the proper `gr-iapr-vat-category` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above.
+Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above.
 
 As shown in the table, the islands' reduced version of the rates don't have GOBL rates associated to them, and so the GOBL invoice must provide explicitly the VAT category and the percent in those cases. For example:
 
@@ -57,7 +57,7 @@ As shown in the table, the islands' reduced version of the rates don't have GOBL
           "cat": "VAT",
           "percent": "17%",
           "ext": {
-            "gr-iapr-vat-category": "4" // Standard rate in Greek islands
+            "gr-iapr-vat-cat": "4" // Standard rate in Greek islands
           }
         }
       ],

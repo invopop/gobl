@@ -7,13 +7,13 @@ import (
 
 // Regime extension codes.
 const (
-	ExtKeyIAPRVATCategory = "gr-iapr-vat-category"
-	ExtKeyIAPRExemption   = "gr-iapr-exemption"
+	ExtKeyIAPRVATCat    = "gr-iapr-vat-cat"
+	ExtKeyIAPRExemption = "gr-iapr-exemption"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
 	{
-		Key: ExtKeyIAPRVATCategory,
+		Key: ExtKeyIAPRVATCat,
 		Name: i18n.String{
 			i18n.EN: "VAT category",
 			i18n.EL: "Κατηγορία ΦΠΑ",

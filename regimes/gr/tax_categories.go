@@ -32,7 +32,7 @@ var taxCategories = []*tax.Category{
 		},
 		Retained: false,
 		Extensions: []cbc.Key{
-			ExtKeyIAPRVATCategory,
+			ExtKeyIAPRVATCat,
 		},
 		Rates: []*tax.Rate{
 			{

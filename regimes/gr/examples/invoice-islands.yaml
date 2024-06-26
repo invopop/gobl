@@ -46,4 +46,4 @@ lines:
       - cat: VAT
         percent: "17%"
         ext:
-          gr-iapr-vat-category: "4"
+          gr-iapr-vat-cat: "4"
