@@ -15,11 +15,6 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
-// Custom keys used typically in meta or codes information.
-const (
-	KeyIAPRVATCategory cbc.Key = "iapr-vat-category"
-)
-
 // Official IAPR codes to include in stamps.
 const (
 	StampIAPRQR       cbc.Key = "iapr-qr"

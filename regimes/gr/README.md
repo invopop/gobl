@@ -16,32 +16,25 @@ Example GR GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by a 30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate with a specific VAT category.
 
-In GOBL, the IAPR VAT category code must be set using the `iapr-gr-vat-category` extension of a line's tax to one of these codes:
+In GOBL, the IAPR VAT category code must be set using the `gr-iapr-vat-cat` extension of a line's tax to one of the codes:
 
-| Code | Description            | GOBL Rate       |
-| ---- | ---------------------- | --------------- |
-| `1`  | VAT rate 24%           | `standard`      |
-| `2`  | VAT rate 13%           | `reduced`       |
-| `3`  | VAT rate 6%            | `super-reduced` |
-| `4`  | VAT rate 17%           |                 |
-| `5`  | VAT rate 9%            |                 |
-| `6`  | VAT rate 4%            |                 |
-| `7`  | Without VAT            | `exempt`        |
-| `8`  | Records without VAT    |                 |
+| Code | Description                 | GOBL Rate              |
+| ---- | --------------------------- | ---------------------- |
+| `1`  | Standard rate               | `standard`             |
+| `2`  | Reduced rate                | `reduced`              |
+| `3`  | Super-reduced rate          | `super-reduced`        |
+| `4`  | Standard rate (Island)      | `standard+island`      |
+| `5`  | Reduced rate (Island)       | `reduced+island`       |
+| `6`  | Super-reduced rate (Island) | `super-reduced+island` |
+| `7`  | Without VAT                 | `exempt`               |
+| `8`  | Records without VAT         |                        |
 
-Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above.
 
-As shown in the table, the islands' reduced version of the rates don't have GOBL rates associated to them, and so the GOBL invoice must provide explicitly the VAT category and the percent in those cases. For example:
+Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
 
 ```js
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
-  //...
-  "tax": {
-    "tags": [
-      "islands"
-    ]
-  },
   // ...
   "lines": [
     {
@@ -55,10 +48,7 @@ As shown in the table, the islands' reduced version of the rates don't have GOBL
       "taxes": [
         {
           "cat": "VAT",
-          "percent": "17%",
-          "ext": {
-            "gr-iapr-vat-cat": "4" // Standard rate in Greek islands
-          }
+          "rate": "standard+island"
         }
       ],
       "total": "1800.00"

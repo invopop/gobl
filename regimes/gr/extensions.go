@@ -22,43 +22,43 @@ var extensionKeys = []*cbc.KeyDefinition{
 			{
 				Code: "1",
 				Name: i18n.String{
-					i18n.EN: "VAT rate 24%",
-					i18n.EL: "ΦΠΑ συντελεστής 24%",
+					i18n.EN: "Standard rate",
+					i18n.EL: "Κανονικός συντελεστής",
 				},
 			},
 			{
 				Code: "2",
 				Name: i18n.String{
-					i18n.EN: "VAT rate 13%",
-					i18n.EL: "ΦΠΑ συντελεστής 13%",
+					i18n.EN: "Reduced rate",
+					i18n.EL: "Μειωμένος συντελεστής",
 				},
 			},
 			{
 				Code: "3",
 				Name: i18n.String{
-					i18n.EN: "VAT rate 6%",
-					i18n.EL: "ΦΠΑ συντελεστής 6%",
+					i18n.EN: "Super-Reduced Rate",
+					i18n.EL: "Υπερμειωμένος συντελεστής",
 				},
 			},
 			{
 				Code: "4",
 				Name: i18n.String{
-					i18n.EN: "VAT rate 17%",
-					i18n.EL: "ΦΠΑ συντελεστής 17%",
+					i18n.EN: "Standard rate (Island)",
+					i18n.EL: "Κανονικός συντελεστής (Νησί)",
 				},
 			},
 			{
 				Code: "5",
 				Name: i18n.String{
-					i18n.EN: "VAT rate 9%",
-					i18n.EL: "ΦΠΑ συντελεστής 9%",
+					i18n.EN: "Reduced rate (Island)",
+					i18n.EL: "Μειωμένος συντελεστής (Νησί)",
 				},
 			},
 			{
 				Code: "6",
 				Name: i18n.String{
-					i18n.EN: "VAT rate 4%",
-					i18n.EL: "ΦΠΑ συντελεστής 4%",
+					i18n.EN: "Super-reduced rate (Island)",
+					i18n.EL: "Υπερμειωμένος συντελεστής (Νησί)",
 				},
 			},
 			{

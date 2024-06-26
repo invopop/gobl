@@ -7,6 +7,9 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// TaxRateIsland is used to define the island reduced tax rates
+const TaxRateIsland cbc.Key = "island"
+
 var taxCategories = []*tax.Category{
 	//
 	// VAT
@@ -47,7 +50,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVATCategory: "1",
+					ExtKeyIAPRVATCat: "1",
 				},
 			},
 			{
@@ -62,13 +65,13 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVATCategory: "2",
+					ExtKeyIAPRVATCat: "2",
 				},
 			},
 			{
 				Key: tax.RateSuperReduced,
 				Name: i18n.String{
-					i18n.EN: "Super-Reduced Rate",
+					i18n.EN: "Super-reduced rate",
 					i18n.EL: "Υπερμειωμένος συντελεστής",
 				},
 				Values: []*tax.RateValue{
@@ -77,7 +80,52 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVATCategory: "3",
+					ExtKeyIAPRVATCat: "3",
+				},
+			},
+			{
+				Key: tax.RateStandard.With(TaxRateIsland),
+				Name: i18n.String{
+					i18n.EN: "Standard rate (Island)",
+					i18n.EL: "Κανονικός συντελεστής (Νησί)",
+				},
+				Values: []*tax.RateValue{
+					{
+						Percent: num.MakePercentage(17, 2),
+					},
+				},
+				Map: cbc.CodeMap{
+					ExtKeyIAPRVATCat: "4",
+				},
+			},
+			{
+				Key: tax.RateReduced.With(TaxRateIsland),
+				Name: i18n.String{
+					i18n.EN: "Reduced rate (Island)",
+					i18n.EL: "Μειωμένος συντελεστής (Νησί)",
+				},
+				Values: []*tax.RateValue{
+					{
+						Percent: num.MakePercentage(9, 2),
+					},
+				},
+				Map: cbc.CodeMap{
+					ExtKeyIAPRVATCat: "5",
+				},
+			},
+			{
+				Key: tax.RateSuperReduced.With(TaxRateIsland),
+				Name: i18n.String{
+					i18n.EN: "Super-reduced rate (Island)",
+					i18n.EL: "Υπερμειωμένος συντελεστής (Νησί)",
+				},
+				Values: []*tax.RateValue{
+					{
+						Percent: num.MakePercentage(4, 2),
+					},
+				},
+				Map: cbc.CodeMap{
+					ExtKeyIAPRVATCat: "6",
 				},
 			},
 			{
@@ -91,7 +139,7 @@ var taxCategories = []*tax.Category{
 					ExtKeyIAPRExemption,
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVATCategory: "7",
+					ExtKeyIAPRVATCat: "7",
 				},
 			},
 		},

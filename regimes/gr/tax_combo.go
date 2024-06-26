@@ -39,8 +39,7 @@ func normalizeTaxCombo(tc *tax.Combo) error {
 		return nil
 	}
 
-	vcat := rate.Map[KeyIAPRVATCategory]
-	tc.Ext[ExtKeyIAPRVATCat] = tax.ExtValue(vcat)
+	tc.Ext[ExtKeyIAPRVATCat] = tax.ExtValue(rate.Map[ExtKeyIAPRVATCat])
 
 	return nil
 }
