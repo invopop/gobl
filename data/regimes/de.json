@@ -1,8 +1,8 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/regime",
   "name": {
-    "en": "Germany",
-    "fr": "Deutschland"
+    "de": "Deutschland",
+    "en": "Germany"
   },
   "time_zone": "Europe/Berlin",
   "country": "DE",
