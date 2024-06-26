@@ -7,10 +7,76 @@ import (
 
 // Regime extension codes.
 const (
-	ExtKeyIAPRExemption = "gr-iapr-exemption"
+	ExtKeyIAPRVATCategory = "gr-iapr-vat-category"
+	ExtKeyIAPRExemption   = "gr-iapr-exemption"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
+	{
+		Key: ExtKeyIAPRVATCategory,
+		Name: i18n.String{
+			i18n.EN: "VAT category",
+			i18n.EL: "Κατηγορία ΦΠΑ",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "VAT rate 24%",
+					i18n.EL: "ΦΠΑ συντελεστής 24%",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "VAT rate 13%",
+					i18n.EL: "ΦΠΑ συντελεστής 13%",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "VAT rate 6%",
+					i18n.EL: "ΦΠΑ συντελεστής 6%",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "VAT rate 17%",
+					i18n.EL: "ΦΠΑ συντελεστής 17%",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "VAT rate 9%",
+					i18n.EL: "ΦΠΑ συντελεστής 9%",
+				},
+			},
+			{
+				Code: "6",
+				Name: i18n.String{
+					i18n.EN: "VAT rate 4%",
+					i18n.EL: "ΦΠΑ συντελεστής 4%",
+				},
+			},
+			{
+				Code: "7",
+				Name: i18n.String{
+					i18n.EN: "Without VAT",
+					i18n.EL: "Άνευ ΦΠΑ",
+				},
+			},
+			{
+				Code: "8",
+				Name: i18n.String{
+					i18n.EN: "Records without VAT (e.g. Payroll, Amortisations)",
+					i18n.EL: "Εγγραφές χωρίς ΦΠΑ (πχ Μισθοδοσία, Αποσβέσεις)",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyIAPRExemption,
 		Name: i18n.String{

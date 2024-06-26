@@ -4,9 +4,6 @@ currency: "EUR"
 issue_date: "2022-02-01"
 series: "SAMPLE"
 code: "001"
-tax:
-  tags:
-    - "islands"
 
 supplier:
   tax_id:
@@ -47,4 +44,6 @@ lines:
         reason: "Ειδική Έκπτωση"
     taxes:
       - cat: VAT
-        rate: standard
+        percent: "17%"
+        ext:
+          gr-iapr-vat-category: "4"

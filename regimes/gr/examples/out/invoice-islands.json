@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d2b17e4e339db0d8fd1f437036d76f32f325f02fa1f719d4150cf390bc393f6a"
+			"val": "5d01d685763222fc9579fd7d017247dbc34c9464b05b40c8de850c879398b703"
 		},
 		"draft": true
 	},
@@ -16,11 +16,6 @@
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"islands"
-			]
-		},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
@@ -83,8 +78,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
-						"percent": "17%"
+						"percent": "17%",
+						"ext": {
+							"gr-iapr-vat-category": "4"
+						}
 					}
 				],
 				"total": "1620.00"
@@ -99,7 +96,9 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
+								"ext": {
+									"gr-iapr-vat-category": "4"
+								},
 								"base": "1620.00",
 								"percent": "17%",
 								"amount": "275.40"

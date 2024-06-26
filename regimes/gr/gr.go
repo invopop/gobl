@@ -17,8 +17,7 @@ func init() {
 
 // Custom keys used typically in meta or codes information.
 const (
-	KeyIAPRVatCategory        cbc.Key = "iapr-vat-category"
-	KeyIAPRVatCategoryIslands cbc.Key = "iapr-vat-category-islands"
+	KeyIAPRVATCategory cbc.Key = "iapr-vat-category"
 )
 
 // Official IAPR codes to include in stamps.
@@ -66,6 +65,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }
@@ -75,6 +76,8 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
+	case *tax.Combo:
+		return normalizeTaxCombo(obj)
 	}
 	return nil
 }

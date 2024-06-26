@@ -31,6 +31,9 @@ var taxCategories = []*tax.Category{
 			},
 		},
 		Retained: false,
+		Extensions: []cbc.Key{
+			ExtKeyIAPRVATCategory,
+		},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateStandard,
@@ -40,16 +43,11 @@ var taxCategories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Tags:    []cbc.Key{TagIslands},
-						Percent: num.MakePercentage(17, 2),
-					},
-					{
 						Percent: num.MakePercentage(24, 2),
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory:        "1",
-					KeyIAPRVatCategoryIslands: "4",
+					KeyIAPRVATCategory: "1",
 				},
 			},
 			{
@@ -60,16 +58,11 @@ var taxCategories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Tags:    []cbc.Key{TagIslands},
-						Percent: num.MakePercentage(13, 2),
-					},
-					{
 						Percent: num.MakePercentage(13, 2),
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory:        "2",
-					KeyIAPRVatCategoryIslands: "5",
+					KeyIAPRVATCategory: "2",
 				},
 			},
 			{
@@ -80,16 +73,11 @@ var taxCategories = []*tax.Category{
 				},
 				Values: []*tax.RateValue{
 					{
-						Tags:    []cbc.Key{TagIslands},
-						Percent: num.MakePercentage(4, 2),
-					},
-					{
 						Percent: num.MakePercentage(6, 2),
 					},
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory:        "3",
-					KeyIAPRVatCategoryIslands: "6",
+					KeyIAPRVATCategory: "3",
 				},
 			},
 			{
@@ -103,7 +91,7 @@ var taxCategories = []*tax.Category{
 					ExtKeyIAPRExemption,
 				},
 				Map: cbc.CodeMap{
-					KeyIAPRVatCategory: "7",
+					KeyIAPRVATCategory: "7",
 				},
 			},
 		},

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ac43d54d99dab6b3958ab344004309d071a51dbb577adde9b2fbde39d3cac6b2"
+			"val": "fc42813d80fe949fcafcde10bfe5d77375fc6c63e25e3895d4dc6df83032138e"
 		},
 		"draft": true
 	},
@@ -79,7 +79,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "24%"
+						"percent": "24%",
+						"ext": {
+							"gr-iapr-vat-category": "1"
+						}
 					}
 				],
 				"total": "1620.00"
@@ -95,6 +98,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"gr-iapr-vat-category": "1"
+								},
 								"base": "1620.00",
 								"percent": "24%",
 								"amount": "388.80"
