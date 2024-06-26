@@ -102,10 +102,6 @@ func combineExtKeys(cat *Category, rate *Rate) []cbc.Key {
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
 func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
-	if err := r.CalculateObject(c); err != nil {
-		return err
-	}
-
 	c.category = r.Category(c.Category)
 	if c.category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
@@ -152,7 +148,8 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		}
 	}
 
-	return nil
+	// Run the regime's calculations and normalisations
+	return r.CalculateObject(c)
 }
 
 // UnmarshalJSON is a temporary migration helper that will move the
