@@ -4,37 +4,32 @@ Italy uses the FatturaPA format for their e-invoicing system.
 
 Example IT GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
 
-## Public Documentations
+## Public Documentation
 
 ### FatturaPA
 
-[Historical Documentation](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
-
-[Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - by far the most comprehensible spec doc. Since the difference between 1.2.2 and 1.2.1 is minimal, this is perfectly usable.
-
-[Schema V1.2.2 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/Specifiche_tecniche_del_formato_FatturaPA_v1.3.1.pdf) - most up-to-date but difficult
-
-[XSD V1.2.2](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd)
-
-### Tax Rates
-
-[IRPEF](https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef)
-[IVA (VAT)](https://www.agenziaentrate.gov.it/portale/web/guest/iva-regole-generali-aliquote-esenzioni-pagamento/norme-generali-e-aliquote#:~:text=In%20Italia%20l'aliquota%20ordinaria,per%20esempio%20per%20alcuni%20alimenti)
+- [Historical Documentation](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
+- [Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - by far the most comprehensible spec doc. Since the difference between 1.2.2 and 1.2.1 is minimal, this is perfectly usable.
+- [Schema V1.2.2 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/Specifiche_tecniche_del_formato_FatturaPA_v1.3.1.pdf) - most up-to-date but difficult
+- [XSD V1.2.2](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd)
 
 #### Changes from 1.2.1 to 1.2.2
 
 - Documentation changes: TD25, N1, N6.2, N7
 - Addition of TD28: Acquisti da San Marino con IVA (fattura cartacea)
 
+### Tax Rates
+
+- [IRPEF](https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef)
+- [IVA (VAT)](https://www.agenziaentrate.gov.it/portale/web/guest/iva-regole-generali-aliquote-esenzioni-pagamento/norme-generali-e-aliquote#:~:text=In%20Italia%20l'aliquota%20ordinaria,per%20esempio%20per%20alcuni%20alimenti)
+
 ### Tax Definitions
 
-[Fiscal Code (Codice Fiscale)](https://en.wikipedia.org/wiki/Italian_fiscal_code)
+- [Fiscal Code (Codice Fiscale)](https://en.wikipedia.org/wiki/Italian_fiscal_code)
+- [VAT Number (Partita IVA)](https://en.wikipedia.org/wiki/VAT_identification_number)
+- [Agenzia Entrate (Tax Office) IVA Doc](https://www.agenziaentrate.gov.it/portale/web/english/nse/business/vat-in-italy)
 
-[VAT Number (Partita IVA)](https://en.wikipedia.org/wiki/VAT_identification_number)
-
-[Agenzia Entrate (Tax Office) IVA Doc](https://www.agenziaentrate.gov.it/portale/web/english/nse/business/vat-in-italy)
-
-### Italy-specific Details
+## Italy specifics
 
 Italy requires all invoices to comply with the [FatturaPA](https://www.fatturapa.gov.it/it/index.html) format which includes support for a specific set of fields unique to Italy. GOBL tries to guess what the best options are so that the conversion process is simple, but some data needs to be added manually.
 
@@ -47,7 +42,7 @@ A better way to consider electronic invoices in Italy is perhaps to think of the
 
 We've tried to describe how to deal with many of the exception cases and special usages in this page, but if you find something that is not supported, please get in touch.
 
-#### Reverse Charge Mechanism
+### Reverse Charge Mechanism
 
 The regular approach in GOBL to indicate that an invoice is subject to the "reverse charge" mechanism, is simply to include the `reverse-charge` tag inside the invoice's tax section.
 
@@ -74,7 +69,7 @@ Unfortunately in Italy this alone is not sufficient, each line item inside the d
 
 When converting to FatturaPA the "Nature" code will be set to `N6.9`.
 
-#### Stamp Duty
+### Stamp Duty
 
 Stamp Duty ("Imposta di bollo") is a fixed priced tax applied to the production, request, or presentation of certain documents: civil, commercial, judicial and extrajudicial documents, on notices, or posters.
 
@@ -94,7 +89,7 @@ These can be added to GOBL Invoices as "charges" (`bill.Charge`) defined with th
 
 See also [examples/stamp-duty.json](./examples/stamp-duty.json).
 
-#### Numero REA
+### Numero REA
 
 If you need to include an REA number ("Repertorio delle notizie Economiche e Amministrative") in your invoices, you can use the `registration` ([org.Registration](https://docs.gobl.org/draft-0/org/registration) property of a [org.Part](https://docs.gobl.org/draft-0/org/party) object.
 
@@ -118,7 +113,7 @@ For example:
 }
 ```
 
-#### Tax System - "Regime Fiscale"
+### Tax System - "Regime Fiscale"
 
 The tax system ("Regime Fiscale") needs to be defined to suppliers in all Italian FatturaPA invoices. The default code `RF01` will always be used unless overridden in an extension field with the `it-sdi-fiscal-regime` tag.
 
@@ -163,7 +158,7 @@ The following identities are defined:
 }
 ```
 
-#### Payment Means (ModalitaPagamento)
+### Payment Means (ModalitaPagamento)
 
 The FatturaPA format defines its own set of payment means to declare invoices with the SDI. Take the following example of the payment property inside an invoice:
 
@@ -209,7 +204,7 @@ The following table describes how to map the Italian payment means codes to thos
 | MP22 | `netting`                  | Deduction on sums already collected from previous transactions. |
 | MP23 | `online+pagopa`            | PagoPA                                                          |
 
-#### Document Type (TipoDocumento)
+### Document Type (TipoDocumento)
 
 All Italian invoices must be identified with a specific type code defined by the FatturaPA format. The following table helps identify how GOBL will map the expected Italian code with a combination of the Invoice Type and tax tags.
 
@@ -238,7 +233,7 @@ All Italian invoices must be identified with a specific type code defined by the
 | TD27 | `standard`    | `self-billed`                       | self invoicing for self consumption or for free transfer without recourse                                                                                                         |
 | TD28 | `standard`    | `self-billed`, `san-marino-paper`   | Purchases from San Marino with VAT (paper invoice)                                                                                                                                |
 
-#### Line Nature Code (Natura)
+### Line Nature Code (Natura)
 
 The "Natura" code is required when identifying why a single row inside an invoice _does not_ include VAT. With the `rate` field set to `exempt`, on the of the following codes should be provided in the `code` field:
 
@@ -266,7 +261,7 @@ The "Natura" code is required when identifying why a single row inside an invoic
 | `N6.9` | reverse charge - other cases                                                                                                                                                                         |
 | `N7`   | "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)" |
 
-##### Withholding Type (TipoRitenuta)
+### Withholding Type (TipoRitenuta)
 
 Withholding types are different categories of withheld taxes that can be applied alongside VAT. The following list identifies those currently supported by GOBL:
 
@@ -279,7 +274,7 @@ Withholding types are different categories of withheld taxes that can be applied
 | RT05 | `ENPAM`           | ENPAM contribution                 |
 | RT06 | not supported     | Other social security contribution |
 
-##### Fund Type (TipoCassa)
+### Fund Type (TipoCassa)
 
 The Fund Type field is used in very specific circumstances and is currently not supported by GOBL. The following table lists the known types for future implementation.
 

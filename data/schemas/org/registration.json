@@ -46,6 +46,10 @@
         "entry": {
           "type": "string",
           "title": "Entry"
+        },
+        "other": {
+          "type": "string",
+          "title": "Other"
         }
       },
       "type": "object",

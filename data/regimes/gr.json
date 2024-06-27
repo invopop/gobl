@@ -1,0 +1,519 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime",
+  "name": {
+    "el": "Ελλάδα",
+    "en": "Greece"
+  },
+  "time_zone": "Europe/Athens",
+  "country": "GR",
+  "currency": "EUR",
+  "tags": [
+    {
+      "key": "simplified",
+      "name": {
+        "de": "Vereinfachte Rechnung",
+        "en": "Simplified Invoice",
+        "es": "Factura Simplificada",
+        "it": "Fattura Semplificata"
+      },
+      "desc": {
+        "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+        "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+        "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+        "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+      }
+    },
+    {
+      "key": "reverse-charge",
+      "name": {
+        "de": "Umkehr der Steuerschuld",
+        "en": "Reverse Charge",
+        "es": "Inversión del Sujeto Pasivo",
+        "it": "Inversione del soggetto passivo"
+      }
+    },
+    {
+      "key": "self-billed",
+      "name": {
+        "de": "Rechnung durch den Leistungsempfänger",
+        "en": "Self-billed",
+        "es": "Facturación por el destinatario",
+        "it": "Autofattura"
+      }
+    },
+    {
+      "key": "customer-rates",
+      "name": {
+        "de": "Kundensätze",
+        "en": "Customer rates",
+        "es": "Tarifas aplicables al destinatario",
+        "it": "Aliquote applicabili al destinatario"
+      }
+    },
+    {
+      "key": "partial",
+      "name": {
+        "de": "Teilweise",
+        "en": "Partial",
+        "es": "Parcial",
+        "it": "Parziale"
+      }
+    },
+    {
+      "key": "islands",
+      "name": {
+        "el": "Νησιά μειωμένοι συντελεστές",
+        "en": "Islands Reduced Rates"
+      }
+    }
+  ],
+  "extensions": [
+    {
+      "key": "gr-iapr-vat-cat",
+      "name": {
+        "el": "Κατηγορία ΦΠΑ",
+        "en": "VAT category"
+      },
+      "codes": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Κανονικός συντελεστής",
+            "en": "Standard rate"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Μειωμένος συντελεστής",
+            "en": "Reduced rate"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής",
+            "en": "Super-Reduced Rate"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Κανονικός συντελεστής (Νησί)",
+            "en": "Standard rate (Island)"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Μειωμένος συντελεστής (Νησί)",
+            "en": "Reduced rate (Island)"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής (Νησί)",
+            "en": "Super-reduced rate (Island)"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Άνευ ΦΠΑ",
+            "en": "Without VAT"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Εγγραφές χωρίς ΦΠΑ (πχ Μισθοδοσία, Αποσβέσεις)",
+            "en": "Records without VAT (e.g. Payroll, Amortisations)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-iapr-exemption",
+      "name": {
+        "el": "Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
+        "en": "VAT exemption cause"
+      },
+      "codes": [
+        {
+          "code": "1",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 3 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 3 of the VAT code"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 5 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 5 of the VAT code"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 13 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 13 of the VAT code"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 14 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 14 of the VAT code"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 16 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 16 of the VAT code"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 19 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 19 of the VAT code"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 22 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 22 of the VAT code"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 24 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 24 of the VAT code"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 25 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 25 of the VAT code"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 26 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 26 of the VAT code"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 27 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 27 of the VAT code"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 27 - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 27 - Seagoing Vessels of the VAT code"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 27.1.γ - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 27.1.γ - Seagoing Vessels of the VAT code"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 28 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 28 of the VAT code"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 39 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 39 of the VAT code"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 39α του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 39a of the VAT code"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 40 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 40 of the VAT code"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 41 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 41 of the VAT code"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 47 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 47 of the VAT code"
+          }
+        },
+        {
+          "code": "20",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 43 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 43 of the VAT code"
+          }
+        },
+        {
+          "code": "21",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 44 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 44 of the VAT code"
+          }
+        },
+        {
+          "code": "22",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 45 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 45 of the VAT code"
+          }
+        },
+        {
+          "code": "23",
+          "name": {
+            "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 46 του Κώδικα ΦΠΑ",
+            "en": "VAT included - article 46 of the VAT code"
+          }
+        },
+        {
+          "code": "24",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - άρθρο 6 του Κώδικα ΦΠΑ",
+            "en": "Without VAT - article 6 of the VAT code"
+          }
+        },
+        {
+          "code": "25",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - ΠΟΛ.1029/1995",
+            "en": "Without VAT - ΠΟΛ.1029/1995"
+          }
+        },
+        {
+          "code": "26",
+          "name": {
+            "el": "Χωρίς ΦΠΑ - ΠΟΛ.1167/2015",
+            "en": "Without VAT - ΠΟΛ.1167/2015"
+          }
+        },
+        {
+          "code": "27",
+          "name": {
+            "el": "Λοιπές Εξαιρέσεις ΦΠΑ",
+            "en": "Without VAT - Other VAT exceptions"
+          }
+        },
+        {
+          "code": "28",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 24 περ. β' παρ.1 του Κώδικα ΦΠΑ, (Tax Free)",
+            "en": "Without VAT - Article 24 (b) (1) of the VAT Code (Tax Free)"
+          }
+        },
+        {
+          "code": "29",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 47β, του Κώδικα ΦΠΑ (OSS μη ενωσιακό καθεστώς)",
+            "en": "Without VAT - Article 47b of the VAT Code (OSS non-EU scheme)"
+          }
+        },
+        {
+          "code": "30",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 47γ, του Κώδικα ΦΠΑ (OSS ενωσιακό καθεστώς)",
+            "en": "Without VAT - Article 47c of the VAT Code (OSS EU scheme)"
+          }
+        },
+        {
+          "code": "31",
+          "name": {
+            "el": "Χωρίς ΦΠΑ – άρθρο 47δ του Κώδικα ΦΠΑ (IOSS)",
+            "en": "Excluding VAT - Article 47d of the VAT Code (IOSS)"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge / Αντίστροφη φόρτιση"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "el": "ΦΠΑ",
+        "en": "VAT"
+      },
+      "title": {
+        "el": "Φόρος προστιθέμενης αξίας",
+        "en": "Value Added Tax"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "el": "Κανονικός συντελεστής",
+            "en": "Standard rate"
+          },
+          "values": [
+            {
+              "percent": "24%"
+            }
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "1"
+          }
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "el": "Μειωμένος συντελεστής",
+            "en": "Reduced rate"
+          },
+          "values": [
+            {
+              "percent": "13%"
+            }
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "2"
+          }
+        },
+        {
+          "key": "super-reduced",
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής",
+            "en": "Super-reduced rate"
+          },
+          "values": [
+            {
+              "percent": "6%"
+            }
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "3"
+          }
+        },
+        {
+          "key": "standard+island",
+          "name": {
+            "el": "Κανονικός συντελεστής (Νησί)",
+            "en": "Standard rate (Island)"
+          },
+          "values": [
+            {
+              "percent": "17%"
+            }
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "4"
+          }
+        },
+        {
+          "key": "reduced+island",
+          "name": {
+            "el": "Μειωμένος συντελεστής (Νησί)",
+            "en": "Reduced rate (Island)"
+          },
+          "values": [
+            {
+              "percent": "9%"
+            }
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "5"
+          }
+        },
+        {
+          "key": "super-reduced+island",
+          "name": {
+            "el": "Υπερμειωμένος συντελεστής (Νησί)",
+            "en": "Super-reduced rate (Island)"
+          },
+          "values": [
+            {
+              "percent": "4%"
+            }
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "6"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "el": "Απαλλαγή",
+            "en": "Exempt"
+          },
+          "exempt": true,
+          "extensions": [
+            "gr-iapr-exemption"
+          ],
+          "map": {
+            "gr-iapr-vat-cat": "7"
+          }
+        }
+      ],
+      "extensions": [
+        "gr-iapr-vat-cat"
+      ],
+      "sources": [
+        {
+          "title": {
+            "el": "Φόρος Προστιθέμενης Αξίας/Φόρος Αγαθών και Υπηρεσιών (ΦΠΑ/GST) (1976-2023)",
+            "en": "Value Added Tax/Goods and Services Tax (VAT/GST) (1976-2023)"
+          },
+          "url": "https://www.oecd.org/tax/tax-policy/tax-database/"
+        }
+      ]
+    }
+  ]
+}

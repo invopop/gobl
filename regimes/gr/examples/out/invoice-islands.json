@@ -1,0 +1,119 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "77197bd12315cc970928950a34da6d54e6b27af36c992eeb4d34b6a7f7ec8782"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "019035bd-4524-73ab-bf44-6037841ce5d9",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Ελληνικά Τρόφιμα Α.Ε.",
+			"tax_id": {
+				"country": "GR",
+				"code": "728089281"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Λεωφόρος Βουλιαγμένης",
+					"locality": "Αθήνα",
+					"code": "11636",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "hellenicfoods@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Αιγαίο Λιανική Α.Ε.",
+			"tax_id": {
+				"country": "GR",
+				"code": "841442160"
+			},
+			"addresses": [
+				{
+					"num": "45",
+					"street": "Οδός Εγνατίας",
+					"locality": "Θεσσαλονίκη",
+					"code": "54625",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "aegeanretail@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Υπηρεσίες Ανάπτυξης",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Ειδική Έκπτωση"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard+island",
+						"percent": "17%",
+						"ext": {
+							"gr-iapr-vat-cat": "4"
+						}
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard+island",
+								"ext": {
+									"gr-iapr-vat-cat": "4"
+								},
+								"base": "1620.00",
+								"percent": "17%",
+								"amount": "275.40"
+							}
+						],
+						"amount": "275.40"
+					}
+				],
+				"sum": "275.40"
+			},
+			"tax": "275.40",
+			"total_with_tax": "1895.40",
+			"payable": "1895.40"
+		}
+	}
+}

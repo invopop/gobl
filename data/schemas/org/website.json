@@ -14,7 +14,7 @@
         "label": {
           "type": "string",
           "title": "Label",
-          "description": "Identifier for this number."
+          "description": "Label for the website to show alongside the URL."
         },
         "title": {
           "type": "string",

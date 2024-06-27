@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "019035bd-4524-73ab-bf44-6037841ce5d9"
+currency: "EUR"
+issue_date: "2022-02-01"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "GR"
+    code: "728089281"
+  name: "Ελληνικά Τρόφιμα Α.Ε."
+  emails:
+    - addr: "hellenicfoods@example.com"
+  addresses:
+    - num: "12"
+      street: "Λεωφόρος Βουλιαγμένης"
+      locality: "Αθήνα"
+      code: "11636"
+      country: "GR"
+
+customer:
+  tax_id:
+    country: "GR"
+    code: "841442160"
+  name: "Αιγαίο Λιανική Α.Ε."
+  emails:
+    - addr: "aegeanretail@example.com"
+  addresses:
+    - num: "45"
+      street: "Οδός Εγνατίας"
+      locality: "Θεσσαλονίκη"
+      code: "54625"
+      country: "GR"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Υπηρεσίες Ανάπτυξης"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Ειδική Έκπτωση"
+    taxes:
+      - cat: VAT
+        rate: "standard+island"

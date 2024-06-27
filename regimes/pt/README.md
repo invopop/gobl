@@ -11,7 +11,7 @@ Example PT GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 - [Portaria n.o 195/2020 – Especificações Técnicas Código QR](https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Novas_regras_faturacao/Documents/Especificacoes_Tecnicas_Codigo_QR.pdf)
 - [Comunicação dos elementos dos documentos de faturação à AT, por webservice](https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf)
 
-## Local Codes
+## Portugal specifics
 
 ### `InvoiceType` (Tipo de documento)
 

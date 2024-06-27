@@ -1,5 +1,5 @@
-// Package de provides the tax region definition for Germany.
-package de
+// Package gr provides the tax region definition for Greece.
+package gr
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -15,24 +15,32 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
+// Official IAPR codes to include in stamps.
+const (
+	StampIAPRQR       cbc.Key = "iapr-qr"
+	StampIAPRMark     cbc.Key = "iapr-mark"
+	StampIAPRHash     cbc.Key = "iapr-hash"
+	StampIAPRUID      cbc.Key = "iapr-uid"
+	StampIAPRProvider cbc.Key = "iapr-provider"
+)
+
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.DE,
+		Country:  l10n.GR,
 		Currency: currency.EUR,
 		Name: i18n.String{
-			i18n.EN: "Germany",
-			i18n.DE: "Deutschland",
+			i18n.EN: "Greece",
+			i18n.EL: "Ελλάδα",
 		},
-		TimeZone: "Europe/Berlin",
-		Tags:     common.InvoiceTags(),
+		TimeZone: "Europe/Athens",
+		Tags:     invoiceTags,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
-				// Germany only supports credit notes to correct an invoice
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
@@ -41,6 +49,7 @@ func New() *tax.Regime {
 		Validator:  Validate,
 		Calculator: Calculate,
 		Categories: taxCategories,
+		Extensions: extensionKeys,
 	}
 }
 
@@ -51,6 +60,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }
@@ -60,6 +71,8 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
+	case *tax.Combo:
+		return normalizeTaxCombo(obj)
 	}
 	return nil
 }

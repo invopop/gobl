@@ -148,7 +148,8 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		}
 	}
 
-	return nil
+	// Run the regime's calculations and normalisations
+	return r.CalculateObject(c)
 }
 
 // UnmarshalJSON is a temporary migration helper that will move the
