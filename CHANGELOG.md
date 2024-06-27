@@ -4,13 +4,14 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [vX.XX.X] - XXXX-XX-XX
+## [v0.80.0] - 2024-06-27
 
 ### Added
 
-- `num.Amount` - added `RescaleDown` method, that helps reduce accuracy from a number if higher.
-- `num.Amount` - added `RescaleRange` method, ensures that the exponent is within a specific range.
+- `num.Amount` - `RescaleDown` method, that helps reduce accuracy from a number if higher.
+- `num.Amount` - `RescaleRange` method, ensures that the exponent is within a specific range.
 - Greece tax regime
+- `tax.Combo` - regime specific calculations now supported.
 
 ## [v0.79.3] - 2024-06-18
 
