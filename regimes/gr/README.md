@@ -142,7 +142,7 @@ For example:
 ```js
 "payment": {
   "instructions": {
-    "key": "credit-transfer+foregin" // Will set the IAPR Payment Method to "2"
+    "key": "credit-transfer+foreign" // Will set the IAPR Payment Method to "2"
   }
 }
 ```
