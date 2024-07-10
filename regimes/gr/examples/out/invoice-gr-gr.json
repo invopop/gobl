@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d96c140221a4f61d3817d80da481715d85ff9fdf1b38dde2cfc757f667be7976"
+			"val": "a4d7dceb4f492f85e3e1ee288cb5ec70f24d4e491e0fe465e19f8d351109a98f"
 		},
 		"draft": true
 	},
@@ -88,6 +88,11 @@
 				"total": "1620.00"
 			}
 		],
+		"payment": {
+			"instructions": {
+				"key": "cash"
+			}
+		},
 		"totals": {
 			"sum": "1620.00",
 			"total": "1620.00",
