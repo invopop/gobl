@@ -215,17 +215,6 @@ func (v *invoiceValidator) precedingEntry(value interface{}) error {
 	return fmt.Errorf("must have a `%s` stamp", StampSATUUID)
 }
 
-var isValidPaymentMeanKey = validation.In(validPaymentMeanKeys()...)
-
-func validPaymentMeanKeys() []interface{} {
-	keys := make([]interface{}, len(paymentMeansKeyDefinitions))
-	for i, keyDef := range paymentMeansKeyDefinitions {
-		keys[i] = keyDef.Key
-	}
-
-	return keys
-}
-
 func normalizeInvoice(inv *bill.Invoice) error {
 	// 2024-04-26: copy suppliers post code to invoice, if not already
 	// set.

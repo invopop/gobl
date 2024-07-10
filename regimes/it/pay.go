@@ -279,21 +279,13 @@ var paymentMeansKeyDefinitions = []*cbc.KeyDefinition{
 	},
 }
 
-var paymentMeansKeyList = paymentMeansKeys()
-
-func paymentMeansKeys() []interface{} {
-	keys := make([]interface{}, len(paymentMeansKeyDefinitions))
-	for _, m := range paymentMeansKeyDefinitions {
-		keys = append(keys, m.Key)
-	}
-	return keys
-}
+var isValidPaymentMeanKey = cbc.InKeyDefs(paymentMeansKeyDefinitions)
 
 func validatePayAdvance(a *pay.Advance) error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.Key,
 			validation.Required,
-			validation.In(paymentMeansKeyList...),
+			isValidPaymentMeanKey,
 		),
 	)
 }
@@ -302,7 +294,7 @@ func validatePayInstructions(i *pay.Instructions) error {
 	return validation.ValidateStruct(i,
 		validation.Field(&i.Key,
 			validation.Required,
-			validation.In(paymentMeansKeyList...),
+			isValidPaymentMeanKey,
 		),
 	)
 }
