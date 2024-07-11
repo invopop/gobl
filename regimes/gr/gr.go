@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -14,6 +15,11 @@ import (
 func init() {
 	tax.RegisterRegime(New())
 }
+
+// Custom keys used typically in meta or codes information.
+const (
+	KeyIAPRPaymentMethod cbc.Key = "iapr-payment-method"
+)
 
 // Official IAPR codes to include in stamps.
 const (
@@ -46,10 +52,11 @@ func New() *tax.Regime {
 				},
 			},
 		},
-		Validator:  Validate,
-		Calculator: Calculate,
-		Categories: taxCategories,
-		Extensions: extensionKeys,
+		Validator:        Validate,
+		Calculator:       Calculate,
+		Categories:       taxCategories,
+		PaymentMeansKeys: paymentMeansKeys,
+		Extensions:       extensionKeys,
 	}
 }
 
@@ -62,6 +69,8 @@ func Validate(doc interface{}) error {
 		return validateTaxIdentity(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *org.Address:
+		return validateAddress(obj)
 	}
 	return nil
 }

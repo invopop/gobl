@@ -45,3 +45,7 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+
+payment:
+  instructions:
+    key: cash

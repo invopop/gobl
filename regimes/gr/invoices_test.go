@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,6 +30,12 @@ func validInvoice() *bill.Invoice {
 				Country: l10n.GR,
 				Code:    "841442160",
 			},
+			Addresses: []*org.Address{
+				{
+					Locality: "Athens",
+					Code:     "11528",
+				},
+			},
 		},
 		Lines: []*bill.Line{
 			{
@@ -46,6 +53,11 @@ func validInvoice() *bill.Invoice {
 				},
 			},
 		},
+		Payment: &bill.Payment{
+			Instructions: &pay.Instructions{
+				Key: pay.MeansKeyCreditTransfer,
+			},
+		},
 	}
 }
 
@@ -54,8 +66,19 @@ func TestInvoiceValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	assert.NoError(t, inv.Validate())
 
-	inv = validInvoice()
+	// Make it invalid
+	inv.Series = ""
 	inv.Supplier.TaxID.Code = ""
+	inv.Customer.Addresses = nil
+	inv.Lines[0].Quantity = num.MakeAmount(0, 0)
+	inv.Payment.Instructions.Key = "debit-transfer"
+
 	require.NoError(t, inv.Calculate())
-	assert.ErrorContains(t, inv.Validate(), "supplier: (tax_id: (code: cannot be blank.).)")
+
+	err := inv.Validate()
+	assert.ErrorContains(t, err, "series: cannot be blank")
+	assert.ErrorContains(t, err, "supplier: (tax_id: (code: cannot be blank")
+	assert.ErrorContains(t, err, "customer: (addresses: cannot be blank")
+	assert.ErrorContains(t, err, "lines: (0: (total: must be greater than 0")
+	assert.ErrorContains(t, err, "payment: (instructions: (key: must be a valid value")
 }

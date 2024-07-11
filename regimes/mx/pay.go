@@ -247,3 +247,5 @@ var paymentMeansKeyDefinitions = []*cbc.KeyDefinition{
 		},
 	},
 }
+
+var isValidPaymentMeanKey = cbc.InKeyDefs(paymentMeansKeyDefinitions)

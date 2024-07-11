@@ -122,3 +122,27 @@ For example:
   }
 ]
 ```
+
+### Payment Methods
+
+The IAPR requires invoices to specify a payment method code. In a GOBL invoice, the payment means is set using the `key` field in the payment instructions. The following table lists all the IAPR payment methods and how GOBL will map from the payment instructions key to each of them:
+
+| Code | Name                             | GOBL Payment Instruction Key |
+| ---- | -------------------------------- | ---------------------------- |
+| 1    | Domestic Payments Account Number | `credit-transfer`            |
+| 2    | Foreign Payments Account Number  | `credit-transfer+foreign`    |
+| 3    | Cash                             | `cash`                       |
+| 4    | Check                            | `cheque`                     |
+| 5    | On credit                        | `promissory-note`            |
+| 6    | Web Banking                      | `online`                     |
+| 7    | POS / e-POS                      | `card`                       |
+
+For example:
+
+```js
+"payment": {
+  "instructions": {
+    "key": "credit-transfer+foreign" // Will set the IAPR Payment Method to "2"
+  }
+}
+```

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XX.X] - XXXX-XX-XX
 
+### Added
+
+- GR: Invoice and address validations
+- GR: Payment means key definitions
+
 ### Changed
 
 - GB: removed requirement for suppliers to have a tax ID code (country is still requried!)
