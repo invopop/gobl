@@ -106,6 +106,16 @@ func IdentityForType(in []*Identity, typ cbc.Code) *Identity {
 	return nil
 }
 
+// IdentityForKey helps return the identity with a matching key.
+func IdentityForKey(in []*Identity, key cbc.Key) *Identity {
+	for _, v := range in {
+		if v.Key == key {
+			return v
+		}
+	}
+	return nil
+}
+
 // AddIdentity makes it easier to add a new identity to a list and replace an
 // existing value with a matching type.
 func AddIdentity(in []*Identity, i *Identity) []*Identity {
@@ -113,7 +123,7 @@ func AddIdentity(in []*Identity, i *Identity) []*Identity {
 		return []*Identity{i}
 	}
 	for _, v := range in {
-		if v.Type == i.Type {
+		if v.Type == i.Type || v.Key == i.Key {
 			*v = *i // copy in place
 			return in
 		}

@@ -43,7 +43,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: l10n.IT,
-				Type:    it.TaxIdentityTypeBusiness,
 				Code:    "13029381004",
 			},
 			Addresses: []*org.Address{
@@ -89,32 +88,55 @@ func TestInvoiceValidation(t *testing.T) {
 }
 
 func TestCustomerValidation(t *testing.T) {
-	inv := testInvoiceStandard(t)
-	inv.Customer.TaxID = &tax.Identity{
-		Country: l10n.IT,
-		Type:    it.TaxIdentityTypeIndividual,
-		Code:    "RSSGNN60R30H501U",
+	id := &org.Identity{
+		Key:  it.IdentityKeyFiscalCode,
+		Code: "RSSGNN60R30H501U",
 	}
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	t.Run("valid", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: l10n.IT,
+			Code:    "",
+		}
+		inv.Customer.Identities = append(inv.Customer.Identities, id)
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 
-	inv.Customer.TaxID = nil
-	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "customer: (tax_id: cannot be blank.)")
+	t.Run("missing tax_id", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = append(inv.Customer.Identities, id)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "customer: (tax_id: cannot be blank.)")
+	})
+
+	t.Run("missing tax id code and identity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: l10n.IT,
+			Code:    "",
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		// ensure contains bother errors
+		assert.ErrorContains(t, err, "identities: missing key it-fiscal-code")
+		assert.ErrorContains(t, err, "tax_id: (code: cannot be blank.")
+	})
 }
 
 func TestSupplierValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	inv.Supplier.TaxID = &tax.Identity{
 		Country: l10n.IT,
-		Type:    it.TaxIdentityTypeIndividual,
 		Code:    "RSSGNN60R30H501U",
 	}
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "type: must be a valid value")
+	assert.Contains(t, err.Error(), "code: contains invalid characters")
 }
 
 func TestSupplierAddressesValidation(t *testing.T) {

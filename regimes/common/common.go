@@ -20,14 +20,15 @@ const (
 )
 
 var (
-	taxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
+	// TaxCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
+	TaxCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
 )
 
 // NormalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase.
 func NormalizeTaxIdentity(tID *tax.Identity) error {
 	code := strings.ToUpper(tID.Code.String())
-	code = taxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = TaxCodeBadCharsRegexp.ReplaceAllString(code, "")
 	code = strings.TrimPrefix(code, string(tID.Country))
 	tID.Code = cbc.Code(code)
 	return nil

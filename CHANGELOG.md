@@ -4,6 +4,13 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [vX.XX.X] - XXXX-XX-XX
+
+### Changed
+
+- IT: moved fiscal code (codice fiscale) from the `org.Party` Tax ID to the Identities array with the specific key `it-fiscal-code`. This implies that invoices can now be issued with **both** a VAT code (partita IVA) and a fiscal code (codice fiscale).
+- IT: data will be normalized automatically to move the fiscal code from the tax ID to the identities array.
+
 ## [v0.80.1] - 2024-07-11
 
 ### Added
@@ -13,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- GB: removed requirement for suppliers to have a tax ID code (country is still requried!)
+- GB: removed requirement for suppliers to have a tax ID code (country is still required!)
 
 ## [v0.80.0] - 2024-06-27
 

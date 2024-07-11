@@ -22,7 +22,7 @@ type Error struct {
 
 // FieldErrors is a map of field names to errors, which is provided when it
 // was possible to determine that the error was related to a specific field.
-type FieldErrors map[string]error
+type FieldErrors map[string]error // nolint:errname
 
 var (
 	// ErrNoDocument is provided when the envelope does not contain a

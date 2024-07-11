@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 )
@@ -35,7 +36,6 @@ func New() *tax.Regime {
 		ChargeKeys:       chargeKeyDefinitions,       // charges.go
 		InboxKeys:        inboxKeyDefinitions,        // inboxes.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
-		IdentityTypeKeys: taxIdentityTypeDefinitions, // tax_identity.go
 		Extensions:       extensionKeys,              // extensions.go
 		Tags:             invoiceTags,
 		Scenarios:        scenarios, // scenarios.go
@@ -63,6 +63,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *pay.Instructions:
 		return validatePayInstructions(obj)
+	case *org.Identity:
+		return validateIdentity(obj)
 	case *pay.Advance:
 		return validatePayAdvance(obj)
 	}
@@ -72,8 +74,12 @@ func Validate(doc interface{}) error {
 // Calculate will perform any regime specific calculations.
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return normalizeInvoice(obj)
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
+	case *org.Identity:
+		return normalizeIdentity(obj)
 	}
 	return nil
 }
