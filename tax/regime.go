@@ -48,21 +48,25 @@ type Regime struct {
 	// considerations.
 	Tags []*cbc.KeyDefinition `json:"tags,omitempty" jsonschema:"title=Tags"`
 
-	// Identity types specific for the regime and may be validated
-	// against.
-	IdentityTypeKeys []*cbc.KeyDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
-
 	// Extensions defines the keys that can be used for extended or extra data inside the regime that
 	// is specific to the regime and cannot be easily determined from other GOBL structures.
 	// Typically these are used to define local codes for suppliers, customers, products, or tax rates.
 	Extensions []*cbc.KeyDefinition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
-	// Charge types specific for the regime and may be validated or used in the UI as suggestions
-	ChargeKeys []*cbc.KeyDefinition `json:"charge_types,omitempty" jsonschema:"title=Charge Types"`
+	// Tax Identity types specific for the regime and may be validated
+	// against.
+	TaxIdentityTypeKeys []*cbc.KeyDefinition `json:"tax_identity_type_keys,omitempty" jsonschema:"title=Tax Identity Type Keys"`
+
+	// Identity keys used in addition to regular tax identities and specific for the
+	// regime that may be validated against.
+	IdentityKeys []*cbc.KeyDefinition `json:"identity_keys,omitempty" jsonschema:"title=Identity Keys"`
+
+	// Charge keys specific for the regime and may be validated or used in the UI as suggestions
+	ChargeKeys []*cbc.KeyDefinition `json:"charge_keys,omitempty" jsonschema:"title=Charge Keys"`
 
 	// PaymentMeansKeys specific for the regime that extend the original
 	// base payment means keys.
-	PaymentMeansKeys []*cbc.KeyDefinition `json:"payment_means,omitempty" jsonschema:"title=Payment Means"`
+	PaymentMeansKeys []*cbc.KeyDefinition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
 
 	// InboxKeys specific to the regime that can be used to identify where a document
 	// should be forwarded to.
@@ -274,7 +278,8 @@ func (r *Regime) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Zone),
 		validation.Field(&r.Currency),
 		validation.Field(&r.Tags),
-		validation.Field(&r.IdentityTypeKeys),
+		validation.Field(&r.TaxIdentityTypeKeys),
+		validation.Field(&r.IdentityKeys),
 		validation.Field(&r.Extensions),
 		validation.Field(&r.ChargeKeys),
 		validation.Field(&r.PaymentMeansKeys),

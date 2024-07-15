@@ -6,34 +6,34 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/uuid"
 
 	"github.com/invopop/validation"
 )
 
 // Identity stores the details required to identify an entity for tax
-// purposes. There are two levels of accuracy that may be used to
-// describe where an entity is located: Country and Locality.
-// Country is a required field, but locality is optional according to
-// rules of a given tax jurisdiction.
+// purposes in a specific country. Typically this would be a code related
+// to a specific indirect tax like VAT or GST. Some countries, such as the
+// US, do not have a VAT system so will not have a code here.
+//
+// Other fiscal identities should be defined in a parties identities array
+// with their own validation rules and country specific handling.
 type Identity struct {
-	// Unique universal identity code for this tax identity.
-	UUID uuid.UUID `json:"uuid,omitempty" jsonschema:"title=UUID"`
-
 	// ISO country code for Where the tax identity was issued.
 	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
-
-	// Type is set according to the requirements of each regime, some have a single
-	// tax document type code, others require a choice to be made.
-	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
-	// Additional details that may be required.
-	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+	// Type is set according to the requirements of each regime, some have a single
+	// tax document type code, others require a choice to be made.
+	//
+	// Deprecated: Tax Identities should only be used for VAT or similar codes
+	// for companies. Use the identities array for other types of identification.
+	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 
-	// DEPRECATED. Zone was removed 2024-03-14 in favour of using tax tags
+	// Zone identifies a sub-locality within a country.
+	//
+	// Deprecated: Removed 2024-03-14 in favour of using tax tags
 	// and extensions with local data when required. Maintained here to support
 	// data migration.
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
@@ -49,23 +49,8 @@ var (
 // value set.
 var RequireIdentityCode = validateTaxID{requireCode: true}
 
-// RequireIdentityType ensures that the identity type is set.
-var RequireIdentityType = validateTaxID{requireType: true}
-
-// IdentityTypeIn checks that the identity code is within one of the
-// acceptable keys.
-var IdentityTypeIn = func(keys ...cbc.Key) validation.Rule {
-	out := make([]interface{}, len(keys))
-	for i, l := range keys {
-		out[i] = l
-	}
-	return validateTaxID{typeIn: out}
-}
-
 type validateTaxID struct {
 	requireCode bool
-	requireType bool
-	typeIn      []interface{}
 }
 
 // String provides a string representation of the tax identity.
@@ -93,12 +78,10 @@ func (id *Identity) Calculate() error {
 // country and zone properties.
 func (id *Identity) Validate() error {
 	err := validation.ValidateStruct(id,
-		validation.Field(&id.UUID),
 		validation.Field(&id.Country, validation.Required),
+		validation.Field(&id.Code),
 		validation.Field(&id.Zone, validation.Empty),
 		validation.Field(&id.Type),
-		validation.Field(&id.Code),
-		validation.Field(&id.Meta),
 	)
 	if err != nil {
 		return err
@@ -118,10 +101,6 @@ func (v validateTaxID) Validate(value interface{}) error {
 	rules := []*validation.FieldRules{
 		validation.Field(&id.Code,
 			validation.When(v.requireCode, validation.Required),
-		),
-		validation.Field(&id.Type,
-			validation.When(v.requireType, validation.Required),
-			validation.When(len(v.typeIn) > 0, validation.In(v.typeIn...)),
 		),
 	}
 	return validation.ValidateStruct(id, rules...)

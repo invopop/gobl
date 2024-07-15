@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
@@ -18,6 +19,16 @@ const (
 	// that is independent from the "Partita IVA" or VAT number used by businesses.
 	IdentityKeyFiscalCode cbc.Key = "it-fiscal-code"
 )
+
+var identityKeyDefinitions = []*cbc.KeyDefinition{
+	{
+		Key: IdentityKeyFiscalCode,
+		Name: i18n.String{
+			i18n.EN: "Fiscal Code",
+			i18n.IT: "Codice Fiscale",
+		},
+	},
+}
 
 func normalizeIdentity(id *org.Identity) error {
 	if id == nil || id.Key != IdentityKeyFiscalCode {

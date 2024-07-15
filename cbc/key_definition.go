@@ -85,6 +85,15 @@ func (kd *KeyDefinition) Validate() error {
 	return err
 }
 
+// DefinitionKeys helps extract the keys from a list of key definitions.
+func DefinitionKeys(list []*KeyDefinition) []Key {
+	keys := make([]Key, len(list))
+	for i, item := range list {
+		keys[i] = item.Key
+	}
+	return keys
+}
+
 // GetKeyDefinition helps fetch the key definition instance from a list.
 func GetKeyDefinition(key Key, list []*KeyDefinition) *KeyDefinition {
 	for _, item := range list {

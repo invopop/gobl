@@ -2,6 +2,7 @@ package co
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -29,12 +30,11 @@ func (v *invoiceValidator) validate() error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(v.validParty),
 			validation.By(v.validSupplier),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(v.validParty),
+			validation.By(v.validCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
@@ -51,20 +51,19 @@ func (v *invoiceValidator) validate() error {
 	)
 }
 
-func (v *invoiceValidator) validParty(value interface{}) error {
+func (v *invoiceValidator) validSupplier(value interface{}) error {
 	obj, _ := value.(*org.Party)
-	if obj == nil {
+	if obj == nil || obj.TaxID == nil {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
-			validation.Required,
-			validation.By(v.validTaxIdentity),
+			tax.RequireIdentityCode,
 			validation.Skip,
 		),
 		validation.Field(&obj.Addresses,
 			validation.When(
-				obj.TaxID != nil && obj.TaxID.Country.In(l10n.CO),
+				isColombian(obj.TaxID),
 				validation.Length(1, 0),
 			),
 			validation.Skip,
@@ -80,6 +79,44 @@ func (v *invoiceValidator) validParty(value interface{}) error {
 	)
 }
 
+func (v *invoiceValidator) validCustomer(value interface{}) error {
+	obj, _ := value.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Identities,
+			validation.When(
+				obj.TaxID == nil || obj.TaxID.Code == cbc.CodeEmpty,
+				validation.Required,
+				org.HasIdentityKey(identityKeys...),
+			),
+			validation.Skip,
+		),
+		validation.Field(&obj.Addresses,
+			validation.When(
+				isColombian(obj.TaxID),
+				validation.Length(1, 0),
+			),
+			validation.Skip,
+		),
+		validation.Field(&obj.Ext,
+			validation.When(
+				municipalityCodeRequired(obj.TaxID),
+				validation.Required,
+				tax.ExtensionsRequires(ExtKeyDIANMunicipality),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func isColombian(tID *tax.Identity) bool {
+	return tID != nil && tID.Country.In(l10n.CO)
+}
+
+// municipalityCodeRequired checks if the municipality code is required for the given tax
+// identity by checking to see if the customer is a Colombian company.
 func municipalityCodeRequired(tID *tax.Identity) bool {
 	if tID == nil {
 		return false
@@ -87,43 +124,7 @@ func municipalityCodeRequired(tID *tax.Identity) bool {
 	if !tID.Country.In(l10n.CO) {
 		return false
 	}
-	if tID.Type == TaxIdentityTypeCitizen || tID.Code == TaxCodeFinalCustomer {
-		return false
-	}
-	return true
-}
-
-func (v *invoiceValidator) validSupplier(value interface{}) error {
-	obj, _ := value.(*org.Party)
-	if obj == nil || obj.TaxID == nil {
-		return nil
-	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
-			tax.RequireIdentityType,
-			tax.IdentityTypeIn(TaxIdentityTypeTIN),
-			tax.RequireIdentityCode,
-			validation.Skip,
-		),
-	)
-}
-
-func (v *invoiceValidator) validTaxIdentity(value interface{}) error {
-	obj, _ := value.(*tax.Identity)
-	if obj == nil {
-		return nil
-	}
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.Code, validation.Required),
-		validation.Field(&obj.Type,
-			validation.Required,
-			isValidTaxIdentityTypeKey,
-			validation.When(!obj.Country.In(l10n.CO),
-				// Certain types are exclusive of CO identities
-				validation.NotIn(TaxIdentityTypeTIN, TaxIdentityTypeCitizen),
-			),
-		),
-	)
+	return tID.Code != ""
 }
 
 func (v *invoiceValidator) preceding(value interface{}) error {
