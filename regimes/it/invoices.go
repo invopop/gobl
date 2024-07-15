@@ -143,7 +143,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		validation.Field(&customer.Identities,
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
-				org.HasIdentityKey(IdentityKeyFiscalCode),
+				org.RequireIdentityKey(IdentityKeyFiscalCode),
 			),
 			validation.Skip,
 		),

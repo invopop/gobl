@@ -144,7 +144,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier: (tax_id: (type: must be a valid value.).).")
+	assert.Contains(t, err.Error(), "supplier: (tax_id: (code: cannot be blank.).).")
 
 	inv = baseInvoice()
 	inv.Customer.TaxID.Code = ""

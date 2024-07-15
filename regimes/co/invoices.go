@@ -47,6 +47,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Outlays,
 			validation.Empty,
+			validation.Skip,
 		),
 	)
 }
@@ -89,7 +90,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 			validation.When(
 				obj.TaxID == nil || obj.TaxID.Code == cbc.CodeEmpty,
 				validation.Required,
-				org.HasIdentityKey(identityKeys...),
+				org.RequireIdentityKey(identityKeys...),
 			),
 			validation.Skip,
 		),

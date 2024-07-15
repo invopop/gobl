@@ -49,15 +49,15 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// HasIdentityType provides a validation rule that will determine if at least one
+// RequireIdentityType provides a validation rule that will determine if at least one
 // of the identities defined includes one with the defined type.
-func HasIdentityType(typ cbc.Code) validation.Rule {
+func RequireIdentityType(typ cbc.Code) validation.Rule {
 	return validateIdentitySet{typ: typ}
 }
 
-// HasIdentityKey provides a validation rule that will determine if at least one
+// RequireIdentityKey provides a validation rule that will determine if at least one
 // of the identities defined includes one with one of the defined keys.
-func HasIdentityKey(key ...cbc.Key) validation.Rule {
+func RequireIdentityKey(key ...cbc.Key) validation.Rule {
 	return validateIdentitySet{keys: key}
 }
 
@@ -91,7 +91,7 @@ func (v validateIdentitySet) String() string {
 		parts = append(parts, fmt.Sprintf("type %s", v.typ))
 	}
 	if len(v.keys) != 0 {
-		parts = append(parts, fmt.Sprintf("keys: %v", v.keys))
+		parts = append(parts, fmt.Sprintf("key %s", strings.Join(cbc.KeyStrings(v.keys), ", ")))
 	}
 	return strings.Join(parts, ", ")
 }
