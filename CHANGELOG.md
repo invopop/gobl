@@ -8,13 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `tax.Regime`: added new "Identity Keys" definition.
 - IT: `it-sdi-format` extension added with the two main document formats in Italy: `FPA12` and `FPR12` (default for B2B/C if none assigned).
 
 ### Changed
 
+- `tax.Identity`: deprecated the `type` field, and directly removed the `uuid` and `meta` fields which no longer make sense here.
+- `tax.Regime`: standardised naming around key definitions to always include `_keys` as suffix.
 - IT: moved fiscal code (codice fiscale) from the `org.Party` Tax ID to the Identities array with the specific key `it-fiscal-code`. This implies that invoices can now be issued with **both** a VAT code (partita IVA) and a fiscal code (codice fiscale).
 - IT: data will be normalized automatically to move the fiscal code from the tax ID to the identities array.
 - IT: removed explicit support for Tax ID type field.
+- ES: moved Tax ID `type` usage to the `identities` array.
+- CO: moved Tax ID type definitions to `identities` array.
 
 ## [v0.80.1] - 2024-07-11
 
