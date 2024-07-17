@@ -5,43 +5,32 @@
   "$defs": {
     "Identity": {
       "properties": {
-        "uuid": {
-          "type": "string",
-          "format": "uuid",
-          "title": "UUID",
-          "description": "Unique universal identity code for this tax identity."
-        },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/country-code",
           "title": "Country Code",
           "description": "ISO country code for Where the tax identity was issued."
-        },
-        "type": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Type",
-          "description": "Type is set according to the requirements of each regime, some have a single\ntax document type code, others require a choice to be made."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
           "description": "Normalized code shown on the original identity document."
         },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Additional details that may be required."
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Type",
+          "description": "Type is set according to the requirements of each regime, some have a single\ntax document type code, others require a choice to be made.\n\nDeprecated: Tax Identities should only be used for VAT or similar codes\nfor companies. Use the identities array for other types of identification."
         },
         "zone": {
           "$ref": "https://gobl.org/draft-0/l10n/code",
           "title": "Zone",
-          "description": "DEPRECATED. Zone was removed 2024-03-14 in favour of using tax tags\nand extensions with local data when required. Maintained here to support\ndata migration."
+          "description": "Zone identifies a sub-locality within a country.\n\nDeprecated: Removed 2024-03-14 in favour of using tax tags\nand extensions with local data when required. Maintained here to support\ndata migration."
         }
       },
       "type": "object",
       "required": [
         "country"
       ],
-      "description": "Identity stores the details required to identify an entity for tax purposes."
+      "description": "Identity stores the details required to identify an entity for tax purposes in a specific country."
     }
   }
 }

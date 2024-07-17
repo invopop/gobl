@@ -34,6 +34,7 @@ func New() *tax.Regime {
 		},
 		TimeZone:         "Europe/Rome",
 		ChargeKeys:       chargeKeyDefinitions,       // charges.go
+		IdentityKeys:     identityKeyDefinitions,     // identities.go
 		InboxKeys:        inboxKeyDefinitions,        // inboxes.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Extensions:       extensionKeys,              // extensions.go

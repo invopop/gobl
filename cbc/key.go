@@ -49,6 +49,16 @@ func (k Key) String() string {
 	return string(k)
 }
 
+// KeyStrings is a convenience method to convert a list of keys
+// into a list of strings.
+func KeyStrings(keys []Key) []string {
+	l := make([]string, len(keys))
+	for i, v := range keys {
+		l[i] = v.String()
+	}
+	return l
+}
+
 // With provides a new key that combines another joining them together
 // with a `+` symbol.
 func (k Key) With(ke Key) Key {

@@ -258,14 +258,6 @@
           "title": "Tags",
           "description": "Tags that can be applied at the document level to identify additional\nconsiderations."
         },
-        "identity_types": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
-          },
-          "type": "array",
-          "title": "Identity Types",
-          "description": "Identity types specific for the regime and may be validated\nagainst."
-        },
         "extensions": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key-definition"
@@ -274,20 +266,36 @@
           "title": "Extensions",
           "description": "Extensions defines the keys that can be used for extended or extra data inside the regime that\nis specific to the regime and cannot be easily determined from other GOBL structures.\nTypically these are used to define local codes for suppliers, customers, products, or tax rates."
         },
-        "charge_types": {
+        "tax_identity_type_keys": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
-          "title": "Charge Types",
-          "description": "Charge types specific for the regime and may be validated or used in the UI as suggestions"
+          "title": "Tax Identity Type Keys",
+          "description": "Tax Identity types specific for the regime and may be validated\nagainst."
         },
-        "payment_means": {
+        "identity_keys": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key-definition"
           },
           "type": "array",
-          "title": "Payment Means",
+          "title": "Identity Keys",
+          "description": "Identity keys used in addition to regular tax identities and specific for the\nregime that may be validated against."
+        },
+        "charge_keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+          },
+          "type": "array",
+          "title": "Charge Keys",
+          "description": "Charge keys specific for the regime and may be validated or used in the UI as suggestions"
+        },
+        "payment_means_keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+          },
+          "type": "array",
+          "title": "Payment Means Keys",
           "description": "PaymentMeansKeys specific for the regime that extend the original\nbase payment means keys."
         },
         "inbox_keys": {

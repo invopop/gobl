@@ -138,58 +138,6 @@
       }
     }
   ],
-  "identity_types": [
-    {
-      "key": "fiscal",
-      "name": {
-        "en": "National Tax Identity",
-        "es": "Número de Identificación Fiscal"
-      },
-      "map": {
-        "ticketbai-id-type": "02"
-      }
-    },
-    {
-      "key": "passport",
-      "name": {
-        "en": "Passport",
-        "es": "Pasaporte"
-      },
-      "map": {
-        "ticketbai-id-type": "03"
-      }
-    },
-    {
-      "key": "foreign",
-      "name": {
-        "en": "National ID Card or similar from a foreign country",
-        "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
-      },
-      "map": {
-        "ticketbai-id-type": "04"
-      }
-    },
-    {
-      "key": "resident",
-      "name": {
-        "en": "Residential permit",
-        "es": "Certificado de residencia"
-      },
-      "map": {
-        "ticketbai-id-type": "05"
-      }
-    },
-    {
-      "key": "other",
-      "name": {
-        "en": "An other type of source not listed",
-        "es": "Otro documento probatorio"
-      },
-      "map": {
-        "ticketbai-id-type": "06"
-      }
-    }
-  ],
   "extensions": [
     {
       "key": "es-facturae-correction",
@@ -531,6 +479,48 @@
           }
         }
       ]
+    }
+  ],
+  "identity_keys": [
+    {
+      "key": "es-passport",
+      "name": {
+        "en": "Passport",
+        "es": "Pasaporte"
+      },
+      "map": {
+        "ticketbai-id-type": "03"
+      }
+    },
+    {
+      "key": "es-foreign-id",
+      "name": {
+        "en": "National ID Card or similar from a foreign country",
+        "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
+      },
+      "map": {
+        "ticketbai-id-type": "04"
+      }
+    },
+    {
+      "key": "es-resident",
+      "name": {
+        "en": "Residential permit",
+        "es": "Certificado de residencia"
+      },
+      "map": {
+        "ticketbai-id-type": "05"
+      }
+    },
+    {
+      "key": "es-other",
+      "name": {
+        "en": "An other type of source not listed",
+        "es": "Otro documento probatorio"
+      },
+      "map": {
+        "ticketbai-id-type": "06"
+      }
     }
   ],
   "scenarios": [

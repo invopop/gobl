@@ -144,27 +144,33 @@
       }
     }
   ],
-  "identity_types": [
-    {
-      "key": "business",
-      "name": {
-        "en": "Legal Person"
-      }
-    },
-    {
-      "key": "government",
-      "name": {
-        "en": "Public Administration"
-      }
-    },
-    {
-      "key": "individual",
-      "name": {
-        "en": "Natural Person"
-      }
-    }
-  ],
   "extensions": [
+    {
+      "key": "it-sdi-format",
+      "name": {
+        "en": "SDI Transmission Format",
+        "it": "Formato Trasmissione SDI"
+      },
+      "desc": {
+        "en": "Code used to describe the transmission format of the invoice. By default\nthe value \"FPR12\" is used unless the user explicitly sets the value\nto something else.\n\nNormally this will only be needed when the invoice is to be sent to governmental\nbodies and must use the \"FPA12\" format."
+      },
+      "codes": [
+        {
+          "code": "FPA12",
+          "name": {
+            "en": "Public Administration",
+            "it": "Pubblica Amministrazione"
+          }
+        },
+        {
+          "code": "FPR12",
+          "name": {
+            "en": "Private Parties (default)",
+            "it": "Soggetti Privati (predefinito)"
+          }
+        }
+      ]
+    },
     {
       "key": "it-sdi-fiscal-regime",
       "name": {
@@ -690,7 +696,16 @@
       ]
     }
   ],
-  "charge_types": [
+  "identity_keys": [
+    {
+      "key": "it-fiscal-code",
+      "name": {
+        "en": "Fiscal Code",
+        "it": "Codice Fiscale"
+      }
+    }
+  ],
+  "charge_keys": [
     {
       "key": "stamp-duty",
       "name": {
@@ -703,7 +718,7 @@
       }
     }
   ],
-  "payment_means": [
+  "payment_means_keys": [
     {
       "key": "cash",
       "name": {

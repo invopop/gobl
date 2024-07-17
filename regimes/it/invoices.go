@@ -30,13 +30,13 @@ func normalizeCustomer(party *org.Party) error {
 		return nil
 	}
 	// If the party is an individual, move the fiscal code to the identities.
-	if party.TaxID.Type == "individual" {
+	if party.TaxID.Type == "individual" { //nolint:staticcheck
 		id := &org.Identity{
 			Key:  IdentityKeyFiscalCode,
 			Code: party.TaxID.Code,
 		}
 		party.TaxID.Code = ""
-		party.TaxID.Type = ""
+		party.TaxID.Type = "" //nolint:staticcheck
 		party.Identities = org.AddIdentity(party.Identities, id)
 	}
 	return nil
@@ -143,7 +143,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		validation.Field(&customer.Identities,
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
-				org.HasIdentityKey(IdentityKeyFiscalCode),
+				org.RequireIdentityKey(IdentityKeyFiscalCode),
 			),
 			validation.Skip,
 		),

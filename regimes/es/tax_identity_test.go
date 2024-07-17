@@ -50,7 +50,7 @@ func TestNormalizeTaxIdentityZone(t *testing.T) {
 	tID := &tax.Identity{Country: l10n.ES, Code: "93471790C", Zone: "XX"}
 	err := r.CalculateObject(tID)
 	assert.NoError(t, err)
-	assert.Empty(t, tID.Zone)
+	assert.Empty(t, tID.Zone) //nolint:staticcheck
 }
 
 func TestValidateTaxIdentity(t *testing.T) {
