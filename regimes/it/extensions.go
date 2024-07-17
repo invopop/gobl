@@ -3,6 +3,7 @@ package it
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // Italian extension keys required by the Italian tax authority (SDI)
@@ -11,9 +12,43 @@ const (
 	ExtKeySDIFiscalRegime = "it-sdi-fiscal-regime"
 	ExtKeySDINature       = "it-sdi-nature"
 	ExtKeySDIRetainedTax  = "it-sdi-retained-tax"
+	ExtKeySDIFormat       = "it-sdi-format"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
+	{
+		Key: ExtKeySDIFormat,
+		Name: i18n.String{
+			i18n.EN: "SDI Transmission Format",
+			i18n.IT: "Formato Trasmissione SDI",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to describe the transmission format of the invoice. By default
+				the value "FPR12" is used unless the user explicitly sets the value
+				to something else.
+				
+				Normally this will only be needed when the invoice is to be sent to governmental
+				bodies and must use the "FPA12" format.
+			`),
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "FPA12",
+				Name: i18n.String{
+					i18n.EN: "Public Administration",
+					i18n.IT: "Pubblica Amministrazione",
+				},
+			},
+			{
+				Code: "FPR12",
+				Name: i18n.String{
+					i18n.EN: "Private Parties (default)",
+					i18n.IT: "Soggetti Privati (predefinito)",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeySDIFiscalRegime,
 		Name: i18n.String{

@@ -23,6 +23,7 @@ var skipExamplePaths = []string{
 	"/out/",
 	"data/",
 	".github",
+	".golangci.yaml",
 }
 
 var updateExamples = flag.Bool("update", false, "Update the examples in the repository")
@@ -32,7 +33,7 @@ var updateExamples = flag.Bool("update", false, "Update the examples in the repo
 func TestConvertExamplesToJSON(t *testing.T) {
 	// Find all .yaml files in subdirectories
 	var files []string
-	err := filepath.Walk("./", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("./", func(path string, _ os.FileInfo, _ error) error {
 		switch filepath.Ext(path) {
 		case ".yaml", ".json":
 			for _, skip := range skipExamplePaths {

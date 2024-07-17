@@ -259,13 +259,13 @@ var taxRateVATExemptMigrationMap = []struct {
 
 // 2024-04-17: Migrate zone to VAT tax rows
 func migrateTaxIDZoneToLines(inv *bill.Invoice) error {
-	if inv.Supplier == nil || inv.Supplier.TaxID == nil || inv.Supplier.TaxID.Zone == "" {
+	if inv.Supplier == nil || inv.Supplier.TaxID == nil || inv.Supplier.TaxID.Zone == "" { //nolint:staticcheck
 		return nil
 	}
 
 	ext := make(tax.Extensions)
-	zone := inv.Supplier.TaxID.Zone
-	inv.Supplier.TaxID.Zone = ""
+	zone := inv.Supplier.TaxID.Zone //nolint:staticcheck
+	inv.Supplier.TaxID.Zone = ""    //nolint:staticcheck
 	switch zone {
 	case "20":
 		ext[ExtKeyRegion] = "PT-AC"

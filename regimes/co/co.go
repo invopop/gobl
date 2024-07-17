@@ -44,12 +44,12 @@ func New() *tax.Regime {
 				specifications for electronic invoicing.
 			`),
 		},
-		TimeZone:         "America/Bogota",
-		Tags:             common.InvoiceTags(),
-		Validator:        Validate,
-		Calculator:       Calculate,
-		IdentityTypeKeys: taxIdentityTypeDefs, // see tax_identity.go
-		Extensions:       extensionKeys,       // see extensions.go
+		TimeZone:     "America/Bogota",
+		Tags:         common.InvoiceTags(),
+		Validator:    Validate,
+		Calculator:   Calculate,
+		IdentityKeys: identityKeyDefs, // see identities.go
+		Extensions:   extensionKeys,   // see extensions.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

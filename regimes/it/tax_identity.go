@@ -7,45 +7,13 @@ package it
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
-
-// Italian identity types required for transactions inside the same country,
-// but not needed for inter-country sales.
-const (
-	TaxIdentityTypeBusiness   cbc.Key = "business" // default
-	TaxIdentityTypeGovernment cbc.Key = "government"
-	TaxIdentityTypeIndividual cbc.Key = "individual"
-)
-
-var taxIdentityTypeDefinitions = []*cbc.KeyDefinition{
-	{
-		Key: TaxIdentityTypeBusiness,
-		Name: i18n.String{
-			i18n.EN: "Legal Person",
-		},
-	},
-	{
-		Key: TaxIdentityTypeGovernment,
-		Name: i18n.String{
-			i18n.EN: "Public Administration",
-		},
-	},
-	{
-		Key: TaxIdentityTypeIndividual,
-		Name: i18n.String{
-			i18n.EN: "Natural Person",
-		},
-	},
-}
 
 const (
 	taxIDEvenChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -61,16 +29,7 @@ var taxIDPersonRegexPattern = regexp.MustCompile(`^(?:[A-Z][AEIOU][AEIOUX]|[AEIO
 // that was set. Additional validation is laid out at the invoice layer.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.When(
-				!tID.Type.In(TaxIdentityTypeIndividual), // include empty type!
-				validation.By(validateTaxCode),
-			),
-			validation.When(
-				tID.Type.In(TaxIdentityTypeIndividual),
-				validation.By(validateIndividualTaxCode),
-			),
-		),
+		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
 }
 
@@ -80,20 +39,6 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 	if err := common.NormalizeTaxIdentity(tID); err != nil {
 		return err
 	}
-
-	// try to determine the type automatically
-	if tID.Type == cbc.KeyEmpty {
-		if tID.Code == "" {
-			return nil
-		}
-		// note that we don't yet have a way to determine government codes
-		if taxIDPersonRegexPattern.MatchString(tID.Code.String()) {
-			tID.Type = TaxIdentityTypeIndividual
-		} else {
-			tID.Type = TaxIdentityTypeBusiness
-		}
-	}
-
 	return nil
 }
 
@@ -120,40 +65,6 @@ func validateTaxCode(value interface{}) error {
 	chk := common.ComputeLuhnCheckDigit(str[:10])
 	if chk != str[10:] {
 		return errors.New("invalid check digit")
-	}
-
-	return nil
-}
-
-// Based on details at https://en.wikipedia.org/wiki/Italian_fiscal_code
-func validateIndividualTaxCode(value interface{}) error {
-	val, ok := value.(cbc.Code)
-	if !ok || val == cbc.CodeEmpty {
-		return nil
-	}
-	code := val.String()
-
-	matched := taxIDPersonRegexPattern.MatchString(code)
-	if !matched {
-		return errors.New("invalid format")
-	}
-
-	var sum int
-	for i := 0; i < 15; i++ {
-		c := strings.Index(taxIDCharCode, string(code[i]))
-		if c < 10 {
-			c += 10 // move numbers to letters
-		}
-		if !(i%2 == 0) { // even as count starts from 1
-			sum += strings.Index(taxIDEvenChars, string(taxIDCharCode[c]))
-		} else { // odd
-			sum += strings.Index(taxIDOddChars, string(taxIDCharCode[c]))
-		}
-	}
-
-	x := string(taxIDCharCode[(sum%taxIDCRCMod)+10])
-	if x != string(code[15]) {
-		return fmt.Errorf("invalid check digit, expected '%s'", x)
 	}
 
 	return nil

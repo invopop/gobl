@@ -64,6 +64,14 @@ func (p *Party) Calculate() error {
 	if r == nil {
 		return nil // nothing to do here
 	}
+
+	// Normalize identities explicitly
+	for _, id := range p.Identities {
+		if err := r.CalculateObject(id); err != nil {
+			return err
+		}
+	}
+
 	return r.CalculateObject(p)
 }
 

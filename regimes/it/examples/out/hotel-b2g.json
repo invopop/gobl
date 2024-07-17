@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9da0308fd30fb9c9cf910d999fbf6876c041880e4ce57ed18b9acd585908302f"
+			"val": "8e0cf96fb6088c737eac65f30a73cbbbfef42166a2509933de759a2c213ca8c9"
 		},
 		"draft": true
 	},
@@ -13,9 +13,15 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
-		"code": "003",
-		"issue_date": "2023-08-01",
+		"code": "002",
+		"issue_date": "2023-05-21",
 		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"it-sdi-format": "FPA12"
+			}
+		},
 		"supplier": {
 			"name": "Hotel California",
 			"tax_id": {
@@ -67,6 +73,25 @@
 				"i": 1,
 				"quantity": "1",
 				"item": {
+					"name": "Tassa di Soggiorno",
+					"price": "1.00"
+				},
+				"sum": "1.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-nature": "N4"
+						}
+					}
+				],
+				"total": "1.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
 					"name": "Camera Matrimoniale",
 					"price": "125.00"
 				},
@@ -81,38 +106,38 @@
 				"total": "125.00"
 			}
 		],
-		"charges": [
-			{
-				"key": "stamp-duty",
-				"i": 1,
-				"amount": "2.00",
-				"reason": "Imposta di bollo"
-			}
-		],
 		"totals": {
-			"sum": "125.00",
-			"charge": "2.00",
-			"total": "127.00",
+			"sum": "126.00",
+			"tax_included": "11.36",
+			"total": "114.64",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
+								"key": "exempt",
+								"ext": {
+									"it-sdi-nature": "N4"
+								},
+								"base": "1.00",
+								"amount": "0.00"
+							},
+							{
 								"key": "intermediate",
-								"base": "125.00",
+								"base": "113.64",
 								"percent": "10.0%",
-								"amount": "12.50"
+								"amount": "11.36"
 							}
 						],
-						"amount": "12.50"
+						"amount": "11.36"
 					}
 				],
-				"sum": "12.50"
+				"sum": "11.36"
 			},
-			"tax": "12.50",
-			"total_with_tax": "139.50",
-			"payable": "139.50"
+			"tax": "11.36",
+			"total_with_tax": "126.00",
+			"payable": "126.00"
 		}
 	}
 }

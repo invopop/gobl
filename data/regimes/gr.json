@@ -360,6 +360,78 @@
       ]
     }
   ],
+  "payment_means_keys": [
+    {
+      "key": "credit-transfer",
+      "name": {
+        "el": "Επαγ. Λογαριασμός Πληρωμών Ημεδαπής",
+        "en": "Domestic Payments Account Number"
+      },
+      "map": {
+        "iapr-payment-method": "1"
+      }
+    },
+    {
+      "key": "credit-transfer+foreign",
+      "name": {
+        "el": "Επαγ. Λογαριασμός Πληρωμών Αλλοδαπής",
+        "en": "Foreign Payments Account Number"
+      },
+      "map": {
+        "iapr-payment-method": "2"
+      }
+    },
+    {
+      "key": "cash",
+      "name": {
+        "el": "Μετρητά",
+        "en": "Cash"
+      },
+      "map": {
+        "iapr-payment-method": "3"
+      }
+    },
+    {
+      "key": "cheque",
+      "name": {
+        "el": "Επιταγή",
+        "en": "Check"
+      },
+      "map": {
+        "iapr-payment-method": "4"
+      }
+    },
+    {
+      "key": "promissory-note",
+      "name": {
+        "el": "Επί Πιστώσει",
+        "en": "On credit"
+      },
+      "map": {
+        "iapr-payment-method": "5"
+      }
+    },
+    {
+      "key": "online",
+      "name": {
+        "el": "Web Banking",
+        "en": "Web Banking"
+      },
+      "map": {
+        "iapr-payment-method": "6"
+      }
+    },
+    {
+      "key": "card",
+      "name": {
+        "el": "POS / e-POS",
+        "en": "POS / e-POS"
+      },
+      "map": {
+        "iapr-payment-method": "7"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

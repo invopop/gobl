@@ -160,7 +160,7 @@
       ]
     }
   ],
-  "payment_means": [
+  "payment_means_keys": [
     {
       "key": "cash",
       "name": {

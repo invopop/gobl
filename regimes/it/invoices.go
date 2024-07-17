@@ -17,6 +17,31 @@ type invoiceValidator struct {
 	inv *bill.Invoice
 }
 
+// normalizeInvoice is used to ensure the invoice data is correct.
+func normalizeInvoice(inv *bill.Invoice) error {
+	return normalizeCustomer(inv.Customer)
+}
+
+func normalizeCustomer(party *org.Party) error {
+	if party == nil {
+		return nil
+	}
+	if !isItalianParty(party) {
+		return nil
+	}
+	// If the party is an individual, move the fiscal code to the identities.
+	if party.TaxID.Type == "individual" { //nolint:staticcheck
+		id := &org.Identity{
+			Key:  IdentityKeyFiscalCode,
+			Code: party.TaxID.Code,
+		}
+		party.TaxID.Code = ""
+		party.TaxID.Type = "" //nolint:staticcheck
+		party.Identities = org.AddIdentity(party.Identities, id)
+	}
+	return nil
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	v := &invoiceValidator{inv: inv}
 	return v.validate()
@@ -29,6 +54,10 @@ func (v *invoiceValidator) validate() error {
 
 	inv := v.inv
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Tax,
+			validation.By(v.tax),
+			validation.Skip,
+		),
 		validation.Field(&inv.Supplier,
 			validation.By(v.supplier),
 			validation.Skip,
@@ -47,6 +76,21 @@ func (v *invoiceValidator) validate() error {
 	)
 }
 
+func (v *invoiceValidator) tax(value any) error {
+	obj, _ := value.(*bill.Tax)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			tax.ExtensionsHas(
+				ExtKeySDIFormat,
+			),
+			validation.Skip,
+		),
+	)
+}
+
 func (v *invoiceValidator) supplier(value interface{}) error {
 	supplier, ok := value.(*org.Party)
 	if !ok {
@@ -57,14 +101,16 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&supplier.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
-			tax.IdentityTypeIn(TaxIdentityTypeBusiness, TaxIdentityTypeGovernment),
+			validation.Skip,
 		),
 		validation.Field(&supplier.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validateAddress)),
+			validation.Skip,
 		),
 		validation.Field(&supplier.Registration,
 			validation.By(validateRegistration),
+			validation.Skip,
 		),
 	)
 }
@@ -75,19 +121,16 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		return nil
 	}
 
-	// Customers must have a tax ID (PartitaIVA)
+	// Customers must have either a Tax ID (PartitaIVA)
+	// or fiscal identity (codice fiscale)
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.TaxID,
 			validation.Required,
 			validation.When(
-				isItalianParty(customer),
+				isItalianParty(customer) && !hasFiscalCode(customer),
 				tax.RequireIdentityCode,
-				tax.IdentityTypeIn(
-					TaxIdentityTypeBusiness,
-					TaxIdentityTypeGovernment,
-					TaxIdentityTypeIndividual,
-				),
 			),
+			validation.Skip,
 		),
 		validation.Field(&customer.Addresses,
 			validation.When(
@@ -95,8 +138,28 @@ func (v *invoiceValidator) customer(value interface{}) error {
 				// TODO: address not required for simplified invoices
 				validation.Each(validation.By(validateAddress)),
 			),
+			validation.Skip,
+		),
+		validation.Field(&customer.Identities,
+			validation.When(
+				isItalianParty(customer) && !hasTaxIDCode(customer),
+				org.RequireIdentityKey(IdentityKeyFiscalCode),
+			),
+			validation.Skip,
 		),
 	)
+}
+
+func hasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasFiscalCode(party *org.Party) bool {
+	if party == nil || party.TaxID == nil {
+		return false
+	}
+	return org.IdentityForKey(party.Identities, IdentityKeyFiscalCode) != nil
+
 }
 
 func isItalianParty(party *org.Party) bool {

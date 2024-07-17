@@ -52,8 +52,7 @@ func TestTaxIdentity(t *testing.T) {
 func TestValidationRules(t *testing.T) {
 	tID := &tax.Identity{
 		Country: l10n.ES,
-		Code:    "X3157928M",
 	}
-	err := validation.Validate(tID, tax.RequireIdentityType)
-	assert.Error(t, err)
+	err := validation.Validate(tID, tax.RequireIdentityCode)
+	assert.ErrorContains(t, err, "code: cannot be blank")
 }

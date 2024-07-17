@@ -39,5 +39,5 @@ func TestMigratePartyIdentities(t *testing.T) {
 	assert.Equal(t, "608", customer.Ext[mx.ExtKeyCFDIFiscalRegime].String())
 	assert.Equal(t, "G01", customer.Ext[mx.ExtKeyCFDIUse].String())
 	assert.Equal(t, "65000", customer.Ext[mx.ExtKeyCFDIPostCode].String())
-	assert.Empty(t, customer.TaxID.Zone)
+	assert.Empty(t, customer.TaxID.Zone) //nolint:staticcheck
 }

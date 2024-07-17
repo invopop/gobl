@@ -49,21 +49,21 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// HasIdentityType provides a validation rule that will determine if at least one
+// RequireIdentityType provides a validation rule that will determine if at least one
 // of the identities defined includes one with the defined type.
-func HasIdentityType(typ cbc.Code) validation.Rule {
+func RequireIdentityType(typ cbc.Code) validation.Rule {
 	return validateIdentitySet{typ: typ}
 }
 
-// HasIdentityKey provides a validation rule that will determine if at least one
-// of the identities defined includes one with the defined key.
-func HasIdentityKey(key cbc.Key) validation.Rule {
-	return validateIdentitySet{key: key}
+// RequireIdentityKey provides a validation rule that will determine if at least one
+// of the identities defined includes one with one of the defined keys.
+func RequireIdentityKey(key ...cbc.Key) validation.Rule {
+	return validateIdentitySet{keys: key}
 }
 
 type validateIdentitySet struct {
-	typ cbc.Code
-	key cbc.Key
+	typ  cbc.Code
+	keys []cbc.Key
 }
 
 func (v validateIdentitySet) Validate(value interface{}) error {
@@ -82,7 +82,7 @@ func (v validateIdentitySet) Validate(value interface{}) error {
 
 func (v validateIdentitySet) matches(row *Identity) bool {
 	return (v.typ == cbc.CodeEmpty || row.Type == v.typ) &&
-		(v.key == cbc.KeyEmpty || row.Key == v.key)
+		(len(v.keys) == 0 || row.Key.In(v.keys...))
 }
 
 func (v validateIdentitySet) String() string {
@@ -90,8 +90,8 @@ func (v validateIdentitySet) String() string {
 	if v.typ != cbc.CodeEmpty {
 		parts = append(parts, fmt.Sprintf("type %s", v.typ))
 	}
-	if v.key != cbc.KeyEmpty {
-		parts = append(parts, fmt.Sprintf("key %s", v.key))
+	if len(v.keys) != 0 {
+		parts = append(parts, fmt.Sprintf("key %s", strings.Join(cbc.KeyStrings(v.keys), ", ")))
 	}
 	return strings.Join(parts, ", ")
 }
@@ -106,6 +106,16 @@ func IdentityForType(in []*Identity, typ cbc.Code) *Identity {
 	return nil
 }
 
+// IdentityForKey helps return the identity with on of the matching keys.
+func IdentityForKey(in []*Identity, key ...cbc.Key) *Identity {
+	for _, v := range in {
+		if v.Key.In(key...) {
+			return v
+		}
+	}
+	return nil
+}
+
 // AddIdentity makes it easier to add a new identity to a list and replace an
 // existing value with a matching type.
 func AddIdentity(in []*Identity, i *Identity) []*Identity {
@@ -113,7 +123,7 @@ func AddIdentity(in []*Identity, i *Identity) []*Identity {
 		return []*Identity{i}
 	}
 	for _, v := range in {
-		if v.Type == i.Type {
+		if v.Type == i.Type || v.Key == i.Key {
 			*v = *i // copy in place
 			return in
 		}

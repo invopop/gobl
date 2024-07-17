@@ -140,16 +140,20 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "supplier: (ext: (co-dian-municipality: does not match pattern.).")
 
 	inv = baseInvoice()
-	inv.Supplier.TaxID.Type = co.TaxIdentityTypeCitizen
+	inv.Supplier.TaxID.Code = ""
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier: (tax_id: (type: must be a valid value.).).")
+	assert.Contains(t, err.Error(), "supplier: (tax_id: (code: cannot be blank.).).")
 
 	inv = baseInvoice()
-	inv.Customer.TaxID.Type = co.TaxIdentityTypeCitizen
-	inv.Customer.TaxID.Code = co.TaxCodeFinalCustomer
-	inv.Customer.TaxID.Zone = ""
+	inv.Customer.TaxID.Code = ""
+	inv.Customer.Identities = org.AddIdentity(inv.Customer.Identities,
+		&org.Identity{
+			Key:  co.IdentityKeyCitizenID,
+			Code: "124499654",
+		},
+	)
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.NoError(t, err)
@@ -157,8 +161,6 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	inv = baseInvoice()
 	inv.Customer.TaxID.Country = l10n.ES
 	inv.Customer.TaxID.Code = "A13180492"
-	inv.Customer.TaxID.Type = co.TaxIdentityTypeForeign
-	inv.Customer.TaxID.Zone = ""
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.NoError(t, err)
@@ -193,6 +195,6 @@ func TestNormalizeParty(t *testing.T) {
 	}
 	err := co.Calculate(p)
 	assert.NoError(t, err)
-	assert.Empty(t, p.TaxID.Zone)
+	assert.Empty(t, p.TaxID.Zone) //nolint:staticcheck
 	assert.Equal(t, p.Ext[co.ExtKeyDIANMunicipality].String(), "11001")
 }

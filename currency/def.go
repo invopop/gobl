@@ -83,7 +83,7 @@ func WithDisambiguateSymbol() FormatOption {
 // WithNumeralSystem will override the default numeral system used to output
 // numbers.
 func WithNumeralSystem(ns num.NumeralSystem) FormatOption {
-	return func(d *Def, f num.Formatter) num.Formatter {
+	return func(_ *Def, f num.Formatter) num.Formatter {
 		f.NumeralSystem = ns
 		return f
 	}
@@ -165,7 +165,7 @@ func (ds *defs) load(src fs.FS, root string) error {
 	ds.byPriority = make([]*Def, 0)
 	ds.byCode = make(map[Code]*Def)
 
-	err := fs.WalkDir(src, root, func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(src, root, func(path string, _ fs.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf("walking directory: %w", err)
 		}

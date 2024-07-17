@@ -22,12 +22,12 @@ func normalizeParty(p *org.Party) error {
 	p.Identities = idents
 
 	// 2024-03-14: Migrate Tax ID Zone to extensions "mx-cfdi-post-code"
-	if p.TaxID != nil && p.TaxID.Zone != "" {
+	if p.TaxID != nil && p.TaxID.Zone != "" { //nolint:staticcheck
 		if p.Ext == nil {
 			p.Ext = make(tax.Extensions)
 		}
-		p.Ext[ExtKeyCFDIPostCode] = tax.ExtValue(p.TaxID.Zone)
-		p.TaxID.Zone = ""
+		p.Ext[ExtKeyCFDIPostCode] = tax.ExtValue(p.TaxID.Zone) //nolint:staticcheck
+		p.TaxID.Zone = ""                                      //nolint:staticcheck
 	}
 
 	return nil
