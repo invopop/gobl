@@ -195,6 +195,6 @@ func TestNormalizeParty(t *testing.T) {
 	}
 	err := co.Calculate(p)
 	assert.NoError(t, err)
-	assert.Empty(t, p.TaxID.Zone)
+	assert.Empty(t, p.TaxID.Zone) //nolint:staticcheck
 	assert.Equal(t, p.Ext[co.ExtKeyDIANMunicipality].String(), "11001")
 }

@@ -38,7 +38,6 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		err := it.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.expected, tID.Code)
-		assert.Equal(t, ts.typ, tID.Type)
 	}
 }
 

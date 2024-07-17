@@ -56,5 +56,3 @@ var identityKeyDefinitions = []*cbc.KeyDefinition{
 		},
 	},
 }
-
-var identityKeys = cbc.DefinitionKeys(identityKeyDefinitions)

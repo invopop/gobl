@@ -93,7 +93,7 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 		return err
 	}
 	// Remove the Zone
-	tID.Zone = ""
+	tID.Zone = "" //nolint:staticcheck
 	return nil
 }
 
