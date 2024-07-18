@@ -25,7 +25,8 @@ const (
 )
 
 const (
-	defaultTaxRemovalAccuracy uint32 = 2
+	defaultTaxRemovalAccuracy         uint32 = 2
+	defaultCurrencyConversionAccuracy uint32 = 2
 )
 
 const (

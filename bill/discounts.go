@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -98,6 +99,13 @@ func (m *Discount) removeIncludedTaxes(cat cbc.Code) *Discount {
 	}
 	m2 := *m
 	m2.Amount = m2.Amount.Upscale(accuracy).Remove(*rate.Percent)
+	return &m2
+}
+
+func (m *Discount) convertInto(ex *currency.ExchangeRate) *Discount {
+	accuracy := defaultCurrencyConversionAccuracy
+	m2 := *m
+	m2.Amount = m2.Amount.Upscale(accuracy).Multiply(ex.Amount)
 	return &m2
 }
 
