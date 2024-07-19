@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill.Invoice`: experimental `ConvertInto` method to convert the invoice's amounts from one currency into another.
+- DE: support for "de-tax-number" identity which can be used instead of regular tax ID code inside Germany.
+- DE: "simplified" tax tag removes requirement for supplier tax identification.
 
 ## [v0.81.0] - 2024-07-17
 

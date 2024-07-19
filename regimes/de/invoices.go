@@ -7,10 +7,15 @@ import (
 	"github.com/invopop/validation"
 )
 
+// validateInvoice checks to ensure the German invoice is not simplified
+// and the supplier contains either a Tax ID (VAT) *or* a Tax Number.
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
-			validation.By(validateInvoiceSupplier),
+			validation.When(
+				!isSimplified(inv),
+				validation.By(validateInvoiceSupplier),
+			),
 			validation.Skip,
 		),
 	)
@@ -24,8 +29,33 @@ func validateInvoiceSupplier(value any) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.TaxID,
 			validation.Required,
-			tax.RequireIdentityCode,
+			validation.When(
+				!hasTaxNumber(p),
+				tax.RequireIdentityCode,
+			),
+			validation.Skip,
+		),
+		validation.Field(&p.Identities,
+			validation.When(
+				!hasTaxIDCode(p),
+				org.RequireIdentityKey(IdentityKeyTaxNumber),
+			),
 			validation.Skip,
 		),
 	)
+}
+
+func isSimplified(inv *bill.Invoice) bool {
+	return inv != nil && inv.Tax != nil && inv.Tax.ContainsTag(tax.TagSimplified)
+}
+
+func hasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
+}
+
+func hasTaxNumber(party *org.Party) bool {
+	if party == nil || party.TaxID == nil {
+		return false
+	}
+	return org.IdentityForKey(party.Identities, IdentityKeyTaxNumber) != nil
 }
