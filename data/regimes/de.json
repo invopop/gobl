@@ -60,6 +60,15 @@
       }
     }
   ],
+  "identity_keys": [
+    {
+      "key": "de-tax-number",
+      "name": {
+        "de": "Steuernummer",
+        "en": "Tax Number"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
