@@ -45,6 +45,10 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code("B3-1-2"),
 		},
 		{
+			name: "valid with slash",
+			code: cbc.Code("B3/12"),
+		},
+		{
 			name: "empty",
 			code: cbc.Code(""),
 		},

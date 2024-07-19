@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -50,12 +51,39 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	assert.NoError(t, inv.Validate())
+	t.Run("normal invoice", func(t *testing.T) {
+		inv := validInvoice()
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
 
-	inv = validInvoice()
-	inv.Supplier.TaxID.Code = ""
-	require.NoError(t, inv.Calculate())
-	assert.ErrorContains(t, inv.Validate(), "supplier: (tax_id: (code: cannot be blank.).)")
+		inv = validInvoice()
+		inv.Supplier.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing key de-tax-number; tax_id: (code: cannot be blank.).)")
+	})
+
+	t.Run("simplified invoice - no tax details", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = &bill.Tax{
+			Tags: []cbc.Key{"simplified"},
+		}
+		inv.Supplier.TaxID.Code = ""
+		inv.Customer = nil
+
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("regular invoice - only tax number", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID.Code = ""
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Key:  "de-tax-number",
+				Code: "92/345/67894",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 }

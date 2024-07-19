@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -29,6 +30,7 @@ func New() *tax.Regime {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
+		IdentityKeys: identityKeyDefinitions, // identities.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -58,6 +60,8 @@ func Validate(doc interface{}) error {
 // Calculate will attempt to clean the object passed to it.
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
+	case *org.Identity:
+		return normalizeIdentity(obj)
 	case *tax.Identity:
 		return common.NormalizeTaxIdentity(obj)
 	}
