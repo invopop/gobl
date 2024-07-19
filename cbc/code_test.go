@@ -78,6 +78,11 @@ func TestCode_Validate(t *testing.T) {
 			wantErr: "valid format",
 		},
 		{
+			name:    "multiple symbols",
+			code:    cbc.Code("AB/.CD"),
+			wantErr: "valid format",
+		},
+		{
 			name:    "too long",
 			code:    cbc.Code("12345678901234567890ABCDE"),
 			wantErr: "length must be between",
