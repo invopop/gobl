@@ -55,6 +55,7 @@ func New() *tax.Regime {
 				Schema: bill.ShortSchemaInvoice,
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
 				},
 				Extensions: []cbc.Key{
 					ExtKeyDIANCorrection,
