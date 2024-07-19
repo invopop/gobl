@@ -204,58 +204,6 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	return &l2
 }
 
-func (l *Line) convertInto(ex *currency.ExchangeRate) *Line {
-	accuracy := defaultCurrencyConversionAccuracy
-
-	l2 := *l
-	l2i := *l.Item
-
-	// Add current price to the list of alternative prices
-	l2i.AltPrices = append(l2i.AltPrices, &currency.Amount{
-		Currency: l2i.Currency,
-		Value:    l2i.Price,
-	})
-
-	// Use alt price if available
-	altFound := false
-	for i, ap := range l2i.AltPrices {
-		if ap.Currency == ex.To {
-			l2i.Price = ap.Value
-			// remove this alt price from the list
-			l2i.AltPrices = append(l2i.AltPrices[:i], l2i.AltPrices[i+1:]...)
-			altFound = true
-			break
-		}
-	}
-	if !altFound {
-		// Perform exchange
-		l2i.Price = l2i.Price.Upscale(accuracy).Multiply(ex.Amount)
-	}
-
-	if len(l2.Discounts) > 0 {
-		rows := make([]*LineDiscount, len(l2.Discounts))
-		for i, v := range l.Discounts {
-			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Multiply(ex.Amount)
-			rows[i] = &d
-		}
-		l2.Discounts = rows
-	}
-
-	if len(l2.Charges) > 0 {
-		rows := make([]*LineCharge, len(l2.Charges))
-		for i, v := range l.Charges {
-			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Multiply(ex.Amount)
-			rows[i] = &d
-		}
-		l2.Charges = rows
-	}
-
-	l2.Item = &l2i
-	return &l2
-}
-
 func calculateLines(r *tax.Regime, lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
 	for i, l := range lines {
 		l.Index = i + 1

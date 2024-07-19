@@ -46,6 +46,52 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.NoError(t, err)
 		require.NotNil(t, i2)
 		assert.Equal(t, "134.96", i2.Totals.Payable.String())
+		assert.Equal(t, "USD", i2.Currency.String())
+		assert.Equal(t, "134.9600", i2.Lines[0].Item.Price.String())
+		assert.Len(t, i2.Lines[0].Item.AltPrices, 1)
+		assert.Equal(t, "EUR", i2.Lines[0].Item.AltPrices[0].Currency.String())
+		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
+	})
+
+	t.Run("conversion with alt prices", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(12050, 2),
+					AltPrices: []*currency.Amount{
+						{
+							Currency: currency.USD,
+							Value:    num.MakeAmount(13000, 2),
+						},
+					},
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateStandard,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		assert.NoError(t, err)
+		require.NotNil(t, i2)
+		assert.Equal(t, "130.00", i2.Totals.Payable.String())
+		assert.Equal(t, "USD", i2.Currency.String())
+		assert.Equal(t, "130.00", i2.Lines[0].Item.Price.String())
+		assert.Len(t, i2.Lines[0].Item.AltPrices, 1)
+		assert.Equal(t, "EUR", i2.Lines[0].Item.AltPrices[0].Currency.String())
+		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
 	})
 
 	t.Run("complex example", func(t *testing.T) {
@@ -57,9 +103,6 @@ func TestInvoiceConvertInto(t *testing.T) {
 					To:     currency.USD,
 					Amount: num.MakeAmount(112, 2),
 				},
-			},
-			Tax: &bill.Tax{
-				PricesInclude: tax.CategoryVAT,
 			},
 			Supplier: &org.Party{
 				TaxID: &tax.Identity{
@@ -111,7 +154,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 				Advances: []*pay.Advance{
 					{
 						Description: "Test Advance",
-						Amount:      num.MakeAmount(25000, 2),
+						Percent:     num.NewPercentage(50, 2),
 					},
 				},
 			},
@@ -120,8 +163,9 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.NoError(t, err)
 		require.NotNil(t, i2)
 		assert.Equal(t, "11.20", i2.Outlays[0].Amount.String())
-		assert.Equal(t, "280.00", i2.Payment.Advances[0].Amount.String())
-		assert.Equal(t, i2.Totals.Sum.String(), "1064.00")
-		assert.Equal(t, i2.Totals.Due.String(), "795.20")
+		assert.Equal(t, "643.72", i2.Payment.Advances[0].Amount.String())
+		assert.Equal(t, "1064.00", i2.Totals.Sum.String())
+		assert.Equal(t, "1298.64", i2.Totals.Payable.String())
+		assert.Equal(t, "654.92", i2.Totals.Due.String())
 	})
 }
