@@ -7,7 +7,6 @@ import (
 
 // Regime extension codes for local electronic formats.
 const (
-	ExtKeyKSeFVATZero       = "pl-ksef-vat-zero"
 	ExtKeyKSeFVATSpecial    = "pl-ksef-vat-special"
 	ExtKeyKSeFEffectiveDate = "pl-ksef-effective-date"
 )
@@ -30,38 +29,6 @@ var extensionKeys = []*cbc.KeyDefinition{
 					i18n.EN: "Special flat rate for taxi drivers.",
 					i18n.PL: "Specjalna stawka ryczałtu dla taksówkarzy.",
 				},
-			},
-		},
-	},
-	{
-		Key: ExtKeyKSeFVATZero,
-		Name: i18n.String{
-			i18n.EN: "Zero VAT Extensions for KSeF",
-		},
-		Keys: []*cbc.KeyDefinition{
-			{
-				Key: "wdt",
-				Name: i18n.String{
-					i18n.EN: "WDT",
-					i18n.PL: "WDT",
-				},
-				// TODO: description required
-			},
-			{
-				Key: "domestic",
-				Name: i18n.String{
-					i18n.EN: "Domestic",
-					i18n.PL: "Krajowy",
-				},
-				// TODO: description required
-			},
-			{
-				Key: "export",
-				Name: i18n.String{
-					i18n.EN: "Export",
-					i18n.PL: "Eksport",
-				},
-				// TODO: description required
 			},
 		},
 	},

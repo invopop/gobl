@@ -10,8 +10,7 @@ import (
 
 // Tax rates specific to Poland.
 const (
-	TaxRateNotPursuant       cbc.Key = "np"
-	TaxRateNotPursuantArt100 cbc.Key = "np-art100sec1point4"
+	TaxRateNotPursuant cbc.Key = "np"
 )
 
 var taxCategories = []*tax.Category{
@@ -89,9 +88,6 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(0, 3),
 					},
 				},
-				Extensions: []cbc.Key{
-					ExtKeyKSeFVATZero,
-				},
 			},
 			{
 				Key: tax.RateExempt,
@@ -99,8 +95,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Exempt",
 					i18n.PL: "Zwolnione",
 				},
-				Exempt:     true,
-				Extensions: []cbc.Key{},
+				Exempt: true,
 			},
 			{
 				Key: tax.RateSpecial,
@@ -111,27 +106,20 @@ var taxCategories = []*tax.Category{
 				Extensions: []cbc.Key{
 					ExtKeyKSeFVATSpecial,
 				},
+				Values: []*tax.RateValue{
+					{
+						Percent: num.MakePercentage(40, 3),
+					},
+				},
 			},
-
-			/*
-				 * Still working on refactoring these...
-				{
-					Key: TaxRateNotPursuant,
-					Name: i18n.String{
-						i18n.EN: "Not pursuant, pursuant to art100 section 1 point4",
-						i18n.PL: "Niepodlegające opodatkowaniu na postawie wyłączeniem art100 sekcja 1 punkt 4",
-					},
-					Exempt: true,
+			{
+				Key: TaxRateNotPursuant,
+				Name: i18n.String{
+					i18n.EN: "Not pursuant",
+					i18n.PL: "Niepodlegające opodatkowaniu",
 				},
-				{
-					Key: TaxRateNotPursuantArt100,
-					Name: i18n.String{
-						i18n.EN: "Not pursuant excluding art100 section 1 point4",
-						i18n.PL: "Niepodlegające opodatkowaniu z wyłączeniem art100 sekcja 1 punkt 4",
-					},
-					Exempt: true,
-				},
-			*/
+				Exempt: true,
+			},
 		},
 	},
 }
