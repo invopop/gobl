@@ -8,8 +8,9 @@ import (
 
 // Extension keys used in Colombia.
 const (
-	ExtKeyDIANMunicipality cbc.Key = "co-dian-municipality"
-	ExtKeyDIANCorrection   cbc.Key = "co-dian-correction"
+	ExtKeyDIANMunicipality     cbc.Key = "co-dian-municipality"
+	ExtKeyDIANCorrectionCredit cbc.Key = "co-dian-correction"
+	ExtKeyDIANCorrectionDebit  cbc.Key = "co-dian-correction-debit"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -32,10 +33,10 @@ var extensionKeys = []*cbc.KeyDefinition{
 		Pattern: `^\d{5}$`,
 	},
 	{
-		Key: ExtKeyDIANCorrection,
+		Key: ExtKeyDIANCorrectionCredit,
 		Name: i18n.String{
-			i18n.EN: "DIAN Correction Code",
-			i18n.ES: "Código de corrección DIAN",
+			i18n.EN: "DIAN correction code for credit notes",
+			i18n.ES: "Código de corrección DIAN para notas de crédito",
 		},
 		Codes: []*cbc.CodeDefinition{
 			{
@@ -84,6 +85,43 @@ var extensionKeys = []*cbc.KeyDefinition{
 			},
 			{
 				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.ES: "Otros",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyDIANCorrectionDebit,
+		Name: i18n.String{
+			i18n.EN: "DIAN correction code for debit notes",
+			i18n.ES: "Código de corrección DIAN para notas de débito",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Interest",
+					i18n.ES: "Intereses",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Pending charges",
+					i18n.ES: "Gastos por cobrar",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Change in value",
+					i18n.ES: "Cambio del valor",
+				},
+			},
+			{
+				Code: "4",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otros",
