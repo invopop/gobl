@@ -36,6 +36,19 @@ func TestIdentityValidation(t *testing.T) {
 		{name: "good 3", code: "FOOBRR80C04H146T"}, // Generated at https://www.codicefiscale.com/calcolo-completato.php
 		{name: "good 4", code: "LWNSML81L16F205A"}, // ..
 		{
+			name: "good company 1",
+			code: "12345678903",
+		},
+		{
+			name: "good company 2",
+			code: "10182640150",
+		},
+		{
+			name: "bad company",
+			code: "12345678901",
+			err:  "invalid check digit",
+		},
+		{
 			name: "empty",
 			code: "",
 			err:  "code: cannot be blank",
