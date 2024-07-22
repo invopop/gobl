@@ -2,7 +2,6 @@ package co
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -86,10 +85,17 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
+		validation.Field(&obj.TaxID,
+			validation.When(
+				!v.inv.Tax.ContainsTag(tax.TagSimplified),
+				validation.Required,
+				tax.RequireIdentityCode,
+			),
+			validation.Skip,
+		),
 		validation.Field(&obj.Identities,
 			validation.When(
-				obj.TaxID == nil || obj.TaxID.Code == cbc.CodeEmpty,
-				validation.Required,
+				len(obj.Identities) > 0,
 				org.RequireIdentityKey(identityKeys...),
 			),
 			validation.Skip,
