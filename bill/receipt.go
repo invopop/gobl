@@ -75,16 +75,17 @@ type Receipt struct {
 	// Legal entity that receives the goods or services.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
-	Documents []*DocumentReference `json:"lines" jsonschema:"title=Lines"`
+	// List of lines that detail what has been paid for.
+	Lines []*Line `json:"lines" jsonschema:"title=Lines"`
 
 	// Summary of all the payment totals, including tax calculations (calculated)
 	Totals *Totals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
 
-	// Unstructured information that is relevant to the invoice, such as correction or additional
+	// Unstructured information that is relevant to the receipt, such as correction or additional
 	// legal details.
 	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
-	// Additional complementary objects that add relevant information to the invoice.
+	// Additional complementary objects that add relevant information to the receipt.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
 
 	// Additional semi-structured data that doesn't fit into the body of the invoice.

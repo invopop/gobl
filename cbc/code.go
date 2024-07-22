@@ -3,6 +3,7 @@ package cbc
 import (
 	"errors"
 	"regexp"
+	"strings"
 
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -28,7 +29,9 @@ var (
 )
 
 var (
-	codeValidationRegexp = regexp.MustCompile(CodePattern)
+	codeValidationRegexp   = regexp.MustCompile(CodePattern)
+	codeUnderscoreRegexp   = regexp.MustCompile(`_`)
+	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -73,6 +76,16 @@ func (Code) JSONSchema() *jsonschema.Schema {
 		MaxLength:   &CodeMaxLength,
 		Description: "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols.",
 	}
+}
+
+// NormalizeCode attempts to clean and normalize the provided code so that
+// it matches what we'd expect instead of raising validation errors.
+func NormalizeCode(c Code) Code {
+	code := strings.ToUpper(c.String())
+	code = strings.TrimSpace(code)
+	code = codeUnderscoreRegexp.ReplaceAllString(code, "-")
+	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
 }
 
 // Validate ensures the code maps data looks correct.
