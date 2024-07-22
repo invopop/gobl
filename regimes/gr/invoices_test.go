@@ -20,14 +20,14 @@ func validInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: l10n.GR,
+				Country: l10n.EL,
 				Code:    "728089281",
 			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.GR,
+				Country: l10n.EL,
 				Code:    "841442160",
 			},
 			Addresses: []*org.Address{

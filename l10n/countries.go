@@ -253,6 +253,14 @@ const (
 	ZW CountryCode = "ZW"
 )
 
+// Extension country codes required by some countries for tax purposes.
+const (
+	EL CountryCode = "EL" // Greece
+	XI CountryCode = "XI" // Northern Ireland
+	XU CountryCode = "XU" // United Kingdom except Northern Ireland
+	EU CountryCode = "EU" // European Union special code
+)
+
 // CountryDefinitions provides and array of country definitions including
 // the official ISO country code, the name in English, and the countries
 // top-level-domain name.
@@ -506,4 +514,10 @@ var CountryDefinitions = []CountryDef{
 	{YE, "YEM", "Yemen", "ye"},
 	{ZM, "ZMB", "Zambia", "zm"},
 	{ZW, "ZWE", "Zimbabwe", "zw"},
+
+	// Extensions
+	{EL, "GRC", "Greece", "gr"},
+	{XI, "GBR", "Northern Ireland", "ie"},
+	{XU, "GBR", "United Kingdom", "uk"},
+	{EU, "EUE", "European Union", "eu"}, // ISO/IEC 7501-1
 }

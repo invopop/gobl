@@ -7,7 +7,7 @@ code: "001"
 
 supplier:
   tax_id:
-    country: "GR"
+    country: "EL"
     code: "728089281"
   name: "Ελληνικά Τρόφιμα Α.Ε."
   emails:
@@ -21,7 +21,7 @@ supplier:
 
 customer:
   tax_id:
-    country: "GR"
+    country: "EL"
     code: "841442160"
   name: "Αιγαίο Λιανική Α.Ε."
   emails:
