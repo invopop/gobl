@@ -857,7 +857,7 @@ func TestCalculate(t *testing.T) {
 				Amount:      num.MakeAmount(1000, 2),
 			},
 		},
-		Payment: &bill.InvoicePayment{
+		Payment: &bill.Payment{
 			Advances: []*pay.Advance{
 				{
 					Description: "Test Advance",
@@ -930,7 +930,7 @@ func TestCalculateInverted(t *testing.T) {
 				Amount:      num.MakeAmount(1000, 2),
 			},
 		},
-		Payment: &bill.InvoicePayment{
+		Payment: &bill.Payment{
 			Advances: []*pay.Advance{
 				{
 					Description: "Test Advance",
