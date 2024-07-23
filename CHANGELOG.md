@@ -14,9 +14,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - CO: renaming `co-dian-correction` code to `co-dian-credit-code` while also adding `co-dian-debit-code` to extensions.
 - CO: support debit notes
-- l10n: extension countries like EL, XI, EU for special tax cases
-- GR: renamed greece country code to `EL` to reflect local naming in tax code, package still named `gr` for ease of use.
 - CO: updated validation for simplified invoices
+- GR: renamed greece country code to `EL` to reflect local naming in tax code, package still named `gr` for ease of use.
+- l10n: extension countries like EL, XI, EU for special tax cases
+- l10n: country definition extension flag to be able to filter ISO codes
 
 ### Fixed
 
