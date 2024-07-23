@@ -125,7 +125,7 @@ func TestInvoiceCorrect(t *testing.T) {
 		bill.Credit,
 		bill.WithStamps(stamps),
 		bill.WithReason("test refund"),
-		bill.WithExtension(co.ExtKeyDIANCorrection, "2"),
+		bill.WithExtension(co.ExtKeyDIANCreditCode, "2"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)

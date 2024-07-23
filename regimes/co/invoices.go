@@ -24,6 +24,7 @@ func (v *invoiceValidator) validate() error {
 			validation.In(
 				bill.InvoiceTypeStandard,
 				bill.InvoiceTypeCreditNote,
+				bill.InvoiceTypeDebitNote,
 				bill.InvoiceTypeProforma,
 			),
 			validation.Skip,
@@ -38,7 +39,10 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Preceding,
 			validation.When(
-				inv.Type.In(bill.InvoiceTypeCreditNote),
+				inv.Type.In(
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				),
 				validation.Required,
 			),
 			validation.Each(validation.By(v.preceding)),
@@ -141,7 +145,14 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtensionsRequires(ExtKeyDIANCorrection),
+			validation.When(
+				v.inv.Type == bill.InvoiceTypeCreditNote,
+				tax.ExtensionsRequires(ExtKeyDIANCreditCode),
+			),
+			validation.When(
+				v.inv.Type == bill.InvoiceTypeDebitNote,
+				tax.ExtensionsRequires(ExtKeyDIANDebitCode),
+			),
 		),
 		validation.Field(&obj.Reason, validation.Required),
 	)

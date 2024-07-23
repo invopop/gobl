@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- CO: support debit notes
+- CO: support debit notes with additional validations for required reason extensions.
+
+### Changed
+
+- CO: renaming `co-dian-correction` code to `co-dian-credit-code` while also adding `co-dian-debit-code` to extensions.
 
 ### Changed
 

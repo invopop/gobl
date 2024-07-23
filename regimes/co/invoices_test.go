@@ -75,7 +75,7 @@ func creditNote() *bill.Invoice {
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
 				Ext: tax.Extensions{
-					co.ExtKeyDIANCorrection: "2", // revoked
+					co.ExtKeyDIANCreditCode: "2", // revoked
 				},
 			},
 		},
@@ -175,8 +175,8 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Contains(t, inv.Preceding[0].Ext, co.ExtKeyDIANCorrection)
-	assert.Equal(t, inv.Preceding[0].Ext[co.ExtKeyDIANCorrection], tax.ExtValue("2"))
+	assert.Contains(t, inv.Preceding[0].Ext, co.ExtKeyDIANCreditCode)
+	assert.Equal(t, inv.Preceding[0].Ext[co.ExtKeyDIANCreditCode], tax.ExtValue("2"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()
