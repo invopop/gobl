@@ -76,10 +76,10 @@
       "pattern": "^\\d{5}$"
     },
     {
-      "key": "co-dian-correction",
+      "key": "co-dian-credit-code",
       "name": {
-        "en": "DIAN Correction Code",
-        "es": "Código de corrección DIAN"
+        "en": "DIAN correction code for credit notes",
+        "es": "Código de corrección DIAN para notas de crédito"
       },
       "codes": [
         {
@@ -128,6 +128,43 @@
         },
         {
           "code": "5",
+          "name": {
+            "en": "Other",
+            "es": "Otros"
+          }
+        }
+      ]
+    },
+    {
+      "key": "co-dian-debit-code",
+      "name": {
+        "en": "DIAN correction code for debit notes",
+        "es": "Código de corrección DIAN para notas de débito"
+      },
+      "codes": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Interest",
+            "es": "Intereses"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Pending charges",
+            "es": "Gastos por cobrar"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Change in value",
+            "es": "Cambio del valor"
+          }
+        },
+        {
+          "code": "4",
           "name": {
             "en": "Other",
             "es": "Otros"
@@ -236,7 +273,8 @@
         "debit-note"
       ],
       "extensions": [
-        "co-dian-correction"
+        "co-dian-credit-code",
+        "co-dian-debit-code"
       ],
       "reason_required": true,
       "stamps": [
