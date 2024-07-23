@@ -12,6 +12,9 @@ import (
 // Person represents a human, and how to contact them electronically.
 type Person struct {
 	uuid.Identify
+	// Label can be used to identify the person in a given context in a single
+	// language, for example "Attn", "Contact", "Responsible", etc.
+	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Attn"`
 	// Complete details on the name of the person
 	Name Name `json:"name" jsonschema:"title=Name"`
 	// What they do within an organization
@@ -36,6 +39,7 @@ func (p *Person) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, p,
 		validation.Field(&p.UUID),
 		validation.Field(&p.Name, validation.Required),
+		validation.Field(&p.Label),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
 		validation.Field(&p.Avatars),

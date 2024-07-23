@@ -16,7 +16,7 @@ import (
 type Address struct {
 	uuid.Identify
 	// Useful identifier, such as home, work, etc.
-	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Office"`
 	// Box number or code for the post office box located at the address.
 	PostOfficeBox string `json:"po_box,omitempty" jsonschema:"title=Post Office Box"`
 	// House or building number in the street.
