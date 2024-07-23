@@ -19,6 +19,8 @@ type CountryDef struct {
 	Name string `json:"name" jsonschema:"Name"`
 	// Internet Top-Level-Domain
 	TLD string `json:"tld" jsonschema:"Top level domain"`
+	// When true, the country is a extension used for tax purposes.
+	Extension bool `json:"extension,omitempty" jsonschema:"Extension"`
 }
 
 func validCountryCodes() []interface{} {
