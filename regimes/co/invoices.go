@@ -141,11 +141,11 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 		validation.Field(&obj.Ext,
 			validation.When(
 				v.inv.Type == bill.InvoiceTypeCreditNote,
-				tax.ExtensionsRequires(ExtKeyDIANCorrectionCredit),
+				tax.ExtensionsRequires(ExtKeyDIANCreditCode),
 			),
 			validation.When(
 				v.inv.Type == bill.InvoiceTypeDebitNote,
-				tax.ExtensionsRequires(ExtKeyDIANCorrectionDebit),
+				tax.ExtensionsRequires(ExtKeyDIANDebitCode),
 			),
 		),
 		validation.Field(&obj.Reason, validation.Required),

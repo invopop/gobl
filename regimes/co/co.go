@@ -58,8 +58,8 @@ func New() *tax.Regime {
 					bill.InvoiceTypeDebitNote,
 				},
 				Extensions: []cbc.Key{
-					ExtKeyDIANCorrectionCredit,
-					ExtKeyDIANCorrectionDebit,
+					ExtKeyDIANCreditCode,
+					ExtKeyDIANDebitCode,
 				},
 				ReasonRequired: true,
 				Stamps: []cbc.Key{

@@ -8,9 +8,9 @@ import (
 
 // Extension keys used in Colombia.
 const (
-	ExtKeyDIANMunicipality     cbc.Key = "co-dian-municipality"
-	ExtKeyDIANCorrectionCredit cbc.Key = "co-dian-correction"
-	ExtKeyDIANCorrectionDebit  cbc.Key = "co-dian-correction-debit"
+	ExtKeyDIANMunicipality cbc.Key = "co-dian-municipality"
+	ExtKeyDIANCreditCode   cbc.Key = "co-dian-credit-code"
+	ExtKeyDIANDebitCode    cbc.Key = "co-dian-debit-code"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -33,7 +33,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		Pattern: `^\d{5}$`,
 	},
 	{
-		Key: ExtKeyDIANCorrectionCredit,
+		Key: ExtKeyDIANCreditCode,
 		Name: i18n.String{
 			i18n.EN: "DIAN correction code for credit notes",
 			i18n.ES: "Código de corrección DIAN para notas de crédito",
@@ -93,7 +93,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyDIANCorrectionDebit,
+		Key: ExtKeyDIANDebitCode,
 		Name: i18n.String{
 			i18n.EN: "DIAN correction code for debit notes",
 			i18n.ES: "Código de corrección DIAN para notas de débito",
