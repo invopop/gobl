@@ -16,6 +16,7 @@ import (
 // If your country requires additional fields, please let us know.
 type Registration struct {
 	uuid.Identify
+	Label    string        `json:"label,omitempty" jsonschema:"title=Label,example=Registration"`
 	Capital  *num.Amount   `json:"capital,omitempty" jsonschema:"title=Capital"`
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	Office   string        `json:"office,omitempty" jsonschema:"title=Office"`
@@ -37,6 +38,7 @@ func (r *Registration) Validate() error {
 func (r *Registration) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, r,
 		validation.Field(&r.UUID),
+		validation.Field(&r.Label),
 		validation.Field(&r.Capital),
 		validation.Field(&r.Currency),
 		validation.Field(&r.Office),

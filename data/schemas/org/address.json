@@ -14,7 +14,10 @@
         "label": {
           "type": "string",
           "title": "Label",
-          "description": "Useful identifier, such as home, work, etc."
+          "description": "Useful identifier, such as home, work, etc.",
+          "examples": [
+            "Office"
+          ]
         },
         "po_box": {
           "type": "string",

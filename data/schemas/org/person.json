@@ -11,6 +11,14 @@
           "title": "UUID",
           "description": "Universally Unique Identifier."
         },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label can be used to identify the person in a given context in a single\nlanguage, for example \"Attn\", \"Contact\", \"Responsible\", etc.",
+          "examples": [
+            "Attn"
+          ]
+        },
         "name": {
           "$ref": "https://gobl.org/draft-0/org/name",
           "title": "Name",
