@@ -78,5 +78,5 @@ changelog:
 release:
   github:
     owner: invopop
-    name: gobl.cli
+    name: gobl
   prerelease: auto
