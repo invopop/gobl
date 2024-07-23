@@ -6,6 +6,7 @@ import (
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -147,6 +148,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "supplier: (tax_id: (code: cannot be blank.).).")
 
 	inv = baseInvoice()
+	inv.Tax = &bill.Tax{Tags: []cbc.Key{tax.TagSimplified}}
 	inv.Customer.TaxID.Code = ""
 	inv.Customer.Identities = org.AddIdentity(inv.Customer.Identities,
 		&org.Identity{
