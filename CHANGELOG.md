@@ -4,6 +4,14 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [v0.110.0] - 2024-07-23
+
+Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop/gobl.cli) project directly here instead.
+
+### Added
+
+- CLI: move the command line interface and wasm binary support directly into GOBL.
+
 ## [v0.83.0] - 2024-07-23
 
 ### Added

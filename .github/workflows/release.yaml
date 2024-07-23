@@ -2,10 +2,10 @@
 # Automatically tag a merge with master, or build a new image from the tag.
 #
 # Secrets required:
-#  * `DO_TOKEN` - DigitalOcean private token
-#  * `DO_REGISTRY_NAME` - DigitalOcean name of the registry
-#  * `GO_MOD_USER` - Machine username to read private repos
-#  * `GO_MOD_PASS` - Machine password to read private repos
+#  * `GITHUB_TOKEN` - A GitHub token with access to the repository.
+#  * `AWS_ACCESS_KEY_ID` - An AWS access key with write access to the CDN bucket.
+#  * `AWS_SECRET_ACCESS_KEY` - The secret for the AWS access key
+#  * `NPM_TOKEN` - An NPM token with access to the package.
 #
 
 name: Release
@@ -19,8 +19,9 @@ on:
 
 jobs:
   tag-build-publish:
-    name: Tag
-    runs-on: ubuntu-20.04
+    name: Tag & Release
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -24,7 +24,7 @@ archives:
     builds:
       - gobl.cli
     format: tar.gz
-    name_template: "gobl.cli_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    name_template: "gobl.{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     wrap_in_directory: true
   - id: wasm
     builds:
