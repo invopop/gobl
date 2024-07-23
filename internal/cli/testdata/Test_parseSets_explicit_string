@@ -1,0 +1,3 @@
+(map[string]interface {}) (len=1) {
+  (string) (len=3) "foo": (string) (len=4) "1234"
+}

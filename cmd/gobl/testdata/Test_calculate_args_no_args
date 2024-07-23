@@ -1,0 +1,14 @@
+(*main.calculateOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) <nil>,
+  setStrings: (map[string]string) <nil>,
+  template: (string) "",
+  docType: (string) "",
+  use: (string) (len=28) "calculate [infile] [outfile]",
+  short: (string) (len=45) "Calculate performs calculations on a document"
+})

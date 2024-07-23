@@ -1,0 +1,82 @@
+version: 2
+before:
+  hooks:
+    - go mod download
+builds:
+  - id: gobl.cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    main: ./cmd/gobl
+    binary: gobl
+  - id: gobl.wasm
+    goos:
+      - js
+    main: ./wasm
+    binary: gobl.wasm
+    goarch:
+      - "wasm"
+archives:
+  - id: cli
+    builds:
+      - gobl.cli
+    format: tar.gz
+    name_template: "gobl.{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    wrap_in_directory: true
+  - id: wasm
+    builds:
+      - gobl.wasm
+    format: binary
+    name_template: "gobl.{{ .Version }}"
+    files:
+      - none*
+    wrap_in_directory: false
+  - id: wasm-gz
+    builds:
+      - gobl.wasm
+    format: gz
+    name_template: "gobl.{{ .Version }}.wasm"
+    files:
+      - none*
+    wrap_in_directory: false
+
+blobs:
+  # Upload wasm to Google Cloud Storage
+  #- provider: gs
+  #  bucket: cdn.gobl.org
+  #  directory: "cli"
+  #  ids:
+  #    - wasm
+  #    - wasm-gz
+
+  # Upload wasm to Cloudflare R2
+  - provider: s3
+    bucket: cdn-gobl-org
+    region: auto
+    endpoint: "https://1791095f8859b90cf7717568b61e76a5.eu.r2.cloudflarestorage.com"
+    directory: "cli"
+    ids:
+      - wasm
+      - wasm-gz
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  name_template: "{{ .Tag }}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+release:
+  github:
+    owner: invopop
+    name: gobl.cli
+  prerelease: auto

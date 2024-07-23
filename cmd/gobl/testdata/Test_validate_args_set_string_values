@@ -1,0 +1,17 @@
+(*main.calculateOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) <nil>,
+  setStrings: (map[string]string) (len=2) {
+    (string) (len=3) "bar": (string) (len=4) "1234",
+    (string) (len=3) "foo": (string) (len=3) "foo"
+  },
+  template: (string) "",
+  docType: (string) "",
+  use: (string) (len=27) "validate [infile] [outfile]",
+  short: (string) (len=53) "Validate checks if the input is a valid GOBL document"
+})

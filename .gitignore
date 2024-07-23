@@ -17,3 +17,5 @@
 
 # Output from example testing
 *.out.json
+
+/gobl

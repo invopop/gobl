@@ -1,0 +1,33 @@
+{
+  "name": "wasm",
+  "version": "1.0.0",
+  "description": "This folder contains the files necessary to execute the GOBL client library in your web browser. The core library is written in Go, and compiled to WebAssembly.  The file `gobl.js` provides a thin JavaScript wrapper around the compiled WebAssembly running in a web worker.",
+  "main": "index.js",
+  "scripts": {
+    "build": "./build.sh",
+    "start": "http-server . -p 8080",
+    "dev": "browser-sync start . -s --port 8080 --files '*.html, *.css, *.js'",
+    "test": "./node_modules/.bin/cypress open",
+    "ci": "npm run check-formatting && npm start & node_modules/.bin/wait-on http://127.0.0.1:8080 && cypress run",
+    "check-formatting": "node_modules/.bin/markdownlint *.md && node_modules/.bin/eslint *.js cypress/**/*.js --no-error-on-unmatched-pattern",
+    "process-ids-on-8080": "lsof -t -i:8080"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cypress-audit/lighthouse": "^1.3.0",
+    "browser-sync": "^2.27.9",
+    "cypress": "^9.6.1",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "markdownlint-cli": "^0.31.1",
+    "prettier": "^2.6.2"
+  },
+  "dependencies": {
+    "http-server": "^14.1.0",
+    "wait-on": "^6.0.1"
+  }
+}

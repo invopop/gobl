@@ -1,0 +1,15 @@
+(*main.signOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) <nil>,
+  setStrings: (map[string]string) <nil>,
+  template: (string) (len=8) "foo.yaml",
+  privateKeyFile: (string) (len=20) "~/.gobl/id_es256.jwk",
+  docType: (string) "",
+  use: (string) (len=23) "sign [infile] [outfile]",
+  short: (string) (len=37) "Signs an envelope using a private key"
+})
