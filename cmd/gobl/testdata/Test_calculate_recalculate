@@ -1,0 +1,211 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
+		"dig": {
+			"alg": "sha256",
+			"val": "6483b4e486bfafa53017b4c5551294c242f513efc7a394c6583fb0d6fc7be798"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
+		"code": "INV2021-001",
+		"currency": "EUR",
+		"issue_date": "2021-06-16",
+		"supplier": {
+			"tax_id": {
+				"country": "ES",
+				"code": "B91983379"
+			},
+			"name": "A Company Name S.L.",
+			"people": [
+				{
+					"name": {
+						"alias": "Paco",
+						"given": "Francisco",
+						"surname": "Smith"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Calle Mayor",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28003",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "contact@company.com"
+				}
+			],
+			"telephones": [
+				{
+					"label": "mobile",
+					"num": "+34644123123"
+				}
+			]
+		},
+		"customer": {
+			"tax_id": {
+				"country": "ES",
+				"code": "B85905495"
+			},
+			"name": "Autofiscal S.L.",
+			"addresses": [
+				{
+					"num": "1629",
+					"street": "Calle Diseminado",
+					"locality": "Miraflores de la Sierra",
+					"region": "Madrid",
+					"code": "28792",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "sam.lown@invopop.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services day rate",
+					"price": "200.00"
+				},
+				"sum": "4000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					},
+					{
+						"cat": "IRPF",
+						"rate": "pro",
+						"percent": "15.0%"
+					}
+				],
+				"total": "4000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "10",
+				"item": {
+					"name": "Something random",
+					"price": "100.00"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "1000.00"
+			},
+			{
+				"i": 3,
+				"quantity": "5",
+				"item": {
+					"name": "Additional random services",
+					"price": "34.50"
+				},
+				"sum": "172.50",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "zero",
+						"percent": "0.0%"
+					}
+				],
+				"total": "172.50"
+			},
+			{
+				"i": 4,
+				"quantity": "3",
+				"item": {
+					"name": "Impuesto local",
+					"price": "5.00"
+				},
+				"sum": "15.00",
+				"total": "15.00"
+			}
+		],
+		"outlays": [
+			{
+				"i": 1,
+				"desc": "Something paid for by us",
+				"amount": "0"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "instant"
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "ES06 0128 0011 3901 0008 1391",
+						"name": "Bankinter"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "5187.50",
+			"total": "5187.50",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "5000.00",
+								"percent": "21.0%",
+								"amount": "1050.00"
+							},
+							{
+								"key": "zero",
+								"base": "172.50",
+								"percent": "0.0%",
+								"amount": "0.00"
+							}
+						],
+						"base": "5172.50",
+						"amount": "1050.00"
+					},
+					{
+						"code": "IRPF",
+						"retained": true,
+						"rates": [
+							{
+								"key": "pro",
+								"base": "4000.00",
+								"percent": "15.0%",
+								"amount": "600.00"
+							}
+						],
+						"base": "4000.00",
+						"amount": "600.00"
+					}
+				],
+				"sum": "450.00"
+			},
+			"tax": "450.00",
+			"total_with_tax": "5637.50",
+			"outlays": "0.00",
+			"payable": "5637.50"
+		}
+	}
+}

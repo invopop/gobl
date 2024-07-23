@@ -31,17 +31,68 @@ jobs:
         run: |
           grep 'const VERSION' version.go | sed -e 's/const VERSION Version = "\(v[^"]*\)"/GOBL_VERSION=\1/' >> $GITHUB_ENV
 
-      # This stopped working as it couldn't find the git repo:
-      #- name: "Release tag"
-      #  uses: actions-ecosystem/action-push-tag@v1
-      #  with:
-      #    tag: ${{ env.GOBL_VERSION }}
-
       - name: Bump version and push tag
         id: bump
-        uses: anothrNick/github-tag-action@1.36.0
+        uses: anothrNick/github-tag-action@1.52.0
         env:
           CUSTOM_TAG: ${{ env.GOBL_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_BRANCHES: main
-      #     WITH_V: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      # Ensure we have a wasm_exec.js for the current version of Go
+      - name: Copy Go WASM Exec
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        run: cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./gobl-worker/src
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+
+      # Following actions are to release a new version of gobl-worker to NPM
+      # using the new wasm version in the CDN.
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        with:
+          node-version: 16.x
+          cache: "npm"
+          cache-dependency-path: "./gobl-worker/package-lock.json"
+
+      - name: Run npm install
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        working-directory: ./gobl-worker
+        run: npm install
+
+      - name: Update gobl-worker version
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        working-directory: ./gobl-worker
+        run: npm version --no-git-tag-version ${{ steps.bump.outputs.new_tag }}
+
+      - name: Build gobl-worker
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        working-directory: ./gobl-worker
+        run: npm run build
+
+      - name: Publish gobl-worker to NPM registry
+        if: ${{ steps.bump.new_tag == steps.bump.tag }}
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./gobl-worker/package.json
+          access: public

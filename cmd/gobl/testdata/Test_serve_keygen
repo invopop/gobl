@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/json
+
+{"private":{"use":"sig","kty":"EC","kid":"...","crv":"P-256","alg":"ES256","x":"...","y":"...","d":"..."},"public":{"use":"sig","kty":"EC","kid":"...","crv":"P-256","alg":"ES256","x":"...","y":"..."}}

@@ -1,0 +1,138 @@
+{
+    "$schema": "https://gobl.org/draft-0/envelope",
+    "doc": {
+        "$schema": "https://gobl.org/draft-0/bill/invoice",
+        "code": "SAMPLE-001",
+        "currency": "EUR",
+        "customer": {
+            "name": "Sample Consumer",
+            "tax_id": {
+                "code": "54387763P",
+                "country": "ES"
+            }
+        },
+        "issue_date": "2022-02-01",
+        "lines": [
+            {
+                "discounts": [
+                    {
+                        "amount": "180.00",
+                        "percent": "10%",
+                        "reason": "Special discount"
+                    }
+                ],
+                "i": 1,
+                "item": {
+                    "name": "Development services",
+                    "price": "90.00",
+                    "unit": "h"
+                },
+                "quantity": "20",
+                "sum": "1800.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "percent": "21.0%",
+                        "rate": "standard"
+                    },
+                    {
+                        "cat": "IRPF",
+                        "percent": "15.0%"
+                    }
+                ],
+                "total": "1620.00"
+            }
+        ],
+        "payment": {
+            "instructions": {
+                "credit_transfer": [
+                    {
+                        "iban": "ES06 0128 0011 3901 0008 1391",
+                        "name": "Bankinter"
+                    }
+                ],
+                "key": "credit-transfer"
+            },
+            "terms": {
+                "key": "instant"
+            }
+        },
+        "supplier": {
+            "addresses": [
+                {
+                    "code": "23480",
+                    "country": "ES",
+                    "locality": "CANENA",
+                    "num": "9",
+                    "region": "JAÉN",
+                    "street": "CAMÍ MADRID"
+                }
+            ],
+            "emails": [
+                {
+                    "addr": "billing@example.com"
+                }
+            ],
+            "name": "MªF. Services",
+            "people": [
+                {
+                    "name": {
+                        "given": "MARIA FRANCISCA",
+                        "surname": "MONTERO",
+                        "surname2": "ESTEBAN"
+                    }
+                }
+            ],
+            "tax_id": {
+                "code": "58384285G",
+                "country": "ES"
+            }
+        },
+        "totals": {
+            "payable": "1717.20",
+            "sum": "1620.00",
+            "tax": "97.20",
+            "taxes": {
+                "categories": [
+                    {
+                        "amount": "340.20",
+                        "base": "1620.00",
+                        "code": "VAT",
+                        "rates": [
+                            {
+                                "amount": "340.20",
+                                "base": "1620.00",
+                                "key": "standard",
+                                "percent": "21.0%"
+                            }
+                        ]
+                    },
+                    {
+                        "amount": "243.00",
+                        "base": "1620.00",
+                        "code": "IRPF",
+                        "rates": [
+                            {
+                                "amount": "243.00",
+                                "base": "1620.00",
+                                "percent": "15.0%"
+                            }
+                        ],
+                        "retained": true
+                    }
+                ],
+                "sum": "97.20"
+            },
+            "total": "1620.00",
+            "total_with_tax": "1717.20"
+        }
+    },
+    "head": {
+        "dig": {
+            "alg": "sha256",
+            "val": "005454e011384f8138b83164a3c5cdfae47bdc891da22cc46ca75eb5c40a9b30"
+        },
+        "draft": true,
+        "uuid": "83f74a18-13f7-11ed-ab1d-762272768a06"
+    }
+}

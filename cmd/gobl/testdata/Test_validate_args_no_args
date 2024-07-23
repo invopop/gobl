@@ -1,0 +1,9 @@
+(*main.validateOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  use: (string) (len=27) "validate [infile] [outfile]",
+  short: (string) (len=53) "Validate checks if the input is a valid GOBL document"
+})

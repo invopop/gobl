@@ -1,0 +1,14 @@
+(*main.calculateOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) <nil>,
+  setStrings: (map[string]string) <nil>,
+  template: (string) (len=8) "foo.yaml",
+  docType: (string) "",
+  use: (string) (len=27) "validate [infile] [outfile]",
+  short: (string) (len=53) "Validate checks if the input is a valid GOBL document"
+})

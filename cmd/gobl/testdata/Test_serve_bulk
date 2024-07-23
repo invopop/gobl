@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/json
+
+{"seq_id":1,"error":{"code":400,"message":"unrecognized action: 'oink'"},"is_final":false}
+{"seq_id":2,"error":null,"is_final":true}

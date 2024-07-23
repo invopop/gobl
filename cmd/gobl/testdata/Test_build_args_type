@@ -1,0 +1,15 @@
+(*main.buildOpts)({
+  rootOpts: (*main.rootOpts)({
+    indent: (bool) false,
+    overwriteOutputFile: (bool) false,
+    inPlace: (bool) false
+  }),
+  set: (map[string]string) <nil>,
+  setFiles: (map[string]string) <nil>,
+  setStrings: (map[string]string) <nil>,
+  template: (string) "",
+  docType: (string) (len=12) "bill.Invoice",
+  envelop: (bool) false,
+  use: (string) (len=24) "build [infile] [outfile]",
+  short: (string) (len=68) "Calculate and validate a document, wrapping it in envelope if needed"
+})

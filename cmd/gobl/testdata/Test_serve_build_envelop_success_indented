@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/json
+
+{
+	"$schema": "https://gobl.org/draft-0/note/message",
+	"title": "Message Title",
+	"content": "Hope you like this meaningful content!"
+}

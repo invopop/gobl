@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>GOBL.js Playground</title>
+    <meta name="description" content="GOBL.js Playground" />
+    <script type="module" src="index.js" defer></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+  </head>
+
+  <body class="min-h-screen min-w-screen m-4 bg-slate-800">
+    <h1 class="text-xl text-center text-white">GOBL.js</h1>
+    <div class="h-1/6 m-4">
+      <label
+        for="key"
+        class="text-lg p-2 bg-slate-50 rounded-t-xl border border-b-0 border-slate-300"
+      >
+        Auto-generated Keys
+      </label>
+      <textarea
+        readonly
+        class="w-100 min-w-full h-24 bg-slate-200 border border-slate-300"
+        id="key"
+      ></textarea>
+    </div>
+    <div class="flex flex-wrap">
+      <div class="flex-1 p-4">
+        <label
+          for="input-file"
+          class="text-lg p-2 bg-slate-50 rounded-t-xl border border-b-0 border-slate-300"
+        >
+          Input File
+        </label>
+        <textarea
+          id="input-file"
+          class="w-100 h-96 min-w-full border border-slate-300"
+        >
+{
+  "$schema": "https://gobl.org/draft-0/envelope",
+  "doc": { 
+    "$schema": "https://gobl.org/draft-0/note/message",
+    "title": "Test Message",
+    "content": "test content"
+  }
+}
+</textarea
+        >
+      </div>
+      <div class="flex-1 p-4">
+        <label
+          for="output-file"
+          class="text-lg p-2 bg-slate-50 rounded-t-xl border border-b-0 border-slate-300"
+        >
+          Output File
+        </label>
+        <textarea
+          id="output-file"
+          class="w-100 h-96 min-w-full border border-slate-300"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div id="status" class="mx-4 my-0 rounded-xl p-4 text-center bg-green-200">
+      Success!
+    </div>
+  </body>
+</html>
