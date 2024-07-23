@@ -47,7 +47,7 @@ jobs:
       # Ensure we have a wasm_exec.js for the current version of Go
       - name: Copy Go WASM Exec
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
-        run: cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./gobl-worker/src
+        run: cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./wasm/worker/src
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
@@ -72,21 +72,21 @@ jobs:
         with:
           node-version: 16.x
           cache: "npm"
-          cache-dependency-path: "./gobl-worker/package-lock.json"
+          cache-dependency-path: "./wasm/worker/package-lock.json"
 
       - name: Run npm install
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
-        working-directory: ./gobl-worker
+        working-directory: ./wasm/worker
         run: npm install
 
       - name: Update gobl-worker version
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
-        working-directory: ./gobl-worker
+        working-directory: ./wasm/worker
         run: npm version --no-git-tag-version ${{ steps.bump.outputs.new_tag }}
 
       - name: Build gobl-worker
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
-        working-directory: ./gobl-worker
+        working-directory: ./wasm/worker
         run: npm run build
 
       - name: Publish gobl-worker to NPM registry
@@ -94,5 +94,5 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: ./gobl-worker/package.json
+          package: ./wasm/worker/package.json
           access: public

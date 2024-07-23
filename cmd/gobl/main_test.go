@@ -7,8 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"
-
-	"github.com/invopop/gobl"
 )
 
 func Test_root(t *testing.T) {
@@ -58,7 +56,7 @@ func Test_version(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	wantOut := string(gobl.VERSION) // just check it's there somewhere!
+	wantOut := `"version": "dev"` // just check it's there somewhere!
 	wantErr := ""
 	if sout, _ := io.ReadAll(stdout); !strings.Contains(string(sout), wantOut) {
 		t.Errorf("Unexpected STDOUT: %s", sout)

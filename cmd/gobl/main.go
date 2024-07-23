@@ -11,8 +11,6 @@ import (
 	"syscall"
 
 	"github.com/spf13/cobra"
-
-	"github.com/invopop/gobl"
 )
 
 // build data provided by goreleaser and mage setup
@@ -23,11 +21,9 @@ var (
 
 var versionOutput = struct {
 	Version string `json:"version"`
-	GOBL    string `json:"gobl"`
 	Date    string `json:"date,omitempty"`
 }{
 	Version: version,
-	GOBL:    string(gobl.VERSION),
 	Date:    date,
 }
 

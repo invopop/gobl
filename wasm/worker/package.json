@@ -1,0 +1,39 @@
+{
+  "name": "@invopop/gobl-worker",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/invopop/gobl.cli.git"
+  },
+  "author": {
+    "name": "Invopop S.L.",
+    "email": "dev@invopop.com",
+    "url": "https://invopop.com"
+  },
+  "main": "./dist/gobl-worker.umd.cjs",
+  "module": "./dist/gobl-worker.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/gobl-worker.js",
+      "require": "./dist/gobl-worker.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.4.9",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.5.1"
+  }
+}
