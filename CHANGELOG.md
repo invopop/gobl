@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - CO: support debit notes
 
+### Changed
+
+- CO: updated validation for simplified invoices
+
 ### Fixed
 
 - IT: Company fiscal code can be the same as the VAT code.
