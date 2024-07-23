@@ -25,7 +25,7 @@ func normalizeTaxCombo(tc *tax.Combo) error {
 		return nil
 	}
 
-	reg := tax.RegimeFor(l10n.GR)
+	reg := tax.RegimeFor(l10n.EL)
 	rate := reg.Rate(tax.CategoryVAT, tc.Rate)
 	if rate == nil {
 		return nil

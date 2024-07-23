@@ -1000,11 +1000,27 @@
         {
           "const": "ZW",
           "title": "Zimbabwe"
+        },
+        {
+          "const": "EL",
+          "title": "Greece"
+        },
+        {
+          "const": "XI",
+          "title": "Northern Ireland"
+        },
+        {
+          "const": "XU",
+          "title": "United Kingdom"
+        },
+        {
+          "const": "EU",
+          "title": "European Union"
         }
       ],
       "type": "string",
       "title": "Country Code",
-      "description": "Defines an ISO 3166-2 country code"
+      "description": "Defines an ISO 3166-2 country code with exception cases for tax based extensions."
     }
   }
 }

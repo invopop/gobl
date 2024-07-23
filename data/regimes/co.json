@@ -232,7 +232,8 @@
     {
       "schema": "bill/invoice",
       "types": [
-        "credit-note"
+        "credit-note",
+        "debit-note"
       ],
       "extensions": [
         "co-dian-correction"

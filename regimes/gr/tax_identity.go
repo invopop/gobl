@@ -4,8 +4,11 @@ import (
 	"errors"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -15,6 +18,22 @@ import (
 var (
 	taxCodeRegexp = regexp.MustCompile(`^\d{9}$`)
 )
+
+// normalizeTaxIdentity requires additional steps for Greece as the language code
+// may also be used in the tax code.
+func normalizeTaxIdentity(tID *tax.Identity) error {
+	if tID == nil {
+		return nil
+	}
+	if err := common.NormalizeTaxIdentity(tID); err != nil {
+		return err
+	}
+	// also allow for usage of "GR" which may be used in the tax code
+	// by accident.
+	code := strings.TrimPrefix(tID.Code.String(), string(l10n.GR))
+	tID.Code = cbc.Code(code)
+	return nil
+}
 
 // validateTaxIdentity checks to ensure the tax code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {

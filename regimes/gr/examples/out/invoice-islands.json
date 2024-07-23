@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1449d24f527507850a1830c14c662a2641e00fc8765130d4aec641dfb043d13b"
+			"val": "9f7fe5b3f2c4c3d20ed91205d1ddd442e11ea039eb9c9f61f5e4b35067ac6fe1"
 		},
 		"draft": true
 	},
@@ -19,7 +19,7 @@
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
-				"country": "GR",
+				"country": "EL",
 				"code": "728089281"
 			},
 			"addresses": [
@@ -40,7 +40,7 @@
 		"customer": {
 			"name": "Αιγαίο Λιανική Α.Ε.",
 			"tax_id": {
-				"country": "GR",
+				"country": "EL",
 				"code": "841442160"
 			},
 			"addresses": [

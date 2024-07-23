@@ -8,7 +8,33 @@ import (
 	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestNormalizeTaxIdentity(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{name: "no change", code: "123456789", want: "123456789"},
+		{name: "remove spaces", code: " 123 456 789 ", want: "123456789"},
+		{name: "remove dashes", code: "123-456-789", want: "123456789"},
+		{name: "remove dots", code: "123.456.789", want: "123456789"},
+		{name: "remove slashes", code: "123/456/789", want: "123456789"},
+		{name: "remove EL", code: "EL123456789", want: "123456789"},
+		{name: "remove GR", code: "GR123456789", want: "123456789"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{Country: l10n.EL, Code: tt.code}
+			require.NoError(t, gr.Calculate(tID))
+			assert.Equal(t, tt.want, tID.Code)
+		})
+	}
+
+}
 
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
@@ -44,7 +70,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.GR, Code: tt.code}
+			tID := &tax.Identity{Country: l10n.EL, Code: tt.code}
 			err := gr.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
