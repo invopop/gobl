@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - IT: Company fiscal code can be the same as the VAT code.
 
-## [v0.82.0] - 2024-07-29
+## [v0.82.0] - 2024-07-19
 
 ### Added
 
