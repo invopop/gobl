@@ -115,10 +115,11 @@
         }
       },
       "type": "object",
-      "required": [
-        "name"
-      ],
-      "description": "Party represents a person or business entity."
+      "description": "Party represents a person or business entity.",
+      "recommended": [
+        "name",
+        "tax_id"
+      ]
     }
   }
 }

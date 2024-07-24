@@ -20,6 +20,24 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	inv := v.inv
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Type,
+			validation.In(
+				bill.InvoiceTypeStandard,
+				bill.InvoiceTypeCreditNote,
+				bill.InvoiceTypeDebitNote,
+			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Preceding,
+			validation.When(
+				inv.Type.In(
+					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
+				),
+				validation.Required,
+			),
+			validation.Skip,
+		),
 		validation.Field(&inv.Supplier,
 			validation.By(v.supplier),
 			validation.Skip,

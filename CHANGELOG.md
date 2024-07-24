@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `uuid`: Compact Base64 encoding and decoding of UUIDs for compact URLs.
 - `head`: New `Link` model for associating Envelopes with static URLs.
 - `head.Header`: Link array in addition to stamps.
+- PT: support for debit notes
+- PT: validations for debit and credit notes
 
 ### Changed
 

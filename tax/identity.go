@@ -109,8 +109,10 @@ func (v validateTaxID) Validate(value interface{}) error {
 }
 
 // JSONSchemaExtend adds extra details to the schema.
-func (*Identity) JSONSchemaExtend(js *jsonschema.Schema) {
-	js.Extras[schema.Recommended] = []string{
-		"code",
+func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"code",
+		},
 	}
 }
