@@ -1,6 +1,7 @@
 package bill_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
@@ -51,6 +52,10 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.Len(t, i2.Lines[0].Item.AltPrices, 1)
 		assert.Equal(t, "EUR", i2.Lines[0].Item.AltPrices[0].Currency.String())
 		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
+
+		ex, err := json.Marshal(i2.ExchangeRates)
+		require.NoError(t, err)
+		assert.JSONEq(t, `[{"amount":"1.12","from":"EUR","to":"USD"}]`, string(ex))
 	})
 
 	t.Run("conversion with alt prices", func(t *testing.T) {

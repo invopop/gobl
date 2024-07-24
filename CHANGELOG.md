@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - PT: support for debit notes
 - PT: validations for debit and credit notes
 
+### Changed
+
+- CO: renamed credit and debit extension names to fit in UIs.
+
 ## [v0.110.2] - 2024-07-23
 
 ### Added
