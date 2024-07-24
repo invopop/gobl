@@ -37,9 +37,9 @@ func (s *Stamp) In(ss []*Stamp) bool {
 
 // DetectDuplicateStamps checks if the list of stamps contains duplicate
 // provider keys.
-var DetectDuplicateStamps = validation.By(duplicateDuplicateStamps)
+var DetectDuplicateStamps = validation.By(detectDuplicateStamps)
 
-func duplicateDuplicateStamps(list interface{}) error {
+func detectDuplicateStamps(list interface{}) error {
 	values, ok := list.([]*Stamp)
 	if !ok {
 		return errors.New("must be a stamp array")
