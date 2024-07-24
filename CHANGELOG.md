@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [vX.XXX.X] - XXXX-XX-XX
 
+### Added
+
+- PT: support for debit notes
+- PT: validations for debit and credit notes
+
 ### Changed
 
 - CO: renamed credit and debit extension names to fit in UIs.
