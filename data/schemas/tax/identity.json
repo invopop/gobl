@@ -30,7 +30,10 @@
       "required": [
         "country"
       ],
-      "description": "Identity stores the details required to identify an entity for tax purposes in a specific country."
+      "description": "Identity stores the details required to identify an entity for tax purposes in a specific country.",
+      "recommended": [
+        "code"
+      ]
     }
   }
 }

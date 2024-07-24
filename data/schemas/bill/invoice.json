@@ -386,7 +386,10 @@
         "supplier",
         "totals"
       ],
-      "description": "Invoice represents a payment claim for goods or services supplied under conditions agreed between the supplier and the customer."
+      "description": "Invoice represents a payment claim for goods or services supplied under conditions agreed between the supplier and the customer.",
+      "recommended": [
+        "lines"
+      ]
     },
     "Line": {
       "properties": {

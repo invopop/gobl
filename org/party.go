@@ -102,8 +102,10 @@ func (p *Party) ValidateWithContext(ctx context.Context) error {
 }
 
 // JSONSchemaExtend adds extra details to the schema.
-func (*Party) JSONSchemaExtend(js *jsonschema.Schema) {
-	js.Extras[schema.Recommended] = []string{
-		"name", "tax_id",
+func (Party) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"name", "tax_id",
+		},
 	}
 }
