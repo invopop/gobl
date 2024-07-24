@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
 )
@@ -17,7 +19,7 @@ type Party struct {
 	// context in a single language, for example "Supplier", "Host", or similar.
 	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Supplier"`
 	// Legal name or representation of the organization.
-	Name string `json:"name" jsonschema:"title=Name"`
+	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 	// Alternate short name.
 	Alias string `json:"alias,omitempty" jsonschema:"title=Alias"`
 	// The entity's legal ID code used for tax purposes. They may have other numbers, but we're only interested in those valid for tax purposes.
@@ -83,7 +85,7 @@ func (p *Party) Validate() error {
 // ValidateWithContext is used to check the party's data meets minimum expectations.
 func (p *Party) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, p,
-		validation.Field(&p.Name, validation.Required),
+		validation.Field(&p.Name),
 		validation.Field(&p.TaxID),
 		validation.Field(&p.Identities),
 		validation.Field(&p.People),
@@ -97,4 +99,11 @@ func (p *Party) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Ext),
 		validation.Field(&p.Meta),
 	)
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (*Party) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras[schema.Recommended] = []string{
+		"name", "tax_id",
+	}
 }

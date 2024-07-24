@@ -16,7 +16,7 @@ type Person struct {
 	// language, for example "Attn", "Contact", "Responsible", etc.
 	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Attn"`
 	// Complete details on the name of the person
-	Name Name `json:"name" jsonschema:"title=Name"`
+	Name *Name `json:"name" jsonschema:"title=Name"`
 	// What they do within an organization
 	Role string `json:"role,omitempty" jsonschema:"title=Role"`
 	// Electronic mail addresses that belong to the person.

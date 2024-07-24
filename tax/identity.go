@@ -6,6 +6,8 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/schema"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
 )
@@ -104,4 +106,11 @@ func (v validateTaxID) Validate(value interface{}) error {
 		),
 	}
 	return validation.ValidateStruct(id, rules...)
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (*Identity) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras[schema.Recommended] = []string{
+		"code",
+	}
 }
