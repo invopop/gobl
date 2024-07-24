@@ -3,7 +3,11 @@ package uuid
 
 import (
 	"crypto/rand"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,6 +30,10 @@ type Version byte
 const (
 	Empty UUID = ""
 	Zero  UUID = "00000000-0000-0000-0000-000000000000"
+)
+
+var (
+	regexpSimpleUUID = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 )
 
 // V1 generates a version 1 UUID. We strongly recommend using V7 now as an alternative
@@ -176,6 +184,29 @@ func (u UUID) String() string {
 // Validate checks to ensure the value is a UUID
 func (u UUID) Validate() error {
 	return validation.Validate(string(u), Valid)
+}
+
+// Base64 returns a compact URL-safe Base64 string of the UUID as opposed to the
+// regular hex representation. This can be used for prettier and shorter URLs
+// and is completely reversible.
+func (u UUID) Base64() string {
+	s := strings.ReplaceAll(u.String(), "-", "")
+	b, _ := hex.DecodeString(s)
+	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(b)
+}
+
+// ParseBase64 will attempt to decode a Base64 string into a UUID. If the string
+// is already a regular UUID, it will be parsed and returned using the regular
+// Parse method.
+func ParseBase64(s string) (UUID, error) {
+	if !regexpSimpleUUID.MatchString(s) {
+		d, err := base64.URLEncoding.WithPadding(base64.NoPadding).DecodeString(s)
+		if err != nil {
+			return Empty, err
+		}
+		s = hex.EncodeToString(d)
+	}
+	return Parse(s)
 }
 
 // Parse decodes s into a UUID or provides an error.

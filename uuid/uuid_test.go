@@ -242,3 +242,18 @@ func TestUUIDv5(t *testing.T) {
 	assert.Equal(t, 5, int(u.Version()))
 	assert.Equal(t, "1f53a310-2a17-5acb-b76a-c39495e5356f", u.String())
 }
+
+func TestUUIDBase64(t *testing.T) {
+	u := uuid.MustParse("f47ac10b-58cc-0372-8567-0e02b2c3d479")
+
+	s := u.Base64()
+	assert.Equal(t, "9HrBC1jMA3KFZw4CssPUeQ", s)
+
+	u2, err := uuid.ParseBase64(s)
+	require.NoError(t, err)
+	assert.Equal(t, u.String(), u2.String())
+
+	u2, err = uuid.ParseBase64(u.String())
+	require.NoError(t, err)
+	assert.Equal(t, u.String(), u2.String())
+}
