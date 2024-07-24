@@ -24,6 +24,14 @@
           "title": "Stamps",
           "description": "Seals of approval from other organisations that can only be added to\nnon-draft envelopes."
         },
+        "links": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/head/link"
+          },
+          "type": "array",
+          "title": "Links",
+          "description": "Links provide URLs to other resources that are related to this envelope\nand unlike stamps can be added even in the draft state."
+        },
         "tags": {
           "items": {
             "type": "string"
