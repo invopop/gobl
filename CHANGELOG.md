@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Including `recommended` array in more JSON Schema objects.
 - `bill.Invoice`: validation and changes around acceptance of simplified invoices with customer name. A customer without a tax ID now implies that a name is also not required.
+- PT: support for debit notes
+- PT: validations for debit and credit notes
 
 ### Changed
 
