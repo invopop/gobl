@@ -35,6 +35,10 @@ var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyDIANCreditCode,
 		Name: i18n.String{
+			i18n.EN: "Credit Code",
+			i18n.ES: "Código de Crédito",
+		},
+		Desc: i18n.String{
 			i18n.EN: "DIAN correction code for credit notes",
 			i18n.ES: "Código de corrección DIAN para notas de crédito",
 		},
@@ -95,6 +99,10 @@ var extensionKeys = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyDIANDebitCode,
 		Name: i18n.String{
+			i18n.EN: "Debit Code",
+			i18n.ES: "Código de Débito",
+		},
+		Desc: i18n.String{
 			i18n.EN: "DIAN correction code for debit notes",
 			i18n.ES: "Código de corrección DIAN para notas de débito",
 		},
