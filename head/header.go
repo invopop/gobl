@@ -22,6 +22,10 @@ type Header struct {
 	// non-draft envelopes.
 	Stamps []*Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 
+	// Links provide URLs to other resources that are related to this envelope
+	// and unlike stamps can be added even in the draft state.
+	Links []*Link `json:"links,omitempty" jsonschema:"title=Links"`
+
 	// Set of labels that describe but have no influence on the data.
 	Tags []string `json:"tags,omitempty" jsonschema:"title=Tags"`
 
@@ -58,6 +62,9 @@ func (h *Header) ValidateWithContext(ctx context.Context) error {
 			validation.When(h.Draft, validation.Empty),
 			DetectDuplicateStamps,
 		),
+		validation.Field(&h.Links,
+			DetectDuplicateLinks,
+		),
 	)
 }
 
@@ -67,9 +74,26 @@ func (h *Header) AddStamp(s *Stamp) {
 	h.Stamps = AddStamp(h.Stamps, s)
 }
 
-// GetStamp provides the stamp for the given provider or nil.
-func (h *Header) GetStamp(provider cbc.Key) *Stamp {
+// Stamp provides the stamp for the given provider or nil.
+func (h *Header) Stamp(provider cbc.Key) *Stamp {
 	return GetStamp(h.Stamps, provider)
+}
+
+// GetStamp provides the stamp for the given provider or nil.
+// Deprecated: use Stamp instead.
+func (h *Header) GetStamp(provider cbc.Key) *Stamp {
+	return h.Stamp(provider)
+}
+
+// AddLink will add the link to the header, or update a link with the same
+// key.
+func (h *Header) AddLink(l *Link) {
+	h.Links = AppendLink(h.Links, l)
+}
+
+// Link provides the link with the matching key in the header, or nil.
+func (h *Header) Link(key cbc.Key) *Link {
+	return LinkByKey(h.Links, key)
 }
 
 // Contains compares the provided header to ensure that all the fields
@@ -86,6 +110,18 @@ func (h *Header) Contains(h2 *Header) bool {
 		match := false
 		for _, s := range h.Stamps {
 			if s.Provider == s2.Provider && s.Value == s2.Value {
+				match = true
+				break
+			}
+		}
+		if !match {
+			return false
+		}
+	}
+	for _, l2 := range h2.Links {
+		match := false
+		for _, l := range h.Links {
+			if l.Key == l2.Key && l.URL == l2.URL {
 				match = true
 				break
 			}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/head/link",
+  "$ref": "#/$defs/Link",
+  "$defs": {
+    "Link": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "description": "Key is a unique identifier for the link."
+        },
+        "title": {
+          "type": "string",
+          "title": "Title",
+          "description": "Title of the resource to use when presenting to users."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Description of the resource to use when presenting to users."
+        },
+        "mime": {
+          "type": "string",
+          "title": "MIME Type",
+          "description": "Expected MIME type of the link's content."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "URL of the resource."
+        }
+      },
+      "type": "object",
+      "required": [
+        "key",
+        "url"
+      ],
+      "description": "Link defines a link between this document and another resource."
+    }
+  }
+}

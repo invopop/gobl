@@ -32,7 +32,24 @@ func TestHeaderAddStamp(t *testing.T) {
 	assert.Equal(t, "bax", h.Stamps[1].Value)
 }
 
-func TestHeaderGetStamp(t *testing.T) {
+func TestHeaderAddLink(t *testing.T) {
+	h := head.NewHeader()
+	assert.Len(t, h.Links, 0)
+	h.AddLink(&head.Link{Key: "foo", URL: "bar.com"})
+	assert.Len(t, h.Links, 1)
+}
+
+func TestHeaderLink(t *testing.T) {
+	h := head.NewHeader()
+	h.AddLink(&head.Link{Key: "foo", URL: "bar.com"})
+	l := h.Link("foo")
+	assert.NotNil(t, l)
+	assert.Equal(t, "bar.com", l.URL)
+	l = h.Link("baa")
+	assert.Nil(t, l)
+}
+
+func TestHeaderStamp(t *testing.T) {
 	h := head.NewHeader()
 	h.AddStamp(&head.Stamp{Provider: "foo", Value: "boo"})
 	h.AddStamp(&head.Stamp{Provider: "foo2", Value: "bling"})
@@ -71,6 +88,18 @@ func TestHeaderContains(t *testing.T) {
 	assert.False(t, h1.Contains(h2))
 	h1.AddStamp(&head.Stamp{Provider: "foo3", Value: "bow"})
 	assert.True(t, h1.Contains(h2))
+
+	// Links
+	h1.AddLink(&head.Link{Key: "foo", URL: "bar.com"})
+	h1.AddLink(&head.Link{Key: "foo2", URL: "bar2.com"})
+	assert.True(t, h1.Contains(h2))
+	h2.AddLink(&head.Link{Key: "foo", URL: "bar.com"})
+	assert.True(t, h1.Contains(h2))
+	h2.AddLink(&head.Link{Key: "foo2", URL: "bar2.com"})
+	assert.True(t, h1.Contains(h2))
+	h2.AddLink(&head.Link{Key: "foo3", URL: "bar3.com"})
+	assert.False(t, h1.Contains(h2))
+	h1.AddLink(&head.Link{Key: "foo3", URL: "bar3.com"})
 
 	// Tags
 	h1.Tags = append(h1.Tags, "foo")
