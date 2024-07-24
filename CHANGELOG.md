@@ -8,12 +8,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- Including `recommended` array in more JSON Schema objects.
+- `bill.Invoice`: validation and changes around acceptance of simplified invoices with customer name. A customer without a tax ID now implies that a name is also not required.
 - PT: support for debit notes
 - PT: validations for debit and credit notes
 
 ### Changed
 
 - CO: renamed credit and debit extension names to fit in UIs.
+- `org.Party`: `name` is now optional, but recommended.
+
+### Fixes
+
+- `org.People`: `name` is now correctly validated.
 
 ## [v0.110.2] - 2024-07-23
 
@@ -23,7 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `org`: Refining availablility of `label` field.
+- `org`: Refining availability of `label` field.
 
 ## [v0.110.0] - 2024-07-23
 

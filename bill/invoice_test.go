@@ -9,6 +9,7 @@ import (
 	_ "github.com/invopop/gobl" // load regions
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/l10n"
@@ -950,56 +951,104 @@ func TestCalculateInverted(t *testing.T) {
 }
 
 func TestValidation(t *testing.T) {
-	inv := &bill.Invoice{
-		Currency:  currency.EUR,
-		IssueDate: cal.MakeDate(2022, 6, 13),
-		Tax: &bill.Tax{
-			PricesInclude: tax.CategoryVAT,
-		},
-		Supplier: &org.Party{
-			Name: "Test Supplier",
-			TaxID: &tax.Identity{
-				Country: l10n.ES,
-				Code:    "B98602642",
+	t.Run("basic validation", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Code = ""
+		ctx := context.Background()
+		require.NoError(t, inv.Calculate())
+		err := inv.ValidateWithContext(ctx)
+		assert.ErrorContains(t, err, "code: cannot be blank")
+		ctx = context.WithValue(ctx, internal.KeyDraft, true)
+		assert.NoError(t, inv.ValidateWithContext(ctx))
+	})
+
+	t.Run("supplier name", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Supplier.Name = ""
+		inv.Customer.TaxID.Code = "" // simplified
+		inv.Customer.Name = ""       // so this is okay
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.).")
+		assert.NotContains(t, err.Error(), "customer")
+	})
+
+	t.Run("simplified", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: cannot be blank.")
+
+		inv.Tax = &bill.Tax{
+			Tags: []cbc.Key{
+				tax.TagSimplified,
 			},
-		},
-		Customer: &org.Party{
-			Name: "Test Customer",
-			TaxID: &tax.Identity{
-				Country: l10n.ES,
-				Code:    "54387763P",
+		}
+		require.NoError(t, inv.Calculate())
+		err = inv.Validate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("simplified without customer name", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Tax = &bill.Tax{
+			Tags: []cbc.Key{
+				tax.TagSimplified,
 			},
-		},
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(10, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.MakeAmount(10000, 2),
+		}
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("implied simplified without customer tax ID", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Name = ""
+		inv.Customer.Emails = append(inv.Customer.Emails, &org.Email{
+			Address: "foo@example.com",
+		})
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("not simplified without customer name", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Customer.Name = ""
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
+	})
+}
+
+func baseInvoiceWithLines(t *testing.T) *bill.Invoice {
+	inv := baseInvoice(t,
+		&bill.Line{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Rate:     "standard",
 				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Rate:     "standard",
-					},
-				},
 			},
 		},
-	}
-	ctx := context.Background()
-	require.NoError(t, inv.Calculate())
-	err := inv.ValidateWithContext(ctx)
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "code: cannot be blank")
-	ctx = context.WithValue(ctx, internal.KeyDraft, true)
-	assert.NoError(t, inv.ValidateWithContext(ctx))
+	)
+	return inv
 }
 
 func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
-		Series: "TEST",
-		Code:   "00123",
+		Series:    "TEST",
+		Code:      "00123",
+		IssueDate: cal.MakeDate(2022, 6, 13),
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
 		},
@@ -1017,8 +1066,7 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 				Code:    "54387763P",
 			},
 		},
-		IssueDate: cal.MakeDate(2022, 6, 13),
-		Lines:     lines,
+		Lines: lines,
 	}
 	return i
 }

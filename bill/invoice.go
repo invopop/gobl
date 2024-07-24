@@ -95,11 +95,6 @@ type Invoice struct {
 	// Summary of all the invoice totals, including taxes (calculated).
 	Totals *Totals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
 
-	// The EN 16931-1:2017 standard recognises a need to be able to attach additional
-	// documents to an invoice. We don't support this yet, but this is where
-	// it could go.
-	//Attachments Attachments `json:"attachments,omitempty" jsonschema:"title=Attachments"`
-
 	// Unstructured information that is relevant to the invoice, such as correction or additional
 	// legal details.
 	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
@@ -154,13 +149,15 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Tax),
 		validation.Field(&inv.Supplier,
 			validation.Required,
+			validation.By(validateInvoiceSupplier),
 		),
 		validation.Field(&inv.Customer,
 			// Customer is not required for simplified invoices.
 			validation.When(
-				!inv.Tax.ContainsTag(tax.TagSimplified),
+				!inv.isSimplified(),
 				validation.Required,
 			),
+			validation.By(inv.validateInvoiceCustomer()),
 		),
 		validation.Field(&inv.Lines,
 			validation.Required,
@@ -182,6 +179,41 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		err = r.ValidateObject(inv)
 	}
 	return err
+}
+
+func validateInvoiceSupplier(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Name, validation.Required),
+	)
+}
+
+func (inv *Invoice) validateInvoiceCustomer() validation.RuleFunc {
+	return func(value any) error {
+		p, ok := value.(*org.Party)
+		if !ok || p == nil {
+			return nil
+		}
+		return validation.ValidateStruct(p,
+			validation.Field(&p.Name,
+				validation.When(
+					inv.isSimplified() || partyHasTaxIDCode(p),
+					validation.Required,
+				),
+			),
+		)
+	}
+}
+
+func (inv *Invoice) isSimplified() bool {
+	return inv.Tax != nil && tax.TagSimplified.In(inv.Tax.Tags...)
+}
+
+func partyHasTaxIDCode(party *org.Party) bool {
+	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
 // Invert effectively reverses the invoice by inverting the sign of all quantity
@@ -583,8 +615,8 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 }
 
 // JSONSchemaExtend extends the schema with additional property details
-func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
-	props := schema.Properties
+func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
 	if prop, ok := props.Get("series"); ok {
 		prop.Pattern = InvoiceCodePattern
 	}
@@ -601,5 +633,11 @@ func (Invoice) JSONSchemaExtend(schema *jsonschema.Schema) {
 				Description: kd.Desc.String(),
 			}
 		}
+	}
+	// Recommendations
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"lines",
+		},
 	}
 }
