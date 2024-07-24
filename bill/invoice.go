@@ -635,7 +635,9 @@ func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 		}
 	}
 	// Recommendations
-	js.Extras[schema.Recommended] = []string{
-		"lines",
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"lines",
+		},
 	}
 }

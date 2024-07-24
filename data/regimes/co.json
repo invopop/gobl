@@ -78,6 +78,10 @@
     {
       "key": "co-dian-credit-code",
       "name": {
+        "en": "Credit Code",
+        "es": "Código de Crédito"
+      },
+      "desc": {
         "en": "DIAN correction code for credit notes",
         "es": "Código de corrección DIAN para notas de crédito"
       },
@@ -138,6 +142,10 @@
     {
       "key": "co-dian-debit-code",
       "name": {
+        "en": "Debit Code",
+        "es": "Código de Débito"
+      },
+      "desc": {
         "en": "DIAN correction code for debit notes",
         "es": "Código de corrección DIAN para notas de débito"
       },
