@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - CO: renamed credit and debit extension names to fit in UIs.
-- `org.Party`: `name` is now optional, but recommended. Specific regime validation added.
+- `org.Party`: `name` is now optional, but recommended.
 
 ### Fixes
 
