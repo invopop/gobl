@@ -62,6 +62,7 @@ func (a *Address) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
+// JSONSchemaExtend adds extra details to the Address schema.
 func (Address) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
