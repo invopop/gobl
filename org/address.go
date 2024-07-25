@@ -5,8 +5,10 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -58,4 +60,12 @@ func (a *Address) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&a.Coordinates),
 		validation.Field(&a.Meta),
 	)
+}
+
+func (Address) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"number", "street", "locality", "region", "code", "country",
+		},
+	}
 }
