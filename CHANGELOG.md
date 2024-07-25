@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-- Coming soon...
+### Added
+
+- `org.Address`: recommended fields added
+
+### Changed
+
+- `org.Address`: `locality` no longer required.
 
 ## [v0.111.0] - 2024-07-24
 

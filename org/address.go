@@ -5,8 +5,10 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -32,7 +34,7 @@ type Address struct {
 	// Additional street address details.
 	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
 	// Village, town, district, or city, typically inside a region.
-	Locality string `json:"locality" jsonschema:"title=Locality"`
+	Locality string `json:"locality,omitempty" jsonschema:"title=Locality"`
 	// Province, county, or state, inside a country.
 	Region string `json:"region,omitempty" jsonschema:"title=Region"`
 	// Post or ZIP code.
@@ -54,9 +56,17 @@ func (a *Address) Validate() error {
 func (a *Address) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, a,
 		validation.Field(&a.UUID),
-		validation.Field(&a.Locality, validation.Required),
 		validation.Field(&a.Country),
 		validation.Field(&a.Coordinates),
 		validation.Field(&a.Meta),
 	)
+}
+
+// JSONSchemaExtend adds extra details to the Address schema.
+func (Address) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Extras = map[string]any{
+		schema.Recommended: []string{
+			"number", "street", "locality", "region", "code", "country",
+		},
+	}
 }
