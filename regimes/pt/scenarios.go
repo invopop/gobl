@@ -63,13 +63,78 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 
-		// Reverse Charges
+		// Extension texts
+
 		{
-			Tags: []cbc.Key{tax.TagReverseCharge},
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M30",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
-				Src:  tax.TagReverseCharge,
-				Text: "Reverse charge / Autoliquidação - Artigo 2.º n.º 1 alínea j) do Código do IVA",
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea i) do Código do IVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M31",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea j) do Código do IVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M32",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea I) do Código do IVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M33",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea m) do Código do IVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M40",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / Autoliquidação - Artigo 6.º n.º 6 alínea a) do Código do IVA, a contrário",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M41",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / Autoliquidação - Artigo 8.º n.º 3 do RITI",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M42",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / Autoliquidação - Decreto-Lei n.º 21/2007, de 29 de janeiro",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M43",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Reverse charge / Autoliquidação - Decreto-Lei n.° 362/99, de 16 de setembro",
 			},
 		},
 	},
