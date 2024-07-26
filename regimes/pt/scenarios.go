@@ -64,7 +64,168 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 
 		// Extension texts
-
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M01",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Artigo 16.°, n.° 6 do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M02",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M04",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Exempt / Isento artigo 13.° do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M05",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Exempt / Isento artigo 14.° do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M06",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Exempt / Isento artigo 15.° do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M07",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Exempt / Isento artigo 9.° do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M09",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Não confere direito a dedução / Artigo 62.° alínea b) do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M10",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime de isenção / Artigo 57.° do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M11",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M12",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M13",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M14",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M15",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M16",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Exempt / Isento artigo 14.° do RITI",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M19",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Outras isenções - Isenções temporárias determinadas em diploma próprio",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M20",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Regime forfetário / Artigo 59.°-D n.°2 do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M21",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M25",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA",
+			},
+		},
 		{
 			ExtKey:   ExtKeyExemptionCode,
 			ExtValue: "M30",
@@ -135,6 +296,15 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemptionCode,
 				Text: "Reverse charge / Autoliquidação - Decreto-Lei n.° 362/99, de 16 de setembro",
+			},
+		},
+		{
+			ExtKey:   ExtKeyExemptionCode,
+			ExtValue: "M99",
+			Note: &cbc.Note{
+				Key:  cbc.NoteKeyLegal,
+				Src:  ExtKeyExemptionCode,
+				Text: "Não sujeito ou não tributado",
 			},
 		},
 	},
