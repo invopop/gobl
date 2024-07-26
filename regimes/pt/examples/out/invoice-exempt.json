@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3855300fedceccd979f3505677edbd4125e771bec7e4ea9bee5f0b1953a866bf"
+			"val": "4edbfc19235a0f031273f35014dafe6055a63f62006b320474274516ea927500"
 		},
 		"draft": true
 	},
@@ -52,11 +52,30 @@
 					}
 				],
 				"total": "100.00"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "Noite em quarto triplo",
+					"price": "120.00"
+				},
+				"sum": "240.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"pt-exemption-code": "M40"
+						}
+					}
+				],
+				"total": "240.00"
 			}
 		],
 		"totals": {
-			"sum": "100.00",
-			"total": "100.00",
+			"sum": "340.00",
+			"total": "340.00",
 			"taxes": {
 				"categories": [
 					{
@@ -67,7 +86,7 @@
 								"ext": {
 									"pt-exemption-code": "M40"
 								},
-								"base": "100.00",
+								"base": "340.00",
 								"amount": "0.00"
 							}
 						],
@@ -77,8 +96,8 @@
 				"sum": "0.00"
 			},
 			"tax": "0.00",
-			"total_with_tax": "100.00",
-			"payable": "100.00"
+			"total_with_tax": "340.00",
+			"payable": "340.00"
 		},
 		"notes": [
 			{

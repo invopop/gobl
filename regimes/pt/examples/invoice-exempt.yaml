@@ -16,12 +16,19 @@ supplier:
 customer:
   name: Maria Santos Silva
 lines:
-  - i: 1
-    quantity: 1
+  - quantity: 1
     item:
       name: Noite em quarto duplo
       price: 100.00
-    sum: 100.00
+    taxes:
+      - cat: VAT
+        rate: exempt
+        ext:
+          pt-exemption-code: "M40"
+  - quantity: 2
+    item:
+      name: Noite em quarto triplo
+      price: 120.00
     taxes:
       - cat: VAT
         rate: exempt
