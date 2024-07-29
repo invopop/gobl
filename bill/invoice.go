@@ -302,7 +302,7 @@ func (inv *Invoice) Calculate() error {
 		}
 	}
 
-	if err := inv.prepareTagsAndScenarios(); err != nil {
+	if err := inv.prepareTags(); err != nil {
 		return err
 	}
 
@@ -321,7 +321,15 @@ func (inv *Invoice) Calculate() error {
 		return err
 	}
 
-	return inv.calculateWithRegime(r)
+	if err := inv.calculateWithRegime(r); err != nil {
+		return err
+	}
+
+	if err := inv.prepareScenarios(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
@@ -404,14 +412,25 @@ func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
 	if ss == nil {
 		return nil
 	}
+	exts := make([]tax.Extensions, 0)
 	tags := []cbc.Key{}
+
 	if inv.Tax != nil {
 		tags = inv.Tax.Tags
+		if len(inv.Tax.Ext) > 0 {
+			exts = append(exts, inv.Tax.Ext)
+		}
 	}
-	return ss.SummaryFor(inv.Type, tags)
+	for _, cat := range inv.Totals.Taxes.Categories {
+		for _, rate := range cat.Rates {
+			exts = append(exts, rate.Ext)
+		}
+	}
+
+	return ss.SummaryFor(inv.Type, tags, exts)
 }
 
-func (inv *Invoice) prepareTagsAndScenarios() error {
+func (inv *Invoice) prepareTags() error {
 	r := inv.TaxRegime()
 	if r == nil {
 		return nil
@@ -426,6 +445,14 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 			return fmt.Errorf("invalid document tag: %v", k)
 		}
 	}
+	return nil
+}
+
+func (inv *Invoice) prepareScenarios() error {
+	r := inv.TaxRegime()
+	if r == nil {
+		return nil
+	}
 
 	// Use the scenario summary to add any notes to the invoice
 	ss := inv.scenarioSummary(r)
@@ -436,7 +463,7 @@ func (inv *Invoice) prepareTagsAndScenarios() error {
 		// make sure we don't already have the same note in the invoice
 		var en *cbc.Note
 		for _, n2 := range inv.Notes {
-			if n.Src == n2.Src {
+			if n.Src == n2.Src && n.Code == n2.Code {
 				en = n
 				break
 			}

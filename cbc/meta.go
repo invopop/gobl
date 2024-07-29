@@ -32,6 +32,19 @@ func (m Meta) Validate() error {
 	return err
 }
 
+// Equals checks if the meta data is the same.
+func (m Meta) Equals(m2 Meta) bool {
+	if len(m) != len(m2) {
+		return false
+	}
+	for k, v := range m {
+		if m2[k] != v {
+			return false
+		}
+	}
+	return true
+}
+
 // JSONSchemaExtend ensures the meta keys are valid.
 func (Meta) JSONSchemaExtend(schema *jsonschema.Schema) {
 	prop := schema.AdditionalProperties
