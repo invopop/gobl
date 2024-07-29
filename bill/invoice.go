@@ -19,11 +19,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Constants used to help identify invoices
-const (
-	ShortSchemaInvoice = "bill/invoice"
-)
-
 const (
 	defaultTaxRemovalAccuracy         uint32 = 2
 	defaultCurrencyConversionAccuracy uint32 = 2

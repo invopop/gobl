@@ -14,6 +14,56 @@ func TestCodeIn(t *testing.T) {
 	assert.False(t, c.In("BAR", "DOM"))
 }
 
+func TestNormalizeCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "uppercase",
+			code: cbc.Code("FOO"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "lowercase",
+			code: cbc.Code("foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "mixed case",
+			code: cbc.Code("Foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+			want: cbc.Code(""),
+		},
+		{
+			name: "underscore",
+			code: cbc.Code("FOO_BAR"),
+			want: cbc.Code("FOO-BAR"),
+		},
+		{
+			name: "whitespace",
+			code: cbc.Code(" foo-bar1  "),
+			want: cbc.Code("FOO-BAR1"),
+		},
+		{
+			name: "invalid chars",
+			code: cbc.Code("f$oo-bar1!"),
+			want: cbc.Code("FOO-BAR1"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
+		})
+	}
+
+}
+
 func TestCode_Validate(t *testing.T) {
 	tests := []struct {
 		name    string

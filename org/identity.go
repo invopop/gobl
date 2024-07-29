@@ -16,7 +16,7 @@ type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// Uniquely classify this identity using a key instead of a code.
+	// Uniquely classify this identity using a key instead of a type.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
 	// a particular context, country, or tax regime, and cannot be used
