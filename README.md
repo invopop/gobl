@@ -9,6 +9,7 @@ Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/mai
 [![Lint](https://github.com/invopop/gobl/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl/actions/workflows/lint.yaml)
 [![Test Go](https://github.com/invopop/gobl/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl/actions/workflows/test.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/invopop/gobl)](https://goreportcard.com/report/github.com/invopop/gobl)
+[![codecov](https://codecov.io/gh/invopop/gobl/graph/badge.svg?token=490W2CZVIT)](https://codecov.io/gh/invopop/gobl)
 [![GoDoc](https://godoc.org/github.com/invopop/gobl?status.svg)](https://godoc.org/github.com/invopop/gobl)
 ![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl)
 

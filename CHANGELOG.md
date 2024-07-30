@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - CO: improved regime's documentation
 
+### Added
+
+- Code coverage report (still a lot to improve there!)
+
+### Upgraded
+
+- [invopop/validation](https://github.com/invopop/validation) - upgrade to latest version with nil pointer fix.
+
 ## [v0.112.0] - 2024-07-26
 
 ### Added
