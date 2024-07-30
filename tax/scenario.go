@@ -19,15 +19,31 @@ type ScenarioSet struct {
 
 // Scenario is used to describe a tax scenario of a document based on the combination
 // of document type and tag used.
+//
+// There are effectively two parts to a scenario, the filters that are used to determine
+// if the scenario is applicable to a document and the output that is applied or data to
+// be used by conversion processes.
 type Scenario struct {
+	// Name of the scenario for further information.
+	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+
+	/* Filters */
+
 	// Type of document, if present.
 	Types []cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 
 	// Tag that was applied to the document
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tag"`
 
-	// Name of the scenario for further information.
-	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
+	// Extension key that must be present in the document.
+	ExtKey cbc.Key `json:"ext_key,omitempty" jsonschema:"title=Extension Key"`
+
+	// Extension value that along side the key must be present for a match
+	// to happen. This cannot be used without an `ExtKey`. The value will
+	// be copied to the note code if needed.
+	ExtValue ExtValue `json:"ext_value,omitempty" jsonschema:"title=Extension Value"`
+
+	/* Outputs */
 
 	// A note to be added to the document if the scenario is applied.
 	Note *cbc.Note `json:"note,omitempty" jsonschema:"title=Note"`
@@ -60,16 +76,16 @@ func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
 
 // SummaryFor returns a summary by applying the scenarios to the
 // supplied document.
-func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key) *ScenarioSummary {
+func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key, docExt []Extensions) *ScenarioSummary {
 	summary := &ScenarioSummary{
 		Notes: make([]*cbc.Note, 0),
 		Codes: make(cbc.CodeMap),
 		Meta:  make(cbc.Meta),
 	}
 	for _, s := range ss.List {
-		if s.match(docType, docTags) {
+		if s.match(docType, docTags, docExt) {
 			if s.Note != nil {
-				summary.Notes = append(summary.Notes, s.Note)
+				summary.addNote(s.Note.WithCode(s.ExtValue.String()))
 			}
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
@@ -82,9 +98,20 @@ func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key) *ScenarioS
 	return summary
 }
 
+func (ss *ScenarioSummary) addNote(note *cbc.Note) {
+	for _, n := range ss.Notes {
+		if n.Equals(note) {
+			return // already added
+		}
+	}
+	ss.Notes = append(ss.Notes, note)
+}
+
 // match checks if the scenario has a matching doc type or set of tags.
 // Empty types or tags in the scenario implies that all values are valid.
-func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key) bool {
+// The list of extensions can contain duplicate extension maps to make recompilation
+// of the array easier.
+func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key, docExt []Extensions) bool {
 	if len(s.Types) > 0 {
 		if !s.hasType(docType) {
 			return false
@@ -94,6 +121,25 @@ func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key) bool {
 		if !s.hasTags(docTags) {
 			return false
 		}
+	}
+	if s.ExtKey != cbc.KeyEmpty {
+		// For extensions we need to find a complete match
+		// and reject if none found. We intentionally don't try
+		// to combine extensions from the document.
+		for _, ext := range docExt {
+			v, ok := ext[s.ExtKey]
+			if !ok {
+				continue // try next extension
+			}
+			if s.ExtValue != "" {
+				if v == s.ExtValue {
+					return true
+				}
+			} else {
+				return true
+			}
+		}
+		return false
 	}
 	return true
 }

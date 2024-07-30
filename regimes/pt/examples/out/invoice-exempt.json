@@ -1,0 +1,111 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4edbfc19235a0f031273f35014dafe6055a63f62006b320474274516ea927500"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "",
+		"issue_date": "2023-01-30",
+		"currency": "EUR",
+		"supplier": {
+			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
+			"name": "Hotelzinho",
+			"tax_id": {
+				"country": "PT",
+				"code": "545259045"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"customer": {
+			"name": "Maria Santos Silva"
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Noite em quarto duplo",
+					"price": "100.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"pt-exemption-code": "M40"
+						}
+					}
+				],
+				"total": "100.00"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "Noite em quarto triplo",
+					"price": "120.00"
+				},
+				"sum": "240.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"pt-exemption-code": "M40"
+						}
+					}
+				],
+				"total": "240.00"
+			}
+		],
+		"totals": {
+			"sum": "340.00",
+			"total": "340.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"ext": {
+									"pt-exemption-code": "M40"
+								},
+								"base": "340.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "340.00",
+			"payable": "340.00"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"code": "M40",
+				"src": "pt-exemption-code",
+				"text": "Reverse charge / Autoliquidação - Artigo 6.º n.º 6 alínea a) do Código do IVA, a contrário"
+			}
+		]
+	}
+}

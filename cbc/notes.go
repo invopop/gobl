@@ -285,6 +285,22 @@ func (n *Note) WithSrc(src Key) *Note {
 	return &nw
 }
 
+// WithCode provides a new copy of the note with the code set.
+func (n *Note) WithCode(code string) *Note {
+	nw := *n // copy
+	nw.Code = code
+	return &nw
+}
+
+// Equals returns true if the provided note is the same as the current one.
+func (n *Note) Equals(n2 *Note) bool {
+	return n.Key == n2.Key &&
+		n.Code == n2.Code &&
+		n.Src == n2.Src &&
+		n.Text == n2.Text &&
+		n.Meta.Equals(n2.Meta)
+}
+
 // JSONSchemaExtend adds the list of definitions for the notes.
 func (Note) JSONSchemaExtend(schema *jsonschema.Schema) {
 	ks, _ := schema.Properties.Get("key")

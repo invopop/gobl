@@ -991,72 +991,76 @@
       "schema": "bill/invoice",
       "list": [
         {
-          "type": [
-            "standard"
-          ],
           "name": {
             "en": "Regular Invoice",
             "it": "Fattura"
           },
+          "type": [
+            "standard"
+          ],
           "codes": {
             "fatturapa-tipo-documento": "TD01"
           }
         },
         {
+          "name": {
+            "en": "Advance or down payment on invoice",
+            "it": "Acconto / anticipo su fattura"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "partial"
           ],
-          "name": {
-            "en": "Advance or down payment on invoice",
-            "it": "Acconto / anticipo su fattura"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD02"
           }
         },
         {
-          "type": [
-            "credit-note"
-          ],
           "name": {
             "en": "Credit Note",
             "it": "Nota di credito"
           },
+          "type": [
+            "credit-note"
+          ],
           "codes": {
             "fatturapa-tipo-documento": "TD04"
           }
         },
         {
-          "type": [
-            "debit-note"
-          ],
           "name": {
             "en": "Debit Note",
             "it": "Nota di debito"
           },
+          "type": [
+            "debit-note"
+          ],
           "codes": {
             "fatturapa-tipo-documento": "TD05"
           }
         },
         {
+          "name": {
+            "en": "Freelancer invoice with retained taxes",
+            "it": "Parcella"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "freelance"
           ],
-          "name": {
-            "en": "Freelancer invoice with retained taxes",
-            "it": "Parcella"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD06"
           }
         },
         {
+          "name": {
+            "en": "Advance or down payment on freelance invoice",
+            "it": "Acconto / anticipo su parcella"
+          },
           "type": [
             "standard"
           ],
@@ -1064,75 +1068,75 @@
             "partial",
             "freelance"
           ],
-          "name": {
-            "en": "Advance or down payment on freelance invoice",
-            "it": "Acconto / anticipo su parcella"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD03"
           }
         },
         {
+          "name": {
+            "en": "Simplified Invoice",
+            "it": "Fattura Semplificata"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "simplified"
           ],
-          "name": {
-            "en": "Simplified Invoice",
-            "it": "Fattura Semplificata"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD07"
           }
         },
         {
+          "name": {
+            "en": "Simplified Credit Note",
+            "it": "Nota di credito semplificata"
+          },
           "type": [
             "credit-note"
           ],
           "tags": [
             "simplified"
           ],
-          "name": {
-            "en": "Simplified Credit Note",
-            "it": "Nota di credito semplificata"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD08"
           }
         },
         {
+          "name": {
+            "en": "Simplified Debit Note",
+            "it": "Nota di debito semplificata"
+          },
           "type": [
             "debit-note"
           ],
           "tags": [
             "simplified"
           ],
-          "name": {
-            "en": "Simplified Debit Note",
-            "it": "Nota di debito semplificata"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD09"
           }
         },
         {
+          "name": {
+            "en": "Self-billed for self consumption or for free transfer without recourse",
+            "it": "Fattura per autoconsumo o per cessioni gratuite senza rivalsa"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "self-billed"
           ],
-          "name": {
-            "en": "Self-billed for self consumption or for free transfer without recourse",
-            "it": "Fattura per autoconsumo o per cessioni gratuite senza rivalsa"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD27"
           }
         },
         {
+          "name": {
+            "en": "Reverse charge",
+            "it": "Integrazione fattura reverse charge interno"
+          },
           "type": [
             "standard"
           ],
@@ -1140,15 +1144,15 @@
             "self-billed",
             "reverse-charge"
           ],
-          "name": {
-            "en": "Reverse charge",
-            "it": "Integrazione fattura reverse charge interno"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD16"
           }
         },
         {
+          "name": {
+            "en": "Self-billed Import",
+            "it": "Integrazione/autofattura per acquisto servizi da estero"
+          },
           "type": [
             "standard"
           ],
@@ -1156,15 +1160,15 @@
             "self-billed",
             "import"
           ],
-          "name": {
-            "en": "Self-billed Import",
-            "it": "Integrazione/autofattura per acquisto servizi da estero"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD17"
           }
         },
         {
+          "name": {
+            "en": "Self-billed EU Goods Import",
+            "it": "Integrazione per acquisto beni intracomunitari"
+          },
           "type": [
             "standard"
           ],
@@ -1173,15 +1177,15 @@
             "import",
             "goods-eu"
           ],
-          "name": {
-            "en": "Self-billed EU Goods Import",
-            "it": "Integrazione per acquisto beni intracomunitari"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD18"
           }
         },
         {
+          "name": {
+            "en": "Self-billed Goods Import",
+            "it": "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72"
+          },
           "type": [
             "standard"
           ],
@@ -1190,15 +1194,15 @@
             "import",
             "goods"
           ],
-          "name": {
-            "en": "Self-billed Goods Import",
-            "it": "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD19"
           }
         },
         {
+          "name": {
+            "en": "Self-billed Regularization",
+            "it": "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93"
+          },
           "type": [
             "standard"
           ],
@@ -1206,15 +1210,15 @@
             "self-billed",
             "regularization"
           ],
-          "name": {
-            "en": "Self-billed Regularization",
-            "it": "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD20"
           }
         },
         {
+          "name": {
+            "en": "Self-billed invoice when ceiling exceeded",
+            "it": "Autofattura per splafonamento"
+          },
           "type": [
             "standard"
           ],
@@ -1222,15 +1226,15 @@
             "self-billed",
             "ceiling-exceeded"
           ],
-          "name": {
-            "en": "Self-billed invoice when ceiling exceeded",
-            "it": "Autofattura per splafonamento"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD21"
           }
         },
         {
+          "name": {
+            "en": "Self-billed for goods extracted from VAT warehouse",
+            "it": "Estrazione beni da Deposito IVA"
+          },
           "type": [
             "standard"
           ],
@@ -1238,15 +1242,15 @@
             "self-billed",
             "goods-extracted"
           ],
-          "name": {
-            "en": "Self-billed for goods extracted from VAT warehouse",
-            "it": "Estrazione beni da Deposito IVA"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD22"
           }
         },
         {
+          "name": {
+            "en": "Self-billed for goods extracted from VAT warehouse with VAT payment",
+            "it": "Estrazione beni da Deposito IVA con versamento IVA"
+          },
           "type": [
             "standard"
           ],
@@ -1254,30 +1258,30 @@
             "self-billed",
             "goods-with-tax"
           ],
-          "name": {
-            "en": "Self-billed for goods extracted from VAT warehouse with VAT payment",
-            "it": "Estrazione beni da Deposito IVA con versamento IVA"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD23"
           }
         },
         {
+          "name": {
+            "en": "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
+            "it": "Fattura differita - art.21 c.4 lett. a"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "deferred"
           ],
-          "name": {
-            "en": "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
-            "it": "Fattura differita - art.21 c.4 lett. a"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD24"
           }
         },
         {
+          "name": {
+            "en": "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
+            "it": "Fattura differita - art.21 c.4 terzo periodo lett. b"
+          },
           "type": [
             "standard"
           ],
@@ -1285,30 +1289,30 @@
             "deferred",
             "third-period"
           ],
-          "name": {
-            "en": "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
-            "it": "Fattura differita - art.21 c.4 terzo periodo lett. b"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD25"
           }
         },
         {
+          "name": {
+            "en": "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
+            "it": "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "depreciable-assets"
           ],
-          "name": {
-            "en": "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
-            "it": "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD26"
           }
         },
         {
+          "name": {
+            "en": "Purchases from San Marino with VAT (paper invoice)",
+            "it": "Acquisti da San Marino con IVA (fattura cartacea)"
+          },
           "type": [
             "standard"
           ],
@@ -1316,10 +1320,6 @@
             "self-billed",
             "san-marino-paper"
           ],
-          "name": {
-            "en": "Purchases from San Marino with VAT (paper invoice)",
-            "it": "Acquisti da San Marino con IVA (fattura cartacea)"
-          },
           "codes": {
             "fatturapa-tipo-documento": "TD28"
           }

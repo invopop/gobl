@@ -342,6 +342,11 @@
     },
     "Scenario": {
       "properties": {
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the scenario for further information."
+        },
         "type": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key"
@@ -358,10 +363,15 @@
           "title": "Tag",
           "description": "Tag that was applied to the document"
         },
-        "name": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Name",
-          "description": "Name of the scenario for further information."
+        "ext_key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Extension Key",
+          "description": "Extension key that must be present in the document."
+        },
+        "ext_value": {
+          "type": "string",
+          "title": "Extension Value",
+          "description": "Extension value that along side the key must be present for a match\nto happen. This cannot be used without an `ExtKey`. The value will\nbe copied to the note code if needed."
         },
         "note": {
           "$ref": "https://gobl.org/draft-0/cbc/note",

@@ -237,100 +237,100 @@
       "schema": "bill/invoice",
       "list": [
         {
-          "type": [
-            "standard"
-          ],
           "name": {
             "en": "Regular Invoice",
             "pl": "Faktura Podstawowa"
           },
+          "type": [
+            "standard"
+          ],
           "codes": {
             "favat-rodzaj-faktury": "VAT"
           }
         },
         {
+          "name": {
+            "en": "Prepayment Invoice",
+            "pl": "Faktura Zaliczkowa"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "partial"
           ],
-          "name": {
-            "en": "Prepayment Invoice",
-            "pl": "Faktura Zaliczkowa"
-          },
           "codes": {
             "favat-rodzaj-faktury": "ZAL"
           }
         },
         {
+          "name": {
+            "en": "Settlement Invoice",
+            "pl": "Faktura Rozliczeniowa"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "settlement"
           ],
-          "name": {
-            "en": "Settlement Invoice",
-            "pl": "Faktura Rozliczeniowa"
-          },
           "codes": {
             "favat-rodzaj-faktury": "ROZ"
           }
         },
         {
+          "name": {
+            "en": "Simplified Invoice",
+            "pl": "Faktura Uproszczona"
+          },
           "type": [
             "standard"
           ],
           "tags": [
             "simplified"
           ],
-          "name": {
-            "en": "Simplified Invoice",
-            "pl": "Faktura Uproszczona"
-          },
           "codes": {
             "favat-rodzaj-faktury": "UPR"
           }
         },
         {
-          "type": [
-            "credit-note"
-          ],
           "name": {
             "en": "Credit note",
             "pl": "Faktura korygująca"
           },
+          "type": [
+            "credit-note"
+          ],
           "codes": {
             "favat-rodzaj-faktury": "KOR"
           }
         },
         {
+          "name": {
+            "en": "Prepayment credit note",
+            "pl": "Faktura korygująca fakturę zaliczkową"
+          },
           "type": [
             "credit-note"
           ],
           "tags": [
             "partial"
           ],
-          "name": {
-            "en": "Prepayment credit note",
-            "pl": "Faktura korygująca fakturę zaliczkową"
-          },
           "codes": {
             "favat-rodzaj-faktury": "KOR_ZAL"
           }
         },
         {
+          "name": {
+            "en": "Settlement credit note",
+            "pl": "Faktura korygująca fakturę rozliczeniową"
+          },
           "type": [
             "credit-note"
           ],
           "tags": [
             "settlement"
           ],
-          "name": {
-            "en": "Settlement credit note",
-            "pl": "Faktura korygująca fakturę rozliczeniową"
-          },
           "codes": {
             "favat-rodzaj-faktury": "KOR_ROZ"
           }

@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - CO: improved regime's documentation
 
+## [v0.112.0] - 2024-07-26
+
+### Added
+
+- `tax`: Scenarios now handle extension key and value for filtering.
+- PT: exemption text handling moved to scenarios.
+
 ## [v0.111.1] - 2024-07-25
 
 ### Added
