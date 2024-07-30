@@ -44,3 +44,11 @@ func TestPartyCalculate(t *testing.T) {
 	}
 	assert.NoError(t, party.Calculate(), "unknown entry should not cause problem")
 }
+
+func TestPartyAddressNill(t *testing.T) {
+	party := org.Party{
+		Addresses: []*org.Address{nil},
+	}
+	assert.NoError(t, party.Calculate())
+	assert.NoError(t, party.Validate())
+}

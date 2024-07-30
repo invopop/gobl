@@ -316,9 +316,9 @@ func (r *Regime) TimeLocation() *time.Location {
 // is inside the list of known tags.
 func (r *Regime) InTags() validation.Rule {
 	if r == nil {
-		return validation.In()
+		return validation.Empty
 	}
-	tags := make([]interface{}, len(r.Tags))
+	tags := make([]cbc.Key, len(r.Tags))
 	for i, t := range r.Tags {
 		tags[i] = t.Key
 	}
@@ -329,13 +329,13 @@ func (r *Regime) InTags() validation.Rule {
 // ensure a rate key is defined inside a category.
 func (r *Regime) InCategoryRates(cat cbc.Code) validation.Rule {
 	if r == nil {
-		return validation.In()
+		return validation.Empty
 	}
 	c := r.Category(cat)
 	if c == nil {
-		return validation.In()
+		return validation.Empty
 	}
-	keys := make([]interface{}, len(c.Rates))
+	keys := make([]cbc.Key, len(c.Rates))
 	for i, x := range c.Rates {
 		keys[i] = x.Key
 	}
@@ -346,9 +346,9 @@ func (r *Regime) InCategoryRates(cat cbc.Code) validation.Rule {
 // is inside the list of known codes.
 func (r *Regime) InCategories() validation.Rule {
 	if r == nil {
-		return validation.In()
+		return validation.Empty
 	}
-	cats := make([]interface{}, len(r.Categories))
+	cats := make([]cbc.Code, len(r.Categories))
 	for i, c := range r.Categories {
 		cats[i] = c.Code
 	}
