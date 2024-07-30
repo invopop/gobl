@@ -40,7 +40,7 @@ type Address struct {
 	// Post or ZIP code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// ISO country code.
-	Country l10n.CountryCode `json:"country,omitempty" jsonschema:"title=Country"`
+	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// When the postal address is not sufficient, coordinates help locate the address more precisely.
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
 	// Any additional semi-structure details about the address.

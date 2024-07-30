@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -38,7 +37,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
+		tID := &tax.Identity{Country: "ES", Code: ts.Code}
 		err := r.CalculateObject(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
@@ -47,7 +46,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 
 func TestNormalizeTaxIdentityZone(t *testing.T) {
 	r := es.New()
-	tID := &tax.Identity{Country: l10n.ES, Code: "93471790C", Zone: "XX"}
+	tID := &tax.Identity{Country: "ES", Code: "93471790C", Zone: "XX"}
 	err := r.CalculateObject(tID)
 	assert.NoError(t, err)
 	assert.Empty(t, tID.Zone) //nolint:staticcheck
@@ -191,7 +190,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 	r := es.New()
 	for _, ts := range tests {
 		t.Run(string(ts.Code), func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.ES, Code: ts.Code}
+			tID := &tax.Identity{Country: "ES", Code: ts.Code}
 			err := r.ValidateObject(tID)
 			if ts.Expected == nil {
 				assert.NoError(t, err)

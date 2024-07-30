@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/l10n/country-code",
-  "$ref": "#/$defs/CountryCode",
+  "$id": "https://gobl.org/draft-0/l10n/iso-country-code",
+  "$ref": "#/$defs/ISOCountryCode",
   "$defs": {
-    "CountryCode": {
+    "ISOCountryCode": {
       "oneOf": [
         {
           "const": "AF",
@@ -1000,27 +1000,11 @@
         {
           "const": "ZW",
           "title": "Zimbabwe"
-        },
-        {
-          "const": "EL",
-          "title": "Greece"
-        },
-        {
-          "const": "XI",
-          "title": "Northern Ireland"
-        },
-        {
-          "const": "XU",
-          "title": "United Kingdom"
-        },
-        {
-          "const": "EU",
-          "title": "European Union"
         }
       ],
       "type": "string",
-      "title": "Country Code",
-      "description": "Defines an ISO 3166-2 country code with exception cases for tax based extensions."
+      "title": "ISO Country Code",
+      "description": "Defines an ISO 3166-2 country code"
     }
   }
 }

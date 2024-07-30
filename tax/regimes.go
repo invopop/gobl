@@ -11,7 +11,7 @@ var regimes = newRegimeCollection()
 // supported as we've not yet come across situations where multiple
 // regimes exist within a single country.
 type RegimeCollection struct {
-	list map[l10n.CountryCode]*Regime
+	list map[l10n.TaxCountryCode]*Regime
 }
 
 // Regimes provides the current global regime collection object.
@@ -21,7 +21,7 @@ func Regimes() *RegimeCollection {
 
 func newRegimeCollection() *RegimeCollection {
 	c := new(RegimeCollection)
-	c.list = make(map[l10n.CountryCode]*Regime)
+	c.list = make(map[l10n.TaxCountryCode]*Regime)
 	return c
 }
 
@@ -31,7 +31,7 @@ func (c *RegimeCollection) add(r *Regime) {
 
 // For provides a single matching regime from the collection, or nil if
 // no match is found.
-func (c *RegimeCollection) For(country l10n.CountryCode) *Regime {
+func (c *RegimeCollection) For(country l10n.TaxCountryCode) *Regime {
 	r, ok := c.list[country]
 	if !ok {
 		return nil
@@ -57,7 +57,7 @@ func RegisterRegime(regime *Regime) {
 
 // RegimeFor returns the regime definition for country and locality combination
 // or nil if no match was found.
-func RegimeFor(country l10n.CountryCode) *Regime {
+func RegimeFor(country l10n.TaxCountryCode) *Regime {
 	return regimes.For(country)
 }
 

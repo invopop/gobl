@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -12,11 +11,11 @@ import (
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
-	tID := &tax.Identity{Country: l10n.CO, Code: "901.458.652-7"}
+	tID := &tax.Identity{Country: "CO", Code: "901.458.652-7"}
 	err := co.Calculate(tID)
 	require.NoError(t, err)
 
-	tID = &tax.Identity{Country: l10n.CO, Code: "XX"}
+	tID = &tax.Identity{Country: "CO", Code: "XX"}
 	err = co.Calculate(tID)
 	require.NoError(t, err)
 
@@ -42,7 +41,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &tax.Identity{Country: l10n.CO, Code: ts.Code}
+		tID := &tax.Identity{Country: "CO", Code: ts.Code}
 		err := co.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
@@ -85,7 +84,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.CO, Code: tt.code}
+			tID := &tax.Identity{Country: "CO", Code: tt.code}
 			err := co.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)

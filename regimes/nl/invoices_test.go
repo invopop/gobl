@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -19,14 +18,14 @@ func validInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: l10n.NL,
+				Country: "NL",
 				Code:    "000099998B57",
 			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.NL,
+				Country: "NL",
 				Code:    "808661863B01",
 			},
 		},

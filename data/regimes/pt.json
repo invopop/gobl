@@ -349,6 +349,168 @@
         },
         {
           "ext_key": "pt-exemption-code",
+          "ext_value": "M01",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Artigo 16.°, n.° 6 do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M02",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M04",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Exempt / Isento artigo 13.° do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M05",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Exempt / Isento artigo 14.° do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M06",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Exempt / Isento artigo 15.° do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M07",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Exempt / Isento artigo 9.° do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M09",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M10",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime de isenção / Artigo 57.° do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M11",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M12",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M13",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M14",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M15",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M16",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Exempt / Isento artigo 14.° do RITI"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M19",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M20",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Regime forfetário / Artigo 59.°-D n.°2 do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M21",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M25",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
           "ext_value": "M30",
           "note": {
             "key": "legal",
@@ -417,6 +579,15 @@
             "key": "legal",
             "src": "pt-exemption-code",
             "text": "Reverse charge / Autoliquidação - Decreto-Lei n.° 362/99, de 16 de setembro"
+          }
+        },
+        {
+          "ext_key": "pt-exemption-code",
+          "ext_value": "M99",
+          "note": {
+            "key": "legal",
+            "src": "pt-exemption-code",
+            "text": "Não sujeito ou não tributado"
           }
         }
       ]

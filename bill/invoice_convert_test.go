@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -111,13 +110,13 @@ func TestInvoiceConvertInto(t *testing.T) {
 			},
 			Supplier: &org.Party{
 				TaxID: &tax.Identity{
-					Country: l10n.ES,
+					Country: "ES",
 					Code:    "B98602642",
 				},
 			},
 			Customer: &org.Party{
 				TaxID: &tax.Identity{
-					Country: l10n.ES,
+					Country: "ES",
 					Code:    "54387763P",
 				},
 			},

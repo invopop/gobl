@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/head"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
@@ -219,13 +218,13 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "54387763P",
 			},
 		},
@@ -265,13 +264,13 @@ func testInvoicePTForCorrection(t *testing.T) *bill.Invoice {
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.PT,
+				Country: "PT",
 				Code:    "545259045",
 			},
 		},
 		Customer: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.PT,
+				Country: "PT",
 				Code:    "503504030",
 			},
 		},
@@ -308,13 +307,13 @@ func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 		Code:   "123",
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.FR,
+				Country: "FR",
 				Code:    "732829320",
 			},
 		},
 		Customer: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.FR,
+				Country: "FR",
 				Code:    "391838042",
 			},
 		},
@@ -354,13 +353,13 @@ func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 		},
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.CO,
+				Country: "CO",
 				Code:    "9014586527",
 			},
 		},
 		Customer: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.CO,
+				Country: "CO",
 				Code:    "8001345363",
 			},
 		},

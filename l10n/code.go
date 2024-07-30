@@ -22,9 +22,7 @@ const CodeEmpty Code = ""
 
 // Validate ensures the code is formatted correctly.
 func (c Code) Validate() error {
-	return validation.Validate(string(c),
-		validation.Match(codeFormat),
-	)
+	return validation.Match(codeFormat).Validate(string(c))
 }
 
 // In returns true if the code is contained inside the provided set

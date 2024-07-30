@@ -35,7 +35,7 @@ type Regime struct {
 	TimeZone string `json:"time_zone" jsonschema:"title=Time Zone"`
 
 	// Country code for the region
-	Country l10n.CountryCode `json:"country" jsonschema:"title=Code"`
+	Country l10n.TaxCountryCode `json:"country" jsonschema:"title=Code"`
 
 	// Specific Locality, region, city, province, county, or similar code inside
 	// the country, if needed.

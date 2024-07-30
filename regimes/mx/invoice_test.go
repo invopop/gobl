@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/head"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -34,7 +33,7 @@ func validInvoice() *bill.Invoice {
 				mx.ExtKeyCFDIFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
-				Country: l10n.MX,
+				Country: "MX",
 				Code:    "AAA010101AAA",
 			},
 		},
@@ -46,7 +45,7 @@ func validInvoice() *bill.Invoice {
 				mx.ExtKeyCFDIUse:          "G01",
 			},
 			TaxID: &tax.Identity{
-				Country: l10n.MX,
+				Country: "MX",
 				Code:    "ZZZ010101ZZZ",
 			},
 		},

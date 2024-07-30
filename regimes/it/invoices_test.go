@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -26,7 +25,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: l10n.IT,
+				Country: "IT",
 				Code:    "12345678903",
 			},
 			Addresses: []*org.Address{
@@ -34,7 +33,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					Street:   "Via di Test",
 					Code:     "12345",
 					Locality: "Rome",
-					Country:  l10n.IT,
+					Country:  "IT",
 					Number:   "3",
 				},
 			},
@@ -42,7 +41,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.IT,
+				Country: "IT",
 				Code:    "13029381004",
 			},
 			Addresses: []*org.Address{
@@ -50,7 +49,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					Street:   "Piazza di Test",
 					Code:     "38342",
 					Locality: "Venezia",
-					Country:  l10n.IT,
+					Country:  "IT",
 					Number:   "1",
 				},
 			},
@@ -95,7 +94,7 @@ func TestCustomerValidation(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = &tax.Identity{
-			Country: l10n.IT,
+			Country: "IT",
 			Code:    "",
 		}
 		inv.Customer.Identities = append(inv.Customer.Identities, id)
@@ -116,7 +115,7 @@ func TestCustomerValidation(t *testing.T) {
 	t.Run("missing tax id code and identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = &tax.Identity{
-			Country: l10n.IT,
+			Country: "IT",
 			Code:    "",
 		}
 		require.NoError(t, inv.Calculate())
@@ -130,7 +129,7 @@ func TestCustomerValidation(t *testing.T) {
 func TestSupplierValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	inv.Supplier.TaxID = &tax.Identity{
-		Country: l10n.IT,
+		Country: "IT",
 		Code:    "RSSGNN60R30H501U",
 	}
 	require.NoError(t, inv.Calculate())

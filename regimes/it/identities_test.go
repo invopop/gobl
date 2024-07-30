@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestIdentityNormalization(t *testing.T) {
-	r := tax.RegimeFor(l10n.IT)
+	r := tax.RegimeFor("IT")
 
 	t.Run("normalize codice fiscale", func(t *testing.T) {
 		p1 := &org.Identity{

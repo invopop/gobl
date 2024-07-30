@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
@@ -28,13 +27,13 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "54387763P",
 			},
 		},
@@ -75,7 +74,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "B98602642",
 			},
 		},

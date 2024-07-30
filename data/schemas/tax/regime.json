@@ -236,7 +236,7 @@
           "description": "Location name for the country's central time zone. Accepted\nvalues from IANA Time Zone Database (https://iana.org/time-zones)."
         },
         "country": {
-          "$ref": "https://gobl.org/draft-0/l10n/country-code",
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Code",
           "description": "Country code for the region"
         },

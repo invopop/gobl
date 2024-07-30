@@ -34,7 +34,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &tax.Identity{Country: l10n.IT, Code: ts.code}
+		tID := &tax.Identity{Country: "IT", Code: ts.code}
 		err := it.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.expected, tID.Code)
@@ -90,7 +90,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.IT, Code: tt.code}
+			tID := &tax.Identity{Country: "IT", Code: tt.code}
 			err := it.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
@@ -111,12 +111,12 @@ func TestTaxIdentityValidateGeneralCases(t *testing.T) {
 	}{
 		{
 			name: "just country",
-			tID:  &tax.Identity{Country: l10n.IT},
+			tID:  &tax.Identity{Country: "IT"},
 			err:  "",
 		},
 		{
 			name: "no type, assume biz",
-			tID:  &tax.Identity{Country: l10n.IT, Code: "12345678903"},
+			tID:  &tax.Identity{Country: "IT", Code: "12345678903"},
 			err:  "",
 		},
 	}

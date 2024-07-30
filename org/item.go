@@ -44,7 +44,7 @@ type Item struct {
 	// Unit of measure.
 	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Country code of where this item was from originally.
-	Origin l10n.CountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
+	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Additional meta information that may be useful

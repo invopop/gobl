@@ -6,9 +6,9 @@
     "Identity": {
       "properties": {
         "country": {
-          "$ref": "https://gobl.org/draft-0/l10n/country-code",
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Country Code",
-          "description": "ISO country code for Where the tax identity was issued."
+          "description": "Tax country code for Where the tax identity was issued."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

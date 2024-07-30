@@ -63,7 +63,7 @@
           "description": "Unit of measure."
         },
         "origin": {
-          "$ref": "https://gobl.org/draft-0/l10n/country-code",
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
           "title": "Country of Origin",
           "description": "Country code of where this item was from originally."
         },
