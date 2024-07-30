@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- CO: improved regime's documentation
+
 ## [v0.112.0] - 2024-07-26
 
 ### Added
