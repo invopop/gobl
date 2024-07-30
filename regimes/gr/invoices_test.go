@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -81,4 +82,16 @@ func TestInvoiceValidation(t *testing.T) {
 	assert.ErrorContains(t, err, "customer: (addresses: cannot be blank")
 	assert.ErrorContains(t, err, "lines: (0: (total: must be greater than 0")
 	assert.ErrorContains(t, err, "payment: (instructions: (key: must be a valid value")
+}
+
+func TestSimplifiedInvoiceValidation(t *testing.T) {
+	inv := validInvoice()
+	inv.Tax = &bill.Tax{
+		Tags: []cbc.Key{tax.TagSimplified},
+	}
+	inv.Customer.TaxID = nil
+	inv.Customer.Addresses = nil
+
+	require.NoError(t, inv.Calculate())
+	assert.NoError(t, inv.Validate())
 }

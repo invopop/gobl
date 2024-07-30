@@ -9,34 +9,47 @@ import (
 	"github.com/invopop/validation"
 )
 
+// invoiceValidator adds validation checks to v.invoices which are relevant
+// for the region.
+type invoiceValidator struct {
+	inv *bill.Invoice
+}
+
 func validateInvoice(inv *bill.Invoice) error {
-	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Series, validation.Required),
-		validation.Field(&inv.Supplier,
-			validation.By(validateInvoiceParty),
+	v := &invoiceValidator{inv: inv}
+	return v.validate()
+}
+
+func (v *invoiceValidator) validate() error {
+	return validation.ValidateStruct(v.inv,
+		validation.Field(&v.inv.Series, validation.Required),
+		validation.Field(&v.inv.Supplier,
+			validation.By(v.validateBusinessParty),
 			validation.Skip,
 		),
-		validation.Field(&inv.Customer,
-			validation.By(validateInvoiceParty),
-			validation.By(validateInvoiceCustomer),
+		validation.Field(&v.inv.Customer,
+			validation.When(!v.isSimplified(),
+				validation.By(v.validateBusinessParty),
+				validation.By(v.validateBusinessCustomer),
+			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Lines,
+		validation.Field(&v.inv.Lines,
 			validation.Each(
-				validation.By(validateInvoiceLine),
+				validation.By(v.validateLine),
 				validation.Skip,
 			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Payment,
+		validation.Field(&v.inv.Payment,
 			validation.Required,
-			validation.By(validateInvoicePayment),
+			validation.By(v.validatePayment),
 			validation.Skip,
 		),
 	)
 }
 
-func validateInvoiceParty(value any) error {
+func (v *invoiceValidator) validateBusinessParty(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {
 		return nil
@@ -50,7 +63,7 @@ func validateInvoiceParty(value any) error {
 	)
 }
 
-func validateInvoiceCustomer(value any) error {
+func (v *invoiceValidator) validateBusinessCustomer(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {
 		return nil
@@ -64,7 +77,7 @@ func validateInvoiceCustomer(value any) error {
 	)
 }
 
-func validateInvoiceLine(value any) error {
+func (v *invoiceValidator) validateLine(value any) error {
 	l, ok := value.(*bill.Line)
 	if !ok || l == nil {
 		return nil
@@ -78,7 +91,7 @@ func validateInvoiceLine(value any) error {
 	)
 }
 
-func validateInvoicePayment(value any) error {
+func (v *invoiceValidator) validatePayment(value any) error {
 	p, ok := value.(*bill.Payment)
 	if !ok || p == nil {
 		return nil
@@ -86,13 +99,13 @@ func validateInvoicePayment(value any) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Instructions,
 			validation.Required,
-			validation.By(validateInvoicePaymentInstructions),
+			validation.By(v.validatePaymentInstructions),
 			validation.Skip,
 		),
 	)
 }
 
-func validateInvoicePaymentInstructions(value any) error {
+func (v *invoiceValidator) validatePaymentInstructions(value any) error {
 	i, ok := value.(*pay.Instructions)
 	if !ok || i == nil {
 		return nil
@@ -105,4 +118,8 @@ func validateInvoicePaymentInstructions(value any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func (v *invoiceValidator) isSimplified() bool {
+	return v.inv.Tax.ContainsTag(tax.TagSimplified)
 }
