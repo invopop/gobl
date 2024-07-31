@@ -62,6 +62,9 @@ func TestParseIdentity(t *testing.T) {
 
 	_, err = tax.ParseIdentity("ESX3157928MMM")
 	assert.ErrorContains(t, err, "code: unknown type")
+
+	_, err = tax.ParseIdentity("E")
+	assert.ErrorContains(t, err, "invalid tax identity code")
 }
 
 func TestValidationRules(t *testing.T) {
