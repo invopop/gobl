@@ -4,7 +4,6 @@ import (
 	"errors"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
@@ -20,18 +19,17 @@ var (
 )
 
 // normalizeTaxIdentity requires additional steps for Greece as the language code
-// may also be used in the tax code.
+// is used in the tax code.
 func normalizeTaxIdentity(tID *tax.Identity) error {
 	if tID == nil {
 		return nil
 	}
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
 	// also allow for usage of "GR" which may be used in the tax code
 	// by accident.
-	code := strings.TrimPrefix(tID.Code.String(), string(l10n.GR))
-	tID.Code = cbc.Code(code)
+	if err := common.NormalizeTaxIdentity(tID, l10n.GR); err != nil {
+		return err
+	}
+	tID.Country = "EL" // always override for greece
 	return nil
 }
 

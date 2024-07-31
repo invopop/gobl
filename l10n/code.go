@@ -40,6 +40,18 @@ func (c Code) String() string {
 	return string(c)
 }
 
+// ISO is a convenience method to provide the ISO country code of
+// a code.
+func (c Code) ISO() ISOCountryCode {
+	return ISOCountryCode(c)
+}
+
+// Tax is a convenience method to provide the tax country code of a
+// code.
+func (c Code) Tax() TaxCountryCode {
+	return TaxCountryCode(c)
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Code) JSONSchema() *jsonschema.Schema {
 	s := &jsonschema.Schema{

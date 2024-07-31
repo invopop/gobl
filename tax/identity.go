@@ -86,7 +86,7 @@ func (id *Identity) Regime() *Regime {
 	if id == nil {
 		return nil
 	}
-	return regimes.For(id.Country)
+	return regimes.For(id.Country.Code())
 }
 
 // Normalize will attempt to perform a regional tax normalization
@@ -118,7 +118,7 @@ func (id *Identity) Validate() error {
 	if err != nil {
 		return err
 	}
-	r := regimes.For(id.Country)
+	r := regimes.For(id.Country.Code())
 	if r != nil {
 		return r.ValidateObject(id)
 	}

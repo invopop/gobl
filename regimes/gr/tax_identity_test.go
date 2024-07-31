@@ -33,6 +33,9 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		})
 	}
 
+	tID := &tax.Identity{Country: "GR", Code: "123456789"}
+	require.NoError(t, gr.Calculate(tID))
+	assert.Equal(t, "EL123456789", tID.String())
 }
 
 func TestValidateTaxIdentity(t *testing.T) {

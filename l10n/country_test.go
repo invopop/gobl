@@ -55,10 +55,12 @@ func TestISOCountryCodeOutput(t *testing.T) {
 	assert.Equal(t, "US", c.String())
 	assert.Equal(t, "United States of America", c.Name())
 	assert.Equal(t, "USA", c.Alpha3())
+	assert.Equal(t, l10n.US, c.Code())
 
 	c = l10n.ISOCountryCode("XX")
 	assert.Empty(t, c.Name())
 	assert.Empty(t, c.Alpha3())
+
 }
 
 func TestISOCountryCodeSchema(t *testing.T) {
@@ -84,6 +86,7 @@ func TestTaxCountryCodeOutput(t *testing.T) {
 	c := l10n.TaxCountryCode("US")
 	assert.Equal(t, "US", c.String())
 	assert.Equal(t, "United States of America", c.Name())
+	assert.Equal(t, l10n.US, c.Code())
 	c = l10n.TaxCountryCode("XX")
 	assert.Empty(t, c.Name())
 }

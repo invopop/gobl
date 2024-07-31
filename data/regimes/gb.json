@@ -5,6 +5,10 @@
   },
   "time_zone": "Europe/London",
   "country": "GB",
+  "alt_country_codes": [
+    "XI",
+    "XU"
+  ],
   "currency": "GBP",
   "tags": [
     {

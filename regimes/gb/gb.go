@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -19,11 +20,19 @@ const (
 	IdentityTypeCRN cbc.Code = "CRN" // Company Registration Number
 )
 
+var (
+	altCountryCodes = []l10n.Code{
+		l10n.XI, // Northern Ireland
+		l10n.XU, // UK except Northern Ireland (Brexit)
+	}
+)
+
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  "GB",
-		Currency: currency.GBP,
+		Country:         "GB",
+		AltCountryCodes: altCountryCodes,
+		Currency:        currency.GBP,
 		Name: i18n.String{
 			i18n.EN: "United Kingdom",
 		},
@@ -60,7 +69,7 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj)
+		return common.NormalizeTaxIdentity(obj, altCountryCodes...)
 	}
 	return nil
 }

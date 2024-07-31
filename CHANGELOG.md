@@ -12,11 +12,14 @@ Significant set of small changes related to renaming of the `l10n.CountryCode` t
 
 - CO: improved regime's documentation
 - `l10n`: split "CountryCode" into "ISOCountryCode" and "TaxCountryCode", for the two explicit use-cases.
+- `l10n`: renamed `CountryDefinitions` variable to `Countries()` method.
 
 ### Added
 
 - Code coverage report (still a lot to improve there!)
 - GR: support for simplified invoices
+- `l10n`: ISO and Tax lists of country definitions available, e.g. `l10n.Countries().ISO()`
+- `tax`: support for alternative country codes
 
 ### Upgraded
 

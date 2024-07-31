@@ -261,10 +261,14 @@ const (
 	EU Code = "EU" // European Union special code
 )
 
-// CountryDefinitions provides and array of country definitions including
+// Countries provides an array of country definitions including
 // the official ISO country code, the name in English, the country's
 // top-level-domain name, and if this is an extension or not.
-var CountryDefinitions = CountryDefs{
+func Countries() CountryDefs {
+	return countries
+}
+
+var countries = CountryDefs{
 	{AF, "AFG", "Afghanistan", "af", true, true, ""},
 	{AX, "ALA", "Åland Islands", "ax", true, true, ""},
 	{AL, "ALB", "Albania", "al", true, true, ""},
