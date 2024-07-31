@@ -45,6 +45,15 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+  - quantity: 1
+    item:
+      name: "Tax exempt item"
+      price: "100.00"
+    taxes:
+      - cat: VAT
+        rate: exempt
+        ext:
+          "gr-iapr-exemption": "3"
 
 payment:
   instructions:
