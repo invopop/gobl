@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -166,7 +165,7 @@ func isItalianParty(party *org.Party) bool {
 	if party == nil || party.TaxID == nil {
 		return false
 	}
-	return party.TaxID.Country.In(l10n.IT)
+	return party.TaxID.Country.In("IT")
 }
 
 func validateAddress(value interface{}) error {

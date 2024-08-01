@@ -14,3 +14,8 @@ func TestAllRegimes(t *testing.T) {
 		})
 	}
 }
+
+func TestRegimesAltCountryCodes(t *testing.T) {
+	r := tax.RegimeFor("GR")
+	assert.Equal(t, "EL", r.Country.String())
+}

@@ -32,7 +32,10 @@ const (
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.EL,
+		Country: "EL",
+		AltCountryCodes: []l10n.Code{
+			"GR", // regular ISO code
+		},
 		Currency: currency.EUR,
 		Name: i18n.String{
 			i18n.EN: "Greece",

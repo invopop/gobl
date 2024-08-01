@@ -70,7 +70,7 @@
           "description": "Post or ZIP code."
         },
         "country": {
-          "$ref": "https://gobl.org/draft-0/l10n/country-code",
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
           "title": "Country",
           "description": "ISO country code."
         },

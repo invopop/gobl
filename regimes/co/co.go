@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/regimes/common"
@@ -32,7 +31,7 @@ const (
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.CO,
+		Country:  "CO",
 		Currency: "COP",
 		Name: i18n.String{
 			i18n.EN: "Colombia",

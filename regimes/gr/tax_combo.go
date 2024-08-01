@@ -2,7 +2,6 @@ package gr
 
 import (
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -25,7 +24,7 @@ func normalizeTaxCombo(tc *tax.Combo) error {
 		return nil
 	}
 
-	reg := tax.RegimeFor(l10n.EL)
+	reg := tax.RegimeFor("EL")
 	rate := reg.Rate(tax.CategoryVAT, tc.Rate)
 	if rate == nil {
 		return nil

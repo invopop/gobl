@@ -22,9 +22,7 @@ const CodeEmpty Code = ""
 
 // Validate ensures the code is formatted correctly.
 func (c Code) Validate() error {
-	return validation.Validate(string(c),
-		validation.Match(codeFormat),
-	)
+	return validation.Match(codeFormat).Validate(string(c))
 }
 
 // In returns true if the code is contained inside the provided set
@@ -40,6 +38,18 @@ func (c Code) In(set ...Code) bool {
 // String provides string representation of code
 func (c Code) String() string {
 	return string(c)
+}
+
+// ISO is a convenience method to provide the ISO country code of
+// a code.
+func (c Code) ISO() ISOCountryCode {
+	return ISOCountryCode(c)
+}
+
+// Tax is a convenience method to provide the tax country code of a
+// code.
+func (c Code) Tax() TaxCountryCode {
+	return TaxCountryCode(c)
 }
 
 // JSONSchema provides a representation of the struct for usage in Schema.

@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/pl"
@@ -33,7 +32,7 @@ func creditNote() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Party",
 			TaxID: &tax.Identity{
-				Country: l10n.PL,
+				Country: "PL",
 				Code:    "1111111111",
 			},
 			Addresses: []*org.Address{
@@ -45,7 +44,7 @@ func creditNote() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.PL,
+				Country: "PL",
 				Code:    "2222222222",
 			},
 			Addresses: []*org.Address{

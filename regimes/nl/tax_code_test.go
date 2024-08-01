@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/nl"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +28,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &tax.Identity{Country: l10n.NL, Code: ts.Code}
+		tID := &tax.Identity{Country: "NL", Code: ts.Code}
 		err := nl.Calculate(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
@@ -88,7 +87,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: l10n.NL, Code: tt.code}
+			tID := &tax.Identity{Country: "NL", Code: tt.code}
 			err := nl.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)

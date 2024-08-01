@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
@@ -26,7 +25,7 @@ func baseInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Party",
 			TaxID: &tax.Identity{
-				Country: l10n.CO,
+				Country: "CO",
 				Code:    "412615332",
 				Zone:    "11001",
 			},
@@ -40,7 +39,7 @@ func baseInvoice() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.CO,
+				Country: "CO",
 				Code:    "124499654",
 				Zone:    "08638",
 			},
@@ -82,7 +81,7 @@ func creditNote() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Party",
 			TaxID: &tax.Identity{
-				Country: l10n.CO,
+				Country: "CO",
 				Code:    "412615332",
 				Zone:    "11001",
 			},
@@ -96,7 +95,7 @@ func creditNote() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.CO,
+				Country: "CO",
 				Code:    "124499654",
 				Zone:    "08638",
 			},
@@ -161,7 +160,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.NoError(t, err)
 
 	inv = baseInvoice()
-	inv.Customer.TaxID.Country = l10n.ES
+	inv.Customer.TaxID.Country = "ES"
 	inv.Customer.TaxID.Code = "A13180492"
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
@@ -190,7 +189,7 @@ func TestNormalizeParty(t *testing.T) {
 	p := &org.Party{
 		Name: "Test Party",
 		TaxID: &tax.Identity{
-			Country: l10n.CO,
+			Country: "CO",
 			Code:    "412615332",
 			Zone:    "11001",
 		},

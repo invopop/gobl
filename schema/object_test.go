@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/note"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -81,14 +80,14 @@ func exampleInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "B98602642",
 			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: l10n.ES,
+				Country: "ES",
 				Code:    "54387763P",
 			},
 		},

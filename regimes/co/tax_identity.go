@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -26,7 +25,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
 			validation.When(
-				tID.Country.In(l10n.CO),
+				tID.Country.In("CO"),
 				validation.By(validateTaxCode),
 			),
 		),

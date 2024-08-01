@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
 	"github.com/invopop/gobl/tax"
@@ -32,7 +31,7 @@ func TestPartyCalculate(t *testing.T) {
 		},
 	}
 	assert.NoError(t, party.Calculate())
-	assert.Equal(t, l10n.ES, party.TaxID.Country)
+	assert.Equal(t, "ES", party.TaxID.Country.String())
 	assert.Equal(t, "ES42342912G", party.TaxID.String())
 
 	party = org.Party{

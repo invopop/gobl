@@ -223,7 +223,7 @@
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name",
-          "description": "Name of the country"
+          "description": "Name of the tax regime."
         },
         "description": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
@@ -236,9 +236,17 @@
           "description": "Location name for the country's central time zone. Accepted\nvalues from IANA Time Zone Database (https://iana.org/time-zones)."
         },
         "country": {
-          "$ref": "https://gobl.org/draft-0/l10n/country-code",
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Code",
           "description": "Country code for the region"
+        },
+        "alt_country_codes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/l10n/code"
+          },
+          "type": "array",
+          "title": "Alternative Country Codes",
+          "description": "Alternative localization codes that may be used to identify the tax regime\nin specific circumstances."
         },
         "zone": {
           "$ref": "https://gobl.org/draft-0/l10n/code",

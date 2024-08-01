@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -90,7 +89,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			validation.When(
-				obj.TaxID != nil && obj.TaxID.Country.In(l10n.MX),
+				obj.TaxID != nil && obj.TaxID.Country.In("MX"),
 				tax.ExtensionsRequires(
 					ExtKeyCFDIPostCode,
 					ExtKeyCFDIFiscalRegime,

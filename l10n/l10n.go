@@ -8,6 +8,7 @@ import (
 func init() {
 	schema.Register(schema.GOBL.Add("l10n"),
 		Code(""),
-		CountryCode(""),
+		ISOCountryCode(""),
+		TaxCountryCode(""),
 	)
 }

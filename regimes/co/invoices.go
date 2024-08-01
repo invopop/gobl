@@ -2,7 +2,6 @@ package co
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -123,7 +122,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 }
 
 func isColombian(tID *tax.Identity) bool {
-	return tID != nil && tID.Country.In(l10n.CO)
+	return tID != nil && tID.Country.In("CO")
 }
 
 // municipalityCodeRequired checks if the municipality code is required for the given tax
@@ -132,7 +131,7 @@ func municipalityCodeRequired(tID *tax.Identity) bool {
 	if tID == nil {
 		return false
 	}
-	if !tID.Country.In(l10n.CO) {
+	if !tID.Country.In("CO") {
 		return false
 	}
 	return tID.Code != ""

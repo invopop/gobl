@@ -20,8 +20,8 @@ import (
 // Other fiscal identities should be defined in a parties identities array
 // with their own validation rules and country specific handling.
 type Identity struct {
-	// ISO country code for Where the tax identity was issued.
-	Country l10n.CountryCode `json:"country" jsonschema:"title=Country Code"`
+	// Tax country code for Where the tax identity was issued.
+	Country l10n.TaxCountryCode `json:"country" jsonschema:"title=Country Code"`
 
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
@@ -55,6 +55,27 @@ type validateTaxID struct {
 	requireCode bool
 }
 
+// ParseIdentity will attempt to parse a tax identity from a string making
+// the assumption that the first two characters are the country code and
+// the rest is the tax code. If the country code is identified by a
+// tax regime, the code will be normalized and validated.
+func ParseIdentity(tin string) (*Identity, error) {
+	if len(tin) < 2 {
+		return nil, ErrIdentityCodeInvalid
+	}
+	id := &Identity{
+		Country: l10n.TaxCountryCode(tin[:2]),
+		Code:    cbc.Code(tin[2:]),
+	}
+	if err := id.Normalize(); err != nil {
+		return nil, err
+	}
+	if err := id.Validate(); err != nil {
+		return nil, err
+	}
+	return id, nil
+}
+
 // String provides a string representation of the tax identity.
 func (id *Identity) String() string {
 	return fmt.Sprintf("%s%s", id.Country, id.Code)
@@ -62,17 +83,26 @@ func (id *Identity) String() string {
 
 // Regime provides the regime object for this tax identity.
 func (id *Identity) Regime() *Regime {
-	return regimes.For(id.Country)
+	if id == nil {
+		return nil
+	}
+	return regimes.For(id.Country.Code())
 }
 
-// Calculate will attempt to perform a regional tax normalization
+// Normalize will attempt to perform a regional tax normalization
 // on the tax identity.
-func (id *Identity) Calculate() error {
+func (id *Identity) Normalize() error {
 	r := id.Regime()
 	if r != nil {
 		return r.CalculateObject(id)
 	}
 	return nil
+}
+
+// Calculate is an alias for Normalize and will perform normalization
+// on the tax identity code.
+func (id *Identity) Calculate() error {
+	return id.Normalize()
 }
 
 // Validate checks to ensure the tax ID contains all the required
@@ -88,7 +118,7 @@ func (id *Identity) Validate() error {
 	if err != nil {
 		return err
 	}
-	r := regimes.For(id.Country)
+	r := regimes.For(id.Country.Code())
 	if r != nil {
 		return r.ValidateObject(id)
 	}

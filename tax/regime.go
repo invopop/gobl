@@ -24,7 +24,7 @@ const (
 // Regime defines the holding structure for the definitions of taxes inside a country
 // or territory.
 type Regime struct {
-	// Name of the country
+	// Name of the tax regime.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
 	// Introductory details about the regime.
@@ -35,7 +35,11 @@ type Regime struct {
 	TimeZone string `json:"time_zone" jsonschema:"title=Time Zone"`
 
 	// Country code for the region
-	Country l10n.CountryCode `json:"country" jsonschema:"title=Code"`
+	Country l10n.TaxCountryCode `json:"country" jsonschema:"title=Code"`
+
+	// Alternative localization codes that may be used to identify the tax regime
+	// in specific circumstances.
+	AltCountryCodes []l10n.Code `json:"alt_country_codes,omitempty" jsonschema:"title=Alternative Country Codes"`
 
 	// Specific Locality, region, city, province, county, or similar code inside
 	// the country, if needed.
@@ -271,6 +275,7 @@ func (r *Regime) ValidateWithContext(ctx context.Context) error {
 	ctx = context.WithValue(ctx, KeyRegime, r)
 	err := validation.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.Country, validation.Required),
+		validation.Field(&r.AltCountryCodes),
 		validation.Field(&r.Name, validation.Required),
 		validation.Field(&r.Description),
 		validation.Field(&r.TimeZone, validation.Required, validation.By(validateTimeZone)),

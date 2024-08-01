@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -20,7 +19,7 @@ func main() {
 		IssueDate: cal.MakeDate(2023, time.May, 11),
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
-				Country: l10n.US,
+				Country: "US",
 			},
 			Name:  "Provider One Inc.",
 			Alias: "Provider One",
@@ -36,7 +35,7 @@ func main() {
 					Locality: "San Francisco",
 					Region:   "CA",
 					Code:     "94105",
-					Country:  l10n.US,
+					Country:  "US",
 				},
 			},
 		},

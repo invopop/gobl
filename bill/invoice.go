@@ -311,7 +311,7 @@ func (inv *Invoice) Calculate() error {
 	if err != nil {
 		return err
 	}
-	r := tax.RegimeFor(tID.Country)
+	r := tax.RegimeFor(tID.Country.Code())
 	if r == nil {
 		return fmt.Errorf("no tax regime for %v", tID.Country)
 	}
@@ -638,7 +638,7 @@ func taxRegimeFor(party *org.Party) *tax.Regime {
 	if tID == nil {
 		return nil
 	}
-	return tax.RegimeFor(tID.Country)
+	return tax.RegimeFor(tID.Country.Code())
 }
 
 // JSONSchemaExtend extends the schema with additional property details

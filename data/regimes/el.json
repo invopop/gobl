@@ -6,6 +6,9 @@
   },
   "time_zone": "Europe/Athens",
   "country": "EL",
+  "alt_country_codes": [
+    "GR"
+  ],
   "currency": "EUR",
   "tags": [
     {

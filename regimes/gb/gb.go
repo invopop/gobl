@@ -20,11 +20,19 @@ const (
 	IdentityTypeCRN cbc.Code = "CRN" // Company Registration Number
 )
 
+var (
+	altCountryCodes = []l10n.Code{
+		l10n.XI, // Northern Ireland
+		l10n.XU, // UK except Northern Ireland (Brexit)
+	}
+)
+
 // New provides the tax region definition
 func New() *tax.Regime {
 	return &tax.Regime{
-		Country:  l10n.GB,
-		Currency: currency.GBP,
+		Country:         "GB",
+		AltCountryCodes: altCountryCodes,
+		Currency:        currency.GBP,
 		Name: i18n.String{
 			i18n.EN: "United Kingdom",
 		},
@@ -61,7 +69,7 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj)
+		return common.NormalizeTaxIdentity(obj, altCountryCodes...)
 	}
 	return nil
 }

@@ -2,7 +2,6 @@ package es
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -75,7 +74,7 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			validation.When(
-				obj.TaxID.Country.In(l10n.ES),
+				obj.TaxID.Country.In("ES"),
 				tax.RequireIdentityCode,
 			),
 		),

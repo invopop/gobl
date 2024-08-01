@@ -3,7 +3,6 @@ package mx_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
@@ -25,7 +24,7 @@ func TestMigratePartyIdentities(t *testing.T) {
 			},
 		},
 		TaxID: &tax.Identity{
-			Country: l10n.MX,
+			Country: "MX",
 			Code:    "ZZZ010101ZZZ",
 			Zone:    "65000",
 		},
