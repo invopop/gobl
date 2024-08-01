@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "28c8038223b50d1638b0aaabeb81ab7f48e6de754ab61a68df4ff7d9ac137a9c"
+			"val": "fbd62bfe8e72e1c115f170e49f42f00453c05756668f16c7708090e4f0e79a9c"
 		},
 		"draft": true
 	},
@@ -86,6 +86,26 @@
 					}
 				],
 				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Tax exempt item",
+					"price": "100.00"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"gr-iapr-exemption": "3",
+							"gr-iapr-vat-cat": "7"
+						}
+					}
+				],
+				"total": "100.00"
 			}
 		],
 		"payment": {
@@ -94,8 +114,8 @@
 			}
 		},
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "1720.00",
+			"total": "1720.00",
 			"taxes": {
 				"categories": [
 					{
@@ -109,6 +129,15 @@
 								"base": "1620.00",
 								"percent": "24%",
 								"amount": "388.80"
+							},
+							{
+								"key": "exempt",
+								"ext": {
+									"gr-iapr-exemption": "3",
+									"gr-iapr-vat-cat": "7"
+								},
+								"base": "100.00",
+								"amount": "0.00"
 							}
 						],
 						"amount": "388.80"
@@ -117,8 +146,8 @@
 				"sum": "388.80"
 			},
 			"tax": "388.80",
-			"total_with_tax": "2008.80",
-			"payable": "2008.80"
+			"total_with_tax": "2108.80",
+			"payable": "2108.80"
 		}
 	}
 }

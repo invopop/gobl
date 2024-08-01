@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - [invopop/validation](https://github.com/invopop/validation) - upgrade to latest version with nil pointer fix.
 
+### Fixed
+
+- GR: fixed certain tax combos not getting calculated by the regime
+
 ## [v0.112.0] - 2024-07-26
 
 ### Added
@@ -53,7 +57,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - CO: renamed credit and debit extension names to fit in UIs.
 - `org.Party`: `name` is now optional, but recommended.
 
-### Fixes
+### Fixed
 
 - `org.People`: `name` is now correctly validated.
 
@@ -145,7 +149,7 @@ Multiple version upgrade after merging the [gobl.cli](https://github.com/invopop
 
 - `org.Registration`: added `other` field.
 
-### Fixes
+### Fixed
 
 - Field descriptions of `org.Website`
 
