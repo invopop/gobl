@@ -19,11 +19,11 @@ type Name struct {
 	// Additional prefix to add to name, like Mrs. or Mr.
 	Prefix string `json:"prefix,omitempty" jsonschema:"title=Prefix"`
 	// Person's given or first name
-	Given string `json:"given" jsonschema:"title=Given"`
+	Given string `json:"given,omitempty" jsonschema:"title=Given"`
 	// Middle names or initials
 	Middle string `json:"middle,omitempty" jsonschema:"title=Middle"`
 	// Second or Family name.
-	Surname string `json:"surname" jsonschema:"title=Surname"`
+	Surname string `json:"surname,omitempty" jsonschema:"title=Surname"`
 	// Additional second of family name.
 	Surname2 string `json:"surname2,omitempty" jsonschema:"title=Second Surname"`
 	// Titles to include after the name.
@@ -41,8 +41,16 @@ func (n *Name) Validate() error {
 func (n *Name) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithRegime(ctx, n,
 		validation.Field(&n.UUID),
-		validation.Field(&n.Given, validation.Required),
-		validation.Field(&n.Surname, validation.Required),
+		validation.Field(&n.Given,
+			validation.When(n.Surname == "",
+				validation.Required,
+			),
+		),
+		validation.Field(&n.Surname,
+			validation.When(n.Given == "",
+				validation.Required,
+			),
+		),
 		validation.Field(&n.Meta),
 	)
 }
