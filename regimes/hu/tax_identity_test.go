@@ -1,4 +1,4 @@
-package hu
+package hu_test
 
 import (
 	"testing"
@@ -25,7 +25,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		tID := &tax.Identity{Country: "ES", Code: ts.Code}
+		tID := &tax.Identity{Country: "HU", Code: ts.Code}
 		err := r.CalculateObject(tID)
 		assert.NoError(t, err)
 		assert.Equal(t, ts.Expected, tID.Code)
@@ -42,10 +42,10 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{"Invalid length (5)", "12345", "invalid length"},
 		{"Invalid length (10)", "1234567890", "invalid length"},
 		{"Invalid check digit", "12345678", "checksum mismatch"},
-		{"Invalid VAT code", "12345678123", "invalid VAT code"},
-		{"Invalid area code", "12345678120", "invalid area code"},
-		{"Valid code (8 chars)", "12345670", ""},
-		{"Valid code (11 chars)", "12345678103", ""},
+		{"Invalid VAT code", "21114445623", "invalid VAT code"},
+		{"Invalid area code", "82713452101", "invalid area code"},
+		{"Valid code (8 chars)", "98109858", ""},
+		{"Valid code (11 chars)", "88212131103", ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

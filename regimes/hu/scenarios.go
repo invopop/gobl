@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/regimes/common"
 )
 
+// Document tag keys
 const (
 	TagOutOfScope            cbc.Key = "out-of-scope"
 	TagDomesticReverseCharge cbc.Key = "domestic-reverse-charge"

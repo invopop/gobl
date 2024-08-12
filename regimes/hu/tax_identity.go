@@ -50,18 +50,29 @@ func validateTaxCode(value interface{}) error {
 	if code == "" {
 		return nil
 	}
+
+	for _, v := range code {
+		x := v - 48
+		if x < 0 || x > 9 {
+			return errors.New("contains invalid characters")
+		}
+	}
+
 	if len(code) != 8 && len(code) != 11 {
 		return errors.New("invalid length")
 	}
 
+	str := code.String()
+
 	// Calculate check-digit
-	check_digit := (10 - (9*int(code[0])+7*int(code[1])+3*int(code[2])+int(code[3])+9*int(code[4])+7*int(code[5])+3*int(code[6]))%10) % 10
+	result := 9*int(str[0]-'0') + 7*int(str[1]-'0') + 3*int(str[2]-'0') + int(str[3]-'0') + 9*int(str[4]-'0') + 7*int(str[5]-'0') + 3*int(str[6]-'0')
+	checkDigit := (10 - result%10) % 10
 
 	compare, err := strconv.Atoi(string(code[7]))
 	if err != nil {
 		return fmt.Errorf("invalid check digit: %w", err)
 	}
-	if compare != check_digit {
+	if compare != checkDigit {
 		return errors.New("checksum mismatch")
 	}
 

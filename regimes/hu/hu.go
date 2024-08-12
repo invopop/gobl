@@ -1,3 +1,4 @@
+// Package hu provides the Hungarian tax regime.
 package hu
 
 import (
@@ -10,6 +11,7 @@ func init() {
 	tax.RegisterRegime(New())
 }
 
+// New instantiates a new Hungarian regime.
 func New() *tax.Regime {
 	return &tax.Regime{
 		Country:  "HU",
