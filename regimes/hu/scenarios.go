@@ -14,7 +14,6 @@ const (
 	TagSecondHand            cbc.Key = "second-hand"
 	TagArt                   cbc.Key = "art"
 	TagAntiques              cbc.Key = "antiques"
-	TagPrivatePerson         cbc.Key = "private-person"
 )
 
 var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
@@ -58,13 +57,6 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Antiques",
 			i18n.HU: "Antikvitás",
-		},
-	},
-	{
-		Key: TagPrivatePerson,
-		Name: i18n.String{
-			i18n.EN: "Private Person",
-			i18n.HU: "Magánszemély",
 		},
 	},
 })

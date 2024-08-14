@@ -2,6 +2,7 @@
 package hu
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
@@ -32,8 +33,8 @@ func New() *tax.Regime {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
-	//case *bill.Invoice:
-	//	return validateInvoice(obj)
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}

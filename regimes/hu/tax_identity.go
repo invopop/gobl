@@ -11,6 +11,8 @@ import (
 	"github.com/invopop/validation"
 )
 
+// There are also some rules for individuals' tax codes, that can be found in this document: https://web.archive.org/web/20200622115229/https://ceginformaciosszolgalat.kormany.hu/download/4/27/02000/adoszam_adoazonosito_ellenorzes_2018.pdf
+
 // Number 4 is only valid for the group tax subject to VAT (second tax id)
 var (
 	validVatCodes = map[cbc.Code]bool{
