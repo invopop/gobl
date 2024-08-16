@@ -7,7 +7,8 @@ import (
 
 // Special codes to be used inside rates
 const (
-	ExtKeyExemptionCode = "hu-exemption-code"
+	ExtKeyExemptionCode     = "hu-exemption-code"
+	ExtKeyVatOutOfScopeCode = "hu-vat-out-of-scope-code"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -61,6 +62,22 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
+				Code: "UNKNOWN",
+				Name: i18n.String{
+					i18n.EN: "It can be used for modifying or cancelling invoices or if unknown",
+					i18n.HU: "Számla módosítására, törlésére vagy ismeretlen esetén használható",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyVatOutOfScopeCode,
+		Name: i18n.String{
+			i18n.EN: "VAT out of scope reason code",
+			i18n.HU: "ÁFA hatálya alól mentesség okának kódja",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
 				Code: "ATK",
 				Name: i18n.String{
 					i18n.EN: "Outside Scope of VAT act: Sections 2 and 3 of the VAT Act",
@@ -86,6 +103,13 @@ var extensionKeys = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Non-reverse charge in another member state",
 					i18n.HU: "Nem fordított adózás más tagállamban",
+				},
+			},
+			{
+				Code: "HO",
+				Name: i18n.String{
+					i18n.EN: "Transaction in a 3rd country",
+					i18n.HU: "Ügylet harmadik országban",
 				},
 			},
 			{
