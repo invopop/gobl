@@ -41,19 +41,10 @@ func New() *tax.Regime {
 			i18n.EN: "Greece",
 			i18n.EL: "Ελλάδα",
 		},
-		TimeZone: "Europe/Athens",
-		Tags:     invoiceTags,
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
-		},
-		Corrections: []*tax.CorrectionDefinition{
-			{
-				Schema: bill.ShortSchemaInvoice,
-				Types: []cbc.Key{
-					bill.InvoiceTypeCreditNote,
-				},
-			},
-		},
+		TimeZone:         "Europe/Athens",
+		Tags:             invoiceTags,
+		Scenarios:        scenarios,
+		Corrections:      corrections,
 		Validator:        Validate,
 		Calculator:       Calculate,
 		Categories:       taxCategories,

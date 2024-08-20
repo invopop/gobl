@@ -2,6 +2,7 @@ package gr
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -44,6 +45,14 @@ func (v *invoiceValidator) validate() error {
 		validation.Field(&v.inv.Payment,
 			validation.Required,
 			validation.By(v.validatePayment),
+			validation.Skip,
+		),
+		validation.Field(&v.inv.Preceding,
+			validation.When(
+				v.inv.Type.In(bill.InvoiceTypeCreditNote),
+				validation.Required,
+			),
+			validation.Each(validation.By(v.validatePreceding)),
 			validation.Skip,
 		),
 	)
@@ -115,6 +124,20 @@ func (v *invoiceValidator) validatePaymentInstructions(value any) error {
 		validation.Field(&i.Key,
 			validation.Required,
 			isValidPaymentMeanKey,
+			validation.Skip,
+		),
+	)
+}
+
+func (v *invoiceValidator) validatePreceding(value any) error {
+	p, ok := value.(*bill.Preceding)
+	if !ok || p == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Stamps,
+			head.StampsHas(StampIAPRMark),
 			validation.Skip,
 		),
 	)

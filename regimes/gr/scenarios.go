@@ -23,6 +23,10 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	},
 })
 
+var scenarios = []*tax.ScenarioSet{
+	invoiceScenarios,
+}
+
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*tax.Scenario{
