@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -93,4 +94,29 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 
 	require.NoError(t, inv.Calculate())
 	assert.NoError(t, inv.Validate())
+}
+
+func TestPrecedingValidation(t *testing.T) {
+	inv := validInvoice()
+
+	inv.Preceding = []*bill.Preceding{
+		{
+			Code: "123",
+			Stamps: []*head.Stamp{
+				{
+					Provider: "unexpected",
+					Value:    "1234",
+				},
+			},
+		},
+	}
+	inv.Type = bill.InvoiceTypeCreditNote
+
+	require.NoError(t, inv.Calculate())
+
+	err := inv.Validate()
+	assert.ErrorContains(t, err, "preceding: (0: (stamps: missing iapr-mark stamp.).)")
+
+	inv.Preceding[0].Stamps[0].Provider = "iapr-mark"
+	require.NoError(t, inv.Validate())
 }
