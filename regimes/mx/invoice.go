@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -205,13 +206,13 @@ func (v *invoiceValidator) precedingEntry(value interface{}) error {
 		return nil
 	}
 
-	for _, s := range entry.Stamps {
-		if s.Provider == StampSATUUID {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("must have a `%s` stamp", StampSATUUID)
+	return validation.ValidateStruct(entry,
+		validation.Field(
+			&entry.Stamps,
+			head.StampsHas(StampSATUUID),
+			validation.Skip,
+		),
+	)
 }
 
 func normalizeInvoice(inv *bill.Invoice) error {

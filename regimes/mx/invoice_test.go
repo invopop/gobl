@@ -201,7 +201,7 @@ func TestPrecedingValidation(t *testing.T) {
 	assertValidationError(t, inv, "preceding: cannot be mapped from a `standard` type invoice")
 
 	inv.Type = bill.InvoiceTypeCreditNote
-	assertValidationError(t, inv, "preceding: (0: must have a `sat-uuid` stamp.)")
+	assertValidationError(t, inv, "preceding: (0: (stamps: missing sat-uuid stamp.).)")
 
 	inv.Preceding[0].Stamps[0].Provider = "sat-uuid"
 	require.NoError(t, inv.Validate())
