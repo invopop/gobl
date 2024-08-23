@@ -21,16 +21,16 @@ func TestValidateTaxCombo(t *testing.T) {
 			Percent:  num.NewPercentage(4, 2),
 		}
 		err := tc.ValidateWithContext(ctx)
-		require.ErrorContains(t, err, "ext: (gr-iapr-vat-cat: required.)")
+		require.ErrorContains(t, err, "ext: (gr-mydata-vat-cat: required.)")
 	})
 
 	t.Run("exemption presence", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateExempt,
-			Ext:      tax.Extensions{"gr-iapr-vat-cat": "1"},
+			Ext:      tax.Extensions{"gr-mydata-vat-cat": "1"},
 		}
 		err := tc.ValidateWithContext(ctx)
-		require.ErrorContains(t, err, "gr-iapr-exemption: required")
+		require.ErrorContains(t, err, "gr-mydata-exemption: required")
 	})
 }

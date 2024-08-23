@@ -53,7 +53,7 @@ lines:
       - cat: VAT
         rate: exempt
         ext:
-          "gr-iapr-exemption": "3"
+          "gr-mydata-exemption": "3"
 
 payment:
   instructions:

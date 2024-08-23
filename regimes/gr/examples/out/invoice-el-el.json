@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fbd62bfe8e72e1c115f170e49f42f00453c05756668f16c7708090e4f0e79a9c"
+			"val": "f5eea36f4cc864e3f9648b1ce5ff5b47c9a659b124d88b0e758a301188384744"
 		},
 		"draft": true
 	},
@@ -81,7 +81,7 @@
 						"rate": "standard",
 						"percent": "24%",
 						"ext": {
-							"gr-iapr-vat-cat": "1"
+							"gr-mydata-vat-cat": "1"
 						}
 					}
 				],
@@ -100,8 +100,8 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"gr-iapr-exemption": "3",
-							"gr-iapr-vat-cat": "7"
+							"gr-mydata-exemption": "3",
+							"gr-mydata-vat-cat": "7"
 						}
 					}
 				],
@@ -124,7 +124,7 @@
 							{
 								"key": "standard",
 								"ext": {
-									"gr-iapr-vat-cat": "1"
+									"gr-mydata-vat-cat": "1"
 								},
 								"base": "1620.00",
 								"percent": "24%",
@@ -133,8 +133,8 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"gr-iapr-exemption": "3",
-									"gr-iapr-vat-cat": "7"
+									"gr-mydata-exemption": "3",
+									"gr-mydata-vat-cat": "7"
 								},
 								"base": "100.00",
 								"amount": "0.00"

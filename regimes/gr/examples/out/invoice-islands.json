@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9f7fe5b3f2c4c3d20ed91205d1ddd442e11ea039eb9c9f61f5e4b35067ac6fe1"
+			"val": "988c5d19c22447915d0e5184b8a99eaef271f87c24e8746b6809962259b3cac4"
 		},
 		"draft": true
 	},
@@ -81,7 +81,7 @@
 						"rate": "standard+island",
 						"percent": "17%",
 						"ext": {
-							"gr-iapr-vat-cat": "4"
+							"gr-mydata-vat-cat": "4"
 						}
 					}
 				],
@@ -104,7 +104,7 @@
 							{
 								"key": "standard+island",
 								"ext": {
-									"gr-iapr-vat-cat": "4"
+									"gr-mydata-vat-cat": "4"
 								},
 								"base": "1620.00",
 								"percent": "17%",

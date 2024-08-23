@@ -36,16 +36,16 @@ var taxCategories = []*tax.Category{
 		},
 		Retained: false,
 		Extensions: []cbc.Key{
-			ExtKeyIAPRVATCat,
-			ExtKeyIAPRExemption,
+			ExtKeyMyDATAVATCat,
+			ExtKeyMyDATAExemption,
 		},
 		Validation: func(tc *tax.Combo) error {
 			return validation.ValidateStruct(tc,
 				validation.Field(&tc.Ext,
-					tax.ExtensionsRequires(ExtKeyIAPRVATCat),
+					tax.ExtensionsRequires(ExtKeyMyDATAVATCat),
 					validation.When(
 						tc.Percent == nil,
-						tax.ExtensionsRequires(ExtKeyIAPRExemption),
+						tax.ExtensionsRequires(ExtKeyMyDATAExemption),
 					),
 					validation.Skip,
 				),
@@ -64,7 +64,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "1",
+					ExtKeyMyDATAVATCat: "1",
 				},
 			},
 			{
@@ -79,7 +79,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "2",
+					ExtKeyMyDATAVATCat: "2",
 				},
 			},
 			{
@@ -94,7 +94,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "3",
+					ExtKeyMyDATAVATCat: "3",
 				},
 			},
 			{
@@ -109,7 +109,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "4",
+					ExtKeyMyDATAVATCat: "4",
 				},
 			},
 			{
@@ -124,7 +124,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "5",
+					ExtKeyMyDATAVATCat: "5",
 				},
 			},
 			{
@@ -139,7 +139,7 @@ var taxCategories = []*tax.Category{
 					},
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "6",
+					ExtKeyMyDATAVATCat: "6",
 				},
 			},
 			{
@@ -150,7 +150,7 @@ var taxCategories = []*tax.Category{
 					i18n.EL: "Απαλλαγή",
 				},
 				Ext: tax.Extensions{
-					ExtKeyIAPRVATCat: "7",
+					ExtKeyMyDATAVATCat: "7",
 				},
 			},
 		},

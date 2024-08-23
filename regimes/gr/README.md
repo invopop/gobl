@@ -16,7 +16,7 @@ Example GR GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by a 30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate with a specific VAT category.
 
-In GOBL, the IAPR VAT category code must be set using the `gr-iapr-vat-cat` extension of a line's tax to one of the codes:
+In GOBL, the IAPR VAT category code must be set using the `gr-mydata-vat-cat` extension of a line's tax to one of the codes:
 
 | Code | Description                 | GOBL Rate              |
 | ---- | --------------------------- | ---------------------- |
@@ -30,7 +30,7 @@ In GOBL, the IAPR VAT category code must be set using the `gr-iapr-vat-cat` exte
 | `8`  | Records without VAT         |                        |
 
 
-Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
+Please, note that GOBL will automatically set the proper `gr-mydata-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
 
 ```js
 {
@@ -61,7 +61,7 @@ Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code 
 
 Greece invoices can be exempt of VAT for different causes and the tax authority require a specific cause code to be provided.
 
-In a GOBL invoice, the `rate` of a line's tax need to be set to `exempt`, and the `ext` map's `gr-iapr-exemption` property needs to be set to one of these codes:
+In a GOBL invoice, the `rate` of a line's tax need to be set to `exempt`, and the `ext` map's `gr-mydata-exemption` property needs to be set to one of these codes:
 
 | Code | Description                                             |
 | ---- | ------------------------------------------------------- |
@@ -114,7 +114,7 @@ For example:
         "cat": "VAT",
         "rate": "exempt",
         "ext": {
-          "gr-iapr-exemption": "30"
+          "gr-mydata-exemption": "30"
         }
       }
     ],
