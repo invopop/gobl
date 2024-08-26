@@ -142,6 +142,12 @@
         "en": "Depreciable assets",
         "it": "Beni ammortizzabili"
       }
+    },
+    {
+      "key": "b2g",
+      "name": {
+        "en": "Business to Government"
+      }
     }
   ],
   "extensions": [
@@ -167,6 +173,172 @@
           "name": {
             "en": "Private Parties (default)",
             "it": "Soggetti Privati (predefinito)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "it-sdi-document-type",
+      "name": {
+        "en": "SDI Document Type",
+        "it": "Tipo Documento SDI"
+      },
+      "desc": {
+        "en": "Code used to describe the type of document being sent to the SDI. This is\nused to determine the correct schema to use when validating the document."
+      },
+      "codes": [
+        {
+          "code": "TD01",
+          "name": {
+            "en": "Regular Invoice",
+            "it": "Fattura"
+          }
+        },
+        {
+          "code": "TD02",
+          "name": {
+            "en": "Advance or down payment on invoice",
+            "it": "Acconto / anticipo su fattura"
+          }
+        },
+        {
+          "code": "TD03",
+          "name": {
+            "en": "Advance or down payment on freelance invoice",
+            "it": "Acconto / anticipo su parcella"
+          }
+        },
+        {
+          "code": "TD04",
+          "name": {
+            "en": "Credit Note",
+            "it": "Nota di credito"
+          }
+        },
+        {
+          "code": "TD05",
+          "name": {
+            "en": "Debit Note",
+            "it": "Nota di debito"
+          }
+        },
+        {
+          "code": "TD06",
+          "name": {
+            "en": "Freelancer invoice with retained taxes",
+            "it": "Parcella"
+          }
+        },
+        {
+          "code": "TD07",
+          "name": {
+            "en": "Simplified Invoice",
+            "it": "Fattura Semplificata"
+          }
+        },
+        {
+          "code": "TD08",
+          "name": {
+            "en": "Simplified Credit Note",
+            "it": "Nota di credito semplificata"
+          }
+        },
+        {
+          "code": "TD09",
+          "name": {
+            "en": "Simplified Debit Note",
+            "it": "Nota di debito semplificata"
+          }
+        },
+        {
+          "code": "TD16",
+          "name": {
+            "en": "Reverse charge",
+            "it": "Integrazione fattura reverse charge interno"
+          }
+        },
+        {
+          "code": "TD17",
+          "name": {
+            "en": "Self-billed Import",
+            "it": "Integrazione/autofattura per acquisto servizi da estero"
+          }
+        },
+        {
+          "code": "TD18",
+          "name": {
+            "en": "Self-billed EU Goods Import",
+            "it": "Integrazione per acquisto beni intracomunitari"
+          }
+        },
+        {
+          "code": "TD19",
+          "name": {
+            "en": "Self-billed Goods Import",
+            "it": "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72"
+          }
+        },
+        {
+          "code": "TD20",
+          "name": {
+            "en": "Self-billed Regularization",
+            "it": "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93"
+          }
+        },
+        {
+          "code": "TD21",
+          "name": {
+            "en": "Self-billed invoice when ceiling exceeded",
+            "it": "Autofattura per splafonamento"
+          }
+        },
+        {
+          "code": "TD22",
+          "name": {
+            "en": "Self-billed for goods extracted from VAT warehouse",
+            "it": "Estrazione beni da Deposito IVA"
+          }
+        },
+        {
+          "code": "TD23",
+          "name": {
+            "en": "Self-billed for goods extracted from VAT warehouse with VAT payment",
+            "it": "Estrazione beni da Deposito IVA con versamento IVA"
+          }
+        },
+        {
+          "code": "TD24",
+          "name": {
+            "en": "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
+            "it": "Fattura differita - art.21 c.4 lett. a"
+          }
+        },
+        {
+          "code": "TD25",
+          "name": {
+            "en": "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
+            "it": "Fattura differita - art.21 c.4 terzo periodo lett. b"
+          }
+        },
+        {
+          "code": "TD26",
+          "name": {
+            "en": "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
+            "it": "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72"
+          }
+        },
+        {
+          "code": "TD27",
+          "name": {
+            "en": "Self-billed for self consumption or for free transfer without recourse",
+            "it": "Fattura per autoconsumo o per cessioni gratuite senza rivalsa"
+          }
+        },
+        {
+          "code": "TD28",
+          "name": {
+            "en": "Purchases from San Marino with VAT (paper invoice)",
+            "it": "Acquisti da San Marino con IVA (fattura cartacea)"
           }
         }
       ]
@@ -992,6 +1164,27 @@
       "list": [
         {
           "name": {
+            "en": "Private Invoice",
+            "it": "Fattura Privata"
+          },
+          "ext": {
+            "it-sdi-format": "FPR12"
+          }
+        },
+        {
+          "name": {
+            "en": "Government Invoice",
+            "it": "Fattura Pubblica"
+          },
+          "tags": [
+            "b2g"
+          ],
+          "ext": {
+            "it-sdi-format": "FPA12"
+          }
+        },
+        {
+          "name": {
             "en": "Regular Invoice",
             "it": "Fattura"
           },
@@ -1000,6 +1193,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD01"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD01"
           }
         },
         {
@@ -1015,6 +1211,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD02"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD02"
           }
         },
         {
@@ -1027,6 +1226,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD04"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD04"
           }
         },
         {
@@ -1039,6 +1241,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD05"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD05"
           }
         },
         {
@@ -1054,6 +1259,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD06"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD06"
           }
         },
         {
@@ -1070,6 +1278,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD03"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD03"
           }
         },
         {
@@ -1085,6 +1296,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD07"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD07"
           }
         },
         {
@@ -1100,6 +1314,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD08"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD08"
           }
         },
         {
@@ -1115,6 +1332,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD09"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD09"
           }
         },
         {
@@ -1130,6 +1350,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD27"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD27"
           }
         },
         {
@@ -1146,6 +1369,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD16"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD16"
           }
         },
         {
@@ -1162,6 +1388,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD17"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD17"
           }
         },
         {
@@ -1179,6 +1408,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD18"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD18"
           }
         },
         {
@@ -1196,6 +1428,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD19"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD19"
           }
         },
         {
@@ -1212,6 +1447,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD20"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD20"
           }
         },
         {
@@ -1228,6 +1466,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD21"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD21"
           }
         },
         {
@@ -1244,6 +1485,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD22"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD22"
           }
         },
         {
@@ -1260,6 +1504,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD23"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD23"
           }
         },
         {
@@ -1275,6 +1522,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD24"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD24"
           }
         },
         {
@@ -1291,6 +1541,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD25"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD25"
           }
         },
         {
@@ -1306,6 +1559,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD26"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD26"
           }
         },
         {
@@ -1322,6 +1578,9 @@
           ],
           "codes": {
             "fatturapa-tipo-documento": "TD28"
+          },
+          "ext": {
+            "it-sdi-document-type": "TD28"
           }
         },
         {

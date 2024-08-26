@@ -84,6 +84,7 @@ func (v *invoiceValidator) tax(value any) error {
 		validation.Field(&obj.Ext,
 			tax.ExtensionsHas(
 				ExtKeySDIFormat,
+				ExtKeySDIDocumentType,
 			),
 			validation.Skip,
 		),

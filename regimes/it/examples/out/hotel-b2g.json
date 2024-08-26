@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8e0cf96fb6088c737eac65f30a73cbbbfef42166a2509933de759a2c213ca8c9"
+			"val": "4422cc906aed3b2ccf656821a4e73b72e9893568aa2071f5edfcd696213466a5"
 		},
 		"draft": true
 	},
@@ -18,7 +18,11 @@
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT",
+			"tags": [
+				"b2g"
+			],
 			"ext": {
+				"it-sdi-document-type": "TD01",
 				"it-sdi-format": "FPA12"
 			}
 		},

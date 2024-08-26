@@ -7,9 +7,7 @@
   "issue_date": "2023-05-21",
   "tax": {
     "prices_include": "VAT",
-    "ext": {
-      "it-sdi-format": "FPA12"
-    }
+    "tags": ["b2g"]
   },
   "type": "standard",
   "supplier": {
