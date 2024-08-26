@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -947,6 +948,34 @@ func TestCalculateInverted(t *testing.T) {
 	require.NoError(t, i.Invert())
 	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
 	assert.Equal(t, i.Totals.Due.String(), "-710.00")
+}
+
+func TestInvoiceForUnknownRegime(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(32, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(4375, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(6, 2),
+				},
+			},
+		},
+	}
+	inv := baseInvoice(t, lines...)
+
+	// Set an undefined regime
+	inv.Supplier.TaxID.Country = l10n.AD.Tax()
+	assert.Nil(t, tax.RegimeFor(l10n.AD), "if Andorra is defined, change this to another country")
+
+	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
+	inv.Currency = currency.USD
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
 }
 
 func TestValidation(t *testing.T) {

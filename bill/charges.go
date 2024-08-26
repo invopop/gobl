@@ -59,7 +59,7 @@ type Charge struct {
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	//
+	// internal amount for calculations
 	amount num.Amount
 }
 

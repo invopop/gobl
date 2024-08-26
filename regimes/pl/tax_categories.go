@@ -26,6 +26,10 @@ var taxCategories = []*tax.Category{
 			i18n.PL: "Podatek od Wartości Dodanej",
 		},
 		Retained: false,
+		Extensions: []cbc.Key{
+			ExtKeyKSeFVATZero,
+			ExtKeyKSeFVATSpecial,
+		},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateStandard,
@@ -89,9 +93,6 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(0, 3),
 					},
 				},
-				Extensions: []cbc.Key{
-					ExtKeyKSeFVATZero,
-				},
 			},
 			{
 				Key: tax.RateExempt,
@@ -99,17 +100,13 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Exempt",
 					i18n.PL: "Zwolnione",
 				},
-				Exempt:     true,
-				Extensions: []cbc.Key{},
+				Exempt: true,
 			},
 			{
 				Key: tax.RateSpecial,
 				Name: i18n.String{
 					i18n.EN: "Special Rate",
 					i18n.PL: "Stawka Specjalna",
-				},
-				Extensions: []cbc.Key{
-					ExtKeyKSeFVATSpecial,
 				},
 			},
 

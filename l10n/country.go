@@ -47,6 +47,16 @@ func (c TaxCountryCode) Validate() error {
 	return isTaxCountry.Validate(c)
 }
 
+// Empty returns true if the ISO country code is empty.
+func (c ISOCountryCode) Empty() bool {
+	return c == ""
+}
+
+// Empty returns true if the tax country code is empty.
+func (c TaxCountryCode) Empty() bool {
+	return c == ""
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (ISOCountryCode) JSONSchema() *jsonschema.Schema {
 	defs := countries.ISO()

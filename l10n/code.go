@@ -40,6 +40,11 @@ func (c Code) String() string {
 	return string(c)
 }
 
+// Empty returns true if the code is empty.
+func (c Code) Empty() bool {
+	return c == CodeEmpty
+}
+
 // ISO is a convenience method to provide the ISO country code of
 // a code.
 func (c Code) ISO() ISOCountryCode {

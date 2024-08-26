@@ -11,6 +11,28 @@ import (
 	"github.com/invopop/validation"
 )
 
+// Extensions are a key component of GOBL that are used to include additional
+// structured data in documents that doesn't fit into any of the common or
+// universal fields. They're typically defined by local tax agencies that will
+// use the data for tax reports or classification. Civil law countries
+// have a far greater tendancy to require these than common law countries.
+//
+// Naming of extension keys is important and should be kept short and descriptive.
+// There are three key components to an extension key separated by dashes:
+//
+// - An ISO country code e.g. `mx`, `es`, `gb`, etc.
+// - Short abreviation of the platform or format the extension will be used with,
+//   e.g. `cfdi` for Mexico's CFDI defined by the SAT, `facturae` for Spain's
+//   FacturaE format, `sdi` for the Italian SDI (document interchange system), etc.
+//   This is important, as it helps avoid potential conflicts in the future with
+//   new or alternative formats that may appear.
+// - A short descriptive name of the extension, e.g. `exception`, `fiscal-regime`,
+//   `vat-cat`, `incoming-typ`, etc. The aim should be to avoid using obvious names
+//   like `code` or `key` in the name, as these are already implied through usage.
+//
+// Please look at the regimes package and othe country specific implementations for
+// examples of how to define and use extensions.
+
 // Extensions is a map of extension keys to values.
 type Extensions map[cbc.Key]ExtValue
 

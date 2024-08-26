@@ -43,6 +43,9 @@ var categories = []*tax.Category{
 				),
 			)
 		},
+		Extensions: []cbc.Key{
+			ExtKeySDIExempt,
+		},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateZero,
@@ -110,9 +113,6 @@ var categories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.IT: "Esente",
-				},
-				Extensions: []cbc.Key{
-					ExtKeySDIExempt,
 				},
 			},
 		},

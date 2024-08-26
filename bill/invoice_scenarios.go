@@ -67,12 +67,7 @@ func (inv *Invoice) prepareTags() error {
 	return nil
 }
 
-func (inv *Invoice) prepareScenarios() error {
-	r := inv.TaxRegime()
-	if r == nil {
-		return nil
-	}
-
+func (inv *Invoice) prepareScenarios(r *tax.Regime) error {
 	// Use the scenario summary to add any notes to the invoice
 	ss := inv.scenarioSummary(r)
 	if ss == nil {
