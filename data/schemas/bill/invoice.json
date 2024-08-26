@@ -506,7 +506,7 @@
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Value",
+          "title": "Amount",
           "description": "Fixed discount amount to apply (calculated if percent present).",
           "calculated": true
         },
