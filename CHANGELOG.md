@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `org.Name`: either given **or** surname are required, as opposed to both at the same time.
+
 ### Added
 
 - `head`: validation rule to check for the presence of stamps
