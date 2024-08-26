@@ -22,6 +22,7 @@ For example, the document format and type in Italy are now set inside the extens
 
 ### Added
 
+- `tax`: `Combo` now supports a "country" field.
 - `tax.Category`: added `Validation` method support for custom validation of a tax combo for a specific tax category.
 - `tax.Scenario`: added "extensions" to be able to automatically update document level extensions based on the scenario detected.
 - `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
