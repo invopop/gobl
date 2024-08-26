@@ -457,6 +457,9 @@
       "schema": "bill/invoice",
       "types": [
         "credit-note"
+      ],
+      "stamps": [
+        "iapr-mark"
       ]
     }
   ],
