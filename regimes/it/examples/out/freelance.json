@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "124e26bab54b94076c0b734ae289d86cdb55de6e95e68bce5d8abebd4a4c646a"
+			"val": "40290781746fb9fb82dca15c6887db4491d450535f1c72c4cc1f6fd016375545"
 		},
 		"draft": true
 	},
@@ -19,7 +19,11 @@
 		"tax": {
 			"tags": [
 				"freelance"
-			]
+			],
+			"ext": {
+				"it-sdi-document-type": "TD06",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "MªF. Services",

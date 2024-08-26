@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7c8b49ce0d6fcf0ea4a825299efabdb4132dc5e6114d49c21268ae980be2f249"
+			"val": "981582884a4a4b2dfc2fcccb146d782d1be5e6bb1e058b8d8b30a9f214d7c524"
 		},
 		"draft": true
 	},
@@ -19,7 +19,11 @@
 		"tax": {
 			"tags": [
 				"reverse-charge"
-			]
+			],
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "MªF. Services",

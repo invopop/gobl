@@ -54,15 +54,20 @@ type Scenario struct {
 
 	// Any additional local meta data that may be useful in integrations.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	// Ext represents a set of tax extensions that should be applied to
+	// the document in the appropriate "tax" context.
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // ScenarioSummary is the result after running through a set of
-// scenarios and determining which combinations of Notes and Meta
-// are viable.
+// scenarios and determining which combinations of Notes, Codes, Meta,
+// and extensions are viable.
 type ScenarioSummary struct {
 	Notes []*cbc.Note
 	Codes cbc.CodeMap
 	Meta  cbc.Meta
+	Ext   Extensions
 }
 
 // ValidateWithContext checks the scenario set for errors.
@@ -81,6 +86,7 @@ func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key, docExt []E
 		Notes: make([]*cbc.Note, 0),
 		Codes: make(cbc.CodeMap),
 		Meta:  make(cbc.Meta),
+		Ext:   make(Extensions),
 	}
 	for _, s := range ss.List {
 		if s.match(docType, docTags, docExt) {
@@ -92,6 +98,9 @@ func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key, docExt []E
 			}
 			for k, v := range s.Meta {
 				summary.Meta[k] = v
+			}
+			for k, v := range s.Ext {
+				summary.Ext[k] = v
 			}
 		}
 	}

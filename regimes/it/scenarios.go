@@ -114,6 +114,12 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 			i18n.IT: "Beni ammortizzabili",
 		},
 	},
+	{
+		Key: tax.TagB2G,
+		Name: i18n.String{
+			i18n.EN: "Business to Government",
+		},
+	},
 })
 
 var scenarios = []*tax.ScenarioSet{
@@ -123,15 +129,40 @@ var scenarios = []*tax.ScenarioSet{
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*tax.Scenario{
+		// **** DOCUMENT FORMAT ****
+		{
+			// default
+			Name: i18n.String{
+				i18n.EN: "Private Invoice",
+				i18n.IT: "Fattura Privata",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIFormat: "FPR12",
+			},
+		},
+		{
+			Tags: []cbc.Key{tax.TagB2G},
+			Name: i18n.String{
+				i18n.EN: "Government Invoice",
+				i18n.IT: "Fattura Pubblica",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIFormat: "FPA12",
+			},
+		},
 		// **** TIPO DOCUMENTO ****
 		{
+			// Default
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Name: i18n.String{
 				i18n.EN: "Regular Invoice",
 				i18n.IT: "Fattura",
 			},
 			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD01",
+				KeyFatturaPATipoDocumento: "TD01", // deprecation pending
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD01",
 			},
 		},
 		{
@@ -144,6 +175,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD02",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD02",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -154,6 +188,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD04",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD04",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
@@ -163,6 +200,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD05",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD05",
 			},
 		},
 		{
@@ -175,6 +215,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD06",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD06",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -185,6 +228,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD03",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD03",
 			},
 		},
 		{
@@ -197,6 +243,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD07",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD07",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
@@ -207,6 +256,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD08",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD08",
 			},
 		},
 		{
@@ -219,6 +271,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD09",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD09",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -229,6 +284,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD27", // order is important
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD27",
 			},
 		},
 		{
@@ -241,6 +299,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD16",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD16",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -251,6 +312,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD17",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD17",
 			},
 		},
 		{
@@ -263,6 +327,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD18",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD18",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -273,6 +340,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD19",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD19",
 			},
 		},
 		{
@@ -285,6 +355,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD20",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD20",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -295,6 +368,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD21",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD21",
 			},
 		},
 		{
@@ -307,6 +383,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD22",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD22",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -317,6 +396,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD23",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD23",
 			},
 		},
 		{
@@ -329,6 +411,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD24",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD24",
+			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -339,6 +424,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD25",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD25",
 			},
 		},
 		{
@@ -351,8 +439,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD26",
 			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD26",
+			},
 		},
-
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{tax.TagSelfBilled, TagSanMarinoPaper},
@@ -362,6 +452,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 			Codes: cbc.CodeMap{
 				KeyFatturaPATipoDocumento: "TD28",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD28",
 			},
 		},
 

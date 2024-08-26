@@ -4,6 +4,18 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [Unreleased]
+
+### Changed
+
+- `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
+
+### Added
+
+- `tax.Scenario`: added "extensions" to be able to automatically update document level extensions based on the scenario detected.
+- `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
+- `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
+
 ## [v0.114.0]
 
 ### Changed

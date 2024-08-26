@@ -399,6 +399,10 @@ func (inv *Invoice) TaxRegime() *tax.Regime {
 
 // ScenarioSummary determines a summary of the tax scenario for the invoice based on
 // the document type and tax tags.
+//
+// Deprecated: tax regimes should be updated to automatically apply all the required
+// extensions and meta-data to the invoice itself. This method will still be needed
+// until all documents have transitioned to the current approach.
 func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
 	r := inv.TaxRegime()
 	if r == nil {
@@ -471,6 +475,16 @@ func (inv *Invoice) prepareScenarios() error {
 		if en == nil {
 			inv.Notes = append(inv.Notes, n)
 		}
+	}
+	// Apply extensions at the document level
+	for k, v := range ss.Ext {
+		if inv.Tax == nil {
+			inv.Tax = new(Tax)
+		}
+		if inv.Tax.Ext == nil {
+			inv.Tax.Ext = make(tax.Extensions)
+		}
+		inv.Tax.Ext[k] = v
 	}
 
 	return nil

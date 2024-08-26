@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2434bdabd945fae738d55633f80263f928ca256bf38987aede6c0795e63c13b9"
+			"val": "20e340e585ffea671a4c2f4146f2fcaf81b22a3e112f359d6c1d4c3002542d00"
 		},
 		"draft": true
 	},
@@ -17,7 +17,11 @@
 		"issue_date": "2024-07-12",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT"
+			"prices_include": "VAT",
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "Company Name S.r.l.",
