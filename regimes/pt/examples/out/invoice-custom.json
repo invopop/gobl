@@ -4,26 +4,20 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "cb8d238600064894369e3ca71845ffd694c44153c85f3d01ec713b96bf8158d1"
+			"val": "a3295f1a3a86eaec661bfe0d92215e5463e5866d1e1db2b6e4b11412d8319f52"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
-		"type": "credit-note",
+		"type": "standard",
 		"code": "",
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
-		"preceding": [
-			{
-				"code": "SEQ/333",
-				"issue_date": "2023-01-20"
-			}
-		],
 		"tax": {
 			"ext": {
-				"pt-saft-invoice-type": "NC"
+				"pt-saft-invoice-type": "FT"
 			}
 		},
 		"supplier": {
@@ -50,50 +44,46 @@
 				"quantity": "1",
 				"item": {
 					"name": "Noite em quarto duplo",
-					"price": "200.00"
+					"price": "100.00"
 				},
-				"sum": "200.00",
+				"sum": "100.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
-						"percent": "23.0%",
+						"percent": "22%",
 						"ext": {
-							"pt-region": "PT",
 							"pt-saft-tax-rate": "NOR"
 						}
 					}
 				],
-				"total": "200.00"
+				"total": "100.00"
 			}
 		],
 		"totals": {
-			"sum": "200.00",
-			"total": "200.00",
+			"sum": "100.00",
+			"total": "100.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
 								"ext": {
-									"pt-region": "PT",
 									"pt-saft-tax-rate": "NOR"
 								},
-								"base": "200.00",
-								"percent": "23.0%",
-								"amount": "46.00"
+								"base": "100.00",
+								"percent": "22%",
+								"amount": "22.00"
 							}
 						],
-						"amount": "46.00"
+						"amount": "22.00"
 					}
 				],
-				"sum": "46.00"
+				"sum": "22.00"
 			},
-			"tax": "46.00",
-			"total_with_tax": "246.00",
-			"payable": "246.00"
+			"tax": "22.00",
+			"total_with_tax": "122.00",
+			"payable": "122.00"
 		}
 	}
 }

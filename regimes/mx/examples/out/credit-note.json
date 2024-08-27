@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "94764fa558c99a777b6cd73dc97cc8601e72bb767102206385abf069c7aa7c6a"
+			"val": "cd89fc7b1791ca8b5d3b734d45c4ccf418469fb1179edaecd2feaf855b66e076"
 		},
 		"draft": true
 	},
@@ -31,7 +31,9 @@
 		],
 		"tax": {
 			"ext": {
-				"mx-cfdi-issue-place": "21000"
+				"mx-cfdi-doc-type": "E",
+				"mx-cfdi-issue-place": "21000",
+				"mx-cfdi-rel-type": "01"
 			}
 		},
 		"supplier": {

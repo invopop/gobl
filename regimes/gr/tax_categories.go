@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // TaxRateIsland is used to define the island reduced tax rates
@@ -36,6 +37,19 @@ var taxCategories = []*tax.Category{
 		Retained: false,
 		Extensions: []cbc.Key{
 			ExtKeyIAPRVATCat,
+			ExtKeyIAPRExemption,
+		},
+		Validation: func(tc *tax.Combo) error {
+			return validation.ValidateStruct(tc,
+				validation.Field(&tc.Ext,
+					tax.ExtensionsRequires(ExtKeyIAPRVATCat),
+					validation.When(
+						tc.Percent == nil,
+						tax.ExtensionsRequires(ExtKeyIAPRExemption),
+					),
+					validation.Skip,
+				),
+			)
 		},
 		Rates: []*tax.Rate{
 			{
@@ -49,7 +63,7 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(24, 2),
 					},
 				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "1",
 				},
 			},
@@ -64,7 +78,7 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(13, 2),
 					},
 				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "2",
 				},
 			},
@@ -79,7 +93,7 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(6, 2),
 					},
 				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "3",
 				},
 			},
@@ -94,7 +108,7 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(17, 2),
 					},
 				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "4",
 				},
 			},
@@ -109,7 +123,7 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(9, 2),
 					},
 				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "5",
 				},
 			},
@@ -124,7 +138,7 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(4, 2),
 					},
 				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "6",
 				},
 			},
@@ -135,10 +149,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Exempt",
 					i18n.EL: "Απαλλαγή",
 				},
-				Extensions: []cbc.Key{
-					ExtKeyIAPRExemption,
-				},
-				Map: cbc.CodeMap{
+				Ext: tax.Extensions{
 					ExtKeyIAPRVATCat: "7",
 				},
 			},

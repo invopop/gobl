@@ -99,6 +99,94 @@
       ]
     },
     {
+      "key": "pt-saft-invoice-type",
+      "name": {
+        "en": "Invoice Type",
+        "pt": "Tipo de Fatura"
+      },
+      "codes": [
+        {
+          "code": "FT",
+          "name": {
+            "en": "Standard Invoice",
+            "pt": "Fatura"
+          }
+        },
+        {
+          "code": "FS",
+          "name": {
+            "en": "Simplified Invoice",
+            "pt": "Fatura Simplificada"
+          }
+        },
+        {
+          "code": "FR",
+          "name": {
+            "en": "Invoice-Receipt",
+            "pt": "Fatura-Recibo"
+          }
+        },
+        {
+          "code": "ND",
+          "name": {
+            "en": "Debit Note",
+            "pt": "Nota de Débito"
+          }
+        },
+        {
+          "code": "NC",
+          "name": {
+            "en": "Credit Note",
+            "pt": "Nota de Crédito"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pt-saft-tax-rate",
+      "name": {
+        "en": "Tax Rate Code",
+        "pt": "Código da Taxa de Imposto"
+      },
+      "codes": [
+        {
+          "code": "RED",
+          "name": {
+            "en": "Reduced",
+            "pt": "Redução"
+          }
+        },
+        {
+          "code": "INT",
+          "name": {
+            "en": "Intermediate",
+            "pt": "Intermédio"
+          }
+        },
+        {
+          "code": "NOR",
+          "name": {
+            "en": "Normal",
+            "pt": "Normal"
+          }
+        },
+        {
+          "code": "ISE",
+          "name": {
+            "en": "Exempt",
+            "pt": "Isento"
+          }
+        },
+        {
+          "code": "OUT",
+          "name": {
+            "en": "Other",
+            "pt": "Outro"
+          }
+        }
+      ]
+    },
+    {
       "key": "pt-exemption-code",
       "name": {
         "en": "Tax exemption reason code",
@@ -305,8 +393,8 @@
           "type": [
             "standard"
           ],
-          "codes": {
-            "at-invoice-type": "FT"
+          "ext": {
+            "pt-saft-invoice-type": "FT"
           }
         },
         {
@@ -316,8 +404,8 @@
           "tags": [
             "simplified"
           ],
-          "codes": {
-            "at-invoice-type": "FS"
+          "ext": {
+            "pt-saft-invoice-type": "FS"
           }
         },
         {
@@ -327,24 +415,24 @@
           "tags": [
             "invoice-receipt"
           ],
-          "codes": {
-            "at-invoice-type": "FR"
+          "ext": {
+            "pt-saft-invoice-type": "FR"
           }
         },
         {
           "type": [
             "debit-note"
           ],
-          "codes": {
-            "at-invoice-type": "ND"
+          "ext": {
+            "pt-saft-invoice-type": "ND"
           }
         },
         {
           "type": [
             "credit-note"
           ],
-          "codes": {
-            "at-invoice-type": "NC"
+          "ext": {
+            "pt-saft-invoice-type": "NC"
           }
         },
         {
@@ -613,7 +701,6 @@
         "en": "Value Added Tax",
         "pt": "Imposto sobre o Valor Acrescentado"
       },
-      "rate_required": true,
       "rates": [
         {
           "key": "standard",
@@ -641,8 +728,8 @@
               "percent": "23.0%"
             }
           ],
-          "map": {
-            "at-tax-code": "NOR"
+          "ext": {
+            "pt-saft-tax-rate": "NOR"
           }
         },
         {
@@ -671,8 +758,8 @@
               "percent": "13.0%"
             }
           ],
-          "map": {
-            "at-tax-code": "INT"
+          "ext": {
+            "pt-saft-tax-rate": "INT"
           }
         },
         {
@@ -701,8 +788,8 @@
               "percent": "6.0%"
             }
           ],
-          "map": {
-            "at-tax-code": "RED"
+          "ext": {
+            "pt-saft-tax-rate": "RED"
           }
         },
         {
@@ -712,16 +799,15 @@
             "pt": "Isento"
           },
           "exempt": true,
-          "extensions": [
-            "pt-exemption-code"
-          ],
-          "map": {
-            "at-tax-code": "ISE"
+          "ext": {
+            "pt-saft-tax-rate": "ISE"
           }
         }
       ],
       "extensions": [
-        "pt-region"
+        "pt-region",
+        "pt-saft-tax-rate",
+        "pt-exemption-code"
       ]
     }
   ]

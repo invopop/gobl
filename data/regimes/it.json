@@ -60,6 +60,12 @@
       }
     },
     {
+      "key": "b2g",
+      "name": {
+        "en": "Business to Government"
+      }
+    },
+    {
       "key": "freelance",
       "name": {
         "en": "Freelancer",
@@ -142,12 +148,6 @@
         "en": "Depreciable assets",
         "it": "Beni ammortizzabili"
       }
-    },
-    {
-      "key": "b2g",
-      "name": {
-        "en": "Business to Government"
-      }
     }
   ],
   "extensions": [
@@ -184,7 +184,7 @@
         "it": "Tipo Documento SDI"
       },
       "desc": {
-        "en": "Code used to describe the type of document being sent to the SDI. This is\nused to determine the correct schema to use when validating the document."
+        "en": "Code used to describe the type of document being sent to the SDI. This should\nnormally be determined automatically by GOBL."
       },
       "codes": [
         {
@@ -1191,9 +1191,6 @@
           "type": [
             "standard"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD01"
-          },
           "ext": {
             "it-sdi-document-type": "TD01"
           }
@@ -1209,9 +1206,6 @@
           "tags": [
             "partial"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD02"
-          },
           "ext": {
             "it-sdi-document-type": "TD02"
           }
@@ -1224,9 +1218,6 @@
           "type": [
             "credit-note"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD04"
-          },
           "ext": {
             "it-sdi-document-type": "TD04"
           }
@@ -1239,9 +1230,6 @@
           "type": [
             "debit-note"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD05"
-          },
           "ext": {
             "it-sdi-document-type": "TD05"
           }
@@ -1257,9 +1245,6 @@
           "tags": [
             "freelance"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD06"
-          },
           "ext": {
             "it-sdi-document-type": "TD06"
           }
@@ -1276,9 +1261,6 @@
             "partial",
             "freelance"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD03"
-          },
           "ext": {
             "it-sdi-document-type": "TD03"
           }
@@ -1294,9 +1276,6 @@
           "tags": [
             "simplified"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD07"
-          },
           "ext": {
             "it-sdi-document-type": "TD07"
           }
@@ -1312,9 +1291,6 @@
           "tags": [
             "simplified"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD08"
-          },
           "ext": {
             "it-sdi-document-type": "TD08"
           }
@@ -1330,9 +1306,6 @@
           "tags": [
             "simplified"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD09"
-          },
           "ext": {
             "it-sdi-document-type": "TD09"
           }
@@ -1348,9 +1321,6 @@
           "tags": [
             "self-billed"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD27"
-          },
           "ext": {
             "it-sdi-document-type": "TD27"
           }
@@ -1367,9 +1337,6 @@
             "self-billed",
             "reverse-charge"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD16"
-          },
           "ext": {
             "it-sdi-document-type": "TD16"
           }
@@ -1386,9 +1353,6 @@
             "self-billed",
             "import"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD17"
-          },
           "ext": {
             "it-sdi-document-type": "TD17"
           }
@@ -1406,9 +1370,6 @@
             "import",
             "goods-eu"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD18"
-          },
           "ext": {
             "it-sdi-document-type": "TD18"
           }
@@ -1426,9 +1387,6 @@
             "import",
             "goods"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD19"
-          },
           "ext": {
             "it-sdi-document-type": "TD19"
           }
@@ -1445,9 +1403,6 @@
             "self-billed",
             "regularization"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD20"
-          },
           "ext": {
             "it-sdi-document-type": "TD20"
           }
@@ -1464,9 +1419,6 @@
             "self-billed",
             "ceiling-exceeded"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD21"
-          },
           "ext": {
             "it-sdi-document-type": "TD21"
           }
@@ -1483,9 +1435,6 @@
             "self-billed",
             "goods-extracted"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD22"
-          },
           "ext": {
             "it-sdi-document-type": "TD22"
           }
@@ -1502,9 +1451,6 @@
             "self-billed",
             "goods-with-tax"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD23"
-          },
           "ext": {
             "it-sdi-document-type": "TD23"
           }
@@ -1520,9 +1466,6 @@
           "tags": [
             "deferred"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD24"
-          },
           "ext": {
             "it-sdi-document-type": "TD24"
           }
@@ -1539,9 +1482,6 @@
             "deferred",
             "third-period"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD25"
-          },
           "ext": {
             "it-sdi-document-type": "TD25"
           }
@@ -1557,9 +1497,6 @@
           "tags": [
             "depreciable-assets"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD26"
-          },
           "ext": {
             "it-sdi-document-type": "TD26"
           }
@@ -1576,9 +1513,6 @@
             "self-billed",
             "san-marino-paper"
           ],
-          "codes": {
-            "fatturapa-tipo-documento": "TD28"
-          },
           "ext": {
             "it-sdi-document-type": "TD28"
           }

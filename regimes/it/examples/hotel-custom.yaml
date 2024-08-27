@@ -1,0 +1,66 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: 3aea7b56-59d8-4beb-90bd-f8f280d852a0
+series: SAMPLE
+code: "002"
+currency: EUR
+issue_date: "2023-05-21"
+tax:
+  prices_include: VAT
+  ext:
+    it-sdi-format: FPA12 # this overrides default
+type: standard
+supplier:
+  tax_id:
+    country: IT
+    code: "12345678903"
+  name: Hotel California
+  registration:
+    capital: "50000.00"
+    currency: EUR
+    entry: "123456"
+    office: RM
+  addresses:
+    - num: "102"
+      street: Via California
+      locality: Palermo
+      region: PA
+      code: "33213"
+      country: IT
+customer:
+  tax_id:
+    country: IT
+    code: "13029381004"
+  name: Mela S.r.l.
+  inboxes:
+    - key: it-sdi-code
+      code: M5UXCR5
+  addresses:
+    - num: "23"
+      street: Via dei Mille
+      locality: Firenze
+      region: FI
+      code: "00100"
+      country: IT
+lines:
+  - i: 1
+    quantity: "1"
+    item:
+      name: Tassa di Soggiorno
+      price: "1.00"
+    taxes:
+      - cat: VAT
+        rate: exempt
+        ext:
+          it-sdi-nature: N4
+    sum: "1.00"
+    total: "1.00"
+  - i: 2
+    quantity: "1"
+    item:
+      name: Camera Matrimoniale
+      price: "125.00"
+    taxes:
+      - cat: VAT
+        rate: intermediate
+    sum: "125.00"
+    total: "137.50"

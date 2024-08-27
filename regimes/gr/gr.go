@@ -60,8 +60,6 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
 	case *org.Address:
 		return validateAddress(obj)
 	}
@@ -73,8 +71,6 @@ func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
-	case *tax.Combo:
-		return normalizeTaxCombo(obj)
 	}
 	return nil
 }

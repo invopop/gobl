@@ -8,13 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
+- `gr`: simplified validation to use tax categories.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
 
 ### Added
 
+- `tax.Category`: added `Validation` method support for custom validation of a tax combo for a specific tax category.
 - `tax.Scenario`: added "extensions" to be able to automatically update document level extensions based on the scenario detected.
 - `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
+- `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
+
+### Removed
+
+- `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine valid extensions (eg. PT and GR).
+
+### Fixed
+
+- `tax.Scenario`: potential issue around matching notes.
 
 ## [v0.114.0]
 
