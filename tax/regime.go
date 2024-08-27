@@ -113,14 +113,6 @@ type Category struct {
 	// income.
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
-	// RateRequired when true implies that when a tax combo is defined using
-	// this category that one of the rate's keys must be defined. This is
-	// normally needed for regimes that categorize taxes in local document
-	// formats as opposed to grouping by percentage values.
-	// Try to avoid using this. It is better for rates to be determined
-	// by the percentage and conditions, not the rate key.
-	RateRequired bool `json:"rate_required,omitempty" jsonschema:"title=Rate Required"`
-
 	// Specific tax definitions inside this category.
 	Rates []*Rate `json:"rates,omitempty" jsonschema:"title=Rates"`
 
@@ -134,6 +126,10 @@ type Category struct {
 
 	// List of sources for the information contained in this category.
 	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+
+	// Validation provides an additional method that will be called to check
+	// that a tax Combo is correctly using the category.
+	Validation func(*Combo) error `json:"-"`
 
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
@@ -174,8 +170,12 @@ type Rate struct {
 	// extensions.
 	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
+	// Extensions key-value pair that will be copied to the tax combo if this
+	// rate is used.
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+
 	// Map is used to associate specific codes with the chosen rate.
-	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
+	// Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
 
 	// Meta contains additional information about the rate that is relevant
 	// for local frequently used implementations.
@@ -434,7 +434,6 @@ func (r *Rate) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Extensions,
 			validation.Each(cbc.InKeyDefs(reg.Extensions)),
 		),
-		validation.Field(&r.Map),
 		validation.Field(&r.Meta),
 	)
 	return err

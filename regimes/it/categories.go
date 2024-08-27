@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // Local tax category definitions which are not considered standard.
@@ -30,6 +31,17 @@ var categories = []*tax.Category{
 		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 			i18n.IT: "Imposta sul Valore Aggiunto",
+		},
+		Validation: func(c *tax.Combo) error {
+			return validation.ValidateStruct(c,
+				validation.Field(&c.Ext,
+					validation.When(
+						c.Percent == nil,
+						tax.ExtensionsRequires(ExtKeySDINature),
+					),
+					validation.Skip,
+				),
+			)
 		},
 		Rates: []*tax.Rate{
 			{

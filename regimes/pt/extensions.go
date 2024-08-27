@@ -7,8 +7,10 @@ import (
 
 // Special codes to be used inside rates.
 const (
-	ExtKeyRegion        = "pt-region"
-	ExtKeyExemptionCode = "pt-exemption-code" // note: avoid redundant prefixes like `-code`
+	ExtKeyRegion          = "pt-region"         // TODO: rename to pt-saft-tax-region
+	ExtKeyExemptionCode   = "pt-exemption-code" // note: avoid redundant prefixes like `-code`
+	ExtKeySAFTTaxRate     = "pt-saft-tax-rate"
+	ExtKeySAFTInvoiceType = "pt-saft-invoice-type"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -38,6 +40,94 @@ var extensionKeys = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Madeira",
 					i18n.PT: "Madeira",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySAFTInvoiceType,
+		Name: i18n.String{
+			i18n.EN: "Invoice Type",
+			i18n.PT: "Tipo de Fatura",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "FT",
+				Name: i18n.String{
+					i18n.EN: "Standard Invoice",
+					i18n.PT: "Fatura",
+				},
+			},
+			{
+				Code: "FS",
+				Name: i18n.String{
+					i18n.EN: "Simplified Invoice",
+					i18n.PT: "Fatura Simplificada",
+				},
+			},
+			{
+				Code: "FR",
+				Name: i18n.String{
+					i18n.EN: "Invoice-Receipt",
+					i18n.PT: "Fatura-Recibo",
+				},
+			},
+			{
+				Code: "ND",
+				Name: i18n.String{
+					i18n.EN: "Debit Note",
+					i18n.PT: "Nota de Débito",
+				},
+			},
+			{
+				Code: "NC",
+				Name: i18n.String{
+					i18n.EN: "Credit Note",
+					i18n.PT: "Nota de Crédito",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySAFTTaxRate,
+		Name: i18n.String{
+			i18n.EN: "Tax Rate Code",
+			i18n.PT: "Código da Taxa de Imposto",
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "RED",
+				Name: i18n.String{
+					i18n.EN: "Reduced",
+					i18n.PT: "Redução",
+				},
+			},
+			{
+				Code: "INT",
+				Name: i18n.String{
+					i18n.EN: "Intermediate",
+					i18n.PT: "Intermédio",
+				},
+			},
+			{
+				Code: "NOR",
+				Name: i18n.String{
+					i18n.EN: "Normal",
+					i18n.PT: "Normal",
+				},
+			},
+			{
+				Code: "ISE",
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.PT: "Isento",
+				},
+			},
+			{
+				Code: "OUT",
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.PT: "Outro",
 				},
 			},
 		},

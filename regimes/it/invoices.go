@@ -1,7 +1,6 @@
 package it
 
 import (
-	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
@@ -47,10 +46,6 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func (v *invoiceValidator) validate() error {
-	if err := v.validateScenarios(); err != nil {
-		return err
-	}
-
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
@@ -234,17 +229,4 @@ func validateRegistration(value interface{}) error {
 		validation.Field(&v.Entry, validation.Required),
 		validation.Field(&v.Office, validation.Required),
 	)
-}
-
-// validateScenarios checks that the invoice includes scenarios that help determine
-// TipoDocumento and RegimeFiscale
-func (v *invoiceValidator) validateScenarios() error {
-	ss := v.inv.ScenarioSummary()
-
-	td := ss.Codes[KeyFatturaPATipoDocumento]
-	if td == "" {
-		return errors.New("missing scenario related to TipoDocumento")
-	}
-
-	return nil
 }

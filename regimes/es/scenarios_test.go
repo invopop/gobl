@@ -109,7 +109,9 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	require.NoError(t, i.Calculate())
 	assert.Len(t, i.Notes, 0)
 
-	ss := i.ScenarioSummary()
+	// TODO: refactor this to have the scenarios add extensions,
+	// or perform these checks in the conversion module.
+	ss := i.ScenarioSummary() //nolint:staticcheck
 	assert.Contains(t, ss.Codes, es.KeyFacturaEInvoiceDocumentType)
 	assert.Equal(t, ss.Codes[es.KeyFacturaEInvoiceDocumentType], cbc.Code("FC"))
 
