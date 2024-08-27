@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
 - `gr`: simplified validation to use tax categories.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
+- `mx`: scenarios will now copy the document and relation types to the tax extensions.
 
 ### Added
 
