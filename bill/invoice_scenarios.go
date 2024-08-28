@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // ScenarioSummary determines a summary of the tax scenario for the invoice based on
@@ -56,7 +57,11 @@ func (inv *Invoice) prepareTags() error {
 	// First check the tags are all valid
 	for _, k := range inv.Tax.Tags {
 		if t := r.Tag(k); t == nil {
-			return fmt.Errorf("invalid document tag: %v", k)
+			return validation.Errors{
+				"tax": validation.Errors{
+					"tags": fmt.Errorf("invalid tag '%v'", k),
+				},
+			}
 		}
 	}
 	return nil
