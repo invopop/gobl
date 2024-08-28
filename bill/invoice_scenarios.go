@@ -80,14 +80,13 @@ func (inv *Invoice) prepareScenarios() error {
 	}
 	for _, n := range ss.Notes {
 		// make sure we don't already have the same note in the invoice
-		var en *cbc.Note
 		for _, n2 := range inv.Notes {
-			if n.Src == n2.Src && n.Code == n2.Code {
-				en = n
+			if n.SameAs(n2) {
+				n = nil
 				break
 			}
 		}
-		if en == nil {
+		if n != nil {
 			inv.Notes = append(inv.Notes, n)
 		}
 	}

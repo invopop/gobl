@@ -63,7 +63,7 @@ func TestScenarios(t *testing.T) {
 		})
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Notes, 1)
-		assert.Equal(t, "Reverse Charge / Inversione del soggetto passivo", inv.Notes[0].Text)
+		assert.Equal(t, "Random to replace", inv.Notes[0].Text, "should keep invoices existing note")
 	})
 
 	t.Run("without tax defined", func(t *testing.T) {
