@@ -276,6 +276,13 @@ func TestEnvelopeSign(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Len(t, env.Signatures, 1)
 	})
+	t.Run("without header", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Foooo"}))
+		env.Head = nil
+		err := env.Sign(testKey)
+		assert.ErrorContains(t, err, "header required")
+	})
 	t.Run("cannot sign invalid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
@@ -290,6 +297,16 @@ func TestEnvelopeSign(t *testing.T) {
 		assert.True(t, env.Signed())
 	})
 }
+
+func TestEnvelopeUnsign(t *testing.T) {
+	env := gobl.NewEnvelope()
+	require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+	require.NoError(t, env.Sign(testKey))
+	assert.True(t, env.Signed())
+	env.Unsign()
+	assert.False(t, env.Signed())
+}
+
 func TestEnvelopeCorrect(t *testing.T) {
 	t.Run("correct invoice", func(t *testing.T) {
 		env := gobl.NewEnvelope()
