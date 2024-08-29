@@ -58,7 +58,7 @@ func (h *Header) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&h.Stamps,
 			validation.When(
 				!internal.IsSigned(ctx),
-				validation.Empty,
+				validation.Empty.Error("must be empty when envelope not signed"),
 			),
 			DetectDuplicateStamps,
 		),

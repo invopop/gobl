@@ -1,10 +1,12 @@
 package head_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,6 +20,24 @@ func TestNewHeader(t *testing.T) {
 		h.Tags = append(h.Tags, "foo")
 		h.Stamps = append(h.Stamps, &head.Stamp{})
 	}, "header and meta hash should have been initialized")
+}
+
+func TestHeaderValidation(t *testing.T) {
+	h := head.NewHeader()
+	assert.ErrorContains(t, h.Validate(), "dig: cannot be blank.")
+	h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+	assert.NoError(t, h.Validate())
+	assert.NoError(t, h.Validate())
+	h.UUID = ""
+	assert.ErrorContains(t, h.Validate(), "uuid: cannot be blank.")
+
+	h = head.NewHeader()
+	h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+	h.AddStamp(&head.Stamp{Provider: "foo", Value: "bar"})
+	assert.ErrorContains(t, h.Validate(), "stamps: must be empty when envelope not signed")
+
+	ctx := internal.SignedContext(context.Background())
+	assert.NoError(t, h.ValidateWithContext(ctx))
 }
 
 func TestHeaderAddStamp(t *testing.T) {
