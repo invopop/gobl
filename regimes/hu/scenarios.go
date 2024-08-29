@@ -8,7 +8,6 @@ import (
 
 // Document tag keys
 const (
-	TagOutOfScope            cbc.Key = "out-of-scope"
 	TagDomesticReverseCharge cbc.Key = "domestic-reverse-charge"
 	TagTravelAgency          cbc.Key = "travel-agency"
 	TagSecondHand            cbc.Key = "second-hand"
@@ -17,13 +16,6 @@ const (
 )
 
 var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
-	{
-		Key: TagOutOfScope,
-		Name: i18n.String{
-			i18n.EN: "Out of Scope",
-			i18n.HU: "Hatályaon kívül",
-		},
-	},
 	{
 		Key: TagDomesticReverseCharge,
 		Name: i18n.String{

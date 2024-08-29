@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -22,7 +23,7 @@ func baseInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
-				Country: "HU",
+				Country: l10n.HU.Tax(),
 				Code:    "88212131503", // Group VAT ID
 			},
 			Identities: []*org.Identity{
@@ -89,5 +90,51 @@ func TestInvoiceValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "customer: (identities: cannot be blank.).")
+	})
+
+	// Test 4: Supplier Validation (Group VAT ID without Member ID)
+	t.Run("Supplier Group VAT ID without Member ID", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier.TaxID.Code = "88212131503" // Group VAT ID
+		inv.Supplier.Identities = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "supplier: (identities: cannot be blank.).")
+	})
+
+	// Test 5: Supplier Validation (Group VAT ID with Invalid Member ID)
+	t.Run("Supplier Group VAT ID with Invalid Member ID", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier.TaxID.Code = "88212131503" // Group VAT ID
+		inv.Supplier.Identities = []*org.Identity{
+			{Code: "12345678302"}, // Invalid member ID (9th digit is not 4)
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "supplier: (identities: (code: must be a group member ID.).).")
+	})
+
+	// Test 6: Supplier Validation (Group VAT ID with Valid Member ID)
+	t.Run("Supplier Group VAT ID with Valid Member ID", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier.TaxID.Code = "88212131503" // Group VAT ID
+		inv.Supplier.Identities = []*org.Identity{
+			{Code: "12345678402"}, // Valid member ID (9th digit is 4)
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+
+	// Test 7: Invoice Date Validation
+	t.Run("Invoice Date Before 2010", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.IssueDate = cal.MakeDate(2009, 12, 31)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "issue_date: too early")
 	})
 }

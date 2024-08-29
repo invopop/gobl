@@ -3,6 +3,7 @@ package hu
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -54,6 +55,7 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
+			validation.By(v.localTaxID),
 			validation.Skip,
 		),
 		validation.Field(&obj.Name,
@@ -64,15 +66,29 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			validation.Length(1, 0),
 			validation.Skip,
 		),
-		// Here I also want to add a coondition that the code of the first indentity must have
-		// the VAT code (9th character) of 4.
 		validation.Field(&obj.Identities,
 			validation.When(
 				isGroupVatID(obj.TaxID),
 				validation.Required,
-				validation.Length(1, 0),
+				validation.Length(1, 1),
+				validation.By(v.memberGroupID),
 			),
 			validation.Skip),
+	)
+}
+
+// The supplier must be a Hungarian entity.
+func (v *invoiceValidator) localTaxID(value interface{}) error {
+	obj, _ := value.(*tax.Identity)
+	if obj == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Country,
+			validation.In(l10n.HU.Tax()),
+			validation.Skip,
+		),
 	)
 }
 
@@ -83,21 +99,12 @@ func (v *invoiceValidator) customer(value interface{}) error {
 	}
 
 	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
-			validation.When(
-				!v.inv.Tax.ContainsTag(tax.TagSimplified),
-				validation.Required,
-				tax.RequireIdentityCode,
-			),
-			validation.Skip,
-		),
-		// Here I also want to add a coondition that the code of the first indentity must have
-		// the VAT code (9th character) of 4.
 		validation.Field(&obj.Identities,
 			validation.When(
 				isGroupVatID(obj.TaxID),
 				validation.Required,
-				validation.Length(1, 0),
+				validation.Length(1, 1),
+				validation.By(v.memberGroupID),
 			),
 			validation.Skip),
 	)
@@ -108,4 +115,25 @@ func isGroupVatID(taxID *tax.Identity) bool {
 		return false
 	}
 	return len(taxID.Code) == 11 && taxID.Code.String()[8] == '5'
+}
+
+func (v *invoiceValidator) memberGroupID(value interface{}) error {
+	obj, _ := value.([]*org.Identity)
+	if obj == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(obj[0],
+		validation.Field(&obj[0].Code,
+			validation.Length(11, 11),
+			isGroupMember,
+			validation.Skip,
+		),
+	)
+}
+
+var isGroupMember = validation.NewStringRule(checkGroupMemberDigit, "must be a group member ID")
+
+func checkGroupMemberDigit(code string) bool {
+	return len(code) == 11 && code[8:9] == "4"
 }
