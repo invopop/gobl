@@ -9,15 +9,20 @@ import (
 type contextKey string
 
 const (
-	// KeyDraft is used for extract the draft status from the context.
-	KeyDraft contextKey = "draft"
+	// KeySigned is the context key used to indicate that the envelope is signed.
+	KeySigned contextKey = "signed"
 )
 
-// IsDraft returns true if the context indicates we're working with an
-// envelope with the header draft status marked as true.
-func IsDraft(ctx context.Context) bool {
+// IsSigned returns true if the context indicates we're working with an
+// envelope with signatures.
+func IsSigned(ctx context.Context) bool {
 	if ctx == nil {
 		return false
 	}
-	return ctx.Value(KeyDraft) == true
+	return ctx.Value(KeySigned) == true
+}
+
+// SignedContext returns a new context with the signed flag set.
+func SignedContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, KeySigned, true)
 }

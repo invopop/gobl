@@ -205,7 +205,6 @@
             "alg": "sha256",
             "val": "7562cbd04fd489e779eac4619cac36888d4c38a2822737dd0e8aa4d9159efbe7"
         },
-        "draft": true,
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }
 }

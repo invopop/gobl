@@ -136,14 +136,13 @@
             "total_with_tax": "1717.20"
         },
         "type": "credit-note",
-        "uuid": "7f5b5a10-00b2-11ef-9067-8e3f6d4fff0a"
+        "uuid": "01919fcb-d6bf-777a-885d-d82acb972607"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "478cc6e41ea1d8a2582102009fbaf98f570bfd74ee4111681f7f62ed3738d38b"
+            "val": "984f8628bd4012df93032e9c0041cb8c97d6051321cb19c27fa24db392417b92"
         },
-        "draft": true,
-        "uuid": "7f5b59ef-00b2-11ef-9067-8e3f6d4fff0a"
+        "uuid": "01919fcb-d6bf-776d-8f98-55adab506224"
     }
 }

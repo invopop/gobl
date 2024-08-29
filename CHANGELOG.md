@@ -12,10 +12,12 @@ For example, the document format and type in Italy are now set inside the extens
 
 ### Changed
 
+- `head.Header`: Removed the `draft` flag. Instead envelopes must now be signed in order to activate additional validation rules such as requiring the invoice code, and allow "stamps" in the header.
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
 - `gr`: simplified validation to use tax categories.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
+- `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine valid extensions (eg. PT and GR).
 
 ### Added
 
@@ -24,10 +26,6 @@ For example, the document format and type in Italy are now set inside the extens
 - `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
 - `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
-
-### Removed
-
-- `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine valid extensions (eg. PT and GR).
 
 ### Fixed
 

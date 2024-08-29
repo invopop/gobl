@@ -123,9 +123,6 @@ func parseGOBLData(ctx context.Context, opts *ParseOptions) (interface{}, error)
 	// be incurred from the call site of this function.
 	env = gobl.NewEnvelope()
 	env.Document = doc
-	// Set envelope as draft, so it can be rebuilt over time, and eventually
-	// signed using the separate `sign` command.
-	env.Head.Draft = true
 
 	return env, nil
 }

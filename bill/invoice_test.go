@@ -955,10 +955,10 @@ func TestValidation(t *testing.T) {
 		inv.Code = ""
 		ctx := context.Background()
 		require.NoError(t, inv.Calculate())
-		err := inv.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "code: cannot be blank")
-		ctx = context.WithValue(ctx, internal.KeyDraft, true)
 		assert.NoError(t, inv.ValidateWithContext(ctx))
+		ctx = context.WithValue(ctx, internal.KeySigned, true)
+		err := inv.ValidateWithContext(ctx)
+		assert.ErrorContains(t, err, "code: required for signed invoices")
 	})
 
 	t.Run("supplier name", func(t *testing.T) {
