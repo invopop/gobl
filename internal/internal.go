@@ -16,9 +16,6 @@ const (
 // IsSigned returns true if the context indicates we're working with an
 // envelope with signatures.
 func IsSigned(ctx context.Context) bool {
-	if ctx == nil {
-		return false
-	}
 	return ctx.Value(KeySigned) == true
 }
 

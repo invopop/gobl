@@ -149,6 +149,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		err := e.Calculate()
 		assert.NoError(t, err)
 		err = e.Sign(testKey)
+		assert.NoError(t, err)
 		assert.NotEmpty(t, e.Head.Stamps)
 
 		// remove signatures
