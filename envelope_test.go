@@ -156,7 +156,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e.Signatures = nil
 		err = e.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "stamps: must be blank.")
+		assert.Contains(t, err.Error(), "head: (stamps: must be empty when envelope not signed.)")
 		err = e.Calculate()
 		assert.NoError(t, err)
 		assert.Len(t, e.Head.Stamps, 1)
