@@ -13,7 +13,7 @@ import (
 //
 // Deprecated: tax regimes should be updated to automatically apply all the required
 // extensions and meta-data to the invoice itself. This method will still be needed
-// until all documents have transitioned to the current approach.
+// until all regimes have transitioned to the new approach.
 func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
 	r := inv.TaxRegime()
 	if r == nil {
