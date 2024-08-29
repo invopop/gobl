@@ -125,7 +125,8 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "zero"
+            "rate": "zero",
+            "percent": "0%"
           }
         ],
         "total": "172.50"
