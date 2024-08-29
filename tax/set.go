@@ -143,6 +143,11 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		return nil
 	}
 
+	if c.Percent != nil {
+		// If the percent was already set, don't attempt to replace it.
+		return nil
+	}
+
 	// if there are no rate values, don't attempt to prepare anything else.
 	if len(rate.Values) == 0 {
 		return nil
@@ -153,9 +158,6 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 	}
 
-	// Always overwrite the percentage. If a regime requires a rate
-	// to be set, this should be applied as an extension and not by
-	// forcing the rate key to be present.
 	p := value.Percent // copy
 	c.Percent = &p
 
