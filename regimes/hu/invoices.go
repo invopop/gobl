@@ -26,6 +26,7 @@ func (v *invoiceValidator) validate() error {
 		validation.Field(&inv.Type,
 			validation.In(
 				bill.InvoiceTypeStandard,
+				bill.InvoiceTypeCreditNote,
 			),
 			validation.Skip,
 		),
@@ -40,6 +41,13 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Customer,
 			validation.By(v.customer),
+			validation.Skip,
+		),
+		validation.Field(&inv.Preceding,
+			validation.When(
+				inv.Type == bill.InvoiceTypeCreditNote,
+				validation.Required,
+			),
 			validation.Skip,
 		),
 	)
@@ -63,6 +71,7 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Addresses,
+			validation.Required,
 			validation.Length(1, 0),
 			validation.Skip,
 		),

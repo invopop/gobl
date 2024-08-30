@@ -1,9 +1,11 @@
 package hu
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 )
 
 // Document tag keys
@@ -14,6 +16,30 @@ const (
 	TagArt                   cbc.Key = "art"
 	TagAntiques              cbc.Key = "antiques"
 )
+
+var scenarios = []*tax.ScenarioSet{
+	invoiceScenarios,
+}
+
+var invoiceScenarios = &tax.ScenarioSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*tax.Scenario{
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Name: i18n.String{
+				i18n.EN: "Standard invoice",
+				i18n.HU: "Számla",
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
+			Name: i18n.String{
+				i18n.EN: "Credit note",
+				i18n.HU: "Jóváírás",
+			},
+		},
+	},
+}
 
 var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	{

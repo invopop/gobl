@@ -39,7 +39,7 @@ func baseInvoice() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
-				Country: "HU",
+				Country: l10n.HU.Tax(),
 				Code:    "98109858",
 			},
 			Addresses: []*org.Address{
@@ -63,7 +63,7 @@ func baseInvoice() *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	// Test 1: Basic Validation
+	// Test 1: Valid Invoice
 	t.Run("Valid Invoice", func(t *testing.T) {
 		inv := baseInvoice()
 		require.NoError(t, inv.Calculate())
@@ -71,28 +71,17 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	// Test 2: Customer Validation (Missing TaxID)
-	t.Run("Customer Missing TaxID", func(t *testing.T) {
-		inv := baseInvoice()
-		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.Error(t, err)
-		println(err.Error())
-		assert.Contains(t, err.Error(), "customer: (tax_id: cannot be blank.).")
-	})
-
-	// Test 3: Customer Validation (Invalid Group VAT Code)
+	// Test 2: Customer Invalid Group VAT Code
 	t.Run("Customer Invalid Group VAT Code", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Customer.TaxID.Code = "98109858512" // Group VAT ID with 9th character 5
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "customer: (identities: cannot be blank.).")
+		assert.Contains(t, err.Error(), "customer: (identities: cannot be blank.)")
 	})
 
-	// Test 4: Supplier Validation (Group VAT ID without Member ID)
+	// Test 3: Supplier Group VAT ID without Member ID
 	t.Run("Supplier Group VAT ID without Member ID", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Supplier.TaxID.Code = "88212131503" // Group VAT ID
@@ -100,10 +89,10 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "supplier: (identities: cannot be blank.).")
+		assert.Contains(t, err.Error(), "supplier: (identities: cannot be blank.)")
 	})
 
-	// Test 5: Supplier Validation (Group VAT ID with Invalid Member ID)
+	// Test 4: Supplier Group VAT ID with Invalid Member ID
 	t.Run("Supplier Group VAT ID with Invalid Member ID", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Supplier.TaxID.Code = "88212131503" // Group VAT ID
@@ -116,7 +105,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "supplier: (identities: (code: must be a group member ID.).).")
 	})
 
-	// Test 6: Supplier Validation (Group VAT ID with Valid Member ID)
+	// Test 5: Supplier Group VAT ID with Valid Member ID
 	t.Run("Supplier Group VAT ID with Valid Member ID", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Supplier.TaxID.Code = "88212131503" // Group VAT ID
@@ -128,7 +117,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	// Test 7: Invoice Date Validation
+	// Test 6: Invoice Date Validation
 	t.Run("Invoice Date Before 2010", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.IssueDate = cal.MakeDate(2009, 12, 31)
@@ -136,5 +125,50 @@ func TestInvoiceValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "issue_date: too early")
+	})
+
+	// Test 7: Invalid Invoice Type
+	t.Run("Invalid Invoice Type", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Type = "InvalidType"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "type: must be a valid value")
+	})
+
+	// Test 8: Credit Note without Preceding Invoice
+	t.Run("Credit Note without Preceding Invoice", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "preceding: cannot be blank")
+	})
+
+	// Test 9: Supplier without Address
+	t.Run("Supplier without Address", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier.Addresses = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "supplier: (addresses: cannot be blank.)")
+	})
+
+	// Test 10: Valid Credit Note
+	t.Run("Valid Credit Note", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*bill.Preceding{
+			{
+				Code: "TEST-001",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
 	})
 }

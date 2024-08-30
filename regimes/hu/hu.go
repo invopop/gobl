@@ -27,6 +27,7 @@ func New() *tax.Regime {
 		Tags:       invoiceTags,
 		Validator:  Validate,
 		Calculator: Calculate,
+		Scenarios:  scenarios,
 	}
 }
 
