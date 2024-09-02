@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "40290781746fb9fb82dca15c6887db4491d450535f1c72c4cc1f6fd016375545"
+			"val": "47c9211a9cddb7df3100faf474ae4a79d01f762d4b337ce94e95552c0aa62c3e"
 		},
 		"draft": true
 	},
@@ -54,7 +54,10 @@
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
 		},
 		"customer": {
 			"name": "David Bowie",
@@ -100,7 +103,7 @@
 						"cat": "IRPEF",
 						"percent": "20.0%",
 						"ext": {
-							"it-sdi-retained-tax": "A"
+							"it-sdi-retained-reason": "A"
 						}
 					}
 				],
@@ -163,7 +166,7 @@
 						"rates": [
 							{
 								"ext": {
-									"it-sdi-retained-tax": "A"
+									"it-sdi-retained-reason": "A"
 								},
 								"base": "1620.00",
 								"percent": "20.0%",

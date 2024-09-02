@@ -17,10 +17,29 @@ type invoiceValidator struct {
 
 // normalizeInvoice is used to ensure the invoice data is correct.
 func normalizeInvoice(inv *bill.Invoice) error {
-	return normalizeCustomer(inv.Customer)
+	if err := normalizeSupplier(inv.Supplier); err != nil {
+		return validation.Errors{"supplier": err}
+	}
+	if err := normalizeCustomer(inv.Customer); err != nil {
+		return validation.Errors{"customer": err}
+	}
+	return nil
 }
 
-func normalizeCustomer(party *org.Party) error {
+func normalizeSupplier(party *org.Party) error { //nolint:unparam
+	if party == nil {
+		return nil
+	}
+	if party.Ext == nil || party.Ext[ExtKeySDIFiscalRegime] == "" {
+		if party.Ext == nil {
+			party.Ext = make(tax.Extensions)
+		}
+		party.Ext[ExtKeySDIFiscalRegime] = "RF01" // Ordinary regime is default
+	}
+	return nil
+}
+
+func normalizeCustomer(party *org.Party) error { //nolint:unparam
 	if party == nil {
 		return nil
 	}
@@ -62,7 +81,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(validateLine),
+				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -105,6 +124,10 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		),
 		validation.Field(&supplier.Registration,
 			validation.By(validateRegistration),
+			validation.Skip,
+		),
+		validation.Field(&supplier.Ext,
+			tax.ExtensionsRequires(ExtKeySDIFiscalRegime),
 			validation.Skip,
 		),
 	)
@@ -175,47 +198,6 @@ func validateAddress(value interface{}) error {
 		validation.Field(&v.Code,
 			validation.Required,
 			validation.Match(regexp.MustCompile(`^\d{5}$`)),
-		),
-	)
-}
-
-func validateLine(value interface{}) error {
-	v, ok := value.(*bill.Line)
-	if v == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Taxes,
-			tax.SetHasCategory(tax.CategoryVAT),
-			validation.Each(
-				validation.By(validateLineTax),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateLineTax(value interface{}) error {
-	v, ok := value.(*tax.Combo)
-	if v == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Ext,
-			validation.When(
-				v.Category.In(
-					TaxCategoryIRPEF,
-					TaxCategoryIRES,
-					TaxCategoryINPS,
-					TaxCategoryENASARCO,
-					TaxCategoryENPAM,
-				),
-				tax.ExtensionsRequires(
-					ExtKeySDIRetainedTax,
-				),
-			),
-			validation.Skip,
 		),
 	)
 }

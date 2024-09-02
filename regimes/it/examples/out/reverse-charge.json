@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "981582884a4a4b2dfc2fcccb146d782d1be5e6bb1e058b8d8b30a9f214d7c524"
+			"val": "9ce0beb155a2a37e24546f15b08fec2afc8495586381819accef1f96df7696d2"
 		},
 		"draft": true
 	},
@@ -54,7 +54,10 @@
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
 		},
 		"customer": {
 			"name": "David Bowie",

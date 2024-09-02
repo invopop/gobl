@@ -950,7 +950,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.Extensions{
-								it.ExtKeySDIRetainedTax: "A",
+								it.ExtKeySDIRetainedReason: "A",
 							},
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -966,7 +966,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.Extensions{
-								it.ExtKeySDIRetainedTax: "J", // truffles!
+								it.ExtKeySDIRetainedReason: "J", // truffles!
 							},
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -994,7 +994,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.Extensions{
-									it.ExtKeySDIRetainedTax: "A",
+									it.ExtKeySDIRetainedReason: "A",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
@@ -1002,7 +1002,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Ext: tax.Extensions{
-									it.ExtKeySDIRetainedTax: "J",
+									it.ExtKeySDIRetainedReason: "J",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4f9593bc8291390bf6f9473a9ee904e902ec770247431a281d8d76303780ea90"
+			"val": "94d9e967d373290da73296170710c10d86ef441a5118bd6879c227117a345770"
 		},
 		"draft": true
 	},
@@ -44,6 +44,9 @@
 				"currency": "EUR",
 				"office": "RM",
 				"entry": "123456"
+			},
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
 			}
 		},
 		"customer": {

@@ -14,6 +14,8 @@ For example, the document format and type in Italy are now set inside the extens
 
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
 - `gr`: simplified validation to use tax categories.
+- `it`: always add `it-sdi-fiscal-regime` to Invoice suppliers.
+- `it`: renamed extension `it-sdi-retained-tax` to `it-sdi-retained-reason`, now with validation on retained taxes.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
 
@@ -24,6 +26,7 @@ For example, the document format and type in Italy are now set inside the extens
 - `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
 - `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
+- `bill.Line`: added `RequireLineTaxCategory` validation helper method.
 
 ### Removed
 
@@ -32,6 +35,7 @@ For example, the document format and type in Italy are now set inside the extens
 ### Fixed
 
 - `tax.Scenario`: potential issue around matching notes.
+- `tax.Set`: improved validation embedded error handling.
 
 ## [v0.114.0]
 

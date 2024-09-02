@@ -82,7 +82,7 @@
           "cat": "IRPEF",
           "percent": "20.0%",
           "ext": {
-            "it-sdi-retained-tax": "A"
+            "it-sdi-retained-reason": "A"
           }
         }
       ],

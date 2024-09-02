@@ -130,10 +130,11 @@ var categories = []*tax.Category{
 			i18n.EN: "Personal Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Persone Fisiche",
 		},
+		Validation: requireRetainedReason,
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT01",
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
+		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
 	},
 	{
 		Code:     TaxCategoryIRES,
@@ -146,10 +147,11 @@ var categories = []*tax.Category{
 			i18n.EN: "Corporate Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Società",
 		},
+		Validation: requireRetainedReason,
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT02",
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
+		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
 	},
 	{
 		Code:     TaxCategoryINPS,
@@ -162,7 +164,8 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Social Security Institute",
 			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
+		Validation: requireRetainedReason,
+		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT03",
 		},
@@ -178,7 +181,8 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Welfare Board for Sales Agents and Representatives",
 			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
+		Validation: requireRetainedReason,
+		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT04",
 		},
@@ -194,9 +198,19 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Pension and Welfare Board for Doctors",
 			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedTax},
+		Validation: requireRetainedReason,
+		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT05",
 		},
 	},
+}
+
+func requireRetainedReason(c *tax.Combo) error {
+	return validation.ValidateStruct(c,
+		validation.Field(&c.Ext,
+			tax.ExtensionsRequires(ExtKeySDIRetainedReason),
+			validation.Skip,
+		),
+	)
 }

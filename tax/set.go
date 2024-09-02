@@ -216,10 +216,14 @@ func (s Set) ValidateWithContext(ctx context.Context) error {
 	combos := make(map[cbc.Code]cbc.Key)
 	for i, c := range s {
 		if _, ok := combos[c.Category]; ok {
-			return fmt.Errorf("%d: category %v is duplicated", i, c.Category)
+			return validation.Errors{
+				fmt.Sprintf("%d", i): fmt.Errorf("category %v is duplicated", c.Category),
+			}
 		}
 		if err := c.ValidateWithContext(ctx); err != nil {
-			return fmt.Errorf("%d: %w", i, err)
+			return validation.Errors{
+				fmt.Sprintf("%d", i): err,
+			}
 		}
 		combos[c.Category] = c.Rate
 	}
