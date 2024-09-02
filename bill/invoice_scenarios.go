@@ -23,6 +23,9 @@ func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
 }
 
 func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
+	if r == nil {
+		return nil
+	}
 	ss := r.ScenarioSet(ShortSchemaInvoice)
 	if ss == nil {
 		return nil

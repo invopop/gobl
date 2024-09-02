@@ -146,7 +146,7 @@ func (c *Combo) prepareRate(category *Category, tags []cbc.Key, date cal.Date) e
 	}
 
 	// Copy over the predefined extensions from the rate to the combo.
-	if len(rate.Ext) > 0 {
+	if c.Country == "" && len(rate.Ext) > 0 {
 		if c.Ext == nil {
 			c.Ext = make(Extensions)
 		}
