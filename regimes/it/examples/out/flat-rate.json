@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9da0308fd30fb9c9cf910d999fbf6876c041880e4ce57ed18b9acd585908302f"
+			"val": "851db2db406648cb2cdd864d49b4f455815951c9051741e18342ad6406bc614f"
 		},
 		"draft": true
 	},
@@ -17,7 +17,7 @@
 		"issue_date": "2023-08-01",
 		"currency": "EUR",
 		"supplier": {
-			"name": "Hotel California",
+			"name": "Francesco Ferrari",
 			"tax_id": {
 				"country": "IT",
 				"code": "12345678903"
@@ -32,11 +32,8 @@
 					"country": "IT"
 				}
 			],
-			"registration": {
-				"capital": "50000.00",
-				"currency": "EUR",
-				"office": "RM",
-				"entry": "123456"
+			"ext": {
+				"it-sdi-fiscal-regime": "RF19"
 			}
 		},
 		"customer": {
@@ -74,8 +71,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "intermediate",
-						"percent": "10.0%"
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-nature": "N2.1"
+						}
 					}
 				],
 				"total": "125.00"
@@ -99,20 +98,22 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "intermediate",
+								"key": "exempt",
+								"ext": {
+									"it-sdi-nature": "N2.1"
+								},
 								"base": "125.00",
-								"percent": "10.0%",
-								"amount": "12.50"
+								"amount": "0.00"
 							}
 						],
-						"amount": "12.50"
+						"amount": "0.00"
 					}
 				],
-				"sum": "12.50"
+				"sum": "0.00"
 			},
-			"tax": "12.50",
-			"total_with_tax": "139.50",
-			"payable": "139.50"
+			"tax": "0.00",
+			"total_with_tax": "127.00",
+			"payable": "127.00"
 		}
 	}
 }
