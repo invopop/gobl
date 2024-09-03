@@ -37,7 +37,7 @@ var categories = []*tax.Category{
 				validation.Field(&c.Ext,
 					validation.When(
 						c.Percent == nil,
-						tax.ExtensionsRequires(ExtKeySDINature),
+						tax.ExtensionsRequires(ExtKeySDIExempt),
 					),
 					validation.Skip,
 				),
@@ -112,7 +112,7 @@ var categories = []*tax.Category{
 					i18n.IT: "Esente",
 				},
 				Extensions: []cbc.Key{
-					ExtKeySDINature,
+					ExtKeySDIExempt,
 				},
 			},
 		},
@@ -134,7 +134,7 @@ var categories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT01",
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
+		Extensions: []cbc.Key{ExtKeySDIRetained},
 	},
 	{
 		Code:     TaxCategoryIRES,
@@ -151,7 +151,7 @@ var categories = []*tax.Category{
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT02",
 		},
-		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
+		Extensions: []cbc.Key{ExtKeySDIRetained},
 	},
 	{
 		Code:     TaxCategoryINPS,
@@ -165,7 +165,7 @@ var categories = []*tax.Category{
 			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
 		},
 		Validation: requireRetainedReason,
-		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
+		Extensions: []cbc.Key{ExtKeySDIRetained},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT03",
 		},
@@ -182,7 +182,7 @@ var categories = []*tax.Category{
 			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
 		},
 		Validation: requireRetainedReason,
-		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
+		Extensions: []cbc.Key{ExtKeySDIRetained},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT04",
 		},
@@ -199,7 +199,7 @@ var categories = []*tax.Category{
 			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
 		},
 		Validation: requireRetainedReason,
-		Extensions: []cbc.Key{ExtKeySDIRetainedReason},
+		Extensions: []cbc.Key{ExtKeySDIRetained},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT05",
 		},
@@ -209,7 +209,7 @@ var categories = []*tax.Category{
 func requireRetainedReason(c *tax.Combo) error {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Ext,
-			tax.ExtensionsRequires(ExtKeySDIRetainedReason),
+			tax.ExtensionsRequires(ExtKeySDIRetained),
 			validation.Skip,
 		),
 	)

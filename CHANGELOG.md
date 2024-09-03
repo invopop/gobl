@@ -15,7 +15,8 @@ For example, the document format and type in Italy are now set inside the extens
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
 - `gr`: simplified validation to use tax categories.
 - `it`: always add `it-sdi-fiscal-regime` to Invoice suppliers.
-- `it`: renamed extension `it-sdi-retained-tax` to `it-sdi-retained-reason`, now with validation on retained taxes.
+- `it`: renamed extension `it-sdi-retained-tax` to `it-sdi-retained`, now with validation on retained taxes.
+- `it`: renamed extension `it-sdi-natura` to `it-sdi-exempt`.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
 

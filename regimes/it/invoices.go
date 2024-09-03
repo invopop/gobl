@@ -16,19 +16,17 @@ type invoiceValidator struct {
 }
 
 // normalizeInvoice is used to ensure the invoice data is correct.
-func normalizeInvoice(inv *bill.Invoice) error {
-	if err := normalizeSupplier(inv.Supplier); err != nil {
-		return validation.Errors{"supplier": err}
+func normalizeInvoice(inv *bill.Invoice) {
+	normalizeSupplier(inv.Supplier)
+	normalizeCustomer(inv.Customer)
+	for _, line := range inv.Lines {
+		normalizeLine(line)
 	}
-	if err := normalizeCustomer(inv.Customer); err != nil {
-		return validation.Errors{"customer": err}
-	}
-	return nil
 }
 
-func normalizeSupplier(party *org.Party) error { //nolint:unparam
+func normalizeSupplier(party *org.Party) {
 	if party == nil {
-		return nil
+		return
 	}
 	if party.Ext == nil || party.Ext[ExtKeySDIFiscalRegime] == "" {
 		if party.Ext == nil {
@@ -36,15 +34,14 @@ func normalizeSupplier(party *org.Party) error { //nolint:unparam
 		}
 		party.Ext[ExtKeySDIFiscalRegime] = "RF01" // Ordinary regime is default
 	}
-	return nil
 }
 
-func normalizeCustomer(party *org.Party) error { //nolint:unparam
+func normalizeCustomer(party *org.Party) {
 	if party == nil {
-		return nil
+		return
 	}
 	if !isItalianParty(party) {
-		return nil
+		return
 	}
 	// If the party is an individual, move the fiscal code to the identities.
 	if party.TaxID.Type == "individual" { //nolint:staticcheck
@@ -56,7 +53,22 @@ func normalizeCustomer(party *org.Party) error { //nolint:unparam
 		party.TaxID.Type = "" //nolint:staticcheck
 		party.Identities = org.AddIdentity(party.Identities, id)
 	}
-	return nil
+}
+
+func normalizeLine(line *bill.Line) {
+	for _, tax := range line.Taxes {
+		if tax.Ext == nil {
+			continue
+		}
+		if tax.Ext.Has("it-sdi-retained-tax") {
+			tax.Ext[ExtKeySDIRetained] = tax.Ext["it-sdi-retained-tax"]
+			delete(tax.Ext, "it-sdi-retained-tax")
+		}
+		if tax.Ext.Has("it-sdi-nature") {
+			tax.Ext[ExtKeySDIExempt] = tax.Ext["it-sdi-nature"]
+			delete(tax.Ext, "it-sdi-nature")
+		}
+	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {

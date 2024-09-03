@@ -9,11 +9,11 @@ import (
 // Italian extension keys required by the Italian tax authority (SDI)
 // and defined as part of the FatturaPA specification.
 const (
-	ExtKeySDIFiscalRegime   = "it-sdi-fiscal-regime"
-	ExtKeySDINature         = "it-sdi-nature"
-	ExtKeySDIRetainedReason = "it-sdi-retained-reason"
-	ExtKeySDIFormat         = "it-sdi-format"
-	ExtKeySDIDocumentType   = "it-sdi-document-type"
+	ExtKeySDIFiscalRegime = "it-sdi-fiscal-regime"
+	ExtKeySDIFormat       = "it-sdi-format"
+	ExtKeySDIDocumentType = "it-sdi-document-type"
+	ExtKeySDIExempt       = "it-sdi-exempt"
+	ExtKeySDIRetained     = "it-sdi-retained"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -300,12 +300,12 @@ var extensionKeys = []*cbc.KeyDefinition{
 			}},
 		},
 	},
-
 	{
-		Key: ExtKeySDINature,
+		// Related to the "Natura" field used for VAT exemptions.
+		Key: ExtKeySDIExempt,
 		Name: i18n.String{
-			i18n.EN: "Nature",
-			i18n.IT: "Natura",
+			i18n.EN: "Exemption Code",
+			i18n.IT: "Natura Esenzione",
 		},
 		Codes: []*cbc.CodeDefinition{
 			{
@@ -459,12 +459,12 @@ var extensionKeys = []*cbc.KeyDefinition{
 	},
 
 	{
-		// Retained tax tag keys determined from the "CausalePagamento" field from FatturaPA.
+		// Retained reason code determined from the "CausalePagamento" field from FatturaPA.
 		// Source: https://www.agenziaentrate.gov.it/portale/documents/20143/4115385/CU_istr_2022.pdf
 		// Section VII, Part 2
-		Key: ExtKeySDIRetainedReason,
+		Key: ExtKeySDIRetained,
 		Name: i18n.String{
-			i18n.EN: "Retained Tax Payment Reason",
+			i18n.EN: "Retained Tax Payment Reason Code",
 			i18n.IT: "Causale Pagamento Ritenuta",
 		},
 		Codes: []*cbc.CodeDefinition{

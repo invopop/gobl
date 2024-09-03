@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "47c9211a9cddb7df3100faf474ae4a79d01f762d4b337ce94e95552c0aa62c3e"
+			"val": "4f72794392316349d5bbadae37eaf43861a08361a75d35456d9ac657801c23c6"
 		},
 		"draft": true
 	},
@@ -103,7 +103,7 @@
 						"cat": "IRPEF",
 						"percent": "20.0%",
 						"ext": {
-							"it-sdi-retained-reason": "A"
+							"it-sdi-retained": "A"
 						}
 					}
 				],
@@ -123,7 +123,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"it-sdi-nature": "N1"
+							"it-sdi-exempt": "N1"
 						}
 					}
 				],
@@ -152,7 +152,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-nature": "N1"
+									"it-sdi-exempt": "N1"
 								},
 								"base": "100.00",
 								"amount": "0.00"
@@ -166,7 +166,7 @@
 						"rates": [
 							{
 								"ext": {
-									"it-sdi-retained-reason": "A"
+									"it-sdi-retained": "A"
 								},
 								"base": "1620.00",
 								"percent": "20.0%",
