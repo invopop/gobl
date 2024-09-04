@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // AT Tax Map
@@ -29,10 +30,23 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.PT: "Imposto sobre o Valor Acrescentado",
 		},
-		Retained:     false,
-		RateRequired: true,
+		Retained: false,
 		Extensions: []cbc.Key{
 			ExtKeyRegion,
+			ExtKeySAFTTaxRate,
+			ExtKeyExemptionCode,
+		},
+		Validation: func(c *tax.Combo) error {
+			return validation.ValidateStruct(c,
+				validation.Field(&c.Ext,
+					tax.ExtensionsRequires(ExtKeySAFTTaxRate),
+					validation.When(
+						c.Percent == nil,
+						tax.ExtensionsRequires(ExtKeyExemptionCode),
+					),
+					validation.Skip,
+				),
+			)
 		},
 		Rates: []*tax.Rate{
 			{
@@ -40,6 +54,9 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PT: "Tipo Geral",
+				},
+				Ext: tax.Extensions{
+					ExtKeySAFTTaxRate: "NOR",
 				},
 				Values: []*tax.RateValue{
 					{
@@ -61,15 +78,15 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(230, 3),
 					},
 				},
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeStandard,
-				},
 			},
 			{
 				Key: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate Rate",
 					i18n.PT: "Taxa Intermédia", //nolint:misspell
+				},
+				Ext: tax.Extensions{
+					ExtKeySAFTTaxRate: "INT",
 				},
 				Values: []*tax.RateValue{
 					{
@@ -91,15 +108,15 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(130, 3),
 					},
 				},
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeIntermediate,
-				},
 			},
 			{
 				Key: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.PT: "Taxa Reduzida",
+				},
+				Ext: tax.Extensions{
+					ExtKeySAFTTaxRate: "RED",
 				},
 				Values: []*tax.RateValue{
 					{
@@ -121,9 +138,6 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(60, 3),
 					},
 				},
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeReduced,
-				},
 			},
 			{
 				Key: tax.RateExempt,
@@ -132,11 +146,8 @@ var taxCategories = []*tax.Category{
 					i18n.PT: "Isento",
 				},
 				Exempt: true,
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeExempt,
-				},
-				Extensions: []cbc.Key{
-					ExtKeyExemptionCode,
+				Ext: tax.Extensions{
+					ExtKeySAFTTaxRate: "ISE",
 				},
 			},
 		},

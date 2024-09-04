@@ -75,7 +75,8 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return normalizeInvoice(obj)
+		normalizeInvoice(obj)
+		return nil
 	case *tax.Identity:
 		return normalizeTaxIdentity(obj)
 	case *org.Identity:

@@ -292,6 +292,17 @@ func (n *Note) WithCode(code string) *Note {
 	return &nw
 }
 
+// SameAs returns true if the provided note is the same as
+// the current one. Comparison is only made using the
+// Key, Code, and Src properties.
+//
+// For a more complete comparison, use Equals.
+func (n *Note) SameAs(n2 *Note) bool {
+	return n.Key == n2.Key &&
+		n.Code == n2.Code &&
+		n.Src == n2.Src
+}
+
 // Equals returns true if the provided note is the same as the current one.
 func (n *Note) Equals(n2 *Note) bool {
 	return n.Key == n2.Key &&

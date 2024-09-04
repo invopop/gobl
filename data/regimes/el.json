@@ -486,7 +486,7 @@
               "percent": "24%"
             }
           ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "1"
           }
         },
@@ -501,7 +501,7 @@
               "percent": "13%"
             }
           ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "2"
           }
         },
@@ -516,7 +516,7 @@
               "percent": "6%"
             }
           ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "3"
           }
         },
@@ -531,7 +531,7 @@
               "percent": "17%"
             }
           ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "4"
           }
         },
@@ -546,7 +546,7 @@
               "percent": "9%"
             }
           ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "5"
           }
         },
@@ -561,7 +561,7 @@
               "percent": "4%"
             }
           ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "6"
           }
         },
@@ -572,16 +572,14 @@
             "en": "Exempt"
           },
           "exempt": true,
-          "extensions": [
-            "gr-iapr-exemption"
-          ],
-          "map": {
+          "ext": {
             "gr-iapr-vat-cat": "7"
           }
         }
       ],
       "extensions": [
-        "gr-iapr-vat-cat"
+        "gr-iapr-vat-cat",
+        "gr-iapr-exemption"
       ],
       "sources": [
         {

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8498b04df38e7e733e97258a6fcb22052c2261a16be67d720e49bf543d31b6f0"
+			"val": "014e37bf85ee31992e7ed3f91dbb0d33a9a305c7033bb8ac29286fc2fa281e37"
 		},
 		"draft": true
 	},
@@ -17,7 +17,11 @@
 		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT"
+			"prices_include": "VAT",
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "Hotel California",
@@ -40,6 +44,9 @@
 				"currency": "EUR",
 				"office": "RM",
 				"entry": "123456"
+			},
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
 			}
 		},
 		"customer": {
@@ -79,7 +86,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"it-sdi-nature": "N4"
+							"it-sdi-exempt": "N4"
 						}
 					}
 				],
@@ -115,7 +122,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-nature": "N4"
+									"it-sdi-exempt": "N4"
 								},
 								"base": "1.00",
 								"amount": "0.00"

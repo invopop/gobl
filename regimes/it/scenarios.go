@@ -30,6 +30,13 @@ const (
 // involved, we've focussed here on the most useful.
 var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 	// *** Document Type Tags ***
+	// Sales:
+	{
+		Key: tax.TagB2G,
+		Name: i18n.String{
+			i18n.EN: "Business to Government",
+		},
+	},
 	{
 		Key: TagFreelance,
 		Name: i18n.String{
@@ -37,6 +44,7 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 			i18n.IT: "Parcella",
 		},
 	},
+	// Self-billed:
 	{
 		Key: TagCeilingExceeded,
 		Name: i18n.String{
@@ -123,6 +131,26 @@ var scenarios = []*tax.ScenarioSet{
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*tax.Scenario{
+		// **** DOCUMENT FORMAT ****
+		{
+			Name: i18n.String{
+				i18n.EN: "Private Invoice",
+				i18n.IT: "Fattura Privata",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIFormat: "FPR12",
+			},
+		},
+		{
+			Tags: []cbc.Key{tax.TagB2G},
+			Name: i18n.String{
+				i18n.EN: "Government Invoice",
+				i18n.IT: "Fattura Pubblica",
+			},
+			Ext: tax.Extensions{
+				ExtKeySDIFormat: "FPA12",
+			},
+		},
 		// **** TIPO DOCUMENTO ****
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
@@ -130,8 +158,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Regular Invoice",
 				i18n.IT: "Fattura",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD01",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD01",
 			},
 		},
 		{
@@ -141,8 +169,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Advance or down payment on invoice",
 				i18n.IT: "Acconto / anticipo su fattura",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD02",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD02",
 			},
 		},
 		{
@@ -151,8 +179,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Credit Note",
 				i18n.IT: "Nota di credito",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD04",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD04",
 			},
 		},
 		{
@@ -161,8 +189,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Debit Note",
 				i18n.IT: "Nota di debito",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD05",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD05",
 			},
 		},
 		{
@@ -172,8 +200,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Freelancer invoice with retained taxes",
 				i18n.IT: "Parcella",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD06",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD06",
 			},
 		},
 		{
@@ -183,8 +211,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Advance or down payment on freelance invoice",
 				i18n.IT: "Acconto / anticipo su parcella",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD03",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD03",
 			},
 		},
 		{
@@ -194,8 +222,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Invoice",
 				i18n.IT: "Fattura Semplificata",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD07",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD07",
 			},
 		},
 		{
@@ -205,8 +233,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Credit Note",
 				i18n.IT: "Nota di credito semplificata",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD08",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD08",
 			},
 		},
 		{
@@ -216,8 +244,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Simplified Debit Note",
 				i18n.IT: "Nota di debito semplificata",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD09",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD09",
 			},
 		},
 		{
@@ -227,8 +255,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed for self consumption or for free transfer without recourse",
 				i18n.IT: "Fattura per autoconsumo o per cessioni gratuite senza rivalsa",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD27", // order is important
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD27", // order is important
 			},
 		},
 		{
@@ -238,8 +266,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Reverse charge",
 				i18n.IT: "Integrazione fattura reverse charge interno",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD16",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD16",
 			},
 		},
 		{
@@ -249,8 +277,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed Import",
 				i18n.IT: "Integrazione/autofattura per acquisto servizi da estero",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD17",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD17",
 			},
 		},
 		{
@@ -260,8 +288,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed EU Goods Import",
 				i18n.IT: "Integrazione per acquisto beni intracomunitari",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD18",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD18",
 			},
 		},
 		{
@@ -271,8 +299,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed Goods Import",
 				i18n.IT: "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD19",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD19",
 			},
 		},
 		{
@@ -282,8 +310,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed Regularization",
 				i18n.IT: "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD20",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD20",
 			},
 		},
 		{
@@ -293,8 +321,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed invoice when ceiling exceeded",
 				i18n.IT: "Autofattura per splafonamento",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD21",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD21",
 			},
 		},
 		{
@@ -304,8 +332,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed for goods extracted from VAT warehouse",
 				i18n.IT: "Estrazione beni da Deposito IVA",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD22",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD22",
 			},
 		},
 		{
@@ -315,8 +343,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Self-billed for goods extracted from VAT warehouse with VAT payment",
 				i18n.IT: "Estrazione beni da Deposito IVA con versamento IVA",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD23",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD23",
 			},
 		},
 		{
@@ -326,8 +354,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
 				i18n.IT: "Fattura differita - art.21 c.4 lett. a",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD24",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD24",
 			},
 		},
 		{
@@ -337,8 +365,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
 				i18n.IT: "Fattura differita - art.21 c.4 terzo periodo lett. b",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD25",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD25",
 			},
 		},
 		{
@@ -348,11 +376,10 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
 				i18n.IT: "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD26",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD26",
 			},
 		},
-
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{tax.TagSelfBilled, TagSanMarinoPaper},
@@ -360,8 +387,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.EN: "Purchases from San Marino with VAT (paper invoice)",
 				i18n.IT: "Acquisti da San Marino con IVA (fattura cartacea)",
 			},
-			Codes: cbc.CodeMap{
-				KeyFatturaPATipoDocumento: "TD28",
+			Ext: tax.Extensions{
+				ExtKeySDIDocumentType: "TD28",
 			},
 		},
 

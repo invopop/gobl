@@ -30,11 +30,6 @@
           "title": "Retained",
           "description": "Retained when true implies that the tax amount will be retained\nby the buyer on behalf of the supplier, and thus subtracted from\nthe invoice taxable base total. Typically used for taxes related to\nincome."
         },
-        "rate_required": {
-          "type": "boolean",
-          "title": "Rate Required",
-          "description": "RateRequired when true implies that when a tax combo is defined using\nthis category that one of the rate's keys must be defined. This is\nnormally needed for regimes that categorize taxes in local document\nformats as opposed to grouping by percentage values.\nTry to avoid using this. It is better for rates to be determined\nby the percentage and conditions, not the rate key."
-        },
         "rates": {
           "items": {
             "$ref": "#/$defs/Rate"
@@ -158,10 +153,10 @@
           "title": "Extensions",
           "description": "Extensions defines a list of keys for codes that can or must be associated with the\ntax rate for it to be validated. Every key must be defined in the Regime's\nextensions."
         },
-        "map": {
-          "$ref": "https://gobl.org/draft-0/cbc/code-map",
-          "title": "Map",
-          "description": "Map is used to associate specific codes with the chosen rate."
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions key-value pair that will be copied to the tax combo if this\nrate is used."
         },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
@@ -391,10 +386,10 @@
           "title": "Codes",
           "description": "Codes is used to define additional codes for regime specific\nsituations."
         },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Any additional local meta data that may be useful in integrations."
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Ext represents a set of tax extensions that should be applied to\nthe document in the appropriate \"tax\" context."
         }
       },
       "type": "object",

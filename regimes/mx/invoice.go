@@ -1,8 +1,6 @@
 package mx
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
@@ -15,12 +13,10 @@ import (
 
 type invoiceValidator struct {
 	inv *bill.Invoice
-	ss  *tax.ScenarioSummary
 }
 
 func validateInvoice(inv *bill.Invoice) error {
-	ss := inv.ScenarioSummary()
-	v := &invoiceValidator{inv, ss}
+	v := &invoiceValidator{inv}
 	return v.validate()
 }
 
@@ -51,7 +47,6 @@ func (v *invoiceValidator) validate() error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
-			validation.By(v.precedingList),
 			validation.Each(validation.By(v.precedingEntry)),
 			validation.Skip,
 		),
@@ -70,7 +65,14 @@ func (v *invoiceValidator) tax(value any) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequires(
+				ExtKeyCFDIDocType,
 				ExtKeyCFDIIssuePlace,
+			),
+			validation.When(
+				len(v.inv.Preceding) > 0,
+				tax.ExtensionsRequires(
+					ExtKeyCFDIRelType,
+				),
 			),
 			validation.Skip,
 		),
@@ -185,19 +187,6 @@ func (v *invoiceValidator) payTerms(value interface{}) error {
 	return validation.ValidateStruct(terms,
 		validation.Field(&terms.Notes, validation.Length(0, 1000)),
 	)
-}
-
-func (v *invoiceValidator) precedingList(value interface{}) error {
-	list, _ := value.([]*bill.Preceding)
-	if len(list) == 0 {
-		return nil
-	}
-
-	if v.ss.Codes[KeySATTipoRelacion] == "" {
-		return fmt.Errorf("cannot be mapped from a `%s` type invoice", v.inv.Type)
-	}
-
-	return nil
 }
 
 func (v *invoiceValidator) precedingEntry(value interface{}) error {

@@ -50,10 +50,6 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			r.InCategories(),
 		),
 		validation.Field(&c.Rate,
-			validation.When(
-				(cat != nil && cat.RateRequired),
-				validation.Required,
-			),
 			r.InCategoryRates(c.Category),
 		),
 		validation.Field(&c.Ext,
@@ -75,6 +71,11 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	)
 	if err != nil {
 		return err
+	}
+	if cat != nil && cat.Validation != nil {
+		if err := cat.Validation(c); err != nil {
+			return err
+		}
 	}
 	return r.ValidateObject(c)
 }
@@ -125,9 +126,25 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 	if rate == nil {
 		return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
 	}
+
+	// Copy over the predefined extensions from the rate to the combo.
+	if len(rate.Ext) > 0 {
+		if c.Ext == nil {
+			c.Ext = make(Extensions)
+		}
+		for k, v := range rate.Ext {
+			c.Ext[k] = v
+		}
+	}
+
 	if rate.Exempt {
 		c.Percent = nil
 		c.Surcharge = nil
+		return nil
+	}
+
+	if c.Percent != nil {
+		// If the percent was already set, don't attempt to replace it.
 		return nil
 	}
 
@@ -141,20 +158,14 @@ func (c *Combo) prepare(r *Regime, tags []cbc.Key, date cal.Date) error {
 		return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 	}
 
-	// 2024-03-14: only update the percentage if none previously set.
-	// This means that custom percentages can be used even if the
-	// rate classification is required by a regime (like PT).
-	if c.Percent == nil {
-		p := value.Percent // copy
-		c.Percent = &p
-	}
-	if c.Surcharge == nil {
-		if value.Surcharge != nil {
-			s := *value.Surcharge // copy
-			c.Surcharge = &s
-		} else {
-			c.Surcharge = nil
-		}
+	p := value.Percent // copy
+	c.Percent = &p
+
+	if value.Surcharge != nil {
+		s := *value.Surcharge // copy
+		c.Surcharge = &s
+	} else {
+		c.Surcharge = nil
 	}
 
 	return nil
@@ -205,10 +216,14 @@ func (s Set) ValidateWithContext(ctx context.Context) error {
 	combos := make(map[cbc.Code]cbc.Key)
 	for i, c := range s {
 		if _, ok := combos[c.Category]; ok {
-			return fmt.Errorf("%d: category %v is duplicated", i, c.Category)
+			return validation.Errors{
+				fmt.Sprintf("%d", i): fmt.Errorf("category %v is duplicated", c.Category),
+			}
 		}
 		if err := c.ValidateWithContext(ctx); err != nil {
-			return fmt.Errorf("%d: %w", i, err)
+			return validation.Errors{
+				fmt.Sprintf("%d", i): err,
+			}
 		}
 		combos[c.Category] = c.Rate
 	}

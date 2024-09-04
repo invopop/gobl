@@ -236,7 +236,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
 								Ext: tax.Extensions{
-									pt.ExtKeyRegion: "PT-AC",
+									pt.ExtKeyRegion:      "PT-AC",
+									pt.ExtKeySAFTTaxRate: "NOR",
 								},
 							},
 						},
@@ -281,7 +282,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 		},
 
 		{
-			desc: "with VAT percents defined, do not override rate",
+			desc: "with VAT percents defined, maintain rate",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -949,7 +950,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.Extensions{
-								it.ExtKeySDIRetainedTax: "A",
+								it.ExtKeySDIRetained: "A",
 							},
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -965,7 +966,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.Extensions{
-								it.ExtKeySDIRetainedTax: "J", // truffles!
+								it.ExtKeySDIRetained: "J", // truffles!
 							},
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -993,7 +994,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.Extensions{
-									it.ExtKeySDIRetainedTax: "A",
+									it.ExtKeySDIRetained: "A",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
@@ -1001,7 +1002,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Ext: tax.Extensions{
-									it.ExtKeySDIRetainedTax: "J",
+									it.ExtKeySDIRetained: "J",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),

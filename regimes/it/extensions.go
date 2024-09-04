@@ -10,9 +10,10 @@ import (
 // and defined as part of the FatturaPA specification.
 const (
 	ExtKeySDIFiscalRegime = "it-sdi-fiscal-regime"
-	ExtKeySDINature       = "it-sdi-nature"
-	ExtKeySDIRetainedTax  = "it-sdi-retained-tax"
 	ExtKeySDIFormat       = "it-sdi-format"
+	ExtKeySDIDocumentType = "it-sdi-document-type"
+	ExtKeySDIExempt       = "it-sdi-exempt"
+	ExtKeySDIRetained     = "it-sdi-retained"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -45,6 +46,175 @@ var extensionKeys = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Private Parties (default)",
 					i18n.IT: "Soggetti Privati (predefinito)",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySDIDocumentType,
+		Name: i18n.String{
+			i18n.EN: "SDI Document Type",
+			i18n.IT: "Tipo Documento SDI",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to describe the type of document being sent to the SDI. This should
+				normally be determined automatically by GOBL.
+			`),
+		},
+		Codes: []*cbc.CodeDefinition{
+			{
+				Code: "TD01",
+				Name: i18n.String{
+					i18n.EN: "Regular Invoice",
+					i18n.IT: "Fattura",
+				},
+			},
+			{
+				Code: "TD02",
+				Name: i18n.String{
+					i18n.EN: "Advance or down payment on invoice",
+					i18n.IT: "Acconto / anticipo su fattura",
+				},
+			},
+			{
+				Code: "TD03",
+				Name: i18n.String{
+					i18n.EN: "Advance or down payment on freelance invoice",
+					i18n.IT: "Acconto / anticipo su parcella",
+				},
+			},
+			{
+				Code: "TD04",
+				Name: i18n.String{
+					i18n.EN: "Credit Note",
+					i18n.IT: "Nota di credito",
+				},
+			},
+			{
+				Code: "TD05",
+				Name: i18n.String{
+					i18n.EN: "Debit Note",
+					i18n.IT: "Nota di debito",
+				},
+			},
+			{
+				Code: "TD06",
+				Name: i18n.String{
+					i18n.EN: "Freelancer invoice with retained taxes",
+					i18n.IT: "Parcella",
+				},
+			},
+			{
+				Code: "TD07",
+				Name: i18n.String{
+					i18n.EN: "Simplified Invoice",
+					i18n.IT: "Fattura Semplificata",
+				},
+			},
+			{
+				Code: "TD08",
+				Name: i18n.String{
+					i18n.EN: "Simplified Credit Note",
+					i18n.IT: "Nota di credito semplificata",
+				},
+			},
+			{
+				Code: "TD09",
+				Name: i18n.String{
+					i18n.EN: "Simplified Debit Note",
+					i18n.IT: "Nota di debito semplificata",
+				},
+			},
+			{
+				Code: "TD16",
+				Name: i18n.String{
+					i18n.EN: "Reverse charge",
+					i18n.IT: "Integrazione fattura reverse charge interno",
+				},
+			},
+			{
+				Code: "TD17",
+				Name: i18n.String{
+					i18n.EN: "Self-billed Import",
+					i18n.IT: "Integrazione/autofattura per acquisto servizi da estero",
+				},
+			},
+			{
+				Code: "TD18",
+				Name: i18n.String{
+					i18n.EN: "Self-billed EU Goods Import",
+					i18n.IT: "Integrazione per acquisto beni intracomunitari",
+				},
+			},
+			{
+				Code: "TD19",
+				Name: i18n.String{
+					i18n.EN: "Self-billed Goods Import",
+					i18n.IT: "Integrazione/autofattura per acquisto beni ex art.17 c.2 DPR 633/72",
+				},
+			},
+			{
+				Code: "TD20",
+				Name: i18n.String{
+					i18n.EN: "Self-billed Regularization",
+					i18n.IT: "Autofattura per regolarizzazione e integrazione delle fatture - art.6 c.8 d.lgs.471/97 o art.46 c.5 D.L.331/93",
+				},
+			},
+			{
+				Code: "TD21",
+				Name: i18n.String{
+					i18n.EN: "Self-billed invoice when ceiling exceeded",
+					i18n.IT: "Autofattura per splafonamento",
+				},
+			},
+			{
+				Code: "TD22",
+				Name: i18n.String{
+					i18n.EN: "Self-billed for goods extracted from VAT warehouse",
+					i18n.IT: "Estrazione beni da Deposito IVA",
+				},
+			},
+			{
+				Code: "TD23",
+				Name: i18n.String{
+					i18n.EN: "Self-billed for goods extracted from VAT warehouse with VAT payment",
+					i18n.IT: "Estrazione beni da Deposito IVA con versamento IVA",
+				},
+			},
+			{
+				Code: "TD24",
+				Name: i18n.String{
+					i18n.EN: "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
+					i18n.IT: "Fattura differita - art.21 c.4 lett. a",
+				},
+			},
+			{
+				Code: "TD25",
+				Name: i18n.String{
+					i18n.EN: "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
+					i18n.IT: "Fattura differita - art.21 c.4 terzo periodo lett. b",
+				},
+			},
+			{
+				Code: "TD26",
+				Name: i18n.String{
+					i18n.EN: "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
+					i18n.IT: "Cessione di beni ammortizzabili e per passaggi interni - art.36 DPR 633/72",
+				},
+			},
+			{
+				Code: "TD27",
+				Name: i18n.String{
+					i18n.EN: "Self-billed for self consumption or for free transfer without recourse",
+					i18n.IT: "Fattura per autoconsumo o per cessioni gratuite senza rivalsa",
+				},
+			},
+			{
+				Code: "TD28",
+				Name: i18n.String{
+					i18n.EN: "Purchases from San Marino with VAT (paper invoice)",
+					i18n.IT: "Acquisti da San Marino con IVA (fattura cartacea)",
 				},
 			},
 		},
@@ -130,12 +300,12 @@ var extensionKeys = []*cbc.KeyDefinition{
 			}},
 		},
 	},
-
 	{
-		Key: ExtKeySDINature,
+		// Related to the "Natura" field used for VAT exemptions.
+		Key: ExtKeySDIExempt,
 		Name: i18n.String{
-			i18n.EN: "Nature",
-			i18n.IT: "Natura",
+			i18n.EN: "Exemption Code",
+			i18n.IT: "Natura Esenzione",
 		},
 		Codes: []*cbc.CodeDefinition{
 			{
@@ -289,13 +459,13 @@ var extensionKeys = []*cbc.KeyDefinition{
 	},
 
 	{
-		// Retained tax tag keys determined from the "CausalePagamento" field from FatturaPA.
+		// Retained reason code determined from the "CausalePagamento" field from FatturaPA.
 		// Source: https://www.agenziaentrate.gov.it/portale/documents/20143/4115385/CU_istr_2022.pdf
 		// Section VII, Part 2
-		Key: ExtKeySDIRetainedTax,
+		Key: ExtKeySDIRetained,
 		Name: i18n.String{
-			i18n.EN: "Retained Tax",
-			i18n.IT: "Ritenuta",
+			i18n.EN: "Retained Tax Payment Reason Code",
+			i18n.IT: "Causale Pagamento Ritenuta",
 		},
 		Codes: []*cbc.CodeDefinition{
 			{

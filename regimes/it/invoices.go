@@ -1,7 +1,6 @@
 package it
 
 import (
-	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
@@ -17,16 +16,32 @@ type invoiceValidator struct {
 }
 
 // normalizeInvoice is used to ensure the invoice data is correct.
-func normalizeInvoice(inv *bill.Invoice) error {
-	return normalizeCustomer(inv.Customer)
+func normalizeInvoice(inv *bill.Invoice) {
+	normalizeSupplier(inv.Supplier)
+	normalizeCustomer(inv.Customer)
+	for _, line := range inv.Lines {
+		normalizeLine(line)
+	}
 }
 
-func normalizeCustomer(party *org.Party) error {
+func normalizeSupplier(party *org.Party) {
 	if party == nil {
-		return nil
+		return
+	}
+	if party.Ext == nil || party.Ext[ExtKeySDIFiscalRegime] == "" {
+		if party.Ext == nil {
+			party.Ext = make(tax.Extensions)
+		}
+		party.Ext[ExtKeySDIFiscalRegime] = "RF01" // Ordinary regime is default
+	}
+}
+
+func normalizeCustomer(party *org.Party) {
+	if party == nil {
+		return
 	}
 	if !isItalianParty(party) {
-		return nil
+		return
 	}
 	// If the party is an individual, move the fiscal code to the identities.
 	if party.TaxID.Type == "individual" { //nolint:staticcheck
@@ -38,7 +53,22 @@ func normalizeCustomer(party *org.Party) error {
 		party.TaxID.Type = "" //nolint:staticcheck
 		party.Identities = org.AddIdentity(party.Identities, id)
 	}
-	return nil
+}
+
+func normalizeLine(line *bill.Line) {
+	for _, tax := range line.Taxes {
+		if tax.Ext == nil {
+			continue
+		}
+		if tax.Ext.Has("it-sdi-retained-tax") {
+			tax.Ext[ExtKeySDIRetained] = tax.Ext["it-sdi-retained-tax"]
+			delete(tax.Ext, "it-sdi-retained-tax")
+		}
+		if tax.Ext.Has("it-sdi-nature") {
+			tax.Ext[ExtKeySDIExempt] = tax.Ext["it-sdi-nature"]
+			delete(tax.Ext, "it-sdi-nature")
+		}
+	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {
@@ -47,10 +77,6 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func (v *invoiceValidator) validate() error {
-	if err := v.validateScenarios(); err != nil {
-		return err
-	}
-
 	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
@@ -67,7 +93,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(validateLine),
+				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -84,6 +110,7 @@ func (v *invoiceValidator) tax(value any) error {
 		validation.Field(&obj.Ext,
 			tax.ExtensionsHas(
 				ExtKeySDIFormat,
+				ExtKeySDIDocumentType,
 			),
 			validation.Skip,
 		),
@@ -109,6 +136,10 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		),
 		validation.Field(&supplier.Registration,
 			validation.By(validateRegistration),
+			validation.Skip,
+		),
+		validation.Field(&supplier.Ext,
+			tax.ExtensionsRequires(ExtKeySDIFiscalRegime),
 			validation.Skip,
 		),
 	)
@@ -183,47 +214,6 @@ func validateAddress(value interface{}) error {
 	)
 }
 
-func validateLine(value interface{}) error {
-	v, ok := value.(*bill.Line)
-	if v == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Taxes,
-			tax.SetHasCategory(tax.CategoryVAT),
-			validation.Each(
-				validation.By(validateLineTax),
-				validation.Skip,
-			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateLineTax(value interface{}) error {
-	v, ok := value.(*tax.Combo)
-	if v == nil || !ok {
-		return nil
-	}
-	return validation.ValidateStruct(v,
-		validation.Field(&v.Ext,
-			validation.When(
-				v.Category.In(
-					TaxCategoryIRPEF,
-					TaxCategoryIRES,
-					TaxCategoryINPS,
-					TaxCategoryENASARCO,
-					TaxCategoryENPAM,
-				),
-				tax.ExtensionsRequires(
-					ExtKeySDIRetainedTax,
-				),
-			),
-			validation.Skip,
-		),
-	)
-}
-
 func validateRegistration(value interface{}) error {
 	v, ok := value.(*org.Registration)
 	if v == nil || !ok {
@@ -233,17 +223,4 @@ func validateRegistration(value interface{}) error {
 		validation.Field(&v.Entry, validation.Required),
 		validation.Field(&v.Office, validation.Required),
 	)
-}
-
-// validateScenarios checks that the invoice includes scenarios that help determine
-// TipoDocumento and RegimeFiscale
-func (v *invoiceValidator) validateScenarios() error {
-	ss := v.inv.ScenarioSummary()
-
-	td := ss.Codes[KeyFatturaPATipoDocumento]
-	if td == "" {
-		return errors.New("missing scenario related to TipoDocumento")
-	}
-
-	return nil
 }

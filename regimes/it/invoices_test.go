@@ -86,6 +86,63 @@ func TestInvoiceValidation(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
+func TestInvoiceNormalization(t *testing.T) {
+	t.Run("supplier fiscal regime", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		err := it.Calculate(inv)
+		require.NoError(t, err)
+
+		assert.Equal(t, "RF01", inv.Supplier.Ext[it.ExtKeySDIFiscalRegime].String())
+	})
+
+	t.Run("normalize customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "IT",
+			Code:    "RSSGNN60R30H501U",
+			Type:    "individual",
+		}
+		err := it.Calculate(inv)
+		require.NoError(t, err)
+		assert.Empty(t, inv.Customer.TaxID.Code)
+		assert.Empty(t, inv.Customer.TaxID.Type) //nolint:staticcheck
+		assert.Len(t, inv.Customer.Identities, 1)
+		assert.Equal(t, it.IdentityKeyFiscalCode, inv.Customer.Identities[0].Key)
+		assert.Equal(t, "RSSGNN60R30H501U", inv.Customer.Identities[0].Code.String())
+	})
+
+	t.Run("replace natura with exempt extenions", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: "VAT",
+			Percent:  nil, // exempt
+			Ext: tax.Extensions{
+				"it-sdi-nature": "N1",
+			},
+		}
+		err := it.Calculate(inv)
+		require.NoError(t, err)
+		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext[it.ExtKeySDIExempt].String())
+		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-nature")
+	})
+
+	t.Run("replace retained tax extenion", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: "IRPEF",
+			Percent:  num.NewPercentage(8, 3),
+			Ext: tax.Extensions{
+				"it-sdi-retained-tax": "A",
+			},
+		}
+		err := it.Calculate(inv)
+		require.NoError(t, err)
+		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext[it.ExtKeySDIRetained].String())
+		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-retained-tax")
+	})
+
+}
+
 func TestCustomerValidation(t *testing.T) {
 	id := &org.Identity{
 		Key:  it.IdentityKeyFiscalCode,
@@ -168,14 +225,14 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "lines: (0: (taxes: (1: (ext: (it-sdi-retained-tax: required.).).).).).")
+		assert.Contains(t, err.Error(), "lines: (0: (taxes: (1: (ext: (it-sdi-retained: required.).).).).).")
 	}
 
 	inv = testInvoiceStandard(t)
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
 		Ext: tax.Extensions{
-			it.ExtKeySDIRetainedTax: "A",
+			it.ExtKeySDIRetained: "A",
 		},
 		Percent: num.NewPercentage(20, 2),
 	})

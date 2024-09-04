@@ -27,4 +27,5 @@ const (
 	TagCustomerRates cbc.Key = "customer-rates"
 	TagSelfBilled    cbc.Key = "self-billed"
 	TagPartial       cbc.Key = "partial"
+	TagB2G           cbc.Key = "b2g"
 )

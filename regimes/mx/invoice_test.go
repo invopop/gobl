@@ -198,7 +198,7 @@ func TestPrecedingValidation(t *testing.T) {
 			},
 		},
 	}
-	assertValidationError(t, inv, "preceding: cannot be mapped from a `standard` type invoice")
+	assertValidationError(t, inv, "preceding: (0: (stamps: missing sat-uuid stamp.).); tax: (ext: (mx-cfdi-rel-type: required.).)")
 
 	inv.Type = bill.InvoiceTypeCreditNote
 	assertValidationError(t, inv, "preceding: (0: (stamps: missing sat-uuid stamp.).)")

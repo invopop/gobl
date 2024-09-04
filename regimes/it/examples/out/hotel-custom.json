@@ -4,27 +4,27 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "66ff1eb0759e99f49fe9ae10c8636d7bc1088421c28383c441e76c304df3300c"
+			"val": "b3cd3bfecd61d6508c3ced90a303bf6662c98d31bd4f1b43feaa2a2628bd974c"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "FT",
-		"code": "020",
-		"issue_date": "2024-07-12",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT",
 			"ext": {
 				"it-sdi-document-type": "TD01",
-				"it-sdi-format": "FPR12"
+				"it-sdi-format": "FPA12"
 			}
 		},
 		"supplier": {
-			"name": "Company Name S.r.l.",
+			"name": "Hotel California",
 			"tax_id": {
 				"country": "IT",
 				"code": "12345678903"
@@ -50,14 +50,15 @@
 			}
 		},
 		"customer": {
-			"name": "Monica Bellucci",
+			"name": "Mela S.r.l.",
 			"tax_id": {
-				"country": "IT"
+				"country": "IT",
+				"code": "13029381004"
 			},
-			"identities": [
+			"inboxes": [
 				{
-					"key": "it-fiscal-code",
-					"code": "RSSGNN60R30H501U"
+					"key": "it-sdi-code",
+					"code": "M5UXCR5"
 				}
 			],
 			"addresses": [
@@ -76,44 +77,71 @@
 				"i": 1,
 				"quantity": "1",
 				"item": {
-					"name": "Cleaning services",
+					"name": "Tassa di Soggiorno",
+					"price": "1.00"
+				},
+				"sum": "1.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-exempt": "N4"
+						}
+					}
+				],
+				"total": "1.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Camera Matrimoniale",
 					"price": "125.00"
 				},
 				"sum": "125.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
-						"percent": "22.0%"
+						"rate": "intermediate",
+						"percent": "10.0%"
 					}
 				],
 				"total": "125.00"
 			}
 		],
 		"totals": {
-			"sum": "125.00",
-			"tax_included": "22.54",
-			"total": "102.46",
+			"sum": "126.00",
+			"tax_included": "11.36",
+			"total": "114.64",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
-								"base": "102.46",
-								"percent": "22.0%",
-								"amount": "22.54"
+								"key": "exempt",
+								"ext": {
+									"it-sdi-exempt": "N4"
+								},
+								"base": "1.00",
+								"amount": "0.00"
+							},
+							{
+								"key": "intermediate",
+								"base": "113.64",
+								"percent": "10.0%",
+								"amount": "11.36"
 							}
 						],
-						"amount": "22.54"
+						"amount": "11.36"
 					}
 				],
-				"sum": "22.54"
+				"sum": "11.36"
 			},
-			"tax": "22.54",
-			"total_with_tax": "125.00",
-			"payable": "125.00"
+			"tax": "11.36",
+			"total_with_tax": "126.00",
+			"payable": "126.00"
 		}
 	}
 }

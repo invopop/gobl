@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7c8b49ce0d6fcf0ea4a825299efabdb4132dc5e6114d49c21268ae980be2f249"
+			"val": "2f2a868c7ab8065e664d0d8e1856b3307b86cefa0701de613c14448fa69289ae"
 		},
 		"draft": true
 	},
@@ -19,7 +19,11 @@
 		"tax": {
 			"tags": [
 				"reverse-charge"
-			]
+			],
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "MªF. Services",
@@ -50,7 +54,10 @@
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
 		},
 		"customer": {
 			"name": "David Bowie",
@@ -83,7 +90,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"it-sdi-nature": "N6.9"
+							"it-sdi-exempt": "N6.9"
 						}
 					}
 				],
@@ -101,7 +108,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-nature": "N6.9"
+									"it-sdi-exempt": "N6.9"
 								},
 								"base": "1800.00",
 								"amount": "0.00"
