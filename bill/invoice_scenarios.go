@@ -48,8 +48,7 @@ func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
 	return ss.SummaryFor(inv.Type, tags, exts)
 }
 
-func (inv *Invoice) prepareTags() error {
-	r := inv.TaxRegime()
+func (inv *Invoice) prepareTags(r *tax.Regime) error {
 	if r == nil {
 		return nil
 	}
@@ -57,7 +56,8 @@ func (inv *Invoice) prepareTags() error {
 		return nil
 	}
 
-	// First check the tags are all valid
+	// Check the tags are all valid and identified by the tax regime
+	// as acceptable for invoices.
 	for _, k := range inv.Tax.Tags {
 		if t := r.Tag(k); t == nil {
 			return validation.Errors{
@@ -67,6 +67,7 @@ func (inv *Invoice) prepareTags() error {
 			}
 		}
 	}
+
 	return nil
 }
 

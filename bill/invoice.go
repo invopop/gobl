@@ -307,13 +307,12 @@ func (inv *Invoice) Calculate() error {
 		}
 	}
 
-	if err := inv.prepareTags(); err != nil {
-		return err
-	}
-
 	r := inv.TaxRegime()
 
-	// Run Regime pre-calculations first
+	if err := inv.prepareTags(r); err != nil {
+		return err
+	}
+	// Regime calculations first
 	if err := r.CalculateObject(inv); err != nil {
 		return err
 	}
@@ -432,6 +431,11 @@ func (inv *Invoice) calculate(r *tax.Regime) error {
 	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
 
+	// Do we need to deal with the customer-rates tag?
+	if inv.Tax.ContainsTag(tax.TagCustomerRates) {
+		inv.applyCustomerRates()
+	}
+
 	// Lines
 	if err := calculateLines(r, inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
 		return validation.Errors{"lines": err}
@@ -531,6 +535,28 @@ func (inv *Invoice) calculate(r *tax.Regime) error {
 	}
 
 	return nil
+}
+
+func (inv *Invoice) applyCustomerRates() {
+	if inv.Customer == nil || inv.Customer.TaxID == nil {
+		return
+	}
+	country := inv.Customer.TaxID.Country
+	for _, l := range inv.Lines {
+		addCountryToTaxes(l.Taxes, country)
+	}
+	for _, d := range inv.Discounts {
+		addCountryToTaxes(d.Taxes, country)
+	}
+	for _, c := range inv.Charges {
+		addCountryToTaxes(c.Taxes, country)
+	}
+}
+
+func addCountryToTaxes(ts tax.Set, country l10n.TaxCountryCode) {
+	for _, t := range ts {
+		t.Country = country
+	}
 }
 
 func calculateComplements(comps []*schema.Object) error {

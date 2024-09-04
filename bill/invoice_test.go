@@ -806,6 +806,102 @@ func TestCalculateTotalsWithFractions(t *testing.T) {
 	assert.Equal(t, "122.61", i.Totals.Total.String())
 }
 
+func TestApplyCustomerRates(t *testing.T) {
+	t.Run("missing customer", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
+	})
+	t.Run("missing customer tax ID", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
+	})
+	t.Run("regular customer rates", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.Customer.TaxID.Country = "PT"
+		inv.Discounts = []*bill.Discount{
+			{
+				Reason:  "Testing",
+				Percent: num.NewPercentage(10, 2),
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv.Charges = []*bill.Charge{
+			{
+				Reason:  "Testing",
+				Percent: num.NewPercentage(5, 2),
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "PT", inv.Lines[0].Taxes[0].Country.String())
+		assert.Equal(t, "PT", inv.Discounts[0].Taxes[0].Country.String())
+		assert.Equal(t, "PT", inv.Charges[0].Taxes[0].Country.String())
+	})
+}
+
 func TestCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
