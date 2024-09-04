@@ -47,7 +47,7 @@ var (
 	// ErrIdentityCodeInvalid is returned when the tax identity code is not valid.
 	ErrIdentityCodeInvalid = errors.New("invalid tax identity code")
 
-	// TaxCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
+	// IdentityCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
 	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
 )
 
