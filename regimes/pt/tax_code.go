@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -28,7 +27,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 // normalizeTaxIdentity will remove any whitespace or separation characters from
 // the tax code.
 func normalizeTaxIdentity(tID *tax.Identity) error {
-	return common.NormalizeTaxIdentity(tID)
+	return tax.NormalizeIdentity(tID)
 }
 
 // based on example provided by https://pt.wikipedia.org/wiki/N%C3%BAmero_de_identifica%C3%A7%C3%A3o_fiscal

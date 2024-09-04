@@ -39,7 +39,14 @@ var taxCategories = []*tax.Category{
 		Validation: func(c *tax.Combo) error {
 			return validation.ValidateStruct(c,
 				validation.Field(&c.Ext,
-					tax.ExtensionsRequires(ExtKeySAFTTaxRate),
+					// NOTE! We know that some tax rate is required in portugal, but
+					// we don't know what it should be for foreign countries.
+					// Until this is known, we're removing the validation for the
+					// country tax rate.
+					validation.When(
+						c.Country == "",
+						tax.ExtensionsRequires(ExtKeySAFTTaxRate),
+					),
 					validation.When(
 						c.Percent == nil,
 						tax.ExtensionsRequires(ExtKeyExemptionCode),

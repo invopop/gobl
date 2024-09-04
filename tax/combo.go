@@ -113,6 +113,10 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.
 		return nil
 	}
 
+	return c.calculateForRegime(r, tags, date)
+}
+
+func (c *Combo) calculateForRegime(r *Regime, tags []cbc.Key, date cal.Date) error {
 	category := r.Category(c.Category)
 	if category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())

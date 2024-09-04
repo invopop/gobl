@@ -74,3 +74,43 @@ func TestValidationRules(t *testing.T) {
 	err := validation.Validate(tID, tax.RequireIdentityCode)
 	assert.ErrorContains(t, err, "code: cannot be blank")
 }
+
+func TestNormalizeIdentity(t *testing.T) {
+	tID := &tax.Identity{
+		Country: "AU",
+		Code:    "  x315-7928 m  ",
+	}
+	err := tax.NormalizeIdentity(tID)
+	assert.NoError(t, err)
+	assert.Equal(t, tID.Code.String(), "X3157928M")
+}
+
+func TestIdentityNormalize(t *testing.T) {
+	t.Run("for unkown regime", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "XX",
+			Code:    "  x315-7928 m  ",
+		}
+		err := tID.Normalize()
+		assert.NoError(t, err)
+		assert.Equal(t, tID.Code.String(), "X3157928M")
+	})
+	t.Run("for known regime", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "  x315-7928 m  ",
+		}
+		err := tID.Normalize()
+		assert.NoError(t, err)
+		assert.Equal(t, tID.Code.String(), "X3157928M")
+	})
+
+	t.Run("for known regime with error", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "FR",
+			Code:    "  356000100  ",
+		}
+		err := tID.Normalize()
+		assert.ErrorContains(t, err, "code: checksum mismatch")
+	})
+}

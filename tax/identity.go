@@ -3,6 +3,8 @@ package tax
 import (
 	"errors"
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
@@ -41,9 +43,12 @@ type Identity struct {
 	Zone l10n.Code `json:"zone,omitempty" jsonschema:"title=Zone"`
 }
 
-// Standard error responses to be used by regimes.
 var (
+	// ErrIdentityCodeInvalid is returned when the tax identity code is not valid.
 	ErrIdentityCodeInvalid = errors.New("invalid tax identity code")
+
+	// TaxCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
+	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
 )
 
 // RequireIdentityCode is an additional check to use alongside
@@ -93,10 +98,11 @@ func (id *Identity) Regime() *Regime {
 // on the tax identity.
 func (id *Identity) Normalize() error {
 	r := id.Regime()
-	if r != nil {
-		return r.CalculateObject(id)
+	if r == nil {
+		// Fallback to common normalization
+		return NormalizeIdentity(id)
 	}
-	return nil
+	return r.CalculateObject(id)
 }
 
 // Calculate is an alias for Normalize and will perform normalization
@@ -145,4 +151,20 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 			"code",
 		},
 	}
+}
+
+// NormalizeIdentity removes any whitespace or separation characters and ensures all letters are
+// uppercase.
+func NormalizeIdentity(tID *Identity, altCodes ...l10n.Code) error {
+	if tID == nil {
+		return nil
+	}
+	code := strings.ToUpper(tID.Code.String())
+	code = IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = strings.TrimPrefix(code, string(tID.Country))
+	for _, alt := range altCodes {
+		code = strings.TrimPrefix(code, string(alt))
+	}
+	tID.Code = cbc.Code(code)
+	return nil
 }

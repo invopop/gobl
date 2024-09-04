@@ -7,7 +7,6 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -26,7 +25,7 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 	}
 	// also allow for usage of "GR" which may be used in the tax code
 	// by accident.
-	if err := common.NormalizeTaxIdentity(tID, l10n.GR); err != nil {
+	if err := tax.NormalizeIdentity(tID, l10n.GR); err != nil {
 		return err
 	}
 	tID.Country = "EL" // always override for greece
