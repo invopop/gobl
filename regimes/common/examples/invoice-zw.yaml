@@ -1,6 +1,7 @@
 # This is an example invoice for a tax regime that is not currently supported
 # by GOBL.
 $schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "0191bdbf-b329-7ae3-9fa8-119df45cb9d5"
 series: "XYZ"
 code: "0001"
 issue_date: "2024-09-04"
