@@ -27,6 +27,7 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 - `it`: renamed extension `it-sdi-natura` to `it-sdi-exempt`.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
+- `gr`: switched to use the new `round-then-sum` calculation method
 
 ### Added
 
@@ -37,6 +38,7 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
 - `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
 - `bill.Line`: added `RequireLineTaxCategory` validation helper method.
+- `tax.TotalCalculator`: now supports `round-then-sum` as an alternative to the default `sum-then-round` calculation method to meet the requirements of regimes like Greece.
 
 ### Removed
 

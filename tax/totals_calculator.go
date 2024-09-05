@@ -7,6 +7,24 @@ import (
 	"github.com/invopop/gobl/num"
 )
 
+// CalculatorRoundingRule defines the available methods for calculating the
+// totals in the tax calculator.
+type CalculatorRoundingRule string
+
+const (
+	// CalculatorSumThenRound is the default method of calculating the totals
+	// in GOBL, and provides the best results for most cases as the precision
+	// is maintained to the maximum amount possible. The tradeoff however is
+	// that sometimes the totals may not sum exactly based on what is visible.
+	CalculatorSumThenRound CalculatorRoundingRule = "sum-then-round"
+	// CalculatorRoundThenSum is the alternative method of calculating the totals
+	// that will first round all the amounts to the currency's precision before
+	// making the sums. Totals using this approach can always be recalculated using
+	// the amounts presented, but can lead to rounding errors in the case of
+	// pre-payments and when line item prices include tax.
+	CalculatorRoundThenSum CalculatorRoundingRule = "round-then-sum"
+)
+
 // TotalCalculator defines the base structure with the available
 // data for calculating tax totals.
 type TotalCalculator struct {
@@ -92,7 +110,7 @@ func (tc *TotalCalculator) calculateBaseRateTotals(taxLines []*taxLine, t *Total
 				continue // not much to do here!
 			}
 			rt := t.rateTotalFor(c, tc.Zero)
-			rt.Base = rt.Base.MatchPrecision(tl.total)
+			rt.Base = tc.matchPrecision(rt.Base, tl.total)
 			rt.Base = rt.Base.Add(tl.total)
 		}
 	}
@@ -104,7 +122,7 @@ func (tc *TotalCalculator) calculateFinalSum(t *Total) {
 	for _, ct := range t.Categories {
 		tc.calculateBaseCategoryTotal(ct)
 
-		t.Sum = t.Sum.MatchPrecision(ct.Amount)
+		t.Sum = tc.matchPrecision(t.Sum, ct.Amount)
 		if ct.Retained {
 			t.Sum = t.Sum.Subtract(ct.Amount)
 			if ct.Surcharge != nil {
@@ -129,7 +147,7 @@ func (tc *TotalCalculator) calculateBaseCategoryTotal(ct *CategoryTotal) {
 		}
 		base := rt.Base
 		rt.Amount = rt.Percent.Of(rt.Base)
-		ct.Amount = ct.Amount.MatchPrecision(rt.Amount)
+		ct.Amount = tc.matchPrecision(ct.Amount, rt.Amount)
 		ct.Amount = ct.Amount.Add(rt.Amount)
 		if rt.Surcharge != nil {
 			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(base)
@@ -138,11 +156,24 @@ func (tc *TotalCalculator) calculateBaseCategoryTotal(ct *CategoryTotal) {
 			}
 			a := rt.Surcharge.Amount
 			x := *ct.Surcharge
-			x = x.MatchPrecision(a)
+			x = tc.matchPrecision(x, a)
 			x = x.Add(a)
 			ct.Surcharge = &x
 		}
 	}
+}
+
+// matchPrecision is used to match the precision of two amounts according to the
+// current rounding rule.
+func (tc *TotalCalculator) matchPrecision(a, b num.Amount) num.Amount {
+	r := RegimeFor(tc.Country.Code())
+	if r != nil {
+		switch r.CalculatorRoundingRule {
+		case CalculatorRoundThenSum:
+			return a.Rescale(tc.Zero.Exp())
+		}
+	}
+	return a.MatchPrecision(b)
 }
 
 // round will go through all the values generated and round them to the currency's
