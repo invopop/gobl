@@ -65,6 +65,34 @@ func TestKeyDefinitionsWithKeys(t *testing.T) {
 	assert.Equal(t, "Code", cd.Name[i18n.EN])
 }
 
+func TestKeyDefinitionsWithValues(t *testing.T) {
+	kd := &cbc.KeyDefinition{
+		Key: "key",
+		Name: i18n.String{
+			i18n.EN: "Name",
+			i18n.ES: "Nombre",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Description",
+			i18n.ES: "Descripción",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "value",
+				Name: i18n.String{
+					i18n.EN: "Value",
+					i18n.ES: "Valor",
+				},
+			},
+		},
+	}
+	assert.True(t, kd.HasValue("value"))
+	assert.False(t, kd.HasValue("invalid"))
+	vd := kd.ValueDef("value")
+	require.NotNil(t, vd)
+	assert.Equal(t, "Value", vd.Name[i18n.EN])
+}
+
 func TestKeyDefinitionWithPattern(t *testing.T) {
 	kd := &cbc.KeyDefinition{
 		Key: "key",

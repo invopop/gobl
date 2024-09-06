@@ -38,6 +38,8 @@ var taxCategories = []*tax.Category{
 		Extensions: []cbc.Key{
 			ExtKeyMyDATAVATCat,
 			ExtKeyMyDATAExemption,
+			ExtKeyMyDATAIncomeCat,
+			ExtKeyMyDATAIncomeType,
 		},
 		Validation: func(tc *tax.Combo) error {
 			return validation.ValidateStruct(tc,
@@ -46,6 +48,10 @@ var taxCategories = []*tax.Category{
 					validation.When(
 						tc.Percent == nil,
 						tax.ExtensionsRequires(ExtKeyMyDATAExemption),
+					),
+					validation.When(
+						tc.Ext.Has(ExtKeyMyDATAIncomeCat) || tc.Ext.Has(ExtKeyMyDATAIncomeType),
+						tax.ExtensionsRequires(ExtKeyMyDATAIncomeCat, ExtKeyMyDATAIncomeType),
 					),
 					validation.Skip,
 				),

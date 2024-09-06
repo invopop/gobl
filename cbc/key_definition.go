@@ -25,6 +25,9 @@ type KeyDefinition struct {
 	// Keys is used instead of codes to define a further sub-set of keys that
 	// can be used alongside this one.
 	Keys []*KeyDefinition `json:"keys,omitempty" jsonschema:"title=Keys"`
+	// Values is used instead of codes or keys to define a set of values that
+	// can be used alongside the Key
+	Values []*ValueDefinition `json:"values,omitempty" jsonschema:"title=Values"`
 	// Pattern is used to validate the key value instead of using a fixed value
 	// from the code or key definitions.
 	Pattern string `json:"pattern,omitempty" jsonschema:"title=Pattern"`
@@ -68,6 +71,23 @@ func (kd *KeyDefinition) KeyDef(key Key) *KeyDefinition {
 	return nil
 }
 
+// HasValue loops through the key definitions values and determines if there
+// is a match.
+func (kd *KeyDefinition) HasValue(value string) bool {
+	vd := kd.ValueDef(value)
+	return vd != nil
+}
+
+// ValueDef returns the value definition for the provided value, or nil.
+func (kd *KeyDefinition) ValueDef(value string) *ValueDefinition {
+	for _, vd := range kd.Values {
+		if vd.Value == value {
+			return vd
+		}
+	}
+	return nil
+}
+
 // Validate ensures the key definition looks correct in the context of the regime.
 func (kd *KeyDefinition) Validate() error {
 	err := validation.ValidateStruct(kd,
@@ -77,6 +97,11 @@ func (kd *KeyDefinition) Validate() error {
 		validation.Field(&kd.Codes),
 		validation.Field(&kd.Keys,
 			validation.When(len(kd.Codes) > 0,
+				validation.Empty,
+			),
+		),
+		validation.Field(&kd.Values,
+			validation.When(len(kd.Codes) > 0 || len(kd.Keys) > 0,
 				validation.Empty,
 			),
 		),

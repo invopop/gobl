@@ -146,3 +146,91 @@ For example:
   }
 }
 ```
+
+### Income Classification
+
+Invoices reported to the Greek tax authority via myDATA can optionally include information about the income classification of each invoice item.
+
+In a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be set at line tax level to any of the values expected by the IAPR:
+
+#### Income Category
+
+| Value        | Description                                            |
+| ------------ | ------------------------------------------------------ |
+| category1_1  | Commodity Sale Income (+)/(-)                          |
+| category1_2  | Product Sale Income (+)/(-)                            |
+| category1_3  | Provision of Services Income (+)/(-)                   |
+| category1_4  | Sale of Fixed Assets Income (+)/(-)                    |
+| category1_5  | Other Income/Profits (+)/(-)                           |
+| category1_6  | Self-Deliveries/Self-Supplies (+)/(-)                  |
+| category1_7  | Income on behalf of Third Parties (+)/(-)              |
+| category1_8  | Past fiscal years income (+)/(-)                       |
+| category1_9  | Future fiscal years income (+)/(-)                     |
+| category1_10 | Other Income Adjustment/Regularisation Entries (+)/(-) |
+| category1_95 | Other Income-related Information (+)/(-)               |
+
+#### Income Type
+
+| Value       | Description |
+| ----------- | ----------- |
+| E3_106      | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Com modities |
+| E3_205      | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw  and other materials |
+| E3_210      | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Pro ducts and production in progress |
+| E3_305      | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw  and other materials |
+| E3_310      | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Pro ducts and production in progress |
+| E3_318      | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Pro duction expenses |
+| E3_561_001  | Wholesale Sales of Goods and Services – for Traders |
+| E3_561_002  | Wholesale Sales of Goods and Services pursuant to article 39a paragraph 5 o f the VAT Code (Law 2859/2000) |
+| E3_561_003  | Retail Sales of Goods and Services – Private Clientele |
+| E3_561_004  | Retail Sales of Goods and Services pursuant to article 39a paragraph 5 o f the VAT Code (Law 2859/2000) |
+| E3_561_005  | Intra-Community Foreign Sales of Goods and Services |
+| E3_561_006  | Third Country Foreign Sales of Goods and Services |
+| E3_561_007  | Other Sales of Goods and Services |
+| E3_562      | Other Ordinary Income |
+| E3_563      | Credit Interest and Related Income |
+| E3_564      | Credit Exchange Differences |
+| E3_565      | Income from Participations |
+| E3_566      | Profits from Disposing Non-Current Assets |
+| E3_567      | Profits from the Reversal of Provisions and Impairments |
+| E3_568      | Profits from Measurement at Fair Value |
+| E3_570      | Extraordinary income and profits |
+| E3_595      | Self-Production Expenses |
+| E3_596      | Subsidies - Grants |
+| E3_597      | Subsidies – Grants for Investment Purposes – Expense Coverage |
+| E3_880_001  | Wholesale Sales of Fixed Assets |
+| E3_880_002  | Retail Sales of Fixed Assets |
+| E3_880_003  | Intra-Community Foreign Sales of Fixed Assets |
+| E3_880_004  | Third Country Foreign Sales of Fixed Assets |
+| E3_881_001  | Wholesale Sales on behalf of Third Parties |
+| E3_881_002  | Retail Sales on behalf of Third Parties |
+| E3_881_003  | Intra-Community Foreign Sales on behalf of Third Parties |
+| E3_881_004  | Third Country Foreign Sales on behalf of Third Parties |
+| E3_598_001  | Sales of goods belonging to excise duty |
+| E3_598_003  | Sales on behalf of farmers through an agricultural cooperative e.t.c. |
+
+For example:
+
+```js
+"lines": [
+  {
+    "i": 1,
+    "quantity": "20",
+    "item": {
+      "name": "Υπηρεσίες Ανάπτυξης",
+      "price": "90.00"
+    },
+    // ...
+    "taxes": [
+      {
+        "cat": "VAT",
+        "rate": "standard",
+        "ext": {
+          "gr-mydata-income-cat": "category1_1",
+          "gr-mydata-income-type": "E3_106",
+          // ...
+        }
+      }
+    ]
+  }
+]
+```

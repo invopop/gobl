@@ -28,6 +28,8 @@ For example, the document format and type in Italy are now set inside the extens
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
 - `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
 - `bill.Line`: added `RequireLineTaxCategory` validation helper method.
+- `tax`: added new `ValueDefinition` for extension values not meeting the constraints of codes or keys.
+- `gr`: added "Income Classification" extensions.
 
 ### Removed
 

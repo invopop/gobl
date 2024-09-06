@@ -48,6 +48,9 @@ func (em Extensions) ValidateWithContext(ctx context.Context) error {
 		if len(kd.Keys) > 0 && !kd.HasKey(ev.Key()) {
 			err[ks] = fmt.Errorf("key '%s' invalid", ev)
 		}
+		if len(kd.Values) > 0 && !kd.HasValue(ev.Value()) {
+			err[ks] = fmt.Errorf("value '%s' invalid", ev)
+		}
 		if kd.Pattern != "" {
 			re, rerr := regexp.Compile(kd.Pattern)
 			if rerr != nil {
@@ -222,4 +225,9 @@ func (ev ExtValue) Code() cbc.Code {
 		return c
 	}
 	return cbc.CodeEmpty
+}
+
+// Value returns the value as a string.
+func (ev ExtValue) Value() string {
+	return ev.String()
 }
