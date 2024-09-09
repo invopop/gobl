@@ -74,9 +74,9 @@
         "en": "Special VAT Extensions for KSeF",
         "pl": "Rozszerzenia specjalne dla KSeF"
       },
-      "keys": [
+      "values": [
         {
-          "key": "taxi",
+          "value": "taxi",
           "name": {
             "en": "Taxi Rate",
             "pl": "Ryczałt dla taksówek"
@@ -93,23 +93,23 @@
       "name": {
         "en": "Zero VAT Extensions for KSeF"
       },
-      "keys": [
+      "values": [
         {
-          "key": "wdt",
+          "value": "wdt",
           "name": {
             "en": "WDT",
             "pl": "WDT"
           }
         },
         {
-          "key": "domestic",
+          "value": "domestic",
           "name": {
             "en": "Domestic",
             "pl": "Krajowy"
           }
         },
         {
-          "key": "export",
+          "value": "export",
           "name": {
             "en": "Export",
             "pl": "Eksport"
@@ -123,9 +123,9 @@
         "en": "Effective date code.",
         "pl": "Kod daty wejścia w życie."
       },
-      "codes": [
+      "values": [
         {
-          "code": "1",
+          "value": "1",
           "name": {
             "en": "Original",
             "pl": "Pierwotna"
@@ -136,7 +136,7 @@
           }
         },
         {
-          "code": "2",
+          "value": "2",
           "name": {
             "en": "Correction",
             "pl": "Korygująca"
@@ -147,7 +147,7 @@
           }
         },
         {
-          "code": "3",
+          "value": "3",
           "name": {
             "en": "Other",
             "pl": "Inna"

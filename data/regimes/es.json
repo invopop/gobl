@@ -149,156 +149,156 @@
         "en": "FacturaE requires a specific and single code that explains why the previous invoice is being corrected.",
         "es": "FacturaE requiere un código específico y único que explique por qué se está corrigiendo la factura anterior."
       },
-      "codes": [
+      "values": [
         {
-          "code": "01",
+          "value": "01",
           "name": {
             "en": "Invoice code",
             "es": "Número de la factura"
           }
         },
         {
-          "code": "02",
+          "value": "02",
           "name": {
             "en": "Invoice series",
             "es": "Serie de la factura"
           }
         },
         {
-          "code": "03",
+          "value": "03",
           "name": {
             "en": "Issue date",
             "es": "Fecha expedición"
           }
         },
         {
-          "code": "04",
+          "value": "04",
           "name": {
             "en": "Name and surnames/Corporate name - Issuer (Sender)",
             "es": "Nombre y apellidos/Razón Social-Emisor"
           }
         },
         {
-          "code": "05",
+          "value": "05",
           "name": {
             "en": "Name and surnames/Corporate name - Receiver",
             "es": "Nombre y apellidos/Razón Social-Receptor"
           }
         },
         {
-          "code": "06",
+          "value": "06",
           "name": {
             "en": "Issuer's Tax Identification Number",
             "es": "Identificación fiscal Emisor/obligado"
           }
         },
         {
-          "code": "07",
+          "value": "07",
           "name": {
             "en": "Receiver's Tax Identification Number",
             "es": "Identificación fiscal Receptor"
           }
         },
         {
-          "code": "08",
+          "value": "08",
           "name": {
             "en": "Supplier's address",
             "es": "Domicilio Emisor/Obligado"
           }
         },
         {
-          "code": "09",
+          "value": "09",
           "name": {
             "en": "Customer's address",
             "es": "Domicilio Receptor"
           }
         },
         {
-          "code": "10",
+          "value": "10",
           "name": {
             "en": "Item line",
             "es": "Detalle Operación"
           }
         },
         {
-          "code": "11",
+          "value": "11",
           "name": {
             "en": "Applicable Tax Rate",
             "es": "Porcentaje impositivo a aplicar"
           }
         },
         {
-          "code": "12",
+          "value": "12",
           "name": {
             "en": "Applicable Tax Amount",
             "es": "Cuota tributaria a aplicar"
           }
         },
         {
-          "code": "13",
+          "value": "13",
           "name": {
             "en": "Applicable Date/Period",
             "es": "Fecha/Periodo a aplicar"
           }
         },
         {
-          "code": "14",
+          "value": "14",
           "name": {
             "en": "Invoice Class",
             "es": "Clase de factura"
           }
         },
         {
-          "code": "15",
+          "value": "15",
           "name": {
             "en": "Legal literals",
             "es": "Literales legales"
           }
         },
         {
-          "code": "16",
+          "value": "16",
           "name": {
             "en": "Taxable Base",
             "es": "Base imponible"
           }
         },
         {
-          "code": "80",
+          "value": "80",
           "name": {
             "en": "Calculation of tax outputs",
             "es": "Cálculo de cuotas repercutidas"
           }
         },
         {
-          "code": "81",
+          "value": "81",
           "name": {
             "en": "Calculation of tax inputs",
             "es": "Cálculo de cuotas retenidas"
           }
         },
         {
-          "code": "82",
+          "value": "82",
           "name": {
             "en": "Taxable Base modified due to return of packages and packaging materials",
             "es": "Base imponible modificada por devolución de envases / embalajes"
           }
         },
         {
-          "code": "83",
+          "value": "83",
           "name": {
             "en": "Taxable Base modified due to discounts and rebates",
             "es": "Base imponible modificada por descuentos y bonificaciones"
           }
         },
         {
-          "code": "84",
+          "value": "84",
           "name": {
             "en": "Taxable Base modified due to firm court ruling or administrative decision",
             "es": "Base imponible modificada por resolución firme, judicial o administrativa"
           }
         },
         {
-          "code": "85",
+          "value": "85",
           "name": {
             "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
             "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"
@@ -315,23 +315,23 @@
       "desc": {
         "en": "Product keys are used by TicketBAI to differentiate between -exported- goods\nand services. It may be useful to classify all products regardless of wether\nthey are exported or not.\n\nThere is an additional exception case for goods that are resold without modification\nwhen the supplier is in the simplified tax regime. For must purposes this special\ncase can be ignored."
       },
-      "keys": [
+      "values": [
         {
-          "key": "goods",
+          "value": "goods",
           "name": {
             "en": "Delivery of goods",
             "es": "Entrega de bienes"
           }
         },
         {
-          "key": "services",
+          "value": "services",
           "name": {
             "en": "Provision of services",
             "es": "Prestacion de servicios"
           }
         },
         {
-          "key": "resale",
+          "value": "resale",
           "name": {
             "en": "Resale of goods without modification by vendor in the simplified regime",
             "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
@@ -348,79 +348,79 @@
       "desc": {
         "en": "Codes used by TicketBAI for both \"exempt\", \"not-subject\", and reverse\ncharge transactions. In the TicketBAI format these are separated,\nbut in order to simplify GOBL and be more closely aligned with\nother countries we've combined them into one."
       },
-      "codes": [
+      "values": [
         {
-          "code": "E1",
+          "value": "E1",
           "name": {
             "en": "Exempt: pursuant to Article 20 of the Foral VAT Law",
             "es": "Exenta: por el artículo 20 de la Norma Foral del IVA"
           }
         },
         {
-          "code": "E2",
+          "value": "E2",
           "name": {
             "en": "Exempt: pursuant to Article 21 of the Foral VAT Law",
             "es": "Exenta: por el artículo 21 de la Norma Foral del IVA"
           }
         },
         {
-          "code": "E3",
+          "value": "E3",
           "name": {
             "en": "Exempt: pursuant to Article 22 of the Foral VAT Law",
             "es": "Exenta: por el artículo 22 de la Norma Foral del IVA"
           }
         },
         {
-          "code": "E4",
+          "value": "E4",
           "name": {
             "en": "Exempt: pursuant to Articles 23 and 24 of the Foral VAT Law",
             "es": "Exenta: por el artículos 23 y 24 de la Norma Foral del IVA"
           }
         },
         {
-          "code": "E5",
+          "value": "E5",
           "name": {
             "en": "Exempt: pursuant to Article 25 of the Foral VAT law",
             "es": "Exenta: por el artículo 25 de la Norma Foral del IVA"
           }
         },
         {
-          "code": "E6",
+          "value": "E6",
           "name": {
             "en": "Exempt: pursuant to other reasons",
             "es": "Exenta: por otra causa"
           }
         },
         {
-          "code": "OT",
+          "value": "OT",
           "name": {
             "en": "Not subject: pursuant to Article 7 of the VAT Law - other cases of non-subject",
             "es": "No sujeto: por el artículo 7 de la Ley del IVA - otros supuestos de no sujeción"
           }
         },
         {
-          "code": "RL",
+          "value": "RL",
           "name": {
             "en": "Not subject: pursuant to localization rules",
             "es": "No sujeto: por reglas de localización"
           }
         },
         {
-          "code": "VT",
+          "value": "VT",
           "name": {
             "en": "Not subject: sales made on behalf of third parties (amount not computable for VAT or IRPF purposes)",
             "es": "No sujeto: ventas realizadas por cuenta de terceros (importe no computable a efectos de IVA ni de IRPF)"
           }
         },
         {
-          "code": "IE",
+          "value": "IE",
           "name": {
             "en": "Not subject in the TAI due to localization rules, but foreign tax, IPS/IGIC or VAT from another EU member state is passed on",
             "es": "No sujeto en el TAI por reglas de localización, pero repercute impuesto extranjero, IPS/IGIC o IVA de otro estado miembro UE"
           }
         },
         {
-          "code": "S2",
+          "value": "S2",
           "name": {
             "en": "Subject and not exempt: with reverse charge",
             "es": "Sujeto y no exenta: con inversión del sujeto pasivo"
@@ -437,9 +437,9 @@
       "desc": {
         "en": "Corrected or rectified invoices that need to be sent in the TicketBAI format\nrequire a specific type code to be defined alongside the preceding invoice\ndata."
       },
-      "codes": [
+      "values": [
         {
-          "code": "R1",
+          "value": "R1",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT",
             "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis de la Norma Foral del IVA",
@@ -447,7 +447,7 @@
           }
         },
         {
-          "code": "R2",
+          "value": "R2",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT",
             "es": "Factura rectificativa: artículo 80 Tres de la Norma Foral del IVA",
@@ -455,7 +455,7 @@
           }
         },
         {
-          "code": "R3",
+          "value": "R3",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT",
             "es": "Factura rectificativa: artículo 80 Cuatro de la Norma Foral del IVA",
@@ -463,7 +463,7 @@
           }
         },
         {
-          "code": "R4",
+          "value": "R4",
           "name": {
             "en": "Rectified invoice: Other",
             "es": "Factura rectificativa: Resto",
@@ -471,7 +471,7 @@
           }
         },
         {
-          "code": "R5",
+          "value": "R5",
           "name": {
             "en": "Rectified invoice: simplified invoices",
             "es": "Factura rectificativa: facturas simplificadas",

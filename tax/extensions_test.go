@@ -92,7 +92,7 @@ func TestExtValidation(t *testing.T) {
 			}
 			err = em.ValidateWithContext(ctx)
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "mx-cfdi-fiscal-regime: code '000' invalid")
+			assert.Contains(t, err.Error(), "mx-cfdi-fiscal-regime: value '000' invalid")
 		})
 	})
 
@@ -114,7 +114,7 @@ func TestExtValidation(t *testing.T) {
 			}
 			err := em.ValidateWithContext(ctx)
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "es-tbai-product: key 'bads' invalid")
+			assert.Contains(t, err.Error(), "es-tbai-product: value 'bads' invalid")
 		})
 
 		t.Run("missing extension", func(t *testing.T) {

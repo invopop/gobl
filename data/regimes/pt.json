@@ -74,23 +74,23 @@
         "en": "Region Code",
         "pt": "Código da Região"
       },
-      "codes": [
+      "values": [
         {
-          "code": "PT",
+          "value": "PT",
           "name": {
             "en": "Mainland Portugal",
             "pt": "Portugal Continental"
           }
         },
         {
-          "code": "PT-AC",
+          "value": "PT-AC",
           "name": {
             "en": "Azores",
             "pt": "Açores"
           }
         },
         {
-          "code": "PT-MA",
+          "value": "PT-MA",
           "name": {
             "en": "Madeira",
             "pt": "Madeira"
@@ -104,37 +104,37 @@
         "en": "Invoice Type",
         "pt": "Tipo de Fatura"
       },
-      "codes": [
+      "values": [
         {
-          "code": "FT",
+          "value": "FT",
           "name": {
             "en": "Standard Invoice",
             "pt": "Fatura"
           }
         },
         {
-          "code": "FS",
+          "value": "FS",
           "name": {
             "en": "Simplified Invoice",
             "pt": "Fatura Simplificada"
           }
         },
         {
-          "code": "FR",
+          "value": "FR",
           "name": {
             "en": "Invoice-Receipt",
             "pt": "Fatura-Recibo"
           }
         },
         {
-          "code": "ND",
+          "value": "ND",
           "name": {
             "en": "Debit Note",
             "pt": "Nota de Débito"
           }
         },
         {
-          "code": "NC",
+          "value": "NC",
           "name": {
             "en": "Credit Note",
             "pt": "Nota de Crédito"
@@ -148,37 +148,37 @@
         "en": "Tax Rate Code",
         "pt": "Código da Taxa de Imposto"
       },
-      "codes": [
+      "values": [
         {
-          "code": "RED",
+          "value": "RED",
           "name": {
             "en": "Reduced",
             "pt": "Redução"
           }
         },
         {
-          "code": "INT",
+          "value": "INT",
           "name": {
             "en": "Intermediate",
             "pt": "Intermédio"
           }
         },
         {
-          "code": "NOR",
+          "value": "NOR",
           "name": {
             "en": "Normal",
             "pt": "Normal"
           }
         },
         {
-          "code": "ISE",
+          "value": "ISE",
           "name": {
             "en": "Exempt",
             "pt": "Isento"
           }
         },
         {
-          "code": "OUT",
+          "value": "OUT",
           "name": {
             "en": "Other",
             "pt": "Outro"
@@ -192,191 +192,191 @@
         "en": "Tax exemption reason code",
         "pt": "Código do motivo de isenção de imposto"
       },
-      "codes": [
+      "values": [
         {
-          "code": "M01",
+          "value": "M01",
           "name": {
             "en": "Article 16, No. 6 of the VAT code",
             "pt": "Artigo 16.°, n.° 6 do CIVA"
           }
         },
         {
-          "code": "M02",
+          "value": "M02",
           "name": {
             "en": "Article 6 of the Decree-Law 198/90 of 19th June",
             "pt": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
           }
         },
         {
-          "code": "M04",
+          "value": "M04",
           "name": {
             "en": "Exempt pursuant to article 13 of the VAT code",
             "pt": "Isento artigo 13.° do CIVA"
           }
         },
         {
-          "code": "M05",
+          "value": "M05",
           "name": {
             "en": "Exempt pursuant to article 14 of the VAT code",
             "pt": "Isento artigo 14.° do CIVA"
           }
         },
         {
-          "code": "M06",
+          "value": "M06",
           "name": {
             "en": "Exempt pursuant to article 15 of the VAT code",
             "pt": "Isento artigo 15.° do CIVA"
           }
         },
         {
-          "code": "M07",
+          "value": "M07",
           "name": {
             "en": "Exempt pursuant to article 9 of the VAT code",
             "pt": "Isento artigo 9.° do CIVA"
           }
         },
         {
-          "code": "M09",
+          "value": "M09",
           "name": {
             "en": "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
             "pt": "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
           }
         },
         {
-          "code": "M10",
+          "value": "M10",
           "name": {
             "en": "VAT - exemption scheme / Article 57 of the VAT code",
             "pt": "IVA - regime de isenção / Artigo 57.° do CIVA"
           }
         },
         {
-          "code": "M11",
+          "value": "M11",
           "name": {
             "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
             "pt": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
           }
         },
         {
-          "code": "M12",
+          "value": "M12",
           "name": {
             "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
             "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
           }
         },
         {
-          "code": "M13",
+          "value": "M13",
           "name": {
             "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
         {
-          "code": "M14",
+          "value": "M14",
           "name": {
             "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
         {
-          "code": "M15",
+          "value": "M15",
           "name": {
             "en": "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
         {
-          "code": "M16",
+          "value": "M16",
           "name": {
             "en": "Exempt pursuant to Article 14 of the RITI",
             "pt": "Isento artigo 14.° do RITI"
           }
         },
         {
-          "code": "M19",
+          "value": "M19",
           "name": {
             "en": "Other exemptions - Temporary exemptions determined by specific legislation",
             "pt": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
           }
         },
         {
-          "code": "M20",
+          "value": "M20",
           "name": {
             "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
             "pt": "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA"
           }
         },
         {
-          "code": "M21",
+          "value": "M21",
           "name": {
             "en": "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
             "pt": "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
           }
         },
         {
-          "code": "M25",
+          "value": "M25",
           "name": {
             "en": "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
             "pt": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
           }
         },
         {
-          "code": "M30",
+          "value": "M30",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA"
           }
         },
         {
-          "code": "M31",
+          "value": "M31",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA"
           }
         },
         {
-          "code": "M32",
+          "value": "M32",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA"
           }
         },
         {
-          "code": "M33",
+          "value": "M33",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA"
           }
         },
         {
-          "code": "M40",
+          "value": "M40",
           "name": {
             "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
             "pt": "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário"
           }
         },
         {
-          "code": "M41",
+          "value": "M41",
           "name": {
             "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
             "pt": "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI"
           }
         },
         {
-          "code": "M42",
+          "value": "M42",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro"
           }
         },
         {
-          "code": "M43",
+          "value": "M43",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro"
           }
         },
         {
-          "code": "M99",
+          "value": "M99",
           "name": {
             "en": "Not subject to tax or not taxed",
             "pt": "Não sujeito ou não tributado"

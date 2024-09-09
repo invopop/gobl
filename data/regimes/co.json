@@ -85,9 +85,9 @@
         "en": "DIAN correction code for credit notes",
         "es": "Código de corrección DIAN para notas de crédito"
       },
-      "codes": [
+      "values": [
         {
-          "code": "1",
+          "value": "1",
           "name": {
             "en": "Partial refund",
             "es": "Devolución parcial"
@@ -98,7 +98,7 @@
           }
         },
         {
-          "code": "2",
+          "value": "2",
           "name": {
             "en": "Revoked",
             "es": "Anulación"
@@ -109,7 +109,7 @@
           }
         },
         {
-          "code": "3",
+          "value": "3",
           "name": {
             "en": "Discount",
             "es": "Descuento"
@@ -120,7 +120,7 @@
           }
         },
         {
-          "code": "4",
+          "value": "4",
           "name": {
             "en": "Adjustment",
             "es": "Ajuste"
@@ -131,7 +131,7 @@
           }
         },
         {
-          "code": "5",
+          "value": "5",
           "name": {
             "en": "Other",
             "es": "Otros"
@@ -149,30 +149,30 @@
         "en": "DIAN correction code for debit notes",
         "es": "Código de corrección DIAN para notas de débito"
       },
-      "codes": [
+      "values": [
         {
-          "code": "1",
+          "value": "1",
           "name": {
             "en": "Interest",
             "es": "Intereses"
           }
         },
         {
-          "code": "2",
+          "value": "2",
           "name": {
             "en": "Pending charges",
             "es": "Gastos por cobrar"
           }
         },
         {
-          "code": "3",
+          "value": "3",
           "name": {
             "en": "Change in value",
             "es": "Cambio del valor"
           }
         },
         {
-          "code": "4",
+          "value": "4",
           "name": {
             "en": "Other",
             "es": "Otros"
