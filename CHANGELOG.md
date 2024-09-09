@@ -19,6 +19,7 @@ For example, the document format and type in Italy are now set inside the extens
 - `it`: renamed extension `it-sdi-natura` to `it-sdi-exempt`.
 - `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
+- `cbc`: consolidated "keys" and "codes" lists from key definitions into a single values array.
 
 ### Added
 
@@ -28,12 +29,13 @@ For example, the document format and type in Italy are now set inside the extens
 - `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
 - `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
 - `bill.Line`: added `RequireLineTaxCategory` validation helper method.
-- `tax`: added new `ValueDefinition` for extension values not meeting the constraints of codes or keys.
+- `cbc`: added new `ValueDefinition`.
 - `gr`: added "Income Classification" extensions.
 
 ### Removed
 
 - `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine valid extensions (eg. PT and GR).
+- `cbc`: removed `CodeDefinition`.
 
 ### Fixed
 
