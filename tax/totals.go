@@ -2,6 +2,7 @@ package tax
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 )
 
@@ -22,6 +23,10 @@ type CategoryTotal struct {
 type RateTotal struct {
 	// Optional rate key is required when grouping.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Country code override when issuing with taxes applied from different countries,
+	// it'd be very strange to mix rates from different countries, but in theory
+	// this would be possible.
+	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// If the rate is defined with extensions, they'll be used to group by also.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
 	// Base amount that the percentage is applied to.
@@ -80,15 +85,16 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Amount = zero
 	ct.amount = zero
-	ct.Retained = c.category.Retained
+	ct.Retained = c.retained
 	return ct
 }
 
 // newRateTotal returns a rate total.
 func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
-	rt.Key = c.Rate // may be empty!
-	rt.Ext = c.Ext  // may be empty!
+	rt.Key = c.Rate        // may be empty!
+	rt.Country = c.Country // usually empty
+	rt.Ext = c.Ext         // may be empty!
 	if c.Percent != nil {
 		pc := *c.Percent
 		rt.Percent = &pc
@@ -117,6 +123,10 @@ func (t *Total) Category(code cbc.Code) *CategoryTotal {
 func (rt *RateTotal) matches(c *Combo) bool {
 	if !rt.Ext.Equals(c.Ext) {
 		// Extensions, if set, should always match
+		return false
+	}
+	// assume country will always be empty if same as the base
+	if rt.Country != c.Country {
 		return false
 	}
 	if rt.Percent == nil || c.Percent == nil {

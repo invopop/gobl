@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ca076099cce47d7e9f3e3ce76da1c22e438f565c0c64b04893ba58a555206da9"
+			"val": "573cdd9660d745db0065484583e4ac37df170eece330ea78c404ce9e18746d95"
 		},
 		"draft": true
 	},
@@ -45,8 +45,15 @@
 		"customer": {
 			"name": "Sample Consumer",
 			"tax_id": {
-				"country": "NL"
-			}
+				"country": "PT"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
 		},
 		"lines": [
 			{
@@ -54,23 +61,42 @@
 				"quantity": "10",
 				"item": {
 					"name": "Services exported",
-					"price": "100.00"
+					"price": "20.00",
+					"unit": "day"
 				},
-				"sum": "1000.00",
+				"sum": "200.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
+						"country": "PT",
 						"rate": "standard",
-						"percent": "21.0%"
+						"percent": "23.0%"
 					}
 				],
-				"total": "1000.00"
+				"total": "200.00"
+			},
+			{
+				"i": 2,
+				"quantity": "50",
+				"item": {
+					"name": "Branded Mugs",
+					"price": "7.50"
+				},
+				"sum": "375.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"country": "PT",
+						"rate": "standard",
+						"percent": "23.0%"
+					}
+				],
+				"total": "375.00"
 			}
 		],
 		"totals": {
-			"sum": "1000.00",
-			"total": "1000.00",
+			"sum": "575.00",
+			"total": "575.00",
 			"taxes": {
 				"categories": [
 					{
@@ -78,20 +104,20 @@
 						"rates": [
 							{
 								"key": "standard",
-								"country": "NL",
-								"base": "1000.00",
-								"percent": "21.0%",
-								"amount": "210.00"
+								"country": "PT",
+								"base": "575.00",
+								"percent": "23.0%",
+								"amount": "132.25"
 							}
 						],
-						"amount": "210.00"
+						"amount": "132.25"
 					}
 				],
-				"sum": "210.00"
+				"sum": "132.25"
 			},
-			"tax": "210.00",
-			"total_with_tax": "1210.00",
-			"payable": "1210.00"
+			"tax": "132.25",
+			"total_with_tax": "707.25",
+			"payable": "707.25"
 		}
 	}
 }

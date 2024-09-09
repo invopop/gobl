@@ -1,0 +1,90 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "94b502d1b0279a9849357ac5865221e6514ad9625dc7d71dff02dc86faf607f6"
+		},
+		"draft": true
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "",
+		"issue_date": "2023-01-30",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"pt-saft-invoice-type": "FT"
+			}
+		},
+		"supplier": {
+			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
+			"name": "Hotelzinho",
+			"tax_id": {
+				"country": "PT",
+				"code": "545259045"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"customer": {
+			"name": "Maria Santos Silva",
+			"tax_id": {
+				"country": "ES"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "Random services",
+					"price": "100.00"
+				},
+				"sum": "200.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"country": "ES",
+						"rate": "standard",
+						"percent": "21.0%"
+					}
+				],
+				"total": "200.00"
+			}
+		],
+		"totals": {
+			"sum": "200.00",
+			"total": "200.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"country": "ES",
+								"base": "200.00",
+								"percent": "21.0%",
+								"amount": "42.00"
+							}
+						],
+						"amount": "42.00"
+					}
+				],
+				"sum": "42.00"
+			},
+			"tax": "42.00",
+			"total_with_tax": "242.00",
+			"payable": "242.00"
+		}
+	}
+}

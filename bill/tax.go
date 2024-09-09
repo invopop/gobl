@@ -2,7 +2,6 @@ package bill
 
 import (
 	"context"
-	"errors"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
@@ -43,9 +42,6 @@ func (t *Tax) ContainsTag(key cbc.Key) bool {
 // ValidateWithContext ensures the tax details look valid.
 func (t *Tax) ValidateWithContext(ctx context.Context) error {
 	r, _ := ctx.Value(tax.KeyRegime).(*tax.Regime)
-	if r == nil {
-		return errors.New("tax regime not found in context")
-	}
 	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
 		validation.Field(&t.Tags, validation.Each(r.InTags())),

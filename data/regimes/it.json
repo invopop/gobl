@@ -148,6 +148,12 @@
         "en": "Depreciable assets",
         "it": "Beni ammortizzabili"
       }
+    },
+    {
+      "key": "b2g",
+      "name": {
+        "en": "Business to Government"
+      }
     }
   ],
   "extensions": [
@@ -184,7 +190,7 @@
         "it": "Tipo Documento SDI"
       },
       "desc": {
-        "en": "Code used to describe the type of document being sent to the SDI. This should\nnormally be determined automatically by GOBL."
+        "en": "\u003c\u003c\u003c\u003c\u003c\u003c\u003c HEAD\n\t\t\t\tCode used to describe the type of document being sent to the SDI. This should\n\t\t\t\tnormally be determined automatically by GOBL.\n=======\n\t\t\t\tCode used to describe the type of document being sent to the SDI. This is\n\t\t\t\tused to determine the correct schema to use when validating the document.\n\u003e\u003e\u003e\u003e\u003e\u003e\u003e 1aca6b8 (Refactor scenarios to apply extensions to document automatically)\n\t\t\t"
       },
       "codes": [
         {
@@ -479,10 +485,10 @@
       ]
     },
     {
-      "key": "it-sdi-nature",
+      "key": "it-sdi-exempt",
       "name": {
-        "en": "Nature",
-        "it": "Natura"
+        "en": "Exemption Code",
+        "it": "Natura Esenzione"
       },
       "codes": [
         {
@@ -635,10 +641,10 @@
       ]
     },
     {
-      "key": "it-sdi-retained-tax",
+      "key": "it-sdi-retained",
       "name": {
-        "en": "Retained Tax",
-        "it": "Ritenuta"
+        "en": "Retained Tax Payment Reason Code",
+        "it": "Causale Pagamento Ritenuta"
       },
       "codes": [
         {
@@ -1619,7 +1625,7 @@
           },
           "exempt": true,
           "extensions": [
-            "it-sdi-nature"
+            "it-sdi-exempt"
           ]
         }
       ]
@@ -1636,7 +1642,7 @@
       },
       "retained": true,
       "extensions": [
-        "it-sdi-retained-tax"
+        "it-sdi-retained"
       ],
       "map": {
         "fatturapa-tipo-ritenuta": "RT01"
@@ -1654,7 +1660,7 @@
       },
       "retained": true,
       "extensions": [
-        "it-sdi-retained-tax"
+        "it-sdi-retained"
       ],
       "map": {
         "fatturapa-tipo-ritenuta": "RT02"
@@ -1672,7 +1678,7 @@
       },
       "retained": true,
       "extensions": [
-        "it-sdi-retained-tax"
+        "it-sdi-retained"
       ],
       "map": {
         "fatturapa-tipo-ritenuta": "RT03"
@@ -1690,7 +1696,7 @@
       },
       "retained": true,
       "extensions": [
-        "it-sdi-retained-tax"
+        "it-sdi-retained"
       ],
       "map": {
         "fatturapa-tipo-ritenuta": "RT04"
@@ -1708,7 +1714,7 @@
       },
       "retained": true,
       "extensions": [
-        "it-sdi-retained-tax"
+        "it-sdi-retained"
       ],
       "map": {
         "fatturapa-tipo-ritenuta": "RT05"

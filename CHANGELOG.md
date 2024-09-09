@@ -6,12 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+This one is big...
+
 Significant set of changes around Scenario handling. Scenarios defined by tax regimes can now set tax extensions at the document level automatically. The objective here is to move away from external projects using scenario summaries directly, and instead use the absolute values set in the document.
 
 For example, the document format and type in Italy are now set inside the extensions and can be overriden if needed manually. This will be especially important when receiving and converting invoices into GOBL from external formats; its much easier to set specific values than trying to determine the appropriate tags.
 
+Also included is support for defining the country in tax combos, making it possible for taxes from a customers country to applied directly if needed. Typical use case would be for selling digital goods into or between EU states for B2C customers.
+
+Invoices in GOBL can now also finally produced for any country in the world, even if not explicitly defined inside the tax regimes.
+
 ### Changed
 
+- `bill.Invoice`: using the `customer-rates` tag will now automatically copy the customer's country code, if available, to the individual tax combo lines.
+- `tax`: moved `NormalizeIdentity` method from the regimes common package so that it can be applied to all tax IDs, regardless of if they have a regime defined or not.
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
 - `gr`: simplified validation to use tax categories.
 - `it`: always add `it-sdi-fiscal-regime` to Invoice suppliers.
@@ -22,6 +30,7 @@ For example, the document format and type in Italy are now set inside the extens
 
 ### Added
 
+- `tax`: `Combo` now supports a `country` field.
 - `tax.Category`: added `Validation` method support for custom validation of a tax combo for a specific tax category.
 - `tax.Scenario`: added "extensions" to be able to automatically update document level extensions based on the scenario detected.
 - `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.

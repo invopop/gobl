@@ -32,7 +32,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 // normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase.
 func normalizeTaxIdentity(tID *tax.Identity) error {
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
+	if err := tax.NormalizeIdentity(tID); err != nil {
 		return err
 	}
 	return nil

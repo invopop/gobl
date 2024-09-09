@@ -130,11 +130,6 @@ var Debit schema.Option = func(o interface{}) {
 // that can be used on the invoice in order to correct it. Data is
 // extracted from the tax regime associated with the supplier.
 func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
-	r := taxRegimeFor(inv.Supplier)
-	if r == nil {
-		return nil, nil
-	}
-
 	js := new(jsonschema.Schema)
 
 	// try to load the pre-generated schema, this is just way more efficient
@@ -147,8 +142,8 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, fmt.Errorf("unmarshalling options schema: %w", err)
 	}
 
-	// Add our regime to the schema ID
-	code := strings.ToLower(r.Code().String())
+	// Add our tax country code to the schema ID
+	code := strings.ToLower(inv.TaxCountry().String())
 	id := fmt.Sprintf("%s?tax_regime=%s", js.ID.String(), code)
 	js.ID = jsonschema.ID(id)
 	js.Comments = fmt.Sprintf("Generated dynamically for %s", code)
@@ -158,6 +153,12 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	// Always recommend the series
 	recommended := []string{"series"}
 
+	// Try to load the regime and its correction definition for the document
+	// type if there is one defined.
+	r := inv.TaxRegime()
+	if r == nil {
+		return js, nil
+	}
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 	if cd == nil {
 		return js, nil
@@ -275,11 +276,6 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		return errors.New("cannot correct an invoice without a code")
 	}
 
-	r := taxRegimeFor(inv.Supplier)
-	if r == nil {
-		return errors.New("failed to load supplier regime")
-	}
-
 	// Copy and prepare the basic fields
 	pre := &Preceding{
 		UUID:      inv.UUID,
@@ -302,6 +298,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
+	r := inv.TaxRegime()
 	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
 
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {

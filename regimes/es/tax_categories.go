@@ -38,7 +38,7 @@ var taxCategories = []*tax.Category{
 		},
 		Extensions: []cbc.Key{
 			ExtKeyTBAIProduct,
-			ExtKeyTBAIExemption, // may be added to any rate
+			ExtKeyTBAIExemption,
 		},
 		Rates: []*tax.Rate{
 			{
@@ -178,9 +178,6 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.ES: "Exenta",
-				},
-				Extensions: []cbc.Key{
-					ExtKeyTBAIExemption,
 				},
 			},
 		},

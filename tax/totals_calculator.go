@@ -3,13 +3,14 @@ package tax
 import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 )
 
 // TotalCalculator defines the base structure with the available
 // data for calculating tax totals.
 type TotalCalculator struct {
-	Regime   *Regime
+	Country  l10n.TaxCountryCode
 	Tags     []cbc.Key
 	Zero     num.Amount
 	Date     cal.Date
@@ -26,17 +27,12 @@ type TaxableLine interface {
 
 // Calculate the totals
 func (tc *TotalCalculator) Calculate(t *Total) error {
-	if tc.Regime == nil {
-		return ErrMissingRegime
-	}
-
 	// reset
 	t.Categories = make([]*CategoryTotal, 0)
 	t.Sum = tc.Zero
 
 	// get simplified list of lines
 	taxLines := mapTaxLines(tc.Lines)
-
 	if err := tc.prepareLines(taxLines); err != nil {
 		return err
 	}
@@ -57,7 +53,7 @@ func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
 	// First, prepare all tax combos using the regime, zone, and date
 	for _, tl := range taxLines {
 		for _, combo := range tl.taxes {
-			if err := combo.calculate(tc.Regime, tc.Tags, tc.Date); err != nil {
+			if err := combo.calculate(tc.Country, tc.Tags, tc.Date); err != nil {
 				return err
 			}
 			// always add 2 decimal places for all tax calculations
@@ -75,7 +71,7 @@ func (tc *TotalCalculator) removeIncludedTaxes(taxLines []*taxLine) error {
 	}
 	for _, tl := range taxLines {
 		if c := tl.taxes.Get(tc.Includes); c != nil {
-			if c.category.Retained {
+			if c.retained {
 				return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 			}
 			if c.Percent == nil {

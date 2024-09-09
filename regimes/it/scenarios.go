@@ -122,6 +122,12 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 			i18n.IT: "Beni ammortizzabili",
 		},
 	},
+	{
+		Key: tax.TagB2G,
+		Name: i18n.String{
+			i18n.EN: "Business to Government",
+		},
+	},
 })
 
 var scenarios = []*tax.ScenarioSet{
@@ -153,6 +159,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		// **** TIPO DOCUMENTO ****
 		{
+			// Default
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Name: i18n.String{
 				i18n.EN: "Regular Invoice",

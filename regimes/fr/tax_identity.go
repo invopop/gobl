@@ -22,14 +22,16 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 	if tID.Code == "" {
 		return nil
 	}
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
+	if err := tax.NormalizeIdentity(tID); err != nil {
 		return err
 	}
 	str := tID.Code.String()
 	if len(str) == 9 {
-		// Check is we have a SIREN
+		// Check if we have a SIREN
 		if err := validateSIRENTaxCode(tID.Code); err != nil {
-			return err
+			return validation.Errors{
+				"code": err,
+			}
 		}
 		chk := calculateVATCheckDigit(str)
 		tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
