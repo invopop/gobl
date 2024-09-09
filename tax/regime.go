@@ -48,6 +48,10 @@ type Regime struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
+	// Rounding rule to use when calculating the tax totals, default is always
+	// `sum-then-round`.
+	CalculatorRoundingRule CalculatorRoundingRule `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
+
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
 	Tags []*cbc.KeyDefinition `json:"tags,omitempty" jsonschema:"title=Tags"`

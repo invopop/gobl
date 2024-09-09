@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
@@ -1147,6 +1148,60 @@ func TestTotalBySumCalculate(t *testing.T) {
 					},
 				},
 				Sum: num.MakeAmount(400, 2),
+			},
+		},
+		{
+			desc:    "round-then-sum calculation",
+			country: "GR", // Greece uses round-then-sum calculation
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Rate:     tax.RateStandard,
+						},
+					},
+					amount: num.MakeAmount(942, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Rate:     tax.RateReduced,
+						},
+					},
+					amount: num.MakeAmount(942, 2),
+				},
+			},
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Ext: tax.Extensions{
+									gr.ExtKeyIAPRVATCat: "1",
+								},
+								Key:     tax.RateStandard,
+								Base:    num.MakeAmount(942, 2),
+								Percent: num.NewPercentage(24, 2),
+								Amount:  num.MakeAmount(226, 2),
+							},
+							{
+								Ext: tax.Extensions{
+									gr.ExtKeyIAPRVATCat: "2",
+								},
+								Key:     tax.RateReduced,
+								Base:    num.MakeAmount(942, 2),
+								Percent: num.NewPercentage(13, 2),
+								Amount:  num.MakeAmount(122, 2),
+							},
+						},
+						Amount: num.MakeAmount(348, 2), // with sum-then-round this would be 3.49
+					},
+				},
+				Sum: num.MakeAmount(348, 2), // with sum-then-round this would be 3.49
 			},
 		},
 	}
