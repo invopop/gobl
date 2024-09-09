@@ -38,7 +38,8 @@ func (kd *KeyDefinition) HasValue(val string) bool {
 	return cd != nil
 }
 
-// CodeDef returns the code definition for the provided code, or nil.
+// ValueDef searches the list of values defined for the key, and provides
+// the matching value definition.
 func (kd *KeyDefinition) ValueDef(val string) *ValueDefinition {
 	for _, c := range kd.Values {
 		if c.Value == val {
