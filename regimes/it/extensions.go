@@ -58,13 +58,8 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-<<<<<<< HEAD
-				Code used to describe the type of document being sent to the SDI. This should
-				normally be determined automatically by GOBL.
-=======
 				Code used to describe the type of document being sent to the SDI. This is
 				used to determine the correct schema to use when validating the document.
->>>>>>> 1aca6b8 (Refactor scenarios to apply extensions to document automatically)
 			`),
 		},
 		Codes: []*cbc.CodeDefinition{
