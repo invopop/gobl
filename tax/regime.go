@@ -48,6 +48,10 @@ type Regime struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
+	// Rounding rule to use when calculating the tax totals, default is always
+	// `sum-then-round`.
+	CalculatorRoundingRule CalculatorRoundingRule `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
+
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
 	Tags []*cbc.KeyDefinition `json:"tags,omitempty" jsonschema:"title=Tags"`
@@ -165,11 +169,6 @@ type Rate struct {
 	// older values.
 	Values []*RateValue `json:"values,omitempty" jsonschema:"title=Values"`
 
-	// Extensions defines a list of keys for codes that can or must be associated with the
-	// tax rate for it to be validated. Every key must be defined in the Regime's
-	// extensions.
-	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
-
 	// Extensions key-value pair that will be copied to the tax combo if this
 	// rate is used.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
@@ -222,6 +221,9 @@ func (r *Regime) Code() cbc.Code {
 // ValidateObject performs validation on the provided object in the context
 // of the regime.
 func (r *Regime) ValidateObject(value interface{}) error {
+	if r == nil {
+		return nil
+	}
 	if r.Validator != nil {
 		return r.Validator(value)
 	}
@@ -231,6 +233,9 @@ func (r *Regime) ValidateObject(value interface{}) error {
 // CalculateObject performs any regime specific calculations on the provided
 // object.
 func (r *Regime) CalculateObject(obj interface{}) error {
+	if r == nil {
+		return nil
+	}
 	if r.Calculator != nil {
 		return r.Calculator(obj)
 	}
@@ -255,6 +260,9 @@ func (r *Regime) ScenarioSet(schema string) *ScenarioSet {
 
 // CorrectionDefinitionFor provides the correction definition for the matching schema.
 func (r *Regime) CorrectionDefinitionFor(schema string) *CorrectionDefinition {
+	if r == nil {
+		return nil
+	}
 	for _, c := range r.Corrections {
 		if strings.HasSuffix(schema, c.Schema) {
 			return c
@@ -308,7 +316,7 @@ func validateTimeZone(value interface{}) error {
 // TimeLocation returns the time.Location for the regime.
 func (r *Regime) TimeLocation() *time.Location {
 	if r == nil {
-		return nil
+		return time.UTC
 	}
 	loc, err := time.LoadLocation(r.TimeZone)
 	if err != nil {
@@ -351,7 +359,7 @@ func (r *Regime) InCategoryRates(cat cbc.Code) validation.Rule {
 // is inside the list of known codes.
 func (r *Regime) InCategories() validation.Rule {
 	if r == nil {
-		return validation.Empty
+		return validation.Skip
 	}
 	cats := make([]cbc.Code, len(r.Categories))
 	for i, c := range r.Categories {
@@ -362,6 +370,9 @@ func (r *Regime) InCategories() validation.Rule {
 
 // WithContext adds this regime to the given context.
 func (r *Regime) WithContext(ctx context.Context) context.Context {
+	if r == nil {
+		return ctx
+	}
 	return context.WithValue(ctx, KeyRegime, r)
 }
 
@@ -423,7 +434,6 @@ func (s *Source) Validate() error {
 // ValidateWithContext checks that our tax definition is valid. This is only really
 // meant to be used when testing new regional tax definitions.
 func (r *Rate) ValidateWithContext(ctx context.Context) error {
-	reg := ctx.Value(KeyRegime).(*Regime)
 	err := validation.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.Key, validation.Required),
 		validation.Field(&r.Name, validation.Required),
@@ -431,9 +441,7 @@ func (r *Rate) ValidateWithContext(ctx context.Context) error {
 			validation.When(r.Exempt, validation.Nil),
 			validation.By(checkRateValuesOrder),
 		),
-		validation.Field(&r.Extensions,
-			validation.Each(cbc.InKeyDefs(reg.Extensions)),
-		),
+		validation.Field(&r.Ext),
 		validation.Field(&r.Meta),
 	)
 	return err
@@ -472,6 +480,9 @@ func checkRateValuesOrder(list interface{}) error {
 
 // Category provides the requested category by its code.
 func (r *Regime) Category(code cbc.Code) *Category {
+	if r == nil {
+		return nil
+	}
 	for _, c := range r.Categories {
 		if c.Code == code {
 			return c
@@ -482,6 +493,9 @@ func (r *Regime) Category(code cbc.Code) *Category {
 
 // Tag returns the KeyDefinition for the provided tag key
 func (r *Regime) Tag(key cbc.Key) *cbc.KeyDefinition {
+	if r == nil {
+		return nil
+	}
 	for _, t := range r.Tags {
 		if t.Key == key {
 			return t

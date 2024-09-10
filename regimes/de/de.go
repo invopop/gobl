@@ -62,7 +62,7 @@ func Calculate(doc interface{}) error {
 	case *org.Identity:
 		return normalizeIdentity(obj)
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj)
+		return tax.NormalizeIdentity(obj)
 	}
 	return nil
 }

@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -38,7 +37,7 @@ func normalizeTaxIdentity(tID *tax.Identity) error {
 	if tID == nil {
 		return nil
 	}
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
+	if err := tax.NormalizeIdentity(tID); err != nil {
 		return err
 	}
 	return nil

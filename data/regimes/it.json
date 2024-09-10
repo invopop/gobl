@@ -148,6 +148,12 @@
         "en": "Depreciable assets",
         "it": "Beni ammortizzabili"
       }
+    },
+    {
+      "key": "b2g",
+      "name": {
+        "en": "Business to Government"
+      }
     }
   ],
   "extensions": [
@@ -184,7 +190,7 @@
         "it": "Tipo Documento SDI"
       },
       "desc": {
-        "en": "Code used to describe the type of document being sent to the SDI. This should\nnormally be determined automatically by GOBL."
+        "en": "Code used to describe the type of document being sent to the SDI. This is\nused to determine the correct schema to use when validating the document."
       },
       "values": [
         {
@@ -1617,11 +1623,11 @@
             "en": "Exempt",
             "it": "Esente"
           },
-          "exempt": true,
-          "extensions": [
-            "it-sdi-exempt"
-          ]
+          "exempt": true
         }
+      ],
+      "extensions": [
+        "it-sdi-exempt"
       ]
     },
     {

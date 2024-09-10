@@ -6,8 +6,10 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
@@ -16,16 +18,13 @@ import (
 )
 
 func TestTotalBySumCalculate(t *testing.T) {
-	spain := es.New()
-	portugal := pt.New()
-	italy := it.New()
 	date := cal.MakeDate(2022, 01, 24)
 	zero := num.MakeAmount(0, 2)
 	var tests = []struct {
 		desc        string
-		regime      *tax.Regime    // default, spain
-		tags        []cbc.Key      // default empty
-		ext         tax.Extensions // default empty
+		country     l10n.TaxCountryCode // default "ES"
+		tags        []cbc.Key           // default empty
+		ext         tax.Extensions      // default empty
 		lines       []tax.TaxableLine
 		date        *cal.Date
 		taxIncluded cbc.Code
@@ -75,6 +74,142 @@ func TestTotalBySumCalculate(t *testing.T) {
 					},
 				},
 				Sum: num.MakeAmount(2100, 2),
+			},
+		},
+		{
+			desc: "rate from same country",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Country:  "ES",
+							Category: tax.CategoryVAT,
+							Rate:     tax.RateStandard,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Key:     tax.RateStandard,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(210, 3),
+								Amount:  num.MakeAmount(2100, 2),
+							},
+						},
+						Amount: num.MakeAmount(2100, 2),
+					},
+				},
+				Sum: num.MakeAmount(2100, 2),
+			},
+		},
+		{
+			desc:    "from unknown tax regime",
+			country: "XX", // this will fail validation!
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Percent:  num.NewPercentage(210, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(210, 3),
+								Amount:  num.MakeAmount(2100, 2),
+							},
+						},
+						Amount: num.MakeAmount(2100, 2),
+					},
+				},
+				Sum: num.MakeAmount(2100, 2),
+			},
+		},
+		{
+			desc: "export with local VAT of known regime",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Country:  "PT",
+							Rate:     tax.RateStandard,
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Country: "PT",
+								Key:     tax.RateStandard,
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(230, 3),
+								Amount:  num.MakeAmount(2300, 2),
+							},
+						},
+						Amount: num.MakeAmount(2300, 2),
+					},
+				},
+				Sum: num.MakeAmount(2300, 2),
+			},
+		},
+		{
+			desc: "export with local VAT of unknown regime",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Country:  "JP",
+							Percent:  num.NewPercentage(190, 3),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Country: "JP",
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(190, 3),
+								Amount:  num.MakeAmount(1900, 2),
+							},
+						},
+						Amount: num.MakeAmount(1900, 2),
+					},
+				},
+				Sum: num.MakeAmount(1900, 2),
 			},
 		},
 		{
@@ -207,8 +342,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 		},
 		{
-			desc:   "with VAT in Azores",
-			regime: portugal,
+			desc:    "with VAT in Azores",
+			country: "PT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -937,8 +1072,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 		},
 		{
-			desc:   "multiple different retained rates",
-			regime: italy,
+			desc:    "multiple different retained rates",
+			country: "IT",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -1015,6 +1150,60 @@ func TestTotalBySumCalculate(t *testing.T) {
 				Sum: num.MakeAmount(400, 2),
 			},
 		},
+		{
+			desc:    "round-then-sum calculation",
+			country: "GR", // Greece uses round-then-sum calculation
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Rate:     tax.RateStandard,
+						},
+					},
+					amount: num.MakeAmount(942, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Rate:     tax.RateReduced,
+						},
+					},
+					amount: num.MakeAmount(942, 2),
+				},
+			},
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Ext: tax.Extensions{
+									gr.ExtKeyIAPRVATCat: "1",
+								},
+								Key:     tax.RateStandard,
+								Base:    num.MakeAmount(942, 2),
+								Percent: num.NewPercentage(24, 2),
+								Amount:  num.MakeAmount(226, 2),
+							},
+							{
+								Ext: tax.Extensions{
+									gr.ExtKeyIAPRVATCat: "2",
+								},
+								Key:     tax.RateReduced,
+								Base:    num.MakeAmount(942, 2),
+								Percent: num.NewPercentage(13, 2),
+								Amount:  num.MakeAmount(122, 2),
+							},
+						},
+						Amount: num.MakeAmount(348, 2), // with sum-then-round this would be 3.49
+					},
+				},
+				Sum: num.MakeAmount(348, 2), // with sum-then-round this would be 3.49
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -1023,12 +1212,12 @@ func TestTotalBySumCalculate(t *testing.T) {
 			if test.date != nil {
 				d = *test.date
 			}
-			reg := spain
-			if test.regime != nil {
-				reg = test.regime
+			country := l10n.ES.Tax()
+			if test.country != "" {
+				country = test.country
 			}
 			tc := &tax.TotalCalculator{
-				Regime:   reg,
+				Country:  country,
 				Tags:     test.tags,
 				Zero:     zero,
 				Date:     d,

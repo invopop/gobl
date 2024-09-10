@@ -82,7 +82,7 @@ func Calculate(doc interface{}) error {
 	case *bill.Invoice:
 		return normalizeInvoice(obj)
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj)
+		return tax.NormalizeIdentity(obj)
 	case *org.Party:
 		return normalizeParty(obj)
 	case *org.Item:

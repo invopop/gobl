@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -32,7 +32,7 @@ func normalizeIdentity(id *org.Identity) error {
 		return nil
 	}
 	code := strings.ToUpper(id.Code.String())
-	code = common.TaxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
 	id.Code = cbc.Code(code)
 	return nil
 }

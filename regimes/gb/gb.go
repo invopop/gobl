@@ -69,7 +69,7 @@ func Validate(doc interface{}) error {
 func Calculate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj, altCountryCodes...)
+		return tax.NormalizeIdentity(obj, altCountryCodes...)
 	}
 	return nil
 }

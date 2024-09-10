@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -805,6 +806,102 @@ func TestCalculateTotalsWithFractions(t *testing.T) {
 	assert.Equal(t, "122.61", i.Totals.Total.String())
 }
 
+func TestApplyCustomerRates(t *testing.T) {
+	t.Run("missing customer", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
+	})
+	t.Run("missing customer tax ID", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
+	})
+	t.Run("regular customer rates", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.Customer.TaxID.Country = "PT"
+		inv.Discounts = []*bill.Discount{
+			{
+				Reason:  "Testing",
+				Percent: num.NewPercentage(10, 2),
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv.Charges = []*bill.Charge{
+			{
+				Reason:  "Testing",
+				Percent: num.NewPercentage(5, 2),
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "PT", inv.Lines[0].Taxes[0].Country.String())
+		assert.Equal(t, "PT", inv.Discounts[0].Taxes[0].Country.String())
+		assert.Equal(t, "PT", inv.Charges[0].Taxes[0].Country.String())
+	})
+}
+
 func TestCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
@@ -947,6 +1044,34 @@ func TestCalculateInverted(t *testing.T) {
 	require.NoError(t, i.Invert())
 	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
 	assert.Equal(t, i.Totals.Due.String(), "-710.00")
+}
+
+func TestInvoiceForUnknownRegime(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(32, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(4375, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(6, 2),
+				},
+			},
+		},
+	}
+	inv := baseInvoice(t, lines...)
+
+	// Set an undefined regime
+	inv.Supplier.TaxID.Country = l10n.AD.Tax()
+	assert.Nil(t, tax.RegimeFor(l10n.AD), "if Andorra is defined, change this to another country")
+
+	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
+	inv.Currency = currency.USD
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
 }
 
 func TestValidation(t *testing.T) {

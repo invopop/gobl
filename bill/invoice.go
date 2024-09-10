@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -115,10 +116,14 @@ func (inv *Invoice) Validate() error {
 // information we need.
 func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	r := inv.TaxRegime()
-	if r == nil {
-		return errors.New("supplier: invalid or unknown tax regime")
-	}
 	ctx = r.WithContext(ctx)
+
+	var exRule validation.Rule
+	exRule = validation.Skip
+	if r != nil {
+		exRule = currency.CanConvertInto(inv.ExchangeRates, r.Currency)
+	}
+
 	err := validation.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Type,
@@ -142,7 +147,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.ValueDate),
 		validation.Field(&inv.Currency,
 			validation.Required,
-			currency.CanConvertInto(inv.ExchangeRates, r.Currency),
+			exRule,
 		),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Preceding),
@@ -302,30 +307,19 @@ func (inv *Invoice) Calculate() error {
 		}
 	}
 
-	if err := inv.prepareTags(); err != nil {
+	r := inv.TaxRegime()
+
+	if err := inv.prepareTags(r); err != nil {
 		return err
 	}
-
-	// Should we use the customer's identity for calculations?
-	tID, err := inv.determineTaxIdentity()
-	if err != nil {
-		return err
-	}
-	r := tax.RegimeFor(tID.Country.Code())
-	if r == nil {
-		return fmt.Errorf("no tax regime for %v", tID.Country)
-	}
-
-	// Run Regime pre-calculations first
+	// Regime calculations first
 	if err := r.CalculateObject(inv); err != nil {
 		return err
 	}
-
-	if err := inv.calculateWithRegime(r); err != nil {
+	if err := inv.calculate(r); err != nil {
 		return err
 	}
-
-	if err := inv.prepareScenarios(); err != nil {
+	if err := inv.prepareScenarios(r); err != nil {
 		return err
 	}
 
@@ -391,13 +385,27 @@ func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	return &i2, nil
 }
 
-// TaxRegime determines the tax regime for the invoice based on the supplier tax
+// TaxCountry determines the tax country for the invoice based on the supplier tax
 // identity.
-func (inv *Invoice) TaxRegime() *tax.Regime {
-	return taxRegimeFor(inv.Supplier)
+func (inv *Invoice) TaxCountry() l10n.Code {
+	if inv.Supplier == nil {
+		return l10n.CodeEmpty
+	}
+	if inv.Supplier.TaxID == nil {
+		return l10n.CodeEmpty
+	}
+	return inv.Supplier.TaxID.Country.Code()
 }
 
-func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
+// TaxRegime determines the tax regime for the invoice based on the supplier tax
+// identity which may be nil if the supplier is missing or does not have
+// a matching tax regime.
+func (inv *Invoice) TaxRegime() *tax.Regime {
+	return tax.RegimeFor(inv.TaxCountry())
+}
+
+// calculate does not assume that the tax regime is available.
+func (inv *Invoice) calculate(r *tax.Regime) error {
 	// Normalize data
 	if inv.IssueDate.IsZero() {
 		inv.IssueDate = cal.TodayIn(r.TimeLocation())
@@ -409,6 +417,9 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 
 	// Convert empty or invalid currency to the regime's currency
 	if inv.Currency == currency.CodeEmpty || inv.Currency.Def() == nil {
+		if r == nil {
+			return validation.Errors{"currency": errors.New("missing")}
+		}
 		inv.Currency = r.Currency
 	}
 
@@ -419,6 +430,11 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	t := inv.Totals
 	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
+
+	// Do we need to deal with the customer-rates tag?
+	if inv.Tax.ContainsTag(tax.TagCustomerRates) {
+		inv.applyCustomerRates()
+	}
 
 	// Lines
 	if err := calculateLines(r, inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
@@ -465,7 +481,7 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	}
 	tc := &tax.TotalCalculator{
 		Zero:     zero,
-		Regime:   r,
+		Country:  inv.TaxCountry().Tax(),
 		Tags:     tags,
 		Date:     *date,
 		Lines:    tls,
@@ -521,6 +537,28 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	return nil
 }
 
+func (inv *Invoice) applyCustomerRates() {
+	if inv.Customer == nil || inv.Customer.TaxID == nil {
+		return
+	}
+	country := inv.Customer.TaxID.Country
+	for _, l := range inv.Lines {
+		addCountryToTaxes(l.Taxes, country)
+	}
+	for _, d := range inv.Discounts {
+		addCountryToTaxes(d.Taxes, country)
+	}
+	for _, c := range inv.Charges {
+		addCountryToTaxes(c.Taxes, country)
+	}
+}
+
+func addCountryToTaxes(ts tax.Set, country l10n.TaxCountryCode) {
+	for _, t := range ts {
+		t.Country = country
+	}
+}
+
 func calculateComplements(comps []*schema.Object) error {
 	for _, c := range comps {
 		if err := c.Calculate(); err != nil {
@@ -528,38 +566,6 @@ func calculateComplements(comps []*schema.Object) error {
 		}
 	}
 	return nil
-}
-
-func (inv *Invoice) determineTaxIdentity() (*tax.Identity, error) {
-	if inv.Tax != nil {
-		if inv.Tax.ContainsTag(tax.TagCustomerRates) {
-			if inv.Customer == nil {
-				return nil, fmt.Errorf("missing customer for %s", tax.TagCustomerRates.String())
-			}
-			if inv.Customer.TaxID == nil {
-				return nil, fmt.Errorf("missing customer tax ID for %s", tax.TagCustomerRates.String())
-			}
-			return inv.Customer.TaxID, nil
-		}
-	}
-	if inv.Supplier == nil {
-		return nil, errors.New("missing supplier")
-	}
-	if inv.Supplier.TaxID == nil {
-		return nil, errors.New("missing supplier tax ID")
-	}
-	return inv.Supplier.TaxID, nil
-}
-
-func taxRegimeFor(party *org.Party) *tax.Regime {
-	if party == nil {
-		return nil
-	}
-	tID := party.TaxID
-	if tID == nil {
-		return nil
-	}
-	return tax.RegimeFor(tID.Country.Code())
 }
 
 // JSONSchemaExtend extends the schema with additional property details

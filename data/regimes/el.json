@@ -10,6 +10,7 @@
     "GR"
   ],
   "currency": "EUR",
+  "calculator_rounding_rule": "round-then-sum",
   "tags": [
     {
       "key": "simplified",

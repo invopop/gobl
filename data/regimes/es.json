@@ -863,10 +863,7 @@
             "en": "Exempt",
             "es": "Exenta"
           },
-          "exempt": true,
-          "extensions": [
-            "es-tbai-exemption"
-          ]
+          "exempt": true
         }
       ],
       "extensions": [

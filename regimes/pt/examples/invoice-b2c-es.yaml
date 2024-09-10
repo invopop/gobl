@@ -1,0 +1,30 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+type: standard
+currency: EUR
+issue_date: "2023-01-30"
+supplier:
+  uuid: 9de7584f-ea5c-42a7-b159-5e4c6a280a5c
+  tax_id:
+    country: PT
+    code: "545259045"
+  name: Hotelzinho
+  addresses:
+    - street: Rua do Hotelzinho
+      code: 1000-000
+      locality: Lisboa
+customer:
+  tax_id:
+    country: ES
+  name: Maria Santos Silva
+lines:
+  - i: 1
+    quantity: 2
+    item:
+      name: Random services
+      price: 100.00
+    sum: 100.00
+    taxes:
+      - cat: VAT
+        country: "ES"
+        rate: standard

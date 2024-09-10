@@ -2,7 +2,6 @@ package tax_test
 
 import (
 	"context"
-	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -10,7 +9,6 @@ import (
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestSetValidation(t *testing.T) {
@@ -49,6 +47,17 @@ func TestSetValidation(t *testing.T) {
 					Percent:  num.NewPercentage(15, 3),
 				},
 			},
+		},
+		{
+			desc: "other country",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Country:  "NL",
+					Rate:     "standard",
+				},
+			},
+			err: nil,
 		},
 		{
 			desc: "duplicate",
@@ -273,15 +282,6 @@ func TestSetGet(t *testing.T) {
 	}
 	assert.NotNil(t, s.Get(cbc.Code("VAT")))
 	assert.Nil(t, s.Get(cbc.Code("FOO")))
-}
-
-func TestComboUnmarshal(t *testing.T) {
-	data := []byte(`{"cat":"VAT","tags":["standard"],"percent":"20%"}`)
-	var c tax.Combo
-	err := json.Unmarshal(data, &c)
-	require.NoError(t, err)
-	assert.Equal(t, c.Category, cbc.Code("VAT"))
-	assert.Equal(t, c.Rate, cbc.Key("standard"))
 }
 
 func TestNormalizeSet(t *testing.T) {

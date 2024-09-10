@@ -94,6 +94,9 @@ func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key, docExt []E
 			for k, v := range s.Ext {
 				summary.Ext[k] = v
 			}
+			for k, v := range s.Ext {
+				summary.Ext[k] = v
+			}
 		}
 	}
 	return summary
