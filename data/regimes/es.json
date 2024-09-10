@@ -140,6 +140,87 @@
   ],
   "extensions": [
     {
+      "key": "es-facturae-doc-type",
+      "name": {
+        "en": "FacturaE: Document Type",
+        "es": "FacturaE: Tipo de Documento"
+      },
+      "values": [
+        {
+          "value": "FC",
+          "name": {
+            "en": "Commercial Invoice",
+            "es": "Factura Comercial"
+          }
+        },
+        {
+          "value": "FA",
+          "name": {
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada"
+          }
+        },
+        {
+          "value": "AF",
+          "name": {
+            "en": "Self-billed Invoice",
+            "es": "Auto-Factura"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-facturae-invoice-class",
+      "name": {
+        "en": "FacturaE: Invoice Class",
+        "es": "FacturaE: Clase de Factura"
+      },
+      "values": [
+        {
+          "value": "OO",
+          "name": {
+            "en": "Original",
+            "es": "Original"
+          }
+        },
+        {
+          "value": "OR",
+          "name": {
+            "en": "Corrective Original",
+            "es": "Original Rectificativa"
+          }
+        },
+        {
+          "value": "OC",
+          "name": {
+            "en": "Summary Original",
+            "es": "Original Recapitulativa"
+          }
+        },
+        {
+          "value": "CO",
+          "name": {
+            "en": "Copy of the Original",
+            "es": "Duplicado Original"
+          }
+        },
+        {
+          "value": "CR",
+          "name": {
+            "en": "Copy of the Corrective",
+            "es": "Duplicado Rectificativa"
+          }
+        },
+        {
+          "value": "CC",
+          "name": {
+            "en": "Copy of the Summary",
+            "es": "Duplicado Recapitulativa"
+          }
+        }
+      ]
+    },
+    {
       "key": "es-facturae-correction",
       "name": {
         "en": "FacturaE Change",
@@ -534,32 +615,40 @@
             "credit-note",
             "debit-note"
           ],
-          "codes": {
-            "facturae-invoice-document-type": "FC"
+          "tags": [
+            "facturae"
+          ],
+          "ext": {
+            "es-facturae-doc-type": "FC"
           }
         },
         {
           "tags": [
+            "facturae",
             "simplified"
           ],
-          "codes": {
-            "facturae-invoice-document-type": "FA"
+          "ext": {
+            "es-facturae-doc-type": "FA"
           }
         },
         {
           "tags": [
+            "facturae",
             "self-billed"
           ],
-          "codes": {
-            "facturae-invoice-document-type": "AF"
+          "ext": {
+            "es-facturae-doc-type": "AF"
           }
         },
         {
           "type": [
             "standard"
           ],
-          "codes": {
-            "facturae-invoice-class": "OO"
+          "tags": [
+            "facturae"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "OO"
           }
         },
         {
@@ -568,16 +657,20 @@
             "credit-note",
             "debit-note"
           ],
-          "codes": {
-            "facturae-invoice-class": "OR"
+          "tags": [
+            "facturae"
+          ],
+          "ext": {
+            "es-facturae-invoice-class": "OR"
           }
         },
         {
           "tags": [
+            "facturae",
             "summary"
           ],
-          "codes": {
-            "facturae-invoice-class": "OC"
+          "ext": {
+            "es-facturae-invoice-class": "OC"
           }
         },
         {
@@ -585,10 +678,11 @@
             "standard"
           ],
           "tags": [
+            "facturae",
             "copy"
           ],
-          "codes": {
-            "facturae-invoice-class": "CO"
+          "ext": {
+            "es-facturae-invoice-class": "CO"
           }
         },
         {
@@ -596,10 +690,11 @@
             "corrective"
           ],
           "tags": [
+            "facturae",
             "copy"
           ],
-          "codes": {
-            "facturae-invoice-class": "CR"
+          "ext": {
+            "es-facturae-invoice-class": "CR"
           }
         },
         {
@@ -607,11 +702,12 @@
             "standard"
           ],
           "tags": [
+            "facturae",
             "copy",
             "summary"
           ],
-          "codes": {
-            "facturae-invoice-class": "CC"
+          "ext": {
+            "es-facturae-invoice-class": "CC"
           }
         },
         {
