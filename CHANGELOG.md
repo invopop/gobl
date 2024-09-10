@@ -18,7 +18,7 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 
 ### Changed
 
-- `bill.Invoice`: `simplified` tag will now always remove the customer.
+- `bill.Invoice`: `customer` can now be empty by default, the `simplified` simplified tag will have no effect on the document unless used by regime scenarios.
 - `bill.Invoice`: using the `customer-rates` tag will now automatically copy the customer's country code, if available, to the individual tax combo lines.
 - `tax`: moved `NormalizeIdentity` method from the regimes common package so that it can be applied to all tax IDs, regardless of if they have a regime defined or not.
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
