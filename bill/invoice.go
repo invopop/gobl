@@ -74,7 +74,7 @@ type Invoice struct {
 
 	// The taxable entity supplying the goods or services.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
-	// Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices.
+	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
 	// List of invoice lines representing each of the items sold to the customer.
@@ -157,12 +157,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.By(validateInvoiceSupplier),
 		),
 		validation.Field(&inv.Customer,
-			// Customer is not required for simplified invoices.
-			validation.When(
-				!inv.isSimplified(),
-				validation.Required,
-			),
-			validation.By(inv.validateInvoiceCustomer()),
+			validation.By(validateInvoiceCustomer),
 		),
 		validation.Field(&inv.Lines,
 			validation.Required,
@@ -196,25 +191,19 @@ func validateInvoiceSupplier(value any) error {
 	)
 }
 
-func (inv *Invoice) validateInvoiceCustomer() validation.RuleFunc {
-	return func(value any) error {
-		p, ok := value.(*org.Party)
-		if !ok || p == nil {
-			return nil
-		}
-		return validation.ValidateStruct(p,
-			validation.Field(&p.Name,
-				validation.When(
-					inv.isSimplified() || partyHasTaxIDCode(p),
-					validation.Required,
-				),
-			),
-		)
+func validateInvoiceCustomer(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
 	}
-}
-
-func (inv *Invoice) isSimplified() bool {
-	return inv.Tax != nil && tax.TagSimplified.In(inv.Tax.Tags...)
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Name,
+			validation.When(
+				partyHasTaxIDCode(p),
+				validation.Required,
+			),
+		),
+	)
 }
 
 func partyHasTaxIDCode(party *org.Party) bool {

@@ -4,6 +4,10 @@ currency: "EUR"
 issue_date: "2022-02-01"
 code: "SAMPLE-001"
 
+tax:
+  tags:
+    - "facturae"
+
 supplier:
   tax_id:
     country: "ES"

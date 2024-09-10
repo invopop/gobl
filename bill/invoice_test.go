@@ -1089,8 +1089,7 @@ func TestValidation(t *testing.T) {
 	t.Run("supplier name", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Supplier.Name = ""
-		inv.Customer.TaxID.Code = "" // simplified
-		inv.Customer.Name = ""       // so this is okay
+		inv.Customer = nil // simplified
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.).")
@@ -1099,36 +1098,43 @@ func TestValidation(t *testing.T) {
 
 	t.Run("simplified", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
-		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: cannot be blank.")
+		require.NoError(t, inv.Validate())
+		assert.NotNil(t, inv.Customer)
 
 		inv.Tax = &bill.Tax{
 			Tags: []cbc.Key{
 				tax.TagSimplified,
 			},
 		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+		assert.NotNil(t, inv.Customer) // just ignore simplified tag
+	})
+
+	t.Run("customer name and tax ID code", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "GB",
+			Code:    "000472631",
+		}
+		inv.Customer.Name = ""
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
+
+		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err = inv.Validate()
 		assert.NoError(t, err)
 	})
 
-	t.Run("simplified without customer name", func(t *testing.T) {
-		inv := baseInvoiceWithLines(t)
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				tax.TagSimplified,
-			},
-		}
-		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err)
-	})
-
 	t.Run("implied simplified without customer tax ID", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "GB",
+			Code:    "000472631",
+		}
 		inv.Customer.TaxID = nil
 		inv.Customer.Name = ""
 		inv.Customer.Emails = append(inv.Customer.Emails, &org.Email{

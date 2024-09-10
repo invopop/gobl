@@ -35,7 +35,7 @@ func (v *invoiceValidator) validate() error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(v.commercialCustomer),
+			validation.By(v.customer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -57,26 +57,27 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
+			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) commercialCustomer(value interface{}) error {
+func (v *invoiceValidator) customer(value interface{}) error {
 	obj, _ := value.(*org.Party)
 	if obj == nil {
 		return nil
 	}
-	if obj.TaxID == nil {
-		return nil // validation already handled, this prevents panics
-	}
-	// Customers must have a tax ID if a Spanish entity
+	// Customers must have a tax ID to at least set the country,
+	// and Spanish ones should also have an ID. There are more complex
+	// rules for exports.
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			validation.When(
-				obj.TaxID.Country.In("ES"),
+				obj.TaxID != nil && obj.TaxID.Country.In("ES"),
 				tax.RequireIdentityCode,
 			),
+			validation.Skip,
 		),
 	)
 }

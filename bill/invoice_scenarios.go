@@ -97,8 +97,9 @@ func (inv *Invoice) prepareScenarios(r *tax.Regime) error {
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
-		if inv.Tax.Ext[k] == "" {
-			// only override if not set
+		// Always override if there are tags already present, *or* the extension
+		// is not already set.
+		if len(inv.Tax.Tags) > 0 || inv.Tax.Ext[k] == "" {
 			inv.Tax.Ext[k] = v
 		}
 	}

@@ -415,9 +415,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 				Sum: num.MakeAmount(2100, 2),
 			},
 		},
-
 		{
-			desc: "with VAT percents defined, maintain rate",
+			desc: "with VAT percents defined, replace for rate",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -440,14 +439,14 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key:     tax.RateStandard,
 								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(20, 2),
-								Amount:  num.MakeAmount(2000, 2),
+								Percent: num.NewPercentage(210, 3),
+								Amount:  num.MakeAmount(2100, 2),
 							},
 						},
-						Amount: num.MakeAmount(2000, 2),
+						Amount: num.MakeAmount(2100, 2),
 					},
 				},
-				Sum: num.MakeAmount(2000, 2),
+				Sum: num.MakeAmount(2100, 2),
 			},
 		},
 		{

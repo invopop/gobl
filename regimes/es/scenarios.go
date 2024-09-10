@@ -124,20 +124,27 @@ var invoiceScenarios = &tax.ScenarioSet{
 				bill.InvoiceTypeCreditNote,
 				bill.InvoiceTypeDebitNote,
 			},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceDocumentType: "FC", // default
+			Tags: []cbc.Key{TagFacturaE},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEDocType: "FC", // default
 			},
 		},
 		{
-			Tags: []cbc.Key{tax.TagSimplified},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceDocumentType: "FA",
+			Tags: []cbc.Key{
+				TagFacturaE,
+				tax.TagSimplified,
+			},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEDocType: "FA",
 			},
 		},
 		{
-			Tags: []cbc.Key{tax.TagSelfBilled},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceDocumentType: "AF",
+			Tags: []cbc.Key{
+				TagFacturaE,
+				tax.TagSelfBilled,
+			},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEDocType: "AF",
 			},
 		},
 		// ** Invoice Class **
@@ -145,8 +152,9 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Types: []cbc.Key{
 				bill.InvoiceTypeStandard,
 			},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceClass: "OO", // Original Invoice
+			Tags: []cbc.Key{TagFacturaE},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEInvoiceClass: "OO", // Original Invoice
 			},
 		},
 		{
@@ -155,35 +163,36 @@ var invoiceScenarios = &tax.ScenarioSet{
 				bill.InvoiceTypeCreditNote,
 				bill.InvoiceTypeDebitNote,
 			},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceClass: "OR", // Corrective
+			Tags: []cbc.Key{TagFacturaE},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEInvoiceClass: "OR", // Corrective
 			},
 		},
 		{
-			Tags: []cbc.Key{TagSummary},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceClass: "OC", // Summary
+			Tags: []cbc.Key{TagFacturaE, TagSummary},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEInvoiceClass: "OC", // Summary
 			},
 		},
 		{
-			Tags:  []cbc.Key{TagCopy},
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceClass: "CO", // Copy of the original
+			Tags:  []cbc.Key{TagFacturaE, TagCopy},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEInvoiceClass: "CO", // Copy of the original
 			},
 		},
 		{
-			Tags:  []cbc.Key{TagCopy},
 			Types: []cbc.Key{bill.InvoiceTypeCorrective},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceClass: "CR", // Copy of the corrective
+			Tags:  []cbc.Key{TagFacturaE, TagCopy},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEInvoiceClass: "CR", // Copy of the corrective
 			},
 		},
 		{
-			Tags:  []cbc.Key{TagCopy, TagSummary},
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Codes: cbc.CodeMap{
-				KeyFacturaEInvoiceClass: "CC", // Copy of the summary
+			Tags:  []cbc.Key{TagFacturaE, TagCopy, TagSummary},
+			Ext: tax.Extensions{
+				ExtKeyFacturaEInvoiceClass: "CC", // Copy of the summary
 			},
 		},
 		// ** Special Messages **

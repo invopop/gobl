@@ -8,13 +8,96 @@ import (
 
 // Spanish regime extension codes for local electronic formats.
 const (
-	ExtKeyTBAIExemption      = "es-tbai-exemption"
-	ExtKeyTBAIProduct        = "es-tbai-product"
-	ExtKeyTBAICorrection     = "es-tbai-correction"
-	ExtKeyFacturaECorrection = "es-facturae-correction"
+	ExtKeyTBAIExemption        = "es-tbai-exemption"
+	ExtKeyTBAIProduct          = "es-tbai-product"
+	ExtKeyTBAICorrection       = "es-tbai-correction"
+	ExtKeyFacturaECorrection   = "es-facturae-correction"
+	ExtKeyFacturaEDocType      = "es-facturae-doc-type"
+	ExtKeyFacturaEInvoiceClass = "es-facturae-invoice-class"
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
+	{
+		Key: ExtKeyFacturaEDocType,
+		Name: i18n.String{
+			i18n.EN: "FacturaE: Document Type",
+			i18n.ES: "FacturaE: Tipo de Documento",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "FC",
+				Name: i18n.String{
+					i18n.EN: "Commercial Invoice",
+					i18n.ES: "Factura Comercial",
+				},
+			},
+			{
+				Value: "FA",
+				Name: i18n.String{
+					i18n.EN: "Simplified Invoice",
+					i18n.ES: "Factura Simplificada",
+				},
+			},
+			{
+				Value: "AF",
+				Name: i18n.String{
+					i18n.EN: "Self-billed Invoice",
+					i18n.ES: "Auto-Factura",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyFacturaEInvoiceClass,
+		Name: i18n.String{
+			i18n.EN: "FacturaE: Invoice Class",
+			i18n.ES: "FacturaE: Clase de Factura",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "OO",
+				Name: i18n.String{
+					i18n.EN: "Original",
+					i18n.ES: "Original",
+				},
+			},
+			{
+				Value: "OR",
+				Name: i18n.String{
+					i18n.EN: "Corrective Original",
+					i18n.ES: "Original Rectificativa",
+				},
+			},
+			{
+				Value: "OC",
+				Name: i18n.String{
+					i18n.EN: "Summary Original",
+					i18n.ES: "Original Recapitulativa",
+				},
+			},
+			{
+				Value: "CO",
+				Name: i18n.String{
+					i18n.EN: "Copy of the Original",
+					i18n.ES: "Duplicado Original",
+				},
+			},
+			{
+				Value: "CR",
+				Name: i18n.String{
+					i18n.EN: "Copy of the Corrective",
+					i18n.ES: "Duplicado Rectificativa",
+				},
+			},
+			{
+				Value: "CC",
+				Name: i18n.String{
+					i18n.EN: "Copy of the Summary",
+					i18n.ES: "Duplicado Recapitulativa",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyFacturaECorrection,
 		Name: i18n.String{

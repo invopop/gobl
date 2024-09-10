@@ -110,7 +110,8 @@ func TestCustomerValidation(t *testing.T) {
 	assertValidationError(t, inv, "customer: (tax_id: cannot be blank.)")
 
 	inv.Customer = nil
-	assertValidationError(t, inv, "customer: cannot be blank")
+	require.NoError(t, inv.Calculate())
+	assert.NoError(t, inv.Validate())
 }
 
 func TestLineValidation(t *testing.T) {
