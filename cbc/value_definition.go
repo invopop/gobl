@@ -20,10 +20,10 @@ type ValueDefinition struct {
 }
 
 // Validate ensures the contents of the value definition are valid.
-func (cd *ValueDefinition) Validate() error {
-	return validation.ValidateStruct(cd,
-		validation.Field(&cd.Value, validation.Required),
-		validation.Field(&cd.Name, validation.Required),
-		validation.Field(&cd.Desc),
+func (vd *ValueDefinition) Validate() error {
+	return validation.ValidateStruct(vd,
+		validation.Field(&vd.Value, validation.Required),
+		validation.Field(&vd.Name, validation.Required),
+		validation.Field(&vd.Desc),
 	)
 }
