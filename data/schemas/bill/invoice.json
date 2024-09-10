@@ -300,7 +300,7 @@
         "customer": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Customer",
-          "description": "Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices."
+          "description": "Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices."
         },
         "lines": {
           "items": {
@@ -783,7 +783,7 @@
           },
           "type": "array",
           "title": "Tags",
-          "description": "Special tax tags that apply to this invoice according to local requirements."
+          "description": "Tags are used to help identify specific tax scenarios or requirements that will\napply changes to the contents of the invoice. Tags by design should always be optional,\nit should always be possible to build a valid invoice without any tags."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
