@@ -28,7 +28,7 @@ type RateTotal struct {
 	// this would be possible.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// If the rate is defined with extensions, they'll be used to group by also.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Base amount that the percentage is applied to.
 	Base num.Amount `json:"base" jsonschema:"title=Base"`
 	// Percentage of the rate. Will be nil when taxes are **exempt**.

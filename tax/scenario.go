@@ -32,8 +32,8 @@ type Scenario struct {
 	// Type of document, if present.
 	Types []cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 
-	// Tag that was applied to the document
-	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tag"`
+	// Array of tags that have been applied to the document.
+	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Extension key that must be present in the document.
 	ExtKey cbc.Key `json:"ext_key,omitempty" jsonschema:"title=Extension Key"`

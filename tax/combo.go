@@ -28,7 +28,7 @@ type Combo struct {
 	// Some countries require an additional surcharge (calculated if rate present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
 	// Copied from the category definition, implies this tax combo is retained
 	retained bool `json:"-"`
