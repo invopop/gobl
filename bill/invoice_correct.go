@@ -205,23 +205,11 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 					prop.Description = re.Desc.String()
 				}
 				var oneOf []*jsonschema.Schema
-				if len(re.Codes) > 0 {
-					oneOf = make([]*jsonschema.Schema, 0, len(re.Codes))
-					for _, c := range re.Codes {
+				if len(re.Values) > 0 {
+					oneOf = make([]*jsonschema.Schema, 0, len(re.Values))
+					for _, c := range re.Values {
 						ci := &jsonschema.Schema{
-							Const: c.Code.String(),
-							Title: c.Name.String(),
-						}
-						if len(c.Desc) > 0 {
-							ci.Description = c.Desc.String()
-						}
-						oneOf = append(oneOf, ci)
-					}
-				} else if len(re.Keys) > 0 {
-					oneOf = make([]*jsonschema.Schema, 0, len(re.Keys))
-					for _, c := range re.Keys {
-						ci := &jsonschema.Schema{
-							Const: c.Key.String(),
+							Const: c.Value,
 							Title: c.Name.String(),
 						}
 						if len(c.Desc) > 0 {

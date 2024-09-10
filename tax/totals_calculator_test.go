@@ -1181,7 +1181,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.Extensions{
-									gr.ExtKeyIAPRVATCat: "1",
+									gr.ExtKeyMyDATAVATCat: "1",
 								},
 								Key:     tax.RateStandard,
 								Base:    num.MakeAmount(942, 2),
@@ -1190,7 +1190,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Ext: tax.Extensions{
-									gr.ExtKeyIAPRVATCat: "2",
+									gr.ExtKeyMyDATAVATCat: "2",
 								},
 								Key:     tax.RateReduced,
 								Base:    num.MakeAmount(942, 2),

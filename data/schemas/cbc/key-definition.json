@@ -25,21 +25,13 @@
           "title": "Meta",
           "description": "Meta defines any additional details that may be useful or associated\nwith the key."
         },
-        "codes": {
+        "values": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/code-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/value-definition"
           },
           "type": "array",
-          "title": "Codes",
-          "description": "Codes describes the list of codes that can be used alongside the Key,\nfor example with identities."
-        },
-        "keys": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
-          },
-          "type": "array",
-          "title": "Keys",
-          "description": "Keys is used instead of codes to define a further sub-set of keys that\ncan be used alongside this one."
+          "title": "Values",
+          "description": "Values defines the possible values associated with the key."
         },
         "pattern": {
           "type": "string",

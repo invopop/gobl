@@ -145,14 +145,6 @@
           "title": "Values",
           "description": "Values contains a list of Value objects that contain the\ncurrent and historical percentage values for the rate and\nadditional filters.\nOrder is important, newer values should come before\nolder values."
         },
-        "extensions": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Extensions",
-          "description": "Extensions defines a list of keys for codes that can or must be associated with the\ntax rate for it to be validated. Every key must be defined in the Regime's\nextensions."
-        },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
@@ -252,6 +244,11 @@
           "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",
           "description": "Currency used by the country."
+        },
+        "calculator_rounding_rule": {
+          "type": "string",
+          "title": "Calculator Rounding Rule",
+          "description": "Rounding rule to use when calculating the tax totals, default is always\n`sum-then-round`."
         },
         "tags": {
           "items": {

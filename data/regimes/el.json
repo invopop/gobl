@@ -10,6 +10,7 @@
     "GR"
   ],
   "currency": "EUR",
+  "calculator_rounding_rule": "round-then-sum",
   "tags": [
     {
       "key": "simplified",
@@ -72,63 +73,63 @@
   ],
   "extensions": [
     {
-      "key": "gr-iapr-vat-cat",
+      "key": "gr-mydata-vat-cat",
       "name": {
         "el": "Κατηγορία ΦΠΑ",
         "en": "VAT category"
       },
-      "codes": [
+      "values": [
         {
-          "code": "1",
+          "value": "1",
           "name": {
             "el": "Κανονικός συντελεστής",
             "en": "Standard rate"
           }
         },
         {
-          "code": "2",
+          "value": "2",
           "name": {
             "el": "Μειωμένος συντελεστής",
             "en": "Reduced rate"
           }
         },
         {
-          "code": "3",
+          "value": "3",
           "name": {
             "el": "Υπερμειωμένος συντελεστής",
             "en": "Super-Reduced Rate"
           }
         },
         {
-          "code": "4",
+          "value": "4",
           "name": {
             "el": "Κανονικός συντελεστής (Νησί)",
             "en": "Standard rate (Island)"
           }
         },
         {
-          "code": "5",
+          "value": "5",
           "name": {
             "el": "Μειωμένος συντελεστής (Νησί)",
             "en": "Reduced rate (Island)"
           }
         },
         {
-          "code": "6",
+          "value": "6",
           "name": {
             "el": "Υπερμειωμένος συντελεστής (Νησί)",
             "en": "Super-reduced rate (Island)"
           }
         },
         {
-          "code": "7",
+          "value": "7",
           "name": {
             "el": "Άνευ ΦΠΑ",
             "en": "Without VAT"
           }
         },
         {
-          "code": "8",
+          "value": "8",
           "name": {
             "el": "Εγγραφές χωρίς ΦΠΑ (πχ Μισθοδοσία, Αποσβέσεις)",
             "en": "Records without VAT (e.g. Payroll, Amortisations)"
@@ -137,227 +138,560 @@
       ]
     },
     {
-      "key": "gr-iapr-exemption",
+      "key": "gr-mydata-exemption",
       "name": {
         "el": "Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
         "en": "VAT exemption cause"
       },
-      "codes": [
+      "values": [
         {
-          "code": "1",
+          "value": "1",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 3 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 3 of the VAT code"
           }
         },
         {
-          "code": "2",
+          "value": "2",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 5 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 5 of the VAT code"
           }
         },
         {
-          "code": "3",
+          "value": "3",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 13 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 13 of the VAT code"
           }
         },
         {
-          "code": "4",
+          "value": "4",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 14 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 14 of the VAT code"
           }
         },
         {
-          "code": "5",
+          "value": "5",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 16 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 16 of the VAT code"
           }
         },
         {
-          "code": "6",
+          "value": "6",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 19 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 19 of the VAT code"
           }
         },
         {
-          "code": "7",
+          "value": "7",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 22 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 22 of the VAT code"
           }
         },
         {
-          "code": "8",
+          "value": "8",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 24 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 24 of the VAT code"
           }
         },
         {
-          "code": "9",
+          "value": "9",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 25 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 25 of the VAT code"
           }
         },
         {
-          "code": "10",
+          "value": "10",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 26 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 26 of the VAT code"
           }
         },
         {
-          "code": "11",
+          "value": "11",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 27 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 27 of the VAT code"
           }
         },
         {
-          "code": "12",
+          "value": "12",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 27 - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 27 - Seagoing Vessels of the VAT code"
           }
         },
         {
-          "code": "13",
+          "value": "13",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 27.1.γ - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 27.1.γ - Seagoing Vessels of the VAT code"
           }
         },
         {
-          "code": "14",
+          "value": "14",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 28 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 28 of the VAT code"
           }
         },
         {
-          "code": "15",
+          "value": "15",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 39 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 39 of the VAT code"
           }
         },
         {
-          "code": "16",
+          "value": "16",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 39α του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 39a of the VAT code"
           }
         },
         {
-          "code": "17",
+          "value": "17",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 40 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 40 of the VAT code"
           }
         },
         {
-          "code": "18",
+          "value": "18",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 41 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 41 of the VAT code"
           }
         },
         {
-          "code": "19",
+          "value": "19",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 47 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 47 of the VAT code"
           }
         },
         {
-          "code": "20",
+          "value": "20",
           "name": {
             "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 43 του Κώδικα ΦΠΑ",
             "en": "VAT included - article 43 of the VAT code"
           }
         },
         {
-          "code": "21",
+          "value": "21",
           "name": {
             "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 44 του Κώδικα ΦΠΑ",
             "en": "VAT included - article 44 of the VAT code"
           }
         },
         {
-          "code": "22",
+          "value": "22",
           "name": {
             "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 45 του Κώδικα ΦΠΑ",
             "en": "VAT included - article 45 of the VAT code"
           }
         },
         {
-          "code": "23",
+          "value": "23",
           "name": {
             "el": "ΦΠΑ εμπεριεχόμενος - άρθρο 46 του Κώδικα ΦΠΑ",
             "en": "VAT included - article 46 of the VAT code"
           }
         },
         {
-          "code": "24",
+          "value": "24",
           "name": {
             "el": "Χωρίς ΦΠΑ - άρθρο 6 του Κώδικα ΦΠΑ",
             "en": "Without VAT - article 6 of the VAT code"
           }
         },
         {
-          "code": "25",
+          "value": "25",
           "name": {
             "el": "Χωρίς ΦΠΑ - ΠΟΛ.1029/1995",
             "en": "Without VAT - ΠΟΛ.1029/1995"
           }
         },
         {
-          "code": "26",
+          "value": "26",
           "name": {
             "el": "Χωρίς ΦΠΑ - ΠΟΛ.1167/2015",
             "en": "Without VAT - ΠΟΛ.1167/2015"
           }
         },
         {
-          "code": "27",
+          "value": "27",
           "name": {
             "el": "Λοιπές Εξαιρέσεις ΦΠΑ",
             "en": "Without VAT - Other VAT exceptions"
           }
         },
         {
-          "code": "28",
+          "value": "28",
           "name": {
             "el": "Χωρίς ΦΠΑ – άρθρο 24 περ. β' παρ.1 του Κώδικα ΦΠΑ, (Tax Free)",
             "en": "Without VAT - Article 24 (b) (1) of the VAT Code (Tax Free)"
           }
         },
         {
-          "code": "29",
+          "value": "29",
           "name": {
             "el": "Χωρίς ΦΠΑ – άρθρο 47β, του Κώδικα ΦΠΑ (OSS μη ενωσιακό καθεστώς)",
             "en": "Without VAT - Article 47b of the VAT Code (OSS non-EU scheme)"
           }
         },
         {
-          "code": "30",
+          "value": "30",
           "name": {
             "el": "Χωρίς ΦΠΑ – άρθρο 47γ, του Κώδικα ΦΠΑ (OSS ενωσιακό καθεστώς)",
             "en": "Without VAT - Article 47c of the VAT Code (OSS EU scheme)"
           }
         },
         {
-          "code": "31",
+          "value": "31",
           "name": {
             "el": "Χωρίς ΦΠΑ – άρθρο 47δ του Κώδικα ΦΠΑ (IOSS)",
             "en": "Excluding VAT - Article 47d of the VAT Code (IOSS)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-income-cat",
+      "name": {
+        "el": "Κωδικός Κατηγορίας Χαρακτηρισμού Εσόδων",
+        "en": "Income Classification Category"
+      },
+      "values": [
+        {
+          "value": "category1_1",
+          "name": {
+            "el": "Έσοδα από Πώληση Εμπορευμάτων (+)/(-)",
+            "en": "Commodity Sale Income (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_2",
+          "name": {
+            "el": "Έσοδα από Πώληση Προϊόντων (+)/(-)",
+            "en": "Product Sale Income (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_3",
+          "name": {
+            "el": "Έσοδα από Παροχή Υπηρεσιών (+)/(-)",
+            "en": "Provision of Services Income (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_4",
+          "name": {
+            "el": "Έσοδα από Πώληση Παγίων (+)/(-)",
+            "en": "Sale of Fixed Assets Income (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_5",
+          "name": {
+            "el": "Λοιπά Έσοδα/ Κέρδη (+)/(-)",
+            "en": "Other Income/Profits (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_6",
+          "name": {
+            "el": "Αυτοπαραδόσεις / Ιδιοχρησιμοποιήσεις (+)/(-)",
+            "en": "Self-Deliveries/Self-Supplies (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_7",
+          "name": {
+            "el": "Έσοδα για λ/σμο τρίτων (+)/(-)",
+            "en": "Income on behalf of Third Parties (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_8",
+          "name": {
+            "el": "Έσοδα προηγούμενων χρήσεων (+)/ (-)",
+            "en": "Past fiscal years income (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_9",
+          "name": {
+            "el": "Έσοδα επομένων χρήσεων (+)/(-)",
+            "en": "Future fiscal years income (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_10",
+          "name": {
+            "el": "Λοιπές Εγγραφές Τακτοποίησης Εσόδων (+)/(-)",
+            "en": "Other Income Adjustment/Regularisation Entries (+)/(-)"
+          }
+        },
+        {
+          "value": "category1_95",
+          "name": {
+            "el": "Λοιπά Πληροφοριακά Στοιχεία Εσόδων (+)/(-)",
+            "en": "Other Income-related Information (+)/(-)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "gr-mydata-income-type",
+      "name": {
+        "el": "Κωδικός Τύπου Χαρακτηρισμού Εσόδων",
+        "en": "Income Classification Type"
+      },
+      "values": [
+        {
+          "value": "E3_106",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Εμπορεύματα",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Commodities"
+          }
+        },
+        {
+          "value": "E3_205",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Πρώτες ύλες και λοιπά υλικά",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw and other materials"
+          }
+        },
+        {
+          "value": "E3_210",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Προϊόντα και παραγωγή σε εξέλιξη",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Products and production in progress"
+          }
+        },
+        {
+          "value": "E3_305",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις – Καταστροφές αποθεμάτων/Πρώτες ύλες και λοιπά υλικά",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw and other materials"
+          }
+        },
+        {
+          "value": "E3_310",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Προϊόντα και παραγωγή σε εξέλιξη",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Products and production in progress"
+          }
+        },
+        {
+          "value": "E3_318",
+          "name": {
+            "el": "Ιδιοπαραγωγή παγίων - Αυτοπαραδόσεις - Καταστροφές αποθεμάτων/Έξοδα παραγωγής",
+            "en": "Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Production expenses"
+          }
+        },
+        {
+          "value": "E3_561_001",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές - Επιτηδευματιών",
+            "en": "Wholesale Sales of Goods and Services – for Traders"
+          }
+        },
+        {
+          "value": "E3_561_002",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Χονδρικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)",
+            "en": "Wholesale Sales of Goods and Services pursuant to article 39a paragraph 5 of the VAT Code (Law 2859/2000)"
+          }
+        },
+        {
+          "value": "E3_561_003",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Λιανικές - Ιδιωτική Πελατεία",
+            "en": "Retail Sales of Goods and Services – Private Clientele"
+          }
+        },
+        {
+          "value": "E3_561_004",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Λιανικές βάσει άρθρου 39α παρ 5 του Κώδικα Φ.Π.Α. (Ν.2859/2000)",
+            "en": "Retail Sales of Goods and Services pursuant to article 39a paragraph 5 of the VAT Code (Law 2859/2000)"
+          }
+        },
+        {
+          "value": "E3_561_005",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Εξωτερικού Ενδοκοινοτικές",
+            "en": "Intra-Community Foreign Sales of Goods and Services"
+          }
+        },
+        {
+          "value": "E3_561_006",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Εξωτερικού Τρίτες Χώρες",
+            "en": "Third Country Foreign Sales of Goods and Services"
+          }
+        },
+        {
+          "value": "E3_561_007",
+          "name": {
+            "el": "Πωλήσεις αγαθών και υπηρεσιών Λοιπά",
+            "en": "Other Sales of Goods and Services"
+          }
+        },
+        {
+          "value": "E3_562",
+          "name": {
+            "el": "Λοιπά συνήθη έσοδα",
+            "en": "Other Ordinary Income"
+          }
+        },
+        {
+          "value": "E3_563",
+          "name": {
+            "el": "Πιστωτικοί τόκοι και συναφή έσοδα",
+            "en": "Credit Interest and Related Income"
+          }
+        },
+        {
+          "value": "E3_564",
+          "name": {
+            "el": "Πιστωτικές συναλλαγματικές διαφορές",
+            "en": "Credit Exchange Differences"
+          }
+        },
+        {
+          "value": "E3_565",
+          "name": {
+            "el": "Έσοδα συμμετοχών",
+            "en": "Income from Participations"
+          }
+        },
+        {
+          "value": "E3_566",
+          "name": {
+            "el": "Κέρδη από διάθεση μη κυκλοφορούντων περιουσιακών στοιχείων",
+            "en": "Profits from Disposing Non-Current Assets"
+          }
+        },
+        {
+          "value": "E3_567",
+          "name": {
+            "el": "Κέρδη από αναστροφή προβλέψεων και απομειώσεων",
+            "en": "Profits from the Reversal of Provisions and Impairments"
+          }
+        },
+        {
+          "value": "E3_568",
+          "name": {
+            "el": "Κέρδη από επιμέτρηση στην εύλογη αξία",
+            "en": "Profits from Measurement at Fair Value"
+          }
+        },
+        {
+          "value": "E3_570",
+          "name": {
+            "el": "Ασυνήθη έσοδα και κέρδη",
+            "en": "Extraordinary income and profits"
+          }
+        },
+        {
+          "value": "E3_595",
+          "name": {
+            "el": "Έξοδα σε ιδιοπαραγωγή",
+            "en": "Self-Production Expenses"
+          }
+        },
+        {
+          "value": "E3_596",
+          "name": {
+            "el": "Επιδοτήσεις - Επιχορηγήσεις",
+            "en": "Subsidies - Grants"
+          }
+        },
+        {
+          "value": "E3_597",
+          "name": {
+            "el": "Επιδοτήσεις - Επιχορηγήσεις για επενδυτικούς σκοπούς - κάλυψη δαπανών",
+            "en": "Subsidies – Grants for Investment Purposes – Expense Coverage"
+          }
+        },
+        {
+          "value": "E3_880_001",
+          "name": {
+            "el": "Πωλήσεις Παγίων Χονδρικές",
+            "en": "Wholesale Sales of Fixed Assets"
+          }
+        },
+        {
+          "value": "E3_880_002",
+          "name": {
+            "el": "Πωλήσεις Παγίων Λιανικές",
+            "en": "Retail Sales of Fixed Assets"
+          }
+        },
+        {
+          "value": "E3_880_003",
+          "name": {
+            "el": "Πωλήσεις Παγίων Εξωτερικού Ενδοκοινοτικές",
+            "en": "Intra-Community Foreign Sales of Fixed Assets"
+          }
+        },
+        {
+          "value": "E3_880_004",
+          "name": {
+            "el": "Πωλήσεις Παγίων Εξωτερικού Τρίτες Χώρες",
+            "en": "Third Country Foreign Sales of Fixed Assets"
+          }
+        },
+        {
+          "value": "E3_881_001",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Χονδρικές",
+            "en": "Wholesale Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "value": "E3_881_002",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Λιανικές",
+            "en": "Retail Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "value": "E3_881_003",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Εξωτερικού Ενδοκοινοτικές",
+            "en": "Intra-Community Foreign Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "value": "E3_881_004",
+          "name": {
+            "el": "Πωλήσεις για λογ/σμο Τρίτων Εξωτερικού Τρίτες Χώρες",
+            "en": "Third Country Foreign Sales on behalf of Third Parties"
+          }
+        },
+        {
+          "value": "E3_598_001",
+          "name": {
+            "el": "Πωλήσεις αγαθών που υπάγονται σε ΕΦΚ",
+            "en": "Sales of goods belonging to excise duty"
+          }
+        },
+        {
+          "value": "E3_598_003",
+          "name": {
+            "el": "Πωλήσεις για λογαριασμό αγροτών μέσω αγροτικού συνεταιρισμού κ.λ.π.",
+            "en": "Sales on behalf of farmers through an agricultural cooperative e.t.c."
           }
         }
       ]
@@ -487,7 +821,7 @@
             }
           ],
           "ext": {
-            "gr-iapr-vat-cat": "1"
+            "gr-mydata-vat-cat": "1"
           }
         },
         {
@@ -502,7 +836,7 @@
             }
           ],
           "ext": {
-            "gr-iapr-vat-cat": "2"
+            "gr-mydata-vat-cat": "2"
           }
         },
         {
@@ -517,7 +851,7 @@
             }
           ],
           "ext": {
-            "gr-iapr-vat-cat": "3"
+            "gr-mydata-vat-cat": "3"
           }
         },
         {
@@ -532,7 +866,7 @@
             }
           ],
           "ext": {
-            "gr-iapr-vat-cat": "4"
+            "gr-mydata-vat-cat": "4"
           }
         },
         {
@@ -547,7 +881,7 @@
             }
           ],
           "ext": {
-            "gr-iapr-vat-cat": "5"
+            "gr-mydata-vat-cat": "5"
           }
         },
         {
@@ -562,7 +896,7 @@
             }
           ],
           "ext": {
-            "gr-iapr-vat-cat": "6"
+            "gr-mydata-vat-cat": "6"
           }
         },
         {
@@ -573,13 +907,15 @@
           },
           "exempt": true,
           "ext": {
-            "gr-iapr-vat-cat": "7"
+            "gr-mydata-vat-cat": "7"
           }
         }
       ],
       "extensions": [
-        "gr-iapr-vat-cat",
-        "gr-iapr-exemption"
+        "gr-mydata-vat-cat",
+        "gr-mydata-exemption",
+        "gr-mydata-income-cat",
+        "gr-mydata-income-type"
       ],
       "sources": [
         {

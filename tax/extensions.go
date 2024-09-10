@@ -64,11 +64,8 @@ func (em Extensions) ValidateWithContext(ctx context.Context) error {
 			err[ks] = errors.New("undefined")
 			continue
 		}
-		if len(kd.Codes) > 0 && !kd.HasCode(ev.Code()) {
-			err[ks] = fmt.Errorf("code '%s' invalid", ev)
-		}
-		if len(kd.Keys) > 0 && !kd.HasKey(ev.Key()) {
-			err[ks] = fmt.Errorf("key '%s' invalid", ev)
+		if len(kd.Values) > 0 && !kd.HasValue(ev.String()) {
+			err[ks] = fmt.Errorf("value '%s' invalid", ev)
 		}
 		if kd.Pattern != "" {
 			re, rerr := regexp.Compile(kd.Pattern)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -53,8 +54,8 @@ func TestExtValue(t *testing.T) {
 func TestExtValidation(t *testing.T) {
 	t.Run("with mexico", func(t *testing.T) {
 		// Use mexico for tests as it has more extensions
-		mr := mx.New()
-		ctx := mr.WithContext(context.Background())
+		r := mx.New()
+		ctx := r.WithContext(context.Background())
 
 		t.Run("test patterns", func(t *testing.T) {
 			em := tax.Extensions{
@@ -70,7 +71,7 @@ func TestExtValidation(t *testing.T) {
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "mx-cfdi-post-code: does not match pattern")
 
-			kd := mr.ExtensionDef(mx.ExtKeyCFDIPostCode)
+			kd := r.ExtensionDef(mx.ExtKeyCFDIPostCode)
 			pt := kd.Pattern
 			kd.Pattern = "[][" // invalid
 			err = em.ValidateWithContext(ctx)
@@ -91,42 +92,70 @@ func TestExtValidation(t *testing.T) {
 			}
 			err = em.ValidateWithContext(ctx)
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "mx-cfdi-fiscal-regime: code '000' invalid")
+			assert.Contains(t, err.Error(), "mx-cfdi-fiscal-regime: value '000' invalid")
 		})
 	})
 
-	sp := es.New()
-	ctx := sp.WithContext(context.Background())
-	t.Run("test good key", func(t *testing.T) {
-		em := tax.Extensions{
-			es.ExtKeyTBAIProduct: "goods",
-		}
-		err := em.ValidateWithContext(ctx)
-		assert.NoError(t, err)
+	t.Run("with spain", func(t *testing.T) {
+		r := es.New()
+		ctx := r.WithContext(context.Background())
+
+		t.Run("test good key", func(t *testing.T) {
+			em := tax.Extensions{
+				es.ExtKeyTBAIProduct: "goods",
+			}
+			err := em.ValidateWithContext(ctx)
+			assert.NoError(t, err)
+		})
+
+		t.Run("test bad key", func(t *testing.T) {
+			em := tax.Extensions{
+				es.ExtKeyTBAIProduct: "bads",
+			}
+			err := em.ValidateWithContext(ctx)
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "es-tbai-product: value 'bads' invalid")
+		})
+
+		t.Run("missing extension", func(t *testing.T) {
+			em := tax.Extensions{
+				"random-key": "type",
+			}
+			err := em.ValidateWithContext(ctx)
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "random-key: undefined")
+		})
+
+		t.Run("invalid key", func(t *testing.T) {
+			em := tax.Extensions{
+				"INVALID": "value",
+			}
+			err := em.ValidateWithContext(ctx)
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "INVALID: must be in a valid format")
+		})
 	})
-	t.Run("test bad key", func(t *testing.T) {
-		em := tax.Extensions{
-			es.ExtKeyTBAIProduct: "bads",
-		}
-		err := em.ValidateWithContext(ctx)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "es-tbai-product: key 'bads' invalid")
-	})
-	t.Run("missing extension", func(t *testing.T) {
-		em := tax.Extensions{
-			"random-key": "type",
-		}
-		err := em.ValidateWithContext(ctx)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "random-key: undefined")
-	})
-	t.Run("invalid key", func(t *testing.T) {
-		em := tax.Extensions{
-			"INVALID": "value",
-		}
-		err := em.ValidateWithContext(ctx)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "INVALID: must be in a valid format")
+
+	t.Run("with greece", func(t *testing.T) {
+		r := gr.New()
+		ctx := r.WithContext(context.Background())
+
+		t.Run("test good value", func(t *testing.T) {
+			em := tax.Extensions{
+				gr.ExtKeyMyDATAIncomeCat: "category1_1",
+			}
+			err := em.ValidateWithContext(ctx)
+			assert.NoError(t, err)
+		})
+
+		t.Run("test bad value", func(t *testing.T) {
+			em := tax.Extensions{
+				gr.ExtKeyMyDATAIncomeCat: "xxx",
+			}
+			err := em.ValidateWithContext(ctx)
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "gr-mydata-income-cat: value 'xxx' invalid")
+		})
 	})
 }
 

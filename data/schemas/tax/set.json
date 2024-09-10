@@ -10,6 +10,11 @@
           "title": "Category",
           "description": "Tax category code from those available inside a region."
         },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
+          "title": "Country",
+          "description": "Country code override when issuing with taxes applied from different countries."
+        },
         "rate": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Rate",

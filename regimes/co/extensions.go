@@ -42,9 +42,9 @@ var extensionKeys = []*cbc.KeyDefinition{
 			i18n.EN: "DIAN correction code for credit notes",
 			i18n.ES: "Código de corrección DIAN para notas de crédito",
 		},
-		Codes: []*cbc.CodeDefinition{
+		Values: []*cbc.ValueDefinition{
 			{
-				Code: "1",
+				Value: "1",
 				Name: i18n.String{
 					i18n.EN: "Partial refund",
 					i18n.ES: "Devolución parcial",
@@ -55,7 +55,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Code: "2",
+				Value: "2",
 				Name: i18n.String{
 					i18n.EN: "Revoked",
 					i18n.ES: "Anulación",
@@ -66,7 +66,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Code: "3",
+				Value: "3",
 				Name: i18n.String{
 					i18n.EN: "Discount",
 					i18n.ES: "Descuento",
@@ -77,7 +77,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Code: "4",
+				Value: "4",
 				Name: i18n.String{
 					i18n.EN: "Adjustment",
 					i18n.ES: "Ajuste",
@@ -88,7 +88,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Code: "5",
+				Value: "5",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otros",
@@ -106,30 +106,30 @@ var extensionKeys = []*cbc.KeyDefinition{
 			i18n.EN: "DIAN correction code for debit notes",
 			i18n.ES: "Código de corrección DIAN para notas de débito",
 		},
-		Codes: []*cbc.CodeDefinition{
+		Values: []*cbc.ValueDefinition{
 			{
-				Code: "1",
+				Value: "1",
 				Name: i18n.String{
 					i18n.EN: "Interest",
 					i18n.ES: "Intereses",
 				},
 			},
 			{
-				Code: "2",
+				Value: "2",
 				Name: i18n.String{
 					i18n.EN: "Pending charges",
 					i18n.ES: "Gastos por cobrar",
 				},
 			},
 			{
-				Code: "3",
+				Value: "3",
 				Name: i18n.String{
 					i18n.EN: "Change in value",
 					i18n.ES: "Cambio del valor",
 				},
 			},
 			{
-				Code: "4",
+				Value: "4",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otros",
