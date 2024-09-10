@@ -360,8 +360,8 @@
             "$ref": "https://gobl.org/draft-0/cbc/key"
           },
           "type": "array",
-          "title": "Tag",
-          "description": "Tag that was applied to the document"
+          "title": "Tags",
+          "description": "Array of tags that have been applied to the document."
         },
         "ext_key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",

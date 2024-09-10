@@ -106,9 +106,6 @@ func (tc *TotalCalculator) calculateBaseRateTotals(taxLines []*taxLine, t *Total
 	// Go through each line and add the total to the base of each tax
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
-			if c.Percent == nil && c.Rate.IsEmpty() {
-				continue // not much to do here!
-			}
 			rt := t.rateTotalFor(c, tc.Zero)
 			rt.Base = tc.matchPrecision(rt.Base, tl.total)
 			rt.Base = rt.Base.Add(tl.total)

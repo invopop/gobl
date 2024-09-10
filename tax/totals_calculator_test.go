@@ -1020,6 +1020,52 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 		},
 		{
+			desc: "tax included with exempt rate and no key",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Ext: tax.Extensions{
+								es.ExtKeyTBAIExemption: "E1",
+							},
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Ext: tax.Extensions{
+								es.ExtKeyTBAIExemption: "E1",
+							},
+						},
+					},
+					amount: num.MakeAmount(2000, 2),
+				},
+			},
+			taxIncluded: tax.CategoryVAT,
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code: tax.CategoryVAT,
+						Rates: []*tax.RateTotal{
+							{
+								Ext: tax.Extensions{
+									es.ExtKeyTBAIExemption: "E1",
+								},
+								Base:   num.MakeAmount(12000, 2),
+								Amount: num.MakeAmount(0, 2),
+							},
+						},
+						Amount: num.MakeAmount(0, 2),
+					},
+				},
+				Sum: num.MakeAmount(0, 2),
+			},
+		},
+		{
 			desc: "tax included with regular and exempt rate",
 			lines: []tax.TaxableLine{
 				&taxableLine{
