@@ -1109,7 +1109,7 @@ func TestValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
-		assert.Nil(t, inv.Customer)
+		assert.NotNil(t, inv.Customer) // just ignore simplified tag
 	})
 
 	t.Run("customer name and tax ID code", func(t *testing.T) {

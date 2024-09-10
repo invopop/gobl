@@ -158,10 +158,6 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.By(validateInvoiceCustomer),
-			validation.When(
-				inv.hasTagSimplified(),
-				validation.Nil,
-			),
 		),
 		validation.Field(&inv.Lines,
 			validation.Required,
@@ -208,10 +204,6 @@ func validateInvoiceCustomer(value any) error {
 			),
 		),
 	)
-}
-
-func (inv *Invoice) hasTagSimplified() bool {
-	return inv.Tax != nil && tax.TagSimplified.In(inv.Tax.Tags...)
 }
 
 func partyHasTaxIDCode(party *org.Party) bool {
@@ -288,9 +280,6 @@ func (inv *Invoice) Calculate() error {
 	}
 	if err := inv.Supplier.Calculate(); err != nil {
 		return fmt.Errorf("supplier: %w", err)
-	}
-	if inv.hasTagSimplified() {
-		inv.Customer = nil
 	}
 	if inv.Customer != nil {
 		if err := inv.Customer.Calculate(); err != nil {
