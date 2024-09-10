@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "16de245afcbefd9470d54b7797500e56c2925cb26943edac7a3d182cafcb1c8e"
+			"val": "e91a19620ffbf83d2abde0f2106af7b0e22fa31893e9f79b9a1d235671c99e4f"
 		},
 		"draft": true
 	},
@@ -58,7 +58,7 @@
 						"rate": "standard",
 						"percent": "24%",
 						"ext": {
-							"gr-iapr-vat-cat": "1"
+							"gr-mydata-vat-cat": "1"
 						}
 					}
 				],
@@ -78,7 +78,7 @@
 						"rate": "reduced",
 						"percent": "13%",
 						"ext": {
-							"gr-iapr-vat-cat": "2"
+							"gr-mydata-vat-cat": "2"
 						}
 					}
 				],
@@ -108,7 +108,7 @@
 							{
 								"key": "standard",
 								"ext": {
-									"gr-iapr-vat-cat": "1"
+									"gr-mydata-vat-cat": "1"
 								},
 								"base": "8.44",
 								"percent": "24%",
@@ -117,7 +117,7 @@
 							{
 								"key": "reduced",
 								"ext": {
-									"gr-iapr-vat-cat": "2"
+									"gr-mydata-vat-cat": "2"
 								},
 								"base": "8.44",
 								"percent": "13%",
