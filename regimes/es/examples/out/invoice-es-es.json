@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "23cd4a6e2d2d49558d11106ca64cd6de7446fa779362e26e4e7789b1128b0b5b"
+			"val": "e7456b345749a48978afef1eaaa39c2effa7bb4e265c371478a21503f008a600"
 		},
 		"draft": true
 	},
@@ -15,6 +15,15 @@
 		"code": "SAMPLE-001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"tags": [
+				"facturae"
+			],
+			"ext": {
+				"es-facturae-doc-type": "FC",
+				"es-facturae-invoice-class": "OO"
+			}
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

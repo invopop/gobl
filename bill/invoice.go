@@ -74,7 +74,7 @@ type Invoice struct {
 
 	// The taxable entity supplying the goods or services.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
-	// Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices.
+	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
 	// List of invoice lines representing each of the items sold to the customer.
@@ -157,12 +157,11 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.By(validateInvoiceSupplier),
 		),
 		validation.Field(&inv.Customer,
-			// Customer is not required for simplified invoices.
+			validation.By(validateInvoiceCustomer),
 			validation.When(
-				!inv.isSimplified(),
-				validation.Required,
+				inv.hasTagSimplified(),
+				validation.Nil,
 			),
-			validation.By(inv.validateInvoiceCustomer()),
 		),
 		validation.Field(&inv.Lines,
 			validation.Required,
@@ -196,24 +195,22 @@ func validateInvoiceSupplier(value any) error {
 	)
 }
 
-func (inv *Invoice) validateInvoiceCustomer() validation.RuleFunc {
-	return func(value any) error {
-		p, ok := value.(*org.Party)
-		if !ok || p == nil {
-			return nil
-		}
-		return validation.ValidateStruct(p,
-			validation.Field(&p.Name,
-				validation.When(
-					inv.isSimplified() || partyHasTaxIDCode(p),
-					validation.Required,
-				),
-			),
-		)
+func validateInvoiceCustomer(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
 	}
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Name,
+			validation.When(
+				partyHasTaxIDCode(p),
+				validation.Required,
+			),
+		),
+	)
 }
 
-func (inv *Invoice) isSimplified() bool {
+func (inv *Invoice) hasTagSimplified() bool {
 	return inv.Tax != nil && tax.TagSimplified.In(inv.Tax.Tags...)
 }
 
@@ -291,6 +288,9 @@ func (inv *Invoice) Calculate() error {
 	}
 	if err := inv.Supplier.Calculate(); err != nil {
 		return fmt.Errorf("supplier: %w", err)
+	}
+	if inv.hasTagSimplified() {
+		inv.Customer = nil
 	}
 	if inv.Customer != nil {
 		if err := inv.Customer.Calculate(); err != nil {

@@ -77,4 +77,37 @@ func TestScenarios(t *testing.T) {
 		assert.Len(t, inv.Tax.Ext, 2)
 		assert.Equal(t, "TD01", inv.Tax.Ext[it.ExtKeySDIDocumentType].String())
 	})
+
+	t.Run("overwrite previous values with tag", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "IT",
+			Code:    "12345678903",
+		}
+		inv.Tax = &bill.Tax{
+			Tags: []cbc.Key{"b2g"},
+			Ext: tax.Extensions{
+				it.ExtKeySDIFormat: "XXXX",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Len(t, inv.Tax.Ext, 2)
+		assert.Equal(t, "FPA12", inv.Tax.Ext[it.ExtKeySDIFormat].String())
+	})
+
+	t.Run("maintain previous values without tags", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "IT",
+			Code:    "12345678903",
+		}
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				it.ExtKeySDIFormat: "XXXX",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Len(t, inv.Tax.Ext, 2)
+		assert.Equal(t, "XXXX", inv.Tax.Ext[it.ExtKeySDIFormat].String())
+	})
 }

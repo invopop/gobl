@@ -107,13 +107,13 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 func TestInvoiceDocumentScenarios(t *testing.T) {
 	i := testInvoiceStandard(t)
 	require.NoError(t, i.Calculate())
-	assert.Len(t, i.Notes, 0)
+	assert.Empty(t, i.Tax.Ext[es.ExtKeyFacturaEDocType])
 
-	// TODO: refactor this to have the scenarios add extensions,
-	// or perform these checks in the conversion module.
-	ss := i.ScenarioSummary() //nolint:staticcheck
-	assert.Contains(t, ss.Codes, es.KeyFacturaEInvoiceDocumentType)
-	assert.Equal(t, ss.Codes[es.KeyFacturaEInvoiceDocumentType], cbc.Code("FC"))
+	i = testInvoiceStandard(t)
+	i.Tax.Tags = []cbc.Key{"facturae"}
+	require.NoError(t, i.Calculate())
+	assert.Len(t, i.Notes, 0)
+	assert.Equal(t, i.Tax.Ext[es.ExtKeyFacturaEDocType].String(), "FC")
 
 	i = testInvoiceStandard(t)
 	i.Tax.Tags = []cbc.Key{es.TagTravelAgency}

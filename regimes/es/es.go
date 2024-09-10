@@ -55,13 +55,11 @@ const (
 
 // Custom keys used typically in meta information.
 const (
-	KeyAddressCode                 cbc.Key = "post"
-	KeyFacturaE                    cbc.Key = "facturae"
-	KeyFacturaETaxTypeCode         cbc.Key = "facturae-tax-type-code"
-	KeyFacturaEInvoiceDocumentType cbc.Key = "facturae-invoice-document-type"
-	KeyFacturaEInvoiceClass        cbc.Key = "facturae-invoice-class"
-	KeyTicketBAICausaExencion      cbc.Key = "ticketbai-causa-exencion"
-	KeyTicketBAIIDType             cbc.Key = "ticketbai-id-type"
+	KeyAddressCode            cbc.Key = "post"
+	KeyFacturaE               cbc.Key = "facturae"
+	KeyFacturaETaxTypeCode    cbc.Key = "facturae-tax-type-code"
+	KeyTicketBAICausaExencion cbc.Key = "ticketbai-causa-exencion"
+	KeyTicketBAIIDType        cbc.Key = "ticketbai-id-type"
 )
 
 // New provides the Spanish tax regime definition

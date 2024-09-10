@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "20992f6285d38abe96eebf992d8910cb623df19a6e64ed468a9ccd0c340a0f61"
+			"val": "51e3501eeaabd57c06aade3b7b13c05e18c2de278c3ee25822c6ba681b73e77f"
 		},
 		"draft": true
 	},
@@ -30,15 +30,6 @@
 			"ext": {
 				"co-dian-municipality": "11001"
 			}
-		},
-		"customer": {
-			"name": "Test end user",
-			"identities": [
-				{
-					"key": "co-id-card",
-					"code": "1234567890"
-				}
-			]
 		},
 		"lines": [
 			{

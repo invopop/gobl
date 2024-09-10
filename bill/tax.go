@@ -19,7 +19,9 @@ type Tax struct {
 	// tax.
 	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
 
-	// Special tax tags that apply to this invoice according to local requirements.
+	// Tags are used to help identify specific tax scenarios or requirements that will
+	// apply changes to the contents of the invoice. Tags by design should always be optional,
+	// it should always be possible to build a valid invoice without any tags.
 	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
 
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific

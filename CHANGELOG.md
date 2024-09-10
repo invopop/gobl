@@ -18,6 +18,7 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 
 ### Changed
 
+- `bill.Invoice`: `simplified` tag will now always remove the customer.
 - `bill.Invoice`: using the `customer-rates` tag will now automatically copy the customer's country code, if available, to the individual tax combo lines.
 - `tax`: moved `NormalizeIdentity` method from the regimes common package so that it can be applied to all tax IDs, regardless of if they have a regime defined or not.
 - `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
@@ -29,6 +30,9 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 - `mx`: scenarios will now copy the document and relation types to the tax extensions.
 - `cbc`: consolidated "keys" and "codes" lists from key definitions into a single values array.
 - `gr`: switched to use the new `round-then-sum` calculation method
+- `tax.Combo`: rates when defined will always update the combo.
+- `bill.Invoice`: tax tags will always cause scenarios to update the document.
+- `es`: support for `facturae` tag which will correct set local extensions instead of using scenario summary codes.
 
 ### Added
 

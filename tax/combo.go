@@ -165,11 +165,6 @@ func (c *Combo) prepareRate(category *Category, tags []cbc.Key, date cal.Date) e
 		return nil
 	}
 
-	if c.Percent != nil {
-		// If the percent was already set, don't attempt to replace it.
-		return nil
-	}
-
 	// if there are no rate values, don't attempt to prepare anything else.
 	if len(rate.Values) == 0 {
 		return nil
