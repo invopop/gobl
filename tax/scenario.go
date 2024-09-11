@@ -13,6 +13,7 @@ import (
 type ScenarioSet struct {
 	// Partial or complete schema URL for the document type
 	Schema string `json:"schema" jsonschema:"title=Schema"`
+
 	// List of scenarios for the schema
 	List []*Scenario `json:"list" jsonschema:"title=List"`
 }
@@ -42,6 +43,10 @@ type Scenario struct {
 	// to happen. This cannot be used without an `ExtKey`. The value will
 	// be copied to the note code if needed.
 	ExtValue ExtValue `json:"ext_value,omitempty" jsonschema:"title=Extension Value"`
+
+	// Filter defines a custom filter method for when the regular basic filters
+	// are not sufficient.
+	Filter func(doc any) bool `json:"-"`
 
 	/* Outputs */
 
@@ -75,24 +80,46 @@ func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
 	return err
 }
 
+// ExtensionKeys extracts all the possible extension keys that could be applied to a
+// document.
+func (ss *ScenarioSet) ExtensionKeys() []cbc.Key {
+	keys := make([]cbc.Key, 0)
+	for _, row := range ss.List {
+		for k := range row.Ext {
+			if !k.In(keys...) {
+				keys = append(keys, k)
+			}
+		}
+	}
+	return keys
+}
+
+// Notes extracts all the possible notes that could be applied to a document.
+func (ss *ScenarioSet) Notes() []*cbc.Note {
+	notes := make([]*cbc.Note, 0)
+	for _, row := range ss.List {
+		if row.Note != nil {
+			notes = append(notes, row.Note)
+		}
+	}
+	return notes
+}
+
 // SummaryFor returns a summary by applying the scenarios to the
 // supplied document.
-func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key, docExt []Extensions) *ScenarioSummary {
+func (ss *ScenarioSet) SummaryFor(doc any, docType cbc.Key, docTags []cbc.Key, docExt []Extensions) *ScenarioSummary {
 	summary := &ScenarioSummary{
 		Notes: make([]*cbc.Note, 0),
 		Codes: make(cbc.CodeMap),
 		Ext:   make(Extensions),
 	}
 	for _, s := range ss.List {
-		if s.match(docType, docTags, docExt) {
+		if s.match(doc, docType, docTags, docExt) {
 			if s.Note != nil {
 				summary.addNote(s.Note.WithCode(s.ExtValue.String()))
 			}
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
-			}
-			for k, v := range s.Ext {
-				summary.Ext[k] = v
 			}
 			for k, v := range s.Ext {
 				summary.Ext[k] = v
@@ -117,7 +144,7 @@ func (ss *ScenarioSummary) addNote(note *cbc.Note) {
 // Empty types or tags in the scenario implies that all values are valid.
 // The list of extensions can contain duplicate extension maps to make recompilation
 // of the array easier.
-func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key, docExt []Extensions) bool {
+func (s *Scenario) match(doc any, docType cbc.Key, docTags []cbc.Key, docExt []Extensions) bool {
 	if len(s.Types) > 0 {
 		if !s.hasType(docType) {
 			return false
@@ -146,6 +173,11 @@ func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key, docExt []Extensions
 			}
 		}
 		return false
+	}
+	if s.Filter != nil {
+		if !s.Filter(doc) {
+			return false
+		}
 	}
 	return true
 }

@@ -63,7 +63,7 @@ func TestScenarios(t *testing.T) {
 		})
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Notes, 1)
-		assert.Equal(t, "Random to replace", inv.Notes[0].Text, "should keep invoices existing note")
+		assert.Equal(t, "Reverse Charge / Inversione del soggetto passivo", inv.Notes[0].Text, "should replace invoices existing note")
 	})
 
 	t.Run("without tax defined", func(t *testing.T) {
@@ -95,7 +95,7 @@ func TestScenarios(t *testing.T) {
 		assert.Equal(t, "FPA12", inv.Tax.Ext[it.ExtKeySDIFormat].String())
 	})
 
-	t.Run("maintain previous values without tags", func(t *testing.T) {
+	t.Run("overwrite previous values without tags", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Supplier.TaxID = &tax.Identity{
 			Country: "IT",
@@ -108,6 +108,6 @@ func TestScenarios(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "XXXX", inv.Tax.Ext[it.ExtKeySDIFormat].String())
+		assert.Equal(t, "FPR12", inv.Tax.Ext[it.ExtKeySDIFormat].String())
 	})
 }

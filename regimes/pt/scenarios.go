@@ -45,7 +45,13 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{TagInvoiceReceipt},
+			Filter: func(doc any) bool {
+				inv, ok := doc.(*bill.Invoice)
+				if !ok {
+					return false
+				}
+				return inv.Tax.ContainsTag(TagInvoiceReceipt) || inv.Totals.Paid()
+			},
 			Ext: tax.Extensions{
 				ExtKeySAFTInvoiceType: "FR",
 			},

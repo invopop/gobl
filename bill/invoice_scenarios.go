@@ -30,6 +30,9 @@ func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
 	if ss == nil {
 		return nil
 	}
+
+	inv.removePreviousScenarios(ss)
+
 	exts := make([]tax.Extensions, 0)
 	tags := []cbc.Key{}
 
@@ -45,7 +48,23 @@ func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
 		}
 	}
 
-	return ss.SummaryFor(inv.Type, tags, exts)
+	return ss.SummaryFor(inv, inv.Type, tags, exts)
+}
+
+func (inv *Invoice) removePreviousScenarios(ss *tax.ScenarioSet) {
+	if inv.Tax != nil && len(inv.Tax.Ext) > 0 {
+		for _, ek := range ss.ExtensionKeys() {
+			delete(inv.Tax.Ext, ek)
+		}
+	}
+	for _, n := range ss.Notes() {
+		for i, n2 := range inv.Notes {
+			if n.SameAs(n2) {
+				// remove from array
+				inv.Notes = append(inv.Notes[:i], inv.Notes[i+1:]...)
+			}
+		}
+	}
 }
 
 func (inv *Invoice) prepareTags(r *tax.Regime) error {
@@ -97,11 +116,8 @@ func (inv *Invoice) prepareScenarios(r *tax.Regime) error {
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
-		// Always override if there are tags already present, *or* the extension
-		// is not already set.
-		if len(inv.Tax.Tags) > 0 || inv.Tax.Ext[k] == "" {
-			inv.Tax.Ext[k] = v
-		}
+		// Always override
+		inv.Tax.Ext[k] = v
 	}
 
 	return nil

@@ -973,6 +973,7 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, i.Totals.Advances.String(), "285.00")
 	assert.Equal(t, i.Totals.Payable.String(), "960.00")
 	assert.Equal(t, i.Totals.Due.String(), "675.00")
+	assert.False(t, i.Totals.Paid())
 }
 
 func TestCalculateInverted(t *testing.T) {

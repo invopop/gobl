@@ -7,6 +7,8 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,7 +33,8 @@ func validInvoice() *bill.Invoice {
 			{
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
-					Name: "Test Item",
+					Name:  "Test Item",
+					Price: num.MakeAmount(100, 0),
 				},
 				Taxes: tax.Set{
 					{
@@ -42,6 +45,20 @@ func validInvoice() *bill.Invoice {
 			},
 		},
 	}
+}
+
+func TestInvoiceScenarioCalculation(t *testing.T) {
+	inv := validInvoice()
+	inv.Payment = &bill.Payment{
+		Advances: []*pay.Advance{
+			{
+				Percent:     num.NewPercentage(1, 0),
+				Description: "prepaid",
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, "FR", inv.Tax.Ext[pt.ExtKeySAFTInvoiceType].String())
 }
 
 func TestValidInvoice(t *testing.T) {

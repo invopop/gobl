@@ -4,7 +4,11 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,14 +21,27 @@ func TestScenarioSetSummary(t *testing.T) {
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Ext: tax.Extensions{
-					"xx-test": "100",
+					"xx-test": "normal",
+				},
+			},
+			{
+				Types: []cbc.Key{bill.InvoiceTypeStandard},
+				Filter: func(doc any) bool {
+					inv, ok := doc.(*bill.Invoice)
+					if !ok {
+						return false
+					}
+					return inv.Totals.Paid()
+				},
+				Ext: tax.Extensions{
+					"xx-test": "paid",
 				},
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSimplified},
 				Ext: tax.Extensions{
-					"xx-test": "200",
+					"xx-test": "simple",
 				},
 				Note: &cbc.Note{
 					Key:  cbc.NoteKeyLegal,
@@ -77,32 +94,87 @@ func TestScenarioSetSummary(t *testing.T) {
 		},
 	}
 	t.Run("standard invoice", func(t *testing.T) {
-		sum := ss.SummaryFor(bill.InvoiceTypeStandard, nil, nil)
+		sum := ss.SummaryFor(nil, bill.InvoiceTypeStandard, nil, nil)
 		require.NotNil(t, sum)
-		assert.Equal(t, "100", sum.Ext["xx-test"].String())
+		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
+	})
+	t.Run("standard invoice", func(t *testing.T) {
+		inv := scenariosInvoiceExample()
+		inv.Payment = &bill.Payment{
+			Advances: []*pay.Advance{
+				{
+					Percent:     num.NewPercentage(1, 0),
+					Description: "prepaid",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		sum := ss.SummaryFor(inv, bill.InvoiceTypeStandard, nil, nil)
+		require.NotNil(t, sum)
+		assert.Equal(t, "paid", sum.Ext["xx-test"].String())
 	})
 	t.Run("simplified invoice", func(t *testing.T) {
-		sum := ss.SummaryFor(bill.InvoiceTypeStandard, []cbc.Key{tax.TagSimplified}, nil)
+		sum := ss.SummaryFor(nil, bill.InvoiceTypeStandard, []cbc.Key{tax.TagSimplified}, nil)
 		require.NotNil(t, sum)
-		assert.Equal(t, "200", sum.Ext["xx-test"].String())
+		assert.Equal(t, "simple", sum.Ext["xx-test"].String())
 	})
 	t.Run("simplified partial invoice", func(t *testing.T) {
-		sum := ss.SummaryFor(bill.InvoiceTypeStandard, []cbc.Key{tax.TagSimplified, tax.TagPartial}, nil)
+		sum := ss.SummaryFor(nil, bill.InvoiceTypeStandard, []cbc.Key{tax.TagSimplified, tax.TagPartial}, nil)
 		require.NotNil(t, sum)
-		assert.Equal(t, "200", sum.Ext["xx-test"].String())
+		assert.Equal(t, "simple", sum.Ext["xx-test"].String())
 		assert.Equal(t, "This will replace previous note1", sum.Notes[0].Text)
 	})
 	t.Run("invoice with extensions", func(t *testing.T) {
-		sum := ss.SummaryFor(bill.InvoiceTypeStandard, []cbc.Key{}, []tax.Extensions{{"yy-test": "BAR"}})
+		sum := ss.SummaryFor(nil, bill.InvoiceTypeStandard, []cbc.Key{}, []tax.Extensions{{"yy-test": "BAR"}})
 		require.NotNil(t, sum)
-		assert.Equal(t, "100", sum.Ext["xx-test"].String())
+		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
 		assert.Equal(t, "This is a note 2", sum.Notes[0].Text)
 	})
 	t.Run("invoice with extensions and no value", func(t *testing.T) {
-		sum := ss.SummaryFor(bill.InvoiceTypeStandard, []cbc.Key{}, []tax.Extensions{{"yy-test": "BAR", "zz-test": "FOO"}})
+		sum := ss.SummaryFor(nil, bill.InvoiceTypeStandard, []cbc.Key{}, []tax.Extensions{{"yy-test": "BAR", "zz-test": "FOO"}})
 		require.NotNil(t, sum)
-		assert.Equal(t, "100", sum.Ext["xx-test"].String())
+		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
 		assert.Equal(t, "This is a note 3", sum.Notes[1].Text)
 	})
+}
 
+func scenariosInvoiceExample() *bill.Invoice {
+	i := &bill.Invoice{
+		Series:    "TEST",
+		Code:      "00123",
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Tax: &bill.Tax{
+			PricesInclude: tax.CategoryVAT,
+		},
+		Supplier: &org.Party{
+			Name: "Test Supplier",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "B98602642",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "54387763P",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+			},
+		},
+	}
+	return i
 }
