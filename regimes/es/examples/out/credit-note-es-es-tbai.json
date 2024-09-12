@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7f334a9457b3944ffb6928d87ceab30ed379944c393ce03cc2bdc840e8be546b"
+			"val": "82d3bf1de9ee30948371cf035ec40da7ae0cb10b2d7e31b1b7eb67d032144e0a"
 		},
 		"draft": true
 	},
@@ -28,8 +28,8 @@
 			}
 		],
 		"tax": {
-			"tags": [
-				"ticketbai"
+			"addons": [
+				"es-tbai-v1"
 			]
 		},
 		"supplier": {

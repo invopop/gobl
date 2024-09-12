@@ -3,9 +3,9 @@ package tax_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/addons/mx/cfdi" // this will also prepare registers
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -94,7 +94,7 @@ func TestExtValidation(t *testing.T) {
 	t.Run("with spain", func(t *testing.T) {
 		t.Run("test good key", func(t *testing.T) {
 			em := tax.Extensions{
-				es.ExtKeyTBAIProduct: "goods",
+				tbai.ExtKeyProduct: "goods",
 			}
 			err := em.Validate()
 			assert.NoError(t, err)
@@ -102,7 +102,7 @@ func TestExtValidation(t *testing.T) {
 
 		t.Run("test bad key", func(t *testing.T) {
 			em := tax.Extensions{
-				es.ExtKeyTBAIProduct: "bads",
+				tbai.ExtKeyProduct: "bads",
 			}
 			err := em.Validate()
 			assert.Error(t, err)

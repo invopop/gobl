@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/facturae"
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
@@ -132,7 +134,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
-						es.ExtKeyTBAIExemption: "E1",
+						tbai.ExtKeyExemption: "E1",
 					},
 				},
 			},
@@ -144,7 +146,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Ext: tax.Extensions{
-						es.ExtKeyTBAIExemption: "E1",
+						tbai.ExtKeyExemption: "E1",
 					},
 				},
 			},
@@ -170,7 +172,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
-						es.ExtKeyTBAIProduct: "services",
+						tbai.ExtKeyProduct: "services",
 					},
 				},
 			},
@@ -307,7 +309,7 @@ func TestNormalizeSet(t *testing.T) {
 			Category: "VAT",
 			Rate:     "standard",
 			Ext: tax.Extensions{
-				es.ExtKeyFacturaECorrection: "",
+				facturae.ExtKeyCorrection: "",
 			},
 		},
 		nil,

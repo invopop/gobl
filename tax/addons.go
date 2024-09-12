@@ -24,6 +24,10 @@ type Addon interface {
 
 	// Validate performs the validation rules for the add-on.
 	Validate(doc any) error
+
+	// Corrections is used to provide a map of correction definitions that
+	// are supported by the add-on.
+	Corrections() CorrectionSet
 }
 
 type addonCollection struct {
@@ -76,5 +80,40 @@ func (addonValidation) Validate(value interface{}) error {
 	if AddonForKey(key) == nil {
 		return fmt.Errorf("addon '%v' not registered", key.String())
 	}
+	return nil
+}
+
+// BaseAddon provides a base implementation of the Addon interface
+// that can be embedded in other add-ons to provide a default
+// implemenation and avoid adding empty methods.
+type BaseAddon struct{}
+
+// Key provides a default implementation that panics.
+func (BaseAddon) Key() cbc.Key {
+	panic("Key() not implemented")
+}
+
+// Extensions provides a default implementation that returns nil.
+func (BaseAddon) Extensions() []*cbc.KeyDefinition {
+	return nil
+}
+
+// Normalize provides a default implementation that returns nil.
+func (BaseAddon) Normalize(_ any) error {
+	return nil
+}
+
+// Scenarios provides a default implementation that returns nil.
+func (BaseAddon) Scenarios() []*ScenarioSet {
+	return nil
+}
+
+// Validate provides a default implementation that returns nil.
+func (BaseAddon) Validate(_ any) error {
+	return nil
+}
+
+// Corrections provides a default implementation that returns nil.
+func (BaseAddon) Corrections() CorrectionSet {
 	return nil
 }

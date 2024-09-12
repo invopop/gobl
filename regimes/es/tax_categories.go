@@ -2,7 +2,6 @@ package es
 
 import (
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pkg/here"
@@ -32,13 +31,6 @@ var taxCategories = []*tax.Category{
 				follows the EU's VAT Directive, but with specific rates and exemptions tailored
 				to its local needs.
 			`),
-		},
-		Map: cbc.CodeMap{
-			KeyFacturaETaxTypeCode: "01",
-		},
-		Extensions: []cbc.Key{
-			ExtKeyTBAIProduct,
-			ExtKeyTBAIExemption,
 		},
 		Rates: []*tax.Rate{
 			{
@@ -193,9 +185,6 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IGIC",
 			i18n.ES: "IGIC",
 		},
-		Map: cbc.CodeMap{
-			KeyFacturaETaxTypeCode: "03",
-		},
 		Title: i18n.String{
 			i18n.EN: "Canary Island General Indirect Tax",
 			i18n.ES: "Impuesto General Indirecto Canario",
@@ -251,9 +240,6 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "IPSI",
 			i18n.ES: "IPSI",
 		},
-		Map: cbc.CodeMap{
-			KeyFacturaETaxTypeCode: "02",
-		},
 		Title: i18n.String{
 			i18n.EN: "Production, Services, and Import Tax",
 			i18n.ES: "Impuesto sobre la Producción, los Servicios y la Importación",
@@ -273,9 +259,6 @@ var taxCategories = []*tax.Category{
 		Name: i18n.String{
 			i18n.EN: "IRPF",
 			i18n.ES: "IRPF",
-		},
-		Map: cbc.CodeMap{
-			KeyFacturaETaxTypeCode: "04",
 		},
 		Title: i18n.String{
 			i18n.EN: "Personal income tax.",

@@ -106,16 +106,6 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 
 func TestInvoiceDocumentScenarios(t *testing.T) {
 	i := testInvoiceStandard(t)
-	require.NoError(t, i.Calculate())
-	assert.Empty(t, i.Tax.Ext[es.ExtKeyFacturaEDocType])
-
-	i = testInvoiceStandard(t)
-	i.Tax.Tags = []cbc.Key{"facturae"}
-	require.NoError(t, i.Calculate())
-	assert.Len(t, i.Notes, 0)
-	assert.Equal(t, i.Tax.Ext[es.ExtKeyFacturaEDocType].String(), "FC")
-
-	i = testInvoiceStandard(t)
 	i.Tax.Tags = []cbc.Key{es.TagTravelAgency}
 	require.NoError(t, i.Calculate())
 	assert.Len(t, i.Notes, 1)

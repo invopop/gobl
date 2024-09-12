@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c0fe01b99d31fbb6cd0c4708ab9fdb14a90afb5a4ca79a52e33555c17ea25579"
+			"val": "f8bf0e8a62e6bfa2b6bd4bdbc98c6d4458c425f5da4aa6f97b21c2da7da9afa4"
 		},
 		"draft": true
 	},
@@ -17,6 +17,9 @@
 		"issue_date": "2023-12-18",
 		"currency": "EUR",
 		"tax": {
+			"addons": [
+				"es-tbai-v1"
+			],
 			"tags": [
 				"customer-rates"
 			]

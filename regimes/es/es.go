@@ -34,14 +34,8 @@ const (
 	TaxRateEquivalence cbc.Key = "eqs"
 )
 
-// Official stamps or codes validated by government agencies
-const (
-	// TicketBAI (Basque Country) codes used for stamps.
-	StampProviderTBAICode cbc.Key = "tbai-code"
-	StampProviderTBAIQR   cbc.Key = "tbai-qr"
-)
-
-// Inbox key and role definitions
+// Inbox key and role definitions.
+// TODO: move to their own addon.
 const (
 	InboxKeyFACE cbc.Key = "face"
 
@@ -51,15 +45,6 @@ const (
 	InboxRolePayer     cbc.Key = "payer"     // Pagador / 03
 	InboxRoleCustomer  cbc.Key = "customer"  // Comprador / 04
 
-)
-
-// Custom keys used typically in meta information.
-const (
-	KeyAddressCode            cbc.Key = "post"
-	KeyFacturaE               cbc.Key = "facturae"
-	KeyFacturaETaxTypeCode    cbc.Key = "facturae-tax-type-code"
-	KeyTicketBAICausaExencion cbc.Key = "ticketbai-causa-exencion"
-	KeyTicketBAIIDType        cbc.Key = "ticketbai-id-type"
 )
 
 // New provides the Spanish tax regime definition
@@ -74,7 +59,6 @@ func New() *tax.Regime {
 		TimeZone:     "Europe/Madrid",
 		Tags:         invoiceTags,
 		IdentityKeys: identityKeyDefinitions,
-		Extensions:   extensionKeys,
 		Categories:   taxCategories,
 		Validator:    Validate,
 		Calculator:   Calculate,

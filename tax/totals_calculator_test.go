@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
@@ -221,7 +222,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateExempt,
 							Ext: tax.Extensions{
-								es.ExtKeyTBAIExemption: "E1",
+								tbai.ExtKeyExemption: "E1",
 							},
 						},
 					},
@@ -238,7 +239,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.RateExempt,
 								Ext: tax.Extensions{
-									es.ExtKeyTBAIExemption: "E1",
+									tbai.ExtKeyExemption: "E1",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: nil,
@@ -991,7 +992,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateExempt,
 							Ext: tax.Extensions{
-								es.ExtKeyTBAIExemption: "E1",
+								tbai.ExtKeyExemption: "E1",
 							},
 						},
 					},
@@ -1007,7 +1008,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.RateExempt,
 								Ext: tax.Extensions{
-									es.ExtKeyTBAIExemption: "E1",
+									tbai.ExtKeyExemption: "E1",
 								},
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),
@@ -1027,7 +1028,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Ext: tax.Extensions{
-								es.ExtKeyTBAIExemption: "E1",
+								tbai.ExtKeyExemption: "E1",
 							},
 						},
 					},
@@ -1038,7 +1039,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Ext: tax.Extensions{
-								es.ExtKeyTBAIExemption: "E1",
+								tbai.ExtKeyExemption: "E1",
 							},
 						},
 					},
@@ -1053,7 +1054,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.Extensions{
-									es.ExtKeyTBAIExemption: "E1",
+									tbai.ExtKeyExemption: "E1",
 								},
 								Base:   num.MakeAmount(12000, 2),
 								Amount: num.MakeAmount(0, 2),
@@ -1083,7 +1084,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateExempt,
 							Ext: tax.Extensions{
-								es.ExtKeyTBAIExemption: "E2",
+								tbai.ExtKeyExemption: "E2",
 							},
 						},
 					},
@@ -1104,7 +1105,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							{
 								Key: tax.RateExempt,
 								Ext: tax.Extensions{
-									es.ExtKeyTBAIExemption: "E2",
+									tbai.ExtKeyExemption: "E2",
 								},
 								Base:   num.MakeAmount(10000, 2),
 								Amount: num.MakeAmount(0, 2),

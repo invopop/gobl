@@ -1,13 +1,13 @@
-package es_test
+package tbai_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +18,7 @@ func validTicketBAIInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Code: "123",
 		Tax: &bill.Tax{
-			Tags: []cbc.Key{es.TagTicketBAI},
+			Addons: []cbc.Key{tbai.KeyV1},
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -47,7 +47,7 @@ func validTicketBAIInvoice() *bill.Invoice {
 						Category: "VAT",
 						Rate:     "exempt",
 						Ext: tax.Extensions{
-							es.ExtKeyTBAIExemption: "E1",
+							tbai.ExtKeyExemption: "E1",
 						},
 					},
 				},
@@ -61,12 +61,12 @@ func TestBasqueLineValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 
-	inv.Lines[0].Taxes[0].Ext[es.ExtKeyTBAIProduct] = "services"
+	inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 
 	inv.Lines[0].Taxes[0].Ext = nil
-	assertValidationError(t, inv, "es-tbai-exemption: require")
+	assertValidationError(t, inv, "es-tbai-exemption: required")
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

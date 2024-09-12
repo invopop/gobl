@@ -5,6 +5,8 @@ issue_date: "2023-12-18"
 series: "EXPORT-X"
 code: "0002"
 tax:
+  addons:
+    - es-tbai-v1
   tags:
     - customer-rates
 

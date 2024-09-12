@@ -33,6 +33,7 @@ func init() {
 }
 
 type addon struct {
+	tax.BaseAddon
 }
 
 func (addon) Key() cbc.Key {

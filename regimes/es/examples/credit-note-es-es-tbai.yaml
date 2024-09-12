@@ -6,8 +6,8 @@ series: "FR"
 code: "012"
 type: "credit-note"
 tax:
-  tags:
-    - "ticketbai"
+  addons:
+    - "es-tbai-v1"
 
 preceding:
   - type: "standard"

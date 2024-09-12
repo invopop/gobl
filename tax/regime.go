@@ -83,7 +83,7 @@ type Regime struct {
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
 	// Configuration details for corrections to be used with correction options.
-	Corrections []*CorrectionDefinition `json:"corrections,omitempty" jsonschema:"title=Corrections"`
+	Corrections CorrectionSet `json:"corrections,omitempty" jsonschema:"title=Corrections"`
 
 	// List of tax categories.
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
@@ -203,20 +203,6 @@ type RateValue struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
-// CorrectionDefinition contains details about what can be defined in .
-type CorrectionDefinition struct {
-	// Partial or complete schema URL for the document type supported by correction.
-	Schema string `json:"schema" jsonschema:"title=Schema"`
-	// The types of sub-documents supported by the regime
-	Types []cbc.Key `json:"types,omitempty" jsonschema:"title=Types"`
-	// Extension keys that can be included
-	Extensions []cbc.Key `json:"extensions,omitempty" jsonschema:"title=Extensions"`
-	// ReasonRequired when true implies that a reason must be provided
-	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
-	// Stamps that must be copied from the preceding document.
-	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
-}
-
 // Code provides a unique code for this tax regime based on the country.
 func (r *Regime) Code() cbc.Code {
 	return cbc.Code(r.Country)
@@ -257,19 +243,6 @@ func (r *Regime) ScenarioSet(schema string) *ScenarioSet {
 	for _, s := range r.Scenarios {
 		if strings.HasSuffix(schema, s.Schema) {
 			return s
-		}
-	}
-	return nil
-}
-
-// CorrectionDefinitionFor provides the correction definition for the matching schema.
-func (r *Regime) CorrectionDefinitionFor(schema string) *CorrectionDefinition {
-	if r == nil {
-		return nil
-	}
-	for _, c := range r.Corrections {
-		if strings.HasSuffix(schema, c.Schema) {
-			return c
 		}
 	}
 	return nil
@@ -570,31 +543,4 @@ func (rv *RateValue) HasATag(tags []cbc.Key) bool {
 		}
 	}
 	return false
-}
-
-// HasType returns true if the correction definition has a type that matches the one provided.
-func (cd *CorrectionDefinition) HasType(t cbc.Key) bool {
-	if cd == nil {
-		return false // no preceding definitions
-	}
-	return t.In(cd.Types...)
-}
-
-// HasExtension returns true if the correction definition has the change key provided.
-func (cd *CorrectionDefinition) HasExtension(key cbc.Key) bool {
-	if cd == nil {
-		return false // no correction definitions
-	}
-	return key.In(cd.Extensions...)
-}
-
-// Validate ensures the key definition looks correct in the context of the regime.
-func (cd *CorrectionDefinition) Validate() error {
-	err := validation.ValidateStruct(cd,
-		validation.Field(&cd.Schema, validation.Required),
-		validation.Field(&cd.Types),
-		validation.Field(&cd.Stamps),
-		validation.Field(&cd.Extensions),
-	)
-	return err
 }

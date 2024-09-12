@@ -6,7 +6,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var correctionTypes = []cbc.Key{
+// InvoiceCorrectionTypes defines the types of corrections recognized in Spanish law
+var InvoiceCorrectionTypes = []cbc.Key{
 	bill.InvoiceTypeCreditNote,
 	bill.InvoiceTypeCorrective,
 	bill.InvoiceTypeDebitNote,
@@ -15,10 +16,6 @@ var correctionTypes = []cbc.Key{
 var correctionDefinitions = []*tax.CorrectionDefinition{
 	{
 		Schema: bill.ShortSchemaInvoice,
-		Types:  correctionTypes,
-		Extensions: []cbc.Key{
-			ExtKeyFacturaECorrection,
-			ExtKeyTBAICorrection,
-		},
+		Types:  InvoiceCorrectionTypes,
 	},
 }

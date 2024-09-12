@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e7456b345749a48978afef1eaaa39c2effa7bb4e265c371478a21503f008a600"
+			"val": "8fcbb12ccaf16ff301faec7e8eafc8f01b2eae92f43f8bad5218169e358dc05e"
 		},
 		"draft": true
 	},
@@ -16,8 +16,8 @@
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
 		"tax": {
-			"tags": [
-				"facturae"
+			"addons": [
+				"es-facturae-v3"
 			],
 			"ext": {
 				"es-facturae-doc-type": "FC",

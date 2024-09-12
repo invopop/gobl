@@ -5,8 +5,8 @@ issue_date: "2022-02-01"
 code: "SAMPLE-001"
 
 tax:
-  tags:
-    - "facturae"
+  addons:
+    - "es-facturae-v3"
 
 supplier:
   tax_id:

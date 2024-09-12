@@ -159,7 +159,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	if r == nil {
 		return js, nil
 	}
-	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
+	cd := inv.correctionDef()
 	if cd == nil {
 		return js, nil
 	}
@@ -193,7 +193,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 			ext.Properties = jsonschema.NewProperties()
 			rcmd := make([]string, 0)
 			for _, pk := range cd.Extensions {
-				re := r.ExtensionDef(pk)
+				re := tax.ExtensionForKey(pk)
 				if re == nil {
 					continue
 				}
@@ -286,9 +286,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
-	r := inv.TaxRegime()
-	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
-
+	cd := inv.correctionDef()
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
 		return err
 	}
@@ -300,6 +298,25 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	// this operation on the corrected invoice results in potentially
 	// conflicting or incomplete data.
 	return inv.Calculate()
+}
+
+// correctionDef tries to determine a final correction definition
+// by merge potentially multiple sources. The results include
+// a key that can be used to identify the definition.
+func (inv *Invoice) correctionDef() *tax.CorrectionDefinition {
+	cd := &tax.CorrectionDefinition{
+		Schema: ShortSchemaInvoice,
+	}
+
+	r := inv.TaxRegime()
+	if r != nil {
+		cd = cd.Merge(r.Corrections.Def(ShortSchemaInvoice))
+	}
+	for _, a := range inv.Tax.GetAddons() {
+		cd = cd.Merge(a.Corrections().Def(ShortSchemaInvoice))
+	}
+
+	return cd
 }
 
 func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error {

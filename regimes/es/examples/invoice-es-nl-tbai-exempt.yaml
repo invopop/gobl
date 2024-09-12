@@ -4,6 +4,9 @@ currency: "EUR"
 issue_date: "2022-02-01"
 series: "EXPORT"
 code: "0002"
+tax:
+  addons:
+    - es-tbai-v1
 
 supplier:
   tax_id:

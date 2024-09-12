@@ -8,7 +8,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Universal tax tags
+// Tax tags that can be applied in Spain.
 const (
 	TagCopy             cbc.Key = "copy"
 	TagSummary          cbc.Key = "summary"
@@ -19,8 +19,6 @@ const (
 	TagArt              cbc.Key = "art"
 	TagAntiques         cbc.Key = "antiques"
 	TagCashBasis        cbc.Key = "cash-basis"
-	TagFacturaE         cbc.Key = "facturae"
-	TagTicketBAI        cbc.Key = "ticketbai"
 )
 
 var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
@@ -46,28 +44,6 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Simplified tax scheme",
 			i18n.ES: "Contribuyente en régimen simplificado",
-		},
-	},
-	{
-		Key: TagFacturaE,
-		Name: i18n.String{
-			i18n.EN: "FacturaE",
-			i18n.ES: "FacturaE",
-		},
-		Desc: i18n.String{
-			i18n.EN: "Invoice must comply with the FacturaE standard.",
-			i18n.ES: "La factura debe cumplir con el estándar FacturaE.",
-		},
-	},
-	{
-		Key: TagTicketBAI,
-		Name: i18n.String{
-			i18n.EN: "TicketBAI",
-			i18n.ES: "TicketBAI",
-		},
-		Desc: i18n.String{
-			i18n.EN: "Invoice must comply with the TicketBAI specifications.",
-			i18n.ES: "La factura debe cumplir con el estándar TicketBAI.",
 		},
 	},
 
@@ -116,85 +92,6 @@ var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*tax.Scenario{
-		// ** Invoice Document Types **
-		{
-			Types: []cbc.Key{
-				bill.InvoiceTypeStandard,
-				bill.InvoiceTypeCorrective,
-				bill.InvoiceTypeCreditNote,
-				bill.InvoiceTypeDebitNote,
-			},
-			Tags: []cbc.Key{TagFacturaE},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEDocType: "FC", // default
-			},
-		},
-		{
-			Tags: []cbc.Key{
-				TagFacturaE,
-				tax.TagSimplified,
-			},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEDocType: "FA",
-			},
-		},
-		{
-			Tags: []cbc.Key{
-				TagFacturaE,
-				tax.TagSelfBilled,
-			},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEDocType: "AF",
-			},
-		},
-		// ** Invoice Class **
-		{
-			Types: []cbc.Key{
-				bill.InvoiceTypeStandard,
-			},
-			Tags: []cbc.Key{TagFacturaE},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEInvoiceClass: "OO", // Original Invoice
-			},
-		},
-		{
-			Types: []cbc.Key{
-				bill.InvoiceTypeCorrective,
-				bill.InvoiceTypeCreditNote,
-				bill.InvoiceTypeDebitNote,
-			},
-			Tags: []cbc.Key{TagFacturaE},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEInvoiceClass: "OR", // Corrective
-			},
-		},
-		{
-			Tags: []cbc.Key{TagFacturaE, TagSummary},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEInvoiceClass: "OC", // Summary
-			},
-		},
-		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{TagFacturaE, TagCopy},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEInvoiceClass: "CO", // Copy of the original
-			},
-		},
-		{
-			Types: []cbc.Key{bill.InvoiceTypeCorrective},
-			Tags:  []cbc.Key{TagFacturaE, TagCopy},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEInvoiceClass: "CR", // Copy of the corrective
-			},
-		},
-		{
-			Types: []cbc.Key{bill.InvoiceTypeStandard},
-			Tags:  []cbc.Key{TagFacturaE, TagCopy, TagSummary},
-			Ext: tax.Extensions{
-				ExtKeyFacturaEInvoiceClass: "CC", // Copy of the summary
-			},
-		},
 		// ** Special Messages **
 		// Reverse Charges
 		{
