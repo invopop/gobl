@@ -14,6 +14,10 @@ type TaxScheme string
 
 // Tax defines a summary of the taxes which may be applied to an invoice.
 type Tax struct {
+	// Addons defines a list of keys used to identify tax addons that apply special
+	// normalization, scenarios, and validation rules to a document.
+	Addons []cbc.Key `json:"addons,omitempty" jsonschame:"title=Addons"`
+
 	// Category of the tax already included in the line item prices, especially
 	// useful for B2C retailers with customers who prefer final prices inclusive of
 	// tax.
@@ -41,11 +45,41 @@ func (t *Tax) ContainsTag(key cbc.Key) bool {
 	return key.In(t.Tags...)
 }
 
+// HasTags returns true if the tax object contains all of the
+// provided tags. Can be be used against a nil tax object in
+// case it has not yet been initialized.
+func (t *Tax) HasTags(keys ...cbc.Key) bool {
+	if t == nil {
+		return false
+	}
+	for _, k := range keys {
+		if !k.In(t.Tags...) {
+			return false
+		}
+	}
+	return true
+}
+
+// GetAddons provides the list of addon instances ready to use.
+func (t *Tax) GetAddons() []tax.Addon {
+	if t == nil {
+		return nil
+	}
+	addons := make([]tax.Addon, 0, len(t.Addons))
+	for _, ak := range t.Addons {
+		if a := tax.AddonForKey(ak); a != nil {
+			addons = append(addons, a)
+		}
+	}
+	return addons
+}
+
 // ValidateWithContext ensures the tax details look valid.
 func (t *Tax) ValidateWithContext(ctx context.Context) error {
 	r, _ := ctx.Value(tax.KeyRegime).(*tax.Regime)
 	return validation.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
+		validation.Field(&t.Addons, validation.Each(tax.AddonRegistered)),
 		validation.Field(&t.Tags, validation.Each(r.InTags())),
 		validation.Field(&t.Ext),
 		validation.Field(&t.Meta),

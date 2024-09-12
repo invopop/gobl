@@ -1,4 +1,4 @@
-package mx
+package cfdi
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -17,14 +17,14 @@ var invoiceScenarios = &tax.ScenarioSet{
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Ext: tax.Extensions{
-				ExtKeyCFDIDocType: "I",
+				ExtKeyDocType: "I",
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Ext: tax.Extensions{
-				ExtKeyCFDIDocType: "E",
-				ExtKeyCFDIRelType: "01",
+				ExtKeyDocType: "E",
+				ExtKeyRelType: "01",
 			},
 		},
 	},

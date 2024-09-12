@@ -1,10 +1,11 @@
-package mx
+package cfdi
 
 import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/mx/sat"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -18,7 +19,7 @@ const (
 // FuelAccountValidTaxCodes lists of the complement's allowed tax codes
 var FuelAccountValidTaxCodes = []any{
 	tax.CategoryVAT,
-	TaxCategoryIEPS,
+	sat.TaxCategoryIEPS,
 }
 
 // FuelAccountBalance carries the data to produce a CFDI's "Complemento de
@@ -111,7 +112,7 @@ func (fal *FuelAccountLine) Validate() error {
 		validation.Field(&fal.PurchaseDateTime, cal.DateTimeNotZero()),
 		validation.Field(&fal.VendorTaxCode,
 			validation.Required,
-			validation.By(validateTaxCode),
+			validation.By(sat.ValidateTaxCode),
 		),
 		validation.Field(&fal.ServiceStationCode,
 			validation.Required,

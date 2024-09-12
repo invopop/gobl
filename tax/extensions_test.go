@@ -1,13 +1,12 @@
 package tax_test
 
 import (
-	"context"
 	"testing"
 
+	"github.com/invopop/gobl/addons/mx/cfdi" // this will also prepare registers
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/regimes/gr"
-	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -53,28 +52,24 @@ func TestExtValue(t *testing.T) {
 
 func TestExtValidation(t *testing.T) {
 	t.Run("with mexico", func(t *testing.T) {
-		// Use mexico for tests as it has more extensions
-		r := mx.New()
-		ctx := r.WithContext(context.Background())
-
 		t.Run("test patterns", func(t *testing.T) {
 			em := tax.Extensions{
-				mx.ExtKeyCFDIPostCode: "12345",
+				cfdi.ExtKeyPostCode: "12345",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.NoError(t, err)
 
 			em = tax.Extensions{
-				mx.ExtKeyCFDIPostCode: "123457",
+				cfdi.ExtKeyPostCode: "123457",
 			}
-			err = em.ValidateWithContext(ctx)
+			err = em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "mx-cfdi-post-code: does not match pattern")
 
-			kd := r.ExtensionDef(mx.ExtKeyCFDIPostCode)
+			kd := tax.ExtensionForKey(cfdi.ExtKeyPostCode)
 			pt := kd.Pattern
 			kd.Pattern = "[][" // invalid
-			err = em.ValidateWithContext(ctx)
+			err = em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "mx-cfdi-post-code: error parsing regexp: missing closing ]: `[][`")
 			kd.Pattern = pt // put back!
@@ -82,29 +77,26 @@ func TestExtValidation(t *testing.T) {
 
 		t.Run("test codes", func(t *testing.T) {
 			em := tax.Extensions{
-				mx.ExtKeyCFDIFiscalRegime: "601",
+				cfdi.ExtKeyFiscalRegime: "601",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.NoError(t, err)
 
 			em = tax.Extensions{
-				mx.ExtKeyCFDIFiscalRegime: "000",
+				cfdi.ExtKeyFiscalRegime: "000",
 			}
-			err = em.ValidateWithContext(ctx)
+			err = em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "mx-cfdi-fiscal-regime: value '000' invalid")
 		})
 	})
 
 	t.Run("with spain", func(t *testing.T) {
-		r := es.New()
-		ctx := r.WithContext(context.Background())
-
 		t.Run("test good key", func(t *testing.T) {
 			em := tax.Extensions{
 				es.ExtKeyTBAIProduct: "goods",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.NoError(t, err)
 		})
 
@@ -112,7 +104,7 @@ func TestExtValidation(t *testing.T) {
 			em := tax.Extensions{
 				es.ExtKeyTBAIProduct: "bads",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "es-tbai-product: value 'bads' invalid")
 		})
@@ -121,7 +113,7 @@ func TestExtValidation(t *testing.T) {
 			em := tax.Extensions{
 				"random-key": "type",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "random-key: undefined")
 		})
@@ -130,21 +122,18 @@ func TestExtValidation(t *testing.T) {
 			em := tax.Extensions{
 				"INVALID": "value",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "INVALID: must be in a valid format")
 		})
 	})
 
 	t.Run("with greece", func(t *testing.T) {
-		r := gr.New()
-		ctx := r.WithContext(context.Background())
-
 		t.Run("test good value", func(t *testing.T) {
 			em := tax.Extensions{
 				gr.ExtKeyMyDATAIncomeCat: "category1_1",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.NoError(t, err)
 		})
 
@@ -152,7 +141,7 @@ func TestExtValidation(t *testing.T) {
 			em := tax.Extensions{
 				gr.ExtKeyMyDATAIncomeCat: "xxx",
 			}
-			err := em.ValidateWithContext(ctx)
+			err := em.Validate()
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "gr-mydata-income-cat: value 'xxx' invalid")
 		})

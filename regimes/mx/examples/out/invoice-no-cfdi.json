@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "11cb5203e9024f21e43738f1ddde456bfd6cf0b0f98cc23aad281f537f3d8bb3"
+			"val": "a7662b0e8dc3e0bf0e51b51eab64cfac51910420be094f8acdca52edacb86abb"
 		},
 		"draft": true
 	},
@@ -16,23 +16,11 @@
 		"code": "00001",
 		"issue_date": "2023-07-10",
 		"currency": "MXN",
-		"tax": {
-			"addons": [
-				"mx-cfdi-v4"
-			],
-			"ext": {
-				"mx-cfdi-doc-type": "I",
-				"mx-cfdi-issue-place": "21000"
-			}
-		},
 		"supplier": {
 			"name": "ESCUELA KEMPER URGATE",
 			"tax_id": {
 				"country": "MX",
 				"code": "EKU9003173C9"
-			},
-			"ext": {
-				"mx-cfdi-fiscal-regime": "601"
 			}
 		},
 		"customer": {
@@ -40,11 +28,6 @@
 			"tax_id": {
 				"country": "MX",
 				"code": "URE180429TM6"
-			},
-			"ext": {
-				"mx-cfdi-fiscal-regime": "601",
-				"mx-cfdi-post-code": "86991",
-				"mx-cfdi-use": "G01"
 			}
 		},
 		"lines": [
@@ -53,10 +36,7 @@
 				"quantity": "1",
 				"item": {
 					"name": "Cobro por tarjetas",
-					"price": "10.00",
-					"ext": {
-						"mx-cfdi-prod-serv": "84141602"
-					}
+					"price": "10.00"
 				},
 				"sum": "10.00",
 				"discounts": [
@@ -69,10 +49,7 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%",
-						"ext": {
-							"mx-cfdi-tax-type": "002"
-						}
+						"percent": "16.0%"
 					}
 				],
 				"total": "9.00"
@@ -83,20 +60,14 @@
 				"item": {
 					"name": "Porcentaje sobre GMV",
 					"price": "10.00",
-					"unit": "service",
-					"ext": {
-						"mx-cfdi-prod-serv": "80141628"
-					}
+					"unit": "service"
 				},
 				"sum": "10.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%",
-						"ext": {
-							"mx-cfdi-tax-type": "002"
-						}
+						"percent": "16.0%"
 					}
 				],
 				"total": "10.00"
@@ -117,9 +88,6 @@
 						"rates": [
 							{
 								"key": "standard",
-								"ext": {
-									"mx-cfdi-tax-type": "002"
-								},
 								"base": "19.00",
 								"percent": "16.0%",
 								"amount": "3.04"

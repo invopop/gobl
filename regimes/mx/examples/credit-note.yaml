@@ -5,6 +5,9 @@ type: credit-note
 series: CN
 code: "0003"
 currency: MXN
+tax:
+  addons:
+    - "mx-cfdi-v4"
 preceding:
   - series: "TEST"
     code: "0001"

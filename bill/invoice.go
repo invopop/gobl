@@ -178,6 +178,13 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 	if err == nil {
 		err = r.ValidateObject(inv)
 	}
+	if err == nil {
+		for _, a := range inv.Tax.GetAddons() {
+			if err = a.Validate(inv); err != nil {
+				break
+			}
+		}
+	}
 	return err
 }
 
@@ -305,10 +312,17 @@ func (inv *Invoice) Calculate() error {
 	if err := r.CalculateObject(inv); err != nil {
 		return err
 	}
+	// Then addon normalizations
+	for _, a := range inv.Tax.GetAddons() {
+		if err := a.Normalize(inv); err != nil {
+			return err
+		}
+	}
+	// Main calculations
 	if err := inv.calculate(r); err != nil {
 		return err
 	}
-	if err := inv.prepareScenarios(r); err != nil {
+	if err := inv.prepareScenarios(); err != nil {
 		return err
 	}
 

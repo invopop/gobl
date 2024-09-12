@@ -135,6 +135,10 @@ type Category struct {
 	// that a tax Combo is correctly using the category.
 	Validation func(*Combo) error `json:"-"`
 
+	// Extensions key-value pairs that will be copied to the tax combo if this
+	// category is used.
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`

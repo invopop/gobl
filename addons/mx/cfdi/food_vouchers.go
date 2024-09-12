@@ -1,4 +1,4 @@
-package mx
+package cfdi
 
 import (
 	"regexp"
@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regimes/mx/sat"
 	"github.com/invopop/validation"
 )
 
@@ -102,7 +103,7 @@ func (fve *FoodVouchersEmployee) Validate() error {
 	return validation.ValidateStruct(fve,
 		validation.Field(&fve.TaxCode,
 			validation.Required,
-			validation.By(validateTaxCode),
+			validation.By(sat.ValidateTaxCode),
 		),
 		validation.Field(&fve.CURP,
 			validation.Required,

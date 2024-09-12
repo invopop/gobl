@@ -1,11 +1,14 @@
-package mx
+package cfdi
 
 import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
-func normalizeParty(p *org.Party) error {
+func normalizeParty(p *org.Party) {
+	if p == nil {
+		return
+	}
 	// 2023-08-25: Migrate identities to extensions
 	// Pending removal after migrations completed.
 	idents := make([]*org.Identity, 0)
@@ -26,9 +29,7 @@ func normalizeParty(p *org.Party) error {
 		if p.Ext == nil {
 			p.Ext = make(tax.Extensions)
 		}
-		p.Ext[ExtKeyCFDIPostCode] = tax.ExtValue(p.TaxID.Zone) //nolint:staticcheck
-		p.TaxID.Zone = ""                                      //nolint:staticcheck
+		p.Ext[ExtKeyPostCode] = tax.ExtValue(p.TaxID.Zone) //nolint:staticcheck
+		p.TaxID.Zone = ""                                  //nolint:staticcheck
 	}
-
-	return nil
 }

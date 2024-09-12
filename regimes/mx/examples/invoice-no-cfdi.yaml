@@ -3,24 +3,13 @@ uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 issue_date: "2023-07-10"
 series: "TEST"
 code: "00001"
-tax:
-  addons:
-    - "mx-cfdi-v4"
-  ext:
-    mx-cfdi-issue-place: "21000"
 supplier:
   name: "ESCUELA KEMPER URGATE"
-  ext:
-    mx-cfdi-fiscal-regime: "601"
   tax_id:
     country: "MX"
     code: "EKU9003173C9"
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
-  ext:
-    mx-cfdi-post-code: "86991"
-    mx-cfdi-fiscal-regime: "601"
-    mx-cfdi-use: "G01"
   tax_id:
     country: "MX"
     code: "URE180429TM6"
@@ -29,8 +18,6 @@ lines:
     item:
       name: "Cobro por tarjetas"
       price: "10.00"
-      ext:
-        mx-cfdi-prod-serv: "84141602"
     discounts:
       - percent: "10.0%"
     taxes:
@@ -41,8 +28,6 @@ lines:
       name: "Porcentaje sobre GMV"
       price: "10.00"
       unit: "service"
-      ext:
-        mx-cfdi-prod-serv: "80141628"
     taxes:
       - cat: "VAT"
         rate: "standard"

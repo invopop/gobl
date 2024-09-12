@@ -39,6 +39,8 @@ type Advance struct {
 	Card *Card `json:"card,omitempty" jsonschema:"title=Card"`
 	// Details about how the payment was made by credit (bank) transfer.
 	CreditTransfer *CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer"`
+	// Tax extensions required by tax regimes or addons.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional details useful for the parties involved.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -58,6 +60,7 @@ func (a *Advance) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&a.Amount),
 		validation.Field(&a.Card),
 		validation.Field(&a.CreditTransfer),
+		validation.Field(&a.Ext),
 		validation.Field(&a.Meta),
 	)
 }

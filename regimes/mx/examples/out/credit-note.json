@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "cd89fc7b1791ca8b5d3b734d45c4ccf418469fb1179edaecd2feaf855b66e076"
+			"val": "ebcf12d823f33f5e2f97e1c65e307012cfa6a6d5ba9e0e7fd686f8db8f454237"
 		},
 		"draft": true
 	},
@@ -30,6 +30,9 @@
 			}
 		],
 		"tax": {
+			"addons": [
+				"mx-cfdi-v4"
+			],
 			"ext": {
 				"mx-cfdi-doc-type": "E",
 				"mx-cfdi-issue-place": "21000",
@@ -84,7 +87,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					}
 				],
 				"total": "200.2020"
@@ -105,6 +111,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "200.20",
 								"percent": "16.0%",
 								"amount": "32.03"

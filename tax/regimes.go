@@ -55,6 +55,9 @@ func (c *RegimeCollection) All() []*Regime {
 
 // RegisterRegime adds a new regime to the shared global list of tax regimes.
 func RegisterRegime(regime *Regime) {
+	for _, ext := range regime.Extensions {
+		RegisterExtension(ext)
+	}
 	regimes.add(regime)
 }
 

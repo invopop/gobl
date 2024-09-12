@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8e5d4c3d3992a0ae3606dc42334a61279cb7f193dfc5290c0908479f966c2e89"
+			"val": "d377c60dc216607edb28c076fed8a95a49b727e1f5eca4803de7d0ae3ca6240b"
 		},
 		"draft": true
 	},
@@ -17,6 +17,9 @@
 		"issue_date": "2023-07-10",
 		"currency": "MXN",
 		"tax": {
+			"addons": [
+				"mx-cfdi-v4"
+			],
 			"ext": {
 				"mx-cfdi-doc-type": "I",
 				"mx-cfdi-issue-place": "21000"
@@ -67,7 +70,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					}
 				],
 				"total": "9.00"
@@ -88,7 +94,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					}
 				],
 				"total": "10.00"
@@ -103,13 +112,19 @@
 					"key": "cash",
 					"description": "Anticipo",
 					"percent": "10.0%",
-					"amount": "2.20"
+					"amount": "2.20",
+					"ext": {
+						"mx-cfdi-payment-means": "01"
+					}
 				},
 				{
 					"key": "card",
 					"description": "Saldo",
 					"percent": "90.0%",
-					"amount": "19.84"
+					"amount": "19.84",
+					"ext": {
+						"mx-cfdi-payment-means": "04"
+					}
 				}
 			]
 		},
@@ -123,6 +138,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "19.00",
 								"percent": "16.0%",
 								"amount": "3.04"

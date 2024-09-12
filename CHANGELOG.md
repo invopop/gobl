@@ -6,11 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-### Changed
+Another significant release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
+
+This implies that basic GOBL documents can be created anywhere, and local rules related to a specific format can be added if needed.
 
 ### Added
 
 - `tax`: `Scenario` now has `Filter` property to set a code function
+- `tax`: `Addon` interface defined.
+- `mx-cfdi-v4`: introducing the first addon.
+
+### Changed
+
+- `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package.
 
 ## [v0.115.1]
 

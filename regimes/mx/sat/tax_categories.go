@@ -1,4 +1,4 @@
-package mx
+package sat
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -19,6 +19,11 @@ const (
 const (
 	TaxRateExempt cbc.Key = "exempt"
 )
+
+// TaxCategories returns the list of tax categories used in Mexico.
+func TaxCategories() []*tax.Category {
+	return taxCategories
+}
 
 var taxCategories = []*tax.Category{
 	//
@@ -81,7 +86,6 @@ var taxCategories = []*tax.Category{
 				Exempt: true,
 			},
 		},
-		Map: cbc.CodeMap{KeySATImpuesto: "002"},
 	},
 
 	//
@@ -99,7 +103,6 @@ var taxCategories = []*tax.Category{
 		},
 		Retained: true,
 		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "002"},
 	},
 
 	//
@@ -117,7 +120,6 @@ var taxCategories = []*tax.Category{
 		},
 		Retained: false,
 		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "003"},
 	},
 
 	//
@@ -135,7 +137,6 @@ var taxCategories = []*tax.Category{
 		},
 		Retained: true,
 		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "003"},
 	},
 
 	//
@@ -153,6 +154,5 @@ var taxCategories = []*tax.Category{
 		},
 		Retained: true,
 		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "001"},
 	},
 }

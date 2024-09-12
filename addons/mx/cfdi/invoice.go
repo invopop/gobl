@@ -1,12 +1,12 @@
-package mx
+package cfdi
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/mx/sat"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -65,13 +65,13 @@ func (v *invoiceValidator) tax(value any) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequires(
-				ExtKeyCFDIDocType,
-				ExtKeyCFDIIssuePlace,
+				ExtKeyDocType,
+				ExtKeyIssuePlace,
 			),
 			validation.When(
 				len(v.inv.Preceding) > 0,
 				tax.ExtensionsRequires(
-					ExtKeyCFDIRelType,
+					ExtKeyRelType,
 				),
 			),
 			validation.Skip,
@@ -94,9 +94,9 @@ func (v *invoiceValidator) customer(value interface{}) error {
 			validation.When(
 				obj.TaxID != nil && obj.TaxID.Country.In("MX"),
 				tax.ExtensionsRequires(
-					ExtKeyCFDIPostCode,
-					ExtKeyCFDIFiscalRegime,
-					ExtKeyCFDIUse,
+					ExtKeyPostCode,
+					ExtKeyFiscalRegime,
+					ExtKeyUse,
 				),
 			),
 		),
@@ -116,7 +116,7 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequires(
-				ExtKeyCFDIFiscalRegime,
+				ExtKeyFiscalRegime,
 			),
 		),
 	)
@@ -130,6 +130,7 @@ func (v *invoiceValidator) line(value interface{}) error {
 
 	return validation.ValidateStruct(line,
 		validation.Field(&line.Quantity, num.Positive),
+		validation.Field(&line.Item, validation.By(validateItem)),
 		validation.Field(&line.Total, num.Min(num.AmountZero)),
 	)
 }
@@ -154,7 +155,10 @@ func (v *invoiceValidator) payInstructions(value interface{}) error {
 	}
 
 	return validation.ValidateStruct(instr,
-		validation.Field(&instr.Key, isValidPaymentMeanKey),
+		validation.Field(&instr.Ext,
+			tax.ExtensionsRequires(ExtKeyPaymentMeans),
+			validation.Skip,
+		),
 	)
 }
 
@@ -164,18 +168,12 @@ func (v *invoiceValidator) payAdvance(value interface{}) error {
 		return nil
 	}
 
-	fields := []*validation.FieldRules{
-		validation.Field(&adv.Key, isValidPaymentMeanKey),
-	}
-
-	// Temporary hack necessary to help transition users from using the instructions key to use
-	// the advance key. TODO: Expect the payment means key always to be present in every
-	// advance (and not the instructions) once users have transitioned.
-	if v.inv.Payment.Instructions == nil || v.inv.Payment.Instructions.Key == cbc.KeyEmpty {
-		fields = append(fields, validation.Field(&adv.Key, validation.Required))
-	}
-
-	return validation.ValidateStruct(adv, fields...)
+	return validation.ValidateStruct(adv,
+		validation.Field(&adv.Ext,
+			tax.ExtensionsRequires(ExtKeyPaymentMeans),
+			validation.Skip,
+		),
+	)
 }
 
 func (v *invoiceValidator) payTerms(value interface{}) error {
@@ -198,13 +196,19 @@ func (v *invoiceValidator) precedingEntry(value interface{}) error {
 	return validation.ValidateStruct(entry,
 		validation.Field(
 			&entry.Stamps,
-			head.StampsHas(StampSATUUID),
+			head.StampsHas(sat.StampUUID),
 			validation.Skip,
 		),
 	)
 }
 
-func normalizeInvoice(inv *bill.Invoice) error {
+func normalizeInvoice(inv *bill.Invoice) {
+	normalizeParty(inv.Supplier)
+	normalizeParty(inv.Customer)
+	normalizeInvoiceLines(inv)
+	normalizeInvoicePaymentInstructions(inv)
+	normalizeInvoicePaymentAdvances(inv)
+
 	// 2024-04-26: copy suppliers post code to invoice, if not already
 	// set.
 	if inv.Tax == nil {
@@ -213,18 +217,38 @@ func normalizeInvoice(inv *bill.Invoice) error {
 	if inv.Tax.Ext == nil {
 		inv.Tax.Ext = make(tax.Extensions)
 	}
-	if inv.Tax.Ext.Has(ExtKeyCFDIIssuePlace) {
-		return nil
+	if inv.Tax.Ext.Has(ExtKeyIssuePlace) {
+		return
 	}
-	if inv.Supplier.Ext.Has(ExtKeyCFDIPostCode) {
-		inv.Tax.Ext[ExtKeyCFDIIssuePlace] = inv.Supplier.Ext[ExtKeyCFDIPostCode]
-		return nil
+	if inv.Supplier.Ext.Has(ExtKeyPostCode) {
+		inv.Tax.Ext[ExtKeyIssuePlace] = inv.Supplier.Ext[ExtKeyPostCode]
+		return
 	}
 	if len(inv.Supplier.Addresses) > 0 {
 		addr := inv.Supplier.Addresses[0]
 		if addr.Code != "" {
-			inv.Tax.Ext[ExtKeyCFDIIssuePlace] = tax.ExtValue(addr.Code)
+			inv.Tax.Ext[ExtKeyIssuePlace] = tax.ExtValue(addr.Code)
 		}
 	}
-	return nil
+}
+
+func normalizeInvoiceLines(inv *bill.Invoice) {
+	for _, line := range inv.Lines {
+		normalizeItem(line.Item)
+		for _, combo := range line.Taxes {
+			var k tax.ExtValue
+			switch combo.Category {
+			case sat.TaxCategoryISR:
+				k = "001"
+			case tax.CategoryVAT, sat.TaxCategoryRVAT:
+				k = "002"
+			case sat.TaxCategoryIEPS, sat.TaxCategoryRIEPS:
+				k = "003"
+			}
+			if combo.Ext == nil {
+				combo.Ext = make(tax.Extensions)
+			}
+			combo.Ext[ExtKeyTaxType] = k
+		}
+	}
 }

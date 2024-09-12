@@ -1,4 +1,4 @@
-package mx
+package cfdi
 
 import (
 	"regexp"
@@ -15,10 +15,14 @@ var (
 	itemExtensionNormalizableCodeRegexp = regexp.MustCompile(`^\d{6}$`)
 )
 
-func validateItem(item *org.Item) error {
+func validateItem(value any) error {
+	item, _ := value.(*org.Item)
+	if item == nil {
+		return nil
+	}
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Ext,
-			tax.ExtensionsRequires(ExtKeyCFDIProdServ),
+			tax.ExtensionsRequires(ExtKeyProdServ),
 			validation.By(validItemExtensions),
 			validation.Skip,
 		),
@@ -31,7 +35,7 @@ func validItemExtensions(value interface{}) error {
 		return nil
 	}
 	for k, v := range ids {
-		if k == ExtKeyCFDIProdServ {
+		if k == ExtKeyProdServ {
 			if itemExtensionValidCodeRegexp.MatchString(string(v)) {
 				return nil
 			}
@@ -46,12 +50,12 @@ func validItemExtensions(value interface{}) error {
 // extension keys that have been migrated from identities to
 // extensions.
 var migratedExtensionKeys = []cbc.Key{
-	ExtKeyCFDIProdServ,
-	ExtKeyCFDIFiscalRegime,
-	ExtKeyCFDIUse,
+	ExtKeyProdServ,
+	ExtKeyFiscalRegime,
+	ExtKeyUse,
 }
 
-func normalizeItem(item *org.Item) error {
+func normalizeItem(item *org.Item) {
 	// 2023-08-25: Migrate identities to extensions
 	// Pending removal after migrations completed.
 	idents := make([]*org.Identity, 0)
@@ -68,11 +72,10 @@ func normalizeItem(item *org.Item) error {
 	item.Identities = idents
 	// end.
 	for k, v := range item.Ext {
-		if k == ExtKeyCFDIProdServ {
+		if k == ExtKeyProdServ {
 			if itemExtensionNormalizableCodeRegexp.MatchString(v.String()) {
 				item.Ext[k] = tax.ExtValue(v.String() + "00")
 			}
 		}
 	}
-	return nil
 }

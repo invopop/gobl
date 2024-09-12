@@ -1,19 +1,20 @@
-package mx_test
+package cfdi_test
 
 import (
 	"encoding/json"
 	"math"
 	"testing"
 
+	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/mx"
+	"github.com/invopop/gobl/regimes/mx/sat"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestInvalidComplement(t *testing.T) {
-	fab := &mx.FuelAccountBalance{}
+	fab := new(cfdi.FuelAccountBalance)
 
 	err := fab.Validate()
 
@@ -23,7 +24,7 @@ func TestInvalidComplement(t *testing.T) {
 }
 
 func TestInvalidLine(t *testing.T) {
-	fab := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{{}}}
+	fab := &cfdi.FuelAccountBalance{Lines: []*cfdi.FuelAccountLine{{}}}
 
 	err := fab.Validate()
 
@@ -39,7 +40,7 @@ func TestInvalidLine(t *testing.T) {
 
 	fab.Lines[0].VendorTaxCode = "1234"
 	fab.Lines[0].Quantity = num.MakeAmount(1, 0)
-	fab.Lines[0].Item = &mx.FuelAccountItem{Price: num.MakeAmount(1, 0)}
+	fab.Lines[0].Item = &cfdi.FuelAccountItem{Price: num.MakeAmount(1, 0)}
 
 	err = fab.Validate()
 
@@ -49,8 +50,8 @@ func TestInvalidLine(t *testing.T) {
 }
 
 func TestInvalidItem(t *testing.T) {
-	fab := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{
-		{Item: &mx.FuelAccountItem{}}},
+	fab := &cfdi.FuelAccountBalance{Lines: []*cfdi.FuelAccountLine{
+		{Item: &cfdi.FuelAccountItem{}}},
 	}
 
 	err := fab.Validate()
@@ -62,8 +63,8 @@ func TestInvalidItem(t *testing.T) {
 }
 
 func TestInvalidTax(t *testing.T) {
-	fab := &mx.FuelAccountBalance{Lines: []*mx.FuelAccountLine{
-		{Taxes: []*mx.FuelAccountTax{{}}}},
+	fab := &cfdi.FuelAccountBalance{Lines: []*cfdi.FuelAccountLine{
+		{Taxes: []*cfdi.FuelAccountTax{{}}}},
 	}
 
 	err := fab.Validate()
@@ -83,13 +84,13 @@ func TestInvalidTax(t *testing.T) {
 
 func TestCalculate(t *testing.T) {
 	t.Run("example 1", func(t *testing.T) {
-		fab := &mx.FuelAccountBalance{
-			Lines: []*mx.FuelAccountLine{
+		fab := &cfdi.FuelAccountBalance{
+			Lines: []*cfdi.FuelAccountLine{
 				{
 					Quantity: num.MakeAmount(11, 1),
-					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(9091, 2)},
+					Item:     &cfdi.FuelAccountItem{Price: num.MakeAmount(9091, 2)},
 					Total:    num.MakeAmount(100, 0),
-					Taxes: []*mx.FuelAccountTax{
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Percent: num.NewPercentage(160, 3),
 						},
@@ -100,7 +101,7 @@ func TestCalculate(t *testing.T) {
 				},
 				{
 					Total: num.MakeAmount(100009, 3),
-					Taxes: []*mx.FuelAccountTax{
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Percent: num.NewPercentage(160, 3),
 						},
@@ -127,32 +128,32 @@ func TestCalculate(t *testing.T) {
 	})
 
 	t.Run("example 2", func(t *testing.T) {
-		fab := &mx.FuelAccountBalance{
-			Lines: []*mx.FuelAccountLine{
+		fab := &cfdi.FuelAccountBalance{
+			Lines: []*cfdi.FuelAccountLine{
 				{
 					Quantity: num.MakeAmount(9661, 3),
-					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(12743, 3)},
-					Taxes: []*mx.FuelAccountTax{
+					Item:     &cfdi.FuelAccountItem{Price: num.MakeAmount(12743, 3)},
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: mx.TaxCategoryIEPS,
+							Category: sat.TaxCategoryIEPS,
 							Rate:     num.NewAmount(59195, 4),
 						},
 					},
 				},
 				{
 					Quantity: num.MakeAmount(9680, 3),
-					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(12709, 3)},
-					Taxes: []*mx.FuelAccountTax{
+					Item:     &cfdi.FuelAccountItem{Price: num.MakeAmount(12709, 3)},
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: mx.TaxCategoryIEPS,
+							Category: sat.TaxCategoryIEPS,
 							Rate:     num.NewAmount(59195, 4),
 						},
 					},
@@ -175,32 +176,32 @@ func TestCalculate(t *testing.T) {
 	})
 
 	t.Run("example 3", func(t *testing.T) {
-		fab := &mx.FuelAccountBalance{
-			Lines: []*mx.FuelAccountLine{
+		fab := &cfdi.FuelAccountBalance{
+			Lines: []*cfdi.FuelAccountLine{
 				{
 					Quantity: num.MakeAmount(525, 3),
-					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(19809, 3)},
-					Taxes: []*mx.FuelAccountTax{
+					Item:     &cfdi.FuelAccountItem{Price: num.MakeAmount(19809, 3)},
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: mx.TaxCategoryIEPS,
+							Category: sat.TaxCategoryIEPS,
 							Rate:     num.NewAmount(5451, 4),
 						},
 					},
 				},
 				{
 					Quantity: num.MakeAmount(304, 3),
-					Item:     &mx.FuelAccountItem{Price: num.MakeAmount(19823, 3)},
-					Taxes: []*mx.FuelAccountTax{
+					Item:     &cfdi.FuelAccountItem{Price: num.MakeAmount(19823, 3)},
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: mx.TaxCategoryIEPS,
+							Category: sat.TaxCategoryIEPS,
 							Rate:     num.NewAmount(5451, 4),
 						},
 					},
@@ -238,18 +239,18 @@ func TestCalculate(t *testing.T) {
 		q := math.Round((total/price)*1000) / 1000
 		ip := ((total / q) - ieps) / (1 + vat)
 
-		fab := &mx.FuelAccountBalance{
-			Lines: []*mx.FuelAccountLine{
+		fab := &cfdi.FuelAccountBalance{
+			Lines: []*cfdi.FuelAccountLine{
 				{
 					Quantity: num.AmountFromFloat64(q, 3),
-					Item:     &mx.FuelAccountItem{Price: num.AmountFromFloat64(ip, 4)},
-					Taxes: []*mx.FuelAccountTax{
+					Item:     &cfdi.FuelAccountItem{Price: num.AmountFromFloat64(ip, 4)},
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
 							Percent:  num.NewPercentage(int64(vat*1000), 3),
 						},
 						{
-							Category: mx.TaxCategoryIEPS,
+							Category: sat.TaxCategoryIEPS,
 							Rate:     num.NewAmount(int64(ieps*10000), 4),
 						},
 					},
@@ -316,19 +317,19 @@ func TestCalculate(t *testing.T) {
 		q := math.Round((total/price)*1000) / 1000
 		ip := ((total / q) - ieps) / (1 + vat)
 
-		fab := &mx.FuelAccountBalance{
-			Lines: []*mx.FuelAccountLine{
+		fab := &cfdi.FuelAccountBalance{
+			Lines: []*cfdi.FuelAccountLine{
 				{
 					Quantity: num.AmountFromFloat64(q, 3),
 					// This case needs 5 decimal places to work due to large quantity:
-					Item: &mx.FuelAccountItem{Price: num.AmountFromFloat64(ip, 5)},
-					Taxes: []*mx.FuelAccountTax{
+					Item: &cfdi.FuelAccountItem{Price: num.AmountFromFloat64(ip, 5)},
+					Taxes: []*cfdi.FuelAccountTax{
 						{
 							Category: tax.CategoryVAT,
 							Percent:  num.NewPercentage(int64(vat*1000), 3),
 						},
 						{
-							Category: mx.TaxCategoryIEPS,
+							Category: sat.TaxCategoryIEPS,
 							Rate:     num.NewAmount(int64(ieps*1000), 3),
 						},
 					},

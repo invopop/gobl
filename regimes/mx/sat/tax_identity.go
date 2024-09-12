@@ -1,4 +1,4 @@
-package mx
+package sat
 
 import (
 	"regexp"
@@ -40,15 +40,18 @@ var (
 	TaxIdentityRegexpCompany = regexp.MustCompile(TaxIdentityPatternCompany)
 )
 
-func validateTaxIdentity(tID *tax.Identity) error {
+// ValidateTaxIdentity validates a tax identity for SAT.
+func ValidateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
-			validation.By(validateTaxCode),
+			validation.By(ValidateTaxCode),
 		),
 	)
 }
 
-func validateTaxCode(value interface{}) error {
+// ValidateTaxCode validates a tax code according to the rules
+// defined by the Mexican SAT.
+func ValidateTaxCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok {
 		return nil

@@ -1,4 +1,4 @@
-package mx
+package cfdi
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -9,18 +9,20 @@ import (
 // Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
 // invoices and cannot be determined automatically.
 const (
-	ExtKeyCFDIIssuePlace   = "mx-cfdi-issue-place"
-	ExtKeyCFDIPostCode     = "mx-cfdi-post-code"
-	ExtKeyCFDIFiscalRegime = "mx-cfdi-fiscal-regime"
-	ExtKeyCFDIUse          = "mx-cfdi-use"
-	ExtKeyCFDIProdServ     = "mx-cfdi-prod-serv" // name from XML field: ClaveProdServ
-	ExtKeyCFDIRelType      = "mx-cfdi-rel-type"  // name from XML field: TipoRelacion
-	ExtKeyCFDIDocType      = "mx-cfdi-doc-type"  // name from XML field: TipoDeComprobante
+	ExtKeyIssuePlace   = "mx-cfdi-issue-place"
+	ExtKeyPostCode     = "mx-cfdi-post-code"
+	ExtKeyFiscalRegime = "mx-cfdi-fiscal-regime"
+	ExtKeyUse          = "mx-cfdi-use"
+	ExtKeyProdServ     = "mx-cfdi-prod-serv"     // name from XML field: ClaveProdServ
+	ExtKeyRelType      = "mx-cfdi-rel-type"      // name from XML field: TipoRelacion
+	ExtKeyDocType      = "mx-cfdi-doc-type"      // name from XML field: TipoDeComprobante
+	ExtKeyTaxType      = "mx-cfdi-tax-type"      // name from XML field: TipoImpuesto
+	ExtKeyPaymentMeans = "mx-cfdi-payment-means" // name from XML field: FormaPago
 )
 
-var extensionKeys = []*cbc.KeyDefinition{
+var extensions = []*cbc.KeyDefinition{
 	{
-		Key: ExtKeyCFDIDocType,
+		Key: ExtKeyDocType,
 		Name: i18n.String{
 			i18n.EN: "Document Type",
 			i18n.ES: "Tipo de Comprobante",
@@ -43,7 +45,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyCFDIRelType,
+		Key: ExtKeyRelType,
 		Name: i18n.String{
 			i18n.EN: "Relation Type",
 			i18n.ES: "Tipo de Relación",
@@ -101,7 +103,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyCFDIIssuePlace,
+		Key: ExtKeyIssuePlace,
 		Name: i18n.String{
 			i18n.EN: "Place of Issue",
 			i18n.ES: "Lugar de Expedición",
@@ -117,7 +119,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		Pattern: "^[0-9]{5}$",
 	},
 	{
-		Key: ExtKeyCFDIPostCode,
+		Key: ExtKeyPostCode,
 		Name: i18n.String{
 			i18n.EN: "Post Code",
 			i18n.ES: "Código Postal",
@@ -133,7 +135,45 @@ var extensionKeys = []*cbc.KeyDefinition{
 		Pattern: "^[0-9]{5}$",
 	},
 	{
-		Key: ExtKeyCFDIProdServ,
+		Key: ExtKeyTaxType,
+		Name: i18n.String{
+			i18n.EN: "Tax Type",
+			i18n.ES: "Tipo de Impuesto",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code defined in the CFDI catalogue "c_Impuesto" for the type of tax. Used in the 'Impuesto' field.
+			`),
+			i18n.ES: here.Doc(`
+				Código definido en el catálogo del CFDI "c_Impuesto" para el tipo de impuesto. Usado en el campo 'Impuesto'.
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "001",
+				Name: i18n.String{
+					i18n.EN: "Income Tax",
+					i18n.ES: "Impuesto Sobre la Renta",
+				},
+			},
+			{
+				Value: "002",
+				Name: i18n.String{
+					i18n.EN: "Value Added Tax",
+					i18n.ES: "Impuesto al Valor Agregado",
+				},
+			},
+			{
+				Value: "003",
+				Name: i18n.String{
+					i18n.EN: "Special Tax on Production and Services",
+					i18n.ES: "Impuesto Especial sobre Producción y Servicios",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyProdServ,
 		Name: i18n.String{
 			i18n.EN: "Product or Service Code",
 			i18n.ES: "Clave de Producto o Servicio", //nolint:misspell
@@ -150,7 +190,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyCFDIFiscalRegime,
+		Key: ExtKeyFiscalRegime,
 		Name: i18n.String{
 			i18n.EN: "Fiscal Regime Code",
 			i18n.ES: "Código de Régimen Fiscal",
@@ -277,7 +317,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyCFDIUse,
+		Key: ExtKeyUse,
 		Name: i18n.String{
 			i18n.EN: "CFDI Use Code",
 			i18n.ES: "Código de Uso CFDI",
@@ -453,6 +493,177 @@ var extensionKeys = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Payroll",
 					i18n.ES: "Nómina",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyPaymentMeans,
+		Name: i18n.String{
+			i18n.EN: "Payment Means",
+			i18n.ES: "Forma de Pago",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code defined in the CFDI catalogue "c_FormaPago" for the payment method. Used in the 'FormaPago' field.
+			`),
+			i18n.ES: here.Doc(`
+				Código definido en el catálogo del CFDI "c_FormaPago" para el método de pago. Usado en el campo 'FormaPago'.
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "01",
+				Name: i18n.String{
+					i18n.EN: "Cash",
+					i18n.ES: "Efectivo",
+				},
+			},
+			{
+				Value: "02",
+				Name: i18n.String{
+					i18n.EN: "Check",
+					i18n.ES: "Cheque nominativo",
+				},
+			},
+			{
+				Value: "03",
+				Name: i18n.String{
+					i18n.EN: "Electronic Funds Transfer",
+					i18n.ES: "Transferencia electrónica de fondos",
+				},
+			},
+			{
+				Value: "04",
+				Name: i18n.String{
+					i18n.EN: "Credit Card",
+					i18n.ES: "Tarjeta de crédito",
+				},
+			},
+			{
+				Value: "05",
+				Name: i18n.String{
+					i18n.EN: "Electronic Wallet",
+					i18n.ES: "Monedero electrónico",
+				},
+			},
+			{
+				Value: "06",
+				Name: i18n.String{
+					i18n.EN: "Online or Electronic Payment",
+					i18n.ES: "Dinero electrónico",
+				},
+			},
+			{
+				Value: "08",
+				Name: i18n.String{
+					i18n.EN: "Grocery Voucher",
+					i18n.ES: "Vales de despensa",
+				},
+			},
+			{
+				Value: "12",
+				Name: i18n.String{
+					i18n.EN: "Payment in Kind",
+					i18n.ES: "Dación en pago",
+				},
+			},
+			{
+				Value: "13",
+				Name: i18n.String{
+					i18n.EN: "Payment by subrogation",
+					i18n.ES: "Pago por subrogación",
+				},
+			},
+			{
+				Value: "14",
+				Name: i18n.String{
+					i18n.EN: "Payment by consignment",
+					i18n.ES: "Pago por consignación",
+				},
+			},
+			{
+				Value: "15",
+				Name: i18n.String{
+					i18n.EN: "Debt relief",
+					i18n.ES: "Condonación",
+				},
+			},
+			{
+				Value: "17",
+				Name: i18n.String{
+					i18n.EN: "Netting",
+					i18n.ES: "Compensación",
+				},
+			},
+			{
+				Value: "23",
+				Name: i18n.String{
+					i18n.EN: "Novation",
+					i18n.ES: "Novación",
+				},
+			},
+			{
+				Value: "24",
+				Name: i18n.String{
+					i18n.EN: "Merger",
+					i18n.ES: "Confusión",
+				},
+			},
+			{
+				Value: "25",
+				Name: i18n.String{
+					i18n.EN: "Debt remission",
+					i18n.ES: "Remisión de deuda",
+				},
+			},
+			{
+				Value: "26",
+				Name: i18n.String{
+					i18n.EN: "Expiration of payment obligation",
+					i18n.ES: "Prescripción o caducidad",
+				},
+			},
+			{
+				Value: "27",
+				Name: i18n.String{
+					i18n.EN: "To the creditor's satisfaction",
+					i18n.ES: "A satisfacción del acreedor",
+				},
+			},
+			{
+				Value: "28",
+				Name: i18n.String{
+					i18n.EN: "Debit card",
+					i18n.ES: "Tarjeta de débito",
+				},
+			},
+			{
+				Value: "29",
+				Name: i18n.String{
+					i18n.EN: "Services card",
+					i18n.ES: "Tarjeta de servicios",
+				},
+			},
+			{
+				Value: "30",
+				Name: i18n.String{
+					i18n.EN: "Advance payment",
+					i18n.ES: "Aplicación de anticipos",
+				},
+			},
+			{
+				Value: "31",
+				Name: i18n.String{
+					i18n.EN: "Payment via intermediary",
+					i18n.ES: "Intermediario pagos",
+				},
+			},
+			{
+				Value: "99",
+				Name: i18n.String{
+					i18n.EN: "Undefined",
+					i18n.ES: "Por definir",
 				},
 			},
 		},

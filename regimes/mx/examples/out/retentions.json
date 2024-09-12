@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7832f901938ca19db4a03fb3eae71d8876100899c4dcdda4c58d201dd718f392"
+			"val": "e70f131461a29b787ebbcd2653e890aaf23c6fc9ae1b70b8cd369e299e536bec"
 		},
 		"draft": true
 	},
@@ -17,6 +17,9 @@
 		"issue_date": "2023-07-10",
 		"currency": "MXN",
 		"tax": {
+			"addons": [
+				"mx-cfdi-v4"
+			],
 			"ext": {
 				"mx-cfdi-doc-type": "I",
 				"mx-cfdi-issue-place": "01160"
@@ -61,15 +64,24 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					},
 					{
 						"cat": "RVAT",
-						"percent": "10.6667%"
+						"percent": "10.6667%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					},
 					{
 						"cat": "ISR",
-						"percent": "10.00%"
+						"percent": "10.00%",
+						"ext": {
+							"mx-cfdi-tax-type": "001"
+						}
 					}
 				],
 				"total": "1230.00"
@@ -90,6 +102,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "1230.00",
 								"percent": "16.0%",
 								"amount": "196.80"
@@ -102,6 +117,9 @@
 						"retained": true,
 						"rates": [
 							{
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "1230.00",
 								"percent": "10.6667%",
 								"amount": "131.20"
@@ -114,6 +132,9 @@
 						"retained": true,
 						"rates": [
 							{
+								"ext": {
+									"mx-cfdi-tax-type": "001"
+								},
 								"base": "1230.00",
 								"percent": "10.00%",
 								"amount": "123.00"

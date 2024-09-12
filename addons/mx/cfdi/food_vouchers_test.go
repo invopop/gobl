@@ -1,16 +1,16 @@
-package mx_test
+package cfdi_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/mx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestInvalidFoodVouchers(t *testing.T) {
-	fvc := &mx.FoodVouchers{}
+	fvc := &cfdi.FoodVouchers{}
 
 	err := fvc.Validate()
 
@@ -29,7 +29,7 @@ func TestInvalidFoodVouchers(t *testing.T) {
 }
 
 func TestInvalidFoodVouchersLine(t *testing.T) {
-	fvc := &mx.FoodVouchers{Lines: []*mx.FoodVouchersLine{{}}}
+	fvc := &cfdi.FoodVouchers{Lines: []*cfdi.FoodVouchersLine{{}}}
 
 	err := fvc.Validate()
 
@@ -47,7 +47,7 @@ func TestInvalidFoodVouchersLine(t *testing.T) {
 }
 
 func TestInvalidFoodVouchersEmployee(t *testing.T) {
-	fvc := &mx.FoodVouchers{Lines: []*mx.FoodVouchersLine{{Employee: &mx.FoodVouchersEmployee{}}}}
+	fvc := &cfdi.FoodVouchers{Lines: []*cfdi.FoodVouchersLine{{Employee: &cfdi.FoodVouchersEmployee{}}}}
 
 	err := fvc.Validate()
 
@@ -69,8 +69,8 @@ func TestInvalidFoodVouchersEmployee(t *testing.T) {
 }
 
 func TestCalculateFoodVouchers(t *testing.T) {
-	fvc := &mx.FoodVouchers{
-		Lines: []*mx.FoodVouchersLine{
+	fvc := &cfdi.FoodVouchers{
+		Lines: []*cfdi.FoodVouchersLine{
 			{Amount: num.MakeAmount(1234, 3)},
 			{Amount: num.MakeAmount(4321, 3)},
 		},

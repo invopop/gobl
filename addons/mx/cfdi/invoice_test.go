@@ -1,16 +1,18 @@
-package mx_test
+package cfdi_test
 
 import (
 	"strings"
 	"testing"
 
+	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regimes/mx"
+	_ "github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,15 +24,16 @@ func validInvoice() *bill.Invoice {
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Tax: &bill.Tax{
+			Addons: []cbc.Key{cfdi.KeyV4},
 			Ext: tax.Extensions{
-				mx.ExtKeyCFDIIssuePlace: "21000",
+				cfdi.ExtKeyIssuePlace: "21000",
 			},
 		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Ext: tax.Extensions{
-				mx.ExtKeyCFDIPostCode:     "21000",
-				mx.ExtKeyCFDIFiscalRegime: "601",
+				cfdi.ExtKeyPostCode:     "21000",
+				cfdi.ExtKeyFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
 				Country: "MX",
@@ -40,9 +43,9 @@ func validInvoice() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			Ext: tax.Extensions{
-				mx.ExtKeyCFDIPostCode:     "65000",
-				mx.ExtKeyCFDIFiscalRegime: "608",
-				mx.ExtKeyCFDIUse:          "G01",
+				cfdi.ExtKeyPostCode:     "65000",
+				cfdi.ExtKeyFiscalRegime: "608",
+				cfdi.ExtKeyUse:          "G01",
 			},
 			TaxID: &tax.Identity{
 				Country: "MX",
@@ -57,7 +60,7 @@ func validInvoice() *bill.Invoice {
 					Price: num.MakeAmount(10000, 2),
 					Unit:  org.UnitPackage,
 					Ext: tax.Extensions{
-						mx.ExtKeyCFDIProdServ: "01010101",
+						cfdi.ExtKeyProdServ: "01010101",
 					},
 				},
 				Taxes: tax.Set{
@@ -80,16 +83,20 @@ func TestValidInvoice(t *testing.T) {
 func TestNormalizeInvoice(t *testing.T) {
 	t.Run("no tax", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Tax = nil
+		inv.Tax = &bill.Tax{
+			Addons: []cbc.Key{cfdi.KeyV4},
+		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[mx.ExtKeyCFDIIssuePlace])
+		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Tax = nil
-		delete(inv.Supplier.Ext, mx.ExtKeyCFDIPostCode)
+		inv.Tax = &bill.Tax{
+			Addons: []cbc.Key{cfdi.KeyV4},
+		}
+		delete(inv.Supplier.Ext, cfdi.ExtKeyPostCode)
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
 			&org.Address{
 				Locality: "Mexico",
@@ -99,7 +106,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[mx.ExtKeyCFDIIssuePlace])
+		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
 }
 
@@ -136,7 +143,7 @@ func TestPaymentInstructionsValidation(t *testing.T) {
 	}
 
 	inv.Payment.Instructions.Key = "direct-debit"
-	assertValidationError(t, inv, "payment: (instructions: (key: must be a valid value.).)")
+	assertValidationError(t, inv, "payment: (instructions: (ext: (mx-cfdi-payment-means: required.).).)")
 
 	inv.Payment.Instructions.Key = "unexisting"
 	assertValidationError(t, inv, "payment: (instructions: (key: must be or start with a valid key.).)")
@@ -153,13 +160,13 @@ func TestPaymentAdvancesValidation(t *testing.T) {
 	}
 
 	inv.Payment.Advances[0].Key = "direct-debit"
-	assertValidationError(t, inv, "payment: (advances: (0: (key: must be a valid value.).).)")
+	assertValidationError(t, inv, "payment: (advances: (0: (ext: (mx-cfdi-payment-means: required.).).).)")
 
 	inv.Payment.Advances[0].Key = "unexisting"
 	assertValidationError(t, inv, "payment: (advances: (0: (key: must be or start with a valid key.).).)")
 
 	inv.Payment.Advances[0].Key = ""
-	assertValidationError(t, inv, "payment: (advances: (0: (key: cannot be blank.).).)")
+	assertValidationError(t, inv, "payment: (advances: (0: (ext: (mx-cfdi-payment-means: required.).).).)")
 }
 
 func TestPaymentTermsValidation(t *testing.T) {
@@ -179,8 +186,8 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 	inv := validInvoice()
 
 	inv.Customer.Ext = tax.Extensions{
-		mx.ExtKeyCFDIFiscalRegime: "601",
-		mx.ExtKeyCFDIPostCode:     "21000",
+		cfdi.ExtKeyFiscalRegime: "601",
+		cfdi.ExtKeyPostCode:     "21000",
 	}
 	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")
 }

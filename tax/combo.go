@@ -57,31 +57,15 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			c.Percent == nil,
 			validation.Nil.Error("required with percent"),
 		)),
+		validation.Field(&c.Ext),
 	)
 	if err != nil {
 		return err
 	}
 
-	// Always use base regime to check extensions
+	// Run any regime specific validations
 	r, _ = ctx.Value(KeyRegime).(*Regime)
 	cat := r.Category(c.Category)
-	exts := make([]cbc.Key, 0)
-	if cat != nil {
-		exts = append(exts, cat.Extensions...)
-	}
-	err = validation.ValidateStructWithContext(ctx, c,
-		validation.Field(&c.Ext,
-			ExtensionsHas(exts...),
-			validation.When(
-				len(exts) == 0,
-				validation.Empty,
-				validation.Skip,
-			),
-		),
-	)
-	if err != nil {
-		return err
-	}
 	if cat != nil && cat.Validation != nil {
 		if err := cat.Validation(c); err != nil {
 			return err

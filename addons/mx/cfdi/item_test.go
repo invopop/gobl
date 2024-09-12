@@ -1,10 +1,10 @@
-package mx_test
+package cfdi_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,7 +20,7 @@ func TestItemValidation(t *testing.T) {
 			name: "valid item",
 			item: &org.Item{
 				Ext: tax.Extensions{
-					mx.ExtKeyCFDIProdServ: "12345678",
+					cfdi.ExtKeyProdServ: "12345678",
 				},
 			},
 		},
@@ -49,16 +49,17 @@ func TestItemValidation(t *testing.T) {
 			name: "invalid code format",
 			item: &org.Item{
 				Ext: tax.Extensions{
-					mx.ExtKeyCFDIProdServ: "AbC2",
+					cfdi.ExtKeyProdServ: "AbC2",
 				},
 			},
 			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
 		},
 	}
 
+	addon := tax.AddonForKey(cfdi.KeyV4)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := mx.Validate(ts.item)
+			err := addon.Validate(ts.item)
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -71,7 +72,7 @@ func TestItemValidation(t *testing.T) {
 }
 
 func TestItemIdentityNormalization(t *testing.T) {
-	r := mx.New()
+	addon := tax.AddonForKey(cfdi.KeyV4)
 	tests := []struct {
 		Code     tax.ExtValue
 		Expected tax.ExtValue
@@ -90,18 +91,26 @@ func TestItemIdentityNormalization(t *testing.T) {
 		},
 	}
 	for _, ts := range tests {
-		item := &org.Item{Ext: tax.Extensions{mx.ExtKeyCFDIProdServ: ts.Code}}
-		err := r.CalculateObject(item)
+		item := &org.Item{Ext: tax.Extensions{cfdi.ExtKeyProdServ: ts.Code}}
+		err := addon.Normalize(item)
 		assert.NoError(t, err)
-		assert.Equal(t, ts.Expected, item.Ext[mx.ExtKeyCFDIProdServ])
+		assert.Equal(t, ts.Expected, item.Ext[cfdi.ExtKeyProdServ])
 	}
 
 	// In context of invoice
 	inv := validInvoice()
-	inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ] = "010101"
+	inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ] = "010101"
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, tax.ExtValue("01010100"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
+	assert.Equal(t, tax.ExtValue("01010100"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+}
+
+func TestInvoiceLineExtensions(t *testing.T) {
+	inv := validInvoice()
+	require.NoError(t, inv.Calculate())
+
+	l := inv.Lines[0]
+	assert.Equal(t, "002", l.Taxes[0].Ext[cfdi.ExtKeyTaxType].String())
 }
 
 func TestItemIdentityMigration(t *testing.T) {
@@ -110,12 +119,12 @@ func TestItemIdentityMigration(t *testing.T) {
 	inv.Lines[0].Item.Ext = nil
 	inv.Lines[0].Item.Identities = []*org.Identity{
 		{
-			Key:  mx.ExtKeyCFDIProdServ,
+			Key:  cfdi.ExtKeyProdServ,
 			Code: "01010101",
 		},
 	}
 
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, tax.ExtValue("01010101"), inv.Lines[0].Item.Ext[mx.ExtKeyCFDIProdServ])
+	assert.Equal(t, tax.ExtValue("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
 }
