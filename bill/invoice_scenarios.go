@@ -56,7 +56,7 @@ func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 		ss.Merge(r.Scenarios)
 	}
 	for _, a := range inv.Tax.GetAddons() {
-		ss.Merge(a.Scenarios())
+		ss.Merge(a.Scenarios)
 	}
 
 	inv.removePreviousScenarios(ss)

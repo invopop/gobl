@@ -61,11 +61,11 @@ func (t *Tax) HasTags(keys ...cbc.Key) bool {
 }
 
 // GetAddons provides the list of addon instances ready to use.
-func (t *Tax) GetAddons() []tax.Addon {
+func (t *Tax) GetAddons() []*tax.Addon {
 	if t == nil {
 		return nil
 	}
-	addons := make([]tax.Addon, 0, len(t.Addons))
+	addons := make([]*tax.Addon, 0, len(t.Addons))
 	for _, ak := range t.Addons {
 		if a := tax.AddonForKey(ak); a != nil {
 			addons = append(addons, a)

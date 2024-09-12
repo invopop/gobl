@@ -412,9 +412,6 @@
           "type": [
             "standard"
           ],
-          "tags": [
-            "invoice-receipt"
-          ],
           "ext": {
             "pt-saft-invoice-type": "FR"
           }

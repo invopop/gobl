@@ -772,6 +772,13 @@
     },
     "Tax": {
       "properties": {
+        "addons": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+        },
         "prices_include": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Prices Include",

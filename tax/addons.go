@@ -7,62 +7,62 @@ import (
 )
 
 // Addon is an interface that defines the methods that a tax add-on must implement.
-type Addon interface {
+type Addon struct {
 	// Key that defines how to uniquely idenitfy the add-on.
-	Key() cbc.Key
+	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
 	// Extensions defines the list of extensions that are associated with an add-on.
-	Extensions() []*cbc.KeyDefinition
+	Extensions []*cbc.KeyDefinition `json:"extensions" jsonschema:"title=Extensions"`
 
 	// Normalize performs the normalization rules for the add-on.
-	Normalize(doc any) error
+	Normalize func(doc any) error `json:"-"`
 
 	// Scenarios are applied to documents after normalization and before
 	// validation to ensure that form specific extensions have been added
 	// to the document.
-	Scenarios() []*ScenarioSet
+	Scenarios []*ScenarioSet `json:"scenarios" jsonschema:"title=Scenarios"`
 
 	// Validate performs the validation rules for the add-on.
-	Validate(doc any) error
+	Validate func(doc any) error `json:"-"`
 
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.
-	Corrections() CorrectionSet
+	Corrections CorrectionSet `json:"corrections" jsonschema:"title=Corrections"`
 }
 
 type addonCollection struct {
-	list map[cbc.Key]Addon
+	list map[cbc.Key]*Addon
 }
 
 var addons = newAddonCollection()
 
 func newAddonCollection() *addonCollection {
 	return &addonCollection{
-		list: make(map[cbc.Key]Addon),
+		list: make(map[cbc.Key]*Addon),
 	}
 }
 
 // add will register the addon in the collection
-func (c *addonCollection) add(a Addon) {
-	c.list[a.Key()] = a
+func (c *addonCollection) add(a *Addon) {
+	c.list[a.Key] = a
 }
 
 // RegisterAddon adds a new add-on to the shared global list of tax add-ons. This is
 // expected to be called from module init functions.
-func RegisterAddon(addon Addon) {
-	for _, ext := range addon.Extensions() {
+func RegisterAddon(addon *Addon) {
+	for _, ext := range addon.Extensions {
 		RegisterExtension(ext)
 	}
 	addons.add(addon)
 }
 
 // AddonForKey provides the add-on for the given key.
-func AddonForKey(key cbc.Key) Addon {
+func AddonForKey(key cbc.Key) *Addon {
 	return addons.list[key]
 }
 
 // Addons provides the map of keys to addons.
-func Addons() map[cbc.Key]Addon {
+func Addons() map[cbc.Key]*Addon {
 	return addons.list
 }
 
@@ -80,40 +80,5 @@ func (addonValidation) Validate(value interface{}) error {
 	if AddonForKey(key) == nil {
 		return fmt.Errorf("addon '%v' not registered", key.String())
 	}
-	return nil
-}
-
-// BaseAddon provides a base implementation of the Addon interface
-// that can be embedded in other add-ons to provide a default
-// implemenation and avoid adding empty methods.
-type BaseAddon struct{}
-
-// Key provides a default implementation that panics.
-func (BaseAddon) Key() cbc.Key {
-	panic("Key() not implemented")
-}
-
-// Extensions provides a default implementation that returns nil.
-func (BaseAddon) Extensions() []*cbc.KeyDefinition {
-	return nil
-}
-
-// Normalize provides a default implementation that returns nil.
-func (BaseAddon) Normalize(_ any) error {
-	return nil
-}
-
-// Scenarios provides a default implementation that returns nil.
-func (BaseAddon) Scenarios() []*ScenarioSet {
-	return nil
-}
-
-// Validate provides a default implementation that returns nil.
-func (BaseAddon) Validate(_ any) error {
-	return nil
-}
-
-// Corrections provides a default implementation that returns nil.
-func (BaseAddon) Corrections() CorrectionSet {
 	return nil
 }

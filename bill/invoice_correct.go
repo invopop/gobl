@@ -313,7 +313,7 @@ func (inv *Invoice) correctionDef() *tax.CorrectionDefinition {
 		cd = cd.Merge(r.Corrections.Def(ShortSchemaInvoice))
 	}
 	for _, a := range inv.Tax.GetAddons() {
-		cd = cd.Merge(a.Corrections().Def(ShortSchemaInvoice))
+		cd = cd.Merge(a.Corrections.Def(ShortSchemaInvoice))
 	}
 
 	return cd

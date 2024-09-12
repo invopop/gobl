@@ -12,5 +12,6 @@ func init() {
 		Total{},
 		Regime{},
 		Identity{},
+		Addon{},
 	)
 }

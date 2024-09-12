@@ -127,6 +127,11 @@
           "title": "Credit Transfer",
           "description": "Details about how the payment was made by credit (bank) transfer."
         },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Tax extensions required by tax regimes or addons."
+        },
         "meta": {
           "$ref": "https://gobl.org/draft-0/cbc/meta",
           "title": "Meta",

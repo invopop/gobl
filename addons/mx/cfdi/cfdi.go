@@ -23,7 +23,7 @@ const (
 )
 
 func init() {
-	tax.RegisterAddon(&addon{})
+	tax.RegisterAddon(newAddon())
 
 	// TODO: rename complements to use cfdi in schema path.
 	schema.Register(schema.GOBL.Add("regimes/mx"),
@@ -32,19 +32,17 @@ func init() {
 	)
 }
 
-type addon struct {
-	tax.BaseAddon
+func newAddon() *tax.Addon {
+	return &tax.Addon{
+		Key:        KeyV4,
+		Extensions: extensions,
+		Normalize:  normalize,
+		Scenarios:  scenarios,
+		Validate:   validate,
+	}
 }
 
-func (addon) Key() cbc.Key {
-	return KeyV4
-}
-
-func (addon) Extensions() []*cbc.KeyDefinition {
-	return extensions
-}
-
-func (addon) Normalize(doc any) error {
+func normalize(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
@@ -56,11 +54,7 @@ func (addon) Normalize(doc any) error {
 	return nil
 }
 
-func (addon) Scenarios() []*tax.ScenarioSet {
-	return scenarios
-}
-
-func (addon) Validate(doc any) error {
+func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)

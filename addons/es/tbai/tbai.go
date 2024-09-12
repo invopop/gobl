@@ -19,29 +19,27 @@ const (
 )
 
 func init() {
-	tax.RegisterAddon(&addon{})
+	tax.RegisterAddon(newAddon())
 }
 
-type addon struct {
-	tax.BaseAddon
+func newAddon() *tax.Addon {
+	return &tax.Addon{
+		Key:         KeyV1,
+		Extensions:  extensions,
+		Validate:    validate,
+		Normalize:   normalize,
+		Corrections: invoiceCorrectionDefinitions,
+	}
 }
 
-func (addon) Key() cbc.Key {
-	return KeyV1
+func normalize(_ any) error {
+	return nil
 }
 
-func (addon) Extensions() []*cbc.KeyDefinition {
-	return extensions
-}
-
-func (addon) Validate(doc any) error {
+func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
 	}
 	return nil
-}
-
-func (addon) Corrections() tax.CorrectionSet {
-	return invoiceCorrectionDefinitions
 }
