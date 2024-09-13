@@ -26,14 +26,14 @@ func newAddon() *tax.Addon {
 	return &tax.Addon{
 		Key:         KeyV1,
 		Extensions:  extensions,
-		Validate:    validate,
-		Normalize:   normalize,
+		Validator:   validate,
+		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
 
-func normalize(_ any) error {
-	return nil
+func normalize(_ any) {
+	return
 }
 
 func validate(doc any) error {

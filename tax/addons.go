@@ -14,16 +14,16 @@ type Addon struct {
 	// Extensions defines the list of extensions that are associated with an add-on.
 	Extensions []*cbc.KeyDefinition `json:"extensions" jsonschema:"title=Extensions"`
 
-	// Normalize performs the normalization rules for the add-on.
-	Normalize func(doc any) error `json:"-"`
+	// Normalizer performs the normalization rules for the add-on.
+	Normalizer func(doc any) `json:"-"`
 
 	// Scenarios are applied to documents after normalization and before
 	// validation to ensure that form specific extensions have been added
 	// to the document.
 	Scenarios []*ScenarioSet `json:"scenarios" jsonschema:"title=Scenarios"`
 
-	// Validate performs the validation rules for the add-on.
-	Validate func(doc any) error `json:"-"`
+	// Validator performs the validation rules for the add-on.
+	Validator func(doc any) error `json:"-"`
 
 	// Corrections is used to provide a map of correction definitions that
 	// are supported by the add-on.

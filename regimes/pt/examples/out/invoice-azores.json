@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ec67b7a2aad99bd80200f8050cebe95223309ab3b20865f6f13b383e6a0c88eb"
+			"val": "a6feef77a607a40d9931722bc81a048227ffd76d218c9fa370c736bbc4724bb5"
 		},
 		"draft": true
 	},
@@ -16,6 +16,9 @@
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
+			"addons": [
+				"pt-saft-v1"
+			],
 			"ext": {
 				"pt-saft-invoice-type": "FT"
 			}

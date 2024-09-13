@@ -199,6 +199,29 @@ func isItalianParty(party *org.Party) bool {
 	return party.TaxID.Country.In("IT")
 }
 
+func validateTaxCombo(c *tax.Combo) error {
+	switch c.Category {
+	case tax.CategoryVAT:
+		return validation.ValidateStruct(c,
+			validation.Field(&c.Ext,
+				validation.When(
+					c.Percent == nil,
+					tax.ExtensionsRequires(ExtKeySDIExempt),
+				),
+				validation.Skip,
+			),
+		)
+	case TaxCategoryIRPEF, TaxCategoryIRES, TaxCategoryINPS, TaxCategoryENASARCO, TaxCategoryENPAM:
+		return validation.ValidateStruct(c,
+			validation.Field(&c.Ext,
+				tax.ExtensionsRequires(ExtKeySDIRetained),
+				validation.Skip,
+			),
+		)
+	}
+	return nil
+}
+
 func validateAddress(value interface{}) error {
 	v, ok := value.(*org.Address)
 	if v == nil || !ok {

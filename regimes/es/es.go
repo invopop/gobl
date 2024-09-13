@@ -61,7 +61,7 @@ func New() *tax.Regime {
 		IdentityKeys: identityKeyDefinitions,
 		Categories:   taxCategories,
 		Validator:    Validate,
-		Calculator:   Calculate,
+		Normalizer:   Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
@@ -80,11 +80,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will perform any regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize will perform any regime specific normalizations on the data.
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	}
-	return nil
 }

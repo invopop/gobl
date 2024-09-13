@@ -59,7 +59,7 @@ func TestItemValidation(t *testing.T) {
 	addon := tax.AddonForKey(cfdi.KeyV4)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
-			err := addon.Validate(ts.item)
+			err := addon.Validator(ts.item)
 			if ts.err == "" {
 				assert.NoError(t, err)
 			} else {
@@ -92,8 +92,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 	}
 	for _, ts := range tests {
 		item := &org.Item{Ext: tax.Extensions{cfdi.ExtKeyProdServ: ts.Code}}
-		err := addon.Normalize(item)
-		assert.NoError(t, err)
+		addon.Normalizer(item)
 		assert.Equal(t, ts.Expected, item.Ext[cfdi.ExtKeyProdServ])
 	}
 

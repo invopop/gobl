@@ -24,12 +24,6 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	)
 }
 
-// normalizeTaxIdentity will remove any whitespace or separation characters from
-// the tax code.
-func normalizeTaxIdentity(tID *tax.Identity) error {
-	return tax.NormalizeIdentity(tID)
-}
-
 // based on example provided by https://pt.wikipedia.org/wiki/N%C3%BAmero_de_identifica%C3%A7%C3%A3o_fiscal
 func validateTaxCode(value interface{}) error {
 	code, ok := value.(cbc.Code)

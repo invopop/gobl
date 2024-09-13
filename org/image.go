@@ -47,7 +47,7 @@ func (i *Image) Validate() error {
 
 // ValidateWithContext ensures the details on the image look okay inside the provided context.
 func (i *Image) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.URL, is.URL),
 		validation.Field(&i.Height, validation.Min(64), validation.Max(2048)),

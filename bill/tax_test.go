@@ -7,13 +7,14 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestTaxValidation(t *testing.T) {
 	es := es.New()
-	ctx := es.WithContext(context.Background())
+	ctx := tax.ContextWithValidator(context.Background(), es.Validator)
 	tx := &bill.Tax{
 		Tags: []cbc.Key{"reverse-charge"},
 	}

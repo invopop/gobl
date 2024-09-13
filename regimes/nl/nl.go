@@ -26,7 +26,7 @@ func New() *tax.Regime {
 		},
 		TimeZone:   "Europe/Amsterdam",
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			common.InvoiceScenarios(),
 		},
@@ -109,11 +109,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate performs region specific calculations on the document.
-func Calculate(doc interface{}) error {
+// Normalize performs region specific calculations on the document.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return tax.NormalizeIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }

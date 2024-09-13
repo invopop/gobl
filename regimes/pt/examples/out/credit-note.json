@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "cb8d238600064894369e3ca71845ffd694c44153c85f3d01ec713b96bf8158d1"
+			"val": "46927fbd42b9d58bb68899d08d54e723d77382f4f8f05b4f13f3c89a5ba57def"
 		},
 		"draft": true
 	},
@@ -22,6 +22,9 @@
 			}
 		],
 		"tax": {
+			"addons": [
+				"pt-saft-v1"
+			],
 			"ext": {
 				"pt-saft-invoice-type": "NC"
 			}

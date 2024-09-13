@@ -52,7 +52,7 @@ func (a *Advance) Validate() error {
 
 // ValidateWithContext checks the advance looks okay inside the context.
 func (a *Advance) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, a,
+	return tax.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.Amount, validation.Required),
 		validation.Field(&a.Key, HasValidMeansKey),
 		validation.Field(&a.Description, validation.Required),

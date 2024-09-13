@@ -1,8 +1,6 @@
 package pt
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
@@ -48,43 +46,41 @@ const (
 	TaxRateNonTaxable    cbc.Key = "non-taxable"
 )
 
-func migrateInvoiceRates(inv *bill.Invoice) error {
+func migrateInvoiceRates(inv *bill.Invoice) {
 	for _, line := range inv.Lines {
 		for _, tax := range line.Taxes {
-			if err := migrateInvoiceTaxCombo(tax); err != nil {
-				return err
-			}
+			migrateInvoiceTaxCombo(tax)
 		}
 	}
 	for _, line := range inv.Discounts {
 		for _, tax := range line.Taxes {
-			if err := migrateInvoiceTaxCombo(tax); err != nil {
-				return err
-			}
+			migrateInvoiceTaxCombo(tax)
 		}
 	}
 	for _, line := range inv.Charges {
 		for _, tax := range line.Taxes {
-			if err := migrateInvoiceTaxCombo(tax); err != nil {
-				return err
-			}
+			migrateInvoiceTaxCombo(tax)
 		}
 	}
-	return nil
 }
 
-func migrateInvoiceTaxCombo(tc *tax.Combo) error {
+const oldExtKeyExemptionCode cbc.Key = "pt-exemption-code"
+
+func migrateInvoiceTaxCombo(tc *tax.Combo) {
 	if tc.Rate.HasPrefix(TaxRateExempt) && tc.Rate != TaxRateExempt {
 		for _, m := range taxRateVATExemptMigrationMap {
 			if m.Key == tc.Rate {
 				tc.Rate = tax.RateExempt
 				tc.Ext = m.Ext
-				return nil
+				break
 			}
 		}
-		return errors.New("invalid tax rate")
 	}
-	return nil
+	// 2024-09-13: Added after move to addons
+	if tc.Ext[oldExtKeyExemptionCode] != "" {
+		tc.Ext["pt-saft-exemption"] = tc.Ext[oldExtKeyExemptionCode]
+		delete(tc.Ext, oldExtKeyExemptionCode)
+	}
 }
 
 var taxRateVATExemptMigrationMap = []struct {
@@ -94,173 +90,173 @@ var taxRateVATExemptMigrationMap = []struct {
 	{
 		Key: TaxRateExempt.With(TaxRateOutlay),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M01",
+			oldExtKeyExemptionCode: "M01",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateIntrastate),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M02",
+			oldExtKeyExemptionCode: "M02",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateImports),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M04",
+			oldExtKeyExemptionCode: "M04",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateExports),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M05",
+			oldExtKeyExemptionCode: "M05",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateSuspension),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M06",
+			oldExtKeyExemptionCode: "M06",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateInternalOps),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M07",
+			oldExtKeyExemptionCode: "M07",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateSmallRetail),
 		Ext: tax.Extensions{
-			KeyATTaxCode:        tax.ExtValue(TaxCodeExempt),
-			ExtKeyExemptionCode: "M09",
+			KeyATTaxCode:           tax.ExtValue("exempt"),
+			oldExtKeyExemptionCode: "M09",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateExemptScheme),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M10",
+			oldExtKeyExemptionCode: "M10",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateTobacco),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M11",
+			oldExtKeyExemptionCode: "M11",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateTravel),
 		Ext: tax.Extensions{
-			KeyATTaxCode:        tax.ExtValue(TaxCodeExempt),
-			ExtKeyExemptionCode: "M12",
+			KeyATTaxCode:           tax.ExtValue("exempt"),
+			oldExtKeyExemptionCode: "M12",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateSecondHand),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M13",
+			oldExtKeyExemptionCode: "M13",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateArt),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M14",
+			oldExtKeyExemptionCode: "M14",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateAntiques),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M15",
+			oldExtKeyExemptionCode: "M15",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateTransmission),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M16",
+			oldExtKeyExemptionCode: "M16",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateOther),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M19",
+			oldExtKeyExemptionCode: "M19",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateFlatRate),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M20",
+			oldExtKeyExemptionCode: "M20",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateNonDeductible),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M21",
+			oldExtKeyExemptionCode: "M21",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateConsignment),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M25",
+			oldExtKeyExemptionCode: "M25",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWaste),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M30",
+			oldExtKeyExemptionCode: "M30",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateCivilEng),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M31",
+			oldExtKeyExemptionCode: "M31",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGreenhouse),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M32",
+			oldExtKeyExemptionCode: "M32",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateWoods),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M33",
+			oldExtKeyExemptionCode: "M33",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateB2B),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M40",
+			oldExtKeyExemptionCode: "M40",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateIntraEU),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M41",
+			oldExtKeyExemptionCode: "M41",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateRealEstate),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M42",
+			oldExtKeyExemptionCode: "M42",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateReverseCharge).With(TaxRateGold),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M43",
+			oldExtKeyExemptionCode: "M43",
 		},
 	},
 	{
 		Key: TaxRateExempt.With(TaxRateNonTaxable),
 		Ext: tax.Extensions{
-			ExtKeyExemptionCode: "M99",
+			oldExtKeyExemptionCode: "M99",
 		},
 	},
 }
 
 // 2024-04-17: Migrate zone to VAT tax rows
-func migrateTaxIDZoneToLines(inv *bill.Invoice) error {
+func migrateTaxIDZoneToLines(inv *bill.Invoice) {
 	if inv.Supplier == nil || inv.Supplier.TaxID == nil || inv.Supplier.TaxID.Zone == "" { //nolint:staticcheck
-		return nil
+		return
 	}
 
 	ext := make(tax.Extensions)
@@ -273,7 +269,7 @@ func migrateTaxIDZoneToLines(inv *bill.Invoice) error {
 		ext[ExtKeyRegion] = "PT-MA"
 	default:
 		// nothing to do
-		return nil
+		return
 	}
 
 	for _, line := range inv.Lines {
@@ -297,5 +293,4 @@ func migrateTaxIDZoneToLines(inv *bill.Invoice) error {
 			}
 		}
 	}
-	return nil
 }

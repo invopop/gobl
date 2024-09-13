@@ -37,6 +37,16 @@ type Tax struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Normalize performs normalization on the tax and embedded objects using the
+// provided list of normalizers.
+func (t *Tax) Normalize(normalizers tax.Normalizers) {
+	if t == nil {
+		return
+	}
+	t.Ext = tax.CleanExtensions(t.Ext)
+	normalizers.Each(t)
+}
+
 // ContainsTag returns true if the tax contains the given tag.
 func (t *Tax) ContainsTag(key cbc.Key) bool {
 	if t == nil {
@@ -76,8 +86,8 @@ func (t *Tax) GetAddons() []*tax.Addon {
 
 // ValidateWithContext ensures the tax details look valid.
 func (t *Tax) ValidateWithContext(ctx context.Context) error {
-	r, _ := ctx.Value(tax.KeyRegime).(*tax.Regime)
-	return validation.ValidateStructWithContext(ctx, t,
+	r := tax.RegimeFromContext(ctx)
+	return tax.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
 		validation.Field(&t.Addons, validation.Each(tax.AddonRegistered)),
 		validation.Field(&t.Tags, validation.Each(r.InTags())),

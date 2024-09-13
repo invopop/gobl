@@ -29,8 +29,9 @@ func New() *tax.Regime {
 		Name: i18n.String{
 			i18n.EN: "Canada",
 		},
-		TimeZone:  "America/Toronto", // Toronto
-		Validator: Validate,
+		TimeZone:   "America/Toronto", // Toronto
+		Validator:  Validate,
+		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -136,11 +137,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return tax.NormalizeIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }

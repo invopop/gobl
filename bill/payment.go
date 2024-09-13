@@ -24,7 +24,7 @@ type Payment struct {
 
 // ValidateWithContext checks to make sure the payment data looks good
 func (p *Payment) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, p,
+	return tax.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.Payee),
 		validation.Field(&p.Terms),
 		validation.Field(&p.Advances),

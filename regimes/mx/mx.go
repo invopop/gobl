@@ -27,7 +27,7 @@ func New() *tax.Regime {
 		},
 		TimeZone:    "America/Mexico_City",
 		Validator:   Validate,
-		Calculator:  Calculate,
+		Normalizer:  Normalize,
 		Tags:        common.InvoiceTags(),
 		Categories:  sat.TaxCategories(),
 		Corrections: sat.CorrectionDefinitions(),
@@ -35,7 +35,7 @@ func New() *tax.Regime {
 }
 
 // Validate validates a document against the tax regime.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return sat.ValidateTaxIdentity(obj)
@@ -43,11 +43,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate performs regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize performs regime specific calculations.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return tax.NormalizeIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }

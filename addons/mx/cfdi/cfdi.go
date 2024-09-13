@@ -36,13 +36,13 @@ func newAddon() *tax.Addon {
 	return &tax.Addon{
 		Key:        KeyV4,
 		Extensions: extensions,
-		Normalize:  normalize,
+		Normalizer: normalize,
 		Scenarios:  scenarios,
-		Validate:   validate,
+		Validator:  validate,
 	}
 }
 
-func normalize(doc any) error {
+func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
@@ -51,7 +51,6 @@ func normalize(doc any) error {
 	case *org.Item:
 		normalizeItem(obj)
 	}
-	return nil
 }
 
 func validate(doc any) error {

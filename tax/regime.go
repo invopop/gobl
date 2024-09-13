@@ -18,7 +18,7 @@ import (
 
 const (
 	// KeyRegime is used in the context to store the tax regime during validation.
-	KeyRegime cbc.Key = "tax-regime"
+	keyRegime contextKey = "regime"
 )
 
 // Regime defines the holding structure for the definitions of taxes inside a country
@@ -89,12 +89,11 @@ type Regime struct {
 	Categories []*Category `json:"categories" jsonschema:"title=Categories"`
 
 	// Validator is a method to use to validate a document in a given region.
-	Validator func(doc interface{}) error `json:"-"`
+	Validator Validator `json:"-"`
 
-	// Calculator is used to performs regime specific calculations on data,
-	// including any normalization that might need to take place such as
-	// with tax codes and removing white-space.
-	Calculator func(doc interface{}) error `json:"-"`
+	// Normalizer is used to perform regime specific normalizations on data,
+	// that might need to take place such as with tax codes and removing white-space.
+	Normalizer Normalizer `json:"-"`
 }
 
 // Category contains the definition of a general type of tax inside a region.
@@ -130,10 +129,6 @@ type Category struct {
 
 	// List of sources for the information contained in this category.
 	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
-
-	// Validation provides an additional method that will be called to check
-	// that a tax Combo is correctly using the category.
-	Validation func(*Combo) error `json:"-"`
 
 	// Extensions key-value pairs that will be copied to the tax combo if this
 	// category is used.
@@ -203,6 +198,26 @@ type RateValue struct {
 	Disabled bool `json:"disabled,omitempty" jsonschema:"title=Disabled"`
 }
 
+// WithContext adds this regime to the given context, alongside
+// its validator in the contexts.
+func (r *Regime) WithContext(ctx context.Context) context.Context {
+	if r == nil {
+		return ctx
+	}
+	ctx = context.WithValue(ctx, keyRegime, r)
+	ctx = ContextWithValidator(ctx, r.Validator)
+	return ctx
+}
+
+// RegimeFromContext returns the regime from the given context, or nil.
+func RegimeFromContext(ctx context.Context) *Regime {
+	r, ok := ctx.Value(keyRegime).(*Regime)
+	if !ok {
+		return nil
+	}
+	return r
+}
+
 // Code provides a unique code for this tax regime based on the country.
 func (r *Regime) Code() cbc.Code {
 	return cbc.Code(r.Country)
@@ -220,16 +235,15 @@ func (r *Regime) ValidateObject(value interface{}) error {
 	return nil
 }
 
-// CalculateObject performs any regime specific calculations on the provided
+// NormalizeObject performs any regime specific normalizations on the provided
 // object.
-func (r *Regime) CalculateObject(obj interface{}) error {
+func (r *Regime) NormalizeObject(obj interface{}) {
 	if r == nil {
-		return nil
+		return
 	}
-	if r.Calculator != nil {
-		return r.Calculator(obj)
+	if r.Normalizer != nil {
+		r.Normalizer(obj)
 	}
-	return nil
 }
 
 // CurrencyDef provides the currency definition object for the region.
@@ -257,7 +271,7 @@ func (r *Regime) Validate() error {
 // ValidateWithContext enures the region definition is valid, including all
 // subsequent categories, and passes through the context.
 func (r *Regime) ValidateWithContext(ctx context.Context) error {
-	ctx = context.WithValue(ctx, KeyRegime, r)
+	ctx = r.WithContext(ctx)
 	err := validation.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.Country, validation.Required),
 		validation.Field(&r.AltCountryCodes),
@@ -345,46 +359,9 @@ func (r *Regime) InCategories() validation.Rule {
 	return validation.In(cats...)
 }
 
-// WithContext adds this regime to the given context.
-func (r *Regime) WithContext(ctx context.Context) context.Context {
-	if r == nil {
-		return ctx
-	}
-	return context.WithValue(ctx, KeyRegime, r)
-}
-
-// RegimeFromContext returns the regime from the given context, or nil.
-func RegimeFromContext(ctx context.Context) *Regime {
-	r, ok := ctx.Value(KeyRegime).(*Regime)
-	if !ok {
-		return nil
-	}
-	return r
-}
-
-// ValidateInRegime ensures that the object is valid in the context of the
-// regime.
-func ValidateInRegime(ctx context.Context, obj interface{}) error {
-	r := RegimeFromContext(ctx)
-	if r == nil {
-		return nil
-	}
-	return r.ValidateObject(obj)
-}
-
-// ValidateStructWithRegime wraps around the standard validation.ValidateStructWithContext
-// method to add an additional check for the tax regime.
-func ValidateStructWithRegime(ctx context.Context, obj interface{}, fields ...*validation.FieldRules) error {
-	// First run regular validation
-	if err := validation.ValidateStructWithContext(ctx, obj, fields...); err != nil {
-		return err
-	}
-	return ValidateInRegime(ctx, obj)
-}
-
 // ValidateWithContext ensures the Category's contents are correct.
 func (c *Category) ValidateWithContext(ctx context.Context) error {
-	reg := ctx.Value(KeyRegime).(*Regime)
+	r := RegimeFromContext(ctx)
 	err := validation.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Code, validation.Required),
 		validation.Field(&c.Name, validation.Required),
@@ -393,7 +370,7 @@ func (c *Category) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Sources),
 		validation.Field(&c.Rates),
 		validation.Field(&c.Extensions,
-			validation.Each(cbc.InKeyDefs(reg.Extensions)),
+			validation.Each(cbc.InKeyDefs(r.Extensions)),
 		),
 		validation.Field(&c.Map),
 	)

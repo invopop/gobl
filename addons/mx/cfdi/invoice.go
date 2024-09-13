@@ -235,20 +235,30 @@ func normalizeInvoice(inv *bill.Invoice) {
 func normalizeInvoiceLines(inv *bill.Invoice) {
 	for _, line := range inv.Lines {
 		normalizeItem(line.Item)
-		for _, combo := range line.Taxes {
-			var k tax.ExtValue
-			switch combo.Category {
-			case sat.TaxCategoryISR:
-				k = "001"
-			case tax.CategoryVAT, sat.TaxCategoryRVAT:
-				k = "002"
-			case sat.TaxCategoryIEPS, sat.TaxCategoryRIEPS:
-				k = "003"
-			}
-			if combo.Ext == nil {
-				combo.Ext = make(tax.Extensions)
-			}
-			combo.Ext[ExtKeyTaxType] = k
+		normalizeTaxSet(line.Taxes)
+	}
+	for _, line := range inv.Discounts {
+		normalizeTaxSet(line.Taxes)
+	}
+	for _, line := range inv.Charges {
+		normalizeTaxSet(line.Taxes)
+	}
+}
+
+func normalizeTaxSet(ts tax.Set) {
+	for _, combo := range ts {
+		var k tax.ExtValue
+		switch combo.Category {
+		case sat.TaxCategoryISR:
+			k = "001"
+		case tax.CategoryVAT, sat.TaxCategoryRVAT:
+			k = "002"
+		case sat.TaxCategoryIEPS, sat.TaxCategoryRIEPS:
+			k = "003"
 		}
+		if combo.Ext == nil {
+			combo.Ext = make(tax.Extensions)
+		}
+		combo.Ext[ExtKeyTaxType] = k
 	}
 }

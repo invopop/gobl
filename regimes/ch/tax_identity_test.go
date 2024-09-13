@@ -11,8 +11,9 @@ import (
 
 func TestNormalizeTaxIdentity(t *testing.T) {
 	var tID *tax.Identity
-	err := ch.Calculate(tID)
-	assert.NoError(t, err, "nil tax identity")
+	assert.NotPanics(t, func() {
+		ch.Normalize(tID)
+	}, "nil tax identity")
 
 	tests := []struct {
 		Code     cbc.Code
@@ -41,8 +42,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "CH", Code: ts.Code}
-		err := ch.Calculate(tID)
-		assert.NoError(t, err)
+		ch.Normalize(tID)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
 }

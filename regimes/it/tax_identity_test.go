@@ -10,37 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNormalizeTaxIdentity(t *testing.T) {
-	tests := []struct {
-		code     cbc.Code
-		expected cbc.Code
-		typ      cbc.Key
-	}{
-		{
-			code:     "12345678901",
-			expected: "12345678901",
-		},
-		{
-			code:     "123-456-789-01",
-			expected: "12345678901",
-		},
-		{
-			code:     "123456 789 01",
-			expected: "12345678901",
-		},
-		{
-			code:     "IT 12345678901",
-			expected: "12345678901",
-		},
-	}
-	for _, ts := range tests {
-		tID := &tax.Identity{Country: "IT", Code: ts.code}
-		err := it.Calculate(tID)
-		assert.NoError(t, err)
-		assert.Equal(t, ts.expected, tID.Code)
-	}
-}
-
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string

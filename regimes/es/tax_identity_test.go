@@ -38,8 +38,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "ES", Code: ts.Code}
-		err := r.CalculateObject(tID)
-		assert.NoError(t, err)
+		r.NormalizeObject(tID)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
 }
@@ -47,8 +46,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 func TestNormalizeTaxIdentityZone(t *testing.T) {
 	r := es.New()
 	tID := &tax.Identity{Country: "ES", Code: "93471790C", Zone: "XX"}
-	err := r.CalculateObject(tID)
-	assert.NoError(t, err)
+	r.NormalizeObject(tID)
 	assert.Empty(t, tID.Zone) //nolint:staticcheck
 }
 

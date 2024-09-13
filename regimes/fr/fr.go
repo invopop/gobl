@@ -55,7 +55,7 @@ func New() *tax.Regime {
 			},
 		},
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
 }
@@ -71,11 +71,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	}
-	return nil
 }

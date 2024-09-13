@@ -11,8 +11,9 @@ import (
 )
 
 func TestValidateTaxCombo(t *testing.T) {
+	ctx := context.Background()
 	greece := gr.New()
-	ctx := greece.WithContext(context.Background())
+	ctx = greece.WithContext(ctx)
 
 	t.Run("vat category presence", func(t *testing.T) {
 		tc := &tax.Combo{

@@ -11,23 +11,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNormalizeExtensions(t *testing.T) {
+func TestCleanExtensions(t *testing.T) {
 	var em tax.Extensions
 
-	em2 := tax.NormalizeExtensions(em)
+	em2 := tax.CleanExtensions(em)
 	assert.Nil(t, em2)
 
 	em = tax.Extensions{
 		"key": "",
 	}
-	em2 = tax.NormalizeExtensions(em)
+	em2 = tax.CleanExtensions(em)
 	assert.Nil(t, em2)
 
 	em = tax.Extensions{
 		"key": "foo",
 		"bar": "",
 	}
-	em2 = tax.NormalizeExtensions(em)
+	em2 = tax.CleanExtensions(em)
 	assert.NotNil(t, em2)
 	assert.Len(t, em2, 1)
 	assert.Equal(t, "foo", em2["key"].String())

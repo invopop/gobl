@@ -25,7 +25,7 @@ func (t *Telephone) Validate() error {
 
 // ValidateWithContext checks the telephone objects number to ensure it looks correct inside the provided context.
 func (t *Telephone) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, t,
+	return tax.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.UUID),
 		validation.Field(&t.Number, validation.Required, is.E164),
 	)

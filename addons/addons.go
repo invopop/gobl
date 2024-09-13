@@ -12,4 +12,5 @@ import (
 	_ "github.com/invopop/gobl/addons/es/facturae"
 	_ "github.com/invopop/gobl/addons/es/tbai"
 	_ "github.com/invopop/gobl/addons/mx/cfdi"
+	_ "github.com/invopop/gobl/addons/pt/saft"
 )

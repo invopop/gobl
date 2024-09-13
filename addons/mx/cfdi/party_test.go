@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMigratePartyIdentities(t *testing.T) {
@@ -31,8 +30,7 @@ func TestMigratePartyIdentities(t *testing.T) {
 	}
 
 	addon := tax.AddonForKey(cfdi.KeyV4)
-	err := addon.Normalize(customer)
-	require.NoError(t, err)
+	addon.Normalizer(customer)
 
 	assert.Empty(t, customer.Identities)
 	assert.Len(t, customer.Ext, 3)

@@ -169,9 +169,9 @@ func (em Extensions) Merge(other Extensions) Extensions {
 	return nem
 }
 
-// NormalizeExtensions will try to clean the extension map removing empty values
+// CleanExtensions will try to clean the extension map removing empty values
 // and will potentially return a nil if there only keys with no values.
-func NormalizeExtensions(em Extensions) Extensions {
+func CleanExtensions(em Extensions) Extensions {
 	if em == nil {
 		return nil
 	}

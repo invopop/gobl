@@ -2,20 +2,9 @@ package pt
 
 import (
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
-)
-
-// AT Tax Map
-const (
-	TaxCodeStandard     cbc.Code = "NOR"
-	TaxCodeIntermediate cbc.Code = "INT"
-	TaxCodeReduced      cbc.Code = "RED"
-	TaxCodeExempt       cbc.Code = "ISE"
-	TaxCodeOther        cbc.Code = "OUT"
 )
 
 var taxCategories = []*tax.Category{
@@ -31,39 +20,12 @@ var taxCategories = []*tax.Category{
 			i18n.PT: "Imposto sobre o Valor Acrescentado",
 		},
 		Retained: false,
-		Extensions: []cbc.Key{
-			ExtKeyRegion,
-			ExtKeySAFTTaxRate,
-			ExtKeyExemptionCode,
-		},
-		Validation: func(c *tax.Combo) error {
-			return validation.ValidateStruct(c,
-				validation.Field(&c.Ext,
-					// NOTE! We know that some tax rate is required in portugal, but
-					// we don't know what it should be for foreign countries.
-					// Until this is known, we're removing the validation for the
-					// country tax rate.
-					validation.When(
-						c.Country == "",
-						tax.ExtensionsRequires(ExtKeySAFTTaxRate),
-					),
-					validation.When(
-						c.Percent == nil,
-						tax.ExtensionsRequires(ExtKeyExemptionCode),
-					),
-					validation.Skip,
-				),
-			)
-		},
 		Rates: []*tax.Rate{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PT: "Tipo Geral",
-				},
-				Ext: tax.Extensions{
-					ExtKeySAFTTaxRate: "NOR",
 				},
 				Values: []*tax.RateValue{
 					{
@@ -92,9 +54,6 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Intermediate Rate",
 					i18n.PT: "Taxa Intermédia", //nolint:misspell
 				},
-				Ext: tax.Extensions{
-					ExtKeySAFTTaxRate: "INT",
-				},
 				Values: []*tax.RateValue{
 					{
 						Ext: tax.Extensions{
@@ -121,9 +80,6 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.PT: "Taxa Reduzida",
-				},
-				Ext: tax.Extensions{
-					ExtKeySAFTTaxRate: "RED",
 				},
 				Values: []*tax.RateValue{
 					{
@@ -153,9 +109,6 @@ var taxCategories = []*tax.Category{
 					i18n.PT: "Isento",
 				},
 				Exempt: true,
-				Ext: tax.Extensions{
-					ExtKeySAFTTaxRate: "ISE",
-				},
 			},
 		},
 	},

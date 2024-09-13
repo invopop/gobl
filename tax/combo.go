@@ -38,13 +38,14 @@ type Combo struct {
 func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	// First perform combo validation with the regime from the context,
 	// or the country override.
+
 	var r *Regime
 	if c.Country.Empty() {
-		r, _ = ctx.Value(KeyRegime).(*Regime)
+		r = RegimeFromContext(ctx)
 	} else {
 		r = RegimeFor(c.Country.Code())
 	}
-	err := validation.ValidateStructWithContext(ctx, c,
+	return ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category,
 			validation.Required,
 			r.InCategories(),
@@ -59,28 +60,15 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 		)),
 		validation.Field(&c.Ext),
 	)
-	if err != nil {
-		return err
-	}
-
-	// Run any regime specific validations
-	r, _ = ctx.Value(KeyRegime).(*Regime)
-	cat := r.Category(c.Category)
-	if cat != nil && cat.Validation != nil {
-		if err := cat.Validation(c); err != nil {
-			return err
-		}
-	}
-	return r.ValidateObject(c)
 }
 
-// NormalizeCombo tries to normalize the data inside the tax combo.
-func NormalizeCombo(c *Combo) *Combo {
+// Normalize tries to normalize the data inside the tax combo.
+func (c *Combo) Normalize(normalizers Normalizers) {
 	if c == nil {
-		return nil
+		return
 	}
-	c.Ext = NormalizeExtensions(c.Ext)
-	return c
+	c.Ext = CleanExtensions(c.Ext)
+	normalizers.Each(c)
 }
 
 func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.Date) error {
@@ -111,11 +99,11 @@ func (c *Combo) calculateForRegime(r *Regime, tags []cbc.Key, date cal.Date) err
 		return err
 	}
 
-	// Run the regime's calculations and normalisations, but only if this is not
+	// Run the regime's normalisations, but only if this is not
 	// a country-specific combo.
-	if c.Country == "" {
-		return r.CalculateObject(c)
-	}
+	//if c.Country == "" {
+	//	r.NormalizeObject(c)
+	//}
 
 	return nil
 }

@@ -46,7 +46,7 @@ func New() *tax.Regime {
 		TimeZone:     "America/Bogota",
 		Tags:         common.InvoiceTags(),
 		Validator:    Validate,
-		Calculator:   Calculate,
+		Normalizer:   Normalize,
 		IdentityKeys: identityKeyDefs, // see identities.go
 		Extensions:   extensionKeys,   // see extensions.go
 		Corrections: []*tax.CorrectionDefinition{
@@ -81,13 +81,12 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	case *org.Party:
-		return normalizeParty(obj)
+		normalizeParty(obj)
 	}
-	return nil
 }

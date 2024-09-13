@@ -232,7 +232,7 @@ func (s *Scenario) hasTags(docTags []cbc.Key) bool {
 // ValidateWithContext checks the scenario for errors, using the regime in the context
 // to validate the list of tags.
 func (s *Scenario) ValidateWithContext(ctx context.Context) error {
-	r := ctx.Value(KeyRegime).(*Regime)
+	r := RegimeFromContext(ctx)
 	err := validation.ValidateStructWithContext(ctx, s,
 		validation.Field(&s.Types),
 		validation.Field(&s.Tags, validation.Each(cbc.InKeyDefs(r.Tags))),

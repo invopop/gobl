@@ -72,9 +72,7 @@ func ParseIdentity(tin string) (*Identity, error) {
 		Country: l10n.TaxCountryCode(tin[:2]),
 		Code:    cbc.Code(tin[2:]),
 	}
-	if err := id.Normalize(); err != nil {
-		return nil, err
-	}
+	id.Normalize()
 	if err := id.Validate(); err != nil {
 		return nil, err
 	}
@@ -95,20 +93,16 @@ func (id *Identity) Regime() *Regime {
 }
 
 // Normalize will attempt to perform a regional tax normalization
-// on the tax identity.
-func (id *Identity) Normalize() error {
+// on the tax identity. Identities are an exception to the normal
+// normalization rules as they cannot be normalized using addons.
+func (id *Identity) Normalize() {
 	r := id.Regime()
 	if r == nil {
 		// Fallback to common normalization
-		return NormalizeIdentity(id)
+		NormalizeIdentity(id)
+		return
 	}
-	return r.CalculateObject(id)
-}
-
-// Calculate is an alias for Normalize and will perform normalization
-// on the tax identity code.
-func (id *Identity) Calculate() error {
-	return id.Normalize()
+	r.NormalizeObject(id)
 }
 
 // Validate checks to ensure the tax ID contains all the required
@@ -155,9 +149,9 @@ func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
 
 // NormalizeIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase.
-func NormalizeIdentity(tID *Identity, altCodes ...l10n.Code) error {
+func NormalizeIdentity(tID *Identity, altCodes ...l10n.Code) {
 	if tID == nil {
-		return nil
+		return
 	}
 	code := strings.ToUpper(tID.Code.String())
 	code = IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
@@ -166,5 +160,4 @@ func NormalizeIdentity(tID *Identity, altCodes ...l10n.Code) error {
 		code = strings.TrimPrefix(code, string(alt))
 	}
 	tID.Code = cbc.Code(code)
-	return nil
 }

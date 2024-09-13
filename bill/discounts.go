@@ -64,9 +64,17 @@ type Discount struct {
 	amount num.Amount
 }
 
+// Normalize performs normalization on the line and embedded objects using the
+// provided list of normalizers.
+func (m *Discount) Normalize(normalizers tax.Normalizers) {
+	m.Taxes = tax.CleanSet(m.Taxes)
+	normalizers.Each(m)
+	tax.Normalize(normalizers, m.Taxes)
+}
+
 // ValidateWithContext checks the discount's fields.
 func (m *Discount) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, m,
+	return tax.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
 		validation.Field(&m.Base),
 		validation.Field(&m.Percent,

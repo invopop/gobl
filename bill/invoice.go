@@ -115,16 +115,16 @@ func (inv *Invoice) Validate() error {
 // ValidateWithContext checks to ensure the invoice is valid and contains all the
 // information we need.
 func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
-	r := inv.TaxRegime()
-	ctx = r.WithContext(ctx)
+	ctx = inv.ValidationContext(ctx)
 
 	var exRule validation.Rule
 	exRule = validation.Skip
-	if r != nil {
+	if r := inv.TaxRegime(); r != nil {
+		// regime specific additions for validation
 		exRule = currency.CanConvertInto(inv.ExchangeRates, r.Currency)
 	}
 
-	err := validation.ValidateStructWithContext(ctx, inv,
+	return tax.ValidateStructWithContext(ctx, inv,
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Type,
 			validation.Required,
@@ -175,17 +175,6 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Complements),
 		validation.Field(&inv.Meta),
 	)
-	if err == nil {
-		err = r.ValidateObject(inv)
-	}
-	if err == nil {
-		for _, a := range inv.Tax.GetAddons() {
-			if err = a.Validate(inv); err != nil {
-				break
-			}
-		}
-	}
-	return err
 }
 
 func validateInvoiceSupplier(value any) error {
@@ -275,51 +264,13 @@ func (inv *Invoice) Empty() {
 	inv.Payment.ResetAdvances()
 }
 
-// Calculate performs all the calculations and normalizations required for the invoice
+// Calculate performs all the normalizations and calculations required for the invoice
 // totals and taxes. If the original invoice only includes partial calculations, this
 // will figure out what's missing.
 func (inv *Invoice) Calculate() error {
-	if inv.Type == cbc.KeyEmpty {
-		inv.Type = InvoiceTypeStandard
-	}
-	if inv.Supplier == nil {
-		return errors.New("missing supplier")
-	}
-	if err := inv.Supplier.Calculate(); err != nil {
-		return fmt.Errorf("supplier: %w", err)
-	}
-	if inv.Customer != nil {
-		if err := inv.Customer.Calculate(); err != nil {
-			return fmt.Errorf("customer: %w", err)
-		}
-	}
+	inv.Normalize(inv.normalizers())
 
-	// Preceding entries
-	if inv.Preceding != nil {
-		for _, p := range inv.Preceding {
-			if err := p.Calculate(); err != nil {
-				return err
-			}
-		}
-	}
-
-	r := inv.TaxRegime()
-
-	if err := inv.prepareTags(r); err != nil {
-		return err
-	}
-	// Regime calculations first
-	if err := r.CalculateObject(inv); err != nil {
-		return err
-	}
-	// Then addon normalizations
-	for _, a := range inv.Tax.GetAddons() {
-		if err := a.Normalize(inv); err != nil {
-			return err
-		}
-	}
-	// Main calculations
-	if err := inv.calculate(r); err != nil {
+	if err := inv.calculate(); err != nil {
 		return err
 	}
 	if err := inv.prepareScenarios(); err != nil {
@@ -327,6 +278,48 @@ func (inv *Invoice) Calculate() error {
 	}
 
 	return nil
+}
+
+// Normalize is run as part of the Calculate method to ensure that the invoice
+// is in a consistent state before calculations are performed. This will leverage
+// any add-ons alongside the tax regime.
+func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
+	if inv.Type == cbc.KeyEmpty {
+		inv.Type = InvoiceTypeStandard
+	}
+	normalizers.Each(inv)
+
+	tax.Normalize(normalizers, inv.Tax)
+	tax.Normalize(normalizers, inv.Supplier)
+	tax.Normalize(normalizers, inv.Customer)
+	tax.Normalize(normalizers, inv.Preceding)
+	tax.Normalize(normalizers, inv.Lines)
+	tax.Normalize(normalizers, inv.Discounts)
+	tax.Normalize(normalizers, inv.Charges)
+	tax.Normalize(normalizers, inv.Payment)
+}
+
+func (inv *Invoice) normalizers() tax.Normalizers {
+	normalizers := make(tax.Normalizers, 0)
+	if r := inv.TaxRegime(); r != nil {
+		normalizers = normalizers.Append(r.Normalizer)
+	}
+	for _, a := range inv.Tax.GetAddons() {
+		normalizers = normalizers.Append(a.Normalizer)
+	}
+	return normalizers
+}
+
+// ValidationContext builds a context with all the validators that the invoice might
+// need for execution.
+func (inv *Invoice) ValidationContext(ctx context.Context) context.Context {
+	if r := inv.TaxRegime(); r != nil {
+		ctx = r.WithContext(ctx)
+	}
+	for _, a := range inv.Tax.GetAddons() {
+		ctx = tax.ContextWithValidator(ctx, a.Validator)
+	}
+	return ctx
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
@@ -408,7 +401,9 @@ func (inv *Invoice) TaxRegime() *tax.Regime {
 }
 
 // calculate does not assume that the tax regime is available.
-func (inv *Invoice) calculate(r *tax.Regime) error {
+func (inv *Invoice) calculate() error {
+	r := inv.TaxRegime() // may be nil!
+
 	// Normalize data
 	if inv.IssueDate.IsZero() {
 		inv.IssueDate = cal.TodayIn(r.TimeLocation())

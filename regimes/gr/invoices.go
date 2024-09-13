@@ -146,3 +146,20 @@ func (v *invoiceValidator) validatePreceding(value any) error {
 func (v *invoiceValidator) isSimplified() bool {
 	return v.inv.Tax.ContainsTag(tax.TagSimplified)
 }
+
+func validateTaxCombo(tc *tax.Combo) error {
+	return validation.ValidateStruct(tc,
+		validation.Field(&tc.Ext,
+			tax.ExtensionsRequires(ExtKeyMyDATAVATCat),
+			validation.When(
+				tc.Percent == nil,
+				tax.ExtensionsRequires(ExtKeyMyDATAExemption),
+			),
+			validation.When(
+				tc.Ext.Has(ExtKeyMyDATAIncomeCat) || tc.Ext.Has(ExtKeyMyDATAIncomeType),
+				tax.ExtensionsRequires(ExtKeyMyDATAIncomeCat, ExtKeyMyDATAIncomeType),
+			),
+			validation.Skip,
+		),
+	)
+}

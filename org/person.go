@@ -36,7 +36,7 @@ func (p *Person) Validate() error {
 
 // ValidateWithContext validates the person with the given context.
 func (p *Person) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, p,
+	return tax.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.UUID),
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Label),

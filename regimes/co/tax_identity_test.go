@@ -7,22 +7,22 @@ import (
 	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
-	tID := &tax.Identity{Country: "CO", Code: "901.458.652-7"}
-	err := co.Calculate(tID)
-	require.NoError(t, err)
-
-	tID = &tax.Identity{Country: "CO", Code: "XX"}
-	err = co.Calculate(tID)
-	require.NoError(t, err)
+	var tID *tax.Identity
+	assert.NotPanics(t, func() {
+		co.Normalize(tID)
+	})
 
 	tests := []struct {
 		Code     cbc.Code
 		Expected cbc.Code
 	}{
+		{
+			Code:     "XX",
+			Expected: "XX",
+		},
 		{
 			Code:     "901.458.652-7",
 			Expected: "9014586527",
@@ -42,8 +42,7 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "CO", Code: ts.Code}
-		err := co.Calculate(tID)
-		assert.NoError(t, err)
+		co.Normalize(tID)
 		assert.Equal(t, ts.Expected, tID.Code)
 	}
 }

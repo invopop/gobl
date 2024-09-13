@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // Local tax category definitions which are not considered standard.
@@ -31,17 +30,6 @@ var categories = []*tax.Category{
 		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 			i18n.IT: "Imposta sul Valore Aggiunto",
-		},
-		Validation: func(c *tax.Combo) error {
-			return validation.ValidateStruct(c,
-				validation.Field(&c.Ext,
-					validation.When(
-						c.Percent == nil,
-						tax.ExtensionsRequires(ExtKeySDIExempt),
-					),
-					validation.Skip,
-				),
-			)
 		},
 		Extensions: []cbc.Key{
 			ExtKeySDIExempt,
@@ -130,7 +118,6 @@ var categories = []*tax.Category{
 			i18n.EN: "Personal Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Persone Fisiche",
 		},
-		Validation: requireRetainedReason,
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT01",
 		},
@@ -147,7 +134,6 @@ var categories = []*tax.Category{
 			i18n.EN: "Corporate Income Tax",
 			i18n.IT: "Imposta sul Reddito delle Società",
 		},
-		Validation: requireRetainedReason,
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT02",
 		},
@@ -164,7 +150,6 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Social Security Institute",
 			i18n.IT: "Contributo Istituto Nazionale della Previdenza Sociale", // nolint:misspell
 		},
-		Validation: requireRetainedReason,
 		Extensions: []cbc.Key{ExtKeySDIRetained},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT03",
@@ -181,7 +166,6 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Welfare Board for Sales Agents and Representatives",
 			i18n.IT: "Contributo Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio", // nolint:misspell
 		},
-		Validation: requireRetainedReason,
 		Extensions: []cbc.Key{ExtKeySDIRetained},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT04",
@@ -198,19 +182,9 @@ var categories = []*tax.Category{
 			i18n.EN: "Contribution to the National Pension and Welfare Board for Doctors",
 			i18n.IT: "Contributo - Ente Nazionale Previdenza e Assistenza Medici", // nolint:misspell
 		},
-		Validation: requireRetainedReason,
 		Extensions: []cbc.Key{ExtKeySDIRetained},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT05",
 		},
 	},
-}
-
-func requireRetainedReason(c *tax.Combo) error {
-	return validation.ValidateStruct(c,
-		validation.Field(&c.Ext,
-			tax.ExtensionsRequires(ExtKeySDIRetained),
-			validation.Skip,
-		),
-	)
 }

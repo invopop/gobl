@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a3295f1a3a86eaec661bfe0d92215e5463e5866d1e1db2b6e4b11412d8319f52"
+			"val": "4b948e3bf6dc0adb8d5655b31e0c413591f6fff99bd9d71fd679af0f75a8d06a"
 		},
 		"draft": true
 	},
@@ -16,6 +16,9 @@
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
+			"addons": [
+				"pt-saft-v1"
+			],
 			"ext": {
 				"pt-saft-invoice-type": "FT"
 			}
@@ -52,7 +55,7 @@
 						"cat": "VAT",
 						"percent": "22%",
 						"ext": {
-							"pt-saft-tax-rate": "NOR"
+							"pt-saft-tax-rate": "OUT"
 						}
 					}
 				],
@@ -69,7 +72,7 @@
 						"rates": [
 							{
 								"ext": {
-									"pt-saft-tax-rate": "NOR"
+									"pt-saft-tax-rate": "OUT"
 								},
 								"base": "100.00",
 								"percent": "22%",

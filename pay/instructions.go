@@ -130,7 +130,7 @@ func (i *Instructions) Validate() error {
 
 // ValidateWithContext ensures the fields provided in the instructions are valid.
 func (i *Instructions) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Key, validation.Required, HasValidMeansKey),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),

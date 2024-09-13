@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // TaxRateIsland is used to define the island reduced tax rates
@@ -40,22 +39,6 @@ var taxCategories = []*tax.Category{
 			ExtKeyMyDATAExemption,
 			ExtKeyMyDATAIncomeCat,
 			ExtKeyMyDATAIncomeType,
-		},
-		Validation: func(tc *tax.Combo) error {
-			return validation.ValidateStruct(tc,
-				validation.Field(&tc.Ext,
-					tax.ExtensionsRequires(ExtKeyMyDATAVATCat),
-					validation.When(
-						tc.Percent == nil,
-						tax.ExtensionsRequires(ExtKeyMyDATAExemption),
-					),
-					validation.When(
-						tc.Ext.Has(ExtKeyMyDATAIncomeCat) || tc.Ext.Has(ExtKeyMyDATAIncomeType),
-						tax.ExtensionsRequires(ExtKeyMyDATAIncomeCat, ExtKeyMyDATAIncomeType),
-					),
-					validation.Skip,
-				),
-			)
 		},
 		Rates: []*tax.Rate{
 			{

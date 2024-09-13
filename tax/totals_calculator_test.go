@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
+	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
@@ -352,7 +353,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 							Category: tax.CategoryVAT,
 							Rate:     tax.RateStandard,
 							Ext: tax.Extensions{
-								pt.ExtKeyRegion: "PT-AC",
+								pt.ExtKeyRegion:    "PT-AC",
+								saft.ExtKeyTaxRate: "NOR",
 							},
 						},
 					},
@@ -372,8 +374,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
 								Ext: tax.Extensions{
-									pt.ExtKeyRegion:      "PT-AC",
-									pt.ExtKeySAFTTaxRate: "NOR",
+									pt.ExtKeyRegion:    "PT-AC",
+									saft.ExtKeyTaxRate: "NOR",
 								},
 							},
 						},

@@ -42,7 +42,7 @@ func New() *tax.Regime {
 		Tags:             invoiceTags,
 		Scenarios:        scenarios, // scenarios.go
 		Validator:        Validate,
-		Calculator:       Calculate,
+		Normalizer:       Normalize,
 		Categories:       taxCategories, // tax_categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
@@ -77,11 +77,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will perform any regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize will perform any regime specific normalizations.
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return tax.NormalizeIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }

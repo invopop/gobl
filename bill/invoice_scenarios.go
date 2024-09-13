@@ -1,11 +1,8 @@
 package bill
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
 // GetType provides the invoice type as part of the tax.ScenarioDocument interface.
@@ -77,29 +74,6 @@ func (inv *Invoice) removePreviousScenarios(ss *tax.ScenarioSet) {
 			}
 		}
 	}
-}
-
-func (inv *Invoice) prepareTags(r *tax.Regime) error {
-	if r == nil {
-		return nil
-	}
-	if inv.Tax == nil {
-		return nil
-	}
-
-	// Check the tags are all valid and identified by the tax regime
-	// as acceptable for invoices.
-	for _, k := range inv.Tax.Tags {
-		if t := r.Tag(k); t == nil {
-			return validation.Errors{
-				"tax": validation.Errors{
-					"tags": fmt.Errorf("invalid tag '%v'", k),
-				},
-			}
-		}
-	}
-
-	return nil
 }
 
 func (inv *Invoice) prepareScenarios() error {

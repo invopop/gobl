@@ -40,10 +40,8 @@ func New() *tax.Regime {
 		},
 		TimeZone:   "Europe/Lisbon",
 		Extensions: extensionKeys,
-		Tags:       invoiceTags,
-		Scenarios:  scenarios,
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -58,7 +56,7 @@ func New() *tax.Regime {
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
@@ -68,16 +66,13 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalizer will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		if err := migrateTaxIDZoneToLines(obj); err != nil {
-			return err
-		}
-		return migrateInvoiceRates(obj)
+		migrateTaxIDZoneToLines(obj)
+		migrateInvoiceRates(obj)
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }
