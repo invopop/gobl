@@ -7,9 +7,9 @@ import (
 
 // SAF-T Extension Keys
 const (
-	ExtKeyExemption   = "pt-saft-exemption" // note: avoid redundant prefixes like `-code`
-	ExtKeyTaxRate     = "pt-saft-tax-rate"
-	ExtKeyInvoiceType = "pt-saft-invoice-type"
+	ExtKeyExemption   cbc.Key = "pt-saft-exemption"
+	ExtKeyTaxRate     cbc.Key = "pt-saft-tax-rate"
+	ExtKeyInvoiceType cbc.Key = "pt-saft-invoice-type"
 )
 
 var extensions = []*cbc.KeyDefinition{

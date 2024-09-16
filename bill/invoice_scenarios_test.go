@@ -100,3 +100,15 @@ func TestScenarios(t *testing.T) {
 		assert.Equal(t, "FPR12", inv.Tax.Ext[it.ExtKeySDIFormat].String())
 	})
 }
+
+func TestInvoiceGetExtensions(t *testing.T) {
+	inv := baseInvoiceWithLines(t)
+	inv.Supplier.TaxID = &tax.Identity{
+		Country: "IT",
+		Code:    "12345678903",
+	}
+	require.NoError(t, inv.Calculate())
+	ext := inv.GetExtensions()
+	assert.Len(t, ext, 2)
+	assert.Equal(t, "FPR12", ext[0][it.ExtKeySDIFormat].String())
+}

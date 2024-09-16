@@ -9,15 +9,15 @@ import (
 // Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
 // invoices and cannot be determined automatically.
 const (
-	ExtKeyIssuePlace   = "mx-cfdi-issue-place"
-	ExtKeyPostCode     = "mx-cfdi-post-code"
-	ExtKeyFiscalRegime = "mx-cfdi-fiscal-regime"
-	ExtKeyUse          = "mx-cfdi-use"
-	ExtKeyProdServ     = "mx-cfdi-prod-serv"     // name from XML field: ClaveProdServ
-	ExtKeyRelType      = "mx-cfdi-rel-type"      // name from XML field: TipoRelacion
-	ExtKeyDocType      = "mx-cfdi-doc-type"      // name from XML field: TipoDeComprobante
-	ExtKeyTaxType      = "mx-cfdi-tax-type"      // name from XML field: TipoImpuesto
-	ExtKeyPaymentMeans = "mx-cfdi-payment-means" // name from XML field: FormaPago
+	ExtKeyIssuePlace   cbc.Key = "mx-cfdi-issue-place"
+	ExtKeyPostCode     cbc.Key = "mx-cfdi-post-code"
+	ExtKeyFiscalRegime cbc.Key = "mx-cfdi-fiscal-regime"
+	ExtKeyUse          cbc.Key = "mx-cfdi-use"
+	ExtKeyProdServ     cbc.Key = "mx-cfdi-prod-serv"     // name from XML field: ClaveProdServ
+	ExtKeyRelType      cbc.Key = "mx-cfdi-rel-type"      // name from XML field: TipoRelacion
+	ExtKeyDocType      cbc.Key = "mx-cfdi-doc-type"      // name from XML field: TipoDeComprobante
+	ExtKeyTaxType      cbc.Key = "mx-cfdi-tax-type"      // name from XML field: TipoImpuesto
+	ExtKeyPaymentMeans cbc.Key = "mx-cfdi-payment-means" // name from XML field: FormaPago
 )
 
 var extensions = []*cbc.KeyDefinition{

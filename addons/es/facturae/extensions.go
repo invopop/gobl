@@ -7,9 +7,9 @@ import (
 
 // Extension keys for use with FacturaE
 const (
-	ExtKeyCorrection   = "es-facturae-correction"
-	ExtKeyDocType      = "es-facturae-doc-type"
-	ExtKeyInvoiceClass = "es-facturae-invoice-class"
+	ExtKeyCorrection   cbc.Key = "es-facturae-correction"
+	ExtKeyDocType      cbc.Key = "es-facturae-doc-type"
+	ExtKeyInvoiceClass cbc.Key = "es-facturae-invoice-class"
 )
 
 var extensions = []*cbc.KeyDefinition{

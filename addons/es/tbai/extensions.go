@@ -8,9 +8,9 @@ import (
 
 // Extension keys for TicketBAI
 const (
-	ExtKeyExemption  = "es-tbai-exemption"
-	ExtKeyProduct    = "es-tbai-product"
-	ExtKeyCorrection = "es-tbai-correction"
+	ExtKeyExemption  cbc.Key = "es-tbai-exemption"
+	ExtKeyProduct    cbc.Key = "es-tbai-product"
+	ExtKeyCorrection cbc.Key = "es-tbai-correction"
 )
 
 var extensions = []*cbc.KeyDefinition{

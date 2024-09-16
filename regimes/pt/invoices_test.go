@@ -3,12 +3,10 @@ package pt_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -45,21 +43,6 @@ func validInvoice() *bill.Invoice {
 			},
 		},
 	}
-}
-
-func TestInvoiceScenarioCalculation(t *testing.T) {
-	inv := validInvoice()
-	inv.SetAddons(saft.V1)
-	inv.Payment = &bill.Payment{
-		Advances: []*pay.Advance{
-			{
-				Percent:     num.NewPercentage(1, 0),
-				Description: "prepaid",
-			},
-		},
-	}
-	require.NoError(t, inv.Calculate())
-	assert.Equal(t, "FR", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
 }
 
 func TestValidInvoice(t *testing.T) {
