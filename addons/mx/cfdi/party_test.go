@@ -29,7 +29,7 @@ func TestMigratePartyIdentities(t *testing.T) {
 		},
 	}
 
-	addon := tax.AddonForKey(cfdi.KeyV4)
+	addon := tax.AddonForKey(cfdi.V4)
 	addon.Normalizer(customer)
 
 	assert.Empty(t, customer.Identities)

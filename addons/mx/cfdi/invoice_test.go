@@ -19,7 +19,7 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Addons:    tax.WithAddons(cfdi.KeyV4),
+		Addons:    tax.WithAddons(cfdi.V4),
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
@@ -82,7 +82,7 @@ func TestValidInvoice(t *testing.T) {
 func TestNormalizeInvoice(t *testing.T) {
 	t.Run("no tax", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Addons = tax.WithAddons(cfdi.KeyV4)
+		inv.Addons = tax.WithAddons(cfdi.V4)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
@@ -90,7 +90,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	})
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Addons = tax.WithAddons(cfdi.KeyV4)
+		inv.Addons = tax.WithAddons(cfdi.V4)
 		delete(inv.Supplier.Ext, cfdi.ExtKeyPostCode)
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
 			&org.Address{

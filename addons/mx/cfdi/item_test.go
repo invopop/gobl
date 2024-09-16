@@ -56,7 +56,7 @@ func TestItemValidation(t *testing.T) {
 		},
 	}
 
-	addon := tax.AddonForKey(cfdi.KeyV4)
+	addon := tax.AddonForKey(cfdi.V4)
 	for _, ts := range tests {
 		t.Run(ts.name, func(t *testing.T) {
 			err := addon.Validator(ts.item)
@@ -72,7 +72,7 @@ func TestItemValidation(t *testing.T) {
 }
 
 func TestItemIdentityNormalization(t *testing.T) {
-	addon := tax.AddonForKey(cfdi.KeyV4)
+	addon := tax.AddonForKey(cfdi.V4)
 	tests := []struct {
 		Code     tax.ExtValue
 		Expected tax.ExtValue

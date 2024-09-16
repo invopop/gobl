@@ -3,6 +3,7 @@ package saft
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,7 +18,10 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key:        V1,
+		Key: V1,
+		Name: i18n.String{
+			i18n.EN: "Portugal SAF-T",
+		},
 		Extensions: extensions,
 		Tags: []*tax.TagSet{
 			invoiceTags,

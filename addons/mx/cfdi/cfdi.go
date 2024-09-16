@@ -6,6 +6,7 @@ package cfdi
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -13,7 +14,7 @@ import (
 
 // Key to identify the CFDI addon.
 const (
-	KeyV4 cbc.Key = "mx-cfdi-v4"
+	V4 cbc.Key = "mx-cfdi-v4"
 )
 
 // Official CFDI codes to include in stamps.
@@ -34,7 +35,10 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key:        KeyV4,
+		Key: V4,
+		Name: i18n.String{
+			i18n.EN: "Mexican SAT CFDI v4.X",
+		},
 		Extensions: extensions,
 		Normalizer: normalize,
 		Scenarios:  scenarios,

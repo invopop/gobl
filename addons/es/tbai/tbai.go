@@ -4,12 +4,13 @@ package tbai
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
-	// KeyV1 for TicketBAI versions 1.x
-	KeyV1 cbc.Key = "es-tbai-v1"
+	// V1 for TicketBAI versions 1.x
+	V1 cbc.Key = "es-tbai-v1"
 )
 
 // Official stamps or codes validated by government agencies
@@ -24,7 +25,10 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key:         KeyV1,
+		Key: V1,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI",
+		},
 		Extensions:  extensions,
 		Validator:   validate,
 		Normalizer:  normalize,

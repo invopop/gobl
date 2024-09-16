@@ -13,7 +13,7 @@ import (
 type Addons struct {
 	// Addons defines a list of keys used to identify tax addons that apply special
 	// normalization, scenarios, and validation rules to a document.
-	Addons []cbc.Key `json:"$addons,omitempty" jsonschema:"title=Addons"`
+	List []cbc.Key `json:"$addons,omitempty" jsonschema:"title=Addons"`
 }
 
 // AddonDef is an interface that defines the methods that a tax add-on must implement.
@@ -51,18 +51,18 @@ type AddonDef struct {
 
 // WithAddons prepares the Addons struct with the provided list of keys.
 func WithAddons(addons ...cbc.Key) Addons {
-	return Addons{Addons: addons}
+	return Addons{List: addons}
 }
 
 // SetAddons is a helper method to set the list of addons
 func (as *Addons) SetAddons(addons ...cbc.Key) {
-	as.Addons = addons
+	as.List = addons
 }
 
 // GetAddons provides a slice of Addon instances.
 func (as Addons) GetAddons() []*AddonDef {
-	list := make([]*AddonDef, 0, len(as.Addons))
-	for _, ak := range as.Addons {
+	list := make([]*AddonDef, 0, len(as.List))
+	for _, ak := range as.List {
 		if a := AddonForKey(ak); a != nil {
 			list = append(list, a)
 		}
@@ -73,7 +73,7 @@ func (as Addons) GetAddons() []*AddonDef {
 // Validate ensures that the list of addons is valid. This struct is designed to be
 // embedded, so we don't perform a regular validation on the struct itself.
 func (as Addons) Validate() error {
-	return validation.Validate(as.Addons, validation.Each(AddonRegistered))
+	return validation.Validate(as.List, validation.Each(AddonRegistered))
 }
 
 type addonCollection struct {

@@ -15,7 +15,7 @@ import (
 
 func validTicketBAIInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Addons: tax.WithAddons(tbai.KeyV1),
+		Addons: tax.WithAddons(tbai.V1),
 		Code:   "123",
 		Supplier: &org.Party{
 			Name: "Test Supplier",

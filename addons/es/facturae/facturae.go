@@ -4,12 +4,13 @@ package facturae
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
-	// KeyV3 for FacturaE versions 3.x
-	KeyV3 cbc.Key = "es-facturae-v3"
+	// V3 for FacturaE versions 3.x
+	V3 cbc.Key = "es-facturae-v3"
 )
 
 func init() {
@@ -18,7 +19,10 @@ func init() {
 
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
-		Key:         KeyV3,
+		Key: V3,
+		Name: i18n.String{
+			i18n.EN: "FacturaE",
+		},
 		Extensions:  extensions,
 		Normalizer:  normalize,
 		Scenarios:   scenarios,

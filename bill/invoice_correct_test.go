@@ -215,7 +215,7 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
 		Regime: tax.WithRegime("ES"),
-		Addons: tax.WithAddons(facturae.KeyV3),
+		Addons: tax.WithAddons(facturae.V3),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{

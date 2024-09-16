@@ -32,7 +32,9 @@ func validateInvoice(inv *bill.Invoice) error {
 				inv.Type.In(es.InvoiceCorrectionTypes...),
 				validation.Required,
 			),
-			validation.By(validateInvoicePreceding),
+			validation.Each(
+				validation.By(validateInvoicePreceding),
+			),
 			validation.Skip,
 		),
 	)
