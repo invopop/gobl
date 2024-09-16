@@ -15,22 +15,22 @@ func WithRegime(country l10n.TaxCountryCode) Regime {
 }
 
 // GetRegime returns the regime country code.
-func (t Regime) GetRegime() l10n.TaxCountryCode {
-	return t.Country
+func (r Regime) GetRegime() l10n.TaxCountryCode {
+	return r.Country
 }
 
 // SetRegime updates the current regime country code, after first checking to ensure
-// that the tax regime is actuall defined. Missing regimes will be silently replace
+// that the regime is actually defined. Missing regimes will silently replace
 // the current regime with an empty value.
-func (t *Regime) SetRegime(country l10n.TaxCountryCode) {
+func (r *Regime) SetRegime(country l10n.TaxCountryCode) {
 	if Regimes().For(country.Code()) == nil {
-		t.Country = ""
+		r.Country = ""
 		return
 	}
-	t.Country = country
+	r.Country = country
 }
 
-// RefimeDef provides the associated regime definition.
+// RegimeDef provides the associated regime definition.
 func (r Regime) RegimeDef() *RegimeDef {
 	return Regimes().For(r.Country.Code())
 }

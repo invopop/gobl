@@ -453,7 +453,7 @@ func (inv *Invoice) calculate() error {
 	}
 
 	// Lines
-	if err := calculateLines(r, inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
+	if err := calculateLines(inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
 		return validation.Errors{"lines": err}
 	}
 	t.Sum = calculateLineSum(inv.Lines, inv.Currency)

@@ -66,7 +66,7 @@ func Validate(doc any) error {
 	return nil
 }
 
-// Normalizer will attempt to clean the object passed to it.
+// Normalize will attempt to clean the object passed to it.
 func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:

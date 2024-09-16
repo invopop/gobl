@@ -33,7 +33,7 @@ func newAddon() *tax.AddonDef {
 }
 
 func normalize(_ any) {
-	return
+	// nothing to normalize yet
 }
 
 func validate(doc any) error {

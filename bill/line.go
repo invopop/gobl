@@ -78,7 +78,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 }
 
 // calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate(r *tax.RegimeDef, cur currency.Code, rates []*currency.ExchangeRate) error {
+func (l *Line) calculate(cur currency.Code, rates []*currency.ExchangeRate) error {
 	if l.Item == nil {
 		return nil
 	}
@@ -202,10 +202,10 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	return &l2
 }
 
-func calculateLines(r *tax.RegimeDef, lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
+func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		if err := l.calculate(r, cur, rates); err != nil {
+		if err := l.calculate(cur, rates); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
 		}
 	}

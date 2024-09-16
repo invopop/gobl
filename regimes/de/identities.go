@@ -27,12 +27,11 @@ var identityKeyDefinitions = []*cbc.KeyDefinition{
 	},
 }
 
-func normalizeIdentity(id *org.Identity) error {
+func normalizeIdentity(id *org.Identity) {
 	if id == nil || id.Key != IdentityKeyTaxNumber {
-		return nil
+		return
 	}
 	code := strings.ToUpper(id.Code.String())
 	code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
 	id.Code = cbc.Code(code)
-	return nil
 }

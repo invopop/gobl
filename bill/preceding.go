@@ -43,7 +43,7 @@ func (p *Preceding) Validate() error {
 	return p.ValidateWithContext(context.Background())
 }
 
-// Calculate tries to normalize the preceding data
+// Normalize tries to normalize the preceding data.
 func (p *Preceding) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
 		return

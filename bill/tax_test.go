@@ -9,10 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTaxValidation(t *testing.T) {
-	// TODO
-}
-
 func TestInvoiceTaxTagsMigration(t *testing.T) {
 	// Sample document taken from spanish examples.
 	in := `{

@@ -147,7 +147,7 @@ type Source struct {
 	URL string `json:"url" jsonschema:"title=URL,format=uri"`
 }
 
-// Rate defines a single rate inside a category
+// RateDef defines a single rate inside a category
 type RateDef struct {
 	// Key identifies this rate within the system
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
@@ -432,7 +432,7 @@ func (r *RegimeDef) CategoryDef(code cbc.Code) *CategoryDef {
 	return nil
 }
 
-// Rate provides the rate definition for the provided category code
+// RateDef provides the rate definition for the provided category code
 // and rate key.
 func (r *RegimeDef) RateDef(cat cbc.Code, key cbc.Key) *RateDef {
 	c := r.CategoryDef(cat)

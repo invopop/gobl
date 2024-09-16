@@ -89,8 +89,8 @@ func newAddonCollection() *addonCollection {
 }
 
 // add will register the addon in the collection
-func (c *addonCollection) add(a *AddonDef) {
-	c.list[a.Key] = a
+func (c *addonCollection) add(ad *AddonDef) {
+	c.list[ad.Key] = ad
 }
 
 // RegisterAddonDef adds a new add-on to the shared global list of tax add-on definitions.
@@ -111,8 +111,8 @@ func AddonForKey(key cbc.Key) *AddonDef {
 func AllAddons() []*AddonDef {
 	all := make([]*AddonDef, len(addons.list))
 	i := 0
-	for _, a := range addons.list {
-		all[i] = a
+	for _, ao := range addons.list {
+		all[i] = ao
 		i++
 	}
 	return all
@@ -120,11 +120,11 @@ func AllAddons() []*AddonDef {
 
 // WithContext adds this addon to the given context, alongside
 // its validator.
-func (a *AddonDef) WithContext(ctx context.Context) context.Context {
-	if a == nil {
+func (ad *AddonDef) WithContext(ctx context.Context) context.Context {
+	if ad == nil {
 		return ctx
 	}
-	ctx = contextWithValidator(ctx, a.Validator)
+	ctx = contextWithValidator(ctx, ad.Validator)
 	return ctx
 }
 
@@ -146,13 +146,13 @@ func (addonValidation) Validate(value interface{}) error {
 }
 
 // Validate checks that the add-on has been defined correctly.
-func (ao *AddonDef) Validate() error {
-	return validation.ValidateStruct(ao,
-		validation.Field(&ao.Key, validation.Required, AddonRegistered),
-		validation.Field(&ao.Name, validation.Required),
-		validation.Field(&ao.Extensions),
-		validation.Field(&ao.Tags),
-		validation.Field(&ao.Scenarios),
-		validation.Field(&ao.Corrections),
+func (ad *AddonDef) Validate() error {
+	return validation.ValidateStruct(ad,
+		validation.Field(&ad.Key, validation.Required, AddonRegistered),
+		validation.Field(&ad.Name, validation.Required),
+		validation.Field(&ad.Extensions),
+		validation.Field(&ad.Tags),
+		validation.Field(&ad.Scenarios),
+		validation.Field(&ad.Corrections),
 	)
 }
