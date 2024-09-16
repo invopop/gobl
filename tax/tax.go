@@ -14,9 +14,9 @@ func init() {
 		Set{},
 		Extensions{},
 		Total{},
-		Regime{},
+		RegimeDef{},
+		AddonDef{},
 		Identity{},
-		Addon{},
 	)
 }
 
@@ -43,8 +43,9 @@ type Normalizers []Normalizer
 // and provide an error if the object is not valid.
 type Validator func(doc any) error
 
-// ContextWithValidator will add the provided validator to the current validators.
-func ContextWithValidator(ctx context.Context, v Validator) context.Context {
+// contextWithValidator will add the provided validator to the current validators.
+// This should be prepared from the Addon or Regime itself.
+func contextWithValidator(ctx context.Context, v Validator) context.Context {
 	list := append(Validators(ctx), v)
 	return context.WithValue(ctx, validtorsKey, list)
 }

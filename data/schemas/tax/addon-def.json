@@ -1,14 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gobl.org/draft-0/tax/addon",
-  "$ref": "#/$defs/Addon",
+  "$id": "https://gobl.org/draft-0/tax/addon-def",
+  "$ref": "#/$defs/AddonDef",
   "$defs": {
-    "Addon": {
+    "AddonDef": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
           "description": "Key that defines how to uniquely idenitfy the add-on."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Name of the add-on"
+        },
+        "description": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description of the add-on"
         },
         "extensions": {
           "items": {
@@ -17,6 +27,14 @@
           "type": "array",
           "title": "Extensions",
           "description": "Extensions defines the list of extensions that are associated with an add-on."
+        },
+        "tags": {
+          "items": {
+            "$ref": "#/$defs/TagSet"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags is slice of tag sets that define what can be assigned to each document schema."
         },
         "scenarios": {
           "items": {
@@ -35,11 +53,12 @@
       "type": "object",
       "required": [
         "key",
+        "name",
         "extensions",
         "scenarios",
         "corrections"
       ],
-      "description": "Addon is an interface that defines the methods that a tax add-on must implement."
+      "description": "AddonDef is an interface that defines the methods that a tax add-on must implement."
     },
     "CorrectionDefinition": {
       "properties": {
@@ -165,6 +184,29 @@
         "list"
       ],
       "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
+    },
+    "TagSet": {
+      "properties": {
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Schema that the tags are associated with."
+        },
+        "list": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+          },
+          "type": "array",
+          "title": "List",
+          "description": "List of tags for the schema"
+        }
+      },
+      "type": "object",
+      "required": [
+        "schema",
+        "list"
+      ],
+      "description": "TagSet defines a set of tags and their descriptions that can be used for a specific schema in the context of a Regime or Addon."
     }
   }
 }

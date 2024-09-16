@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	// VAT
 	{
 		Code: tax.CategoryVAT,
@@ -20,14 +20,14 @@ var taxCategories = []*tax.Category{
 			i18n.PT: "Imposto sobre o Valor Acrescentado",
 		},
 		Retained: false,
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PT: "Tipo Geral",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-AC",
@@ -54,7 +54,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Intermediate Rate",
 					i18n.PT: "Taxa Intermédia", //nolint:misspell
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-AC",
@@ -81,7 +81,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced Rate",
 					i18n.PT: "Taxa Reduzida",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-AC",

@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,7 +18,7 @@ const (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Custom keys used typically in meta or codes information.
@@ -27,8 +28,8 @@ const (
 )
 
 // New instantiates a new Polish regime.
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "PL",
 		Currency: currency.PLN,
 		Name: i18n.String{
@@ -39,11 +40,13 @@ func New() *tax.Regime {
 		// ChargeKeys:       chargeKeyDefinitions,       // charges.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Extensions:       extensionKeys,              // extensions.go
-		Tags:             invoiceTags,
-		Scenarios:        scenarios, // scenarios.go
-		Validator:        Validate,
-		Normalizer:       Normalize,
-		Categories:       taxCategories, // tax_categories.go
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
+		Scenarios:  scenarios, // scenarios.go
+		Validator:  Validate,
+		Normalizer: Normalize,
+		Categories: taxCategories, // tax_categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

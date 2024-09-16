@@ -6,11 +6,12 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Local tax category definitions which are not considered standard.
@@ -48,16 +49,18 @@ const (
 )
 
 // New provides the Spanish tax regime definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "ES",
 		Currency: currency.EUR,
 		Name: i18n.String{
 			i18n.EN: "Spain",
 			i18n.ES: "España",
 		},
-		TimeZone:     "Europe/Madrid",
-		Tags:         invoiceTags,
+		TimeZone: "Europe/Madrid",
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
 		IdentityKeys: identityKeyDefinitions,
 		Categories:   taxCategories,
 		Validator:    Validate,

@@ -144,7 +144,7 @@ func (v *invoiceValidator) validatePreceding(value any) error {
 }
 
 func (v *invoiceValidator) isSimplified() bool {
-	return v.inv.Tax.ContainsTag(tax.TagSimplified)
+	return v.inv.HasTags(tax.TagSimplified)
 }
 
 func validateTaxCombo(tc *tax.Combo) error {

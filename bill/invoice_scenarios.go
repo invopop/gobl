@@ -10,15 +10,6 @@ func (inv *Invoice) GetType() cbc.Key {
 	return inv.Type
 }
 
-// GetTags is used to grab a list of tags from the invoice as part of the
-// tax.ScenarioDocument interface.
-func (inv *Invoice) GetTags() []cbc.Key {
-	if inv.Tax == nil {
-		return nil
-	}
-	return inv.Tax.Tags
-}
-
 // GetExtensions goes through the invoice and grabs all the extensions that are in
 // use and expected to be used as part of a scenario.
 func (inv *Invoice) GetExtensions() []tax.Extensions {
@@ -49,10 +40,10 @@ func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
 func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 	ss := tax.NewScenarioSet(ShortSchemaInvoice)
 
-	if r := inv.TaxRegime(); r != nil {
+	if r := inv.RegimeDef(); r != nil {
 		ss.Merge(r.Scenarios)
 	}
-	for _, a := range inv.Tax.GetAddons() {
+	for _, a := range inv.GetAddons() {
 		ss.Merge(a.Scenarios)
 	}
 

@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/pt/saft"
-	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -14,9 +12,7 @@ import (
 func TestTaxRateMigration(t *testing.T) {
 	// Valid old rate
 	inv := validInvoice()
-	inv.Tax = &bill.Tax{
-		Addons: []cbc.Key{saft.V1},
-	}
+	inv.SetAddons(saft.V1)
 	inv.Lines[0].Taxes[0].Rate = "exempt+outlay"
 
 	err := inv.Calculate()

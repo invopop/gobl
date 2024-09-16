@@ -4,12 +4,16 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9756fad3e5d0b897c9941225585ceb8b4d0c740c0f75b81c8ed756fc2f0df2bf"
+			"val": "97fae0dfcd7a3da5a336c6424de91155ffb91e4e50523520ed648a6003ca71e8"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$tags": [
+			"b2g"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -18,9 +22,6 @@
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT",
-			"tags": [
-				"b2g"
-			],
 			"ext": {
 				"it-sdi-document-type": "TD01",
 				"it-sdi-format": "FPA12"

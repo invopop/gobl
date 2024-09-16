@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Identification code types unique to the United Kingdom.
@@ -28,8 +28,8 @@ var (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:         "GB",
 		AltCountryCodes: altCountryCodes,
 		Currency:        currency.GBP,
@@ -42,7 +42,9 @@ func New() *tax.Regime {
 		Scenarios: []*tax.ScenarioSet{
 			common.InvoiceScenarios(),
 		},
-		Tags:       common.InvoiceTags(),
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
 		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{

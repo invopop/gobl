@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -20,7 +19,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	assert.Empty(t, i.Tax.Ext[facturae.ExtKeyDocType])
 
 	i = testInvoiceStandard(t)
-	i.Tax.Addons = []cbc.Key{facturae.KeyV3}
+	i.SetAddons(facturae.KeyV3)
 	require.NoError(t, i.Calculate())
 	assert.Len(t, i.Notes, 0)
 	assert.Equal(t, i.Tax.Ext[facturae.ExtKeyDocType].String(), "FC")

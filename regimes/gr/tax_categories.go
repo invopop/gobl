@@ -10,7 +10,7 @@ import (
 // TaxRateIsland is used to define the island reduced tax rates
 const TaxRateIsland cbc.Key = "island"
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// VAT
 	//
@@ -40,14 +40,14 @@ var taxCategories = []*tax.Category{
 			ExtKeyMyDATAIncomeCat,
 			ExtKeyMyDATAIncomeType,
 		},
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard rate",
 					i18n.EL: "Κανονικός συντελεστής",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(24, 2),
 					},
@@ -62,7 +62,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced rate",
 					i18n.EL: "Μειωμένος συντελεστής",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(13, 2),
 					},
@@ -77,7 +77,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Super-reduced rate",
 					i18n.EL: "Υπερμειωμένος συντελεστής",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(6, 2),
 					},
@@ -92,7 +92,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Standard rate (Island)",
 					i18n.EL: "Κανονικός συντελεστής (Νησί)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(17, 2),
 					},
@@ -107,7 +107,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced rate (Island)",
 					i18n.EL: "Μειωμένος συντελεστής (Νησί)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(9, 2),
 					},
@@ -122,7 +122,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Super-reduced rate (Island)",
 					i18n.EL: "Υπερμειωμένος συντελεστής (Νησί)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(4, 2),
 					},

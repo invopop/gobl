@@ -143,7 +143,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	}
 
 	// Add our tax country code to the schema ID
-	code := strings.ToLower(inv.TaxCountry().String())
+	code := strings.ToLower(inv.GetRegime().String())
 	id := fmt.Sprintf("%s?tax_regime=%s", js.ID.String(), code)
 	js.ID = jsonschema.ID(id)
 	js.Comments = fmt.Sprintf("Generated dynamically for %s", code)
@@ -155,7 +155,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 
 	// Try to load the regime and its correction definition for the document
 	// type if there is one defined.
-	r := inv.TaxRegime()
+	r := inv.RegimeDef()
 	if r == nil {
 		return js, nil
 	}
@@ -308,11 +308,11 @@ func (inv *Invoice) correctionDef() *tax.CorrectionDefinition {
 		Schema: ShortSchemaInvoice,
 	}
 
-	r := inv.TaxRegime()
+	r := inv.RegimeDef()
 	if r != nil {
 		cd = cd.Merge(r.Corrections.Def(ShortSchemaInvoice))
 	}
-	for _, a := range inv.Tax.GetAddons() {
+	for _, a := range inv.GetAddons() {
 		cd = cd.Merge(a.Corrections.Def(ShortSchemaInvoice))
 	}
 

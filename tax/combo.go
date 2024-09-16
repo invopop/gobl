@@ -39,11 +39,11 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	// First perform combo validation with the regime from the context,
 	// or the country override.
 
-	var r *Regime
+	var r *RegimeDef
 	if c.Country.Empty() {
-		r = RegimeFromContext(ctx)
+		r = RegimeDefFromContext(ctx)
 	} else {
-		r = RegimeFor(c.Country.Code())
+		r = RegimeDefFor(c.Country.Code())
 	}
 	return ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category,
@@ -78,7 +78,7 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.
 		country = c.Country
 	}
 
-	r := RegimeFor(country.Code())
+	r := RegimeDefFor(country.Code())
 	if r == nil {
 		// if the tax regime is not yet defined, don't try to perform
 		// any extra calculations.
@@ -88,8 +88,8 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.
 	return c.calculateForRegime(r, tags, date)
 }
 
-func (c *Combo) calculateForRegime(r *Regime, tags []cbc.Key, date cal.Date) error {
-	category := r.Category(c.Category)
+func (c *Combo) calculateForRegime(r *RegimeDef, tags []cbc.Key, date cal.Date) error {
+	category := r.CategoryDef(c.Category)
 	if category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
 	}
@@ -110,13 +110,13 @@ func (c *Combo) calculateForRegime(r *Regime, tags []cbc.Key, date cal.Date) err
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
-func (c *Combo) prepareRate(category *Category, tags []cbc.Key, date cal.Date) error {
+func (c *Combo) prepareRate(category *CategoryDef, tags []cbc.Key, date cal.Date) error {
 	// If there is no rate for the combo, there isn't much else we can do.
 	if c.Rate == cbc.KeyEmpty {
 		return nil
 	}
 
-	rate := category.Rate(c.Rate)
+	rate := category.RateDef(c.Rate)
 	if rate == nil {
 		return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
 	}

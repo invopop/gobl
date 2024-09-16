@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Custom keys used typically in meta information
@@ -30,8 +30,8 @@ const (
 )
 
 // New instantiates a new Portugal regime for the given zone.
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "PT",
 		Currency: currency.EUR,
 		Name: i18n.String{

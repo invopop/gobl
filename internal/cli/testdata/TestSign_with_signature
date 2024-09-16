@@ -1,6 +1,7 @@
 {
     "$schema": "https://gobl.org/draft-0/envelope",
     "doc": {
+        "$regime": "ES",
         "$schema": "https://gobl.org/draft-0/bill/invoice",
         "code": "SAMPLE-001",
         "currency": "EUR",
@@ -130,13 +131,13 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "ea49506c22cf15f339b3cfd4dc2bc3543f49e09c2e045cd31d932c408fafdec3"
+            "val": "f46d4faf052c8e38a90f4659fda55e0f39ad1910d6014e68756a6a5afd4ab3cf"
         },
         "uuid": "4905f174-0384-11ed-9fa6-b24117999d50"
     },
     "sigs": [
         "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImYxZDU0ZDQzNGJhMDdkZGQ5MGYzM2Q3MTFmNmE2NzI1YTgwMjI4ZjgwY2Q4MzFmMTFmY2FhMjEzNTc3OTY1NzEifX0.RRcEnMEaexaM27aXlR1V4Wqox5ZNoF6MgteqvX7wsS08GkdFVS1EDOh_rm_zCV6RRryu6jrLEb7lnyGPy8pIiw",
         "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImVhNDk1MDZjMjJjZjE1ZjMzOWIzY2ZkNGRjMmJjMzU0M2Y0OWUwOWMyZTA0NWNkMzFkOTMyYzQwOGZhZmRlYzMifX0.P_ystp5Ou08ExZaJv_kCgxxTjI-SiGLGj02dEDRpXUxKqxx89pD0psFu-nG0tqybtHMYqg-2cczoYvtHa8jVaQ",
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImVhNDk1MDZjMjJjZjE1ZjMzOWIzY2ZkNGRjMmJjMzU0M2Y0OWUwOWMyZTA0NWNkMzFkOTMyYzQwOGZhZmRlYzMifX0.2ioeo_iWblIn-q3k4nobtfTKAEiZYZ02dRdV8bm6SetQvuYWcNzdAncmTgYxptOFP-aS3YbXeEKQhaBUqYR85Q"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImY0NmQ0ZmFmMDUyYzhlMzhhOTBmNDY1OWZkYTU1ZTBmMzlhZDE5MTBkNjAxNGU2ODc1NmE2YTVhZmQ0YWIzY2YifX0.BWtRHPS0EbxaKDcKDrEjxcHjCWkiLmxj99xpigk30mocX9wczVTTZoQDhv-hQqYTNj1KniHvYxYcHEiJ94MHNQ"
     ]
 }

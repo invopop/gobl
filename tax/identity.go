@@ -85,7 +85,7 @@ func (id *Identity) String() string {
 }
 
 // Regime provides the regime object for this tax identity.
-func (id *Identity) Regime() *Regime {
+func (id *Identity) Regime() *RegimeDef {
 	if id == nil {
 		return nil
 	}

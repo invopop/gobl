@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -215,10 +214,11 @@ func TestCorrectWithData(t *testing.T) {
 func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("ES"),
+		Addons: tax.WithAddons(facturae.KeyV3),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{
-			Addons:        []cbc.Key{facturae.KeyV3},
 			PricesInclude: tax.CategoryVAT,
 		},
 		Supplier: &org.Party{
@@ -308,6 +308,7 @@ func testInvoicePTForCorrection(t *testing.T) *bill.Invoice {
 func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("FR"),
 		Series: "TEST",
 		Code:   "123",
 		Supplier: &org.Party{
@@ -351,6 +352,7 @@ func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("CO"),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{

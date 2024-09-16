@@ -163,7 +163,7 @@ func (tc *TotalCalculator) calculateBaseCategoryTotal(ct *CategoryTotal) {
 // matchPrecision is used to match the precision of two amounts according to the
 // current rounding rule.
 func (tc *TotalCalculator) matchPrecision(a, b num.Amount) num.Amount {
-	r := RegimeFor(tc.Country.Code())
+	r := RegimeDefFor(tc.Country.Code())
 	if r != nil {
 		switch r.CalculatorRoundingRule {
 		case CalculatorRoundThenSum:

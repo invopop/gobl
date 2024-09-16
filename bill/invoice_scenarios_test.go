@@ -21,24 +21,17 @@ func TestScenarios(t *testing.T) {
 
 	t.Run("invalid tags", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				"random",
-			},
-		}
-		require.ErrorContains(t, inv.Calculate(), "tax: (tags: invalid tag 'random'.)")
+		inv.SetTags("random")
+		assert.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "$tags: 'random' undefined.")
 	})
 
 	t.Run("scenario for new note", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.SetTags(tax.TagReverseCharge)
 		inv.Supplier.TaxID = &tax.Identity{
 			Country: "IT",
 			Code:    "12345678903",
-		}
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				tax.TagReverseCharge,
-			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Notes, 1)
@@ -47,14 +40,10 @@ func TestScenarios(t *testing.T) {
 
 	t.Run("scenario for existing note", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.SetTags(tax.TagReverseCharge)
 		inv.Supplier.TaxID = &tax.Identity{
 			Country: "IT",
 			Code:    "12345678903",
-		}
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				tax.TagReverseCharge,
-			},
 		}
 		inv.Notes = append(inv.Notes, &cbc.Note{
 			Key:  cbc.NoteKeyLegal,
@@ -84,8 +73,8 @@ func TestScenarios(t *testing.T) {
 			Country: "IT",
 			Code:    "12345678903",
 		}
+		inv.SetTags(tax.TagB2G)
 		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{"b2g"},
 			Ext: tax.Extensions{
 				it.ExtKeySDIFormat: "XXXX",
 			},

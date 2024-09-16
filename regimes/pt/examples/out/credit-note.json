@@ -4,12 +4,16 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "46927fbd42b9d58bb68899d08d54e723d77382f4f8f05b4f13f3c89a5ba57def"
+			"val": "2e734ea5d8be0c7985ca9f06798fb23f899be8db57199c7ef6540bf3c9c752f7"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "credit-note",
 		"code": "",
@@ -22,9 +26,6 @@
 			}
 		],
 		"tax": {
-			"addons": [
-				"pt-saft-v1"
-			],
 			"ext": {
 				"pt-saft-invoice-type": "NC"
 			}

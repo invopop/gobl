@@ -8,7 +8,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// VAT
 	//
@@ -32,14 +32,14 @@ var taxCategories = []*tax.Category{
 				to its local needs.
 			`),
 		},
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
@@ -51,7 +51,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tipo General",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2012, 9, 1),
 						Percent: num.MakePercentage(210, 3),
@@ -76,7 +76,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Standard Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo General + Recargo de Equivalencia",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:     cal.NewDate(2012, 9, 1),
 						Percent:   num.MakePercentage(210, 3),
@@ -95,7 +95,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Tipo Reducido",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2012, 9, 1),
 						Percent: num.MakePercentage(100, 3),
@@ -120,7 +120,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:     cal.NewDate(2012, 9, 1),
 						Percent:   num.MakePercentage(100, 3),
@@ -139,7 +139,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Super-Reduced Rate",
 					i18n.ES: "Tipo Superreducido",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(1995, 1, 1),
 						Percent: num.MakePercentage(40, 3),
@@ -156,7 +156,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Super-Reduced Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:     cal.NewDate(1995, 1, 1),
 						Percent:   num.MakePercentage(40, 3),
@@ -190,14 +190,14 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto General Indirecto Canario",
 		},
 		// This is a subset of the possible rates.
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
@@ -209,7 +209,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tipo General",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(70, 3),
 					},
@@ -221,7 +221,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Tipo Reducido",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(30, 3),
 					},
@@ -247,7 +247,7 @@ var taxCategories = []*tax.Category{
 		// IPSI rates are complex and don't align well regular rates. Users are
 		// recommended to include whatever percentage applies to their situation
 		// directly in the invoice.
-		Rates: []*tax.Rate{},
+		Rates: []*tax.RateDef{},
 	},
 
 	//
@@ -264,14 +264,14 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Personal income tax.",
 			i18n.ES: "Impuesto sobre la renta de las personas físicas.",
 		},
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: TaxRatePro,
 				Name: i18n.String{
 					i18n.EN: "Professional Rate",
 					i18n.ES: "Profesionales",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2015, 7, 12),
 						Percent: num.MakePercentage(150, 3),
@@ -296,7 +296,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Professional Starting Rate",
 					i18n.ES: "Profesionales Inicio",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2007, 1, 1),
 						Percent: num.MakePercentage(70, 3),
@@ -309,7 +309,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Rental or Interest Capital",
 					i18n.ES: "Alquileres o Intereses de Capital",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2007, 1, 1),
 						Percent: num.MakePercentage(190, 3),
@@ -322,7 +322,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Modules Rate",
 					i18n.ES: "Tipo Modulos",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2007, 1, 1),
 						Percent: num.MakePercentage(10, 3),

@@ -42,7 +42,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!inv.Tax.ContainsTag(tax.TagSimplified),
+				!inv.HasTags(tax.TagSimplified),
 				validation.Required,
 				validation.By(v.commercialCustomer),
 			),

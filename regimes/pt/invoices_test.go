@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -50,9 +49,7 @@ func validInvoice() *bill.Invoice {
 
 func TestInvoiceScenarioCalculation(t *testing.T) {
 	inv := validInvoice()
-	inv.Tax = &bill.Tax{
-		Addons: []cbc.Key{saft.V1},
-	}
+	inv.SetAddons(saft.V1)
 	inv.Payment = &bill.Payment{
 		Advances: []*pay.Advance{
 			{

@@ -4,21 +4,22 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "65627839cbccb4970b1c0a0af2798918294737c58fc1322007e2697bc696b235"
+			"val": "ad1094118085f6b03e0e7f0cc1b0eedf71766f5ba8233d4c93e6b3d22f4a048f"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "",
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
-			"addons": [
-				"pt-saft-v1"
-			],
 			"ext": {
 				"pt-saft-invoice-type": "FT"
 			}

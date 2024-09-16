@@ -20,7 +20,7 @@ func main() {
 }
 
 func generate() error {
-	for _, ao := range tax.Addons() {
+	for _, ao := range tax.AllAddons() {
 		doc, err := schema.NewObject(ao)
 		if err != nil {
 			return err

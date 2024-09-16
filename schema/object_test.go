@@ -20,7 +20,7 @@ import (
 // See also document tests performed in `gobl` package.
 
 func TestObjectUUID(t *testing.T) {
-	tr := &tax.Regime{} // doesn't have a UUID field!
+	tr := &tax.RegimeDef{} // doesn't have a UUID field!
 	obj, err := schema.NewObject(tr)
 	assert.NoError(t, err)
 	assert.Empty(t, obj.UUID())

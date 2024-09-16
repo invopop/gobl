@@ -10,7 +10,7 @@ import (
 )
 
 func TestRegimeTimeLocation(t *testing.T) {
-	r := new(tax.Regime)
+	r := new(tax.RegimeDef)
 	r.TimeZone = "Europe/Amsterdam"
 	loc, err := time.LoadLocation("Europe/Amsterdam")
 	require.NoError(t, err)

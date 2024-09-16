@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -17,15 +16,18 @@ var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,
 }
 
-var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
-	{
-		Key: TagInvoiceReceipt,
-		Name: i18n.String{
-			i18n.EN: "Invoice-receipt",
-			i18n.PT: "Fatura-recibo",
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.KeyDefinition{
+		{
+			Key: TagInvoiceReceipt,
+			Name: i18n.String{
+				i18n.EN: "Invoice-receipt",
+				i18n.PT: "Fatura-recibo",
+			},
 		},
 	},
-})
+}
 
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
@@ -50,7 +52,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				if !ok {
 					return false
 				}
-				return inv.Tax.ContainsTag(TagInvoiceReceipt) || inv.Totals.Paid()
+				return inv.HasTags(TagInvoiceReceipt) || inv.Totals.Paid()
 			},
 			Ext: tax.Extensions{
 				ExtKeyInvoiceType: "FR",

@@ -1,6 +1,7 @@
 {
     "$schema": "https://gobl.org/draft-0/envelope",
     "doc": {
+        "$regime": "ES",
         "$schema": "https://gobl.org/draft-0/bill/invoice",
         "code": "",
         "currency": "EUR",
@@ -136,14 +137,14 @@
             "total_with_tax": "1717.20"
         },
         "type": "credit-note",
-        "uuid": "7f5b5a10-00b2-11ef-9067-8e3f6d4fff0a"
+        "uuid": "0191fb27-f9d3-7c25-879b-0d40aa7aa13e"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "478cc6e41ea1d8a2582102009fbaf98f570bfd74ee4111681f7f62ed3738d38b"
+            "val": "d885a01a036d2396bf9723d8861efb3889eca0a81c7c696429298c352ea4a0ae"
         },
         "draft": true,
-        "uuid": "7f5b59ef-00b2-11ef-9067-8e3f6d4fff0a"
+        "uuid": "0191fb27-f9d3-7c1b-b846-c9b2ba3a8353"
     }
 }

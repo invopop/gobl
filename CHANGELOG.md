@@ -6,19 +6,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-Another significant release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
+Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
 
-This implies that basic GOBL documents can be created anywhere, and local rules related to a specific format can be added if needed.
+Tax Regimes are now also defined using the `$regime` keyword at the top of the document under the `$schema` and alongside `$addons` and `$tags`. This is a significant move with the aim of making the core GOBL project as flexible as possible, while allow greater levels of validation and customization to be added as needed.
+
+Another very significant internal change is around normalization. There is now a much clearer difference internally between the regular `Calculate` methods used when there is some type of math operation to perform, and the `Normalize` methods that designed to never raise errors and simply clean the data as much as possible _before_ calculations and then validation.
 
 ### Added
 
+- `tax`: `Regime` type now used to add `$regime` attribute to documents.
+- `tax`: `Addons` type which uses the `$addons` attribute to control which addons apply to the document.
+- `tax`: `Tags` type which adds the `$tags` attribute.
 - `tax`: `Scenario` now has `Filter` property to set a code function
-- `tax`: `Addon` interface defined.
-- `mx-cfdi-v4`: introducing the first addon.
+- `tax`: `AddonDef` provides support for defining addon extension packs.
 
 ### Changed
 
-- `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package.
+- Renamed `Calculate` methods to `Normalize` and removed errors, to clearly differentiate between the two processes.
+- `bill`: Moved tax `tags` to the invoice level `$tags` property.
+- `tax`: Renamed `Regime` to `RegimeDef`.
+- `tax`: Renamed `Category` to `CategoryDef`.
+- `tax`: Renamed `Rate` to `RateDef`.
+- `tax`: Renamed `RateValue` to `RateValueDef`.
+- `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package to use with the `mx-cfdi-v4` key.
+- `es`: moved FacturaE and TicketBAI extensions to the `addons/es/facturae` and `addons/es/tbai` packages respecitvely.
+- `pt`: moved SAF-T specific extensions to `addons/pt/saft`.
 
 ## [v0.115.1]
 

@@ -1,11 +1,11 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "mx-cfdi-v4"
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 issue_date: "2023-07-10"
 series: "TEST"
 code: "00001"
 tax:
-  addons:
-    - "mx-cfdi-v4"
   ext:
     mx-cfdi-issue-place: "21000"
 supplier:

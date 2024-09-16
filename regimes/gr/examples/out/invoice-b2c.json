@@ -4,23 +4,23 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e91a19620ffbf83d2abde0f2106af7b0e22fa31893e9f79b9a1d235671c99e4f"
+			"val": "421a950d405e3287c501e9b207fb5234c018fe0a0c10671fd116a26f6e274e80"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$tags": [
+			"simplified"
+		],
 		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
 		"issue_date": "2024-08-20",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"simplified"
-			]
-		},
+		"tax": {},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {

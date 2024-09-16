@@ -21,7 +21,7 @@ func main() {
 }
 
 func generate() error {
-	for _, r := range tax.AllRegimes() {
+	for _, r := range tax.AllRegimeDefs() {
 		doc, err := schema.NewObject(r)
 		if err != nil {
 			return err

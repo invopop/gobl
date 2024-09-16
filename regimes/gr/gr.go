@@ -8,11 +8,12 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Custom keys used typically in meta or codes information.
@@ -30,8 +31,8 @@ const (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country: "EL",
 		AltCountryCodes: []l10n.Code{
 			"GR", // regular ISO code
@@ -43,14 +44,16 @@ func New() *tax.Regime {
 		},
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.CalculatorRoundThenSum,
-		Tags:                   invoiceTags,
-		Scenarios:              scenarios,
-		Corrections:            corrections,
-		Validator:              Validate,
-		Normalizer:             Normalize,
-		Categories:             taxCategories,
-		PaymentMeansKeys:       paymentMeansKeys,
-		Extensions:             extensionKeys,
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
+		Scenarios:        scenarios,
+		Corrections:      corrections,
+		Validator:        Validate,
+		Normalizer:       Normalize,
+		Categories:       taxCategories,
+		PaymentMeansKeys: paymentMeansKeys,
+		Extensions:       extensionKeys,
 	}
 }
 

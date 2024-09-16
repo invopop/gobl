@@ -11,12 +11,12 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "BE",
 		Currency: currency.EUR,
 		Name: i18n.String{
@@ -28,7 +28,9 @@ func New() *tax.Regime {
 		Scenarios: []*tax.ScenarioSet{
 			common.InvoiceScenarios(),
 		},
-		Tags:       common.InvoiceTags(),
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
 		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{

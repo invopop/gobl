@@ -90,7 +90,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
 			validation.When(
-				!v.inv.Tax.ContainsTag(tax.TagSimplified),
+				!v.inv.HasTags(tax.TagSimplified),
 				validation.Required,
 				tax.RequireIdentityCode,
 			),

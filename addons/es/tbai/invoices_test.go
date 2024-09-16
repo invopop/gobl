@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -16,10 +15,8 @@ import (
 
 func validTicketBAIInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Code: "123",
-		Tax: &bill.Tax{
-			Addons: []cbc.Key{tbai.KeyV1},
-		},
+		Addons: tax.WithAddons(tbai.KeyV1),
+		Code:   "123",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{

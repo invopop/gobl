@@ -4,23 +4,23 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6b64b5c3a706249f78119114d94f68e151a27b2a8504485352d4ecc547943d5c"
+			"val": "8d405b43bebe874ef5c0c980e6fe81b404ee525cb86e1166c541c75b7f3204cb"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "DE",
+		"$tags": [
+			"simplified"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"simplified"
-			]
-		},
+		"tax": {},
 		"supplier": {
 			"name": "Provide One GmbH",
 			"tax_id": {

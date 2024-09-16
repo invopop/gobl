@@ -2,6 +2,7 @@ package bill
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -47,7 +48,12 @@ var (
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
+	tax.Regime
+	tax.Addons
+	tax.Tags
+
 	uuid.Identify
+
 	// Type of invoice document subject to the requirements of the local tax regime.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Used as a prefix to group codes.
@@ -119,12 +125,15 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 
 	var exRule validation.Rule
 	exRule = validation.Skip
-	if r := inv.TaxRegime(); r != nil {
+	if r := inv.RegimeDef(); r != nil {
 		// regime specific additions for validation
 		exRule = currency.CanConvertInto(inv.ExchangeRates, r.Currency)
 	}
 
 	return tax.ValidateStructWithContext(ctx, inv,
+		validation.Field(&inv.Regime),
+		validation.Field(&inv.Addons),
+		validation.Field(&inv.Tags.List, tax.TagsIn(inv.supportedTags()...)),
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Type,
 			validation.Required,
@@ -268,6 +277,11 @@ func (inv *Invoice) Empty() {
 // totals and taxes. If the original invoice only includes partial calculations, this
 // will figure out what's missing.
 func (inv *Invoice) Calculate() error {
+	// Try to set Regime if not already prepared from the supplier's tax ID
+	if inv.Regime.IsEmpty() {
+		inv.SetRegime(inv.supplierTaxCountry())
+	}
+
 	inv.Normalize(inv.normalizers())
 
 	if err := inv.calculate(); err != nil {
@@ -301,23 +315,34 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 
 func (inv *Invoice) normalizers() tax.Normalizers {
 	normalizers := make(tax.Normalizers, 0)
-	if r := inv.TaxRegime(); r != nil {
+	if r := inv.RegimeDef(); r != nil {
 		normalizers = normalizers.Append(r.Normalizer)
 	}
-	for _, a := range inv.Tax.GetAddons() {
+	for _, a := range inv.GetAddons() {
 		normalizers = normalizers.Append(a.Normalizer)
 	}
 	return normalizers
 }
 
+func (inv *Invoice) supportedTags() []cbc.Key {
+	var ts *tax.TagSet
+	if r := inv.RegimeDef(); r != nil {
+		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaInvoice))
+	}
+	for _, a := range inv.GetAddons() {
+		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaInvoice))
+	}
+	return ts.Keys()
+}
+
 // ValidationContext builds a context with all the validators that the invoice might
 // need for execution.
 func (inv *Invoice) ValidationContext(ctx context.Context) context.Context {
-	if r := inv.TaxRegime(); r != nil {
+	if r := inv.RegimeDef(); r != nil {
 		ctx = r.WithContext(ctx)
 	}
-	for _, a := range inv.Tax.GetAddons() {
-		ctx = tax.ContextWithValidator(ctx, a.Validator)
+	for _, a := range inv.GetAddons() {
+		ctx = a.WithContext(ctx)
 	}
 	return ctx
 }
@@ -381,28 +406,21 @@ func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	return &i2, nil
 }
 
-// TaxCountry determines the tax country for the invoice based on the supplier tax
+// supplierTaxCountry determines the tax country for the invoice based on the supplier tax
 // identity.
-func (inv *Invoice) TaxCountry() l10n.Code {
+func (inv *Invoice) supplierTaxCountry() l10n.TaxCountryCode {
 	if inv.Supplier == nil {
-		return l10n.CodeEmpty
+		return l10n.CodeEmpty.Tax()
 	}
 	if inv.Supplier.TaxID == nil {
-		return l10n.CodeEmpty
+		return l10n.CodeEmpty.Tax()
 	}
-	return inv.Supplier.TaxID.Country.Code()
-}
-
-// TaxRegime determines the tax regime for the invoice based on the supplier tax
-// identity which may be nil if the supplier is missing or does not have
-// a matching tax regime.
-func (inv *Invoice) TaxRegime() *tax.Regime {
-	return tax.RegimeFor(inv.TaxCountry())
+	return inv.Supplier.TaxID.Country
 }
 
 // calculate does not assume that the tax regime is available.
 func (inv *Invoice) calculate() error {
-	r := inv.TaxRegime() // may be nil!
+	r := inv.RegimeDef() // may be nil!
 
 	// Normalize data
 	if inv.IssueDate.IsZero() {
@@ -430,7 +448,7 @@ func (inv *Invoice) calculate() error {
 	t.reset(zero)
 
 	// Do we need to deal with the customer-rates tag?
-	if inv.Tax.ContainsTag(tax.TagCustomerRates) {
+	if inv.HasTags(tax.TagCustomerRates) {
 		inv.applyCustomerRates()
 	}
 
@@ -473,14 +491,10 @@ func (inv *Invoice) calculate() error {
 		pit = inv.Tax.PricesInclude
 	}
 	t.Taxes = new(tax.Total)
-	var tags []cbc.Key
-	if inv.Tax != nil {
-		tags = inv.Tax.Tags
-	}
 	tc := &tax.TotalCalculator{
 		Zero:     zero,
-		Country:  inv.TaxCountry().Tax(),
-		Tags:     tags,
+		Country:  inv.Regime.Country,
+		Tags:     inv.GetTags(),
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,
@@ -562,6 +576,24 @@ func calculateComplements(comps []*schema.Object) error {
 		if err := c.Calculate(); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface and provides any
+// data migrations that might be required.
+func (inv *Invoice) UnmarshalJSON(data []byte) error {
+	type Alias *Invoice
+	if err := json.Unmarshal(data, (Alias)(inv)); err != nil {
+		return err
+	}
+	// Ensure there is regime set when coming in from a raw JSON source.
+	if inv.Regime.IsEmpty() {
+		inv.SetRegime(inv.supplierTaxCountry())
+	}
+	// Copy the old tags array from the tax object to the invoice's $tags attribute.
+	if inv.Tax != nil && len(inv.Tax.tags) > 0 {
+		inv.SetTags(inv.Tax.tags...)
 	}
 	return nil
 }

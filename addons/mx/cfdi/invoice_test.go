@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -20,11 +19,11 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
+		Addons:    tax.WithAddons(cfdi.KeyV4),
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
 		Tax: &bill.Tax{
-			Addons: []cbc.Key{cfdi.KeyV4},
 			Ext: tax.Extensions{
 				cfdi.ExtKeyIssuePlace: "21000",
 			},
@@ -83,9 +82,7 @@ func TestValidInvoice(t *testing.T) {
 func TestNormalizeInvoice(t *testing.T) {
 	t.Run("no tax", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Tax = &bill.Tax{
-			Addons: []cbc.Key{cfdi.KeyV4},
-		}
+		inv.Addons = tax.WithAddons(cfdi.KeyV4)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
@@ -93,9 +90,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	})
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Tax = &bill.Tax{
-			Addons: []cbc.Key{cfdi.KeyV4},
-		}
+		inv.Addons = tax.WithAddons(cfdi.KeyV4)
 		delete(inv.Supplier.Ext, cfdi.ExtKeyPostCode)
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
 			&org.Address{

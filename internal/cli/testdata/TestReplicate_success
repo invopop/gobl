@@ -1,6 +1,7 @@
 {
     "$schema": "https://gobl.org/draft-0/envelope",
     "doc": {
+        "$regime": "ES",
         "$schema": "https://gobl.org/draft-0/bill/invoice",
         "code": "",
         "currency": "EUR",
@@ -11,7 +12,7 @@
                 "country": "ES"
             }
         },
-        "issue_date": "2024-05-06",
+        "issue_date": "2024-09-16",
         "lines": [
             {
                 "discounts": [
@@ -125,14 +126,14 @@
             "total_with_tax": "1717.20"
         },
         "type": "standard",
-        "uuid": "018f4e98-bc32-754a-8b26-9007d2a51612"
+        "uuid": "0191fb18-30c8-7ef3-b590-11e1886f6f89"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "534b415869b122291768c79b6773cb80137ca54b3370d20e1bdcb770aff6193f"
+            "val": "b8c39218f351ba8b4453ac0bc2c5b2f6e070a7c04e9a0d432540d6cb14919d21"
         },
         "draft": true,
-        "uuid": "018f4e98-bc32-7550-a642-2099814478c4"
+        "uuid": "0191fb18-30c8-7efb-833d-607c21da1190"
     }
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// VAT
 	//
@@ -20,13 +20,13 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 		},
 		Retained: false,
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
@@ -37,7 +37,7 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2011, 1, 4),
 						Percent: num.MakePercentage(200, 3),
@@ -49,7 +49,7 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2011, 1, 4),
 						Percent: num.MakePercentage(50, 3),

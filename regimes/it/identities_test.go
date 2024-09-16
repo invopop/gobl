@@ -11,7 +11,7 @@ import (
 )
 
 func TestIdentityNormalization(t *testing.T) {
-	r := tax.RegimeFor("IT")
+	r := tax.RegimeDefFor("IT")
 
 	t.Run("normalize codice fiscale", func(t *testing.T) {
 		p1 := &org.Identity{

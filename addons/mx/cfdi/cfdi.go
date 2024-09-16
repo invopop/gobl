@@ -23,7 +23,7 @@ const (
 )
 
 func init() {
-	tax.RegisterAddon(newAddon())
+	tax.RegisterAddonDef(newAddon())
 
 	// TODO: rename complements to use cfdi in schema path.
 	schema.Register(schema.GOBL.Add("regimes/mx"),
@@ -32,8 +32,8 @@ func init() {
 	)
 }
 
-func newAddon() *tax.Addon {
-	return &tax.Addon{
+func newAddon() *tax.AddonDef {
+	return &tax.AddonDef{
 		Key:        KeyV4,
 		Extensions: extensions,
 		Normalizer: normalize,

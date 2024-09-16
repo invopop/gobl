@@ -4,22 +4,22 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ca076099cce47d7e9f3e3ce76da1c22e438f565c0c64b04893ba58a555206da9"
+			"val": "1c315a855ea6df7b7df5f6645d5c63552ca9cd58f14d6c11db7c3ff03ad12b9f"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$tags": [
+			"customer-rates"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-X-002",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"customer-rates"
-			]
-		},
+		"tax": {},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

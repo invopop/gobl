@@ -18,7 +18,7 @@ const (
 	TaxCategoryReteICA   cbc.Code = "RICA" // ReteICA
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// VAT
 	//
@@ -33,14 +33,14 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto al Valor Agregado",
 		},
 		Retained: false,
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Cero",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
@@ -52,7 +52,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Estándar",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2017, 1, 1),
 						Percent: num.MakePercentage(190, 3),
@@ -69,7 +69,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Reducido",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2006, 1, 1),
 						Percent: num.MakePercentage(50, 3),
@@ -91,7 +91,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto sobre Consumo",
 		},
 		Retained: false,
-		Rates:    []*tax.Rate{},
+		Rates:    []*tax.RateDef{},
 	},
 	//
 	// ICA - local taxes
@@ -106,7 +106,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto de Industria y Comercio",
 		},
 		Retained: false,
-		Rates:    []*tax.Rate{},
+		Rates:    []*tax.RateDef{},
 	},
 	//
 	// ReteIVA
@@ -120,7 +120,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Retención en la fuente por el Impuesto al Valor Agregado",
 		},
 		Retained: true,
-		Rates:    []*tax.Rate{},
+		Rates:    []*tax.RateDef{},
 	},
 	//
 	// ReteICA
@@ -134,7 +134,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Retención en la fuente por el Impuesto de Industria y Comercio",
 		},
 		Retained: true,
-		Rates:    []*tax.Rate{},
+		Rates:    []*tax.RateDef{},
 	},
 	//
 	// ReteRenta
@@ -148,6 +148,6 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Retención en la fuente por el Impuesto de la Renta",
 		},
 		Retained: true,
-		Rates:    []*tax.Rate{},
+		Rates:    []*tax.RateDef{},
 	},
 }

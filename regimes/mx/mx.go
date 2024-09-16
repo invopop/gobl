@@ -10,25 +10,27 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 
 	// MX GOBL Schema Complements for CFDI
 
 }
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "MX",
 		Currency: currency.MXN,
 		Name: i18n.String{
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
-		TimeZone:    "America/Mexico_City",
-		Validator:   Validate,
-		Normalizer:  Normalize,
-		Tags:        common.InvoiceTags(),
+		TimeZone:   "America/Mexico_City",
+		Validator:  Validate,
+		Normalizer: Normalize,
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
 		Categories:  sat.TaxCategories(),
 		Corrections: sat.CorrectionDefinitions(),
 	}

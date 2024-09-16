@@ -9,7 +9,6 @@ import (
 	_ "github.com/invopop/gobl" // load regions
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/l10n"
@@ -824,7 +823,7 @@ func TestApplyCustomerRates(t *testing.T) {
 			},
 		}
 		inv := baseInvoice(t, lines...)
-		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.SetTags(tax.TagCustomerRates)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
@@ -846,7 +845,7 @@ func TestApplyCustomerRates(t *testing.T) {
 			},
 		}
 		inv := baseInvoice(t, lines...)
-		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.SetTags(tax.TagCustomerRates)
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
@@ -868,7 +867,7 @@ func TestApplyCustomerRates(t *testing.T) {
 			},
 		}
 		inv := baseInvoice(t, lines...)
-		inv.Tax.Tags = append(inv.Tax.Tags, tax.TagCustomerRates)
+		inv.SetTags(tax.TagCustomerRates)
 		inv.Customer.TaxID.Country = "PT"
 		inv.Discounts = []*bill.Discount{
 			{
@@ -1067,7 +1066,7 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 
 	// Set an undefined regime
 	inv.Supplier.TaxID.Country = l10n.AD.Tax()
-	assert.Nil(t, tax.RegimeFor(l10n.AD), "if Andorra is defined, change this to another country")
+	assert.Nil(t, tax.RegimeDefFor(l10n.AD), "if Andorra is defined, change this to another country")
 
 	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
 	inv.Currency = currency.USD
@@ -1103,11 +1102,8 @@ func TestValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		assert.NotNil(t, inv.Customer)
 
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				tax.TagSimplified,
-			},
-		}
+		inv.SetTags(tax.TagSimplified)
+
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 		assert.NotNil(t, inv.Customer) // just ignore simplified tag
@@ -1153,6 +1149,21 @@ func TestValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
 	})
+}
+
+func TestInvoiceTagsValidation(t *testing.T) {
+	ctx := context.Background()
+	inv := baseInvoiceWithLines(t)
+	inv.SetTags("reverse-charge")
+
+	assert.NoError(t, inv.Calculate())
+	err := inv.ValidateWithContext(ctx)
+	require.NoError(t, err)
+
+	inv.SetTags("invalid-tag")
+	assert.NoError(t, inv.Calculate())
+	err = inv.ValidateWithContext(ctx)
+	assert.ErrorContains(t, err, "tags: 'invalid-tag' undefined")
 }
 
 func baseInvoiceWithLines(t *testing.T) *bill.Invoice {

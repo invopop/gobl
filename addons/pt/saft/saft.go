@@ -12,13 +12,16 @@ const (
 )
 
 func init() {
-	tax.RegisterAddon(newAddon())
+	tax.RegisterAddonDef(newAddon())
 }
 
-func newAddon() *tax.Addon {
-	return &tax.Addon{
+func newAddon() *tax.AddonDef {
+	return &tax.AddonDef{
 		Key:        V1,
 		Extensions: extensions,
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
 		Normalizer: normalize,
 		Scenarios:  scenarios,
 		Validator:  validate,

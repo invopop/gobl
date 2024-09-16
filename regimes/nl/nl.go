@@ -12,12 +12,12 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // New provides the Dutch region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "NL",
 		Currency: currency.EUR,
 		Name: i18n.String{
@@ -30,7 +30,9 @@ func New() *tax.Regime {
 		Scenarios: []*tax.ScenarioSet{
 			common.InvoiceScenarios(),
 		},
-		Tags: common.InvoiceTags(),
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -39,7 +41,7 @@ func New() *tax.Regime {
 				},
 			},
 		},
-		Categories: []*tax.Category{
+		Categories: []*tax.CategoryDef{
 			//
 			// VAT
 			//
@@ -54,14 +56,14 @@ func New() *tax.Regime {
 					i18n.NL: "Belasting Toegevoegde Waarde",
 				},
 				Retained: false,
-				Rates: []*tax.Rate{
+				Rates: []*tax.RateDef{
 					{
 						Key: tax.RateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 							i18n.NL: `0%-tarief`,
 						},
-						Values: []*tax.RateValue{
+						Values: []*tax.RateValueDef{
 							{
 								Percent: num.MakePercentage(0, 3),
 							},
@@ -73,7 +75,7 @@ func New() *tax.Regime {
 							i18n.EN: "Standard Rate",
 							i18n.NL: "Standaardtarief",
 						},
-						Values: []*tax.RateValue{
+						Values: []*tax.RateValueDef{
 							{
 								Percent: num.MakePercentage(210, 3),
 							},
@@ -85,7 +87,7 @@ func New() *tax.Regime {
 							i18n.EN: "Reduced Rate",
 							i18n.NL: "Gereduceerd Tarief",
 						},
-						Values: []*tax.RateValue{
+						Values: []*tax.RateValueDef{
 							{
 								Percent: num.MakePercentage(90, 3),
 							},

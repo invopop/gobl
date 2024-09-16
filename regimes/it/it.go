@@ -8,11 +8,12 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Keys used for meta data from external sources.
@@ -23,8 +24,8 @@ const (
 )
 
 // New instantiates a new Italian regime.
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "IT",
 		Currency: currency.EUR,
 		Name: i18n.String{
@@ -37,11 +38,13 @@ func New() *tax.Regime {
 		InboxKeys:        inboxKeyDefinitions,        // inboxes.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Extensions:       extensionKeys,              // extensions.go
-		Tags:             invoiceTags,
-		Scenarios:        scenarios, // scenarios.go
-		Validator:        Validate,
-		Normalizer:       Normalize,
-		Categories:       categories, // categories.go
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
+		Scenarios:  scenarios, // scenarios.go
+		Validator:  Validate,
+		Normalizer: Normalize,
+		Categories: categories, // categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

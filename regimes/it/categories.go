@@ -19,7 +19,7 @@ const (
 	TaxCategoryENPAM    cbc.Code = "ENPAM"
 )
 
-var categories = []*tax.Category{
+var categories = []*tax.CategoryDef{
 	{
 		Code:     tax.CategoryVAT,
 		Retained: false,
@@ -34,14 +34,14 @@ var categories = []*tax.Category{
 		Extensions: []cbc.Key{
 			ExtKeySDIExempt,
 		},
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.IT: "Aliquota Zero",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
@@ -53,7 +53,7 @@ var categories = []*tax.Category{
 					i18n.EN: "Minimum Rate",
 					i18n.IT: "Aliquota Minima",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(40, 3),
 					},
@@ -65,7 +65,7 @@ var categories = []*tax.Category{
 					i18n.EN: "Reduced Rate",
 					i18n.IT: "Aliquota Ridotta",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(50, 3),
 					},
@@ -77,7 +77,7 @@ var categories = []*tax.Category{
 					i18n.EN: "Intermediate Rate",
 					i18n.IT: "Aliquota Intermedia",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(100, 3),
 					},
@@ -89,7 +89,7 @@ var categories = []*tax.Category{
 					i18n.EN: "Ordinary Rate",
 					i18n.IT: "Aliquota Ordinaria",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(220, 3),
 					},

@@ -14,7 +14,7 @@ const (
 	TaxRateNotPursuantArt100 cbc.Key = "np-art100sec1point4"
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	{
 		Code: tax.CategoryVAT,
 		Name: i18n.String{
@@ -30,14 +30,14 @@ var taxCategories = []*tax.Category{
 			ExtKeyKSeFVATZero,
 			ExtKeyKSeFVATSpecial,
 		},
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PL: "Stawka Podstawowa",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(230, 3),
 						Since:   cal.NewDate(2011, 1, 1),
@@ -54,7 +54,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "First Reduced Rate",
 					i18n.PL: "Stawka Obniżona Pierwsza",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(80, 3),
 						Since:   cal.NewDate(2011, 1, 1),
@@ -71,7 +71,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Second Reduced Rate",
 					i18n.PL: "Stawka Obniżona Druga",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(50, 3),
 						Since:   cal.NewDate(2011, 1, 1),
@@ -88,7 +88,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Zero Rate",
 					i18n.PL: "Stawka Zerowa",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
