@@ -1,14 +1,11 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-tbai-v1"]
+$tags: ["customer-rates"]
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 currency: "EUR"
 issue_date: "2023-12-18"
 series: "EXPORT-X"
 code: "0002"
-tax:
-  addons:
-    - es-tbai-v1
-  tags:
-    - customer-rates
 
 supplier:
   tax_id:
