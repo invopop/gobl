@@ -1,12 +1,12 @@
-package it_test
+package sdi_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regimes/it"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +17,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	inv.Payment = &bill.Payment{
 		Advances: []*pay.Advance{
 			{
-				Key:         pay.MeansKeyDirectDebit.With(it.MeansKeyRID),
+				Key:         pay.MeansKeyDirectDebit.With(sdi.MeansKeyRID),
 				Description: "Test advance",
 				Amount:      num.MakeAmount(100, 0),
 			},
@@ -38,6 +38,5 @@ func TestPayInstructionsValidation(t *testing.T) {
 	}
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "key: must be a valid value")
+	assert.ErrorContains(t, err, "payment: (advances: (0: (ext: (it-sdi-payment-means: required.).).).)")
 }

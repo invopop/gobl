@@ -3,9 +3,9 @@ package bill_test
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -57,6 +57,7 @@ func TestScenarios(t *testing.T) {
 
 	t.Run("without tax defined", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.Addons = tax.WithAddons(sdi.V1)
 		inv.Supplier.TaxID = &tax.Identity{
 			Country: "IT",
 			Code:    "12345678903",
@@ -64,11 +65,12 @@ func TestScenarios(t *testing.T) {
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "TD01", inv.Tax.Ext[it.ExtKeySDIDocumentType].String())
+		assert.Equal(t, "TD01", inv.Tax.Ext[sdi.ExtKeyDocumentType].String())
 	})
 
 	t.Run("overwrite previous values with tag", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.Addons = tax.WithAddons(sdi.V1)
 		inv.Supplier.TaxID = &tax.Identity{
 			Country: "IT",
 			Code:    "12345678903",
@@ -76,33 +78,35 @@ func TestScenarios(t *testing.T) {
 		inv.SetTags(tax.TagB2G)
 		inv.Tax = &bill.Tax{
 			Ext: tax.Extensions{
-				it.ExtKeySDIFormat: "XXXX",
+				sdi.ExtKeyFormat: "XXXX",
 			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "FPA12", inv.Tax.Ext[it.ExtKeySDIFormat].String())
+		assert.Equal(t, "FPA12", inv.Tax.Ext[sdi.ExtKeyFormat].String())
 	})
 
 	t.Run("overwrite previous values without tags", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.Addons = tax.WithAddons(sdi.V1)
 		inv.Supplier.TaxID = &tax.Identity{
 			Country: "IT",
 			Code:    "12345678903",
 		}
 		inv.Tax = &bill.Tax{
 			Ext: tax.Extensions{
-				it.ExtKeySDIFormat: "XXXX",
+				sdi.ExtKeyFormat: "XXXX",
 			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Len(t, inv.Tax.Ext, 2)
-		assert.Equal(t, "FPR12", inv.Tax.Ext[it.ExtKeySDIFormat].String())
+		assert.Equal(t, "FPR12", inv.Tax.Ext[sdi.ExtKeyFormat].String())
 	})
 }
 
 func TestInvoiceGetExtensions(t *testing.T) {
 	inv := baseInvoiceWithLines(t)
+	inv.Addons = tax.WithAddons(sdi.V1)
 	inv.Supplier.TaxID = &tax.Identity{
 		Country: "IT",
 		Code:    "12345678903",
@@ -110,5 +114,5 @@ func TestInvoiceGetExtensions(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	ext := inv.GetExtensions()
 	assert.Len(t, ext, 2)
-	assert.Equal(t, "FPR12", ext[0][it.ExtKeySDIFormat].String())
+	assert.Equal(t, "FPR12", ext[0][sdi.ExtKeyFormat].String())
 }

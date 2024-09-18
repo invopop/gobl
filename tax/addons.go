@@ -38,6 +38,10 @@ type AddonDef struct {
 	// to the document.
 	Scenarios []*ScenarioSet `json:"scenarios" jsonschema:"title=Scenarios"`
 
+	// Inboxes is a list of keys that are used to identify where copies of
+	// documents can be sent.
+	Inboxes []*cbc.KeyDefinition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
+
 	// Normalizer performs the normalization rules for the add-on.
 	Normalizer func(doc any) `json:"-"`
 
@@ -151,6 +155,7 @@ func (ad *AddonDef) Validate() error {
 		validation.Field(&ad.Key, validation.Required, AddonRegistered),
 		validation.Field(&ad.Name, validation.Required),
 		validation.Field(&ad.Extensions),
+		validation.Field(&ad.Inboxes),
 		validation.Field(&ad.Tags),
 		validation.Field(&ad.Scenarios),
 		validation.Field(&ad.Corrections),

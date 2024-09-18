@@ -1,5 +1,6 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["it-sdi-v1"],
   "uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
   "type": "standard",
   "series": "SAMPLE",
@@ -7,102 +8,102 @@
   "issue_date": "2023-08-01",
   "currency": "EUR",
   "supplier": {
-      "name": "Francesco Ferrari",
-      "tax_id": {
-          "country": "IT",
-          "code": "12345678903"
-      },
-      "addresses": [
-          {
-              "num": "102",
-              "street": "Via California",
-              "locality": "Palermo",
-              "region": "PA",
-              "code": "33213",
-              "country": "IT"
-          }
-      ],
-      "ext": {
-          "it-sdi-fiscal-regime": "RF19"
+    "name": "Francesco Ferrari",
+    "tax_id": {
+      "country": "IT",
+      "code": "12345678903"
+    },
+    "addresses": [
+      {
+        "num": "102",
+        "street": "Via California",
+        "locality": "Palermo",
+        "region": "PA",
+        "code": "33213",
+        "country": "IT"
       }
+    ],
+    "ext": {
+      "it-sdi-fiscal-regime": "RF19"
+    }
   },
   "customer": {
-      "name": "Mela S.r.l.",
-      "tax_id": {
-          "country": "IT",
-          "code": "13029381004"
-      },
-      "inboxes": [
-          {
-              "key": "it-sdi-code",
-              "code": "M5UXCR5"
-          }
-      ],
-      "addresses": [
-          {
-              "num": "23",
-              "street": "Via dei Mille",
-              "locality": "Firenze",
-              "region": "FI",
-              "code": "00100",
-              "country": "IT"
-          }
-      ]
+    "name": "Mela S.r.l.",
+    "tax_id": {
+      "country": "IT",
+      "code": "13029381004"
+    },
+    "inboxes": [
+      {
+        "key": "it-sdi-code",
+        "code": "M5UXCR5"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "23",
+        "street": "Via dei Mille",
+        "locality": "Firenze",
+        "region": "FI",
+        "code": "00100",
+        "country": "IT"
+      }
+    ]
   },
   "lines": [
-      {
-          "i": 1,
-          "quantity": "1",
-          "item": {
-              "name": "Camera Matrimoniale",
-              "price": "125.00"
-          },
-          "sum": "125.00",
-          "taxes": [
-              {
-                  "cat": "VAT",
-                  "rate": "exempt",
-                  "ext": {
-                      "it-sdi-nature": "N2.1"
-                  }
-              }
-          ],
-          "total": "125.00"
-      }
+    {
+      "i": 1,
+      "quantity": "1",
+      "item": {
+        "name": "Camera Matrimoniale",
+        "price": "125.00"
+      },
+      "sum": "125.00",
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "exempt",
+          "ext": {
+            "it-sdi-nature": "N2.1"
+          }
+        }
+      ],
+      "total": "125.00"
+    }
   ],
   "charges": [
-      {
-          "key": "stamp-duty",
-          "i": 1,
-          "amount": "2.00",
-          "reason": "Imposta di bollo"
-      }
+    {
+      "key": "stamp-duty",
+      "i": 1,
+      "amount": "2.00",
+      "reason": "Imposta di bollo"
+    }
   ],
   "totals": {
-      "sum": "125.00",
-      "charge": "2.00",
-      "total": "127.00",
-      "taxes": {
-          "categories": [
-              {
-                  "code": "VAT",
-                  "rates": [
-                      {
-                          "key": "exempt",
-                          "ext": {
-                              "it-sdi-nature": "N2.1"
-                          },
-                          "base": "125.00",
-                          "amount": "0.00"
-                      }
-                  ],
-                  "amount": "0.00"
-              }
+    "sum": "125.00",
+    "charge": "2.00",
+    "total": "127.00",
+    "taxes": {
+      "categories": [
+        {
+          "code": "VAT",
+          "rates": [
+            {
+              "key": "exempt",
+              "ext": {
+                "it-sdi-nature": "N2.1"
+              },
+              "base": "125.00",
+              "amount": "0.00"
+            }
           ],
-          "sum": "0.00"
-      },
-      "tax": "0.00",
-      "total_with_tax": "127.00",
-      "payable": "127.00"
+          "amount": "0.00"
+        }
+      ],
+      "sum": "0.00"
+    },
+    "tax": "0.00",
+    "total_with_tax": "127.00",
+    "payable": "127.00"
   }
 }

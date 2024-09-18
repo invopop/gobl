@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "97fae0dfcd7a3da5a336c6424de91155ffb91e4e50523520ed648a6003ca71e8"
+			"val": "0abfdf85e257a1f08d3fb67873c8543921aaf49a3c53241eb040d568c70eb021"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
 		"$tags": [
 			"b2g"
 		],

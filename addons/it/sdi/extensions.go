@@ -1,4 +1,4 @@
-package it
+package sdi
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -9,16 +9,17 @@ import (
 // Italian extension keys required by the Italian tax authority (SDI)
 // and defined as part of the FatturaPA specification.
 const (
-	ExtKeySDIFiscalRegime = "it-sdi-fiscal-regime"
-	ExtKeySDIFormat       = "it-sdi-format"
-	ExtKeySDIDocumentType = "it-sdi-document-type"
-	ExtKeySDIExempt       = "it-sdi-exempt"
-	ExtKeySDIRetained     = "it-sdi-retained"
+	ExtKeyFiscalRegime cbc.Key = "it-sdi-fiscal-regime"
+	ExtKeyFormat       cbc.Key = "it-sdi-format"
+	ExtKeyDocumentType cbc.Key = "it-sdi-document-type"
+	ExtKeyExempt       cbc.Key = "it-sdi-exempt"
+	ExtKeyRetained     cbc.Key = "it-sdi-retained"
+	ExtKeyPaymentMeans cbc.Key = "it-sdi-payment-means"
 )
 
-var extensionKeys = []*cbc.KeyDefinition{
+var extensions = []*cbc.KeyDefinition{
 	{
-		Key: ExtKeySDIFormat,
+		Key: ExtKeyFormat,
 		Name: i18n.String{
 			i18n.EN: "SDI Transmission Format",
 			i18n.IT: "Formato Trasmissione SDI",
@@ -51,7 +52,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeySDIDocumentType,
+		Key: ExtKeyDocumentType,
 		Name: i18n.String{
 			i18n.EN: "SDI Document Type",
 			i18n.IT: "Tipo Documento SDI",
@@ -220,7 +221,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeySDIFiscalRegime,
+		Key: ExtKeyFiscalRegime,
 		Name: i18n.String{
 			i18n.EN: "Fiscal Regime Code",
 			i18n.IT: "Codice Regime Fiscale",
@@ -302,7 +303,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 	},
 	{
 		// Related to the "Natura" field used for VAT exemptions.
-		Key: ExtKeySDIExempt,
+		Key: ExtKeyExempt,
 		Name: i18n.String{
 			i18n.EN: "Exemption Code",
 			i18n.IT: "Natura Esenzione",
@@ -462,7 +463,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		// Retained reason code determined from the "CausalePagamento" field from FatturaPA.
 		// Source: https://www.agenziaentrate.gov.it/portale/documents/20143/4115385/CU_istr_2022.pdf
 		// Section VII, Part 2
-		Key: ExtKeySDIRetained,
+		Key: ExtKeyRetained,
 		Name: i18n.String{
 			i18n.EN: "Retained Tax Payment Reason Code",
 			i18n.IT: "Causale Pagamento Ritenuta",
@@ -690,6 +691,177 @@ var extensionKeys = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Different title from the previous ones",
 					i18n.IT: "Titolo diverso dai precedenti;",
+				},
+			},
+		},
+	},
+
+	{
+		Key: ExtKeyPaymentMeans,
+		Name: i18n.String{
+			i18n.EN: "Payment Means",
+			i18n.IT: "Modalità di Pagamento",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "MP01",
+				Name: i18n.String{
+					i18n.EN: "Cash",
+					i18n.IT: "Contanti",
+				},
+			},
+			{
+				Value: "MP02",
+				Name: i18n.String{
+					i18n.EN: "Check",
+					i18n.IT: "Assegno",
+				},
+			},
+			{
+				Value: "MP03",
+				Name: i18n.String{
+					i18n.EN: "Banker's Draft",
+					i18n.IT: "Assegno circolare",
+				},
+			},
+			{
+				Value: "MP04",
+				Name: i18n.String{
+					i18n.EN: "Cash at Treasury",
+					i18n.IT: "Contanti presso Tesoreria", // nolint:misspell
+				},
+			},
+			{
+				Value: "MP05",
+				Name: i18n.String{
+					i18n.EN: "Bank Transfer",
+					i18n.IT: "Bonifico",
+				},
+			},
+			{
+				Value: "Mp06",
+				Name: i18n.String{
+					i18n.EN: "Promissory Note",
+					i18n.IT: "Vaglia cambiario",
+				},
+			},
+			{
+				Value: "MP07",
+				Name: i18n.String{
+					i18n.EN: "Bank payment slip",
+					i18n.IT: "Bollettino bancario",
+				},
+			},
+			{
+				Value: "MP08",
+				Name: i18n.String{
+					i18n.EN: "Payment card",
+					i18n.IT: "Carta di pagamento",
+				},
+			},
+			{
+				Value: "MP09",
+				Name: i18n.String{
+					i18n.EN: "Direct Debit (RID)",
+					i18n.IT: "RID",
+				},
+			},
+			{
+				Value: "MP10",
+				Name: i18n.String{
+					i18n.EN: "Utilities Direct Debit (RID utenze)",
+					i18n.IT: "RID utenze",
+				},
+			},
+			{
+				Value: "MP11",
+				Name: i18n.String{
+					i18n.EN: "Fast Direct Debit (RID veloce)",
+					i18n.IT: "RID veloce",
+				},
+			},
+			{
+				Value: "MP12",
+				Name: i18n.String{
+					i18n.EN: "Direct Debit (RIBA)",
+					i18n.IT: "RIBA",
+				},
+			},
+			{
+				Value: "MP13",
+				Name: i18n.String{
+					i18n.EN: "Debit Transfer (MAV)",
+					i18n.IT: "MAV",
+				},
+			},
+			{
+				Value: "MP14",
+				Name: i18n.String{
+					i18n.EN: "Tax Receipt",
+					i18n.IT: "Quietanza erario",
+				},
+			},
+			{
+				Value: "MP15",
+				Name: i18n.String{
+					i18n.EN: "Transfer on special account",
+					i18n.IT: "Giroconto su conti di contabilità speciale",
+				},
+			},
+			{
+				Value: "MP16",
+				Name: i18n.String{
+					i18n.EN: "Direct Debit",
+					i18n.IT: "Domiciliazione Bancaria",
+				},
+			},
+			{
+				Value: "MP17",
+				Name: i18n.String{
+					i18n.EN: "Direct Debit Post Office",
+					i18n.IT: "Domiciliazione Postale",
+				},
+			},
+			{
+				Value: "MP18",
+				Name: i18n.String{
+					i18n.EN: "Post Office Cheque",
+					i18n.IT: "Bollettino di c/c postale",
+				},
+			},
+			{
+				Value: "MP19",
+				Name: i18n.String{
+					i18n.EN: "SEPA Direct Debit",
+					i18n.IT: "SEPA Direct Debit",
+				},
+			},
+			{
+				Value: "MP20",
+				Name: i18n.String{
+					i18n.EN: "SEPA Core Direct Debit",
+					i18n.IT: "SEPA Direct Debit Core",
+				},
+			},
+			{
+				Value: "MP21",
+				Name: i18n.String{
+					i18n.EN: "SEPA B2B Direct Debit",
+					i18n.IT: "SEPA Direct Debit B2B",
+				},
+			},
+			{
+				Value: "MP22",
+				Name: i18n.String{
+					i18n.EN: "Deductible Netting",
+					i18n.IT: "Trattenuta su somme già riscosse",
+				},
+			},
+			{
+				Value: "MP23",
+				Name: i18n.String{
+					i18n.EN: "PagoPA",
+					i18n.IT: "PagoPA",
 				},
 			},
 		},

@@ -54,10 +54,13 @@ func normalizeInvoicePaymentInstructions(inv *bill.Invoice) {
 	if inv.Payment == nil || inv.Payment.Instructions == nil {
 		return
 	}
-
-	extVal := paymentMeansKeyMap[inv.Payment.Instructions.Key]
+	instr := inv.Payment.Instructions
+	extVal := paymentMeansKeyMap[instr.Key]
 	if extVal != "" {
-		inv.Payment.Instructions.Ext[ExtKeyPaymentMeans] = extVal
+		if instr.Ext == nil {
+			instr.Ext = make(tax.Extensions)
+		}
+		instr.Ext[ExtKeyPaymentMeans] = extVal
 	}
 }
 
