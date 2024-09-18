@@ -1,7 +1,9 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "mx-cfdi-v4",
-  "name": null,
+  "name": {
+    "en": "Mexican SAT CFDI v4.X"
+  },
   "extensions": [
     {
       "key": "mx-cfdi-doc-type",

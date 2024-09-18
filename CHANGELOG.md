@@ -22,6 +22,7 @@ Another very significant internal change is around normalization. There is now a
 
 ### Changed
 
+- `head.Header`: Removed the `draft` flag. Instead envelopes must now be signed in order to activate additional validation rules such as requiring the invoice code, and allow "stamps" in the header.
 - Renamed `Calculate` methods to `Normalize` and removed errors, to clearly differentiate between the two processes.
 - `bill`: Moved tax `tags` to the invoice level `$tags` property.
 - `tax`: Renamed `Regime` to `RegimeDef`.

@@ -5,8 +5,7 @@
 		"dig": {
 			"alg": "sha256",
 			"val": "a57a560eca6168b6f3e7d4ca58ec069c097daaccfcee8d2fc5b083976266db40"
-		},
-		"draft": true
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",

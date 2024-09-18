@@ -173,7 +173,7 @@
         "key",
         "name"
       ],
-      "description": "Rate defines a single rate inside a category"
+      "description": "RateDef defines a single rate inside a category"
     },
     "RateValueDef": {
       "properties": {

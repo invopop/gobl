@@ -69,7 +69,7 @@ func TestVerify(t *testing.T) {
 		return tt{
 			in:  testFileReader(t, "testdata/draft.json"),
 			key: publicKey,
-			err: "code=422, message=document is a draft",
+			err: "code=422, message=envelope is not signed",
 		}
 	})
 
