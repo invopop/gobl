@@ -1,7 +1,6 @@
 package sdi
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
@@ -53,11 +52,10 @@ var paymentMeansKeyMap = map[cbc.Key]tax.ExtValue{
 	pay.MeansKeyOther:                                "MP01", // Anything else assume is Cash
 }
 
-func normalizeInvoicePaymentInstructions(inv *bill.Invoice) {
-	if inv.Payment == nil || inv.Payment.Instructions == nil {
+func normalizePayInstructions(instr *pay.Instructions) {
+	if instr == nil {
 		return
 	}
-	instr := inv.Payment.Instructions
 	extVal := paymentMeansKeyMap[instr.Key]
 	if extVal != "" {
 		if instr.Ext == nil {
@@ -67,18 +65,16 @@ func normalizeInvoicePaymentInstructions(inv *bill.Invoice) {
 	}
 }
 
-func normalizeInvoicePaymentAdvances(inv *bill.Invoice) {
-	if inv.Payment == nil || len(inv.Payment.Advances) == 0 {
+func normalizePayAdvance(adv *pay.Advance) {
+	if adv == nil {
 		return
 	}
-	for _, adv := range inv.Payment.Advances {
-		extVal := paymentMeansKeyMap[adv.Key]
-		if extVal != "" {
-			if adv.Ext == nil {
-				adv.Ext = make(tax.Extensions)
-			}
-			adv.Ext[ExtKeyPaymentMeans] = extVal
+	extVal := paymentMeansKeyMap[adv.Key]
+	if extVal != "" {
+		if adv.Ext == nil {
+			adv.Ext = make(tax.Extensions)
 		}
+		adv.Ext[ExtKeyPaymentMeans] = extVal
 	}
 }
 

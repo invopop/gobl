@@ -45,6 +45,16 @@ type Advance struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Normalize will try to normalize the advance's data.
+func (a *Advance) Normalize(normalizers tax.Normalizers) {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.Ext = tax.CleanExtensions(a.Ext)
+	normalizers.Each(a)
+}
+
 // Validate checks the advance looks okay
 func (a *Advance) Validate() error {
 	return a.ValidateWithContext(context.Background())

@@ -16,8 +16,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 	for _, line := range inv.Lines {
 		normalizeLine(line)
 	}
-	normalizeInvoicePaymentInstructions(inv)
-	normalizeInvoicePaymentAdvances(inv)
 }
 
 func normalizeSupplier(party *org.Party) {
