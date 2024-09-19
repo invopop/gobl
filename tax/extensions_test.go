@@ -313,5 +313,14 @@ func TestExtensionsMerge(t *testing.T) {
 			assert.Equal(t, tt.want, tt.em1.Merge(tt.em2))
 		})
 	}
+}
 
+func TestExtensionLookup(t *testing.T) {
+	em := tax.Extensions{
+		"key1": "foo",
+		"key2": "bar",
+	}
+	assert.Equal(t, cbc.Key("key1"), em.Lookup("foo"))
+	assert.Equal(t, cbc.Key("key2"), em.Lookup("bar"))
+	assert.Equal(t, cbc.KeyEmpty, em.Lookup("missing"))
 }

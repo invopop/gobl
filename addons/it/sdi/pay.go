@@ -24,7 +24,13 @@ const (
 	MeansKeyPagoPA         cbc.Key = "pagopa"
 )
 
-var paymentMeansKeyMap = map[cbc.Key]tax.ExtValue{
+// PaymentMeansExtensions returns the mapping of payment means to their
+// extension values used by SDI.
+func PaymentMeansExtensions() tax.Extensions {
+	return paymentMeansKeyMap
+}
+
+var paymentMeansKeyMap = tax.Extensions{
 	pay.MeansKeyCash:                                 "MP01",
 	pay.MeansKeyCheque:                               "MP02",
 	pay.MeansKeyBankDraft:                            "MP03",
@@ -48,8 +54,6 @@ var paymentMeansKeyMap = map[cbc.Key]tax.ExtValue{
 	pay.MeansKeyDirectDebit.With(MeansKeySEPAB2B):    "MP21",
 	pay.MeansKeyNetting:                              "MP22",
 	pay.MeansKeyOnline.With(MeansKeyPagoPA):          "MP23",
-	pay.MeansKeyOnline:                               "MP08", // Using "card" code
-	pay.MeansKeyOther:                                "MP01", // Anything else assume is Cash
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {

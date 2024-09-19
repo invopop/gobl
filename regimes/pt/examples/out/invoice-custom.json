@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "eea648c5b2635261e476c2f8e9727ab8facfcf2262403927cf697a951f8905ff"
+			"val": "690387bcae5e045ed6f50f56761758503275b7fdcc58d6ea7cffd714478c5734"
 		}
 	},
 	"doc": {
@@ -55,7 +55,7 @@
 						"cat": "VAT",
 						"percent": "22%",
 						"ext": {
-							"pt-saft-tax-rate": "OUT"
+							"pt-saft-tax-rate": "NOR"
 						}
 					}
 				],
@@ -72,7 +72,7 @@
 						"rates": [
 							{
 								"ext": {
-									"pt-saft-tax-rate": "OUT"
+									"pt-saft-tax-rate": "NOR"
 								},
 								"base": "100.00",
 								"percent": "22%",

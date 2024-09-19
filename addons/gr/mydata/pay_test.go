@@ -11,6 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPaymentMeans(t *testing.T) {
+	m := mydata.PaymentMeansExtensions()
+	assert.NotEmpty(t, m)
+	assert.Len(t, m, 7)
+}
+
 func TestPayInstructions(t *testing.T) {
 	ad := tax.AddonForKey(mydata.V1)
 	t.Run("valid cash", func(t *testing.T) {

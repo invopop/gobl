@@ -12,6 +12,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestPaymentMeansExtensions(t *testing.T) {
+	m := sdi.PaymentMeansExtensions()
+	assert.NotEmpty(t, m)
+	assert.Len(t, m, 23)
+	assert.Equal(t, pay.MeansKeyCash, m.Lookup("MP01"))
+}
+
 func TestPayInstructionsNormalize(t *testing.T) {
 	inv := testInvoiceStandard(t)
 	inv.Payment = &bill.Payment{
@@ -48,7 +55,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 
 	inv.Payment = &bill.Payment{
 		Instructions: &pay.Instructions{
-			Key: "online",
+			Key: "cash",
 		},
 		Advances: []*pay.Advance{
 			{

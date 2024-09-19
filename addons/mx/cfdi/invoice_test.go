@@ -218,7 +218,7 @@ func TestInvoiceDiscountValidation(t *testing.T) {
 			Percent: num.NewPercentage(20, 2),
 		},
 	}
-	assertValidationError(t, inv, "discounts: the SAT doesn't allow discounts at invoice level")
+	assertValidationError(t, inv, "discounts: not supported, use line discounts instead")
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
