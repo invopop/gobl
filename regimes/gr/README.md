@@ -12,6 +12,55 @@ Example GR GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 ## Greece specifics
 
+### Invoice Type
+
+The Greek tax authority (IAPR) requires the invoice type to be specified as part of the invoice. In GOBL, this type can be set using the `gr-mydata-invoice-type` extension in the tax section.
+
+Alternatively, GOBL will set the extension for you based on the type and the tax tags you set in your GOBL invoice. The table below shows how this mapping is done:
+
+| Type   | Description                                     | GOBL Type     | GOBL Tags                  |
+| ------ | ----------------------------------------------- | ------------- |----------------------------|
+| `1.1`  | Sales Invoice                                   | `standard`    | `goods`                    |
+| `1.2`  | Sales Invoice/Intra-community Supplies          | `standard`    | `goods`, `export`, `eu`    |
+| `1.3`  | Sales Invoice/Third Country Supplies            | `standard`    | `goods`, `export`          |
+| `1.4`  | Sales Invoice/Sale on Behalf of Third Parties   | `standard`    | `goods`, `self-billed`     |
+| `2.1`  | Service Rendered Invoice                        | `standard`    | `services`                 |
+| `2.2`  | Intra-community Service Rendered Invoice        | `standard`    | `services`, `export`, `eu` |
+| `2.3`  | Third Country Service Rendered Invoice          | `standard`    | `services`, `export`       |
+| `5.1`  | Credit Invoice/Associated                       | `credit-note` |                            |
+| `11.1` | Retail Sales Receipt                            | `standard`    | `goods`, `simplified`      |
+| `11.2` | Service Rendered Receipt                        | `standard`    | `services`, `simplified`   |
+| `11.3` | Simplified Invoice                              | `standard`    | `simplified`               |
+| `11.4` | Retail Sales Credit Note                        | `credit-note` | `simplified`               |
+| `11.5` | Retail Sales Receipt on Behalf of Third Parties | `credit-note` | `goods`, `simplified`, `self-billed` |
+
+For example, this is how you set the IAPR invoice type explicitly:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // ...
+  "tax": {
+    "ext": {
+      "gr-mydata-invoice-type": "2.1"
+    }
+  }
+}
+```
+
+And this is how you'll get the same result by using the GOBL type and tags:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // ...
+  "type": "standard",
+  "tax": {
+    "tags": ["services"]
+  }
+}
+```
+
 ### VAT categories
 
 Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by a 30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate with a specific VAT category.

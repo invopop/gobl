@@ -4,6 +4,8 @@ currency: "EUR"
 issue_date: "2022-02-01"
 series: "SAMPLE"
 code: "001"
+$tags:
+  - "services"
 
 supplier:
   tax_id:

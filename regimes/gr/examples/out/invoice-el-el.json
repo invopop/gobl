@@ -4,19 +4,27 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1a9a5fd25eadad1fcdb5f141deaf628b6500c88f906bf9d521a753ae13d4d4f8"
+			"val": "44acc0fc32f2bbbdb5395f9f9c3bf770e4a4741ea7a40284e462fba2a1a307d3"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "EL",
+		"$tags": [
+			"services"
+		],
 		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "2.1"
+			}
+		},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {

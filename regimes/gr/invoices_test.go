@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,6 +18,7 @@ func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Series: "TEST",
 		Code:   "0002",
+		Tags:   tax.WithTags(gr.TagServices),
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{

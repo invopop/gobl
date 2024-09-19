@@ -1,6 +1,8 @@
 package gr
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
@@ -24,12 +26,18 @@ func validateInvoice(inv *bill.Invoice) error {
 func (v *invoiceValidator) validate() error {
 	return validation.ValidateStruct(v.inv,
 		validation.Field(&v.inv.Series, validation.Required),
+		validation.Field(&v.inv.Tax,
+			validation.Required,
+			validation.By(v.validateTax),
+			validation.Skip,
+		),
 		validation.Field(&v.inv.Supplier,
 			validation.By(v.validateBusinessParty),
 			validation.Skip,
 		),
 		validation.Field(&v.inv.Customer,
-			validation.When(!v.isSimplified(),
+			validation.When(!IsRetail(v.inv),
+				validation.Required,
 				validation.By(v.validateBusinessParty),
 				validation.By(v.validateBusinessCustomer),
 			),
@@ -53,6 +61,19 @@ func (v *invoiceValidator) validate() error {
 				validation.Required,
 			),
 			validation.Each(validation.By(v.validatePreceding)),
+			validation.Skip,
+		),
+	)
+}
+
+func (v *invoiceValidator) validateTax(value any) error {
+	t, ok := value.(*bill.Tax)
+	if !ok || t == nil {
+		return nil
+	}
+	return validation.ValidateStruct(t,
+		validation.Field(&t.Ext,
+			tax.ExtensionsRequires(ExtKeyMyDATAInvoiceType),
 			validation.Skip,
 		),
 	)
@@ -143,10 +164,6 @@ func (v *invoiceValidator) validatePreceding(value any) error {
 	)
 }
 
-func (v *invoiceValidator) isSimplified() bool {
-	return v.inv.HasTags(tax.TagSimplified)
-}
-
 func validateTaxCombo(tc *tax.Combo) error {
 	return validation.ValidateStruct(tc,
 		validation.Field(&tc.Ext,
@@ -162,4 +179,14 @@ func validateTaxCombo(tc *tax.Combo) error {
 			validation.Skip,
 		),
 	)
+}
+
+func IsRetail(inv *bill.Invoice) bool {
+	if inv.Tax == nil || inv.Tax.Ext == nil {
+		return false
+	}
+
+	it := inv.Tax.Ext[ExtKeyMyDATAInvoiceType]
+
+	return strings.HasPrefix(string(it), InvoiceTypeRetailPrefix)
 }

@@ -7,10 +7,13 @@ import (
 
 // Regime extension codes.
 const (
-	ExtKeyMyDATAVATCat     = "gr-mydata-vat-cat"
-	ExtKeyMyDATAExemption  = "gr-mydata-exemption"
-	ExtKeyMyDATAIncomeCat  = "gr-mydata-income-cat"
-	ExtKeyMyDATAIncomeType = "gr-mydata-income-type"
+	ExtKeyMyDATAVATCat      = "gr-mydata-vat-cat"
+	ExtKeyMyDATAInvoiceType = "gr-mydata-invoice-type"
+	ExtKeyMyDATAExemption   = "gr-mydata-exemption"
+	ExtKeyMyDATAIncomeCat   = "gr-mydata-income-cat"
+	ExtKeyMyDATAIncomeType  = "gr-mydata-income-type"
+
+	InvoiceTypeRetailPrefix = "11."
 )
 
 var extensionKeys = []*cbc.KeyDefinition{
@@ -75,6 +78,330 @@ var extensionKeys = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Records without VAT (e.g. Payroll, Amortisations)",
 					i18n.EL: "Εγγραφές χωρίς ΦΠΑ (πχ Μισθοδοσία, Αποσβέσεις)",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyMyDATAInvoiceType,
+		Name: i18n.String{
+			i18n.EN: "Invoice type",
+			i18n.EL: "Είδος παραστατικού",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "1.1",
+				Name: i18n.String{
+					i18n.EN: "Sales Invoice",
+					i18n.EL: "Τιμολόγιο Πώλησης",
+				},
+			},
+			{
+				Value: "1.2",
+				Name: i18n.String{
+					i18n.EN: "Sales Invoice/Intra-community Supplies",
+					i18n.EL: "Τιμολόγιο Πώλησης/Ενδοκοινοτικές Παραδόσεις",
+				},
+			},
+			{
+				Value: "1.3",
+				Name: i18n.String{
+					i18n.EN: "Sales Invoice/Third Country Supplies",
+					i18n.EL: "Τιμολόγιο Πώλησης/Παραδόσεις Τρίτων Χωρών",
+				},
+			},
+			{
+				Value: "1.4",
+				Name: i18n.String{
+					i18n.EN: "Sales Invoice/Sale on Behalf of Third Parties",
+					i18n.EL: "Τιμολόγιο Πώλησης/Πώληση για Λογαριασμό Τρίτων",
+				},
+			},
+			{
+				Value: "1.5",
+				Name: i18n.String{
+					i18n.EN: "Sales Invoice/Clearance of Sales on Behalf of Third Parties – Fees from Sales on Behalf of Third Parties",
+					i18n.EL: "Τιμολόγιο Πώλησης/Εκκαθάριση Πωλήσεων Τρίτων - Αμοιβή από Πωλήσεις Τρίτων",
+				},
+			},
+			{
+				Value: "1.6",
+				Name: i18n.String{
+					i18n.EN: "Sales Invoice/Supplemental Accounting Source Document",
+					i18n.EL: "Τιμολόγιο Πώλησης/Συμπληρωματικό Παραστατικό",
+				},
+			},
+			{
+				Value: "2.1",
+				Name: i18n.String{
+					i18n.EN: "Service Rendered Invoice",
+					i18n.EL: "Τιμολόγιο Παροχής Υπηρεσιών",
+				},
+			},
+			{
+				Value: "2.2",
+				Name: i18n.String{
+					i18n.EN: "Intra-community Service Rendered Invoice",
+					i18n.EL: "Τιμολόγιο Παροχής/Ενδοκοινοτική Παροχή Υπηρεσιών",
+				},
+			},
+			{
+				Value: "2.3",
+				Name: i18n.String{
+					i18n.EN: "Third Country Service Rendered Invoice",
+					i18n.EL: "Τιμολόγιο Παροχής/Παροχή Υπηρεσιών σε λήπτη Τρίτης Χώρας",
+				},
+			},
+			{
+				Value: "2.4",
+				Name: i18n.String{
+					i18n.EN: "Service Rendered Invoice/Supplemental Accounting Source Document",
+					i18n.EL: "Τιμολόγιο Παροχής/Συμπληρωματικό Παραστατικό",
+				},
+			},
+			{
+				Value: "3.1",
+				Name: i18n.String{
+					i18n.EN: "Proof of Expenditure (non-liable Issuer)",
+					i18n.EL: "Τίτλος Κτήσης (μη υπόχρεος Εκδότης)",
+				},
+			},
+			{
+				Value: "3.2",
+				Name: i18n.String{
+					i18n.EN: "Proof of Expenditure (denial of issuance by liable Issuer)",
+					i18n.EL: "Τίτλος Κτήσης (άρνηση έκδοσης από υπόχρεο Εκδότη)",
+				},
+			},
+			{
+				Value: "5.1",
+				Name: i18n.String{
+					i18n.EN: "Credit Invoice/Associated",
+					i18n.EL: "Πιστωτικό Τιμολόγιο/Συσχετιζόμενο",
+				},
+			},
+			{
+				Value: "5.2",
+				Name: i18n.String{
+					i18n.EN: "Credit Invoice/Non-Associated",
+					i18n.EL: "Πιστωτικό Τιμολόγιο/Μη Συσχετιζόμενο",
+				},
+			},
+			{
+				Value: "6.1",
+				Name: i18n.String{
+					i18n.EN: "Self-Delivery Record",
+					i18n.EL: "Στοιχείο Αυτοπαράδοσης",
+				},
+			},
+			{
+				Value: "6.2",
+				Name: i18n.String{
+					i18n.EN: "Self-Supply Record",
+					i18n.EL: "Στοιχείο Ιδιοχρησιμοποίησης",
+				},
+			},
+			{
+				Value: "7.1",
+				Name: i18n.String{
+					i18n.EN: "Contract – Income",
+					i18n.EL: "Συμβόλαιο - Έσοδο",
+				},
+			},
+			{
+				Value: "8.1",
+				Name: i18n.String{
+					i18n.EN: "Rents – Income",
+					i18n.EL: "Ενοίκια - Έσοδο",
+				},
+			},
+			{
+				Value: "8.2",
+				Name: i18n.String{
+					i18n.EN: "Special Record – Accommodation Tax Collection/Payment Receipt",
+					i18n.EL: "Ειδικό Στοιχείο – Απόδειξης Είσπραξης Φόρου Διαμονής",
+				},
+			},
+			{
+				Value: "11.1",
+				Name: i18n.String{
+					i18n.EN: "Retail Sales Receipt",
+					i18n.EL: "ΑΛΠ",
+				},
+			},
+			{
+				Value: "11.2",
+				Name: i18n.String{
+					i18n.EN: "Service Rendered Receipt",
+					i18n.EL: "ΑΠΥ",
+				},
+			},
+			{
+				Value: "11.3",
+				Name: i18n.String{
+					i18n.EN: "Simplified Invoice",
+					i18n.EL: "Απλοποιημένο Τιμολόγιο",
+				},
+			},
+			{
+				Value: "11.4",
+				Name: i18n.String{
+					i18n.EN: "Retail Sales Credit Note",
+					i18n.EL: "Πιστωτικό Στοιχ. Λιανικής",
+				},
+			},
+			{
+				Value: "11.5",
+				Name: i18n.String{
+					i18n.EN: "Retail Sales Receipt on Behalf of Third Parties",
+					i18n.EL: "Απόδειξη Λιανικής Πώλησης για Λογ/σμό Τρίτων",
+				},
+			},
+			{
+				Value: "13.1",
+				Name: i18n.String{
+					i18n.EN: "Expenses – Domestic/Foreign Retail Transaction Purchases",
+					i18n.EL: "Έξοδα - Αγορές Λιανικών Συναλλαγών ημεδαπής / αλλοδαπής",
+				},
+			},
+			{
+				Value: "13.2",
+				Name: i18n.String{
+					i18n.EN: "Domestic/Foreign Retail Transaction Provision",
+					i18n.EL: "Παροχή Λιανικών Συναλλαγών ημεδαπής / αλλοδαπής",
+				},
+			},
+			{
+				Value: "13.3",
+				Name: i18n.String{
+					i18n.EN: "Shared Utility Bills",
+					i18n.EL: "Κοινόχρηστα",
+				},
+			},
+			{
+				Value: "13.4",
+				Name: i18n.String{
+					i18n.EN: "Subscriptions",
+					i18n.EL: "Συνδρομές",
+				},
+			},
+			{
+				Value: "13.30",
+				Name: i18n.String{
+					i18n.EN: "Self-Declared Entity Accounting Source Documents (Dynamic)",
+					i18n.EL: "Παραστατικά Οντότητας ως Αναγράφονται από την ίδια (Δυναμικό)",
+				},
+			},
+			{
+				Value: "13.31",
+				Name: i18n.String{
+					i18n.EN: "Domestic/Foreign Retail Sales Credit Note",
+					i18n.EL: "Πιστωτικό Στοιχ. Λιανικής ημεδαπής / αλλοδαπής",
+				},
+			},
+			{
+				Value: "14.1",
+				Name: i18n.String{
+					i18n.EN: "Invoice/Intra-community Acquisitions",
+					i18n.EL: "Τιμολόγιο / Ενδοκοινοτικές Αποκτήσεις",
+				},
+			},
+			{
+				Value: "14.2",
+				Name: i18n.String{
+					i18n.EN: "Invoice/Third Country Acquisitions",
+					i18n.EL: "Τιμολόγιο / Αποκτήσεις Τρίτων Χωρών",
+				},
+			},
+			{
+				Value: "14.3",
+				Name: i18n.String{
+					i18n.EN: "Invoice/Intra-community Services Receipt",
+					i18n.EL: "Τιμολόγιο / Ενδοκοινοτική Λήψη Υπηρεσιών",
+				},
+			},
+			{
+				Value: "14.4",
+				Name: i18n.String{
+					i18n.EN: "Invoice/Third Country Services Receipt",
+					i18n.EL: "Τιμολόγιο / Λήψη Υπηρεσιών Τρίτων Χωρών",
+				},
+			},
+			{
+				Value: "14.5",
+				Name: i18n.String{
+					i18n.EN: "EFKA",
+					i18n.EL: "ΕΦΚΑ και λοιποί Ασφαλιστικοί Οργανισμοί",
+				},
+			},
+			{
+				Value: "14.30",
+				Name: i18n.String{
+					i18n.EN: "Self-Declared Entity Accounting Source Documents (Dynamic)",
+					i18n.EL: "Παραστατικά Οντότητας ως Αναγράφονται από την ίδια (Δυναμικό)",
+				},
+			},
+			{
+				Value: "14.31",
+				Name: i18n.String{
+					i18n.EN: "Domestic/Foreign Credit Note",
+					i18n.EL: "Πιστωτικό ημεδαπής / αλλοδαπής",
+				},
+			},
+			{
+				Value: "15.1",
+				Name: i18n.String{
+					i18n.EN: "Contract-Expense",
+					i18n.EL: "Συμβόλαιο - Έξοδο",
+				},
+			},
+			{
+				Value: "16.1",
+				Name: i18n.String{
+					i18n.EN: "Rent-Expense",
+					i18n.EL: "Ενοίκιο Έξοδο",
+				},
+			},
+			{
+				Value: "17.1",
+				Name: i18n.String{
+					i18n.EN: "Payroll",
+					i18n.EL: "Μισθοδοσία",
+				},
+			},
+			{
+				Value: "17.2",
+				Name: i18n.String{
+					i18n.EN: "Amortisations",
+					i18n.EL: "Αποσβέσεις",
+				},
+			},
+			{
+				Value: "17.3",
+				Name: i18n.String{
+					i18n.EN: "Other Income Adjustment/Regularisation Entries – Accounting Base",
+					i18n.EL: "Λοιπές Εγγραφές Τακτοποίησης Εσόδων - Λογιστική Βάση",
+				},
+			},
+			{
+				Value: "17.4",
+				Name: i18n.String{
+					i18n.EN: "Other Income Adjustment/Regularisation Entries – Tax Base",
+					i18n.EL: "Λοιπές Εγγραφές Τακτοποίησης Εσόδων - Φορολογική Βάση",
+				},
+			},
+			{
+				Value: "17.5",
+				Name: i18n.String{
+					i18n.EN: "Other Expense Adjustment/Regularisation Entries – Accounting Base",
+					i18n.EL: "Λοιπές Εγγραφές Τακτοποίησης Εξόδων - Λογιστική Βάση",
+				},
+			},
+			{
+				Value: "17.6",
+				Name: i18n.String{
+					i18n.EN: "Other Expense Adjustment/Regularisation Entries – Tax Base",
+					i18n.EL: "Λοιπές Εγγραφές Τακτοποίησης Εξόδων - Φορολογική Βάση",
 				},
 			},
 		},
