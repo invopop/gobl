@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -15,13 +14,6 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 }
-
-// Keys used for meta data from external sources.
-const (
-	KeyFatturaPATipoDocumento     cbc.Key = "fatturapa-tipo-documento"
-	KeyFatturaPATipoRitenuta      cbc.Key = "fatturapa-tipo-ritenuta"
-	KeyFatturaPAModalitaPagamento cbc.Key = "fatturapa-modalita-pagamento"
-)
 
 // New instantiates a new Italian regime.
 func New() *tax.RegimeDef {
@@ -32,16 +24,13 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
-		TimeZone:         "Europe/Rome",
-		ChargeKeys:       chargeKeyDefinitions,       // charges.go
-		IdentityKeys:     identityKeyDefinitions,     // identities.go
-		InboxKeys:        inboxKeyDefinitions,        // inboxes.go
-		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
-		Extensions:       extensionKeys,              // extensions.go
+		TimeZone:     "Europe/Rome",
+		ChargeKeys:   chargeKeyDefinitions,   // charges.go
+		IdentityKeys: identityKeyDefinitions, // identities.go
+		Scenarios:    scenarios,              // scenarios.go
 		Tags: []*tax.TagSet{
-			common.InvoiceTags().Merge(invoiceTags),
+			common.InvoiceTags(),
 		},
-		Scenarios:  scenarios, // scenarios.go
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: categories, // categories.go
@@ -62,16 +51,8 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
 	case *org.Identity:
 		return validateIdentity(obj)
-	case *pay.Advance:
-		return validatePayAdvance(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
 	}
 	return nil
 }
@@ -79,8 +60,6 @@ func Validate(doc interface{}) error {
 // Normalize will perform any regime specific calculations.
 func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
 	case *org.Identity:

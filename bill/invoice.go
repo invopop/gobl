@@ -145,8 +145,8 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Code,
 			validation.Match(InvoiceCodeRegexp),
 			validation.When(
-				!internal.IsDraft(ctx),
-				validation.Required,
+				internal.IsSigned(ctx),
+				validation.Required.Error("required to sign invoice"),
 			),
 		),
 		validation.Field(&inv.IssueDate,

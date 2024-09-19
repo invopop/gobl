@@ -1,8 +1,9 @@
-package it_test
+package sdi_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
@@ -16,6 +17,8 @@ import (
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime:   tax.WithRegime("IT"),
+		Addons:   tax.WithAddons(sdi.V1),
 		Code:     "123TEST",
 		Currency: "EUR",
 		Tax: &bill.Tax{
@@ -87,10 +90,12 @@ func TestInvoiceValidation(t *testing.T) {
 }
 
 func TestInvoiceNormalization(t *testing.T) {
+	ad := tax.AddonForKey(sdi.V1)
+
 	t.Run("supplier fiscal regime", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		it.Normalize(inv)
-		assert.Equal(t, "RF01", inv.Supplier.Ext[it.ExtKeySDIFiscalRegime].String())
+		ad.Normalizer(inv)
+		assert.Equal(t, "RF01", inv.Supplier.Ext[sdi.ExtKeyFiscalRegime].String())
 	})
 
 	t.Run("normalize customer", func(t *testing.T) {
@@ -100,7 +105,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Code:    "RSSGNN60R30H501U",
 			Type:    "individual",
 		}
-		it.Normalize(inv)
+		ad.Normalizer(inv)
 		assert.Empty(t, inv.Customer.TaxID.Code)
 		assert.Empty(t, inv.Customer.TaxID.Type) //nolint:staticcheck
 		assert.Len(t, inv.Customer.Identities, 1)
@@ -117,8 +122,8 @@ func TestInvoiceNormalization(t *testing.T) {
 				"it-sdi-nature": "N1",
 			},
 		}
-		it.Normalize(inv)
-		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext[it.ExtKeySDIExempt].String())
+		ad.Normalizer(inv)
+		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext[sdi.ExtKeyExempt].String())
 		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-nature")
 	})
 
@@ -131,8 +136,8 @@ func TestInvoiceNormalization(t *testing.T) {
 				"it-sdi-retained-tax": "A",
 			},
 		}
-		it.Normalize(inv)
-		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext[it.ExtKeySDIRetained].String())
+		ad.Normalizer(inv)
+		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext[sdi.ExtKeyRetained].String())
 		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-retained-tax")
 	})
 
@@ -227,7 +232,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
 		Category: "IRPEF",
 		Ext: tax.Extensions{
-			it.ExtKeySDIRetained: "A",
+			sdi.ExtKeyRetained: "A",
 		},
 		Percent: num.NewPercentage(20, 2),
 	})

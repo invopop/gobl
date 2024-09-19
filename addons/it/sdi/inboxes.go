@@ -1,4 +1,4 @@
-package it
+package sdi
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -7,20 +7,20 @@ import (
 
 // Inbox keys to universally identify where copies of documents can be sent.
 const (
-	KeyInboxSDICode cbc.Key = "it-sdi-code"
-	KeyInboxSDIPEC  cbc.Key = "it-sdi-pec"
+	KeyInboxCode cbc.Key = "it-sdi-code"
+	KeyInboxPEC  cbc.Key = "it-sdi-pec"
 )
 
-var inboxKeyDefinitions = []*cbc.KeyDefinition{
+var inboxes = []*cbc.KeyDefinition{
 	{
-		Key: KeyInboxSDICode,
+		Key: KeyInboxCode,
 		Name: i18n.String{
 			i18n.EN: "SDI Destination Code",
 			i18n.IT: "Codice Destinatario SDI",
 		},
 	},
 	{
-		Key: KeyInboxSDIPEC,
+		Key: KeyInboxPEC,
 		Name: i18n.String{
 			i18n.EN: "SDI PEC Destination",
 			i18n.IT: "PEC Destinatario SDI",

@@ -1,10 +1,12 @@
 package head_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,6 +20,25 @@ func TestNewHeader(t *testing.T) {
 		h.Tags = append(h.Tags, "foo")
 		h.Stamps = append(h.Stamps, &head.Stamp{})
 	}, "header and meta hash should have been initialized")
+}
+
+func TestHeaderValidation(t *testing.T) {
+	h := head.NewHeader()
+	h.Stamps = []*head.Stamp{
+		{Provider: "foo", Value: "bar"},
+	}
+	err := h.Validate()
+	assert.ErrorContains(t, err, "dig: cannot be blank; stamps: must be blank")
+
+	h.Digest = dsig.NewSHA256Digest([]byte("testing"))
+
+	ctx := internal.SignedContext(context.Background())
+	err = h.ValidateWithContext(ctx)
+	assert.NoError(t, err)
+
+	h.Stamps = append(h.Stamps, &head.Stamp{Provider: "foo", Value: "bar"})
+	err = h.ValidateWithContext(ctx)
+	assert.ErrorContains(t, err, "stamps: duplicate stamp 'foo'")
 }
 
 func TestHeaderAddStamp(t *testing.T) {

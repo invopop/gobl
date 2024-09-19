@@ -81,6 +81,15 @@ type Online struct {
 	URL string `json:"url" jsonschema:"title=URL"`
 }
 
+// Normalize will try to normalize the instructions.
+func (i *Instructions) Normalize(normalizers tax.Normalizers) {
+	if i == nil {
+		return
+	}
+	i.Ext = tax.CleanExtensions(i.Ext)
+	normalizers.Each(i)
+}
+
 // UNTDID4461 provides the standard UNTDID 4461 code for the instruction's key.
 func (i *Instructions) UNTDID4461() cbc.Code {
 	for _, v := range MeansKeyDefinitions {

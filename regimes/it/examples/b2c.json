@@ -1,5 +1,6 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["it-sdi-v1"],
   "uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
   "series": "FT",
   "code": "020",

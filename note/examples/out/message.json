@@ -5,8 +5,7 @@
 		"dig": {
 			"alg": "sha256",
 			"val": "756ee06ced5cba14c1faeeb2d151d281b8e858e0121d04e8049dc989d5085567"
-		},
-		"draft": true
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/note/message",

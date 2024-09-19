@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -1133,7 +1134,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.Extensions{
-								it.ExtKeySDIRetained: "A",
+								sdi.ExtKeyRetained: "A",
 							},
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -1149,7 +1150,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: it.TaxCategoryIRPEF,
 							Ext: tax.Extensions{
-								it.ExtKeySDIRetained: "J", // truffles!
+								sdi.ExtKeyRetained: "J", // truffles!
 							},
 							Percent: num.NewPercentage(20, 2),
 						},
@@ -1177,7 +1178,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Ext: tax.Extensions{
-									it.ExtKeySDIRetained: "A",
+									sdi.ExtKeyRetained: "A",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),
@@ -1185,7 +1186,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 							},
 							{
 								Ext: tax.Extensions{
-									it.ExtKeySDIRetained: "J",
+									sdi.ExtKeyRetained: "J",
 								},
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(20, 2),

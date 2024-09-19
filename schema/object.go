@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
@@ -100,10 +99,6 @@ func (d *Object) Validate() error {
 // ValidateWithContext checks to ensure the document has everything it needs
 // and will pass on the validation call to the payload.
 func (d *Object) ValidateWithContext(ctx context.Context) error {
-	if ctx.Value(internal.KeyDraft) == nil {
-		// if draft not set previously, assume true
-		ctx = context.WithValue(ctx, internal.KeyDraft, true)
-	}
 	err := validation.ValidateStructWithContext(ctx, d,
 		validation.Field(&d.Schema, validation.Required),
 	)

@@ -4,13 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a180458ac28dd324f3a00eee703a381c4d759c012d8d710ff486d6a27d82f401"
-		},
-		"draft": true
+			"val": "62582ea82a99d7efb72c120da22647af26b4385cffb402ca81dd8f609ae8b8be"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
 		"$tags": [
 			"freelance"
 		],
@@ -133,7 +135,10 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "credit-transfer"
+				"key": "credit-transfer",
+				"ext": {
+					"it-sdi-payment-means": "MP05"
+				}
 			}
 		},
 		"totals": {

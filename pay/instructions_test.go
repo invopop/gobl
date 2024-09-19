@@ -5,9 +5,27 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestInstructionsNormalize(t *testing.T) {
+	i := &pay.Instructions{
+		Key:    "online",
+		Detail: "Some random payment",
+		Ext: tax.Extensions{
+			"random": "",
+		},
+	}
+	i.Normalize(nil)
+	assert.Empty(t, i.Ext)
+
+	i = nil
+	assert.NotPanics(t, func() {
+		i.Normalize(nil)
+	})
+}
 
 func TestOnline(t *testing.T) {
 	instr := &pay.Instructions{
