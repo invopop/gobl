@@ -49,11 +49,6 @@
           "type": "string",
           "title": "Notes",
           "description": "Any information that may be relevant to other humans about this envelope"
-        },
-        "draft": {
-          "type": "boolean",
-          "title": "Draft",
-          "description": "When true, implies that this document should not be considered final. Digital signatures are optional."
         }
       },
       "type": "object",

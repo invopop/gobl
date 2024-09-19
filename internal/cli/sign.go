@@ -30,13 +30,6 @@ func Sign(ctx context.Context, opts *SignOptions) (*gobl.Envelope, error) {
 		panic("parsed sign data must be an envelope")
 	}
 
-	// A draft automatically becomes a non-draft (i.e. "final") document, This
-	// way it's possible to sign a document in draft state with a single
-	// command.
-	if env.Head != nil && env.Head.Draft {
-		env.Head.Draft = false
-	}
-
 	if err := env.Calculate(); err != nil {
 		return nil, wrapError(StatusUnprocessableEntity, err)
 	}
