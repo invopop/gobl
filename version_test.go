@@ -13,4 +13,15 @@ func TestVersion(t *testing.T) {
 	assert.EqualValues(t, 0, sv.Major())
 	assert.EqualValues(t, 10, sv.Minor())
 	assert.EqualValues(t, 2, sv.Patch())
+
+	v = "xxxx"
+	assert.Panics(t, func() {
+		v.Semver()
+	})
+}
+
+func TestCurrentVersion(t *testing.T) {
+	assert.NotPanics(t, func() {
+		gobl.VERSION.Semver()
+	})
 }
