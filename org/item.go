@@ -56,15 +56,19 @@ func (i *Item) Validate() error {
 	return i.ValidateWithContext(context.Background())
 }
 
-// Calculate performs any required calculations on the Item.
-func (i *Item) Calculate() error {
-	i.Ext = tax.NormalizeExtensions(i.Ext)
-	return nil
+// Normalize performs any required normalizations on the Item.
+func (i *Item) Normalize(normalizers tax.Normalizers) {
+	if i == nil {
+		return
+	}
+	i.Ext = tax.CleanExtensions(i.Ext)
+	normalizers.Each(i)
+	tax.Normalize(normalizers, i.Identities)
 }
 
 // ValidateWithContext checks that the Item looks okay inside the provided context.
 func (i *Item) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),

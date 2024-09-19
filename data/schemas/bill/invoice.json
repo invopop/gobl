@@ -198,6 +198,26 @@
     },
     "Invoice": {
       "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
+          "title": "Regime"
+        },
+        "$addons": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Addons",
+          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+        },
+        "$tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags are used to help identify specific tax scenarios or requirements that will\napply changes to the contents of the invoice. Tags by design should always be optional,\nit should always be possible to build a valid invoice without any tags."
+        },
         "uuid": {
           "type": "string",
           "format": "uuid",
@@ -776,14 +796,6 @@
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Prices Include",
           "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
-        },
-        "tags": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Tags",
-          "description": "Tags are used to help identify specific tax scenarios or requirements that will\napply changes to the contents of the invoice. Tags by design should always be optional,\nit should always be possible to build a valid invoice without any tags."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",

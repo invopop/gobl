@@ -33,7 +33,7 @@ func (c *Coordinates) Validate() error {
 
 // ValidateWithContext checks that coordinates look okay in the given context.
 func (c *Coordinates) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, c,
+	return tax.ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Latitude, validation.Min(-90.0), validation.Max(90.0)),
 		validation.Field(&c.Longitude, validation.Min(-180.0), validation.Max(180.0)),
 		validation.Field(&c.W3W, validation.Match(regexpW3W)),

@@ -90,7 +90,7 @@ func (v *invoiceValidator) validCustomer(value interface{}) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.TaxID,
 			validation.When(
-				!v.inv.Tax.ContainsTag(tax.TagSimplified),
+				!v.inv.HasTags(tax.TagSimplified),
 				validation.Required,
 				tax.RequireIdentityCode,
 			),
@@ -157,7 +157,10 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	)
 }
 
-func normalizeParty(p *org.Party) error {
+func normalizeParty(p *org.Party) {
+	if p == nil {
+		return
+	}
 	// 2024-03-14: Migrate Tax ID Zone to extensions "co-dian-municipality"
 	if p.TaxID != nil && p.TaxID.Zone != "" { //nolint:staticcheck
 		if p.Ext == nil {
@@ -166,5 +169,4 @@ func normalizeParty(p *org.Party) error {
 		p.Ext[ExtKeyDIANMunicipality] = tax.ExtValue(p.TaxID.Zone) //nolint:staticcheck
 		p.TaxID.Zone = ""                                          //nolint:staticcheck
 	}
-	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
@@ -132,7 +133,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
-						es.ExtKeyTBAIExemption: "E1",
+						tbai.ExtKeyExemption: "E1",
 					},
 				},
 			},
@@ -144,7 +145,7 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Ext: tax.Extensions{
-						es.ExtKeyTBAIExemption: "E1",
+						tbai.ExtKeyExemption: "E1",
 					},
 				},
 			},
@@ -161,7 +162,7 @@ func TestSetValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "0: (ext: (foo: invalid.).)",
+			err: "0: (ext: (foo: undefined.).)",
 		},
 		{
 			desc: "category extension",
@@ -170,15 +171,15 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
-						es.ExtKeyTBAIProduct: "services",
+						tbai.ExtKeyProduct: "services",
 					},
 				},
 			},
 			err: nil,
 		},
 	}
-	es := es.New()
-	ctx := es.WithContext(context.Background())
+	ctx := context.Background()
+	ctx = es.New().WithContext(ctx)
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Helper()
@@ -284,8 +285,8 @@ func TestSetGet(t *testing.T) {
 	assert.Nil(t, s.Get(cbc.Code("FOO")))
 }
 
-func TestNormalizeSet(t *testing.T) {
-	s := tax.NormalizeSet(nil)
+func TestCleanSet(t *testing.T) {
+	s := tax.CleanSet(nil)
 	assert.Nil(t, s)
 
 	s = tax.Set{
@@ -298,7 +299,7 @@ func TestNormalizeSet(t *testing.T) {
 			Rate:     "pro",
 		},
 	}
-	s = tax.NormalizeSet(s)
+	s = tax.CleanSet(s)
 	assert.Equal(t, s[0].Category, cbc.Code("VAT"))
 	assert.Equal(t, s[1].Category, cbc.Code("IRPF"))
 
@@ -306,22 +307,17 @@ func TestNormalizeSet(t *testing.T) {
 		{
 			Category: "VAT",
 			Rate:     "standard",
-			Ext: tax.Extensions{
-				es.ExtKeyFacturaECorrection: "",
-			},
 		},
 		nil,
 	}
-	assert.NotNil(t, s[0].Ext)
 	assert.Len(t, s, 2)
-	s = tax.NormalizeSet(s)
-	assert.Nil(t, s[0].Ext)
+	s = tax.CleanSet(s)
 	assert.Len(t, s, 1)
 
 	s = tax.Set{
 		nil,
 	}
 	assert.Len(t, s, 1)
-	s = tax.NormalizeSet(s)
+	s = tax.CleanSet(s)
 	assert.Nil(t, s)
 }

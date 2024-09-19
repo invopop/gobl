@@ -89,9 +89,7 @@ func TestInvoiceValidation(t *testing.T) {
 func TestInvoiceNormalization(t *testing.T) {
 	t.Run("supplier fiscal regime", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		err := it.Calculate(inv)
-		require.NoError(t, err)
-
+		it.Normalize(inv)
 		assert.Equal(t, "RF01", inv.Supplier.Ext[it.ExtKeySDIFiscalRegime].String())
 	})
 
@@ -102,8 +100,7 @@ func TestInvoiceNormalization(t *testing.T) {
 			Code:    "RSSGNN60R30H501U",
 			Type:    "individual",
 		}
-		err := it.Calculate(inv)
-		require.NoError(t, err)
+		it.Normalize(inv)
 		assert.Empty(t, inv.Customer.TaxID.Code)
 		assert.Empty(t, inv.Customer.TaxID.Type) //nolint:staticcheck
 		assert.Len(t, inv.Customer.Identities, 1)
@@ -120,8 +117,7 @@ func TestInvoiceNormalization(t *testing.T) {
 				"it-sdi-nature": "N1",
 			},
 		}
-		err := it.Calculate(inv)
-		require.NoError(t, err)
+		it.Normalize(inv)
 		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext[it.ExtKeySDIExempt].String())
 		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-nature")
 	})
@@ -135,8 +131,7 @@ func TestInvoiceNormalization(t *testing.T) {
 				"it-sdi-retained-tax": "A",
 			},
 		}
-		err := it.Calculate(inv)
-		require.NoError(t, err)
+		it.Normalize(inv)
 		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext[it.ExtKeySDIRetained].String())
 		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-retained-tax")
 	})

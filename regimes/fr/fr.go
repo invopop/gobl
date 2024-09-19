@@ -22,12 +22,12 @@ const (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "FR",
 		Currency: currency.EUR,
 		Name: i18n.String{
@@ -40,7 +40,9 @@ func New() *tax.Regime {
 			`),
 		},
 		TimeZone: "Europe/Paris",
-		Tags:     common.InvoiceTags(),
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
@@ -55,7 +57,7 @@ func New() *tax.Regime {
 			},
 		},
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Categories: taxCategories,
 	}
 }
@@ -71,11 +73,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	}
-	return nil
 }

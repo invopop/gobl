@@ -4,23 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c0fe01b99d31fbb6cd0c4708ab9fdb14a90afb5a4ca79a52e33555c17ea25579"
+			"val": "0745f5625506dd55aefc98f5dd886970f27e39fe1259c0f9c0081422abe8e0c7"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"$tags": [
+			"customer-rates"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "EXPORT-X",
 		"code": "0002",
 		"issue_date": "2023-12-18",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"customer-rates"
-			]
-		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

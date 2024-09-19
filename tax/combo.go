@@ -38,13 +38,14 @@ type Combo struct {
 func (c *Combo) ValidateWithContext(ctx context.Context) error {
 	// First perform combo validation with the regime from the context,
 	// or the country override.
-	var r *Regime
+
+	var r *RegimeDef
 	if c.Country.Empty() {
-		r, _ = ctx.Value(KeyRegime).(*Regime)
+		r = RegimeDefFromContext(ctx)
 	} else {
-		r = RegimeFor(c.Country.Code())
+		r = RegimeDefFor(c.Country.Code())
 	}
-	err := validation.ValidateStructWithContext(ctx, c,
+	return ValidateStructWithContext(ctx, c,
 		validation.Field(&c.Category,
 			validation.Required,
 			r.InCategories(),
@@ -57,46 +58,17 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			c.Percent == nil,
 			validation.Nil.Error("required with percent"),
 		)),
+		validation.Field(&c.Ext),
 	)
-	if err != nil {
-		return err
-	}
-
-	// Always use base regime to check extensions
-	r, _ = ctx.Value(KeyRegime).(*Regime)
-	cat := r.Category(c.Category)
-	exts := make([]cbc.Key, 0)
-	if cat != nil {
-		exts = append(exts, cat.Extensions...)
-	}
-	err = validation.ValidateStructWithContext(ctx, c,
-		validation.Field(&c.Ext,
-			ExtensionsHas(exts...),
-			validation.When(
-				len(exts) == 0,
-				validation.Empty,
-				validation.Skip,
-			),
-		),
-	)
-	if err != nil {
-		return err
-	}
-	if cat != nil && cat.Validation != nil {
-		if err := cat.Validation(c); err != nil {
-			return err
-		}
-	}
-	return r.ValidateObject(c)
 }
 
-// NormalizeCombo tries to normalize the data inside the tax combo.
-func NormalizeCombo(c *Combo) *Combo {
+// Normalize tries to normalize the data inside the tax combo.
+func (c *Combo) Normalize(normalizers Normalizers) {
 	if c == nil {
-		return nil
+		return
 	}
-	c.Ext = NormalizeExtensions(c.Ext)
-	return c
+	c.Ext = CleanExtensions(c.Ext)
+	normalizers.Each(c)
 }
 
 func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.Date) error {
@@ -106,7 +78,7 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.
 		country = c.Country
 	}
 
-	r := RegimeFor(country.Code())
+	r := RegimeDefFor(country.Code())
 	if r == nil {
 		// if the tax regime is not yet defined, don't try to perform
 		// any extra calculations.
@@ -116,8 +88,8 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.
 	return c.calculateForRegime(r, tags, date)
 }
 
-func (c *Combo) calculateForRegime(r *Regime, tags []cbc.Key, date cal.Date) error {
-	category := r.Category(c.Category)
+func (c *Combo) calculateForRegime(r *RegimeDef, tags []cbc.Key, date cal.Date) error {
+	category := r.CategoryDef(c.Category)
 	if category == nil {
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
 	}
@@ -127,24 +99,24 @@ func (c *Combo) calculateForRegime(r *Regime, tags []cbc.Key, date cal.Date) err
 		return err
 	}
 
-	// Run the regime's calculations and normalisations, but only if this is not
+	// Run the regime's normalisations, but only if this is not
 	// a country-specific combo.
-	if c.Country == "" {
-		return r.CalculateObject(c)
-	}
+	//if c.Country == "" {
+	//	r.NormalizeObject(c)
+	//}
 
 	return nil
 }
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
-func (c *Combo) prepareRate(category *Category, tags []cbc.Key, date cal.Date) error {
+func (c *Combo) prepareRate(category *CategoryDef, tags []cbc.Key, date cal.Date) error {
 	// If there is no rate for the combo, there isn't much else we can do.
 	if c.Rate == cbc.KeyEmpty {
 		return nil
 	}
 
-	rate := category.Rate(c.Rate)
+	rate := category.RateDef(c.Rate)
 	if rate == nil {
 		return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
 	}

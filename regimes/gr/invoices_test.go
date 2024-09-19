@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -86,9 +85,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 func TestSimplifiedInvoiceValidation(t *testing.T) {
 	inv := validInvoice()
-	inv.Tax = &bill.Tax{
-		Tags: []cbc.Key{tax.TagSimplified},
-	}
+	inv.SetTags(tax.TagSimplified)
 	inv.Customer.TaxID = nil
 	inv.Customer.Addresses = nil
 

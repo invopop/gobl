@@ -31,7 +31,8 @@ func validInvoice() *bill.Invoice {
 			{
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
-					Name: "Test Item",
+					Name:  "Test Item",
+					Price: num.MakeAmount(100, 0),
 				},
 				Taxes: tax.Set{
 					{

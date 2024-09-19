@@ -32,6 +32,8 @@ type Instructions struct {
 	Online []*Online `json:"online,omitempty" jsonschema:"title=Online"`
 	// Any additional instructions that may be required to make the payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+	// Extension key-pairs values defined by a tax regime.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Non-structured additional data that may be useful.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -128,11 +130,12 @@ func (i *Instructions) Validate() error {
 
 // ValidateWithContext ensures the fields provided in the instructions are valid.
 func (i *Instructions) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Key, validation.Required, HasValidMeansKey),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),
 		validation.Field(&i.Online),
+		validation.Field(&i.Ext),
 	)
 }
 

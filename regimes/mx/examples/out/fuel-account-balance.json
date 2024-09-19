@@ -4,12 +4,16 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4a1aa51d43385f36b632918328f865058f9844a3512f36df90d9e8573febfd21"
+			"val": "b1e85e0edfabccc9338721d7c1483933c593f3fdf90ad557c3bbb5a498023d51"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "TEST",
@@ -61,7 +65,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					}
 				],
 				"total": "10.00"
@@ -82,6 +89,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "10.00",
 								"percent": "16.0%",
 								"amount": "1.60"

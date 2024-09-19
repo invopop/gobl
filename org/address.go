@@ -54,7 +54,7 @@ func (a *Address) Validate() error {
 
 // ValidateWithContext checks that an address looks okay in the given context.
 func (a *Address) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, a,
+	return tax.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.UUID),
 		validation.Field(&a.Country),
 		validation.Field(&a.Coordinates),

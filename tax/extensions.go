@@ -1,7 +1,6 @@
 package tax
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -40,8 +39,39 @@ type Extensions map[cbc.Key]ExtValue
 // if it is a code, key, or regular string.
 type ExtValue string
 
-// ValidateWithContext ensures the extension map data looks correct.
-func (em Extensions) ValidateWithContext(ctx context.Context) error {
+type extensionCollection struct {
+	list map[cbc.Key]*cbc.KeyDefinition
+}
+
+// extensionsDefs is a global register of all extension definitions
+// that have been registered via regimes and addons.
+var extensionDefs = newExtensionCollection()
+
+func newExtensionCollection() *extensionCollection {
+	return &extensionCollection{
+		list: make(map[cbc.Key]*cbc.KeyDefinition),
+	}
+}
+
+func (c *extensionCollection) add(kd *cbc.KeyDefinition) {
+	c.list[kd.Key] = kd
+}
+
+// RegisterExtension is used to add any extension definitions to the global
+// register. This is not expected to be called directly, but rather will
+// be used by the regimes and addons during their registration processes.
+func RegisterExtension(kd *cbc.KeyDefinition) {
+	extensionDefs.add(kd)
+}
+
+// ExtensionForKey returns the extension definition for the given key or nil.
+func ExtensionForKey(key cbc.Key) *cbc.KeyDefinition {
+	return extensionDefs.list[key]
+}
+
+// Validate ensures the extension map data looks correct and that all keys
+// have been registered globally.
+func (em Extensions) Validate() error {
 	err := make(validation.Errors)
 	// Validate key format
 	for k := range em {
@@ -52,14 +82,10 @@ func (em Extensions) ValidateWithContext(ctx context.Context) error {
 	if len(err) > 0 {
 		return err
 	}
-	r := RegimeFromContext(ctx)
-	if r == nil {
-		return nil
-	}
-	// Validate keys are defined in regime
+	// Validate keys are defined and correct
 	for k, ev := range em {
 		ks := k.String()
-		kd := r.ExtensionDef(k)
+		kd := ExtensionForKey(k)
 		if kd == nil {
 			err[ks] = errors.New("undefined")
 			continue
@@ -143,9 +169,9 @@ func (em Extensions) Merge(other Extensions) Extensions {
 	return nem
 }
 
-// NormalizeExtensions will try to clean the extension map removing empty values
+// CleanExtensions will try to clean the extension map removing empty values
 // and will potentially return a nil if there only keys with no values.
-func NormalizeExtensions(em Extensions) Extensions {
+func CleanExtensions(em Extensions) Extensions {
 	if em == nil {
 		return nil
 	}

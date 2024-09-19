@@ -2,15 +2,12 @@ package bill
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
-
-// TaxScheme allows for defining a specific or special scheme that applies to the
-// billing document. Schemes are defined as needed for each region.
-type TaxScheme string
 
 // Tax defines a summary of the taxes which may be applied to an invoice.
 type Tax struct {
@@ -19,11 +16,6 @@ type Tax struct {
 	// tax.
 	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
 
-	// Tags are used to help identify specific tax scenarios or requirements that will
-	// apply changes to the contents of the invoice. Tags by design should always be optional,
-	// it should always be possible to build a valid invoice without any tags.
-	Tags []cbc.Key `json:"tags,omitempty" jsonschema:"title=Tags"`
-
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
@@ -31,23 +23,41 @@ type Tax struct {
 	// Any additional data that may be required for processing, but should never
 	// be relied upon by recipients.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	tags []cbc.Key
 }
 
-// ContainsTag returns true if the tax contains the given tag.
-func (t *Tax) ContainsTag(key cbc.Key) bool {
+// Normalize performs normalization on the tax and embedded objects using the
+// provided list of normalizers.
+func (t *Tax) Normalize(normalizers tax.Normalizers) {
 	if t == nil {
-		return false
+		return
 	}
-	return key.In(t.Tags...)
+	t.Ext = tax.CleanExtensions(t.Ext)
+	normalizers.Each(t)
 }
 
 // ValidateWithContext ensures the tax details look valid.
 func (t *Tax) ValidateWithContext(ctx context.Context) error {
-	r, _ := ctx.Value(tax.KeyRegime).(*tax.Regime)
-	return validation.ValidateStructWithContext(ctx, t,
+	return tax.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
-		validation.Field(&t.Tags, validation.Each(r.InTags())),
 		validation.Field(&t.Ext),
 		validation.Field(&t.Meta),
 	)
+}
+
+// UnmarshalJSON helps migrate the desc field to description.
+func (t *Tax) UnmarshalJSON(data []byte) error {
+	type Alias Tax
+	aux := struct {
+		Tags []cbc.Key `json:"tags,omitempty"`
+		*Alias
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	t.tags = aux.Tags
+	return nil
 }

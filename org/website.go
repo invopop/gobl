@@ -27,7 +27,7 @@ func (w *Website) Validate() error {
 
 // ValidateWithContext checks the website objects URL to ensure it looks correct inside the provided context.
 func (w *Website) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, w,
+	return tax.ValidateStructWithContext(ctx, w,
 		validation.Field(&w.URL, validation.Required, is.URL),
 	)
 }

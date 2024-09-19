@@ -4,12 +4,16 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4f72794392316349d5bbadae37eaf43861a08361a75d35456d9ac657801c23c6"
+			"val": "a180458ac28dd324f3a00eee703a381c4d759c012d8d710ff486d6a27d82f401"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$tags": [
+			"freelance"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -17,9 +21,6 @@
 		"issue_date": "2023-03-02",
 		"currency": "EUR",
 		"tax": {
-			"tags": [
-				"freelance"
-			],
 			"ext": {
 				"it-sdi-document-type": "TD06",
 				"it-sdi-format": "FPR12"

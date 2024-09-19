@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/facturae"
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/co"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,6 @@ import (
 )
 
 func TestInvoiceCorrect(t *testing.T) {
-	// Spanish Case (only corrective)
 
 	i := testInvoicePTForCorrection(t)
 	err := i.Correct(bill.Corrective)
@@ -28,7 +28,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(bill.Credit,
 		bill.WithReason("test refund"),
-		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
+		bill.WithExtension(facturae.ExtKeyCorrection, "01"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
@@ -61,7 +61,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	i = testInvoiceESForCorrection(t)
 	err = i.Correct(
 		bill.Corrective,
-		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
+		bill.WithExtension(facturae.ExtKeyCorrection, "01"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCorrective)
@@ -72,7 +72,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	err = i.Correct(
 		bill.Credit,
 		bill.WithIssueDate(d),
-		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
+		bill.WithExtension(facturae.ExtKeyCorrection, "01"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.IssueDate, d)
@@ -141,7 +141,7 @@ func TestCorrectWithOptions(t *testing.T) {
 		Reason: "test refund",
 		Series: "R-TEST",
 		Ext: tax.Extensions{
-			es.ExtKeyFacturaECorrection: "01",
+			facturae.ExtKeyCorrection: "01",
 		},
 	}
 	err := i.Correct(bill.WithOptions(opts))
@@ -156,7 +156,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, pre.Code, "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
-	assert.Equal(t, pre.Ext[es.ExtKeyFacturaECorrection], tax.ExtValue("01"))
+	assert.Equal(t, pre.Ext[facturae.ExtKeyCorrection], tax.ExtValue("01"))
 	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 }
 
@@ -173,12 +173,15 @@ func TestCorrectionOptionsSchema(t *testing.T) {
 
 	pm, ok := cos.Properties.Get("ext")
 	require.True(t, ok)
-	pmp, ok := pm.Properties.Get(string(es.ExtKeyFacturaECorrection))
-	require.True(t, ok)
-	assert.Len(t, pmp.OneOf, 22)
+	_, ok = pm.Properties.Get(string(tbai.ExtKeyCorrection))
+	assert.False(t, ok, "should not have tbai key")
+	pmp, ok := pm.Properties.Get(string(facturae.ExtKeyCorrection))
+	if assert.True(t, ok) {
+		assert.Len(t, pmp.OneOf, 22)
+	}
 
 	// Sorry, this is copied and pasted from the test output!
-	exp := `{"properties":{"type":{"$ref":"https://gobl.org/draft-0/cbc/key","oneOf":[{"const":"credit-note","title":"Credit Note","description":"Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document."},{"const":"corrective","title":"Corrective","description":"Corrected invoice that completely *replaces* the preceding document."},{"const":"debit-note","title":"Debit Note","description":"An additional set of charges to be added to the preceding document."}],"title":"Type","description":"The type of corrective invoice to produce.","default":"credit-note"},"issue_date":{"$ref":"https://gobl.org/draft-0/cal/date","title":"Issue Date","description":"When the new corrective invoice's issue date should be set to."},"series":{"type":"string","title":"Series","description":"Series to assign to the new corrective invoice.","default":"TEST"},"stamps":{"items":{"$ref":"https://gobl.org/draft-0/head/stamp"},"type":"array","title":"Stamps","description":"Stamps of the previous document to include in the preceding data."},"reason":{"type":"string","title":"Reason","description":"Human readable reason for the corrective operation."},"ext":{"properties":{"es-facturae-correction":{"oneOf":[{"const":"01","title":"Invoice code"},{"const":"02","title":"Invoice series"},{"const":"03","title":"Issue date"},{"const":"04","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"05","title":"Name and surnames/Corporate name - Receiver"},{"const":"06","title":"Issuer's Tax Identification Number"},{"const":"07","title":"Receiver's Tax Identification Number"},{"const":"08","title":"Supplier's address"},{"const":"09","title":"Customer's address"},{"const":"10","title":"Item line"},{"const":"11","title":"Applicable Tax Rate"},{"const":"12","title":"Applicable Tax Amount"},{"const":"13","title":"Applicable Date/Period"},{"const":"14","title":"Invoice Class"},{"const":"15","title":"Legal literals"},{"const":"16","title":"Taxable Base"},{"const":"80","title":"Calculation of tax outputs"},{"const":"81","title":"Calculation of tax inputs"},{"const":"82","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"83","title":"Taxable Base modified due to discounts and rebates"},{"const":"84","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"85","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}],"type":"string","title":"FacturaE Change","description":"FacturaE requires a specific and single code that explains why the previous invoice is being corrected."},"es-tbai-correction":{"oneOf":[{"const":"R1","title":"Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT"},{"const":"R2","title":"Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT"},{"const":"R3","title":"Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT"},{"const":"R4","title":"Rectified invoice: Other"},{"const":"R5","title":"Rectified invoice: simplified invoices"}],"type":"string","title":"TicketBAI Rectification Type Code","description":"Corrected or rectified invoices that need to be sent in the TicketBAI format\nrequire a specific type code to be defined alongside the preceding invoice\ndata."}},"type":"object","title":"Extensions","description":"Extensions for region specific requirements.","recommended":["es-facturae-correction","es-tbai-correction"]}},"type":"object","required":["type"],"description":"CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.","recommended":["series","ext"]}`
+	exp := `{"properties":{"type":{"$ref":"https://gobl.org/draft-0/cbc/key","oneOf":[{"const":"credit-note","title":"Credit Note","description":"Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document."},{"const":"corrective","title":"Corrective","description":"Corrected invoice that completely *replaces* the preceding document."},{"const":"debit-note","title":"Debit Note","description":"An additional set of charges to be added to the preceding document."}],"title":"Type","description":"The type of corrective invoice to produce.","default":"credit-note"},"issue_date":{"$ref":"https://gobl.org/draft-0/cal/date","title":"Issue Date","description":"When the new corrective invoice's issue date should be set to."},"series":{"type":"string","title":"Series","description":"Series to assign to the new corrective invoice.","default":"TEST"},"stamps":{"items":{"$ref":"https://gobl.org/draft-0/head/stamp"},"type":"array","title":"Stamps","description":"Stamps of the previous document to include in the preceding data."},"reason":{"type":"string","title":"Reason","description":"Human readable reason for the corrective operation."},"ext":{"properties":{"es-facturae-correction":{"oneOf":[{"const":"01","title":"Invoice code"},{"const":"02","title":"Invoice series"},{"const":"03","title":"Issue date"},{"const":"04","title":"Name and surnames/Corporate name - Issuer (Sender)"},{"const":"05","title":"Name and surnames/Corporate name - Receiver"},{"const":"06","title":"Issuer's Tax Identification Number"},{"const":"07","title":"Receiver's Tax Identification Number"},{"const":"08","title":"Supplier's address"},{"const":"09","title":"Customer's address"},{"const":"10","title":"Item line"},{"const":"11","title":"Applicable Tax Rate"},{"const":"12","title":"Applicable Tax Amount"},{"const":"13","title":"Applicable Date/Period"},{"const":"14","title":"Invoice Class"},{"const":"15","title":"Legal literals"},{"const":"16","title":"Taxable Base"},{"const":"80","title":"Calculation of tax outputs"},{"const":"81","title":"Calculation of tax inputs"},{"const":"82","title":"Taxable Base modified due to return of packages and packaging materials"},{"const":"83","title":"Taxable Base modified due to discounts and rebates"},{"const":"84","title":"Taxable Base modified due to firm court ruling or administrative decision"},{"const":"85","title":"Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"}],"type":"string","title":"FacturaE Change","description":"FacturaE requires a specific and single code that explains why the previous invoice is being corrected."}},"type":"object","title":"Extensions","description":"Extensions for region specific requirements.","recommended":["es-facturae-correction"]}},"type":"object","required":["type"],"description":"CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.","recommended":["series","ext"]}`
 	data, err := json.Marshal(cos)
 	require.NoError(t, err)
 	if !assert.JSONEq(t, exp, string(data)) {
@@ -196,7 +199,7 @@ func TestCorrectWithData(t *testing.T) {
 
 	err := i.Correct(
 		bill.WithData(data),
-		bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
+		bill.WithExtension(facturae.ExtKeyCorrection, "01"),
 	)
 	assert.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
@@ -211,6 +214,8 @@ func TestCorrectWithData(t *testing.T) {
 func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("ES"),
+		Addons: tax.WithAddons(facturae.V3),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{
@@ -303,6 +308,7 @@ func testInvoicePTForCorrection(t *testing.T) *bill.Invoice {
 func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("FR"),
 		Series: "TEST",
 		Code:   "123",
 		Supplier: &org.Party{
@@ -346,6 +352,7 @@ func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("CO"),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{

@@ -6,8 +6,10 @@ currency: EUR
 issue_date: "2023-05-21"
 tax:
   prices_include: VAT
+  tags:
+    - "b2g"
   ext:
-    it-sdi-format: FPA12 # this overrides default
+    it-sdi-format: FPR12 # this will be overridden
 type: standard
 supplier:
   tax_id:

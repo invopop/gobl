@@ -34,15 +34,14 @@ var identityKeyDefinitions = []*cbc.KeyDefinition{
 	},
 }
 
-func normalizeIdentity(id *org.Identity) error {
+func normalizeIdentity(id *org.Identity) {
 	if id == nil || id.Key != IdentityKeyFiscalCode {
-		return nil
+		return
 	}
 	code := strings.ToUpper(id.Code.String())
 	code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
 	code = strings.TrimPrefix(code, string(l10n.IT))
 	id.Code = cbc.Code(code)
-	return nil
 }
 
 // validateIdentities helps confirm that an identity of a specific type is valid.

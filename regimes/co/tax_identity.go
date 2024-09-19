@@ -33,14 +33,11 @@ func validateTaxIdentity(tID *tax.Identity) error {
 
 // normalizeTaxIdentity will remove any whitespace or separation characters from
 // the tax code and also make sure the default type is set.
-func normalizeTaxIdentity(tID *tax.Identity) error {
+func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil {
-		return nil
+		return
 	}
-	if err := tax.NormalizeIdentity(tID); err != nil {
-		return err
-	}
-	return nil
+	tax.NormalizeIdentity(tID)
 }
 
 func validateTaxCode(value interface{}) error {

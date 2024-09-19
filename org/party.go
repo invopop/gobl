@@ -48,33 +48,24 @@ type Party struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
-// Calculate performs any calculations required on the Party or
-// it's properties, like the tax identity.
-func (p *Party) Calculate() error {
+// Normalize will try to normalize the party's data.
+func (p *Party) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
-		return nil
+		return
 	}
+
 	uuid.Normalize(&p.UUID)
-	p.Ext = tax.NormalizeExtensions(p.Ext)
-	if p.TaxID == nil {
-		return nil
-	}
-	if err := p.TaxID.Calculate(); err != nil {
-		return err
-	}
-	r := p.TaxID.Regime()
-	if r == nil {
-		return nil // nothing to do here
+	p.Ext = tax.CleanExtensions(p.Ext)
+
+	if p.TaxID != nil {
+		// tax ids are noramlized only by their own tax regime, if any
+		p.TaxID.Normalize()
 	}
 
-	// Normalize identities explicitly
-	for _, id := range p.Identities {
-		if err := r.CalculateObject(id); err != nil {
-			return err
-		}
-	}
-
-	return r.CalculateObject(p)
+	normalizers.Each(p)
+	tax.Normalize(normalizers, p.Identities)
+	tax.Normalize(normalizers, p.Addresses)
+	tax.Normalize(normalizers, p.Emails)
 }
 
 // Validate is used to check the party's data meets minimum expectations.
@@ -84,7 +75,7 @@ func (p *Party) Validate() error {
 
 // ValidateWithContext is used to check the party's data meets minimum expectations.
 func (p *Party) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, p,
+	return tax.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.Name),
 		validation.Field(&p.TaxID),
 		validation.Field(&p.Identities),

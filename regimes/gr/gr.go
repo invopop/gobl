@@ -8,11 +8,12 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Custom keys used typically in meta or codes information.
@@ -30,8 +31,8 @@ const (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country: "EL",
 		AltCountryCodes: []l10n.Code{
 			"GR", // regular ISO code
@@ -43,19 +44,21 @@ func New() *tax.Regime {
 		},
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.CalculatorRoundThenSum,
-		Tags:                   invoiceTags,
-		Scenarios:              scenarios,
-		Corrections:            corrections,
-		Validator:              Validate,
-		Calculator:             Calculate,
-		Categories:             taxCategories,
-		PaymentMeansKeys:       paymentMeansKeys,
-		Extensions:             extensionKeys,
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
+		Scenarios:        scenarios,
+		Corrections:      corrections,
+		Validator:        Validate,
+		Normalizer:       Normalize,
+		Categories:       taxCategories,
+		PaymentMeansKeys: paymentMeansKeys,
+		Extensions:       extensionKeys,
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
@@ -63,15 +66,16 @@ func Validate(doc interface{}) error {
 		return validateTaxIdentity(obj)
 	case *org.Address:
 		return validateAddress(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	}
-	return nil
 }

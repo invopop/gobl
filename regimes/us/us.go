@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Identification codes unique to the United States.
@@ -20,8 +20,8 @@ const (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "US",
 		Currency: currency.USD,
 		Name: i18n.String{
@@ -29,8 +29,10 @@ func New() *tax.Regime {
 		},
 		TimeZone:  "America/Chicago", // Around the middle
 		Validator: Validate,
-		Tags:      common.InvoiceTags(),
-		Categories: []*tax.Category{
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
+		Categories: []*tax.CategoryDef{
 			//
 			// Sales Tax
 			//
@@ -43,7 +45,7 @@ func New() *tax.Regime {
 					i18n.EN: "Sales Tax",
 				},
 				Retained: false,
-				Rates:    []*tax.Rate{},
+				Rates:    []*tax.RateDef{},
 			},
 		},
 		Corrections: []*tax.CorrectionDefinition{

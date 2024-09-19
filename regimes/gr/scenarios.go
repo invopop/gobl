@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -13,15 +12,18 @@ const (
 	TagIslands cbc.Key = "islands"
 )
 
-var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
-	{
-		Key: TagIslands,
-		Name: i18n.String{
-			i18n.EN: "Islands Reduced Rates",
-			i18n.EL: "Νησιά μειωμένοι συντελεστές",
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.KeyDefinition{
+		{
+			Key: TagIslands,
+			Name: i18n.String{
+				i18n.EN: "Islands Reduced Rates",
+				i18n.EL: "Νησιά μειωμένοι συντελεστές",
+			},
 		},
 	},
-})
+}
 
 var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,

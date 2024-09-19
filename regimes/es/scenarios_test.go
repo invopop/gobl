@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
@@ -66,11 +65,9 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Tags:     tax.WithTags(tax.TagSimplified),
 		Currency: "EUR",
 		Code:     "123TEST",
-		Tax: &bill.Tax{
-			Tags: []cbc.Key{tax.TagSimplified},
-		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
@@ -106,17 +103,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 
 func TestInvoiceDocumentScenarios(t *testing.T) {
 	i := testInvoiceStandard(t)
-	require.NoError(t, i.Calculate())
-	assert.Empty(t, i.Tax.Ext[es.ExtKeyFacturaEDocType])
-
-	i = testInvoiceStandard(t)
-	i.Tax.Tags = []cbc.Key{"facturae"}
-	require.NoError(t, i.Calculate())
-	assert.Len(t, i.Notes, 0)
-	assert.Equal(t, i.Tax.Ext[es.ExtKeyFacturaEDocType].String(), "FC")
-
-	i = testInvoiceStandard(t)
-	i.Tax.Tags = []cbc.Key{es.TagTravelAgency}
+	i.SetTags(es.TagTravelAgency)
 	require.NoError(t, i.Calculate())
 	assert.Len(t, i.Notes, 1)
 	assert.Equal(t, i.Notes[0].Src, es.TagTravelAgency)

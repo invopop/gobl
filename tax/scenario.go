@@ -13,8 +13,19 @@ import (
 type ScenarioSet struct {
 	// Partial or complete schema URL for the document type
 	Schema string `json:"schema" jsonschema:"title=Schema"`
+
 	// List of scenarios for the schema
 	List []*Scenario `json:"list" jsonschema:"title=List"`
+}
+
+// ScenarioDocument is used to determine if scenarios can be applied to a document.
+type ScenarioDocument interface {
+	// GetType returns a type associated with the document.
+	GetType() cbc.Key
+	// GetTags returns a list of the tags used in the document.
+	GetTags() []cbc.Key
+	// GetExtensions an array of extensions that used in the document.
+	GetExtensions() []Extensions
 }
 
 // Scenario is used to describe a tax scenario of a document based on the combination
@@ -43,6 +54,10 @@ type Scenario struct {
 	// be copied to the note code if needed.
 	ExtValue ExtValue `json:"ext_value,omitempty" jsonschema:"title=Extension Value"`
 
+	// Filter defines a custom filter method for when the regular basic filters
+	// are not sufficient.
+	Filter func(doc any) bool `json:"-"`
+
 	/* Outputs */
 
 	// A note to be added to the document if the scenario is applied.
@@ -66,6 +81,24 @@ type ScenarioSummary struct {
 	Ext   Extensions
 }
 
+// NewScenarioSet creates a new scenario set with the given schema.
+func NewScenarioSet(schema string) *ScenarioSet {
+	return &ScenarioSet{
+		Schema: schema,
+		List:   make([]*Scenario, 0),
+	}
+}
+
+// Merge appends the scenarios from the other set to the current set.
+func (ss *ScenarioSet) Merge(other []*ScenarioSet) {
+	for _, os := range other {
+		if os.Schema != ss.Schema {
+			return
+		}
+		ss.List = append(ss.List, os.List...)
+	}
+}
+
 // ValidateWithContext checks the scenario set for errors.
 func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
 	err := validation.ValidateStructWithContext(ctx, ss,
@@ -75,24 +108,46 @@ func (ss *ScenarioSet) ValidateWithContext(ctx context.Context) error {
 	return err
 }
 
+// ExtensionKeys extracts all the possible extension keys that could be applied to a
+// document.
+func (ss *ScenarioSet) ExtensionKeys() []cbc.Key {
+	keys := make([]cbc.Key, 0)
+	for _, row := range ss.List {
+		for k := range row.Ext {
+			if !k.In(keys...) {
+				keys = append(keys, k)
+			}
+		}
+	}
+	return keys
+}
+
+// Notes extracts all the possible notes that could be applied to a document.
+func (ss *ScenarioSet) Notes() []*cbc.Note {
+	notes := make([]*cbc.Note, 0)
+	for _, row := range ss.List {
+		if row.Note != nil {
+			notes = append(notes, row.Note)
+		}
+	}
+	return notes
+}
+
 // SummaryFor returns a summary by applying the scenarios to the
 // supplied document.
-func (ss *ScenarioSet) SummaryFor(docType cbc.Key, docTags []cbc.Key, docExt []Extensions) *ScenarioSummary {
+func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 	summary := &ScenarioSummary{
 		Notes: make([]*cbc.Note, 0),
 		Codes: make(cbc.CodeMap),
 		Ext:   make(Extensions),
 	}
 	for _, s := range ss.List {
-		if s.match(docType, docTags, docExt) {
+		if s.match(doc) {
 			if s.Note != nil {
 				summary.addNote(s.Note.WithCode(s.ExtValue.String()))
 			}
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
-			}
-			for k, v := range s.Ext {
-				summary.Ext[k] = v
 			}
 			for k, v := range s.Ext {
 				summary.Ext[k] = v
@@ -117,14 +172,14 @@ func (ss *ScenarioSummary) addNote(note *cbc.Note) {
 // Empty types or tags in the scenario implies that all values are valid.
 // The list of extensions can contain duplicate extension maps to make recompilation
 // of the array easier.
-func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key, docExt []Extensions) bool {
+func (s *Scenario) match(doc ScenarioDocument) bool {
 	if len(s.Types) > 0 {
-		if !s.hasType(docType) {
+		if !s.hasType(doc.GetType()) {
 			return false
 		}
 	}
 	if len(s.Tags) > 0 {
-		if !s.hasTags(docTags) {
+		if !s.hasTags(doc.GetTags()) {
 			return false
 		}
 	}
@@ -132,7 +187,7 @@ func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key, docExt []Extensions
 		// For extensions we need to find a complete match
 		// and reject if none found. We intentionally don't try
 		// to combine extensions from the document.
-		for _, ext := range docExt {
+		for _, ext := range doc.GetExtensions() {
 			v, ok := ext[s.ExtKey]
 			if !ok {
 				continue // try next extension
@@ -146,6 +201,11 @@ func (s *Scenario) match(docType cbc.Key, docTags []cbc.Key, docExt []Extensions
 			}
 		}
 		return false
+	}
+	if s.Filter != nil {
+		if !s.Filter(doc) {
+			return false
+		}
 	}
 	return true
 }
@@ -172,10 +232,9 @@ func (s *Scenario) hasTags(docTags []cbc.Key) bool {
 // ValidateWithContext checks the scenario for errors, using the regime in the context
 // to validate the list of tags.
 func (s *Scenario) ValidateWithContext(ctx context.Context) error {
-	r := ctx.Value(KeyRegime).(*Regime)
 	err := validation.ValidateStructWithContext(ctx, s,
 		validation.Field(&s.Types),
-		validation.Field(&s.Tags, validation.Each(cbc.InKeyDefs(r.Tags))),
+		validation.Field(&s.Tags), // consider validating tags in context
 		validation.Field(&s.Name),
 		validation.Field(&s.Note),
 		validation.Field(&s.Codes),

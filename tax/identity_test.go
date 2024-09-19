@@ -43,12 +43,13 @@ func TestTaxIdentity(t *testing.T) {
 		Country: "ES",
 		Code:    "  x315-7928 m",
 	}
-	err = tID.Calculate()
-	assert.NoError(t, err)
+	tID.Normalize()
 	assert.Equal(t, tID.Code.String(), "X3157928M")
 
 	tID = nil
-	assert.NoError(t, tID.Normalize(), "should handle nil identities")
+	assert.NotPanics(t, func() {
+		tID.Normalize()
+	})
 }
 
 func TestParseIdentity(t *testing.T) {
@@ -80,8 +81,7 @@ func TestNormalizeIdentity(t *testing.T) {
 		Country: "AU",
 		Code:    "  x315-7928 m  ",
 	}
-	err := tax.NormalizeIdentity(tID)
-	assert.NoError(t, err)
+	tax.NormalizeIdentity(tID)
 	assert.Equal(t, tID.Code.String(), "X3157928M")
 }
 
@@ -91,26 +91,15 @@ func TestIdentityNormalize(t *testing.T) {
 			Country: "XX",
 			Code:    "  x315-7928 m  ",
 		}
-		err := tID.Normalize()
-		assert.NoError(t, err)
+		tID.Normalize()
 		assert.Equal(t, tID.Code.String(), "X3157928M")
 	})
 	t.Run("for known regime", func(t *testing.T) {
 		tID := &tax.Identity{
-			Country: "ES",
-			Code:    "  x315-7928 m  ",
-		}
-		err := tID.Normalize()
-		assert.NoError(t, err)
-		assert.Equal(t, tID.Code.String(), "X3157928M")
-	})
-
-	t.Run("for known regime with error", func(t *testing.T) {
-		tID := &tax.Identity{
 			Country: "FR",
-			Code:    "  356000100  ",
+			Code:    " 356000000 ",
 		}
-		err := tID.Normalize()
-		assert.ErrorContains(t, err, "code: checksum mismatch")
+		tID.Normalize()
+		assert.Equal(t, tID.Code.String(), "39356000000") // adds 2 0s on end
 	})
 }

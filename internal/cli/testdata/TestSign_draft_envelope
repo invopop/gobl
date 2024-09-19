@@ -1,6 +1,7 @@
 {
     "$schema": "https://gobl.org/draft-0/envelope",
     "doc": {
+        "$regime": "ES",
         "$schema": "https://gobl.org/draft-0/bill/invoice",
         "code": "INV2021-001",
         "currency": "EUR",
@@ -203,11 +204,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "7562cbd04fd489e779eac4619cac36888d4c38a2822737dd0e8aa4d9159efbe7"
+            "val": "c8efedb81922d41509b6df8f94194a877677d4c3a4062ac8c1fb1b1896ab28c9"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6Ijc1NjJjYmQwNGZkNDg5ZTc3OWVhYzQ2MTljYWMzNjg4OGQ0YzM4YTI4MjI3MzdkZDBlOGFhNGQ5MTU5ZWZiZTcifX0.xNhjj5JVnvRXvjT8ErV2oALLBmSDtm2bKYUhgtmqjvXKzA2LLQcZoEbLiOZHmwJILRL5awp7dilnsl9dag1XXg"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4ZWZlZGI4MTkyMmQ0MTUwOWI2ZGY4Zjk0MTk0YTg3NzY3N2Q0YzNhNDA2MmFjOGMxZmIxYjE4OTZhYjI4YzkifX0.uhIm58KfFHPYnqEzpsdfGXCkjRvM5cKSB1o1q2jdL5KaAvpqCsDKmBsMz7K7qsBbFFWleBFrlWNpJ5FVdMw-Gg"
     ]
 }

@@ -4,12 +4,16 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7832f901938ca19db4a03fb3eae71d8876100899c4dcdda4c58d201dd718f392"
+			"val": "05212a882db3ee26e9e1cdaefa264edbabb43a8dd1e7a6f9b48619aeec0b4504"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "TEST",
@@ -61,15 +65,24 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%"
+						"percent": "16.0%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					},
 					{
 						"cat": "RVAT",
-						"percent": "10.6667%"
+						"percent": "10.6667%",
+						"ext": {
+							"mx-cfdi-tax-type": "002"
+						}
 					},
 					{
 						"cat": "ISR",
-						"percent": "10.00%"
+						"percent": "10.00%",
+						"ext": {
+							"mx-cfdi-tax-type": "001"
+						}
 					}
 				],
 				"total": "1230.00"
@@ -90,6 +103,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "1230.00",
 								"percent": "16.0%",
 								"amount": "196.80"
@@ -102,6 +118,9 @@
 						"retained": true,
 						"rates": [
 							{
+								"ext": {
+									"mx-cfdi-tax-type": "002"
+								},
 								"base": "1230.00",
 								"percent": "10.6667%",
 								"amount": "131.20"
@@ -114,6 +133,9 @@
 						"retained": true,
 						"rates": [
 							{
+								"ext": {
+									"mx-cfdi-tax-type": "001"
+								},
 								"base": "1230.00",
 								"percent": "10.00%",
 								"amount": "123.00"

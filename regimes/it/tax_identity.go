@@ -29,15 +29,6 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	)
 }
 
-// normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
-// uppercase.
-func normalizeTaxIdentity(tID *tax.Identity) error {
-	if err := tax.NormalizeIdentity(tID); err != nil {
-		return err
-	}
-	return nil
-}
-
 // source: https://it.wikipedia.org/wiki/Partita_IVA#Struttura_del_codice_identificativo_di_partita_IVA
 func validateTaxCode(value interface{}) error {
 	code, ok := value.(cbc.Code)

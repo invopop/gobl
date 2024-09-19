@@ -8,18 +8,17 @@ import (
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestIdentityNormalization(t *testing.T) {
-	r := tax.RegimeFor("IT")
+	r := tax.RegimeDefFor("IT")
 
 	t.Run("normalize codice fiscale", func(t *testing.T) {
 		p1 := &org.Identity{
 			Key:  it.IdentityKeyFiscalCode,
 			Code: "RSS.mra-74D22-A00 . 1Q",
 		}
-		require.NoError(t, r.CalculateObject(p1))
+		r.NormalizeObject(p1)
 		assert.Equal(t, "RSSMRA74D22A001Q", p1.Code.String())
 	})
 }

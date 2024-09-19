@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// VAT
 	//
@@ -28,7 +28,7 @@ var taxCategories = []*tax.Category{
 			},
 		},
 		Retained: false,
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
@@ -37,7 +37,7 @@ var taxCategories = []*tax.Category{
 					i18n.FR: "Taux standard",
 					i18n.DE: "Standardsatz",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2011, 1, 4),
 						Percent: num.MakePercentage(210, 3),
@@ -52,7 +52,7 @@ var taxCategories = []*tax.Category{
 					i18n.FR: "Taux intermédiaire",
 					i18n.DE: "Mittlerer Satz",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(120, 3),
@@ -67,7 +67,7 @@ var taxCategories = []*tax.Category{
 					i18n.FR: "Taux réduit",
 					i18n.DE: "Ermäßigter Satz",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Since:   cal.NewDate(2011, 1, 4),
 						Percent: num.MakePercentage(60, 3),
@@ -79,7 +79,7 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},

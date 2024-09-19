@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -28,107 +27,110 @@ const (
 // This is only a partial list of all the potential tags that
 // could be available for use in Italy. Given the complexity
 // involved, we've focussed here on the most useful.
-var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
-	// *** Document Type Tags ***
-	// Sales:
-	{
-		Key: tax.TagB2G,
-		Name: i18n.String{
-			i18n.EN: "Business to Government",
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.KeyDefinition{
+		// *** Document Type Tags ***
+		// Sales:
+		{
+			Key: tax.TagB2G,
+			Name: i18n.String{
+				i18n.EN: "Business to Government",
+			},
+		},
+		{
+			Key: TagFreelance,
+			Name: i18n.String{
+				i18n.EN: "Freelancer",
+				i18n.IT: "Parcella",
+			},
+		},
+		// Self-billed:
+		{
+			Key: TagCeilingExceeded,
+			Name: i18n.String{
+				i18n.EN: "Ceiling exceeded",
+				i18n.IT: "Splafonamento",
+			},
+		},
+		{
+			Key: TagSanMarinoPaper,
+			Name: i18n.String{
+				i18n.EN: "Purchases from San Marino with VAT and paper invoice",
+				i18n.IT: "Acquisti da San Marino con IVA e fattura cartacea",
+			},
+		},
+		{
+			Key: TagImport,
+			Name: i18n.String{
+				i18n.EN: "Import",
+				i18n.IT: "Importazione",
+			},
+		},
+		{
+			Key: TagGoods,
+			Name: i18n.String{
+				i18n.EN: "Goods",
+				i18n.IT: "Beni",
+			},
+		},
+		{
+			Key: TagGoodsEU,
+			Name: i18n.String{
+				i18n.EN: "Goods from EU",
+				i18n.IT: "Beni da UE",
+			},
+		},
+		{
+			Key: TagGoodsWithTax,
+			Name: i18n.String{
+				i18n.EN: "Goods with tax",
+				i18n.IT: "Beni con imposta",
+			},
+		},
+		{
+			Key: TagGoodsExtracted,
+			Name: i18n.String{
+				i18n.EN: "Goods extracted",
+				i18n.IT: "Beni estratti",
+			},
+		},
+		{
+			Key: TagDeferred,
+			Name: i18n.String{
+				i18n.EN: "Deferred",
+				i18n.IT: "Differita",
+			},
+		},
+		{
+			Key: TagRegularization,
+			Name: i18n.String{
+				i18n.EN: "Regularization",
+				i18n.IT: "Regolarizzazione",
+			},
+		},
+		{
+			Key: TagThirdPeriod,
+			Name: i18n.String{
+				i18n.EN: "Third period",
+				i18n.IT: "Terzo periodo",
+			},
+		},
+		{
+			Key: TagDepreciableAssets,
+			Name: i18n.String{
+				i18n.EN: "Depreciable assets",
+				i18n.IT: "Beni ammortizzabili",
+			},
+		},
+		{
+			Key: tax.TagB2G,
+			Name: i18n.String{
+				i18n.EN: "Business to Government",
+			},
 		},
 	},
-	{
-		Key: TagFreelance,
-		Name: i18n.String{
-			i18n.EN: "Freelancer",
-			i18n.IT: "Parcella",
-		},
-	},
-	// Self-billed:
-	{
-		Key: TagCeilingExceeded,
-		Name: i18n.String{
-			i18n.EN: "Ceiling exceeded",
-			i18n.IT: "Splafonamento",
-		},
-	},
-	{
-		Key: TagSanMarinoPaper,
-		Name: i18n.String{
-			i18n.EN: "Purchases from San Marino with VAT and paper invoice",
-			i18n.IT: "Acquisti da San Marino con IVA e fattura cartacea",
-		},
-	},
-	{
-		Key: TagImport,
-		Name: i18n.String{
-			i18n.EN: "Import",
-			i18n.IT: "Importazione",
-		},
-	},
-	{
-		Key: TagGoods,
-		Name: i18n.String{
-			i18n.EN: "Goods",
-			i18n.IT: "Beni",
-		},
-	},
-	{
-		Key: TagGoodsEU,
-		Name: i18n.String{
-			i18n.EN: "Goods from EU",
-			i18n.IT: "Beni da UE",
-		},
-	},
-	{
-		Key: TagGoodsWithTax,
-		Name: i18n.String{
-			i18n.EN: "Goods with tax",
-			i18n.IT: "Beni con imposta",
-		},
-	},
-	{
-		Key: TagGoodsExtracted,
-		Name: i18n.String{
-			i18n.EN: "Goods extracted",
-			i18n.IT: "Beni estratti",
-		},
-	},
-	{
-		Key: TagDeferred,
-		Name: i18n.String{
-			i18n.EN: "Deferred",
-			i18n.IT: "Differita",
-		},
-	},
-	{
-		Key: TagRegularization,
-		Name: i18n.String{
-			i18n.EN: "Regularization",
-			i18n.IT: "Regolarizzazione",
-		},
-	},
-	{
-		Key: TagThirdPeriod,
-		Name: i18n.String{
-			i18n.EN: "Third period",
-			i18n.IT: "Terzo periodo",
-		},
-	},
-	{
-		Key: TagDepreciableAssets,
-		Name: i18n.String{
-			i18n.EN: "Depreciable assets",
-			i18n.IT: "Beni ammortizzabili",
-		},
-	},
-	{
-		Key: tax.TagB2G,
-		Name: i18n.String{
-			i18n.EN: "Business to Government",
-		},
-	},
-})
+}
 
 var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,

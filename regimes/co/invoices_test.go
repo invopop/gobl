@@ -6,7 +6,6 @@ import (
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -147,7 +146,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.Contains(t, err.Error(), "supplier: (tax_id: (code: cannot be blank.).).")
 
 	inv = baseInvoice()
-	inv.Tax = &bill.Tax{Tags: []cbc.Key{tax.TagSimplified}}
+	inv.SetTags(tax.TagSimplified)
 	inv.Customer.TaxID.Code = ""
 	inv.Customer.Identities = org.AddIdentity(inv.Customer.Identities,
 		&org.Identity{
@@ -194,8 +193,7 @@ func TestNormalizeParty(t *testing.T) {
 			Zone:    "11001",
 		},
 	}
-	err := co.Calculate(p)
-	assert.NoError(t, err)
+	co.Normalize(p)
 	assert.Empty(t, p.TaxID.Zone) //nolint:staticcheck
 	assert.Equal(t, p.Ext[co.ExtKeyDIANMunicipality].String(), "11001")
 }

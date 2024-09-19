@@ -36,7 +36,7 @@ func (r *Registration) Validate() error {
 
 // ValidateWithContext ensures the registration looks valid inside the provided context.
 func (r *Registration) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, r,
+	return tax.ValidateStructWithContext(ctx, r,
 		validation.Field(&r.UUID),
 		validation.Field(&r.Label),
 		validation.Field(&r.Capital),

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // DIAN official codes to include in stamps.
@@ -29,8 +29,8 @@ const (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "CO",
 		Currency: "COP",
 		Name: i18n.String{
@@ -43,10 +43,12 @@ func New() *tax.Regime {
 				specifications for electronic invoicing.
 			`),
 		},
-		TimeZone:     "America/Bogota",
-		Tags:         common.InvoiceTags(),
+		TimeZone: "America/Bogota",
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
+		},
 		Validator:    Validate,
-		Calculator:   Calculate,
+		Normalizer:   Normalize,
 		IdentityKeys: identityKeyDefs, // see identities.go
 		Extensions:   extensionKeys,   // see extensions.go
 		Corrections: []*tax.CorrectionDefinition{
@@ -81,13 +83,12 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	case *org.Party:
-		return normalizeParty(obj)
+		normalizeParty(obj)
 	}
-	return nil
 }

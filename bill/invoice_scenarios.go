@@ -1,40 +1,20 @@
 package bill
 
 import (
-	"fmt"
-
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
-	"github.com/invopop/validation"
 )
 
-// ScenarioSummary determines a summary of the tax scenario for the invoice based on
-// the document type and tax tags.
-//
-// Deprecated: tax regimes should be updated to automatically apply all the required
-// extensions and meta-data to the invoice itself. This method will still be needed
-// until all regimes have transitioned to the new approach.
-func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
-	r := inv.TaxRegime()
-	if r == nil {
-		return nil
-	}
-	return inv.scenarioSummary(r)
+// GetType provides the invoice type as part of the tax.ScenarioDocument interface.
+func (inv *Invoice) GetType() cbc.Key {
+	return inv.Type
 }
 
-func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
-	if r == nil {
-		return nil
-	}
-	ss := r.ScenarioSet(ShortSchemaInvoice)
-	if ss == nil {
-		return nil
-	}
+// GetExtensions goes through the invoice and grabs all the extensions that are in
+// use and expected to be used as part of a scenario.
+func (inv *Invoice) GetExtensions() []tax.Extensions {
 	exts := make([]tax.Extensions, 0)
-	tags := []cbc.Key{}
-
 	if inv.Tax != nil {
-		tags = inv.Tax.Tags
 		if len(inv.Tax.Ext) > 0 {
 			exts = append(exts, inv.Tax.Ext)
 		}
@@ -44,36 +24,52 @@ func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
 			exts = append(exts, rate.Ext)
 		}
 	}
-
-	return ss.SummaryFor(inv.Type, tags, exts)
+	return exts
 }
 
-func (inv *Invoice) prepareTags(r *tax.Regime) error {
-	if r == nil {
-		return nil
+// ScenarioSummary determines a summary of the tax scenario for the invoice based on
+// the document type and tax tags.
+//
+// Deprecated: tax regimes should be updated to automatically apply all the required
+// extensions and meta-data to the invoice itself. This method will still be needed
+// until all regimes have transitioned to the new approach.
+func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
+	return inv.scenarioSummary()
+}
+
+func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
+	ss := tax.NewScenarioSet(ShortSchemaInvoice)
+
+	if r := inv.RegimeDef(); r != nil {
+		ss.Merge(r.Scenarios)
 	}
-	if inv.Tax == nil {
-		return nil
+	for _, a := range inv.GetAddons() {
+		ss.Merge(a.Scenarios)
 	}
 
-	// Check the tags are all valid and identified by the tax regime
-	// as acceptable for invoices.
-	for _, k := range inv.Tax.Tags {
-		if t := r.Tag(k); t == nil {
-			return validation.Errors{
-				"tax": validation.Errors{
-					"tags": fmt.Errorf("invalid tag '%v'", k),
-				},
+	inv.removePreviousScenarios(ss)
+	return ss.SummaryFor(inv)
+}
+
+func (inv *Invoice) removePreviousScenarios(ss *tax.ScenarioSet) {
+	if inv.Tax != nil && len(inv.Tax.Ext) > 0 {
+		for _, ek := range ss.ExtensionKeys() {
+			delete(inv.Tax.Ext, ek)
+		}
+	}
+	for _, n := range ss.Notes() {
+		for i, n2 := range inv.Notes {
+			if n.SameAs(n2) {
+				// remove from array
+				inv.Notes = append(inv.Notes[:i], inv.Notes[i+1:]...)
 			}
 		}
 	}
-
-	return nil
 }
 
-func (inv *Invoice) prepareScenarios(r *tax.Regime) error {
+func (inv *Invoice) prepareScenarios() error {
 	// Use the scenario summary to add any notes to the invoice
-	ss := inv.scenarioSummary(r)
+	ss := inv.scenarioSummary()
 	if ss == nil {
 		return nil
 	}
@@ -97,11 +93,8 @@ func (inv *Invoice) prepareScenarios(r *tax.Regime) error {
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
-		// Always override if there are tags already present, *or* the extension
-		// is not already set.
-		if len(inv.Tax.Tags) > 0 || inv.Tax.Ext[k] == "" {
-			inv.Tax.Ext[k] = v
-		}
+		// Always override
+		inv.Tax.Ext[k] = v
 	}
 
 	return nil

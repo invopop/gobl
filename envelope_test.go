@@ -11,13 +11,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -303,7 +303,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		_, err = env.Correct(
 			bill.Corrective,
-			bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
+			bill.WithExtension(facturae.ExtKeyCorrection, "01"),
 		)
 		require.NoError(t, err)
 
@@ -312,7 +312,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		e2, err := env.Correct(
 			bill.Corrective,
-			bill.WithExtension(es.ExtKeyFacturaECorrection, "02"),
+			bill.WithExtension(facturae.ExtKeyCorrection, "02"),
 		)
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)

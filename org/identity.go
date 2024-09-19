@@ -35,7 +35,7 @@ func (i *Identity) Validate() error {
 
 // ValidateWithContext ensures the identity looks valid inside the provided context.
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Label),
 		validation.Field(&i.Key),
 		validation.Field(&i.Type,

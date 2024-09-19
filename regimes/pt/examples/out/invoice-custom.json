@@ -4,12 +4,16 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a3295f1a3a86eaec661bfe0d92215e5463e5866d1e1db2b6e4b11412d8319f52"
+			"val": "eea648c5b2635261e476c2f8e9727ab8facfcf2262403927cf697a951f8905ff"
 		},
 		"draft": true
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "",
@@ -52,7 +56,7 @@
 						"cat": "VAT",
 						"percent": "22%",
 						"ext": {
-							"pt-saft-tax-rate": "NOR"
+							"pt-saft-tax-rate": "OUT"
 						}
 					}
 				],
@@ -69,7 +73,7 @@
 						"rates": [
 							{
 								"ext": {
-									"pt-saft-tax-rate": "NOR"
+									"pt-saft-tax-rate": "OUT"
 								},
 								"base": "100.00",
 								"percent": "22%",

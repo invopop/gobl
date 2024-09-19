@@ -31,7 +31,7 @@ func (i *Inbox) Validate() error {
 
 // ValidateWithContext ensures the inbox's fields look good inside the provided context.
 func (i *Inbox) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Key, validation.Required),
 		validation.Field(&i.Role),

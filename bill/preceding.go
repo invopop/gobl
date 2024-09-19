@@ -43,14 +43,14 @@ func (p *Preceding) Validate() error {
 	return p.ValidateWithContext(context.Background())
 }
 
-// Calculate tries to normalize the preceding data
-func (p *Preceding) Calculate() error {
+// Normalize tries to normalize the preceding data.
+func (p *Preceding) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
-		return nil
+		return
 	}
 	p.Stamps = head.NormalizeStamps(p.Stamps)
-	p.Ext = tax.NormalizeExtensions(p.Ext)
-	return nil
+	p.Ext = tax.CleanExtensions(p.Ext)
+	normalizers.Each(p)
 }
 
 // ValidateWithContext ensures the preceding details look okay

@@ -1,6 +1,7 @@
 {
     "$schema": "https://gobl.org/draft-0/envelope",
     "doc": {
+        "$regime": "ES",
         "$schema": "https://gobl.org/draft-0/bill/invoice",
         "code": "INV2021-001",
         "currency": "EUR",
@@ -203,7 +204,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "90a8e6e180cebb87ed4b8060ba4f07abe7eec44c98f0efda74202ab33f99e282"
+            "val": "38fd37f6c05f2d0fe2f52e1c4bf8bb7f6c6fe289e03e07f9e0948d54794efd3d"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

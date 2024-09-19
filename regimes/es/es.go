@@ -6,11 +6,12 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Local tax category definitions which are not considered standard.
@@ -34,14 +35,8 @@ const (
 	TaxRateEquivalence cbc.Key = "eqs"
 )
 
-// Official stamps or codes validated by government agencies
-const (
-	// TicketBAI (Basque Country) codes used for stamps.
-	StampProviderTBAICode cbc.Key = "tbai-code"
-	StampProviderTBAIQR   cbc.Key = "tbai-qr"
-)
-
-// Inbox key and role definitions
+// Inbox key and role definitions.
+// TODO: move to their own addon.
 const (
 	InboxKeyFACE cbc.Key = "face"
 
@@ -53,31 +48,23 @@ const (
 
 )
 
-// Custom keys used typically in meta information.
-const (
-	KeyAddressCode            cbc.Key = "post"
-	KeyFacturaE               cbc.Key = "facturae"
-	KeyFacturaETaxTypeCode    cbc.Key = "facturae-tax-type-code"
-	KeyTicketBAICausaExencion cbc.Key = "ticketbai-causa-exencion"
-	KeyTicketBAIIDType        cbc.Key = "ticketbai-id-type"
-)
-
 // New provides the Spanish tax regime definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "ES",
 		Currency: currency.EUR,
 		Name: i18n.String{
 			i18n.EN: "Spain",
 			i18n.ES: "España",
 		},
-		TimeZone:     "Europe/Madrid",
-		Tags:         invoiceTags,
+		TimeZone: "Europe/Madrid",
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
 		IdentityKeys: identityKeyDefinitions,
-		Extensions:   extensionKeys,
 		Categories:   taxCategories,
 		Validator:    Validate,
-		Calculator:   Calculate,
+		Normalizer:   Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
@@ -96,11 +83,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will perform any regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize will perform any regime specific normalizations on the data.
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		normalizeTaxIdentity(obj)
 	}
-	return nil
 }

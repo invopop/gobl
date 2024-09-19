@@ -4,139 +4,6 @@
         "CorrectionOptions": {
             "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
             "properties": {
-                "ext": {
-                    "description": "Extensions for region specific requirements.",
-                    "properties": {
-                        "es-facturae-correction": {
-                            "description": "FacturaE requires a specific and single code that explains why the previous invoice is being corrected.",
-                            "oneOf": [
-                                {
-                                    "const": "01",
-                                    "title": "Invoice code"
-                                },
-                                {
-                                    "const": "02",
-                                    "title": "Invoice series"
-                                },
-                                {
-                                    "const": "03",
-                                    "title": "Issue date"
-                                },
-                                {
-                                    "const": "04",
-                                    "title": "Name and surnames/Corporate name - Issuer (Sender)"
-                                },
-                                {
-                                    "const": "05",
-                                    "title": "Name and surnames/Corporate name - Receiver"
-                                },
-                                {
-                                    "const": "06",
-                                    "title": "Issuer's Tax Identification Number"
-                                },
-                                {
-                                    "const": "07",
-                                    "title": "Receiver's Tax Identification Number"
-                                },
-                                {
-                                    "const": "08",
-                                    "title": "Supplier's address"
-                                },
-                                {
-                                    "const": "09",
-                                    "title": "Customer's address"
-                                },
-                                {
-                                    "const": "10",
-                                    "title": "Item line"
-                                },
-                                {
-                                    "const": "11",
-                                    "title": "Applicable Tax Rate"
-                                },
-                                {
-                                    "const": "12",
-                                    "title": "Applicable Tax Amount"
-                                },
-                                {
-                                    "const": "13",
-                                    "title": "Applicable Date/Period"
-                                },
-                                {
-                                    "const": "14",
-                                    "title": "Invoice Class"
-                                },
-                                {
-                                    "const": "15",
-                                    "title": "Legal literals"
-                                },
-                                {
-                                    "const": "16",
-                                    "title": "Taxable Base"
-                                },
-                                {
-                                    "const": "80",
-                                    "title": "Calculation of tax outputs"
-                                },
-                                {
-                                    "const": "81",
-                                    "title": "Calculation of tax inputs"
-                                },
-                                {
-                                    "const": "82",
-                                    "title": "Taxable Base modified due to return of packages and packaging materials"
-                                },
-                                {
-                                    "const": "83",
-                                    "title": "Taxable Base modified due to discounts and rebates"
-                                },
-                                {
-                                    "const": "84",
-                                    "title": "Taxable Base modified due to firm court ruling or administrative decision"
-                                },
-                                {
-                                    "const": "85",
-                                    "title": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings"
-                                }
-                            ],
-                            "title": "FacturaE Change",
-                            "type": "string"
-                        },
-                        "es-tbai-correction": {
-                            "description": "Corrected or rectified invoices that need to be sent in the TicketBAI format\nrequire a specific type code to be defined alongside the preceding invoice\ndata.",
-                            "oneOf": [
-                                {
-                                    "const": "R1",
-                                    "title": "Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT"
-                                },
-                                {
-                                    "const": "R2",
-                                    "title": "Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT"
-                                },
-                                {
-                                    "const": "R3",
-                                    "title": "Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT"
-                                },
-                                {
-                                    "const": "R4",
-                                    "title": "Rectified invoice: Other"
-                                },
-                                {
-                                    "const": "R5",
-                                    "title": "Rectified invoice: simplified invoices"
-                                }
-                            ],
-                            "title": "TicketBAI Rectification Type Code",
-                            "type": "string"
-                        }
-                    },
-                    "recommended": [
-                        "es-facturae-correction",
-                        "es-tbai-correction"
-                    ],
-                    "title": "Extensions",
-                    "type": "object"
-                },
                 "issue_date": {
                     "$ref": "https://gobl.org/draft-0/cal/date",
                     "description": "When the new corrective invoice's issue date should be set to.",
@@ -185,8 +52,7 @@
                 }
             },
             "recommended": [
-                "series",
-                "ext"
+                "series"
             ],
             "required": [
                 "type"

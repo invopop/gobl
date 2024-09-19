@@ -8,7 +8,7 @@ import (
 )
 
 func TestAllRegimes(t *testing.T) {
-	for _, r := range tax.AllRegimes() {
+	for _, r := range tax.AllRegimeDefs() {
 		t.Run(r.Name.String(), func(t *testing.T) {
 			assert.NoError(t, r.Validate())
 		})
@@ -16,6 +16,6 @@ func TestAllRegimes(t *testing.T) {
 }
 
 func TestRegimesAltCountryCodes(t *testing.T) {
-	r := tax.RegimeFor("GR")
+	r := tax.RegimeDefFor("GR")
 	assert.Equal(t, "EL", r.Country.String())
 }

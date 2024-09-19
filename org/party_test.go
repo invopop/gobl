@@ -30,7 +30,7 @@ func TestPartyCalculate(t *testing.T) {
 			Code:    "423 429 12.G",
 		},
 	}
-	assert.NoError(t, party.Calculate())
+	party.Normalize(nil)
 	assert.Equal(t, "ES", party.TaxID.Country.String())
 	assert.Equal(t, "ES42342912G", party.TaxID.String())
 
@@ -41,13 +41,14 @@ func TestPartyCalculate(t *testing.T) {
 			Code:    "423 429 12.G",
 		},
 	}
-	assert.NoError(t, party.Calculate(), "unknown entry should not cause problem")
+	party.Normalize(nil) // unknown entry should not cause problem
+	assert.Equal(t, "42342912G", party.TaxID.Code.String())
 }
 
 func TestPartyAddressNill(t *testing.T) {
 	party := org.Party{
 		Addresses: []*org.Address{nil},
 	}
-	assert.NoError(t, party.Calculate())
+	party.Normalize(nil)
 	assert.NoError(t, party.Validate())
 }

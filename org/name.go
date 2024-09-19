@@ -39,7 +39,7 @@ func (n *Name) Validate() error {
 
 // ValidateWithContext ensures the name looks valid inside the provided context.
 func (n *Name) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, n,
+	return tax.ValidateStructWithContext(ctx, n,
 		validation.Field(&n.UUID),
 		validation.Field(&n.Given,
 			validation.When(n.Surname == "",
