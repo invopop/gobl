@@ -181,6 +181,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 	)
 }
 
+// IsRetail returns true if the invoice type corresponds to a retail invoice.
 func IsRetail(inv *bill.Invoice) bool {
 	if inv.Tax == nil || inv.Tax.Ext == nil {
 		return false
