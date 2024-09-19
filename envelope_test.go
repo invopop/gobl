@@ -288,6 +288,15 @@ func TestEnvelopeSign(t *testing.T) {
 		assert.NoError(t, err)
 		assert.True(t, env.Signed())
 	})
+
+	t.Run("unsign document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		assert.NoError(t, err)
+		env.Unsign()
+		assert.False(t, env.Signed())
+	})
 }
 func TestEnvelopeCorrect(t *testing.T) {
 	t.Run("correct invoice", func(t *testing.T) {
