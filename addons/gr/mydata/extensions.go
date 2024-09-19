@@ -1,4 +1,4 @@
-package gr
+package mydata
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -7,20 +7,21 @@ import (
 
 // Regime extension codes.
 const (
-	ExtKeyMyDATAVATCat      = "gr-mydata-vat-cat"
-	ExtKeyMyDATAInvoiceType = "gr-mydata-invoice-type"
-	ExtKeyMyDATAExemption   = "gr-mydata-exemption"
-	ExtKeyMyDATAIncomeCat   = "gr-mydata-income-cat"
-	ExtKeyMyDATAIncomeType  = "gr-mydata-income-type"
+	ExtKeyVATRate      = "gr-mydata-vat-rate"
+	ExtKeyInvoiceType  = "gr-mydata-invoice-type"
+	ExtKeyExemption    = "gr-mydata-exemption"
+	ExtKeyIncomeCat    = "gr-mydata-income-cat"
+	ExtKeyIncomeType   = "gr-mydata-income-type"
+	ExtKeyPaymentMeans = "gr-mydata-payment-means"
 
 	InvoiceTypeRetailPrefix = "11."
 )
 
-var extensionKeys = []*cbc.KeyDefinition{
+var extensions = []*cbc.KeyDefinition{
 	{
-		Key: ExtKeyMyDATAVATCat,
+		Key: ExtKeyVATRate,
 		Name: i18n.String{
-			i18n.EN: "VAT category",
+			i18n.EN: "VAT rate",
 			i18n.EL: "Κατηγορία ΦΠΑ",
 		},
 		Values: []*cbc.ValueDefinition{
@@ -83,7 +84,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyMyDATAInvoiceType,
+		Key: ExtKeyInvoiceType,
 		Name: i18n.String{
 			i18n.EN: "Invoice type",
 			i18n.EL: "Είδος παραστατικού",
@@ -407,7 +408,65 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyMyDATAExemption,
+		Key: ExtKeyPaymentMeans,
+		Name: i18n.String{
+			i18n.EN: "Payment means",
+			i18n.EL: "Τρόπος Πληρωμής",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "1",
+				Name: i18n.String{
+					i18n.EN: "Domestic Payments Account Number",
+					i18n.EL: "Επαγ. Λογαριασμός Πληρωμών Ημεδαπής",
+				},
+			},
+			{
+				Value: "2",
+				Name: i18n.String{
+					i18n.EN: "Foreign Payments Account Number",
+					i18n.EL: "Επαγ. Λογαριασμός Πληρωμών Αλλοδαπής",
+				},
+			},
+			{
+				Value: "3",
+				Name: i18n.String{
+					i18n.EN: "Cash",
+					i18n.EL: "Μετρητά",
+				},
+			},
+			{
+				Value: "4",
+				Name: i18n.String{
+					i18n.EN: "Check",
+					i18n.EL: "Επιταγή",
+				},
+			},
+			{
+				Value: "5",
+				Name: i18n.String{
+					i18n.EN: "On credit",
+					i18n.EL: "Επί Πιστώσει",
+				},
+			},
+			{
+				Value: "6",
+				Name: i18n.String{
+					i18n.EN: "Web Banking",
+					i18n.EL: "Web Banking",
+				},
+			},
+			{
+				Value: "7",
+				Name: i18n.String{
+					i18n.EN: "POS / e-POS",
+					i18n.EL: "POS / e-POS",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyExemption,
 		Name: i18n.String{
 			i18n.EN: "VAT exemption cause",
 			i18n.EL: "Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
@@ -633,7 +692,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyMyDATAIncomeCat,
+		Key: ExtKeyIncomeCat,
 		Name: i18n.String{
 			i18n.EN: "Income Classification Category",
 			i18n.EL: "Κωδικός Κατηγορίας Χαρακτηρισμού Εσόδων",
@@ -719,7 +778,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyMyDATAIncomeType,
+		Key: ExtKeyIncomeType,
 		Name: i18n.String{
 			i18n.EN: "Income Classification Type",
 			i18n.EL: "Κωδικός Τύπου Χαρακτηρισμού Εσόδων",

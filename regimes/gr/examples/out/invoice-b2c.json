@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ab63a7f8adba166abe3660be2c492e3b03eecb1ef2ca1d7c145d59517ad607f3"
+			"val": "7b1f15e3697d8d68d22caa0557078fc772e90ddcff058712f0cbab0013e5c08f"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
 		"$tags": [
 			"simplified"
 		],
@@ -61,7 +64,7 @@
 						"rate": "standard",
 						"percent": "24%",
 						"ext": {
-							"gr-mydata-vat-cat": "1"
+							"gr-mydata-vat-rate": "1"
 						}
 					}
 				],
@@ -81,7 +84,7 @@
 						"rate": "reduced",
 						"percent": "13%",
 						"ext": {
-							"gr-mydata-vat-cat": "2"
+							"gr-mydata-vat-rate": "2"
 						}
 					}
 				],
@@ -91,14 +94,15 @@
 		"payment": {
 			"advances": [
 				{
+					"key": "card",
 					"description": "Prepaid amount",
 					"percent": "100%",
-					"amount": "20.01"
+					"amount": "20.01",
+					"ext": {
+						"gr-mydata-payment-means": "7"
+					}
 				}
-			],
-			"instructions": {
-				"key": "card"
-			}
+			]
 		},
 		"totals": {
 			"sum": "16.88",
@@ -111,7 +115,7 @@
 							{
 								"key": "standard",
 								"ext": {
-									"gr-mydata-vat-cat": "1"
+									"gr-mydata-vat-rate": "1"
 								},
 								"base": "8.44",
 								"percent": "24%",
@@ -120,7 +124,7 @@
 							{
 								"key": "reduced",
 								"ext": {
-									"gr-mydata-vat-cat": "2"
+									"gr-mydata-vat-rate": "2"
 								},
 								"base": "8.44",
 								"percent": "13%",

@@ -2,12 +2,10 @@
 package gr
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -15,11 +13,6 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 }
-
-// Custom keys used typically in meta or codes information.
-const (
-	KeyIAPRPaymentMethod cbc.Key = "iapr-payment-method"
-)
 
 // Official IAPR codes to include in stamps.
 const (
@@ -45,29 +38,21 @@ func New() *tax.RegimeDef {
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.CalculatorRoundThenSum,
 		Tags: []*tax.TagSet{
-			common.InvoiceTags().Merge(invoiceTags),
+			common.InvoiceTags(),
 		},
-		Scenarios:        scenarios,
-		Corrections:      corrections,
-		Validator:        Validate,
-		Normalizer:       Normalize,
-		Categories:       taxCategories,
-		PaymentMeansKeys: paymentMeansKeys,
-		Extensions:       extensionKeys,
+		Scenarios:   scenarios,
+		Corrections: corrections,
+		Validator:   Validate,
+		Normalizer:  Normalize,
+		Categories:  taxCategories,
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *org.Address:
-		return validateAddress(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
 	}
 	return nil
 }

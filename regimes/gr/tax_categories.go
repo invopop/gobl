@@ -7,7 +7,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// TaxRateIsland is used to define the island reduced tax rates
+// TaxRateIsland is used as a suffix to regular tax rates in order to denote
+// the reduced rates that apply to islands.
 const TaxRateIsland cbc.Key = "island"
 
 var taxCategories = []*tax.CategoryDef{
@@ -34,12 +35,6 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
-		Extensions: []cbc.Key{
-			ExtKeyMyDATAVATCat,
-			ExtKeyMyDATAExemption,
-			ExtKeyMyDATAIncomeCat,
-			ExtKeyMyDATAIncomeType,
-		},
 		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
@@ -51,9 +46,6 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Percent: num.MakePercentage(24, 2),
 					},
-				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "1",
 				},
 			},
 			{
@@ -67,9 +59,6 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(13, 2),
 					},
 				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "2",
-				},
 			},
 			{
 				Key: tax.RateSuperReduced,
@@ -81,9 +70,6 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Percent: num.MakePercentage(6, 2),
 					},
-				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "3",
 				},
 			},
 			{
@@ -97,9 +83,6 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(17, 2),
 					},
 				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "4",
-				},
 			},
 			{
 				Key: tax.RateReduced.With(TaxRateIsland),
@@ -111,9 +94,6 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Percent: num.MakePercentage(9, 2),
 					},
-				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "5",
 				},
 			},
 			{
@@ -127,9 +107,6 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(4, 2),
 					},
 				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "6",
-				},
 			},
 			{
 				Key:    tax.RateExempt,
@@ -137,9 +114,6 @@ var taxCategories = []*tax.CategoryDef{
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.EL: "Απαλλαγή",
-				},
-				Ext: tax.Extensions{
-					ExtKeyMyDATAVATCat: "7",
 				},
 			},
 		},
