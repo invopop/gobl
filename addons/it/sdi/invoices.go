@@ -1,21 +1,15 @@
-package it
+package sdi
 
 import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
-// invoiceValidator adds validation checks to invoices which are relevant
-// for the region.
-type invoiceValidator struct {
-	inv *bill.Invoice
-}
-
-// normalizeInvoice is used to ensure the invoice data is correct.
 func normalizeInvoice(inv *bill.Invoice) {
 	normalizeSupplier(inv.Supplier)
 	normalizeCustomer(inv.Customer)
@@ -28,11 +22,11 @@ func normalizeSupplier(party *org.Party) {
 	if party == nil {
 		return
 	}
-	if party.Ext == nil || party.Ext[ExtKeySDIFiscalRegime] == "" {
+	if party.Ext == nil || party.Ext[ExtKeyFiscalRegime] == "" {
 		if party.Ext == nil {
 			party.Ext = make(tax.Extensions)
 		}
-		party.Ext[ExtKeySDIFiscalRegime] = "RF01" // Ordinary regime is default
+		party.Ext[ExtKeyFiscalRegime] = "RF01" // Ordinary regime is default
 	}
 }
 
@@ -46,7 +40,7 @@ func normalizeCustomer(party *org.Party) {
 	// If the party is an individual, move the fiscal code to the identities.
 	if party.TaxID.Type == "individual" { //nolint:staticcheck
 		id := &org.Identity{
-			Key:  IdentityKeyFiscalCode,
+			Key:  it.IdentityKeyFiscalCode,
 			Code: party.TaxID.Code,
 		}
 		party.TaxID.Code = ""
@@ -61,34 +55,28 @@ func normalizeLine(line *bill.Line) {
 			continue
 		}
 		if tax.Ext.Has("it-sdi-retained-tax") {
-			tax.Ext[ExtKeySDIRetained] = tax.Ext["it-sdi-retained-tax"]
+			tax.Ext[ExtKeyRetained] = tax.Ext["it-sdi-retained-tax"]
 			delete(tax.Ext, "it-sdi-retained-tax")
 		}
 		if tax.Ext.Has("it-sdi-nature") {
-			tax.Ext[ExtKeySDIExempt] = tax.Ext["it-sdi-nature"]
+			tax.Ext[ExtKeyExempt] = tax.Ext["it-sdi-nature"]
 			delete(tax.Ext, "it-sdi-nature")
 		}
 	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {
-	v := &invoiceValidator{inv: inv}
-	return v.validate()
-}
-
-func (v *invoiceValidator) validate() error {
-	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
-			validation.By(v.tax),
+			validation.By(validateTax),
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(v.supplier),
+			validation.By(validateSupplier),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(v.customer),
+			validation.By(validateCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -101,7 +89,7 @@ func (v *invoiceValidator) validate() error {
 	)
 }
 
-func (v *invoiceValidator) tax(value any) error {
+func validateTax(value any) error {
 	obj, _ := value.(*bill.Tax)
 	if obj == nil {
 		return nil
@@ -109,15 +97,15 @@ func (v *invoiceValidator) tax(value any) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
 			tax.ExtensionsHas(
-				ExtKeySDIFormat,
-				ExtKeySDIDocumentType,
+				ExtKeyFormat,
+				ExtKeyDocumentType,
 			),
 			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) supplier(value interface{}) error {
+func validateSupplier(value interface{}) error {
 	supplier, ok := value.(*org.Party)
 	if !ok {
 		return nil
@@ -139,13 +127,13 @@ func (v *invoiceValidator) supplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&supplier.Ext,
-			tax.ExtensionsRequires(ExtKeySDIFiscalRegime),
+			tax.ExtensionsRequires(ExtKeyFiscalRegime),
 			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) customer(value interface{}) error {
+func validateCustomer(value interface{}) error {
 	customer, _ := value.(*org.Party)
 	if customer == nil {
 		return nil
@@ -173,7 +161,7 @@ func (v *invoiceValidator) customer(value interface{}) error {
 		validation.Field(&customer.Identities,
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
-				org.RequireIdentityKey(IdentityKeyFiscalCode),
+				org.RequireIdentityKey(it.IdentityKeyFiscalCode),
 			),
 			validation.Skip,
 		),
@@ -188,7 +176,7 @@ func hasFiscalCode(party *org.Party) bool {
 	if party == nil || party.TaxID == nil {
 		return false
 	}
-	return org.IdentityForKey(party.Identities, IdentityKeyFiscalCode) != nil
+	return org.IdentityForKey(party.Identities, it.IdentityKeyFiscalCode) != nil
 
 }
 
@@ -197,29 +185,6 @@ func isItalianParty(party *org.Party) bool {
 		return false
 	}
 	return party.TaxID.Country.In("IT")
-}
-
-func validateTaxCombo(c *tax.Combo) error {
-	switch c.Category {
-	case tax.CategoryVAT:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				validation.When(
-					c.Percent == nil,
-					tax.ExtensionsRequires(ExtKeySDIExempt),
-				),
-				validation.Skip,
-			),
-		)
-	case TaxCategoryIRPEF, TaxCategoryIRES, TaxCategoryINPS, TaxCategoryENASARCO, TaxCategoryENPAM:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				tax.ExtensionsRequires(ExtKeySDIRetained),
-				validation.Skip,
-			),
-		)
-	}
-	return nil
 }
 
 func validateAddress(value interface{}) error {

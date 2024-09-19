@@ -22,6 +22,18 @@ type Payment struct {
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
 }
 
+// Normalize will try to normalize the payment's data.
+func (p *Payment) Normalize(normalizers tax.Normalizers) {
+	if p == nil {
+		return
+	}
+	normalizers.Each(p)
+	tax.Normalize(normalizers, p.Payee)
+	tax.Normalize(normalizers, p.Terms)
+	tax.Normalize(normalizers, p.Advances)
+	tax.Normalize(normalizers, p.Instructions)
+}
+
 // ValidateWithContext checks to make sure the payment data looks good
 func (p *Payment) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, p,

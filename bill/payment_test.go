@@ -5,8 +5,26 @@ import (
 
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestPaymentNormalize(t *testing.T) {
+	p := &Payment{
+		Instructions: &pay.Instructions{
+			Key:    "online",
+			Detail: "Some random payment",
+			Ext: tax.Extensions{
+				"random": "",
+			},
+		},
+	}
+	p.Normalize(nil)
+	assert.Empty(t, p.Instructions.Ext)
+	assert.NotPanics(t, func() {
+		p.Normalize(nil)
+	})
+}
 
 func TestPaymentCalculations(t *testing.T) {
 	zero := num.MakeAmount(0, 2)

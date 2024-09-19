@@ -26,6 +26,7 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package to use with the `mx-cfdi-v4` key.
 - `es`: moved FacturaE and TicketBAI extensions to the `addons/es/facturae` and `addons/es/tbai` packages respecitvely.
 - `pt`: moved SAF-T specific extensions to `addons/pt/saft`.
+- `it`: moved SDI and FatturaPA extensions to `addons/it/sdi` with key `it-sdi-v1`.
 
 ### Added
 
