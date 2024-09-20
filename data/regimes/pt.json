@@ -148,6 +148,13 @@
             "pt": "Isento"
           },
           "exempt": true
+        },
+        {
+          "key": "other",
+          "name": {
+            "en": "Other",
+            "pt": "Outro"
+          }
         }
       ]
     }
