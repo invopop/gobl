@@ -4,15 +4,17 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [Unreleased]
+## [v0.200.0-rc1]
 
 Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
 
-Tax Regimes are now also defined using the `$regime` keyword at the top of the document under the `$schema` and alongside `$addons` and `$tags`. This is a significant move with the aim of making the core GOBL project as flexible as possible, while allow greater levels of validation and customization to be added as needed.
+Tax Regimes are now also defined using the `$regime` keyword at the top of the document under the `$schema` and alongside `$addons` and `$tags`. This is a significant move with the aim of making the core GOBL project as flexible as possible, while allowing greater levels of validation and customization to be added as needed.
 
 Another very significant internal change is around normalization. There is now a much clearer difference internally between `Calculate` and `Normalize` methods. Calculate methods are used when there is some type of math operation to perform, and normalize will simply clean the data as much as possible. The three key steps in order are: normalize, calculate, and validate.
 
 Finally, the `draft` flag has been removed from the header, and much more emphasis has been placed on the signatures for validation. For example, the invoice's "code" property will only be required in order to sign the envelope.
+
+(We've made a big jump in minor version numbers to clarify the extent of the changes.)
 
 ### Changed
 
