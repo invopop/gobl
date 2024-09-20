@@ -1,10 +1,10 @@
 package cfdi
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // Regime Specific Payment Means Extension Keys
@@ -26,7 +26,13 @@ const (
 	MeansKeyIntermediary    cbc.Key = "intermediary"
 )
 
-var paymentMeansKeyMap = map[cbc.Key]tax.ExtValue{
+// PaymentMeansExtensions returns the mapping of payment means to their
+// extension values used by CFDI.
+func PaymentMeansExtensions() tax.Extensions {
+	return paymentMeansKeyMap
+}
+
+var paymentMeansKeyMap = tax.Extensions{
 	pay.MeansKeyCash:                                "01",
 	pay.MeansKeyCheque:                              "02",
 	pay.MeansKeyCreditTransfer:                      "03",
@@ -50,11 +56,10 @@ var paymentMeansKeyMap = map[cbc.Key]tax.ExtValue{
 	pay.MeansKeyOther.With(MeansKeyIntermediary):    "31",
 }
 
-func normalizeInvoicePaymentInstructions(inv *bill.Invoice) {
-	if inv.Payment == nil || inv.Payment.Instructions == nil {
+func normalizePayInstructions(instr *pay.Instructions) {
+	if instr == nil {
 		return
 	}
-	instr := inv.Payment.Instructions
 	extVal := paymentMeansKeyMap[instr.Key]
 	if extVal != "" {
 		if instr.Ext == nil {
@@ -64,18 +69,45 @@ func normalizeInvoicePaymentInstructions(inv *bill.Invoice) {
 	}
 }
 
-func normalizeInvoicePaymentAdvances(inv *bill.Invoice) {
-	if inv.Payment == nil || len(inv.Payment.Advances) == 0 {
+func normalizePayAdvance(adv *pay.Advance) {
+	if adv == nil {
 		return
 	}
-
-	for _, adv := range inv.Payment.Advances {
-		extVal := paymentMeansKeyMap[adv.Key]
-		if extVal != "" {
-			if adv.Ext == nil {
-				adv.Ext = make(tax.Extensions)
-			}
-			adv.Ext[ExtKeyPaymentMeans] = extVal
+	extVal := paymentMeansKeyMap[adv.Key]
+	if extVal != "" {
+		if adv.Ext == nil {
+			adv.Ext = make(tax.Extensions)
 		}
+		adv.Ext[ExtKeyPaymentMeans] = extVal
 	}
+}
+
+func validatePayAdvance(a *pay.Advance) error {
+	return validation.ValidateStruct(a,
+		validation.Field(&a.Ext,
+			tax.ExtensionsRequires(ExtKeyPaymentMeans),
+			validation.Skip,
+		),
+	)
+}
+
+func validatePayInstructions(i *pay.Instructions) error {
+	return validation.ValidateStruct(i,
+		validation.Field(&i.Ext,
+			tax.ExtensionsRequires(ExtKeyPaymentMeans),
+			validation.Skip,
+		),
+	)
+}
+
+func validatePayTerms(terms *pay.Terms) error {
+	if terms == nil {
+		return nil
+	}
+	return validation.ValidateStruct(terms,
+		validation.Field(&terms.Notes,
+			validation.Length(0, 1000),
+			validation.Skip,
+		),
+	)
 }

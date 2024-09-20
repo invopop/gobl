@@ -169,6 +169,17 @@ func (em Extensions) Merge(other Extensions) Extensions {
 	return nem
 }
 
+// Lookup returns the key for the provided value or an empty
+// key if not found. This is useful for reverse lookups.
+func (em Extensions) Lookup(val ExtValue) cbc.Key {
+	for k, v := range em {
+		if v == val {
+			return k
+		}
+	}
+	return cbc.KeyEmpty
+}
+
 // CleanExtensions will try to clean the extension map removing empty values
 // and will potentially return a nil if there only keys with no values.
 func CleanExtensions(em Extensions) Extensions {

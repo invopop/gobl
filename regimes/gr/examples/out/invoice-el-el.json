@@ -4,18 +4,29 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1a9a5fd25eadad1fcdb5f141deaf628b6500c88f906bf9d521a753ae13d4d4f8"
+			"val": "0adb783cf39fd01962abbc45755da8a3cf16b16f5a3d0fec3eba7edd68a1bc66"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"services"
+		],
 		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "2.1"
+			}
+		},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
@@ -83,7 +94,7 @@
 						"ext": {
 							"gr-mydata-income-cat": "category1_1",
 							"gr-mydata-income-type": "E3_106",
-							"gr-mydata-vat-cat": "1"
+							"gr-mydata-vat-rate": "1"
 						}
 					}
 				],
@@ -103,7 +114,7 @@
 						"rate": "exempt",
 						"ext": {
 							"gr-mydata-exemption": "3",
-							"gr-mydata-vat-cat": "7"
+							"gr-mydata-vat-rate": "7"
 						}
 					}
 				],
@@ -112,7 +123,10 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "cash"
+				"key": "cash",
+				"ext": {
+					"gr-mydata-payment-means": "3"
+				}
 			}
 		},
 		"totals": {
@@ -128,7 +142,7 @@
 								"ext": {
 									"gr-mydata-income-cat": "category1_1",
 									"gr-mydata-income-type": "E3_106",
-									"gr-mydata-vat-cat": "1"
+									"gr-mydata-vat-rate": "1"
 								},
 								"base": "1620.00",
 								"percent": "24%",
@@ -138,7 +152,7 @@
 								"key": "exempt",
 								"ext": {
 									"gr-mydata-exemption": "3",
-									"gr-mydata-vat-cat": "7"
+									"gr-mydata-vat-rate": "7"
 								},
 								"base": "100.00",
 								"amount": "0.00"

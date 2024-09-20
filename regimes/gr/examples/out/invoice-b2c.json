@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "421a950d405e3287c501e9b207fb5234c018fe0a0c10671fd116a26f6e274e80"
+			"val": "7b1f15e3697d8d68d22caa0557078fc772e90ddcff058712f0cbab0013e5c08f"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
 		"$tags": [
 			"simplified"
 		],
@@ -19,7 +22,11 @@
 		"code": "002",
 		"issue_date": "2024-08-20",
 		"currency": "EUR",
-		"tax": {},
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "11.3"
+			}
+		},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
@@ -57,7 +64,7 @@
 						"rate": "standard",
 						"percent": "24%",
 						"ext": {
-							"gr-mydata-vat-cat": "1"
+							"gr-mydata-vat-rate": "1"
 						}
 					}
 				],
@@ -77,7 +84,7 @@
 						"rate": "reduced",
 						"percent": "13%",
 						"ext": {
-							"gr-mydata-vat-cat": "2"
+							"gr-mydata-vat-rate": "2"
 						}
 					}
 				],
@@ -87,14 +94,15 @@
 		"payment": {
 			"advances": [
 				{
+					"key": "card",
 					"description": "Prepaid amount",
 					"percent": "100%",
-					"amount": "20.01"
+					"amount": "20.01",
+					"ext": {
+						"gr-mydata-payment-means": "7"
+					}
 				}
-			],
-			"instructions": {
-				"key": "card"
-			}
+			]
 		},
 		"totals": {
 			"sum": "16.88",
@@ -107,7 +115,7 @@
 							{
 								"key": "standard",
 								"ext": {
-									"gr-mydata-vat-cat": "1"
+									"gr-mydata-vat-rate": "1"
 								},
 								"base": "8.44",
 								"percent": "24%",
@@ -116,7 +124,7 @@
 							{
 								"key": "reduced",
 								"ext": {
-									"gr-mydata-vat-cat": "2"
+									"gr-mydata-vat-rate": "2"
 								},
 								"base": "8.44",
 								"percent": "13%",

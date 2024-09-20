@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
+	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/addons/mx/cfdi" // this will also prepare registers
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/gr"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -131,7 +131,7 @@ func TestExtValidation(t *testing.T) {
 	t.Run("with greece", func(t *testing.T) {
 		t.Run("test good value", func(t *testing.T) {
 			em := tax.Extensions{
-				gr.ExtKeyMyDATAIncomeCat: "category1_1",
+				mydata.ExtKeyIncomeCat: "category1_1",
 			}
 			err := em.Validate()
 			assert.NoError(t, err)
@@ -139,7 +139,7 @@ func TestExtValidation(t *testing.T) {
 
 		t.Run("test bad value", func(t *testing.T) {
 			em := tax.Extensions{
-				gr.ExtKeyMyDATAIncomeCat: "xxx",
+				mydata.ExtKeyIncomeCat: "xxx",
 			}
 			err := em.Validate()
 			assert.Error(t, err)
@@ -313,5 +313,14 @@ func TestExtensionsMerge(t *testing.T) {
 			assert.Equal(t, tt.want, tt.em1.Merge(tt.em2))
 		})
 	}
+}
 
+func TestExtensionLookup(t *testing.T) {
+	em := tax.Extensions{
+		"key1": "foo",
+		"key2": "bar",
+	}
+	assert.Equal(t, cbc.Key("key1"), em.Lookup("foo"))
+	assert.Equal(t, cbc.Key("key2"), em.Lookup("bar"))
+	assert.Equal(t, cbc.KeyEmpty, em.Lookup("missing"))
 }

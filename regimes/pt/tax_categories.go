@@ -110,6 +110,14 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Exempt: true,
 			},
+			{
+				Key: tax.RateOther,
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.PT: "Outro",
+				},
+				Values: []*tax.RateValueDef{},
+			},
 		},
 	},
 }

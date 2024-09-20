@@ -1,4 +1,5 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["gr-mydata-v1"]
 uuid: "019035bd-4522-7eb3-83bf-9185ead05ee6"
 currency: "EUR"
 issue_date: "2024-08-20"
@@ -42,7 +43,6 @@ lines:
 
 payment:
   advances:
-    - percent: "100%"
+    - key: card
+      percent: "100%"
       description: "Prepaid amount"
-  instructions:
-    key: card

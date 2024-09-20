@@ -27,14 +27,16 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `es`: moved FacturaE and TicketBAI extensions to the `addons/es/facturae` and `addons/es/tbai` packages respecitvely.
 - `pt`: moved SAF-T specific extensions to `addons/pt/saft`.
 - `it`: moved SDI and FatturaPA extensions to `addons/it/sdi` with key `it-sdi-v1`.
+- `gr`: moved MyDATA to `addons/gr/mydata`, key `gr-mydata-v1`.
 
 ### Added
 
 - `tax`: `Regime` type now used to add `$regime` attribute to documents.
 - `tax`: `Addons` type which uses the `$addons` attribute to control which addons apply to the document.
 - `tax`: `Tags` type which adds the `$tags` attribute.
-- `tax`: `Scenario` now has `Filter` property to set a code function
+- `tax`: `Scenario` now has `Filter` property to set a code function.
 - `tax`: `AddonDef` provides support for defining addon extension packs.
+- `gr`: `gr-mydata-invoice-type` extension with related tags and scenarios.
 
 ## [v0.115.1]
 

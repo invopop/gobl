@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 )
@@ -54,6 +55,12 @@ func normalize(doc any) {
 		normalizeParty(obj)
 	case *org.Item:
 		normalizeItem(obj)
+	case *pay.Instructions:
+		normalizePayInstructions(obj)
+	case *pay.Advance:
+		normalizePayAdvance(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }
 
@@ -63,6 +70,12 @@ func validate(doc any) error {
 		return validateInvoice(obj)
 	case *org.Item:
 		return validateItem(obj)
+	case *pay.Instructions:
+		return validatePayInstructions(obj)
+	case *pay.Advance:
+		return validatePayAdvance(obj)
+	case *pay.Terms:
+		return validatePayTerms(obj)
 	}
 	return nil
 }
