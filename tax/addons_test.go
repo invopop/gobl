@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,7 +23,9 @@ func TestEmbeddingAddons(t *testing.T) {
 	assert.NotNil(t, ts.Addons)
 	assert.Equal(t, "Test", ts.Name)
 
-	defs := ts.GetAddons()
+	assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, ts.GetAddons())
+
+	defs := ts.GetAddonDefs()
 	assert.Len(t, defs, 1)
 	assert.Equal(t, "mx-cfdi-v4", defs[0].Key.String())
 

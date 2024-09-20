@@ -318,7 +318,7 @@ func (inv *Invoice) normalizers() tax.Normalizers {
 	if r := inv.RegimeDef(); r != nil {
 		normalizers = normalizers.Append(r.Normalizer)
 	}
-	for _, a := range inv.GetAddons() {
+	for _, a := range inv.GetAddonDefs() {
 		normalizers = normalizers.Append(a.Normalizer)
 	}
 	return normalizers
@@ -329,7 +329,7 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 	if r := inv.RegimeDef(); r != nil {
 		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaInvoice))
 	}
-	for _, a := range inv.GetAddons() {
+	for _, a := range inv.GetAddonDefs() {
 		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaInvoice))
 	}
 	return ts.Keys()
@@ -341,7 +341,7 @@ func (inv *Invoice) ValidationContext(ctx context.Context) context.Context {
 	if r := inv.RegimeDef(); r != nil {
 		ctx = r.WithContext(ctx)
 	}
-	for _, a := range inv.GetAddons() {
+	for _, a := range inv.GetAddonDefs() {
 		ctx = a.WithContext(ctx)
 	}
 	return ctx

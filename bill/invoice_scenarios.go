@@ -43,7 +43,7 @@ func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 	if r := inv.RegimeDef(); r != nil {
 		ss.Merge(r.Scenarios)
 	}
-	for _, a := range inv.GetAddons() {
+	for _, a := range inv.GetAddonDefs() {
 		ss.Merge(a.Scenarios)
 	}
 
