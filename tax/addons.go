@@ -68,7 +68,7 @@ func (as *Addons) GetAddons() []cbc.Key {
 	return as.List
 }
 
-// GetAddons provides a slice of Addon instances.
+// GetAddonDefs provides a slice of Addon Definition instances.
 func (as Addons) GetAddonDefs() []*AddonDef {
 	list := make([]*AddonDef, 0, len(as.List))
 	for _, ak := range as.List {
