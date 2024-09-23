@@ -12,6 +12,7 @@
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
+          "pattern": "^[A-Z0-9]+$",
           "title": "Code",
           "description": "Normalized code shown on the original identity document."
         },

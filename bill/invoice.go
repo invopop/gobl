@@ -589,12 +589,6 @@ func (inv *Invoice) UnmarshalJSON(data []byte) error {
 // JSONSchemaExtend extends the schema with additional property details
 func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
-	if prop, ok := props.Get("series"); ok {
-		prop.Pattern = cbc.CodePattern
-	}
-	if prop, ok := props.Get("code"); ok {
-		prop.Pattern = cbc.CodePattern
-	}
 	// Extend type list
 	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
