@@ -1,6 +1,8 @@
 package gb
 
 import (
+	"time"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
@@ -39,7 +41,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Since:   cal.NewDate(2011, 1, 4),
+						Since:   cal.NewDate(2011, time.April, 1),
 						Percent: num.MakePercentage(200, 3),
 					},
 				},
@@ -51,7 +53,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 				Values: []*tax.RateValueDef{
 					{
-						Since:   cal.NewDate(2011, 1, 4),
+						Since:   cal.NewDate(2011, time.April, 1),
 						Percent: num.MakePercentage(50, 3),
 					},
 				},

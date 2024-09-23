@@ -6,8 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-
-	// "github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -15,6 +13,11 @@ import (
 func init() {
 	tax.RegisterRegimeDef(New())
 }
+
+const (
+	TaxCategoryWET cbc.Code = "WET"
+	TaxCategoryLCT cbc.Code = "LCT"
+)
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
@@ -24,7 +27,7 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "Australia",
 		},
-		TimeZone:   "Australia",
+		TimeZone:   "Australia/Perth", //Around the middle
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
@@ -39,6 +42,7 @@ func New() *tax.RegimeDef {
 				Schema: bill.ShortSchemaInvoice,
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
+					bill.InvoiceTypeDebitNote,
 				},
 			},
 		},

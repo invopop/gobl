@@ -13,7 +13,6 @@ import (
 var taxWeightTableABN = [11]int{10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19}
 var taxWeightTableACN = [8]int{8, 7, 6, 5, 4, 3, 2, 1}
 
-// function called from main file
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),
@@ -29,6 +28,7 @@ func validateTaxCode(value interface{}) error {
 	reABN := regexp.MustCompile(`^\d{11}$`)
 	reACN := regexp.MustCompile(`^\d{9}$`)
 
+	// If 11 digits long check ABN, if 9 digits long ACN
 	switch {
 	case reABN.MatchString(val):
 		return businessNumberCheck(val)
