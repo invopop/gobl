@@ -32,6 +32,7 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `gr`: moved MyDATA to `addons/gr/mydata`, key `gr-mydata-v1`.
 - `bill.Preceding`: replaced with `org.DocumentRef`.
 - `bill.Invoice`: Ordering now using arrays of `org.DocumentRef`.
+- `bill.Invoice`: `series` and `code` now use `cbc.Code` and normalization instead of the independent invoice code.
 
 ### Added
 

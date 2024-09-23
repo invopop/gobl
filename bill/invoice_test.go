@@ -9,6 +9,7 @@ import (
 	_ "github.com/invopop/gobl" // load regions
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/l10n"
@@ -19,34 +20,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func TestInvoiceCodeRegexp(t *testing.T) {
-	tests := []struct {
-		code string
-		ok   bool
-	}{
-		// Good
-		{"1", true},
-		{"A", true},
-		{"123", true},
-		{"123TEST", true},
-		{"123-TEST", true},
-		{"FR F-01/37", true},
-		{"MultiCase", true},
-		{"F.01_21", true},
-		// Bad
-		{"F101-", false},
-		{" 123 ", false},
-		{"F--01", false},
-		{"\n", false},
-		{"FOO\n", false},
-	}
-	for _, ts := range tests {
-		t.Run(ts.code, func(t *testing.T) {
-			assert.Equal(t, ts.ok, bill.InvoiceCodeRegexp.MatchString(ts.code))
-		})
-	}
-}
 
 func TestInvoiceRegimeCurrency(t *testing.T) {
 	lines := []*bill.Line{
@@ -1072,6 +1045,15 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 	inv.Currency = currency.USD
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
+}
+
+func TestNormalization(t *testing.T) {
+	inv := baseInvoiceWithLines(t)
+	inv.Series = " bar 2024 "
+	inv.Code = " 123 Test "
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, cbc.Code("BAR-2024"), inv.Series)
+	assert.Equal(t, cbc.Code("123-TEST"), inv.Code)
 }
 
 func TestValidation(t *testing.T) {

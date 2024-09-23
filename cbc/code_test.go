@@ -36,6 +36,11 @@ func TestNormalizeCode(t *testing.T) {
 			want: cbc.Code("FOO"),
 		},
 		{
+			name: "with spaces",
+			code: cbc.Code("FOO BAR"),
+			want: cbc.Code("FOO-BAR"),
+		},
+		{
 			name: "empty",
 			code: cbc.Code(""),
 			want: cbc.Code(""),
@@ -54,6 +59,11 @@ func TestNormalizeCode(t *testing.T) {
 			name: "invalid chars",
 			code: cbc.Code("f$oo-bar1!"),
 			want: cbc.Code("FOO-BAR1"),
+		},
+		{
+			name: "multiple spaces",
+			code: cbc.Code("foo bar dome"),
+			want: cbc.Code("FOO-BAR-DOME"),
 		},
 	}
 	for _, tt := range tests {
@@ -103,6 +113,10 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code(""),
 		},
 		{
+			name: "almost too long",
+			code: cbc.Code("123456789012345678901234567890AB"),
+		},
+		{
 			name:    "dot at start",
 			code:    cbc.Code(".B123"),
 			wantErr: "valid format",
@@ -133,8 +147,23 @@ func TestCode_Validate(t *testing.T) {
 			wantErr: "valid format",
 		},
 		{
+			name:    "character return",
+			code:    cbc.Code("AB\nCD"),
+			wantErr: "valid format",
+		},
+		{
+			name:    "character return",
+			code:    cbc.Code("\n"),
+			wantErr: "valid format",
+		},
+		{
+			name:    "multi-dash",
+			code:    cbc.Code("AB--CD"),
+			wantErr: "valid format",
+		},
+		{
 			name:    "too long",
-			code:    cbc.Code("12345678901234567890ABCDE"),
+			code:    cbc.Code("123456789012345678901234567890ABC"),
 			wantErr: "length must be between",
 		},
 	}

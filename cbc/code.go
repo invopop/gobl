@@ -13,7 +13,7 @@ import (
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 1 and 24 inclusive upper-case letters or numbers with optional periods (`.`),
+// 1 and 32 inclusive upper-case letters or numbers with optional periods (`.`),
 // dashes (`-`), or forward slashes (`/`) to separate blocks.
 type Code string
 
@@ -26,12 +26,12 @@ var (
 	CodePattern              = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
-	CodeMaxLength     uint64 = 24
+	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeUnderscoreRegexp   = regexp.MustCompile(`_`)
-	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
+	codeUnderscoreOrSpaceRegexp = regexp.MustCompile(`[_ ]`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -42,7 +42,7 @@ const CodeEmpty Code = ""
 func NormalizeCode(c Code) Code {
 	code := strings.ToUpper(c.String())
 	code = strings.TrimSpace(code)
-	code = codeUnderscoreRegexp.ReplaceAllString(code, "-")
+	code = codeUnderscoreOrSpaceRegexp.ReplaceAllString(code, "-")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }

@@ -28,7 +28,7 @@ type CorrectionOptions struct {
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Series to assign to the new corrective invoice.
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Stamps of the previous document to include in the preceding data.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Human readable reason for the corrective operation.
@@ -71,7 +71,7 @@ func WithStamps(stamps []*head.Stamp) schema.Option {
 }
 
 // WithSeries assigns a new series to the corrective document.
-func WithSeries(value string) schema.Option {
+func WithSeries(value cbc.Code) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Series = value

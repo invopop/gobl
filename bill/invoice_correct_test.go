@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -34,7 +35,7 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "10")
 	assert.Equal(t, i.IssueDate, cal.Today())
-	assert.Equal(t, i.Series, "TEST")
+	assert.Equal(t, i.Series, cbc.Code("TEST"))
 	assert.Empty(t, i.Code)
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series.String(), "TEST")
@@ -81,7 +82,7 @@ func TestInvoiceCorrect(t *testing.T) {
 		inv := testInvoiceESForCorrection(t)
 		err := inv.Correct(bill.Credit, bill.WithSeries("R-TEST"))
 		require.NoError(t, err)
-		assert.Equal(t, inv.Series, "R-TEST")
+		assert.Equal(t, inv.Series, cbc.Code("R-TEST"))
 		assert.Equal(t, inv.Preceding[0].Series.String(), "TEST")
 	})
 
@@ -149,7 +150,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, bill.InvoiceTypeCreditNote, i.Type)
 	assert.Equal(t, i.Lines[0].Quantity.String(), "10")
 	assert.Equal(t, i.IssueDate, cal.Today())
-	assert.Equal(t, i.Series, "R-TEST")
+	assert.Equal(t, i.Series.String(), "R-TEST")
 	assert.Empty(t, i.Code)
 	pre := i.Preceding[0]
 	assert.Equal(t, pre.Series.String(), "TEST")
