@@ -1,7 +1,6 @@
 package org_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/invopop/gobl/cal"
@@ -15,7 +14,7 @@ func TestDocumentRefValidation(t *testing.T) {
 	dr.Code = "FOO"
 	dr.IssueDate = cal.NewDate(2022, 11, 6)
 
-	err := dr.ValidateWithContext(context.Background())
+	err := dr.Validate()
 	assert.NoError(t, err)
 }
 

@@ -35,6 +35,32 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
+	t.Run("migrate supplier issue place", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Tax = nil
+		inv.Supplier.Ext = tax.Extensions{
+			cfdi.ExtKeyPostCode: "12345",
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Tax)
+		assert.Equal(t, tax.ExtValue("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+	})
+	t.Run("migrate supplier issue place", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Tax = nil
+		inv.Supplier.Ext = nil
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
+			&org.Address{
+				Locality: "Mexico",
+				Code:     "12345",
+			},
+		)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Tax)
+		assert.Equal(t, tax.ExtValue("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+	})
 }
 
 func baseInvoice() *bill.Invoice {
