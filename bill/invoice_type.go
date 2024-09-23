@@ -14,6 +14,7 @@ const (
 	InvoiceTypeCorrective cbc.Key = "corrective"
 	InvoiceTypeCreditNote cbc.Key = "credit-note"
 	InvoiceTypeDebitNote  cbc.Key = "debit-note"
+	InvoiceTypeOther      cbc.Key = "other"
 )
 
 const (
@@ -85,6 +86,21 @@ var InvoiceTypes = []*cbc.KeyDefinition{
 		},
 		Map: cbc.CodeMap{
 			UNTDID1001Key: "383",
+		},
+	},
+	{
+		Key: InvoiceTypeOther,
+		Name: i18n.String{
+			i18n.EN: "Other",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Any other type of invoice that does not fit into the standard categories and implies
+				that any scenarios defined in tax regimes or addons will not be applied.
+
+				This is useful for being able to create invoices with custom types in extensions,
+				but is not recommend for general use.
+			`),
 		},
 	},
 }

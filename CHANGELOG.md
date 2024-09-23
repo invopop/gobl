@@ -4,7 +4,7 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [v0.200.0-rc1]
+## [v0.200.0-rc]
 
 Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
 
@@ -43,6 +43,7 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `tax`: `AddonDef` provides support for defining addon extension packs.
 - `gr`: `gr-mydata-invoice-type` extension with related tags and scenarios.
 - `org`: `DocumentRef` consolidates references to previous documents in a single place.
+- `bill`: invoice type option `other` for usage when regular scenarios do not apply.
 
 ## [v0.115.1]
 
