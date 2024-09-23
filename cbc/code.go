@@ -13,8 +13,13 @@ import (
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 1 and 32 inclusive upper-case letters or numbers with optional periods (`.`),
-// dashes (`-`), forward slashes (`/`), or spaces (` `) to separate blocks.
+// 1 and 32 inclusive english alphabet letters or numbers with optional
+// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`), or
+// spaces (` `) to separate blocks. Each block must only be separated by a
+// single symbol.
+//
+// The objective is to have a code that is easy to read and understand, while
+// still being unique and easy to validate.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -23,16 +28,15 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern              = `^[A-Z0-9]+([\.\-\/ ]?[A-Z0-9]+)*$`
+	CodePattern              = `^[A-Za-z0-9]+([\.\-\/ _]?[A-Za-z0-9]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeSeparatorRegexp    = regexp.MustCompile(`([\.\-\/ ])[^A-Z0-9]+`)
-	codeDashSwapRegexp     = regexp.MustCompile(`_`)
-	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Z0-9\.\-\/ ]`)
+	codeSeparatorRegexp    = regexp.MustCompile(`([\.\-\/ _])[^A-Za-z0-9]+`)
+	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -41,9 +45,8 @@ const CodeEmpty Code = ""
 // NormalizeCode attempts to clean and normalize the provided code so that
 // it matches what we'd expect instead of raising validation errors.
 func NormalizeCode(c Code) Code {
-	code := strings.ToUpper(c.String())
+	code := c.String()
 	code = strings.TrimSpace(code)
-	code = codeDashSwapRegexp.ReplaceAllString(code, "-")
 	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
 	return Code(code)

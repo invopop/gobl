@@ -44,6 +44,12 @@ type Identity struct {
 }
 
 var (
+	// IdentityCodePattern is the regular expression pattern used to validate tax identity codes.
+	IdentityCodePattern = `^[A-Z0-9]+$`
+
+	// IdentityCodePatternRegexp is the regular expression used to validate tax identity codes.
+	IdentityCodePatternRegexp = regexp.MustCompile(IdentityCodePattern)
+
 	// ErrIdentityCodeInvalid is returned when the tax identity code is not valid.
 	ErrIdentityCodeInvalid = errors.New("invalid tax identity code")
 
@@ -111,7 +117,7 @@ func (id *Identity) Normalize() {
 func (id *Identity) Validate() error {
 	err := validation.ValidateStruct(id,
 		validation.Field(&id.Country, validation.Required),
-		validation.Field(&id.Code),
+		validation.Field(&id.Code, validation.Match(IdentityCodePatternRegexp)),
 		validation.Field(&id.Zone, validation.Empty),
 		validation.Field(&id.Type),
 	)
@@ -140,6 +146,9 @@ func (v validateTaxID) Validate(value interface{}) error {
 
 // JSONSchemaExtend adds extra details to the schema.
 func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
+	if cp, ok := js.Properties.Get("code"); ok {
+		cp.Pattern = IdentityCodePattern
+	}
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
 			"code",

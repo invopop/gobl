@@ -28,12 +28,12 @@ func TestNormalizeCode(t *testing.T) {
 		{
 			name: "lowercase",
 			code: cbc.Code("foo"),
-			want: cbc.Code("FOO"),
+			want: cbc.Code("foo"),
 		},
 		{
 			name: "mixed case",
 			code: cbc.Code("Foo"),
-			want: cbc.Code("FOO"),
+			want: cbc.Code("Foo"),
 		},
 		{
 			name: "with spaces",
@@ -48,31 +48,31 @@ func TestNormalizeCode(t *testing.T) {
 		{
 			name: "underscore",
 			code: cbc.Code("FOO_BAR"),
-			want: cbc.Code("FOO-BAR"),
+			want: cbc.Code("FOO_BAR"),
 		},
 		{
 			name: "whitespace",
 			code: cbc.Code(" foo-bar1  "),
-			want: cbc.Code("FOO-BAR1"),
+			want: cbc.Code("foo-bar1"),
 		},
 		{
 			name: "invalid chars",
 			code: cbc.Code("f$oo-bar1!"),
-			want: cbc.Code("FOO-BAR1"),
+			want: cbc.Code("foo-bar1"),
 		},
 		{
 			name: "multiple spaces",
 			code: cbc.Code("foo bar dome"),
-			want: cbc.Code("FOO BAR DOME"),
+			want: cbc.Code("foo bar dome"),
 		},
 		{
 			name: "multiple symbols 1",
 			code: cbc.Code("foo- bar-$dome"),
-			want: cbc.Code("FOO-BAR-DOME"),
+			want: cbc.Code("foo-bar-dome"),
 		},
 		{
 			name: "multiple symbols 2",
-			code: cbc.Code("foo  bar--dome"),
+			code: cbc.Code("FOO  BAR--DOME"),
 			want: cbc.Code("FOO BAR-DOME"),
 		},
 	}
@@ -97,6 +97,10 @@ func TestCode_Validate(t *testing.T) {
 		{
 			name: "valid 2",
 			code: cbc.Code("12345678901234567890ABCD"),
+		},
+		{
+			name: "valid with lower",
+			code: cbc.Code("ABC abc/123"),
 		},
 		{
 			name: "valid with dot",
@@ -148,11 +152,6 @@ func TestCode_Validate(t *testing.T) {
 		{
 			name:    "dash at end",
 			code:    cbc.Code("B123-"),
-			wantErr: "valid format",
-		},
-		{
-			name:    "lower case",
-			code:    cbc.Code("ab"),
 			wantErr: "valid format",
 		},
 		{

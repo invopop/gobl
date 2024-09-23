@@ -42,12 +42,12 @@ func TestExtValue(t *testing.T) {
 	ev = tax.ExtValue("testing")
 	assert.Equal(t, "testing", ev.String())
 	assert.Equal(t, cbc.Key("testing"), ev.Key())
-	assert.Equal(t, cbc.CodeEmpty, ev.Code())
+	assert.Equal(t, cbc.Code("testing"), ev.Code())
 
-	ev = tax.ExtValue("A string")
+	ev = tax.ExtValue("A $tring")
 	assert.Equal(t, cbc.CodeEmpty, ev.Code())
 	assert.Equal(t, cbc.KeyEmpty, ev.Key())
-	assert.Equal(t, "A string", ev.String())
+	assert.Equal(t, "A $tring", ev.String())
 }
 
 func TestExtValidation(t *testing.T) {

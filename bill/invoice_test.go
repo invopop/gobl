@@ -1052,8 +1052,8 @@ func TestNormalization(t *testing.T) {
 	inv.Series = " bar 2024 "
 	inv.Code = " 123_Test "
 	require.NoError(t, inv.Calculate())
-	assert.Equal(t, cbc.Code("BAR 2024"), inv.Series)
-	assert.Equal(t, cbc.Code("123-TEST"), inv.Code)
+	assert.Equal(t, cbc.Code("bar 2024"), inv.Series)
+	assert.Equal(t, cbc.Code("123_Test"), inv.Code)
 }
 
 func TestValidation(t *testing.T) {
