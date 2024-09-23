@@ -55,7 +55,7 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
-func validateInvoiceTax(preceding []*bill.Preceding) validation.RuleFunc {
+func validateInvoiceTax(preceding []*org.DocumentRef) validation.RuleFunc {
 	return func(value any) error {
 		obj, _ := value.(*bill.Tax)
 		if obj == nil {
@@ -135,7 +135,7 @@ func validateInvoiceLine(value any) error {
 }
 
 func validateInvoicePreceding(value interface{}) error {
-	entry, _ := value.(*bill.Preceding)
+	entry, _ := value.(*org.DocumentRef)
 	if entry == nil {
 		return nil
 	}

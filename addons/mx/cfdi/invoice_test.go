@@ -190,7 +190,7 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 func TestPrecedingValidation(t *testing.T) {
 	inv := validInvoice()
 
-	inv.Preceding = []*bill.Preceding{
+	inv.Preceding = []*org.DocumentRef{
 		{
 			Code: "123",
 			Stamps: []*head.Stamp{

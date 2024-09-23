@@ -3,6 +3,7 @@ package facturae
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -57,7 +58,7 @@ func validateInvoiceTax(val any) error {
 }
 
 func validateInvoicePreceding(val any) error {
-	p, ok := val.(*bill.Preceding)
+	p, ok := val.(*org.DocumentRef)
 	if !ok {
 		return nil
 	}

@@ -58,7 +58,7 @@ func validateInvoice(inv *bill.Invoice) error {
 				inv.Type.In(bill.InvoiceTypeCreditNote),
 				validation.Required,
 			),
-			validation.Each(validation.By(validatePreceding)),
+			validation.Each(validation.By(validateInvoicePreceding)),
 			validation.Skip,
 		),
 	)
@@ -169,8 +169,8 @@ func validateInvoicePayment(value any) error {
 	)
 }
 
-func validatePreceding(value any) error {
-	p, ok := value.(*bill.Preceding)
+func validateInvoicePreceding(value any) error {
+	p, ok := value.(*org.DocumentRef)
 	if !ok || p == nil {
 		return nil
 	}

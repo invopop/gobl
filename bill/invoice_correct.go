@@ -10,8 +10,10 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
 
@@ -26,7 +28,7 @@ type CorrectionOptions struct {
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Series to assign to the new corrective invoice.
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Stamps of the previous document to include in the preceding data.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Human readable reason for the corrective operation.
@@ -69,7 +71,7 @@ func WithStamps(stamps []*head.Stamp) schema.Option {
 }
 
 // WithSeries assigns a new series to the corrective document.
-func WithSeries(value string) schema.Option {
+func WithSeries(value cbc.Code) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Series = value
@@ -265,8 +267,8 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	// Copy and prepare the basic fields
-	pre := &Preceding{
-		UUID:      inv.UUID,
+	pre := &org.DocumentRef{
+		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
 		Series:    inv.Series,
 		Code:      inv.Code,
@@ -292,7 +294,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	// Replace all previous preceding data
-	inv.Preceding = []*Preceding{pre}
+	inv.Preceding = []*org.DocumentRef{pre}
 
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
@@ -343,7 +345,7 @@ func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error
 	return nil
 }
 
-func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *Preceding) error {
+func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *org.DocumentRef) error {
 	if cd == nil {
 		return nil
 	}

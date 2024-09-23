@@ -14,6 +14,66 @@ func TestCodeIn(t *testing.T) {
 	assert.False(t, c.In("BAR", "DOM"))
 }
 
+func TestNormalizeCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "uppercase",
+			code: cbc.Code("FOO"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "lowercase",
+			code: cbc.Code("foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "mixed case",
+			code: cbc.Code("Foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "with spaces",
+			code: cbc.Code("FOO BAR"),
+			want: cbc.Code("FOO-BAR"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+			want: cbc.Code(""),
+		},
+		{
+			name: "underscore",
+			code: cbc.Code("FOO_BAR"),
+			want: cbc.Code("FOO-BAR"),
+		},
+		{
+			name: "whitespace",
+			code: cbc.Code(" foo-bar1  "),
+			want: cbc.Code("FOO-BAR1"),
+		},
+		{
+			name: "invalid chars",
+			code: cbc.Code("f$oo-bar1!"),
+			want: cbc.Code("FOO-BAR1"),
+		},
+		{
+			name: "multiple spaces",
+			code: cbc.Code("foo bar dome"),
+			want: cbc.Code("FOO-BAR-DOME"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
+		})
+	}
+
+}
+
 func TestCode_Validate(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -53,6 +113,10 @@ func TestCode_Validate(t *testing.T) {
 			code: cbc.Code(""),
 		},
 		{
+			name: "almost too long",
+			code: cbc.Code("123456789012345678901234567890AB"),
+		},
+		{
 			name:    "dot at start",
 			code:    cbc.Code(".B123"),
 			wantErr: "valid format",
@@ -83,8 +147,23 @@ func TestCode_Validate(t *testing.T) {
 			wantErr: "valid format",
 		},
 		{
+			name:    "character return",
+			code:    cbc.Code("AB\nCD"),
+			wantErr: "valid format",
+		},
+		{
+			name:    "character return",
+			code:    cbc.Code("\n"),
+			wantErr: "valid format",
+		},
+		{
+			name:    "multi-dash",
+			code:    cbc.Code("AB--CD"),
+			wantErr: "valid format",
+		},
+		{
 			name:    "too long",
-			code:    cbc.Code("12345678901234567890ABCDE"),
+			code:    cbc.Code("123456789012345678901234567890ABC"),
 			wantErr: "length must be between",
 		},
 	}

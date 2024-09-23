@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -31,18 +30,6 @@ const (
 	defaultCurrencyConversionAccuracy uint32 = 2
 )
 
-const (
-	// InvoiceCodePattern defines what we expect from codes
-	// and series in an invoice.
-	InvoiceCodePattern = `^([A-Za-z0-9][A-Za-z0-9 /\._-]?)*[A-Za-z0-9]$`
-)
-
-var (
-	// InvoiceCodeRegexp is used to validate invoice codes and series
-	// to something that is compatible with most tax regimes.
-	InvoiceCodeRegexp = regexp.MustCompile(InvoiceCodePattern)
-)
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
@@ -57,9 +44,9 @@ type Invoice struct {
 	// Type of invoice document subject to the requirements of the local tax regime.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Used as a prefix to group codes.
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
-	Code string `json:"code" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 	// When the invoice was created.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
@@ -73,7 +60,7 @@ type Invoice struct {
 
 	// Key information regarding previous invoices and potentially details as to why they
 	// were corrected.
-	Preceding []*Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
@@ -139,11 +126,8 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			isValidInvoiceType,
 		),
-		validation.Field(&inv.Series,
-			validation.Match(InvoiceCodeRegexp),
-		),
+		validation.Field(&inv.Series),
 		validation.Field(&inv.Code,
-			validation.Match(InvoiceCodeRegexp),
 			validation.When(
 				internal.IsSigned(ctx),
 				validation.Required.Error("required to sign invoice"),
@@ -301,6 +285,9 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	if inv.Type == cbc.KeyEmpty {
 		inv.Type = InvoiceTypeStandard
 	}
+	inv.Series = cbc.NormalizeCode(inv.Series)
+	inv.Code = cbc.NormalizeCode(inv.Code)
+
 	normalizers.Each(inv)
 
 	tax.Normalize(normalizers, inv.Tax)
@@ -310,6 +297,7 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, inv.Lines)
 	tax.Normalize(normalizers, inv.Discounts)
 	tax.Normalize(normalizers, inv.Charges)
+	tax.Normalize(normalizers, inv.Ordering)
 	tax.Normalize(normalizers, inv.Payment)
 }
 
@@ -602,10 +590,10 @@ func (inv *Invoice) UnmarshalJSON(data []byte) error {
 func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	if prop, ok := props.Get("series"); ok {
-		prop.Pattern = InvoiceCodePattern
+		prop.Pattern = cbc.CodePattern
 	}
 	if prop, ok := props.Get("code"); ok {
-		prop.Pattern = InvoiceCodePattern
+		prop.Pattern = cbc.CodePattern
 	}
 	// Extend type list
 	if its, ok := props.Get("type"); ok {

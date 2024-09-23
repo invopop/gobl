@@ -341,7 +341,7 @@ func TestEnvelopeReplicate(t *testing.T) {
 		require.NoError(t, err)
 
 		doc := env.Extract().(*bill.Invoice)
-		assert.Equal(t, "SAMPLE-001", doc.Code, "should not update in place")
+		assert.Equal(t, "SAMPLE-001", doc.Code.String(), "should not update in place")
 
 		e2, err := env.Replicate()
 		require.NoError(t, err)
