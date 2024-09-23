@@ -23,13 +23,11 @@
         },
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
-          "pattern": "^[A-Z0-9]+([\\.\\-\\/]?[A-Z0-9]+)*$",
           "title": "Series",
           "description": "Series the referenced document belongs to."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
-          "pattern": "^[A-Z0-9]+([\\.\\-\\/]?[A-Z0-9]+)*$",
           "title": "Code",
           "description": "Source document's code or other identifier."
         },

@@ -14,7 +14,7 @@ import (
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
 // 1 and 32 inclusive upper-case letters or numbers with optional periods (`.`),
-// dashes (`-`), or forward slashes (`/`) to separate blocks.
+// dashes (`-`), forward slashes (`/`), or spaces (` `) to separate blocks.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -23,15 +23,16 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern              = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
+	CodePattern              = `^[A-Z0-9]+([\.\-\/ ]?[A-Z0-9]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeUnderscoreOrSpaceRegexp = regexp.MustCompile(`[_ ]`)
-	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
+	codeSeparatorRegexp    = regexp.MustCompile(`([\.\-\/ ])[^A-Z0-9]+`)
+	codeDashSwapRegexp     = regexp.MustCompile(`_`)
+	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Z0-9\.\-\/ ]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -42,7 +43,8 @@ const CodeEmpty Code = ""
 func NormalizeCode(c Code) Code {
 	code := strings.ToUpper(c.String())
 	code = strings.TrimSpace(code)
-	code = codeUnderscoreOrSpaceRegexp.ReplaceAllString(code, "-")
+	code = codeDashSwapRegexp.ReplaceAllString(code, "-")
+	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }

@@ -38,7 +38,7 @@ func TestNormalizeCode(t *testing.T) {
 		{
 			name: "with spaces",
 			code: cbc.Code("FOO BAR"),
-			want: cbc.Code("FOO-BAR"),
+			want: cbc.Code("FOO BAR"),
 		},
 		{
 			name: "empty",
@@ -63,7 +63,17 @@ func TestNormalizeCode(t *testing.T) {
 		{
 			name: "multiple spaces",
 			code: cbc.Code("foo bar dome"),
+			want: cbc.Code("FOO BAR DOME"),
+		},
+		{
+			name: "multiple symbols 1",
+			code: cbc.Code("foo- bar-$dome"),
 			want: cbc.Code("FOO-BAR-DOME"),
+		},
+		{
+			name: "multiple symbols 2",
+			code: cbc.Code("foo  bar--dome"),
+			want: cbc.Code("FOO BAR-DOME"),
 		},
 	}
 	for _, tt := range tests {
@@ -107,6 +117,10 @@ func TestCode_Validate(t *testing.T) {
 		{
 			name: "valid with slash",
 			code: cbc.Code("B3/12"),
+		},
+		{
+			name: "valid with space",
+			code: cbc.Code("FR 12/BX"),
 		},
 		{
 			name: "empty",

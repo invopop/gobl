@@ -33,6 +33,7 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `bill.Preceding`: replaced with `org.DocumentRef`.
 - `bill.Invoice`: Ordering now using arrays of `org.DocumentRef`.
 - `bill.Invoice`: `series` and `code` now use `cbc.Code` and normalization instead of the independent invoice code.
+- `cbc`: `Code` now allows spaces, and has normalization method to avoid validation issues.
 
 ### Added
 
