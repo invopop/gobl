@@ -223,6 +223,11 @@
               "const": "debit-note",
               "title": "Debit Note",
               "description": "An additional set of charges to be added to the preceding document."
+            },
+            {
+              "const": "other",
+              "title": "Other",
+              "description": "Any other type of invoice that does not fit into the standard categories and implies\nthat any scenarios defined in tax regimes or addons will not be applied.\n\nThis is useful for being able to create invoices with custom types in extensions,\nbut is not recommend for general use."
             }
           ],
           "title": "Type",
@@ -230,14 +235,14 @@
           "calculated": true
         },
         "series": {
-          "type": "string",
-          "pattern": "^([A-Za-z0-9][A-Za-z0-9 /\\._-]?)*[A-Za-z0-9]$",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "pattern": "^[A-Z0-9]+([\\.\\-\\/]?[A-Z0-9]+)*$",
           "title": "Series",
           "description": "Used as a prefix to group codes."
         },
         "code": {
-          "type": "string",
-          "pattern": "^([A-Za-z0-9][A-Za-z0-9 /\\._-]?)*[A-Za-z0-9]$",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "pattern": "^[A-Z0-9]+([\\.\\-\\/]?[A-Z0-9]+)*$",
           "title": "Code",
           "description": "Sequential code used to identify this invoice in tax declarations."
         },
@@ -522,7 +527,7 @@
     "Ordering": {
       "properties": {
         "code": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
           "description": "Identifier assigned by the customer or buyer for internal routing purposes."
         },
