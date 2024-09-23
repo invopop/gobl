@@ -5,7 +5,7 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/mx/sat"
+	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -17,27 +17,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 		normalizeItem(line.Item)
 	}
 
-	// 2024-04-26: copy suppliers post code to invoice, if not already
-	// set.
-	if inv.Tax == nil {
-		inv.Tax = new(bill.Tax)
-	}
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = make(tax.Extensions)
-	}
-	if inv.Tax.Ext.Has(ExtKeyIssuePlace) {
-		return
-	}
-	if inv.Supplier.Ext.Has(ExtKeyPostCode) {
-		inv.Tax.Ext[ExtKeyIssuePlace] = inv.Supplier.Ext[ExtKeyPostCode]
-		return
-	}
-	if len(inv.Supplier.Addresses) > 0 {
-		addr := inv.Supplier.Addresses[0]
-		if addr.Code != "" {
-			inv.Tax.Ext[ExtKeyIssuePlace] = tax.ExtValue(addr.Code)
-		}
-	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {
@@ -76,7 +55,7 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
-func validateInvoiceTax(preceding []*bill.Preceding) validation.RuleFunc {
+func validateInvoiceTax(preceding []*org.DocumentRef) validation.RuleFunc {
 	return func(value any) error {
 		obj, _ := value.(*bill.Tax)
 		if obj == nil {
@@ -156,14 +135,14 @@ func validateInvoiceLine(value any) error {
 }
 
 func validateInvoicePreceding(value interface{}) error {
-	entry, _ := value.(*bill.Preceding)
+	entry, _ := value.(*org.DocumentRef)
 	if entry == nil {
 		return nil
 	}
 	return validation.ValidateStruct(entry,
 		validation.Field(
 			&entry.Stamps,
-			head.StampsHas(sat.StampUUID),
+			head.StampsHas(mx.StampSATUUID),
 			validation.Skip,
 		),
 	)

@@ -1,4 +1,4 @@
-package sat
+package mx
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -19,11 +19,6 @@ const (
 const (
 	TaxRateExempt cbc.Key = "exempt"
 )
-
-// TaxCategories returns the list of tax categories used in Mexico.
-func TaxCategories() []*tax.CategoryDef {
-	return taxCategories
-}
 
 var taxCategories = []*tax.CategoryDef{
 	//

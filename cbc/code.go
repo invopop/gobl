@@ -3,6 +3,7 @@ package cbc
 import (
 	"errors"
 	"regexp"
+	"strings"
 
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -12,7 +13,7 @@ import (
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 1 and 24 inclusive upper-case letters or numbers with optional periods (`.`),
+// 1 and 32 inclusive upper-case letters or numbers with optional periods (`.`),
 // dashes (`-`), or forward slashes (`/`) to separate blocks.
 type Code string
 
@@ -22,23 +23,35 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern          = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
-	CodeMinLength uint64 = 1
-	CodeMaxLength uint64 = 24
+	CodePattern              = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
+	CodePatternRegexp        = regexp.MustCompile(CodePattern)
+	CodeMinLength     uint64 = 1
+	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeValidationRegexp = regexp.MustCompile(CodePattern)
+	codeUnderscoreOrSpaceRegexp = regexp.MustCompile(`[_ ]`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
 )
 
 // CodeEmpty is used when no code is defined.
 const CodeEmpty Code = ""
 
+// NormalizeCode attempts to clean and normalize the provided code so that
+// it matches what we'd expect instead of raising validation errors.
+func NormalizeCode(c Code) Code {
+	code := strings.ToUpper(c.String())
+	code = strings.TrimSpace(code)
+	code = codeUnderscoreOrSpaceRegexp.ReplaceAllString(code, "-")
+	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
 	return validation.Validate(string(c),
 		validation.Length(1, int(CodeMaxLength)),
-		validation.Match(codeValidationRegexp),
+		validation.Match(CodePatternRegexp),
 	)
 }
 

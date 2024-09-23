@@ -1,4 +1,4 @@
-package sat_test
+package mx_test
 
 import (
 	"testing"
@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/mx"
-	"github.com/invopop/gobl/regimes/mx/sat"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,7 +43,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 		zone l10n.Code
 		err  string
 	}{
-		{name: "foreign code", code: sat.TaxIdentityCodeForeign, zone: "21000"},
+		{name: "foreign code", code: mx.TaxIdentityCodeForeign, zone: "21000"},
 		{name: "valid code 1", code: "MNOP8201019HJ"},
 		{name: "valid code 2", code: "UVWX610715JKL"},
 		{name: "valid code 3", code: "STU760612MN1"},
@@ -97,16 +96,16 @@ func TestTaxIdentityDetermineType(t *testing.T) {
 			Type: cbc.KeyEmpty,
 		},
 		{
-			Code: sat.TaxIdentityCodeForeign,
-			Type: sat.TaxIdentityTypePerson,
+			Code: mx.TaxIdentityCodeForeign,
+			Type: mx.TaxIdentityTypePerson,
 		},
 		{
 			Code: "MNOP8201019HJ",
-			Type: sat.TaxIdentityTypePerson,
+			Type: mx.TaxIdentityTypePerson,
 		},
 		{
 			Code: "ABC830720XYZ",
-			Type: sat.TaxIdentityTypeCompany,
+			Type: mx.TaxIdentityTypeCompany,
 		},
 		{
 			Code: "XXXX",
@@ -115,7 +114,7 @@ func TestTaxIdentityDetermineType(t *testing.T) {
 	}
 	for _, ts := range tests {
 		t.Run(string(ts.Code), func(t *testing.T) {
-			res := sat.DetermineTaxCodeType(ts.Code)
+			res := mx.DetermineTaxCodeType(ts.Code)
 			assert.Equal(t, ts.Type, res)
 		})
 	}

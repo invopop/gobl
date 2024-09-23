@@ -7,7 +7,7 @@ import (
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/mx/sat"
+	"github.com/invopop/gobl/regimes/mx"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -139,7 +139,7 @@ func TestCalculate(t *testing.T) {
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: sat.TaxCategoryIEPS,
+							Category: mx.TaxCategoryIEPS,
 							Rate:     num.NewAmount(59195, 4),
 						},
 					},
@@ -153,7 +153,7 @@ func TestCalculate(t *testing.T) {
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: sat.TaxCategoryIEPS,
+							Category: mx.TaxCategoryIEPS,
 							Rate:     num.NewAmount(59195, 4),
 						},
 					},
@@ -187,7 +187,7 @@ func TestCalculate(t *testing.T) {
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: sat.TaxCategoryIEPS,
+							Category: mx.TaxCategoryIEPS,
 							Rate:     num.NewAmount(5451, 4),
 						},
 					},
@@ -201,7 +201,7 @@ func TestCalculate(t *testing.T) {
 							Percent:  num.NewPercentage(16, 2),
 						},
 						{
-							Category: sat.TaxCategoryIEPS,
+							Category: mx.TaxCategoryIEPS,
 							Rate:     num.NewAmount(5451, 4),
 						},
 					},
@@ -250,7 +250,7 @@ func TestCalculate(t *testing.T) {
 							Percent:  num.NewPercentage(int64(vat*1000), 3),
 						},
 						{
-							Category: sat.TaxCategoryIEPS,
+							Category: mx.TaxCategoryIEPS,
 							Rate:     num.NewAmount(int64(ieps*10000), 4),
 						},
 					},
@@ -329,7 +329,7 @@ func TestCalculate(t *testing.T) {
 							Percent:  num.NewPercentage(int64(vat*1000), 3),
 						},
 						{
-							Category: sat.TaxCategoryIEPS,
+							Category: mx.TaxCategoryIEPS,
 							Rate:     num.NewAmount(int64(ieps*1000), 3),
 						},
 					},

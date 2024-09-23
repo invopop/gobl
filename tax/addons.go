@@ -63,8 +63,13 @@ func (as *Addons) SetAddons(addons ...cbc.Key) {
 	as.List = addons
 }
 
-// GetAddons provides a slice of Addon instances.
-func (as Addons) GetAddons() []*AddonDef {
+// GetAddons provides the list of addon keys in use.
+func (as *Addons) GetAddons() []cbc.Key {
+	return as.List
+}
+
+// GetAddonDefs provides a slice of Addon Definition instances.
+func (as Addons) GetAddonDefs() []*AddonDef {
 	list := make([]*AddonDef, 0, len(as.List))
 	for _, ak := range as.List {
 		if a := AddonForKey(ak); a != nil {

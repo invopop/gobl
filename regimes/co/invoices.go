@@ -138,7 +138,7 @@ func municipalityCodeRequired(tID *tax.Identity) bool {
 }
 
 func (v *invoiceValidator) preceding(value interface{}) error {
-	obj, ok := value.(*bill.Preceding)
+	obj, ok := value.(*org.DocumentRef)
 	if !ok || obj == nil {
 		return nil
 	}

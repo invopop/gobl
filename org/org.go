@@ -7,6 +7,7 @@ func init() {
 	schema.Register(schema.GOBL.Add("org"),
 		Address{},
 		Coordinates{},
+		DocumentRef{},
 		Email{},
 		Identity{},
 		Image{},

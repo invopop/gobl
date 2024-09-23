@@ -2,19 +2,36 @@
 package mx
 
 import (
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
-	"github.com/invopop/gobl/regimes/mx/sat"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
 	tax.RegisterRegimeDef(New())
-
-	// MX GOBL Schema Complements for CFDI
-
 }
+
+// Official SAT codes to include in stamps.
+const (
+	StampSATSignature   cbc.Key = "sat-sig"          // Signature - Sello Digital del SAT (optional)
+	StampSATSerial      cbc.Key = "sat-serial"       // Cert Serial - Número de Certificado SAT
+	StampSATTimestamp   cbc.Key = "sat-timestamp"    // Timestamp - Fecha y hora de certificación del SAT
+	StampSATUUID        cbc.Key = "sat-uuid"         // Folio Fiscal
+	StampSATURL         cbc.Key = "sat-url"          // URL QR Code
+	StampSATProviderRFC cbc.Key = "sat-provider-rfc" // Provider RFC - RFC del Proveedor de Certificación
+	StampSATChain       cbc.Key = "sat-chain"        // Cadena original del complemento de certificación digital del SAT
+)
+
+// Custom keys used typically in meta or codes information.
+const (
+	KeyFormaPago    cbc.Key = "sat-forma-pago"    // for mapping to c_FormaPago’s codes
+	KeyTipoRelacion cbc.Key = "sat-tipo-relacion" // for mapping to c_TipoRelacion’s codes
+	KeyImpuesto     cbc.Key = "sat-impuesto"      // for mapping to c_Impuesto’s codes
+)
 
 // New provides the tax region definition
 func New() *tax.RegimeDef {
@@ -31,8 +48,20 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Categories:  sat.TaxCategories(),
-		Corrections: sat.CorrectionDefinitions(),
+		Categories:  taxCategories,
+		Corrections: correctionDefinitions,
+	}
+}
+
+// Normalize performs regime specific calculations.
+func Normalize(doc any) {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeInvoice(obj)
+	case *tax.Identity:
+		tax.NormalizeIdentity(obj)
+	case *org.Party:
+		normalizeParty(obj)
 	}
 }
 
@@ -40,15 +69,7 @@ func New() *tax.RegimeDef {
 func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return sat.ValidateTaxIdentity(obj)
+		return ValidateTaxIdentity(obj)
 	}
 	return nil
-}
-
-// Normalize performs regime specific calculations.
-func Normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
-	}
 }
