@@ -3,6 +3,7 @@ package cbc
 import (
 	"errors"
 	"regexp"
+	"strings"
 
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -22,23 +23,35 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern          = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
-	CodeMinLength uint64 = 1
-	CodeMaxLength uint64 = 24
+	CodePattern              = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
+	CodePatternRegexp        = regexp.MustCompile(CodePattern)
+	CodeMinLength     uint64 = 1
+	CodeMaxLength     uint64 = 24
 )
 
 var (
-	codeValidationRegexp = regexp.MustCompile(CodePattern)
+	codeUnderscoreRegexp   = regexp.MustCompile(`_`)
+	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
 )
 
 // CodeEmpty is used when no code is defined.
 const CodeEmpty Code = ""
 
+// NormalizeCode attempts to clean and normalize the provided code so that
+// it matches what we'd expect instead of raising validation errors.
+func NormalizeCode(c Code) Code {
+	code := strings.ToUpper(c.String())
+	code = strings.TrimSpace(code)
+	code = codeUnderscoreRegexp.ReplaceAllString(code, "-")
+	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
 	return validation.Validate(string(c),
 		validation.Length(1, int(CodeMaxLength)),
-		validation.Match(codeValidationRegexp),
+		validation.Match(CodePatternRegexp),
 	)
 }
 

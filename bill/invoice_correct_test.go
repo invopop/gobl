@@ -37,8 +37,8 @@ func TestInvoiceCorrect(t *testing.T) {
 	assert.Equal(t, i.Series, "TEST")
 	assert.Empty(t, i.Code)
 	pre := i.Preceding[0]
-	assert.Equal(t, pre.Series, "TEST")
-	assert.Equal(t, pre.Code, "123")
+	assert.Equal(t, pre.Series.String(), "TEST")
+	assert.Equal(t, pre.Code.String(), "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
 	assert.Equal(t, i.Totals.Payable.String(), "900.00")
@@ -82,7 +82,7 @@ func TestInvoiceCorrect(t *testing.T) {
 		err := inv.Correct(bill.Credit, bill.WithSeries("R-TEST"))
 		require.NoError(t, err)
 		assert.Equal(t, inv.Series, "R-TEST")
-		assert.Equal(t, inv.Preceding[0].Series, "TEST")
+		assert.Equal(t, inv.Preceding[0].Series.String(), "TEST")
 	})
 
 	// France case (both corrective and credit note)
@@ -152,8 +152,8 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, i.Series, "R-TEST")
 	assert.Empty(t, i.Code)
 	pre := i.Preceding[0]
-	assert.Equal(t, pre.Series, "TEST")
-	assert.Equal(t, pre.Code, "123")
+	assert.Equal(t, pre.Series.String(), "TEST")
+	assert.Equal(t, pre.Code.String(), "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
 	assert.Equal(t, pre.Ext[facturae.ExtKeyCorrection], tax.ExtValue("01"))

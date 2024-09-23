@@ -31,7 +31,7 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	err := inv.Validate()
 	assert.ErrorContains(t, err, "preceding: cannot be blank.")
 
-	inv.Preceding = []*bill.Preceding{
+	inv.Preceding = []*org.DocumentRef{
 		{
 			Code: "123TEST",
 		},

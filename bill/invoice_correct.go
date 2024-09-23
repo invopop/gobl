@@ -10,8 +10,10 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
 
@@ -265,11 +267,11 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	// Copy and prepare the basic fields
-	pre := &Preceding{
-		UUID:      inv.UUID,
+	pre := &org.DocumentRef{
+		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
-		Series:    inv.Series,
-		Code:      inv.Code,
+		Series:    cbc.Code(inv.Series),
+		Code:      cbc.Code(inv.Code),
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
 		Ext:       o.Ext,
@@ -292,7 +294,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	}
 
 	// Replace all previous preceding data
-	inv.Preceding = []*Preceding{pre}
+	inv.Preceding = []*org.DocumentRef{pre}
 
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
@@ -343,7 +345,7 @@ func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error
 	return nil
 }
 
-func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *Preceding) error {
+func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *org.DocumentRef) error {
 	if cd == nil {
 		return nil
 	}

@@ -73,7 +73,7 @@ type Invoice struct {
 
 	// Key information regarding previous invoices and potentially details as to why they
 	// were corrected.
-	Preceding []*Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
@@ -310,6 +310,7 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, inv.Lines)
 	tax.Normalize(normalizers, inv.Discounts)
 	tax.Normalize(normalizers, inv.Charges)
+	tax.Normalize(normalizers, inv.Ordering)
 	tax.Normalize(normalizers, inv.Payment)
 }
 

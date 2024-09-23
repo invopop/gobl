@@ -168,34 +168,6 @@
       ],
       "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
     },
-    "DocumentReference": {
-      "properties": {
-        "uuid": {
-          "type": "string",
-          "format": "uuid",
-          "title": "UUID",
-          "description": "Unique ID copied from the source document."
-        },
-        "series": {
-          "type": "string",
-          "title": "Series",
-          "description": "Series the reference document belongs to."
-        },
-        "code": {
-          "type": "string",
-          "title": "Code",
-          "description": "Source document's code or other identifier."
-        },
-        "url": {
-          "type": "string",
-          "format": "uri",
-          "title": "URL",
-          "description": "Link to the source document."
-        }
-      },
-      "type": "object",
-      "description": "DocumentReference provides a link to a existing document."
-    },
     "Invoice": {
       "properties": {
         "$regime": {
@@ -301,7 +273,7 @@
         },
         "preceding": {
           "items": {
-            "$ref": "#/$defs/Preceding"
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
           },
           "type": "array",
           "title": "Preceding Details",
@@ -567,41 +539,6 @@
           "title": "Period",
           "description": "Period of time that the invoice document refers to often used in addition to the details\nprovided in the individual line items."
         },
-        "project": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Project",
-          "description": "Project this invoice refers to."
-        },
-        "contract": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Contract",
-          "description": "The identification of a contract."
-        },
-        "purchase": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Purchase Order",
-          "description": "Purchase order issued by the customer or buyer."
-        },
-        "sale": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Sales Order",
-          "description": "Sales order issued by the supplier or seller."
-        },
-        "receiving": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Receiving Advice",
-          "description": "Receiving Advice."
-        },
-        "despatch": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Despatch Advice",
-          "description": "Despatch advice."
-        },
-        "tender": {
-          "$ref": "#/$defs/DocumentReference",
-          "title": "Tender Advice",
-          "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
-        },
         "buyer": {
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Buyer",
@@ -611,6 +548,62 @@
           "$ref": "https://gobl.org/draft-0/org/party",
           "title": "Seller",
           "description": "Party who is selling the goods but is not responsible for taxes like the\nsupplier."
+        },
+        "projects": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Projects",
+          "description": "Projects this invoice refers to."
+        },
+        "contracts": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Contracts",
+          "description": "The identification of contracts."
+        },
+        "purchases": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Purchase Orders",
+          "description": "Purchase orders issued by the customer or buyer."
+        },
+        "sales": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Sales Orders",
+          "description": "Sales orders issued by the supplier or seller."
+        },
+        "receiving": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Receiving Advice",
+          "description": "Receiving Advice."
+        },
+        "despatch": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Despatch Advice",
+          "description": "Despatch advice."
+        },
+        "tender": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Tender Advice",
+          "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
         }
       },
       "type": "object",
@@ -697,98 +690,6 @@
       },
       "type": "object",
       "description": "Payment contains details as to how the invoice should be paid."
-    },
-    "Preceding": {
-      "properties": {
-        "uuid": {
-          "type": "string",
-          "format": "uuid",
-          "title": "UUID",
-          "description": "Preceding document's UUID."
-        },
-        "type": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
-            {
-              "const": "standard",
-              "title": "Standard",
-              "description": "A regular commercial invoice document between a supplier and customer."
-            },
-            {
-              "const": "proforma",
-              "title": "Proforma",
-              "description": "For a clients validation before sending a final invoice."
-            },
-            {
-              "const": "corrective",
-              "title": "Corrective",
-              "description": "Corrected invoice that completely *replaces* the preceding document."
-            },
-            {
-              "const": "credit-note",
-              "title": "Credit Note",
-              "description": "Reflects a refund either partial or complete of the preceding document. A \ncredit note effectively *extends* the previous document."
-            },
-            {
-              "const": "debit-note",
-              "title": "Debit Note",
-              "description": "An additional set of charges to be added to the preceding document."
-            }
-          ],
-          "title": "Type",
-          "description": "Type of the preceding document"
-        },
-        "series": {
-          "type": "string",
-          "pattern": "^([A-Za-z0-9][A-Za-z0-9 /\\._-]?)*[A-Za-z0-9]$",
-          "title": "Series",
-          "description": "Series identification code"
-        },
-        "code": {
-          "type": "string",
-          "pattern": "^([A-Za-z0-9][A-Za-z0-9 /\\._-]?)*[A-Za-z0-9]$",
-          "title": "Code",
-          "description": "Code of the previous document."
-        },
-        "issue_date": {
-          "$ref": "https://gobl.org/draft-0/cal/date",
-          "title": "Issue Date",
-          "description": "The issue date of the previous document."
-        },
-        "reason": {
-          "type": "string",
-          "title": "Reason",
-          "description": "Human readable description on why the preceding invoice is being replaced."
-        },
-        "stamps": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/head/stamp"
-          },
-          "type": "array",
-          "title": "Stamps",
-          "description": "Seals of approval from other organisations that may need to be listed."
-        },
-        "period": {
-          "$ref": "https://gobl.org/draft-0/cal/period",
-          "title": "Period",
-          "description": "Tax period in which the previous invoice had an effect required by some tax regimes and formats."
-        },
-        "ext": {
-          "$ref": "https://gobl.org/draft-0/tax/extensions",
-          "title": "Extensions",
-          "description": "Extensions for region specific requirements."
-        },
-        "meta": {
-          "$ref": "https://gobl.org/draft-0/cbc/meta",
-          "title": "Meta",
-          "description": "Additional semi-structured data that may be useful in specific regions"
-        }
-      },
-      "type": "object",
-      "required": [
-        "code"
-      ],
-      "description": "Preceding allows for information to be provided about a previous invoice that this one will replace, subtract from, or add to."
     },
     "Tax": {
       "properties": {
