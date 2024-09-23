@@ -65,7 +65,7 @@ And this is how you'll get the same result by using the GOBL type and tags:
 
 Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by a 30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate with a specific VAT category.
 
-In GOBL, the IAPR VAT category code must be set using the `gr-mydata-vat-cat` extension of a line's tax to one of the codes:
+In GOBL, the IAPR VAT category code must be set using the `gr-mydata-vat-rate` extension of a line's tax to one of the codes:
 
 | Code | Description                 | GOBL Rate              |
 | ---- | --------------------------- | ---------------------- |
@@ -79,7 +79,7 @@ In GOBL, the IAPR VAT category code must be set using the `gr-mydata-vat-cat` ex
 | `8`  | Records without VAT         |                        |
 
 
-Please, note that GOBL will automatically set the proper `gr-mydata-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
+Please, note that GOBL will automatically set the proper `gr-mydata-vat-rate` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
 
 ```js
 {
@@ -200,7 +200,7 @@ For example:
 
 Invoices reported to the Greek tax authority via myDATA can optionally include information about the income classification of each invoice item.
 
-In a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be set at line tax level to any of the values expected by the IAPR:
+In a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be set at item level to any of the values expected by the IAPR:
 
 #### Income Category
 
@@ -266,20 +266,12 @@ For example:
     "quantity": "20",
     "item": {
       "name": "Υπηρεσίες Ανάπτυξης",
-      "price": "90.00"
-    },
-    // ...
-    "taxes": [
-      {
-        "cat": "VAT",
-        "rate": "standard",
-        "ext": {
-          "gr-mydata-income-cat": "category1_1",
-          "gr-mydata-income-type": "E3_106",
-          // ...
-        }
+      "price": "90.00",
+      "ext": {
+        "gr-mydata-income-cat": "category1_1",
+        "gr-mydata-income-type": "E3_561_001",
       }
-    ]
+    }
   }
 ]
 ```
