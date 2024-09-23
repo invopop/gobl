@@ -2,6 +2,7 @@ package bill
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -11,7 +12,7 @@ import (
 // to other documents and alternative parties involved in the order-to-delivery process.
 type Ordering struct {
 	// Identifier assigned by the customer or buyer for internal routing purposes.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Any additional Codes, IDs, SKUs, or other regional or custom
 	// identifiers that may be used to identify the order.
 	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
@@ -45,6 +46,7 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 	if o == nil {
 		return
 	}
+	o.Code = cbc.NormalizeCode(o.Code)
 	normalizers.Each(o)
 	tax.Normalize(normalizers, o.Identities)
 	tax.Normalize(normalizers, o.Projects)
@@ -61,6 +63,7 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 // Validate the ordering details.
 func (o *Ordering) Validate() error {
 	return validation.ValidateStruct(o,
+		validation.Field(&o.Code),
 		validation.Field(&o.Identities),
 		validation.Field(&o.Projects),
 		validation.Field(&o.Contracts),
