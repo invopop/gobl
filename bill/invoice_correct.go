@@ -270,8 +270,8 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 	pre := &org.DocumentRef{
 		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
-		Series:    cbc.Code(inv.Series),
-		Code:      cbc.Code(inv.Code),
+		Series:    inv.Series,
+		Code:      inv.Code,
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
 		Ext:       o.Ext,

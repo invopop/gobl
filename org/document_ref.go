@@ -61,7 +61,7 @@ func (dr *DocumentRef) Validate() error {
 	return dr.ValidateWithContext(context.Background())
 }
 
-// Validate ensures the Document looks correct within the provided context.
+// ValidateWithContext ensures the Document looks correct within the provided context.
 func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, dr,
 		validation.Field(&dr.UUID),
