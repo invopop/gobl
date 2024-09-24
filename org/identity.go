@@ -6,9 +6,19 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
+)
+
+// Default or common identity keys that may be used to identify a person or company.
+const (
+	IdentityKeyPassport cbc.Key = "passport"
+	IdentifyKeyNational cbc.Key = "national"
+	IdentityKeyForeign  cbc.Key = "foreign"
+	IdentityKeyResident cbc.Key = "resident"
+	IdentityKeyOther    cbc.Key = "other"
 )
 
 // Identity is used to define a code for a specific context.
@@ -16,6 +26,8 @@ type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Country from which the identity was issued.
+	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Uniquely classify this identity using a key instead of a code.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
@@ -37,6 +49,7 @@ func (i *Identity) Validate() error {
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Label),
+		validation.Field(&i.Country),
 		validation.Field(&i.Key),
 		validation.Field(&i.Type,
 			validation.When(i.Key != "",

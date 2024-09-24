@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -78,15 +77,4 @@ func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&dr.Ext),
 		validation.Field(&dr.Meta),
 	)
-}
-
-// JSONSchemaExtend extends the schema with additional property details
-func (DocumentRef) JSONSchemaExtend(schema *jsonschema.Schema) {
-	props := schema.Properties
-	if prop, ok := props.Get("series"); ok {
-		prop.Pattern = cbc.CodePattern
-	}
-	if prop, ok := props.Get("code"); ok {
-		prop.Pattern = cbc.CodePattern
-	}
 }
