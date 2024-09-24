@@ -86,6 +86,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Payment,
+			validation.By(validateInvoicePayment),
+			validation.Skip,
+		),
 	)
 }
 
@@ -162,6 +166,22 @@ func validateCustomer(value interface{}) error {
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
 				org.RequireIdentityKey(it.IdentityKeyFiscalCode),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoicePayment(val any) error {
+	p, _ := val.(*bill.Payment)
+	if p == nil {
+		return nil
+	}
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Instructions,
+			validation.When(
+				p.Terms != nil,
+				validation.Required.Error("cannot be blank when terms are present"),
 			),
 			validation.Skip,
 		),
