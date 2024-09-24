@@ -20,8 +20,8 @@
 		"currency": "EUR",
 		"preceding": [
 			{
-				"code": "SEQ/333",
-				"issue_date": "2023-01-20"
+				"issue_date": "2023-01-20",
+				"code": "SEQ/333"
 			}
 		],
 		"tax": {

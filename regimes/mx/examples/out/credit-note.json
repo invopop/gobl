@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "89f515e3285a16e1ff5da7dc3a1bfc96a98609f37d4dbfa051d1cc40239aa9d8"
+			"val": "d68dc80f2f6f0c4ac962961f2c367455b8b529ab67b81e8d5bc6a7f2972a5ae2"
 		}
 	},
 	"doc": {
@@ -21,9 +21,9 @@
 		"currency": "MXN",
 		"preceding": [
 			{
+				"issue_date": "2023-07-10",
 				"series": "TEST",
 				"code": "0001",
-				"issue_date": "2023-07-10",
 				"stamps": [
 					{
 						"prv": "sat-uuid",
@@ -87,10 +87,7 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%",
-						"ext": {
-							"mx-cfdi-tax-type": "002"
-						}
+						"percent": "16.0%"
 					}
 				],
 				"total": "200.2020"
@@ -111,9 +108,6 @@
 						"rates": [
 							{
 								"key": "standard",
-								"ext": {
-									"mx-cfdi-tax-type": "002"
-								},
 								"base": "200.20",
 								"percent": "16.0%",
 								"amount": "32.03"

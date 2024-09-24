@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b1e85e0edfabccc9338721d7c1483933c593f3fdf90ad557c3bbb5a498023d51"
+			"val": "d6590300e024e94dd50400b2c016c574222ca1f5259e3da6132e66ebb9d514c9"
 		}
 	},
 	"doc": {
@@ -64,10 +64,7 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "16.0%",
-						"ext": {
-							"mx-cfdi-tax-type": "002"
-						}
+						"percent": "16.0%"
 					}
 				],
 				"total": "10.00"
@@ -88,9 +85,6 @@
 						"rates": [
 							{
 								"key": "standard",
-								"ext": {
-									"mx-cfdi-tax-type": "002"
-								},
 								"base": "10.00",
 								"percent": "16.0%",
 								"amount": "1.60"
