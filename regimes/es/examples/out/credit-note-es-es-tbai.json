@@ -22,9 +22,9 @@
 		"preceding": [
 			{
 				"type": "standard",
+				"issue_date": "2022-01-10",
 				"series": "SAMPLE",
 				"code": "085",
-				"issue_date": "2022-01-10",
 				"ext": {
 					"es-tbai-correction": "R2"
 				}

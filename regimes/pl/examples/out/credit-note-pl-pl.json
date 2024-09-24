@@ -19,9 +19,9 @@
 		"preceding": [
 			{
 				"type": "standard",
+				"issue_date": "2023-12-20",
 				"series": "SAMPLE",
 				"code": "001",
-				"issue_date": "2023-12-20",
 				"reason": "Special Discount",
 				"stamps": [
 					{
