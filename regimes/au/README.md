@@ -4,6 +4,10 @@ Goods and services tax (GST) is a broad-based tax of 10% on most goods, services
 
 Input-taxed sales are sales of goods and services that don't include GST in the price. You can't claim GST credits for the GST included in the price of your 'inputs'. The most common input-taxed sales are financial supplies (such as lending money or the provision of credit for a fee) and selling or renting out residential premises.
 
+## E-Invoicing Requirements
+
+Australia uses the PEPPOL BIS Billing 3.0. e-invoicing format. E-Invoicing is not yet mandatory for businesses operating in Australia, although the confirmed migration schedule indicates that, by the 15th of November 2024, businesses will be mandated to support the PINT A-NZ specification. For Commonwealth agencies, e-invoicing is mandatory as of July 1st 2022 in Australia. 
+
 ## Tax IDs
 
 The main identifier for this tax is the Australian Business Number (ABN), an 11-digit number required to operate as a company in Australia. Alternatively, it is possible to use the Australian Company Number (ACN), a 9-digit identifier for invoicing. While every Australian business needs an ABN, only businesses registered as companies require an ACN.

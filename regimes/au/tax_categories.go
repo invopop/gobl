@@ -83,6 +83,7 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 	},
+	//Source: https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax
 	{
 		Code: TaxCategoryLCT,
 		Name: i18n.String{

@@ -1,4 +1,4 @@
-// Package au provides the Australia tax regime.
+// Package au provides the Australian tax regime.
 package au
 
 import (
@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -31,10 +30,10 @@ func New() *tax.RegimeDef {
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
-			common.InvoiceScenarios(),
+			invoiceScenarios,
 		},
 		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
+			invoiceTags,
 		},
 		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
