@@ -18,19 +18,22 @@ var taxCategories = []*tax.CategoryDef{
 		Title: i18n.String{
 			i18n.EN: "Goods and Services Tax",
 		},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "How GST Works",
+				},
+				URL: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/how-gst-works",
+			},
+		},
 		Retained: false,
 		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateExempt,
 				Name: i18n.String{
-					i18n.EN: "GST-free",
+					i18n.EN: "Exempt",
 				},
-				Values: []*tax.RateValueDef{
-					{
-						Since:   cal.NewDate(2000, time.July, 1),
-						Percent: num.MakePercentage(0, 2),
-					},
-				},
+				Exempt: true,
 			},
 			{
 				Key: tax.RateStandard,
@@ -47,7 +50,7 @@ var taxCategories = []*tax.CategoryDef{
 			{
 				Key: tax.RateZero,
 				Name: i18n.String{
-					i18n.EN: "Input-Taxed",
+					i18n.EN: "Zero",
 				},
 				Values: []*tax.RateValueDef{
 					{
@@ -58,7 +61,6 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 	},
-	//Source: https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/wine-equalisation-tax
 	{
 		Code: TaxCategoryWET,
 		Name: i18n.String{
@@ -66,6 +68,14 @@ var taxCategories = []*tax.CategoryDef{
 		},
 		Title: i18n.String{
 			i18n.EN: "Wine Equalisation Tax",
+		},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Wine Equalisation Tax",
+				},
+				URL: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/wine-equalisation-tax",
+			},
 		},
 		Retained: false,
 		Rates: []*tax.RateDef{
@@ -83,7 +93,6 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 	},
-	//Source: https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax
 	{
 		Code: TaxCategoryLCT,
 		Name: i18n.String{
@@ -91,6 +100,14 @@ var taxCategories = []*tax.CategoryDef{
 		},
 		Title: i18n.String{
 			i18n.EN: "Luxury Car Tax",
+		},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Luxury Car Tax",
+				},
+				URL: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax",
+			},
 		},
 		Retained: false,
 		Rates: []*tax.RateDef{

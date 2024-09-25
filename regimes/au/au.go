@@ -13,6 +13,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
+// Special Tax Codes
 const (
 	TaxCategoryWET cbc.Code = "WET"
 	TaxCategoryLCT cbc.Code = "LCT"

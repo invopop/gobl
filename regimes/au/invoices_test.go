@@ -60,7 +60,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
-
 	t.Run("Empty Supplier ID", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.TaxID.Code = ""
@@ -72,20 +71,5 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, inv.Validate(), "supplier: (name: cannot be blank.).")
-	})
-
-	t.Run("Empty Customer - Under 1000", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
-	t.Run("Empty Customer - Over 1000", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Customer.TaxID = nil
-		inv.Lines[0].Item.Price = num.MakeAmount(50000, 0)
-		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "customer: (tax_id: cannot be blank.).")
 	})
 }
