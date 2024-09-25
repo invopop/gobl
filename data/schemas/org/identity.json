@@ -16,6 +16,11 @@
           "title": "Label",
           "description": "Optional label useful for non-standard identities to give a bit more context."
         },
+        "country": {
+          "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
+          "title": "Country",
+          "description": "Country from which the identity was issued."
+        },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",

@@ -123,28 +123,28 @@
   ],
   "identity_keys": [
     {
-      "key": "es-passport",
+      "key": "passport",
       "name": {
         "en": "Passport",
         "es": "Pasaporte"
       }
     },
     {
-      "key": "es-foreign-id",
+      "key": "foreign",
       "name": {
         "en": "National ID Card or similar from a foreign country",
         "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
       }
     },
     {
-      "key": "es-resident",
+      "key": "resident",
       "name": {
         "en": "Residential permit",
         "es": "Certificado de residencia"
       }
     },
     {
-      "key": "es-other",
+      "key": "other",
       "name": {
         "en": "An other type of source not listed",
         "es": "Otro documento probatorio"
