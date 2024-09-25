@@ -12,10 +12,6 @@ import (
 
 func normalizeInvoice(inv *bill.Invoice) {
 	normalizeSupplier(inv.Supplier)
-	normalizeCustomer(inv.Customer)
-	for _, line := range inv.Lines {
-		normalizeLine(line)
-	}
 }
 
 func normalizeSupplier(party *org.Party) {
@@ -27,41 +23,6 @@ func normalizeSupplier(party *org.Party) {
 			party.Ext = make(tax.Extensions)
 		}
 		party.Ext[ExtKeyFiscalRegime] = "RF01" // Ordinary regime is default
-	}
-}
-
-func normalizeCustomer(party *org.Party) {
-	if party == nil {
-		return
-	}
-	if !isItalianParty(party) {
-		return
-	}
-	// If the party is an individual, move the fiscal code to the identities.
-	if party.TaxID.Type == "individual" { //nolint:staticcheck
-		id := &org.Identity{
-			Key:  it.IdentityKeyFiscalCode,
-			Code: party.TaxID.Code,
-		}
-		party.TaxID.Code = ""
-		party.TaxID.Type = "" //nolint:staticcheck
-		party.Identities = org.AddIdentity(party.Identities, id)
-	}
-}
-
-func normalizeLine(line *bill.Line) {
-	for _, tax := range line.Taxes {
-		if tax.Ext == nil {
-			continue
-		}
-		if tax.Ext.Has("it-sdi-retained-tax") {
-			tax.Ext[ExtKeyRetained] = tax.Ext["it-sdi-retained-tax"]
-			delete(tax.Ext, "it-sdi-retained-tax")
-		}
-		if tax.Ext.Has("it-sdi-nature") {
-			tax.Ext[ExtKeyExempt] = tax.Ext["it-sdi-nature"]
-			delete(tax.Ext, "it-sdi-nature")
-		}
 	}
 }
 
