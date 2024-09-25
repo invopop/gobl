@@ -3,9 +3,11 @@ package tax
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -86,6 +88,7 @@ func (as Addons) Validate() error {
 }
 
 type addonCollection struct {
+	keys []cbc.Key // ordered list
 	list map[cbc.Key]*AddonDef
 }
 
@@ -99,6 +102,10 @@ func newAddonCollection() *addonCollection {
 
 // add will register the addon in the collection
 func (c *addonCollection) add(ad *AddonDef) {
+	c.keys = append(c.keys, ad.Key)
+	sort.Slice(c.keys, func(i, j int) bool {
+		return c.keys[i].String() < c.keys[j].String()
+	})
 	c.list[ad.Key] = ad
 }
 
@@ -116,13 +123,11 @@ func AddonForKey(key cbc.Key) *AddonDef {
 	return addons.list[key]
 }
 
-// AllAddons provides a slice of all the addons defined.
-func AllAddons() []*AddonDef {
+// AllAddonDefs provides a slice of all the addons defined.
+func AllAddonDefs() []*AddonDef {
 	all := make([]*AddonDef, len(addons.list))
-	i := 0
-	for _, ao := range addons.list {
-		all[i] = ao
-		i++
+	for i, ao := range addons.keys {
+		all[i] = addons.list[ao]
 	}
 	return all
 }
@@ -165,4 +170,18 @@ func (ad *AddonDef) Validate() error {
 		validation.Field(&ad.Scenarios),
 		validation.Field(&ad.Corrections),
 	)
+}
+
+// JSONSchemaExtend will add the addon options to the JSON list.
+func (as Addons) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	if asl, ok := props.Get("$addons"); ok {
+		asl.Items.OneOf = make([]*jsonschema.Schema, len(AllAddonDefs()))
+		for i, ao := range AllAddonDefs() {
+			asl.Items.OneOf[i] = &jsonschema.Schema{
+				Const: ao.Key.String(),
+				Title: ao.Name.String(),
+			}
+		}
+	}
 }

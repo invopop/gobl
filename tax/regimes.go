@@ -1,6 +1,8 @@
 package tax
 
 import (
+	"sort"
+
 	"github.com/invopop/gobl/l10n"
 )
 
@@ -11,7 +13,8 @@ var regimes = newRegimeCollection()
 // supported as we've not yet come across situations where multiple
 // regimes exist within a single country.
 type RegimeDefCollection struct {
-	list map[l10n.Code]*RegimeDef
+	codes []l10n.Code // ordered list of main country codes
+	list  map[l10n.Code]*RegimeDef
 }
 
 // Regimes provides the current global regime collection object.
@@ -26,6 +29,10 @@ func newRegimeCollection() *RegimeDefCollection {
 }
 
 func (c *RegimeDefCollection) add(r *RegimeDef) {
+	c.codes = append(c.codes, r.Country.Code())
+	sort.Slice(c.codes, func(i, j int) bool {
+		return c.codes[i].String() < c.codes[j].String()
+	})
 	c.list[r.Country.Code()] = r
 	for _, cc := range r.AltCountryCodes {
 		c.list[cc] = r
@@ -44,11 +51,9 @@ func (c *RegimeDefCollection) For(country l10n.Code) *RegimeDef {
 
 // All provides a list of all the registered Regimes.
 func (c *RegimeDefCollection) All() []*RegimeDef {
-	all := make([]*RegimeDef, len(c.list))
-	i := 0
-	for _, r := range c.list {
-		all[i] = r
-		i++
+	all := make([]*RegimeDef, len(c.codes))
+	for i, code := range c.codes {
+		all[i] = RegimeDefFor(code)
 	}
 	return all
 }

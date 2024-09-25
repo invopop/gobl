@@ -587,7 +587,7 @@ func (inv *Invoice) UnmarshalJSON(data []byte) error {
 }
 
 // JSONSchemaExtend extends the schema with additional property details
-func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
+func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	// Extend type list
 	if its, ok := props.Get("type"); ok {
@@ -600,9 +600,13 @@ func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
+	inv.Regime.JSONSchemaExtend(js)
+	inv.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
+			"$regime",
+			"$addons",
 			"lines",
 		},
 	}
