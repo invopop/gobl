@@ -172,11 +172,103 @@
       "properties": {
         "$regime": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
-          "title": "Regime"
+          "oneOf": [
+            {
+              "const": "AT",
+              "title": "Austria"
+            },
+            {
+              "const": "BE",
+              "title": "Belgium"
+            },
+            {
+              "const": "CA",
+              "title": "Canada"
+            },
+            {
+              "const": "CH",
+              "title": "Switzerland"
+            },
+            {
+              "const": "CO",
+              "title": "Colombia"
+            },
+            {
+              "const": "DE",
+              "title": "Germany"
+            },
+            {
+              "const": "EL",
+              "title": "Greece"
+            },
+            {
+              "const": "ES",
+              "title": "Spain"
+            },
+            {
+              "const": "FR",
+              "title": "France"
+            },
+            {
+              "const": "GB",
+              "title": "United Kingdom"
+            },
+            {
+              "const": "IT",
+              "title": "Italy"
+            },
+            {
+              "const": "MX",
+              "title": "Mexico"
+            },
+            {
+              "const": "NL",
+              "title": "The Netherlands"
+            },
+            {
+              "const": "PL",
+              "title": "Poland"
+            },
+            {
+              "const": "PT",
+              "title": "Portugal"
+            },
+            {
+              "const": "US",
+              "title": "United States of America"
+            }
+          ],
+          "title": "Tax Regime"
         },
         "$addons": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
+            "$ref": "https://gobl.org/draft-0/cbc/key",
+            "oneOf": [
+              {
+                "const": "es-facturae-v3",
+                "title": "Spain FacturaE"
+              },
+              {
+                "const": "es-tbai-v1",
+                "title": "Spain TicketBAI"
+              },
+              {
+                "const": "gr-mydata-v1",
+                "title": "Greece MyData v1.x"
+              },
+              {
+                "const": "it-sdi-v1",
+                "title": "Italy SDI FatturaPA v1.x"
+              },
+              {
+                "const": "mx-cfdi-v4",
+                "title": "Mexican SAT CFDI v4.X"
+              },
+              {
+                "const": "pt-saft-v1",
+                "title": "Portugal SAF-T"
+              }
+            ]
           },
           "type": "array",
           "title": "Addons",
@@ -383,6 +475,8 @@
       ],
       "description": "Invoice represents a payment claim for goods or services supplied under conditions agreed between the supplier and the customer.",
       "recommended": [
+        "$regime",
+        "$addons",
         "lines"
       ]
     },

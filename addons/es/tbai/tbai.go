@@ -27,7 +27,7 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI",
+			i18n.EN: "Spain TicketBAI",
 		},
 		Extensions:  extensions,
 		Validator:   validate,

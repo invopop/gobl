@@ -17,6 +17,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -1193,4 +1194,65 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 		Lines: lines,
 	}
 	return i
+}
+
+func TestRegimeJSONSchemaExtend(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$regime": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Regime"
+			},
+			"$addons": {
+				"items": {
+            		"$ref": "https://gobl.org/draft-0/cbc/key",
+					"type": "array",
+					"title": "Addons",
+					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+				}
+			},
+			"uuid": {
+				"type": "string",
+				"format": "uuid",
+				"title": "UUID",
+				"description": "Universally Unique Identifier."
+			},
+			"type": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Type",
+		        "description": "Type of invoice document subject to the requirements of the local tax regime.",
+        		"calculated": true
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	inv := bill.Invoice{}
+	inv.JSONSchemaExtend(js)
+
+	assert.Equal(t, js.Properties.Len(), 4) // from this example
+
+	t.Run("regime", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$regime")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		rd := tax.AllRegimeDefs()[0]
+		assert.Equal(t, rd.Code().String(), prop.OneOf[0].Const)
+	})
+	t.Run("addons", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$addons")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.Items.OneOf), 1)
+		ao := tax.AllAddonDefs()[0]
+		assert.Equal(t, ao.Key.String(), prop.Items.OneOf[0].Const)
+	})
+	t.Run("types", func(t *testing.T) {
+		prop, ok := js.Properties.Get("type")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		it := bill.InvoiceTypes[0]
+		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
+	})
+
 }

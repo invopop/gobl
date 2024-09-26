@@ -21,7 +21,7 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V3,
 		Name: i18n.String{
-			i18n.EN: "FacturaE",
+			i18n.EN: "Spain FacturaE",
 		},
 		Extensions:  extensions,
 		Normalizer:  normalize,
