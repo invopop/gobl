@@ -606,7 +606,6 @@ func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
 			"$regime",
-			"$addons",
 			"lines",
 		},
 	}
