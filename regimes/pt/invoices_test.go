@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,6 +48,14 @@ func validInvoice() *bill.Invoice {
 
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
+}
+
+func TestValidSimplifiedInvoice(t *testing.T) {
+	inv := validInvoice()
+	inv.SetTags(tax.TagSimplified, pt.TagInvoiceReceipt)
+	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
 }
