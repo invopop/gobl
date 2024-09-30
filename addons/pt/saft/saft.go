@@ -23,9 +23,6 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Portugal SAF-T",
 		},
 		Extensions: extensions,
-		Tags: []*tax.TagSet{
-			invoiceTags,
-		},
 		Normalizer: normalize,
 		Scenarios:  scenarios,
 		Validator:  validate,

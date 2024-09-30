@@ -4,6 +4,12 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [v0.200.1]
+
+### Fixed
+
+- `pt`: moving invoice tags from saft addon to regime, ensure defaults present.
+
 ## [v0.200.0]
 
 Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
