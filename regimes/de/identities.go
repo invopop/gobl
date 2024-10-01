@@ -1,12 +1,14 @@
 package de
 
 import (
-	"strings"
+	"errors"
+	"fmt"
+	"regexp"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 const (
@@ -27,11 +29,53 @@ var identityKeyDefinitions = []*cbc.KeyDefinition{
 	},
 }
 
-func normalizeIdentity(id *org.Identity) {
+// Normalize for German Steuernummer
+func normalizeTaxNumber(id *org.Identity) {
 	if id == nil || id.Key != IdentityKeyTaxNumber {
 		return
 	}
-	code := strings.ToUpper(id.Code.String())
-	code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code := id.Code.String()
+	code = regexp.MustCompile(`[^\d]`).ReplaceAllString(code, "")
+	if len(code) == 11 {
+		// If 11 digits, return the format 123/456/78901
+		code = fmt.Sprintf("%s/%s/%s", code[:3], code[3:6], code[6:])
+	} else if len(code) == 10 {
+		// If 10 digits, return the format 12/345/67890
+		code = fmt.Sprintf("%s/%s/%s", code[:2], code[2:5], code[5:])
+	}
 	id.Code = cbc.Code(code)
+}
+
+// Validation for German Steuernummer
+func validateTaxNumber(id *org.Identity) error {
+	if id == nil || id.Key != IdentityKeyTaxNumber {
+		return nil
+	}
+	return validation.ValidateStruct(id,
+		validation.Field(&id.Code,
+			validation.Required,
+			validation.By(validateTaxNumberFormat),
+			validation.Skip,
+		),
+	)
+}
+
+// Validation for German Steuernummer Format
+func validateTaxNumberFormat(value interface{}) error {
+	val, ok := value.(cbc.Code)
+	if !ok || val == cbc.CodeEmpty {
+		return errors.New(val.String())
+	}
+	code := val.String()
+	if match, _ := regexp.MatchString(`^[\d/]+$`, code); !match {
+		return errors.New("invalid format: tax number should only contain digits and /")
+	}
+	if len(code) < 12 || len(code) > 13 {
+		return errors.New("invalid length")
+	}
+	if regexp.MustCompile(`^\d{2}/\d{3}/\d{5}$|^\d{3}/\d{3}/\d{5}$`).MatchString(code) {
+		return nil
+	}
+
+	return errors.New("invalid format")
 }
