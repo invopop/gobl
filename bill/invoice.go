@@ -20,11 +20,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Constants used to help identify invoices
-const (
-	ShortSchemaInvoice = "bill/invoice"
-)
-
 const (
 	defaultTaxRemovalAccuracy         uint32 = 2
 	defaultCurrencyConversionAccuracy uint32 = 2
@@ -38,7 +33,6 @@ type Invoice struct {
 	tax.Regime
 	tax.Addons
 	tax.Tags
-
 	uuid.Identify
 
 	// Type of invoice document subject to the requirements of the local tax regime.
