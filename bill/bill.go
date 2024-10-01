@@ -11,3 +11,8 @@ func init() {
 		CorrectionOptions{},
 	)
 }
+
+// Constants used to help identify document schemas
+const (
+	ShortSchemaInvoice = "bill/invoice"
+)
