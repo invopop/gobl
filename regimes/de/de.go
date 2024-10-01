@@ -54,6 +54,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateIdentity(obj)
 	}
 	return nil
 }
