@@ -17,7 +17,8 @@ const (
 	// sales, the registered VAT number (Umsatzsteueridentifikationsnummer) should
 	// be used instead.
 	IdentityKeyTaxNumber cbc.Key = "de-tax-number"
-	IdentityKeyTaxID     cbc.Key = "de-tax-id"
+	// IdentityKeyTaxID represents the German tax ID (Steuerliche Identifikationsnummer)
+	IdentityKeyTaxID cbc.Key = "de-tax-id"
 )
 
 var identityKeyDefinitions = []*cbc.KeyDefinition{
@@ -73,7 +74,7 @@ func validateIdentity(id *org.Identity) error {
 	return nil
 }
 
-// ValidateTaxNumber checks the document type and determines if it can be validated.
+// Validation for German Steuernummer
 func validateTaxNumber(value interface{}) error {
 	val, ok := value.(cbc.Code)
 	if !ok || val == cbc.CodeEmpty {
@@ -95,6 +96,7 @@ func validateTaxNumber(value interface{}) error {
 	return nil
 }
 
+// Validation for German Steuerliche Identifikationsnummer
 func validateTaxID(value interface{}) error {
 	val, ok := value.(cbc.Code)
 	if !ok || val == cbc.CodeEmpty {
