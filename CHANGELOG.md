@@ -124,6 +124,9 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 - `head`: validation rule to check for the presence of stamps
 - GR: support for credit notes
 
+- HU: New regime
+- `org.Address`: Included field `StreetType`
+
 ## [v0.112.0]
 
 Significant set of small changes related to renaming of the `l10n.CountryCode` type. The main reason for this is an attempt to reduce confusion between regular ISO country selection, and the specific country codes used for tax purposes. Normally they coincide, but exception cases like for Greece, whose ISO code is `GR` but use `EL` for tax purposes, or `XI` for companies in Northern Ireland, mean that there needs to be a clear selection.

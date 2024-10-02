@@ -31,6 +31,8 @@ type Address struct {
 	Door string `json:"door,omitempty" jsonschema:"title=Door"`
 	// First line of street.
 	Street string `json:"street,omitempty" jsonschema:"title=Street"`
+	// Street type, such as road, avenue, etc.
+	StreetType string `json:"street_type,omitempty" jsonschema:"title=Street Type"`
 	// Additional street address details.
 	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
 	// Village, town, district, or city, typically inside a region.
