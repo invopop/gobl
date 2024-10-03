@@ -93,6 +93,13 @@ var taxCategories = []*tax.CategoryDef{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-MA",
 						},
+						Since: cal.NewDate(2024, 10, 1),
+						Percent: num.MakePercentage(40, 3),
+					},
+					{
+						Ext: tax.Extensions{
+							ExtKeyRegion: "PT-MA",
+						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(50, 3),
 					},
