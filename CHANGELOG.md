@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
+- `es`: moving invoice customer validation to the facturae and tbai addons.
 
 ### Updated
 
