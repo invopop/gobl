@@ -6,8 +6,50 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestTagSetForSchema(t *testing.T) {
+	ts1 := &tax.TagSet{
+		Schema: "bill/invoice",
+		List: []*cbc.KeyDefinition{
+			{
+				Key: "test1",
+				Name: i18n.String{
+					i18n.EN: "Test 1",
+				},
+			},
+		},
+	}
+	ts2 := &tax.TagSet{
+		Schema: "bill/receipt",
+		List: []*cbc.KeyDefinition{
+			{
+				Key: "test2",
+				Name: i18n.String{
+					i18n.EN: "Test 2",
+				},
+			},
+		},
+	}
+	ts3 := tax.TagSetForSchema([]*tax.TagSet{ts1, ts2}, "bill/invoice")
+	assert.Equal(t, ts3, ts1)
+	ts4 := tax.TagSetForSchema([]*tax.TagSet{ts1, ts2}, "bill/receipt")
+	assert.Equal(t, ts4, ts2)
+	ts5 := tax.TagSetForSchema([]*tax.TagSet{ts1, ts2}, "bill/unknown")
+	assert.Nil(t, ts5)
+}
+
+func TestTagsHasTags(t *testing.T) {
+	var tagsNil tax.Tags
+	assert.False(t, tagsNil.HasTags("tag1"))
+
+	tags := tax.WithTags("tag1", "tag2")
+	assert.True(t, tags.HasTags("tag1"))
+	assert.True(t, tags.HasTags("tag2"))
+	assert.False(t, tags.HasTags("tag3"))
+}
 
 func TestTagSetMerge(t *testing.T) {
 	ts1 := &tax.TagSet{
@@ -66,6 +108,35 @@ func TestTagSetMerge(t *testing.T) {
 	assert.Equal(t, ts7, ts1)
 	ts7 = ts6.Merge(ts1)
 	assert.Equal(t, ts7, ts1)
+}
+
+func TestTagSetValidation(t *testing.T) {
+	list := []cbc.Key{"tag1", "tag2"}
+
+	t.Run("valid tag", func(t *testing.T) {
+		err := validation.Validate([]cbc.Key{"tag1"}, tax.TagsIn(list...))
+		assert.NoError(t, err)
+	})
+	t.Run("invalid tag", func(t *testing.T) {
+		err := validation.Validate([]cbc.Key{"tag3"}, tax.TagsIn(list...))
+		assert.ErrorContains(t, err, "0: 'tag3' undefined")
+	})
+	t.Run("invalid tag 2", func(t *testing.T) {
+		err := validation.Validate([]cbc.Key{"tag1", "tag3"}, tax.TagsIn(list...))
+		assert.ErrorContains(t, err, "1: 'tag3' undefined")
+	})
+
+	t.Run("with tags", func(t *testing.T) {
+		set := tax.WithTags("tag1")
+		err := validation.Validate(set, tax.TagsIn(list...))
+		assert.NoError(t, err)
+	})
+
+	t.Run("with something else", func(t *testing.T) {
+		codes := []cbc.Code{"FOO"}
+		err := validation.Validate(codes, tax.TagsIn(list...))
+		assert.NoError(t, err)
+	})
 }
 
 func TestTaxSetKeys(t *testing.T) {
