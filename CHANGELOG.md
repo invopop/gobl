@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
 
+### Updated
+
+- `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
+
 ## [v0.200.1]
 
 ### Fixed
