@@ -85,7 +85,7 @@ type DueDate struct {
 	Currency currency.Code   `json:"currency,omitempty" jsonschema:"title=Currency,description=If different from the parent document's base currency."`
 }
 
-// UNTDID4279 returns the UNTDID 4270 code associated with the terms key.
+// UNTDID4279 returns the UNTDID 4279 code associated with the terms key.
 func (t *Terms) UNTDID4279() cbc.Code {
 	for _, v := range TermKeyDefinitions {
 		if t.Key == v.Key {
