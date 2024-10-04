@@ -168,7 +168,19 @@ func TestCustomerValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "payment: (instructions: cannot be blank when terms are present.)")
+		assert.ErrorContains(t, err, "payment: (instructions: cannot be blank when terms with due dates are present.).")
+	})
+
+	t.Run("payment terms with no due dates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.Payment{
+			Terms: &pay.Terms{
+				Key: "instant",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
 	})
 
 	t.Run("payment terms with instructions", func(t *testing.T) {
@@ -189,6 +201,26 @@ func TestCustomerValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 		assert.Equal(t, "MP08", inv.Payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String())
+	})
+
+	t.Run("with supplier registration details", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Registration = &org.Registration{
+			Entry:  "123456",
+			Office: "Rome",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("with supplier missing registration details", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Registration = &org.Registration{
+			Entry: "123456",
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (registration: (office: cannot be blank.).).")
 	})
 }
 

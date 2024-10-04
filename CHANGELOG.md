@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
 - `es`: moving invoice customer validation to the facturae and tbai addons.
+- `it-sdi-v1`: fixing validation issue for payment terms with no due dates.
 
 ### Updated
 
