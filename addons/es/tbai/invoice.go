@@ -20,7 +20,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
-    validation.Field(&inv.Series, validation.Required),
+		validation.Field(&inv.Series, validation.Required),
 		validation.Field(&inv.Customer,
 			validation.By(validateInvoiceCustomer),
 			validation.Skip,

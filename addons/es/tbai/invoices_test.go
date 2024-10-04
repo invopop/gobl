@@ -10,12 +10,20 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("with services", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
@@ -27,41 +35,21 @@ func TestInvoiceValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
 	})
-}
 
-func TestBasqueLineValidation(t *testing.T) {
-	inv := testInvoiceStandard(t)
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-
-	inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-
-	inv.Lines[0].Taxes[0].Ext = nil
-	assertValidationError(t, inv, "es-tbai-exemption: required")
-}
-
-func TestInvoiceValidation(t *testing.T) {
-	inv := validTicketBAIInvoice()
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-
-	inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "services"
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
-
-	inv.Lines[0].Taxes[0].Ext = nil
-	assertValidationError(t, inv, "es-tbai-exemption: required")
+	t.Run("with exemption reason", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Ext = nil
+		assertValidationError(t, inv, "es-tbai-exemption: required")
+	})
 
 	t.Run("without series", func(t *testing.T) {
-		inv := validTicketBAIInvoice()
+		inv := testInvoiceStandard(t)
 		inv.Series = ""
 		assertValidationError(t, inv, "series: cannot be blank")
 	})
 
 	t.Run("without notes", func(t *testing.T) {
-		inv := validTicketBAIInvoice()
+		inv := testInvoiceStandard(t)
 		inv.Notes = nil
 		assertValidationError(t, inv, "notes: with key 'general' missing")
 	})
