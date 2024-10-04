@@ -1,15 +1,15 @@
-package co_test
+package dian_test
 
 import (
 	"testing"
 
 	_ "github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,6 +17,8 @@ import (
 
 func baseInvoice() *bill.Invoice {
 	inv := &bill.Invoice{
+		Regime:    tax.WithRegime("CO"),
+		Addons:    tax.WithAddons(dian.V2),
 		Currency:  currency.COP,
 		Code:      "TEST",
 		IssueDate: cal.MakeDate(2022, 12, 27),
@@ -64,6 +66,8 @@ func baseInvoice() *bill.Invoice {
 
 func creditNote() *bill.Invoice {
 	inv := &bill.Invoice{
+		Regime:    tax.WithRegime("CO"),
+		Addons:    tax.WithAddons(dian.V2),
 		Currency:  currency.COP,
 		Code:      "TEST",
 		Type:      bill.InvoiceTypeCreditNote,
@@ -73,7 +77,7 @@ func creditNote() *bill.Invoice {
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
 				Ext: tax.Extensions{
-					co.ExtKeyDIANCreditCode: "2", // revoked
+					dian.ExtKeyCreditCode: "2", // revoked
 				},
 			},
 		},
@@ -128,29 +132,26 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.Equal(t, inv.Customer.Addresses[0].Locality, "Sabanalarga")
 	assert.Equal(t, inv.Customer.Addresses[0].Region, "Atlántico")
 
-	delete(inv.Supplier.Ext, co.ExtKeyDIANMunicipality)
+	delete(inv.Supplier.Ext, dian.ExtKeyMunicipality)
 	err := inv.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier: (ext: cannot be blank.).")
+	assert.ErrorContains(t, err, "supplier: (ext: cannot be blank.).")
 
-	inv.Supplier.Ext[co.ExtKeyDIANMunicipality] = "110011"
+	inv.Supplier.Ext[dian.ExtKeyMunicipality] = "110011"
 	err = inv.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier: (ext: (co-dian-municipality: does not match pattern.).")
+	assert.ErrorContains(t, err, "supplier: (ext: (co-dian-municipality: does not match pattern.).")
 
 	inv = baseInvoice()
 	inv.Supplier.TaxID.Code = ""
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "supplier: (tax_id: (code: cannot be blank.).).")
+	assert.ErrorContains(t, err, "supplier: (tax_id: (code: cannot be blank.).).")
 
 	inv = baseInvoice()
 	inv.SetTags(tax.TagSimplified)
 	inv.Customer.TaxID.Code = ""
 	inv.Customer.Identities = org.AddIdentity(inv.Customer.Identities,
 		&org.Identity{
-			Key:  co.IdentityKeyCitizenID,
+			Key:  dian.IdentityKeyCitizenID,
 			Code: "124499654",
 		},
 	)
@@ -173,8 +174,8 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Contains(t, inv.Preceding[0].Ext, co.ExtKeyDIANCreditCode)
-	assert.Equal(t, inv.Preceding[0].Ext[co.ExtKeyDIANCreditCode], tax.ExtValue("2"))
+	assert.Contains(t, inv.Preceding[0].Ext, dian.ExtKeyCreditCode)
+	assert.Equal(t, inv.Preceding[0].Ext[dian.ExtKeyCreditCode], tax.ExtValue("2"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()
@@ -182,18 +183,4 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "preceding: (0: (ext: (foo: undefined.).).)")
 	}
 
-}
-
-func TestNormalizeParty(t *testing.T) {
-	p := &org.Party{
-		Name: "Test Party",
-		TaxID: &tax.Identity{
-			Country: "CO",
-			Code:    "412615332",
-			Zone:    "11001",
-		},
-	}
-	co.Normalize(p)
-	assert.Empty(t, p.TaxID.Zone) //nolint:staticcheck
-	assert.Equal(t, p.Ext[co.ExtKeyDIANMunicipality].String(), "11001")
 }

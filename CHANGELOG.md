@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Updated
 
 - `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
+- `co-dian-v2`: moved from `co` tax regime into own addon.
 
 ## [v0.200.1]
 
