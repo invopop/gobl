@@ -43,3 +43,7 @@ lines:
         ext:
           es-tbai-product: "services"
           # es-tbai-not-subject: "RL" # set automatically
+
+notes:
+  - key: "general"
+    text: "Just an invoice"
