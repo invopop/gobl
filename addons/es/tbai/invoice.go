@@ -20,6 +20,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Series, validation.Required),
 		validation.Field(&inv.Preceding,
 			validation.When(
 				inv.Type.In(es.InvoiceCorrectionTypes...),
@@ -35,6 +36,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Notes,
+			cbc.ValidateNotesHasKey(cbc.NoteKeyGeneral),
+			validation.Skip,
+		),
 	)
 }
 
@@ -45,6 +50,7 @@ func validateInvoicePreceding(val any) error {
 	}
 	return validation.ValidateStruct(p,
 		validation.Field(&p.IssueDate, validation.Required),
+		validation.Field(&p.Series, validation.Required),
 		validation.Field(&p.Ext,
 			tax.ExtensionsRequires(ExtKeyCorrection),
 			validation.Skip,

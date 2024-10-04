@@ -4,9 +4,14 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [unreleased]
+## [Unreleased]
+
+### Fixed
+
+- `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
 
 ### Updated
+
 - `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
 
 ## [v0.200.1]

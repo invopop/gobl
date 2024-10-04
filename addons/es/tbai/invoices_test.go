@@ -5,17 +5,18 @@ import (
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func validTicketBAIInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Addons: tax.WithAddons(tbai.V1),
+		Series: "ABC",
 		Code:   "123",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -50,10 +51,16 @@ func validTicketBAIInvoice() *bill.Invoice {
 				},
 			},
 		},
+		Notes: []*cbc.Note{
+			{
+				Key:  cbc.NoteKeyGeneral,
+				Text: "This is a test invoice",
+			},
+		},
 	}
 }
 
-func TestBasqueLineValidation(t *testing.T) {
+func TestInvoiceValidation(t *testing.T) {
 	inv := validTicketBAIInvoice()
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
@@ -64,11 +71,22 @@ func TestBasqueLineValidation(t *testing.T) {
 
 	inv.Lines[0].Taxes[0].Ext = nil
 	assertValidationError(t, inv, "es-tbai-exemption: required")
+
+	t.Run("without series", func(t *testing.T) {
+		inv := validTicketBAIInvoice()
+		inv.Series = ""
+		assertValidationError(t, inv, "series: cannot be blank")
+	})
+
+	t.Run("without notes", func(t *testing.T) {
+		inv := validTicketBAIInvoice()
+		inv.Notes = nil
+		assertValidationError(t, inv, "notes: with key 'general' missing")
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), expected)
+	require.ErrorContains(t, err, expected)
 }

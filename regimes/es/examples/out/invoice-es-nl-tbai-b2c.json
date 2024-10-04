@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0745f5625506dd55aefc98f5dd886970f27e39fe1259c0f9c0081422abe8e0c7"
+			"val": "951ab32ee551ab67853712d2f2d4f8bf5f361121565ca747c77ac1b29db7746e"
 		}
 	},
 	"doc": {
@@ -108,6 +108,12 @@
 			"tax": "340.20",
 			"total_with_tax": "1960.20",
 			"payable": "1960.20"
-		}
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Just an invoice"
+			}
+		]
 	}
 }
