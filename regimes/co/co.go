@@ -14,13 +14,6 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
-// Special keys to use in meta data.
-const (
-	KeyDIAN                    cbc.Key = "dian"
-	KeyDIANCompanyID           cbc.Key = "dian-company-id"
-	KeyDIANAdditionalAccountID cbc.Key = "dian-additional-account-id"
-)
-
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
