@@ -4,6 +4,8 @@ Example CO GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 ## Colombia specifics
 
+Please also see the [DIAN Addon](../../addons/co/dian) package named `co-dian-v2` which should be included in your documents.
+
 ## Invoice Series & Code
 
 Invoices ("Facturas de Venta") as expected in many countries require a series and unique sequential code to be issued for each document. The DIAN in colombia however have gone a step further and require invoice series to be pre-registered with the government.
@@ -77,7 +79,7 @@ For example:
 In the case of non-business customers, the GOBL invoice will need to include the tax tag `simplified`. That will allow to omit the customer or identify it with any of the other document types accepted by the DIAN. They'll just need to include an Identity object with any of the keys below:
 
 | GOBL Identity Key      | DIAN ID type | Description                            |
-|------------------------|--------------|----------------------------------------|
+| ---------------------- | ------------ | -------------------------------------- |
 | `co-civil-register`    | 11           | Registro civil                         |
 | `co-id-card`           | 12           | Tarjeta de identidad                   |
 | `co-citizen-id`        | 13           | Cédula de ciudadanía                   |
@@ -126,18 +128,18 @@ In a GOBL invoice, you'll need to include the extension `co-dian-credit-code` (f
 
 **`co-dian-credit-code`**
 
-| Code | Description     |
-|------|-----------------|
-| 1    | Partial refund  |
-| 2    | Revoked         |
-| 3    | Discount        |
-| 4    | Adjustment      |
-| 5    | Other           |
+| Code | Description    |
+| ---- | -------------- |
+| 1    | Partial refund |
+| 2    | Revoked        |
+| 3    | Discount       |
+| 4    | Adjustment     |
+| 5    | Other          |
 
 **`co-dian-debit-code`**
 
 | Code | Description     |
-|------|-----------------|
+| ---- | --------------- |
 | 1    | Interest        |
 | 2    | Pending charges |
 | 3    | Change in value |
