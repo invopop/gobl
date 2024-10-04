@@ -1,6 +1,8 @@
 package cbc
 
 import (
+	"fmt"
+
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
@@ -310,6 +312,29 @@ func (n *Note) Equals(n2 *Note) bool {
 		n.Src == n2.Src &&
 		n.Text == n2.Text &&
 		n.Meta.Equals(n2.Meta)
+}
+
+type validateNotes struct {
+	key Key
+}
+
+// ValidateNotesHasKey returns a validation rule that check that at least one
+// of the notes has the provided key.
+func ValidateNotesHasKey(key Key) validation.Rule {
+	return &validateNotes{key: key}
+}
+
+func (v *validateNotes) Validate(value any) error {
+	notes, ok := value.([]*Note)
+	if !ok {
+		return nil
+	}
+	for _, n := range notes {
+		if n.Key.In(v.key) {
+			return nil // match found, this is good
+		}
+	}
+	return fmt.Errorf("with key '%s' missing", v.key.String())
 }
 
 // JSONSchemaExtend adds the list of definitions for the notes.
