@@ -4,7 +4,7 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [Unreleased]
+## [v0.201.0]
 
 ### Fixed
 
@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `es`: moving invoice customer validation to the facturae and tbai addons.
 - `it-sdi-v1`: fixing validation issue for payment terms with no due dates.
 
-### Updated
+### Changed
 
 - `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
 - `co-dian-v2`: moved from `co` tax regime into own addon.
