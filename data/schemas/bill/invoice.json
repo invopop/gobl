@@ -245,6 +245,10 @@
             "$ref": "https://gobl.org/draft-0/cbc/key",
             "oneOf": [
               {
+                "const": "co-dian-v2",
+                "title": "Colombia DIAN UBL 2.X"
+              },
+              {
                 "const": "es-facturae-v3",
                 "title": "Spain FacturaE"
               },
