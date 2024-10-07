@@ -1,7 +1,6 @@
 package de
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 
@@ -19,6 +18,9 @@ const (
 	IdentityKeyTaxNumber cbc.Key = "de-tax-number"
 )
 
+var taxNumberRegexPattern = regexp.MustCompile(`^\d{2,3}/\d{3}/\d{5}$`)
+var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
+
 var identityKeyDefinitions = []*cbc.KeyDefinition{
 	{
 		Key: IdentityKeyTaxNumber,
@@ -35,7 +37,7 @@ func normalizeTaxNumber(id *org.Identity) {
 		return
 	}
 	code := id.Code.String()
-	code = regexp.MustCompile(`[^\d]`).ReplaceAllString(code, "")
+	code = badCharsRegexPattern.ReplaceAllString(code, "")
 	if len(code) == 11 {
 		// If 11 digits, return the format 123/456/78901
 		code = fmt.Sprintf("%s/%s/%s", code[:3], code[3:6], code[6:])
@@ -54,28 +56,8 @@ func validateTaxNumber(id *org.Identity) error {
 	return validation.ValidateStruct(id,
 		validation.Field(&id.Code,
 			validation.Required,
-			validation.By(validateTaxNumberFormat),
+			validation.Match(taxNumberRegexPattern),
 			validation.Skip,
 		),
 	)
-}
-
-// Validation for German Steuernummer Format
-func validateTaxNumberFormat(value interface{}) error {
-	val, ok := value.(cbc.Code)
-	if !ok || val == cbc.CodeEmpty {
-		return errors.New(val.String())
-	}
-	code := val.String()
-	if match, _ := regexp.MatchString(`^[\d/]+$`, code); !match {
-		return errors.New("invalid format: tax number should only contain digits and /")
-	}
-	if len(code) < 12 || len(code) > 13 {
-		return errors.New("invalid length")
-	}
-	if regexp.MustCompile(`^\d{2}/\d{3}/\d{5}$|^\d{3}/\d{3}/\d{5}$`).MatchString(code) {
-		return nil
-	}
-
-	return errors.New("invalid format")
 }

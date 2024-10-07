@@ -1,7 +1,6 @@
 package de_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -49,16 +48,15 @@ func TestTaxNumberValidation(t *testing.T) {
 		{name: "valid 11 digits", code: "123/456/78901"},
 
 		// Invalid formats
-		{name: "too short", code: "12/345/678", err: "invalid length"},
-		{name: "too long", code: "1234/567/89012", err: "invalid length"},
-		{name: "non-numeric", code: "12/3AB/67890", err: "should only contain digits"},
-		{name: "invalid separator", code: "12-345-67890", err: "invalid format"},
+		{name: "too short", code: "12/345/678", err: "code: must be in a valid format."},
+		{name: "too long", code: "1234/567/89012", err: "code: must be in a valid format."},
+		{name: "non-numeric", code: "12/3AB/67890", err: "code: must be in a valid format."},
+		{name: "invalid separator", code: "12-345-67890", err: "code: must be in a valid format."},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Key: de.IdentityKeyTaxNumber, Code: tt.code}
-			fmt.Println(id.Code.String())
 			err := de.Validate(id)
 			if tt.err == "" {
 				assert.NoError(t, err)
