@@ -20,11 +20,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Constants used to help identify invoices
-const (
-	ShortSchemaInvoice = "bill/invoice"
-)
-
 const (
 	defaultTaxRemovalAccuracy         uint32 = 2
 	defaultCurrencyConversionAccuracy uint32 = 2
@@ -38,7 +33,6 @@ type Invoice struct {
 	tax.Regime
 	tax.Addons
 	tax.Tags
-
 	uuid.Identify
 
 	// Type of invoice document subject to the requirements of the local tax regime.
@@ -263,7 +257,7 @@ func (inv *Invoice) Empty() {
 func (inv *Invoice) Calculate() error {
 	// Try to set Regime if not already prepared from the supplier's tax ID
 	if inv.Regime.IsEmpty() {
-		inv.SetRegime(inv.supplierTaxCountry())
+		inv.SetRegime(partyTaxCountry(inv.Supplier))
 	}
 
 	inv.Normalize(inv.normalizers())
@@ -392,18 +386,6 @@ func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	}
 
 	return &i2, nil
-}
-
-// supplierTaxCountry determines the tax country for the invoice based on the supplier tax
-// identity.
-func (inv *Invoice) supplierTaxCountry() l10n.TaxCountryCode {
-	if inv.Supplier == nil {
-		return l10n.CodeEmpty.Tax()
-	}
-	if inv.Supplier.TaxID == nil {
-		return l10n.CodeEmpty.Tax()
-	}
-	return inv.Supplier.TaxID.Country
 }
 
 // calculate does not assume that the tax regime is available.
@@ -577,7 +559,7 @@ func (inv *Invoice) UnmarshalJSON(data []byte) error {
 	}
 	// Ensure there is regime set when coming in from a raw JSON source.
 	if inv.Regime.IsEmpty() {
-		inv.SetRegime(inv.supplierTaxCountry())
+		inv.SetRegime(partyTaxCountry(inv.Supplier))
 	}
 	// Copy the old tags array from the tax object to the invoice's $tags attribute.
 	if inv.Tax != nil && len(inv.Tax.tags) > 0 {
