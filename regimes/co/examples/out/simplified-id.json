@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a315c575ebe976a4f65f8694722e74372f5725559b3538d8c886414b5a7d3b04"
+			"val": "1b80acf83b7ff709d71a8e43ea2dcee88591564497ac59d419e869ec6d9e574d"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "CO",
+		"$addons": [
+			"co-dian-v2"
+		],
 		"$tags": [
 			"simplified"
 		],

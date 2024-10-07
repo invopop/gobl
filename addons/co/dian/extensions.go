@@ -1,4 +1,4 @@
-package co
+package dian
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -8,14 +8,14 @@ import (
 
 // Extension keys used in Colombia.
 const (
-	ExtKeyDIANMunicipality cbc.Key = "co-dian-municipality"
-	ExtKeyDIANCreditCode   cbc.Key = "co-dian-credit-code"
-	ExtKeyDIANDebitCode    cbc.Key = "co-dian-debit-code"
+	ExtKeyMunicipality cbc.Key = "co-dian-municipality"
+	ExtKeyCreditCode   cbc.Key = "co-dian-credit-code"
+	ExtKeyDebitCode    cbc.Key = "co-dian-debit-code"
 )
 
-var extensionKeys = []*cbc.KeyDefinition{
+var extensions = []*cbc.KeyDefinition{
 	{
-		Key: ExtKeyDIANMunicipality,
+		Key: ExtKeyMunicipality,
 		Name: i18n.String{
 			i18n.EN: "DIAN Municipality Code",
 			i18n.ES: "Código de municipio DIAN",
@@ -33,7 +33,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		Pattern: `^\d{5}$`,
 	},
 	{
-		Key: ExtKeyDIANCreditCode,
+		Key: ExtKeyCreditCode,
 		Name: i18n.String{
 			i18n.EN: "Credit Code",
 			i18n.ES: "Código de Crédito",
@@ -97,7 +97,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyDIANDebitCode,
+		Key: ExtKeyDebitCode,
 		Name: i18n.String{
 			i18n.EN: "Debit Code",
 			i18n.ES: "Código de Débito",

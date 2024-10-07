@@ -1,4 +1,4 @@
-package co
+package dian
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -18,7 +18,12 @@ const (
 	IdentityKeyNUIP            cbc.Key = "co-nuip"
 )
 
-var identityKeyDefs = []*cbc.KeyDefinition{
+// Special keys to use in meta data.
+const (
+	KeyCompanyID cbc.Key = "dian-company-id"
+)
+
+var identities = []*cbc.KeyDefinition{
 	{
 		Key: IdentityKeyCivilRegister,
 		Name: i18n.String{
@@ -26,7 +31,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.EN: "Civil Registry",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "11",
+			KeyCompanyID: "11",
 		},
 	},
 	{
@@ -36,7 +41,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "Tarjeta de Identidad",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "12",
+			KeyCompanyID: "12",
 		},
 	},
 	{
@@ -46,7 +51,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "Cédula de ciudadanía",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "13",
+			KeyCompanyID: "13",
 		},
 	},
 	{
@@ -56,7 +61,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "Tarjeta de Extranjería",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "21",
+			KeyCompanyID: "21",
 		},
 	},
 	{
@@ -66,7 +71,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "Cédula de extranjería",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "22",
+			KeyCompanyID: "22",
 		},
 	},
 	{
@@ -76,7 +81,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "Pasaporte",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "41",
+			KeyCompanyID: "41",
 		},
 	},
 	{
@@ -86,7 +91,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "Documento de identificación extranjero",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "42",
+			KeyCompanyID: "42",
 		},
 	},
 	{
@@ -96,7 +101,7 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "PEP - Permiso Especial de Permanencia",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "47",
+			KeyCompanyID: "47",
 		},
 	},
 	{
@@ -106,9 +111,9 @@ var identityKeyDefs = []*cbc.KeyDefinition{
 			i18n.ES: "NUIP - Número Único de Identificación Personal",
 		},
 		Map: cbc.CodeMap{
-			KeyDIANCompanyID: "91",
+			KeyCompanyID: "91",
 		},
 	},
 }
 
-var identityKeys = cbc.DefinitionKeys(identityKeyDefs)
+var identityKeys = cbc.DefinitionKeys(identities)
