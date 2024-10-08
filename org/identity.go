@@ -23,7 +23,7 @@ const (
 	IdentityKeyAgreement cbc.Key = "agreement" // agreement number
 	IdentityKeyContract  cbc.Key = "contract"  // contract number
 	IdentityKeyPassport  cbc.Key = "passport"  // Passport number
-	IdentifyKeyNational  cbc.Key = "national"  // National ID card number
+	IdentityKeyNational  cbc.Key = "national"  // National ID card number
 	IdentityKeyForeign   cbc.Key = "foreign"   // Foreigner ID card number
 	IdentityKeyResident  cbc.Key = "resident"  // Resident ID card number
 	IdentityKeyOther     cbc.Key = "other"     // Other ID card number
