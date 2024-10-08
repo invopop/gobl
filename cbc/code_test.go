@@ -1,10 +1,14 @@
 package cbc_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/jsonschema"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCodeIn(t *testing.T) {
@@ -12,6 +16,30 @@ func TestCodeIn(t *testing.T) {
 
 	assert.True(t, c.In("BAR", "FOO", "DOM"))
 	assert.False(t, c.In("BAR", "DOM"))
+}
+
+func TestCodeEmpty(t *testing.T) {
+	assert.Equal(t, cbc.Code(""), cbc.CodeEmpty)
+	assert.True(t, cbc.Code("").IsEmpty())
+}
+
+func TestCodeJoin(t *testing.T) {
+	t.Run("basic join", func(t *testing.T) {
+		c := cbc.Code("BAR")
+		assert.Equal(t, "BAR-FOO", c.Join("FOO").String())
+	})
+	t.Run("empty base join", func(t *testing.T) {
+		c := cbc.Code("")
+		assert.Equal(t, "FOO", c.Join("FOO").String())
+	})
+	t.Run("empty postfix join", func(t *testing.T) {
+		c := cbc.Code("BAR")
+		assert.Equal(t, "BAR", c.Join("").String())
+	})
+	t.Run("custom separator", func(t *testing.T) {
+		c := cbc.Code("BAR")
+		assert.Equal(t, "BAR|FOO", c.JoinWith("|", "FOO").String())
+	})
 }
 
 func TestNormalizeCode(t *testing.T) {
@@ -192,4 +220,96 @@ func TestCode_Validate(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCodeMap(t *testing.T) {
+	cm := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"bar": cbc.Code("02"),
+	}
+	t.Run("Has", func(t *testing.T) {
+		assert.True(t, cm.Has("foo"))
+		assert.True(t, cm.Has("foo", "bar"))
+		assert.False(t, cm.Has("dom"))
+		assert.False(t, cm.Has("foo", "dom"))
+	})
+
+	t.Run("validation", func(t *testing.T) {
+		assert.NoError(t, cm.Validate())
+		cm2 := cbc.CodeMap{
+			"Invalid": cbc.Code("01"),
+		}
+		assert.ErrorContains(t, cm2.Validate(), "Invalid: must be in a valid format")
+	})
+}
+
+func TestCodeMap_Equals(t *testing.T) {
+	cm := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"bar": cbc.Code("02"),
+	}
+	cm2 := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"bar": cbc.Code("02"),
+	}
+	cm3 := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"bar": cbc.Code("03"),
+	}
+	cm4 := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"bar": cbc.Code("02"),
+		"dom": cbc.Code("03"),
+	}
+	cm5 := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+	}
+	cm6 := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"dom": cbc.Code("02"),
+	}
+	assert.True(t, cm.Equals(cm2))
+	assert.False(t, cm.Equals(cm3))
+	assert.False(t, cm.Equals(cm4))
+	assert.False(t, cm.Equals(cm5))
+	assert.False(t, cm.Equals(cm6))
+}
+
+func TestCodeMapHas(t *testing.T) {
+	cm := cbc.CodeMap{
+		"foo": cbc.Code("01"),
+		"bar": cbc.Code("02"),
+	}
+	err := validation.Validate(cm, cbc.CodeMapHas("foo", "bar"))
+	assert.NoError(t, err)
+	assert.ErrorContains(t, validation.Validate(cm, cbc.CodeMapHas("foo", "dom")), "dom: required.")
+	err = validation.Validate(nil, cbc.CodeMapHas("foo"))
+	assert.NoError(t, err)
+}
+
+func TestCodeJSONSchema(t *testing.T) {
+	s := cbc.Code("").JSONSchema()
+	assert.Equal(t, "string", s.Type)
+	assert.Equal(t, "Code", s.Title)
+	assert.Equal(t, uint64(1), *s.MinLength)
+	assert.Equal(t, uint64(32), *s.MaxLength)
+}
+
+func TestCodeMapJSONSchemaExtend(t *testing.T) {
+	eg := `{
+			"type": "object",
+			"additionalProperties": {
+				"$ref": "https://gobl.org/draft-0/cbc/code"
+			},
+			"description": "CodeMap is a map of keys to specific codes, useful to determine regime specific codes from their key counterparts."
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	cm := cbc.CodeMap{}
+	cm.JSONSchemaExtend(js)
+
+	assert.Nil(t, js.AdditionalProperties)
+	assert.Equal(t, 1, len(js.PatternProperties))
+	assert.Equal(t, "https://gobl.org/draft-0/cbc/code", js.PatternProperties[cbc.KeyPattern].Ref)
 }

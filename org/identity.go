@@ -12,13 +12,21 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Default or common identity keys that may be used to identify a person or company.
+// Common identity keys that may be used to identify something, like an item, document,
+// person, organisation, or company. Ideally, these will only be used when no other
+// more structured properties are available inside GOBL. The keys suggested here are
+// non-binding and can be used as a reference for other implementations.
 const (
-	IdentityKeyPassport cbc.Key = "passport"
-	IdentifyKeyNational cbc.Key = "national"
-	IdentityKeyForeign  cbc.Key = "foreign"
-	IdentityKeyResident cbc.Key = "resident"
-	IdentityKeyOther    cbc.Key = "other"
+	IdentityKeySKU       cbc.Key = "sku"       // stock code unit ID
+	IdentityKeyItem      cbc.Key = "item"      // item number
+	IdentityKeyOrder     cbc.Key = "order"     // order number or code
+	IdentityKeyAgreement cbc.Key = "agreement" // agreement number
+	IdentityKeyContract  cbc.Key = "contract"  // contract number
+	IdentityKeyPassport  cbc.Key = "passport"  // Passport number
+	IdentityKeyNational  cbc.Key = "national"  // National ID card number
+	IdentityKeyForeign   cbc.Key = "foreign"   // Foreigner ID card number
+	IdentityKeyResident  cbc.Key = "resident"  // Resident ID card number
+	IdentityKeyOther     cbc.Key = "other"     // Other ID card number
 )
 
 // Identity is used to define a code for a specific context.
