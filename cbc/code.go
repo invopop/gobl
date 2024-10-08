@@ -5,8 +5,14 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
+)
+
+const (
+	// DefaultCodeSeparator is the default separator used to join codes.
+	DefaultCodeSeparator Code = "-"
 )
 
 // Code represents a string used to uniquely identify the data we're looking
@@ -81,15 +87,37 @@ func (c Code) In(ary ...Code) bool {
 	return false
 }
 
+// Join returns a new code that is the result of joining the provided
+// code with the current one using a default separator.
+func (c Code) Join(c2 Code) Code {
+	return c.JoinWith(DefaultCodeSeparator, c2)
+}
+
+// JoinWith returns a new code that is the result of joining the provided
+// code with the current one using the provided separator. If any of the codes
+// are empty, no separator will be added.
+func (c Code) JoinWith(separator Code, c2 Code) Code {
+	if c == CodeEmpty {
+		return c2
+	}
+	if c2 == CodeEmpty {
+		return c
+	}
+	return c + separator + c2
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Code) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
-		Type:        "string",
-		Pattern:     CodePattern,
-		Title:       "Code",
-		MinLength:   &CodeMinLength,
-		MaxLength:   &CodeMaxLength,
-		Description: "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols.",
+		Type:      "string",
+		Pattern:   CodePattern,
+		Title:     "Code",
+		MinLength: &CodeMinLength,
+		MaxLength: &CodeMaxLength,
+		Description: here.Doc(`
+			Alphanumerical text identifier with upper-case letters and limits on using
+			special characters or whitespace to separate blocks.
+		`),
 	}
 }
 

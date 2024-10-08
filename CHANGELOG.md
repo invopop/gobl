@@ -4,6 +4,16 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [Unreleased]
+
+### Change
+
+- `org.DocumentRef`: renamed `line` to `lines` that accepts an array of integers making it possible to define a selection of reference lines in another document as opposed to just one.
+
+### Added
+
+- `cbc.Code`: new `Join` and `JoinWith` methods to help concatenate codes.
+
 ## [v0.201.0]
 
 ### Fixed
