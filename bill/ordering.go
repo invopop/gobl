@@ -18,7 +18,7 @@ type Ordering struct {
 	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Period of time that the invoice document refers to often used in addition to the details
 	// provided in the individual line items.
-	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
+	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period" en16931:"BG-14"`
 	// Party who is responsible for making the purchase, but is not responsible
 	// for handling taxes.
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
@@ -26,19 +26,19 @@ type Ordering struct {
 	// supplier.
 	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
 	// Projects this invoice refers to.
-	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects"`
+	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects" en16931:"BT-11"`
 	// The identification of contracts.
-	Contracts []*org.DocumentRef `json:"contracts,omitempty" jsonschema:"title=Contracts"`
+	Contracts []*org.DocumentRef `json:"contracts,omitempty" jsonschema:"title=Contracts" en16931:"BT-12"`
 	// Purchase orders issued by the customer or buyer.
-	Purchases []*org.DocumentRef `json:"purchases,omitempty" jsonschema:"title=Purchase Orders"`
+	Purchases []*org.DocumentRef `json:"purchases,omitempty" jsonschema:"title=Purchase Orders" en16931:"BT-13"`
 	// Sales orders issued by the supplier or seller.
-	Sales []*org.DocumentRef `json:"sales,omitempty" jsonschema:"title=Sales Orders"`
+	Sales []*org.DocumentRef `json:"sales,omitempty" jsonschema:"title=Sales Orders" en16931:"BT-14"`
 	// Receiving Advice.
-	Receiving []*org.DocumentRef `json:"receiving,omitempty" jsonschema:"title=Receiving Advice"`
+	Receiving []*org.DocumentRef `json:"receiving,omitempty" jsonschema:"title=Receiving Advice" en16931:"BT-15"`
 	// Despatch advice.
-	Despatch []*org.DocumentRef `json:"despatch,omitempty" jsonschema:"title=Despatch Advice"`
+	Despatch []*org.DocumentRef `json:"despatch,omitempty" jsonschema:"title=Despatch Advice" en16931:"BT-16"`
 	// Tender advice, the identification of the call for tender or lot the invoice relates to.
-	Tender []*org.DocumentRef `json:"tender,omitempty" jsonschema:"title=Tender Advice"`
+	Tender []*org.DocumentRef `json:"tender,omitempty" jsonschema:"title=Tender Advice" en16931:"BT-17"`
 }
 
 // Normalize attempts to clean and normalize the Ordering data.

@@ -11,30 +11,30 @@ import (
 // Totals contains the summaries of all calculations for the invoice.
 type Totals struct {
 	// Sum of all line item sums
-	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
+	Sum num.Amount `json:"sum" jsonschema:"title=Sum" en16931:"BT-106"`
 	// Sum of all document level discounts
-	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Discount"`
+	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Discount" en16931:"BT-107"`
 	// Sum of all document level charges
-	Charge *num.Amount `json:"charge,omitempty" jsonschema:"title=Charge"`
+	Charge *num.Amount `json:"charge,omitempty" jsonschema:"title=Charge" en16931:"BT-108"`
 	// If prices include tax, this is the total tax included in the price.
 	TaxIncluded *num.Amount `json:"tax_included,omitempty" jsonschema:"title=Tax Included"`
 	// Sum of all line sums minus the discounts, plus the charges, without tax.
-	Total num.Amount `json:"total" jsonschema:"title=Total"`
+	Total num.Amount `json:"total" jsonschema:"title=Total" en16931:"BT-109"`
 	// Summary of all the taxes included in the invoice.
 	Taxes *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals"`
 	// Total amount of tax to apply to the invoice.
-	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax"`
+	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax" en16931:"BT-110"`
 	// Grand total after all taxes have been applied.
-	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
+	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax" en16931:"BT-112"`
 	// Rounding amount to apply to the invoice in case the total and payable
 	// amounts don't quite match.
-	Rounding *num.Amount `json:"rounding,omitempty" jsonschema:"title=Rounding"`
+	Rounding *num.Amount `json:"rounding,omitempty" jsonschema:"title=Rounding" en16931:"BT-114"`
 	// Total paid in outlays that need to be reimbursed
 	Outlays *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals"`
 	// Total amount to be paid after applying taxes and outlays.
-	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
+	Payable num.Amount `json:"payable" jsonschema:"title=Payable" en16931:"BT-115"`
 	// Total amount already paid in advance.
-	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance"`
+	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance" en16931:"BT-113"`
 	// How much actually needs to be paid now.
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }

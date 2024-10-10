@@ -19,7 +19,7 @@ type Payment struct {
 	// Any amounts that have been paid in advance and should be deducted from the amount due.
 	Advances []*pay.Advance `json:"advances,omitempty" jsonschema:"title=Advances"`
 	// Details on how payment should be made.
-	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
+	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions" en16931:"BG-16"`
 }
 
 // Normalize will try to normalize the payment's data.

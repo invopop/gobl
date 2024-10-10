@@ -42,40 +42,40 @@ type Invoice struct {
 	uuid.Identify
 
 	// Type of invoice document subject to the requirements of the local tax regime.
-	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
+	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true" en16931:"BT-3"`
 	// Used as a prefix to group codes.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code" jsonschema:"title=Code" en16931:"BT-1"`
 	// When the invoice was created.
-	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true" en16931:"BT-2"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
-	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
+	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date" en16931:"BT-7"`
 	// Currency for all invoice totals.
-	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
+	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true" en16931:"BT-5"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
 	// Key information regarding previous invoices and potentially details as to why they
 	// were corrected.
-	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details" en16931:"BG-3"`
 
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
 	// The taxable entity supplying the goods or services.
-	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
+	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier" en16931:"BG-4"`
 	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
-	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
+	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer" en16931:"BG-7"`
 
 	// List of invoice lines representing each of the items sold to the customer.
-	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines"`
+	Lines []*Line `json:"lines,omitempty" jsonschema:"title=Lines" en16931:"BG-25"`
 	// Discounts or allowances applied to the complete invoice
-	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts" en16931:"BG-20"`
 	// Charges or surcharges applied to the complete invoice
-	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
+	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges" en16931:"BG-21"`
 	// Expenses paid for by the supplier but invoiced directly to the customer.
 	Outlays []*Outlay `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
@@ -84,14 +84,14 @@ type Invoice struct {
 	// Information on when, how, and to whom the invoice should be paid.
 	Payment *Payment `json:"payment,omitempty" jsonschema:"title=Payment Details"`
 	// Specific details on delivery of the goods referenced in the invoice.
-	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details"`
+	Delivery *Delivery `json:"delivery,omitempty" jsonschema:"title=Delivery Details" en16931:"BG-13"`
 
 	// Summary of all the invoice totals, including taxes (calculated).
-	Totals *Totals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true"`
+	Totals *Totals `json:"totals" jsonschema:"title=Totals" jsonschema_extras:"calculated=true" en16931:"BG-22"`
 
 	// Unstructured information that is relevant to the invoice, such as correction or additional
 	// legal details.
-	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes" en16931:"BG-1"`
 
 	// Additional complementary objects that add relevant information to the invoice.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`

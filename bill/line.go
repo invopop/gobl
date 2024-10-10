@@ -18,24 +18,24 @@ import (
 type Line struct {
 	uuid.Identify
 	// Line number inside the parent (calculated)
-	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true" en16931:"BT-126"`
 	// Number of items
-	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
+	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity" en16931:"BT-129"`
 	// Details about what is being sold
 	Item *org.Item `json:"item" jsonschema:"title=Item"`
 	// Result of quantity multiplied by the item's price (calculated)
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
 	// Discounts applied to this line
-	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts" en16931:"BG-27"`
 	// Charges applied to this line
-	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
+	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges" en16931:"BG-28"`
 	// Map of taxes to be applied and used in the invoice totals
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Total line amount after applying discounts to the sum (calculated).
-	Total num.Amount `json:"total" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
+	Total num.Amount `json:"total" jsonschema:"title=Total" jsonschema_extras:"calculated=true" en16931:"BT-131"`
 	// Set of specific notes for this line that may be required for
 	// clarification.
-	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes" en16931:"BT-127"`
 
 	// internal amount provided with greater precision
 	total num.Amount

@@ -22,7 +22,7 @@ type DocumentRef struct {
 	// Series the referenced document belongs to.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Source document's code or other identifier.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code" jsonschema:"title=Code" en16931:"BT-122"`
 	// Line index number inside the document, if relevant.
 	Line int `json:"line,omitempty" jsonschema:"title=Line"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the document or its contents, agreed upon by the supplier and customer.
@@ -32,11 +32,11 @@ type DocumentRef struct {
 	// Human readable description on why this reference is here or needs to be used.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Additional details about the document.
-	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	Description string `json:"description,omitempty" jsonschema:"title=Description" en16931:"BT-123"`
 	// Seals of approval from other organisations that may need to be listed.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Link to the source document.
-	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
+	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri" en16931:"BT-124"`
 	// Extensions for additional codes that may be required.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschemaL:"title=Extensions"`
 	// Meta contains additional information about the document.

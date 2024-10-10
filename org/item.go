@@ -29,11 +29,11 @@ type Item struct {
 	// Special key used to classify the item sometimes required by some regimes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Brief name of the item
-	Name string `json:"name" jsonschema:"title=Name"`
+	Name string `json:"name" jsonschema:"title=Name" en16931:"BT-153"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the item. They should be agreed upon between supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Detailed description of the item.
-	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	Description string `json:"description,omitempty" jsonschema:"title=Description" en16931:"BT-154"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.
@@ -42,9 +42,9 @@ type Item struct {
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`
 	// Unit of measure.
-	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	Unit Unit `json:"unit,omitempty" jsonschema:"title=Unit" en16931:"BT-130"`
 	// Country code of where this item was from originally.
-	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
+	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin" en16931:"BT-159"`
 	// Extension code map for any additional regime specific codes that may be required.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional meta information that may be useful

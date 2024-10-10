@@ -15,13 +15,13 @@ import (
 // applied before taxes.
 type LineDiscount struct {
 	// Percentage if fixed amount not applied
-	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" en16931:"BT-138"`
 	// Fixed discount amount to apply (calculated if percent present).
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true" en16931:"BT-136"`
 	// Reason code.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	Code string `json:"code,omitempty" jsonschema:"title=Code" en16931:"BT-140"`
 	// Text description as to why the discount was applied
-	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	Reason string `json:"reason,omitempty" jsonschema:"title=Reason" en16931:"BT-139"`
 
 	// TODO: support UNTDID 5189 codes
 }
@@ -46,17 +46,17 @@ type Discount struct {
 	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Base represents the value used as a base for percent calculations instead
 	// of the invoice's sum of lines.
-	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base" en16931:"BT-93"`
 	// Percentage to apply to the base or invoice's sum.
-	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" en16931:"BT-94"`
 	// Amount to apply (calculated if percent present).
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true" en16931:"BT-92"`
 	// List of taxes to apply to the discount
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Code for the reason this discount applied
-	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
+	Code string `json:"code,omitempty" jsonschema:"title=Reason Code" en16931:"BT-98"`
 	// Text description as to why the discount was applied
-	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	Reason string `json:"reason,omitempty" jsonschema:"title=Reason" en16931:"BT-97"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 

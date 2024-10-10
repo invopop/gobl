@@ -17,17 +17,17 @@ import (
 // should be provided, all other details serve as a reference.
 type Instructions struct {
 	// The payment means expected or that have been arranged to be used to make the payment.
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+	Key cbc.Key `json:"key" jsonschema:"title=Key" en16931:"BT-81"`
 	// Optional text description of the payment method
-	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
+	Detail string `json:"detail,omitempty" jsonschema:"title=Detail" en16931:"BT-82"`
 	// Remittance information or concept, a text value used to link the payment with the invoice.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
+	Ref string `json:"ref,omitempty" jsonschema:"title=Reference" en16931:"BT-83"`
 	// Instructions for sending payment via a bank transfer.
-	CreditTransfer []*CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer"`
+	CreditTransfer []*CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer" en16931:"BG-17"`
 	// Details of the payment that will be made via a credit or debit card.
-	Card *Card `json:"card,omitempty" jsonschema:"title=Card"`
+	Card *Card `json:"card,omitempty" jsonschema:"title=Card" en16931:"BG-18"`
 	// A group of terms that can be used by the customer or payer to consolidate direct debit payments.
-	DirectDebit *DirectDebit `json:"direct_debit,omitempty" jsonschema:"title=Direct Debit"`
+	DirectDebit *DirectDebit `json:"direct_debit,omitempty" jsonschema:"title=Direct Debit" en16931:"BG-19"`
 	// Array of online payment options
 	Online []*Online `json:"online,omitempty" jsonschema:"title=Online"`
 	// Any additional instructions that may be required to make the payment.
@@ -41,32 +41,32 @@ type Instructions struct {
 // Card contains simplified card holder data as a reference for the customer.
 type Card struct {
 	// Last 4 digits of the card's Primary Account Number (PAN).
-	Last4 string `json:"last4" jsonschema:"title=Last 4"`
+	Last4 string `json:"last4" jsonschema:"title=Last 4" en16931:"BT-87"`
 	// Name of the person whom the card belongs to.
-	Holder string `json:"holder" jsonschema:"title=Holder Name"`
+	Holder string `json:"holder" jsonschema:"title=Holder Name" en16931:"BT-88"`
 }
 
 // DirectDebit defines the data that will be used to make the direct debit.
 type DirectDebit struct {
 	// Unique identifier assigned by the payee for referencing the direct debit.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Mandate Reference"`
+	Ref string `json:"ref,omitempty" jsonschema:"title=Mandate Reference" en16931:"BT-89"`
 	// Unique banking reference that identifies the payee or seller assigned by the bank.
-	Creditor string `json:"creditor,omitempty" jsonschema:"title=Creditor ID"`
+	Creditor string `json:"creditor,omitempty" jsonschema:"title=Creditor ID" en16931:"BT-90"`
 	// Account identifier to be debited by the direct debit.
-	Account string `json:"account,omitempty" jsonschema:"title=Account"`
+	Account string `json:"account,omitempty" jsonschema:"title=Account" en16931:"BT-91"`
 }
 
 // CreditTransfer contains fields that can be used for making payments via
 // a bank transfer or wire.
 type CreditTransfer struct {
 	// International Bank Account Number
-	IBAN string `json:"iban,omitempty" jsonschema:"title=IBAN"`
+	IBAN string `json:"iban,omitempty" jsonschema:"title=IBAN" en16931:"BT-84"`
 	// Bank Identifier Code used for international transfers.
-	BIC string `json:"bic,omitempty" jsonschema:"title=BIC"`
+	BIC string `json:"bic,omitempty" jsonschema:"title=BIC" en16931:"BT-86"`
 	// Account number, if IBAN not available.
-	Number string `json:"number,omitempty" jsonschema:"title=Number"`
+	Number string `json:"number,omitempty" jsonschema:"title=Number" en16931:"BT-84"`
 	// Name of the bank.
-	Name string `json:"name,omitempty" jsonschema:"title=Name"`
+	Name string `json:"name,omitempty" jsonschema:"title=Name" en16931:"BT-85"`
 	// Bank office branch address, not normally required.
 	Branch *org.Address `json:"branch,omitempty" jsonschema:"title=Branch"`
 }
