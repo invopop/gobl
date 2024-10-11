@@ -4,6 +4,12 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [v0.201.1]
+
+### Fixed
+
+- `mx`: fixed panic when normalizing an invoice with `tax` but no `ext` inside.
+
 ## [v0.201.0]
 
 ### Fixed
