@@ -31,10 +31,13 @@
           "title": "Code",
           "description": "Source document's code or other identifier."
         },
-        "line": {
-          "type": "integer",
-          "title": "Line",
-          "description": "Line index number inside the document, if relevant."
+        "lines": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "Line index numbers inside the document, if relevant."
         },
         "identities": {
           "items": {
