@@ -9,30 +9,35 @@ import (
 	"github.com/invopop/validation"
 )
 
-func isValidInvoiceType(t cbc.Key) bool {
-	validTypes := []cbc.Key{
-		bill.InvoiceTypeStandard,
-		bill.InvoiceTypeCreditNote,
-		bill.InvoiceTypeCorrective,
-		invoiceTypeSelfBilled,
-		invoiceTypePartial,
-	}
-	for _, validType := range validTypes {
-		if t == validType {
-			return true
-		}
-	}
-	return false
+const (
+	invoiceTypeSelfBilled               cbc.Key = "389"
+	invoiceTypePartial                  cbc.Key = "326"
+	invoiceTypePartialConstruction      cbc.Key = "875"
+	invoiceTypePartialFinalConstruction cbc.Key = "876"
+	invoiceTypeFinalConstruction        cbc.Key = "877"
+)
+
+var validTypes = []cbc.Key{
+	bill.InvoiceTypeStandard,
+	bill.InvoiceTypeCreditNote,
+	bill.InvoiceTypeCorrective,
+	invoiceTypeSelfBilled,
+	invoiceTypePartial,
+	invoiceTypePartialConstruction,
+	invoiceTypePartialFinalConstruction,
+	invoiceTypeFinalConstruction,
 }
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		// BR-DE-17
 		validation.Field(&inv.Type,
-			validation.In(bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote, bill.InvoiceTypeCorrective, invoiceTypeSelfBilled, invoiceTypePartial),
+			validation.By(validateInvoiceType),
 		),
 		// BR-DE-01
 		validation.Field(&inv.Payment.Instructions,
 			validation.Required,
+			validation.By(validatePaymentInstructions),
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
@@ -45,7 +50,22 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.By(validateDeliveryParty),
 			),
 		),
+		// BR-DE-26
+		validation.Field(&inv,
+			validation.By(validateCorrectiveInvoice),
+		),
 	)
+}
+
+func validateInvoiceType(value interface{}) error {
+	t, ok := value.(cbc.Key)
+	if !ok {
+		return validation.NewError("type", "Invalid invoice type")
+	}
+	if t.In(validTypes...) {
+		return nil
+	}
+	return validation.NewError("invalid", "Invalid invoice type")
 }
 
 func validateSupplier(value interface{}) error {
@@ -54,11 +74,11 @@ func validateSupplier(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(party,
-		// BR-DE-05
+		// BR-DE-02
 		validation.Field(&party.Name,
 			validation.Required,
 		),
-		// BR-DE-02
+		// BR-DE-03, BR-DE-04
 		validation.Field(&party.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validatePartyAddress)),
@@ -67,9 +87,11 @@ func validateSupplier(value interface{}) error {
 		validation.Field(&party.People,
 			validation.Required,
 		),
+		// BR-DE-05
 		validation.Field(&party.Telephones,
 			validation.Required,
 		),
+		// BR-DE-07
 		validation.Field(&party.Emails,
 			validation.Required,
 		),
@@ -82,6 +104,7 @@ func validateCustomer(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(party,
+		// BR-DE-08, BR-DE-09
 		validation.Field(&party.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validatePartyAddress)),
@@ -112,7 +135,6 @@ func validateDeliveryParty(value interface{}) error {
 	return validation.ValidateStruct(party,
 		validation.Field(&party.Addresses,
 			validation.Required,
-			validation.Length(1, 1),
 			validation.Each(validation.By(validateDeliveryAddress)),
 		),
 	)
@@ -148,6 +170,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 	)
 }
 
+// BR-DE-14
 func validateVATRate(value interface{}) error {
 	rate, _ := value.(cbc.Key)
 	if rate == "" {
@@ -156,54 +179,11 @@ func validateVATRate(value interface{}) error {
 	return nil
 }
 
-func validatePaymentMeans(inv *bill.Invoice) error {
-	if inv.Payment == nil || inv.Payment.Instructions == nil {
+func validateCorrectiveInvoice(value interface{}) error {
+	inv, ok := value.(*bill.Invoice)
+	if !ok || inv == nil {
 		return nil
 	}
-
-	instr := inv.Payment.Instructions
-	return validation.ValidateStruct(instr,
-		validation.Field(&instr.Key, validation.Required),
-		validation.Field(&instr.CreditTransfer,
-			validation.When(instr.Key == pay.MeansKeyCreditTransfer,
-				validation.Required.Error("Credit transfer details are required when payment means is credit transfer"),
-				validation.Length(1, 1).Error("Exactly one credit transfer detail must be provided"),
-				validation.Each(validation.By(func(ct interface{}) error {
-					creditTransfer, _ := ct.(*pay.CreditTransfer)
-					if creditTransfer.IBAN == "" && creditTransfer.Number == "" {
-						return validation.NewError("required", "Either IBAN or account number must be provided for credit transfer")
-					}
-					return nil
-				})),
-			).Else(validation.Empty),
-		),
-		validation.Field(&instr.Card,
-			validation.When(instr.Key == pay.MeansKeyCard,
-				validation.Required.Error("Card details are required when payment means is card"),
-				validation.By(func(card interface{}) error {
-					c, _ := card.(*pay.Card)
-					if c == nil || (c.Last4 == "" && c.Holder == "") {
-						return validation.NewError("required", "Card details must include either last 4 digits or holder name")
-					}
-					return nil
-				}),
-			).Else(validation.Nil),
-		),
-		validation.Field(&instr.DirectDebit,
-			validation.When(instr.Key == pay.MeansKeyDirectDebit,
-				validation.Required.Error("Direct debit details are required when payment means is direct debit"),
-				validation.By(validateDirectDebit),
-			).Else(validation.Nil),
-		),
-		validation.Field(&instr.Online,
-			validation.When(instr.Key != pay.MeansKeyCreditTransfer && instr.Key != pay.MeansKeyCard && instr.Key != pay.MeansKeyDirectDebit,
-				validation.Empty.Error("Online payment details should not be present for this payment means"),
-			),
-		),
-	)
-}
-
-func validateCorrectiveInvoice(inv *bill.Invoice) error {
 	if inv.Type.In(bill.InvoiceTypeCorrective) {
 		if inv.Preceding == nil {
 			return validation.NewError("required", "Preceding invoice details are required for corrective invoices")

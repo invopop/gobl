@@ -4,18 +4,12 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
 const (
 	V3 cbc.Key = "de-xrechnung-3.0.2"
-)
-
-const (
-	invoiceTypeSelfBilled cbc.Key = "389"
-	invoiceTypePartial    cbc.Key = "326"
 )
 
 func init() {
@@ -54,8 +48,6 @@ func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePayInstructions(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
 	}
