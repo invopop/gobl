@@ -17,7 +17,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// set.
 	normalizeParty(inv.Supplier) // first do party
 	ext := make(tax.Extensions)
-	if inv.Tax != nil {
+	if inv.Tax != nil && inv.Tax.Ext != nil {
 		ext = inv.Tax.Ext
 	}
 	if ext.Has(extKeyIssuePlace) {

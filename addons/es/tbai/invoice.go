@@ -20,6 +20,11 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Series, validation.Required),
+		validation.Field(&inv.Customer,
+			validation.By(validateInvoiceCustomer),
+			validation.Skip,
+		),
 		validation.Field(&inv.Preceding,
 			validation.When(
 				inv.Type.In(es.InvoiceCorrectionTypes...),
@@ -35,6 +40,30 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Notes,
+			cbc.ValidateNotesHasKey(cbc.NoteKeyGeneral),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceCustomer(val any) error {
+	obj, _ := val.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+	// Customers must have a tax ID to at least set the country,
+	// and Spanish ones should also have an ID. There are more complex
+	// rules for exports.
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.TaxID,
+			validation.Required,
+			validation.When(
+				obj.TaxID != nil && obj.TaxID.Country.In("ES"),
+				tax.RequireIdentityCode,
+			),
+			validation.Skip,
+		),
 	)
 }
 
@@ -45,6 +74,7 @@ func validateInvoicePreceding(val any) error {
 	}
 	return validation.ValidateStruct(p,
 		validation.Field(&p.IssueDate, validation.Required),
+		validation.Field(&p.Series, validation.Required),
 		validation.Field(&p.Ext,
 			tax.ExtensionsRequires(ExtKeyCorrection),
 			validation.Skip,

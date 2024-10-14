@@ -44,6 +44,14 @@
           "title": "Scenarios",
           "description": "Scenarios are applied to documents after normalization and before\nvalidation to ensure that form specific extensions have been added\nto the document."
         },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities that are specific for the add-on and may be validated against or\nused during conversion processes."
+        },
         "inboxes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key-definition"

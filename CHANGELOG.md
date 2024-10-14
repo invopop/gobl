@@ -4,6 +4,34 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
+## [Unreleased]
+
+### Change
+
+- `org.DocumentRef`: renamed `line` to `lines` that accepts an array of integers making it possible to define a selection of reference lines in another document as opposed to just one.
+
+### Added
+
+- `cbc.Code`: new `Join` and `JoinWith` methods to help concatenate codes.
+- `it-sdi-v1`: added CIG and CUP identity type codes.
+
+### Fixed
+
+- `mx`: fixed panic when normalizing an invoice with `tax` but no `ext` inside.
+
+## [v0.201.0]
+
+### Fixed
+
+- `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
+- `es`: moving invoice customer validation to the facturae and tbai addons.
+- `it-sdi-v1`: fixing validation issue for payment terms with no due dates.
+
+### Changed
+
+- `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
+- `co-dian-v2`: moved from `co` tax regime into own addon.
+
 ## [v0.200.1]
 
 ### Fixed

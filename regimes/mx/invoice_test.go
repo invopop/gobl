@@ -21,6 +21,16 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
+
+	t.Run("no ext", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Tax = &bill.Tax{}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Tax)
+		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+	})
+
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := baseInvoice()
 		delete(inv.Supplier.Ext, cfdi.ExtKeyPostCode)

@@ -14,13 +14,36 @@ import (
 )
 
 func TestInvoiceValidation(t *testing.T) {
-	inv := testInvoiceStandard(t)
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	t.Run("standard invoice", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
 
-	delete(inv.Tax.Ext, facturae.ExtKeyDocType)
-	err := inv.Validate()
-	assert.ErrorContains(t, err, "tax: (ext: (es-facturae-doc-type: required.).)")
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (tax_id: cannot be blank.)")
+	})
+
+	t.Run("missing customer tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+	})
+
+	t.Run("missing ext key doc type", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		delete(inv.Tax.Ext, facturae.ExtKeyDocType)
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "tax: (ext: (es-facturae-doc-type: required.).)")
+	})
+
 }
 
 func TestInvoicePrecedingValidation(t *testing.T) {

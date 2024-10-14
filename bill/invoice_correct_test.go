@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
@@ -12,7 +13,6 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/co"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -106,11 +106,11 @@ func TestInvoiceCorrect(t *testing.T) {
 
 	stamps := []*head.Stamp{
 		{
-			Provider: co.StampProviderDIANCUDE,
+			Provider: dian.StampCUDE,
 			Value:    "FOOO",
 		},
 		{
-			Provider: co.StampProviderDIANQR, // not copied!
+			Provider: dian.StampQR, // not copied!
 			Value:    "BARRRR",
 		},
 	}
@@ -125,13 +125,13 @@ func TestInvoiceCorrect(t *testing.T) {
 		bill.Credit,
 		bill.WithStamps(stamps),
 		bill.WithReason("test refund"),
-		bill.WithExtension(co.ExtKeyDIANCreditCode, "2"),
+		bill.WithExtension(dian.ExtKeyCreditCode, "2"),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, i.Type, bill.InvoiceTypeCreditNote)
 	pre = i.Preceding[0]
 	require.Len(t, pre.Stamps, 1)
-	assert.Equal(t, pre.Stamps[0].Provider, co.StampProviderDIANCUDE)
+	assert.Equal(t, pre.Stamps[0].Provider, dian.StampCUDE)
 	// assert.Equal(t, pre.CorrectionMethod, co.CorrectionMethodKeyRevoked)
 }
 
@@ -354,6 +354,7 @@ func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
 		Regime: tax.WithRegime("CO"),
+		Addons: tax.WithAddons(dian.V2),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{

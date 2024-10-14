@@ -197,6 +197,13 @@
               "ext": {
                 "pt-region": "PT-MA"
               },
+              "since": "2024-10-01",
+              "percent": "4.0%"
+            },
+            {
+              "ext": {
+                "pt-region": "PT-MA"
+              },
               "since": "2011-01-01",
               "percent": "5.0%"
             },

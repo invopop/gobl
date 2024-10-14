@@ -88,7 +88,7 @@ func validateSupplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&supplier.Registration,
-			validation.By(validateRegistration),
+			validation.By(validateInvoiceSupplierRegistration),
 			validation.Skip,
 		),
 		validation.Field(&supplier.Ext,
@@ -141,8 +141,8 @@ func validateInvoicePayment(val any) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Instructions,
 			validation.When(
-				p.Terms != nil,
-				validation.Required.Error("cannot be blank when terms are present"),
+				(p.Terms != nil && len(p.Terms.DueDates) > 0),
+				validation.Required.Error("cannot be blank when terms with due dates are present"),
 			),
 			validation.Skip,
 		),
@@ -183,7 +183,7 @@ func validateAddress(value interface{}) error {
 	)
 }
 
-func validateRegistration(value interface{}) error {
+func validateInvoiceSupplierRegistration(value interface{}) error {
 	v, ok := value.(*org.Registration)
 	if v == nil || !ok {
 		return nil

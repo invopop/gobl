@@ -43,3 +43,7 @@ lines:
         ext:
           es-tbai-product: "services"
           es-tbai-exemption: "E1"
+
+notes:
+  - key: "general"
+    text: "Just an invoice"
