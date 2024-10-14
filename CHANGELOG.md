@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc.Code`: new `Join` and `JoinWith` methods to help concatenate codes.
 - `it-sdi-v1`: added CIG and CUP identity type codes.
 
+### Fixed
+
+- `mx`: fixed panic when normalizing an invoice with `tax` but no `ext` inside.
+
 ## [v0.201.0]
 
 ### Fixed
