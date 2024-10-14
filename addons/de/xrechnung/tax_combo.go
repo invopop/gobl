@@ -6,7 +6,35 @@ import (
 	"github.com/invopop/validation"
 )
 
-func validateTaxCombo(tc *tax.Combo) error {
+func TaxRateExtensions() tax.Extensions {
+	return taxRateMap
+}
+
+var taxRateMap = tax.Extensions{
+	tax.RateStandard: "S",
+	tax.RateZero:     "Z",
+	tax.RateExempt:   "E",
+}
+
+func normalizeTaxCombo(combo *tax.Combo) {
+	// copy the SAF-T tax rate code to the line
+	switch combo.Category {
+	case tax.CategoryVAT:
+		if combo.Rate.IsEmpty() {
+			return
+		}
+		k, ok := taxRateMap[combo.Rate]
+		if !ok {
+			return
+		}
+		if combo.Ext == nil {
+			combo.Ext = make(tax.Extensions)
+		}
+		combo.Ext[ExtKeyTaxRate] = k
+	}
+}
+
+func ValidateTaxCombo(tc *tax.Combo) error {
 	if tc == nil {
 		return nil
 	}

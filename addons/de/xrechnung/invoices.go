@@ -26,7 +26,7 @@ var validTypes = []cbc.Key{
 	invoiceTypeFinalConstruction,
 }
 
-func validateInvoice(inv *bill.Invoice) error {
+func ValidateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		// BR-DE-17
 		validation.Field(&inv.Type,
