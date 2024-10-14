@@ -33,8 +33,6 @@ func newAddon() *tax.AddonDef {
 			https://www.xrechnung.de/
 			`),
 		},
-		// Extensions:  extensions,
-		// Identities:  identities,
 		Normalizer: normalize,
 		Validator:  validate,
 	}
