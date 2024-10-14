@@ -33,21 +33,25 @@ func newAddon() *tax.AddonDef {
 			https://www.xrechnung.de/
 			`),
 		},
+		Extensions: extensions,
 		Normalizer: normalize,
 		Validator:  validate,
 	}
 }
 
 func normalize(doc any) {
-	// No normalizations yet
+	switch obj := doc.(type) {
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
+	}
 }
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return validateInvoice(obj)
+		return ValidateInvoice(obj)
 	case *tax.Combo:
-		return validateTaxCombo(obj)
+		return ValidateTaxCombo(obj)
 	}
 	return nil
 }
