@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ca8f63e92f0bc970f18bb3cf2b675de5856df31cbc14fd6ae0bbca468e365aa9"
+			"val": "c1f8222dc56b7da46bdba0794375229935d1b325454c562977149b717de9d25d"
 		}
 	},
 	"doc": {
@@ -24,7 +24,7 @@
 			"identities": [
 				{
 					"key": "de-tax-number",
-					"code": "9234567894"
+					"code": "92/345/67894"
 				}
 			],
 			"addresses": [
