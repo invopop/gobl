@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `cbc.Code`: new `Join` and `JoinWith` methods to help concatenate codes.
 - `it-sdi-v1`: added CIG and CUP identity type codes.
-- `de`: added validation and normalization for tax identities.
+- `de`: added validation and normalization for tax identities (not VAT).
 
 ### Fixed
 
