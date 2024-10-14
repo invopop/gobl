@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
@@ -48,10 +47,7 @@ func newAddon() *tax.AddonDef {
 }
 
 func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
-	}
+	// No normalizations yet
 }
 
 func validate(doc any) error {
@@ -60,8 +56,6 @@ func validate(doc any) error {
 		return validateInvoice(obj)
 	case *pay.Instructions:
 		return validatePayInstructions(obj)
-	case *org.Party:
-		return validateParty(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
 	}
