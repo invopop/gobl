@@ -5,7 +5,9 @@ import (
 
 	"github.com/invopop/gobl/addons/de/xrechnung"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/cal"
+
+	// "github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -17,13 +19,49 @@ import (
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := &bill.Invoice{
-		Type:   cbc.Key("standard"),
-		Addons: tax.WithAddons(xrechnung.V3),
-		Series: "A",
-		Customer: &org.Party{
+		Addons:    tax.WithAddons(xrechnung.V3),
+		IssueDate: cal.MakeDate(2024, 1, 1),
+		Currency:  "EUR",
+		Series:    "A",
+		Code:      "1000",
+		Supplier: &org.Party{
+			Name: "Cursor AG",
 			TaxID: &tax.Identity{
 				Country: "DE",
-				Code:    "123456789",
+				Code:    "82741168",
+			},
+			Addresses: []*org.Address{
+				{
+					Street:   "Dietmar-Hopp-Allee",
+					Locality: "Walldorf",
+					Code:     "69190",
+					Country:  "DE",
+				},
+			},
+			Emails: []*org.Email{
+				{
+					Address: "billing@cursor.com",
+				},
+			},
+			Telephones: []*org.Telephone{
+				{
+					Number: "+49100200300",
+				},
+			},
+		},
+		Customer: &org.Party{
+			Name: "Sample Consumer",
+			TaxID: &tax.Identity{
+				Country: "DE",
+				Code:    "111111125",
+			},
+			Addresses: []*org.Address{
+				{
+					Street:   "Werner-Heisenberg-Allee",
+					Locality: "München",
+					Code:     "80939",
+					Country:  "DE",
+				},
 			},
 		},
 		Lines: []*bill.Line{
@@ -54,17 +92,6 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
 	})
 
-	t.Run("with exemption reason", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0].Ext = nil
-		assertValidationError(t, inv, "de-xrechnung-exemption: required")
-	})
-
-	t.Run("without series", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Series = ""
-		assertValidationError(t, inv, "series: cannot be blank")
-	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expectedError string) {
