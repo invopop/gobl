@@ -4,17 +4,16 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
 const (
-	invoiceTypeSelfBilled               cbc.Key = "389"
-	invoiceTypePartial                  cbc.Key = "326"
-	invoiceTypePartialConstruction      cbc.Key = "875"
-	invoiceTypePartialFinalConstruction cbc.Key = "876"
-	invoiceTypeFinalConstruction        cbc.Key = "877"
+	invoiceTypeSelfBilled               cbc.Key = "self-billed"
+	invoiceTypePartial                  cbc.Key = "partial"
+	invoiceTypePartialConstruction      cbc.Key = "partial-construction"
+	invoiceTypePartialFinalConstruction cbc.Key = "partial-final-construction"
+	invoiceTypeFinalConstruction        cbc.Key = "final-construction"
 )
 
 var validTypes = []cbc.Key{
@@ -38,6 +37,10 @@ func validateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Payment.Instructions,
 			validation.Required,
 			validation.By(validatePaymentInstructions),
+		),
+		// BR-DE-15
+		validation.Field(&inv.Ordering.Code,
+			validation.Required,
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
@@ -190,30 +193,4 @@ func validateCorrectiveInvoice(value interface{}) error {
 		}
 	}
 	return nil
-}
-
-func validateDirectDebit(value interface{}) error {
-	inv, ok := value.(*bill.Invoice)
-	if !ok || inv == nil {
-		return nil
-	}
-	if inv.Payment == nil || inv.Payment.Instructions == nil || inv.Payment.Instructions.Key != pay.MeansKeyDirectDebit {
-		return nil
-	}
-
-	dd := inv.Payment.Instructions.DirectDebit
-	return validation.ValidateStruct(dd,
-		// BR-DE-29 - Changed to Peppol-EN16931-R061
-		validation.Field(&dd.Ref,
-			validation.Required.Error("Mandate reference is mandatory for direct debit"),
-		),
-		// BR-DE-30
-		validation.Field(&dd.Creditor,
-			validation.Required.Error("Creditor identifier is mandatory for direct debit"),
-		),
-		// BR-DE-31
-		validation.Field(&dd.Account,
-			validation.Required.Error("Debited account identifier is mandatory for direct debit"),
-		),
-	)
 }
