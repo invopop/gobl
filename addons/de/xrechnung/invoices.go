@@ -26,6 +26,7 @@ var validTypes = []cbc.Key{
 	invoiceTypeFinalConstruction,
 }
 
+// ValidateInvoice validates the invoice according to the XRechnung standard
 func ValidateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		// BR-DE-17

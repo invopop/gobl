@@ -5,9 +5,8 @@ import (
 	"github.com/invopop/gobl/i18n"
 )
 
-var (
-	ExtKeyTaxRate cbc.Key = "de-xrechnung-tax-rate"
-)
+// ExtKeyTaxRate is the key for the tax rate extension in XRechnung
+var ExtKeyTaxRate cbc.Key = "de-xrechnung-tax-rate"
 
 var extensions = []*cbc.KeyDefinition{
 	{
