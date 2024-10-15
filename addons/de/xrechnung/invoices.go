@@ -65,12 +65,10 @@ func ValidateInvoice(inv *bill.Invoice) error {
 			validation.By(validateSupplier),
 		),
 		validation.Field(&inv.Customer,
-			validation.By(validateCustomer),
+			validation.By(validateCustomerReceiver),
 		),
 		validation.Field(&inv.Delivery,
-			validation.When(inv.Delivery != nil,
-				validation.By(validateDeliveryParty),
-			),
+			validation.By(validateDelivery),
 		),
 		// BR-DE-26
 		validation.Field(&inv.Preceding,
@@ -122,7 +120,30 @@ func validateSupplier(value interface{}) error {
 	)
 }
 
-func validateCustomer(value interface{}) error {
+func validateDelivery(value interface{}) error {
+	d, _ := value.(*bill.Delivery)
+	if d == nil {
+		return nil
+	}
+	return validation.ValidateStruct(d,
+		validation.Field(&d.Receiver,
+			validation.By(validateCustomerReceiver)),
+	)
+}
+
+// func validateDeliveryParty(value interface{}) error {
+// 	d, _ := value.(*bill.Delivery)
+// 	if d == nil {
+// 		return nil
+// 	}
+// 	return validation.ValidateStruct(d,
+// 		validation.Field(&d.Receiver,
+// 			validation.Required,
+// 			validation.By(validateCustomerReceiver)),
+// 	)
+// }
+
+func validateCustomerReceiver(value interface{}) error {
 	p, _ := value.(*org.Party)
 	if p == nil {
 		return nil
@@ -135,7 +156,6 @@ func validateCustomer(value interface{}) error {
 		),
 	)
 }
-
 func validatePartyAddress(value interface{}) error {
 	addr, _ := value.(*org.Address)
 	if addr == nil {
@@ -145,36 +165,6 @@ func validatePartyAddress(value interface{}) error {
 		validation.Field(&addr.Locality,
 			validation.Required,
 		),
-		validation.Field(&addr.Code,
-			validation.Required,
-		),
-	)
-}
-
-func validateDeliveryParty(value interface{}) error {
-	p, _ := value.(*org.Party)
-	if p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Addresses,
-			validation.Required,
-			validation.Each(validation.By(validateDeliveryAddress)),
-		),
-	)
-}
-
-func validateDeliveryAddress(value interface{}) error {
-	addr, _ := value.(*org.Address)
-	if addr == nil {
-		return nil
-	}
-	return validation.ValidateStruct(addr,
-		// BR-DE-10
-		validation.Field(&addr.Locality,
-			validation.Required,
-		),
-		// BR-DE-11
 		validation.Field(&addr.Code,
 			validation.Required,
 		),
