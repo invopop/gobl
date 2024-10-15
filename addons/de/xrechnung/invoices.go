@@ -43,7 +43,7 @@ func ValidateInvoice(inv *bill.Invoice) error {
 				return validation.ValidateStruct(payment,
 					validation.Field(&payment.Instructions,
 						validation.Required,
-						validation.By(validatePaymentInstructions),
+						validation.By(ValidatePaymentInstructions),
 					),
 				)
 			}),
@@ -65,7 +65,7 @@ func ValidateInvoice(inv *bill.Invoice) error {
 			validation.By(validateSupplier),
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(validateSellerTaxInfo),
+			validation.By(validateSupplierTaxInfo),
 		),
 		validation.Field(&inv.Customer,
 			validation.By(validateCustomerReceiver),
@@ -123,25 +123,7 @@ func validateSupplier(value interface{}) error {
 	)
 }
 
-// func validateSellerTaxInfo(value interface{}) error {
-// 	supplier, ok := value.(*org.Party)
-// 	if !ok || supplier == nil {
-// 		return validation.NewError("invalid_supplier", "Supplier is invalid or nil")
-// 	}
-// 	hasVATIdentifier := supplier.TaxID != nil && supplier.TaxID.Code != ""
-// 	hasTaxIdentifier := org.IdentityForKey(supplier.Identities, "de-tax-number") != nil
-
-// 	if !hasVATIdentifier && !hasTaxIdentifier {
-// 		return validation.NewError(
-// 			"missing_seller_tax_info",
-// 			"Either Seller VAT identifier or Seller tax identifier must be provided",
-// 		)
-// 	}
-
-// 	return nil
-// }
-
-func validateSellerTaxInfo(value interface{}) error {
+func validateSupplierTaxInfo(value interface{}) error {
 	supplier, ok := value.(*org.Party)
 	if !ok || supplier == nil {
 		return validation.NewError("invalid_supplier", "Supplier is invalid or nil")
