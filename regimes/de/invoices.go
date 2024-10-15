@@ -33,14 +33,14 @@ func validateInvoiceSupplier(value any) error {
 				!hasTaxNumber(p),
 				tax.RequireIdentityCode,
 			),
-			validation.Skip,
+			// validation.Skip,
 		),
 		validation.Field(&p.Identities,
 			validation.When(
 				!hasTaxIDCode(p),
 				org.RequireIdentityKey(IdentityKeyTaxNumber),
 			),
-			validation.Skip,
+			// validation.Skip,
 		),
 	)
 }

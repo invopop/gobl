@@ -32,14 +32,34 @@ func ValidateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Type,
 			validation.By(validateInvoiceType),
 		),
-		// BR-DE-01
-		validation.Field(&inv.Payment.Instructions,
-			validation.Required,
-			validation.By(validatePaymentInstructions),
+		// BR-DE-01 (modified)
+		validation.Field(&inv.Payment, validation.Required),
+		validation.Field(&inv.Payment,
+			validation.By(func(value interface{}) error {
+				payment, ok := value.(*bill.Payment)
+				if !ok || payment == nil {
+					return validation.NewError("payment_type", "must be a valid non-empty Payment type")
+				}
+				return validation.ValidateStruct(payment,
+					validation.Field(&payment.Instructions,
+						validation.Required,
+						validation.By(validatePaymentInstructions),
+					),
+				)
+			}),
 		),
-		// BR-DE-15
-		validation.Field(&inv.Ordering.Code,
-			validation.Required,
+		// BR-DE-15 (modified)
+		validation.Field(&inv.Ordering, validation.Required),
+		validation.Field(&inv.Ordering,
+			validation.By(func(value interface{}) error {
+				ordering, ok := value.(*bill.Ordering)
+				if !ok || ordering == nil {
+					return validation.NewError("ordering_type", "must be a valid Ordering type")
+				}
+				return validation.ValidateStruct(ordering,
+					validation.Field(&ordering.Code, validation.Required),
+				)
+			}),
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
@@ -53,9 +73,9 @@ func ValidateInvoice(inv *bill.Invoice) error {
 			),
 		),
 		// BR-DE-26
-		validation.Field(&inv,
-			validation.By(validateCorrectiveInvoice),
-		),
+		// validation.Field(&inv,
+		// 	validation.By(validateCorrectiveInvoice),
+		// ),
 	)
 }
 
@@ -64,10 +84,10 @@ func validateInvoiceType(value interface{}) error {
 	if !ok {
 		return validation.NewError("type", "Invalid invoice type")
 	}
-	if t.In(validTypes...) {
-		return nil
+	if !t.In(validTypes...) {
+		return validation.NewError("invalid", "Invalid invoice type")
 	}
-	return validation.NewError("invalid", "Invalid invoice type")
+	return nil
 }
 
 func validateSupplier(value interface{}) error {

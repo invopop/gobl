@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	V3 cbc.Key = "de-xrechnung-3.0.2"
+	V3 cbc.Key = "de-xrechnung-v3"
 )
 
 func init() {
