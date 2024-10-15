@@ -32,7 +32,7 @@ func ValidateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Type,
 			validation.By(validateInvoiceType),
 		),
-		// BR-DE-01 (modified)
+		// BR-DE-01
 		validation.Field(&inv.Payment, validation.Required),
 		validation.Field(&inv.Payment,
 			validation.By(func(value interface{}) error {
@@ -48,7 +48,7 @@ func ValidateInvoice(inv *bill.Invoice) error {
 				)
 			}),
 		),
-		// BR-DE-15 (modified)
+		// BR-DE-15
 		validation.Field(&inv.Ordering, validation.Required),
 		validation.Field(&inv.Ordering,
 			validation.By(func(value interface{}) error {
@@ -73,9 +73,11 @@ func ValidateInvoice(inv *bill.Invoice) error {
 			),
 		),
 		// BR-DE-26
-		// validation.Field(&inv,
-		// 	validation.By(validateCorrectiveInvoice),
-		// ),
+		validation.Field(&inv.Preceding,
+			validation.When(inv.Type.In(bill.InvoiceTypeCorrective),
+				validation.Required,
+			),
+		),
 	)
 }
 
@@ -177,17 +179,4 @@ func validateDeliveryAddress(value interface{}) error {
 			validation.Required,
 		),
 	)
-}
-
-func validateCorrectiveInvoice(value interface{}) error {
-	inv, ok := value.(*bill.Invoice)
-	if !ok || inv == nil {
-		return nil
-	}
-	if inv.Type.In(bill.InvoiceTypeCorrective) {
-		if inv.Preceding == nil {
-			return validation.NewError("required", "Preceding invoice details are required for corrective invoices")
-		}
-	}
-	return nil
 }
