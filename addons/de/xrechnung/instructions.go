@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/validation"
 )
 
+// Payment keys for XRechnung SEPA direct debit and credit transfer
 const (
 	KeyPaymentMeansSEPACreditTransfer cbc.Key = "sepa-credit-transfer"
 	KeyPaymentMeansSEPADirectDebit    cbc.Key = "sepa-direct-debit"
@@ -23,6 +24,7 @@ var validPaymentKeys = []cbc.Key{
 	KeyPaymentMeansSEPADirectDebit,
 }
 
+// ValidatePaymentInstructions validates the payment instructions according to the XRechnung standard
 func ValidatePaymentInstructions(value interface{}) error {
 	inv, ok := value.(*bill.Invoice)
 	if !ok || inv == nil || inv.Payment == nil || inv.Payment.Instructions == nil {

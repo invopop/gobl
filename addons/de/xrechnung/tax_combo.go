@@ -5,6 +5,8 @@ import (
 	"github.com/invopop/validation"
 )
 
+// TaxRateExtensions returns the mapping of tax rates defined in DE
+// to their extension values used by XRechnung.
 func TaxRateExtensions() tax.Extensions {
 	return taxRateMap
 }
@@ -15,6 +17,7 @@ var taxRateMap = tax.Extensions{
 	tax.RateExempt:   "E",
 }
 
+// NormalizeTaxCombo adds the XRechnung tax rate code to the tax combo.
 func NormalizeTaxCombo(combo *tax.Combo) {
 	// copy the SAF-T tax rate code to the line
 	switch combo.Category {
@@ -33,6 +36,7 @@ func NormalizeTaxCombo(combo *tax.Combo) {
 	}
 }
 
+// ValidateTaxCombo validates percentage is included as BR-DE-14 indicates
 func ValidateTaxCombo(tc *tax.Combo) error {
 	if tc == nil {
 		return nil
