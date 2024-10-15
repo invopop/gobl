@@ -71,43 +71,43 @@ func validateInvoiceType(value interface{}) error {
 }
 
 func validateSupplier(value interface{}) error {
-	party, _ := value.(*org.Party)
-	if party == nil {
+	p, _ := value.(*org.Party)
+	if p == nil {
 		return nil
 	}
-	return validation.ValidateStruct(party,
+	return validation.ValidateStruct(p,
 		// BR-DE-02
-		validation.Field(&party.Name,
+		validation.Field(&p.Name,
 			validation.Required,
 		),
 		// BR-DE-03, BR-DE-04
-		validation.Field(&party.Addresses,
+		validation.Field(&p.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validatePartyAddress)),
 		),
 		// BR-DE-06
-		validation.Field(&party.People,
+		validation.Field(&p.People,
 			validation.Required,
 		),
 		// BR-DE-05
-		validation.Field(&party.Telephones,
+		validation.Field(&p.Telephones,
 			validation.Required,
 		),
 		// BR-DE-07
-		validation.Field(&party.Emails,
+		validation.Field(&p.Emails,
 			validation.Required,
 		),
 	)
 }
 
 func validateCustomer(value interface{}) error {
-	party, _ := value.(*org.Party)
-	if party == nil {
+	p, _ := value.(*org.Party)
+	if p == nil {
 		return nil
 	}
-	return validation.ValidateStruct(party,
+	return validation.ValidateStruct(p,
 		// BR-DE-08, BR-DE-09
-		validation.Field(&party.Addresses,
+		validation.Field(&p.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validatePartyAddress)),
 		),
@@ -130,12 +130,12 @@ func validatePartyAddress(value interface{}) error {
 }
 
 func validateDeliveryParty(value interface{}) error {
-	party, _ := value.(*org.Party)
-	if party == nil {
+	p, _ := value.(*org.Party)
+	if p == nil {
 		return nil
 	}
-	return validation.ValidateStruct(party,
-		validation.Field(&party.Addresses,
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validateDeliveryAddress)),
 		),

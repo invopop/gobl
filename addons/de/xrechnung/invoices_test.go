@@ -1,6 +1,8 @@
 package xrechnung_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/addons/de/xrechnung"
@@ -10,6 +12,7 @@ import (
 	// "github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 
 	"github.com/stretchr/testify/assert"
@@ -21,14 +24,15 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	inv := &bill.Invoice{
 		Addons:    tax.WithAddons(xrechnung.V3),
 		IssueDate: cal.MakeDate(2024, 1, 1),
+		Type:      "standard",
 		Currency:  "EUR",
-		Series:    "A",
+		Series:    "2024",
 		Code:      "1000",
 		Supplier: &org.Party{
 			Name: "Cursor AG",
 			TaxID: &tax.Identity{
 				Country: "DE",
-				Code:    "82741168",
+				Code:    "505898911",
 			},
 			Addresses: []*org.Address{
 				{
@@ -53,7 +57,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			Name: "Sample Consumer",
 			TaxID: &tax.Identity{
 				Country: "DE",
-				Code:    "111111125",
+				Code:    "449674701",
 			},
 			Addresses: []*org.Address{
 				{
@@ -71,6 +75,25 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					Name:  "Cursor Subscription",
 					Price: num.MakeAmount(1000, 3),
 				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     "standard",
+					},
+				},
+			},
+		},
+		Ordering: &bill.Ordering{
+			Code: "1234567890",
+		},
+		Payment: &bill.Payment{
+			Instructions: &pay.Instructions{
+				Key: "credit-transfer",
+				CreditTransfer: []*pay.CreditTransfer{
+					{
+						IBAN: "DE89370400440532013000",
+					},
+				},
 			},
 		},
 	}
@@ -81,6 +104,9 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
+		invJSON, err := json.MarshalIndent(inv, "", "  ")
+		require.NoError(t, err)
+		fmt.Println(string(invJSON))
 		require.NoError(t, inv.Validate())
 	})
 
@@ -92,10 +118,4 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
 	})
 
-}
-
-func assertValidationError(t *testing.T, inv *bill.Invoice, expectedError string) {
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	assert.ErrorContains(t, err, expectedError)
 }

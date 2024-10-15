@@ -1,7 +1,6 @@
 package xrechnung
 
 import (
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -16,7 +15,7 @@ var taxRateMap = tax.Extensions{
 	tax.RateExempt:   "E",
 }
 
-func normalizeTaxCombo(combo *tax.Combo) {
+func NormalizeTaxCombo(combo *tax.Combo) {
 	// copy the SAF-T tax rate code to the line
 	switch combo.Category {
 	case tax.CategoryVAT:
@@ -38,20 +37,11 @@ func ValidateTaxCombo(tc *tax.Combo) error {
 	if tc == nil {
 		return nil
 	}
+	// BR-DE-14: Percentage required for VAT
 	return validation.ValidateStruct(tc,
-		validation.Field(&tc.Category,
+		validation.Field(&tc.Percent,
 			validation.When(tc.Category == tax.CategoryVAT,
-				validation.By(validateVATRate),
-			),
+				validation.Required),
 		),
 	)
-}
-
-// BR-DE-14
-func validateVATRate(value interface{}) error {
-	rate, _ := value.(cbc.Key)
-	if rate == "" {
-		return validation.NewError("required", "VAT category rate is required")
-	}
-	return nil
 }
