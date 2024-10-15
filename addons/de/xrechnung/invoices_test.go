@@ -28,10 +28,10 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Code:      "1000",
 		Supplier: &org.Party{
 			Name: "Cursor AG",
-			// TaxID: &tax.Identity{
-			// 	Country: "DE",
-			// 	Code:    "505898911",
-			// },
+			TaxID: &tax.Identity{
+				Country: "DE",
+				Code:    "505898911",
+			},
 			People: []*org.Person{
 				{
 					Name: &org.Name{
@@ -61,10 +61,10 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Sample Consumer",
-			// TaxID: &tax.Identity{
-			// 	Country: "DE",
-			// 	Code:    "449674701",
-			// },
+			TaxID: &tax.Identity{
+				Country: "DE",
+				Code:    "449674701",
+			},
 			People: []*org.Person{
 				{
 					Name: &org.Name{
@@ -132,7 +132,20 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		errr := inv.Validate()
-		assert.ErrorContains(t, errr, "supplier: (tax_id: cannot be blank.)")
+		assert.ErrorContains(t, errr, "supplier: (identities: cannot be blank; tax_id: cannot be blank.).")
+	})
+	t.Run("missing supplier tax ID but has tax number", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Key:  "de-tax-number",
+				Code: "123/456/7890",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
 	})
 
 	t.Run("missing invoice type", func(t *testing.T) {
