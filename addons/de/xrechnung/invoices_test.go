@@ -1,21 +1,13 @@
 package xrechnung_test
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/addons/de/xrechnung"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-
-	// "github.com/invopop/gobl/l10n"
-
-	// "github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-
-	// "github.com/invopop/gobl/regimes/de"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 
@@ -138,10 +130,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing supplier tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
-		invJSON, err := json.MarshalIndent(inv, "", "  ")
-		require.NoError(t, err)
-		fmt.Println(string(invJSON))
-
 		require.NoError(t, inv.Calculate())
 		errr := inv.Validate()
 		assert.ErrorContains(t, errr, "supplier: (tax_id: cannot be blank.)")
@@ -232,8 +220,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "delivery: (party.addresses.0.locality: cannot be blank.)")
-		assert.ErrorContains(t, err, "delivery: (party.addresses.0.code: cannot be blank.)")
+		assert.ErrorContains(t, err, "delivery: (receiver: (addresses: (0: (code: cannot be blank; locality: cannot be blank.).).).).")
 	})
 
 	t.Run("valid delivery address", func(t *testing.T) {
