@@ -1,3 +1,4 @@
+// Package xrechnung provides extensions and validations for the German XRechnung standard version 3.0.2 for electronic invoicing.
 package xrechnung
 
 import (
@@ -9,6 +10,7 @@ import (
 )
 
 const (
+	// V3 is the key for the XRechnung version 3.x
 	V3 cbc.Key = "de-xrechnung-v3"
 )
 
