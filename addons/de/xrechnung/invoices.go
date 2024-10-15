@@ -64,6 +64,9 @@ func ValidateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
 		),
+		validation.Field(&inv.Supplier,
+			validation.By(validateSellerTaxInfo),
+		),
 		validation.Field(&inv.Customer,
 			validation.By(validateCustomerReceiver),
 		),
@@ -120,6 +123,56 @@ func validateSupplier(value interface{}) error {
 	)
 }
 
+// func validateSellerTaxInfo(value interface{}) error {
+// 	supplier, ok := value.(*org.Party)
+// 	if !ok || supplier == nil {
+// 		return validation.NewError("invalid_supplier", "Supplier is invalid or nil")
+// 	}
+// 	hasVATIdentifier := supplier.TaxID != nil && supplier.TaxID.Code != ""
+// 	hasTaxIdentifier := org.IdentityForKey(supplier.Identities, "de-tax-number") != nil
+
+// 	if !hasVATIdentifier && !hasTaxIdentifier {
+// 		return validation.NewError(
+// 			"missing_seller_tax_info",
+// 			"Either Seller VAT identifier or Seller tax identifier must be provided",
+// 		)
+// 	}
+
+// 	return nil
+// }
+
+func validateSellerTaxInfo(value interface{}) error {
+	supplier, ok := value.(*org.Party)
+	if !ok || supplier == nil {
+		return validation.NewError("invalid_supplier", "Supplier is invalid or nil")
+	}
+
+	return validation.ValidateStruct(supplier,
+		validation.Field(&supplier.TaxID,
+			validation.When(supplier.Identities == nil || org.IdentityForKey(supplier.Identities, "de-tax-number") == nil,
+				validation.Required,
+			),
+		),
+		validation.Field(&supplier.Identities,
+			validation.When(supplier.TaxID == nil || supplier.TaxID.Code == "",
+				validation.Required,
+				validation.By(validateTaxNumber),
+			),
+		),
+	)
+}
+
+func validateTaxNumber(value interface{}) error {
+	identities, ok := value.([]*org.Identity)
+	if !ok {
+		return validation.NewError("invalid_identities", "Identities are invalid")
+	}
+	if org.IdentityForKey(identities, "de-tax-number") == nil {
+		return validation.NewError("missing_tax_identifier", "German tax identifier (de-tax-number) is required")
+	}
+	return nil
+}
+
 func validateDelivery(value interface{}) error {
 	d, _ := value.(*bill.Delivery)
 	if d == nil {
@@ -131,18 +184,8 @@ func validateDelivery(value interface{}) error {
 	)
 }
 
-// func validateDeliveryParty(value interface{}) error {
-// 	d, _ := value.(*bill.Delivery)
-// 	if d == nil {
-// 		return nil
-// 	}
-// 	return validation.ValidateStruct(d,
-// 		validation.Field(&d.Receiver,
-// 			validation.Required,
-// 			validation.By(validateCustomerReceiver)),
-// 	)
-// }
-
+// As the fields for customer and delivery reciver have the same requirements
+// they are handled by the same validation function.
 func validateCustomerReceiver(value interface{}) error {
 	p, _ := value.(*org.Party)
 	if p == nil {
