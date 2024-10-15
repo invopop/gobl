@@ -12,7 +12,7 @@ import (
 // to other documents and alternative parties involved in the order-to-delivery process.
 type Ordering struct {
 	// Identifier assigned by the customer or buyer for internal routing purposes.
-	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code" en16931:"BT-10"`
 	// Any additional Codes, IDs, SKUs, or other regional or custom
 	// identifiers that may be used to identify the order.
 	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`

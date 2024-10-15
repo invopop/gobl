@@ -15,7 +15,7 @@ type Payment struct {
 	// The party responsible for receiving payment of the invoice, if not the supplier.
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 	// Payment terms or conditions.
-	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms"`
+	Terms *pay.Terms `json:"terms,omitempty" jsonschema:"title=Terms" en16931:"BT-20"`
 	// Any amounts that have been paid in advance and should be deducted from the amount due.
 	Advances []*pay.Advance `json:"advances,omitempty" jsonschema:"title=Advances"`
 	// Details on how payment should be made.
