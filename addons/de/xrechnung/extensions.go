@@ -3,31 +3,13 @@ package xrechnung
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pkg/here"
 )
 
 var (
-	ExtKeyPostCode cbc.Key = "de-xrechnung-post-code"
-	ExtKeyTaxRate  cbc.Key = "de-xrechnung-tax-rate"
+	ExtKeyTaxRate cbc.Key = "de-xrechnung-tax-rate"
 )
 
 var extensions = []*cbc.KeyDefinition{
-	{
-		Key: ExtKeyPostCode,
-		Name: i18n.String{
-			i18n.EN: "Post Code",
-			i18n.DE: "Postleitzahl",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-			Post code of a supplier or customer to use instead of an address. Example: "55000".
-		`),
-			i18n.DE: here.Doc(`
-			Postleitzahl eines Lieferanten oder Kunden, die anstelle einer Adresse verwendet wird. Beispiel: "55000".
-		`),
-		},
-		Pattern: "^[0-9]{5}$",
-	},
 	{
 		Key: ExtKeyTaxRate,
 		Name: i18n.String{
