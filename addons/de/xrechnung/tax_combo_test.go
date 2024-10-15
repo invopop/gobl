@@ -4,26 +4,32 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/de/xrechnung"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTaxComboValidation(t *testing.T) {
 	t.Run("standard VAT rate", func(t *testing.T) {
-		combo := &tax.Combo{
+		p := num.MakePercentage(19, 2)
+		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateStandard,
+			Percent:  &p,
 		}
-		assert.NoError(t, xrechnung.ValidateTaxCombo(combo))
-		assert.Equal(t, "S", combo.Ext["de-xrechnung-tax-rate"])
+		xrechnung.NormalizeTaxCombo(c)
+		assert.NoError(t, xrechnung.ValidateTaxCombo(c))
+		assert.Equal(t, "S", c.Ext[xrechnung.ExtKeyTaxRate].String())
+		assert.Equal(t, "19%", c.Percent.String())
 	})
 
 	t.Run("missing rate", func(t *testing.T) {
-		combo := &tax.Combo{
+		c := &tax.Combo{
 			Category: tax.CategoryVAT,
+			Rate:     tax.RateStandard,
 		}
-		err := xrechnung.ValidateTaxCombo(combo)
-		assert.EqualError(t, err, "VAT category rate is required")
+		err := xrechnung.ValidateTaxCombo(c)
+		assert.EqualError(t, err, "percent: cannot be blank.")
 	})
 
 }

@@ -42,7 +42,7 @@ func newAddon() *tax.AddonDef {
 func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Combo:
-		normalizeTaxCombo(obj)
+		NormalizeTaxCombo(obj)
 	}
 }
 
