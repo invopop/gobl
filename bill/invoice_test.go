@@ -158,6 +158,21 @@ func TestInvoiceAutoSetIssueDate(t *testing.T) {
 	assert.Equal(t, dn.String(), i.IssueDate.String(), "should set issue date to today")
 }
 
+func TestInvoiceNoTax(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	require.NoError(t, i.Calculate())
+	assert.Nil(t, i.Totals.Taxes, "should remove empty taxes object")
+}
+
 func TestRemoveIncludedTax(t *testing.T) {
 	lines := []*bill.Line{
 		{

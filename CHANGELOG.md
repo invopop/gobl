@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `bill.Invoice` - remove empty taxes instances.
+
 ## [v0.202.0]
 
 ### Changed
