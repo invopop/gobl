@@ -36,6 +36,12 @@ func TestUUIDParsing(t *testing.T) {
 	assert.True(t, u1.IsZero())
 	u1 = uuid.ShouldParse(v1s)
 	assert.Equal(t, v1s, u1.String())
+
+	t.Run("must parse", func(t *testing.T) {
+		assert.Panics(t, func() {
+			uuid.MustParse("fooo")
+		})
+	})
 }
 
 func TestUUIDIsZero(t *testing.T) {
@@ -71,6 +77,15 @@ func TestUUIDTimestasmp(t *testing.T) {
 	u = uuid.V4()
 	ts = u.Timestamp()
 	assert.True(t, ts.IsZero())
+}
+
+func TestNodeID(t *testing.T) {
+	a := uuid.NodeID()
+	assert.Len(t, a, 12)
+
+	uuid.SetRandomNodeID()
+	assert.Len(t, uuid.NodeID(), 12)
+	assert.NotEqual(t, a, uuid.NodeID())
 }
 
 func TestUUIDJSON(t *testing.T) {
@@ -225,6 +240,9 @@ func TestNormalize(t *testing.T) {
 	uuid.Normalize(&u3)
 	assert.Equal(t, "03907310-8daa-11eb-8dcd-0242ac130003", u3.String())
 
+	assert.NotPanics(t, func() {
+		uuid.Normalize(nil)
+	})
 }
 
 func TestUUIDv3(t *testing.T) {
@@ -256,4 +274,23 @@ func TestUUIDBase64(t *testing.T) {
 	u2, err = uuid.ParseBase64(u.String())
 	require.NoError(t, err)
 	assert.Equal(t, u.String(), u2.String())
+}
+
+func TestUUIDBunary(t *testing.T) {
+	u := uuid.MustParse("f47ac10b-58cc-0372-8567-0e02b2c3d479")
+
+	b := u.Bytes()
+	assert.Equal(t, 16, len(b))
+
+	out, err := u.MarshalBinary()
+	require.NoError(t, err)
+	assert.Equal(t, b, out)
+
+	u2 := new(uuid.UUID)
+	err = u2.UnmarshalBinary(b)
+	require.NoError(t, err)
+
+	u2 = new(uuid.UUID)
+	err = u2.UnmarshalBinary([]byte("invalid"))
+	assert.ErrorContains(t, err, "invalid UUID (got 7 bytes)")
 }
