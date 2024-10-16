@@ -37,7 +37,7 @@ type Item struct {
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.
-	Price num.Amount `json:"price" jsonschema:"title=Price"`
+	Price num.Amount `json:"price" jsonschema:"title=Price" en16931:"BT-146"`
 	// AltPrices defines a list of prices with their currencies that may be used
 	// as an alternative to the item's base price.
 	AltPrices []*currency.Amount `json:"alt_prices,omitempty" jsonschema:"title=Alternative Prices"`

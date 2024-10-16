@@ -14,7 +14,7 @@ type Delivery struct {
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
 	// Identities is used to define specific codes or IDs that may be used to
 	// identify the delivery.
-	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities" en16931:"BT-71"`
 	// When the goods should be expected.
 	Date *cal.Date `json:"date,omitempty" jsonschema:"title=Date" en16931:"BT-72"`
 	// Period of time in which to expect delivery if a specific date is not available.
