@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `uuid` - SQL library compatibility for type conversion.
+
 ### Fixed
 
 - `bill.Invoice` - remove empty taxes instances.
