@@ -38,7 +38,7 @@ type DocumentRef struct {
 	// Link to the source document.
 	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
 	// Extensions for additional codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschemaL:"title=Extensions"`
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Meta contains additional information about the document.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
