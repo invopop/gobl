@@ -7,23 +7,10 @@ import (
 	"github.com/invopop/validation"
 )
 
-const (
-	invoiceTypeSelfBilled               cbc.Key = "self-billed"
-	invoiceTypePartial                  cbc.Key = "partial"
-	invoiceTypePartialConstruction      cbc.Key = "partial-construction"
-	invoiceTypePartialFinalConstruction cbc.Key = "partial-final-construction"
-	invoiceTypeFinalConstruction        cbc.Key = "final-construction"
-)
-
 var validTypes = []cbc.Key{
 	bill.InvoiceTypeStandard,
 	bill.InvoiceTypeCreditNote,
 	bill.InvoiceTypeCorrective,
-	invoiceTypeSelfBilled,
-	invoiceTypePartial,
-	invoiceTypePartialConstruction,
-	invoiceTypePartialFinalConstruction,
-	invoiceTypeFinalConstruction,
 }
 
 // ValidateInvoice validates the invoice according to the XRechnung standard
@@ -45,6 +32,7 @@ func ValidateInvoice(inv *bill.Invoice) error {
 					validation.Field(&payment.Instructions,
 						validation.Required,
 						validation.By(ValidatePaymentInstructions),
+						validation.Skip,
 					),
 				)
 			}),
@@ -64,15 +52,19 @@ func ValidateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
+			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplierTaxInfo),
+			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
 			validation.By(validateCustomerReceiver),
+			validation.Skip,
 		),
 		validation.Field(&inv.Delivery,
 			validation.By(validateDelivery),
+			validation.Skip,
 		),
 		// BR-DE-26
 		validation.Field(&inv.Preceding,
@@ -108,6 +100,7 @@ func validateSupplier(value interface{}) error {
 		validation.Field(&p.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validatePartyAddress)),
+			validation.Skip,
 		),
 		// BR-DE-06
 		validation.Field(&p.People,
@@ -140,6 +133,7 @@ func validateSupplierTaxInfo(value interface{}) error {
 			validation.When(supplier.TaxID == nil || supplier.TaxID.Code == "",
 				validation.Required,
 				validation.By(validateTaxNumber),
+				validation.Skip,
 			),
 		),
 	)
@@ -163,7 +157,9 @@ func validateDelivery(value interface{}) error {
 	}
 	return validation.ValidateStruct(d,
 		validation.Field(&d.Receiver,
-			validation.By(validateCustomerReceiver)),
+			validation.By(validateCustomerReceiver),
+			validation.Skip,
+		),
 	)
 }
 
@@ -179,6 +175,7 @@ func validateCustomerReceiver(value interface{}) error {
 		validation.Field(&p.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validatePartyAddress)),
+			validation.Skip,
 		),
 	)
 }

@@ -6,7 +6,10 @@ import (
 )
 
 // ExtKeyTaxRate is the key for the tax rate extension in XRechnung
-var ExtKeyTaxRate cbc.Key = "de-xrechnung-tax-rate"
+const (
+	ExtKeyTaxRate cbc.Key = "de-xrechnung-tax-rate"
+	ExtKeyDocType cbc.Key = "de-xrechnung-doc-type"
+)
 
 var extensions = []*cbc.KeyDefinition{
 	{
@@ -77,6 +80,50 @@ var extensions = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Tax for production, services and importation in Ceuta and Melilla",
 					i18n.DE: "Steuer auf Produktion, Dienstleistungen und Importe in Ceuta und Melilla",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyDocType,
+		Name: i18n.String{
+			i18n.EN: "Document Type",
+			i18n.DE: "Dokumentenart",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: string(invoiceTypeSelfBilled),
+				Name: i18n.String{
+					i18n.EN: "Self-Billed Invoice",
+					i18n.DE: "Gutschrift",
+				},
+			},
+			{
+				Value: string(invoiceTypePartial),
+				Name: i18n.String{
+					i18n.EN: "Partial Invoice",
+					i18n.DE: "Teilrechnung",
+				},
+			},
+			{
+				Value: string(invoiceTypePartialConstruction),
+				Name: i18n.String{
+					i18n.EN: "Partial Construction Invoice",
+					i18n.DE: "Teilrechnung für Bauleistungen",
+				},
+			},
+			{
+				Value: string(invoiceTypePartialFinalConstruction),
+				Name: i18n.String{
+					i18n.EN: "Partial Final Construction Invoice",
+					i18n.DE: "Schlussrechnung für Bauleistungen mit Teilrechnungen",
+				},
+			},
+			{
+				Value: string(invoiceTypeFinalConstruction),
+				Name: i18n.String{
+					i18n.EN: "Final Construction Invoice",
+					i18n.DE: "Schlussrechnung für Bauleistungen",
 				},
 			},
 		},
