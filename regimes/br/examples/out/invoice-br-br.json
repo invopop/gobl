@@ -1,0 +1,98 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5b7bb418d378de68d73da3f12f211648c5238e8ba916f4f5f00b2712f24d2476"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "BR",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2023-04-21",
+		"currency": "BRL",
+		"supplier": {
+			"name": "TechSolutions Brasil Ltda.",
+			"tax_id": {
+				"country": "BR"
+			},
+			"addresses": [
+				{
+					"num": "595",
+					"street": "Rua Haddock Lobo",
+					"locality": "São Paulo",
+					"region": "SP",
+					"code": "01311-000",
+					"country": "BR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "supplier_br@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"emails": [
+				{
+					"addr": "customer_br@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "ISS",
+						"percent": "15%"
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "ISS",
+						"rates": [
+							{
+								"base": "1620.00",
+								"percent": "15%",
+								"amount": "243.00"
+							}
+						],
+						"amount": "243.00"
+					}
+				],
+				"sum": "243.00"
+			},
+			"tax": "243.00",
+			"total_with_tax": "1863.00",
+			"payable": "1863.00"
+		}
+	}
+}
