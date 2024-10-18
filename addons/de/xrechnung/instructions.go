@@ -1,7 +1,6 @@
 package xrechnung
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/validation"
@@ -26,15 +25,15 @@ var validPaymentKeys = []cbc.Key{
 
 // ValidatePaymentInstructions validates the payment instructions according to the XRechnung standard
 func ValidatePaymentInstructions(value interface{}) error {
-	inv, ok := value.(*bill.Invoice)
-	if !ok || inv == nil || inv.Payment == nil || inv.Payment.Instructions == nil {
+	instr, ok := value.(*pay.Instructions)
+	if !ok || instr == nil {
 		return nil
 	}
-	instr := inv.Payment.Instructions
 	return validation.ValidateStruct(instr,
 		validation.Field(&instr.Key,
 			validation.Required,
 			validation.By(validatePaymentKey),
+			validation.Skip,
 		),
 		// BR-DE-23
 		validation.Field(&instr.CreditTransfer,
@@ -42,6 +41,7 @@ func ValidatePaymentInstructions(value interface{}) error {
 				validation.Required,
 				validation.Each(validation.By(validateCreditTransfer)),
 			),
+			validation.Skip,
 		),
 		// BR-DE-24
 		validation.Field(&instr.Card,
@@ -54,6 +54,7 @@ func ValidatePaymentInstructions(value interface{}) error {
 			validation.When(instr.Key == KeyPaymentMeansSEPADirectDebit || instr.Key == pay.MeansKeyDirectDebit,
 				validation.Required,
 				validation.By(validateDirectDebit),
+				validation.Skip,
 			),
 		),
 	)
@@ -62,7 +63,7 @@ func ValidatePaymentInstructions(value interface{}) error {
 func validatePaymentKey(value interface{}) error {
 	t, ok := value.(cbc.Key)
 	if !ok {
-		return validation.NewError("type", "Invalid payment key")
+		return validation.NewError("invalid_key", "invalid payment key")
 	}
 	if !t.In(validPaymentKeys...) {
 		return validation.NewError("invalid", "Invalid payment key")
