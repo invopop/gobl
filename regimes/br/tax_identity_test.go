@@ -33,6 +33,11 @@ func TestTaxIdentityValidation(t *testing.T) {
 			err:  "must contain only digits",
 		},
 		{
+			name: "non-numeric verification digit",
+			code: "123456789012AB",
+			err:  "must contain only digits",
+		},
+		{
 			name: "first verification digit wrong",
 			code: "05104582000160",
 			err:  "verification digit mismatch",
