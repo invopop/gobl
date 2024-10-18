@@ -98,6 +98,12 @@ func (id *Identity) Regime() *RegimeDef {
 	return regimes.For(id.Country.Code())
 }
 
+// Calculate will simply perform normalization.
+func (id *Identity) Calculate() error {
+	id.Normalize()
+	return nil
+}
+
 // Normalize will attempt to perform a regional tax normalization
 // on the tax identity. Identities are an exception to the normal
 // normalization rules as they cannot be normalized using addons.

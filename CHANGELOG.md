@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `bill.Invoice` - remove empty taxes instances.
+- `tax.Identity` - support Calculate method to normalize IDs.
 
 ## [v0.202.0]
 
