@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `br`: added basic Brazil regime
+- `uuid` - SQL library compatibility for type conversion.
 
 ### Fixed
 
