@@ -15,6 +15,7 @@ const (
 	ExtKeyExempt       cbc.Key = "it-sdi-exempt"
 	ExtKeyRetained     cbc.Key = "it-sdi-retained"
 	ExtKeyPaymentMeans cbc.Key = "it-sdi-payment-means"
+	ExtKeyVATCollect   cbc.Key = "it-sdi-vat-collect"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -29,7 +30,7 @@ var extensions = []*cbc.KeyDefinition{
 				Code used to describe the transmission format of the invoice. By default
 				the value "FPR12" is used unless the user explicitly sets the value
 				to something else.
-				
+
 				Normally this will only be needed when the invoice is to be sent to governmental
 				bodies and must use the "FPA12" format.
 			`),
@@ -458,7 +459,6 @@ var extensions = []*cbc.KeyDefinition{
 			},
 		},
 	},
-
 	{
 		// Retained reason code determined from the "CausalePagamento" field from FatturaPA.
 		// Source: https://www.agenziaentrate.gov.it/portale/documents/20143/4115385/CU_istr_2022.pdf
@@ -695,7 +695,6 @@ var extensions = []*cbc.KeyDefinition{
 			},
 		},
 	},
-
 	{
 		Key: ExtKeyPaymentMeans,
 		Name: i18n.String{
@@ -862,6 +861,36 @@ var extensions = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "PagoPA",
 					i18n.IT: "PagoPA",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyVATCollect,
+		Name: i18n.String{
+			i18n.EN: "VAT Collection",
+			i18n.IT: "Esigibilità dell'IVA",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "I",
+				Name: i18n.String{
+					i18n.EN: "Immediate",
+					i18n.IT: "Immediata",
+				},
+			},
+			{
+				Value: "D",
+				Name: i18n.String{
+					i18n.EN: "Deferred",
+					i18n.IT: "Differita",
+				},
+			},
+			{
+				Value: "S",
+				Name: i18n.String{
+					i18n.EN: "Split Payment",
+					i18n.IT: "Scissione dei pagamenti",
 				},
 			},
 		},
