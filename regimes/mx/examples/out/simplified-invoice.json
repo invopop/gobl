@@ -1,116 +1,120 @@
 {
-    "$schema": "https://gobl.org/draft-0/envelope",
-    "head": {
-        "uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
-        "dig": {
-            "alg": "sha256",
-            "val": "a05c95940f0b46b4db0e091487a802454be50513ada6c6ba12ab252c29e942f7"
-        },
-        "draft": true
-    },
-    "doc": {
-        "$schema": "https://gobl.org/draft-0/bill/invoice",
-        "type": "standard",
-        "series": "TEST",
-        "code": "00001",
-        "issue_date": "2023-07-10",
-        "currency": "MXN",
-        "tax": {
-            "tags": [
-                "simplified"
-            ]
-        },
-        "supplier": {
-            "name": "ESCUELA KEMPER URGATE",
-            "tax_id": {
-                "country": "MX",
-                "zone": "21000",
-                "code": "EKU9003173C9"
-            },
-            "ext": {
-                "mx-cfdi-fiscal-regime": "601"
-            }
-        },
-        "lines": [
-            {
-                "i": 1,
-                "quantity": "1",
-                "item": {
-                    "name": "Cobro por tarjetas",
-                    "price": "10.00",
-                    "ext": {
-                        "mx-cfdi-prod-serv": "84141602"
-                    }
-                },
-                "sum": "10.00",
-                "discounts": [
-                    {
-                        "percent": "10.0%",
-                        "amount": "1.00"
-                    }
-                ],
-                "taxes": [
-                    {
-                        "cat": "VAT",
-                        "rate": "standard",
-                        "percent": "16.0%"
-                    }
-                ],
-                "total": "9.00"
-            },
-            {
-                "i": 2,
-                "quantity": "1",
-                "item": {
-                    "name": "Porcentaje sobre GMV",
-                    "price": "10.00",
-                    "unit": "service",
-                    "ext": {
-                        "mx-cfdi-prod-serv": "80141628"
-                    }
-                },
-                "sum": "10.00",
-                "taxes": [
-                    {
-                        "cat": "VAT",
-                        "rate": "standard",
-                        "percent": "16.0%"
-                    }
-                ],
-                "total": "10.00"
-            }
-        ],
-        "payment": {
-            "terms": {
-                "notes": "Condiciones de pago"
-            },
-            "instructions": {
-                "key": "online+wallet"
-            }
-        },
-        "totals": {
-            "sum": "19.00",
-            "total": "19.00",
-            "taxes": {
-                "categories": [
-                    {
-                        "code": "VAT",
-                        "rates": [
-                            {
-                                "key": "standard",
-                                "base": "19.00",
-                                "percent": "16.0%",
-                                "amount": "3.04"
-                            }
-                        ],
-                        "amount": "3.04"
-                    }
-                ],
-                "sum": "3.04"
-            },
-            "tax": "3.04",
-            "total_with_tax": "22.04",
-            "payable": "22.04"
-        }
-    }
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4df4dd22fc22b163c693d45a7b2605340fd241c5bd8bfa0ba9132deb8e26b809"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "TEST",
+		"code": "00001",
+		"issue_date": "2023-07-10",
+		"currency": "MXN",
+		"tax": {
+			"ext": {
+				"mx-cfdi-doc-type": "I",
+				"mx-cfdi-issue-place": "21000"
+			}
+		},
+		"supplier": {
+			"name": "ESCUELA KEMPER URGATE",
+			"tax_id": {
+				"country": "MX",
+				"code": "EKU9003173C9"
+			},
+			"ext": {
+				"mx-cfdi-fiscal-regime": "601"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cobro por tarjetas",
+					"price": "10.00",
+					"ext": {
+						"mx-cfdi-prod-serv": "84141602"
+					}
+				},
+				"sum": "10.00",
+				"discounts": [
+					{
+						"percent": "10.0%",
+						"amount": "1.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "9.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Porcentaje sobre GMV",
+					"price": "10.00",
+					"unit": "service",
+					"ext": {
+						"mx-cfdi-prod-serv": "80141628"
+					}
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Condiciones de pago"
+			}
+		},
+		"totals": {
+			"sum": "19.00",
+			"total": "19.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "19.00",
+								"percent": "16.0%",
+								"amount": "3.04"
+							}
+						],
+						"amount": "3.04"
+					}
+				],
+				"sum": "3.04"
+			},
+			"tax": "3.04",
+			"total_with_tax": "22.04",
+			"payable": "22.04"
+		}
+	}
 }
