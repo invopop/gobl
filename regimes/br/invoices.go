@@ -1,4 +1,4 @@
-package us
+package br
 
 import (
 	"github.com/invopop/gobl/bill"
