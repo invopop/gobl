@@ -182,6 +182,10 @@
               "title": "Belgium"
             },
             {
+              "const": "BR",
+              "title": "Brazil"
+            },
+            {
               "const": "CA",
               "title": "Canada"
             },
