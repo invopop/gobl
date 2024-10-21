@@ -48,6 +48,13 @@ type Party struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Calculate will perform basic normalization of the party's data without
+// using any tax regime or addon.
+func (p *Party) Calculate() error {
+	p.Normalize(nil)
+	return nil
+}
+
 // Normalize will try to normalize the party's data.
 func (p *Party) Normalize(normalizers tax.Normalizers) {
 	if p == nil {

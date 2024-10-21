@@ -1,0 +1,15 @@
+$schema: "https://gobl.org/draft-0/org/party"
+uuid: "0192a13b-7f85-7429-a635-b269f6eb5295"
+tax_id:
+  country: "ES"
+  code: "B-986.026.42" # test normalization
+name: "Provide One S.L."
+emails:
+  - addr: "billing@example.com"
+addresses:
+  - num: "42"
+    street: "Calle Pradillo"
+    locality: "Madrid"
+    region: "Madrid"
+    code: "28002"
+    country: "ES"
