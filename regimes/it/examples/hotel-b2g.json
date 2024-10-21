@@ -1,15 +1,14 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["it-sdi-v1"],
+  "$tags": ["b2g"],
   "uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
   "series": "SAMPLE",
   "code": "002",
   "currency": "EUR",
   "issue_date": "2023-05-21",
   "tax": {
-    "prices_include": "VAT",
-    "ext": {
-      "it-sdi-format": "FPA12"
-    }
+    "prices_include": "VAT"
   },
   "type": "standard",
   "supplier": {

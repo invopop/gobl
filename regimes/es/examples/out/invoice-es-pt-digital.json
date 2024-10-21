@@ -1,0 +1,122 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5d6d6423d5895dbb2c8ca93b5d85fc1df8b57e414b2f0303e496e48614850f05"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$tags": [
+			"customer-rates"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "SAMPLE-X-002",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "PT"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Services exported",
+					"price": "20.00",
+					"unit": "day"
+				},
+				"sum": "200.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"country": "PT",
+						"rate": "standard",
+						"percent": "23.0%"
+					}
+				],
+				"total": "200.00"
+			},
+			{
+				"i": 2,
+				"quantity": "50",
+				"item": {
+					"name": "Branded Mugs",
+					"price": "7.50"
+				},
+				"sum": "375.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"country": "PT",
+						"rate": "standard",
+						"percent": "23.0%"
+					}
+				],
+				"total": "375.00"
+			}
+		],
+		"totals": {
+			"sum": "575.00",
+			"total": "575.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"country": "PT",
+								"base": "575.00",
+								"percent": "23.0%",
+								"amount": "132.25"
+							}
+						],
+						"amount": "132.25"
+					}
+				],
+				"sum": "132.25"
+			},
+			"tax": "132.25",
+			"total_with_tax": "707.25",
+			"payable": "707.25"
+		}
+	}
+}

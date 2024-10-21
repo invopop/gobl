@@ -4,22 +4,22 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4567dc8a5463a7d5553c6e30fe368b3259efa68a78d3da1cb5794b84c60bae0e"
-		},
-		"draft": true
+			"val": "9933198da084cea1342a62d80014ae53262de1c33972b52ab7093bb002136ff5"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$tags": [
+			"simplified"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT",
-			"tags": [
-				"simplified"
-			]
+			"prices_include": "VAT"
 		},
 		"supplier": {
 			"name": "Simple Goods Store",

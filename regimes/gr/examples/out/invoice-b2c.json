@@ -1,0 +1,146 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "7b1f15e3697d8d68d22caa0557078fc772e90ddcff058712f0cbab0013e5c08f"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "002",
+		"issue_date": "2024-08-20",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "11.3"
+			}
+		},
+		"supplier": {
+			"name": "Ελληνικά Τρόφιμα Α.Ε.",
+			"tax_id": {
+				"country": "EL",
+				"code": "728089281"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Λεωφόρος Βουλιαγμένης",
+					"locality": "Αθήνα",
+					"code": "11636",
+					"country": "GR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "hellenicfoods@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Υπηρεσίες Ανάπτυξης",
+					"price": "8.44",
+					"unit": "h"
+				},
+				"sum": "8.44",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "24%",
+						"ext": {
+							"gr-mydata-vat-rate": "1"
+						}
+					}
+				],
+				"total": "8.44"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Cleaning",
+					"price": "8.44"
+				},
+				"sum": "8.44",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "reduced",
+						"percent": "13%",
+						"ext": {
+							"gr-mydata-vat-rate": "2"
+						}
+					}
+				],
+				"total": "8.44"
+			}
+		],
+		"payment": {
+			"advances": [
+				{
+					"key": "card",
+					"description": "Prepaid amount",
+					"percent": "100%",
+					"amount": "20.01",
+					"ext": {
+						"gr-mydata-payment-means": "7"
+					}
+				}
+			]
+		},
+		"totals": {
+			"sum": "16.88",
+			"total": "16.88",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"gr-mydata-vat-rate": "1"
+								},
+								"base": "8.44",
+								"percent": "24%",
+								"amount": "2.03"
+							},
+							{
+								"key": "reduced",
+								"ext": {
+									"gr-mydata-vat-rate": "2"
+								},
+								"base": "8.44",
+								"percent": "13%",
+								"amount": "1.10"
+							}
+						],
+						"amount": "3.13"
+					}
+				],
+				"sum": "3.13"
+			},
+			"tax": "3.13",
+			"total_with_tax": "20.01",
+			"payable": "20.01",
+			"advance": "20.01",
+			"due": "0.00"
+		}
+	}
+}

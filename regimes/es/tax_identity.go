@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -88,13 +87,10 @@ func validateTaxCode(value interface{}) error {
 // normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
 // uppercase. It'll also remove the "ES" part at beginning if present such as required
 // for EU VIES system which is redundant and not used in the validation process.
-func normalizeTaxIdentity(tID *tax.Identity) error {
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
+func normalizeTaxIdentity(tID *tax.Identity) {
+	tax.NormalizeIdentity(tID)
 	// Remove the Zone
 	tID.Zone = "" //nolint:staticcheck
-	return nil
 }
 
 // DetermineTaxCodeType takes a valid code and determines the type. If the code

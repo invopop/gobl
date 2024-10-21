@@ -29,11 +29,13 @@ AT's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax do
 
 AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation (Portugal mainland, Açores or Madeira) in a Portuguese invoice. Each region has their own tax rates which can be determined automatically.
 
-To set the specific region inside an invoice, add one of the following tax tags:
+To set the specific a region different to Portugal mainland, the `pt-region` extension of each line's VAT tax should be set to one of the following values:
 
-- no tag - implies default Portugal zone with `PT` code.
-- `azores` - for the Azores region, which will use `PT-AC` code.
-- `madeira` - For the Madeira region, which will use `PT-MA` code.
+| Code | Description |
+| --- | --- |
+| PT | Mainland Portugal (default, no need to be explicit) |
+| PT-AC | Açores |
+| PT-MA | Madeira |
 
 ### VAT Tax Rates
 

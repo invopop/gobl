@@ -4,12 +4,12 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3560de836cd054f5e99c7ee3e9465c0c54ce4bdcd1b119e406808683956c31c7"
-		},
-		"draft": true
+			"val": "d463afcdcc4be6a0a734b2cd2289ce33cae7317b8b1b6d8d76613c370eca34f6"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "NL",
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "HS2022",

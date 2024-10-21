@@ -1,0 +1,192 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "es-tbai-v1",
+  "name": {
+    "en": "Spain TicketBAI"
+  },
+  "extensions": [
+    {
+      "key": "es-tbai-product",
+      "name": {
+        "en": "TicketBAI Product Key",
+        "es": "Clave de Producto TicketBAI"
+      },
+      "desc": {
+        "en": "Product keys are used by TicketBAI to differentiate between -exported- goods\nand services. It may be useful to classify all products regardless of wether\nthey are exported or not.\n\nThere is an additional exception case for goods that are resold without modification\nwhen the supplier is in the simplified tax regime. For must purposes this special\ncase can be ignored."
+      },
+      "values": [
+        {
+          "value": "goods",
+          "name": {
+            "en": "Delivery of goods",
+            "es": "Entrega de bienes"
+          }
+        },
+        {
+          "value": "services",
+          "name": {
+            "en": "Provision of services",
+            "es": "Prestacion de servicios"
+          }
+        },
+        {
+          "value": "resale",
+          "name": {
+            "en": "Resale of goods without modification by vendor in the simplified regime",
+            "es": "Reventa de bienes sin modificación por vendedor en regimen simplificado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-tbai-exemption",
+      "name": {
+        "en": "TicketBAI Exemption code",
+        "es": "Código de Exención de TicketBAI"
+      },
+      "desc": {
+        "en": "Codes used by TicketBAI for both \"exempt\", \"not-subject\", and reverse\ncharge transactions. In the TicketBAI format these are separated,\nbut in order to simplify GOBL and be more closely aligned with\nother countries we've combined them into one."
+      },
+      "values": [
+        {
+          "value": "E1",
+          "name": {
+            "en": "Exempt: pursuant to Article 20 of the Foral VAT Law",
+            "es": "Exenta: por el artículo 20 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "value": "E2",
+          "name": {
+            "en": "Exempt: pursuant to Article 21 of the Foral VAT Law",
+            "es": "Exenta: por el artículo 21 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "value": "E3",
+          "name": {
+            "en": "Exempt: pursuant to Article 22 of the Foral VAT Law",
+            "es": "Exenta: por el artículo 22 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "value": "E4",
+          "name": {
+            "en": "Exempt: pursuant to Articles 23 and 24 of the Foral VAT Law",
+            "es": "Exenta: por el artículos 23 y 24 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "value": "E5",
+          "name": {
+            "en": "Exempt: pursuant to Article 25 of the Foral VAT law",
+            "es": "Exenta: por el artículo 25 de la Norma Foral del IVA"
+          }
+        },
+        {
+          "value": "E6",
+          "name": {
+            "en": "Exempt: pursuant to other reasons",
+            "es": "Exenta: por otra causa"
+          }
+        },
+        {
+          "value": "OT",
+          "name": {
+            "en": "Not subject: pursuant to Article 7 of the VAT Law - other cases of non-subject",
+            "es": "No sujeto: por el artículo 7 de la Ley del IVA - otros supuestos de no sujeción"
+          }
+        },
+        {
+          "value": "RL",
+          "name": {
+            "en": "Not subject: pursuant to localization rules",
+            "es": "No sujeto: por reglas de localización"
+          }
+        },
+        {
+          "value": "VT",
+          "name": {
+            "en": "Not subject: sales made on behalf of third parties (amount not computable for VAT or IRPF purposes)",
+            "es": "No sujeto: ventas realizadas por cuenta de terceros (importe no computable a efectos de IVA ni de IRPF)"
+          }
+        },
+        {
+          "value": "IE",
+          "name": {
+            "en": "Not subject in the TAI due to localization rules, but foreign tax, IPS/IGIC or VAT from another EU member state is passed on",
+            "es": "No sujeto en el TAI por reglas de localización, pero repercute impuesto extranjero, IPS/IGIC o IVA de otro estado miembro UE"
+          }
+        },
+        {
+          "value": "S2",
+          "name": {
+            "en": "Subject and not exempt: with reverse charge",
+            "es": "Sujeto y no exenta: con inversión del sujeto pasivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-tbai-correction",
+      "name": {
+        "en": "TicketBAI Rectification Type Code",
+        "es": "TicketBAI Código de Factura Rectificativa"
+      },
+      "desc": {
+        "en": "Corrected or rectified invoices that need to be sent in the TicketBAI format\nrequire a specific type code to be defined alongside the preceding invoice\ndata."
+      },
+      "values": [
+        {
+          "value": "R1",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT",
+            "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis de la Norma Foral del IVA",
+            "eu": "Faktura zuzentzailea: zuzenbidean oinarritutako akatsa eta BEZaren Foru Arauaren 80.artikuluko Bat, Bi eta Sei"
+          }
+        },
+        {
+          "value": "R2",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT",
+            "es": "Factura rectificativa: artículo 80 Tres de la Norma Foral del IVA",
+            "eu": "Faktura zuzentzailea: BEZari buruzko Foru Arauko 80. artikuluko Hiru"
+          }
+        },
+        {
+          "value": "R3",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT",
+            "es": "Factura rectificativa: artículo 80 Cuatro de la Norma Foral del IVA",
+            "eu": "Faktura zuzentzailea: BEZari buruzko Foru Arauko 80. artikuluko Lau"
+          }
+        },
+        {
+          "value": "R4",
+          "name": {
+            "en": "Rectified invoice: Other",
+            "es": "Factura rectificativa: Resto",
+            "eu": "Faktura zuzentzailea: Gainerakoak"
+          }
+        },
+        {
+          "value": "R5",
+          "name": {
+            "en": "Rectified invoice: simplified invoices",
+            "es": "Factura rectificativa: facturas simplificadas",
+            "eu": "Faktura zuzentzaile: faktura erraztuetan"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "extensions": [
+        "es-tbai-correction"
+      ]
+    }
+  ]
+}

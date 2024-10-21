@@ -18,7 +18,7 @@ const (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Custom keys used typically in meta or codes information.
@@ -28,8 +28,8 @@ const (
 )
 
 // New instantiates a new Polish regime.
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "PL",
 		Currency: currency.PLN,
 		Name: i18n.String{
@@ -40,11 +40,13 @@ func New() *tax.Regime {
 		// ChargeKeys:       chargeKeyDefinitions,       // charges.go
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Extensions:       extensionKeys,              // extensions.go
-		Tags:             invoiceTags,
-		Scenarios:        scenarios, // scenarios.go
-		Validator:        Validate,
-		Calculator:       Calculate,
-		Categories:       taxCategories, // tax_categories.go
+		Tags: []*tax.TagSet{
+			common.InvoiceTags().Merge(invoiceTags),
+		},
+		Scenarios:  scenarios, // scenarios.go
+		Validator:  Validate,
+		Normalizer: Normalize,
+		Categories: taxCategories, // tax_categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -78,11 +80,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will perform any regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize will perform any regime specific normalizations.
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return common.NormalizeTaxIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // Tax categories specific for Canada.
@@ -22,15 +22,16 @@ const (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "CA",
 		Currency: currency.CAD,
 		Name: i18n.String{
 			i18n.EN: "Canada",
 		},
-		TimeZone:  "America/Toronto", // Toronto
-		Validator: Validate,
+		TimeZone:   "America/Toronto", // Toronto
+		Validator:  Validate,
+		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -40,7 +41,7 @@ func New() *tax.Regime {
 				},
 			},
 		},
-		Categories: []*tax.Category{
+		Categories: []*tax.CategoryDef{
 			//
 			// General Sales Tax (GST)
 			//
@@ -61,7 +62,7 @@ func New() *tax.Regime {
 					},
 				},
 				Retained: false,
-				Rates: []*tax.Rate{
+				Rates: []*tax.RateDef{
 					{
 						Key: tax.RateZero,
 						Name: i18n.String{
@@ -70,7 +71,7 @@ func New() *tax.Regime {
 						Description: i18n.String{
 							i18n.EN: "Some supplies are zero-rated under the GST, mainly: basic groceries, agricultural products, farm livestock, most fishery products such, prescription drugs and drug-dispensing services, certain medical devices, feminine hygiene products, exports, many transportation services where the origin or destination is outside Canada",
 						},
-						Values: []*tax.RateValue{
+						Values: []*tax.RateValueDef{
 							{
 								Percent: num.MakePercentage(0, 3),
 							},
@@ -85,7 +86,7 @@ func New() *tax.Regime {
 							i18n.EN: "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided.",
 						},
 
-						Values: []*tax.RateValue{
+						Values: []*tax.RateValueDef{
 							{
 								Since:   cal.NewDate(2022, 1, 1),
 								Percent: num.MakePercentage(5, 2),
@@ -106,7 +107,7 @@ func New() *tax.Regime {
 					i18n.EN: "Harmonized Sales Tax",
 				},
 				// TODO: determine local rates
-				Rates: []*tax.Rate{},
+				Rates: []*tax.RateDef{},
 			},
 
 			//
@@ -121,7 +122,7 @@ func New() *tax.Regime {
 					i18n.EN: "Provincial Sales Tax",
 				},
 				// TODO: determine local rates
-				Rates: []*tax.Rate{},
+				Rates: []*tax.RateDef{},
 			},
 		},
 	}
@@ -134,4 +135,12 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	}
 	return nil
+}
+
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc interface{}) {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		tax.NormalizeIdentity(obj)
+	}
 }

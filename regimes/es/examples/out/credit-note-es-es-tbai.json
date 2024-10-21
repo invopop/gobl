@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7f334a9457b3944ffb6928d87ceab30ed379944c393ce03cc2bdc840e8be546b"
-		},
-		"draft": true
+			"val": "96ae76238c90546f3fa238637b07a0080e9d41670ca32029a274c705453cb225"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "credit-note",
 		"series": "FR",
@@ -19,19 +22,14 @@
 		"preceding": [
 			{
 				"type": "standard",
+				"issue_date": "2022-01-10",
 				"series": "SAMPLE",
 				"code": "085",
-				"issue_date": "2022-01-10",
 				"ext": {
 					"es-tbai-correction": "R2"
 				}
 			}
 		],
-		"tax": {
-			"tags": [
-				"ticketbai"
-			]
-		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

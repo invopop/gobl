@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -34,9 +35,6 @@ type Header struct {
 
 	// Any information that may be relevant to other humans about this envelope
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
-
-	// When true, implies that this document should not be considered final. Digital signatures are optional.
-	Draft bool `json:"draft,omitempty" jsonschema:"title=Draft"`
 }
 
 // NewHeader creates a new header and automatically assigns a UUIDv1.
@@ -44,7 +42,6 @@ func NewHeader() *Header {
 	h := new(Header)
 	h.UUID = uuid.V7()
 	h.Meta = make(cbc.Meta)
-	h.Draft = true // default to draft
 	return h
 }
 
@@ -59,7 +56,10 @@ func (h *Header) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&h.UUID, validation.Required, uuid.HasTimestamp),
 		validation.Field(&h.Digest, validation.Required),
 		validation.Field(&h.Stamps,
-			validation.When(h.Draft, validation.Empty),
+			validation.When(
+				!internal.IsSigned(ctx),
+				validation.Empty,
+			),
 			DetectDuplicateStamps,
 		),
 		validation.Field(&h.Links,

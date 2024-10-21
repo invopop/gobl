@@ -42,7 +42,7 @@ func (v *invoiceValidator) validate() error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!inv.Tax.ContainsTag(tax.TagSimplified),
+				!inv.HasTags(tax.TagSimplified),
 				validation.Required,
 				validation.By(v.commercialCustomer),
 			),
@@ -83,7 +83,7 @@ func (v *invoiceValidator) commercialCustomer(value interface{}) error {
 }
 
 func (v *invoiceValidator) preceding(value interface{}) error {
-	obj, ok := value.(*bill.Preceding)
+	obj, ok := value.(*org.DocumentRef)
 	if !ok || obj == nil {
 		return nil
 	}

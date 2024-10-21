@@ -19,12 +19,9 @@ type KeyDefinition struct {
 	// with the key.
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
-	// Codes describes the list of codes that can be used alongside the Key,
-	// for example with identities.
-	Codes []*CodeDefinition `json:"codes,omitempty" jsonschema:"title=Codes"`
-	// Keys is used instead of codes to define a further sub-set of keys that
-	// can be used alongside this one.
-	Keys []*KeyDefinition `json:"keys,omitempty" jsonschema:"title=Keys"`
+	// Values defines the possible values associated with the key.
+	Values []*ValueDefinition `json:"values,omitempty" jsonschema:"title=Values"`
+
 	// Pattern is used to validate the key value instead of using a fixed value
 	// from the code or key definitions.
 	Pattern string `json:"pattern,omitempty" jsonschema:"title=Pattern"`
@@ -34,35 +31,19 @@ type KeyDefinition struct {
 	Map CodeMap `json:"map,omitempty" jsonschema:"title=Code Map"`
 }
 
-// HasCode loops through the key definitions codes and determines if there
+// HasValue loops through values and determines if there
 // is a match.
-func (kd *KeyDefinition) HasCode(code Code) bool {
-	cd := kd.CodeDef(code)
+func (kd *KeyDefinition) HasValue(val string) bool {
+	cd := kd.ValueDef(val)
 	return cd != nil
 }
 
-// CodeDef returns the code definition for the provided code, or nil.
-func (kd *KeyDefinition) CodeDef(code Code) *CodeDefinition {
-	for _, c := range kd.Codes {
-		if c.Code == code {
+// ValueDef searches the list of values defined for the key, and provides
+// the matching value definition.
+func (kd *KeyDefinition) ValueDef(val string) *ValueDefinition {
+	for _, c := range kd.Values {
+		if c.Value == val {
 			return c
-		}
-	}
-	return nil
-}
-
-// HasKey loops through the key definitions keys and determines if there
-// is a match.
-func (kd *KeyDefinition) HasKey(key Key) bool {
-	skd := kd.KeyDef(key)
-	return skd != nil
-}
-
-// KeyDef returns the key definition for the provided key, or nil.
-func (kd *KeyDefinition) KeyDef(key Key) *KeyDefinition {
-	for _, skd := range kd.Keys {
-		if skd.Key == key {
-			return skd
 		}
 	}
 	return nil
@@ -74,12 +55,7 @@ func (kd *KeyDefinition) Validate() error {
 		validation.Field(&kd.Key, validation.Required),
 		validation.Field(&kd.Name, validation.Required),
 		validation.Field(&kd.Desc),
-		validation.Field(&kd.Codes),
-		validation.Field(&kd.Keys,
-			validation.When(len(kd.Codes) > 0,
-				validation.Empty,
-			),
-		),
+		validation.Field(&kd.Values),
 		validation.Field(&kd.Pattern, validation.By(validRegexpPattern)),
 	)
 	return err

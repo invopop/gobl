@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1ac7227b5de7e6e8f1d6daf20eae81613164a69c813aeeef473946e0c0ad8ebd"
-		},
-		"draft": true
+			"val": "ea065afce50358819fe68587f573dbad7c0d6ea1626d075b91faa924ebeb07db"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "TEST",
@@ -18,6 +21,7 @@
 		"currency": "MXN",
 		"tax": {
 			"ext": {
+				"mx-cfdi-doc-type": "I",
 				"mx-cfdi-issue-place": "21000"
 			}
 		},

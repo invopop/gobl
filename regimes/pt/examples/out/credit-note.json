@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6bae39adb6849c01cbc7e424f5c31ac49a0c46f100221f182715ddf9fa904e4c"
-		},
-		"draft": true
+			"val": "2e734ea5d8be0c7985ca9f06798fb23f899be8db57199c7ef6540bf3c9c752f7"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "credit-note",
 		"code": "",
@@ -17,10 +20,15 @@
 		"currency": "EUR",
 		"preceding": [
 			{
-				"code": "SEQ/333",
-				"issue_date": "2023-01-20"
+				"issue_date": "2023-01-20",
+				"code": "SEQ/333"
 			}
 		],
+		"tax": {
+			"ext": {
+				"pt-saft-invoice-type": "NC"
+			}
+		},
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
 			"name": "Hotelzinho",
@@ -54,7 +62,8 @@
 						"rate": "standard",
 						"percent": "23.0%",
 						"ext": {
-							"pt-region": "PT"
+							"pt-region": "PT",
+							"pt-saft-tax-rate": "NOR"
 						}
 					}
 				],
@@ -72,7 +81,8 @@
 							{
 								"key": "standard",
 								"ext": {
-									"pt-region": "PT"
+									"pt-region": "PT",
+									"pt-saft-tax-rate": "NOR"
 								},
 								"base": "200.00",
 								"percent": "23.0%",

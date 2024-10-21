@@ -34,4 +34,5 @@ lines:
       price: "100.00"
     taxes:
       - cat: VAT
+        country: "NL"
         rate: standard

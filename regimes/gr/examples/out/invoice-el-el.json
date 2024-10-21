@@ -4,18 +4,29 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fbd62bfe8e72e1c115f170e49f42f00453c05756668f16c7708090e4f0e79a9c"
-		},
-		"draft": true
+			"val": "0adb783cf39fd01962abbc45755da8a3cf16b16f5a3d0fec3eba7edd68a1bc66"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"services"
+		],
 		"uuid": "019035bd-4522-7eb3-83bf-9185ead05ee6",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "2.1"
+			}
+		},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
@@ -81,7 +92,9 @@
 						"rate": "standard",
 						"percent": "24%",
 						"ext": {
-							"gr-iapr-vat-cat": "1"
+							"gr-mydata-income-cat": "category1_1",
+							"gr-mydata-income-type": "E3_106",
+							"gr-mydata-vat-rate": "1"
 						}
 					}
 				],
@@ -100,8 +113,8 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"gr-iapr-exemption": "3",
-							"gr-iapr-vat-cat": "7"
+							"gr-mydata-exemption": "3",
+							"gr-mydata-vat-rate": "7"
 						}
 					}
 				],
@@ -110,7 +123,10 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "cash"
+				"key": "cash",
+				"ext": {
+					"gr-mydata-payment-means": "3"
+				}
 			}
 		},
 		"totals": {
@@ -124,7 +140,9 @@
 							{
 								"key": "standard",
 								"ext": {
-									"gr-iapr-vat-cat": "1"
+									"gr-mydata-income-cat": "category1_1",
+									"gr-mydata-income-type": "E3_106",
+									"gr-mydata-vat-rate": "1"
 								},
 								"base": "1620.00",
 								"percent": "24%",
@@ -133,8 +151,8 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"gr-iapr-exemption": "3",
-									"gr-iapr-vat-cat": "7"
+									"gr-mydata-exemption": "3",
+									"gr-mydata-vat-rate": "7"
 								},
 								"base": "100.00",
 								"amount": "0.00"

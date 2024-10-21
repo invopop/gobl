@@ -9,7 +9,8 @@ const (
 	CategoryGST cbc.Code = "GST" // Goods and Services Tax
 )
 
-// Most commonly used keys. Local regions may add their own rate keys.
+// Most commonly used keys. Local regions may add their own rate
+// keys or extend them.
 const (
 	RateExempt       cbc.Key = "exempt"
 	RateZero         cbc.Key = "zero"
@@ -18,6 +19,7 @@ const (
 	RateReduced      cbc.Key = "reduced"
 	RateSuperReduced cbc.Key = "super-reduced"
 	RateSpecial      cbc.Key = "special"
+	RateOther        cbc.Key = "other"
 )
 
 // Standard tax tags
@@ -27,4 +29,5 @@ const (
 	TagCustomerRates cbc.Key = "customer-rates"
 	TagSelfBilled    cbc.Key = "self-billed"
 	TagPartial       cbc.Key = "partial"
+	TagB2G           cbc.Key = "b2g"
 )

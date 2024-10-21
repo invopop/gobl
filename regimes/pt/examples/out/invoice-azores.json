@@ -4,17 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d9d018792fb2311fc5c2d7162a1a526183200965588c0cd79fb8e69d7667792f"
-		},
-		"draft": true
+			"val": "0e9a80b3de06f709d37bf9338b2f981fd8638656fdee6f979bb6471da97e1dfd"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "",
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"pt-saft-invoice-type": "FT"
+			}
+		},
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
 			"name": "Hotelzinho",
@@ -48,7 +56,8 @@
 						"rate": "standard",
 						"percent": "16.0%",
 						"ext": {
-							"pt-region": "PT-AC"
+							"pt-region": "PT-AC",
+							"pt-saft-tax-rate": "NOR"
 						}
 					}
 				],
@@ -66,7 +75,8 @@
 							{
 								"key": "standard",
 								"ext": {
-									"pt-region": "PT-AC"
+									"pt-region": "PT-AC",
+									"pt-saft-tax-rate": "NOR"
 								},
 								"base": "100.00",
 								"percent": "16.0%",

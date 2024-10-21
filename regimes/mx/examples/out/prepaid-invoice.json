@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bc2fa4cde78e811dd15d6185481b7c734d2bebe99f438912f460f1e2aaae284b"
-		},
-		"draft": true
+			"val": "98314830e2c99c01ae84557742d34583e07454f461d3bd585a3f70925d315fdf"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "TEST",
@@ -18,6 +21,7 @@
 		"currency": "MXN",
 		"tax": {
 			"ext": {
+				"mx-cfdi-doc-type": "I",
 				"mx-cfdi-issue-place": "21000"
 			}
 		},
@@ -102,13 +106,19 @@
 					"key": "cash",
 					"description": "Anticipo",
 					"percent": "10.0%",
-					"amount": "2.20"
+					"amount": "2.20",
+					"ext": {
+						"mx-cfdi-payment-means": "01"
+					}
 				},
 				{
 					"key": "card",
 					"description": "Saldo",
 					"percent": "90.0%",
-					"amount": "19.84"
+					"amount": "19.84",
+					"ext": {
+						"mx-cfdi-payment-means": "04"
+					}
 				}
 			]
 		},

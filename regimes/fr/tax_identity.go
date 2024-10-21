@@ -17,24 +17,24 @@ var (
 	taxCodeSIRENRegexp = regexp.MustCompile(`^\d{9}$`)
 )
 
-// normalizeTaxIdentity normalizes the SIREN code and ensures it includes the VAT check digits.
-func normalizeTaxIdentity(tID *tax.Identity) error {
+// normalizeTaxIdentity normalizes the SIREN code, if there are any errors,
+// these will be picked up by validation.
+func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID.Code == "" {
-		return nil
+		return
 	}
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
+	tax.NormalizeIdentity(tID)
+
 	str := tID.Code.String()
+	// Check if we have a SIREN so we can try and normalize with the
+	// check digit.
 	if len(str) == 9 {
-		// Check is we have a SIREN
 		if err := validateSIRENTaxCode(tID.Code); err != nil {
-			return err
+			return
 		}
 		chk := calculateVATCheckDigit(str)
 		tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
 	}
-	return nil
 }
 
 // validateTaxIdentity checks to ensure the SIRET code looks okay.

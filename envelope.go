@@ -69,9 +69,6 @@ func (e *Envelope) Validate() error {
 // they will be used to ensure that the signatures we're signed by at least
 // one of them. If no keys are provided, only the contents will be checked.
 func (e *Envelope) Verify(keys ...*dsig.PublicKey) error {
-	if e.Head == nil || e.Head.Draft {
-		return errors.New("cannot verify draft document")
-	}
 	if len(e.Signatures) == 0 {
 		return errors.New("no signatures to verify")
 	}
@@ -127,17 +124,14 @@ func (e *Envelope) verifySignature(sig *dsig.Signature, keys ...*dsig.PublicKey)
 
 // ValidateWithContext ensures that the envelope contains everything it should to be considered valid GoBL.
 func (e *Envelope) ValidateWithContext(ctx context.Context) error {
-	ctx = context.WithValue(ctx, internal.KeyDraft, e.Head != nil && e.Head.Draft)
+	if len(e.Signatures) > 0 {
+		ctx = internal.SignedContext(ctx)
+	}
 	err := validation.ValidateStructWithContext(ctx, e,
 		validation.Field(&e.Schema, validation.Required),
 		validation.Field(&e.Head, validation.Required),
 		validation.Field(&e.Document, validation.Required), // this will also check payload
-		validation.Field(&e.Signatures,
-			validation.When(
-				e.Head == nil || e.Head.Draft,
-				validation.Empty,
-			),
-		),
+		validation.Field(&e.Signatures),
 	)
 	if err != nil {
 		return wrapError(err)
@@ -157,23 +151,34 @@ func (e *Envelope) verifyDigest() error {
 	return nil
 }
 
-// Sign uses the private key to sign the envelope headers. The header
-// draft flag will be set to false and validation is performed so that
-// only valid non-draft documents will be signed.
+// Sign uses the private key to sign the envelope headers. Additional validation
+// rules may be applied to signed documents, so the document will be signed,
+// then validated, and if the validation fails, the signature will be removed.
 func (e *Envelope) Sign(key *dsig.PrivateKey) error {
 	if e.Head == nil {
 		return ErrValidation.WithReason("header required")
-	}
-	e.Head.Draft = false
-	if err := e.Validate(); err != nil {
-		return err
 	}
 	sig, err := key.Sign(e.Head)
 	if err != nil {
 		return ErrSignature.WithCause(err)
 	}
 	e.Signatures = append(e.Signatures, sig)
+	if err := e.Validate(); err != nil {
+		// invalid envlopes cannot be signed
+		e.Signatures = nil
+		return err
+	}
 	return nil
+}
+
+// Signed returns true if the envelope has signatures.
+func (e *Envelope) Signed() bool {
+	return len(e.Signatures) > 0
+}
+
+// Unsign removes the signatures from the envelope.
+func (e *Envelope) Unsign() {
+	e.Signatures = nil
 }
 
 // Insert takes the provided document and inserts it into this

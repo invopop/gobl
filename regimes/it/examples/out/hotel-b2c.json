@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "277eb3247d67ce9de6feef8bec4d710e1a1f10feae546ab9da138e62dd6b1cc1"
-		},
-		"draft": true
+			"val": "5cfb47917de8c5d82d0d977fc49dfa31e5065eb1f24915e6a5a7144bca08f41c"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -17,7 +20,11 @@
 		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT"
+			"prices_include": "VAT",
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "Hotel California",
@@ -40,6 +47,9 @@
 				"currency": "EUR",
 				"office": "RM",
 				"entry": "123456"
+			},
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
 			}
 		},
 		"customer": {
@@ -84,7 +94,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"it-sdi-nature": "N4"
+							"it-sdi-exempt": "N4"
 						}
 					}
 				],
@@ -120,7 +130,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-nature": "N4"
+									"it-sdi-exempt": "N4"
 								},
 								"base": "1.00",
 								"amount": "0.00"

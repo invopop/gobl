@@ -20,7 +20,7 @@ const (
 	TaxRateExempt cbc.Key = "exempt"
 )
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// IVA
 	//
@@ -35,14 +35,14 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto al Valor Agregado",
 		},
 		Retained: false,
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tasa General",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(160, 3),
 					},
@@ -54,7 +54,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced (Border) Rate",
 					i18n.ES: "Tasa Reducida (Fronteriza)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(80, 3),
 					},
@@ -66,7 +66,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tasa Cero",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(0, 3),
 					},
@@ -81,7 +81,6 @@ var taxCategories = []*tax.Category{
 				Exempt: true,
 			},
 		},
-		Map: cbc.CodeMap{KeySATImpuesto: "002"},
 	},
 
 	//
@@ -98,8 +97,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto al Valor Agregado Retenido",
 		},
 		Retained: true,
-		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "002"},
+		Rates:    []*tax.RateDef{},
 	},
 
 	//
@@ -116,8 +114,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto Especial sobre Producción y Servicios",
 		},
 		Retained: false,
-		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "003"},
+		Rates:    []*tax.RateDef{},
 	},
 
 	//
@@ -134,8 +131,7 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto Especial sobre Producción y Servicios Retenido",
 		},
 		Retained: true,
-		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "003"},
+		Rates:    []*tax.RateDef{},
 	},
 
 	//
@@ -152,7 +148,6 @@ var taxCategories = []*tax.Category{
 			i18n.ES: "Impuesto Sobre la Renta",
 		},
 		Retained: true,
-		Rates:    []*tax.Rate{},
-		Map:      cbc.CodeMap{KeySATImpuesto: "001"},
+		Rates:    []*tax.RateDef{},
 	},
 }

@@ -1,0 +1,106 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "b1776879720d9280ea3d9b654cb40ae174219241bbfc6e05f8aafc62e5222d6c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "TEST",
+		"code": "00001",
+		"issue_date": "2023-07-10",
+		"currency": "MXN",
+		"supplier": {
+			"name": "ESCUELA KEMPER URGATE",
+			"tax_id": {
+				"country": "MX",
+				"code": "EKU9003173C9"
+			}
+		},
+		"customer": {
+			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
+			"tax_id": {
+				"country": "MX",
+				"code": "URE180429TM6"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cobro por tarjetas",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"discounts": [
+					{
+						"percent": "10.0%",
+						"amount": "1.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "9.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Porcentaje sobre GMV",
+					"price": "10.00",
+					"unit": "service"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"notes": "Condiciones de pago"
+			}
+		},
+		"totals": {
+			"sum": "19.00",
+			"total": "19.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "19.00",
+								"percent": "16.0%",
+								"amount": "3.04"
+							}
+						],
+						"amount": "3.04"
+					}
+				],
+				"sum": "3.04"
+			},
+			"tax": "3.04",
+			"total_with_tax": "22.04",
+			"payable": "22.04"
+		}
+	}
+}

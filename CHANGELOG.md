@@ -6,8 +6,164 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-- HU: New regime
-- `org.Address`: Included field `StreetType`
+### Added
+
+- `br`: added basic Brazil regime
+- `uuid` - SQL library compatibility for type conversion.
+
+### Fixed
+
+- `bill.Invoice` - remove empty taxes instances.
+- `tax.Identity` - support Calculate method to normalize IDs.
+
+## [v0.202.0]
+
+### Changed
+
+- `org.DocumentRef`: renamed `line` to `lines` that accepts an array of integers making it possible to define a selection of reference lines in another document as opposed to just one.
+
+### Added
+
+- `cbc.Code`: new `Join` and `JoinWith` methods to help concatenate codes.
+- `it-sdi-v1`: added CIG and CUP identity type codes.
+- `de`: added validation and normalization for tax identities (not VAT).
+
+### Fixed
+
+- `mx`: fixed panic when normalizing an invoice with `tax` but no `ext` inside.
+
+## [v0.201.0]
+
+### Fixed
+
+- `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
+- `es`: moving invoice customer validation to the facturae and tbai addons.
+- `it-sdi-v1`: fixing validation issue for payment terms with no due dates.
+
+### Changed
+
+- `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
+- `co-dian-v2`: moved from `co` tax regime into own addon.
+
+## [v0.200.1]
+
+### Fixed
+
+- `pt`: moving invoice tags from saft addon to regime, ensure defaults present.
+
+## [v0.200.0]
+
+Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
+
+Tax Regimes are now also defined using the `$regime` keyword at the top of the document under the `$schema` and alongside `$addons` and `$tags`. This is a significant move with the aim of making the core GOBL project as flexible as possible, while allowing greater levels of validation and customization to be added as needed.
+
+Another very significant internal change is around normalization. There is now a much clearer difference internally between `Calculate` and `Normalize` methods. Calculate methods are used when there is some type of math operation to perform, and normalize will simply clean the data as much as possible. The three key steps in order are: normalize, calculate, and validate.
+
+Finally, the `draft` flag has been removed from the header, and much more emphasis has been placed on the signatures for validation. For example, the invoice's "code" property will only be required in order to sign the envelope.
+
+(We've made a big jump in minor version numbers to clarify the extent of the changes.)
+
+### Changed
+
+- `head.Header`: Removed the `draft` flag. Instead envelopes must now be signed in order to activate additional validation rules such as requiring the invoice code, and allow "stamps" in the header.
+- Renamed `Calculate` methods to `Normalize` and removed errors, to clearly differentiate between the two processes.
+- `bill`: Moved tax `tags` to the invoice level `$tags` property.
+- `tax`: Renamed `Regime` to `RegimeDef`.
+- `tax`: Renamed `Category` to `CategoryDef`.
+- `tax`: Renamed `Rate` to `RateDef`.
+- `tax`: Renamed `RateValue` to `RateValueDef`.
+- `mx`: local normalization, validation, and extensions moved to the `addons/mx/cfdi` package to use with the `mx-cfdi-v4` key.
+- `es`: moved FacturaE and TicketBAI extensions to the `addons/es/facturae` and `addons/es/tbai` packages respecitvely.
+- `pt`: moved SAF-T specific extensions to `addons/pt/saft`.
+- `it`: moved SDI and FatturaPA extensions to `addons/it/sdi` with key `it-sdi-v1`.
+- `gr`: moved MyDATA to `addons/gr/mydata`, key `gr-mydata-v1`.
+- `bill.Preceding`: replaced with `org.DocumentRef`.
+- `bill.Invoice`: Ordering now using arrays of `org.DocumentRef`.
+- `bill.Invoice`: `series` and `code` now use `cbc.Code` and normalization instead of the independent invoice code.
+- `cbc`: `Code` now allows spaces, dashes, and lower-case letters. Normalization will remove duplicate symbols.
+
+### Added
+
+- `tax`: `Regime` type now used to add `$regime` attribute to documents.
+- `tax`: `Addons` type which uses the `$addons` attribute to control which addons apply to the document.
+- `tax`: `Tags` type which adds the `$tags` attribute.
+- `tax`: `Scenario` now has `Filter` property to set a code function.
+- `tax`: `AddonDef` provides support for defining addon extension packs.
+- `gr`: `gr-mydata-invoice-type` extension with related tags and scenarios.
+- `org`: `DocumentRef` consolidates references to previous documents in a single place.
+- `bill`: invoice type option `other` for usage when regular scenarios do not apply.
+
+## [v0.115.1]
+
+### Fixes
+
+- `tax`: totals calculator was ignoring tax combos with rate and percent, when they should be classed as exempt.
+
+## [v0.115.0]
+
+This one is big...
+
+Significant set of changes around Scenario handling. Scenarios defined by tax regimes can now set tax extensions at the document level automatically. The objective here is to move away from external projects using scenario summaries directly, and instead use the absolute values set in the document.
+
+For example, the document format and type in Italy are now set inside the extensions and can be overriden if needed manually. This will be especially important when receiving and converting invoices into GOBL from external formats; its much easier to set specific values than trying to determine the appropriate tags.
+
+Also included is support for defining the country in tax combos, making it possible for taxes from a customers country to applied directly if needed. Typical use case would be for selling digital goods into or between EU states for B2C customers.
+
+Invoices in GOBL can now also finally produced for any country in the world, even if not explicitly defined inside the tax regimes.
+
+### Changed
+
+- `bill.Invoice`: `customer` can now be empty by default, the `simplified` simplified tag will have no effect on the document unless used by regime scenarios.
+- `bill.Invoice`: using the `customer-rates` tag will now automatically copy the customer's country code, if available, to the individual tax combo lines.
+- `tax`: moved `NormalizeIdentity` method from the regimes common package so that it can be applied to all tax IDs, regardless of if they have a regime defined or not.
+- `pt`: VAT rate key is now optional if `pt-saft-tax-rate` is provided.
+- `gr`: simplified validation to use tax categories.
+- `it`: always add `it-sdi-fiscal-regime` to Invoice suppliers.
+- `it`: renamed extension `it-sdi-retained-tax` to `it-sdi-retained`, now with validation on retained taxes.
+- `it`: renamed extension `it-sdi-natura` to `it-sdi-exempt`.
+- `bill.Invoice`: deprecated the `ScenarioSummary` method, as tax regimes themselves should be using extensions to apply all the correct data to a document up front.
+- `mx`: scenarios will now copy the document and relation types to the tax extensions.
+- `cbc`: consolidated "keys" and "codes" lists from key definitions into a single values array.
+- `gr`: switched to use the new `round-then-sum` calculation method
+- `tax.Combo`: rates when defined will always update the combo.
+- `bill.Invoice`: tax tags will always cause scenarios to update the document.
+- `es`: support for `facturae` tag which will correct set local extensions instead of using scenario summary codes.
+
+### Added
+
+- `tax`: `Combo` now supports a `country` field.
+- `tax.Category`: added `Validation` method support for custom validation of a tax combo for a specific tax category.
+- `tax.Scenario`: added "extensions" to be able to automatically update document level extensions based on the scenario detected.
+- `it`: added `ExtKeySDIDocumentType` as an extension that will be automatically included according to the scenario.
+- `it`: now adding `ExtKeySDIFormat` value to document instead of just referencing from scenarios.
+- `cbc.Note`: now provides `SameAs` method that will compare key attributes, but not the text payload. This is now used in Schema Summaries.
+- `bill.Line`: added `RequireLineTaxCategory` validation helper method.
+- `cbc`: added new `ValueDefinition`.
+- `gr`: added "Income Classification" extensions.
+- `tax.TotalCalculator`: now supports `round-then-sum` as an alternative to the default `sum-then-round` calculation method to meet the requirements of regimes like Greece.
+
+### Removed
+
+- `tax.Category`: removed `RateRequired` flag, regimes should instead should help users determine valid extensions (eg. PT and GR).
+- `cbc`: removed `CodeDefinition`.
+
+### Fixed
+
+- `tax.Scenario`: potential issue around matching notes.
+- `tax.Set`: improved validation embedded error handling.
+
+## [v0.114.0]
+
+### Changed
+
+- `org.Name`: either given **or** surname are required, as opposed to both at the same time.
+
+## [v0.113.0]
+
+### Added
+
+- `head`: validation rule to check for the presence of stamps
+- GR: support for credit notes
 
 ## [v0.112.0]
 

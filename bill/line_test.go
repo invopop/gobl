@@ -40,7 +40,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				Price: num.MakeAmount(10, 0),
 			},
 		}
-		err := line.normalizeItemPrice(currency.EUR, exampleRates(t))
+		err := line.calculateItemPrice(currency.EUR, exampleRates(t))
 		require.NoError(t, err)
 		assert.Equal(t, "10.00", line.Item.Price.String())
 	})
@@ -53,7 +53,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				Price:    num.MakeAmount(10, 0),
 			},
 		}
-		err := line.normalizeItemPrice(currency.EUR, exampleRates(t))
+		err := line.calculateItemPrice(currency.EUR, exampleRates(t))
 		require.NoError(t, err)
 		assert.Equal(t, "10.00", line.Item.Price.String())
 	})
@@ -73,7 +73,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				},
 			},
 		}
-		err := line.normalizeItemPrice(currency.EUR, exampleRates(t))
+		err := line.calculateItemPrice(currency.EUR, exampleRates(t))
 		require.NoError(t, err)
 		assert.Equal(t, "8.00", line.Item.Price.String())
 		require.Len(t, line.Item.AltPrices, 1)
@@ -90,7 +90,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				Price:    num.MakeAmount(10, 0),
 			},
 		}
-		err := line.normalizeItemPrice(currency.EUR, exampleRates(t))
+		err := line.calculateItemPrice(currency.EUR, exampleRates(t))
 		require.NoError(t, err)
 		assert.Equal(t, "8.76", line.Item.Price.String())
 		require.Len(t, line.Item.AltPrices, 1)
@@ -107,7 +107,7 @@ func TestLinePriceNormalization(t *testing.T) {
 				Price:    num.MakeAmount(100, 0),
 			},
 		}
-		err := line.normalizeItemPrice(currency.EUR, exampleRates(t))
+		err := line.calculateItemPrice(currency.EUR, exampleRates(t))
 		assert.ErrorContains(t, err, "no exchange rate found from 'MXN' to 'EUR")
 	})
 }

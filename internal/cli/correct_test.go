@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"testing"
 
+	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/cal"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/flimzy/testy"

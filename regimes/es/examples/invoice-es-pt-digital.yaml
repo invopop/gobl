@@ -1,0 +1,51 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2022-02-01"
+code: "SAMPLE-X-002"
+tax:
+  tags:
+    - customer-rates
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: PT
+  name: "Sample Consumer"
+  addresses:
+    - street: Rua do Hotelzinho
+      code: 1000-000
+      locality: Lisboa
+
+lines:
+  - quantity: 10
+    item:
+      name: "Services exported"
+      price: "20.00"
+      unit: "day"
+    taxes:
+      - cat: VAT
+        country: PT
+        rate: standard
+  - quantity: 50
+    item:
+      name: "Branded Mugs"
+      price: "7.50"
+    taxes:
+      - cat: VAT
+        country: PT
+        rate: standard

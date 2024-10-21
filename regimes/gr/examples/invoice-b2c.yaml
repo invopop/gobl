@@ -1,0 +1,48 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["gr-mydata-v1"]
+uuid: "019035bd-4522-7eb3-83bf-9185ead05ee6"
+currency: "EUR"
+issue_date: "2024-08-20"
+series: "SAMPLE"
+code: "002"
+tax:
+  tags:
+    - "simplified"
+  # prices_include: "VAT"
+
+supplier:
+  tax_id:
+    country: "EL"
+    code: "728089281"
+  name: "Ελληνικά Τρόφιμα Α.Ε."
+  emails:
+    - addr: "hellenicfoods@example.com"
+  addresses:
+    - num: "12"
+      street: "Λεωφόρος Βουλιαγμένης"
+      locality: "Αθήνα"
+      code: "11636"
+      country: "GR"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Υπηρεσίες Ανάπτυξης"
+      price: "8.44"
+      unit: "h"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Cleaning"
+      price: "8.44"
+    taxes:
+      - cat: VAT
+        rate: reduced
+
+payment:
+  advances:
+    - key: card
+      percent: "100%"
+      description: "Prepaid amount"

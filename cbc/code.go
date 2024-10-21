@@ -3,17 +3,29 @@ package cbc
 import (
 	"errors"
 	"regexp"
+	"strings"
 
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
+)
+
+const (
+	// DefaultCodeSeparator is the default separator used to join codes.
+	DefaultCodeSeparator Code = "-"
 )
 
 // Code represents a string used to uniquely identify the data we're looking
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 1 and 24 inclusive upper-case letters or numbers with optional periods (`.`),
-// dashes (`-`), or forward slashes (`/`) to separate blocks.
+// 1 and 32 inclusive english alphabet letters or numbers with optional
+// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`), or
+// spaces (` `) to separate blocks. Each block must only be separated by a
+// single symbol.
+//
+// The objective is to have a code that is easy to read and understand, while
+// still being unique and easy to validate.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -22,23 +34,35 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern          = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
-	CodeMinLength uint64 = 1
-	CodeMaxLength uint64 = 24
+	CodePattern              = `^[A-Za-z0-9]+([\.\-\/ _]?[A-Za-z0-9]+)*$`
+	CodePatternRegexp        = regexp.MustCompile(CodePattern)
+	CodeMinLength     uint64 = 1
+	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeValidationRegexp = regexp.MustCompile(CodePattern)
+	codeSeparatorRegexp    = regexp.MustCompile(`([\.\-\/ _])[^A-Za-z0-9]+`)
+	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _]`)
 )
 
 // CodeEmpty is used when no code is defined.
 const CodeEmpty Code = ""
 
+// NormalizeCode attempts to clean and normalize the provided code so that
+// it matches what we'd expect instead of raising validation errors.
+func NormalizeCode(c Code) Code {
+	code := c.String()
+	code = strings.TrimSpace(code)
+	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
+	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
 // Validate ensures that the code complies with the expected rules.
 func (c Code) Validate() error {
 	return validation.Validate(string(c),
 		validation.Length(1, int(CodeMaxLength)),
-		validation.Match(codeValidationRegexp),
+		validation.Match(CodePatternRegexp),
 	)
 }
 
@@ -63,15 +87,37 @@ func (c Code) In(ary ...Code) bool {
 	return false
 }
 
+// Join returns a new code that is the result of joining the provided
+// code with the current one using a default separator.
+func (c Code) Join(c2 Code) Code {
+	return c.JoinWith(DefaultCodeSeparator, c2)
+}
+
+// JoinWith returns a new code that is the result of joining the provided
+// code with the current one using the provided separator. If any of the codes
+// are empty, no separator will be added.
+func (c Code) JoinWith(separator Code, c2 Code) Code {
+	if c == CodeEmpty {
+		return c2
+	}
+	if c2 == CodeEmpty {
+		return c
+	}
+	return c + separator + c2
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Code) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
-		Type:        "string",
-		Pattern:     CodePattern,
-		Title:       "Code",
-		MinLength:   &CodeMinLength,
-		MaxLength:   &CodeMaxLength,
-		Description: "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols.",
+		Type:      "string",
+		Pattern:   CodePattern,
+		Title:     "Code",
+		MinLength: &CodeMinLength,
+		MaxLength: &CodeMaxLength,
+		Description: here.Doc(`
+			Alphanumerical text identifier with upper-case letters and limits on using
+			special characters or whitespace to separate blocks.
+		`),
 	}
 }
 

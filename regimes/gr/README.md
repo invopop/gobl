@@ -12,11 +12,60 @@ Example GR GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 
 ## Greece specifics
 
+### Invoice Type
+
+The Greek tax authority (IAPR) requires the invoice type to be specified as part of the invoice. In GOBL, this type can be set using the `gr-mydata-invoice-type` extension in the tax section.
+
+Alternatively, GOBL will set the extension for you based on the type and the tax tags you set in your GOBL invoice. The table below shows how this mapping is done:
+
+| Type   | Description                                     | GOBL Type     | GOBL Tags                  |
+| ------ | ----------------------------------------------- | ------------- |----------------------------|
+| `1.1`  | Sales Invoice                                   | `standard`    | `goods`                    |
+| `1.2`  | Sales Invoice/Intra-community Supplies          | `standard`    | `goods`, `export`, `eu`    |
+| `1.3`  | Sales Invoice/Third Country Supplies            | `standard`    | `goods`, `export`          |
+| `1.4`  | Sales Invoice/Sale on Behalf of Third Parties   | `standard`    | `goods`, `self-billed`     |
+| `2.1`  | Service Rendered Invoice                        | `standard`    | `services`                 |
+| `2.2`  | Intra-community Service Rendered Invoice        | `standard`    | `services`, `export`, `eu` |
+| `2.3`  | Third Country Service Rendered Invoice          | `standard`    | `services`, `export`       |
+| `5.1`  | Credit Invoice/Associated                       | `credit-note` |                            |
+| `11.1` | Retail Sales Receipt                            | `standard`    | `goods`, `simplified`      |
+| `11.2` | Service Rendered Receipt                        | `standard`    | `services`, `simplified`   |
+| `11.3` | Simplified Invoice                              | `standard`    | `simplified`               |
+| `11.4` | Retail Sales Credit Note                        | `credit-note` | `simplified`               |
+| `11.5` | Retail Sales Receipt on Behalf of Third Parties | `credit-note` | `goods`, `simplified`, `self-billed` |
+
+For example, this is how you set the IAPR invoice type explicitly:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // ...
+  "tax": {
+    "ext": {
+      "gr-mydata-invoice-type": "2.1"
+    }
+  }
+}
+```
+
+And this is how you'll get the same result by using the GOBL type and tags:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // ...
+  "type": "standard",
+  "tax": {
+    "tags": ["services"]
+  }
+}
+```
+
 ### VAT categories
 
 Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by a 30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate with a specific VAT category.
 
-In GOBL, the IAPR VAT category code must be set using the `gr-iapr-vat-cat` extension of a line's tax to one of the codes:
+In GOBL, the IAPR VAT category code must be set using the `gr-mydata-vat-rate` extension of a line's tax to one of the codes:
 
 | Code | Description                 | GOBL Rate              |
 | ---- | --------------------------- | ---------------------- |
@@ -30,7 +79,7 @@ In GOBL, the IAPR VAT category code must be set using the `gr-iapr-vat-cat` exte
 | `8`  | Records without VAT         |                        |
 
 
-Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
+Please, note that GOBL will automatically set the proper `gr-mydata-vat-rate` code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
 
 ```js
 {
@@ -61,7 +110,7 @@ Please, note that GOBL will automatically set the proper `gr-iapr-vat-cat` code 
 
 Greece invoices can be exempt of VAT for different causes and the tax authority require a specific cause code to be provided.
 
-In a GOBL invoice, the `rate` of a line's tax need to be set to `exempt`, and the `ext` map's `gr-iapr-exemption` property needs to be set to one of these codes:
+In a GOBL invoice, the `rate` of a line's tax need to be set to `exempt`, and the `ext` map's `gr-mydata-exemption` property needs to be set to one of these codes:
 
 | Code | Description                                             |
 | ---- | ------------------------------------------------------- |
@@ -114,7 +163,7 @@ For example:
         "cat": "VAT",
         "rate": "exempt",
         "ext": {
-          "gr-iapr-exemption": "30"
+          "gr-mydata-exemption": "30"
         }
       }
     ],
@@ -129,13 +178,13 @@ The IAPR requires invoices to specify a payment method code. In a GOBL invoice, 
 
 | Code | Name                             | GOBL Payment Instruction Key |
 | ---- | -------------------------------- | ---------------------------- |
-| 1    | Domestic Payments Account Number | `credit-transfer`            |
-| 2    | Foreign Payments Account Number  | `credit-transfer+foreign`    |
-| 3    | Cash                             | `cash`                       |
-| 4    | Check                            | `cheque`                     |
-| 5    | On credit                        | `promissory-note`            |
-| 6    | Web Banking                      | `online`                     |
-| 7    | POS / e-POS                      | `card`                       |
+| `1`  | Domestic Payments Account Number | `credit-transfer`            |
+| `2`  | Foreign Payments Account Number  | `credit-transfer+foreign`    |
+| `3`  | Cash                             | `cash`                       |
+| `4`  | Check                            | `cheque`                     |
+| `5`  | On credit                        | `promissory-note`            |
+| `6`  | Web Banking                      | `online`                     |
+| `7`  | POS / e-POS                      | `card`                       |
 
 For example:
 
@@ -145,4 +194,84 @@ For example:
     "key": "credit-transfer+foreign" // Will set the IAPR Payment Method to "2"
   }
 }
+```
+
+### Income Classification
+
+Invoices reported to the Greek tax authority via myDATA can optionally include information about the income classification of each invoice item.
+
+In a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be set at item level to any of the values expected by the IAPR:
+
+#### Income Category
+
+| Value          | Description                                            |
+| -------------- | ------------------------------------------------------ |
+| `category1_1`  | Commodity Sale Income (+)/(-)                          |
+| `category1_2`  | Product Sale Income (+)/(-)                            |
+| `category1_3`  | Provision of Services Income (+)/(-)                   |
+| `category1_4`  | Sale of Fixed Assets Income (+)/(-)                    |
+| `category1_5`  | Other Income/Profits (+)/(-)                           |
+| `category1_6`  | Self-Deliveries/Self-Supplies (+)/(-)                  |
+| `category1_7`  | Income on behalf of Third Parties (+)/(-)              |
+| `category1_8`  | Past fiscal years income (+)/(-)                       |
+| `category1_9`  | Future fiscal years income (+)/(-)                     |
+| `category1_10` | Other Income Adjustment/Regularisation Entries (+)/(-) |
+| `category1_95` | Other Income-related Information (+)/(-)               |
+
+#### Income Type
+
+| Value        | Description |
+| -------------| ----------- |
+| `E3_106`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Com modities |
+| `E3_205`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Raw  and other materials |
+| `E3_210`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Pro ducts and production in progress |
+| `E3_305`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Raw  and other materials |
+| `E3_310`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Pro ducts and production in progress |
+| `E3_318`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntory/Pro duction expenses |
+| `E3_561_001` | Wholesale Sales of Goods and Services – for Traders |
+| `E3_561_002` | Wholesale Sales of Goods and Services pursuant to article 39a pa`ragraph 5 `of the VAT Code (Law 2859/2000) |
+| `E3_561_003` | Retail Sales of Goods and Services – Private Clientele |
+| `E3_561_004` | Retail Sales of Goods and Services pursuant to article 39a pa`ragraph 5 `of the VAT Code (Law 2859/2000) |
+| `E3_561_005` | Intra-Community Foreign Sales of Goods and Services |
+| `E3_561_006` | Third Country Foreign Sales of Goods and Services |
+| `E3_561_007` | Other Sales of Goods and Services |
+| `E3_562`     | Other Ordinary Income |
+| `E3_563`     | Credit Interest and Related Income |
+| `E3_564`     | Credit Exchange Differences |
+| `E3_565`     | Income from Participations |
+| `E3_566`     | Profits from Disposing Non-Current Assets |
+| `E3_567`     | Profits from the Reversal of Provisions and Impairments |
+| `E3_568`     | Profits from Measurement at Fair Value |
+| `E3_570`     | Extraordinary income and profits |
+| `E3_595`     | Self-Production Expenses |
+| `E3_596`     | Subsidies - Grants |
+| `E3_597`     | Subsidies – Grants for Investment Purposes – Expense Coverage |
+| `E3_880_001` | Wholesale Sales of Fixed Assets |
+| `E3_880_002` | Retail Sales of Fixed Assets |
+| `E3_880_003` | Intra-Community Foreign Sales of Fixed Assets |
+| `E3_880_004` | Third Country Foreign Sales of Fixed Assets |
+| `E3_881_001` | Wholesale Sales on behalf of Third Parties |
+| `E3_881_002` | Retail Sales on behalf of Third Parties |
+| `E3_881_003` | Intra-Community Foreign Sales on behalf of Third Parties |
+| `E3_881_004` | Third Country Foreign Sales on behalf of Third Parties |
+| `E3_598_001` | Sales of goods belonging to excise duty |
+| `E3_598_003` | Sales on behalf of farmers through an agricultural cooperative e.t.c. |
+
+For example:
+
+```js
+"lines": [
+  {
+    "i": 1,
+    "quantity": "20",
+    "item": {
+      "name": "Υπηρεσίες Ανάπτυξης",
+      "price": "90.00",
+      "ext": {
+        "gr-mydata-income-cat": "category1_1",
+        "gr-mydata-income-type": "E3_561_001",
+      }
+    }
+  }
+]
 ```

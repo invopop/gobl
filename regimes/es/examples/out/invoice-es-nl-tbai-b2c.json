@@ -4,23 +4,24 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d514b7b500ee0c08dd76cfc4455280ae44f586c487eb4ae9fd22aeb5e617ffba"
-		},
-		"draft": true
+			"val": "951ab32ee551ab67853712d2f2d4f8bf5f361121565ca747c77ac1b29db7746e"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-tbai-v1"
+		],
+		"$tags": [
+			"customer-rates"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "EXPORT-X",
 		"code": "0002",
 		"issue_date": "2023-12-18",
 		"currency": "EUR",
-		"tax": {
-			"tags": [
-				"customer-rates"
-			]
-		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
@@ -69,6 +70,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"country": "NL",
 						"rate": "standard",
 						"percent": "21.0%",
 						"ext": {
@@ -89,6 +91,7 @@
 						"rates": [
 							{
 								"key": "standard",
+								"country": "NL",
 								"ext": {
 									"es-tbai-product": "services"
 								},
@@ -105,6 +108,12 @@
 			"tax": "340.20",
 			"total_with_tax": "1960.20",
 			"payable": "1960.20"
-		}
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Just an invoice"
+			}
+		]
 	}
 }

@@ -7,6 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCodeEmpty(t *testing.T) {
+	c := l10n.CodeEmpty
+	assert.True(t, c.Empty())
+	assert.True(t, c.ISO().Empty())
+	assert.True(t, c.Tax().Empty())
+}
+
 func TestISOCountryCodeValidation(t *testing.T) {
 	// Test that the country code is valid
 	c := l10n.ISOCountryCode("US")

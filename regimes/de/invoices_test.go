@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -14,6 +13,7 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
+		Regime: tax.WithRegime("DE"),
 		Series: "TEST",
 		Code:   "0002",
 		Supplier: &org.Party{
@@ -63,9 +63,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("simplified invoice - no tax details", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{"simplified"},
-		}
+		inv.SetTags("simplified")
 		inv.Supplier.TaxID.Code = ""
 		inv.Customer = nil
 

@@ -1,13 +1,11 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-tbai-v1"]
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 currency: "EUR"
 issue_date: "2022-02-01"
 series: "FR"
 code: "012"
 type: "credit-note"
-tax:
-  tags:
-    - "ticketbai"
 
 preceding:
   - type: "standard"

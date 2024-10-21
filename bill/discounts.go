@@ -13,16 +13,17 @@ import (
 
 // LineDiscount represents an amount deducted from the line, and will be
 // applied before taxes.
-// TODO: use UNTDID 5189 code list
 type LineDiscount struct {
 	// Percentage if fixed amount not applied
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Fixed discount amount to apply (calculated if percent present).
-	Amount num.Amount `json:"amount" jsonschema:"title=Value" jsonschema_extras:"calculated=true"`
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// Reason code.
 	Code string `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the discount was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+
+	// TODO: support UNTDID 5189 codes
 }
 
 // Validate checks the line discount's fields.
@@ -63,9 +64,17 @@ type Discount struct {
 	amount num.Amount
 }
 
+// Normalize performs normalization on the line and embedded objects using the
+// provided list of normalizers.
+func (m *Discount) Normalize(normalizers tax.Normalizers) {
+	m.Taxes = tax.CleanSet(m.Taxes)
+	normalizers.Each(m)
+	tax.Normalize(normalizers, m.Taxes)
+}
+
 // ValidateWithContext checks the discount's fields.
 func (m *Discount) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, m,
+	return tax.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
 		validation.Field(&m.Base),
 		validation.Field(&m.Percent,

@@ -54,7 +54,7 @@ func (l *Line) GetTotal() num.Amount {
 // ValidateWithContext ensures the line contains everything required using
 // the provided context that should include the regime.
 func (l *Line) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, l,
+	return tax.ValidateStructWithContext(ctx, l,
 		validation.Field(&l.UUID),
 		validation.Field(&l.Index, validation.Required),
 		validation.Field(&l.Quantity, validation.Required),
@@ -68,26 +68,24 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
+// Normalize performs normalization on the line and embedded objects using the
+// provided list of normalizers.
+func (l *Line) Normalize(normalizers tax.Normalizers) {
+	l.Taxes = tax.CleanSet(l.Taxes)
+	normalizers.Each(l)
+	tax.Normalize(normalizers, l.Taxes)
+	tax.Normalize(normalizers, l.Item)
+}
+
 // calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate(r *tax.Regime, cur currency.Code, rates []*currency.ExchangeRate) error {
+func (l *Line) calculate(cur currency.Code, rates []*currency.ExchangeRate) error {
 	if l.Item == nil {
 		return nil
-	}
-	if err := r.CalculateObject(l); err != nil {
-		return err
-	}
-
-	// Ensure Item looks good
-	if err := l.Item.Calculate(); err != nil { // Normalizes
-		return validation.Errors{"item": err}
-	}
-	if err := r.CalculateObject(l.Item); err != nil {
-		return validation.Errors{"item": err}
 	}
 
 	// Perform currency manipulation to ensure item's price is
 	// in the document's currency.
-	if err := l.normalizeItemPrice(cur, rates); err != nil {
+	if err := l.calculateItemPrice(cur, rates); err != nil {
 		return err
 	}
 
@@ -125,10 +123,10 @@ func (l *Line) calculate(r *tax.Regime, cur currency.Code, rates []*currency.Exc
 	return nil
 }
 
-// normalizeItemPrice will attempt to perform any currency conversion process on
+// calculateItemPrice will attempt to perform any currency conversion process on
 // the line item's data so that the currency always matches that of the
 // document.
-func (l *Line) normalizeItemPrice(cur currency.Code, rates []*currency.ExchangeRate) error {
+func (l *Line) calculateItemPrice(cur currency.Code, rates []*currency.ExchangeRate) error {
 	item := l.Item
 	icur := item.Currency
 	if icur == currency.CodeEmpty {
@@ -204,10 +202,10 @@ func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
 	return &l2
 }
 
-func calculateLines(r *tax.Regime, lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
+func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		if err := l.calculate(r, cur, rates); err != nil {
+		if err := l.calculate(cur, rates); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
 		}
 	}

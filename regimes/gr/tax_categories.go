@@ -7,10 +7,11 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// TaxRateIsland is used to define the island reduced tax rates
+// TaxRateIsland is used as a suffix to regular tax rates in order to denote
+// the reduced rates that apply to islands.
 const TaxRateIsland cbc.Key = "island"
 
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	//
 	// VAT
 	//
@@ -34,23 +35,17 @@ var taxCategories = []*tax.Category{
 			},
 		},
 		Retained: false,
-		Extensions: []cbc.Key{
-			ExtKeyIAPRVATCat,
-		},
-		Rates: []*tax.Rate{
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard rate",
 					i18n.EL: "Κανονικός συντελεστής",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(24, 2),
 					},
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "1",
 				},
 			},
 			{
@@ -59,13 +54,10 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced rate",
 					i18n.EL: "Μειωμένος συντελεστής",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(13, 2),
 					},
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "2",
 				},
 			},
 			{
@@ -74,13 +66,10 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Super-reduced rate",
 					i18n.EL: "Υπερμειωμένος συντελεστής",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(6, 2),
 					},
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "3",
 				},
 			},
 			{
@@ -89,13 +78,10 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Standard rate (Island)",
 					i18n.EL: "Κανονικός συντελεστής (Νησί)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(17, 2),
 					},
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "4",
 				},
 			},
 			{
@@ -104,13 +90,10 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced rate (Island)",
 					i18n.EL: "Μειωμένος συντελεστής (Νησί)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(9, 2),
 					},
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "5",
 				},
 			},
 			{
@@ -119,13 +102,10 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Super-reduced rate (Island)",
 					i18n.EL: "Υπερμειωμένος συντελεστής (Νησί)",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Percent: num.MakePercentage(4, 2),
 					},
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "6",
 				},
 			},
 			{
@@ -134,12 +114,6 @@ var taxCategories = []*tax.Category{
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.EL: "Απαλλαγή",
-				},
-				Extensions: []cbc.Key{
-					ExtKeyIAPRExemption,
-				},
-				Map: cbc.CodeMap{
-					ExtKeyIAPRVATCat: "7",
 				},
 			},
 		},

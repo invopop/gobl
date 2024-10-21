@@ -4,18 +4,29 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9f7fe5b3f2c4c3d20ed91205d1ddd442e11ea039eb9c9f61f5e4b35067ac6fe1"
-		},
-		"draft": true
+			"val": "dda9cc633ac5050877271cc1bd6631bd95b1190a4e4b26a69725d86e4f2a6d55"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "EL",
+		"$addons": [
+			"gr-mydata-v1"
+		],
+		"$tags": [
+			"services"
+		],
 		"uuid": "019035bd-4524-73ab-bf44-6037841ce5d9",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"gr-mydata-invoice-type": "2.1"
+			}
+		},
 		"supplier": {
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
@@ -81,7 +92,7 @@
 						"rate": "standard+island",
 						"percent": "17%",
 						"ext": {
-							"gr-iapr-vat-cat": "4"
+							"gr-mydata-vat-rate": "4"
 						}
 					}
 				],
@@ -90,7 +101,10 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "cash"
+				"key": "cash",
+				"ext": {
+					"gr-mydata-payment-means": "3"
+				}
 			}
 		},
 		"totals": {
@@ -104,7 +118,7 @@
 							{
 								"key": "standard+island",
 								"ext": {
-									"gr-iapr-vat-cat": "4"
+									"gr-mydata-vat-rate": "4"
 								},
 								"base": "1620.00",
 								"percent": "17%",

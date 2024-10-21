@@ -11,13 +11,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/dsig"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/note"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/uuid"
 )
@@ -56,8 +56,7 @@ func ExampleNewEnvelope_complete() {
 	// 		"dig": {
 	// 			"alg": "sha256",
 	// 			"val": "6854b999501883c478f0dbcb929ea1cb33e0e738fd0e74ac8194d1e5b7991980"
-	// 		},
-	//		"draft": true
+	// 		}
 	// 	},
 	// 	"doc": {
 	// 		"$schema": "https://gobl.org/draft-0/note/message",
@@ -149,8 +148,11 @@ func TestEnvelopeCalculate(t *testing.T) {
 		e.Head.AddStamp(&head.Stamp{Provider: cbc.Key("test"), Value: "test"})
 		err := e.Calculate()
 		assert.NoError(t, err)
+		require.NoError(t, e.Sign(testKey))
 		assert.NotEmpty(t, e.Head.Stamps)
-		e.Head.Draft = true
+
+		// remove signatures
+		e.Signatures = nil
 		err = e.Validate()
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "stamps: must be blank.")
@@ -217,7 +219,6 @@ func TestEnvelopeValidate(t *testing.T) {
 			name: "missing message body, draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Head.Draft = true
 				require.NoError(t, env.Insert(&note.Message{}))
 				return env
 			},
@@ -227,7 +228,6 @@ func TestEnvelopeValidate(t *testing.T) {
 			name: "missing sig, draft",
 			env: func() *gobl.Envelope {
 				env := gobl.NewEnvelope()
-				env.Head.Draft = true
 				require.NoError(t, env.Insert(&note.Message{Content: "foo"}))
 				return env
 			},
@@ -268,27 +268,34 @@ func TestEnvelopeValidate(t *testing.T) {
 }
 
 func TestEnvelopeSign(t *testing.T) {
-	t.Run("will sign draft", func(t *testing.T) {
+	t.Run("will sign", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Foooo"}))
-		assert.True(t, env.Head.Draft)
 		err := env.Sign(testKey)
 		assert.NoError(t, err)
-		assert.False(t, env.Head.Draft)
+		assert.Len(t, env.Signatures, 1)
 	})
 	t.Run("cannot sign invalid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{})) // missing msg content
 		err := env.Sign(testKey)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "validation: (doc: (content: cannot be blank.).).")
+		assert.ErrorContains(t, err, "validation: (doc: (content: cannot be blank.).).")
 	})
 	t.Run("sign valid document", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
 		err := env.Sign(testKey)
 		assert.NoError(t, err)
-		assert.Len(t, env.Signatures, 1)
+		assert.True(t, env.Signed())
+	})
+
+	t.Run("unsign document", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		err := env.Sign(testKey)
+		assert.NoError(t, err)
+		env.Unsign()
+		assert.False(t, env.Signed())
 	})
 }
 func TestEnvelopeCorrect(t *testing.T) {
@@ -303,7 +310,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		_, err = env.Correct(
 			bill.Corrective,
-			bill.WithExtension(es.ExtKeyFacturaECorrection, "01"),
+			bill.WithExtension(facturae.ExtKeyCorrection, "01"),
 		)
 		require.NoError(t, err)
 
@@ -312,7 +319,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 
 		e2, err := env.Correct(
 			bill.Corrective,
-			bill.WithExtension(es.ExtKeyFacturaECorrection, "02"),
+			bill.WithExtension(facturae.ExtKeyCorrection, "02"),
 		)
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)
@@ -334,7 +341,7 @@ func TestEnvelopeReplicate(t *testing.T) {
 		require.NoError(t, err)
 
 		doc := env.Extract().(*bill.Invoice)
-		assert.Equal(t, "SAMPLE-001", doc.Code, "should not update in place")
+		assert.Equal(t, "SAMPLE-001", doc.Code.String(), "should not update in place")
 
 		e2, err := env.Replicate()
 		require.NoError(t, err)
@@ -432,12 +439,7 @@ func TestEnvelopeVerify(t *testing.T) {
 		env := gobl.NewEnvelope()
 		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
 		err := env.Verify()
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "cannot verify draft document")
-		env.Head.Draft = false
-		err = env.Verify()
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "no signatures to verify")
+		assert.ErrorContains(t, err, "no signatures to verify")
 	})
 
 	t.Run("valid signature", func(t *testing.T) {

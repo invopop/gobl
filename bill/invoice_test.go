@@ -12,41 +12,15 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func TestInvoiceCodeRegexp(t *testing.T) {
-	tests := []struct {
-		code string
-		ok   bool
-	}{
-		// Good
-		{"1", true},
-		{"A", true},
-		{"123", true},
-		{"123TEST", true},
-		{"123-TEST", true},
-		{"FR F-01/37", true},
-		{"MultiCase", true},
-		{"F.01_21", true},
-		// Bad
-		{"F101-", false},
-		{" 123 ", false},
-		{"F--01", false},
-		{"\n", false},
-		{"FOO\n", false},
-	}
-	for _, ts := range tests {
-		t.Run(ts.code, func(t *testing.T) {
-			assert.Equal(t, ts.ok, bill.InvoiceCodeRegexp.MatchString(ts.code))
-		})
-	}
-}
 
 func TestInvoiceRegimeCurrency(t *testing.T) {
 	lines := []*bill.Line{
@@ -182,6 +156,21 @@ func TestInvoiceAutoSetIssueDate(t *testing.T) {
 	require.NoError(t, err)
 	dn := cal.TodayIn(loc)
 	assert.Equal(t, dn.String(), i.IssueDate.String(), "should set issue date to today")
+}
+
+func TestInvoiceNoTax(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	require.NoError(t, i.Calculate())
+	assert.Nil(t, i.Totals.Taxes, "should remove empty taxes object")
 }
 
 func TestRemoveIncludedTax(t *testing.T) {
@@ -805,6 +794,102 @@ func TestCalculateTotalsWithFractions(t *testing.T) {
 	assert.Equal(t, "122.61", i.Totals.Total.String())
 }
 
+func TestApplyCustomerRates(t *testing.T) {
+	t.Run("missing customer", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.SetTags(tax.TagCustomerRates)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
+	})
+	t.Run("missing customer tax ID", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.SetTags(tax.TagCustomerRates)
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Lines[0].Taxes[0].Country)
+	})
+	t.Run("regular customer rates", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(100000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+		inv.SetTags(tax.TagCustomerRates)
+		inv.Customer.TaxID.Country = "PT"
+		inv.Discounts = []*bill.Discount{
+			{
+				Reason:  "Testing",
+				Percent: num.NewPercentage(10, 2),
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+		inv.Charges = []*bill.Charge{
+			{
+				Reason:  "Testing",
+				Percent: num.NewPercentage(5, 2),
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(21, 2),
+					},
+				},
+			},
+		}
+
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "PT", inv.Lines[0].Taxes[0].Country.String())
+		assert.Equal(t, "PT", inv.Discounts[0].Taxes[0].Country.String())
+		assert.Equal(t, "PT", inv.Charges[0].Taxes[0].Country.String())
+	})
+}
+
 func TestCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
@@ -876,6 +961,7 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, i.Totals.Advances.String(), "285.00")
 	assert.Equal(t, i.Totals.Payable.String(), "960.00")
 	assert.Equal(t, i.Totals.Due.String(), "675.00")
+	assert.False(t, i.Totals.Paid())
 }
 
 func TestCalculateInverted(t *testing.T) {
@@ -949,23 +1035,59 @@ func TestCalculateInverted(t *testing.T) {
 	assert.Equal(t, i.Totals.Due.String(), "-710.00")
 }
 
+func TestInvoiceForUnknownRegime(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(32, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(4375, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(6, 2),
+				},
+			},
+		},
+	}
+	inv := baseInvoice(t, lines...)
+
+	// Set an undefined regime
+	inv.Supplier.TaxID.Country = l10n.AD.Tax()
+	assert.Nil(t, tax.RegimeDefFor(l10n.AD), "if Andorra is defined, change this to another country")
+
+	assert.ErrorContains(t, inv.Calculate(), "currency: missing")
+	inv.Currency = currency.USD
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
+}
+
+func TestNormalization(t *testing.T) {
+	inv := baseInvoiceWithLines(t)
+	inv.Series = " bar 2024 "
+	inv.Code = " 123_Test "
+	require.NoError(t, inv.Calculate())
+	assert.Equal(t, cbc.Code("bar 2024"), inv.Series)
+	assert.Equal(t, cbc.Code("123_Test"), inv.Code)
+}
+
 func TestValidation(t *testing.T) {
 	t.Run("basic validation", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Code = ""
 		ctx := context.Background()
 		require.NoError(t, inv.Calculate())
-		err := inv.ValidateWithContext(ctx)
-		assert.ErrorContains(t, err, "code: cannot be blank")
-		ctx = context.WithValue(ctx, internal.KeyDraft, true)
 		assert.NoError(t, inv.ValidateWithContext(ctx))
+		ctx = internal.SignedContext(ctx)
+		err := inv.ValidateWithContext(ctx)
+		assert.ErrorContains(t, err, "code: required to sign invoice")
 	})
 
 	t.Run("supplier name", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.Supplier.Name = ""
-		inv.Customer.TaxID.Code = "" // simplified
-		inv.Customer.Name = ""       // so this is okay
+		inv.Customer = nil // simplified
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.).")
@@ -974,36 +1096,40 @@ func TestValidation(t *testing.T) {
 
 	t.Run("simplified", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
-		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.NotNil(t, inv.Customer)
+
+		inv.SetTags(tax.TagSimplified)
+
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+		assert.NotNil(t, inv.Customer) // just ignore simplified tag
+	})
+
+	t.Run("customer name and tax ID code", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "GB",
+			Code:    "000472631",
+		}
+		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: cannot be blank.")
+		assert.ErrorContains(t, err, "customer: (name: cannot be blank.)")
 
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				tax.TagSimplified,
-			},
-		}
+		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err = inv.Validate()
 		assert.NoError(t, err)
 	})
 
-	t.Run("simplified without customer name", func(t *testing.T) {
-		inv := baseInvoiceWithLines(t)
-		inv.Tax = &bill.Tax{
-			Tags: []cbc.Key{
-				tax.TagSimplified,
-			},
-		}
-		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err)
-	})
-
 	t.Run("implied simplified without customer tax ID", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "GB",
+			Code:    "000472631",
+		}
 		inv.Customer.TaxID = nil
 		inv.Customer.Name = ""
 		inv.Customer.Emails = append(inv.Customer.Emails, &org.Email{
@@ -1021,6 +1147,21 @@ func TestValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
 	})
+}
+
+func TestInvoiceTagsValidation(t *testing.T) {
+	ctx := context.Background()
+	inv := baseInvoiceWithLines(t)
+	inv.SetTags("reverse-charge")
+
+	assert.NoError(t, inv.Calculate())
+	err := inv.ValidateWithContext(ctx)
+	require.NoError(t, err)
+
+	inv.SetTags("invalid-tag")
+	assert.NoError(t, inv.Calculate())
+	err = inv.ValidateWithContext(ctx)
+	assert.ErrorContains(t, err, "tags: 'invalid-tag' undefined")
 }
 
 func baseInvoiceWithLines(t *testing.T) *bill.Invoice {
@@ -1068,4 +1209,65 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 		Lines: lines,
 	}
 	return i
+}
+
+func TestRegimeJSONSchemaExtend(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$regime": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Regime"
+			},
+			"$addons": {
+				"items": {
+            		"$ref": "https://gobl.org/draft-0/cbc/key",
+					"type": "array",
+					"title": "Addons",
+					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+				}
+			},
+			"uuid": {
+				"type": "string",
+				"format": "uuid",
+				"title": "UUID",
+				"description": "Universally Unique Identifier."
+			},
+			"type": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Type",
+		        "description": "Type of invoice document subject to the requirements of the local tax regime.",
+        		"calculated": true
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	inv := bill.Invoice{}
+	inv.JSONSchemaExtend(js)
+
+	assert.Equal(t, js.Properties.Len(), 4) // from this example
+
+	t.Run("regime", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$regime")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		rd := tax.AllRegimeDefs()[0]
+		assert.Equal(t, rd.Code().String(), prop.OneOf[0].Const)
+	})
+	t.Run("addons", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$addons")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.Items.OneOf), 1)
+		ao := tax.AllAddonDefs()[0]
+		assert.Equal(t, ao.Key.String(), prop.Items.OneOf[0].Const)
+	})
+	t.Run("types", func(t *testing.T) {
+		prop, ok := js.Properties.Get("type")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		it := bill.InvoiceTypes[0]
+		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
+	})
+
 }

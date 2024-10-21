@@ -4,17 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4edbfc19235a0f031273f35014dafe6055a63f62006b320474274516ea927500"
-		},
-		"draft": true
+			"val": "6a215711707e43b560bdccc9d44f2ab1c0b35553d2960f05f29a2ace7b185dca"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "",
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"pt-saft-invoice-type": "FT"
+			}
+		},
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
 			"name": "Hotelzinho",
@@ -47,7 +55,8 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"pt-exemption-code": "M40"
+							"pt-saft-exemption": "M40",
+							"pt-saft-tax-rate": "ISE"
 						}
 					}
 				],
@@ -66,7 +75,8 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"pt-exemption-code": "M40"
+							"pt-saft-exemption": "M40",
+							"pt-saft-tax-rate": "ISE"
 						}
 					}
 				],
@@ -84,7 +94,8 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"pt-exemption-code": "M40"
+									"pt-saft-exemption": "M40",
+									"pt-saft-tax-rate": "ISE"
 								},
 								"base": "340.00",
 								"amount": "0.00"
@@ -103,7 +114,7 @@
 			{
 				"key": "legal",
 				"code": "M40",
-				"src": "pt-exemption-code",
+				"src": "pt-saft-exemption",
 				"text": "Reverse charge / Autoliquidação - Artigo 6.º n.º 6 alínea a) do Código do IVA, a contrário"
 			}
 		]

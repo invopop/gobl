@@ -2,23 +2,17 @@
 package gr
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
-
-// Custom keys used typically in meta or codes information.
-const (
-	KeyIAPRPaymentMethod cbc.Key = "iapr-payment-method"
-)
 
 // Official IAPR codes to include in stamps.
 const (
@@ -30,8 +24,8 @@ const (
 )
 
 // New provides the tax region definition
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country: "EL",
 		AltCountryCodes: []l10n.Code{
 			"GR", // regular ISO code
@@ -41,49 +35,32 @@ func New() *tax.Regime {
 			i18n.EN: "Greece",
 			i18n.EL: "Ελλάδα",
 		},
-		TimeZone: "Europe/Athens",
-		Tags:     invoiceTags,
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
+		TimeZone:               "Europe/Athens",
+		CalculatorRoundingRule: tax.CalculatorRoundThenSum,
+		Tags: []*tax.TagSet{
+			common.InvoiceTags(),
 		},
-		Corrections: []*tax.CorrectionDefinition{
-			{
-				Schema: bill.ShortSchemaInvoice,
-				Types: []cbc.Key{
-					bill.InvoiceTypeCreditNote,
-				},
-			},
-		},
-		Validator:        Validate,
-		Calculator:       Calculate,
-		Categories:       taxCategories,
-		PaymentMeansKeys: paymentMeansKeys,
-		Extensions:       extensionKeys,
+		Scenarios:   scenarios,
+		Corrections: corrections,
+		Validator:   Validate,
+		Normalizer:  Normalize,
+		Categories:  taxCategories,
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *tax.Combo:
-		return validateTaxCombo(obj)
-	case *org.Address:
-		return validateAddress(obj)
 	}
 	return nil
 }
 
-// Calculate will attempt to clean the object passed to it.
-func Calculate(doc interface{}) error {
+// Normalize will attempt to clean the object passed to it.
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
-	case *tax.Combo:
-		return normalizeTaxCombo(obj)
+		normalizeTaxIdentity(obj)
 	}
-	return nil
 }

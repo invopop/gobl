@@ -116,7 +116,7 @@ func (t *Terms) Validate() error {
 
 // ValidateWithContext ensures that the terms contain everything required.
 func (t *Terms) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, t,
+	return tax.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.Key, isValidTermKey),
 		validation.Field(&t.DueDates),
 	)

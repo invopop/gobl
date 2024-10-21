@@ -10,7 +10,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
@@ -34,15 +34,14 @@ var identityKeyDefinitions = []*cbc.KeyDefinition{
 	},
 }
 
-func normalizeIdentity(id *org.Identity) error {
+func normalizeIdentity(id *org.Identity) {
 	if id == nil || id.Key != IdentityKeyFiscalCode {
-		return nil
+		return
 	}
 	code := strings.ToUpper(id.Code.String())
-	code = common.TaxCodeBadCharsRegexp.ReplaceAllString(code, "")
+	code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
 	code = strings.TrimPrefix(code, string(l10n.IT))
 	id.Code = cbc.Code(code)
-	return nil
 }
 
 // validateIdentities helps confirm that an identity of a specific type is valid.

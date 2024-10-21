@@ -6,7 +6,6 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -32,16 +31,13 @@ var (
 
 // normalizeTaxIdentity will remove any whitespace or separation characters from
 // the tax code and also make sure the default type is set.
-func normalizeTaxIdentity(tID *tax.Identity) error {
+func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID == nil {
-		return nil
+		return
 	}
-	if err := common.NormalizeTaxIdentity(tID); err != nil {
-		return err
-	}
+	tax.NormalizeIdentity(tID)
 	// CH has some strange suffixes, remove them.
 	tID.Code = cbc.Code(taxCodeSuffixes.ReplaceAllString(tID.Code.String(), ""))
-	return nil
 }
 
 // validateTaxIdentity checks to ensure the NIT code looks okay.

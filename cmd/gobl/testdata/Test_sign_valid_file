@@ -4,11 +4,12 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "6574da6531cf058c7fcf89e36dff6061cf716553200d31dc468d50f88385f1f9"
+			"val": "cd45a3373b70f8cbf1247dc25698baba8462dd6c47781e66b790490f129a87ce"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
 		"uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635",
 		"type": "standard",
 		"code": "INV2021-001",
@@ -122,7 +123,7 @@
 					{
 						"cat": "VAT",
 						"rate": "zero",
-						"percent": "0%"
+						"percent": "0.0%"
 					}
 				],
 				"total": "172.50"
@@ -175,7 +176,7 @@
 							{
 								"key": "zero",
 								"base": "172.50",
-								"percent": "0%",
+								"percent": "0.0%",
 								"amount": "0.00"
 							}
 						],

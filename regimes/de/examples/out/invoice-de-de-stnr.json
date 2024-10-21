@@ -4,12 +4,12 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5debf22de57b209288fd8bed0a41ed1afadc27d9bca798340adb860797c607d8"
-		},
-		"draft": true
+			"val": "c1f8222dc56b7da46bdba0794375229935d1b325454c562977149b717de9d25d"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "DE",
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -24,7 +24,7 @@
 			"identities": [
 				{
 					"key": "de-tax-number",
-					"code": "9234567894"
+					"code": "92/345/67894"
 				}
 			],
 			"addresses": [

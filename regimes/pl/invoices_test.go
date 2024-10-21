@@ -20,7 +20,7 @@ func creditNote() *bill.Invoice {
 		Code:      "TEST",
 		Type:      bill.InvoiceTypeCreditNote,
 		IssueDate: cal.MakeDate(2022, 12, 29),
-		Preceding: []*bill.Preceding{
+		Preceding: []*org.DocumentRef{
 			{
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),

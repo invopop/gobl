@@ -4,23 +4,25 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "20992f6285d38abe96eebf992d8910cb623df19a6e64ed468a9ccd0c340a0f61"
-		},
-		"draft": true
+			"val": "1b80acf83b7ff709d71a8e43ea2dcee88591564497ac59d419e869ec6d9e574d"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "CO",
+		"$addons": [
+			"co-dian-v2"
+		],
+		"$tags": [
+			"simplified"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SETT",
 		"code": "1234",
 		"issue_date": "2021-01-01",
 		"currency": "COP",
-		"tax": {
-			"tags": [
-				"simplified"
-			]
-		},
+		"tax": {},
 		"supplier": {
 			"name": "EXAMPLE SUPPLIER S.A.S.",
 			"tax_id": {

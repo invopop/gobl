@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "94764fa558c99a777b6cd73dc97cc8601e72bb767102206385abf069c7aa7c6a"
-		},
-		"draft": true
+			"val": "d68dc80f2f6f0c4ac962961f2c367455b8b529ab67b81e8d5bc6a7f2972a5ae2"
+		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "credit-note",
 		"series": "CN",
@@ -18,9 +21,9 @@
 		"currency": "MXN",
 		"preceding": [
 			{
+				"issue_date": "2023-07-10",
 				"series": "TEST",
 				"code": "0001",
-				"issue_date": "2023-07-10",
 				"stamps": [
 					{
 						"prv": "sat-uuid",
@@ -31,7 +34,9 @@
 		],
 		"tax": {
 			"ext": {
-				"mx-cfdi-issue-place": "21000"
+				"mx-cfdi-doc-type": "E",
+				"mx-cfdi-issue-place": "21000",
+				"mx-cfdi-rel-type": "01"
 			}
 		},
 		"supplier": {

@@ -46,7 +46,7 @@ func validateInvoiceSupplier(value any) error {
 }
 
 func isSimplified(inv *bill.Invoice) bool {
-	return inv != nil && inv.Tax != nil && inv.Tax.ContainsTag(tax.TagSimplified)
+	return inv.HasTags(tax.TagSimplified)
 }
 
 func hasTaxIDCode(party *org.Party) bool {

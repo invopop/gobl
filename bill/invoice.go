@@ -2,14 +2,15 @@ package bill
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
@@ -29,30 +30,23 @@ const (
 	defaultCurrencyConversionAccuracy uint32 = 2
 )
 
-const (
-	// InvoiceCodePattern defines what we expect from codes
-	// and series in an invoice.
-	InvoiceCodePattern = `^([A-Za-z0-9][A-Za-z0-9 /\._-]?)*[A-Za-z0-9]$`
-)
-
-var (
-	// InvoiceCodeRegexp is used to validate invoice codes and series
-	// to something that is compatible with most tax regimes.
-	InvoiceCodeRegexp = regexp.MustCompile(InvoiceCodePattern)
-)
-
 // Invoice represents a payment claim for goods or services supplied under
 // conditions agreed between the supplier and the customer. In most cases
 // the resulting document describes the actual financial commitment of goods
 // or services ordered from the supplier.
 type Invoice struct {
+	tax.Regime
+	tax.Addons
+	tax.Tags
+
 	uuid.Identify
+
 	// Type of invoice document subject to the requirements of the local tax regime.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Used as a prefix to group codes.
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Sequential code used to identify this invoice in tax declarations.
-	Code string `json:"code" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 	// When the invoice was created.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
@@ -66,14 +60,14 @@ type Invoice struct {
 
 	// Key information regarding previous invoices and potentially details as to why they
 	// were corrected.
-	Preceding []*Preceding `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
+	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
 	// The taxable entity supplying the goods or services.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
-	// Legal entity receiving the goods or services, may be empty in certain circumstances such as simplified invoices.
+	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
 	// List of invoice lines representing each of the items sold to the customer.
@@ -114,25 +108,29 @@ func (inv *Invoice) Validate() error {
 // ValidateWithContext checks to ensure the invoice is valid and contains all the
 // information we need.
 func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
-	r := inv.TaxRegime()
-	if r == nil {
-		return errors.New("supplier: invalid or unknown tax regime")
+	ctx = inv.ValidationContext(ctx)
+
+	var exRule validation.Rule
+	exRule = validation.Skip
+	if r := inv.RegimeDef(); r != nil {
+		// regime specific additions for validation
+		exRule = currency.CanConvertInto(inv.ExchangeRates, r.Currency)
 	}
-	ctx = r.WithContext(ctx)
-	err := validation.ValidateStructWithContext(ctx, inv,
+
+	return tax.ValidateStructWithContext(ctx, inv,
+		validation.Field(&inv.Regime),
+		validation.Field(&inv.Addons),
+		validation.Field(&inv.Tags.List, tax.TagsIn(inv.supportedTags()...)),
 		validation.Field(&inv.UUID),
 		validation.Field(&inv.Type,
 			validation.Required,
 			isValidInvoiceType,
 		),
-		validation.Field(&inv.Series,
-			validation.Match(InvoiceCodeRegexp),
-		),
+		validation.Field(&inv.Series),
 		validation.Field(&inv.Code,
-			validation.Match(InvoiceCodeRegexp),
 			validation.When(
-				!internal.IsDraft(ctx),
-				validation.Required,
+				internal.IsSigned(ctx),
+				validation.Required.Error("required to sign invoice"),
 			),
 		),
 		validation.Field(&inv.IssueDate,
@@ -142,7 +140,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.ValueDate),
 		validation.Field(&inv.Currency,
 			validation.Required,
-			currency.CanConvertInto(inv.ExchangeRates, r.Currency),
+			exRule,
 		),
 		validation.Field(&inv.ExchangeRates),
 		validation.Field(&inv.Preceding),
@@ -152,12 +150,7 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.By(validateInvoiceSupplier),
 		),
 		validation.Field(&inv.Customer,
-			// Customer is not required for simplified invoices.
-			validation.When(
-				!inv.isSimplified(),
-				validation.Required,
-			),
-			validation.By(inv.validateInvoiceCustomer()),
+			validation.By(validateInvoiceCustomer),
 		),
 		validation.Field(&inv.Lines,
 			validation.Required,
@@ -175,10 +168,6 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&inv.Complements),
 		validation.Field(&inv.Meta),
 	)
-	if err == nil {
-		err = r.ValidateObject(inv)
-	}
-	return err
 }
 
 func validateInvoiceSupplier(value any) error {
@@ -191,25 +180,19 @@ func validateInvoiceSupplier(value any) error {
 	)
 }
 
-func (inv *Invoice) validateInvoiceCustomer() validation.RuleFunc {
-	return func(value any) error {
-		p, ok := value.(*org.Party)
-		if !ok || p == nil {
-			return nil
-		}
-		return validation.ValidateStruct(p,
-			validation.Field(&p.Name,
-				validation.When(
-					inv.isSimplified() || partyHasTaxIDCode(p),
-					validation.Required,
-				),
-			),
-		)
+func validateInvoiceCustomer(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
 	}
-}
-
-func (inv *Invoice) isSimplified() bool {
-	return inv.Tax != nil && tax.TagSimplified.In(inv.Tax.Tags...)
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Name,
+			validation.When(
+				partyHasTaxIDCode(p),
+				validation.Required,
+			),
+		),
+	)
 }
 
 func partyHasTaxIDCode(party *org.Party) bool {
@@ -274,62 +257,82 @@ func (inv *Invoice) Empty() {
 	inv.Payment.ResetAdvances()
 }
 
-// Calculate performs all the calculations and normalizations required for the invoice
+// Calculate performs all the normalizations and calculations required for the invoice
 // totals and taxes. If the original invoice only includes partial calculations, this
 // will figure out what's missing.
 func (inv *Invoice) Calculate() error {
-	if inv.Type == cbc.KeyEmpty {
-		inv.Type = InvoiceTypeStandard
-	}
-	if inv.Supplier == nil {
-		return errors.New("missing supplier")
-	}
-	if err := inv.Supplier.Calculate(); err != nil {
-		return fmt.Errorf("supplier: %w", err)
-	}
-	if inv.Customer != nil {
-		if err := inv.Customer.Calculate(); err != nil {
-			return fmt.Errorf("customer: %w", err)
-		}
+	// Try to set Regime if not already prepared from the supplier's tax ID
+	if inv.Regime.IsEmpty() {
+		inv.SetRegime(inv.supplierTaxCountry())
 	}
 
-	// Preceding entries
-	if inv.Preceding != nil {
-		for _, p := range inv.Preceding {
-			if err := p.Calculate(); err != nil {
-				return err
-			}
-		}
-	}
+	inv.Normalize(inv.normalizers())
 
-	if err := inv.prepareTags(); err != nil {
+	if err := inv.calculate(); err != nil {
 		return err
 	}
-
-	// Should we use the customer's identity for calculations?
-	tID, err := inv.determineTaxIdentity()
-	if err != nil {
-		return err
-	}
-	r := tax.RegimeFor(tID.Country.Code())
-	if r == nil {
-		return fmt.Errorf("no tax regime for %v", tID.Country)
-	}
-
-	// Run Regime pre-calculations first
-	if err := r.CalculateObject(inv); err != nil {
-		return err
-	}
-
-	if err := inv.calculateWithRegime(r); err != nil {
-		return err
-	}
-
 	if err := inv.prepareScenarios(); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Normalize is run as part of the Calculate method to ensure that the invoice
+// is in a consistent state before calculations are performed. This will leverage
+// any add-ons alongside the tax regime.
+func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
+	if inv.Type == cbc.KeyEmpty {
+		inv.Type = InvoiceTypeStandard
+	}
+	inv.Series = cbc.NormalizeCode(inv.Series)
+	inv.Code = cbc.NormalizeCode(inv.Code)
+
+	normalizers.Each(inv)
+
+	tax.Normalize(normalizers, inv.Tax)
+	tax.Normalize(normalizers, inv.Supplier)
+	tax.Normalize(normalizers, inv.Customer)
+	tax.Normalize(normalizers, inv.Preceding)
+	tax.Normalize(normalizers, inv.Lines)
+	tax.Normalize(normalizers, inv.Discounts)
+	tax.Normalize(normalizers, inv.Charges)
+	tax.Normalize(normalizers, inv.Ordering)
+	tax.Normalize(normalizers, inv.Payment)
+}
+
+func (inv *Invoice) normalizers() tax.Normalizers {
+	normalizers := make(tax.Normalizers, 0)
+	if r := inv.RegimeDef(); r != nil {
+		normalizers = normalizers.Append(r.Normalizer)
+	}
+	for _, a := range inv.GetAddonDefs() {
+		normalizers = normalizers.Append(a.Normalizer)
+	}
+	return normalizers
+}
+
+func (inv *Invoice) supportedTags() []cbc.Key {
+	var ts *tax.TagSet
+	if r := inv.RegimeDef(); r != nil {
+		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaInvoice))
+	}
+	for _, a := range inv.GetAddonDefs() {
+		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaInvoice))
+	}
+	return ts.Keys()
+}
+
+// ValidationContext builds a context with all the validators that the invoice might
+// need for execution.
+func (inv *Invoice) ValidationContext(ctx context.Context) context.Context {
+	if r := inv.RegimeDef(); r != nil {
+		ctx = r.WithContext(ctx)
+	}
+	for _, a := range inv.GetAddonDefs() {
+		ctx = a.WithContext(ctx)
+	}
+	return ctx
 }
 
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
@@ -391,92 +394,22 @@ func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
 	return &i2, nil
 }
 
-// TaxRegime determines the tax regime for the invoice based on the supplier tax
+// supplierTaxCountry determines the tax country for the invoice based on the supplier tax
 // identity.
-func (inv *Invoice) TaxRegime() *tax.Regime {
-	return taxRegimeFor(inv.Supplier)
+func (inv *Invoice) supplierTaxCountry() l10n.TaxCountryCode {
+	if inv.Supplier == nil {
+		return l10n.CodeEmpty.Tax()
+	}
+	if inv.Supplier.TaxID == nil {
+		return l10n.CodeEmpty.Tax()
+	}
+	return inv.Supplier.TaxID.Country
 }
 
-// ScenarioSummary determines a summary of the tax scenario for the invoice based on
-// the document type and tax tags.
-func (inv *Invoice) ScenarioSummary() *tax.ScenarioSummary {
-	r := inv.TaxRegime()
-	if r == nil {
-		return nil
-	}
-	return inv.scenarioSummary(r)
-}
+// calculate does not assume that the tax regime is available.
+func (inv *Invoice) calculate() error {
+	r := inv.RegimeDef() // may be nil!
 
-func (inv *Invoice) scenarioSummary(r *tax.Regime) *tax.ScenarioSummary {
-	ss := r.ScenarioSet(ShortSchemaInvoice)
-	if ss == nil {
-		return nil
-	}
-	exts := make([]tax.Extensions, 0)
-	tags := []cbc.Key{}
-
-	if inv.Tax != nil {
-		tags = inv.Tax.Tags
-		if len(inv.Tax.Ext) > 0 {
-			exts = append(exts, inv.Tax.Ext)
-		}
-	}
-	for _, cat := range inv.Totals.Taxes.Categories {
-		for _, rate := range cat.Rates {
-			exts = append(exts, rate.Ext)
-		}
-	}
-
-	return ss.SummaryFor(inv.Type, tags, exts)
-}
-
-func (inv *Invoice) prepareTags() error {
-	r := inv.TaxRegime()
-	if r == nil {
-		return nil
-	}
-	if inv.Tax == nil {
-		return nil
-	}
-
-	// First check the tags are all valid
-	for _, k := range inv.Tax.Tags {
-		if t := r.Tag(k); t == nil {
-			return fmt.Errorf("invalid document tag: %v", k)
-		}
-	}
-	return nil
-}
-
-func (inv *Invoice) prepareScenarios() error {
-	r := inv.TaxRegime()
-	if r == nil {
-		return nil
-	}
-
-	// Use the scenario summary to add any notes to the invoice
-	ss := inv.scenarioSummary(r)
-	if ss == nil {
-		return nil
-	}
-	for _, n := range ss.Notes {
-		// make sure we don't already have the same note in the invoice
-		var en *cbc.Note
-		for _, n2 := range inv.Notes {
-			if n.Src == n2.Src && n.Code == n2.Code {
-				en = n
-				break
-			}
-		}
-		if en == nil {
-			inv.Notes = append(inv.Notes, n)
-		}
-	}
-
-	return nil
-}
-
-func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	// Normalize data
 	if inv.IssueDate.IsZero() {
 		inv.IssueDate = cal.TodayIn(r.TimeLocation())
@@ -488,6 +421,9 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 
 	// Convert empty or invalid currency to the regime's currency
 	if inv.Currency == currency.CodeEmpty || inv.Currency.Def() == nil {
+		if r == nil {
+			return validation.Errors{"currency": errors.New("missing")}
+		}
 		inv.Currency = r.Currency
 	}
 
@@ -499,8 +435,13 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	zero := inv.Currency.Def().Zero()
 	t.reset(zero)
 
+	// Do we need to deal with the customer-rates tag?
+	if inv.HasTags(tax.TagCustomerRates) {
+		inv.applyCustomerRates()
+	}
+
 	// Lines
-	if err := calculateLines(r, inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
+	if err := calculateLines(inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
 		return validation.Errors{"lines": err}
 	}
 	t.Sum = calculateLineSum(inv.Lines, inv.Currency)
@@ -538,14 +479,10 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 		pit = inv.Tax.PricesInclude
 	}
 	t.Taxes = new(tax.Total)
-	var tags []cbc.Key
-	if inv.Tax != nil {
-		tags = inv.Tax.Tags
-	}
 	tc := &tax.TotalCalculator{
 		Zero:     zero,
-		Regime:   r,
-		Tags:     tags,
+		Country:  inv.Regime.Country,
+		Tags:     inv.GetTags(),
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,
@@ -569,6 +506,11 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	if t.Rounding != nil {
 		// BT-144 in EN16931
 		t.Payable = t.Payable.Add(*t.Rounding)
+	}
+
+	// Remove taxes object if it doesn't contain any categories
+	if len(t.Taxes.Categories) == 0 {
+		t.Taxes = nil
 	}
 
 	// Outlays
@@ -600,6 +542,28 @@ func (inv *Invoice) calculateWithRegime(r *tax.Regime) error {
 	return nil
 }
 
+func (inv *Invoice) applyCustomerRates() {
+	if inv.Customer == nil || inv.Customer.TaxID == nil {
+		return
+	}
+	country := inv.Customer.TaxID.Country
+	for _, l := range inv.Lines {
+		addCountryToTaxes(l.Taxes, country)
+	}
+	for _, d := range inv.Discounts {
+		addCountryToTaxes(d.Taxes, country)
+	}
+	for _, c := range inv.Charges {
+		addCountryToTaxes(c.Taxes, country)
+	}
+}
+
+func addCountryToTaxes(ts tax.Set, country l10n.TaxCountryCode) {
+	for _, t := range ts {
+		t.Country = country
+	}
+}
+
 func calculateComplements(comps []*schema.Object) error {
 	for _, c := range comps {
 		if err := c.Calculate(); err != nil {
@@ -609,47 +573,27 @@ func calculateComplements(comps []*schema.Object) error {
 	return nil
 }
 
-func (inv *Invoice) determineTaxIdentity() (*tax.Identity, error) {
-	if inv.Tax != nil {
-		if inv.Tax.ContainsTag(tax.TagCustomerRates) {
-			if inv.Customer == nil {
-				return nil, fmt.Errorf("missing customer for %s", tax.TagCustomerRates.String())
-			}
-			if inv.Customer.TaxID == nil {
-				return nil, fmt.Errorf("missing customer tax ID for %s", tax.TagCustomerRates.String())
-			}
-			return inv.Customer.TaxID, nil
-		}
+// UnmarshalJSON implements the json.Unmarshaler interface and provides any
+// data migrations that might be required.
+func (inv *Invoice) UnmarshalJSON(data []byte) error {
+	type Alias *Invoice
+	if err := json.Unmarshal(data, (Alias)(inv)); err != nil {
+		return err
 	}
-	if inv.Supplier == nil {
-		return nil, errors.New("missing supplier")
+	// Ensure there is regime set when coming in from a raw JSON source.
+	if inv.Regime.IsEmpty() {
+		inv.SetRegime(inv.supplierTaxCountry())
 	}
-	if inv.Supplier.TaxID == nil {
-		return nil, errors.New("missing supplier tax ID")
+	// Copy the old tags array from the tax object to the invoice's $tags attribute.
+	if inv.Tax != nil && len(inv.Tax.tags) > 0 {
+		inv.SetTags(inv.Tax.tags...)
 	}
-	return inv.Supplier.TaxID, nil
-}
-
-func taxRegimeFor(party *org.Party) *tax.Regime {
-	if party == nil {
-		return nil
-	}
-	tID := party.TaxID
-	if tID == nil {
-		return nil
-	}
-	return tax.RegimeFor(tID.Country.Code())
+	return nil
 }
 
 // JSONSchemaExtend extends the schema with additional property details
-func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
+func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
-	if prop, ok := props.Get("series"); ok {
-		prop.Pattern = InvoiceCodePattern
-	}
-	if prop, ok := props.Get("code"); ok {
-		prop.Pattern = InvoiceCodePattern
-	}
 	// Extend type list
 	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(InvoiceTypes))
@@ -661,9 +605,12 @@ func (Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
+	inv.Regime.JSONSchemaExtend(js)
+	inv.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
+			"$regime",
 			"lines",
 		},
 	}

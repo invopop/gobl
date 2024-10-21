@@ -2,22 +2,12 @@ package pt
 
 import (
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 )
 
-// AT Tax Map
-const (
-	TaxCodeStandard     cbc.Code = "NOR"
-	TaxCodeIntermediate cbc.Code = "INT"
-	TaxCodeReduced      cbc.Code = "RED"
-	TaxCodeExempt       cbc.Code = "ISE"
-	TaxCodeOther        cbc.Code = "OUT"
-)
-
-var taxCategories = []*tax.Category{
+var taxCategories = []*tax.CategoryDef{
 	// VAT
 	{
 		Code: tax.CategoryVAT,
@@ -29,19 +19,15 @@ var taxCategories = []*tax.Category{
 			i18n.EN: "Value Added Tax",
 			i18n.PT: "Imposto sobre o Valor Acrescentado",
 		},
-		Retained:     false,
-		RateRequired: true,
-		Extensions: []cbc.Key{
-			ExtKeyRegion,
-		},
-		Rates: []*tax.Rate{
+		Retained: false,
+		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.PT: "Tipo Geral",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-AC",
@@ -61,9 +47,6 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(230, 3),
 					},
 				},
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeStandard,
-				},
 			},
 			{
 				Key: tax.RateIntermediate,
@@ -71,7 +54,7 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Intermediate Rate",
 					i18n.PT: "Taxa Intermédia", //nolint:misspell
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-AC",
@@ -91,9 +74,6 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(130, 3),
 					},
 				},
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeIntermediate,
-				},
 			},
 			{
 				Key: tax.RateReduced,
@@ -101,12 +81,19 @@ var taxCategories = []*tax.Category{
 					i18n.EN: "Reduced Rate",
 					i18n.PT: "Taxa Reduzida",
 				},
-				Values: []*tax.RateValue{
+				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
 							ExtKeyRegion: "PT-AC",
 						},
 						Since:   cal.NewDate(2011, 1, 1),
+						Percent: num.MakePercentage(40, 3),
+					},
+					{
+						Ext: tax.Extensions{
+							ExtKeyRegion: "PT-MA",
+						},
+						Since:   cal.NewDate(2024, 10, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
@@ -121,9 +108,6 @@ var taxCategories = []*tax.Category{
 						Percent: num.MakePercentage(60, 3),
 					},
 				},
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeReduced,
-				},
 			},
 			{
 				Key: tax.RateExempt,
@@ -132,12 +116,14 @@ var taxCategories = []*tax.Category{
 					i18n.PT: "Isento",
 				},
 				Exempt: true,
-				Map: cbc.CodeMap{
-					KeyATTaxCode: TaxCodeExempt,
+			},
+			{
+				Key: tax.RateOther,
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.PT: "Outro",
 				},
-				Extensions: []cbc.Key{
-					ExtKeyExemptionCode,
-				},
+				Values: []*tax.RateValueDef{},
 			},
 		},
 	},

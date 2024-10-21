@@ -29,8 +29,8 @@ func Verify(ctx context.Context, in io.Reader, key *dsig.PublicKey) error {
 	if key == nil {
 		return wrapErrorf(StatusBadRequest, "public key required")
 	}
-	if env.Head.Draft {
-		return wrapErrorf(http.StatusUnprocessableEntity, "document is a draft")
+	if !env.Signed() {
+		return wrapErrorf(http.StatusUnprocessableEntity, "envelope is not signed")
 	}
 	if err := env.Signatures[0].VerifyPayload(key, env); err != nil {
 		return wrapError(http.StatusUnprocessableEntity, err)

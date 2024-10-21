@@ -46,7 +46,7 @@ type Item struct {
 	// Country code of where this item was from originally.
 	Origin l10n.ISOCountryCode `json:"origin,omitempty" jsonschema:"title=Country of Origin"`
 	// Extension code map for any additional regime specific codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Ext"`
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional meta information that may be useful
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -56,15 +56,19 @@ func (i *Item) Validate() error {
 	return i.ValidateWithContext(context.Background())
 }
 
-// Calculate performs any required calculations on the Item.
-func (i *Item) Calculate() error {
-	i.Ext = tax.NormalizeExtensions(i.Ext)
-	return nil
+// Normalize performs any required normalizations on the Item.
+func (i *Item) Normalize(normalizers tax.Normalizers) {
+	if i == nil {
+		return
+	}
+	i.Ext = tax.CleanExtensions(i.Ext)
+	normalizers.Each(i)
+	tax.Normalize(normalizers, i.Identities)
 }
 
 // ValidateWithContext checks that the Item looks okay inside the provided context.
 func (i *Item) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, i,
+	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),

@@ -1,0 +1,84 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "52786402b81e14f77c50cf82c32d0bd4b96216772be62b09ca167d89b261aaf1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "0191bdbf-b329-7ae3-9fa8-119df45cb9d5",
+		"type": "standard",
+		"series": "XYZ",
+		"code": "0001",
+		"issue_date": "2024-09-04",
+		"currency": "USD",
+		"supplier": {
+			"name": "Acme Coporation",
+			"tax_id": {
+				"country": "ZW",
+				"code": "123456789"
+			},
+			"addresses": [
+				{
+					"street": "Industrial Avenue",
+					"locality": "Harare",
+					"country": "ZW"
+				}
+			]
+		},
+		"customer": {
+			"name": "Beta Solutions",
+			"addresses": [
+				{
+					"street": "Business Park",
+					"locality": "Bulawayo",
+					"country": "ZW"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Product A",
+					"price": "10.50"
+				},
+				"sum": "105.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "15%"
+					}
+				],
+				"total": "105.00"
+			}
+		],
+		"totals": {
+			"sum": "105.00",
+			"total": "105.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"base": "105.00",
+								"percent": "15%",
+								"amount": "15.75"
+							}
+						],
+						"amount": "15.75"
+					}
+				],
+				"sum": "15.75"
+			},
+			"tax": "15.75",
+			"total_with_tax": "120.75",
+			"payable": "120.75"
+		}
+	}
+}

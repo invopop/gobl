@@ -39,8 +39,20 @@ type Advance struct {
 	Card *Card `json:"card,omitempty" jsonschema:"title=Card"`
 	// Details about how the payment was made by credit (bank) transfer.
 	CreditTransfer *CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer"`
+	// Tax extensions required by tax regimes or addons.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional details useful for the parties involved.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// Normalize will try to normalize the advance's data.
+func (a *Advance) Normalize(normalizers tax.Normalizers) {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.Ext = tax.CleanExtensions(a.Ext)
+	normalizers.Each(a)
 }
 
 // Validate checks the advance looks okay
@@ -50,7 +62,7 @@ func (a *Advance) Validate() error {
 
 // ValidateWithContext checks the advance looks okay inside the context.
 func (a *Advance) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, a,
+	return tax.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.Amount, validation.Required),
 		validation.Field(&a.Key, HasValidMeansKey),
 		validation.Field(&a.Description, validation.Required),
@@ -58,6 +70,7 @@ func (a *Advance) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&a.Amount),
 		validation.Field(&a.Card),
 		validation.Field(&a.CreditTransfer),
+		validation.Field(&a.Ext),
 		validation.Field(&a.Meta),
 	)
 }

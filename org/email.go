@@ -28,7 +28,7 @@ func (e *Email) Validate() error {
 
 // ValidateWithContext ensures email address looks valid inside the provided context.
 func (e *Email) ValidateWithContext(ctx context.Context) error {
-	return tax.ValidateStructWithRegime(ctx, e,
+	return tax.ValidateStructWithContext(ctx, e,
 		validation.Field(&e.Address, validation.Required, is.EmailFormat),
 	)
 }

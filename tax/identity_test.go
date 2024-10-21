@@ -43,12 +43,13 @@ func TestTaxIdentity(t *testing.T) {
 		Country: "ES",
 		Code:    "  x315-7928 m",
 	}
-	err = tID.Calculate()
-	assert.NoError(t, err)
+	tID.Normalize()
 	assert.Equal(t, tID.Code.String(), "X3157928M")
 
 	tID = nil
-	assert.NoError(t, tID.Normalize(), "should handle nil identities")
+	assert.NotPanics(t, func() {
+		tID.Normalize()
+	})
 }
 
 func TestParseIdentity(t *testing.T) {
@@ -73,4 +74,41 @@ func TestValidationRules(t *testing.T) {
 	}
 	err := validation.Validate(tID, tax.RequireIdentityCode)
 	assert.ErrorContains(t, err, "code: cannot be blank")
+}
+
+func TestNormalizeIdentity(t *testing.T) {
+	tID := &tax.Identity{
+		Country: "AU",
+		Code:    "  x315-7928 m  ",
+	}
+	tax.NormalizeIdentity(tID)
+	assert.Equal(t, tID.Code.String(), "X3157928M")
+}
+
+func TestIdentityNormalize(t *testing.T) {
+	t.Run("for unkown regime", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "XX",
+			Code:    "  x315-7928 m  ",
+		}
+		tID.Normalize()
+		assert.Equal(t, tID.Code.String(), "X3157928M")
+	})
+	t.Run("for known regime", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "FR",
+			Code:    " 356000000 ",
+		}
+		tID.Normalize()
+		assert.Equal(t, tID.Code.String(), "39356000000") // adds 2 0s on end
+	})
+	t.Run("with calculate method", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "FR",
+			Code:    " 356000000 ",
+		}
+		err := tID.Calculate()
+		assert.NoError(t, err)
+		assert.Equal(t, tID.Code.String(), "39356000000")
+	})
 }

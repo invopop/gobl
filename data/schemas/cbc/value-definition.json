@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/cbc/value-definition",
+  "$ref": "#/$defs/ValueDefinition",
+  "$defs": {
+    "ValueDefinition": {
+      "properties": {
+        "value": {
+          "type": "string",
+          "title": "Value",
+          "description": "Value for which the definition is for."
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Short name for the value, if relevant."
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description offering more details about when the value should be used."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Meta defines any additional details that may be useful or associated\nwith the value."
+        }
+      },
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "description": "ValueDefinition describes a specific value and how it maps to a human name and description if appropriate."
+    }
+  }
+}

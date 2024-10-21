@@ -10,8 +10,10 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
 )
 
@@ -26,7 +28,7 @@ type CorrectionOptions struct {
 	// When the new corrective invoice's issue date should be set to.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
 	// Series to assign to the new corrective invoice.
-	Series string `json:"series,omitempty" jsonschema:"title=Series"`
+	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Stamps of the previous document to include in the preceding data.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Human readable reason for the corrective operation.
@@ -69,7 +71,7 @@ func WithStamps(stamps []*head.Stamp) schema.Option {
 }
 
 // WithSeries assigns a new series to the corrective document.
-func WithSeries(value string) schema.Option {
+func WithSeries(value cbc.Code) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.Series = value
@@ -130,11 +132,6 @@ var Debit schema.Option = func(o interface{}) {
 // that can be used on the invoice in order to correct it. Data is
 // extracted from the tax regime associated with the supplier.
 func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
-	r := taxRegimeFor(inv.Supplier)
-	if r == nil {
-		return nil, nil
-	}
-
 	js := new(jsonschema.Schema)
 
 	// try to load the pre-generated schema, this is just way more efficient
@@ -147,8 +144,8 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		return nil, fmt.Errorf("unmarshalling options schema: %w", err)
 	}
 
-	// Add our regime to the schema ID
-	code := strings.ToLower(r.Code().String())
+	// Add our tax country code to the schema ID
+	code := strings.ToLower(inv.GetRegime().String())
 	id := fmt.Sprintf("%s?tax_regime=%s", js.ID.String(), code)
 	js.ID = jsonschema.ID(id)
 	js.Comments = fmt.Sprintf("Generated dynamically for %s", code)
@@ -158,7 +155,13 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 	// Always recommend the series
 	recommended := []string{"series"}
 
-	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
+	// Try to load the regime and its correction definition for the document
+	// type if there is one defined.
+	r := inv.RegimeDef()
+	if r == nil {
+		return js, nil
+	}
+	cd := inv.correctionDef()
 	if cd == nil {
 		return js, nil
 	}
@@ -192,7 +195,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 			ext.Properties = jsonschema.NewProperties()
 			rcmd := make([]string, 0)
 			for _, pk := range cd.Extensions {
-				re := r.ExtensionDef(pk)
+				re := tax.ExtensionForKey(pk)
 				if re == nil {
 					continue
 				}
@@ -204,23 +207,11 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 					prop.Description = re.Desc.String()
 				}
 				var oneOf []*jsonschema.Schema
-				if len(re.Codes) > 0 {
-					oneOf = make([]*jsonschema.Schema, 0, len(re.Codes))
-					for _, c := range re.Codes {
+				if len(re.Values) > 0 {
+					oneOf = make([]*jsonschema.Schema, 0, len(re.Values))
+					for _, c := range re.Values {
 						ci := &jsonschema.Schema{
-							Const: c.Code.String(),
-							Title: c.Name.String(),
-						}
-						if len(c.Desc) > 0 {
-							ci.Description = c.Desc.String()
-						}
-						oneOf = append(oneOf, ci)
-					}
-				} else if len(re.Keys) > 0 {
-					oneOf = make([]*jsonschema.Schema, 0, len(re.Keys))
-					for _, c := range re.Keys {
-						ci := &jsonschema.Schema{
-							Const: c.Key.String(),
+							Const: c.Value,
 							Title: c.Name.String(),
 						}
 						if len(c.Desc) > 0 {
@@ -275,14 +266,9 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		return errors.New("cannot correct an invoice without a code")
 	}
 
-	r := taxRegimeFor(inv.Supplier)
-	if r == nil {
-		return errors.New("failed to load supplier regime")
-	}
-
 	// Copy and prepare the basic fields
-	pre := &Preceding{
-		UUID:      inv.UUID,
+	pre := &org.DocumentRef{
+		Identify:  uuid.Identify{UUID: inv.UUID},
 		Type:      inv.Type,
 		Series:    inv.Series,
 		Code:      inv.Code,
@@ -302,19 +288,37 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		inv.IssueDate = cal.Today()
 	}
 
-	cd := r.CorrectionDefinitionFor(ShortSchemaInvoice)
-
+	cd := inv.correctionDef()
 	if err := inv.validatePrecedingData(o, cd, pre); err != nil {
 		return err
 	}
 
 	// Replace all previous preceding data
-	inv.Preceding = []*Preceding{pre}
+	inv.Preceding = []*org.DocumentRef{pre}
 
 	// Running a Calculate feels a bit out of place, but not performing
 	// this operation on the corrected invoice results in potentially
 	// conflicting or incomplete data.
 	return inv.Calculate()
+}
+
+// correctionDef tries to determine a final correction definition
+// by merge potentially multiple sources. The results include
+// a key that can be used to identify the definition.
+func (inv *Invoice) correctionDef() *tax.CorrectionDefinition {
+	cd := &tax.CorrectionDefinition{
+		Schema: ShortSchemaInvoice,
+	}
+
+	r := inv.RegimeDef()
+	if r != nil {
+		cd = cd.Merge(r.Corrections.Def(ShortSchemaInvoice))
+	}
+	for _, a := range inv.GetAddonDefs() {
+		cd = cd.Merge(a.Corrections.Def(ShortSchemaInvoice))
+	}
+
+	return cd
 }
 
 func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error {
@@ -341,7 +345,7 @@ func prepareCorrectionOptions(o *CorrectionOptions, opts ...schema.Option) error
 	return nil
 }
 
-func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *Preceding) error {
+func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.CorrectionDefinition, pre *org.DocumentRef) error {
 	if cd == nil {
 		return nil
 	}

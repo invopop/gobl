@@ -1,4 +1,5 @@
 {
+    "$regime": "ES",
     "$schema": "https://gobl.org/draft-0/bill/invoice",
     "code": "",
     "currency": "EUR",
