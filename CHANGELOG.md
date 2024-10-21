@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `br`: added basic Brazil regime
 - `uuid` - SQL library compatibility for type conversion.
+- `it-sdi-v1`: added `it-sdi-vat-collect` extension for EsigibilitaIVA.
 
 ### Fixed
 
