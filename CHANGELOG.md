@@ -8,12 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `uuid`: SQL library compatibility for type conversion.
+- `br`: added basic Brazil regime
+- `uuid` - SQL library compatibility for type conversion.
 - `it-sdi-v1`: added `it-sdi-vat-collect` extension for EsigibilitaIVA.
 
 ### Fixed
 
-- `bill.Invoice`: remove empty taxes instances.
+- `bill.Invoice` - remove empty taxes instances.
+- `tax.Identity` - support Calculate method to normalize IDs.
 
 ## [v0.202.0]
 
