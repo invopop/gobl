@@ -1,4 +1,5 @@
 $schema: "https://gobl.org/draft-0/org/party"
+uuid: "0192a13b-7f85-7429-a635-b269f6eb5295"
 tax_id:
   country: "ES"
   code: "B-986.026.42" # test normalization
