@@ -15,7 +15,7 @@ const (
 	ExtKeyExempt       cbc.Key = "it-sdi-exempt"
 	ExtKeyRetained     cbc.Key = "it-sdi-retained"
 	ExtKeyPaymentMeans cbc.Key = "it-sdi-payment-means"
-	ExtKeyVATCollect   cbc.Key = "it-sdi-vat-collect"
+	ExtKeyVATLiability cbc.Key = "it-sdi-vat-liability"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -866,9 +866,9 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyVATCollect,
+		Key: ExtKeyVATLiability,
 		Name: i18n.String{
-			i18n.EN: "VAT Collection",
+			i18n.EN: "VAT Liability",
 			i18n.IT: "Esigibilità dell'IVA",
 		},
 		Values: []*cbc.ValueDefinition{
