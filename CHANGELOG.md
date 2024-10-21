@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill.Invoice` - remove empty taxes instances.
 - `tax.Identity` - support Calculate method to normalize IDs.
+- `tax.Regime` - properly set regime when alternative codes is given.
 
 ## [v0.202.0]
 
