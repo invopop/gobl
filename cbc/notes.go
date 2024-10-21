@@ -237,11 +237,11 @@ type Note struct {
 	// Key specifying subject of the text
 	Key Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Code used for additional data that may be required to identify the note.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	Code string `json:"code,omitempty" jsonschema:"title=Code" en16931:"BT-21"`
 	// Source of this note, especially useful when auto-generated.
 	Src Key `json:"src,omitempty" jsonschema:"title=Source"`
 	// The contents of the note
-	Text string `json:"text" jsonschema:"title=Text"`
+	Text string `json:"text" jsonschema:"title=Text" en16931:"BT-22"`
 	// Additional information about the note
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }

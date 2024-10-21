@@ -28,15 +28,15 @@ type RateTotal struct {
 	// this would be possible.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// If the rate is defined with extensions, they'll be used to group by also.
-	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions" en16931:"BT-118"`
 	// Base amount that the percentage is applied to.
-	Base num.Amount `json:"base" jsonschema:"title=Base"`
+	Base num.Amount `json:"base" jsonschema:"title=Base" en16931:"BT-116"`
 	// Percentage of the rate. Will be nil when taxes are **exempt**.
-	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" en16931:"BT-119"`
 	// Surcharge applied to the rate.
 	Surcharge *RateTotalSurcharge `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 	// Total amount of rate, excluding surcharges
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount" en16931:"BT-117"`
 }
 
 // RateTotalSurcharge reflects the sum surcharges inside the rate.
