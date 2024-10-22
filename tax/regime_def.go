@@ -67,7 +67,7 @@ type RegimeDef struct {
 
 	// Identity Types are used as an alternative to Identity Keys when there is a clear local
 	// definition of a specific code.
-	IdentityTypes []*cbc.ValueDefinition `json:"identity_types,omitempty" :jsonschema:"title=Identity Types"`
+	IdentityTypes []*cbc.ValueDefinition `json:"identity_types,omitempty" jsonschema:"title=Identity Types"`
 
 	// Charge keys specific for the regime and may be validated or used in the UI as suggestions
 	ChargeKeys []*cbc.KeyDefinition `json:"charge_keys,omitempty" jsonschema:"title=Charge Keys"`
