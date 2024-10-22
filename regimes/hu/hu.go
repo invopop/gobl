@@ -9,12 +9,12 @@ import (
 )
 
 func init() {
-	tax.RegisterRegime(New())
+	tax.RegisterRegimeDef(New())
 }
 
 // New instantiates a new Hungarian regime.
-func New() *tax.Regime {
-	return &tax.Regime{
+func New() *tax.RegimeDef {
+	return &tax.RegimeDef{
 		Country:  "HU",
 		Currency: currency.HUF,
 		Name: i18n.String{
@@ -26,7 +26,7 @@ func New() *tax.Regime {
 		Categories: taxCategories,
 		Tags:       invoiceTags,
 		Validator:  Validate,
-		Calculator: Calculate,
+		Normalizer: Normalize,
 		Scenarios:  scenarios,
 	}
 }
@@ -42,11 +42,10 @@ func Validate(doc interface{}) error {
 	return nil
 }
 
-// Calculate will perform any regime specific calculations.
-func Calculate(doc interface{}) error {
+// Normalize will perform any regime specific normalizations.
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		return normalizeTaxIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	}
-	return nil
 }

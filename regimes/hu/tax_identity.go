@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -34,12 +33,6 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code, validation.By(validateTaxCode)),
 	)
-}
-
-// normalizeTaxIdentity will remove any whitespace or separation characters from
-// the tax code.
-func normalizeTaxIdentity(tID *tax.Identity) error {
-	return common.NormalizeTaxIdentity(tID)
 }
 
 //We can have 2 different lenghts of tax code, 8 and 11 characters (8+1+2)
