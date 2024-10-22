@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	// IdentityUTR represents the UK Unique Taxpayer Reference (UTR).
+	// IdentityTypeUTR represents the UK Unique Taxpayer Reference (UTR).
 	IdentityTypeUTR cbc.Code = "UTR"
-	// IdentityNINO represents the UK National Insurance Number (NINO).
+	// IdentityTypeNINO represents the UK National Insurance Number (NINO).
 	IdentityTypeNINO cbc.Code = "NINO"
 )
 
