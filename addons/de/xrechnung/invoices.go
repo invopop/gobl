@@ -19,36 +19,19 @@ func ValidateInvoice(inv *bill.Invoice) error {
 		// BR-DE-17
 		validation.Field(&inv.Type,
 			validation.By(validateInvoiceType),
+			validation.Skip,
 		),
 		// BR-DE-01
-		validation.Field(&inv.Payment, validation.Required),
 		validation.Field(&inv.Payment,
-			validation.By(func(value interface{}) error {
-				payment, ok := value.(*bill.Payment)
-				if !ok || payment == nil {
-					return validation.NewError("payment_type", "must be a valid non-empty Payment type")
-				}
-				return validation.ValidateStruct(payment,
-					validation.Field(&payment.Instructions,
-						validation.Required,
-						validation.By(ValidatePaymentInstructions),
-						validation.Skip,
-					),
-				)
-			}),
+			validation.Required,
+			validation.By(validatePayment),
+			validation.Skip,
 		),
 		// BR-DE-15
-		validation.Field(&inv.Ordering, validation.Required),
 		validation.Field(&inv.Ordering,
-			validation.By(func(value interface{}) error {
-				ordering, ok := value.(*bill.Ordering)
-				if !ok || ordering == nil {
-					return validation.NewError("ordering_type", "must be a valid Ordering type")
-				}
-				return validation.ValidateStruct(ordering,
-					validation.Field(&ordering.Code, validation.Required),
-				)
-			}),
+			validation.Required,
+			validation.By(validateOrdering),
+			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
@@ -75,13 +58,38 @@ func ValidateInvoice(inv *bill.Invoice) error {
 	)
 }
 
+func validatePayment(value interface{}) error {
+	payment, ok := value.(*bill.Payment)
+	if !ok || payment == nil {
+		return nil
+	}
+	return validation.ValidateStruct(payment,
+		validation.Field(&payment.Instructions,
+			validation.Required,
+			validation.By(validatePaymentInstructions),
+		),
+	)
+}
+
+func validateOrdering(value interface{}) error {
+	ordering, ok := value.(*bill.Ordering)
+	if !ok || ordering == nil {
+		return nil
+	}
+	return validation.ValidateStruct(ordering,
+		validation.Field(&ordering.Code,
+			validation.Required,
+		),
+	)
+}
+
 func validateInvoiceType(value interface{}) error {
 	t, ok := value.(cbc.Key)
 	if !ok {
-		return validation.NewError("type", "Invalid invoice type")
+		return validation.NewError("type", "invalid invoice type")
 	}
 	if !t.In(validTypes...) {
-		return validation.NewError("invalid", "Invalid invoice type")
+		return validation.NewError("invalid", "invalid invoice type")
 	}
 	return nil
 }
@@ -142,10 +150,10 @@ func validateSupplierTaxInfo(value interface{}) error {
 func validateTaxNumber(value interface{}) error {
 	identities, ok := value.([]*org.Identity)
 	if !ok {
-		return validation.NewError("invalid_identities", "Identities are invalid")
+		return validation.NewError("invalid_identities", "identities are invalid")
 	}
 	if org.IdentityForKey(identities, "de-tax-number") == nil {
-		return validation.NewError("missing_tax_identifier", "German tax identifier (de-tax-number) is required")
+		return validation.NewError("missing_tax_identifier", "tax identifier (de-tax-number) is required")
 	}
 	return nil
 }
