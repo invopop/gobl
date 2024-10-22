@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
@@ -56,9 +57,10 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:  Validate,
-		Normalizer: Normalize,
-		Categories: taxCategories,
+		Validator:    Validate,
+		Normalizer:   Normalize,
+		Categories:   taxCategories,
+		IdentityKeys: identityKeyDefinitions, // identities.go
 	}
 }
 
@@ -69,6 +71,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateTaxNumber(obj)
 	}
 	return nil
 }
@@ -78,5 +82,7 @@ func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
+	case *org.Identity:
+		normalizeTaxNumber(obj)
 	}
 }

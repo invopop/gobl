@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -45,7 +46,8 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Categories: taxCategories,
+		Categories:   taxCategories,
+		IdentityKeys: identityKeyDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -63,6 +65,8 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateTaxNumber(obj)
 	}
 	return nil
 }
@@ -72,5 +76,7 @@ func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj, altCountryCodes...)
+	case *org.Identity:
+		normalizeTaxNumber(obj)
 	}
 }

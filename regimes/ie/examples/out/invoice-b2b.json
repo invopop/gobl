@@ -1,0 +1,113 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "9b72fe31-3b38-11ee-be56-0242ac120003",
+		"dig": {
+			"alg": "sha256",
+			"val": "b2dd44d6fa187b19c233f03305f3c1a0531a844a4312312842cfc548b9b49572"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IE",
+		"uuid": "12345678-abcd-12ef-ab12-1234567890ab",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2024-07-31",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Test Company Ltd.",
+			"tax_id": {
+				"country": "IE",
+				"code": "1X23456L"
+			},
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Main Street",
+					"locality": "Dublin",
+					"code": "D02 X285",
+					"country": "IE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "company@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Random Company Ltd.",
+			"tax_id": {
+				"country": "IE",
+				"code": "8Y87654B"
+			},
+			"addresses": [
+				{
+					"num": "45",
+					"street": "Another Street",
+					"locality": "Cork",
+					"code": "T12 RHK3",
+					"country": "IE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "random@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "23.0%"
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "23.0%",
+								"amount": "372.60"
+							}
+						],
+						"amount": "372.60"
+					}
+				],
+				"sum": "372.60"
+			},
+			"tax": "372.60",
+			"total_with_tax": "1992.60",
+			"payable": "1992.60"
+		}
+	}
+}

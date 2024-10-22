@@ -1,12 +1,11 @@
-// Package at provides the Austrian tax regime.
-package at
+// Package gb provides the United Kingdom tax regime.
+package ie
 
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -18,12 +17,12 @@ func init() {
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "AT",
+		Country:  "IE",
 		Currency: currency.EUR,
 		Name: i18n.String{
-			i18n.EN: "Austria",
+			i18n.EN: "Ireland",
 		},
-		TimeZone:   "Europe/Vienna",
+		TimeZone:   "Europe/Dublin",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
@@ -32,8 +31,7 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Categories:   taxCategories,
-		IdentityKeys: identityKeyDefinitions, // identities.go
+		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -46,25 +44,18 @@ func New() *tax.RegimeDef {
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc any) error {
+func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateTaxNumber(obj)
 	}
-
 	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
-	case *org.Identity:
-		normalizeTaxNumber(obj)
 	}
 }
