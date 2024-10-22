@@ -26,11 +26,12 @@ func (r Regime) GetRegime() l10n.TaxCountryCode {
 // that the regime is actually defined. Missing regimes will silently replace
 // the current regime with an empty value.
 func (r *Regime) SetRegime(country l10n.TaxCountryCode) {
-	if Regimes().For(country.Code()) == nil {
+	rd := Regimes().For(country.Code())
+	if rd == nil {
 		r.Country = ""
 		return
 	}
-	r.Country = country
+	r.Country = rd.Country
 }
 
 // RegimeDef provides the associated regime definition.

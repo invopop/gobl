@@ -102,4 +102,13 @@ func TestIdentityNormalize(t *testing.T) {
 		tID.Normalize()
 		assert.Equal(t, tID.Code.String(), "39356000000") // adds 2 0s on end
 	})
+	t.Run("with calculate method", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "FR",
+			Code:    " 356000000 ",
+		}
+		err := tID.Calculate()
+		assert.NoError(t, err)
+		assert.Equal(t, tID.Code.String(), "39356000000")
+	})
 }

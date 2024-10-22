@@ -9,7 +9,7 @@
       "minLength": 1,
       "pattern": "^[A-Za-z0-9]+([\\.\\-\\/ _]?[A-Za-z0-9]+)*$",
       "title": "Code",
-      "description": "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols."
+      "description": "Alphanumerical text identifier with upper-case letters and limits on using\nspecial characters or whitespace to separate blocks."
     }
   }
 }

@@ -1,22 +1,24 @@
 # 🇲🇽 GOBL Mexico Tax Regime
 
-Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for their e-invoicing system.
+Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for e-invoicing.
 
-Example MX GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example MX GOBL files in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
 
 ## Public Documentation
 
-- [Formato de factura (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
+- [Invoice Format (Anexo 20)](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/anexo_20.htm)
+- [CFDI 4.0 Filling Guide](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/Anexo_20_Guia_de_llenado_CFDI.pdf)
+- [Global CFDI 4.0 Filling Guide](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/GuiallenadoCFDIglobal311221.pdf)
 
-## Mexico specifics
+## Mexico-specific Requirements
 
-Mexican invoices as defined in the CFDI specification must include a set of specific codes that will either need to be known in advance by the supplier or requested from the customer during their purchase process.
+Mexican invoices require specific codes as defined in the CFDI specification. Suppliers need to know these in advance or request them from customers during purchase.
 
-The following sections highlight these codes and how they can be defined inside your GOBL documents.
+Here's how to include these codes in your GOBL documents:
 
-### `LugarExpedicion` - Issue Place
+### Issue Place (`LugarExpedicion`)
 
-Every MX invoice needs to specify the postal code of place where it was issued. In a GOBL Invoice, you can provide this value using the `mx-cfdi-issue-place` extension under the `tax` of the invoice.
+Specify the postal code where the invoice was issued using the `mx-cfdi-issue-place` extension under the `tax` field of the invoice.
 
 #### Example
 
@@ -316,7 +318,7 @@ The following GOBL maps to the `10101602` ("live ducks") value to the `ClaveProd
 }
 ```
 
-### Generic RFCs
+### Generic RFCs (B2C sales)
 
 In MX, CFDI invoices to end consumers need to use a generic RFC code (`XAXX010101000`) in the document's `Receptor` and some specific values for the supplier extensions. In GOBL, you don't need to enter those values explicitly. Just set the `simplified` tax tag in your invoice and exclude the customer, the GOBL to CFDI conversor will take care of the rest:
 
@@ -336,6 +338,7 @@ In MX, CFDI invoices to end consumers need to use a generic RFC code (`XAXX01010
 
 }
 ```
+Sellers can issue one simplified invoice for every B2C sale or aggregate all daily transactions into a single invoice to _the general public_ ("al público en general"). The rules on how to issue global B2C invoices are available in the [public documentation](http://omawww.sat.gob.mx/tramitesyservicios/Paginas/documentos/GuiallenadoCFDIglobal311221.pdf).
 
 Similarly, CFDI invoices to foreign customers are required to use the foreign generic RFC (`XEXX010101000`) along with some specific values for the extensions. The country and the local tax code of the supplier are included in separated CFDI fields. And again, in GOBL, you just need to provide the actual country and tax code of the supplier (without extensions), and the GOBL to CFDI conversor will take care of producing the correct document:
 

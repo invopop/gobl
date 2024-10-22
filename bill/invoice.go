@@ -508,6 +508,11 @@ func (inv *Invoice) calculate() error {
 		t.Payable = t.Payable.Add(*t.Rounding)
 	}
 
+	// Remove taxes object if it doesn't contain any categories
+	if len(t.Taxes.Categories) == 0 {
+		t.Taxes = nil
+	}
+
 	// Outlays
 	t.Outlays = calculateOutlays(zero, inv.Outlays)
 	if t.Outlays != nil {

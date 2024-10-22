@@ -64,7 +64,7 @@
           "cat": "VAT",
           "rate": "exempt",
           "ext": {
-            "it-sdi-nature": "N2.1"
+            "it-sdi-nature": "N2.2"
           }
         }
       ],
@@ -78,32 +78,5 @@
       "amount": "2.00",
       "reason": "Imposta di bollo"
     }
-  ],
-  "totals": {
-    "sum": "125.00",
-    "charge": "2.00",
-    "total": "127.00",
-    "taxes": {
-      "categories": [
-        {
-          "code": "VAT",
-          "rates": [
-            {
-              "key": "exempt",
-              "ext": {
-                "it-sdi-nature": "N2.1"
-              },
-              "base": "125.00",
-              "amount": "0.00"
-            }
-          ],
-          "amount": "0.00"
-        }
-      ],
-      "sum": "0.00"
-    },
-    "tax": "0.00",
-    "total_with_tax": "127.00",
-    "payable": "127.00"
-  }
+  ]
 }

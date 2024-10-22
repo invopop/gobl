@@ -1,0 +1,44 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "mx-cfdi-v4"
+$tags:
+  - "simplified"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+issue_date: "2023-07-10"
+series: "TEST"
+code: "00001"
+tax:
+  ext:
+    mx-cfdi-issue-place: "21000"
+supplier:
+  name: "ESCUELA KEMPER URGATE"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+  tax_id:
+    country: "MX"
+    code: "EKU9003173C9"
+lines:
+  - quantity: "1"
+    item:
+      name: "Cobro por tarjetas"
+      price: "10.00"
+      ext:
+        mx-cfdi-prod-serv: "84141602"
+    discounts:
+      - percent: "10.0%"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+  - quantity: "1"
+    item:
+      name: "Porcentaje sobre GMV"
+      price: "10.00"
+      unit: "service"
+      ext:
+        mx-cfdi-prod-serv: "80141628"
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+payment:
+  terms:
+    notes: "Condiciones de pago"

@@ -1,12 +1,11 @@
-// Package de provides the tax region definition for Germany.
-package de
+// Package br provides the tax region definition for Brazil.
+package br
 
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -18,32 +17,26 @@ func init() {
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "DE",
-		Currency: currency.EUR,
+		Country:  "BR",
+		Currency: currency.BRL,
 		Name: i18n.String{
-			i18n.EN: "Germany",
-			i18n.DE: "Deutschland",
+			i18n.EN: "Brazil",
+			i18n.PT: "Brasil",
 		},
-		TimeZone: "Europe/Berlin",
+		TimeZone:  "America/Sao_Paulo",
+		Validator: Validate,
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
-		},
-		IdentityKeys: identityKeyDefinitions, // identities.go
+		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
-				// Germany only supports credit notes to correct an invoice
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
 				},
 			},
 		},
-		Validator:  Validate,
-		Normalizer: Normalize,
-		Categories: taxCategories,
 	}
 }
 
@@ -54,18 +47,14 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateTaxNumber(obj)
 	}
 	return nil
 }
 
 // Normalize will attempt to clean the object passed to it.
-func Normalize(doc any) {
+func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
-	case *org.Identity:
-		normalizeTaxNumber(obj)
 	}
 }
