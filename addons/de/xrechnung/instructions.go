@@ -24,7 +24,7 @@ var validPaymentKeys = []cbc.Key{
 }
 
 // ValidatePaymentInstructions validates the payment instructions according to the XRechnung standard
-func ValidatePaymentInstructions(value interface{}) error {
+func validatePaymentInstructions(value interface{}) error {
 	instr, ok := value.(*pay.Instructions)
 	if !ok || instr == nil {
 		return nil
@@ -48,6 +48,7 @@ func ValidatePaymentInstructions(value interface{}) error {
 			validation.When(instr.Key == pay.MeansKeyCard,
 				validation.Required,
 			),
+			validation.Skip,
 		),
 		// BR-DE-25
 		validation.Field(&instr.DirectDebit,
@@ -66,7 +67,7 @@ func validatePaymentKey(value interface{}) error {
 		return validation.NewError("invalid_key", "invalid payment key")
 	}
 	if !t.In(validPaymentKeys...) {
-		return validation.NewError("invalid", "Invalid payment key")
+		return validation.NewError("invalid", "invalid payment key")
 	}
 	return nil
 }
@@ -79,15 +80,15 @@ func validateDirectDebit(value interface{}) error {
 	return validation.ValidateStruct(dd,
 		// BR-DE-29 - Changed to Peppol-EN16931-R061
 		validation.Field(&dd.Ref,
-			validation.Required.Error("Mandate reference is mandatory for direct debit"),
+			validation.Required,
 		),
 		// BR-DE-30
 		validation.Field(&dd.Creditor,
-			validation.Required.Error("Creditor identifier is mandatory for direct debit"),
+			validation.Required,
 		),
 		// BR-DE-31
 		validation.Field(&dd.Account,
-			validation.Required.Error("Debited account identifier is mandatory for direct debit"),
+			validation.Required,
 		),
 	)
 }
@@ -101,7 +102,7 @@ func validateCreditTransfer(value interface{}) error {
 	return validation.ValidateStruct(creditTransfer,
 		validation.Field(&creditTransfer.Number,
 			validation.When(creditTransfer.IBAN == "",
-				validation.Required.Error("IBAN must be provided for SEPA credit transfer"),
+				validation.Required,
 			),
 		),
 	)
