@@ -11,16 +11,16 @@ import (
 )
 
 const (
-	// IdentityKeyTaxNumber represents the Polish tax number (PESEL). It is not
+	// IdentityTypePESEL represents the Polish tax number (PESEL). It is not
 	// required for invoices, but can be included for identification purposes.
-	IdentityKeyTaxNumber cbc.Key = "pl-tax-number"
+	IdentityTypePESEL cbc.Code = "PESEL"
 )
 
 // Reference: https://en.wikipedia.org/wiki/PESEL
 
-var identityKeyDefinitions = []*cbc.KeyDefinition{
+var identityTypeDefinitions = []*cbc.ValueDefinition{
 	{
-		Key: IdentityKeyTaxNumber,
+		Value: IdentityTypePESEL.String(),
 		Name: i18n.String{
 			i18n.EN: "Tax Number",
 			i18n.PL: "Numer podatkowy",
@@ -29,7 +29,7 @@ var identityKeyDefinitions = []*cbc.KeyDefinition{
 }
 
 func validateTaxNumber(id *org.Identity) error {
-	if id == nil || id.Key != IdentityKeyTaxNumber {
+	if id == nil || id.Type != IdentityTypePESEL {
 		return nil
 	}
 

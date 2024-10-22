@@ -68,15 +68,15 @@
       ]
     }
   ],
-  "identity_keys": [
+  "identity_types": [
     {
-      "key": "gb-utr",
+      "value": "UTR",
       "name": {
         "en": "Unique Taxpayer Reference"
       }
     },
     {
-      "key": "gb-nino",
+      "value": "NINO",
       "name": {
         "en": "National Insurance Number"
       }

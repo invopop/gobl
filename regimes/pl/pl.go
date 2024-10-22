@@ -44,11 +44,11 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags().Merge(invoiceTags),
 		},
-		Scenarios:    scenarios,              // scenarios.go
-		IdentityKeys: identityKeyDefinitions, // identities.go
-		Validator:    Validate,
-		Normalizer:   Normalize,
-		Categories:   taxCategories, // tax_categories.go
+		Scenarios:     scenarios,               // scenarios.go
+		IdentityTypes: identityTypeDefinitions, // identities.go
+		Validator:     Validate,
+		Normalizer:    Normalize,
+		Categories:    taxCategories, // tax_categories.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

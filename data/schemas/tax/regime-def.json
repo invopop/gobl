@@ -278,14 +278,6 @@
           "title": "Extensions",
           "description": "Extensions defines the keys that can be used for extended or extra data inside the regime that\nis specific to the regime and cannot be easily determined from other GOBL structures.\nTypically these are used to define local codes for suppliers, customers, products, or tax rates."
         },
-        "tax_identity_type_keys": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
-          },
-          "type": "array",
-          "title": "Tax Identity Type Keys",
-          "description": "Tax Identity types specific for the regime and may be validated\nagainst."
-        },
         "identity_keys": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key-definition"
@@ -293,6 +285,13 @@
           "type": "array",
           "title": "Identity Keys",
           "description": "Identity keys used in addition to regular tax identities and specific for the\nregime that may be validated against."
+        },
+        "identity_types": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/value-definition"
+          },
+          "type": "array",
+          "description": "Identity Types are used as an alternative to Identity Keys when there is a clear local\ndefinition of a specific code."
         },
         "charge_keys": {
           "items": {

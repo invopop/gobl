@@ -68,12 +68,12 @@
       ]
     }
   ],
-  "identity_keys": [
+  "identity_types": [
     {
-      "key": "fr-tax-number",
+      "value": "SPI",
       "name": {
-        "en": "Tax Number",
-        "fr": "Numéro fiscal de référence"
+        "en": "Index Steering System",
+        "fr": "Système de Pilotage des Indices"
       }
     }
   ],

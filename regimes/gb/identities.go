@@ -14,9 +14,9 @@ import (
 
 const (
 	// IdentityUTR represents the UK Unique Taxpayer Reference (UTR).
-	IdentityUTR cbc.Key = "gb-utr"
+	IdentityTypeUTR cbc.Code = "UTR"
 	// IdentityNINO represents the UK National Insurance Number (NINO).
-	IdentityNINO cbc.Key = "gb-nino"
+	IdentityTypeNINO cbc.Code = "NINO"
 )
 
 var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
@@ -26,31 +26,31 @@ var utrPattern = `^[1-9]\d{9}$`
 // https://design.tax.service.gov.uk/hmrc-design-patterns/unique-taxpayer-reference/
 // https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
 
-var identityKeyDefinitions = []*cbc.KeyDefinition{
+var identityTypeDefinitions = []*cbc.ValueDefinition{
 	{
-		Key: IdentityUTR,
+		Value: IdentityTypeUTR.String(),
 		Name: i18n.String{
 			i18n.EN: "Unique Taxpayer Reference",
 		},
 	},
 	{
-		Key: IdentityNINO,
+		Value: IdentityTypeNINO.String(),
 		Name: i18n.String{
 			i18n.EN: "National Insurance Number",
 		},
 	},
 }
 
-func normalizeTaxNumber(id *org.Identity) {
-	if id == nil || (id.Key != IdentityUTR && id.Key != IdentityNINO) {
+func normalizeIdentity(id *org.Identity) {
+	if id == nil || (id.Type != IdentityTypeUTR && id.Type != IdentityTypeNINO) {
 		return
 	}
 
-	if id.Key == IdentityUTR {
+	if id.Type == IdentityTypeUTR {
 		code := id.Code.String()
 		code = badCharsRegexPattern.ReplaceAllString(code, "")
 		id.Code = cbc.Code(code)
-	} else if id.Key == IdentityNINO {
+	} else if id.Type == IdentityTypeNINO {
 		code := id.Code.String()
 		code = strings.ToUpper(code)
 		code = tax.IdentityCodeBadCharsRegexp.ReplaceAllString(code, "")
@@ -58,26 +58,26 @@ func normalizeTaxNumber(id *org.Identity) {
 	}
 }
 
-func validateTaxNumber(id *org.Identity) error {
+func validateIdentity(id *org.Identity) error {
 	if id == nil {
 		return nil
 	}
 
-	if id.Key == IdentityNINO {
+	if id.Type == IdentityTypeNINO {
 		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.By(validateNinoCode)),
+			validation.Field(&id.Code, validation.By(validateNino)),
 		)
-	} else if id.Key == IdentityUTR {
+	} else if id.Type == IdentityTypeUTR {
 		return validation.ValidateStruct(id,
-			validation.Field(&id.Code, validation.By(validateUtrCode)),
+			validation.Field(&id.Code, validation.By(validateUtr)),
 		)
 	}
 
 	return nil
 }
 
-// validateUtrCode validates the normalized Unique Taxpayer Reference (UTR).
-func validateUtrCode(value interface{}) error {
+// validateUtr validates the normalized Unique Taxpayer Reference (UTR).
+func validateUtr(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil
@@ -98,8 +98,8 @@ func validateUtrCode(value interface{}) error {
 	return nil
 }
 
-// validateNinoCode validates the normalized National Insurance Number (NINO).
-func validateNinoCode(value interface{}) error {
+// validateNino validates the normalized National Insurance Number (NINO).
+func validateNino(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil

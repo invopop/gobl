@@ -46,8 +46,8 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Categories:   taxCategories,
-		IdentityKeys: identityKeyDefinitions,
+		Categories:    taxCategories,
+		IdentityTypes: identityTypeDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -66,7 +66,7 @@ func Validate(doc interface{}) error {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	case *org.Identity:
-		return validateTaxNumber(obj)
+		return validateIdentity(obj)
 	}
 	return nil
 }
@@ -77,6 +77,6 @@ func Normalize(doc interface{}) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj, altCountryCodes...)
 	case *org.Identity:
-		normalizeTaxNumber(obj)
+		normalizeIdentity(obj)
 	}
 }

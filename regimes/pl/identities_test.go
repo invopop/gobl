@@ -18,7 +18,7 @@ func TestValidateTaxNumber(t *testing.T) {
 		{
 			name: "Valid PESEL",
 			identity: &org.Identity{
-				Key:  pl.IdentityKeyTaxNumber,
+				Type: pl.IdentityTypePESEL,
 				Code: cbc.Code("44051401359"), // Replace with an actual valid PESEL number
 			},
 			wantErr: false,
@@ -26,7 +26,7 @@ func TestValidateTaxNumber(t *testing.T) {
 		{
 			name: "Invalid length PESEL",
 			identity: &org.Identity{
-				Key:  pl.IdentityKeyTaxNumber,
+				Type: pl.IdentityTypePESEL,
 				Code: cbc.Code("1234567890"), // Invalid PESEL with less than 11 digits
 			},
 			wantErr: true,
@@ -34,7 +34,7 @@ func TestValidateTaxNumber(t *testing.T) {
 		{
 			name: "Invalid checksum PESEL",
 			identity: &org.Identity{
-				Key:  pl.IdentityKeyTaxNumber,
+				Type: pl.IdentityTypePESEL,
 				Code: cbc.Code("44051401358"), // Incorrect checksum
 			},
 			wantErr: true,
@@ -42,15 +42,15 @@ func TestValidateTaxNumber(t *testing.T) {
 		{
 			name: "Empty PESEL code",
 			identity: &org.Identity{
-				Key:  pl.IdentityKeyTaxNumber,
+				Type: pl.IdentityTypePESEL,
 				Code: cbc.Code(""),
 			},
 			wantErr: false,
 		},
 		{
-			name: "Wrong Key Identity",
+			name: "Wrong Code Identity",
 			identity: &org.Identity{
-				Key:  cbc.Key("wrong-key"),
+				Type: cbc.Code("NINO"),
 				Code: cbc.Code("44051401359"),
 			},
 			wantErr: false,

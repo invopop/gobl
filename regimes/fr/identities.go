@@ -65,6 +65,7 @@ func identityValidator(typ cbc.Code) validation.RuleFunc {
 		switch typ {
 		case IdentityTypeSPI:
 			return validation.Validate(value, validation.Match(identityTypeSPIPattern))
+		//TODO: Add the other types
 		default:
 			return nil
 		}

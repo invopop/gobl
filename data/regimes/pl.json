@@ -165,9 +165,9 @@
       ]
     }
   ],
-  "identity_keys": [
+  "identity_types": [
     {
-      "key": "pl-tax-number",
+      "value": "PESEL",
       "name": {
         "en": "Tax Number",
         "pl": "Numer podatkowy"
