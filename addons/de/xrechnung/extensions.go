@@ -3,6 +3,7 @@ package xrechnung
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // ExtKeyTaxRate is the key for the tax rate extension in XRechnung
@@ -17,6 +18,14 @@ var extensions = []*cbc.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Tax Rate",
 			i18n.DE: "Steuersatz",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to describe the applicable tax rate. Taken from the UNTDID 5305 code list.
+			`),
+			i18n.DE: here.Doc(`
+				Code verwendet um den anwendbaren Steuersatz zu beschreiben. Entnommen aus der UNTDID 5305 Code-Liste.
+			`),
 		},
 		Values: []*cbc.ValueDefinition{
 			{
@@ -89,6 +98,14 @@ var extensions = []*cbc.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Document Type",
 			i18n.DE: "Dokumentenart",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code used to describe the type of document. 
+			`),
+			i18n.DE: here.Doc(`
+				Code verwendet um die Art des Dokuments zu beschreiben.
+			`),
 		},
 		Values: []*cbc.ValueDefinition{
 			{

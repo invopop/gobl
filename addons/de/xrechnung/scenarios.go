@@ -19,11 +19,11 @@ const (
 
 // Invoice type constants
 const (
-	invoiceTypeSelfBilled               = "380"
+	invoiceTypeSelfBilled               = "389"
 	invoiceTypePartial                  = "326"
-	invoiceTypePartialConstruction      = "80"
-	invoiceTypePartialFinalConstruction = "84"
-	invoiceTypeFinalConstruction        = "389"
+	invoiceTypePartialConstruction      = "875"
+	invoiceTypePartialFinalConstruction = "876"
+	invoiceTypeFinalConstruction        = "877"
 )
 
 var invoiceTags = &tax.TagSet{
@@ -150,6 +150,7 @@ var scenarios = []*tax.ScenarioSet{
 					ExtKeyTaxRate: "AE",
 				},
 			},
+			// TODO: Map Scenarios
 			{
 				Ext: tax.Extensions{
 					ExtKeyTaxRate: "K",

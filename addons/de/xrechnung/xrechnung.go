@@ -35,6 +35,10 @@ func newAddon() *tax.AddonDef {
 			https://www.xrechnung.de/
 			`),
 		},
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
+		Scenarios:  scenarios,
 		Extensions: extensions,
 		Normalizer: normalize,
 		Validator:  validate,
