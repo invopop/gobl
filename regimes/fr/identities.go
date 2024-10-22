@@ -1,9 +1,7 @@
 package fr
 
 import (
-	"errors"
 	"regexp"
-	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -11,69 +9,64 @@ import (
 	"github.com/invopop/validation"
 )
 
+// Identification keys used for additional codes not
+// covered by the standard fields.
 const (
-	// IdentityKeyTaxNumber represents the French tax reference number (numéro fiscal de référence).
-	IdentityKeyTaxNumber cbc.Key = "fr-tax-number"
+	IdentityTypeSIREN cbc.Code = "SIREN" // SIREN is the main local tax code used in france, we use the normalized VAT version for the tax ID.
+	IdentityTypeSIRET cbc.Code = "SIRET" // SIRET number combines the SIREN with a branch number.
+	IdentityTypeRCS   cbc.Code = "RCS"   // Trade and Companies Register.
+	IdentityTypeRM    cbc.Code = "RM"    // Directory of Traders.
+	IdentityTypeNAF   cbc.Code = "NAF"   // Identifies the main branch of activity of the company or self-employed person.
+	IdentityTypeSPI   cbc.Code = "SPI"   // Système de Pilotage des Indices
+	IdentityTypeNIF   cbc.Code = "NIF"   // Numéro d'identification fiscale (people)
 )
 
-// https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/france-tin.pdf
+var (
+	identityTypeSPIPattern = regexp.MustCompile(`^[0-3]\d{12}$`)
+)
 
 var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
 
-var identityKeyDefinitions = []*cbc.KeyDefinition{
+var identityTypeDefinitions = []*cbc.ValueDefinition{
 	{
-		Key: IdentityKeyTaxNumber,
+		// https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/france-tin.pdf
+		Value: IdentityTypeSPI.String(),
 		Name: i18n.String{
-			i18n.EN: "Tax Number",
-			i18n.FR: "Numéro fiscal de référence",
+			i18n.EN: "Index Steering System",
+			i18n.FR: "Système de Pilotage des Indices",
 		},
 	},
 }
 
-// validateTaxNumber validates the French tax reference number.
-func validateTaxNumber(id *org.Identity) error {
-	if id == nil || id.Key != IdentityKeyTaxNumber {
-		return nil
+func normalizeIdentity(id *org.Identity) {
+	if id == nil {
+		return
 	}
+	switch id.Type {
+	case IdentityTypeSPI:
+		code := id.Code.String()
+		code = badCharsRegexPattern.ReplaceAllString(code, "")
+		id.Code = cbc.Code(code)
+	}
+}
 
+// validateIdentity performs basic validation checks on identities provided.
+func validateIdentity(id *org.Identity) error {
 	return validation.ValidateStruct(id,
-		validation.Field(&id.Code, validation.By(validateTaxIDCode)),
+		validation.Field(&id.Code,
+			validation.By(identityValidator(id.Type)),
+			validation.Skip,
+		),
 	)
 }
 
-// validateTaxIDCode validates the normalized tax ID code.
-func validateTaxIDCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok || code == "" {
-		return nil
+func identityValidator(typ cbc.Code) validation.RuleFunc {
+	return func(value interface{}) error {
+		switch typ {
+		case IdentityTypeSPI:
+			return validation.Validate(value, validation.Match(identityTypeSPIPattern))
+		default:
+			return nil
+		}
 	}
-	val := code.String()
-
-	// Check length
-	if len(val) != 13 {
-		return errors.New("length must be 13 digits")
-	}
-
-	// Check that all characters are digits
-	if _, err := strconv.Atoi(val); err != nil {
-		return errors.New("must contain only digits")
-	}
-
-	// Check that the first digit is 0, 1, 2, or 3
-	firstDigit := val[0]
-	if firstDigit < '0' || firstDigit > '3' {
-		return errors.New("first digit must be 0, 1, 2, or 3")
-	}
-
-	return nil
-}
-
-// normalizeTaxNumber removes any non-digit characters from the tax number.
-func normalizeTaxNumber(id *org.Identity) {
-	if id == nil || id.Key != IdentityKeyTaxNumber {
-		return
-	}
-	code := id.Code.String()
-	code = badCharsRegexPattern.ReplaceAllString(code, "")
-	id.Code = cbc.Code(code)
 }

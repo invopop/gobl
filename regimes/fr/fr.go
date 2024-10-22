@@ -12,16 +12,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Identification keys used for additional codes not
-// covered by the standard fields.
-const (
-	IdentityTypeSIREN cbc.Code = "SIREN" // SIREN is the main local tax code used in france, we use the normalized VAT version for the tax ID.
-	IdentityTypeSIRET cbc.Code = "SIRET" // SIRET number combines the SIREN with a branch number.
-	IdentityTypeRCS   cbc.Code = "RCS"   // Trade and Companies Register.
-	IdentityTypeRM    cbc.Code = "RM"    // Directory of Traders.
-	IdentityTypeNAF   cbc.Code = "NAF"   // Identifies the main branch of activity of the company or self-employed person.
-)
-
 func init() {
 	tax.RegisterRegimeDef(New())
 }
@@ -57,10 +47,10 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
-		Validator:    Validate,
-		Normalizer:   Normalize,
-		Categories:   taxCategories,
-		IdentityKeys: identityKeyDefinitions, // identities.go
+		Validator:     Validate,
+		Normalizer:    Normalize,
+		Categories:    taxCategories,
+		IdentityTypes: identityTypeDefinitions, // identities.go
 	}
 }
 
@@ -72,7 +62,7 @@ func Validate(doc interface{}) error {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	case *org.Identity:
-		return validateTaxNumber(obj)
+		return validateIdentity(obj)
 	}
 	return nil
 }
@@ -83,6 +73,6 @@ func Normalize(doc any) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
 	case *org.Identity:
-		normalizeTaxNumber(obj)
+		normalizeIdentity(obj)
 	}
 }

@@ -70,7 +70,7 @@ func TestNormalizeAndValidateTaxNumber(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			identity := &org.Identity{
-				Key:  fr.IdentityKeyTaxNumber,
+				Type: fr.IdentityTypeSPI,
 				Code: cbc.Code(tt.input),
 			}
 
