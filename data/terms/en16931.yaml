@@ -1,0 +1,224 @@
+---
+key: "en16931"
+name: "EN16931-1 to GOBL Invoice Mapping"
+description: |-
+  Mappings of EN16931 Business terms and rules to GOBL properties.
+
+terms:
+  - id: BT-1
+    name: "Invoice number"
+    paths:
+      - $.doc.series
+      - $.doc.code
+    notes: |-
+      The document series and code are combined to form the document identifier, whereby
+      the code contains a sequential number within the series.
+
+  - id: BT-2
+    name: "Invoice issue date"
+    paths:
+      - $.doc.issue_date
+
+  - id: BT-3
+    name: "Invoice type code"
+    paths:
+      - $.doc.type
+      - $.doc.$tags
+    notes: |-
+      GOBL defines a reduced set of basic invoice types which may be extended using
+      the `$tags` property.
+
+  - id: BT-5
+    name: "Invoice currency code"
+    paths:
+      - $.doc.currency
+    notes: |-
+      The currency code is a three-letter code as defined by ISO 4217. In GOBL, if the
+      currency is different from that of the tax regime of the supplier, the exchange
+      rate used for conversion must also be defined.
+
+  - id: BT-6
+    name: "VAT accounting currency code"
+    paths:
+      - $.doc.currency
+      - $.doc.exchange_rates
+    notes: |-
+      The VAT accounting currency code is the currency in which the VAT amounts are
+      expressed. If the VAT accounting currency is different from the invoice currency,
+      the exchange rate used for conversion must also be defined.
+
+  - id: "BT-7"
+    name: "Value added tax point date"
+    paths:
+      - $.doc.issue_date
+      - $.doc.value_date
+    notes: |-
+      The value added tax point date is the date on which the VAT becomes due and different
+      from the issue date.
+
+  - id: "BT-8"
+    name: "Value added tax point date code"
+    paths: []
+    notes: |-
+      TODO
+
+  - id: "BT-9"
+    name: "Payment due date"
+    paths:
+      - $.doc.payment.terms[*].due_dates
+    notes: |-
+      Forms part of the general payment details.
+
+  - id: "BT-10"
+    name: "Buyer reference"
+    paths:
+      - $.doc.ordering.code
+      - $.doc.ordering.identities[*].code
+    notes: |-
+      Additional codes defined with types or keys are available in the ordering identities
+      array.
+
+  - id: "BT-11"
+    name: "Project reference"
+    paths:
+      - $.doc.ordering.projects
+
+  - id: "BT-12"
+    name: "Contract reference"
+    paths:
+      - $.doc.ordering.contracts
+
+  - id: "BT-13"
+    name: "Purchase order reference"
+    paths:
+      - $.doc.ordering.purchases
+
+  - id: "BT-14"
+    name: "Sales order reference"
+    paths:
+      - $.doc.ordering.sales
+
+  - id: "BT-15"
+    name: "Receiving advice reference"
+    paths:
+      - $.doc.ordering.receiving
+
+  - id: "BT-16"
+    name: "Despatch advice reference"
+    paths:
+      - $.doc.ordering.despatch
+
+  - id: "BT-17"
+    name: "Tender or lot reference"
+    paths:
+      - $.doc.ordering.tenders
+
+  - id: "BT-18"
+    name: "Invoiced object identifier"
+    path:
+      - $.doc.ordering.identities
+
+  - id: "BT-19"
+    name: "Buyer accounting reference"
+    paths: []
+    notes: |-
+      TODO
+
+  - id: "BT-20"
+    name: "Payment terms"
+    paths:
+      - $.doc.payment.terms
+
+  - id: "BG-1"
+    name: "INVOICE NOTE"
+    paths:
+      - $.doc.notes
+    terms:
+      - id: "BT-21"
+        name: "Invoice note subject code"
+        paths:
+          - $.doc.notes[*].key
+        notes: |-
+          Note keys include mapping to UNTDID 4451 codes.
+
+      - id: "BT-22"
+        name: "Invoice note"
+        paths:
+          - $.doc.notes[*].text
+        notes: |-
+          Applies when the note `key` property is empty.
+
+  - id: "BG-2"
+    name: "PROCESS CONTROL"
+    terms:
+      - id: "BT-23"
+        name: "Business process type"
+        paths:
+          - $.doc.$addons
+        notes: |-
+          GOBL uses Addons to define additional support for business contexts and formats.
+
+      - id: "BT-24"
+        name: "Specification identifier"
+        paths: []
+        notes: |-
+          GOBL does not explicitly define a specification identifier, but it may be inferred
+          from the GOBL library for conversion purposes.
+
+  - id: "BG-3"
+    name: "PRECEDING INVOICE REFERENCE"
+    paths:
+      - $.doc.preceding
+    terms:
+      - id: "BT-25"
+        name: "Preceding invoice reference"
+        paths:
+          - $.doc.preceding
+
+      - id: "BT-26"
+        name: "Preceding invoice issue date"
+        paths:
+          - $.doc.preceding[*].issue_date
+        notes: |-
+          Issue date copied from the previous document.
+
+  - id: "BG-4"
+    name: "SELLER"
+    paths:
+      - $.doc.supplier
+    notes: |-
+      Seller details in GOBL are represented by the `supplier` property and `org.Party`
+      type.
+    terms:
+      - id: "BT-27"
+        name: "Seller name"
+        paths:
+          - $.doc.supplier.name
+
+      - id: "BT-28"
+        name: "Seller trading name"
+        paths:
+          - $.doc.supplier.alias
+
+      - id: "BT-29"
+        name: "Seller identifier"
+        paths:
+          - $.doc.supplier.uuid
+          - $.doc.supplier.identities
+        notes: |-
+          Supplier UUID is designed for use with internal systems of the document issuer.
+          Identification schemes are determined and validated by the GOBL library.
+
+      - id: "BT-30"
+        name: "Seller legal registration identifier"
+        paths:
+          - $.doc.supplier.identities
+
+      - id: "BT-31"
+        name: "Seller VAT identifier"
+        paths:
+          - $.doc.supplier.tax_id
+        notes: |-
+          The supplier's Tax ID in GOBL is only used for VAT or GST purposes. In the case of
+          issuing via a tax representative, the supplier **must** contain the tax representative's
+          details and utilize the `ordering.seller` property.
