@@ -92,35 +92,56 @@ var extensions = []*cbc.KeyDefinition{
 		},
 		Values: []*cbc.ValueDefinition{
 			{
-				Value: string(invoiceTypeSelfBilled),
-				Name: i18n.String{
-					i18n.EN: "Self-Billed Invoice",
-					i18n.DE: "Gutschrift",
-				},
-			},
-			{
-				Value: string(invoiceTypePartial),
+				Value: "326",
 				Name: i18n.String{
 					i18n.EN: "Partial Invoice",
 					i18n.DE: "Teilrechnung",
 				},
 			},
 			{
-				Value: string(invoiceTypePartialConstruction),
+				Value: "380",
+				Name: i18n.String{
+					i18n.EN: "Standard Invoice",
+					i18n.DE: "Standardrechnung",
+				},
+			},
+			{
+				Value: "381",
+				Name: i18n.String{
+					i18n.EN: "Credit Note",
+					i18n.DE: "Gutschrift",
+				},
+			},
+			{
+				Value: "384",
+				Name: i18n.String{
+					i18n.EN: "Corrected Invoice",
+					i18n.DE: "Korrigierte Rechnung",
+				},
+			},
+			{
+				Value: "389",
+				Name: i18n.String{
+					i18n.EN: "Self-Billed Invoice",
+					i18n.DE: "Gutschrift",
+				},
+			},
+			{
+				Value: "875",
 				Name: i18n.String{
 					i18n.EN: "Partial Construction Invoice",
 					i18n.DE: "Teilrechnung für Bauleistungen",
 				},
 			},
 			{
-				Value: string(invoiceTypePartialFinalConstruction),
+				Value: "876",
 				Name: i18n.String{
 					i18n.EN: "Partial Final Construction Invoice",
 					i18n.DE: "Schlussrechnung für Bauleistungen mit Teilrechnungen",
 				},
 			},
 			{
-				Value: string(invoiceTypeFinalConstruction),
+				Value: "877",
 				Name: i18n.String{
 					i18n.EN: "Final Construction Invoice",
 					i18n.DE: "Schlussrechnung für Bauleistungen",
