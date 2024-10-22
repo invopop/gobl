@@ -15,6 +15,8 @@ var (
 	taxCodeRegexp = `^(\d{7}[A-Z]{1,2}|\d{1}[A-Z]{1}\d{5}[A-Z]{1})$`
 )
 
+// https://euipo.europa.eu/tunnel-web/secure/webdav/guest/document_library/Documents/COSME/VAT%20numbers%20EU.pdf
+
 // validateTaxIdentity checks to ensure the NIT code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,

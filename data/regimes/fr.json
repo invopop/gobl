@@ -68,6 +68,15 @@
       ]
     }
   ],
+  "identity_keys": [
+    {
+      "key": "fr-tax-number",
+      "name": {
+        "en": "Tax Number",
+        "fr": "Numéro fiscal de référence"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

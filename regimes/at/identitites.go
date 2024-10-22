@@ -19,6 +19,8 @@ const (
 	IdentityKeyTaxNumber cbc.Key = "at-tax-number"
 )
 
+// https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/austria-tin.pdf
+
 var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
 
 var identityKeyDefinitions = []*cbc.KeyDefinition{
@@ -46,12 +48,12 @@ func validateTaxNumber(id *org.Identity) error {
 	}
 
 	return validation.ValidateStruct(id,
-		validation.Field(&id.Code, validation.By(validateTaxIdCode)),
+		validation.Field(&id.Code, validation.By(validateTaxIDCode)),
 	)
 }
 
 // validateAustrianTaxIdCode validates the normalized tax ID code.
-func validateTaxIdCode(value interface{}) error {
+func validateTaxIDCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil

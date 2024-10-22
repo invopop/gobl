@@ -68,6 +68,20 @@
       ]
     }
   ],
+  "identity_keys": [
+    {
+      "key": "gb-utr",
+      "name": {
+        "en": "Unique Taxpayer Reference"
+      }
+    },
+    {
+      "key": "gb-nino",
+      "name": {
+        "en": "National Insurance Number"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

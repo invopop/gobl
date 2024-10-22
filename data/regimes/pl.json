@@ -165,6 +165,15 @@
       ]
     }
   ],
+  "identity_keys": [
+    {
+      "key": "pl-tax-number",
+      "name": {
+        "en": "Tax Number",
+        "pl": "Numer podatkowy"
+      }
+    }
+  ],
   "payment_means_keys": [
     {
       "key": "cash",

@@ -23,6 +23,9 @@ var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
 var ninoPattern = `^[A-CEGHJ-PR-TW-Z]{2}\d{6}[A-D]$`
 var utrPattern = `^[1-9]\d{9}$`
 
+// https://design.tax.service.gov.uk/hmrc-design-patterns/unique-taxpayer-reference/
+// https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
+
 var identityKeyDefinitions = []*cbc.KeyDefinition{
 	{
 		Key: IdentityUTR,

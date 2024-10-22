@@ -16,6 +16,8 @@ const (
 	IdentityKeyTaxNumber cbc.Key = "fr-tax-number"
 )
 
+// https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/france-tin.pdf
+
 var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
 
 var identityKeyDefinitions = []*cbc.KeyDefinition{
@@ -35,12 +37,12 @@ func validateTaxNumber(id *org.Identity) error {
 	}
 
 	return validation.ValidateStruct(id,
-		validation.Field(&id.Code, validation.By(validateTaxIdCode)),
+		validation.Field(&id.Code, validation.By(validateTaxIDCode)),
 	)
 }
 
-// validateTaxIdCode validates the normalized tax ID code.
-func validateTaxIdCode(value interface{}) error {
+// validateTaxIDCode validates the normalized tax ID code.
+func validateTaxIDCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil

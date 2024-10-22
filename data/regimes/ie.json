@@ -1,10 +1,10 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/regime-def",
   "name": {
-    "en": "Austria"
+    "en": "Ireland"
   },
-  "time_zone": "Europe/Vienna",
-  "country": "AT",
+  "time_zone": "Europe/Dublin",
+  "country": "IE",
   "currency": "EUR",
   "tags": [
     {
@@ -64,15 +64,6 @@
       ]
     }
   ],
-  "identity_keys": [
-    {
-      "key": "at-tax-number",
-      "name": {
-        "de": "Steuernummer",
-        "en": "Tax Number"
-      }
-    }
-  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
@@ -126,20 +117,16 @@
           },
           "values": [
             {
-              "since": "2011-01-04",
-              "percent": "20.0%"
-            }
-          ]
-        },
-        {
-          "key": "intermediate",
-          "name": {
-            "en": "Intermediate Rate"
-          },
-          "values": [
+              "since": "2021-02-28",
+              "percent": "23%"
+            },
             {
-              "since": "2011-01-01",
-              "percent": "13.0%"
+              "since": "2020-09-01",
+              "percent": "21%"
+            },
+            {
+              "since": "2012-01-01",
+              "percent": "23%"
             }
           ]
         },
@@ -150,18 +137,34 @@
           },
           "values": [
             {
-              "since": "2011-01-04",
-              "percent": "10.0%"
+              "since": "2003-01-01",
+              "percent": "13.5%"
             }
           ]
-        }
-      ],
-      "sources": [
+        },
         {
-          "title": {
-            "en": "Business Service Portal - Rates of VAT"
+          "key": "super-reduced",
+          "name": {
+            "en": "Reduced Rate"
           },
-          "url": "https://www.usp.gv.at/en/steuern-finanzen/umsatzsteuer/steuersaetze-der-umsatzsteuer.html"
+          "values": [
+            {
+              "since": "2011-07-01",
+              "percent": "9%"
+            }
+          ]
+        },
+        {
+          "key": "special",
+          "name": {
+            "en": "Reduced Rate"
+          },
+          "values": [
+            {
+              "since": "2005-01-01",
+              "percent": "4.8%"
+            }
+          ]
         }
       ]
     }

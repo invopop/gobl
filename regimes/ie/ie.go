@@ -1,4 +1,4 @@
-// Package gb provides the United Kingdom tax regime.
+// Package ie provides the United Kingdom tax regime.
 package ie
 
 import (
