@@ -9,5 +9,6 @@
 - [ ] I've run `go generate .` to ensure that Schemas and Regime data are up to date.
 - [ ] All linter warnings have been reviewed and fixed.
 - [ ] I've been obsessive with pointer nil checks to avoid panics.
+- [ ] The CHANGELOG.md has been updated with an overview of my changes.
 - [ ] Requested a review from @samlown.
 
