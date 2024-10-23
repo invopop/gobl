@@ -218,6 +218,10 @@
               "title": "United Kingdom"
             },
             {
+              "const": "IE",
+              "title": "Ireland"
+            },
+            {
               "const": "IT",
               "title": "Italy"
             },

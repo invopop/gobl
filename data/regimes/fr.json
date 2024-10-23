@@ -68,6 +68,15 @@
       ]
     }
   ],
+  "identity_types": [
+    {
+      "value": "SPI",
+      "name": {
+        "en": "Index Steering System",
+        "fr": "Système de Pilotage des Indices"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

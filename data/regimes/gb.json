@@ -68,6 +68,20 @@
       ]
     }
   ],
+  "identity_types": [
+    {
+      "value": "UTR",
+      "name": {
+        "en": "Unique Taxpayer Reference"
+      }
+    },
+    {
+      "value": "NINO",
+      "name": {
+        "en": "National Insurance Number"
+      }
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
