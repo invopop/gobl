@@ -253,6 +253,10 @@
                 "title": "Colombia DIAN UBL 2.X"
               },
               {
+                "const": "de-xrechnung-v3",
+                "title": "Germany XRechnung v3.x"
+              },
+              {
                 "const": "es-facturae-v3",
                 "title": "Spain FacturaE"
               },
