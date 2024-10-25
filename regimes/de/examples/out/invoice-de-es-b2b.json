@@ -1,0 +1,151 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "8aaa0df9390444f233eaa74495a66b758df529a1a58513ce59fc6cded30d12e9"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "DE",
+		"$addons": [
+			"eu-en16931-v2017",
+			"de-xrechnung-v3"
+		],
+		"$tags": [
+			"reverse-charge"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Provide One GmbH",
+			"tax_id": {
+				"country": "DE",
+				"code": "111111125"
+			},
+			"addresses": [
+				{
+					"num": "16",
+					"street": "Dietmar-Hopp-Allee",
+					"locality": "Walldorf",
+					"code": "69190",
+					"country": "DE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt+reverse-charge",
+						"ext": {
+							"untdid-tax-category": "AE"
+						}
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer+sepa",
+				"credit_transfer": [
+					{
+						"iban": "DE89370400440532013000",
+						"name": "Random Bank Co."
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "58"
+				}
+			}
+		},
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt+reverse-charge",
+								"ext": {
+									"untdid-tax-category": "AE"
+								},
+								"base": "1620.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1620.00",
+			"payable": "1620.00"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "reverse-charge",
+				"text": "Reverse Charge / Umkehr der Steuerschuld."
+			}
+		]
+	}
+}
