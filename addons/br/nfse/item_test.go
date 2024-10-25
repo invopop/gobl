@@ -24,6 +24,10 @@ func TestItemValidation(t *testing.T) {
 			},
 		},
 		{
+			name: "nil item",
+			item: nil,
+		},
+		{
 			name: "missing extensions",
 			item: &org.Item{},
 			err:  "ext: (br-nfse-service: required.)",
@@ -43,10 +47,6 @@ func TestItemValidation(t *testing.T) {
 				},
 			},
 			err: "ext: (br-nfse-service: required.).",
-		},
-		{
-			name: "nil",
-			item: nil,
 		},
 	}
 

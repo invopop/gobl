@@ -6,8 +6,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-func validateItem(value any) error {
-	item, _ := value.(*org.Item)
+func validateItem(item *org.Item) error {
 	if item == nil {
 		return nil
 	}

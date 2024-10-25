@@ -27,6 +27,10 @@ func TestLineValidation(t *testing.T) {
 			},
 		},
 		{
+			name: "nil line",
+			line: nil,
+		},
+		{
 			name: "missing taxes",
 			line: &bill.Line{},
 			err:  "taxes: missing category ISS.",

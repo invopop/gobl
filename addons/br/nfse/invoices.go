@@ -6,6 +6,10 @@ import (
 )
 
 func validateInvoice(inv *bill.Invoice) error {
+	if inv == nil {
+		return nil
+	}
+
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Charges,
 			validation.Empty.Error("not supported by nfse"),

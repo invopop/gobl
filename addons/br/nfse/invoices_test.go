@@ -21,6 +21,10 @@ func TestInvoicesValidation(t *testing.T) {
 			inv:  &bill.Invoice{},
 		},
 		{
+			name: "nil invoice",
+			inv:  nil,
+		},
+		{
 			name: "charges present",
 			inv: &bill.Invoice{
 				Charges: []*bill.Charge{

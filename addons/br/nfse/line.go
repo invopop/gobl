@@ -6,8 +6,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-func validateLine(value any) error {
-	line, _ := value.(*bill.Line)
+func validateLine(line *bill.Line) error {
 	if line == nil {
 		return nil
 	}
