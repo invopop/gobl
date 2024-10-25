@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
 - `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
 
+### Modified
+
+- `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
+
 ### Removed
 
 - `pay`: UNTDID 4461 mappings from payment means table, now provided by catalogues
