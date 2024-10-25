@@ -12,7 +12,14 @@ var taxCategoryMap = tax.Extensions{
 	tax.RateReduced:  "S", // Same as standard
 	tax.RateZero:     "Z",
 	tax.RateExempt:   "E",
-	tax.RateExempt.With(tax.TagReverseCharge): "AE",
+	tax.RateExempt.With(tax.TagReverseCharge):           "AE",
+	tax.RateExempt.With(tax.TagExport).With(tax.TagEEA): "K",
+	tax.RateExempt.With(tax.TagExport):                  "G",
+}
+
+// acceptedTaxCategories as defined by the EN 16931 code list values data.
+var acceptedTaxCategories = []tax.ExtValue{
+	"S", "Z", "E", "AE", "K", "G", "O", "L", "M",
 }
 
 func normalizeTaxCombo(tc *tax.Combo) {
@@ -46,6 +53,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 	return validation.ValidateStruct(tc,
 		validation.Field(&tc.Ext,
 			tax.ExtensionsRequires(untdid.ExtKeyTaxCategory),
+			tax.ExtensionsHasValues(untdid.ExtKeyTaxCategory, acceptedTaxCategories...),
 			validation.Skip,
 		),
 	)
