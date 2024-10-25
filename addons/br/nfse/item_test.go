@@ -45,8 +45,8 @@ func TestItemValidation(t *testing.T) {
 			err: "ext: (br-nfse-service: required.).",
 		},
 		{
-		  name: "nil",
-		  item: nil,
+			name: "nil",
+			item: nil,
 		},
 	}
 
