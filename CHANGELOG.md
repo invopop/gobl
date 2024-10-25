@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
 - `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
 - `org`: `Identity` support for extensions.
+- `tax`: tags for `export` and `eea` (european economic area) for use with rates.
 
 ### Modified
 

@@ -89,6 +89,28 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.Nil(t, c.Percent)
 	})
 
+	t.Run("exempt export EEA", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagEEA),
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, ad.Validator(c))
+		assert.Equal(t, "K", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Nil(t, c.Percent)
+	})
+
+	t.Run("exempt export", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateExempt.With(tax.TagExport),
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, ad.Validator(c))
+		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Nil(t, c.Percent)
+	})
+
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
 		err := ad.Validator(tc)
