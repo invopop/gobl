@@ -20,9 +20,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `eu-en16931-v2017`: addon for underlying support of the EN16931 semantic specifications.
 - `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
 - `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
+- `org`: `Identity` support for extensions.
 
 ### Modified
 
+- `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used by addons to included additional codes.
 - `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
 
 ### Removed

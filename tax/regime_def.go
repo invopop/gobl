@@ -3,6 +3,7 @@ package tax
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -116,7 +117,7 @@ type CategoryDef struct {
 	// income.
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
-	// Specific tax definitions inside this category.
+	// Specific tax definitions inside this category. Order is important.
 	Rates []*RateDef `json:"rates,omitempty" jsonschema:"title=Rates"`
 
 	// Extensions defines a list of extension keys that may be used or required
@@ -316,8 +317,26 @@ func (r *RegimeDef) TimeLocation() *time.Location {
 	return loc
 }
 
+type inCategoryRatesRule struct {
+	cat  cbc.Code
+	keys []cbc.Key
+}
+
+func (r *inCategoryRatesRule) Validate(value any) error {
+	key, ok := value.(cbc.Key)
+	if !ok || key == cbc.KeyEmpty {
+		return nil
+	}
+	for _, k := range r.keys {
+		if key.Has(k) {
+			return nil
+		}
+	}
+	return fmt.Errorf("'%v' not defined in '%v' category", key, r.cat)
+}
+
 // InCategoryRates is used to provide a validation rule that will
-// ensure a rate key is defined inside a category.
+// ensure a rate key is represented inside a category.
 func (r *RegimeDef) InCategoryRates(cat cbc.Code) validation.Rule {
 	if r == nil {
 		return validation.Empty.Error("must be blank when regime is undefined")
@@ -330,7 +349,7 @@ func (r *RegimeDef) InCategoryRates(cat cbc.Code) validation.Rule {
 	for i, x := range c.Rates {
 		keys[i] = x.Key
 	}
-	return validation.In(keys...)
+	return &inCategoryRatesRule{cat: cat, keys: keys}
 }
 
 // InCategories returns a validation rule to ensure the category code
@@ -453,10 +472,17 @@ func (r *RegimeDef) ExtensionDef(key cbc.Key) *cbc.KeyDefinition {
 }
 
 // RateDef provides the rate definition with a matching key for
-// the category.
+// the category. Key comparison is made using two loops. The first
+// will find an exact match, while the second will see if the provided
+// key has the rate key as a prefix.
 func (c *CategoryDef) RateDef(key cbc.Key) *RateDef {
 	for _, r := range c.Rates {
 		if r.Key == key {
+			return r
+		}
+	}
+	for _, r := range c.Rates {
+		if key.Has(r.Key) {
 			return r
 		}
 	}

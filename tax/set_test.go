@@ -114,7 +114,18 @@ func TestSetValidation(t *testing.T) {
 					Rate:     cbc.Key("invalid-tag"),
 				},
 			},
-			err: "rate: must be a valid value.",
+			err: "rate: 'invalid-tag' not defined in 'VAT' category",
+		},
+		{
+			desc: "rate with extension",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(20, 3),
+					Rate:     tax.RateExempt.With(tax.TagReverseCharge),
+				},
+			},
+			err: nil,
 		},
 		{
 			desc: "missing percent with surcharge",

@@ -269,6 +269,10 @@
                 "title": "Spain TicketBAI"
               },
               {
+                "const": "eu-en16931-v2017",
+                "title": "EN 16931-1:2017"
+              },
+              {
                 "const": "gr-mydata-v1",
                 "title": "Greece MyData v1.x"
               },
