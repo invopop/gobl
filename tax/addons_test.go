@@ -27,7 +27,7 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, ts.GetAddons())
 
-	defs := ts.GetAddonDefs()
+	defs := ts.AddonDefs()
 	assert.Len(t, defs, 1)
 	assert.Equal(t, "mx-cfdi-v4", defs[0].Key.String())
 
@@ -35,6 +35,12 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	err := ts.Addons.Validate()
 	assert.ErrorContains(t, err, "1: addon 'invalid-addon' not registered")
+
+	t.Run("test addon normalization", func(t *testing.T) {
+		ts.Addons.List = []cbc.Key{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
+		_ = tax.ExtractNormalizers(ts)
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4", "eu-en16931-v2017", "de-xrechnung-v3"}, ts.Addons.List)
+	})
 }
 
 func TestAddonForKey(t *testing.T) {

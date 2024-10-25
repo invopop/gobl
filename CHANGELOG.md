@@ -13,6 +13,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `mx` – deprecated the `mx-cfdi-post-code` extension in favor of the customer address post code.
+- New "tax catalogues" used for defining extensions for specific standards.
+- `eu-en16931-v2017`: addon for underlying support of the EN16931 semantic specifications.
+- `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
+
+### Removed
+
+- `pay`: UNTDID 4461 mappings from payment means table, now provided by catalogues
 
 ## [v0.203.0]
 

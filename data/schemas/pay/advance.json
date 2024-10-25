@@ -35,6 +35,11 @@
               "description": "Sender initiated bank or wire transfer."
             },
             {
+              "const": "credit-transfer+sepa",
+              "title": "SEPA Credit Transfer",
+              "description": "Sender initiated bank or wire transfer via SEPA."
+            },
+            {
               "const": "debit-transfer",
               "title": "Debit Transfer",
               "description": "Receiver initiated bank or wire transfer."
@@ -58,6 +63,11 @@
               "const": "direct-debit",
               "title": "Direct Debit",
               "description": "Direct debit from the customers bank account."
+            },
+            {
+              "const": "direct-debit+sepa",
+              "title": "SEPA Direct Debit",
+              "description": "Direct debit from the customers bank account via SEPA."
             },
             {
               "const": "online",

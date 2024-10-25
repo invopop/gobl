@@ -83,4 +83,17 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
+
+	t.Run("regular invoice - only tax number nil tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Key:  "de-tax-number",
+				Code: "92/345/67894",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 }

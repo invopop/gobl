@@ -23,6 +23,10 @@ type AddonDef struct {
 	// Key that defines how to uniquely idenitfy the add-on.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 
+	// Requires defines any additional addons that this one depends on to operate
+	// correctly.
+	Requires []cbc.Key `json:"requires,omitempty" jsonschema:"title=Requires"`
+
 	// Name of the add-on
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
 
@@ -74,8 +78,9 @@ func (as *Addons) GetAddons() []cbc.Key {
 	return as.List
 }
 
-// GetAddonDefs provides a slice of Addon Definition instances.
-func (as Addons) GetAddonDefs() []*AddonDef {
+// AddonDefs provides a slice of Addon Definition instances including
+// any dependencies.
+func (as Addons) AddonDefs() []*AddonDef {
 	list := make([]*AddonDef, 0, len(as.List))
 	for _, ak := range as.List {
 		if a := AddonForKey(ak); a != nil {
@@ -83,6 +88,19 @@ func (as Addons) GetAddonDefs() []*AddonDef {
 		}
 	}
 	return list
+}
+
+// normalizeAddons ensures that the list of addons is normalized and is normally
+// performed internally when preparing the list of normalizers to use.
+func (as *Addons) normalizeAddons() {
+	list := make([]cbc.Key, 0, len(as.List))
+	for _, ak := range as.List {
+		if ad := AddonForKey(ak); ad != nil {
+			list = cbc.AppendUniqueKeys(list, ad.Requires...)
+			list = cbc.AppendUniqueKeys(list, ad.Key)
+		}
+	}
+	as.List = list
 }
 
 // Validate ensures that the list of addons is valid. This struct is designed to be

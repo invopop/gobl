@@ -41,8 +41,10 @@ var (
 )
 
 var (
-	codeSeparatorRegexp    = regexp.MustCompile(`([\.\-\/ _])[^A-Za-z0-9]+`)
-	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _]`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([\.\-\/ _])[^A-Za-z0-9]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _]`)
+	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
+	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -55,6 +57,24 @@ func NormalizeCode(c Code) Code {
 	code = strings.TrimSpace(code)
 	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
+// NormalizeAlphanumericalCode cleans and normalizes the code,
+// ensuring all letters are uppercase while also removing
+// non-alphanumerical characters.
+func NormalizeAlphanumericalCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = strings.ToUpper(code)
+	code = codeNonAlphanumericalRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
+// NormalizeNumericalCode cleans and normalizes the code, while also
+// removing non-numerical characters.
+func NormalizeNumericalCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = codeNonNumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 

@@ -10,6 +10,14 @@
           "title": "Key",
           "description": "Key that defines how to uniquely idenitfy the add-on."
         },
+        "requires": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Requires",
+          "description": "Requires defines any additional addons that this one depends on to operate\ncorrectly."
+        },
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Name",

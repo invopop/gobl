@@ -3,11 +3,11 @@ package xrechnung_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/de/xrechnung"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func invoiceTemplate(t *testing.T) *bill.Invoice {
@@ -22,7 +22,7 @@ func TestValidateInvoice(t *testing.T) {
 		inv := invoiceTemplate(t)
 		inv.Payment = &bill.Payment{
 			Instructions: &pay.Instructions{
-				Key: cbc.Key("sepa-credit-transfer"),
+				Key: "credit-transfer+sepa",
 				CreditTransfer: []*pay.CreditTransfer{
 					{
 						IBAN: "DE89370400440532013000",
@@ -31,14 +31,15 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 		}
-		assert.NoError(t, xrechnung.ValidateInvoice(inv))
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
 	})
 
 	t.Run("invalid invoice with missing IBAN for SEPA credit transfer", func(t *testing.T) {
 		inv := invoiceTemplate(t)
 		inv.Payment = &bill.Payment{
 			Instructions: &pay.Instructions{
-				Key: xrechnung.KeyPaymentMeansSEPACreditTransfer,
+				Key: pay.MeansKeyCreditTransfer.With(pay.MeansKeySEPA),
 				CreditTransfer: []*pay.CreditTransfer{
 					{
 						BIC: "DEUTDEFF",
@@ -46,7 +47,9 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 		}
-		assert.Error(t, xrechnung.ValidateInvoice(inv))
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "payment: (instructions: (credit_transfer: (0: (number: cannot be blank.).).).)")
 	})
 
 	t.Run("valid invoice with card payment", func(t *testing.T) {
@@ -57,14 +60,15 @@ func TestValidateInvoice(t *testing.T) {
 				Card: &pay.Card{},
 			},
 		}
-		assert.NoError(t, xrechnung.ValidateInvoice(inv))
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
 	})
 
 	t.Run("valid invoice with SEPA direct debit", func(t *testing.T) {
 		inv := invoiceTemplate(t)
 		inv.Payment = &bill.Payment{
 			Instructions: &pay.Instructions{
-				Key: xrechnung.KeyPaymentMeansSEPADirectDebit,
+				Key: "direct-debit+sepa",
 				DirectDebit: &pay.DirectDebit{
 					Ref:      "MANDATE123",
 					Creditor: "DE98ZZZ09999999999",
@@ -72,21 +76,24 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 		}
-		assert.NoError(t, xrechnung.ValidateInvoice(inv))
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
 	})
 
 	t.Run("invalid invoice with missing mandate reference for direct debit", func(t *testing.T) {
 		inv := invoiceTemplate(t)
 		inv.Payment = &bill.Payment{
 			Instructions: &pay.Instructions{
-				Key: xrechnung.KeyPaymentMeansSEPADirectDebit,
+				Key: "direct-debit+sepa",
 				DirectDebit: &pay.DirectDebit{
 					Creditor: "DE98ZZZ09999999999",
 					Account:  "DE89370400440532013000",
 				},
 			},
 		}
-		assert.Error(t, xrechnung.ValidateInvoice(inv))
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "payment: (instructions: (direct_debit: (ref: cannot be blank.).).)")
 	})
 
 	t.Run("invalid invoice with invalid payment key", func(t *testing.T) {
@@ -96,6 +103,8 @@ func TestValidateInvoice(t *testing.T) {
 				Key: cbc.Key("invalid-key"),
 			},
 		}
-		assert.Error(t, xrechnung.ValidateInvoice(inv))
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "payment: (instructions: (key: must be or start with a valid key.).)")
 	})
 }

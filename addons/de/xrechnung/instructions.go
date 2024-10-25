@@ -1,27 +1,9 @@
 package xrechnung
 
 import (
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/validation"
 )
-
-// Payment keys for XRechnung SEPA direct debit and credit transfer
-const (
-	KeyPaymentMeansSEPACreditTransfer cbc.Key = "sepa-credit-transfer"
-	KeyPaymentMeansSEPADirectDebit    cbc.Key = "sepa-direct-debit"
-)
-
-var validPaymentKeys = []cbc.Key{
-	pay.MeansKeyCash,
-	pay.MeansKeyCheque,
-	pay.MeansKeyCreditTransfer,
-	pay.MeansKeyCard,
-	pay.MeansKeyDirectDebit,
-	pay.MeansKeyOther,
-	KeyPaymentMeansSEPACreditTransfer,
-	KeyPaymentMeansSEPADirectDebit,
-}
 
 // ValidatePaymentInstructions validates the payment instructions according to the XRechnung standard
 func validatePaymentInstructions(value interface{}) error {
@@ -30,14 +12,10 @@ func validatePaymentInstructions(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(instr,
-		validation.Field(&instr.Key,
-			validation.Required,
-			validation.By(validatePaymentKey),
-			validation.Skip,
-		),
 		// BR-DE-23
 		validation.Field(&instr.CreditTransfer,
-			validation.When(instr.Key == KeyPaymentMeansSEPACreditTransfer,
+			validation.When(
+				instr.Key.Has(pay.MeansKeyCreditTransfer),
 				validation.Required,
 				validation.Each(validation.By(validateCreditTransfer)),
 			),
@@ -45,34 +23,25 @@ func validatePaymentInstructions(value interface{}) error {
 		),
 		// BR-DE-24
 		validation.Field(&instr.Card,
-			validation.When(instr.Key == pay.MeansKeyCard,
+			validation.When(
+				instr.Key.Has(pay.MeansKeyCard),
 				validation.Required,
 			),
 			validation.Skip,
 		),
 		// BR-DE-25
 		validation.Field(&instr.DirectDebit,
-			validation.When(instr.Key == KeyPaymentMeansSEPADirectDebit || instr.Key == pay.MeansKeyDirectDebit,
+			validation.When(
+				instr.Key.Has(pay.MeansKeyDirectDebit),
 				validation.Required,
-				validation.By(validateDirectDebit),
+				validation.By(validateInstructionsDirectDebit),
 				validation.Skip,
 			),
 		),
 	)
 }
 
-func validatePaymentKey(value interface{}) error {
-	t, ok := value.(cbc.Key)
-	if !ok {
-		return validation.NewError("invalid_key", "invalid payment key")
-	}
-	if !t.In(validPaymentKeys...) {
-		return validation.NewError("invalid", "invalid payment key")
-	}
-	return nil
-}
-
-func validateDirectDebit(value interface{}) error {
+func validateInstructionsDirectDebit(value interface{}) error {
 	dd, ok := value.(*pay.DirectDebit)
 	if !ok || dd == nil {
 		return nil
@@ -95,13 +64,14 @@ func validateDirectDebit(value interface{}) error {
 
 // BR-DE-19
 func validateCreditTransfer(value interface{}) error {
-	creditTransfer, _ := value.(*pay.CreditTransfer)
-	if creditTransfer == nil {
+	ct, ok := value.(*pay.CreditTransfer)
+	if ct == nil || !ok {
 		return nil
 	}
-	return validation.ValidateStruct(creditTransfer,
-		validation.Field(&creditTransfer.Number,
-			validation.When(creditTransfer.IBAN == "",
+	return validation.ValidateStruct(ct,
+		validation.Field(&ct.Number,
+			validation.When(
+				ct.IBAN == "",
 				validation.Required,
 			),
 		),

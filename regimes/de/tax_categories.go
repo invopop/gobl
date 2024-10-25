@@ -103,6 +103,18 @@ var taxCategories = []*tax.CategoryDef{
 					},
 				},
 			},
+			{
+				Key: tax.RateExempt,
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.DE: "Befreit",
+				},
+				Exempt: true,
+				Description: i18n.String{
+					i18n.EN: "Certain goods and services are exempt from VAT.",
+					i18n.DE: "Bestimmte Waren und Dienstleistungen sind von der Umsatzsteuer befreit.",
+				},
+			},
 		},
 	},
 }

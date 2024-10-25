@@ -1,4 +1,6 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "de-xrechnung-v3"
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
 currency: "EUR"
 issue_date: "2022-02-01"
@@ -45,3 +47,10 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+
+payment:
+  instructions:
+    key: "credit-transfer+sepa"
+    credit_transfer:
+      - iban: "DE89370400440532013000"
+        name: "Random Bank Co."
