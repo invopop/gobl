@@ -8,9 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- New "tax catalogues" used for defining extensions for specific standards.
+- `tax`: New "tax catalogues" used for defining extensions for specific standards.
+- `iso`: catalogue created with `iso-schema-id` extensions.
+- `untdid`: catalogue created with extensions: `untdid-document-type`, `untdid-payment-means`, and `untdid-tax-category`.
 - `eu-en16931-v2017`: addon for underlying support of the EN16931 semantic specifications.
 - `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
+- `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
 
 ### Removed
 
