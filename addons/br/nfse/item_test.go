@@ -44,6 +44,10 @@ func TestItemValidation(t *testing.T) {
 			},
 			err: "ext: (br-nfse-service: required.).",
 		},
+		{
+		  name: "nil",
+		  item: nil,
+		},
 	}
 
 	addon := tax.AddonForKey(nfse.V1)
