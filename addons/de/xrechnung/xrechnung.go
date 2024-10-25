@@ -39,13 +39,8 @@ func newAddon() *tax.AddonDef {
 				For more information on XRechnung, visit [www.xrechnung.de](https://www.xrechnung.de/).
 			`),
 		},
-		Normalizer: normalize,
-		Validator:  validate,
+		Validator: validate,
 	}
-}
-
-func normalize(doc any) {
-	// nothing to normalize yet
 }
 
 func validate(doc any) error {

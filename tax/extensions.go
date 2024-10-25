@@ -248,7 +248,8 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 	return nil
 }
 
-// ExtensionsHasValues
+// ExtensionsHasValues returns a validation rule that ensures the extension map's
+// key has one of the provided **values**.
 func ExtensionsHasValues(key cbc.Key, values ...ExtValue) validation.Rule {
 	return validateExtCodeValues{
 		key:    key,
