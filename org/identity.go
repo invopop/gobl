@@ -46,6 +46,18 @@ type Identity struct {
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 	// Description adds details about what the code could mean or imply
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	// Ext provides a way to add additional information to the identity.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+}
+
+// Normalize will try to clean the identity's data.
+func (i *Identity) Normalize(normalizers tax.Normalizers) {
+	if i == nil {
+		return
+	}
+	uuid.Normalize(&i.UUID)
+	i.Ext = tax.CleanExtensions(i.Ext)
+	normalizers.Each(i)
 }
 
 // Validate ensures the identity looks valid.
@@ -61,12 +73,13 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&i.Key),
 		validation.Field(&i.Type,
 			validation.When(i.Key != "",
-				validation.Empty,
+				validation.Empty.Error("must be empty when key is set"),
 			),
 		),
 		validation.Field(&i.Code,
 			validation.Required,
 		),
+		validation.Field(&i.Ext),
 	)
 }
 
@@ -127,7 +140,7 @@ func IdentityForType(in []*Identity, typ cbc.Code) *Identity {
 	return nil
 }
 
-// IdentityForKey helps return the identity with on of the matching keys.
+// IdentityForKey helps return the identity with the first matching key.
 func IdentityForKey(in []*Identity, key ...cbc.Key) *Identity {
 	for _, v := range in {
 		if v.Key.In(key...) {

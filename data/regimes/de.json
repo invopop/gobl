@@ -180,6 +180,18 @@
               "percent": "5%"
             }
           ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "de": "Befreit",
+            "en": "Exempt"
+          },
+          "desc": {
+            "de": "Bestimmte Waren und Dienstleistungen sind von der Umsatzsteuer befreit.",
+            "en": "Certain goods and services are exempt from VAT."
+          },
+          "exempt": true
         }
       ],
       "sources": [

@@ -2,9 +2,11 @@
 package xrechnung
 
 import (
+	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
@@ -22,42 +24,36 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V3,
 		Name: i18n.String{
-			i18n.EN: "German XRechnung 3.0.2",
+			i18n.EN: "German XRechnung 3.X",
+		},
+		Requires: []cbc.Key{
+			en16931.V2017,
 		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
-			Extensions to support the German XRechnung standard version 3.0.2 for electronic invoicing.
-			XRechnung is based on the European Norm (EN) 16931 and is mandatory for business-to-government
-			(B2G) invoices in Germany. This addon provides the necessary structures and validations to
-			ensure compliance with the XRechnung format.
+				Support for the German XRechnung version 3.X standard for electronic invoicing.
+				XRechnung is based on the European Norm (EN) 16931 and is mandatory for business-to-government
+				(B2G) invoices in Germany. This addon provides the necessary structures and validations to
+				ensure compliance with the XRechnung specifications.
 
-			For more information on XRechnung, visit:
-			https://www.xrechnung.de/
+				For more information on XRechnung, visit [www.xrechnung.de](https://www.xrechnung.de/).
 			`),
 		},
-		Tags: []*tax.TagSet{
-			invoiceTags,
-		},
-		Scenarios:  scenarios,
-		Extensions: extensions,
 		Normalizer: normalize,
 		Validator:  validate,
 	}
 }
 
 func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *tax.Combo:
-		NormalizeTaxCombo(obj)
-	}
+	// nothing to normalize yet
 }
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return ValidateInvoice(obj)
-	case *tax.Combo:
-		return ValidateTaxCombo(obj)
+		return validateInvoice(obj)
+	case *pay.Instructions:
+		return validatePaymentInstructions(obj)
 	}
 	return nil
 }

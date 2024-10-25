@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
@@ -32,6 +33,7 @@ func TestPartyNormalize(t *testing.T) {
 			},
 		}
 		party.Normalize(nil)
+		assert.Empty(t, party.GetRegime())
 		assert.Equal(t, "ES", party.TaxID.Country.String())
 		assert.Equal(t, "ES42342912G", party.TaxID.String())
 	})
@@ -45,6 +47,7 @@ func TestPartyNormalize(t *testing.T) {
 			},
 		}
 		assert.NoError(t, party.Calculate())
+		assert.Empty(t, party.GetRegime())
 		assert.Equal(t, "ES", party.TaxID.Country.String())
 		assert.Equal(t, "ES42342912G", party.TaxID.String())
 	})
@@ -59,6 +62,22 @@ func TestPartyNormalize(t *testing.T) {
 		}
 		party.Normalize(nil) // unknown entry should not cause problem
 		assert.Equal(t, "42342912G", party.TaxID.Code.String())
+	})
+
+	t.Run("for specific regime", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "123 456 78901",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		assert.Equal(t, "DE", party.GetRegime().String())
+		assert.Equal(t, "123/456/78901", party.Identities[0].Code.String())
 	})
 }
 

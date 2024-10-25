@@ -3,6 +3,7 @@ package xrechnung_test
 import (
 	"testing"
 
+	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/de/xrechnung"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
@@ -17,7 +18,6 @@ import (
 
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
-	p := num.MakePercentage(19, 2)
 	inv := &bill.Invoice{
 		Regime:    tax.WithRegime("DE"),
 		Addons:    tax.WithAddons(xrechnung.V3),
@@ -92,8 +92,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						// Rate:     "standard",
-						Percent: &p,
+						Rate:     "standard",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -131,10 +130,12 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		errr := inv.Validate()
-		assert.ErrorContains(t, errr, "supplier: (identities: cannot be blank; tax_id: cannot be blank.).")
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (identities: missing key de-tax-number; tax_id: cannot be blank.).")
 	})
 	t.Run("missing supplier tax ID but has tax number", func(t *testing.T) {
+		// this is validation is performed in the DE regime, but we're
+		// leaving it here for completeness.
 		inv := testInvoiceStandard(t)
 		inv.Supplier.TaxID = nil
 		inv.Supplier.Identities = []*org.Identity{
@@ -146,113 +147,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.NoError(t, err)
-	})
-
-	t.Run("missing invoice type", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Type = ""
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "type: cannot be blank.")
-	})
-
-	t.Run("missing payment instructions", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Payment.Instructions = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "payment: (instructions: cannot be blank.).")
-	})
-
-	t.Run("missing ordering code", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering.Code = ""
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "ordering: (code: cannot be blank.).")
-	})
-
-	t.Run("missing supplier city", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.Addresses[0].Locality = ""
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (addresses: (0: (locality: cannot be blank.).).).")
-	})
-
-	t.Run("missing supplier postcode", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.Addresses[0].Code = ""
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (addresses: (0: (code: cannot be blank.).).).")
-	})
-
-	t.Run("missing customer city", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.Addresses[0].Locality = ""
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (addresses: (0: (locality: cannot be blank.).).).")
-	})
-
-	t.Run("missing customer postcode", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.Addresses[0].Code = ""
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (addresses: (0: (code: cannot be blank.).).).")
-	})
-
-	t.Run("missing supplier name", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.Name = ""
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (name: cannot be blank.)")
-	})
-
-	t.Run("missing delivery address", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Delivery = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err, "Delivery address should be optional")
-	})
-
-	t.Run("incomplete delivery address", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Delivery = &bill.Delivery{
-			Receiver: &org.Party{
-				Addresses: []*org.Address{
-					{
-						Street:  "Delivery Street",
-						Country: "DE",
-					},
-				},
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "delivery: (receiver: (addresses: (0: (code: cannot be blank; locality: cannot be blank.).).).).")
-	})
-
-	t.Run("valid delivery address", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Delivery = &bill.Delivery{
-			Receiver: &org.Party{
-				Addresses: []*org.Address{
-					{
-						Street:   "Delivery Street",
-						Locality: "Delivery City",
-						Code:     "12345",
-						Country:  "DE",
-					},
-				},
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.NoError(t, err, "Valid delivery address should not cause validation errors")
 	})
 
 }

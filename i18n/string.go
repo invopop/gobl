@@ -9,6 +9,14 @@ const (
 // String provides a simple map of locales to texts.
 type String map[Lang]string
 
+// NewString is a convenience method to create a new i18n.String
+// using the default language.
+func NewString(text string) String {
+	return String{
+		defaultLanguage: text,
+	}
+}
+
 // In provides a single string from the map using the
 // language requested or resorts to the default.
 func (s String) In(lang Lang) string {

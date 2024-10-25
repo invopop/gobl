@@ -320,11 +320,11 @@ func (r *RegimeDef) TimeLocation() *time.Location {
 // ensure a rate key is defined inside a category.
 func (r *RegimeDef) InCategoryRates(cat cbc.Code) validation.Rule {
 	if r == nil {
-		return validation.Empty
+		return validation.Empty.Error("must be blank when regime is undefined")
 	}
 	c := r.CategoryDef(cat)
 	if c == nil {
-		return validation.Empty
+		return validation.Empty.Error("must be blank when category is undefined")
 	}
 	keys := make([]cbc.Key, len(c.Rates))
 	for i, x := range c.Rates {

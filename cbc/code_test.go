@@ -109,7 +109,134 @@ func TestNormalizeCode(t *testing.T) {
 			assert.Equal(t, tt.want, cbc.NormalizeCode(tt.code))
 		})
 	}
+}
 
+func TestNormalizeAlphanumericalCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "uppercase",
+			code: cbc.Code("FOO"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "lowercase",
+			code: cbc.Code("foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "mixed case",
+			code: cbc.Code("Foo"),
+			want: cbc.Code("FOO"),
+		},
+		{
+			name: "with spaces",
+			code: cbc.Code("FOO BAR"),
+			want: cbc.Code("FOOBAR"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+			want: cbc.Code(""),
+		},
+		{
+			name: "underscore",
+			code: cbc.Code("FOO_BAR"),
+			want: cbc.Code("FOOBAR"),
+		},
+		{
+			name: "whitespace",
+			code: cbc.Code(" foo-bar1  "),
+			want: cbc.Code("FOOBAR1"),
+		},
+		{
+			name: "invalid chars",
+			code: cbc.Code("f$oo-bar1!"),
+			want: cbc.Code("FOOBAR1"),
+		},
+		{
+			name: "multiple spaces",
+			code: cbc.Code("foo bar dome"),
+			want: cbc.Code("FOOBARDOME"),
+		},
+		{
+			name: "multiple symbols 1",
+			code: cbc.Code("foo- bar-$dome"),
+			want: cbc.Code("FOOBARDOME"),
+		},
+		{
+			name: "multiple symbols 2",
+			code: cbc.Code("FOO  BAR--DOME"),
+			want: cbc.Code("FOOBARDOME"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeAlphanumericalCode(tt.code))
+		})
+	}
+}
+
+func TestNormalizeNumericalCode(t *testing.T) {
+	tests := []struct {
+		name string
+		code cbc.Code
+		want cbc.Code
+	}{
+		{
+			name: "letters",
+			code: cbc.Code("FOO"),
+			want: cbc.Code(""),
+		},
+		{
+			name: "numbers",
+			code: cbc.Code("1234"),
+			want: cbc.Code("1234"),
+		},
+		{
+			name: "mixed case",
+			code: cbc.Code("Foo1234"),
+			want: cbc.Code("1234"),
+		},
+		{
+			name: "with spaces",
+			code: cbc.Code("12 34"),
+			want: cbc.Code("1234"),
+		},
+		{
+			name: "empty",
+			code: cbc.Code(""),
+			want: cbc.Code(""),
+		},
+		{
+			name: "underscore",
+			code: cbc.Code("12_34"),
+			want: cbc.Code("1234"),
+		},
+		{
+			name: "whitespace",
+			code: cbc.Code(" 345  "),
+			want: cbc.Code("345"),
+		},
+		{
+			name: "invalid chars",
+			code: cbc.Code("f$oo-bar1!"),
+			want: cbc.Code("1"),
+		},
+		{
+			name: "multiple spaces",
+			code: cbc.Code("1 2 3 4"),
+			want: cbc.Code("1234"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, cbc.NormalizeNumericalCode(tt.code))
+		})
+	}
 }
 
 func TestCode_Validate(t *testing.T) {

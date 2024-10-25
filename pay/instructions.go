@@ -90,16 +90,6 @@ func (i *Instructions) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(i)
 }
 
-// UNTDID4461 provides the standard UNTDID 4461 code for the instruction's key.
-func (i *Instructions) UNTDID4461() cbc.Code {
-	for _, v := range MeansKeyDefinitions {
-		if v.Key == i.Key {
-			return v.UNTDID4461
-		}
-	}
-	return cbc.CodeEmpty
-}
-
 // Validate ensures the Online method details look correct.
 func (u *Online) Validate() error {
 	return validation.ValidateStruct(u,

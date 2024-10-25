@@ -11,12 +11,13 @@ import (
 
 func init() {
 	schema.Register(schema.GOBL.Add("tax"),
+		Identity{},
 		Set{},
 		Extensions{},
 		Total{},
 		RegimeDef{},
 		AddonDef{},
-		Identity{},
+		CatalogueDef{},
 	)
 }
 
@@ -58,6 +59,36 @@ func Validators(ctx context.Context) []Validator {
 		return make([]Validator, 0)
 	}
 	return list
+}
+
+// ExtractNormalizers will extract the normalizers from the provided object
+// that is using either the regime or addons.
+func ExtractNormalizers(obj any) Normalizers {
+	if obj == nil {
+		return nil
+	}
+	normalizers := make(Normalizers, 0)
+	if n, ok := obj.(regimeImpl); ok {
+		if r := n.RegimeDef(); r != nil {
+			normalizers = normalizers.Append(r.Normalizer)
+		}
+	}
+	if n, ok := obj.(addonsImpl); ok {
+		n.normalizeAddons()
+		for _, a := range n.AddonDefs() {
+			normalizers = normalizers.Append(a.Normalizer)
+		}
+	}
+	return normalizers
+}
+
+type regimeImpl interface {
+	RegimeDef() *RegimeDef
+}
+
+type addonsImpl interface {
+	normalizeAddons()
+	AddonDefs() []*AddonDef
 }
 
 type normalizeImpl interface {
