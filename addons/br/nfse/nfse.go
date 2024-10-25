@@ -32,6 +32,8 @@ func newAddon() *tax.AddonDef {
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *bill.Line:
 		return validateLine(obj)
 	case *org.Item:
