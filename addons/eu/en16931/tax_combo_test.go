@@ -67,16 +67,26 @@ func TestTaxComboNormalization(t *testing.T) {
 func TestTaxComboValidation(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("standard VAT rate", func(t *testing.T) {
-		p := num.MakePercentage(19, 2)
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateStandard,
-			Percent:  &p,
+			Percent:  num.NewPercentage(19, 2),
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
 		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Equal(t, "19%", c.Percent.String())
+	})
+
+	t.Run("exempt reverse charge", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateExempt.With(tax.TagReverseCharge),
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, ad.Validator(c))
+		assert.Equal(t, "AE", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Nil(t, c.Percent)
 	})
 
 	t.Run("nil", func(t *testing.T) {
