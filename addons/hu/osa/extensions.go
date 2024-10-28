@@ -10,7 +10,7 @@ const (
 	ExtKeyExemptionValue = "hu-exemption-Value"
 )
 
-var extensionKeys = []*cbc.KeyDefinition{
+var extensions = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyExemptionValue,
 		Name: i18n.String{
