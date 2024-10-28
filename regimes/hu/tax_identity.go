@@ -15,7 +15,7 @@ import (
 // Number 4 is only valid for the group tax subject to VAT (second tax id)
 var (
 	validVatCodes = map[cbc.Code]bool{
-		"1": true, "2": true, "3": true, "4": true, "5": true,
+		"1": true, "2": true, "3": true, "5": true,
 	}
 
 	validAreaCodes = map[cbc.Code]bool{

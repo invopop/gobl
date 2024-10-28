@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -41,40 +40,43 @@ var invoiceScenarios = &tax.ScenarioSet{
 	},
 }
 
-var invoiceTags = common.InvoiceTagsWith([]*cbc.KeyDefinition{
-	{
-		Key: TagDomesticReverseCharge,
-		Name: i18n.String{
-			i18n.EN: "Domestic Reverse Charge",
-			i18n.HU: "Belföldi fordított adózás",
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.KeyDefinition{
+		{
+			Key: TagDomesticReverseCharge,
+			Name: i18n.String{
+				i18n.EN: "Domestic Reverse Charge",
+				i18n.HU: "Belföldi fordított adózás",
+			},
+		},
+		{
+			Key: TagTravelAgency,
+			Name: i18n.String{
+				i18n.EN: "Travel Agency",
+				i18n.HU: "Utazási iroda",
+			},
+		},
+		{
+			Key: TagSecondHand,
+			Name: i18n.String{
+				i18n.EN: "Second Hand",
+				i18n.HU: "Használt cikk",
+			},
+		},
+		{
+			Key: TagArt,
+			Name: i18n.String{
+				i18n.EN: "Art",
+				i18n.HU: "Műalkotás",
+			},
+		},
+		{
+			Key: TagAntiques,
+			Name: i18n.String{
+				i18n.EN: "Antiques",
+				i18n.HU: "Antikvitás",
+			},
 		},
 	},
-	{
-		Key: TagTravelAgency,
-		Name: i18n.String{
-			i18n.EN: "Travel Agency",
-			i18n.HU: "Utazási iroda",
-		},
-	},
-	{
-		Key: TagSecondHand,
-		Name: i18n.String{
-			i18n.EN: "Second Hand",
-			i18n.HU: "Használt cikk",
-		},
-	},
-	{
-		Key: TagArt,
-		Name: i18n.String{
-			i18n.EN: "Art",
-			i18n.HU: "Műalkotás",
-		},
-	},
-	{
-		Key: TagAntiques,
-		Name: i18n.String{
-			i18n.EN: "Antiques",
-			i18n.HU: "Antikvitás",
-		},
-	},
-})
+}

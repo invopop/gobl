@@ -2,7 +2,6 @@ package hu
 
 import (
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -30,9 +29,6 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
-		Extensions: []cbc.Key{
-			ExtKeyExemptionCode,
-		},
 		Rates: []*tax.RateDef{
 			{
 				Key: tax.RateZero,

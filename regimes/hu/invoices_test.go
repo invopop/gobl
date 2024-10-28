@@ -162,7 +162,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("Valid Credit Note", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Preceding = []*bill.Preceding{
+		inv.Preceding = []*org.DocumentRef{
 			{
 				Code: "TEST-001",
 			},
