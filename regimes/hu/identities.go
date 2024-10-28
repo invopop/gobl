@@ -12,7 +12,9 @@ import (
 )
 
 const (
-	// When an individual belongs to a group, the user group tax number must be included in a separate field.
+	// IdentityKeyGroupNumber is the key used when a person belongs to a VAT group
+	// The main tax identity field contains the vat number of the group and it is required to include
+	// the vat number of the group member, which is included in identites.
 	IdentityKeyGroupNumber cbc.Key = "hu-group-number"
 )
 

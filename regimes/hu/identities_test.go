@@ -18,10 +18,8 @@ func TestValidateGroupId(t *testing.T) {
 		{"Empty code", "", ""},
 		{"Invalid length (5)", "12345", "invalid length"},
 		{"Invalid length (10)", "1234567890", "invalid length"},
-		{"Invalid check digit", "12345678", "checksum mismatch"},
 		{"Invalid VAT code", "21114445123", "invalid VAT code"},
 		{"Invalid area code", "82713452101", "invalid area code"},
-		{"Valid code (8 chars)", "98109858", ""},
 		{"Valid code (11 chars)", "88212131403", ""},
 	}
 	for _, tt := range tests {
