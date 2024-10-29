@@ -10,7 +10,6 @@ import (
 // invoices and cannot be determined automatically.
 const (
 	ExtKeyIssuePlace   cbc.Key = "mx-cfdi-issue-place"
-	ExtKeyPostCode     cbc.Key = "mx-cfdi-post-code"
 	ExtKeyFiscalRegime cbc.Key = "mx-cfdi-fiscal-regime"
 	ExtKeyUse          cbc.Key = "mx-cfdi-use"
 	ExtKeyProdServ     cbc.Key = "mx-cfdi-prod-serv"     // name from XML field: ClaveProdServ
@@ -116,23 +115,7 @@ var extensions = []*cbc.KeyDefinition{
 				Código postal de donde se emitió la factura. En CFDI se traduce a 'LugarExpedicion'.
 			`),
 		},
-		Pattern: "^[0-9]{5}$",
-	},
-	{
-		Key: ExtKeyPostCode,
-		Name: i18n.String{
-			i18n.EN: "Post Code",
-			i18n.ES: "Código Postal",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Post code of a supplier or customer to use instead of an address. Example: "01000".
-			`),
-			i18n.ES: here.Doc(`
-				Código postal de un emisor o receptor para usar en lugar de una dirección. Ejemplo: "01000".
-			`),
-		},
-		Pattern: "^[0-9]{5}$",
+		Pattern: PostCodePattern,
 	},
 	{
 		Key: ExtKeyTaxType,

@@ -14,30 +14,41 @@ import (
 )
 
 func TestNormalizeInvoice(t *testing.T) {
-	t.Run("no tax", func(t *testing.T) {
+	t.Run("does not migrate issue place when already present", func(t *testing.T) {
 		inv := baseInvoice()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
-
-	t.Run("no ext", func(t *testing.T) {
+	t.Run("migrate issue place from supplier ext when no tax ext", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Tax = &bill.Tax{}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, tax.ExtValue("22000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
-
-	t.Run("with supplier address code", func(t *testing.T) {
+	t.Run("migrate issue place from supplier tax ID zone", func(t *testing.T) {
 		inv := baseInvoice()
-		delete(inv.Supplier.Ext, cfdi.ExtKeyPostCode)
+		inv.Supplier.Ext = nil
+		inv.Supplier.TaxID.Zone = "21000" //nolint:staticcheck
+		inv.Tax = &bill.Tax{}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Tax)
+		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
+	})
+	t.Run("does not migrate issue place from address when already present", func(t *testing.T) {
+		inv := baseInvoice()
+		delete(inv.Supplier.Ext, "mx-cfdi-post-code")
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
 			&org.Address{
 				Locality: "Mexico",
-				Code:     "21000",
+				Code:     "22000",
 			},
 		)
 		require.NoError(t, inv.Calculate())
@@ -45,18 +56,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
-	t.Run("migrate supplier issue place", func(t *testing.T) {
-		inv := baseInvoice()
-		inv.Tax = nil
-		inv.Supplier.Ext = tax.Extensions{
-			cfdi.ExtKeyPostCode: "12345",
-		}
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
-	})
-	t.Run("migrate supplier issue place", func(t *testing.T) {
+	t.Run("migrate issue place from supplier address code", func(t *testing.T) {
 		inv := baseInvoice()
 		inv.Tax = nil
 		inv.Supplier.Ext = nil
@@ -70,6 +70,33 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, tax.ExtValue("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+	})
+	t.Run("migrate customer post code from ext", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Customer.Ext = tax.Extensions{
+			"mx-cfdi-post-code": "12345",
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Customer.Addresses)
+		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code)
+		assert.False(t, inv.Customer.Ext.Has("mx-cfdi-post-code"))
+	})
+	t.Run("migrate customer post code from zone", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Customer.TaxID.Zone = "12345" //nolint:staticcheck
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		require.NotNil(t, inv.Customer.Addresses)
+		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code)
+		assert.False(t, inv.Customer.Ext.Has("mx-cfdi-post-code"))
+	})
+	t.Run("does not migrate anything when the customer is missing", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.Nil(t, inv.Customer)
 	})
 }
 
@@ -87,7 +114,7 @@ func baseInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Ext: tax.Extensions{
-				cfdi.ExtKeyPostCode:     "21000",
+				"mx-cfdi-post-code":     "22000",
 				cfdi.ExtKeyFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
@@ -98,7 +125,7 @@ func baseInvoice() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			Ext: tax.Extensions{
-				cfdi.ExtKeyPostCode:     "65000",
+				"mx-cfdi-post-code":     "65000",
 				cfdi.ExtKeyFiscalRegime: "608",
 				cfdi.ExtKeyUse:          "G01",
 			},

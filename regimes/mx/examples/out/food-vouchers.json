@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ea065afce50358819fe68587f573dbad7c0d6ea1626d075b91faa924ebeb07db"
+			"val": "24c15ebc61934602b26715e5a0231761475ef5239084daee7eb2f021acbdc78b"
 		}
 	},
 	"doc": {
@@ -32,8 +32,7 @@
 				"code": "EKU9003173C9"
 			},
 			"ext": {
-				"mx-cfdi-fiscal-regime": "601",
-				"mx-cfdi-post-code": "21000"
+				"mx-cfdi-fiscal-regime": "601"
 			}
 		},
 		"customer": {
@@ -42,9 +41,13 @@
 				"country": "MX",
 				"code": "URE180429TM6"
 			},
+			"addresses": [
+				{
+					"code": "86991"
+				}
+			],
 			"ext": {
 				"mx-cfdi-fiscal-regime": "601",
-				"mx-cfdi-post-code": "86991",
 				"mx-cfdi-use": "G01"
 			}
 		},
