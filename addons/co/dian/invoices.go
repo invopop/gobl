@@ -56,10 +56,6 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Each(validation.By(validateInvoicePreceding(inv.Type))),
 			validation.Skip,
 		),
-		validation.Field(&inv.Outlays,
-			validation.Empty,
-			validation.Skip,
-		),
 	)
 }
 

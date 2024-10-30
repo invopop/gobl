@@ -80,6 +80,7 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 
 	normalizers.Each(p)
 	tax.Normalize(normalizers, p.Identities)
+	tax.Normalize(normalizers, p.Inboxes)
 	tax.Normalize(normalizers, p.Addresses)
 	tax.Normalize(normalizers, p.Emails)
 }

@@ -114,3 +114,87 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	}
 	return inv
 }
+
+func TestNormalizeBillLineDiscount(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with key", func(t *testing.T) {
+		l := &bill.LineDiscount{
+			Key:    "sample",
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		ad.Normalizer(l)
+		assert.Equal(t, "67", l.Ext[untdid.ExtKeyAllowance].String())
+	})
+	t.Run("without key", func(t *testing.T) {
+		l := &bill.LineDiscount{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		ad.Normalizer(l)
+		assert.Nil(t, l.Ext)
+	})
+}
+
+func TestNormalizeBillDiscount(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with key", func(t *testing.T) {
+		l := &bill.Discount{
+			Key:    "sample",
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		ad.Normalizer(l)
+		assert.Equal(t, "67", l.Ext[untdid.ExtKeyAllowance].String())
+	})
+	t.Run("without key", func(t *testing.T) {
+		l := &bill.Discount{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		ad.Normalizer(l)
+		assert.Nil(t, l.Ext)
+	})
+}
+
+func TestNormalizeBillLineCharge(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with key", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Key:    "outlay",
+			Reason: "Notary costs",
+			Amount: num.MakeAmount(1000, 2),
+		}
+		ad.Normalizer(l)
+		assert.Equal(t, "AAE", l.Ext[untdid.ExtKeyCharge].String())
+	})
+	t.Run("without key", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Reason: "Additional costs",
+			Amount: num.MakeAmount(3000, 2),
+		}
+		ad.Normalizer(l)
+		assert.Nil(t, l.Ext)
+	})
+}
+
+func TestNormalizeBillCharge(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with key", func(t *testing.T) {
+		l := &bill.Charge{
+			Key:    "outlay",
+			Reason: "Notary costs",
+			Amount: num.MakeAmount(1000, 2),
+		}
+		ad.Normalizer(l)
+		assert.Equal(t, "AAE", l.Ext[untdid.ExtKeyCharge].String())
+	})
+	t.Run("without key", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason: "Additional costs",
+			Amount: num.MakeAmount(3000, 2),
+		}
+		ad.Normalizer(l)
+		assert.Nil(t, l.Ext)
+	})
+}

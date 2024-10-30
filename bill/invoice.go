@@ -65,7 +65,7 @@ type Invoice struct {
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
-	// The taxable entity supplying the goods or services.
+	// The entity supplying the goods or services and usually responsible for paying taxes.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
 	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
@@ -76,8 +76,6 @@ type Invoice struct {
 	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
 	// Charges or surcharges applied to the complete invoice
 	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
-	// Expenses paid for by the supplier but invoiced directly to the customer.
-	Outlays []*Outlay `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
 	// Ordering details including document references and buyer or seller parties.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
@@ -157,7 +155,6 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&inv.Discounts),
 		validation.Field(&inv.Charges),
-		validation.Field(&inv.Outlays),
 		validation.Field(&inv.Ordering),
 		validation.Field(&inv.Payment),
 		validation.Field(&inv.Delivery),
@@ -223,9 +220,6 @@ func (inv *Invoice) Invert() error {
 	for _, row := range inv.Discounts {
 		row.Amount = row.Amount.Invert()
 	}
-	for _, row := range inv.Outlays {
-		row.Amount = row.Amount.Invert()
-	}
 	if inv.Payment != nil {
 		for _, row := range inv.Payment.Advances {
 			row.Amount = row.Amount.Invert()
@@ -252,7 +246,6 @@ func (inv *Invoice) Empty() {
 	inv.Lines = make([]*Line, 0)
 	inv.Charges = make([]*Charge, 0)
 	inv.Discounts = make([]*Discount, 0)
-	inv.Outlays = make([]*Outlay, 0)
 	inv.Totals = nil
 	inv.Payment.ResetAdvances()
 }
@@ -500,12 +493,6 @@ func (inv *Invoice) calculate() error {
 	// Remove taxes object if it doesn't contain any categories
 	if len(t.Taxes.Categories) == 0 {
 		t.Taxes = nil
-	}
-
-	// Outlays
-	t.Outlays = calculateOutlays(zero, inv.Outlays)
-	if t.Outlays != nil {
-		t.Payable = t.Payable.Add(*t.Outlays)
 	}
 
 	if inv.Payment != nil {

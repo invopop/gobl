@@ -103,6 +103,11 @@ func TestNormalizeCode(t *testing.T) {
 			code: cbc.Code("FOO  BAR--DOME"),
 			want: cbc.Code("FOO BAR-DOME"),
 		},
+		{
+			name: "colons",
+			code: cbc.Code("0088:1234567891234"), // peppol example
+			want: cbc.Code("0088:1234567891234"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -280,6 +285,10 @@ func TestCode_Validate(t *testing.T) {
 		{
 			name: "valid with space",
 			code: cbc.Code("FR 12/BX"),
+		},
+		{
+			name: "valid with colon",
+			code: cbc.Code("FR:12/BX"),
 		},
 		{
 			name: "empty",
