@@ -157,6 +157,11 @@
     },
     "Card": {
       "properties": {
+        "first6": {
+          "type": "string",
+          "title": "First 6",
+          "description": "First 6 digits of the card's Primary Account Number (PAN)."
+        },
         "last4": {
           "type": "string",
           "title": "Last 4",
@@ -170,6 +175,7 @@
       },
       "type": "object",
       "required": [
+        "first6",
         "last4",
         "holder"
       ],

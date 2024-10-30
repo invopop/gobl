@@ -48,6 +48,14 @@ func normalize(doc any) {
 		normalizePayInstructions(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
+	case *bill.Discount:
+		normalizeBillDiscount(obj)
+	case *bill.LineDiscount:
+		normalizeBillLineDiscount(obj)
+	case *bill.Charge:
+		normalizeBillCharge(obj)
+	case *bill.LineCharge:
+		normalizeBillLineCharge(obj)
 	}
 }
 

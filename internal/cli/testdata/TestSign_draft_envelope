@@ -96,13 +96,6 @@
                 "total": "15.00"
             }
         ],
-        "outlays": [
-            {
-                "amount": "0.00",
-                "description": "Something paid for by us",
-                "i": 1
-            }
-        ],
         "payment": {
             "instructions": {
                 "credit_transfer": [
@@ -155,7 +148,6 @@
             ]
         },
         "totals": {
-            "outlays": "0.00",
             "payable": "5637.50",
             "sum": "5187.50",
             "tax": "450.00",
@@ -204,11 +196,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "c8efedb81922d41509b6df8f94194a877677d4c3a4062ac8c1fb1b1896ab28c9"
+            "val": "c793f04d5ee66340bb1a8042a6ba80e71271d50325ca24942d3df50350170d1c"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4ZWZlZGI4MTkyMmQ0MTUwOWI2ZGY4Zjk0MTk0YTg3NzY3N2Q0YzNhNDA2MmFjOGMxZmIxYjE4OTZhYjI4YzkifX0.uhIm58KfFHPYnqEzpsdfGXCkjRvM5cKSB1o1q2jdL5KaAvpqCsDKmBsMz7K7qsBbFFWleBFrlWNpJ5FVdMw-Gg"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM3OTNmMDRkNWVlNjYzNDBiYjFhODA0MmE2YmE4MGU3MTI3MWQ1MDMyNWNhMjQ5NDJkM2RmNTAzNTAxNzBkMWMifX0.III-TN4WWYsyPupPdDUBXjgfAOH7wPU8UrMMcBw6NJ1tAEGYWJ30f_nIEkHPIHz9_g72aeq3obht4teR8RgiRA"
     ]
 }

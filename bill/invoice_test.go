@@ -936,12 +936,6 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
-		Outlays: []*bill.Outlay{
-			{
-				Description: "Something paid in advance",
-				Amount:      num.MakeAmount(1000, 2),
-			},
-		},
 		Payment: &bill.Payment{
 			Advances: []*pay.Advance{
 				{
@@ -959,8 +953,8 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, i.Totals.TotalWithTax.String(), "950.00")
 	assert.Equal(t, i.Payment.Advances[0].Amount.String(), "285.00")
 	assert.Equal(t, i.Totals.Advances.String(), "285.00")
-	assert.Equal(t, i.Totals.Payable.String(), "960.00")
-	assert.Equal(t, i.Totals.Due.String(), "675.00")
+	assert.Equal(t, i.Totals.Payable.String(), "950.00")
+	assert.Equal(t, i.Totals.Due.String(), "665.00")
 	assert.False(t, i.Totals.Paid())
 }
 
@@ -1010,12 +1004,6 @@ func TestCalculateInverted(t *testing.T) {
 				},
 			},
 		},
-		Outlays: []*bill.Outlay{
-			{
-				Description: "Something paid in advance",
-				Amount:      num.MakeAmount(1000, 2),
-			},
-		},
 		Payment: &bill.Payment{
 			Advances: []*pay.Advance{
 				{
@@ -1028,11 +1016,11 @@ func TestCalculateInverted(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 	assert.Equal(t, i.Totals.Sum.String(), "950.00")
-	assert.Equal(t, i.Totals.Due.String(), "710.00")
+	assert.Equal(t, i.Totals.Due.String(), "700.00")
 
 	require.NoError(t, i.Invert())
 	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
-	assert.Equal(t, i.Totals.Due.String(), "-710.00")
+	assert.Equal(t, i.Totals.Due.String(), "-700.00")
 }
 
 func TestInvoiceForUnknownRegime(t *testing.T) {

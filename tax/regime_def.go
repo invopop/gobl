@@ -70,9 +70,6 @@ type RegimeDef struct {
 	// regime that may be validated against.
 	IdentityKeys []*cbc.KeyDefinition `json:"identity_keys,omitempty" jsonschema:"title=Identity Keys"`
 
-	// Charge keys specific for the regime and may be validated or used in the UI as suggestions
-	ChargeKeys []*cbc.KeyDefinition `json:"charge_keys,omitempty" jsonschema:"title=Charge Keys"`
-
 	// PaymentMeansKeys specific for the regime that extend the original
 	// base payment means keys.
 	PaymentMeansKeys []*cbc.KeyDefinition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
@@ -286,7 +283,6 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.TaxIdentityTypeKeys),
 		validation.Field(&r.IdentityKeys),
 		validation.Field(&r.Extensions),
-		validation.Field(&r.ChargeKeys),
 		validation.Field(&r.PaymentMeansKeys),
 		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),

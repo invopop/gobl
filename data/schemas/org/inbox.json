@@ -11,6 +11,11 @@
           "title": "UUID",
           "description": "Universally Unique Identifier."
         },
+        "label": {
+          "type": "string",
+          "title": "Label",
+          "description": "Label for the inbox."
+        },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
@@ -21,21 +26,23 @@
           "title": "Role",
           "description": "Role assigned to this inbox that may be relevant for the consumer."
         },
-        "name": {
-          "type": "string",
-          "title": "Name",
-          "description": "Human name for the inbox."
-        },
         "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code or ID that identifies the Inbox."
+        },
+        "url": {
           "type": "string",
-          "description": "Actual Code or ID that identifies the Inbox."
+          "title": "URL",
+          "description": "URL of the inbox that includes the protocol, server, and path. May\nbe used instead of the Code to identify the inbox."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension code map for any additional regime or addon specific codes that may be required."
         }
       },
       "type": "object",
-      "required": [
-        "key",
-        "code"
-      ],
       "description": "Inbox is used to store data about a connection with a service that is responsible for potentially receiving copies of GOBL envelopes or other document formats defined locally."
     }
   }
