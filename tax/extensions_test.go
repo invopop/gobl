@@ -54,24 +54,24 @@ func TestExtValidation(t *testing.T) {
 	t.Run("with mexico", func(t *testing.T) {
 		t.Run("test patterns", func(t *testing.T) {
 			em := tax.Extensions{
-				cfdi.ExtKeyPostCode: "12345",
+				cfdi.ExtKeyIssuePlace: "12345",
 			}
 			err := em.Validate()
 			assert.NoError(t, err)
 
 			em = tax.Extensions{
-				cfdi.ExtKeyPostCode: "123457",
+				cfdi.ExtKeyIssuePlace: "123457",
 			}
 			err = em.Validate()
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "mx-cfdi-post-code: does not match pattern")
+			assert.Contains(t, err.Error(), "mx-cfdi-issue-place: does not match pattern")
 
-			kd := tax.ExtensionForKey(cfdi.ExtKeyPostCode)
+			kd := tax.ExtensionForKey(cfdi.ExtKeyIssuePlace)
 			pt := kd.Pattern
 			kd.Pattern = "[][" // invalid
 			err = em.Validate()
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "mx-cfdi-post-code: error parsing regexp: missing closing ]: `[][`")
+			assert.Contains(t, err.Error(), "mx-cfdi-issue-place: error parsing regexp: missing closing ]: `[][`")
 			kd.Pattern = pt // put back!
 		})
 

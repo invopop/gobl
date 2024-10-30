@@ -18,7 +18,7 @@ Here's how to include these codes in your GOBL documents:
 
 ### Issue Place (`LugarExpedicion`)
 
-Specify the postal code where the invoice was issued using the `mx-cfdi-issue-place` extension under the `tax` field of the invoice.
+Specify the postal code where the invoice was issued using the `mx-cfdi-issue-place` extension under the `tax` field of the invoice. If the extension is not provided, GOBL will set it automatically to the supplier's address post code.
 
 #### Example
 
@@ -65,7 +65,7 @@ The following example will associate the supplier with the `601` fiscal regime c
 
 ### `DomicilioFiscalReceptor` - Receipt's Tax Address
 
-In CFDI, `DomicilioFiscalReceptor` is a mandatory field that specifies the postal code of the recepient's tax address. In a GOBL Invoice, you can provide this value setting the `mx-cfdi-post-code` extension of the invoice's customer.
+In CFDI, `DomicilioFiscalReceptor` is a mandatory field that specifies the postal code of the recepient's tax address. In a GOBL Invoice, you can provide this value setting the customer's address post code.
 
 #### Example
 
@@ -81,11 +81,11 @@ In CFDI, `DomicilioFiscalReceptor` is a mandatory field that specifies the posta
       "country": "MX",
       "code": "URE180429TM6"
     },
-    "ext": {
-      "mx-cfdi-fiscal-regime": "601",
-      "mx-cfdi-use": "G01",
-      "mx-cfdi-post-code": "65000"
-    }
+    "addresses": [
+      {
+        "code": "65000"
+      }
+    ]
   }
 
   // [...]
@@ -115,9 +115,7 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
       "code": "URE180429TM6"
     },
     "ext": {
-      "mx-cfdi-fiscal-regime": "601",
       "mx-cfdi-use": "G01",
-      "mx-cfdi-post-code": "65000"
     }
   }
 

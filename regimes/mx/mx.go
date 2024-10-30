@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -60,8 +59,6 @@ func Normalize(doc any) {
 		normalizeInvoice(obj)
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
-	case *org.Party:
-		normalizeParty(obj)
 	}
 }
 

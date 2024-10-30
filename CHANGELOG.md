@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `br-nfse-v1`: added initial Brazil NFS-e addon
 
+### Changed
+
+- `mx` – deprecated the `mx-cfdi-post-code` extension in favor of the customer address post code.
+
 ## [v0.203.0]
 
 ### Added
