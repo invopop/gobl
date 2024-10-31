@@ -23,7 +23,7 @@ func TestInvalidComplement(t *testing.T) {
 	assert.Contains(t, err.Error(), "lines: cannot be blank")
 }
 
-func TestInvalidLine(t *testing.T) {
+func TestFuelAccountInvalidLine(t *testing.T) {
 	fab := &cfdi.FuelAccountBalance{Lines: []*cfdi.FuelAccountLine{{}}}
 
 	err := fab.Validate()
@@ -47,6 +47,10 @@ func TestInvalidLine(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "vendor_tax_code: invalid tax identity code")
 	assert.Contains(t, err.Error(), "total: must be quantity x unit_price")
+
+	fab.Lines[0].VendorTaxCode = "K&A010301I16" // with symbols
+	err = fab.Validate()
+	assert.NotContains(t, err.Error(), "vendor_tax_code")
 }
 
 func TestInvalidItem(t *testing.T) {
@@ -270,6 +274,7 @@ func TestCalculate(t *testing.T) {
 				"total": "12.34",
 				"lines": [
 				  {
+					"i": 1,
 					"e_wallet_id": "",
 					"purchase_date_time": "0000-00-00T00:00:00",
 					"vendor_tax_code": "",
@@ -349,6 +354,7 @@ func TestCalculate(t *testing.T) {
 				"total": "3832.93",
 				"lines": [
 				  {
+					"i": 1,
 					"e_wallet_id": "",
 					"purchase_date_time": "0000-00-00T00:00:00",
 					"vendor_tax_code": "",

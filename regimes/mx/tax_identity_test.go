@@ -28,6 +28,10 @@ func TestTaxIdentityNormalization(t *testing.T) {
 			Code:     "GHI-701231-23Z",
 			Expected: "GHI70123123Z",
 		},
+		{
+			Code:     "K&A010301I16",
+			Expected: "K&A010301I16",
+		},
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "MX", Code: ts.Code}
@@ -47,6 +51,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{name: "valid code 1", code: "MNOP8201019HJ"},
 		{name: "valid code 2", code: "UVWX610715JKL"},
 		{name: "valid code 3", code: "STU760612MN1"},
+		{name: "with symbol", code: "K&A010301I16"},
 		{
 			name: "invalid code 1",
 			code: "STU760612MN",
