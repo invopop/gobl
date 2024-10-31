@@ -47,6 +47,8 @@ type FoodVouchers struct {
 // one of the customer's employees. It maps to one `Concepto` node in the CFDI's
 // complement.
 type FoodVouchersLine struct {
+	// Line number starting from 1 (calculated).
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Identifier of the e-wallet that received the food voucher (maps to `Identificador`).
 	EWalletID cbc.Code `json:"e_wallet_id" jsonschema:"title=E-wallet Identifier"`
 	// Date and time of the food voucher's issue (maps to `Fecha`).
@@ -123,7 +125,8 @@ func (fve *FoodVouchersEmployee) Validate() error {
 func (fvc *FoodVouchers) Calculate() error {
 	fvc.Total = num.MakeAmount(0, FoodVouchersFinalPrecision)
 
-	for _, l := range fvc.Lines {
+	for i, l := range fvc.Lines {
+		l.Index = i + 1
 		l.Amount = l.Amount.Rescale(FoodVouchersFinalPrecision)
 
 		fvc.Total = fvc.Total.Add(l.Amount)

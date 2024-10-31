@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ea065afce50358819fe68587f573dbad7c0d6ea1626d075b91faa924ebeb07db"
+			"val": "67be6a62c56ead0addad478296d30fb268c4300fd243be53b14e0f255bdb363a"
 		}
 	},
 	"doc": {
@@ -107,6 +107,7 @@
 				"total": "30.52",
 				"lines": [
 					{
+						"i": 1,
 						"e_wallet_id": "ABC1234",
 						"issue_date_time": "2022-07-19T10:20:30",
 						"employee": {
@@ -118,6 +119,7 @@
 						"amount": "10.12"
 					},
 					{
+						"i": 2,
 						"e_wallet_id": "BCD4321",
 						"issue_date_time": "2022-08-20T11:20:30",
 						"employee": {

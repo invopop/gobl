@@ -59,7 +59,7 @@ func Normalize(doc any) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
 	case *tax.Identity:
-		tax.NormalizeIdentity(obj)
+		NormalizeTaxIdentity(obj)
 	case *org.Party:
 		normalizeParty(obj)
 	}

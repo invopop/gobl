@@ -2,6 +2,7 @@ package mx
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
@@ -30,14 +31,15 @@ const (
 
 // Tax Identity Patterns
 const (
-	TaxIdentityPatternPerson  = `^([A-ZÑ&]{4})([0-9]{6})([A-Z0-9]{3})$`
-	TaxIdentityPatternCompany = `^([A-ZÑ&]{3})([0-9]{6})([A-Z0-9]{3})$`
+	TaxIdentityPatternPerson  = `^([A-ZÑ\&]{4})([0-9]{6})([A-Z0-9]{3})$`
+	TaxIdentityPatternCompany = `^([A-ZÑ\&]{3})([0-9]{6})([A-Z0-9]{3})$`
 )
 
 // Tax Identity Regexp
 var (
 	TaxIdentityRegexpPerson  = regexp.MustCompile(TaxIdentityPatternPerson)
 	TaxIdentityRegexpCompany = regexp.MustCompile(TaxIdentityPatternCompany)
+	TaxCodeBadCharsRegexp    = regexp.MustCompile(`[^A-ZÑ\&0-9]+`)
 )
 
 // ValidateTaxIdentity validates a tax identity for SAT.
@@ -45,8 +47,25 @@ func ValidateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
 			validation.By(ValidateTaxCode),
+			validation.Skip, // don't apply regular code validation
 		),
 	)
+}
+
+// NormalizeTaxIdentity ensures the tax code is good for mexico
+func NormalizeTaxIdentity(tID *tax.Identity) {
+	if tID == nil {
+		return
+	}
+	tID.Code = NormalizeTaxCode(tID.Code)
+}
+
+// NormalizeTaxCode normalizes a tax code for SAT using the special
+// rules it requires.
+func NormalizeTaxCode(code cbc.Code) cbc.Code {
+	c := strings.ToUpper(code.String())
+	c = TaxCodeBadCharsRegexp.ReplaceAllString(c, "")
+	return cbc.Code(c)
 }
 
 // ValidateTaxCode validates a tax code according to the rules
