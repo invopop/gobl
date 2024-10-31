@@ -45,6 +45,8 @@ type FuelAccountBalance struct {
 // issued by the invoice's supplier. It maps to one
 // `ConceptoEstadoDeCuentaCombustible` node in the CFDI's complement.
 type FuelAccountLine struct {
+	// Index of the line starting from 1 (calculated)
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Identifier of the e-wallet used to make the purchase (maps to `Identificador`).
 	EWalletID cbc.Code `json:"e_wallet_id" jsonschema:"title=E-wallet Identifier"`
 	// Date and time of the purchase (maps to `Fecha`).
@@ -113,6 +115,7 @@ func (fal *FuelAccountLine) Validate() error {
 		validation.Field(&fal.VendorTaxCode,
 			validation.Required,
 			validation.By(mx.ValidateTaxCode),
+			validation.Skip, // don't use default code validations
 		),
 		validation.Field(&fal.ServiceStationCode,
 			validation.Required,
@@ -179,7 +182,8 @@ func (fab *FuelAccountBalance) Calculate() error {
 	taxtotal := num.MakeAmount(0, FuelAccountTotalsPrecision)
 	fab.Subtotal = num.MakeAmount(0, FuelAccountTotalsPrecision)
 
-	for _, l := range fab.Lines {
+	for i, l := range fab.Lines {
+		l.Index = i + 1
 		// Normalise amounts to the expected precision
 		l.Quantity = l.Quantity.RescaleUp(FuelAccountPriceMinimumPrecision)
 		if l.Item != nil {
