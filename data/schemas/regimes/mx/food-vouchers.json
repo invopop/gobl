@@ -71,6 +71,12 @@
     },
     "FoodVouchersLine": {
       "properties": {
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number starting from 1 (calculated).",
+          "calculated": true
+        },
         "e_wallet_id": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "E-wallet Identifier",
@@ -94,6 +100,7 @@
       },
       "type": "object",
       "required": [
+        "i",
         "e_wallet_id",
         "issue_date_time",
         "amount"
