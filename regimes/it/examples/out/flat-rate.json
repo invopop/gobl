@@ -91,10 +91,10 @@
 		],
 		"charges": [
 			{
-				"key": "stamp-duty",
 				"i": 1,
-				"amount": "2.00",
-				"reason": "Imposta di bollo"
+				"key": "stamp-duty",
+				"reason": "Imposta di bollo",
+				"amount": "2.00"
 			}
 		],
 		"totals": {
