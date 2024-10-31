@@ -39,6 +39,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: Regime `ChargeKeys` removed. Keys now provided in `bill` package.
 - `it`: Charge keys no longer defined, no migration required, already supported.
 
+### Fixed
+
+- `mx`: Tax ID validation now correctly supports `&` and `Ñ` symbols in codes.
+
 ## [v0.203.0]
 
 ### Added
