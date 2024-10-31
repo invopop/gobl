@@ -40,7 +40,20 @@ func TestTaxIdentityNormalization(t *testing.T) {
 	}
 }
 
+func TestNormalizeTaxIdentity(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		tID := (*tax.Identity)(nil)
+		assert.NotPanics(t, func() {
+			mx.NormalizeTaxIdentity(tID)
+		})
+	})
+}
+
 func TestTaxIdentityValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		tID := (*tax.Identity)(nil)
+		assert.NoError(t, mx.Validate(tID))
+	})
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -89,6 +102,13 @@ func TestTaxIdentityValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestValidateTaxCode(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		err := mx.ValidateTaxCode("")
+		assert.NoError(t, err)
+	})
 }
 
 func TestTaxIdentityDetermineType(t *testing.T) {

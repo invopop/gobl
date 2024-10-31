@@ -44,6 +44,9 @@ var (
 
 // ValidateTaxIdentity validates a tax identity for SAT.
 func ValidateTaxIdentity(tID *tax.Identity) error {
+	if tID == nil {
+		return nil
+	}
 	return validation.ValidateStruct(tID,
 		validation.Field(&tID.Code,
 			validation.By(ValidateTaxCode),
