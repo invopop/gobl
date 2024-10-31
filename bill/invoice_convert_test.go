@@ -148,12 +148,6 @@ func TestInvoiceConvertInto(t *testing.T) {
 					},
 				},
 			},
-			Outlays: []*bill.Outlay{
-				{
-					Description: "Something paid in advance",
-					Amount:      num.MakeAmount(1000, 2),
-				},
-			},
 			Payment: &bill.Payment{
 				Advances: []*pay.Advance{
 					{
@@ -166,10 +160,9 @@ func TestInvoiceConvertInto(t *testing.T) {
 		i2, err := i.ConvertInto(currency.USD)
 		assert.NoError(t, err)
 		require.NotNil(t, i2)
-		assert.Equal(t, "11.20", i2.Outlays[0].Amount.String())
 		assert.Equal(t, "643.72", i2.Payment.Advances[0].Amount.String())
 		assert.Equal(t, "1064.00", i2.Totals.Sum.String())
-		assert.Equal(t, "1298.64", i2.Totals.Payable.String())
-		assert.Equal(t, "654.92", i2.Totals.Due.String())
+		assert.Equal(t, "1287.44", i2.Totals.Payable.String())
+		assert.Equal(t, "643.72", i2.Totals.Due.String())
 	})
 }

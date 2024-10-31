@@ -4,18 +4,27 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0938466f9583f14ef3c26a29ef8a70d6cf2df20d69346e51be8252d7e15eb063"
+			"val": "02225106bf1fb373bc48663ad9eec3d50861d313616b8b392e66cdafab047c66"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "DE",
+		"$addons": [
+			"eu-en16931-v2017",
+			"de-xrechnung-v3"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
 		"supplier": {
 			"name": "Provide One GmbH",
 			"tax_id": {
@@ -69,21 +78,38 @@
 				"sum": "1800.00",
 				"discounts": [
 					{
+						"reason": "Special discount",
 						"percent": "10%",
-						"amount": "180.00",
-						"reason": "Special discount"
+						"amount": "180.00"
 					}
 				],
 				"taxes": [
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "19%"
+						"percent": "19%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
 					}
 				],
 				"total": "1620.00"
 			}
 		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer+sepa",
+				"credit_transfer": [
+					{
+						"iban": "DE89370400440532013000",
+						"name": "Random Bank Co."
+					}
+				],
+				"ext": {
+					"untdid-payment-means": "58"
+				}
+			}
+		},
 		"totals": {
 			"sum": "1620.00",
 			"total": "1620.00",
@@ -94,6 +120,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
 								"base": "1620.00",
 								"percent": "19%",
 								"amount": "307.80"

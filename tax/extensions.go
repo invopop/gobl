@@ -202,24 +202,26 @@ func CleanExtensions(em Extensions) Extensions {
 // ExtensionsHas returns a validation rule that ensures the extension map's
 // keys match those provided.
 func ExtensionsHas(keys ...cbc.Key) validation.Rule {
-	return validateCodeMap{keys: keys}
+	return validateExtCodeMap{
+		keys: keys,
+	}
 }
 
 // ExtensionsRequires returns a validation rule that ensures all the
 // extension map's keys match those provided in the list.
 func ExtensionsRequires(keys ...cbc.Key) validation.Rule {
-	return validateCodeMap{
+	return validateExtCodeMap{
 		required: true,
 		keys:     keys,
 	}
 }
 
-type validateCodeMap struct {
+type validateExtCodeMap struct {
 	keys     []cbc.Key
 	required bool
 }
 
-func (v validateCodeMap) Validate(value interface{}) error {
+func (v validateExtCodeMap) Validate(value interface{}) error {
 	em, ok := value.(Extensions)
 	if !ok {
 		return nil
@@ -237,6 +239,46 @@ func (v validateCodeMap) Validate(value interface{}) error {
 			if !k.In(v.keys...) {
 				err[k.String()] = errors.New("invalid")
 			}
+		}
+	}
+
+	if len(err) > 0 {
+		return err
+	}
+	return nil
+}
+
+// ExtensionsHasValues returns a validation rule that ensures the extension map's
+// key has one of the provided **values**.
+func ExtensionsHasValues(key cbc.Key, values ...ExtValue) validation.Rule {
+	return validateExtCodeValues{
+		key:    key,
+		values: values,
+	}
+}
+
+type validateExtCodeValues struct {
+	key    cbc.Key
+	values []ExtValue
+}
+
+func (v validateExtCodeValues) Validate(value interface{}) error {
+	em, ok := value.(Extensions)
+	if !ok {
+		return nil
+	}
+	err := make(validation.Errors)
+
+	if ev, ok := em[v.key]; ok {
+		match := false
+		for _, val := range v.values {
+			if ev == val {
+				match = true
+				break
+			}
+		}
+		if !match {
+			err[v.key.String()] = errors.New("invalid value")
 		}
 	}
 

@@ -65,3 +65,9 @@ func TestKeyIn(t *testing.T) {
 	assert.True(t, c.In("pro", "reduced+eqs", "standard"))
 	assert.False(t, c.In("pro", "reduced"))
 }
+
+func TestAppendUniqueKeys(t *testing.T) {
+	keys := []cbc.Key{"a", "b", "c"}
+	keys = cbc.AppendUniqueKeys(keys, "b", "d")
+	assert.Equal(t, []cbc.Key{"a", "b", "c", "d"}, keys)
+}

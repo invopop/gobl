@@ -65,7 +65,7 @@ type Invoice struct {
 	// Special tax configuration for billing.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
-	// The taxable entity supplying the goods or services.
+	// The entity supplying the goods or services and usually responsible for paying taxes.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
 	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
@@ -76,8 +76,6 @@ type Invoice struct {
 	Discounts []*Discount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
 	// Charges or surcharges applied to the complete invoice
 	Charges []*Charge `json:"charges,omitempty" jsonschema:"title=Charges"`
-	// Expenses paid for by the supplier but invoiced directly to the customer.
-	Outlays []*Outlay `json:"outlays,omitempty" jsonschema:"title=Outlays"`
 
 	// Ordering details including document references and buyer or seller parties.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering Details"`
@@ -157,7 +155,6 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&inv.Discounts),
 		validation.Field(&inv.Charges),
-		validation.Field(&inv.Outlays),
 		validation.Field(&inv.Ordering),
 		validation.Field(&inv.Payment),
 		validation.Field(&inv.Delivery),
@@ -223,9 +220,6 @@ func (inv *Invoice) Invert() error {
 	for _, row := range inv.Discounts {
 		row.Amount = row.Amount.Invert()
 	}
-	for _, row := range inv.Outlays {
-		row.Amount = row.Amount.Invert()
-	}
 	if inv.Payment != nil {
 		for _, row := range inv.Payment.Advances {
 			row.Amount = row.Amount.Invert()
@@ -252,7 +246,6 @@ func (inv *Invoice) Empty() {
 	inv.Lines = make([]*Line, 0)
 	inv.Charges = make([]*Charge, 0)
 	inv.Discounts = make([]*Discount, 0)
-	inv.Outlays = make([]*Outlay, 0)
 	inv.Totals = nil
 	inv.Payment.ResetAdvances()
 }
@@ -266,7 +259,7 @@ func (inv *Invoice) Calculate() error {
 		inv.SetRegime(inv.supplierTaxCountry())
 	}
 
-	inv.Normalize(inv.normalizers())
+	inv.Normalize(tax.ExtractNormalizers(inv))
 
 	if err := inv.calculate(); err != nil {
 		return err
@@ -301,23 +294,12 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, inv.Payment)
 }
 
-func (inv *Invoice) normalizers() tax.Normalizers {
-	normalizers := make(tax.Normalizers, 0)
-	if r := inv.RegimeDef(); r != nil {
-		normalizers = normalizers.Append(r.Normalizer)
-	}
-	for _, a := range inv.GetAddonDefs() {
-		normalizers = normalizers.Append(a.Normalizer)
-	}
-	return normalizers
-}
-
 func (inv *Invoice) supportedTags() []cbc.Key {
 	var ts *tax.TagSet
 	if r := inv.RegimeDef(); r != nil {
 		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaInvoice))
 	}
-	for _, a := range inv.GetAddonDefs() {
+	for _, a := range inv.AddonDefs() {
 		ts = ts.Merge(tax.TagSetForSchema(a.Tags, ShortSchemaInvoice))
 	}
 	return ts.Keys()
@@ -329,7 +311,7 @@ func (inv *Invoice) ValidationContext(ctx context.Context) context.Context {
 	if r := inv.RegimeDef(); r != nil {
 		ctx = r.WithContext(ctx)
 	}
-	for _, a := range inv.GetAddonDefs() {
+	for _, a := range inv.AddonDefs() {
 		ctx = a.WithContext(ctx)
 	}
 	return ctx
@@ -511,12 +493,6 @@ func (inv *Invoice) calculate() error {
 	// Remove taxes object if it doesn't contain any categories
 	if len(t.Taxes.Categories) == 0 {
 		t.Taxes = nil
-	}
-
-	// Outlays
-	t.Outlays = calculateOutlays(zero, inv.Outlays)
-	if t.Outlays != nil {
-		t.Payable = t.Payable.Add(*t.Outlays)
 	}
 
 	if inv.Payment != nil {

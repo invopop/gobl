@@ -22,13 +22,6 @@ func TestTaxRateMigration(t *testing.T) {
 	assert.Equal(t, tax.RateExempt, t0.Rate)
 	assert.Equal(t, tax.ExtValue("M01"), t0.Ext[saft.ExtKeyExemption])
 
-	// Invalid old rate
-	inv = validInvoice()
-	inv.Lines[0].Taxes[0].Rate = "exempt+invalid"
-
-	err = inv.Calculate()
-	assert.ErrorContains(t, err, "invalid-rate: 'exempt+invalid'")
-
 	// Valid new rate
 	inv = validInvoice()
 	inv.Lines[0].Taxes[0].Rate = "exempt"

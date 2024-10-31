@@ -30,4 +30,6 @@ const (
 	TagSelfBilled    cbc.Key = "self-billed"
 	TagPartial       cbc.Key = "partial"
 	TagB2G           cbc.Key = "b2g"
+	TagExport        cbc.Key = "export"
+	TagEEA           cbc.Key = "eea" // European Economic Area, used with exports
 )

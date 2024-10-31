@@ -28,9 +28,9 @@ func validateInvoiceSupplier(value any) error {
 	}
 	return validation.ValidateStruct(p,
 		validation.Field(&p.TaxID,
-			validation.Required,
 			validation.When(
-				!hasTaxNumber(p),
+				!hasIdentityTaxNumber(p),
+				validation.Required,
 				tax.RequireIdentityCode,
 			),
 			validation.Skip,
@@ -53,8 +53,8 @@ func hasTaxIDCode(party *org.Party) bool {
 	return party != nil && party.TaxID != nil && party.TaxID.Code != ""
 }
 
-func hasTaxNumber(party *org.Party) bool {
-	if party == nil || party.TaxID == nil {
+func hasIdentityTaxNumber(party *org.Party) bool {
+	if party == nil || len(party.Identities) == 0 {
 		return false
 	}
 	return org.IdentityForKey(party.Identities, IdentityKeyTaxNumber) != nil

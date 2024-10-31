@@ -13,6 +13,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `mx` – deprecated the `mx-cfdi-post-code` extension in favor of the customer address post code.
+- New "tax catalogues" used for defining extensions for specific standards.
+- `tax`: New "tax catalogues" used for defining extensions for specific standards.
+- `iso`: catalogue created with `iso-schema-id` extensions.
+- `untdid`: catalogue created with extensions: `untdid-document-type`, `untdid-payment-means`, `untdid-tax-category`, `untdid-allowance`, and `untdid-charge`.
+- `eu-en16931-v2017`: addon for underlying support of the EN16931 semantic specifications.
+- `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
+- `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
+- `org`: `Identity` and `Inbox` support for extensions.
+- `tax`: tags for `export` and `eea` (european economic area) for use with rates.
+- `bill`: support for extensions in `Discount`, `Charge`, `LineDiscount`, and `LineCharge`.
+- `bill`: specifically defined keys for Discounts and Charges.
+
+### Changed
+
+- `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used by addons to included additional codes.
+- `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
+- `cbc`: Code now allows `:` separator.
+
+### Removed
+
+- `pay`: UNTDID 4461 mappings from payment means table, now provided by catalogues
+- `bill`: `Outlay` has been removed in favour of Charges, we've also not seen any evidence this field has been used.
+- `bill`: `ref` field from discounts and charges in favour of `code`.
+- `tax`: Regime `ChargeKeys` removed. Keys now provided in `bill` package.
+- `it`: Charge keys no longer defined, no migration required, already supported.
 
 ## [v0.203.0]
 

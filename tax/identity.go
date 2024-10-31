@@ -139,7 +139,7 @@ func (id *Identity) Validate() error {
 
 func (v validateTaxID) Validate(value interface{}) error {
 	id, ok := value.(*Identity)
-	if !ok {
+	if id == nil || !ok {
 		return nil
 	}
 	rules := []*validation.FieldRules{

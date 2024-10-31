@@ -19,7 +19,6 @@ const (
 )
 
 var taxNumberRegexPattern = regexp.MustCompile(`^\d{2,3}/\d{3}/\d{5}$`)
-var badCharsRegexPattern = regexp.MustCompile(`[^\d]`)
 
 var identityKeyDefinitions = []*cbc.KeyDefinition{
 	{
@@ -36,8 +35,7 @@ func normalizeTaxNumber(id *org.Identity) {
 	if id == nil || id.Key != IdentityKeyTaxNumber {
 		return
 	}
-	code := id.Code.String()
-	code = badCharsRegexPattern.ReplaceAllString(code, "")
+	code := cbc.NormalizeNumericalCode(id.Code).String()
 	if len(code) == 11 {
 		// If 11 digits, return the format 123/456/78901
 		code = fmt.Sprintf("%s/%s/%s", code[:3], code[3:6], code[6:])

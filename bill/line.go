@@ -75,6 +75,8 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(l)
 	tax.Normalize(normalizers, l.Taxes)
 	tax.Normalize(normalizers, l.Item)
+	tax.Normalize(normalizers, l.Discounts)
+	tax.Normalize(normalizers, l.Charges)
 }
 
 // calculate figures out the totals according to quantity and discounts.

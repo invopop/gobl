@@ -20,8 +20,8 @@ type Instructions struct {
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
 	// Optional text description of the payment method
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
-	// Remittance information or concept, a text value used to link the payment with the invoice.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
+	// Remittance information or concept, a code value used to link the payment with the invoice.
+	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Reference"`
 	// Instructions for sending payment via a bank transfer.
 	CreditTransfer []*CreditTransfer `json:"credit_transfer,omitempty" jsonschema:"title=Credit Transfer"`
 	// Details of the payment that will be made via a credit or debit card.
@@ -39,7 +39,11 @@ type Instructions struct {
 }
 
 // Card contains simplified card holder data as a reference for the customer.
+// PCI compliance requires only the first 6 and last 4 digits of the card number
+// to be stored openly.
 type Card struct {
+	// First 6 digits of the card's Primary Account Number (PAN).
+	First6 string `json:"first6" jsonschema:"title=First 6"`
 	// Last 4 digits of the card's Primary Account Number (PAN).
 	Last4 string `json:"last4" jsonschema:"title=Last 4"`
 	// Name of the person whom the card belongs to.
@@ -86,18 +90,9 @@ func (i *Instructions) Normalize(normalizers tax.Normalizers) {
 	if i == nil {
 		return
 	}
+	i.Ref = cbc.NormalizeCode(i.Ref)
 	i.Ext = tax.CleanExtensions(i.Ext)
 	normalizers.Each(i)
-}
-
-// UNTDID4461 provides the standard UNTDID 4461 code for the instruction's key.
-func (i *Instructions) UNTDID4461() cbc.Code {
-	for _, v := range MeansKeyDefinitions {
-		if v.Key == i.Key {
-			return v.UNTDID4461
-		}
-	}
-	return cbc.CodeEmpty
 }
 
 // Validate ensures the Online method details look correct.
@@ -141,6 +136,7 @@ func (i *Instructions) Validate() error {
 func (i *Instructions) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Key, validation.Required, HasValidMeansKey),
+		validation.Field(&i.Ref),
 		validation.Field(&i.CreditTransfer),
 		validation.Field(&i.DirectDebit),
 		validation.Field(&i.Online),

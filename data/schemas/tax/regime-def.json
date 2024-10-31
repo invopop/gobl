@@ -36,7 +36,7 @@
           },
           "type": "array",
           "title": "Rates",
-          "description": "Specific tax definitions inside this category."
+          "description": "Specific tax definitions inside this category. Order is important."
         },
         "extensions": {
           "items": {
@@ -293,14 +293,6 @@
           "type": "array",
           "title": "Identity Keys",
           "description": "Identity keys used in addition to regular tax identities and specific for the\nregime that may be validated against."
-        },
-        "charge_keys": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
-          },
-          "type": "array",
-          "title": "Charge Keys",
-          "description": "Charge keys specific for the regime and may be validated or used in the UI as suggestions"
         },
         "payment_means_keys": {
           "items": {

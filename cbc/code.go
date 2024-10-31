@@ -20,9 +20,9 @@ const (
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
 // 1 and 32 inclusive english alphabet letters or numbers with optional
-// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`), or
-// spaces (` `) to separate blocks. Each block must only be separated by a
-// single symbol.
+// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
+// colons (`:`) or spaces (` `) to separate blocks.
+// Each block must only be separated by a single symbol.
 //
 // The objective is to have a code that is easy to read and understand, while
 // still being unique and easy to validate.
@@ -34,15 +34,17 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern              = `^[A-Za-z0-9]+([\.\-\/ _]?[A-Za-z0-9]+)*$`
+	CodePattern              = `^[A-Za-z0-9]+([\.\-\/ _\:]?[A-Za-z0-9]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeSeparatorRegexp    = regexp.MustCompile(`([\.\-\/ _])[^A-Za-z0-9]+`)
-	codeInvalidCharsRegexp = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _]`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([\.\-\/ _\:])[^A-Za-z0-9]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _\:]`)
+	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
+	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -55,6 +57,24 @@ func NormalizeCode(c Code) Code {
 	code = strings.TrimSpace(code)
 	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
+// NormalizeAlphanumericalCode cleans and normalizes the code,
+// ensuring all letters are uppercase while also removing
+// non-alphanumerical characters.
+func NormalizeAlphanumericalCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = strings.ToUpper(code)
+	code = codeNonAlphanumericalRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
+// NormalizeNumericalCode cleans and normalizes the code, while also
+// removing non-numerical characters.
+func NormalizeNumericalCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = codeNonNumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 

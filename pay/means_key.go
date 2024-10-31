@@ -2,13 +2,13 @@ package pay
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/jsonschema"
 )
 
 // Standard payment means codes for instructions.
 // If you require more payment means options, please make a pull request
-// and try to include references to the use case. All new means keys should
-// map to an existing UNTDID 4461 code.
+// and try to include references to the use case.
 const (
 	MeansKeyAny            cbc.Key = "any" // Use any method available.
 	MeansKeyCard           cbc.Key = "card"
@@ -21,37 +21,83 @@ const (
 	MeansKeyBankDraft      cbc.Key = "bank-draft"
 	MeansKeyDirectDebit    cbc.Key = "direct-debit" // aka. Mandate
 	MeansKeyOnline         cbc.Key = "online"       // Website from which payment can be made
+	MeansKeySEPA           cbc.Key = "sepa"         // extension for SEPA payments
 	MeansKeyOther          cbc.Key = "other"
 )
 
-// MeansKeyDef is used to define each of the payment means keys
-// that can be accepted by GOBL.
-type MeansKeyDef struct {
-	// Key being described
-	Key cbc.Key `json:"key" jsonschema:"title=Key"`
-	// Human value of the key
-	Title string `json:"title" jsonschema:"title=Title"`
-	// Details about the meaning of the key
-	Description string `json:"description" jsonschema:"title=Description"`
-	// UNTDID 4461 Equivalent Code
-	UNTDID4461 cbc.Code `json:"untdid4461" jsonschema:"title=UNTDID 4461 Code"`
-}
-
 // MeansKeyDefinitions includes all the payment means keys that
 // are accepted by GOBL.
-var MeansKeyDefinitions = []MeansKeyDef{
-	{MeansKeyAny, "Any", "Any method available, no preference.", "1"},                            // Instrument not defined
-	{MeansKeyCard, "Card", "Payment card.", "48"},                                                // Bank card
-	{MeansKeyCreditTransfer, "Credit Transfer", "Sender initiated bank or wire transfer.", "30"}, // credit transfer
-	{MeansKeyDebitTransfer, "Debit Transfer", "Receiver initiated bank or wire transfer.", "31"}, // debit transfer
-	{MeansKeyCash, "Cash", "Cash in hand.", "10"},                                                // in cash
-	{MeansKeyCheque, "Cheque", "Cheque from bank.", "20"},                                        // cheque
-	{MeansKeyBankDraft, "Draft", "Bankers Draft or Bank Cheque.", "21"},                          // Banker's draft,
-	{MeansKeyDirectDebit, "Direct Debit", "Direct debit from the customers bank account.", "49"}, // direct debit
-	{MeansKeyOnline, "Online", "Online or web payment.", "68"},                                   // online payment service
-	{MeansKeyPromissoryNote, "Promissory Note", "Promissory note contract.", "60"},               // Promissory note
-	{MeansKeyNetting, "Netting", "Intercompany clearing or clearing between partners.", "97"},    // Netting
-	{MeansKeyOther, "Other", "Other or mutually defined means of payment.", "ZZZ"},               // Other
+var MeansKeyDefinitions = []*cbc.KeyDefinition{
+	{
+		Key:  MeansKeyAny,
+		Name: i18n.NewString("Any"),
+		Desc: i18n.NewString("Any method available, no preference."),
+	},
+	{
+		Key:  MeansKeyCard,
+		Name: i18n.NewString("Card"),
+		Desc: i18n.NewString("Payment card."),
+	},
+	{
+		Key:  MeansKeyCreditTransfer,
+		Name: i18n.NewString("Credit Transfer"),
+		Desc: i18n.NewString("Sender initiated bank or wire transfer."),
+	},
+	{
+		Key:  MeansKeyCreditTransfer.With(MeansKeySEPA),
+		Name: i18n.NewString("SEPA Credit Transfer"),
+		Desc: i18n.NewString("Sender initiated bank or wire transfer via SEPA."),
+	},
+	{
+		Key:  MeansKeyDebitTransfer,
+		Name: i18n.NewString("Debit Transfer"),
+		Desc: i18n.NewString("Receiver initiated bank or wire transfer."),
+	},
+	{
+		Key:  MeansKeyCash,
+		Name: i18n.NewString("Cash"),
+		Desc: i18n.NewString("Cash in hand."),
+	},
+	{
+		Key:  MeansKeyCheque,
+		Name: i18n.NewString("Cheque"),
+		Desc: i18n.NewString("Cheque from bank."),
+	},
+	{
+		Key:  MeansKeyBankDraft,
+		Name: i18n.NewString("Draft"),
+		Desc: i18n.NewString("Bankers Draft or Bank Cheque."),
+	},
+	{
+		Key:  MeansKeyDirectDebit,
+		Name: i18n.NewString("Direct Debit"),
+		Desc: i18n.NewString("Direct debit from the customers bank account."),
+	},
+	{
+		Key:  MeansKeyDirectDebit.With(MeansKeySEPA),
+		Name: i18n.NewString("SEPA Direct Debit"),
+		Desc: i18n.NewString("Direct debit from the customers bank account via SEPA."),
+	},
+	{
+		Key:  MeansKeyOnline,
+		Name: i18n.NewString("Online"),
+		Desc: i18n.NewString("Online or web payment."),
+	},
+	{
+		Key:  MeansKeyPromissoryNote,
+		Name: i18n.NewString("Promissory Note"),
+		Desc: i18n.NewString("Promissory note contract."),
+	},
+	{
+		Key:  MeansKeyNetting,
+		Name: i18n.NewString("Netting"),
+		Desc: i18n.NewString("Intercompany clearing or clearing between partners."),
+	},
+	{
+		Key:  MeansKeyOther,
+		Name: i18n.NewString("Other"),
+		Desc: i18n.NewString("Other or mutually defined means of payment."),
+	},
 }
 
 // HasValidMeansKey provides a usable validator for the means key
@@ -74,8 +120,8 @@ func extendJSONSchemaWithMeansKey(schema *jsonschema.Schema, property string) {
 		for i, v := range MeansKeyDefinitions {
 			anyOf[i] = &jsonschema.Schema{
 				Const:       v.Key,
-				Title:       v.Title,
-				Description: v.Description,
+				Title:       v.Name.String(),
+				Description: v.Desc.String(),
 			}
 		}
 		anyOf = append(anyOf, &jsonschema.Schema{

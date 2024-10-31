@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "e47164849e23ea243e5a76d9503e861d6af4a715d9211f70b7606feaf6f5de40"
+			"val": "7ea57c3e785626d1c68b32a83d47299a70794799b5bb10be96c942171e09873c"
 		}
 	},
 	"doc": {
@@ -139,13 +139,6 @@
 				"total": "15.00"
 			}
 		],
-		"outlays": [
-			{
-				"i": 1,
-				"description": "Something paid for by us",
-				"amount": "0.00"
-			}
-		],
 		"payment": {
 			"terms": {
 				"key": "instant"
@@ -199,7 +192,6 @@
 			},
 			"tax": "450.00",
 			"total_with_tax": "5637.50",
-			"outlays": "0.00",
 			"payable": "5637.50"
 		}
 	}
