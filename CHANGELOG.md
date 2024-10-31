@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.204.0]
+
 ### Added
 
 - `br-nfse-v1`: added initial Brazil NFS-e addon
