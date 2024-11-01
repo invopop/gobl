@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `tax`: identity code handling will skip default validation for specific countries that use special characters.
+
 ## [v0.204.0]
 
 ### Added

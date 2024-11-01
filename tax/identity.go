@@ -55,6 +55,10 @@ var (
 
 	// IdentityCodeBadCharsRegexp is used to remove any characters that are not valid in a tax code.
 	IdentityCodeBadCharsRegexp = regexp.MustCompile(`[^A-Z0-9]+`)
+
+	// IdentityCodeValidationIgnore is a list of countries that should not have their tax identity
+	// codes validated due to local rules.
+	IdentityCodeValidationIgnore = []l10n.TaxCountryCode{"MX"}
 )
 
 // RequireIdentityCode is an additional check to use alongside
@@ -108,13 +112,12 @@ func (id *Identity) Calculate() error {
 // on the tax identity. Identities are an exception to the normal
 // normalization rules as they cannot be normalized using addons.
 func (id *Identity) Normalize() {
-	r := id.Regime()
-	if r == nil {
+	if r := id.Regime(); r != nil {
+		r.NormalizeObject(id)
+	} else {
 		// Fallback to common normalization
 		NormalizeIdentity(id)
-		return
 	}
-	r.NormalizeObject(id)
 }
 
 // Validate checks to ensure the tax ID contains all the required
@@ -123,7 +126,12 @@ func (id *Identity) Normalize() {
 func (id *Identity) Validate() error {
 	err := validation.ValidateStruct(id,
 		validation.Field(&id.Country, validation.Required),
-		validation.Field(&id.Code, validation.Match(IdentityCodePatternRegexp)),
+		validation.Field(&id.Code,
+			validation.Skip.When(
+				id.Country.In(IdentityCodeValidationIgnore...),
+			),
+			validation.Match(IdentityCodePatternRegexp),
+		),
 		validation.Field(&id.Zone, validation.Empty),
 		validation.Field(&id.Type),
 	)
@@ -142,10 +150,14 @@ func (v validateTaxID) Validate(value interface{}) error {
 	if id == nil || !ok {
 		return nil
 	}
-	rules := []*validation.FieldRules{
-		validation.Field(&id.Code,
-			validation.When(v.requireCode, validation.Required),
-		),
+	rules := []*validation.FieldRules{}
+	if v.requireCode {
+		rules = append(rules,
+			validation.Field(&id.Code,
+				validation.Required,
+				validation.Skip,
+			),
+		)
 	}
 	return validation.ValidateStruct(id, rules...)
 }

@@ -19,7 +19,7 @@ customer:
     mx-cfdi-use: "G01"
   tax_id:
     country: "MX"
-    code: "URE180429TM6"
+    code: "K&A010301I16"
     zone: "86991"
 lines:
   - quantity: "1"
