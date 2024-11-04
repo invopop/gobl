@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.204.1]
+
 ### Added
 
 - `bill`: normalize line discounts and charges to remove empty rows.
