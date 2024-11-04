@@ -44,6 +44,28 @@ func (ld *LineDiscount) Validate() error {
 	)
 }
 
+// IsEmpty returns true if the discount is empty.
+func (ld *LineDiscount) IsEmpty() bool {
+	return ld.Key.IsEmpty() &&
+		ld.Code.IsEmpty() &&
+		ld.Reason == "" &&
+		(ld.Percent == nil || ld.Percent.IsZero()) &&
+		ld.Amount.IsZero() &&
+		len(ld.Ext) == 0
+}
+
+// CleanLineDiscounts removes any empty discounts from the list.
+func CleanLineDiscounts(lines []*LineDiscount) []*LineDiscount {
+	var cleaned []*LineDiscount
+	for _, d := range lines {
+		if d.IsEmpty() {
+			continue
+		}
+		cleaned = append(cleaned, d)
+	}
+	return cleaned
+}
+
 // JSONSchemaExtend adds the discount key definitions to the schema.
 func (LineDiscount) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithDiscountKey(schema)

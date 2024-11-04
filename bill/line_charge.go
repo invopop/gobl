@@ -46,6 +46,28 @@ func (lc *LineCharge) Validate() error {
 	)
 }
 
+// IsEmpty returns true if the charge is empty.
+func (lc *LineCharge) IsEmpty() bool {
+	return lc.Key.IsEmpty() &&
+		lc.Code.IsEmpty() &&
+		lc.Reason == "" &&
+		(lc.Percent == nil || lc.Percent.IsZero()) &&
+		lc.Amount.IsZero() &&
+		len(lc.Ext) == 0
+}
+
+// CleanLineCharges removes any empty charges from the list.
+func CleanLineCharges(lines []*LineCharge) []*LineCharge {
+	var cleaned []*LineCharge
+	for _, l := range lines {
+		if l.IsEmpty() {
+			continue
+		}
+		cleaned = append(cleaned, l)
+	}
+	return cleaned
+}
+
 // JSONSchemaExtend adds the charge key definitions to the schema.
 func (LineCharge) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithChargeKey(schema)

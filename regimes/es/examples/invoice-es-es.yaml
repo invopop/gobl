@@ -36,6 +36,7 @@ lines:
     discounts:
       - percent: "10%"
         reason: "Special discount"
+      - amount: "0.00"
     taxes:
       - cat: VAT
         rate: standard
