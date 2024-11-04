@@ -1,6 +1,8 @@
 package tbai
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -18,9 +20,53 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	},
 }
 
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+	normalizeInvoiceTax(inv)
+}
+
+func normalizeInvoiceTax(inv *bill.Invoice) {
+	tx := inv.Tax
+	if tx == nil {
+		tx = &bill.Tax{}
+	}
+	if tx.Ext == nil {
+		tx.Ext = make(tax.Extensions)
+	}
+	if tx.Ext.Has(ExtKeyRegion) {
+		return
+	}
+	if inv.Supplier == nil || len(inv.Supplier.Addresses) == 0 {
+		return
+	}
+	addr := inv.Supplier.Addresses[0]
+	// Take a set of different names for the same region and attempt
+	// to use them to set the region code automatically.
+	switch strings.ToLower(addr.Region) {
+	case "alava", "álava", "araba", "vi":
+		tx.Ext[ExtKeyRegion] = "VI"
+	case "bizkaia", "vizcaya", "bi":
+		tx.Ext[ExtKeyRegion] = "BI"
+	case "gipuzkoa", "guipuzcoa", "guipúzcoa", "ss":
+		tx.Ext[ExtKeyRegion] = "SS"
+	default:
+		return
+	}
+	if len(tx.Ext) > 0 {
+		inv.Tax = tx
+	}
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Series, validation.Required),
+		validation.Field(&inv.Tax,
+			validation.Required,
+			validation.By(validateInvoiceTax),
+			validation.Skip,
+		),
 		validation.Field(&inv.Customer,
 			validation.By(validateInvoiceCustomer),
 			validation.Skip,
@@ -42,6 +88,19 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Notes,
 			cbc.ValidateNotesHasKey(cbc.NoteKeyGeneral),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceTax(val any) error {
+	obj, ok := val.(*bill.Tax)
+	if obj == nil || !ok {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			tax.ExtensionsRequires(ExtKeyRegion),
 			validation.Skip,
 		),
 	)

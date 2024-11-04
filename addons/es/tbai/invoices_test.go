@@ -14,6 +14,73 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestInvoiceNormalization(t *testing.T) {
+	t.Run("standard invoice, no address", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.Nil(t, inv.Tax)
+	})
+
+	t.Run("standard invoice in Vizcaya", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
+			Region: "Vizcaya",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "BI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+	})
+
+	t.Run("standard invoice in Gipuzkoa", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
+			Region: "Gipuzkoa",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "SS", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+	})
+
+	t.Run("standard invoice in Álava (accent)", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
+			Region: "Álava",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "VI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+	})
+
+	t.Run("standard invoice in Araba", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
+			Region: "Araba",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "VI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+	})
+
+	t.Run("standard invoice in Araba", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
+			Region: "Madrid",
+		})
+		require.NoError(t, inv.Calculate())
+		assert.Nil(t, inv.Tax)
+	})
+
+	t.Run("with existing region", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
+			Region: "Araba",
+		})
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				tbai.ExtKeyRegion: "BI", // not Alaba
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "BI", inv.Tax.Ext[tbai.ExtKeyRegion].String())
+	})
+}
+
 func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)

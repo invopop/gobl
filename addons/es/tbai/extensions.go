@@ -8,12 +8,50 @@ import (
 
 // Extension keys for TicketBAI
 const (
+	ExtKeyRegion     cbc.Key = "es-tbai-region"
 	ExtKeyExemption  cbc.Key = "es-tbai-exemption"
 	ExtKeyProduct    cbc.Key = "es-tbai-product"
 	ExtKeyCorrection cbc.Key = "es-tbai-correction"
 )
 
 var extensions = []*cbc.KeyDefinition{
+	{
+		Key: ExtKeyRegion,
+		Name: i18n.String{
+			i18n.EN: "TicketBAI Region Code",
+			i18n.ES: "Código de Región TicketBAI",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Region codes are used by TicketBAI to differentiate between the different
+				subdivisions of the Basque Country. This is used to determine the correct
+				API endpoint to use when submitting documents.
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "VI",
+				Name: i18n.String{
+					i18n.EN: "Araba",
+					i18n.ES: "Álava",
+				},
+			},
+			{
+				Value: "BI",
+				Name: i18n.String{
+					i18n.EN: "Bizkaia",
+					i18n.ES: "Vizcaya",
+				},
+			},
+			{
+				Value: "SS",
+				Name: i18n.String{
+					i18n.EN: "Gipuzkoa",
+					i18n.ES: "Guipúzcoa",
+				},
+			},
+		},
+	},
 	{
 		Key: ExtKeyProduct,
 		Name: i18n.String{
