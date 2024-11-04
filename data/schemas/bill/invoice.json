@@ -386,6 +386,10 @@
                 "title": "Spain TicketBAI"
               },
               {
+                "const": "es-verifactu-v1",
+                "title": "Spain Verifactu"
+              },
+              {
                 "const": "eu-en16931-v2017",
                 "title": "EN 16931-1:2017"
               },
