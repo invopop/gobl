@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "df116edc1be8cffa73ea841b6fc36bb367ac300466c9f1e57f024cbefa410e45"
+			"val": "bf9567fd923b6a5962e91b333a730ef03759c3e82d42827de31796249266f11e"
 		}
 	},
 	"doc": {
@@ -39,7 +39,7 @@
 			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
 			"tax_id": {
 				"country": "MX",
-				"code": "URE180429TM6"
+				"code": "K\u0026A010301I16"
 			},
 			"addresses": [
 				{

@@ -50,6 +50,22 @@ func TestTaxIdentity(t *testing.T) {
 	assert.NotPanics(t, func() {
 		tID.Normalize()
 	})
+
+	t.Run("mexican case with custom validation", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "MX",
+			Code:    "K&A010301I16",
+		}
+		assert.NoError(t, tID.Validate())
+	})
+
+	t.Run("invalid non-exception case", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ZW", // update when ZW regime is added
+			Code:    "AB&DE",
+		}
+		assert.ErrorContains(t, tID.Validate(), "code: must be in a valid format")
+	})
 }
 
 func TestParseIdentity(t *testing.T) {
@@ -77,12 +93,22 @@ func TestValidationRules(t *testing.T) {
 }
 
 func TestNormalizeIdentity(t *testing.T) {
-	tID := &tax.Identity{
-		Country: "AU",
-		Code:    "  x315-7928 m  ",
-	}
-	tax.NormalizeIdentity(tID)
-	assert.Equal(t, tID.Code.String(), "X3157928M")
+	t.Run("regular case", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "AU",
+			Code:    "  x315-7928 m  ",
+		}
+		tax.NormalizeIdentity(tID)
+		assert.Equal(t, tID.Code.String(), "X3157928M")
+	})
+	t.Run("with alt country", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "EL",
+			Code:    "GR925667500",
+		}
+		tax.NormalizeIdentity(tID, "GR")
+		assert.Equal(t, tID.Code.String(), "925667500")
+	})
 }
 
 func TestIdentityNormalize(t *testing.T) {

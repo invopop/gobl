@@ -75,14 +75,10 @@ func NormalizeTaxCode(code cbc.Code) cbc.Code {
 // defined by the Mexican SAT.
 func ValidateTaxCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
-	if !ok {
+	if !ok || code == "" {
 		return nil
 	}
-	if code == "" {
-		return nil
-	}
-	typ := DetermineTaxCodeType(code)
-	if typ.IsEmpty() {
+	if typ := DetermineTaxCodeType(code); typ.IsEmpty() {
 		return tax.ErrIdentityCodeInvalid
 	}
 	return nil
