@@ -57,3 +57,14 @@ func TestLineDiscountJSONSchema(t *testing.T) {
 	assert.NotNil(t, props)
 	assert.True(t, len(props.AnyOf) > 10)
 }
+
+func TestCleanLineDiscounts(t *testing.T) {
+	discounts := []*bill.LineDiscount{
+		{Amount: num.MakeAmount(100, 2)},
+		{Amount: num.MakeAmount(0, 2)},
+		{Reason: "test", Amount: num.MakeAmount(0, 2)},
+		{Code: "ABC", Percent: num.NewPercentage(0, 2)},
+	}
+	cleaned := bill.CleanLineDiscounts(discounts)
+	assert.Len(t, cleaned, 3)
+}

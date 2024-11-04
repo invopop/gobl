@@ -72,6 +72,8 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 // provided list of normalizers.
 func (l *Line) Normalize(normalizers tax.Normalizers) {
 	l.Taxes = tax.CleanSet(l.Taxes)
+	l.Discounts = CleanLineDiscounts(l.Discounts)
+	l.Charges = CleanLineCharges(l.Charges)
 	normalizers.Each(l)
 	tax.Normalize(normalizers, l.Taxes)
 	tax.Normalize(normalizers, l.Item)

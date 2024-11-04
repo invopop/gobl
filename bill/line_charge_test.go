@@ -57,3 +57,14 @@ func TestLineChargeJSONSchema(t *testing.T) {
 	assert.NotNil(t, props)
 	assert.Equal(t, 12, len(props.AnyOf))
 }
+
+func TestCleanLineCharges(t *testing.T) {
+	lines := []*bill.LineCharge{
+		{Amount: num.MakeAmount(100, 2)},
+		{Amount: num.MakeAmount(0, 2)},
+		{Reason: "test", Amount: num.MakeAmount(0, 2)},
+		{Code: "ABC", Percent: num.NewPercentage(0, 2)},
+	}
+	cleaned := bill.CleanLineCharges(lines)
+	assert.Len(t, cleaned, 3)
+}
