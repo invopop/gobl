@@ -17,12 +17,14 @@ import (
 func TestInvoiceNormalization(t *testing.T) {
 	t.Run("standard invoice, no address", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
 		assert.Nil(t, inv.Tax)
 	})
 
 	t.Run("standard invoice in Vizcaya", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Tax = nil
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
 			Region: "Vizcaya",
 		})
@@ -32,6 +34,7 @@ func TestInvoiceNormalization(t *testing.T) {
 
 	t.Run("standard invoice in Gipuzkoa", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Tax = nil
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
 			Region: "Gipuzkoa",
 		})
@@ -41,6 +44,7 @@ func TestInvoiceNormalization(t *testing.T) {
 
 	t.Run("standard invoice in Álava (accent)", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Tax = nil
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
 			Region: "Álava",
 		})
@@ -50,6 +54,7 @@ func TestInvoiceNormalization(t *testing.T) {
 
 	t.Run("standard invoice in Araba", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Tax = nil
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
 			Region: "Araba",
 		})
@@ -59,6 +64,7 @@ func TestInvoiceNormalization(t *testing.T) {
 
 	t.Run("standard invoice in Araba", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Tax = nil
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses, &org.Address{
 			Region: "Madrid",
 		})
@@ -134,6 +140,11 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Addons: tax.WithAddons(tbai.V1),
 		Series: "ABC",
 		Code:   "123",
+		Tax: &bill.Tax{
+			Ext: tax.Extensions{
+				tbai.ExtKeyRegion: "BI",
+			},
+		},
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "96ae76238c90546f3fa238637b07a0080e9d41670ca32029a274c705453cb225"
+			"val": "bd55d1603bc9a657f994684631ad5890c1adfe88c00dbb1f9edb40b7c6d215c5"
 		}
 	},
 	"doc": {
@@ -30,6 +30,11 @@
 				}
 			}
 		],
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {

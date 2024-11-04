@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "951ab32ee551ab67853712d2f2d4f8bf5f361121565ca747c77ac1b29db7746e"
+			"val": "3c08d66076cd20acf69aff434e5c1c652ca8c2414ebc14a1d944bef3932405e8"
 		}
 	},
 	"doc": {
@@ -22,6 +22,11 @@
 		"code": "0002",
 		"issue_date": "2023-12-18",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
