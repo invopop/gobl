@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: normalize line discounts and charges to remove empty rows.
+
 ### Fixed
 
 - `tax`: identity code handling will skip default validation for specific countries that use special characters.
@@ -15,7 +19,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `br-nfse-v1`: added initial Brazil NFS-e addon
-- `bill`: normalize line discounts and charges to remove empty rows.
 
 ### Changed
 
