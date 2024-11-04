@@ -222,12 +222,12 @@ In a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extens
 
 | Value        | Description |
 | -------------| ----------- |
-| `E3_106`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Com modities |
-| `E3_205`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Raw  and other materials |
-| `E3_210`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Pro ducts and production in progress |
-| `E3_305`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Raw  and other materials |
-| `E3_310`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntor`y/Pro ducts and production in progress |
-| `E3_318`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying in`vntory/Pro duction expenses |
+| `E3_106`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Commodities |
+| `E3_205`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw and other materials |
+| `E3_210`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Products and production in progress |
+| `E3_305`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Raw and other materials |
+| `E3_310`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Products and production in progress |
+| `E3_318`     | Self-Production of Fixed Assets – Self-Deliveries – Destroying inventory/Production expenses |
 | `E3_561_001` | Wholesale Sales of Goods and Services – for Traders |
 | `E3_561_002` | Wholesale Sales of Goods and Services pursuant to article 39a pa`ragraph 5 `of the VAT Code (Law 2859/2000) |
 | `E3_561_003` | Retail Sales of Goods and Services – Private Clientele |
