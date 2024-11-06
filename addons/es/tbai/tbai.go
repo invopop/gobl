@@ -15,8 +15,11 @@ const (
 
 // Official stamps or codes validated by government agencies
 const (
+	// StampCode contains the code required to be presented alongside
+	// the QR code.
 	StampCode cbc.Key = "tbai-code"
-	StampQR   cbc.Key = "tbai-qr"
+	// StampQR contains the URL included in the QR code.
+	StampQR cbc.Key = "tbai-qr"
 )
 
 func init() {
