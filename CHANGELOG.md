@@ -8,11 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `org`: `Address` now includes a `state` code, for countries that require them.
 - `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to invoices.
 
 ### Changes
 
 - Moved regime examples into single `/examples` folder.
+- `org`: `Address`, `code` for the post code is now typed as a `cbc.Code`, like the new `state` field.
 
 ## [v0.204.1]
 
