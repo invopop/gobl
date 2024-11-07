@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to invoices.
 
+### Changes
+
+- Moved regime examples into single `/examples` folder.
+
 ## [v0.204.1]
 
 ### Added
