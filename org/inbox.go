@@ -22,12 +22,13 @@ type Inbox struct {
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Role assigned to this inbox that may be relevant for the consumer.
 	Role cbc.Key `json:"role,omitempty" jsonschema:"title=Role"`
-	// Code or ID that identifies the Inbox.
+	// Code or ID that identifies the Inbox. Mutually exclusive with URL and Email.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// URL of the inbox that includes the protocol, server, and path. May
-	// be used instead of the Code to identify the inbox.
+	// be used instead of the Code to identify the inbox. Mutually exclusive with
+	// Code and Email.
 	URL string `json:"url,omitempty" jsonschema:"title=URL"`
-	// Email address for the inbox.
+	// Email address for the inbox. Mutually exclusive with Code and URL.
 	Email string `json:"email,omitempty" jsonschema:"title=Email"`
 	// Extension code map for any additional regime or addon specific codes that may be required.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
