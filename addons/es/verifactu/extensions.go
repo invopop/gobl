@@ -9,8 +9,8 @@ import (
 // Extension keys for TicketBAI
 const (
 	ExtKeyExemption   cbc.Key = "es-verifactu-exemption"
-	ExtKeyInvoiceType cbc.Key = "es-verifactu-invoice-type"
 	ExtKeyCorrection  cbc.Key = "es-verifactu-correction"
+	ExtKeyTaxCategory cbc.Key = "es-verifactu-tax-category"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -120,6 +120,51 @@ var extensions = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.ES: "Factura rectificativa: facturas simplificadas",
 					i18n.EN: "Rectified invoice: simplified invoices",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTaxCategory,
+		Name: i18n.String{
+			i18n.EN: "Verifactu Tax Category Code",
+			i18n.ES: "Verifactu Impuesto de Aplicacion",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+			Tax category code used to identify the type of tax being applied to the invoice.
+			The code must be one of the predefined values that correspond to the main Spanish
+			tax regimes: IVA (Value Added Tax), IPSI (Tax on Production, Services and Imports),
+			IGIC (Canary Islands General Indirect Tax), or Other.
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "01",
+				Name: i18n.String{
+					i18n.EN: "IVA",
+					i18n.ES: "IVA",
+				},
+			},
+			{
+				Value: "02",
+				Name: i18n.String{
+					i18n.EN: "IPSI",
+					i18n.ES: "IPSI",
+				},
+			},
+			{
+				Value: "03",
+				Name: i18n.String{
+					i18n.EN: "IGIC",
+					i18n.ES: "IGIC",
+				},
+			},
+			{
+				Value: "04",
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.ES: "Otro",
 				},
 			},
 		},
