@@ -6,6 +6,39 @@
   },
   "extensions": [
     {
+      "key": "es-tbai-region",
+      "name": {
+        "en": "TicketBAI Region Code",
+        "es": "Código de Región TicketBAI"
+      },
+      "desc": {
+        "en": "Region codes are used by TicketBAI to differentiate between the different\nsubdivisions of the Basque Country. This is used to determine the correct\nAPI endpoint to use when submitting documents."
+      },
+      "values": [
+        {
+          "value": "VI",
+          "name": {
+            "en": "Araba",
+            "es": "Álava"
+          }
+        },
+        {
+          "value": "BI",
+          "name": {
+            "en": "Bizkaia",
+            "es": "Vizcaya"
+          }
+        },
+        {
+          "value": "SS",
+          "name": {
+            "en": "Gipuzkoa",
+            "es": "Guipúzcoa"
+          }
+        }
+      ]
+    },
+    {
       "key": "es-tbai-product",
       "name": {
         "en": "TicketBAI Product Key",

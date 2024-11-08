@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "96ae76238c90546f3fa238637b07a0080e9d41670ca32029a274c705453cb225"
+			"val": "3c08d66076cd20acf69aff434e5c1c652ca8c2414ebc14a1d944bef3932405e8"
 		}
 	},
 	"doc": {
@@ -13,23 +13,20 @@
 		"$addons": [
 			"es-tbai-v1"
 		],
-		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
-		"type": "credit-note",
-		"series": "FR",
-		"code": "012",
-		"issue_date": "2022-02-01",
-		"currency": "EUR",
-		"preceding": [
-			{
-				"type": "standard",
-				"issue_date": "2022-01-10",
-				"series": "SAMPLE",
-				"code": "085",
-				"ext": {
-					"es-tbai-correction": "R2"
-				}
-			}
+		"$tags": [
+			"customer-rates"
 		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "EXPORT-X",
+		"code": "0002",
+		"issue_date": "2023-12-18",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
@@ -53,26 +50,10 @@
 			]
 		},
 		"customer": {
-			"name": "Sample Customer",
+			"name": "Sample End-Consumer",
 			"tax_id": {
-				"country": "ES",
-				"code": "54387763P"
-			},
-			"addresses": [
-				{
-					"num": "13",
-					"street": "Calle del Barro",
-					"locality": "Alcañiz",
-					"region": "Teruel",
-					"code": "44600",
-					"country": "ES"
-				}
-			],
-			"emails": [
-				{
-					"addr": "customer@example.com"
-				}
-			]
+				"country": "NL"
+			}
 		},
 		"lines": [
 			{
@@ -94,33 +75,20 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"country": "NL",
 						"rate": "standard",
-						"percent": "21.0%"
+						"percent": "21.0%",
+						"ext": {
+							"es-tbai-product": "services"
+						}
 					}
 				],
 				"total": "1620.00"
-			},
-			{
-				"i": 2,
-				"quantity": "1",
-				"item": {
-					"name": "Financial service",
-					"price": "10.00"
-				},
-				"sum": "10.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"rate": "zero",
-						"percent": "0.0%"
-					}
-				],
-				"total": "10.00"
 			}
 		],
 		"totals": {
-			"sum": "1630.00",
-			"total": "1630.00",
+			"sum": "1620.00",
+			"total": "1620.00",
 			"taxes": {
 				"categories": [
 					{
@@ -128,15 +96,13 @@
 						"rates": [
 							{
 								"key": "standard",
+								"country": "NL",
+								"ext": {
+									"es-tbai-product": "services"
+								},
 								"base": "1620.00",
 								"percent": "21.0%",
 								"amount": "340.20"
-							},
-							{
-								"key": "zero",
-								"base": "10.00",
-								"percent": "0.0%",
-								"amount": "0.00"
 							}
 						],
 						"amount": "340.20"
@@ -145,13 +111,13 @@
 				"sum": "340.20"
 			},
 			"tax": "340.20",
-			"total_with_tax": "1970.20",
-			"payable": "1970.20"
+			"total_with_tax": "1960.20",
+			"payable": "1960.20"
 		},
 		"notes": [
 			{
 				"key": "general",
-				"text": "Some random description"
+				"text": "Just an invoice"
 			}
 		]
 	}

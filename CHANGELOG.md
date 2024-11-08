@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to invoices.
+
+### Changes
+
+- Moved regime examples into single `/examples` folder.
+
 ## [v0.204.1]
 
 ### Added
@@ -24,7 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `mx` – deprecated the `mx-cfdi-post-code` extension in favor of the customer address post code.
+- `mx`: deprecated the `mx-cfdi-post-code` extension in favor of the customer address post code.
 - New "tax catalogues" used for defining extensions for specific standards.
 - `tax`: New "tax catalogues" used for defining extensions for specific standards.
 - `iso`: catalogue created with `iso-schema-id` extensions.

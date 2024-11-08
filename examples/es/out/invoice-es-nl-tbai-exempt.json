@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "951ab32ee551ab67853712d2f2d4f8bf5f361121565ca747c77ac1b29db7746e"
+			"val": "54c6eb1d6447f15a65d0f87aa67f3b272041e4e5ad2be14c14d2b7a85e47d9d3"
 		}
 	},
 	"doc": {
@@ -13,15 +13,17 @@
 		"$addons": [
 			"es-tbai-v1"
 		],
-		"$tags": [
-			"customer-rates"
-		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "EXPORT-X",
+		"series": "EXPORT",
 		"code": "0002",
-		"issue_date": "2023-12-18",
+		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-tbai-region": "BI"
+			}
+		},
 		"supplier": {
 			"name": "Provide One S.L.",
 			"tax_id": {
@@ -45,9 +47,10 @@
 			]
 		},
 		"customer": {
-			"name": "Sample End-Consumer",
+			"name": "Sample Consumer",
 			"tax_id": {
-				"country": "NL"
+				"country": "NL",
+				"code": "000099995B57"
 			}
 		},
 		"lines": [
@@ -70,10 +73,9 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"country": "NL",
-						"rate": "standard",
-						"percent": "21.0%",
+						"rate": "exempt",
 						"ext": {
+							"es-tbai-exemption": "E1",
 							"es-tbai-product": "services"
 						}
 					}
@@ -90,24 +92,23 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
-								"country": "NL",
+								"key": "exempt",
 								"ext": {
+									"es-tbai-exemption": "E1",
 									"es-tbai-product": "services"
 								},
 								"base": "1620.00",
-								"percent": "21.0%",
-								"amount": "340.20"
+								"amount": "0.00"
 							}
 						],
-						"amount": "340.20"
+						"amount": "0.00"
 					}
 				],
-				"sum": "340.20"
+				"sum": "0.00"
 			},
-			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
+			"tax": "0.00",
+			"total_with_tax": "1620.00",
+			"payable": "1620.00"
 		},
 		"notes": [
 			{

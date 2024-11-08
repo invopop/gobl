@@ -171,7 +171,7 @@ func TestEnvelopeCalculate(t *testing.T) {
 func TestEnvelopeComplete(t *testing.T) {
 	e := new(gobl.Envelope)
 
-	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+	data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, e)
 	require.NoError(t, err)
@@ -302,7 +302,7 @@ func TestEnvelopeCorrect(t *testing.T) {
 	t.Run("correct invoice", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 
-		data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
 		require.NoError(t, err)
 		err = yaml.Unmarshal(data, env)
 		require.NoError(t, err)
@@ -331,7 +331,7 @@ func TestEnvelopeReplicate(t *testing.T) {
 	t.Run("replicate invoice", func(t *testing.T) {
 		env := gobl.NewEnvelope()
 
-		data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.env.yaml")
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
 		require.NoError(t, err)
 		err = yaml.Unmarshal(data, env)
 		require.NoError(t, err)
@@ -398,7 +398,7 @@ func TestDocumentValidation(t *testing.T) {
 	}
 
 	doc = new(schema.Object)
-	data, err := os.ReadFile("./regimes/es/examples/invoice-es-es.yaml")
+	data, err := os.ReadFile("./examples/es/invoice-es-es.yaml")
 	require.NoError(t, err)
 	err = yaml.Unmarshal(data, doc)
 	require.NoError(t, err)
