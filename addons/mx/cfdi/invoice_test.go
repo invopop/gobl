@@ -31,7 +31,7 @@ func validInvoice() *bill.Invoice {
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			Ext: tax.Extensions{
-				cfdi.ExtKeyPostCode:     "21000",
+				"mx-cfdi-post-code":     "21000",
 				cfdi.ExtKeyFiscalRegime: "601",
 			},
 			TaxID: &tax.Identity{
@@ -42,7 +42,7 @@ func validInvoice() *bill.Invoice {
 		Customer: &org.Party{
 			Name: "Test Customer",
 			Ext: tax.Extensions{
-				cfdi.ExtKeyPostCode:     "65000",
+				"mx-cfdi-post-code":     "65000",
 				cfdi.ExtKeyFiscalRegime: "608",
 				cfdi.ExtKeyUse:          "G01",
 			},
@@ -91,7 +91,7 @@ func TestNormalizeInvoice(t *testing.T) {
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Addons = tax.WithAddons(cfdi.V4)
-		delete(inv.Supplier.Ext, cfdi.ExtKeyPostCode)
+		delete(inv.Supplier.Ext, "mx-cfdi-post-code")
 		inv.Supplier.Addresses = append(inv.Supplier.Addresses,
 			&org.Address{
 				Locality: "Mexico",
@@ -114,6 +114,27 @@ func TestCustomerValidation(t *testing.T) {
 	inv.Customer = nil
 	require.NoError(t, inv.Calculate())
 	assert.NoError(t, inv.Validate())
+}
+
+func TestCustomerAddressCodeValidation(t *testing.T) {
+	inv := validInvoice()
+	delete(inv.Customer.Ext, "mx-cfdi-post-code")
+	assertValidationError(t, inv, "customer: (addresses: cannot be blank.)")
+
+	inv.Customer.Addresses = []*org.Address{{}}
+	assertValidationError(t, inv, "customer: (addresses: (0: (code: cannot be blank.).).)")
+
+	inv.Customer.Addresses[0].Code = "ABC"
+	assertValidationError(t, inv, "customer: (addresses: (0: (code: must be in a valid format.).).)")
+
+	inv.Customer.Addresses[0].Code = "21000"
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
+
+	inv.Customer.TaxID.Country = "US"
+	inv.Customer.Addresses = nil
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
 }
 
 func TestLineValidation(t *testing.T) {
@@ -182,7 +203,7 @@ func TestUsoCFDIScenarioValidation(t *testing.T) {
 
 	inv.Customer.Ext = tax.Extensions{
 		cfdi.ExtKeyFiscalRegime: "601",
-		cfdi.ExtKeyPostCode:     "21000",
+		"mx-cfdi-post-code":     "21000",
 	}
 	assertValidationError(t, inv, "ext: (mx-cfdi-use: required.)")
 }

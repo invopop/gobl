@@ -133,13 +133,6 @@
 			"total": "15.00"
 		}
 	],
-	"outlays": [
-		{
-			"i": 1,
-			"description": "Something paid for by us",
-			"amount": "0.00"
-		}
-	],
 	"payment": {
 		"terms": {
 			"key": "instant"
@@ -195,7 +188,6 @@
 		},
 		"tax": "450.00",
 		"total_with_tax": "5637.50",
-		"outlays": "0.00",
 		"payable": "5637.50"
 	}
 }

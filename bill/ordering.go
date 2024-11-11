@@ -19,11 +19,9 @@ type Ordering struct {
 	// Period of time that the invoice document refers to often used in addition to the details
 	// provided in the individual line items.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
-	// Party who is responsible for making the purchase, but is not responsible
-	// for handling taxes.
+	// Party who is responsible for issuing payment, if not the same as the customer.
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
-	// Party who is selling the goods but is not responsible for taxes like the
-	// supplier.
+	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
 	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
 	// Projects this invoice refers to.
 	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects"`

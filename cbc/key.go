@@ -102,6 +102,17 @@ func (k Key) IsEmpty() bool {
 	return k == KeyEmpty
 }
 
+// AppendUniqueKeys is a convenience method to append keys to a list ensuring
+// that any existing keys are not re-added.
+func AppendUniqueKeys(keys []Key, key ...Key) []Key {
+	for _, k := range key {
+		if !k.In(keys...) {
+			keys = append(keys, k)
+		}
+	}
+	return keys
+}
+
 // HasValidKeyIn provides a validator to check the Key's
 // value is within the provided known set.
 func HasValidKeyIn(keys ...Key) validation.Rule {

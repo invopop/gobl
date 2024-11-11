@@ -1,0 +1,16 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "de-xrechnung-v3",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "German XRechnung 3.X"
+  },
+  "description": {
+    "en": "Support for the German XRechnung version 3.X standard for electronic invoicing.\nXRechnung is based on the European Norm (EN) 16931 and is mandatory for business-to-government\n(B2G) invoices in Germany. This addon provides the necessary structures and validations to\nensure compliance with the XRechnung specifications.\n\nFor more information on XRechnung, visit [www.xrechnung.de](https://www.xrechnung.de/)."
+  },
+  "extensions": null,
+  "scenarios": null,
+  "corrections": null
+}

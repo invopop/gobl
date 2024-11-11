@@ -6,8 +6,11 @@ import (
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/addons/gr/mydata"
 	"github.com/invopop/gobl/addons/mx/cfdi" // this will also prepare registers
+	"github.com/invopop/gobl/catalogues/iso"
+	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,36 +45,36 @@ func TestExtValue(t *testing.T) {
 	ev = tax.ExtValue("testing")
 	assert.Equal(t, "testing", ev.String())
 	assert.Equal(t, cbc.Key("testing"), ev.Key())
-	assert.Equal(t, cbc.CodeEmpty, ev.Code())
+	assert.Equal(t, cbc.Code("testing"), ev.Code())
 
-	ev = tax.ExtValue("A string")
+	ev = tax.ExtValue("A $tring")
 	assert.Equal(t, cbc.CodeEmpty, ev.Code())
 	assert.Equal(t, cbc.KeyEmpty, ev.Key())
-	assert.Equal(t, "A string", ev.String())
+	assert.Equal(t, "A $tring", ev.String())
 }
 
 func TestExtValidation(t *testing.T) {
 	t.Run("with mexico", func(t *testing.T) {
 		t.Run("test patterns", func(t *testing.T) {
 			em := tax.Extensions{
-				cfdi.ExtKeyPostCode: "12345",
+				cfdi.ExtKeyIssuePlace: "12345",
 			}
 			err := em.Validate()
 			assert.NoError(t, err)
 
 			em = tax.Extensions{
-				cfdi.ExtKeyPostCode: "123457",
+				cfdi.ExtKeyIssuePlace: "123457",
 			}
 			err = em.Validate()
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "mx-cfdi-post-code: does not match pattern")
+			assert.Contains(t, err.Error(), "mx-cfdi-issue-place: does not match pattern")
 
-			kd := tax.ExtensionForKey(cfdi.ExtKeyPostCode)
+			kd := tax.ExtensionForKey(cfdi.ExtKeyIssuePlace)
 			pt := kd.Pattern
 			kd.Pattern = "[][" // invalid
 			err = em.Validate()
 			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "mx-cfdi-post-code: error parsing regexp: missing closing ]: `[][`")
+			assert.Contains(t, err.Error(), "mx-cfdi-issue-place: error parsing regexp: missing closing ]: `[][`")
 			kd.Pattern = pt // put back!
 		})
 
@@ -145,6 +148,127 @@ func TestExtValidation(t *testing.T) {
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "gr-mydata-income-cat: value 'xxx' invalid")
 		})
+	})
+}
+
+func TestExtensionsHasValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		err := validation.Validate(nil,
+			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("empty", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("correct", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("missing", func(t *testing.T) {
+		em := tax.Extensions{
+			iso.ExtKeySchemeID: "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
+		)
+		assert.ErrorContains(t, err, "iso-scheme-id: invalid")
+	})
+}
+
+func TestExtensionsRequiresValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		err := validation.Validate(nil,
+			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("empty", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+		)
+		assert.ErrorContains(t, err, "untdid-document-type: required")
+	})
+	t.Run("correct", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("correct with extras", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+			iso.ExtKeySchemeID:        "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("missing", func(t *testing.T) {
+		em := tax.Extensions{
+			iso.ExtKeySchemeID: "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+		)
+		assert.ErrorContains(t, err, "untdid-document-type: required")
+	})
+}
+
+func TestExtensionsHasValues(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		err := validation.Validate(nil,
+			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("empty", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("different extensions", func(t *testing.T) {
+		em := tax.Extensions{
+			iso.ExtKeySchemeID: "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("has codes", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("invalid code", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "102",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+		)
+		assert.ErrorContains(t, err, "untdid-document-type: invalid value")
 	})
 }
 

@@ -29,6 +29,8 @@ GOBL, the Go Business Language library and tools, aim to:
 - Be flexible enough to support extreme local complexity but produce output that is easily legible in other countries.
 - Build a global community of contributors tired of the complexity of current standards based on XML or EDI.
 
+For examples on what GOBL document data looks like, please see the [examples directory](https://github.com/invopop/gobl/tree/main/examples).
+
 ## Community
 
 The complexity around invoicing, particularly electronic invoicing, can quickly become overwhelming. Check out the following resources and get in touch:
@@ -166,26 +168,26 @@ Example uses:
 
 ```sh
 # Calculate and validate a YAML invoice
-gobl build ./samples/invoice-es.yaml
+gobl build ./examples/es/invoice-es-es.yaml
 
 # Output using indented formatting
-gobl build -i ./samples/customer.yaml
+gobl build -i ./examples/es/party.yaml
 
 # Set the supplier from an external file
-gobl build -i ./samples/invoice-es.yaml \
-    --set-file customer=./samples/customer.yaml
+gobl build -i ./examples/es/invoice-es-es.yaml \
+    --set-file customer=./examples/es/party.yaml
 
 # Set arbitrary values from the command line. Inputs are parsed as YAML.
-gobl build -i ./samples/invoice-es.yaml \
+gobl build -i ./examples/es/invoice-es-es.yaml \
     --set meta.bar="a long string" \
     --set series="TESTING"
 
 # Set the top-level object:
-gobl build -i ./samples/invoice-es.yaml \
-    --set-file .=./samples/envelope-invoice-es.yaml
+gobl build -i ./examples/es/invoice-es-es.yaml \
+    --set-file .=./examples/es/invoice-es-es.env.yaml
 
 # Insert a document into an envelope
-gobl build -i --envelop ./samples/invoice-es.yaml
+gobl build -i --envelop ./examples/es/invoice-es-es.yaml
 ```
 
 ### Correct
@@ -194,11 +196,11 @@ The GOBL CLI makes it easy to use the library and tax regime specific functional
 
 ```sh
 # Correct an invoice with a credit note (this will error for ES invoice!)
-gobl correct -i ./samples/invoice-es.yaml --credit
+gobl correct -i ./examples/es/invoice-es-es.yaml --credit
 
 # Specify tax regime specific details
 gobl correct -i -d '{"credit":true,"changes":["line"],"method":"complete"}' \
-    ./samples/invoice-es.yaml
+    ./examples/es/invoice-es-es.yaml
 ```
 
 ### Sign
@@ -210,17 +212,17 @@ GOBL encourages users to sign data embedded into envelopes using digital signatu
 gobl keygen
 
 # Generate and output a JWK into a new file
-gobl keygen ./samples/key.jwk
+gobl keygen ./examples/key.jwk
 ```
 
 Use the key to sign documents:
 
 ```sh
 # Add a signature to the envelope using our personal key
-gobl sign -i ./samples/envelope-invoice-es.yaml
+gobl sign -i ./examples/es/invoice-es-es.env.yaml
 
 # Add a signature using a specific key
-gobl sign -i --key ./samples/key.jwk ./samples/envelope-invoice-es.yaml
+gobl sign -i --key ./examples/key.jwk ./examples/es/invoice-es-es.env.yaml
 ```
 
 It is only possible to sign non-draft envelopes, so the CLI will automatically remove this flag during the signing process. This implies that the document must be completely valid before signing.

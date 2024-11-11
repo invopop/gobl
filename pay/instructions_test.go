@@ -13,6 +13,7 @@ import (
 func TestInstructionsNormalize(t *testing.T) {
 	i := &pay.Instructions{
 		Key:    "online",
+		Ref:    " fooo ",
 		Detail: "Some random payment",
 		Ext: tax.Extensions{
 			"random": "",
@@ -20,6 +21,7 @@ func TestInstructionsNormalize(t *testing.T) {
 	}
 	i.Normalize(nil)
 	assert.Empty(t, i.Ext)
+	assert.Equal(t, "fooo", i.Ref.String())
 
 	i = nil
 	assert.NotPanics(t, func() {

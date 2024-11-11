@@ -1,0 +1,81 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "eu-en16931-v2017",
+  "name": {
+    "en": "EN 16931-1:2017"
+  },
+  "description": {
+    "en": "Support for the European Norm (EN) 16931-1:2017 standard for electronic invoicing.\n\nThis addon ensures the basic rules and mappings are applied to the GOBL document\nensure that it is compliant and easily convertible to other formats."
+  },
+  "extensions": null,
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "untdid-document-type": "380"
+          }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "ext": {
+            "untdid-document-type": "381"
+          }
+        },
+        {
+          "type": [
+            "debit-note"
+          ],
+          "ext": {
+            "untdid-document-type": "383"
+          }
+        },
+        {
+          "type": [
+            "corrective"
+          ],
+          "ext": {
+            "untdid-document-type": "384"
+          }
+        },
+        {
+          "type": [
+            "proforma"
+          ],
+          "ext": {
+            "untdid-document-type": "325"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "partial"
+          ],
+          "ext": {
+            "untdid-document-type": "326"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "389"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": null
+}

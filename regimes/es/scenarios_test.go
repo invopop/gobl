@@ -31,6 +31,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 		},
 		Customer: &org.Party{
+			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: "ES",
 				Code:    "54387763P",

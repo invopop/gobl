@@ -99,18 +99,6 @@
       "pattern": "^[0-9]{5}$"
     },
     {
-      "key": "mx-cfdi-post-code",
-      "name": {
-        "en": "Post Code",
-        "es": "Código Postal"
-      },
-      "desc": {
-        "en": "Post code of a supplier or customer to use instead of an address. Example: \"01000\".",
-        "es": "Código postal de un emisor o receptor para usar en lugar de una dirección. Ejemplo: \"01000\"."
-      },
-      "pattern": "^[0-9]{5}$"
-    },
-    {
       "key": "mx-cfdi-tax-type",
       "name": {
         "en": "Tax Type",

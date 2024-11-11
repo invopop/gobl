@@ -16,7 +16,7 @@
           "description": "When the new corrective invoice's issue date should be set to."
         },
         "series": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
           "description": "Series to assign to the new corrective invoice."
         },

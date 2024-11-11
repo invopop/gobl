@@ -15,8 +15,11 @@ const (
 
 // Official stamps or codes validated by government agencies
 const (
+	// StampCode contains the code required to be presented alongside
+	// the QR code.
 	StampCode cbc.Key = "tbai-code"
-	StampQR   cbc.Key = "tbai-qr"
+	// StampQR contains the URL included in the QR code.
+	StampQR cbc.Key = "tbai-qr"
 )
 
 func init() {
@@ -27,7 +30,7 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "TicketBAI",
+			i18n.EN: "Spain TicketBAI",
 		},
 		Extensions:  extensions,
 		Validator:   validate,
@@ -36,8 +39,12 @@ func newAddon() *tax.AddonDef {
 	}
 }
 
-func normalize(_ any) {
+func normalize(doc any) {
 	// nothing to normalize yet
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeInvoice(obj)
+	}
 }
 
 func validate(doc any) error {

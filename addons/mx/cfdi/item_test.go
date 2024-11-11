@@ -104,14 +104,6 @@ func TestItemIdentityNormalization(t *testing.T) {
 	assert.Equal(t, tax.ExtValue("01010100"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
 }
 
-func TestInvoiceLineExtensions(t *testing.T) {
-	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-
-	l := inv.Lines[0]
-	assert.Equal(t, "002", l.Taxes[0].Ext[cfdi.ExtKeyTaxType].String())
-}
-
 func TestItemIdentityMigration(t *testing.T) {
 	inv := validInvoice()
 

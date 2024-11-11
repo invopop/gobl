@@ -6,9 +6,27 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
+)
+
+// Common identity keys that may be used to identify something, like an item, document,
+// person, organisation, or company. Ideally, these will only be used when no other
+// more structured properties are available inside GOBL. The keys suggested here are
+// non-binding and can be used as a reference for other implementations.
+const (
+	IdentityKeySKU       cbc.Key = "sku"       // stock code unit ID
+	IdentityKeyItem      cbc.Key = "item"      // item number
+	IdentityKeyOrder     cbc.Key = "order"     // order number or code
+	IdentityKeyAgreement cbc.Key = "agreement" // agreement number
+	IdentityKeyContract  cbc.Key = "contract"  // contract number
+	IdentityKeyPassport  cbc.Key = "passport"  // Passport number
+	IdentityKeyNational  cbc.Key = "national"  // National ID card number
+	IdentityKeyForeign   cbc.Key = "foreign"   // Foreigner ID card number
+	IdentityKeyResident  cbc.Key = "resident"  // Resident ID card number
+	IdentityKeyOther     cbc.Key = "other"     // Other ID card number
 )
 
 // Identity is used to define a code for a specific context.
@@ -16,6 +34,8 @@ type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Country from which the identity was issued.
+	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Uniquely classify this identity using a key instead of a code.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
@@ -26,6 +46,18 @@ type Identity struct {
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
 	// Description adds details about what the code could mean or imply
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	// Ext provides a way to add additional information to the identity.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+}
+
+// Normalize will try to clean the identity's data.
+func (i *Identity) Normalize(normalizers tax.Normalizers) {
+	if i == nil {
+		return
+	}
+	uuid.Normalize(&i.UUID)
+	i.Ext = tax.CleanExtensions(i.Ext)
+	normalizers.Each(i)
 }
 
 // Validate ensures the identity looks valid.
@@ -37,15 +69,17 @@ func (i *Identity) Validate() error {
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Label),
+		validation.Field(&i.Country),
 		validation.Field(&i.Key),
 		validation.Field(&i.Type,
 			validation.When(i.Key != "",
-				validation.Empty,
+				validation.Empty.Error("must be empty when key is set"),
 			),
 		),
 		validation.Field(&i.Code,
 			validation.Required,
 		),
+		validation.Field(&i.Ext),
 	)
 }
 
@@ -106,7 +140,7 @@ func IdentityForType(in []*Identity, typ cbc.Code) *Identity {
 	return nil
 }
 
-// IdentityForKey helps return the identity with on of the matching keys.
+// IdentityForKey helps return the identity with the first matching key.
 func IdentityForKey(in []*Identity, key ...cbc.Key) *Identity {
 	for _, v := range in {
 		if v.Key.In(key...) {

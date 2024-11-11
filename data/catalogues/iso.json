@@ -1,0 +1,20 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/catalogue-def",
+  "key": "iso",
+  "name": {
+    "en": "ISO/IEC Data Elements"
+  },
+  "description": null,
+  "extensions": [
+    {
+      "key": "iso-scheme-id",
+      "name": {
+        "en": "ISO/IEC 6523 Identifier scheme code"
+      },
+      "desc": {
+        "en": "Defines a global structure for uniquely identifying organizations or entities.\nThis standard is essential in environments where electronic communications require\nunambiguous identification of organizations, especially in automated systems or\nelectronic data interchange (EDI).\n\nThe ISO 6523 set of identifies is used by the EN16931 standard for electronic invoicing."
+      },
+      "pattern": "^\\d{4}$"
+    }
+  ]
+}

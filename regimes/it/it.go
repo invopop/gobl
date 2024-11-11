@@ -25,7 +25,6 @@ func New() *tax.RegimeDef {
 			i18n.IT: "Italia",
 		},
 		TimeZone:     "Europe/Rome",
-		ChargeKeys:   chargeKeyDefinitions,   // charges.go
 		IdentityKeys: identityKeyDefinitions, // identities.go
 		Scenarios:    scenarios,              // scenarios.go
 		Tags: []*tax.TagSet{
@@ -64,5 +63,9 @@ func Normalize(doc interface{}) {
 		tax.NormalizeIdentity(obj)
 	case *org.Identity:
 		normalizeIdentity(obj)
+	case *org.Party:
+		normalizeParty(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }

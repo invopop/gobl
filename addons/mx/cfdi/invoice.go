@@ -92,14 +92,34 @@ func validateInvoiceCustomer(value any) error {
 		),
 		validation.Field(&obj.Ext,
 			validation.When(
-				obj.TaxID != nil && obj.TaxID.Country.In("MX"),
+				isMexican(obj),
 				tax.ExtensionsRequires(
-					ExtKeyPostCode,
 					ExtKeyFiscalRegime,
 					ExtKeyUse,
 				),
 			),
 		),
+		validation.Field(&obj.Addresses,
+			validation.When(
+				isMexican(obj),
+				validation.Required,
+				validation.Each(
+					validation.By(validateMexicanCustomerAddress),
+				),
+			),
+		),
+	)
+}
+
+func validateMexicanCustomerAddress(value any) error {
+	obj, _ := value.(*org.Address)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Code,
+			validation.Required,
+			validation.Match(PostCodeRegexp)),
 	)
 }
 
@@ -146,4 +166,11 @@ func validateInvoicePreceding(value interface{}) error {
 			validation.Skip,
 		),
 	)
+}
+
+func isMexican(party *org.Party) bool {
+	if party == nil || party.TaxID == nil {
+		return false
+	}
+	return party.TaxID.Country.In("MX")
 }

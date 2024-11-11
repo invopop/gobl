@@ -62,6 +62,14 @@ var invoiceScenarios = &tax.ScenarioSet{
 	List: []*tax.Scenario{
 		// ** Invoice Types **
 		{
+			// Default: if no other, more specific scenario matches,
+			// a services invoice is assumed.
+			Types: []cbc.Key{bill.InvoiceTypeStandard},
+			Ext: tax.Extensions{
+				ExtKeyInvoiceType: "2.1",
+			},
+		},
+		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{TagGoods},
 			Ext: tax.Extensions{

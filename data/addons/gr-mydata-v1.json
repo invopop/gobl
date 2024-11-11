@@ -1058,6 +1058,14 @@
           "type": [
             "standard"
           ],
+          "ext": {
+            "gr-mydata-invoice-type": "2.1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
           "tags": [
             "goods"
           ],

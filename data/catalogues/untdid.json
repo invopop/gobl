@@ -1,0 +1,2225 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/catalogue-def",
+  "key": "untdid",
+  "name": {
+    "en": "UN/EDIFACT Data Elements"
+  },
+  "description": null,
+  "extensions": [
+    {
+      "key": "untdid-document-type",
+      "name": {
+        "en": "UNTDID 1001 Document Type"
+      },
+      "desc": {
+        "en": "UNTDID 1001 code used to describe the type of document. Ths list is based\non the [EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments.\n\nOther tax regimes and addons may use their own subset of codes."
+      },
+      "values": [
+        {
+          "value": "71",
+          "name": {
+            "en": "Request for payment"
+          }
+        },
+        {
+          "value": "80",
+          "name": {
+            "en": "Debit note related to goods or services"
+          }
+        },
+        {
+          "value": "81",
+          "name": {
+            "en": "Credit note related to goods or services"
+          }
+        },
+        {
+          "value": "82",
+          "name": {
+            "en": "Metered services invoice"
+          }
+        },
+        {
+          "value": "83",
+          "name": {
+            "en": "Credit note related to financial adjustments"
+          }
+        },
+        {
+          "value": "84",
+          "name": {
+            "en": "Debit note related to financial adjustments"
+          }
+        },
+        {
+          "value": "102",
+          "name": {
+            "en": "Tax notification"
+          }
+        },
+        {
+          "value": "130",
+          "name": {
+            "en": "Invoicing data sheet"
+          }
+        },
+        {
+          "value": "202",
+          "name": {
+            "en": "Direct payment valuation"
+          }
+        },
+        {
+          "value": "203",
+          "name": {
+            "en": "Provisional payment valuation"
+          }
+        },
+        {
+          "value": "204",
+          "name": {
+            "en": "Payment valuation"
+          }
+        },
+        {
+          "value": "211",
+          "name": {
+            "en": "Interim application for payment"
+          }
+        },
+        {
+          "value": "218",
+          "name": {
+            "en": "Final payment request based on completion of work"
+          }
+        },
+        {
+          "value": "219",
+          "name": {
+            "en": "Payment request for completed units"
+          }
+        },
+        {
+          "value": "261",
+          "name": {
+            "en": "Self billed credit note"
+          }
+        },
+        {
+          "value": "262",
+          "name": {
+            "en": "Consolidated credit note - goods and services"
+          }
+        },
+        {
+          "value": "295",
+          "name": {
+            "en": "Price variation invoice"
+          }
+        },
+        {
+          "value": "296",
+          "name": {
+            "en": "Credit note for price variation"
+          }
+        },
+        {
+          "value": "308",
+          "name": {
+            "en": "Delcredere credit note"
+          }
+        },
+        {
+          "value": "325",
+          "name": {
+            "en": "Proforma invoice"
+          }
+        },
+        {
+          "value": "326",
+          "name": {
+            "en": "Partial invoice"
+          }
+        },
+        {
+          "value": "380",
+          "name": {
+            "en": "Standard Invoice"
+          }
+        },
+        {
+          "value": "381",
+          "name": {
+            "en": "Credit note"
+          }
+        },
+        {
+          "value": "382",
+          "name": {
+            "en": "Commission note"
+          }
+        },
+        {
+          "value": "383",
+          "name": {
+            "en": "Debit note"
+          }
+        },
+        {
+          "value": "384",
+          "name": {
+            "en": "Corrected invoice"
+          }
+        },
+        {
+          "value": "385",
+          "name": {
+            "en": "Consolidated invoice"
+          }
+        },
+        {
+          "value": "386",
+          "name": {
+            "en": "Prepayment invoice"
+          }
+        },
+        {
+          "value": "387",
+          "name": {
+            "en": "Hire invoice"
+          }
+        },
+        {
+          "value": "388",
+          "name": {
+            "en": "Tax invoice"
+          }
+        },
+        {
+          "value": "389",
+          "name": {
+            "en": "Self-billed invoice"
+          }
+        },
+        {
+          "value": "390",
+          "name": {
+            "en": "Delcredere invoice"
+          }
+        },
+        {
+          "value": "393",
+          "name": {
+            "en": "Factored invoice"
+          }
+        },
+        {
+          "value": "394",
+          "name": {
+            "en": "Lease invoice"
+          }
+        },
+        {
+          "value": "395",
+          "name": {
+            "en": "Consignment invoice"
+          }
+        },
+        {
+          "value": "396",
+          "name": {
+            "en": "Factored credit note"
+          }
+        },
+        {
+          "value": "420",
+          "name": {
+            "en": "Optical Character Reading (OCR) payment credit note"
+          }
+        },
+        {
+          "value": "456",
+          "name": {
+            "en": "Debit advice"
+          }
+        },
+        {
+          "value": "457",
+          "name": {
+            "en": "Reversal of debit"
+          }
+        },
+        {
+          "value": "458",
+          "name": {
+            "en": "Reversal of credit"
+          }
+        },
+        {
+          "value": "527",
+          "name": {
+            "en": "Self billed debit note"
+          }
+        },
+        {
+          "value": "532",
+          "name": {
+            "en": "Forwarder's credit note"
+          }
+        },
+        {
+          "value": "553",
+          "name": {
+            "en": "Forwarder's invoice discrepancy report"
+          }
+        },
+        {
+          "value": "575",
+          "name": {
+            "en": "Insurer's invoice"
+          }
+        },
+        {
+          "value": "623",
+          "name": {
+            "en": "Forwarder's invoice"
+          }
+        },
+        {
+          "value": "633",
+          "name": {
+            "en": "Port charges documents"
+          }
+        },
+        {
+          "value": "751",
+          "name": {
+            "en": "Invoice information for accounting purposes"
+          }
+        },
+        {
+          "value": "780",
+          "name": {
+            "en": "Freight invoice"
+          }
+        },
+        {
+          "value": "817",
+          "name": {
+            "en": "Claim notification"
+          }
+        },
+        {
+          "value": "870",
+          "name": {
+            "en": "Consular invoice"
+          }
+        },
+        {
+          "value": "875",
+          "name": {
+            "en": "Partial construction invoice"
+          }
+        },
+        {
+          "value": "876",
+          "name": {
+            "en": "Partial final construction invoice"
+          }
+        },
+        {
+          "value": "877",
+          "name": {
+            "en": "Final construction invoice"
+          }
+        },
+        {
+          "value": "935",
+          "name": {
+            "en": "Customs invoice"
+          }
+        }
+      ]
+    },
+    {
+      "key": "untdid-payment-means",
+      "name": {
+        "en": "UNTDID 4461 Payment Means"
+      },
+      "desc": {
+        "en": "UNTDID 4461 code used to describe the means of payment. This list is based on the\n[EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments."
+      },
+      "values": [
+        {
+          "value": "1",
+          "name": {
+            "en": "Instrument not defined"
+          }
+        },
+        {
+          "value": "2",
+          "name": {
+            "en": "Automated clearing house credit"
+          }
+        },
+        {
+          "value": "3",
+          "name": {
+            "en": "Automated clearing house debit"
+          }
+        },
+        {
+          "value": "4",
+          "name": {
+            "en": "ACH demand debit reversal"
+          }
+        },
+        {
+          "value": "5",
+          "name": {
+            "en": "ACH demand credit reversal"
+          }
+        },
+        {
+          "value": "6",
+          "name": {
+            "en": "ACH demand credit"
+          }
+        },
+        {
+          "value": "7",
+          "name": {
+            "en": "ACH demand debit"
+          }
+        },
+        {
+          "value": "8",
+          "name": {
+            "en": "Hold"
+          }
+        },
+        {
+          "value": "9",
+          "name": {
+            "en": "National or regional clearing"
+          }
+        },
+        {
+          "value": "10",
+          "name": {
+            "en": "In cash"
+          }
+        },
+        {
+          "value": "11",
+          "name": {
+            "en": "ACH savings credit reversal"
+          }
+        },
+        {
+          "value": "12",
+          "name": {
+            "en": "ACH savings debit reversal"
+          }
+        },
+        {
+          "value": "13",
+          "name": {
+            "en": "ACH savings credit"
+          }
+        },
+        {
+          "value": "14",
+          "name": {
+            "en": "ACH savings debit"
+          }
+        },
+        {
+          "value": "15",
+          "name": {
+            "en": "Bookentry credit"
+          }
+        },
+        {
+          "value": "16",
+          "name": {
+            "en": "Bookentry debit"
+          }
+        },
+        {
+          "value": "17",
+          "name": {
+            "en": "ACH demand cash concentration/disbursement (CCD) credit"
+          }
+        },
+        {
+          "value": "18",
+          "name": {
+            "en": "ACH demand cash concentration/disbursement (CCD) debit"
+          }
+        },
+        {
+          "value": "19",
+          "name": {
+            "en": "ACH demand corporate trade payment (CTP) credit"
+          }
+        },
+        {
+          "value": "20",
+          "name": {
+            "en": "Cheque"
+          }
+        },
+        {
+          "value": "21",
+          "name": {
+            "en": "Banker's draft"
+          }
+        },
+        {
+          "value": "22",
+          "name": {
+            "en": "Certified banker's draft"
+          }
+        },
+        {
+          "value": "23",
+          "name": {
+            "en": "Bank cheque (issued by a banking or similar establishment)"
+          }
+        },
+        {
+          "value": "24",
+          "name": {
+            "en": "Bill of exchange awaiting acceptance"
+          }
+        },
+        {
+          "value": "25",
+          "name": {
+            "en": "Certified cheque"
+          }
+        },
+        {
+          "value": "26",
+          "name": {
+            "en": "Local cheque"
+          }
+        },
+        {
+          "value": "27",
+          "name": {
+            "en": "ACH demand corporate trade payment (CTP) debit"
+          }
+        },
+        {
+          "value": "28",
+          "name": {
+            "en": "ACH demand corporate trade exchange (CTX) credit"
+          }
+        },
+        {
+          "value": "29",
+          "name": {
+            "en": "ACH demand corporate trade exchange (CTX) debit"
+          }
+        },
+        {
+          "value": "30",
+          "name": {
+            "en": "Credit transfer"
+          }
+        },
+        {
+          "value": "31",
+          "name": {
+            "en": "Debit transfer"
+          }
+        },
+        {
+          "value": "32",
+          "name": {
+            "en": "ACH demand cash concentration/disbursement plus (CCD+)"
+          }
+        },
+        {
+          "value": "33",
+          "name": {
+            "en": "ACH demand cash concentration/disbursement plus (CCD+)"
+          }
+        },
+        {
+          "value": "34",
+          "name": {
+            "en": "ACH prearranged payment and deposit (PPD)"
+          }
+        },
+        {
+          "value": "35",
+          "name": {
+            "en": "ACH savings cash concentration/disbursement (CCD) credit"
+          }
+        },
+        {
+          "value": "36",
+          "name": {
+            "en": "ACH savings cash concentration/disbursement (CCD) debit"
+          }
+        },
+        {
+          "value": "37",
+          "name": {
+            "en": "ACH savings corporate trade payment (CTP) credit"
+          }
+        },
+        {
+          "value": "38",
+          "name": {
+            "en": "ACH savings corporate trade payment (CTP) debit"
+          }
+        },
+        {
+          "value": "39",
+          "name": {
+            "en": "ACH savings corporate trade exchange (CTX) credit"
+          }
+        },
+        {
+          "value": "40",
+          "name": {
+            "en": "ACH savings corporate trade exchange (CTX) debit"
+          }
+        },
+        {
+          "value": "41",
+          "name": {
+            "en": "ACH savings cash concentration/disbursement plus (CCD+)"
+          }
+        },
+        {
+          "value": "42",
+          "name": {
+            "en": "Payment to bank account"
+          }
+        },
+        {
+          "value": "43",
+          "name": {
+            "en": "ACH savings cash concentration/disbursement plus (CCD+)"
+          }
+        },
+        {
+          "value": "44",
+          "name": {
+            "en": "Accepted bill of exchange"
+          }
+        },
+        {
+          "value": "45",
+          "name": {
+            "en": "Referenced home-banking credit transfer"
+          }
+        },
+        {
+          "value": "46",
+          "name": {
+            "en": "Interbank debit transfer"
+          }
+        },
+        {
+          "value": "47",
+          "name": {
+            "en": "Home-banking debit transfer"
+          }
+        },
+        {
+          "value": "48",
+          "name": {
+            "en": "Bank card"
+          }
+        },
+        {
+          "value": "49",
+          "name": {
+            "en": "Direct debit"
+          }
+        },
+        {
+          "value": "50",
+          "name": {
+            "en": "Payment by postgiro"
+          }
+        },
+        {
+          "value": "51",
+          "name": {
+            "en": "FR, norme 6 97-Telereglement CFONB (French Organisation for"
+          }
+        },
+        {
+          "value": "52",
+          "name": {
+            "en": "Urgent commercial payment"
+          }
+        },
+        {
+          "value": "53",
+          "name": {
+            "en": "Urgent Treasury Payment"
+          }
+        },
+        {
+          "value": "54",
+          "name": {
+            "en": "Credit card"
+          }
+        },
+        {
+          "value": "55",
+          "name": {
+            "en": "Debit card"
+          }
+        },
+        {
+          "value": "56",
+          "name": {
+            "en": "Bankgiro"
+          }
+        },
+        {
+          "value": "57",
+          "name": {
+            "en": "Standing agreement"
+          }
+        },
+        {
+          "value": "58",
+          "name": {
+            "en": "SEPA credit transfer"
+          }
+        },
+        {
+          "value": "59",
+          "name": {
+            "en": "SEPA direct debit"
+          }
+        },
+        {
+          "value": "60",
+          "name": {
+            "en": "Promissory note"
+          }
+        },
+        {
+          "value": "61",
+          "name": {
+            "en": "Promissory note signed by the debtor"
+          }
+        },
+        {
+          "value": "62",
+          "name": {
+            "en": "Promissory note signed by the debtor and endorsed by a bank"
+          }
+        },
+        {
+          "value": "63",
+          "name": {
+            "en": "Promissory note signed by the debtor and endorsed by a"
+          }
+        },
+        {
+          "value": "64",
+          "name": {
+            "en": "Promissory note signed by a bank"
+          }
+        },
+        {
+          "value": "65",
+          "name": {
+            "en": "Promissory note signed by a bank and endorsed by another"
+          }
+        },
+        {
+          "value": "66",
+          "name": {
+            "en": "Promissory note signed by a third party"
+          }
+        },
+        {
+          "value": "67",
+          "name": {
+            "en": "Promissory note signed by a third party and endorsed by a"
+          }
+        },
+        {
+          "value": "68",
+          "name": {
+            "en": "Online payment service"
+          }
+        },
+        {
+          "value": "69",
+          "name": {
+            "en": "Transfer Advice"
+          }
+        },
+        {
+          "value": "70",
+          "name": {
+            "en": "Bill drawn by the creditor on the debtor"
+          }
+        },
+        {
+          "value": "74",
+          "name": {
+            "en": "Bill drawn by the creditor on a bank"
+          }
+        },
+        {
+          "value": "75",
+          "name": {
+            "en": "Bill drawn by the creditor, endorsed by another bank"
+          }
+        },
+        {
+          "value": "76",
+          "name": {
+            "en": "Bill drawn by the creditor on a bank and endorsed by a"
+          }
+        },
+        {
+          "value": "77",
+          "name": {
+            "en": "Bill drawn by the creditor on a third party"
+          }
+        },
+        {
+          "value": "78",
+          "name": {
+            "en": "Bill drawn by creditor on third party, accepted and"
+          }
+        },
+        {
+          "value": "91",
+          "name": {
+            "en": "Not transferable banker's draft"
+          }
+        },
+        {
+          "value": "92",
+          "name": {
+            "en": "Not transferable local cheque"
+          }
+        },
+        {
+          "value": "93",
+          "name": {
+            "en": "Reference giro"
+          }
+        },
+        {
+          "value": "94",
+          "name": {
+            "en": "Urgent giro"
+          }
+        },
+        {
+          "value": "95",
+          "name": {
+            "en": "Free format giro"
+          }
+        },
+        {
+          "value": "96",
+          "name": {
+            "en": "Requested method for payment was not used"
+          }
+        },
+        {
+          "value": "97",
+          "name": {
+            "en": "Clearing between partners"
+          }
+        },
+        {
+          "value": "98",
+          "name": {
+            "en": "JP, Electronically Recorded Monetary Claims"
+          }
+        },
+        {
+          "value": "ZZZ",
+          "name": {
+            "en": "Mutually defined"
+          }
+        }
+      ]
+    },
+    {
+      "key": "untdid-allowance",
+      "name": {
+        "en": "UNTDID 5189 Allowance"
+      },
+      "desc": {
+        "en": "UNTDID 5189 code used to describe the allowance type. This list is based on the\n[EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments."
+      },
+      "values": [
+        {
+          "value": "41",
+          "name": {
+            "en": "Bonus for works ahead of schedule"
+          }
+        },
+        {
+          "value": "42",
+          "name": {
+            "en": "Other bonus"
+          }
+        },
+        {
+          "value": "60",
+          "name": {
+            "en": "Manufacturer’s consumer discount"
+          }
+        },
+        {
+          "value": "62",
+          "name": {
+            "en": "Due to military status"
+          }
+        },
+        {
+          "value": "63",
+          "name": {
+            "en": "Due to work accident"
+          }
+        },
+        {
+          "value": "64",
+          "name": {
+            "en": "Special agreement"
+          }
+        },
+        {
+          "value": "65",
+          "name": {
+            "en": "Production error discount"
+          }
+        },
+        {
+          "value": "66",
+          "name": {
+            "en": "New outlet discount"
+          }
+        },
+        {
+          "value": "67",
+          "name": {
+            "en": "Sample discount"
+          }
+        },
+        {
+          "value": "68",
+          "name": {
+            "en": "End-of-range discount"
+          }
+        },
+        {
+          "value": "70",
+          "name": {
+            "en": "Incoterm discount"
+          }
+        },
+        {
+          "value": "71",
+          "name": {
+            "en": "Point of sales threshold allowance"
+          }
+        },
+        {
+          "value": "88",
+          "name": {
+            "en": "Material surcharge/deduction"
+          }
+        },
+        {
+          "value": "95",
+          "name": {
+            "en": "Discount"
+          }
+        },
+        {
+          "value": "100",
+          "name": {
+            "en": "Special rebate"
+          }
+        },
+        {
+          "value": "102",
+          "name": {
+            "en": "Fixed long term"
+          }
+        },
+        {
+          "value": "103",
+          "name": {
+            "en": "Temporary"
+          }
+        },
+        {
+          "value": "104",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "value": "105",
+          "name": {
+            "en": "Yearly turnover"
+          }
+        }
+      ]
+    },
+    {
+      "key": "untdid-tax-category",
+      "name": {
+        "en": "UNTDID 3505 Tax Category"
+      },
+      "desc": {
+        "en": "UNTDID 5305 code used to describe the applicable duty/tax/fee category. There are\nmultiple versions and subsets of this table so regimes and addons may need to filter\noptions for a specific subset of values.\n\nData from https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred5305.htm."
+      },
+      "values": [
+        {
+          "value": "A",
+          "name": {
+            "en": "Mixed tax rate"
+          }
+        },
+        {
+          "value": "AA",
+          "name": {
+            "en": "Lower rate"
+          }
+        },
+        {
+          "value": "AB",
+          "name": {
+            "en": "Exempt for resale"
+          }
+        },
+        {
+          "value": "AC",
+          "name": {
+            "en": "Exempt for resale"
+          }
+        },
+        {
+          "value": "AD",
+          "name": {
+            "en": "Value Added Tax (VAT) due from a previous invoice"
+          }
+        },
+        {
+          "value": "AE",
+          "name": {
+            "en": "VAT Reverse Charge"
+          }
+        },
+        {
+          "value": "B",
+          "name": {
+            "en": "Transferred (VAT)"
+          }
+        },
+        {
+          "value": "C",
+          "name": {
+            "en": "Duty paid by supplier"
+          }
+        },
+        {
+          "value": "D",
+          "name": {
+            "en": "Value Added Tax (VAT) margin scheme - travel agents"
+          }
+        },
+        {
+          "value": "E",
+          "name": {
+            "en": "Exempt from tax"
+          }
+        },
+        {
+          "value": "F",
+          "name": {
+            "en": "Value Added Tax (VAT) margin scheme - second-hand goods"
+          }
+        },
+        {
+          "value": "G",
+          "name": {
+            "en": "Free export item, tax not charged"
+          }
+        },
+        {
+          "value": "H",
+          "name": {
+            "en": "Higher rate"
+          }
+        },
+        {
+          "value": "I",
+          "name": {
+            "en": "Value Added Tax (VAT) margin scheme - works of art"
+          }
+        },
+        {
+          "value": "J",
+          "name": {
+            "en": "Value Added Tax (VAT) margin scheme - collector's items and antiques"
+          }
+        },
+        {
+          "value": "K",
+          "name": {
+            "en": "VAT exempt for EEA intra-community supply of goods and services"
+          }
+        },
+        {
+          "value": "L",
+          "name": {
+            "en": "Canary Islands general indirect tax"
+          }
+        },
+        {
+          "value": "M",
+          "name": {
+            "en": "Tax for production, services and importation in Ceuta and Melilla"
+          }
+        },
+        {
+          "value": "O",
+          "name": {
+            "en": "Services outside scope of tax"
+          }
+        },
+        {
+          "value": "S",
+          "name": {
+            "en": "Standard Rate"
+          }
+        },
+        {
+          "value": "Z",
+          "name": {
+            "en": "Zero rated goods"
+          }
+        }
+      ]
+    },
+    {
+      "key": "untdid-charge",
+      "name": {
+        "en": "UNTDID 7161 Charge"
+      },
+      "desc": {
+        "en": "UNTDID 7161 code used to describe the charge. List is based on the\nEN16931 code lists with extensions for taxes and duties."
+      },
+      "values": [
+        {
+          "value": "AA",
+          "name": {
+            "en": "Advertising"
+          }
+        },
+        {
+          "value": "AAA",
+          "name": {
+            "en": "Telecommunication"
+          }
+        },
+        {
+          "value": "AAC",
+          "name": {
+            "en": "Technical modification"
+          }
+        },
+        {
+          "value": "AAD",
+          "name": {
+            "en": "Job-order production"
+          }
+        },
+        {
+          "value": "AAE",
+          "name": {
+            "en": "Outlays"
+          }
+        },
+        {
+          "value": "AAF",
+          "name": {
+            "en": "Off-premises"
+          }
+        },
+        {
+          "value": "AAH",
+          "name": {
+            "en": "Additional processing"
+          }
+        },
+        {
+          "value": "AAI",
+          "name": {
+            "en": "Attesting"
+          }
+        },
+        {
+          "value": "AAS",
+          "name": {
+            "en": "Acceptance"
+          }
+        },
+        {
+          "value": "AAT",
+          "name": {
+            "en": "Rush delivery"
+          }
+        },
+        {
+          "value": "AAV",
+          "name": {
+            "en": "Special construction"
+          }
+        },
+        {
+          "value": "AAY",
+          "name": {
+            "en": "Airport facilities"
+          }
+        },
+        {
+          "value": "AAZ",
+          "name": {
+            "en": "Concession"
+          }
+        },
+        {
+          "value": "ABA",
+          "name": {
+            "en": "Compulsory storage"
+          }
+        },
+        {
+          "value": "ABB",
+          "name": {
+            "en": "Fuel removal"
+          }
+        },
+        {
+          "value": "ABC",
+          "name": {
+            "en": "Into plane"
+          }
+        },
+        {
+          "value": "ABD",
+          "name": {
+            "en": "Overtime"
+          }
+        },
+        {
+          "value": "ABF",
+          "name": {
+            "en": "Tooling"
+          }
+        },
+        {
+          "value": "ABK",
+          "name": {
+            "en": "Miscellaneous"
+          }
+        },
+        {
+          "value": "ABL",
+          "name": {
+            "en": "Additional packaging"
+          }
+        },
+        {
+          "value": "ABN",
+          "name": {
+            "en": "Dunnage"
+          }
+        },
+        {
+          "value": "ABR",
+          "name": {
+            "en": "Containerisation"
+          }
+        },
+        {
+          "value": "ABS",
+          "name": {
+            "en": "Carton packing"
+          }
+        },
+        {
+          "value": "ABT",
+          "name": {
+            "en": "Hessian wrapped"
+          }
+        },
+        {
+          "value": "ABU",
+          "name": {
+            "en": "Polyethylene wrap packing"
+          }
+        },
+        {
+          "value": "ABW",
+          "name": {
+            "en": "Customs duty charge"
+          }
+        },
+        {
+          "value": "ACF",
+          "name": {
+            "en": "Miscellaneous treatment"
+          }
+        },
+        {
+          "value": "ACG",
+          "name": {
+            "en": "Enamelling treatment"
+          }
+        },
+        {
+          "value": "ACH",
+          "name": {
+            "en": "Heat treatment"
+          }
+        },
+        {
+          "value": "ACI",
+          "name": {
+            "en": "Plating treatment"
+          }
+        },
+        {
+          "value": "ACJ",
+          "name": {
+            "en": "Painting"
+          }
+        },
+        {
+          "value": "ACK",
+          "name": {
+            "en": "Polishing"
+          }
+        },
+        {
+          "value": "ACL",
+          "name": {
+            "en": "Priming"
+          }
+        },
+        {
+          "value": "ACM",
+          "name": {
+            "en": "Preservation treatment"
+          }
+        },
+        {
+          "value": "ACS",
+          "name": {
+            "en": "Fitting"
+          }
+        },
+        {
+          "value": "ADC",
+          "name": {
+            "en": "Consolidation"
+          }
+        },
+        {
+          "value": "ADE",
+          "name": {
+            "en": "Bill of lading"
+          }
+        },
+        {
+          "value": "ADJ",
+          "name": {
+            "en": "Airbag"
+          }
+        },
+        {
+          "value": "ADK",
+          "name": {
+            "en": "Transfer"
+          }
+        },
+        {
+          "value": "ADL",
+          "name": {
+            "en": "Slipsheet"
+          }
+        },
+        {
+          "value": "ADM",
+          "name": {
+            "en": "Binding"
+          }
+        },
+        {
+          "value": "ADN",
+          "name": {
+            "en": "Repair or replacement of broken returnable package"
+          }
+        },
+        {
+          "value": "ADO",
+          "name": {
+            "en": "Efficient logistics"
+          }
+        },
+        {
+          "value": "ADP",
+          "name": {
+            "en": "Merchandising"
+          }
+        },
+        {
+          "value": "ADQ",
+          "name": {
+            "en": "Product mix"
+          }
+        },
+        {
+          "value": "ADR",
+          "name": {
+            "en": "Other services"
+          }
+        },
+        {
+          "value": "ADT",
+          "name": {
+            "en": "Pick-up"
+          }
+        },
+        {
+          "value": "ADW",
+          "name": {
+            "en": "Chronic illness"
+          }
+        },
+        {
+          "value": "ADY",
+          "name": {
+            "en": "New product introduction"
+          }
+        },
+        {
+          "value": "ADZ",
+          "name": {
+            "en": "Direct delivery"
+          }
+        },
+        {
+          "value": "AEA",
+          "name": {
+            "en": "Diversion"
+          }
+        },
+        {
+          "value": "AEB",
+          "name": {
+            "en": "Disconnect"
+          }
+        },
+        {
+          "value": "AEC",
+          "name": {
+            "en": "Distribution"
+          }
+        },
+        {
+          "value": "AED",
+          "name": {
+            "en": "Handling of hazardous cargo"
+          }
+        },
+        {
+          "value": "AEF",
+          "name": {
+            "en": "Rents and leases"
+          }
+        },
+        {
+          "value": "AEH",
+          "name": {
+            "en": "Location differential"
+          }
+        },
+        {
+          "value": "AEI",
+          "name": {
+            "en": "Aircraft refueling"
+          }
+        },
+        {
+          "value": "AEJ",
+          "name": {
+            "en": "Fuel shipped into storage"
+          }
+        },
+        {
+          "value": "AEK",
+          "name": {
+            "en": "Cash on delivery"
+          }
+        },
+        {
+          "value": "AEL",
+          "name": {
+            "en": "Small order processing service"
+          }
+        },
+        {
+          "value": "AEM",
+          "name": {
+            "en": "Clerical or administrative services"
+          }
+        },
+        {
+          "value": "AEN",
+          "name": {
+            "en": "Guarantee"
+          }
+        },
+        {
+          "value": "AEO",
+          "name": {
+            "en": "Collection and recycling"
+          }
+        },
+        {
+          "value": "AEP",
+          "name": {
+            "en": "Copyright fee collection"
+          }
+        },
+        {
+          "value": "AES",
+          "name": {
+            "en": "Veterinary inspection service"
+          }
+        },
+        {
+          "value": "AET",
+          "name": {
+            "en": "Pensioner service"
+          }
+        },
+        {
+          "value": "AEU",
+          "name": {
+            "en": "Medicine free pass holder"
+          }
+        },
+        {
+          "value": "AEV",
+          "name": {
+            "en": "Environmental protection service"
+          }
+        },
+        {
+          "value": "AEW",
+          "name": {
+            "en": "Environmental clean-up service"
+          }
+        },
+        {
+          "value": "AEX",
+          "name": {
+            "en": "National cheque processing service outside account area"
+          }
+        },
+        {
+          "value": "AEY",
+          "name": {
+            "en": "National payment service outside account area"
+          }
+        },
+        {
+          "value": "AEZ",
+          "name": {
+            "en": "National payment service within account area"
+          }
+        },
+        {
+          "value": "AJ",
+          "name": {
+            "en": "Adjustments"
+          }
+        },
+        {
+          "value": "AU",
+          "name": {
+            "en": "Authentication"
+          }
+        },
+        {
+          "value": "CA",
+          "name": {
+            "en": "Cataloguing"
+          }
+        },
+        {
+          "value": "CAB",
+          "name": {
+            "en": "Cartage"
+          }
+        },
+        {
+          "value": "CAD",
+          "name": {
+            "en": "Certification"
+          }
+        },
+        {
+          "value": "CAE",
+          "name": {
+            "en": "Certificate of conformance"
+          }
+        },
+        {
+          "value": "CAF",
+          "name": {
+            "en": "Certificate of origin"
+          }
+        },
+        {
+          "value": "CAI",
+          "name": {
+            "en": "Cutting"
+          }
+        },
+        {
+          "value": "CAJ",
+          "name": {
+            "en": "Consular service"
+          }
+        },
+        {
+          "value": "CAK",
+          "name": {
+            "en": "Customer collection"
+          }
+        },
+        {
+          "value": "CAL",
+          "name": {
+            "en": "Payroll payment service"
+          }
+        },
+        {
+          "value": "CAM",
+          "name": {
+            "en": "Cash transportation"
+          }
+        },
+        {
+          "value": "CAN",
+          "name": {
+            "en": "Home banking service"
+          }
+        },
+        {
+          "value": "CAO",
+          "name": {
+            "en": "Bilateral agreement service"
+          }
+        },
+        {
+          "value": "CAP",
+          "name": {
+            "en": "Insurance brokerage service"
+          }
+        },
+        {
+          "value": "CAQ",
+          "name": {
+            "en": "Cheque generation"
+          }
+        },
+        {
+          "value": "CAR",
+          "name": {
+            "en": "Preferential merchandising location"
+          }
+        },
+        {
+          "value": "CAS",
+          "name": {
+            "en": "Crane"
+          }
+        },
+        {
+          "value": "CAT",
+          "name": {
+            "en": "Special colour service"
+          }
+        },
+        {
+          "value": "CAU",
+          "name": {
+            "en": "Sorting"
+          }
+        },
+        {
+          "value": "CAV",
+          "name": {
+            "en": "Battery collection and recycling"
+          }
+        },
+        {
+          "value": "CAW",
+          "name": {
+            "en": "Product take back fee"
+          }
+        },
+        {
+          "value": "CAX",
+          "name": {
+            "en": "Quality control released"
+          }
+        },
+        {
+          "value": "CAY",
+          "name": {
+            "en": "Quality control held"
+          }
+        },
+        {
+          "value": "CAZ",
+          "name": {
+            "en": "Quality control embargo"
+          }
+        },
+        {
+          "value": "CD",
+          "name": {
+            "en": "Car loading"
+          }
+        },
+        {
+          "value": "CG",
+          "name": {
+            "en": "Cleaning"
+          }
+        },
+        {
+          "value": "CS",
+          "name": {
+            "en": "Cigarette stamping"
+          }
+        },
+        {
+          "value": "CT",
+          "name": {
+            "en": "Count and recount"
+          }
+        },
+        {
+          "value": "DAB",
+          "name": {
+            "en": "Layout/design"
+          }
+        },
+        {
+          "value": "DAC",
+          "name": {
+            "en": "Assortment allowance"
+          }
+        },
+        {
+          "value": "DAD",
+          "name": {
+            "en": "Driver assigned unloading"
+          }
+        },
+        {
+          "value": "DAF",
+          "name": {
+            "en": "Debtor bound"
+          }
+        },
+        {
+          "value": "DAG",
+          "name": {
+            "en": "Dealer allowance"
+          }
+        },
+        {
+          "value": "DAH",
+          "name": {
+            "en": "Allowance transferable to the consumer"
+          }
+        },
+        {
+          "value": "DAI",
+          "name": {
+            "en": "Growth of business"
+          }
+        },
+        {
+          "value": "DAJ",
+          "name": {
+            "en": "Introduction allowance"
+          }
+        },
+        {
+          "value": "DAK",
+          "name": {
+            "en": "Multi-buy promotion"
+          }
+        },
+        {
+          "value": "DAL",
+          "name": {
+            "en": "Partnership"
+          }
+        },
+        {
+          "value": "DAM",
+          "name": {
+            "en": "Return handling"
+          }
+        },
+        {
+          "value": "DAN",
+          "name": {
+            "en": "Minimum order not fulfilled charge"
+          }
+        },
+        {
+          "value": "DAO",
+          "name": {
+            "en": "Point of sales threshold allowance"
+          }
+        },
+        {
+          "value": "DAP",
+          "name": {
+            "en": "Wholesaling discount"
+          }
+        },
+        {
+          "value": "DAQ",
+          "name": {
+            "en": "Documentary credits transfer commission"
+          }
+        },
+        {
+          "value": "DL",
+          "name": {
+            "en": "Delivery"
+          }
+        },
+        {
+          "value": "EG",
+          "name": {
+            "en": "Engraving"
+          }
+        },
+        {
+          "value": "EP",
+          "name": {
+            "en": "Expediting"
+          }
+        },
+        {
+          "value": "ER",
+          "name": {
+            "en": "Exchange rate guarantee"
+          }
+        },
+        {
+          "value": "FAA",
+          "name": {
+            "en": "Fabrication"
+          }
+        },
+        {
+          "value": "FAB",
+          "name": {
+            "en": "Freight equalization"
+          }
+        },
+        {
+          "value": "FAC",
+          "name": {
+            "en": "Freight extraordinary handling"
+          }
+        },
+        {
+          "value": "FC",
+          "name": {
+            "en": "Freight service"
+          }
+        },
+        {
+          "value": "FH",
+          "name": {
+            "en": "Filling/handling"
+          }
+        },
+        {
+          "value": "FI",
+          "name": {
+            "en": "Financing"
+          }
+        },
+        {
+          "value": "GAA",
+          "name": {
+            "en": "Grinding"
+          }
+        },
+        {
+          "value": "HAA",
+          "name": {
+            "en": "Hose"
+          }
+        },
+        {
+          "value": "HD",
+          "name": {
+            "en": "Handling"
+          }
+        },
+        {
+          "value": "HH",
+          "name": {
+            "en": "Hoisting and hauling"
+          }
+        },
+        {
+          "value": "IAA",
+          "name": {
+            "en": "Installation"
+          }
+        },
+        {
+          "value": "IAB",
+          "name": {
+            "en": "Installation and warranty"
+          }
+        },
+        {
+          "value": "ID",
+          "name": {
+            "en": "Inside delivery"
+          }
+        },
+        {
+          "value": "IF",
+          "name": {
+            "en": "Inspection"
+          }
+        },
+        {
+          "value": "IN",
+          "name": {
+            "en": "Insurance"
+          }
+        },
+        {
+          "value": "IR",
+          "name": {
+            "en": "Installation and training"
+          }
+        },
+        {
+          "value": "IS",
+          "name": {
+            "en": "Invoicing"
+          }
+        },
+        {
+          "value": "KO",
+          "name": {
+            "en": "Koshering"
+          }
+        },
+        {
+          "value": "L1",
+          "name": {
+            "en": "Carrier count"
+          }
+        },
+        {
+          "value": "LA",
+          "name": {
+            "en": "Labelling"
+          }
+        },
+        {
+          "value": "LAA",
+          "name": {
+            "en": "Labour"
+          }
+        },
+        {
+          "value": "LAB",
+          "name": {
+            "en": "Repair and return"
+          }
+        },
+        {
+          "value": "LF",
+          "name": {
+            "en": "Legalisation"
+          }
+        },
+        {
+          "value": "MAE",
+          "name": {
+            "en": "Mounting"
+          }
+        },
+        {
+          "value": "MI",
+          "name": {
+            "en": "Mail invoice"
+          }
+        },
+        {
+          "value": "ML",
+          "name": {
+            "en": "Mail invoice to each location"
+          }
+        },
+        {
+          "value": "NAA",
+          "name": {
+            "en": "Non-returnable containers"
+          }
+        },
+        {
+          "value": "OA",
+          "name": {
+            "en": "Outside cable connectors"
+          }
+        },
+        {
+          "value": "PA",
+          "name": {
+            "en": "Invoice with shipment"
+          }
+        },
+        {
+          "value": "PAA",
+          "name": {
+            "en": "Phosphatizing (steel treatment)"
+          }
+        },
+        {
+          "value": "PC",
+          "name": {
+            "en": "Packing"
+          }
+        },
+        {
+          "value": "PL",
+          "name": {
+            "en": "Palletizing"
+          }
+        },
+        {
+          "value": "PRV",
+          "name": {
+            "en": "Price variation"
+          }
+        },
+        {
+          "value": "RAB",
+          "name": {
+            "en": "Repacking"
+          }
+        },
+        {
+          "value": "RAC",
+          "name": {
+            "en": "Repair"
+          }
+        },
+        {
+          "value": "RAD",
+          "name": {
+            "en": "Returnable container"
+          }
+        },
+        {
+          "value": "RAF",
+          "name": {
+            "en": "Restocking"
+          }
+        },
+        {
+          "value": "RE",
+          "name": {
+            "en": "Re-delivery"
+          }
+        },
+        {
+          "value": "RF",
+          "name": {
+            "en": "Refurbishing"
+          }
+        },
+        {
+          "value": "RH",
+          "name": {
+            "en": "Rail wagon hire"
+          }
+        },
+        {
+          "value": "RV",
+          "name": {
+            "en": "Loading"
+          }
+        },
+        {
+          "value": "SA",
+          "name": {
+            "en": "Salvaging"
+          }
+        },
+        {
+          "value": "SAA",
+          "name": {
+            "en": "Shipping and handling"
+          }
+        },
+        {
+          "value": "SAD",
+          "name": {
+            "en": "Special packaging"
+          }
+        },
+        {
+          "value": "SAE",
+          "name": {
+            "en": "Stamping"
+          }
+        },
+        {
+          "value": "SAI",
+          "name": {
+            "en": "Consignee unload"
+          }
+        },
+        {
+          "value": "SG",
+          "name": {
+            "en": "Shrink-wrap"
+          }
+        },
+        {
+          "value": "SH",
+          "name": {
+            "en": "Special handling"
+          }
+        },
+        {
+          "value": "SM",
+          "name": {
+            "en": "Special finish"
+          }
+        },
+        {
+          "value": "ST",
+          "name": {
+            "en": "Stamp duties"
+          }
+        },
+        {
+          "value": "SU",
+          "name": {
+            "en": "Set-up"
+          }
+        },
+        {
+          "value": "TAB",
+          "name": {
+            "en": "Tank renting"
+          }
+        },
+        {
+          "value": "TAC",
+          "name": {
+            "en": "Testing"
+          }
+        },
+        {
+          "value": "TT",
+          "name": {
+            "en": "Transportation - third party billing"
+          }
+        },
+        {
+          "value": "TV",
+          "name": {
+            "en": "Transportation by vendor"
+          }
+        },
+        {
+          "value": "TX",
+          "name": {
+            "en": "Tax"
+          }
+        },
+        {
+          "value": "V1",
+          "name": {
+            "en": "Drop yard"
+          }
+        },
+        {
+          "value": "V2",
+          "name": {
+            "en": "Drop dock"
+          }
+        },
+        {
+          "value": "WH",
+          "name": {
+            "en": "Warehousing"
+          }
+        },
+        {
+          "value": "XAA",
+          "name": {
+            "en": "Combine all same day shipment"
+          }
+        },
+        {
+          "value": "YY",
+          "name": {
+            "en": "Split pick-up"
+          }
+        },
+        {
+          "value": "ZZZ",
+          "name": {
+            "en": "Mutually defined"
+          }
+        }
+      ]
+    }
+  ]
+}

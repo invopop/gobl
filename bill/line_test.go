@@ -111,3 +111,27 @@ func TestLinePriceNormalization(t *testing.T) {
 		assert.ErrorContains(t, err, "no exchange rate found from 'MXN' to 'EUR")
 	})
 }
+
+func TestLineNormalize(t *testing.T) {
+	line := &Line{
+		Quantity: num.MakeAmount(1, 0),
+		Item: &org.Item{
+			Name:     "Test Item",
+			Currency: currency.USD,
+			Price:    num.MakeAmount(10, 0),
+		},
+		Discounts: []*LineDiscount{
+			{
+				Amount: num.MakeAmount(0, 0),
+			},
+		},
+		Charges: []*LineCharge{
+			{
+				Amount: num.MakeAmount(0, 0),
+			},
+		},
+	}
+	line.Normalize(nil)
+	assert.Len(t, line.Discounts, 0)
+	assert.Len(t, line.Charges, 0)
+}

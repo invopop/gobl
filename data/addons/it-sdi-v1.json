@@ -890,6 +890,36 @@
           }
         }
       ]
+    },
+    {
+      "key": "it-sdi-vat-liability",
+      "name": {
+        "en": "VAT Liability",
+        "it": "Esigibilità dell'IVA"
+      },
+      "values": [
+        {
+          "value": "I",
+          "name": {
+            "en": "Immediate",
+            "it": "Immediata"
+          }
+        },
+        {
+          "value": "D",
+          "name": {
+            "en": "Deferred",
+            "it": "Differita"
+          }
+        },
+        {
+          "value": "S",
+          "name": {
+            "en": "Split Payment",
+            "it": "Scissione dei pagamenti"
+          }
+        }
+      ]
     }
   ],
   "tags": [

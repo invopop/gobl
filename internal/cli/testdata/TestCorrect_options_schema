@@ -15,9 +15,9 @@
                     "type": "string"
                 },
                 "series": {
+                    "$ref": "https://gobl.org/draft-0/cbc/code",
                     "description": "Series to assign to the new corrective invoice.",
-                    "title": "Series",
-                    "type": "string"
+                    "title": "Series"
                 },
                 "stamps": {
                     "description": "Stamps of the previous document to include in the preceding data.",

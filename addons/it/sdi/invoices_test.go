@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -97,50 +98,6 @@ func TestInvoiceNormalization(t *testing.T) {
 		ad.Normalizer(inv)
 		assert.Equal(t, "RF01", inv.Supplier.Ext[sdi.ExtKeyFiscalRegime].String())
 	})
-
-	t.Run("normalize customer", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.TaxID = &tax.Identity{
-			Country: "IT",
-			Code:    "RSSGNN60R30H501U",
-			Type:    "individual",
-		}
-		ad.Normalizer(inv)
-		assert.Empty(t, inv.Customer.TaxID.Code)
-		assert.Empty(t, inv.Customer.TaxID.Type) //nolint:staticcheck
-		assert.Len(t, inv.Customer.Identities, 1)
-		assert.Equal(t, it.IdentityKeyFiscalCode, inv.Customer.Identities[0].Key)
-		assert.Equal(t, "RSSGNN60R30H501U", inv.Customer.Identities[0].Code.String())
-	})
-
-	t.Run("replace natura with exempt extenions", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0] = &tax.Combo{
-			Category: "VAT",
-			Percent:  nil, // exempt
-			Ext: tax.Extensions{
-				"it-sdi-nature": "N1",
-			},
-		}
-		ad.Normalizer(inv)
-		assert.Equal(t, "N1", inv.Lines[0].Taxes[0].Ext[sdi.ExtKeyExempt].String())
-		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-nature")
-	})
-
-	t.Run("replace retained tax extenion", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0] = &tax.Combo{
-			Category: "IRPEF",
-			Percent:  num.NewPercentage(8, 3),
-			Ext: tax.Extensions{
-				"it-sdi-retained-tax": "A",
-			},
-		}
-		ad.Normalizer(inv)
-		assert.Equal(t, "A", inv.Lines[0].Taxes[0].Ext[sdi.ExtKeyRetained].String())
-		assert.NotContains(t, inv.Lines[0].Taxes[0].Ext, "it-sdi-retained-tax")
-	})
-
 }
 
 func TestCustomerValidation(t *testing.T) {
@@ -180,6 +137,90 @@ func TestCustomerValidation(t *testing.T) {
 		// ensure contains bother errors
 		assert.ErrorContains(t, err, "identities: missing key it-fiscal-code")
 		assert.ErrorContains(t, err, "tax_id: (code: cannot be blank.")
+	})
+
+	t.Run("payment advances", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.Payment{
+			Advances: []*pay.Advance{
+				{
+					Description: "Paid up front",
+					Percent:     num.NewPercentage(100, 3),
+					Key:         "card",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("payment terms missing instructions", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.Payment{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:    cal.NewDate(2022, 6, 13),
+						Percent: num.NewPercentage(100, 3),
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "payment: (instructions: cannot be blank when terms with due dates are present.).")
+	})
+
+	t.Run("payment terms with no due dates", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.Payment{
+			Terms: &pay.Terms{
+				Key: "instant",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+
+	t.Run("payment terms with instructions", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.Payment{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:    cal.NewDate(2022, 6, 13),
+						Percent: num.NewPercentage(100, 3),
+					},
+				},
+			},
+			Instructions: &pay.Instructions{
+				Key: "card",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+		assert.Equal(t, "MP08", inv.Payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String())
+	})
+
+	t.Run("with supplier registration details", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Registration = &org.Registration{
+			Entry:  "123456",
+			Office: "Rome",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("with supplier missing registration details", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Registration = &org.Registration{
+			Entry: "123456",
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (registration: (office: cannot be blank.).).")
 	})
 }
 

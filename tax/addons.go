@@ -3,9 +3,11 @@ package tax
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -20,6 +22,10 @@ type Addons struct {
 type AddonDef struct {
 	// Key that defines how to uniquely idenitfy the add-on.
 	Key cbc.Key `json:"key" jsonschema:"title=Key"`
+
+	// Requires defines any additional addons that this one depends on to operate
+	// correctly.
+	Requires []cbc.Key `json:"requires,omitempty" jsonschema:"title=Requires"`
 
 	// Name of the add-on
 	Name i18n.String `json:"name" jsonschema:"title=Name"`
@@ -37,6 +43,10 @@ type AddonDef struct {
 	// validation to ensure that form specific extensions have been added
 	// to the document.
 	Scenarios []*ScenarioSet `json:"scenarios" jsonschema:"title=Scenarios"`
+
+	// Identities that are specific for the add-on and may be validated against or
+	// used during conversion processes.
+	Identities []*cbc.KeyDefinition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
 	// Inboxes is a list of keys that are used to identify where copies of
 	// documents can be sent.
@@ -68,8 +78,9 @@ func (as *Addons) GetAddons() []cbc.Key {
 	return as.List
 }
 
-// GetAddonDefs provides a slice of Addon Definition instances.
-func (as Addons) GetAddonDefs() []*AddonDef {
+// AddonDefs provides a slice of Addon Definition instances including
+// any dependencies.
+func (as Addons) AddonDefs() []*AddonDef {
 	list := make([]*AddonDef, 0, len(as.List))
 	for _, ak := range as.List {
 		if a := AddonForKey(ak); a != nil {
@@ -79,6 +90,19 @@ func (as Addons) GetAddonDefs() []*AddonDef {
 	return list
 }
 
+// normalizeAddons ensures that the list of addons is normalized and is normally
+// performed internally when preparing the list of normalizers to use.
+func (as *Addons) normalizeAddons() {
+	list := make([]cbc.Key, 0, len(as.List))
+	for _, ak := range as.List {
+		if ad := AddonForKey(ak); ad != nil {
+			list = cbc.AppendUniqueKeys(list, ad.Requires...)
+			list = cbc.AppendUniqueKeys(list, ad.Key)
+		}
+	}
+	as.List = list
+}
+
 // Validate ensures that the list of addons is valid. This struct is designed to be
 // embedded, so we don't perform a regular validation on the struct itself.
 func (as Addons) Validate() error {
@@ -86,6 +110,7 @@ func (as Addons) Validate() error {
 }
 
 type addonCollection struct {
+	keys []cbc.Key // ordered list
 	list map[cbc.Key]*AddonDef
 }
 
@@ -99,6 +124,10 @@ func newAddonCollection() *addonCollection {
 
 // add will register the addon in the collection
 func (c *addonCollection) add(ad *AddonDef) {
+	c.keys = append(c.keys, ad.Key)
+	sort.Slice(c.keys, func(i, j int) bool {
+		return c.keys[i].String() < c.keys[j].String()
+	})
 	c.list[ad.Key] = ad
 }
 
@@ -116,13 +145,11 @@ func AddonForKey(key cbc.Key) *AddonDef {
 	return addons.list[key]
 }
 
-// AllAddons provides a slice of all the addons defined.
-func AllAddons() []*AddonDef {
+// AllAddonDefs provides a slice of all the addons defined.
+func AllAddonDefs() []*AddonDef {
 	all := make([]*AddonDef, len(addons.list))
-	i := 0
-	for _, ao := range addons.list {
-		all[i] = ao
-		i++
+	for i, ao := range addons.keys {
+		all[i] = addons.list[ao]
 	}
 	return all
 }
@@ -160,9 +187,24 @@ func (ad *AddonDef) Validate() error {
 		validation.Field(&ad.Key, validation.Required, AddonRegistered),
 		validation.Field(&ad.Name, validation.Required),
 		validation.Field(&ad.Extensions),
+		validation.Field(&ad.Identities),
 		validation.Field(&ad.Inboxes),
 		validation.Field(&ad.Tags),
 		validation.Field(&ad.Scenarios),
 		validation.Field(&ad.Corrections),
 	)
+}
+
+// JSONSchemaExtend will add the addon options to the JSON list.
+func (as Addons) JSONSchemaExtend(js *jsonschema.Schema) {
+	props := js.Properties
+	if asl, ok := props.Get("$addons"); ok {
+		asl.Items.OneOf = make([]*jsonschema.Schema, len(AllAddonDefs()))
+		for i, ao := range AllAddonDefs() {
+			asl.Items.OneOf[i] = &jsonschema.Schema{
+				Const: ao.Key.String(),
+				Title: ao.Name.String(),
+			}
+		}
+	}
 }

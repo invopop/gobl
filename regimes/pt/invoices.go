@@ -2,11 +2,31 @@ package pt
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
+
+// Invoice type tags
+const (
+	TagInvoiceReceipt cbc.Key = "invoice-receipt"
+)
+
+var invoiceTags = &tax.TagSet{
+	Schema: bill.ShortSchemaInvoice,
+	List: []*cbc.KeyDefinition{
+		{
+			Key: TagInvoiceReceipt,
+			Name: i18n.String{
+				i18n.EN: "Invoice-receipt",
+				i18n.PT: "Fatura-recibo",
+			},
+		},
+	},
+}
 
 type invoiceValidator struct {
 	inv *bill.Invoice

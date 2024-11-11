@@ -28,6 +28,10 @@ func TestTaxIdentityNormalization(t *testing.T) {
 			Code:     "GHI-701231-23Z",
 			Expected: "GHI70123123Z",
 		},
+		{
+			Code:     "K&A010301I16",
+			Expected: "K&A010301I16",
+		},
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "MX", Code: ts.Code}
@@ -36,7 +40,20 @@ func TestTaxIdentityNormalization(t *testing.T) {
 	}
 }
 
+func TestNormalizeTaxIdentity(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		tID := (*tax.Identity)(nil)
+		assert.NotPanics(t, func() {
+			mx.NormalizeTaxIdentity(tID)
+		})
+	})
+}
+
 func TestTaxIdentityValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		tID := (*tax.Identity)(nil)
+		assert.NoError(t, mx.Validate(tID))
+	})
 	tests := []struct {
 		name string
 		code cbc.Code
@@ -47,6 +64,7 @@ func TestTaxIdentityValidation(t *testing.T) {
 		{name: "valid code 1", code: "MNOP8201019HJ"},
 		{name: "valid code 2", code: "UVWX610715JKL"},
 		{name: "valid code 3", code: "STU760612MN1"},
+		{name: "with symbol", code: "K&A010301I16"},
 		{
 			name: "invalid code 1",
 			code: "STU760612MN",
@@ -84,6 +102,13 @@ func TestTaxIdentityValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestValidateTaxCode(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		err := mx.ValidateTaxCode("")
+		assert.NoError(t, err)
+	})
 }
 
 func TestTaxIdentityDetermineType(t *testing.T) {

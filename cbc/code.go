@@ -5,16 +5,27 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
+)
+
+const (
+	// DefaultCodeSeparator is the default separator used to join codes.
+	DefaultCodeSeparator Code = "-"
 )
 
 // Code represents a string used to uniquely identify the data we're looking
 // at. We use "code" instead of "id", to reenforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
 // Codes are standardised so that when validated they must contain between
-// 1 and 32 inclusive upper-case letters or numbers with optional periods (`.`),
-// dashes (`-`), or forward slashes (`/`) to separate blocks.
+// 1 and 32 inclusive english alphabet letters or numbers with optional
+// periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
+// colons (`:`) or spaces (` `) to separate blocks.
+// Each block must only be separated by a single symbol.
+//
+// The objective is to have a code that is easy to read and understand, while
+// still being unique and easy to validate.
 type Code string
 
 // CodeMap is a map of keys to specific codes, useful to determine regime specific
@@ -23,15 +34,17 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern              = `^[A-Z0-9]+([\.\-\/]?[A-Z0-9]+)*$`
+	CodePattern              = `^[A-Za-z0-9]+([\.\-\/ _\:]?[A-Za-z0-9]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
 	CodeMaxLength     uint64 = 32
 )
 
 var (
-	codeUnderscoreOrSpaceRegexp = regexp.MustCompile(`[_ ]`)
-	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Z0-9\.\-\/]`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([\.\-\/ _\:])[^A-Za-z0-9]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _\:]`)
+	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
+	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
 
 // CodeEmpty is used when no code is defined.
@@ -40,10 +53,28 @@ const CodeEmpty Code = ""
 // NormalizeCode attempts to clean and normalize the provided code so that
 // it matches what we'd expect instead of raising validation errors.
 func NormalizeCode(c Code) Code {
-	code := strings.ToUpper(c.String())
+	code := c.String()
 	code = strings.TrimSpace(code)
-	code = codeUnderscoreOrSpaceRegexp.ReplaceAllString(code, "-")
+	code = codeSeparatorRegexp.ReplaceAllString(code, "$1")
 	code = codeInvalidCharsRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
+// NormalizeAlphanumericalCode cleans and normalizes the code,
+// ensuring all letters are uppercase while also removing
+// non-alphanumerical characters.
+func NormalizeAlphanumericalCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = strings.ToUpper(code)
+	code = codeNonAlphanumericalRegexp.ReplaceAllString(code, "")
+	return Code(code)
+}
+
+// NormalizeNumericalCode cleans and normalizes the code, while also
+// removing non-numerical characters.
+func NormalizeNumericalCode(c Code) Code {
+	code := NormalizeCode(c).String()
+	code = codeNonNumericalRegexp.ReplaceAllString(code, "")
 	return Code(code)
 }
 
@@ -76,15 +107,37 @@ func (c Code) In(ary ...Code) bool {
 	return false
 }
 
+// Join returns a new code that is the result of joining the provided
+// code with the current one using a default separator.
+func (c Code) Join(c2 Code) Code {
+	return c.JoinWith(DefaultCodeSeparator, c2)
+}
+
+// JoinWith returns a new code that is the result of joining the provided
+// code with the current one using the provided separator. If any of the codes
+// are empty, no separator will be added.
+func (c Code) JoinWith(separator Code, c2 Code) Code {
+	if c == CodeEmpty {
+		return c2
+	}
+	if c2 == CodeEmpty {
+		return c
+	}
+	return c + separator + c2
+}
+
 // JSONSchema provides a representation of the struct for usage in Schema.
 func (Code) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
-		Type:        "string",
-		Pattern:     CodePattern,
-		Title:       "Code",
-		MinLength:   &CodeMinLength,
-		MaxLength:   &CodeMaxLength,
-		Description: "Alphanumerical text identifier with upper-case letters, no whitespace, nor symbols.",
+		Type:      "string",
+		Pattern:   CodePattern,
+		Title:     "Code",
+		MinLength: &CodeMinLength,
+		MaxLength: &CodeMaxLength,
+		Description: here.Doc(`
+			Alphanumerical text identifier with upper-case letters and limits on using
+			special characters or whitespace to separate blocks.
+		`),
 	}
 }
 

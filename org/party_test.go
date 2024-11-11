@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl/org"
 	_ "github.com/invopop/gobl/regimes"
@@ -22,27 +23,62 @@ func TestEmailValidation(t *testing.T) {
 	assert.EqualError(t, invalid.Validate(), "addr: must be a valid email address.")
 }
 
-func TestPartyCalculate(t *testing.T) {
-	party := org.Party{
-		Name: "Invopop",
-		TaxID: &tax.Identity{
-			Country: "ES",
-			Code:    "423 429 12.G",
-		},
-	}
-	party.Normalize(nil)
-	assert.Equal(t, "ES", party.TaxID.Country.String())
-	assert.Equal(t, "ES42342912G", party.TaxID.String())
+func TestPartyNormalize(t *testing.T) {
+	t.Run("for known regime", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "423 429 12.G",
+			},
+		}
+		party.Normalize(nil)
+		assert.Empty(t, party.GetRegime())
+		assert.Equal(t, "ES", party.TaxID.Country.String())
+		assert.Equal(t, "ES42342912G", party.TaxID.String())
+	})
 
-	party = org.Party{
-		Name: "Invopop",
-		TaxID: &tax.Identity{
-			Country: "ZZ", // no country has ZZ!
-			Code:    "423 429 12.G",
-		},
-	}
-	party.Normalize(nil) // unknown entry should not cause problem
-	assert.Equal(t, "42342912G", party.TaxID.Code.String())
+	t.Run("for known regime with Calculate", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			TaxID: &tax.Identity{
+				Country: "ES",
+				Code:    "423 429 12.G",
+			},
+		}
+		assert.NoError(t, party.Calculate())
+		assert.Empty(t, party.GetRegime())
+		assert.Equal(t, "ES", party.TaxID.Country.String())
+		assert.Equal(t, "ES42342912G", party.TaxID.String())
+	})
+
+	t.Run("for unknown regime", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			TaxID: &tax.Identity{
+				Country: "ZZ", // no country has ZZ!
+				Code:    "423 429 12.G",
+			},
+		}
+		party.Normalize(nil) // unknown entry should not cause problem
+		assert.Equal(t, "42342912G", party.TaxID.Code.String())
+	})
+
+	t.Run("for specific regime", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "123 456 78901",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		assert.Equal(t, "DE", party.GetRegime().String())
+		assert.Equal(t, "123/456/78901", party.Identities[0].Code.String())
+	})
 }
 
 func TestPartyAddressNill(t *testing.T) {

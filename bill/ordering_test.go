@@ -22,8 +22,8 @@ func TestOrderingNormalize(t *testing.T) {
 		},
 	}
 	o.Normalize(nil)
-	assert.Equal(t, "FOO", o.Code.String())
-	assert.Equal(t, "BAR", o.Projects[0].Code.String())
+	assert.Equal(t, "Foo", o.Code.String())
+	assert.Equal(t, "Bar", o.Projects[0].Code.String())
 	assert.Empty(t, o.Projects[0].Ext)
 }
 

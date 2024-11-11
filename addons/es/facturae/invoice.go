@@ -24,6 +24,10 @@ func normalizeInvoice(_ *bill.Invoice) {
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Customer,
+			validation.By(validateInvoiceCustomer),
+			validation.Skip,
+		),
 		validation.Field(&inv.Tax,
 			validation.By(validateInvoiceTax),
 			validation.Skip,
@@ -35,6 +39,26 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Each(
 				validation.By(validateInvoicePreceding),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceCustomer(val any) error {
+	obj, _ := val.(*org.Party)
+	if obj == nil {
+		return nil
+	}
+	// Customers must have a tax ID to at least set the country,
+	// and Spanish ones should also have an ID. There are more complex
+	// rules for exports.
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.TaxID,
+			validation.Required,
+			validation.When(
+				obj.TaxID != nil && obj.TaxID.Country.In("ES"),
+				tax.RequireIdentityCode,
 			),
 			validation.Skip,
 		),

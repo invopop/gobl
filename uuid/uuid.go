@@ -32,6 +32,9 @@ const (
 	Zero  UUID = "00000000-0000-0000-0000-000000000000"
 )
 
+// Size is the number of bytes in a UUID.
+const Size = 16
+
 var (
 	regexpSimpleUUID = regexp.MustCompile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 )
@@ -195,6 +198,12 @@ func (u UUID) Base64() string {
 	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(b)
 }
 
+// Bytes returns a byte slice of the UUID.
+func (u UUID) Bytes() []byte {
+	id := parse(u)
+	return id[:]
+}
+
 // ParseBase64 will attempt to decode a Base64 string into a UUID. If the string
 // is already a regular UUID, it will be parsed and returned using the regular
 // Parse method.
@@ -271,6 +280,22 @@ func Normalize(u *UUID) {
 	if u.IsZero() {
 		*u = ""
 	}
+}
+
+// UnmarshalBinary will convert a 16 byte slice into a UUID
+func (u *UUID) UnmarshalBinary(data []byte) error {
+	id, err := uuid.FromBytes(data)
+	if err != nil {
+		return err
+	}
+	*u = UUID(id.String())
+	return nil
+}
+
+// MarshalBinary implements the encoding.BinaryMarshaler interface.
+func (u *UUID) MarshalBinary() ([]byte, error) {
+	id := parse(*u)
+	return id.MarshalBinary()
 }
 
 // UnmarshalText will ensure the UUID is always a valid UUID when unmarshalling

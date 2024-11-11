@@ -54,6 +54,8 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateTaxNumber(obj)
 	}
 	return nil
 }
@@ -61,9 +63,9 @@ func Validate(doc interface{}) error {
 // Normalize will attempt to clean the object passed to it.
 func Normalize(doc any) {
 	switch obj := doc.(type) {
-	case *org.Identity:
-		normalizeIdentity(obj)
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
+	case *org.Identity:
+		normalizeTaxNumber(obj)
 	}
 }

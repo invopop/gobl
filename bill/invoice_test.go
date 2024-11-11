@@ -17,6 +17,7 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -155,6 +156,21 @@ func TestInvoiceAutoSetIssueDate(t *testing.T) {
 	require.NoError(t, err)
 	dn := cal.TodayIn(loc)
 	assert.Equal(t, dn.String(), i.IssueDate.String(), "should set issue date to today")
+}
+
+func TestInvoiceNoTax(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.MakeAmount(10, 0),
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	require.NoError(t, i.Calculate())
+	assert.Nil(t, i.Totals.Taxes, "should remove empty taxes object")
 }
 
 func TestRemoveIncludedTax(t *testing.T) {
@@ -920,12 +936,6 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
-		Outlays: []*bill.Outlay{
-			{
-				Description: "Something paid in advance",
-				Amount:      num.MakeAmount(1000, 2),
-			},
-		},
 		Payment: &bill.Payment{
 			Advances: []*pay.Advance{
 				{
@@ -943,8 +953,8 @@ func TestCalculate(t *testing.T) {
 	assert.Equal(t, i.Totals.TotalWithTax.String(), "950.00")
 	assert.Equal(t, i.Payment.Advances[0].Amount.String(), "285.00")
 	assert.Equal(t, i.Totals.Advances.String(), "285.00")
-	assert.Equal(t, i.Totals.Payable.String(), "960.00")
-	assert.Equal(t, i.Totals.Due.String(), "675.00")
+	assert.Equal(t, i.Totals.Payable.String(), "950.00")
+	assert.Equal(t, i.Totals.Due.String(), "665.00")
 	assert.False(t, i.Totals.Paid())
 }
 
@@ -994,12 +1004,6 @@ func TestCalculateInverted(t *testing.T) {
 				},
 			},
 		},
-		Outlays: []*bill.Outlay{
-			{
-				Description: "Something paid in advance",
-				Amount:      num.MakeAmount(1000, 2),
-			},
-		},
 		Payment: &bill.Payment{
 			Advances: []*pay.Advance{
 				{
@@ -1012,11 +1016,11 @@ func TestCalculateInverted(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 	assert.Equal(t, i.Totals.Sum.String(), "950.00")
-	assert.Equal(t, i.Totals.Due.String(), "710.00")
+	assert.Equal(t, i.Totals.Due.String(), "700.00")
 
 	require.NoError(t, i.Invert())
 	assert.Equal(t, i.Totals.Sum.String(), "-950.00")
-	assert.Equal(t, i.Totals.Due.String(), "-710.00")
+	assert.Equal(t, i.Totals.Due.String(), "-700.00")
 }
 
 func TestInvoiceForUnknownRegime(t *testing.T) {
@@ -1050,10 +1054,10 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 func TestNormalization(t *testing.T) {
 	inv := baseInvoiceWithLines(t)
 	inv.Series = " bar 2024 "
-	inv.Code = " 123 Test "
+	inv.Code = " 123_Test "
 	require.NoError(t, inv.Calculate())
-	assert.Equal(t, cbc.Code("BAR-2024"), inv.Series)
-	assert.Equal(t, cbc.Code("123-TEST"), inv.Code)
+	assert.Equal(t, cbc.Code("bar 2024"), inv.Series)
+	assert.Equal(t, cbc.Code("123_Test"), inv.Code)
 }
 
 func TestValidation(t *testing.T) {
@@ -1193,4 +1197,65 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 		Lines: lines,
 	}
 	return i
+}
+
+func TestRegimeJSONSchemaExtend(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$regime": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Regime"
+			},
+			"$addons": {
+				"items": {
+            		"$ref": "https://gobl.org/draft-0/cbc/key",
+					"type": "array",
+					"title": "Addons",
+					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+				}
+			},
+			"uuid": {
+				"type": "string",
+				"format": "uuid",
+				"title": "UUID",
+				"description": "Universally Unique Identifier."
+			},
+			"type": {
+				"$ref": "https://gobl.org/draft-0/cbc/key",
+				"title": "Type",
+		        "description": "Type of invoice document subject to the requirements of the local tax regime.",
+        		"calculated": true
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	inv := bill.Invoice{}
+	inv.JSONSchemaExtend(js)
+
+	assert.Equal(t, js.Properties.Len(), 4) // from this example
+
+	t.Run("regime", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$regime")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		rd := tax.AllRegimeDefs()[0]
+		assert.Equal(t, rd.Code().String(), prop.OneOf[0].Const)
+	})
+	t.Run("addons", func(t *testing.T) {
+		prop, ok := js.Properties.Get("$addons")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.Items.OneOf), 1)
+		ao := tax.AllAddonDefs()[0]
+		assert.Equal(t, ao.Key.String(), prop.Items.OneOf[0].Const)
+	})
+	t.Run("types", func(t *testing.T) {
+		prop, ok := js.Properties.Get("type")
+		require.True(t, ok)
+		assert.Greater(t, len(prop.OneOf), 1)
+		it := bill.InvoiceTypes[0]
+		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
+	})
+
 }

@@ -2,10 +2,12 @@ package tax_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -25,7 +27,7 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	assert.Equal(t, []cbc.Key{"mx-cfdi-v4"}, ts.GetAddons())
 
-	defs := ts.GetAddonDefs()
+	defs := ts.AddonDefs()
 	assert.Len(t, defs, 1)
 	assert.Equal(t, "mx-cfdi-v4", defs[0].Key.String())
 
@@ -33,6 +35,12 @@ func TestEmbeddingAddons(t *testing.T) {
 
 	err := ts.Addons.Validate()
 	assert.ErrorContains(t, err, "1: addon 'invalid-addon' not registered")
+
+	t.Run("test addon normalization", func(t *testing.T) {
+		ts.Addons.List = []cbc.Key{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
+		_ = tax.ExtractNormalizers(ts)
+		assert.Equal(t, []cbc.Key{"mx-cfdi-v4", "eu-en16931-v2017", "de-xrechnung-v3"}, ts.Addons.List)
+	})
 }
 
 func TestAddonForKey(t *testing.T) {
@@ -48,8 +56,8 @@ func TestAddonForKey(t *testing.T) {
 	})
 }
 
-func TestAllAddons(t *testing.T) {
-	as := tax.AllAddons()
+func TestAllAddonDefs(t *testing.T) {
+	as := tax.AllAddonDefs()
 	assert.NotEmpty(t, as)
 }
 
@@ -60,4 +68,31 @@ func TestAddonWithContext(t *testing.T) {
 	vs := tax.Validators(ctx)
 	assert.Len(t, vs, 1)
 	// no reliable way to check the function is actually the same :-(
+}
+
+func TestAddonsJSONSchemaEmbed(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$addons": {
+				"items": {
+            		"$ref": "https://gobl.org/draft-0/cbc/key",
+					"type": "array",
+					"title": "Addons",
+					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+				}
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	as := tax.Addons{}
+	as.JSONSchemaExtend(js)
+
+	assert.Equal(t, js.Properties.Len(), 1)
+	prop, ok := js.Properties.Get("$addons")
+	require.True(t, ok)
+	assert.Greater(t, len(prop.Items.OneOf), 1)
+	ao := tax.AllAddonDefs()[0]
+	assert.Equal(t, ao.Key.String(), prop.Items.OneOf[0].Const)
 }

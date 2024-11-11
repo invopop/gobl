@@ -5,6 +5,11 @@
   "$defs": {
     "Card": {
       "properties": {
+        "first6": {
+          "type": "string",
+          "title": "First 6",
+          "description": "First 6 digits of the card's Primary Account Number (PAN)."
+        },
         "last4": {
           "type": "string",
           "title": "Last 4",
@@ -18,6 +23,7 @@
       },
       "type": "object",
       "required": [
+        "first6",
         "last4",
         "holder"
       ],
@@ -96,6 +102,11 @@
               "description": "Sender initiated bank or wire transfer."
             },
             {
+              "const": "credit-transfer+sepa",
+              "title": "SEPA Credit Transfer",
+              "description": "Sender initiated bank or wire transfer via SEPA."
+            },
+            {
               "const": "debit-transfer",
               "title": "Debit Transfer",
               "description": "Receiver initiated bank or wire transfer."
@@ -119,6 +130,11 @@
               "const": "direct-debit",
               "title": "Direct Debit",
               "description": "Direct debit from the customers bank account."
+            },
+            {
+              "const": "direct-debit+sepa",
+              "title": "SEPA Direct Debit",
+              "description": "Direct debit from the customers bank account via SEPA."
             },
             {
               "const": "online",
@@ -154,9 +170,9 @@
           "description": "Optional text description of the payment method"
         },
         "ref": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Reference",
-          "description": "Remittance information or concept, a text value used to link the payment with the invoice."
+          "description": "Remittance information or concept, a code value used to link the payment with the invoice."
         },
         "credit_transfer": {
           "items": {

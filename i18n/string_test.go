@@ -23,4 +23,7 @@ func TestI18nString(t *testing.T) {
 	}
 	assert.Equal(t, "Foo", snd.In("en"))
 	assert.Equal(t, "Foo", snd.String())
+
+	s2 := i18n.NewString("Test")
+	assert.Equal(t, "Test", s2.In("en"))
 }

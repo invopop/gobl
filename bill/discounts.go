@@ -5,33 +5,91 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
-// LineDiscount represents an amount deducted from the line, and will be
-// applied before taxes.
-type LineDiscount struct {
-	// Percentage if fixed amount not applied
-	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
-	// Fixed discount amount to apply (calculated if percent present).
-	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
-	// Reason code.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
-	// Text description as to why the discount was applied
-	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+// Discount keys for identifying the type of discount being applied.
+// These are based on the UN/CEFACT UNTDID 5189 code list subset defined
+// in the EN16931 code lists and are mean as suggestions.
+const (
+	DiscountKeyEarlyCompletion  cbc.Key = "early-completion"
+	DiscountKeyMilitary         cbc.Key = "military"
+	DiscountKeyWorkAccident     cbc.Key = "work-accident"
+	DiscountKeySpecialAgreement cbc.Key = "special-agreement"
+	DiscountKeyProductionError  cbc.Key = "production-error"
+	DiscountKeyNewOutlet        cbc.Key = "new-outlet"
+	DiscountKeySample           cbc.Key = "sample"
+	DiscountKeyEndOfRange       cbc.Key = "end-of-range"
+	DiscountKeyIncoterm         cbc.Key = "incoterm"
+	DiscountKeyPOSThreshold     cbc.Key = "pos-threshold"
+	DiscountKeySpecialRebate    cbc.Key = "special-rebate"
+	DiscountKeyTemporary        cbc.Key = "temporary"
+	DiscountKeyStandard         cbc.Key = "standard"
+	DiscountKeyYarlyTurnover    cbc.Key = "yearly-turnover"
+)
 
-	// TODO: support UNTDID 5189 codes
-}
-
-// Validate checks the line discount's fields.
-func (ld *LineDiscount) Validate() error {
-	return validation.ValidateStruct(ld,
-		validation.Field(&ld.Percent),
-		validation.Field(&ld.Amount, validation.Required),
-	)
+var discountKeyDefinitions = []*cbc.KeyDefinition{
+	{
+		Key:  DiscountKeyEarlyCompletion,
+		Name: i18n.NewString("Bonus for works ahead of schedule"),
+	},
+	{
+		Key:  DiscountKeyMilitary,
+		Name: i18n.NewString("Military Discount"),
+	},
+	{
+		Key:  DiscountKeyWorkAccident,
+		Name: i18n.NewString("Work Accident Discount"),
+	},
+	{
+		Key:  DiscountKeySpecialAgreement,
+		Name: i18n.NewString("Special Agreement Discount"),
+	},
+	{
+		Key:  DiscountKeyProductionError,
+		Name: i18n.NewString("Production Error Discount"),
+	},
+	{
+		Key:  DiscountKeyNewOutlet,
+		Name: i18n.NewString("New Outlet Discount"),
+	},
+	{
+		Key:  DiscountKeySample,
+		Name: i18n.NewString("Sample Discount"),
+	},
+	{
+		Key:  DiscountKeyEndOfRange,
+		Name: i18n.NewString("End of Range Discount"),
+	},
+	{
+		Key:  DiscountKeyIncoterm,
+		Name: i18n.NewString("Incoterm Discount"),
+	},
+	{
+		Key:  DiscountKeyPOSThreshold,
+		Name: i18n.NewString("Point of Sale Threshold Discount"),
+	},
+	{
+		Key:  DiscountKeySpecialRebate,
+		Name: i18n.NewString("Special Rebate"),
+	},
+	{
+		Key:  DiscountKeyTemporary,
+		Name: i18n.NewString("Temporary"),
+	},
+	{
+		Key:  DiscountKeyStandard,
+		Name: i18n.NewString("Standard"),
+	},
+	{
+		Key:  DiscountKeyYarlyTurnover,
+		Name: i18n.NewString("Yearly Turnover"),
+	},
 }
 
 // Discount represents an allowance applied to the complete document
@@ -42,8 +100,12 @@ type Discount struct {
 	uuid.Identify
 	// Line number inside the list of discounts (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
-	// Reference or ID for this Discount
-	Ref string `json:"ref,omitempty" jsonschema:"title=Reference"`
+	// Key for identifying the type of discount being applied.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Code to used to refer to the this discount by the issuer
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// Text description as to why the discount was applied
+	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Base represents the value used as a base for percent calculations instead
 	// of the invoice's sum of lines.
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
@@ -53,10 +115,8 @@ type Discount struct {
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// List of taxes to apply to the discount
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
-	// Code for the reason this discount applied
-	Code string `json:"code,omitempty" jsonschema:"title=Reason Code"`
-	// Text description as to why the discount was applied
-	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
+	// Extension codes that apply to the discount
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
@@ -67,7 +127,9 @@ type Discount struct {
 // Normalize performs normalization on the line and embedded objects using the
 // provided list of normalizers.
 func (m *Discount) Normalize(normalizers tax.Normalizers) {
+	m.Code = cbc.NormalizeCode(m.Code)
 	m.Taxes = tax.CleanSet(m.Taxes)
+	m.Ext = tax.CleanExtensions(m.Ext)
 	normalizers.Each(m)
 	tax.Normalize(normalizers, m.Taxes)
 }
@@ -76,6 +138,7 @@ func (m *Discount) Normalize(normalizers tax.Normalizers) {
 func (m *Discount) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, m,
 		validation.Field(&m.UUID),
+		validation.Field(&m.Code),
 		validation.Field(&m.Base),
 		validation.Field(&m.Percent,
 			validation.When(
@@ -85,6 +148,7 @@ func (m *Discount) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&m.Amount, validation.Required),
 		validation.Field(&m.Taxes),
+		validation.Field(&m.Ext),
 		validation.Field(&m.Meta),
 	)
 }
@@ -116,6 +180,11 @@ func (m *Discount) convertInto(ex *currency.ExchangeRate) *Discount {
 	m2 := *m
 	m2.Amount = m2.Amount.Upscale(accuracy).Multiply(ex.Amount)
 	return &m2
+}
+
+// JSONSchemaExtend adds the discount key definitions to the schema.
+func (Discount) JSONSchemaExtend(schema *jsonschema.Schema) {
+	extendJSONSchemaWithDiscountKey(schema)
 }
 
 func calculateDiscounts(lines []*Discount, sum, zero num.Amount) {
@@ -151,4 +220,22 @@ func calculateDiscountSum(discounts []*Discount, zero num.Amount) *num.Amount {
 		total = total.Add(l.amount)
 	}
 	return &total
+}
+
+func extendJSONSchemaWithDiscountKey(schema *jsonschema.Schema) {
+	prop, ok := schema.Properties.Get("key")
+	if !ok {
+		return
+	}
+	prop.AnyOf = make([]*jsonschema.Schema, len(discountKeyDefinitions))
+	for i, v := range discountKeyDefinitions {
+		prop.AnyOf[i] = &jsonschema.Schema{
+			Const: v.Key,
+			Title: v.Name.String(),
+		}
+	}
+	prop.AnyOf = append(prop.AnyOf, &jsonschema.Schema{
+		Title:   "Other",
+		Pattern: cbc.KeyPattern,
+	})
 }

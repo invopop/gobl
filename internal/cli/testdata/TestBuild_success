@@ -96,13 +96,6 @@
                 "total": "15.00"
             }
         ],
-        "outlays": [
-            {
-                "amount": "0.00",
-                "description": "Something paid for by us",
-                "i": 1
-            }
-        ],
         "payment": {
             "instructions": {
                 "credit_transfer": [
@@ -155,7 +148,6 @@
             ]
         },
         "totals": {
-            "outlays": "0.00",
             "payable": "5637.50",
             "sum": "5187.50",
             "tax": "450.00",
@@ -204,7 +196,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "2d4d4d81d49dc453f338a27b13fb8e54373f3a412bb7ff16c3d0b28d4a4a8a46"
+            "val": "02b5bfcb333c82b4f9ba02bcf2128b5649a964820cade97f45d926829fb811fa"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

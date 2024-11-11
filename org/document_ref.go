@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/invopop/validation/is"
 )
@@ -24,8 +23,8 @@ type DocumentRef struct {
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Source document's code or other identifier.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Line index number inside the document, if relevant.
-	Line int `json:"line,omitempty" jsonschema:"title=Line"`
+	// Line index numbers inside the document, if relevant.
+	Lines []int `json:"lines,omitempty" jsonschema:"title=Lines"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the document or its contents, agreed upon by the supplier and customer.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Tax period in which the referred document had an effect required by some tax regimes and formats.
@@ -78,15 +77,4 @@ func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&dr.Ext),
 		validation.Field(&dr.Meta),
 	)
-}
-
-// JSONSchemaExtend extends the schema with additional property details
-func (DocumentRef) JSONSchemaExtend(schema *jsonschema.Schema) {
-	props := schema.Properties
-	if prop, ok := props.Get("series"); ok {
-		prop.Pattern = cbc.CodePattern
-	}
-	if prop, ok := props.Get("code"); ok {
-		prop.Pattern = cbc.CodePattern
-	}
 }

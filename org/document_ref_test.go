@@ -26,6 +26,6 @@ func TestDocumentNormalize(t *testing.T) {
 		},
 	}
 	dr.Normalize(nil)
-	assert.Equal(t, "FOO", dr.Code.String())
+	assert.Equal(t, "Foo", dr.Code.String())
 	assert.Empty(t, dr.Ext)
 }

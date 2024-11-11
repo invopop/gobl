@@ -2,7 +2,7 @@
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "es-facturae-v3",
   "name": {
-    "en": "FacturaE"
+    "en": "Spain FacturaE"
   },
   "extensions": [
     {

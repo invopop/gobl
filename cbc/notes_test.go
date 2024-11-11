@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,6 +23,23 @@ func TestNotesValidation(t *testing.T) {
 	err = n.Validate()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "key: must be a valid value")
+}
+
+func TestNotesValidationHasKey(t *testing.T) {
+	ns := []*cbc.Note{
+		{
+			Key:  cbc.NoteKeyGeneral,
+			Text: "This is a general note test",
+		},
+	}
+	err := validation.Validate(ns, cbc.ValidateNotesHasKey(cbc.NoteKeyGeneral))
+	assert.NoError(t, err)
+
+	err = validation.Validate(ns, cbc.ValidateNotesHasKey(cbc.NoteKeyLegal))
+	assert.ErrorContains(t, err, "with key 'legal' missin")
+
+	err = validation.Validate(cbc.Key("foo"), cbc.ValidateNotesHasKey(cbc.NoteKeyGeneral))
+	assert.Nil(t, err, "should ignore invalid type")
 }
 
 func TestNoteSameAs(t *testing.T) {

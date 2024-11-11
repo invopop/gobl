@@ -4,7 +4,118 @@ All notable changes to GOBL will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/). See also the [GOBL versions](https://docs.gobl.org/overview/versions) documentation site for more details.
 
-## [v0.200.0-rc1]
+## [Unreleased]
+
+### Added
+
+- `org`: `Address` now includes a `state` code, for countries that require them.
+- `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to invoices.
+- `org`: `Inbox` now supports `email` field, with auto-normalization of URLs and emails in the `code` field.
+
+### Changes
+
+- Moved regime examples into single `/examples` folder.
+- `org`: `Address`, `code` for the post code is now typed as a `cbc.Code`, like the new `state` field.
+
+## [v0.204.1]
+
+### Added
+
+- `bill`: normalize line discounts and charges to remove empty rows.
+
+### Fixed
+
+- `tax`: identity code handling will skip default validation for specific countries that use special characters.
+
+## [v0.204.0]
+
+### Added
+
+- `br-nfse-v1`: added initial Brazil NFS-e addon
+
+### Changed
+
+- `mx`: deprecated the `mx-cfdi-post-code` extension in favor of the customer address post code.
+- New "tax catalogues" used for defining extensions for specific standards.
+- `tax`: New "tax catalogues" used for defining extensions for specific standards.
+- `iso`: catalogue created with `iso-schema-id` extensions.
+- `untdid`: catalogue created with extensions: `untdid-document-type`, `untdid-payment-means`, `untdid-tax-category`, `untdid-allowance`, and `untdid-charge`.
+- `eu-en16931-v2017`: addon for underlying support of the EN16931 semantic specifications.
+- `de-xrechnung-v3`: addon with extra normalization for XRechnung specification in Germany.
+- `pay`: Added `sepa` payment means key extension in main definition to be used with Credit Transfers and Direct Debit.
+- `org`: `Identity` and `Inbox` support for extensions.
+- `tax`: tags for `export` and `eea` (european economic area) for use with rates.
+- `bill`: support for extensions in `Discount`, `Charge`, `LineDiscount`, and `LineCharge`.
+- `bill`: specifically defined keys for Discounts and Charges.
+
+### Changed
+
+- `tax`: rate keys can now be extended, so `exempt+reverse-charge` will be accepted and may be used by addons to included additional codes.
+- `tax`: Addons can now depend on other addons, whose keys will be automatically added during normalization.
+- `cbc`: Code now allows `:` separator.
+
+### Removed
+
+- `pay`: UNTDID 4461 mappings from payment means table, now provided by catalogues
+- `bill`: `Outlay` has been removed in favour of Charges, we've also not seen any evidence this field has been used.
+- `bill`: `ref` field from discounts and charges in favour of `code`.
+- `tax`: Regime `ChargeKeys` removed. Keys now provided in `bill` package.
+- `it`: Charge keys no longer defined, no migration required, already supported.
+
+### Fixed
+
+- `mx`: Tax ID validation now correctly supports `&` and `Ñ` symbols in codes.
+
+## [v0.203.0]
+
+### Added
+
+- `br`: added basic Brazil regime
+- `uuid`: SQL library compatibility for type conversion.
+- `it-sdi-v1`: added `it-sdi-vat-liability` extension for EsigibilitaIVA.
+
+### Fixed
+
+- `bill.Invoice`: remove empty taxes instances.
+- `tax.Identity`: support Calculate method to normalize IDs.
+- `tax.Regime`: properly set regime when alternative codes is given.
+
+## [v0.202.0]
+
+### Changed
+
+- `org.DocumentRef`: renamed `line` to `lines` that accepts an array of integers making it possible to define a selection of reference lines in another document as opposed to just one.
+
+### Added
+
+- `cbc.Code`: new `Join` and `JoinWith` methods to help concatenate codes.
+- `it-sdi-v1`: added CIG and CUP identity type codes.
+- `de`: added validation and normalization for tax identities (not VAT).
+
+### Fixed
+
+- `mx`: fixed panic when normalizing an invoice with `tax` but no `ext` inside.
+
+## [v0.201.0]
+
+### Fixed
+
+- `es-tbai-v1`: added validation for presense of `series` and `general` notes in Invoices.
+- `es`: moving invoice customer validation to the facturae and tbai addons.
+- `it-sdi-v1`: fixing validation issue for payment terms with no due dates.
+
+### Changed
+
+- `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
+- `co-dian-v2`: moved from `co` tax regime into own addon.
+
+## [v0.200.1]
+
+### Fixed
+
+- `pt`: moving invoice tags from saft addon to regime, ensure defaults present.
+
+## [v0.200.0]
 
 Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
 
@@ -33,6 +144,7 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `bill.Preceding`: replaced with `org.DocumentRef`.
 - `bill.Invoice`: Ordering now using arrays of `org.DocumentRef`.
 - `bill.Invoice`: `series` and `code` now use `cbc.Code` and normalization instead of the independent invoice code.
+- `cbc`: `Code` now allows spaces, dashes, and lower-case letters. Normalization will remove duplicate symbols.
 
 ### Added
 
@@ -43,6 +155,7 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `tax`: `AddonDef` provides support for defining addon extension packs.
 - `gr`: `gr-mydata-invoice-type` extension with related tags and scenarios.
 - `org`: `DocumentRef` consolidates references to previous documents in a single place.
+- `bill`: invoice type option `other` for usage when regular scenarios do not apply.
 
 ## [v0.115.1]
 

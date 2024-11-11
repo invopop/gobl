@@ -1,0 +1,37 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$addons: ["pt-saft-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+type: standard
+currency: EUR
+issue_date: "2024-10-02"
+supplier:
+  uuid: 9de7584f-ea5c-42a7-b159-5e4c6a280a5c
+  tax_id:
+    country: PT
+    code: "545259045"
+  name: Hotelzinho
+  addresses:
+    - street: Rua do Madeira
+      code: 1000-000
+      locality: Madeira
+customer:
+  name: Maria Santos Silva
+lines:
+  - quantity: 1
+    item:
+      name: Noite em quarto duplo
+      price: 100.00
+    taxes:
+      - cat: VAT
+        rate: reduced
+        ext:
+          pt-region: "PT-MA"
+  - quantity: 2
+    item:
+      name: Noite em quarto triplo
+      price: 120.00
+    taxes:
+      - cat: VAT
+        rate: reduced
+        ext:
+          pt-region: "PT-MA"

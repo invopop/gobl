@@ -292,20 +292,6 @@
       ]
     }
   ],
-  "tags": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "key": "invoice-receipt",
-          "name": {
-            "en": "Invoice-receipt",
-            "pt": "Fatura-recibo"
-          }
-        }
-      ]
-    }
-  ],
   "scenarios": [
     {
       "schema": "bill/invoice",

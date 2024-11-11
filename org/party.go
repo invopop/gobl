@@ -14,7 +14,9 @@ import (
 
 // Party represents a person or business entity.
 type Party struct {
+	tax.Regime
 	uuid.Identify
+
 	// Label can be used to provide a custom label for the party in a given
 	// context in a single language, for example "Supplier", "Host", or similar.
 	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Supplier"`
@@ -48,6 +50,20 @@ type Party struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Calculate will perform basic normalization of the party's data without
+// using any tax regime or addon.
+func (p *Party) Calculate() error {
+	p.Normalize(p.normalizers())
+	return nil
+}
+
+func (p *Party) normalizers() tax.Normalizers {
+	if r := p.RegimeDef(); r != nil {
+		return tax.Normalizers{r.Normalizer}
+	}
+	return nil
+}
+
 // Normalize will try to normalize the party's data.
 func (p *Party) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
@@ -64,6 +80,7 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 
 	normalizers.Each(p)
 	tax.Normalize(normalizers, p.Identities)
+	tax.Normalize(normalizers, p.Inboxes)
 	tax.Normalize(normalizers, p.Addresses)
 	tax.Normalize(normalizers, p.Emails)
 }

@@ -3,6 +3,7 @@ package tax
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -69,9 +70,6 @@ type RegimeDef struct {
 	// regime that may be validated against.
 	IdentityKeys []*cbc.KeyDefinition `json:"identity_keys,omitempty" jsonschema:"title=Identity Keys"`
 
-	// Charge keys specific for the regime and may be validated or used in the UI as suggestions
-	ChargeKeys []*cbc.KeyDefinition `json:"charge_keys,omitempty" jsonschema:"title=Charge Keys"`
-
 	// PaymentMeansKeys specific for the regime that extend the original
 	// base payment means keys.
 	PaymentMeansKeys []*cbc.KeyDefinition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
@@ -116,7 +114,7 @@ type CategoryDef struct {
 	// income.
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
-	// Specific tax definitions inside this category.
+	// Specific tax definitions inside this category. Order is important.
 	Rates []*RateDef `json:"rates,omitempty" jsonschema:"title=Rates"`
 
 	// Extensions defines a list of extension keys that may be used or required
@@ -285,7 +283,6 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.TaxIdentityTypeKeys),
 		validation.Field(&r.IdentityKeys),
 		validation.Field(&r.Extensions),
-		validation.Field(&r.ChargeKeys),
 		validation.Field(&r.PaymentMeansKeys),
 		validation.Field(&r.InboxKeys),
 		validation.Field(&r.Scenarios),
@@ -316,21 +313,39 @@ func (r *RegimeDef) TimeLocation() *time.Location {
 	return loc
 }
 
+type inCategoryRatesRule struct {
+	cat  cbc.Code
+	keys []cbc.Key
+}
+
+func (r *inCategoryRatesRule) Validate(value any) error {
+	key, ok := value.(cbc.Key)
+	if !ok || key == cbc.KeyEmpty {
+		return nil
+	}
+	for _, k := range r.keys {
+		if key.Has(k) {
+			return nil
+		}
+	}
+	return fmt.Errorf("'%v' not defined in '%v' category", key, r.cat)
+}
+
 // InCategoryRates is used to provide a validation rule that will
-// ensure a rate key is defined inside a category.
+// ensure a rate key is represented inside a category.
 func (r *RegimeDef) InCategoryRates(cat cbc.Code) validation.Rule {
 	if r == nil {
-		return validation.Empty
+		return validation.Empty.Error("must be blank when regime is undefined")
 	}
 	c := r.CategoryDef(cat)
 	if c == nil {
-		return validation.Empty
+		return validation.Empty.Error("must be blank when category is undefined")
 	}
 	keys := make([]cbc.Key, len(c.Rates))
 	for i, x := range c.Rates {
 		keys[i] = x.Key
 	}
-	return validation.In(keys...)
+	return &inCategoryRatesRule{cat: cat, keys: keys}
 }
 
 // InCategories returns a validation rule to ensure the category code
@@ -453,10 +468,17 @@ func (r *RegimeDef) ExtensionDef(key cbc.Key) *cbc.KeyDefinition {
 }
 
 // RateDef provides the rate definition with a matching key for
-// the category.
+// the category. Key comparison is made using two loops. The first
+// will find an exact match, while the second will see if the provided
+// key has the rate key as a prefix.
 func (c *CategoryDef) RateDef(key cbc.Key) *RateDef {
 	for _, r := range c.Rates {
 		if r.Key == key {
+			return r
+		}
+	}
+	for _, r := range c.Rates {
+		if key.Has(r.Key) {
 			return r
 		}
 	}

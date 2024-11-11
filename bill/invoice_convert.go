@@ -40,7 +40,6 @@ func (inv *Invoice) ConvertInto(cur currency.Code) (*Invoice, error) {
 	i2.Lines = inv.convertLines(ex)
 	i2.Discounts = inv.convertDiscounts(ex)
 	i2.Charges = inv.convertCharges(ex)
-	i2.Outlays = inv.convertOutlays(ex)
 	i2.Payment = inv.convertPayment(ex)
 	i2.Currency = cur
 
@@ -134,22 +133,6 @@ func (inv *Invoice) convertCharges(ex *currency.ExchangeRate) []*Charge {
 		charges[i] = c.convertInto(ex)
 	}
 	return charges
-}
-
-func (inv *Invoice) convertOutlays(ex *currency.ExchangeRate) []*Outlay {
-	if len(inv.Outlays) == 0 {
-		return nil
-	}
-	outlays := make([]*Outlay, len(inv.Outlays))
-	for i, o := range inv.Outlays {
-		o2 := *o
-		o2.Amount = o2.Amount.
-			Upscale(defaultCurrencyConversionAccuracy).
-			Multiply(ex.Amount).
-			Downscale(defaultCurrencyConversionAccuracy)
-		outlays[i] = &o2
-	}
-	return outlays
 }
 
 func (inv *Invoice) convertPayment(ex *currency.ExchangeRate) *Payment {
