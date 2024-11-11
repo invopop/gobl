@@ -21,9 +21,9 @@ var taxCategories = []*tax.CategoryDef{
 		Sources: []*tax.Source{
 			{
 				Title: i18n.String{
-					i18n.EN: "How GST Works",
+					i18n.EN: "Australian Taxation Office: GST Overview",
 				},
-				URL: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/how-gst-works",
+				URL: "https://www.ato.gov.au/about-ato/research-and-statistics/in-detail/tax-gap/a-h-tax-gaps/goods-and-services-tax-gap/overview",
 			},
 		},
 		Retained: false,

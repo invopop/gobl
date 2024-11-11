@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -27,9 +28,10 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "Australia",
 		},
-		TimeZone:   "Australia/Perth", //Around the middle
-		Validator:  Validate,
-		Normalizer: Normalize,
+		TimeZone:     "Australia/Perth", //Around the middle
+		Validator:    Validate,
+		IdentityKeys: identityKeyDefinitions,
+		Normalizer:   Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
@@ -54,6 +56,8 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateIdentity(obj)
 	case *bill.Invoice:
 		return validateInvoice(obj)
 	}
@@ -65,5 +69,7 @@ func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
+	case *org.Identity:
+		normalizeIdentity(obj)
 	}
 }

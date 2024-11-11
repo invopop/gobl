@@ -4,20 +4,20 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/au"
-	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateTaxIdentity(t *testing.T) {
+func TestValidateIdentity(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
 		err  string
 	}{
-		{name: "ABN good 1", code: "53004085616"},
-		{name: "ABN good 2", code: "12004044937"},
-		{name: "ABN good 3", code: "84085334037"},
+		{name: "ACN good 1", code: "010499966"},
+		{name: "ACN good 2", code: "813283831"},
+		{name: "ACN good 3", code: "419673715"},
 		{
 			name: "zeros",
 			code: "00000000000",
@@ -44,20 +44,20 @@ func TestValidateTaxIdentity(t *testing.T) {
 			err:  "invalid format",
 		},
 		{
-			name: "bad ABN checksum 1",
-			code: "99999999123",
+			name: "bad ACN checksum 1",
+			code: "419673716",
 			err:  "checksum mismatch",
 		},
 		{
-			name: "bad ABN checksum 2",
-			code: "73827573823",
+			name: "bad ACN checksum 2",
+			code: "678381888",
 			err:  "checksum mismatch",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tID := &tax.Identity{Country: "AU", Code: tt.code}
+			tID := &org.Identity{Key: au.IdentityCompanyNumber, Code: tt.code}
 			err := au.Validate(tID)
 			if tt.err == "" {
 				assert.NoError(t, err)
