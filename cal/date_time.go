@@ -96,12 +96,12 @@ func (dt DateTime) TimeZ() time.Time {
 // JSONSchema returns a custom json schema for the date time.
 func (DateTime) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
-		Type:   "string",
-		Format: "date-time",
-		Title:  "Date Time",
+		Type:    "string",
+		Title:   "Date Time",
+		Pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$",
 		Description: here.Doc(`
 			Civil date time in simplified ISO format with no time zone
-			information, for example: 2021-05-26T13:45:00
+			nor location information, for example: 2021-05-26T13:45:00
 		`),
 	}
 }
