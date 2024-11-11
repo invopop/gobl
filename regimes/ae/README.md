@@ -21,7 +21,7 @@ Businesses in the UAE must evaluate their eligibility for VAT registration based
 
 **Note:** Businesses below the voluntary registration threshold are not permitted to register for VAT and, therefore, will issue invoices without a TRN.
 
-For more information, visit the ([Federal Tax Authority website](https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx))
+For more information, visit the [Federal Tax Authority website](https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx)
 
 ### TRN Validation
 
@@ -33,7 +33,7 @@ In Dubai, a **30% sales tax** on alcohol previously existed but has since been a
 
 ## VAT Invoicing Requirements
 
-In the UAE, businesses must issue VAT-compliant invoices. There are two types of VAT invoices: the standard and the simplified invoice.
+There are two types of VAT invoices: the standard and the simplified invoice.
 
 **Simplified VAT Invoice**: Allowed in the following cases:
 
