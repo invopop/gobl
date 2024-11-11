@@ -32,11 +32,15 @@ type ExchangeRate struct {
 	From Code `json:"from" jsonschema:"title=From"`
 	// Currency code this exchange rate will convert into.
 	To Code `json:"to" jsonschema:"title=To"`
+	// At represents the effective date and time at which the exchange rate
+	// is determined by the source. The time may be zero if referring to a
+	// specific day only.
+	At *cal.DateTime `json:"at,omitempty" jsonschema:"title=At"`
+	// Source provides the name of the source where the exchange rate was
+	// obtained from.
+	Source string `json:"source,omitempty" jsonschema:"title=Source"`
 	// How much is 1 of the "from" currency worth in the "to" currency.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
-	// At represents the date and time (which may be 00:00:00) when the
-	// currency rate amount was determined.
-	At *cal.DateTime `json:"at,omitempty" jsonschema:"title=At"`
 }
 
 // Validate ensures the content of the exchange rate looks good.
@@ -44,8 +48,8 @@ func (er *ExchangeRate) Validate() error {
 	return validation.ValidateStruct(er,
 		validation.Field(&er.From, validation.Required),
 		validation.Field(&er.To, validation.Required),
+		validation.Field(&er.At, cal.DateTimeNotZero()),
 		validation.Field(&er.Amount, num.Positive),
-		validation.Field(&er.At),
 	)
 }
 

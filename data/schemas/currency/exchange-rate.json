@@ -15,15 +15,20 @@
           "title": "To",
           "description": "Currency code this exchange rate will convert into."
         },
+        "at": {
+          "$ref": "https://gobl.org/draft-0/cal/date-time",
+          "title": "At",
+          "description": "At represents the effective date and time at which the exchange rate\nis determined by the source. The time may be zero if referring to a\nspecific day only."
+        },
+        "source": {
+          "type": "string",
+          "title": "Source",
+          "description": "Source provides the name of the source where the exchange rate was\nobtained from."
+        },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Amount",
           "description": "How much is 1 of the \"from\" currency worth in the \"to\" currency."
-        },
-        "at": {
-          "$ref": "https://gobl.org/draft-0/cal/date-time",
-          "title": "At",
-          "description": "At represents the date and time (which may be 00:00:00) when the\ncurrency rate amount was determined."
         }
       },
       "type": "object",

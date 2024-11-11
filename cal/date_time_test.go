@@ -179,3 +179,11 @@ func TestDateTimeOf(t *testing.T) {
 	d := cal.DateTimeOf(x)
 	assert.Equal(t, "2023-07-28T12:12:01", d.String())
 }
+
+func TestJSONSchema(t *testing.T) {
+	data := []byte(`{"description":"Civil date time in simplified ISO format with no time zone\nnor location information, for example: 2021-05-26T13:45:00", "pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$", "title":"Date Time", "type":"string"}`)
+	schema := cal.DateTime{}.JSONSchema()
+	out, err := json.Marshal(schema)
+	require.NoError(t, err)
+	assert.JSONEq(t, string(data), string(out))
+}
