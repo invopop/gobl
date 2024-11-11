@@ -14,20 +14,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
-// Local tax category definition which is not considered standard.
-const (
-	TaxCategoryExcise cbc.Code = "EXCISE"
-)
-
-// Specific tax rate codes.
-const (
-	TaxRateSmokingProducts  cbc.Key = "smoking-product"
-	TaxRateCarbonatedDrinks cbc.Key = "carbonated-drink"
-	TaxRateEnergyDrinks     cbc.Key = "energy-drink"
-	TaxRateSweetenedDrinks  cbc.Key = "sweetened-drink"
-)
-
-// New provides the tax region definition for UAE.
+// New provides the tax region definition for AE.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
 		Country:  "AE",
@@ -57,11 +44,10 @@ func New() *tax.RegimeDef {
 	}
 }
 
-// Validate checks the document type and determines if it can be validated.
+// Validate function assesses the document type to determine if validation is required.
+// Note that, under the AE tax regime, validation of the supplier's tax ID is not necessary if it does not meet the specified threshold (refer to README section for more details).
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	}

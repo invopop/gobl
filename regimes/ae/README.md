@@ -1,13 +1,8 @@
 # United Arab Emirates (AE) Tax Regime
 
-This document provides an overview of the tax regime in the United Arab Emirates. The UAE tax regime primarily involves two types of indirect taxes: **Value-Added Tax (VAT)** and **Excise Tax**.
+This document provides an overview of the tax regime in the United Arab Emirates.
 
-## Types of Indirect Taxes in the UAE
-
-1. **Value-Added Tax (VAT)**: A general tax applied to most goods and services at a rate of 5%.
-2. **Excise Tax**: Is a form of indirect tax applied to specific categories of products that are considered harmful to health or the environment, such as tobacco and sugary drinks.
-
-### 1. Value-Added Tax (VAT)
+## Value-Added Tax (VAT)
 
 The UAE VAT system categorizes goods and services into three main VAT rates:
 
@@ -15,28 +10,32 @@ The UAE VAT system categorizes goods and services into three main VAT rates:
 - **Zero Rate (0%)**: Applies to certain essential goods, exports, and specific services.
 - **Exempt**: Certain types of goods and services are exempt from VAT, including some financial services or residential real estate.
 
-Businesses required to charge VAT must register with the UAE Federal Tax Authority to get the Tax Registration Number (TRN). Registration can be completed online via the [VAT registration portal](https://tax.gov.ae/en/services/vat.registration.aspx).
+Businesses required to charge VAT must register with the UAE Federal Tax Authority to obtain a Tax Registration Number (TRN). Registration can be completed online via the [VAT registration portal](https://tax.gov.ae/en/services/vat.registration.aspx).
 
-The algorithm to validate the TRN number was not located. Validation must be conducted directly on the official government website.
+## VAT Registration Requirements
 
-### 2. Excise Tax
+Businesses in the UAE must evaluate their eligibility for VAT registration based on their revenue and expenses. The registration requirements are as follows:
 
-Excise Tax is a form of indirect tax on certain goods considered harmful to consumer health or the environment. The following products are subject to Excise Tax in the UAE:
+- **Mandatory Registration**: Businesses are required to register for VAT if the total value of taxable supplies and imports exceeds **AED 375,000** in a 12-month period.
+- **Voluntary Registration**: Businesses may choose to register voluntarily if the total value of taxable supplies and imports, or taxable expenses, exceeds **AED 187,500** within a 12-month period.
 
-- **Tobacco products** (including vapes and vape liquids): 100%
-- **Sugary drinks**: 50%
-- **Energy drinks**: 100%
-- **Carbonated drinks**: 50%
+**Note:** Businesses below the voluntary registration threshold are not permitted to register for VAT and, therefore, will issue invoices without a TRN.
 
-#### Excise Tax Registration
+For more information, visit the ([Federal Tax Authority website](https://tax.gov.ae/en/taxes/Vat/vat.topics/registration.for.vat.aspx))
 
-Businesses that intend to sell goods subject to Excise Tax must register with the UAE Federal Tax Authority. Registration can be completed online via the [official UAE tax authority website](https://tax.gov.ae/en/taxes/excise.tax/excise.tax.topics/excise.tax.registration.aspx).
+### TRN Validation
+
+Currently, no checksum method is available for validating the TRN. Therefore, verification must be performed directly through the official UAE government website.
+
+### Alcohol Sales Tax
+
+In Dubai, a **30% sales tax** on alcohol previously existed but has since been abolished. Some sources suggest that a similar tax persists in Abu Dhabi, but without official confirmation, this has not been included in the UAE tax regime.
 
 ## VAT Invoicing Requirements
 
-In the UAE, businesses must issue VAT-compliant invoices. There are two types of VAT invoices. The standard and the simplified invoice:
+In the UAE, businesses must issue VAT-compliant invoices. There are two types of VAT invoices: the standard and the simplified invoice.
 
 **Simplified VAT Invoice**: Allowed in the following cases:
 
 - When the recipient of goods or services is **not VAT registered**.
-- When the recipient of goods or services **is VAT registered**, and the transaction value does not exceed **AED 10,000** .
+- When the recipient of goods or services **is VAT registered**, and the transaction value does not exceed **AED 10,000**.
