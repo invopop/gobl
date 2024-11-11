@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
 )
@@ -36,9 +37,10 @@ type ExchangeRate struct {
 	// is determined by the source. The time may be zero if referring to a
 	// specific day only.
 	At *cal.DateTime `json:"at,omitempty" jsonschema:"title=At"`
-	// Source provides the name of the source where the exchange rate was
-	// obtained from.
-	Source string `json:"source,omitempty" jsonschema:"title=Source"`
+	// Source key provides a reference to the source the exchange rate was
+	// obtained from. Typically this will be determined by an application
+	// used to update exchange rates automatically.
+	Source cbc.Key `json:"source,omitempty" jsonschema:"title=Source"`
 	// How much is 1 of the "from" currency worth in the "to" currency.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 }
@@ -49,6 +51,7 @@ func (er *ExchangeRate) Validate() error {
 		validation.Field(&er.From, validation.Required),
 		validation.Field(&er.To, validation.Required),
 		validation.Field(&er.At, cal.DateTimeNotZero()),
+		validation.Field(&er.Source),
 		validation.Field(&er.Amount, num.Positive),
 	)
 }
