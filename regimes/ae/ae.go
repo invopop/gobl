@@ -45,7 +45,7 @@ func New() *tax.RegimeDef {
 }
 
 // Validate function assesses the document type to determine if validation is required.
-// Note that, under the AE tax regime, validation of the supplier's tax ID is not necessary if it does not meet the specified threshold (refer to README section for more details).
+// Note that, under the AE tax regime, validation of the supplier's tax ID is not necessary if it does not meet the specified threshold (refer to the README section for more details).
 func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
