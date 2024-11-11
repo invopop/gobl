@@ -13,6 +13,12 @@ const (
 	V1 cbc.Key = "es-verifactu-v1"
 )
 
+// Official stamps or codes validated by government agencies
+const (
+	// StampQR contains the URL included in the QR code.
+	StampQR cbc.Key = "verifactu-qr"
+)
+
 func init() {
 	tax.RegisterAddonDef(newAddon())
 }
