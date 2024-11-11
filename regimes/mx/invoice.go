@@ -69,7 +69,7 @@ func migrateCustomerExtPostCodeToAddress(inv *bill.Invoice) {
 		if len(inv.Customer.Addresses) == 0 {
 			inv.Customer.Addresses = []*org.Address{{}}
 		}
-		inv.Customer.Addresses[0].Code = inv.Customer.Ext[extKeyPostCode].String()
+		inv.Customer.Addresses[0].Code = inv.Customer.Ext[extKeyPostCode].Code()
 	}
 }
 

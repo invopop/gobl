@@ -79,7 +79,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Customer.Addresses)
-		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code)
+		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code.String())
 		assert.False(t, inv.Customer.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("migrate customer post code from zone", func(t *testing.T) {
@@ -88,7 +88,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Customer.Addresses)
-		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code)
+		assert.Equal(t, "12345", inv.Customer.Addresses[0].Code.String())
 		assert.False(t, inv.Customer.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("does not migrate anything when the customer is missing", func(t *testing.T) {

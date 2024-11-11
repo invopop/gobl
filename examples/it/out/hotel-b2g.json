@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0abfdf85e257a1f08d3fb67873c8543921aaf49a3c53241eb040d568c70eb021"
+			"val": "feb8dd76847885f7d513e188e12c5213073c8348c942929c24692ec65e46cf7c"
 		}
 	},
 	"doc": {
@@ -65,6 +65,10 @@
 				{
 					"key": "it-sdi-code",
 					"code": "M5UXCR5"
+				},
+				{
+					"key": "it-sdi-pec",
+					"email": "inbox@example.com"
 				}
 			],
 			"addresses": [

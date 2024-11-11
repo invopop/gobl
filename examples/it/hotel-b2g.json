@@ -44,6 +44,10 @@
       {
         "key": "it-sdi-code",
         "code": "M5UXCR5"
+      },
+      {
+        "key": "it-sdi-pec",
+        "code": "inbox@example.com"
       }
     ],
     "addresses": [

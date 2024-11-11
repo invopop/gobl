@@ -2,6 +2,7 @@ package org
 
 import (
 	"context"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
@@ -33,18 +34,40 @@ type Address struct {
 	Street string `json:"street,omitempty" jsonschema:"title=Street"`
 	// Additional street address details.
 	StreetExtra string `json:"street_extra,omitempty" jsonschema:"title=Extended Street"`
-	// Village, town, district, or city, typically inside a region.
+	// Name of a village, town, district, or city, typically inside a region.
 	Locality string `json:"locality,omitempty" jsonschema:"title=Locality"`
-	// Province, county, or state, inside a country.
+	// Name of a city, province, county, or state, inside a country.
 	Region string `json:"region,omitempty" jsonschema:"title=Region"`
+	// State or province code for countries that require it.
+	State cbc.Code `json:"state,omitempty" jsonschema:"title=State"`
 	// Post or ZIP code.
-	Code string `json:"code,omitempty" jsonschema:"title=Code"`
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// ISO country code.
 	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// When the postal address is not sufficient, coordinates help locate the address more precisely.
 	Coordinates *Coordinates `json:"coords,omitempty" jsonschema:"title=Coordinates"`
 	// Any additional semi-structure details about the address.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+}
+
+// Normalize will perform basic normalization of the address's data.
+func (a *Address) Normalize(normalizers tax.Normalizers) {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.PostOfficeBox = strings.TrimSpace(a.PostOfficeBox)
+	a.Number = strings.TrimSpace(a.Number)
+	a.Floor = strings.TrimSpace(a.Floor)
+	a.Block = strings.TrimSpace(a.Block)
+	a.Door = strings.TrimSpace(a.Door)
+	a.Street = strings.TrimSpace(a.Street)
+	a.StreetExtra = strings.TrimSpace(a.StreetExtra)
+	a.Locality = strings.TrimSpace(a.Locality)
+	a.Region = strings.TrimSpace(a.Region)
+	a.State = cbc.NormalizeAlphanumericalCode(a.State)
+	a.Code = cbc.NormalizeCode(a.Code)
+	normalizers.Each(a)
 }
 
 // Validate checks that an address looks okay.
@@ -56,6 +79,8 @@ func (a *Address) Validate() error {
 func (a *Address) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.UUID),
+		validation.Field(&a.State),
+		validation.Field(&a.Code),
 		validation.Field(&a.Country),
 		validation.Field(&a.Coordinates),
 		validation.Field(&a.Meta),

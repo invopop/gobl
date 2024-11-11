@@ -29,12 +29,17 @@
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Code or ID that identifies the Inbox."
+          "description": "Code or ID that identifies the Inbox. Mutually exclusive with URL and Email."
         },
         "url": {
           "type": "string",
           "title": "URL",
-          "description": "URL of the inbox that includes the protocol, server, and path. May\nbe used instead of the Code to identify the inbox."
+          "description": "URL of the inbox that includes the protocol, server, and path. May\nbe used instead of the Code to identify the inbox. Mutually exclusive with\nCode and Email."
+        },
+        "email": {
+          "type": "string",
+          "title": "Email",
+          "description": "Email address for the inbox. Mutually exclusive with Code and URL."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
