@@ -31,6 +31,7 @@ func newAddon() *tax.AddonDef {
 		},
 		Extensions:  extensions,
 		Validator:   validate,
+		Scenarios:   scenarios,
 		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}

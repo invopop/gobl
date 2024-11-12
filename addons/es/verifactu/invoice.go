@@ -13,7 +13,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	{
 		Schema: bill.ShortSchemaInvoice,
 		Extensions: []cbc.Key{
-			ExtKeyCorrection,
+			ExtKeyDocType,
 		},
 	},
 }
@@ -76,7 +76,7 @@ func validateInvoicePreceding(val any) error {
 		validation.Field(&p.IssueDate, validation.Required),
 		validation.Field(&p.Series, validation.Required),
 		validation.Field(&p.Ext,
-			tax.ExtensionsRequires(ExtKeyCorrection),
+			tax.ExtensionsRequires(ExtKeyDocType),
 			validation.Skip,
 		),
 	)

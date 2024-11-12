@@ -6,10 +6,10 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 )
 
-// Extension keys for TicketBAI
+// Extension keys for Verifactu
 const (
+	ExtKeyDocType     cbc.Key = "es-verifactu-doc-type"
 	ExtKeyExemption   cbc.Key = "es-verifactu-exemption"
-	ExtKeyCorrection  cbc.Key = "es-verifactu-correction"
 	ExtKeyTaxCategory cbc.Key = "es-verifactu-tax-category"
 )
 
@@ -17,13 +17,13 @@ var extensions = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyExemption,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Exemption code",
-			i18n.ES: "Código de Exención de Verifactu",
+			i18n.EN: "Verifactu Exemption code - L10",
+			i18n.ES: "Código de Exención de Verifactu - L10",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Codes used by TicketBAI for both "exempt", "not-subject", and reverse
-				charge transactions. In the TicketBAI format these are separated,
+				Codes used by Verifactu for both "exempt", "not-subject", and reverse
+				charge transactions. In the Verifactu format these are separated,
 				but in order to simplify GOBL and be more closely aligned with
 				other countries we've combined them into one.
 			`),
@@ -32,36 +32,36 @@ var extensions = []*cbc.KeyDefinition{
 			{
 				Value: "E1",
 				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 20 of the Foral VAT Law",
-					i18n.ES: "Exenta: por el artículo 20 de la Norma Foral del IVA",
+					i18n.EN: "Exempt: pursuant to Article 20. Exemptions in internal operations.",
+					i18n.ES: "Exenta: por el artículo 20. Exenciones en operaciones interiores.",
 				},
 			},
 			{
 				Value: "E2",
 				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 21 of the Foral VAT Law",
-					i18n.ES: "Exenta: por el artículo 21 de la Norma Foral del IVA",
+					i18n.EN: "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
+					i18n.ES: "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes.",
 				},
 			},
 			{
 				Value: "E3",
 				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 22 of the Foral VAT Law",
-					i18n.ES: "Exenta: por el artículo 22 de la Norma Foral del IVA",
+					i18n.EN: "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
+					i18n.ES: "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones.",
 				},
 			},
 			{
 				Value: "E4",
 				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Articles 23 and 24 of the Foral VAT Law",
-					i18n.ES: "Exenta: por el artículos 23 y 24 de la Norma Foral del IVA",
+					i18n.EN: "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
+					i18n.ES: "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones.",
 				},
 			},
 			{
 				Value: "E5",
 				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 25 of the Foral VAT law",
-					i18n.ES: "Exenta: por el artículo 25 de la Norma Foral del IVA",
+					i18n.EN: "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
+					i18n.ES: "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro.",
 				},
 			},
 			{
@@ -74,19 +74,38 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyCorrection,
+		Key: ExtKeyDocType,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Rectification Type Code",
-			i18n.ES: "Verifactu Código de Factura Rectificativa",
+			i18n.EN: "Verifactu Invoice Type Code - L2",
+			i18n.ES: "Código de Tipo de Factura de Verifactu - L2",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Corrected or rectified invoices that need to be sent in the Verifactu format
-				require a specific type code to be defined alongside the preceding invoice
-				data.
+				Invoice type code used to identify the type of invoice being sent.
 			`),
 		},
 		Values: []*cbc.ValueDefinition{
+			{
+				Value: "F1",
+				Name: i18n.String{
+					i18n.EN: "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
+					i18n.ES: "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)",
+				},
+			},
+			{
+				Value: "F2",
+				Name: i18n.String{
+					i18n.EN: "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
+					i18n.ES: "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)",
+				},
+			},
+			{
+				Value: "F3",
+				Name: i18n.String{
+					i18n.EN: "Invoice in substitution of simplified invoices.",
+					i18n.ES: "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas.",
+				},
+			},
 			{
 				Value: "R1",
 				Name: i18n.String{
@@ -127,8 +146,8 @@ var extensions = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyTaxCategory,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Tax Category Code",
-			i18n.ES: "Verifactu Impuesto de Aplicacion",
+			i18n.EN: "Verifactu Tax Category Code - L1",
+			i18n.ES: "Código de Tipo de Impuesto de Verifactu - L1",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -161,7 +180,7 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "04",
+				Value: "05",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otro",
