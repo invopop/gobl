@@ -602,4 +602,4 @@ New number formatting support! Expect some possible breaking SDK changes with th
 
 ### Added
 
-- United Arab Emirates (AE) tax regime.
+- ae: added UAE regime
