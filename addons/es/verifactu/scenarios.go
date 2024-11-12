@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	// TagSubstitution is used to identify substitution invoices.
 	TagSubstitution = "substitution"
 )
 
