@@ -599,3 +599,7 @@ New number formatting support! Expect some possible breaking SDK changes with th
 ## [v0.70.1] - 2024-03-25
 
 - Last version before CHANGELOG.md.
+
+### Added
+
+- United Arab Emirates (AE) tax regime.
