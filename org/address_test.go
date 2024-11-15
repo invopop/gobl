@@ -73,3 +73,56 @@ func TestAddressValidation(t *testing.T) {
 		assert.ErrorContains(t, a.Validate(), "uuid: invalid UUID length: 7")
 	})
 }
+
+func TestAddressLineOne(t *testing.T) {
+	t.Run("missing street", func(t *testing.T) {
+		a := &org.Address{
+			Number:  "12",
+			Country: "GB",
+		}
+		assert.Equal(t, "12", a.LineOne())
+	})
+
+	t.Run("number first", func(t *testing.T) {
+		a := &org.Address{
+			Number:  "12",
+			Street:  "Main St.",
+			Country: "GB",
+		}
+		assert.Equal(t, "12 Main St.", a.LineOne())
+	})
+
+	t.Run("street first", func(t *testing.T) {
+		a := &org.Address{
+			Number:  "12",
+			Street:  "Gran Vía",
+			Country: "ES",
+		}
+		assert.Equal(t, "Gran Vía 12", a.LineOne())
+	})
+
+	t.Run("combine number details", func(t *testing.T) {
+		a := &org.Address{
+			Number:  "12",
+			Block:   "esc. 1",
+			Floor:   "10",
+			Door:    "C",
+			Street:  "Gran Vía",
+			Country: "ES",
+		}
+		assert.Equal(t, "Gran Vía 12 esc. 1 10 C", a.LineOne())
+	})
+}
+
+func TestAddressLineTwo(t *testing.T) {
+	t.Run("number first", func(t *testing.T) {
+		a := &org.Address{
+			Number:      "12",
+			Street:      "Main St.",
+			StreetExtra: "Apt. 3",
+			Country:     "GB",
+		}
+		assert.Equal(t, "12 Main St.", a.LineOne())
+		assert.Equal(t, "Apt. 3", a.LineTwo())
+	})
+}

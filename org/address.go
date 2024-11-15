@@ -95,3 +95,54 @@ func (Address) JSONSchemaExtend(js *jsonschema.Schema) {
 		},
 	}
 }
+
+// LineOne returns the first line of the address by automatically
+// combining street, number, and other details into a single line.
+// This is useful for compatibility with other formats that don't
+// support the number fields directly.
+func (a *Address) LineOne() string {
+	str := a.Street
+	num := a.CompleteNumber()
+	if num != "" {
+		if str == "" {
+			return num
+		}
+		if a.numberFirst() {
+			str = num + " " + str
+		} else {
+			str = str + " " + num
+		}
+	}
+	return str
+}
+
+// LineTwo returns the second line of the address which for GOBL
+// is the `StreetExtra` field.
+func (a *Address) LineTwo() string {
+	return a.StreetExtra
+}
+
+// CompleteNumber will combine all the number related details, such
+// as number, block, floor, and door, into a single string separated
+// by spaces.
+func (a *Address) CompleteNumber() string {
+	strs := []string{a.Number, a.Block, a.Floor, a.Door}
+	// Remove empty strings.
+	var parts []string
+	for _, s := range strs {
+		if s != "" {
+			parts = append(parts, s)
+		}
+	}
+	return strings.Join(parts, " ")
+}
+
+func (a *Address) numberFirst() bool {
+	// TODO: add more countries here!
+	switch a.Country.Code() {
+	case l10n.GB, l10n.US, l10n.CA, l10n.FR:
+		return true
+	default:
+		return false
+	}
+}
