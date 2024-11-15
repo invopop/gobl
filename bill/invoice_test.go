@@ -1135,6 +1135,26 @@ func TestValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank.).")
 	})
+
+	t.Run("missing lines", func(t *testing.T) {
+		inv := baseInvoice(t)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "lines: cannot be empty without discounts or charges.")
+	})
+
+	t.Run("missing lines with charge", func(t *testing.T) {
+		inv := baseInvoice(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Reason: "Testing",
+				Amount: num.MakeAmount(1000, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
 }
 
 func TestInvoiceTagsValidation(t *testing.T) {
