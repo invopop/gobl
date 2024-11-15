@@ -104,6 +104,9 @@ func (a *Address) LineOne() string {
 	str := a.Street
 	num := a.CompleteNumber()
 	if num != "" {
+		if str == "" {
+			return num
+		}
 		if a.numberFirst() {
 			str = num + " " + str
 		} else {

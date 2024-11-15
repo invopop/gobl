@@ -75,6 +75,14 @@ func TestAddressValidation(t *testing.T) {
 }
 
 func TestAddressLineOne(t *testing.T) {
+	t.Run("missing street", func(t *testing.T) {
+		a := &org.Address{
+			Number:  "12",
+			Country: "GB",
+		}
+		assert.Equal(t, "12", a.LineOne())
+	})
+
 	t.Run("number first", func(t *testing.T) {
 		a := &org.Address{
 			Number:  "12",
