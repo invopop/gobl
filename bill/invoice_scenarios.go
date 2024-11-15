@@ -19,9 +19,11 @@ func (inv *Invoice) GetExtensions() []tax.Extensions {
 			exts = append(exts, inv.Tax.Ext)
 		}
 	}
-	for _, cat := range inv.Totals.Taxes.Categories {
-		for _, rate := range cat.Rates {
-			exts = append(exts, rate.Ext)
+	if inv.Totals != nil && inv.Totals.Taxes != nil {
+		for _, cat := range inv.Totals.Taxes.Categories {
+			for _, rate := range cat.Rates {
+				exts = append(exts, rate.Ext)
+			}
 		}
 	}
 	return exts

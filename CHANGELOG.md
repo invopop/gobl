@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `org`: `Address` includes `LineOne()`, `LineTwo()`, `CompleteNumber()` methods to help with conversion to other formats with some regional formatting.
 
+### Changes
+
+- `bill`: `Invoice` can now have empty lines if discounts or charges present.
+
+### Fixes
+
+- `bill`: `Invoice` `GetExtensions` method now works correctly if missing totals [Issue #424](https://github.com/invopop/gobl/issues/424).
+
 ## [v0.205.0]
 
 ### Added
