@@ -26,6 +26,7 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Brazil NFS-e 1.X",
 		},
 		Extensions: extensions,
+		Identities: identities,
 		Validator:  validate,
 	}
 }

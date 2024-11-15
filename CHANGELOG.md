@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `org`: `Address` includes `LineOne()`, `LineTwo()`, `CompleteNumber()` methods to help with conversion to other formats with some regional formatting.
+- `br`: new extensions and identities for suppliers
 
 ### Changes
 
