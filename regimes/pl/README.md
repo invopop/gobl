@@ -2,7 +2,7 @@
 
 Poland uses the FA_VAT format for their e-invoicing system.
 
-Example PL GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example PL GOBL files in the [`examples`](../../examples/pl) (uncalculated documents) and [`examples/out`](../../examples/pl/out) (calculated envelopes) subdirectories.
 
 ## Public Documentation
 
@@ -10,7 +10,7 @@ Example PL GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 - [Invoice Templates (Wzór faktury) FA(1)](http://crd.gov.pl/wzor/2021/11/29/11089/)
 - [Invoice Templates (Wzór faktury) FA(2)](http://crd.gov.pl/wzor/2023/06/29/12648/)
 
-## Poland specifics
+## Poland-specific Requirements
 
 ### `TFormaPlatnosci` - Payment Means
 
