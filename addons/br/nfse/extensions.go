@@ -38,6 +38,15 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates whether a party benefits from a fiscal incentive.
+
+				List of codes taken from the national NFSe standard:
+				https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+				(Section 10.2, Field B-68)
+			`),
+		},
 	},
 	{
 		Key: ExtKeyMunicipality,
@@ -96,6 +105,15 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates whether a party is opting for the “Simples Nacional” tax regime.
+
+				List of codes taken from the national NFSe standard:
+				https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+				(Section 10.2, Field B-67)
+			`),
+		},
 	},
 	{
 		Key: ExtKeySpecialRegime,
@@ -146,6 +164,15 @@ var extensions = []*cbc.KeyDefinition{
 					i18n.PT: "Microempresa ou Empresa de Pequeno Porte (ME EPP).",
 				},
 			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates a special tax regime that the party is subject to.
+
+				List of codes taken from the national NFSe standard:
+				https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+				(Section 10.2, Field B-66)
+			`),
 		},
 	},
 }
