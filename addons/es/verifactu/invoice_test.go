@@ -86,7 +86,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 						Category: "VAT",
 						Rate:     "exempt",
 						Ext: tax.Extensions{
-							verifactu.ExtKeyExemption: "E1",
+							verifactu.ExtKeyTaxClassification: "E1",
 						},
 					},
 				},

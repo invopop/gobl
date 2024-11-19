@@ -9,59 +9,11 @@ import (
 // Extension keys for Verifactu
 const (
 	ExtKeyDocType           cbc.Key = "es-verifactu-doc-type"
-	ExtKeyIdentity          cbc.Key = "es-verifactu-identity"
-	ExtKeyExemption         cbc.Key = "es-verifactu-exemption"
-	ExtKeyTaxCategory       cbc.Key = "es-verifactu-tax-category"
 	ExtKeyTaxClassification cbc.Key = "es-verifactu-tax-classification"
 	ExtKeyTaxRegime         cbc.Key = "es-verifactu-tax-regime"
 )
 
 var extensions = []*cbc.KeyDefinition{
-	{
-		Key: ExtKeyTaxCategory,
-		Name: i18n.String{
-			i18n.EN: "Verifactu Tax Category Code - L1",
-			i18n.ES: "Código de Tipo de Impuesto de Verifactu - L1",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-			Tax category code used to identify the type of tax being applied to the invoice.
-			The code must be one of the predefined values that correspond to the main Spanish
-			tax regimes: IVA (Value Added Tax), IPSI (Tax on Production, Services and Imports),
-			IGIC (Canary Islands General Indirect Tax), or Other.
-			`),
-		},
-		Values: []*cbc.ValueDefinition{
-			{
-				Value: "01",
-				Name: i18n.String{
-					i18n.EN: "IVA",
-					i18n.ES: "IVA",
-				},
-			},
-			{
-				Value: "02",
-				Name: i18n.String{
-					i18n.EN: "IPSI",
-					i18n.ES: "IPSI",
-				},
-			},
-			{
-				Value: "03",
-				Name: i18n.String{
-					i18n.EN: "IGIC",
-					i18n.ES: "IGIC",
-				},
-			},
-			{
-				Value: "05",
-				Name: i18n.String{
-					i18n.EN: "Other",
-					i18n.ES: "Otro",
-				},
-			},
-		},
-	},
 	{
 		Key: ExtKeyDocType,
 		Name: i18n.String{
@@ -133,66 +85,10 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyIdentity,
-		Name: i18n.String{
-			i18n.EN: "Verifactu Identity Type Code - L7",
-			i18n.ES: "Código de Tipo de Identificación de Verifactu - L7",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Identity type code used to identify the type of identity being used.
-			`),
-		},
-		Values: []*cbc.ValueDefinition{
-			{
-				Value: "02",
-				Name: i18n.String{
-					i18n.EN: "NIF-VAT",
-					i18n.ES: "NIF-IVA",
-				},
-			},
-			{
-				Value: "03",
-				Name: i18n.String{
-					i18n.EN: "Passport",
-					i18n.ES: "Pasaporte",
-				},
-			},
-			{
-				Value: "04",
-				Name: i18n.String{
-					i18n.EN: "Official identification document issued by the country or territory of residence",
-					i18n.ES: "Documento oficial de identificación expedido por el país o territorio de residencia",
-				},
-			},
-			{
-				Value: "05",
-				Name: i18n.String{
-					i18n.EN: "Certificate of residence",
-					i18n.ES: "Certificado de residencia",
-				},
-			},
-			{
-				Value: "06",
-				Name: i18n.String{
-					i18n.EN: "Other supporting document",
-					i18n.ES: "Otro documento probatorio",
-				},
-			},
-			{
-				Value: "07",
-				Name: i18n.String{
-					i18n.EN: "Not registered",
-					i18n.ES: "No censado",
-				},
-			},
-		},
-	},
-	{
 		Key: ExtKeyTaxRegime,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Tax Regime Code - L8",
-			i18n.ES: "Código de Régimen de Impuesto de Verifactu - L8",
+			i18n.EN: "Verifactu Tax Regime Code - L8A",
+			i18n.ES: "Código de Régimen de Impuesto de Verifactu - L8A",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
@@ -324,12 +220,13 @@ var extensions = []*cbc.KeyDefinition{
 	{
 		Key: ExtKeyTaxClassification,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Tax Classification Code - L9",
-			i18n.ES: "Código de Clasificación de Impuesto de Verifactu - L9",
+			i18n.EN: "Verifactu Tax Classification/Exemption Code - L9/10",
+			i18n.ES: "Código de Clasificación/Exención de Impuesto de Verifactu - L9/10",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Tax classification code used to identify the type of tax being applied to the invoice.
+				Tax classification code used to identify the type of tax being applied to the invoice. In Verifactu these
+				lists are separate but here they are combined.
 			`),
 		},
 		Values: []*cbc.ValueDefinition{
@@ -361,23 +258,6 @@ var extensions = []*cbc.KeyDefinition{
 					i18n.ES: "Operación No Sujeta por Reglas de localización",
 				},
 			},
-		},
-	},
-	{
-		Key: ExtKeyExemption,
-		Name: i18n.String{
-			i18n.EN: "Verifactu Exemption code - L10",
-			i18n.ES: "Código de Exención de Verifactu - L10",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Codes used by Verifactu for both "exempt", "not-subject", and reverse
-				charge transactions. In the Verifactu format these are separated,
-				but in order to simplify GOBL and be more closely aligned with
-				other countries we've combined them into one.
-			`),
-		},
-		Values: []*cbc.ValueDefinition{
 			{
 				Value: "E1",
 				Name: i18n.String{
