@@ -164,4 +164,69 @@ func TestSuppliersValidation(t *testing.T) {
 			assert.NotContains(t, err.Error(), "addresses: (0:")
 		}
 	})
+
+	t.Run("validates extensions", func(t *testing.T) {
+		sup := new(org.Party)
+		inv := &bill.Invoice{
+			Supplier: sup,
+		}
+		err := addon.Validator(inv)
+		if assert.Error(t, err) {
+			assert.Contains(t, err.Error(), "br-nfse-simples-nacional: required")
+			assert.Contains(t, err.Error(), "br-nfse-municipality: required")
+			assert.Contains(t, err.Error(), "br-nfse-fiscal-incentive: required")
+		}
+
+		sup.Ext = tax.Extensions{
+			nfse.ExtKeySimplesNacional: "1",
+			nfse.ExtKeyMunicipality:    "12345678",
+			nfse.ExtKeyFiscalIncentive: "2",
+		}
+		err = addon.Validator(inv)
+		if assert.Error(t, err) {
+			assert.NotContains(t, err.Error(), "br-nfse-simples-nacional: required")
+			assert.NotContains(t, err.Error(), "br-nfse-municipality: required")
+			assert.NotContains(t, err.Error(), "br-nfse-fiscal-incentive: required")
+		}
+	})
+}
+
+func TestSuppliersNormalization(t *testing.T) {
+	addon := tax.AddonForKey(nfse.V1)
+
+	tests := []struct {
+		name     string
+		supplier *org.Party
+		out      tax.ExtValue
+	}{
+		{
+			name:     "no supplier",
+			supplier: nil,
+		},
+		{
+			name:     "sets default fiscal incentive",
+			supplier: &org.Party{},
+			out:      "2",
+		},
+		{
+			name: "does not override fiscal incentive",
+			supplier: &org.Party{
+				Ext: tax.Extensions{
+					nfse.ExtKeyFiscalIncentive: "1",
+				},
+			},
+			out: "1",
+		},
+	}
+	for _, ts := range tests {
+		t.Run(ts.name, func(t *testing.T) {
+			inv := &bill.Invoice{Supplier: ts.supplier}
+			addon.Normalizer(inv)
+			if ts.supplier == nil {
+				assert.Nil(t, inv.Supplier)
+			} else {
+				assert.Equal(t, ts.out, inv.Supplier.Ext[nfse.ExtKeyFiscalIncentive])
+			}
+		})
+	}
 }

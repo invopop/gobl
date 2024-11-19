@@ -132,10 +132,10 @@ For example:
 
 Report whether the party benefits from a fiscal incentive using the `br-nfse-fiscal-incentive` extension set to any of these codes:
 
-| Code | Description             |
-| ---- | ----------------------- |
-| `1`  | Has incentive           |
-| `2`  | Does not have incentive |
+| Code | Description                       |
+| ---- | --------------------------------- |
+| `1`  | Has incentive                     |
+| `2`  | Does not have incentive (Default) |
 
 For example:
 

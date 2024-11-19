@@ -28,6 +28,7 @@ func newAddon() *tax.AddonDef {
 		Extensions: extensions,
 		Identities: identities,
 		Validator:  validate,
+		Normalizer: normalize,
 	}
 }
 
@@ -41,4 +42,11 @@ func validate(doc any) error {
 		return validateItem(obj)
 	}
 	return nil
+}
+
+func normalize(doc any) {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeSupplier(obj.Supplier)
+	}
 }

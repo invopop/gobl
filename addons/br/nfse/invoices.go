@@ -7,6 +7,11 @@ import (
 	"github.com/invopop/validation"
 )
 
+const (
+	// FiscalIncentiveDefault is the default value for the fiscal incentive extenstion
+	FiscalIncentiveDefault = "2" // No incentiva
+)
+
 func validateInvoice(inv *bill.Invoice) error {
 	if inv == nil {
 		return nil
@@ -57,6 +62,7 @@ func validateSupplier(value interface{}) error {
 			tax.ExtensionsRequires(
 				ExtKeySimplesNacional,
 				ExtKeyMunicipality,
+				ExtKeyFiscalIncentive,
 			),
 			validation.Skip,
 		),
@@ -76,4 +82,17 @@ func validateSupplierAddress(value interface{}) error {
 		validation.Field(&obj.State, validation.Required),
 		validation.Field(&obj.Code, validation.Required),
 	)
+}
+
+func normalizeSupplier(sup *org.Party) {
+	if sup == nil {
+		return
+	}
+
+	if !sup.Ext.Has(ExtKeyFiscalIncentive) {
+		if sup.Ext == nil {
+			sup.Ext = make(tax.Extensions)
+		}
+		sup.Ext[ExtKeyFiscalIncentive] = FiscalIncentiveDefault
+	}
 }
