@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "31573fb261adbfa6011c8c21e5e53c4a7546389e6a39fc47124d0e34fb698811"
+			"val": "6b9933fc6209359b95583878eb64c358ac1b9028727c3e992ec4e78f7a196687"
 		}
 	},
 	"doc": {
@@ -91,7 +91,10 @@
 				"taxes": [
 					{
 						"cat": "ISS",
-						"percent": "15%"
+						"percent": "15%",
+						"ext": {
+							"br-nfse-iss-liability": "1"
+						}
 					}
 				],
 				"total": "1500.00"
@@ -106,6 +109,9 @@
 						"code": "ISS",
 						"rates": [
 							{
+								"ext": {
+									"br-nfse-iss-liability": "1"
+								},
 								"base": "1500.00",
 								"percent": "15%",
 								"amount": "225.00"

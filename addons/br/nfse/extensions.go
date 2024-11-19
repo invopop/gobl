@@ -14,6 +14,7 @@ import (
 const (
 	ExtKeyCNAE            = "br-nfse-cnae"
 	ExtKeyFiscalIncentive = "br-nfse-fiscal-incentive"
+	ExtKeyISSLiability    = "br-nfse-iss-liability"
 	ExtKeyMunicipality    = "br-nfse-municipality"
 	ExtKeyService         = "br-nfse-service"
 	ExtKeySimplesNacional = "br-nfse-simples-nacional"
@@ -67,6 +68,74 @@ var extensions = []*cbc.KeyDefinition{
 
 				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-68)
+			`),
+		},
+	},
+	{
+		Key: ExtKeyISSLiability,
+		Name: i18n.String{
+			i18n.EN: "ISS Liability",
+			i18n.PT: "Exigibilidade ISS",
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "1",
+				Name: i18n.String{
+					i18n.EN: "Liable",
+					i18n.PT: "Exigível",
+				},
+			},
+			{
+				Value: "2",
+				Name: i18n.String{
+					i18n.EN: "Not subject",
+					i18n.PT: "Não incidência",
+				},
+			},
+			{
+				Value: "3",
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.PT: "Isenção",
+				},
+			},
+			{
+				Value: "4",
+				Name: i18n.String{
+					i18n.EN: "Export",
+					i18n.PT: "Exportação",
+				},
+			},
+			{
+				Value: "5",
+				Name: i18n.String{
+					i18n.EN: "Immune",
+					i18n.PT: "Imunidade",
+				},
+			},
+			{
+				Value: "6",
+				Name: i18n.String{
+					i18n.EN: "Suspended Judicially",
+					i18n.PT: "Suspensa por Decisão Judicial",
+				},
+			},
+			{
+				Value: "7",
+				Name: i18n.String{
+					i18n.EN: "Suspended Administratively",
+					i18n.PT: "Suspensa por Processo Administrativo",
+				},
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the ISS liability status, i.e., whether the ISS tax is due or not and why.
+
+				List of codes taken from the national NFSe standard:
+
+				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+				(Section 10.2, Field B-38)
 			`),
 		},
 	},

@@ -181,4 +181,31 @@ For example:
 //...
 ```
 
+#### ISS Liability
 
+Report the ISS liability -i.e. whether the tax is due or not and why– using the `br-nfse-iss-liability` extension at ISS tax level. Find the list of possible codes below:
+
+| Code | Description                |
+| ---- | -------------------------- |
+| `1`  | Liable (Default)           |
+| `2`  | Not subject                |
+| `3`  | Exempt                     |
+| `4`  | Export                     |
+| `5`  | Immune                     |
+| `6`  | Suspended Judicially       |
+| `7`  | Suspended Administratively |
+
+For example:
+
+```js
+"lines": [
+  {
+//...
+    "taxes": [
+      {
+        "cat": "ISS",
+        "ext": {
+          "br-nfse-iss-liability": "1"
+        }
+//...
+```

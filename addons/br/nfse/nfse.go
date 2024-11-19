@@ -40,6 +40,8 @@ func validate(doc any) error {
 		return validateLine(obj)
 	case *org.Item:
 		return validateItem(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }
@@ -48,5 +50,7 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeSupplier(obj.Supplier)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }

@@ -42,6 +42,67 @@
       ]
     },
     {
+      "key": "br-nfse-iss-liability",
+      "name": {
+        "en": "ISS Liability",
+        "pt": "Exigibilidade ISS"
+      },
+      "desc": {
+        "en": "Indicates the ISS liability status, i.e., whether the ISS tax is due or not and why.\n\nList of codes taken from the national NFSe standard:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-38)"
+      },
+      "values": [
+        {
+          "value": "1",
+          "name": {
+            "en": "Liable",
+            "pt": "Exigível"
+          }
+        },
+        {
+          "value": "2",
+          "name": {
+            "en": "Not subject",
+            "pt": "Não incidência"
+          }
+        },
+        {
+          "value": "3",
+          "name": {
+            "en": "Exempt",
+            "pt": "Isenção"
+          }
+        },
+        {
+          "value": "4",
+          "name": {
+            "en": "Export",
+            "pt": "Exportação"
+          }
+        },
+        {
+          "value": "5",
+          "name": {
+            "en": "Immune",
+            "pt": "Imunidade"
+          }
+        },
+        {
+          "value": "6",
+          "name": {
+            "en": "Suspended Judicially",
+            "pt": "Suspensa por Decisão Judicial"
+          }
+        },
+        {
+          "value": "7",
+          "name": {
+            "en": "Suspended Administratively",
+            "pt": "Suspensa por Processo Administrativo"
+          }
+        }
+      ]
+    },
+    {
       "key": "br-nfse-municipality",
       "name": {
         "en": "IGBE Municipality Code",

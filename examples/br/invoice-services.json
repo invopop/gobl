@@ -79,7 +79,10 @@
       "taxes": [
         {
           "cat": "ISS",
-          "percent": "15%"
+          "percent": "15%",
+          "ext": {
+            "br-nfse-iss-liability": "1"
+          }
         }
       ]
     }
