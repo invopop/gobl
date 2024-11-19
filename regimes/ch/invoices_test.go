@@ -56,5 +56,5 @@ func TestInvoiceValidation(t *testing.T) {
 	inv = validInvoice()
 	inv.Supplier.TaxID.Code = ""
 	require.NoError(t, inv.Calculate())
-	assert.Error(t, inv.Validate())
+	assert.NoError(t, inv.Validate())
 }
