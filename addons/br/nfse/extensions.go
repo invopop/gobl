@@ -12,6 +12,7 @@ import (
 // of these extensions are common, they can be moved to the regime or to a
 // shared addon.
 const (
+	ExtKeyCNAE            = "br-nfse-cnae"
 	ExtKeyFiscalIncentive = "br-nfse-fiscal-incentive"
 	ExtKeyMunicipality    = "br-nfse-municipality"
 	ExtKeyService         = "br-nfse-service"
@@ -20,6 +21,22 @@ const (
 )
 
 var extensions = []*cbc.KeyDefinition{
+	{
+		Key: ExtKeyCNAE,
+		Name: i18n.String{
+			i18n.EN: "CNAE code",
+			i18n.PT: "Código CNAE",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The CNAE (National Classification of Economic Activities) code for a service.
+
+				For further details on the list of possible codes, see:
+
+				* https://www.ibge.gov.br/en/statistics/technical-documents/statistical-lists-and-classifications/17245-national-classification-of-economic-activities.html
+			`),
+		},
+	},
 	{
 		Key: ExtKeyFiscalIncentive,
 		Name: i18n.String{
@@ -47,7 +64,8 @@ var extensions = []*cbc.KeyDefinition{
 				Indicates whether a party benefits from a fiscal incentive.
 
 				List of codes taken from the national NFSe standard:
-				https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+
+				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-68)
 			`),
 		},
@@ -114,7 +132,8 @@ var extensions = []*cbc.KeyDefinition{
 				Indicates whether a party is opting for the “Simples Nacional” tax regime.
 
 				List of codes taken from the national NFSe standard:
-				https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+
+				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-67)
 			`),
 		},
@@ -174,7 +193,8 @@ var extensions = []*cbc.KeyDefinition{
 				Indicates a special tax regime that the party is subject to.
 
 				List of codes taken from the national NFSe standard:
-				https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
+
+				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-66)
 			`),
 		},

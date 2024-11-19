@@ -6,13 +6,23 @@
   },
   "extensions": [
     {
+      "key": "br-nfse-cnae",
+      "name": {
+        "en": "CNAE code",
+        "pt": "Código CNAE"
+      },
+      "desc": {
+        "en": "The CNAE (National Classification of Economic Activities) code for a service.\n\nFor further details on the list of possible codes, see:\n\n* https://www.ibge.gov.br/en/statistics/technical-documents/statistical-lists-and-classifications/17245-national-classification-of-economic-activities.html"
+      }
+    },
+    {
       "key": "br-nfse-fiscal-incentive",
       "name": {
         "en": "Fiscal Incentive",
         "pt": "Incentivo Fiscal"
       },
       "desc": {
-        "en": "Indicates whether a party benefits from a fiscal incentive.\n\nList of codes taken from the national NFSe standard:\nhttps://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-68)"
+        "en": "Indicates whether a party benefits from a fiscal incentive.\n\nList of codes taken from the national NFSe standard:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-68)"
       },
       "values": [
         {
@@ -59,7 +69,7 @@
         "pt": "Optante pelo Simples Nacional"
       },
       "desc": {
-        "en": "Indicates whether a party is opting for the “Simples Nacional” tax regime.\n\nList of codes taken from the national NFSe standard:\nhttps://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
+        "en": "Indicates whether a party is opting for the “Simples Nacional” tax regime.\n\nList of codes taken from the national NFSe standard:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
       },
       "values": [
         {
@@ -85,7 +95,7 @@
         "pt": "Regime Especial de Tributação"
       },
       "desc": {
-        "en": "Indicates a special tax regime that the party is subject to.\n\nList of codes taken from the national NFSe standard:\nhttps://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-66)"
+        "en": "Indicates a special tax regime that the party is subject to.\n\nList of codes taken from the national NFSe standard:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-66)"
       },
       "values": [
         {

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b1fc7b37b41dc9df2148365e52dd97cdc3a3847de92d5b7560b3cf40cda10f77"
+			"val": "31573fb261adbfa6011c8c21e5e53c4a7546389e6a39fc47124d0e34fb698811"
 		}
 	},
 	"doc": {
@@ -83,6 +83,7 @@
 					"name": "Consultancy Services",
 					"price": "100.00",
 					"ext": {
+						"br-nfse-cnae": "62.01-5-01",
 						"br-nfse-service": "10.5"
 					}
 				},

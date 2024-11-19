@@ -72,7 +72,8 @@
         "name": "Consultancy Services",
         "price": "100.00",
         "ext": {
-          "br-nfse-service": "10.5"
+          "br-nfse-service": "10.5",
+          "br-nfse-cnae": "62.01-5-01"
         }
       },
       "taxes": [
