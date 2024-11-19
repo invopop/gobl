@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixes
 
+- `ch`: Deleted Supplier validation (not needed for under 2300 CHF/year)
 - `bill`: `Invoice` `GetExtensions` method now works correctly if missing totals [Issue #424](https://github.com/invopop/gobl/issues/424).
 
 ## [v0.205.0] - 2024-11-12
