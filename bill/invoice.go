@@ -151,7 +151,10 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.By(validateInvoiceCustomer),
 		),
 		validation.Field(&inv.Lines,
-			validation.Required,
+			validation.When(
+				len(inv.Discounts) == 0 && len(inv.Charges) == 0,
+				validation.Required.Error("cannot be empty without discounts or charges"),
+			),
 		),
 		validation.Field(&inv.Discounts),
 		validation.Field(&inv.Charges),

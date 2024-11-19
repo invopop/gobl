@@ -1,0 +1,35 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-facturae-v3"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2024-11-15"
+series: "SAMPLE"
+code: "001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+charges:
+  - reason: "A charge not related to a product"
+    amount: "50.00"
+    taxes:
+      - cat: VAT
+        rate: standard

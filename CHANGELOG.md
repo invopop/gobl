@@ -6,11 +6,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.205.1] - 2024-11-19
+
 ### Added
 
 - `org`: `Address` includes `LineOne()`, `LineTwo()`, `CompleteNumber()` methods to help with conversion to other formats with some regional formatting.
 
-## [v0.205.0]
+### Changes
+
+- `bill`: `Invoice` can now have empty lines if discounts or charges present.
+
+### Fixes
+
+- `ch`: Deleted Supplier validation (not needed for under 2300 CHF/year)
+- `bill`: `Invoice` `GetExtensions` method now works correctly if missing totals [Issue #424](https://github.com/invopop/gobl/issues/424).
+
+## [v0.205.0] - 2024-11-12
 
 ### Added
 
@@ -28,7 +39,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `cal`: Fixing json schema issue with date times.
 
-## [v0.204.1]
+## [v0.204.1] - 2024-11-04
 
 ### Added
 
@@ -38,7 +49,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `tax`: identity code handling will skip default validation for specific countries that use special characters.
 
-## [v0.204.0]
+## [v0.204.0] - 2024-10-31
 
 ### Added
 
@@ -77,7 +88,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `mx`: Tax ID validation now correctly supports `&` and `Ñ` symbols in codes.
 
-## [v0.203.0]
+## [v0.203.0] - 2024-20-21
 
 ### Added
 
@@ -91,7 +102,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax.Identity`: support Calculate method to normalize IDs.
 - `tax.Regime`: properly set regime when alternative codes is given.
 
-## [v0.202.0]
+## [v0.202.0] - 2024-10-14
 
 ### Changed
 
@@ -107,7 +118,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `mx`: fixed panic when normalizing an invoice with `tax` but no `ext` inside.
 
-## [v0.201.0]
+## [v0.201.0] - 2024-10-07
 
 ### Fixed
 
@@ -120,13 +131,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pt`: reduced rate category for PT-MA was updated to reflect latest value of 4%
 - `co-dian-v2`: moved from `co` tax regime into own addon.
 
-## [v0.200.1]
+## [v0.200.1] - 2024-09-30
 
 ### Fixed
 
 - `pt`: moving invoice tags from saft addon to regime, ensure defaults present.
 
-## [v0.200.0]
+## [v0.200.0] - 2024-09-26
 
 Another ~~significant~~ epic release. Introducing "add-ons" which move the normalization and validation rules from Tax Regimes to specific packages that need to be enabled inside a document to be used.
 
@@ -168,13 +179,13 @@ Finally, the `draft` flag has been removed from the header, and much more emphas
 - `org`: `DocumentRef` consolidates references to previous documents in a single place.
 - `bill`: invoice type option `other` for usage when regular scenarios do not apply.
 
-## [v0.115.1]
+## [v0.115.1] - 2024-09-10
 
 ### Fixes
 
 - `tax`: totals calculator was ignoring tax combos with rate and percent, when they should be classed as exempt.
 
-## [v0.115.0]
+## [v0.115.0] - 2024-09-10
 
 This one is big...
 
@@ -227,20 +238,20 @@ Invoices in GOBL can now also finally produced for any country in the world, eve
 - `tax.Scenario`: potential issue around matching notes.
 - `tax.Set`: improved validation embedded error handling.
 
-## [v0.114.0]
+## [v0.114.0] - 2024-08-26
 
 ### Changed
 
 - `org.Name`: either given **or** surname are required, as opposed to both at the same time.
 
-## [v0.113.0]
+## [v0.113.0] - 2024-08-01
 
 ### Added
 
 - `head`: validation rule to check for the presence of stamps
 - GR: support for credit notes
 
-## [v0.112.0]
+## [v0.112.0] - 2024-07-29
 
 Significant set of small changes related to renaming of the `l10n.CountryCode` type. The main reason for this is an attempt to reduce confusion between regular ISO country selection, and the specific country codes used for tax purposes. Normally they coincide, but exception cases like for Greece, whose ISO code is `GR` but use `EL` for tax purposes, or `XI` for companies in Northern Ireland, mean that there needs to be a clear selection.
 
@@ -256,6 +267,8 @@ Significant set of small changes related to renaming of the `l10n.CountryCode` t
 - GR: support for simplified invoices
 - `l10n`: ISO and Tax lists of country definitions available, e.g. `l10n.Countries().ISO()`
 - `tax`: support for alternative country codes
+- `tax`: Scenarios now handle extension key and value for filtering.
+- PT: exemption text handling moved to scenarios.
 
 ### Upgraded
 
@@ -264,13 +277,6 @@ Significant set of small changes related to renaming of the `l10n.CountryCode` t
 ### Fixed
 
 - GR: fixed certain tax combos not getting calculated by the regime
-
-## [v0.112.0] - 2024-07-26
-
-### Added
-
-- `tax`: Scenarios now handle extension key and value for filtering.
-- PT: exemption text handling moved to scenarios.
 
 ## [v0.111.1] - 2024-07-25
 
