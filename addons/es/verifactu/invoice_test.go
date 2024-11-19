@@ -31,7 +31,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("with exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext = nil
-		assertValidationError(t, inv, "es-verifactu-exemption: required")
+		assertValidationError(t, inv, "es-verifactu-tax-classification: required")
 	})
 
 	t.Run("without series", func(t *testing.T) {
