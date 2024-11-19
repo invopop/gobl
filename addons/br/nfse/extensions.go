@@ -6,7 +6,11 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 )
 
-// Brazilian extension keys required to issue NFS-e documents.
+// Brazilian extension keys required to issue NFS-e documents. In an initial
+// assessment, these extensions do not seem to apply to documents other than
+// NFS-e. However, if when implementing other Fiscal Notes it is found that some
+// of these extensions are common, they can be moved to the regime or to a
+// shared addon.
 const (
 	ExtKeyFiscalIncentive = "br-nfse-fiscal-incentive"
 	ExtKeyMunicipality    = "br-nfse-municipality"
