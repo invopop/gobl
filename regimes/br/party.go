@@ -28,6 +28,7 @@ func validateParty(party *org.Party) error {
 			validation.Each(
 				validation.By(validateAddress(party)),
 			),
+			validation.Skip,
 		),
 	)
 }

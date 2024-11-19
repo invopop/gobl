@@ -38,9 +38,11 @@ func validateSupplier(value interface{}) error {
 		validation.Field(&obj.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
+			validation.Skip,
 		),
 		validation.Field(&obj.Identities,
 			org.RequireIdentityKey(IdentityKeyMunicipalReg),
+			validation.Skip,
 		),
 		validation.Field(&obj.Name, validation.Required),
 		validation.Field(&obj.Addresses,
@@ -49,12 +51,14 @@ func validateSupplier(value interface{}) error {
 				validation.Required,
 				validation.By(validateSupplierAddress),
 			),
+			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequires(
 				ExtKeySimplesNacional,
 				ExtKeyMunicipality,
 			),
+			validation.Skip,
 		),
 	)
 }
