@@ -32,7 +32,7 @@ func validateTRNCode(value interface{}) error {
 
 	// Check if TRN matches the 15-digit pattern
 	if !trnRegex.MatchString(val) {
-		return errors.New("invalid format: TRN must be a 15-digit number")
+		return errors.New("must be a 15-digit number")
 	}
 
 	return nil

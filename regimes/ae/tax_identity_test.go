@@ -21,10 +21,10 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good 3", code: "100111222333444"},
 
 		// Invalid formats
-		{name: "too short", code: "12345678901234", err: "invalid format: TRN must be a 15-digit number"},
-		{name: "too long", code: "1234567890123456", err: "invalid format: TRN must be a 15-digit number"},
-		{name: "non-numeric", code: "12345678ABCD345", err: "invalid format: TRN must be a 15-digit number"},
-		{name: "not normalized", code: "1234-5678-9012-345", err: "invalid format: TRN must be a 15-digit number"},
+		{name: "too short", code: "12345678901234", err: "must be a 15-digit number"},
+		{name: "too long", code: "1234567890123456", err: "must be a 15-digit number"},
+		{name: "non-numeric", code: "12345678ABCD345", err: "must be a 15-digit number"},
+		{name: "not normalized", code: "1234-5678-9012-345", err: "must be a 15-digit number"},
 	}
 
 	for _, tt := range tests {

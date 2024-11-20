@@ -16,7 +16,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  tax.TagReverseCharge,
-				Text: "Reverse Charge / التحويل العكسي",
+				Text: "Reverse Charge",
 			},
 		},
 		// Simplified Tax Invoice
@@ -25,7 +25,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  tax.TagSimplified,
-				Text: "Simplified Tax Invoice / فاتورة ضريبية مبسطة",
+				Text: "Simplified Tax Invoice",
 			},
 		},
 	},

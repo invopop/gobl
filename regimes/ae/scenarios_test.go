@@ -90,12 +90,12 @@ func TestInvoiceScenarios(t *testing.T) {
 	require.NoError(t, i.Validate())
 	assert.Len(t, i.Notes, 1)
 	assert.Equal(t, i.Notes[0].Src, tax.TagReverseCharge)
-	assert.Equal(t, i.Notes[0].Text, "Reverse Charge / التحويل العكسي")
+	assert.Equal(t, i.Notes[0].Text, "Reverse Charge")
 
 	i = testInvoiceSimplified(t)
 	require.NoError(t, i.Calculate())
 	require.NoError(t, i.Validate())
 	assert.Len(t, i.Notes, 1)
 	assert.Equal(t, i.Notes[0].Src, tax.TagSimplified)
-	assert.Equal(t, i.Notes[0].Text, "Simplified Tax Invoice / فاتورة ضريبية مبسطة")
+	assert.Equal(t, i.Notes[0].Text, "Simplified Tax Invoice")
 }
