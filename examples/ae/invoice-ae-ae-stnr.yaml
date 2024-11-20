@@ -44,5 +44,4 @@ lines:
         reason: "Special discount"
     taxes:
       - cat: VAT
-        rate: "5%"
-        reason: "Standard VAT rate in UAE"
+        rate: standard
