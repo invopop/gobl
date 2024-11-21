@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "b1fc7b37b41dc9df2148365e52dd97cdc3a3847de92d5b7560b3cf40cda10f77"
+			"val": "d7ef87ccb18475563f8ce2aa804cd51e46b94c3adc6af2bb0867a72f13ad5ac1"
 		}
 	},
 	"doc": {
@@ -52,7 +52,7 @@
 			"ext": {
 				"br-nfse-fiscal-incentive": "1",
 				"br-nfse-municipality": "3304557",
-				"br-nfse-simples-nacional": "1",
+				"br-nfse-simples": "1",
 				"br-nfse-special-regime": "4"
 			}
 		},
@@ -83,6 +83,7 @@
 					"name": "Consultancy Services",
 					"price": "100.00",
 					"ext": {
+						"br-nfse-cnae": "62.01-5-01",
 						"br-nfse-service": "10.5"
 					}
 				},
@@ -90,7 +91,10 @@
 				"taxes": [
 					{
 						"cat": "ISS",
-						"percent": "15%"
+						"percent": "15%",
+						"ext": {
+							"br-nfse-iss-liability": "1"
+						}
 					}
 				],
 				"total": "1500.00"
@@ -105,6 +109,9 @@
 						"code": "ISS",
 						"rates": [
 							{
+								"ext": {
+									"br-nfse-iss-liability": "1"
+								},
 								"base": "1500.00",
 								"percent": "15%",
 								"amount": "225.00"

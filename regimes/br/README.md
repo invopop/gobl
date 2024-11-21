@@ -25,7 +25,7 @@ For example:
 
 ```js
 "supplier": {
-  //...
+//...
   "addresses": [
     {
       "num": "75",
@@ -38,7 +38,7 @@ For example:
       "country": "BR"
     }
   ],
-  //...
+//...
 ```
 
 ### Service Notes
@@ -55,11 +55,28 @@ For example:
 
 ```js
 "supplier": {
-  //...
+//...
   "ext": {
-    "br-igbe-municipality": "2927408"
+    "br-nfse-municipality": "2927408"
   },
-  //...
+//...
+```
+
+Use the same extension at tax level when the municipality where the ISS is levied differs from the supplier's.
+
+For example:
+
+```js
+"lines": [
+  {
+//...
+    "taxes": [
+      {
+        "cat": "ISS",
+        "ext": {
+          "br-nfse-municipality": "2927408"
+        }
+//...
 ```
 
 #### National and municipal registration
@@ -70,7 +87,7 @@ For example:
 
 ```js
 "supplier": {
-  //...
+//...
   "identities": [
     {
       "key": "br-nfse-municipal-reg",
@@ -81,7 +98,7 @@ For example:
       "code": "12345012345678"
     }
   ],
-  //...
+//...
 ```
 
 #### “Simples Nacional”
@@ -97,11 +114,11 @@ For example:
 
 ```js
 "supplier": {
-  //...
+//...
   "ext": {
     "br-nfse-simples-nacional": "1", // Opt-in
   },
-  //...
+//...
 ```
 
 #### Special Tax Regime
@@ -121,11 +138,11 @@ For example:
 
 ```js
 "supplier": {
-  //...
+//...
   "ext": {
     "br-nfse-special-regime": "4" // Cooperative
   },
-  //...
+//...
 ```
 
 #### Fiscal Incentive
@@ -141,9 +158,71 @@ For example:
 
 ```js
 "supplier": {
-  //...
+//...
   "ext": {
     "br-nfse-fiscal-incentive": "2" // No tax incentive
   },
-  //...
+//...
+```
+
+#### Municipality service code
+
+Specify the code assigned by the municipality to a service using the
+`br-nfse-service` extension at item level. Typically, one of the codes listed in the [Lei Complementar 116/2003](https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm), but municipalities can make their own changes.
+
+For example:
+
+```js
+"lines": [
+  {
+    "item": {
+//...
+      "ext": {
+        "br-nfse-service": "1.01"
+//...
+```
+
+#### CNAE code
+
+Set the CNAE code (National Classification of Economic Activities) for a service using the `br-nfse-cnae` at item level. Find the list of possible codes [at the IGBE](https://www.ibge.gov.br/en/statistics/technical-documents/statistical-lists-and-classifications/17245-national-classification-of-economic-activities.html).
+
+For example:
+
+```js
+"lines": [
+  {
+    "item": {
+//...
+      "ext": {
+        "br-nfse-cnae": "62.01-5-01"
+//...
+```
+
+#### ISS Liability
+
+Report the ISS liability -i.e. whether the tax is due or not and why– using the `br-nfse-iss-liability` extension at ISS tax level. Find the list of possible codes below:
+
+| Code | Description                |
+| ---- | -------------------------- |
+| `1`  | Liable (Default)           |
+| `2`  | Not subject                |
+| `3`  | Exempt                     |
+| `4`  | Export                     |
+| `5`  | Immune                     |
+| `6`  | Suspended Judicially       |
+| `7`  | Suspended Administratively |
+
+For example:
+
+```js
+"lines": [
+  {
+//...
+    "taxes": [
+      {
+        "cat": "ISS",
+        "ext": {
+          "br-nfse-iss-liability": "1"
+        }
+//...
 ```

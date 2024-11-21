@@ -19,11 +19,39 @@ func TestInvoicesValidation(t *testing.T) {
 	}{
 		{
 			name: "valid invoice",
-			inv:  &bill.Invoice{},
+			inv: &bill.Invoice{
+				Series: "SAMPLE",
+			},
 		},
 		{
 			name: "nil invoice",
 			inv:  nil,
+		},
+		{
+			name: "missing series",
+			inv:  &bill.Invoice{},
+			err:  "series: cannot be blank",
+		},
+		{
+			name: "invalid code (non-digits)",
+			inv: &bill.Invoice{
+				Code: "ABC-123",
+			},
+			err: "code: must be in a valid format",
+		},
+		{
+			name: "invalid code (padding zeroes)",
+			inv: &bill.Invoice{
+				Code: "000123",
+			},
+			err: "code: must be in a valid format",
+		},
+		{
+			name: "valid code",
+			inv: &bill.Invoice{
+				Series: "SAMPLE",
+				Code:   "123000",
+			},
 		},
 		{
 			name: "charges present",
@@ -34,7 +62,7 @@ func TestInvoicesValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "charges: not supported by nfse.",
+			err: "charges: not supported by nfse",
 		},
 		{
 			name: "discounts present",
@@ -45,7 +73,12 @@ func TestInvoicesValidation(t *testing.T) {
 					},
 				},
 			},
-			err: "discounts: not supported by nfse.",
+			err: "discounts: not supported by nfse",
+		},
+		{
+			name: "series missing",
+			inv:  &bill.Invoice{},
+			err:  "series: cannot be blank",
 		},
 	}
 
@@ -54,7 +87,9 @@ func TestInvoicesValidation(t *testing.T) {
 		t.Run(ts.name, func(t *testing.T) {
 			err := addon.Validator(ts.inv)
 			if ts.err == "" {
-				assert.NoError(t, err)
+				if err != nil {
+					assert.NotContains(t, err.Error(), ts.err)
+				}
 			} else {
 				if assert.Error(t, err) {
 					assert.Contains(t, err.Error(), ts.err)
@@ -172,19 +207,19 @@ func TestSuppliersValidation(t *testing.T) {
 		}
 		err := addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "br-nfse-simples-nacional: required")
+			assert.Contains(t, err.Error(), "br-nfse-simples: required")
 			assert.Contains(t, err.Error(), "br-nfse-municipality: required")
 			assert.Contains(t, err.Error(), "br-nfse-fiscal-incentive: required")
 		}
 
 		sup.Ext = tax.Extensions{
-			nfse.ExtKeySimplesNacional: "1",
+			nfse.ExtKeySimples:         "1",
 			nfse.ExtKeyMunicipality:    "12345678",
 			nfse.ExtKeyFiscalIncentive: "2",
 		}
 		err = addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "br-nfse-simples-nacional: required")
+			assert.NotContains(t, err.Error(), "br-nfse-simples: required")
 			assert.NotContains(t, err.Error(), "br-nfse-municipality: required")
 			assert.NotContains(t, err.Error(), "br-nfse-fiscal-incentive: required")
 		}

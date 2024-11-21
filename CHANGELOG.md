@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `ae`: added UAE regime
-- `br`: supplier extensions, validations & identities
+- `br-nfse-v1`: new extensions, validations & identities for the typical service note and supplier.
 
 ## [v0.205.1] - 2024-11-19
 
