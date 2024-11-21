@@ -32,7 +32,7 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: here.Doc(`
 				The CNAE (National Classification of Economic Activities) code for a service.
 
-				For further details on the list of possible codes, see:
+				List of codes from the IBGE (Brazilian Institute of Geography and Statistics):
 
 				* https://www.ibge.gov.br/en/statistics/technical-documents/statistical-lists-and-classifications/17245-national-classification-of-economic-activities.html
 			`),
@@ -64,7 +64,7 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: here.Doc(`
 				Indicates whether a party benefits from a fiscal incentive.
 
-				List of codes taken from the national NFSe standard:
+				List of codes from the national NFSe ABRASF (v2.04) model:
 
 				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-68)
@@ -132,7 +132,7 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: here.Doc(`
 				Indicates the ISS liability status, i.e., whether the ISS tax is due or not and why.
 
-				List of codes taken from the national NFSe standard:
+				List of codes from the national NFSe ABRASF (v2.04) model:
 
 				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-38)
@@ -150,7 +150,7 @@ var extensions = []*cbc.KeyDefinition{
 				The municipality code as defined by the IGBE (Brazilian Institute of Geography and
 				Statistics).
 
-				For further details on the list of possible codes, see:
+				List of codes from the IGBE:
 
 				* https://www.ibge.gov.br/explica/codigos-dos-municipios.php
 			`),
@@ -200,7 +200,7 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: here.Doc(`
 				Indicates whether a party is opting for the “Simples Nacional” tax regime.
 
-				List of codes taken from the national NFSe standard:
+				List of codes from the national NFSe ABRASF (v2.04) model:
 
 				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-67)
@@ -259,9 +259,9 @@ var extensions = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Indicates a special tax regime that the party is subject to.
+				Indicates a special tax regime that a party is subject to.
 
-				List of codes taken from the national NFSe standard:
+				List of codes from the national NFSe ABRASF (v2.04) model:
 
 				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
 				(Section 10.2, Field B-66)
