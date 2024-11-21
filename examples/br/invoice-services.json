@@ -1,0 +1,86 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
+  "series": "SAMPLE",
+  "code": "1",
+  "issue_date": "2024-11-15",
+  "currency": "BRL",
+  "supplier": {
+    "name": "SaúdeMais Serviços Médicos Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "55263640000186"
+    },
+    "identities": [
+      {
+        "key": "br-nfse-municipal-reg",
+        "code": "45678901234567"
+      },
+      {
+        "key": "br-nfse-national-reg",
+        "code": "12345012345678"
+      }
+    ],
+    "addresses": [
+      {
+        "num": "200",
+        "street": "Rua Primeiro de Março",
+        "street_extra": "Torre A",
+        "locality": "Centro",
+        "region": "Rio de Janeiro",
+        "state": "RJ",
+        "code": "20010-000",
+        "country": "BR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "saudemais@example.com"
+      }
+    ],
+    "ext": {
+      "br-nfse-municipality": "3304557",
+      "br-nfse-fiscal-incentive": "1",
+      "br-nfse-simples-nacional": "1",
+      "br-nfse-special-regime": "4"
+    }
+  },
+  "customer": {
+    "name": "Construforte Engenharia Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "46602178000103"
+    },
+    "addresses": [
+      {
+        "num": "75",
+        "street": "Avenida Sete de Setembro",
+        "street_extra": "Bloco C",
+        "locality": "Centro",
+        "region": "Salvador",
+        "state": "BA",
+        "code": "40060-000",
+        "country": "BR"
+      }
+    ],
+  },
+  "lines": [
+    {
+      "i": 1,
+      "quantity": "15",
+      "item": {
+        "name": "Consultancy Services",
+        "price": "100.00",
+        "ext": {
+          "br-nfse-service": "10.5"
+        }
+      },
+      "taxes": [
+        {
+          "cat": "ISS",
+          "percent": "15%"
+        }
+      ]
+    }
+  ]
+}

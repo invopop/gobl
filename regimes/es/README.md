@@ -1,8 +1,10 @@
 # 🇪🇸 GOBL Spain Tax Regime
 
-Example ES GOBL files can be found in the [`examples`](./examples) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example ES GOBL files in the [`examples`](../../examples/es) (uncalculated documents) and [`examples/out`](../../examples/es/out) (calculated envelopes) subdirectories.
 
-## Corrective Invoices
+## Spain-specific Requirements
+
+### Corrective Invoices
 
 According to Spanish law on invoicing [Real Decreto 1619/2012, de 30 de noviembre](https://www.boe.es/buscar/act.php?id=BOE-A-2012-14696), only "rectified" invoices are recognized. There are, in fact, no mentions of international credit or debit notes at all.
 

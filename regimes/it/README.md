@@ -2,7 +2,7 @@
 
 Italy uses the FatturaPA format for their e-invoicing system.
 
-Example IT GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example IT GOBL files in the [`examples`](../../examples/it) (uncalculated documents) and [`examples/out`](../../examples/it/out) (calculated envelopes) subdirectories.
 
 ## Public Documentation
 
@@ -12,11 +12,14 @@ Example IT GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 - [FatturaPA documentation: FatturPA's website](https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
 
 #### Ordinary invoices (Fattura Ordinaria)
+
 - [Schema V1.2.3 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/RappresentazioneTabellareFattOrdinariav123.pdf) - most up-to-date but in Italian.
 - [Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - last version of the table translated to English. Since the difference between 1.2.3 and 1.2.1 is minimal, this is perfectly usable.
 - [XSD V1.2.2](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd)
 - [FatturaPA filling guide](https://www.agenziaentrate.gov.it/portale/documents/20143/451259/Guida_compilazione-FE-Esterometro-V_1.9_2024-03-05.pdf/67fe4c2d-1174-e8de-f1ee-cea77b7f5203) - useful to understand what values to choose within the extensions (e.g. Natura)
+
 ##### Changes from 1.2.1 to 1.2.3
+
 - Documentation changes: TD25, N1, N6.2, N7
 - Addition of TD28: Acquisti da San Marino con IVA (fattura cartacea)
 - New codes have been introduced for the AltriDatiGestionali block for agricultural producers under the special regime.
@@ -24,8 +27,8 @@ Example IT GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 -The guidelines for the use of TD28 for transactions to and from entities not established in Italy have been updated.
 
 #### Simplified invoices (Fattura Semplificata)
-- [Simplified invoice schema – table view (IT)](https://www.agenziaentrate.gov.it/portale/documents/20143/4631413/RappresentazioneTabellareFattSemplificata.xlsx/a7ec4a67-f4cf-b558-1bda-0aaab4f0e552)
 
+- [Simplified invoice schema – table view (IT)](https://www.agenziaentrate.gov.it/portale/documents/20143/4631413/RappresentazioneTabellareFattSemplificata.xlsx/a7ec4a67-f4cf-b558-1bda-0aaab4f0e552)
 
 ### Tax Rates
 
@@ -38,7 +41,7 @@ Example IT GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 - [VAT Number (Partita IVA)](https://en.wikipedia.org/wiki/VAT_identification_number)
 - [Agenzia Entrate (Tax Office) IVA Doc](https://www.agenziaentrate.gov.it/portale/web/english/nse/business/vat-in-italy)
 
-## Italy specifics
+## Italy-specific Requirements
 
 Italy requires all invoices to comply with the [FatturaPA](https://www.fatturapa.gov.it/it/index.html) format which includes support for a specific set of fields unique to Italy. GOBL tries to guess what the best options are so that the conversion process is simple, but some data needs to be added manually.
 
@@ -96,7 +99,7 @@ These can be added to GOBL Invoices as "charges" (`bill.Charge`) defined with th
 }
 ```
 
-See also [examples/stamp-duty.json](./examples/stamp-duty.json).
+See also [examples/stamp-duty.json](../../examples/it/stamp-duty.json).
 
 ### Numero REA
 

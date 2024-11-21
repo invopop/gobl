@@ -7,6 +7,9 @@ import (
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Supplier, validation.Required),
+		validation.Field(&inv.Supplier,
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }

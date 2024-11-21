@@ -2,7 +2,7 @@
 
 Portugal doesn't have an e-invoicing format per se. Tax information is reported electronically to the AT (Autoridade Tributária e Aduaneira) either periodically in batches via a SAF-T (PT) report or individually in real time via a web service.
 
-Example PT GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example PT GOBL files in the [`examples`](../../examples/pt) (uncalculated documents) and [`examples/out`](../../examples/pt/out) (calculated envelopes) subdirectories.
 
 ## Public Documentation
 
@@ -11,17 +11,17 @@ Example PT GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 - [Portaria n.o 195/2020 – Especificações Técnicas Código QR](https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Novas_regras_faturacao/Documents/Especificacoes_Tecnicas_Codigo_QR.pdf)
 - [Comunicação dos elementos dos documentos de faturação à AT, por webservice](https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf)
 
-## Portugal specifics
+## Portugal-specific Requirements
 
 ### `InvoiceType` (Tipo de documento)
 
 AT's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
 
-| Code | Name                                                                    | GOBL Type     | GOBL Tax Tag      |
-| ---- | ----------------------------------------------------------------------- | ------------- | ----------------- |
+| Code | Name                                                                     | GOBL Type     | GOBL Tax Tag      |
+| ---- | ------------------------------------------------------------------------ | ------------- | ----------------- |
 | FT   | Fatura, emitida nos termos do artigo 36.o do Código do IVA              | `standard`    |                   |
 | FS   | Fatura simplificada, emitida nos termos do artigo 40.o do Código do IVA | `standard`    | `simplified`      |
-| FR   | Fatura-recibo                                                           | `standard`    | `invoice-receipt` |
+| FR   | Fatura-recibo                                                            | `standard`    | `invoice-receipt` |
 | ND   | Nota de débito                                                          | `credit-note` |                   |
 | NC   | Nota de crédito                                                         | `debit-note`  |                   |
 
@@ -31,17 +31,17 @@ AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of 
 
 To set the specific a region different to Portugal mainland, the `pt-region` extension of each line's VAT tax should be set to one of the following values:
 
-| Code | Description |
-| --- | --- |
-| PT | Mainland Portugal (default, no need to be explicit) |
-| PT-AC | Açores |
-| PT-MA | Madeira |
+| Code  | Description                                         |
+| ----- | --------------------------------------------------- |
+| PT    | Mainland Portugal (default, no need to be explicit) |
+| PT-AC | Açores                                              |
+| PT-MA | Madeira                                             |
 
 ### VAT Tax Rates
 
 The AT `TaxCode` (Código do imposto) is required for invoice items that apply VAT. GOBL helps determine this code using the `rate` field, which in Portuguese invoices is required. The following table lists the supported tax codes and how GOBL will map them:
 
-| Code |  Name           | GOBL Tax Rate                         |
+| Code | Name            | GOBL Tax Rate                         |
 | ---- | --------------- | ------------------------------------- |
 | NOR  | Tipo Geral      | `standard`                            |
 | INT  | Taxa Intermédia | `intermediate`                        |

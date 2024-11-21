@@ -2,7 +2,7 @@
 
 Mexico uses the CFDI (Comprobante Fiscal Digital por Internet) format for e-invoicing.
 
-Find example MX GOBL files in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example MX GOBL files in the [`examples`](../../examples/mx) (uncalculated documents) and [`examples/out`](../../examples/mx/out) (calculated envelopes) subdirectories.
 
 ## Public Documentation
 
@@ -35,7 +35,7 @@ Specify the postal code where the invoice was issued using the `mx-cfdi-issue-pl
 }
 ```
 
-### `RegimenFiscal` - Fiscal Regime
+### Fiscal Regime (`RegimenFiscal`)
 
 Every Supplier and Customer in a Mexican invoice must be associated with a fiscal regime code. You'll need to ensure this field's value is requested from customers when they require an invoice.
 
@@ -63,7 +63,7 @@ The following example will associate the supplier with the `601` fiscal regime c
 }
 ```
 
-### `DomicilioFiscalReceptor` - Receipt's Tax Address
+### Receipt's Tax Address (`DomicilioFiscalReceptor`)
 
 In CFDI, `DomicilioFiscalReceptor` is a mandatory field that specifies the postal code of the recepient's tax address. In a GOBL Invoice, you can provide this value setting the customer's address post code.
 
@@ -92,7 +92,7 @@ In CFDI, `DomicilioFiscalReceptor` is a mandatory field that specifies the posta
 }
 ```
 
-### `UsoCFDI` - CFDI Use
+### CFDI Use (`UsoCFDI`)
 
 The CFDI’s `UsoCFDI` field specifies how the invoice's recipient will use the invoice to deduce taxes for the expenditure made. In a GOBL Invoice, include the `mx-cfdi-use` extension in the customer.
 
@@ -123,7 +123,7 @@ The following GOBL maps to the `G03` (Gastos en general) value of the `UsoCFDI` 
 }
 ```
 
-### `MetodoPago` – Payment Method
+### Payment Method (`MetodoPago`)
 
 The CFDI’s `MetodoPago` field specifies whether the invoice has been fully paid at the moment of issuing the invoice (`PUE` - Pago en una sola exhibición) or whether it will be paid in one or several instalments after that (`PPD` – Pago en parcialidades o diferido).
 
@@ -202,7 +202,7 @@ The following GOBL will map to the `PPD` (Pago en parcialidades o diferido) valu
 }
 ```
 
-### `FormaPago` - Payment Means
+### Payment Means (`FormaPago`)
 
 The CFDI’s `FormaPago` field specifies an invoice's means of payment.
 
@@ -210,30 +210,30 @@ If the invoice hasn't been fully paid at the time of issuing the invoice (`Metod
 
 Otherwise (`MetodoPago = PUE`), the `FormaPago` value will be mapped from the key of the largest payment advance in the GOBL invoice. The following table lists all the supported values and how GOBL will map them:
 
-| Code | Name                                | GOBL Payment Advance Key      |
-| ---- | ----------------------------------- | ----------------------------- |
-| 01   | Efectivo                            | `cash`                        |
-| 02   | Cheque nominativo                   | `cheque`                      |
-| 03   | Transferencia electrónica de fondos | `credit-transfer`             |
-| 04   | Tarjeta de crédito                  | `card`                        |
-| 05   | Monedero electrónico                | `online+wallet`               |
-| 06   | Dinero electrónico                  | `online`                      |
-| 08   | Vales de despensa                   | `other+grocery-vouchers`      |
-| 12   | Dación en pago                      | `other+in-kind`               |
-| 13   | Pago por subrogación                | `other+subrogation`           |
-| 14   | Pago por consignación               | `other+consignment`           |
-| 15   | Condonación                         | `other+debt-relief`           |
-| 17   | Compensación                        | `netting`                     |
-| 23   | Novación                            | `other+novation`              |
-| 24   | Confusión                           | `other+merger`                |
-| 25   | Remisión de deuda                   | `other+remission`             |
-| 26   | Prescripción o caducidad            | `other+expiration`            |
-| 27   | A satisfacción del acreedor         | `other+satisfy-creditor`      |
-| 28   | Tarjeta de débito                   | `card+debit`                  |
-| 29   | Tarjeta de servicios                | `card+services`               |
-| 30   | Aplicación de anticipos             | `other+advance`               |
-| 31   | Intermediario pagos                 | `other+intermediary`          |
-| 99   | Por definir                         | `other`                       |
+| Code | Name                                | GOBL Payment Advance Key |
+| ---- | ----------------------------------- | ------------------------ |
+| 01   | Efectivo                            | `cash`                   |
+| 02   | Cheque nominativo                   | `cheque`                 |
+| 03   | Transferencia electrónica de fondos | `credit-transfer`        |
+| 04   | Tarjeta de crédito                  | `card`                   |
+| 05   | Monedero electrónico                | `online+wallet`          |
+| 06   | Dinero electrónico                  | `online`                 |
+| 08   | Vales de despensa                   | `other+grocery-vouchers` |
+| 12   | Dación en pago                      | `other+in-kind`          |
+| 13   | Pago por subrogación                | `other+subrogation`      |
+| 14   | Pago por consignación               | `other+consignment`      |
+| 15   | Condonación                         | `other+debt-relief`      |
+| 17   | Compensación                        | `netting`                |
+| 23   | Novación                            | `other+novation`         |
+| 24   | Confusión                           | `other+merger`           |
+| 25   | Remisión de deuda                   | `other+remission`        |
+| 26   | Prescripción o caducidad            | `other+expiration`       |
+| 27   | A satisfacción del acreedor         | `other+satisfy-creditor` |
+| 28   | Tarjeta de débito                   | `card+debit`             |
+| 29   | Tarjeta de servicios                | `card+services`          |
+| 30   | Aplicación de anticipos             | `other+advance`          |
+| 31   | Intermediario pagos                 | `other+intermediary`     |
+| 99   | Por definir                         | `other`                  |
 
 #### Example
 
@@ -257,7 +257,7 @@ The following GOBL maps to the `05` (Monedero electrónico) value of the `FormaP
 }
 ```
 
-### `ClaveUnidad` - Unit Code
+### Unit Code (`ClaveUnidad`)
 
 The CFDI’s `ClaveUnidad` field specifies the unit in which the quantity of an invoice's line is given. These are UNECE codes that GOBL will map directly from the invoice's line item unit. See the [source code](../../org/unit.go) for the full list of supported units with their associated UNECE codes.
 
@@ -285,7 +285,7 @@ The following GOBL maps to the `KGM` (Kilogram) value of the `ClaveUnidad` field
 }
 ```
 
-### `ClaveProdServ` - Product or Service Code
+### Product/Service Code (`ClaveProdServ`)
 
 The CFDI’s `ClaveProdServ` field specifies the type of an invoice's line item. GOBL uses the line item extension key `mx-cfdi-prod-serv` to map the code directly to the `ClaveProdServ` field.
 
@@ -370,7 +370,7 @@ In Mexico, e-wallet suppliers use this complement to report this information in 
 
 Learn more about this complement here:
 * [Schema Documentation](https://docs.gobl.org/draft-0/regimes/mx/fuel_account_balance)
-* [Example GOBL document](./examples/out/fuel-account-balance.json)
+* [Example GOBL document](../../examples/mx/out/fuel-account-balance.json)
 
 #### Food Vouchers
 
@@ -380,4 +380,4 @@ In Mexico, e-wallet suppliers use this complement to report this information in 
 
 Learn more about this complement here:
 * [Schema Documentation](https://docs.gobl.org/draft-0/regimes/mx/food_vouchers)
-* [Example GOBL document](./examples/out/food-vouchers.json)
+* [Example GOBL document](../../examples/mx/out/food-vouchers.json)
