@@ -37,6 +37,7 @@ var extensions = []*cbc.KeyDefinition{
 				* https://www.ibge.gov.br/en/statistics/technical-documents/statistical-lists-and-classifications/17245-national-classification-of-economic-activities.html
 			`),
 		},
+		Pattern: `^\d{2}[\s\.\-\/]?\d{2}[\s\.\-\/]?\d[\s\.\-\/]?\d{2}$`,
 	},
 	{
 		Key: ExtKeyFiscalIncentive,
