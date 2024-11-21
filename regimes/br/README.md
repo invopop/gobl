@@ -62,6 +62,23 @@ For example:
 //...
 ```
 
+Use the same extension at tax level when the municipality where the ISS is levied differs from the supplier's.
+
+For example:
+
+```js
+"lines": [
+  {
+//...
+    "taxes": [
+      {
+        "cat": "ISS",
+        "ext": {
+          "br-nfse-municipality": "2927408"
+        }
+//...
+```
+
 #### National and municipal registration
 
 Specify the party's municipal and national registration numbers as identities using the `br-nfse-municipal-reg` and `br-nfse-national-reg` keys.
