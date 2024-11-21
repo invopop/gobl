@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6b9933fc6209359b95583878eb64c358ac1b9028727c3e992ec4e78f7a196687"
+			"val": "d7ef87ccb18475563f8ce2aa804cd51e46b94c3adc6af2bb0867a72f13ad5ac1"
 		}
 	},
 	"doc": {
@@ -52,7 +52,7 @@
 			"ext": {
 				"br-nfse-fiscal-incentive": "1",
 				"br-nfse-municipality": "3304557",
-				"br-nfse-simples-nacional": "1",
+				"br-nfse-simples": "1",
 				"br-nfse-special-regime": "4"
 			}
 		},

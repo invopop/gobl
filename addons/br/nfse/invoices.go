@@ -69,7 +69,7 @@ func validateSupplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequires(
-				ExtKeySimplesNacional,
+				ExtKeySimples,
 				ExtKeyMunicipality,
 				ExtKeyFiscalIncentive,
 			),

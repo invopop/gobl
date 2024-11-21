@@ -125,13 +125,13 @@
       }
     },
     {
-      "key": "br-nfse-simples-nacional",
+      "key": "br-nfse-simples",
       "name": {
-        "en": "Opting for “Simples Nacional”",
+        "en": "Opting for “Simples Nacional” regime",
         "pt": "Optante pelo Simples Nacional"
       },
       "desc": {
-        "en": "Indicates whether a party is opting for the “Simples Nacional” tax regime.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
+        "en": "Indicates whether a party is opting for the “Simples Nacional” (Regime Especial\nUnificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e\nEmpresas de Pequeno Porte) tax regime\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
       },
       "values": [
         {

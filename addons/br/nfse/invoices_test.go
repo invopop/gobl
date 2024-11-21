@@ -207,19 +207,19 @@ func TestSuppliersValidation(t *testing.T) {
 		}
 		err := addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "br-nfse-simples-nacional: required")
+			assert.Contains(t, err.Error(), "br-nfse-simples: required")
 			assert.Contains(t, err.Error(), "br-nfse-municipality: required")
 			assert.Contains(t, err.Error(), "br-nfse-fiscal-incentive: required")
 		}
 
 		sup.Ext = tax.Extensions{
-			nfse.ExtKeySimplesNacional: "1",
+			nfse.ExtKeySimples:         "1",
 			nfse.ExtKeyMunicipality:    "12345678",
 			nfse.ExtKeyFiscalIncentive: "2",
 		}
 		err = addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "br-nfse-simples-nacional: required")
+			assert.NotContains(t, err.Error(), "br-nfse-simples: required")
 			assert.NotContains(t, err.Error(), "br-nfse-municipality: required")
 			assert.NotContains(t, err.Error(), "br-nfse-fiscal-incentive: required")
 		}

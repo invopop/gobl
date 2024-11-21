@@ -17,7 +17,7 @@ const (
 	ExtKeyISSLiability    = "br-nfse-iss-liability"
 	ExtKeyMunicipality    = "br-nfse-municipality"
 	ExtKeyService         = "br-nfse-service"
-	ExtKeySimplesNacional = "br-nfse-simples-nacional"
+	ExtKeySimples         = "br-nfse-simples"
 	ExtKeySpecialRegime   = "br-nfse-special-regime"
 )
 
@@ -176,9 +176,9 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeySimplesNacional,
+		Key: ExtKeySimples,
 		Name: i18n.String{
-			i18n.EN: "Opting for “Simples Nacional”",
+			i18n.EN: "Opting for “Simples Nacional” regime",
 			i18n.PT: "Optante pelo Simples Nacional",
 		},
 		Values: []*cbc.ValueDefinition{
@@ -199,7 +199,9 @@ var extensions = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Indicates whether a party is opting for the “Simples Nacional” tax regime.
+				Indicates whether a party is opting for the “Simples Nacional” (Regime Especial
+				Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e
+				Empresas de Pequeno Porte) tax regime
 
 				List of codes from the national NFSe ABRASF (v2.04) model:
 
