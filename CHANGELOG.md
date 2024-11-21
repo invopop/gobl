@@ -25,6 +25,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- ae: added UAE regime
+
+## [v0.205.1] - 2024-11-19
+
+### Added
+
+- `org`: `Address` includes `LineOne()`, `LineTwo()`, `CompleteNumber()` methods to help with conversion to other formats with some regional formatting.
+
+### Changes
+
+- `bill`: `Invoice` can now have empty lines if discounts or charges present.
+
+### Fixes
+
+- `ch`: Deleted Supplier validation (not needed for under 2300 CHF/year)
+- `bill`: `Invoice` `GetExtensions` method now works correctly if missing totals [Issue #424](https://github.com/invopop/gobl/issues/424).
+
+## [v0.205.0] - 2024-11-12
+
+### Added
+
 - `org`: `Address` now includes a `state` code, for countries that require them.
 - `es-tbai-v1`: normalize address information to automatically add new `es-tbai-region` extension to invoices.
 - `org`: `Inbox` now supports `email` field, with auto-normalization of URLs and emails in the `code` field.

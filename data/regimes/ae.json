@@ -1,0 +1,172 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "ar": "الإمارات العربية المتحدة",
+    "en": "United Arab Emirates"
+  },
+  "time_zone": "Asia/Dubai",
+  "country": "AE",
+  "currency": "AED",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "simplified",
+          "name": {
+            "de": "Vereinfachte Rechnung",
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada",
+            "it": "Fattura Semplificata"
+          },
+          "desc": {
+            "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+            "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+            "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+            "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "de": "Umkehr der Steuerschuld",
+            "en": "Reverse Charge",
+            "es": "Inversión del Sujeto Pasivo",
+            "it": "Inversione del soggetto passivo"
+          }
+        },
+        {
+          "key": "self-billed",
+          "name": {
+            "de": "Rechnung durch den Leistungsempfänger",
+            "en": "Self-billed",
+            "es": "Facturación por el destinatario",
+            "it": "Autofattura"
+          }
+        },
+        {
+          "key": "customer-rates",
+          "name": {
+            "de": "Kundensätze",
+            "en": "Customer rates",
+            "es": "Tarifas aplicables al destinatario",
+            "it": "Aliquote applicabili al destinatario"
+          }
+        },
+        {
+          "key": "partial",
+          "name": {
+            "de": "Teilweise",
+            "en": "Partial",
+            "es": "Parcial",
+            "it": "Parziale"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Tax Invoice"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "VAT"
+      },
+      "title": {
+        "ar": "ضريبة القيمة المضافة",
+        "en": "Value Added Tax"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "ar": "معدل صفر",
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "ar": "نسبة ضريبة قيمة مضافة 0٪ تطبق على الصادرات المحددة والمناطق المعينة والخدمات الأساسية.",
+            "en": "A VAT rate of 0% applicable to specific exports, designated areas, and essential services."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "ar": "معدل قياسي",
+            "en": "Standard Rate"
+          },
+          "desc": {
+            "ar": "ينطبق على معظم السلع والخدمات ما لم ينص على خلاف ذلك.",
+            "en": "Applies to most goods and services unless specified otherwise."
+          },
+          "values": [
+            {
+              "since": "2018-01-01",
+              "percent": "5%"
+            }
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "ar": "معفى",
+            "en": "Exempt"
+          },
+          "desc": {
+            "ar": "بعض السلع والخدمات، مثل الخدمات المالية والعقارات السكنية، معفاة من ضريبة القيمة المضافة.",
+            "en": "Certain goods and services, such as financial services and residential real estate, are exempt from VAT."
+          },
+          "exempt": true
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "ar": "الهيئة الاتحادية للضرائب",
+            "en": "Federal Tax Authority - UAE VAT Regulations"
+          },
+          "url": "https://www.tax.gov.ae"
+        }
+      ]
+    }
+  ]
+}
