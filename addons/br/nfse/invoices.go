@@ -1,6 +1,8 @@
 package nfse
 
 import (
+	"regexp"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -12,12 +14,19 @@ const (
 	FiscalIncentiveDefault = "2" // No incentiva
 )
 
+var (
+	// CodeRegexp is the regular expression used to validate the invoice code
+	CodeRegexp = regexp.MustCompile(`^[1-9][0-9]*$`)
+)
+
 func validateInvoice(inv *bill.Invoice) error {
 	if inv == nil {
 		return nil
 	}
 
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Series, validation.Required),
+		validation.Field(&inv.Code, validation.Match(CodeRegexp)),
 		validation.Field(&inv.Supplier,
 			validation.By(validateSupplier),
 			validation.Skip,
