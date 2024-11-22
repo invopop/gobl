@@ -1,0 +1,227 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "es-verifactu-v1",
+  "name": {
+    "en": "Spain Verifactu"
+  },
+  "extensions": [
+    {
+      "key": "es-verifactu-doc-type",
+      "name": {
+        "en": "Verifactu Invoice Type Code - L2",
+        "es": "Código de Tipo de Factura de Verifactu - L2"
+      },
+      "desc": {
+        "en": "Invoice type code used to identify the type of invoice being sent."
+      },
+      "values": [
+        {
+          "value": "F1",
+          "name": {
+            "en": "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
+            "es": "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)"
+          }
+        },
+        {
+          "value": "F2",
+          "name": {
+            "en": "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
+            "es": "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)"
+          }
+        },
+        {
+          "value": "F3",
+          "name": {
+            "en": "Invoice in substitution of simplified invoices.",
+            "es": "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas."
+          }
+        },
+        {
+          "value": "R1",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
+            "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA"
+          }
+        },
+        {
+          "value": "R2",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80.3",
+            "es": "Factura rectificativa: artículo 80.3"
+          }
+        },
+        {
+          "value": "R3",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80.4",
+            "es": "Factura rectificativa: artículo 80.4"
+          }
+        },
+        {
+          "value": "R4",
+          "name": {
+            "en": "Rectified invoice: Other",
+            "es": "Factura rectificativa: Resto"
+          }
+        },
+        {
+          "value": "R5",
+          "name": {
+            "en": "Rectified invoice: simplified invoices",
+            "es": "Factura rectificativa: facturas simplificadas"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-tax-classification",
+      "name": {
+        "en": "Verifactu Tax Classification/Exemption Code - L9/10",
+        "es": "Código de Clasificación/Exención de Impuesto de Verifactu - L9/10"
+      },
+      "desc": {
+        "en": "Tax classification code used to identify the type of tax being applied to the invoice. In Verifactu these\nlists are separate but here they are combined."
+      },
+      "values": [
+        {
+          "value": "S1",
+          "name": {
+            "en": "Subject and Not Exempt - Without reverse charge",
+            "es": "Operación Sujeta y No exenta - Sin inversión del sujeto pasivo"
+          }
+        },
+        {
+          "value": "S2",
+          "name": {
+            "en": "Subject and Not Exempt - With reverse charge",
+            "es": "Operación Sujeta y No exenta - Con Inversión del sujeto pasivo"
+          }
+        },
+        {
+          "value": "N1",
+          "name": {
+            "en": "Not Subject - Articles 7, 14, others",
+            "es": "Operación No Sujeta artículo 7, 14, otros"
+          }
+        },
+        {
+          "value": "N2",
+          "name": {
+            "en": "Not Subject - Due to location rules",
+            "es": "Operación No Sujeta por Reglas de localización"
+          }
+        },
+        {
+          "value": "E1",
+          "name": {
+            "en": "Exempt: pursuant to Article 20. Exemptions in internal operations.",
+            "es": "Exenta: por el artículo 20. Exenciones en operaciones interiores."
+          }
+        },
+        {
+          "value": "E2",
+          "name": {
+            "en": "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
+            "es": "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes."
+          }
+        },
+        {
+          "value": "E3",
+          "name": {
+            "en": "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
+            "es": "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones."
+          }
+        },
+        {
+          "value": "E4",
+          "name": {
+            "en": "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
+            "es": "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
+          }
+        },
+        {
+          "value": "E5",
+          "name": {
+            "en": "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
+            "es": "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro."
+          }
+        },
+        {
+          "value": "E6",
+          "name": {
+            "en": "Exempt: pursuant to other reasons",
+            "es": "Exenta: por otra causa"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F2"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "substitution"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F3"
+          }
+        },
+        {
+          "type": [
+            "credit-note",
+            "corrective",
+            "debit-note"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "R1"
+          }
+        },
+        {
+          "type": [
+            "credit-note",
+            "corrective",
+            "debit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "R5"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "extensions": [
+        "es-verifactu-doc-type"
+      ]
+    }
+  ]
+}

@@ -91,8 +91,8 @@ var extensions = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Tax classification code used to identify the type of tax being applied to the invoice. In Verifactu these
-				lists are separate but here they are combined.
+				Tax classification code used to identify the type of tax being applied to the line. It includes both exemption reasons and tax scenarios.
+				These lists are separate in Verifactu but combined here for convenience.
 			`),
 		},
 		Values: []*cbc.ValueDefinition{

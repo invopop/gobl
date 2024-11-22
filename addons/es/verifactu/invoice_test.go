@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,9 +22,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.TaxID = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "customer: (tax_id: cannot be blank.)")
+		assertValidationError(t, inv, "customer: (tax_id: cannot be blank.)")
 	})
 
 	t.Run("with exemption reason", func(t *testing.T) {
@@ -34,16 +31,41 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "es-verifactu-tax-classification: required")
 	})
 
-	t.Run("without series", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Series = ""
-		assertValidationError(t, inv, "series: cannot be blank")
-	})
-
 	t.Run("without notes", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = nil
 		assertValidationError(t, inv, "notes: with key 'general' missing")
+	})
+
+	t.Run("missing doc type", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Tax.Ext = nil
+		err := inv.Validate()
+		require.ErrorContains(t, err, "es-verifactu-doc-type: required")
+	})
+
+	t.Run("correction invoice requires preceding", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		assertValidationError(t, inv, "preceding: cannot be blank")
+	})
+
+	t.Run("correction invoice with preceding", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Tax.Ext[verifactu.ExtKeyDocType] = "R1"
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "ABC",
+				Code:   "122",
+				Ext: tax.Extensions{
+					verifactu.ExtKeyDocType: "F1",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
 	})
 }
 
@@ -57,7 +79,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	return &bill.Invoice{
 		Addons: tax.WithAddons(verifactu.V1),
-		Series: "ABC",
 		Code:   "123",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -96,6 +117,11 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			{
 				Key:  cbc.NoteKeyGeneral,
 				Text: "This is a test invoice",
+			},
+		},
+		Tax: &bill.Tax{
+			Ext: tax.Extensions{
+				verifactu.ExtKeyDocType: "F1",
 			},
 		},
 	}
