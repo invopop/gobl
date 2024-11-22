@@ -1,9 +1,8 @@
-package verifactu_test
+package verifactu
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/es/verifactu"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
@@ -54,13 +53,13 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("correction invoice with preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Tax.Ext[verifactu.ExtKeyDocType] = "R1"
+		inv.Tax.Ext[ExtKeyDocType] = "R1"
 		inv.Preceding = []*org.DocumentRef{
 			{
 				Series: "ABC",
 				Code:   "122",
 				Ext: tax.Extensions{
-					verifactu.ExtKeyDocType: "F1",
+					ExtKeyDocType: "F1",
 				},
 			},
 		}
@@ -78,7 +77,7 @@ func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	return &bill.Invoice{
-		Addons: tax.WithAddons(verifactu.V1),
+		Addons: tax.WithAddons(V1),
 		Code:   "123",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -107,7 +106,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 						Category: "VAT",
 						Rate:     "exempt",
 						Ext: tax.Extensions{
-							verifactu.ExtKeyTaxClassification: "E1",
+							ExtKeyTaxClassification: "E1",
 						},
 					},
 				},
@@ -121,7 +120,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		},
 		Tax: &bill.Tax{
 			Ext: tax.Extensions{
-				verifactu.ExtKeyDocType: "F1",
+				ExtKeyDocType: "F1",
 			},
 		},
 	}

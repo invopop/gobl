@@ -2,54 +2,59 @@ package verifactu
 
 import (
 	"testing"
+
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestScenarios(t *testing.T) {
-	tests := []struct {
-		name     string
-		scenario string
-		tags     []string
-		want     bool
-	}{
-		{
-			name:     "standard invoice",
-			scenario: "standard",
-			tags:     []string{},
-			want:     true,
-		},
-		{
-			name:     "simplified invoice",
-			scenario: "simplified",
-			tags:     []string{"simplified"},
-			want:     true,
-		},
-		{
-			name:     "corrective invoice",
-			scenario: "corrective",
-			tags:     []string{"corrective"},
-			want:     true,
-		},
-		{
-			name:     "invalid scenario",
-			scenario: "invalid",
-			tags:     []string{},
-			want:     false,
-		},
-		{
-			name:     "simplified with wrong tags",
-			scenario: "simplified",
-			tags:     []string{"corrective"},
-			want:     false,
-		},
-	}
+func TestInvoiceDocumentScenarios(t *testing.T) {
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := ValidateScenario(tt.scenario, tt.tags)
-			if got != tt.want {
-				t.Errorf("ValidateScenario(%v, %v) = %v, want %v",
-					tt.scenario, tt.tags, got, tt.want)
-			}
-		})
-	}
+	t.Run("with addon", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		require.NoError(t, i.Calculate())
+		assert.Equal(t, i.Tax.Ext[ExtKeyDocType].String(), "F1")
+	})
+
+	t.Run("simplified invoice", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.SetTags(tax.TagSimplified)
+		require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 1)
+		assert.Equal(t, i.Tax.Ext[ExtKeyDocType].String(), "F2")
+	})
+
+	t.Run("substitution invoice", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.SetTags(TagSubstitution)
+		require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 1)
+		assert.Equal(t, i.Tax.Ext[ExtKeyDocType].String(), "F3")
+	})
+
+	t.Run("credit note", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.Type = bill.InvoiceTypeCreditNote
+		require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 1)
+		assert.Equal(t, i.Tax.Ext[ExtKeyDocType].String(), "R1")
+	})
+
+	t.Run("corrective", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.Type = bill.InvoiceTypeCorrective
+		require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 1)
+		assert.Equal(t, i.Tax.Ext[ExtKeyDocType].String(), "R1")
+	})
+
+	t.Run("simplified credit note", func(t *testing.T) {
+		i := testInvoiceStandard(t)
+		i.Type = bill.InvoiceTypeCreditNote
+		i.SetTags(tax.TagSimplified)
+		require.NoError(t, i.Calculate())
+		assert.Len(t, i.Notes, 1)
+		assert.Equal(t, i.Tax.Ext[ExtKeyDocType].String(), "R5")
+	})
 }
