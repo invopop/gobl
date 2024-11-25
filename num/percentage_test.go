@@ -100,9 +100,11 @@ func TestPercentageRescale(t *testing.T) {
 	}
 }
 
-func TestPercentageInvert(t *testing.T) {
+func TestPercentageNegate(t *testing.T) {
 	p := num.MakePercentage(160, 3)
-	x := p.Invert()
+	x := p.Negate()
+	assert.Equal(t, "-16.0%", x.String())
+	x = p.Invert()
 	assert.Equal(t, "-16.0%", x.String())
 }
 
