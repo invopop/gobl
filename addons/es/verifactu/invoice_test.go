@@ -1,14 +1,15 @@
 package verifactu
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,6 +45,13 @@ func TestInvoiceValidation(t *testing.T) {
 		require.ErrorContains(t, err, "es-verifactu-doc-type: required")
 	})
 
+	t.Run("no customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 	t.Run("correction invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
@@ -53,14 +61,12 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("correction invoice with preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Tax.Ext[ExtKeyDocType] = "R1"
+		d := cal.MakeDate(2024, 1, 1)
 		inv.Preceding = []*org.DocumentRef{
 			{
-				Series: "ABC",
-				Code:   "122",
-				Ext: tax.Extensions{
-					ExtKeyDocType: "F1",
-				},
+				Series:    "ABC",
+				Code:      "122",
+				IssueDate: &d,
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -71,6 +77,9 @@ func TestInvoiceValidation(t *testing.T) {
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
+	if inv.Preceding != nil {
+		fmt.Println(inv.Preceding[0].IssueDate)
+	}
 	require.ErrorContains(t, err, expected)
 }
 
@@ -116,11 +125,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			{
 				Key:  cbc.NoteKeyGeneral,
 				Text: "This is a test invoice",
-			},
-		},
-		Tax: &bill.Tax{
-			Ext: tax.Extensions{
-				ExtKeyDocType: "F1",
 			},
 		},
 	}

@@ -90,11 +90,8 @@ func validateInvoicePreceding(val any) error {
 		return nil
 	}
 	return validation.ValidateStruct(p,
-		validation.Field(&p.IssueDate, validation.Required),
-		validation.Field(&p.Series, validation.Required),
-		validation.Field(&p.Ext,
-			tax.ExtensionsRequires(ExtKeyDocType),
-			validation.Skip,
+		validation.Field(&p.IssueDate,
+			validation.Required,
 		),
 	)
 }
