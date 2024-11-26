@@ -55,7 +55,7 @@ func TestItemValidation(t *testing.T) {
 			item: &org.Item{
 				Identities: []*org.Identity{},
 			},
-			err: "", // No error expected since it's not mandatory
+			err: "", // No error expected since it's not mandatory in some specific cases
 		},
 	}
 
