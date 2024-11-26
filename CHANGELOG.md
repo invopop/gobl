@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.206.0] - 2024-11-26
+
 ### Added
 
 - `ae`: added UAE regime
