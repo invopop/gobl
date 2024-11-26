@@ -291,6 +291,10 @@
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "oneOf": [
             {
+              "const": "AE",
+              "title": "United Arab Emirates"
+            },
+            {
               "const": "AT",
               "title": "Austria"
             },
@@ -333,6 +337,10 @@
             {
               "const": "GB",
               "title": "United Kingdom"
+            },
+            {
+              "const": "IN",
+              "title": "India"
             },
             {
               "const": "IT",

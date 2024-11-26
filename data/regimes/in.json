@@ -1,0 +1,216 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "India"
+  },
+  "time_zone": "Asia/Kolkata",
+  "country": "IN",
+  "currency": "INR",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "simplified",
+          "name": {
+            "de": "Vereinfachte Rechnung",
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada",
+            "it": "Fattura Semplificata"
+          },
+          "desc": {
+            "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+            "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+            "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+            "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "de": "Umkehr der Steuerschuld",
+            "en": "Reverse Charge",
+            "es": "Inversión del Sujeto Pasivo",
+            "it": "Inversione del soggetto passivo"
+          }
+        },
+        {
+          "key": "self-billed",
+          "name": {
+            "de": "Rechnung durch den Leistungsempfänger",
+            "en": "Self-billed",
+            "es": "Facturación por el destinatario",
+            "it": "Autofattura"
+          }
+        },
+        {
+          "key": "customer-rates",
+          "name": {
+            "de": "Kundensätze",
+            "en": "Customer rates",
+            "es": "Tarifas aplicables al destinatario",
+            "it": "Aliquote applicabili al destinatario"
+          }
+        },
+        {
+          "key": "partial",
+          "name": {
+            "de": "Teilweise",
+            "en": "Partial",
+            "es": "Parcial",
+            "it": "Parziale"
+          }
+        },
+        {
+          "key": "bill-of-supply",
+          "name": {
+            "en": "Bill of Supply",
+            "hi": "आपूर्ति का बिल"
+          }
+        },
+        {
+          "key": "invoice-cum-bill-of-supply",
+          "name": {
+            "en": "Invoice-cum-bill of supply",
+            "hi": "चालान-सह-आपूर्ति का बिल"
+          }
+        }
+      ]
+    }
+  ],
+  "extensions": [
+    {
+      "key": "in-supply-place",
+      "name": {
+        "en": "Place of Supply",
+        "hi": "आपूर्ति का स्थान"
+      },
+      "desc": {
+        "en": "The location to which the goods or services are supplied. In GST, this is referred to as the 'Place of Supply'.",
+        "hi": "वह स्थान जहां वस्तुएं या सेवाएं प्रदान की जाती हैं। GST में इसे 'आपूर्ति का स्थान' कहा जाता है।"
+      }
+    }
+  ],
+  "identity_keys": [
+    {
+      "key": "in-pan",
+      "name": {
+        "en": "Permanent Account Number",
+        "hi": "स्थायी खाता संख्या"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Tax Invoice"
+          }
+        },
+        {
+          "tags": [
+            "bill-of-supply"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "bill-of-supply",
+            "text": "Bill Of Supply"
+          }
+        },
+        {
+          "tags": [
+            "invoice-cum-bill-of-supply"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "invoice-cum-bill-of-supply",
+            "text": "Invoice-cum-bill Of Supply"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "CGST",
+      "name": {
+        "en": "CGST",
+        "hi": "सीजीएसटी"
+      },
+      "title": {
+        "en": "Central Goods and Services Tax",
+        "hi": "केंद्रीय माल और सेवा कर"
+      }
+    },
+    {
+      "code": "SGST",
+      "name": {
+        "en": "SGST",
+        "hi": "एसजीएसटी"
+      },
+      "title": {
+        "en": "State Goods and Services Tax",
+        "hi": "राज्य माल और सेवा कर"
+      }
+    },
+    {
+      "code": "IGST",
+      "name": {
+        "en": "IGST",
+        "hi": "आईजीएसटी"
+      },
+      "title": {
+        "en": "Integrated Goods and Services Tax",
+        "hi": "एकीकृत माल और सेवा कर"
+      }
+    },
+    {
+      "code": "UTGST",
+      "name": {
+        "en": "UTGST",
+        "hi": "यूटीजीएसटी"
+      },
+      "title": {
+        "en": "Union Territory Goods and Services Tax",
+        "hi": "केंद्र शासित प्रदेश माल और सेवा कर"
+      }
+    },
+    {
+      "code": "CESS",
+      "name": {
+        "en": "Cess",
+        "hi": "उपकर"
+      },
+      "title": {
+        "en": "Cess on Luxury or Specific Goods",
+        "hi": "विलासिता या विशेष वस्तुओं पर उपकर"
+      }
+    }
+  ]
+}
