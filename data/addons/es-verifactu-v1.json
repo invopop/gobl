@@ -80,7 +80,7 @@
         "es": "Código de Clasificación/Exención de Impuesto de Verifactu - L9/10"
       },
       "desc": {
-        "en": "Tax classification code used to identify the type of tax being applied to the invoice. In Verifactu these\nlists are separate but here they are combined."
+        "en": "Tax classification code used to identify the type of tax being applied to the line. It includes both exemption reasons and tax scenarios.\nThese lists are separate in Verifactu but combined here for convenience."
       },
       "values": [
         {
