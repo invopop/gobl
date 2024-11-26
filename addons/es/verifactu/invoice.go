@@ -29,7 +29,9 @@ func validateInvoice(inv *bill.Invoice) error {
 				inv.Type.In(es.InvoiceCorrectionTypes...),
 				validation.Required,
 			),
-			validation.By(validateInvoicePreceding),
+			validation.Each(
+				validation.By(validateInvoicePreceding),
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
@@ -65,8 +67,8 @@ func validateInvoiceTax(val any) error {
 }
 
 func validateInvoiceCustomer(val any) error {
-	obj, _ := val.(*org.Party)
-	if obj == nil {
+	obj, ok := val.(*org.Party)
+	if !ok || obj == nil {
 		return nil
 	}
 	// Customers must have a tax ID to at least set the country,
@@ -86,7 +88,7 @@ func validateInvoiceCustomer(val any) error {
 
 func validateInvoicePreceding(val any) error {
 	p, ok := val.(*org.DocumentRef)
-	if !ok {
+	if !ok || p == nil {
 		return nil
 	}
 	return validation.ValidateStruct(p,
@@ -97,8 +99,8 @@ func validateInvoicePreceding(val any) error {
 }
 
 func validateInvoiceLine(value any) error {
-	obj, _ := value.(*bill.Line)
-	if obj == nil {
+	obj, ok := value.(*bill.Line)
+	if !ok || obj == nil {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
