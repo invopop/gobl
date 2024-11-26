@@ -62,8 +62,6 @@ func TestValidatePAN(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{Key: in.IdentityKeyPAN, Code: tt.code}
-
-			// Validar el PAN
 			err := in.Validate(id)
 
 			if tt.err == "" {

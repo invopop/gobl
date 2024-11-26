@@ -79,7 +79,6 @@ func hasValidChecksum(gstin string) bool {
 
 	remainder := sum % 36
 	calculatedChecksum := (36 - remainder) % 36
-
 	checksumChar := findCharByValue(calculatedChecksum)
 
 	return checksumChar == rune(gstin[14])
