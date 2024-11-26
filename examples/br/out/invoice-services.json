@@ -4,98 +4,127 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "edfb9ac9ce7e8ceecb839cbfba109d8350ecf7408038e6eddd008cb294949456"
+			"val": "d7ef87ccb18475563f8ce2aa804cd51e46b94c3adc6af2bb0867a72f13ad5ac1"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "BR",
-		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
 		"type": "standard",
 		"series": "SAMPLE",
-		"code": "001",
-		"issue_date": "2023-04-21",
+		"code": "1",
+		"issue_date": "2024-11-15",
 		"currency": "BRL",
 		"supplier": {
-			"name": "TechSolutions Brasil Ltda.",
+			"name": "SaúdeMais Serviços Médicos Ltda.",
 			"tax_id": {
-				"country": "BR"
+				"country": "BR",
+				"code": "55263640000186"
 			},
+			"identities": [
+				{
+					"key": "br-nfse-municipal-reg",
+					"code": "45678901234567"
+				},
+				{
+					"key": "br-nfse-national-reg",
+					"code": "12345012345678"
+				}
+			],
 			"addresses": [
 				{
-					"num": "595",
-					"street": "Rua Haddock Lobo",
-					"locality": "São Paulo",
-					"region": "SP",
-					"code": "01311-000",
+					"num": "200",
+					"street": "Rua Primeiro de Março",
+					"street_extra": "Torre A",
+					"locality": "Centro",
+					"region": "Rio de Janeiro",
+					"state": "RJ",
+					"code": "20010-000",
 					"country": "BR"
 				}
 			],
 			"emails": [
 				{
-					"addr": "supplier_br@example.com"
+					"addr": "saudemais@example.com"
 				}
-			]
+			],
+			"ext": {
+				"br-nfse-fiscal-incentive": "1",
+				"br-nfse-municipality": "3304557",
+				"br-nfse-simples": "1",
+				"br-nfse-special-regime": "4"
+			}
 		},
 		"customer": {
-			"name": "Sample Consumer",
-			"emails": [
+			"name": "Construforte Engenharia Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "46602178000103"
+			},
+			"addresses": [
 				{
-					"addr": "customer_br@example.com"
+					"num": "75",
+					"street": "Avenida Sete de Setembro",
+					"street_extra": "Bloco C",
+					"locality": "Centro",
+					"region": "Salvador",
+					"state": "BA",
+					"code": "40060-000",
+					"country": "BR"
 				}
 			]
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "20",
+				"quantity": "15",
 				"item": {
-					"name": "Development services",
-					"price": "90.00",
-					"unit": "h",
+					"name": "Consultancy Services",
+					"price": "100.00",
 					"ext": {
-						"br-nfse-service": "1.01"
+						"br-nfse-cnae": "62.01-5-01",
+						"br-nfse-service": "10.5"
 					}
 				},
-				"sum": "1800.00",
-				"discounts": [
-					{
-						"reason": "Special discount",
-						"percent": "10%",
-						"amount": "180.00"
-					}
-				],
+				"sum": "1500.00",
 				"taxes": [
 					{
 						"cat": "ISS",
-						"percent": "15%"
+						"percent": "15%",
+						"ext": {
+							"br-nfse-iss-liability": "1"
+						}
 					}
 				],
-				"total": "1620.00"
+				"total": "1500.00"
 			}
 		],
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "1500.00",
+			"total": "1500.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "ISS",
 						"rates": [
 							{
-								"base": "1620.00",
+								"ext": {
+									"br-nfse-iss-liability": "1"
+								},
+								"base": "1500.00",
 								"percent": "15%",
-								"amount": "243.00"
+								"amount": "225.00"
 							}
 						],
-						"amount": "243.00"
+						"amount": "225.00"
 					}
 				],
-				"sum": "243.00"
+				"sum": "225.00"
 			},
-			"tax": "243.00",
-			"total_with_tax": "1863.00",
-			"payable": "1863.00"
+			"tax": "225.00",
+			"total_with_tax": "1725.00",
+			"payable": "1725.00"
 		}
 	}
 }

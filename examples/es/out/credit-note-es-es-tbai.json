@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bd55d1603bc9a657f994684631ad5890c1adfe88c00dbb1f9edb40b7c6d215c5"
+			"val": "e4b79d1885c94a3d643b6c234ef7a6251bde4464bd6ee906e47523249c555e06"
 		}
 	},
 	"doc": {
@@ -86,7 +86,10 @@
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
-					"unit": "h"
+					"unit": "h",
+					"ext": {
+						"es-tbai-product": "services"
+					}
 				},
 				"sum": "1800.00",
 				"discounts": [
@@ -110,7 +113,10 @@
 				"quantity": "1",
 				"item": {
 					"name": "Financial service",
-					"price": "10.00"
+					"price": "10.00",
+					"ext": {
+						"es-tbai-product": "services"
+					}
 				},
 				"sum": "10.00",
 				"taxes": [

@@ -1,8 +1,10 @@
 # 🇫🇷 GOBL France Tax Regime
 
-Example FR GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example FR GOBL files in the [`examples`](../../examples/fr) (uncalculated documents) and [`examples/out`](../../examples/fr/out) (calculated envelopes) subdirectories.
 
-## Tax IDs
+## France-specific Requirements
+
+### Tax IDs
 
 France has three main company IDs which are all very closely related and may be included on Invoice documents:
 

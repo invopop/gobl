@@ -2,7 +2,7 @@
 
 Greece uses the myDATA and Peppol BIS Billing 3.0 formats for their e-invoicing/tax-reporting system.
 
-Example GR GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example GR GOBL files in the [`examples`](../../examples/gr) (uncalculated documents) and [`examples/out`](../../examples/gr/out) (calculated envelopes) subdirectories.
 
 ## Public Documentation
 
@@ -10,7 +10,7 @@ Example GR GOBL files can be found in the [`examples`](./examples) (YAML uncalcu
 * [Greek Peppol BIS Billing 3.0](https://www.gsis.gr/sites/default/files/eInvoice/Instructions%20to%20B2G%20Suppliers%20and%20certified%20PEPPOL%20Providers%20for%20the%20Greek%20PEPPOL%20BIS-EN-%20v1.0.pdf)
 * [VAT Rates](https://www.gov.gr/en/sdg/taxes/vat/general/basic-vat-rates)
 
-## Greece specifics
+## Greece-specific Requirements
 
 ### Invoice Type
 

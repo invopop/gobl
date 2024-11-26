@@ -6,6 +6,115 @@
   },
   "extensions": [
     {
+      "key": "br-nfse-cnae",
+      "name": {
+        "en": "CNAE code",
+        "pt": "Código CNAE"
+      },
+      "desc": {
+        "en": "The CNAE (National Classification of Economic Activities) code for a service.\n\nList of codes from the IBGE (Brazilian Institute of Geography and Statistics):\n\n* https://www.ibge.gov.br/en/statistics/technical-documents/statistical-lists-and-classifications/17245-national-classification-of-economic-activities.html"
+      },
+      "pattern": "^\\d{2}[\\s\\.\\-\\/]?\\d{2}[\\s\\.\\-\\/]?\\d[\\s\\.\\-\\/]?\\d{2}$"
+    },
+    {
+      "key": "br-nfse-fiscal-incentive",
+      "name": {
+        "en": "Fiscal Incentive",
+        "pt": "Incentivo Fiscal"
+      },
+      "desc": {
+        "en": "Indicates whether a party benefits from a fiscal incentive.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-68)"
+      },
+      "values": [
+        {
+          "value": "1",
+          "name": {
+            "en": "Has incentive",
+            "pt": "Possui incentivo"
+          }
+        },
+        {
+          "value": "2",
+          "name": {
+            "en": "Does not have incentive",
+            "pt": "Não possui incentivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfse-iss-liability",
+      "name": {
+        "en": "ISS Liability",
+        "pt": "Exigibilidade ISS"
+      },
+      "desc": {
+        "en": "Indicates the ISS liability status, i.e., whether the ISS tax is due or not and why.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-38)"
+      },
+      "values": [
+        {
+          "value": "1",
+          "name": {
+            "en": "Liable",
+            "pt": "Exigível"
+          }
+        },
+        {
+          "value": "2",
+          "name": {
+            "en": "Not subject",
+            "pt": "Não incidência"
+          }
+        },
+        {
+          "value": "3",
+          "name": {
+            "en": "Exempt",
+            "pt": "Isenção"
+          }
+        },
+        {
+          "value": "4",
+          "name": {
+            "en": "Export",
+            "pt": "Exportação"
+          }
+        },
+        {
+          "value": "5",
+          "name": {
+            "en": "Immune",
+            "pt": "Imunidade"
+          }
+        },
+        {
+          "value": "6",
+          "name": {
+            "en": "Suspended Judicially",
+            "pt": "Suspensa por Decisão Judicial"
+          }
+        },
+        {
+          "value": "7",
+          "name": {
+            "en": "Suspended Administratively",
+            "pt": "Suspensa por Processo Administrativo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfse-municipality",
+      "name": {
+        "en": "IGBE Municipality Code",
+        "pt": "Código do Município do IBGE"
+      },
+      "desc": {
+        "en": "The municipality code as defined by the IGBE (Brazilian Institute of Geography and\nStatistics).\n\nList of codes from the IGBE:\n\n* https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+      },
+      "pattern": "^\\d{7}$"
+    },
+    {
       "key": "br-nfse-service",
       "name": {
         "en": "Service Code",
@@ -14,8 +123,104 @@
       "desc": {
         "en": "The service code as defined by the municipality. Typically, one of the codes listed\nin the Lei Complementar 116/2003, but municipalities can make their own changes.\n\nFor further details on the list of possible codes, see:\n\n* https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm"
       }
+    },
+    {
+      "key": "br-nfse-simples",
+      "name": {
+        "en": "Opting for “Simples Nacional” regime",
+        "pt": "Optante pelo Simples Nacional"
+      },
+      "desc": {
+        "en": "Indicates whether a party is opting for the “Simples Nacional” (Regime Especial\nUnificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e\nEmpresas de Pequeno Porte) tax regime\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
+      },
+      "values": [
+        {
+          "value": "1",
+          "name": {
+            "en": "Opt-in",
+            "pt": "Optante"
+          }
+        },
+        {
+          "value": "2",
+          "name": {
+            "en": "Opt-out",
+            "pt": "Não optante"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfse-special-regime",
+      "name": {
+        "en": "Special Tax Regime",
+        "pt": "Regime Especial de Tributação"
+      },
+      "desc": {
+        "en": "Indicates a special tax regime that a party is subject to.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-66)"
+      },
+      "values": [
+        {
+          "value": "1",
+          "name": {
+            "en": "Municipal micro-enterprise",
+            "pt": "Microempresa municipal"
+          }
+        },
+        {
+          "value": "2",
+          "name": {
+            "en": "Estimated",
+            "pt": "Estimativa"
+          }
+        },
+        {
+          "value": "3",
+          "name": {
+            "en": "Professional Society",
+            "pt": "Sociedade de profissionais"
+          }
+        },
+        {
+          "value": "4",
+          "name": {
+            "en": "Cooperative",
+            "pt": "Cooperativa"
+          }
+        },
+        {
+          "value": "5",
+          "name": {
+            "en": "Single micro-entrepreneur (MEI)",
+            "pt": "Microempreendedor individual (MEI)"
+          }
+        },
+        {
+          "value": "6",
+          "name": {
+            "en": "Micro-enterprise or Small Business (ME EPP)",
+            "pt": "Microempresa ou Empresa de Pequeno Porte (ME EPP)."
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,
+  "identities": [
+    {
+      "key": "br-nfse-municipal-reg",
+      "name": {
+        "en": "Company Municipal Registration",
+        "pt": "Inscrição Municipal da Empresa"
+      }
+    },
+    {
+      "key": "br-nfse-national-reg",
+      "name": {
+        "en": "Company National Registration",
+        "pt": "Inscrição Nacional da Empresa"
+      }
+    }
+  ],
   "corrections": null
 }

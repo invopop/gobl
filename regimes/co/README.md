@@ -1,8 +1,8 @@
 # 🇨🇴 GOBL Colombia Tax Regime
 
-Example CO GOBL files can be found in the [`examples`](./examples) (YAML uncalculated documents) and [`examples/out`](./examples/out) (JSON calculated envelopes) subdirectories.
+Find example CO GOBL files in the [`examples`](../../examples/co) (uncalculated documents) and [`examples/out`](../../examples/co/out) (calculated envelopes) subdirectories.
 
-## Colombia specifics
+## Colombia-specific Requirements
 
 Please also see the [DIAN Addon](../../addons/co/dian) package named `co-dian-v2` which should be included in your documents.
 

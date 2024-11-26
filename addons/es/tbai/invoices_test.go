@@ -15,6 +15,14 @@ import (
 )
 
 func TestInvoiceNormalization(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		ad := tax.AddonForKey(tbai.V1)
+		var inv *bill.Invoice
+		assert.NotPanics(t, func() {
+			ad.Normalizer(inv)
+		})
+	})
+
 	t.Run("standard invoice, no address", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Tax = nil
@@ -125,6 +133,17 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = nil
 		assertValidationError(t, inv, "notes: with key 'general' missing")
+	})
+
+	t.Run("correction", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Correct(
+			bill.Credit,
+			bill.WithExtension(tbai.ExtKeyCorrection, "R4"),
+		))
+		assert.Len(t, inv.Preceding, 1)
+		assert.NoError(t, inv.Validate())
 	})
 }
 

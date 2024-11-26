@@ -26,7 +26,9 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Brazil NFS-e 1.X",
 		},
 		Extensions: extensions,
+		Identities: identities,
 		Validator:  validate,
+		Normalizer: normalize,
 	}
 }
 
@@ -38,6 +40,17 @@ func validate(doc any) error {
 		return validateLine(obj)
 	case *org.Item:
 		return validateItem(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
+}
+
+func normalize(doc any) {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeSupplier(obj.Supplier)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
+	}
 }
