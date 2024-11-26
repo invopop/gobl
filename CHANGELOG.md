@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-verifactu-v1`: added initial Spain VeriFactu addon.
+
 ## [v0.206.0] - 2024-11-26
 
 ### Added
