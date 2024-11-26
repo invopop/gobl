@@ -21,7 +21,9 @@ var extensions = []*cbc.KeyDefinition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-			Invoice type code used to identify the type of invoice being sent.
+				Invoice type code used to identify the type of invoice being sent.
+				Source: VeriFactu Ministerial Order:
+				 * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138
 			`),
 		},
 		Values: []*cbc.ValueDefinition{
@@ -93,6 +95,8 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: here.Doc(`
 				Tax classification code used to identify the type of tax being applied to the line. It includes both exemption reasons and tax scenarios.
 				These lists are separate in Verifactu but combined here for convenience.
+				Source: VeriFactu Ministerial Order:
+				 * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138
 			`),
 		},
 		Values: []*cbc.ValueDefinition{
