@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `ae`: added UAE regime
 - `br-nfse-v1`: new extensions, validations & identities for the typical service note and supplier.
 
+### Changed
+
+- `es-tbai-v1`: always add `es-tbai-product` extension to items, indicating default value.
+
+### Fixed
+
+- `es-tbai-v1`: issue with preceding validation.
+
 ## [v0.205.1] - 2024-11-19
 
 ### Added

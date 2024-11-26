@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "54c6eb1d6447f15a65d0f87aa67f3b272041e4e5ad2be14c14d2b7a85e47d9d3"
+			"val": "21f2bb5d933bd6a8cf777b2dfd2ccd9aedbe1e5a5d3d9467e976dbecc2f8a351"
 		}
 	},
 	"doc": {
@@ -60,7 +60,10 @@
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
-					"unit": "h"
+					"unit": "h",
+					"ext": {
+						"es-tbai-product": "services"
+					}
 				},
 				"sum": "1800.00",
 				"discounts": [
