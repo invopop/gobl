@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `org`: Party validation now working with regimes when defined.
+
 ## [v0.206.0] - 2024-11-26
 
 ### Added

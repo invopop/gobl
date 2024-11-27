@@ -88,3 +88,36 @@ func TestPartyAddressNill(t *testing.T) {
 	party.Normalize(nil)
 	assert.NoError(t, party.Validate())
 }
+
+func TestPartyValidation(t *testing.T) {
+	t.Run("with regime", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "123 456 78901",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		assert.NoError(t, party.Validate())
+		assert.Equal(t, "DE", party.GetRegime().String())
+	})
+	t.Run("with regime and bad code", func(t *testing.T) {
+		party := org.Party{
+			Regime: tax.WithRegime("DE"),
+			Name:   "Invopop",
+			Identities: []*org.Identity{
+				{
+					Key:  "de-tax-number",
+					Code: "1231312423432422",
+				},
+			},
+		}
+		require.NoError(t, party.Calculate())
+		err := party.Validate()
+		assert.ErrorContains(t, err, "identities: (0: (code: must be in a valid format.).).")
+	})
+}
