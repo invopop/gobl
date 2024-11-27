@@ -29,8 +29,11 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Spain Verifactu",
 		},
-		Extensions:  extensions,
-		Validator:   validate,
+		Extensions: extensions,
+		Validator:  validate,
+		Tags: []*tax.TagSet{
+			invoiceTags,
+		},
 		Scenarios:   scenarios,
 		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,

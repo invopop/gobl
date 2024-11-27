@@ -1,15 +1,16 @@
-package verifactu
+package verifactu_test
 
 import (
-	"fmt"
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/verifactu"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,6 +19,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F1")
 	})
 	t.Run("missing customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -25,7 +27,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "customer: (tax_id: cannot be blank.)")
 	})
 
-	t.Run("with exemption reason", func(t *testing.T) {
+	t.Run("without exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext = nil
 		assertValidationError(t, inv, "es-verifactu-tax-classification: required")
@@ -45,11 +47,13 @@ func TestInvoiceValidation(t *testing.T) {
 		require.ErrorContains(t, err, "es-verifactu-doc-type: required")
 	})
 
-	t.Run("no customer", func(t *testing.T) {
+	t.Run("simplified invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
 	})
 
 	t.Run("correction invoice requires preceding", func(t *testing.T) {
@@ -82,22 +86,36 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
+	})
+
+	t.Run("substitution invoice", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Tags = tax.Tags{List: []cbc.Key{verifactu.TagSubstitution}}
+		d := cal.MakeDate(2024, 1, 1)
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "ABC",
+				Code:      "122",
+				IssueDate: &d,
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F3")
 	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
-	if inv.Preceding != nil {
-		fmt.Println(inv.Preceding[0].IssueDate)
-	}
 	require.ErrorContains(t, err, expected)
 }
 
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	return &bill.Invoice{
-		Addons: tax.WithAddons(V1),
+		Addons: tax.WithAddons(verifactu.V1),
 		Code:   "123",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
@@ -124,9 +142,9 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "exempt",
+						Rate:     "standard",
 						Ext: tax.Extensions{
-							ExtKeyTaxClassification: "E1",
+							"es-verifactu-tax-classification": "S1",
 						},
 					},
 				},

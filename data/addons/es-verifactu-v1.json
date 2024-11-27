@@ -12,7 +12,7 @@
         "es": "Código de Tipo de Factura de Verifactu - L2"
       },
       "desc": {
-        "en": "Invoice type code used to identify the type of invoice being sent."
+        "en": "Invoice type code used to identify the type of invoice being sent.\nSource: VeriFactu Ministerial Order:\n * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138"
       },
       "values": [
         {
@@ -80,7 +80,7 @@
         "es": "Código de Clasificación/Exención de Impuesto de Verifactu - L9/10"
       },
       "desc": {
-        "en": "Tax classification code used to identify the type of tax being applied to the line. It includes both exemption reasons and tax scenarios.\nThese lists are separate in Verifactu but combined here for convenience."
+        "en": "Tax classification code used to identify the type of tax being applied to the line. It includes both exemption reasons and tax scenarios.\nThese lists are separate in Verifactu but combined here for convenience.\nSource: VeriFactu Ministerial Order:\n * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138"
       },
       "values": [
         {
@@ -151,6 +151,20 @@
           "name": {
             "en": "Exempt: pursuant to other reasons",
             "es": "Exenta: por otra causa"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "substitution",
+          "name": {
+            "en": "Invoice issued in substitution of simplified invoices issued and declared",
+            "es": "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas"
           }
         }
       ]
