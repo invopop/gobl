@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `in`: added Indian regime
 
+## [v0.206.1] - 2024-11-28
+
+### Fixed
+
+- `org`: Party validation now working with regimes when defined.
+
 ## [v0.206.0] - 2024-11-26
 
 ### Added

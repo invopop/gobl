@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "dda9cc633ac5050877271cc1bd6631bd95b1190a4e4b26a69725d86e4f2a6d55"
+			"val": "24b8131e19c332262a8d8afe0bddfaadc7213f841d377fdcfeca8526641cddba"
 		}
 	},
 	"doc": {
@@ -31,7 +31,7 @@
 			"name": "Ελληνικά Τρόφιμα Α.Ε.",
 			"tax_id": {
 				"country": "EL",
-				"code": "728089281"
+				"code": "177472438"
 			},
 			"addresses": [
 				{
