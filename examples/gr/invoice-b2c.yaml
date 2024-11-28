@@ -13,7 +13,7 @@ tax:
 supplier:
   tax_id:
     country: "EL"
-    code: "728089281"
+    code: "177472438"
   name: "Ελληνικά Τρόφιμα Α.Ε."
   emails:
     - addr: "hellenicfoods@example.com"
@@ -33,15 +33,10 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
-  - quantity: 1
-    item:
-      name: "Cleaning"
-      price: "8.44"
-    taxes:
-      - cat: VAT
-        rate: reduced
 
 payment:
+  instructions:
+    key: card
   advances:
     - key: card
       percent: "100%"
