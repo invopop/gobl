@@ -11,7 +11,7 @@ $tags:
 supplier:
   tax_id:
     country: "EL"
-    code: "728089281"
+    code: "177472438"
   name: "Ελληνικά Τρόφιμα Α.Ε."
   emails:
     - addr: "hellenicfoods@example.com"
@@ -42,19 +42,22 @@ lines:
       name: "Υπηρεσίες Ανάπτυξης"
       price: "90.00"
       unit: "h"
+      ext:
+        "gr-mydata-income-cat": "category1_3"
+        "gr-mydata-income-type": "E3_561_001"
     discounts:
       - percent: "10%"
         reason: "Ειδική Έκπτωση"
     taxes:
       - cat: VAT
         rate: standard
-        ext:
-          "gr-mydata-income-cat": "category1_1"
-          "gr-mydata-income-type": "E3_106"
   - quantity: 1
     item:
       name: "Tax exempt item"
       price: "100.00"
+      ext:
+        "gr-mydata-income-cat": "category1_3"
+        "gr-mydata-income-type": "E3_561_001"
     taxes:
       - cat: VAT
         rate: exempt
