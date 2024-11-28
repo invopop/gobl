@@ -14,13 +14,6 @@ import (
 
 var (
 	taxCodeRegexp = regexp.MustCompile(`^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$`)
-
-	conversionTable = map[rune]int{
-		'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
-		'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15, 'G': 16, 'H': 17, 'I': 18,
-		'J': 19, 'K': 20, 'L': 21, 'M': 22, 'N': 23, 'O': 24, 'P': 25, 'Q': 26, 'R': 27,
-		'S': 28, 'T': 29, 'U': 30, 'V': 31, 'W': 32, 'X': 33, 'Y': 34, 'Z': 35,
-	}
 )
 
 func normalizeTaxIdentity(tID *tax.Identity) {
@@ -49,24 +42,21 @@ func validateTaxCode(value interface{}) error {
 		return errors.New("invalid GSTIN format")
 	}
 
-	if !hasValidChecksum(val) {
-		return errors.New("checksum mismatch")
+	if err := hasValidChecksum(val); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func hasValidChecksum(gstin string) bool {
+func hasValidChecksum(gstin string) error {
 	if len(gstin) != 15 {
-		return false
+		return errors.New("invalid GSTIN length")
 	}
 
 	sum := 0
 	for i, char := range gstin[:14] {
-		value, exists := conversionTable[char]
-		if !exists {
-			return false
-		}
+		value := charToValue(char)
 
 		multiplier := 1
 		if i%2 != 0 {
@@ -79,16 +69,25 @@ func hasValidChecksum(gstin string) bool {
 
 	remainder := sum % 36
 	calculatedChecksum := (36 - remainder) % 36
-	checksumChar := findCharByValue(calculatedChecksum)
+	checksumChar := valueToChar(calculatedChecksum)
 
-	return checksumChar == rune(gstin[14])
+	if checksumChar != rune(gstin[14]) {
+		return errors.New("checksum mismatch")
+	}
+
+	return nil
 }
 
-func findCharByValue(value int) rune {
-	for char, num := range conversionTable {
-		if num == value {
-			return char
-		}
+func charToValue(char rune) int {
+	if char >= '0' && char <= '9' {
+		return int(char - '0')
 	}
-	return ' '
+	return int(char - 'A' + 10)
+}
+
+func valueToChar(value int) rune {
+	if value >= 0 && value <= 9 {
+		return rune('0' + value)
+	}
+	return rune('A' + value - 10)
 }
