@@ -28,7 +28,15 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Central Goods and Services Tax",
 			i18n.HI: "केंद्रीय माल और सेवा कर",
 		},
-		Rates: []*tax.RateDef{},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Central GST Regulations",
+					i18n.HI: "केंद्रीय जीएसटी नियमावली",
+				},
+				URL: "https://gstcouncil.gov.in/central-gst",
+			},
+		},
 	},
 
 	// State Goods and Services Tax (SGST)
@@ -42,7 +50,15 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "State Goods and Services Tax",
 			i18n.HI: "राज्य माल और सेवा कर",
 		},
-		Rates: []*tax.RateDef{},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "State GST Regulations",
+					i18n.HI: "राज्य जीएसटी नियमावली",
+				},
+				URL: "https://gstcouncil.gov.in/sgst",
+			},
+		},
 	},
 
 	// Integrated Goods and Services Tax (IGST)
@@ -56,7 +72,15 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Integrated Goods and Services Tax",
 			i18n.HI: "एकीकृत माल और सेवा कर",
 		},
-		Rates: []*tax.RateDef{},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Integrated GST Regulations",
+					i18n.HI: "एकीकृत जीएसटी नियमावली",
+				},
+				URL: "https://gstcouncil.gov.in/gst_council/igst",
+			},
+		},
 	},
 
 	// Union Territory Goods and Services Tax (UTGST)
@@ -70,7 +94,15 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Union Territory Goods and Services Tax",
 			i18n.HI: "केंद्र शासित प्रदेश माल और सेवा कर",
 		},
-		Rates: []*tax.RateDef{},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Union Territory GST Regulations",
+					i18n.HI: "यूटीजीएसटी नियमावली",
+				},
+				URL: "https://gstcouncil.gov.in/utgst",
+			},
+		},
 	},
 
 	// Cess (Additional Tax for Luxury or Specific Goods)
@@ -81,9 +113,17 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.HI: "उपकर",
 		},
 		Title: i18n.String{
-			i18n.EN: "Cess on Luxury or Specific Goods",
-			i18n.HI: "विलासिता या विशेष वस्तुओं पर उपकर",
+			i18n.EN: "GST Compensation Cess on Luxury or Specific Goods",
+			i18n.HI: "विलासिता या विशेष वस्तुओं पर जीएसटी मुआवजा उपकर",
 		},
-		Rates: []*tax.RateDef{},
+		Sources: []*tax.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "GST Compensation Cess Regulations",
+					i18n.HI: "जीएसटी मुआवजा उपकर नियमावली",
+				},
+				URL: "https://gstcouncil.gov.in",
+			},
+		},
 	},
 }

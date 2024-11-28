@@ -166,7 +166,16 @@
       "title": {
         "en": "Central Goods and Services Tax",
         "hi": "केंद्रीय माल और सेवा कर"
-      }
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Central GST Regulations",
+            "hi": "केंद्रीय जीएसटी नियमावली"
+          },
+          "url": "https://gstcouncil.gov.in/central-gst"
+        }
+      ]
     },
     {
       "code": "SGST",
@@ -177,7 +186,16 @@
       "title": {
         "en": "State Goods and Services Tax",
         "hi": "राज्य माल और सेवा कर"
-      }
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "State GST Regulations",
+            "hi": "राज्य जीएसटी नियमावली"
+          },
+          "url": "https://gstcouncil.gov.in/sgst"
+        }
+      ]
     },
     {
       "code": "IGST",
@@ -188,7 +206,16 @@
       "title": {
         "en": "Integrated Goods and Services Tax",
         "hi": "एकीकृत माल और सेवा कर"
-      }
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Integrated GST Regulations",
+            "hi": "एकीकृत जीएसटी नियमावली"
+          },
+          "url": "https://gstcouncil.gov.in/gst_council/igst"
+        }
+      ]
     },
     {
       "code": "UTGST",
@@ -199,7 +226,16 @@
       "title": {
         "en": "Union Territory Goods and Services Tax",
         "hi": "केंद्र शासित प्रदेश माल और सेवा कर"
-      }
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Union Territory GST Regulations",
+            "hi": "यूटीजीएसटी नियमावली"
+          },
+          "url": "https://gstcouncil.gov.in/utgst"
+        }
+      ]
     },
     {
       "code": "CESS",
@@ -208,9 +244,18 @@
         "hi": "उपकर"
       },
       "title": {
-        "en": "Cess on Luxury or Specific Goods",
-        "hi": "विलासिता या विशेष वस्तुओं पर उपकर"
-      }
+        "en": "GST Compensation Cess on Luxury or Specific Goods",
+        "hi": "विलासिता या विशेष वस्तुओं पर जीएसटी मुआवजा उपकर"
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "GST Compensation Cess Regulations",
+            "hi": "जीएसटी मुआवजा उपकर नियमावली"
+          },
+          "url": "https://gstcouncil.gov.in"
+        }
+      ]
     }
   ]
 }
