@@ -27,27 +27,31 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "Spain Verifactu",
+			i18n.EN: "Spain Verifactu V1",
 		},
-		Extensions: extensions,
-		Validator:  validate,
-		Tags: []*tax.TagSet{
-			invoiceTags,
-		},
+		Extensions:  extensions,
+		Validator:   validate,
 		Scenarios:   scenarios,
 		Normalizer:  normalize,
 		Corrections: invoiceCorrectionDefinitions,
 	}
 }
 
-func normalize(_ any) {
-	// nothing to normalize yet
+func normalize(doc any) {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeInvoice(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
+	}
 }
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }

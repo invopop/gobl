@@ -1,6 +1,7 @@
 package verifactu_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/verifactu"
@@ -29,8 +30,10 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("without exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Rate = ""
+		inv.Lines[0].Taxes[0].Percent = num.NewPercentage(21, 2)
 		inv.Lines[0].Taxes[0].Ext = nil
-		assertValidationError(t, inv, "es-verifactu-tax-classification: required")
+		assertValidationError(t, inv, "es-verifactu-op-class: required")
 	})
 
 	t.Run("without notes", func(t *testing.T) {
@@ -54,6 +57,17 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
+	})
+
+	t.Run("simplified substitution", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		require.NoError(t, inv.Calculate())
+
+		inv.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "F3"))
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F3")
+		assert.Empty(t, inv.Tax.Ext[verifactu.ExtKeyCorrectionType])
 	})
 
 	t.Run("correction invoice requires preceding", func(t *testing.T) {
@@ -82,28 +96,19 @@ func TestInvoiceValidation(t *testing.T) {
 				Series:    "ABC",
 				Code:      "122",
 				IssueDate: &d,
+				Ext: tax.Extensions{
+					verifactu.ExtKeyDocType: "R1",
+				},
 			},
 		}
 		require.NoError(t, inv.Calculate())
+		data, _ := json.MarshalIndent(inv, "", "  ")
+		t.Log(string(data))
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
+		assert.Empty(t, inv.Preceding[0].Ext)
 	})
 
-	t.Run("substitution invoice", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Tags = tax.Tags{List: []cbc.Key{verifactu.TagSubstitution}}
-		d := cal.MakeDate(2024, 1, 1)
-		inv.Preceding = []*org.DocumentRef{
-			{
-				Series:    "ABC",
-				Code:      "122",
-				IssueDate: &d,
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F3")
-	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
@@ -143,9 +148,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					{
 						Category: "VAT",
 						Rate:     "standard",
-						Ext: tax.Extensions{
-							"es-verifactu-tax-classification": "S1",
-						},
 					},
 				},
 			},

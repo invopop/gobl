@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -117,4 +118,43 @@ func TestInvoiceTaxTagsMigration(t *testing.T) {
 	require.NoError(t, json.Unmarshal([]byte(in), inv))
 
 	assert.Equal(t, "simplified", inv.GetTags()[0].String())
+}
+
+func TestTaxMergeExtensions(t *testing.T) {
+	t.Run("nil tax", func(t *testing.T) {
+		var tx *bill.Tax
+		ext := tax.Extensions{
+			"vat-cat": "standard",
+		}
+		tx = tx.MergeExtensions(ext)
+		assert.Equal(t, "standard", tx.Ext["vat-cat"].String())
+	})
+	t.Run("nil extensions", func(t *testing.T) {
+		tx := &bill.Tax{}
+		tx = tx.MergeExtensions(nil)
+		assert.Nil(t, tx.Ext)
+	})
+	t.Run("with extensions", func(t *testing.T) {
+		tx := &bill.Tax{
+			Ext: tax.Extensions{
+				"vat-cat": "standard",
+			},
+		}
+		tx = tx.MergeExtensions(tax.Extensions{
+			"vat-cat": "reduced",
+		})
+		assert.Equal(t, "reduced", tx.Ext["vat-cat"].String())
+	})
+	t.Run("new extensions", func(t *testing.T) {
+		tx := &bill.Tax{
+			Ext: tax.Extensions{
+				"vat-test": "bar",
+			},
+		}
+		tx = tx.MergeExtensions(tax.Extensions{
+			"vat-cat": "reduced",
+		})
+		assert.Equal(t, "reduced", tx.Ext["vat-cat"].String())
+		assert.Equal(t, "bar", tx.Ext["vat-test"].String())
+	})
 }

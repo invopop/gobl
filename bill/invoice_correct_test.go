@@ -20,7 +20,6 @@ import (
 )
 
 func TestInvoiceCorrect(t *testing.T) {
-
 	i := testInvoicePTForCorrection(t)
 	err := i.Correct(bill.Corrective)
 	require.Error(t, err)
@@ -263,6 +262,7 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 func testInvoicePTForCorrection(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime: tax.WithRegime("PT"),
 		Series: "TEST",
 		Code:   "123",
 		Tax: &bill.Tax{

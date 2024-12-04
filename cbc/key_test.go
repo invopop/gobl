@@ -66,6 +66,13 @@ func TestKeyIn(t *testing.T) {
 	assert.False(t, c.In("pro", "reduced"))
 }
 
+func TestKeyPop(t *testing.T) {
+	k := cbc.Key("a+b+c")
+	assert.Equal(t, cbc.Key("a+b"), k.Pop())
+	assert.Equal(t, cbc.Key("a"), k.Pop().Pop())
+	assert.Equal(t, cbc.KeyEmpty, k.Pop().Pop().Pop())
+}
+
 func TestAppendUniqueKeys(t *testing.T) {
 	keys := []cbc.Key{"a", "b", "c"}
 	keys = cbc.AppendUniqueKeys(keys, "b", "d")

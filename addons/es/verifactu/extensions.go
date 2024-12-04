@@ -8,8 +8,10 @@ import (
 
 // Extension keys for Verifactu
 const (
-	ExtKeyDocType           cbc.Key = "es-verifactu-doc-type"
-	ExtKeyTaxClassification cbc.Key = "es-verifactu-tax-classification"
+	ExtKeyDocType        cbc.Key = "es-verifactu-doc-type"
+	ExtKeyOpClass        cbc.Key = "es-verifactu-op-class"
+	ExtKeyCorrectionType cbc.Key = "es-verifactu-correction-type"
+	ExtKeyExempt         cbc.Key = "es-verifactu-exempt"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -44,7 +46,7 @@ var extensions = []*cbc.KeyDefinition{
 			{
 				Value: "F3",
 				Name: i18n.String{
-					i18n.EN: "Invoice in substitution of simplified invoices.",
+					i18n.EN: "Invoice issued as a replacement for simplified invoices that have been billed and declared.",
 					i18n.ES: "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas.",
 				},
 			},
@@ -86,17 +88,49 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyTaxClassification,
+		Key: ExtKeyCorrectionType,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Tax Classification/Exemption Code - L9/10",
-			i18n.ES: "Código de Clasificación/Exención de Impuesto de Verifactu - L9/10",
+			i18n.EN: "Verifactu Correction Type Code - L3",
+			i18n.ES: "Código de Tipo de Corrección de Verifactu - L3",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Tax classification code used to identify the type of tax being applied to the line. It includes both exemption reasons and tax scenarios.
-				These lists are separate in Verifactu but combined here for convenience.
+				Correction type code used to identify the type of correction being made.
+				This value will be determined automatically according to the invoice type.
+				Corrective invoices will be marked as "S", while credit and debit notes as "I".
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "S",
+				Name: i18n.String{
+					i18n.EN: "Substitution",
+					i18n.ES: "Por Sustitución",
+				},
+			},
+			{
+				Value: "I",
+				Name: i18n.String{
+					i18n.EN: "Differences",
+					i18n.ES: "Por Diferencias",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyOpClass,
+		Name: i18n.String{
+			i18n.EN: "Verifactu Operation Classification/Exemption Code - L9",
+			i18n.ES: "Código de Clasificación/Exención de Impuesto de Verifactu - L9",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Operation classification code used to identify if taxes should be applied to the line.
 				Source: VeriFactu Ministerial Order:
 				 * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138
+				For details on how best to use and apply these and other codes, see the
+				AEAT FAQ:
+				 * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD
 			`),
 		},
 		Values: []*cbc.ValueDefinition{
@@ -128,6 +162,20 @@ var extensions = []*cbc.KeyDefinition{
 					i18n.ES: "Operación No Sujeta por Reglas de localización",
 				},
 			},
+		},
+	},
+	{
+		Key: ExtKeyExempt,
+		Name: i18n.String{
+			i18n.EN: "Verifactu Exemption Code - L10",
+			i18n.ES: "Código de Exención de Impuesto de Verifactu - L10",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Exemption code used to explain why the operation is exempt from taxes.
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
 			{
 				Value: "E1",
 				Name: i18n.String{

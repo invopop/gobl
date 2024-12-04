@@ -110,6 +110,24 @@ func (em Extensions) Validate() error {
 	return nil
 }
 
+// Get returns the value for the provided key or an empty string if not found
+// or the extensions map is nil. If the key is composed of sub-keys and
+// no precise match is found, the key will be split until one of the sub
+// components is found.
+func (em Extensions) Get(k cbc.Key) ExtValue {
+	if len(em) == 0 {
+		return ""
+	}
+	// while k is not empty, pop the last key and check if it exists
+	for k != cbc.KeyEmpty {
+		if v, ok := em[k]; ok {
+			return v
+		}
+		k = k.Pop()
+	}
+	return ""
+}
+
 // Has returns true if the code map has values for all the provided keys.
 func (em Extensions) Has(keys ...cbc.Key) bool {
 	for _, k := range keys {
@@ -216,9 +234,17 @@ func ExtensionsRequires(keys ...cbc.Key) validation.Rule {
 	}
 }
 
+func ExtensionsExclude(keys ...cbc.Key) validation.Rule {
+	return validateExtCodeMap{
+		exclude: true,
+		keys:    keys,
+	}
+}
+
 type validateExtCodeMap struct {
 	keys     []cbc.Key
 	required bool
+	exclude  bool
 }
 
 func (v validateExtCodeMap) Validate(value interface{}) error {
@@ -232,6 +258,12 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 		for _, k := range v.keys {
 			if _, ok := em[k]; !ok {
 				err[k.String()] = errors.New("required")
+			}
+		}
+	} else if v.exclude {
+		for _, k := range v.keys {
+			if _, ok := em[k]; ok {
+				err[k.String()] = errors.New("must be blank")
 			}
 		}
 	} else {
@@ -302,6 +334,16 @@ func (Extensions) JSONSchemaExtend(schema *jsonschema.Schema) {
 // String provides the string representation.
 func (ev ExtValue) String() string {
 	return string(ev)
+}
+
+// In returns true if the value is in the provided list.
+func (ev ExtValue) In(values ...ExtValue) bool {
+	for _, v := range values {
+		if ev == v {
+			return true
+		}
+	}
+	return false
 }
 
 // Key returns the key value or empty if the value is a Code.

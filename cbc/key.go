@@ -75,6 +75,20 @@ func (k Key) Has(ke Key) bool {
 	return false
 }
 
+// Pop removes the last key from a list and returns the remaining base,
+// or an empty key if there is nothing left.
+//
+// Example:
+//
+//	Key("a+b+c").Pop() => Key("a+b")
+func (k Key) Pop() Key {
+	ks := strings.Split(k.String(), KeySeparator)
+	if len(ks) == 0 {
+		return KeyEmpty
+	}
+	return Key(strings.Join(ks[:len(ks)-1], KeySeparator))
+}
+
 // HasPrefix checks to see if the key starts with the provided key.
 // As per `Has`, only the complete key between `+` symbols are
 // matched.

@@ -33,7 +33,8 @@ type CorrectionOptions struct {
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Human readable reason for the corrective operation.
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Extensions for region specific requirements.
+	// Extensions for region specific requirements that may be added in the preceding
+	// or at the document level, according to the local rules.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
 	// In case we want to use a raw json object as a source of the options.
@@ -303,7 +304,7 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 }
 
 // correctionDef tries to determine a final correction definition
-// by merge potentially multiple sources. The results include
+// by merging potentially multiple sources. The results include
 // a key that can be used to identify the definition.
 func (inv *Invoice) correctionDef() *tax.CorrectionDefinition {
 	cd := &tax.CorrectionDefinition{
@@ -363,7 +364,7 @@ func (inv *Invoice) validatePrecedingData(o *CorrectionOptions, cd *tax.Correcti
 		pre.Stamps = append(pre.Stamps, s)
 	}
 
-	if !o.Type.In(cd.Types...) {
+	if len(cd.Types) > 0 && !o.Type.In(cd.Types...) {
 		return fmt.Errorf("invalid correction type: %v", o.Type.String())
 	}
 
