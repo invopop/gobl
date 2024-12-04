@@ -234,6 +234,8 @@ func ExtensionsRequires(keys ...cbc.Key) validation.Rule {
 	}
 }
 
+// ExtensionsExclude returns a validation rule that ensures that
+// an extensions map does **not** include the provided keys.
 func ExtensionsExclude(keys ...cbc.Key) validation.Rule {
 	return validateExtCodeMap{
 		exclude: true,

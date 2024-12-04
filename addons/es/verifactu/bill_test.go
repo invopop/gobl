@@ -64,7 +64,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		require.NoError(t, inv.Calculate())
 
-		inv.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "F3"))
+		require.NoError(t, inv.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F3")
 		assert.Empty(t, inv.Tax.Ext[verifactu.ExtKeyCorrectionType])
