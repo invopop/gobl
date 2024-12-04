@@ -1,10 +1,13 @@
 package cbc_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestKey(t *testing.T) {
@@ -50,6 +53,11 @@ func TestKeyHas(t *testing.T) {
 	assert.True(t, k.Has("pro"))
 }
 
+func TestKeyStrings(t *testing.T) {
+	keys := []cbc.Key{"a", "b", "c"}
+	assert.Equal(t, []string{"a", "b", "c"}, cbc.KeyStrings(keys))
+}
+
 func TestKeyHasPrefix(t *testing.T) {
 	k := cbc.Key("standard")
 	assert.True(t, k.HasPrefix("standard"))
@@ -57,6 +65,13 @@ func TestKeyHasPrefix(t *testing.T) {
 	k = k.With("pro")
 	assert.True(t, k.HasPrefix("standard"))
 	assert.False(t, k.HasPrefix("pro"))
+	k = cbc.KeyEmpty
+	assert.False(t, k.HasPrefix("foo"))
+}
+
+func TestKeyIsEmpty(t *testing.T) {
+	assert.True(t, cbc.KeyEmpty.IsEmpty())
+	assert.False(t, cbc.Key("foo").IsEmpty())
 }
 
 func TestKeyIn(t *testing.T) {
@@ -77,4 +92,26 @@ func TestAppendUniqueKeys(t *testing.T) {
 	keys := []cbc.Key{"a", "b", "c"}
 	keys = cbc.AppendUniqueKeys(keys, "b", "d")
 	assert.Equal(t, []cbc.Key{"a", "b", "c", "d"}, keys)
+}
+
+func TestHasValidKeyIn(t *testing.T) {
+	k := cbc.Key("standard")
+	err := validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs"))
+	assert.ErrorContains(t, err, "must be or start with a valid ke")
+
+	err = validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs", "standard"))
+	assert.NoError(t, err)
+
+	k = cbc.KeyEmpty
+	err = validation.Validate(k, cbc.HasValidKeyIn("pro", "reduced+eqs", "standard"))
+	assert.NoError(t, err)
+}
+
+func TestKeyJSONSchema(t *testing.T) {
+	data := []byte(`{"description":"Text identifier to be used instead of a code for a more verbose but readable identifier.", "maxLength":64, "minLength":1, "pattern":"^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$", "title":"Key", "type":"string"}`)
+	k := cbc.Key("standard")
+	schema := k.JSONSchema()
+	out, err := json.Marshal(schema)
+	require.NoError(t, err)
+	assert.JSONEq(t, string(data), string(out))
 }

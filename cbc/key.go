@@ -83,9 +83,6 @@ func (k Key) Has(ke Key) bool {
 //	Key("a+b+c").Pop() => Key("a+b")
 func (k Key) Pop() Key {
 	ks := strings.Split(k.String(), KeySeparator)
-	if len(ks) == 0 {
-		return KeyEmpty
-	}
 	return Key(strings.Join(ks[:len(ks)-1], KeySeparator))
 }
 
@@ -94,9 +91,6 @@ func (k Key) Pop() Key {
 // matched.
 func (k Key) HasPrefix(ke Key) bool {
 	ks := strings.SplitN(k.String(), KeySeparator, 2)
-	if len(ks) == 0 {
-		return false
-	}
 	return ks[0] == ke.String()
 }
 
