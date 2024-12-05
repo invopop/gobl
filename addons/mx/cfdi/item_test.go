@@ -55,6 +55,10 @@ func TestItemValidation(t *testing.T) {
 			},
 			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
 		},
+		{
+			name: "nil",
+			item: nil,
+		},
 	}
 
 	addon := tax.AddonForKey(cfdi.V4)
@@ -114,9 +118,14 @@ func TestItemIdentityMigration(t *testing.T) {
 			Key:  cfdi.ExtKeyProdServ,
 			Code: "01010101",
 		},
+		{
+			Key:  "other",
+			Code: "1234",
+		},
 	}
 
 	err := inv.Calculate()
 	require.NoError(t, err)
 	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+	assert.Equal(t, "1234", inv.Lines[0].Item.Identities[0].Code.String())
 }

@@ -60,12 +60,10 @@ func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[instr.Key]
-	if extVal != "" {
-		if instr.Ext == nil {
-			instr.Ext = make(tax.Extensions)
-		}
-		instr.Ext[ExtKeyPaymentMeans] = extVal
+	if code := paymentMeansKeyMap[instr.Key]; code != "" {
+		instr.Ext = instr.Ext.Merge(tax.Extensions{
+			ExtKeyPaymentMeans: code,
+		})
 	}
 }
 
@@ -73,12 +71,10 @@ func normalizePayAdvance(adv *pay.Advance) {
 	if adv == nil {
 		return
 	}
-	extVal := paymentMeansKeyMap[adv.Key]
-	if extVal != "" {
-		if adv.Ext == nil {
-			adv.Ext = make(tax.Extensions)
-		}
-		adv.Ext[ExtKeyPaymentMeans] = extVal
+	if code := paymentMeansKeyMap[adv.Key]; code != "" {
+		adv.Ext = adv.Ext.Merge(tax.Extensions{
+			ExtKeyPaymentMeans: code,
+		})
 	}
 }
 
