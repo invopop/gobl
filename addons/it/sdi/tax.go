@@ -17,7 +17,7 @@ func validateTaxCombo(val any) error {
 			validation.Field(&c.Ext,
 				validation.When(
 					c.Percent == nil,
-					tax.ExtensionsRequires(ExtKeyExempt),
+					tax.ExtensionsRequire(ExtKeyExempt),
 				),
 				validation.Skip,
 			),
@@ -26,7 +26,7 @@ func validateTaxCombo(val any) error {
 	case it.TaxCategoryIRPEF, it.TaxCategoryIRES, it.TaxCategoryINPS, it.TaxCategoryENPAM, it.TaxCategoryENASARCO:
 		return validation.ValidateStruct(c,
 			validation.Field(&c.Ext,
-				tax.ExtensionsRequires(ExtKeyRetained),
+				tax.ExtensionsRequire(ExtKeyRetained),
 				validation.Skip,
 			),
 		)

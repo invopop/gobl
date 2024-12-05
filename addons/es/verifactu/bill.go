@@ -98,7 +98,7 @@ func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
 		obj := val.(*bill.Tax)
 		return validation.ValidateStruct(obj,
 			validation.Field(&obj.Ext,
-				tax.ExtensionsRequires(ExtKeyDocType),
+				tax.ExtensionsRequire(ExtKeyDocType),
 				validation.When(
 					it.In(bill.InvoiceTypeStandard),
 					tax.ExtensionsHasValues(
@@ -122,7 +122,7 @@ func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
 				),
 				validation.When(
 					obj.Ext.Get(ExtKeyDocType).In(docTypesCreditDebit...),
-					tax.ExtensionsRequires(ExtKeyCorrectionType),
+					tax.ExtensionsRequire(ExtKeyCorrectionType),
 				),
 				validation.Skip,
 			),

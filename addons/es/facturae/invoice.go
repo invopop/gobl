@@ -72,7 +72,7 @@ func validateInvoiceTax(val any) error {
 	}
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Ext,
-			tax.ExtensionsRequires(
+			tax.ExtensionsRequire(
 				ExtKeyDocType,
 				ExtKeyInvoiceClass,
 			),
@@ -89,7 +89,7 @@ func validateInvoicePreceding(val any) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.IssueDate, validation.Required),
 		validation.Field(&p.Ext,
-			tax.ExtensionsRequires(ExtKeyCorrection),
+			tax.ExtensionsRequire(ExtKeyCorrection),
 			validation.Skip,
 		),
 	)

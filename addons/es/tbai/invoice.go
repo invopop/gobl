@@ -102,7 +102,7 @@ func validateInvoiceTax(val any) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtensionsRequires(ExtKeyRegion),
+			tax.ExtensionsRequire(ExtKeyRegion),
 			validation.Skip,
 		),
 	)
@@ -137,7 +137,7 @@ func validateInvoicePreceding(val any) error {
 		validation.Field(&p.IssueDate, validation.Required),
 		validation.Field(&p.Series, validation.Required),
 		validation.Field(&p.Ext,
-			tax.ExtensionsRequires(ExtKeyCorrection),
+			tax.ExtensionsRequire(ExtKeyCorrection),
 			validation.Skip,
 		),
 	)
@@ -168,7 +168,7 @@ func validateInvoiceLineTax(value any) error {
 		validation.Field(&obj.Ext,
 			validation.When(
 				obj.Rate == tax.RateExempt,
-				tax.ExtensionsRequires(ExtKeyExemption),
+				tax.ExtensionsRequire(ExtKeyExemption),
 			),
 			validation.Skip,
 		),

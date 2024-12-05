@@ -188,14 +188,14 @@ func TestExtensionsHasValidation(t *testing.T) {
 func TestExtensionsRequiresValidation(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		err := validation.Validate(nil,
-			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 		)
 		assert.NoError(t, err)
 	})
 	t.Run("empty", func(t *testing.T) {
 		em := tax.Extensions{}
 		err := validation.Validate(em,
-			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 		)
 		assert.ErrorContains(t, err, "untdid-document-type: required")
 	})
@@ -204,7 +204,7 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 			untdid.ExtKeyDocumentType: "326",
 		}
 		err := validation.Validate(em,
-			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 		)
 		assert.NoError(t, err)
 	})
@@ -214,7 +214,7 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 			iso.ExtKeySchemeID:        "1234",
 		}
 		err := validation.Validate(em,
-			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 		)
 		assert.NoError(t, err)
 	})
@@ -223,7 +223,7 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 			iso.ExtKeySchemeID: "1234",
 		}
 		err := validation.Validate(em,
-			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 		)
 		assert.ErrorContains(t, err, "untdid-document-type: required")
 	})

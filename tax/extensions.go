@@ -225,9 +225,9 @@ func ExtensionsHas(keys ...cbc.Key) validation.Rule {
 	}
 }
 
-// ExtensionsRequires returns a validation rule that ensures all the
+// ExtensionsRequire returns a validation rule that ensures all the
 // extension map's keys match those provided in the list.
-func ExtensionsRequires(keys ...cbc.Key) validation.Rule {
+func ExtensionsRequire(keys ...cbc.Key) validation.Rule {
 	return validateExtCodeMap{
 		required: true,
 		keys:     keys,

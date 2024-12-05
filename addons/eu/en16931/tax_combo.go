@@ -52,7 +52,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 	}
 	return validation.ValidateStruct(tc,
 		validation.Field(&tc.Ext,
-			tax.ExtensionsRequires(untdid.ExtKeyTaxCategory),
+			tax.ExtensionsRequire(untdid.ExtKeyTaxCategory),
 			tax.ExtensionsHasValues(untdid.ExtKeyTaxCategory, acceptedTaxCategories...),
 			validation.Skip,
 		),

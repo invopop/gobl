@@ -92,7 +92,7 @@ func validateSupplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&supplier.Ext,
-			tax.ExtensionsRequires(ExtKeyFiscalRegime),
+			tax.ExtensionsRequire(ExtKeyFiscalRegime),
 			validation.Skip,
 		),
 	)

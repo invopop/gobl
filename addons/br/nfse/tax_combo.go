@@ -15,7 +15,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 	return validation.ValidateStruct(tc,
 		validation.Field(&tc.Ext,
 			validation.When(tc.Category == br.TaxCategoryISS,
-				tax.ExtensionsRequires(ExtKeyISSLiability),
+				tax.ExtensionsRequire(ExtKeyISSLiability),
 			),
 		),
 	)

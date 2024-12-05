@@ -49,11 +49,11 @@ func validateTaxCombo(tc *tax.Combo) error {
 		validation.Field(&tc.Ext,
 			validation.When(
 				tc.Percent != nil, // Taxed
-				tax.ExtensionsRequires(ExtKeyOpClass),
+				tax.ExtensionsRequire(ExtKeyOpClass),
 			),
 			validation.When(
 				tc.Percent == nil && !tc.Ext.Has(ExtKeyOpClass),
-				tax.ExtensionsRequires(ExtKeyExempt),
+				tax.ExtensionsRequire(ExtKeyExempt),
 			),
 			tax.ExtensionsRequires(ExtKeyRegime),
 			validation.Skip,

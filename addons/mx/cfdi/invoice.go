@@ -63,13 +63,13 @@ func validateInvoiceTax(preceding []*org.DocumentRef) validation.RuleFunc {
 		}
 		return validation.ValidateStruct(obj,
 			validation.Field(&obj.Ext,
-				tax.ExtensionsRequires(
+				tax.ExtensionsRequire(
 					ExtKeyDocType,
 					ExtKeyIssuePlace,
 				),
 				validation.When(
 					len(preceding) > 0,
-					tax.ExtensionsRequires(
+					tax.ExtensionsRequire(
 						ExtKeyRelType,
 					),
 				),
@@ -93,7 +93,7 @@ func validateInvoiceCustomer(value any) error {
 		validation.Field(&obj.Ext,
 			validation.When(
 				isMexican(obj),
-				tax.ExtensionsRequires(
+				tax.ExtensionsRequire(
 					ExtKeyFiscalRegime,
 					ExtKeyUse,
 				),
@@ -135,7 +135,7 @@ func validateInvoiceSupplier(value any) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Ext,
-			tax.ExtensionsRequires(
+			tax.ExtensionsRequire(
 				ExtKeyFiscalRegime,
 			),
 		),
