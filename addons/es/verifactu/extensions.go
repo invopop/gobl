@@ -12,6 +12,7 @@ const (
 	ExtKeyOpClass        cbc.Key = "es-verifactu-op-class"
 	ExtKeyCorrectionType cbc.Key = "es-verifactu-correction-type"
 	ExtKeyExempt         cbc.Key = "es-verifactu-exempt"
+	ExtKeyTaxRegime      cbc.Key = "es-verifactu-tax-regime"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -216,6 +217,139 @@ var extensions = []*cbc.KeyDefinition{
 				Name: i18n.String{
 					i18n.EN: "Exempt: pursuant to other reasons",
 					i18n.ES: "Exenta: por otra causa",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTaxRegime,
+		Name: i18n.String{
+			i18n.EN: "Tax Regime Code - L8A/B",
+			i18n.ES: "Código de Régimen de IVA/IGIC - L8A/B",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				VAT regime code used to identify the type of VAT regime applied to the operation. This list combines lists 8A, which include values for IVA and 8B, which include values for IGIC.
+			`),
+		},
+		Values: []*cbc.ValueDefinition{
+			{
+				Value: "01",
+				Name: i18n.String{
+					i18n.EN: "General regime operation",
+					i18n.ES: "Operación de régimen general",
+				},
+			},
+			{
+				Value: "02",
+				Name: i18n.String{
+					i18n.EN: "Export",
+					i18n.ES: "Exportación",
+				},
+			},
+			{
+				Value: "03",
+				Name: i18n.String{
+					i18n.EN: "Special regime for used goods, art objects, antiques and collectibles",
+					i18n.ES: "Operaciones a las que se aplique el régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección",
+				},
+			},
+			{
+				Value: "04",
+				Name: i18n.String{
+					i18n.EN: "Special regime for investment gold",
+					i18n.ES: "Régimen especial del oro de inversión",
+				},
+			},
+			{
+				Value: "05",
+				Name: i18n.String{
+					i18n.EN: "Special regime for travel agencies",
+					i18n.ES: "Régimen especial de las agencias de viajes",
+				},
+			},
+			{
+				Value: "06",
+				Name: i18n.String{
+					i18n.EN: "Special regime for IVA/IGIC groups (Advanced Level)",
+					i18n.ES: "Régimen especial grupo de entidades en IVA/IGIC (Nivel Avanzado)",
+				},
+			},
+			{
+				Value: "07",
+				Name: i18n.String{
+					i18n.EN: "Special cash accounting regime",
+					i18n.ES: "Régimen especial del criterio de caja",
+				},
+			},
+			{
+				Value: "08",
+				Name: i18n.String{
+					i18n.EN: "Operations subject to a different regime",
+					i18n.ES: "Operaciones sujetas a un régimen diferente",
+				},
+			},
+			{
+				Value: "09",
+				Name: i18n.String{
+					i18n.EN: "Billing of travel agency services acting as mediators in name and on behalf of others",
+					i18n.ES: "Facturación de las prestaciones de servicios de agencias de viaje que actúan como mediadoras en nombre y por cuenta ajena",
+				},
+			},
+			{
+				Value: "10",
+				Name: i18n.String{
+					i18n.EN: "Collection of professional fees or rights on behalf of third parties",
+					i18n.ES: "Cobros por cuenta de terceros de honorarios profesionales o de derechos derivados de la propiedad industrial",
+				},
+			},
+			{
+				Value: "11",
+				Name: i18n.String{
+					i18n.EN: "Business premises rental operations",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio",
+				},
+			},
+			{
+				Value: "14",
+				Name: i18n.String{
+					i18n.EN: "Invoice with pending VAT accrual in work certifications for Public Administration",
+					i18n.ES: "Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública",
+				},
+			},
+			{
+				Value: "15",
+				Name: i18n.String{
+					i18n.EN: "Invoice with pending VAT accrual in successive tract operations",
+					i18n.ES: "Factura con IVA pendiente de devengo en operaciones de tracto sucesivo",
+				},
+			},
+			{
+				Value: "17",
+				Name: i18n.String{
+					i18n.EN: "Operation under OSS and IOSS regimes",
+					i18n.ES: "Operación acogida a alguno de los regímenes previstos en el capítulo XI del título IX (OSS e IOSS)",
+				},
+			},
+			{
+				Value: "18",
+				Name: i18n.String{
+					i18n.EN: "Equivalence surcharge (IVA) / Special regime for small traders or retailers (IGIC)",
+					i18n.ES: "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)",
+				},
+			},
+			{
+				Value: "19",
+				Name: i18n.String{
+					i18n.EN: "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
+					i18n.ES: "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP)",
+				},
+			},
+			{
+				Value: "20",
+				Name: i18n.String{
+					i18n.EN: "Simplified regime (IVA)",
+					i18n.ES: "Régimen simplificado (IVA)",
 				},
 			},
 		},
