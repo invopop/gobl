@@ -97,7 +97,9 @@ func (d *Definition) KeyDef(key Key) *Definition {
 func DefinitionKeys(list []*Definition) []Key {
 	keys := make([]Key, 0, len(list))
 	for _, item := range list {
-		keys = append(keys, item.Key)
+		if item.Key != KeyEmpty {
+			keys = append(keys, item.Key)
+		}
 	}
 	return keys
 }
@@ -106,7 +108,9 @@ func DefinitionKeys(list []*Definition) []Key {
 func DefinitionCodes(list []*Definition) []Code {
 	codes := make([]Code, 0, len(list))
 	for _, item := range list {
-		codes = append(codes, item.Code)
+		if item.Code != CodeEmpty {
+			codes = append(codes, item.Code)
+		}
 	}
 	return codes
 }
@@ -146,7 +150,7 @@ func InKeyDefs(list []*Definition) validation.Rule {
 func InCodeDefs(list []*Definition) validation.Rule {
 	defs := make([]interface{}, len(list))
 	for i, item := range list {
-		defs[i] = item.Key
+		defs[i] = item.Code
 	}
 	return validation.In(defs...)
 }
