@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `ExtValue.In` for comparing extension values.
 - `bill`: `Tax.MergeExtensions` convenience method for adding extensions to tax objects and avoid nil panics.
 - `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
+- `in`: added Indian regime
 
 ### Changed
 

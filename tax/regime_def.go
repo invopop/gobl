@@ -62,10 +62,6 @@ type RegimeDef struct {
 	// Typically these are used to define local codes for suppliers, customers, products, or tax rates.
 	Extensions []*cbc.KeyDefinition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
-	// Tax Identity types specific for the regime and may be validated
-	// against.
-	TaxIdentityTypeKeys []*cbc.KeyDefinition `json:"tax_identity_type_keys,omitempty" jsonschema:"title=Tax Identity Type Keys"`
-
 	// Identity keys used in addition to regular tax identities and specific for the
 	// regime that may be validated against.
 	IdentityKeys []*cbc.KeyDefinition `json:"identity_keys,omitempty" jsonschema:"title=Identity Keys"`
@@ -280,7 +276,6 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Zone),
 		validation.Field(&r.Currency),
 		validation.Field(&r.Tags),
-		validation.Field(&r.TaxIdentityTypeKeys),
 		validation.Field(&r.IdentityKeys),
 		validation.Field(&r.Extensions),
 		validation.Field(&r.PaymentMeansKeys),

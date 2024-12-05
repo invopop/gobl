@@ -1,0 +1,112 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "07b1373e399a192b6860e8870e4312547670a5e6be5ad2a186f991377e34ebaa"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IN",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "INR",
+		"supplier": {
+			"name": "Provide One LLC",
+			"tax_id": {
+				"country": "IN",
+				"code": "27AAPFU0939F1ZV"
+			},
+			"addresses": [
+				{
+					"num": "16",
+					"street": "Baner Road",
+					"locality": "Baner",
+					"region": "Maharashtra",
+					"code": "411045",
+					"country": "IN"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.in"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"identities": [
+						{
+							"type": "HSN",
+							"code": "123456"
+						}
+					],
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "5%",
+						"amount": "90.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "CGST",
+						"percent": "9%"
+					},
+					{
+						"cat": "SGST",
+						"percent": "9%"
+					}
+				],
+				"total": "1710.00"
+			}
+		],
+		"totals": {
+			"sum": "1710.00",
+			"total": "1710.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "CGST",
+						"rates": [
+							{
+								"base": "1710.00",
+								"percent": "9%",
+								"amount": "153.90"
+							}
+						],
+						"amount": "153.90"
+					},
+					{
+						"code": "SGST",
+						"rates": [
+							{
+								"base": "1710.00",
+								"percent": "9%",
+								"amount": "153.90"
+							}
+						],
+						"amount": "153.90"
+					}
+				],
+				"sum": "307.80"
+			},
+			"tax": "307.80",
+			"total_with_tax": "2017.80",
+			"payable": "2017.80"
+		}
+	}
+}
