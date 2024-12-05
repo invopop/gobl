@@ -3,7 +3,7 @@ package in
 import "github.com/invopop/gobl/cbc"
 
 const (
-	// ChargeKeyCompoensationCess is used for addtional charges added to an invoice for the special
+	// ChargeKeyCompensationCess is used for addtional charges added to an invoice for the special
 	// compensation "cess" (cess means tax or levy) which may be appled as a percentage or specific
 	// amount based on valumes or other criteria.
 	//

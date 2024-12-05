@@ -13,7 +13,6 @@ const (
 	TaxCategorySGST  cbc.Code = "SGST"
 	TaxCategoryIGST  cbc.Code = "IGST"
 	TaxCategoryUTGST cbc.Code = "UTGST"
-	TaxCategoryCess  cbc.Code = "CESS"
 )
 
 var taxCategories = []*tax.CategoryDef{
@@ -101,28 +100,6 @@ var taxCategories = []*tax.CategoryDef{
 					i18n.HI: "यूटीजीएसटी नियमावली",
 				},
 				URL: "https://gstcouncil.gov.in/utgst",
-			},
-		},
-	},
-
-	// Cess (Additional Tax for Luxury or Specific Goods)
-	{
-		Code: TaxCategoryCess,
-		Name: i18n.String{
-			i18n.EN: "Cess",
-			i18n.HI: "उपकर",
-		},
-		Title: i18n.String{
-			i18n.EN: "GST Compensation Cess on Luxury or Specific Goods",
-			i18n.HI: "विलासिता या विशेष वस्तुओं पर जीएसटी मुआवजा उपकर",
-		},
-		Sources: []*tax.Source{
-			{
-				Title: i18n.String{
-					i18n.EN: "GST Compensation Cess Regulations",
-					i18n.HI: "जीएसटी मुआवजा उपकर नियमावली",
-				},
-				URL: "https://gstcouncil.gov.in",
 			},
 		},
 	},

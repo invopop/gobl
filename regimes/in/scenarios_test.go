@@ -24,11 +24,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Code:    "27AAPFU0939F1ZV",
 			},
 		},
-		Tax: &bill.Tax{
-			Ext: tax.Extensions{
-				"in-supply-place": "Ciudad prueba",
-			},
-		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{

@@ -4,9 +4,6 @@ currency: "INR"
 issue_date: "2022-02-01"
 series: "SAMPLE"
 code: "001"
-tax:
-  ext:
-    in-supply-place: "Maharashtra"
 
 supplier:
   tax_id:
