@@ -12,7 +12,7 @@ const (
 	ExtKeyOpClass        cbc.Key = "es-verifactu-op-class"
 	ExtKeyCorrectionType cbc.Key = "es-verifactu-correction-type"
 	ExtKeyExempt         cbc.Key = "es-verifactu-exempt"
-	ExtKeyIVAIGICRegime  cbc.Key = "es-verifactu-iva-igic-regime"
+	ExtKeyRegime         cbc.Key = "es-verifactu-regime"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -222,14 +222,14 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyIVAIGICRegime,
+		Key: ExtKeyRegime,
 		Name: i18n.String{
-			i18n.EN: "IVA/IGIC Regime Code - L8A/B",
+			i18n.EN: "VAT/IGIC Regime Code - L8A/B",
 			i18n.ES: "Código de Régimen de IVA/IGIC - L8A/B",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Code list used to identify the type of VAT or IGIC regime applied to the operation. This list combines lists 8A, which include values for IVA and 8B, which include values for IGIC.
+				Identify the type of VAT or IGIC regime applied to the operation. This list combines lists L8A which include values for VAT, and L8B for IGIC.
 			`),
 		},
 		Values: []*cbc.ValueDefinition{
@@ -271,7 +271,7 @@ var extensions = []*cbc.KeyDefinition{
 			{
 				Value: "06",
 				Name: i18n.String{
-					i18n.EN: "Special regime for IVA/IGIC groups (Advanced Level)",
+					i18n.EN: "Special regime for VAT/IGIC groups (Advanced Level)",
 					i18n.ES: "Régimen especial grupo de entidades en IVA/IGIC (Nivel Avanzado)",
 				},
 			},
@@ -313,28 +313,28 @@ var extensions = []*cbc.KeyDefinition{
 			{
 				Value: "14",
 				Name: i18n.String{
-					i18n.EN: "Invoice with pending VAT accrual in work certifications for Public Administration",
-					i18n.ES: "Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública",
+					i18n.EN: "Invoice with pending VAT/IGIC accrual in work certifications for Public Administration",
+					i18n.ES: "Factura con IVA/IGIC pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública",
 				},
 			},
 			{
 				Value: "15",
 				Name: i18n.String{
-					i18n.EN: "Invoice with pending VAT accrual in successive tract operations",
-					i18n.ES: "Factura con IVA pendiente de devengo en operaciones de tracto sucesivo",
+					i18n.EN: "Invoice with pending VAT/IGIC accrual in successive tract operations",
+					i18n.ES: "Factura con IVA/IGIC pendiente de devengo en operaciones de tracto sucesivo",
 				},
 			},
 			{
 				Value: "17",
 				Name: i18n.String{
-					i18n.EN: "Operation under OSS and IOSS regimes",
-					i18n.ES: "Operación acogida a alguno de los regímenes previstos en el capítulo XI del título IX (OSS e IOSS)",
+					i18n.EN: "Operation under OSS and IOSS regimes (VAT) / Special regime for retail traders. (IGIC)",
+					i18n.ES: "Operación acogida a alguno de los regímenes previstos en el capítulo XI del título IX (OSS e IOSS, IVA) / Régimen especial de comerciante minorista. (IGIC)",
 				},
 			},
 			{
 				Value: "18",
 				Name: i18n.String{
-					i18n.EN: "Equivalence surcharge (IVA) / Special regime for small traders or retailers (IGIC)",
+					i18n.EN: "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
 					i18n.ES: "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)",
 				},
 			},
@@ -348,8 +348,8 @@ var extensions = []*cbc.KeyDefinition{
 			{
 				Value: "20",
 				Name: i18n.String{
-					i18n.EN: "Simplified regime (IVA)",
-					i18n.ES: "Régimen simplificado (IVA)",
+					i18n.EN: "Simplified regime (VAT only)",
+					i18n.ES: "Régimen simplificado (IVA only)",
 				},
 			},
 		},

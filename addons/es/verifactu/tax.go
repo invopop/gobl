@@ -22,21 +22,21 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	}
 	switch tc.Category {
 	case tax.CategoryVAT, es.TaxCategoryIGIC:
-		if tc.Rate.IsEmpty() {
-			return
+		ext := make(tax.Extensions)
+
+		// Set default tax regime to "01" (General regime operation) if not already specified
+		if !tc.Ext.Has(ExtKeyRegime) {
+			ext[ExtKeyRegime] = "01"
 		}
-		v := taxCategoryOpClassMap.Get(tc.Rate)
-		if v == "" {
-			return
+
+		if !tc.Rate.IsEmpty() {
+			if v := taxCategoryOpClassMap.Get(tc.Rate); v != "" {
+				ext[ExtKeyOpClass] = v
+			}
 		}
-		tc.Ext = tc.Ext.Merge(
-			tax.Extensions{ExtKeyOpClass: v},
-		)
-		// Set default tax regime to "01" (General regime operation) if not specified
-		if !tc.Ext.Has(ExtKeyIVAIGICRegime) {
-			tc.Ext = tc.Ext.Merge(
-				tax.Extensions{ExtKeyIVAIGICRegime: "01"},
-			)
+
+		if len(ext) > 0 {
+			tc.Ext = tc.Ext.Merge(ext)
 		}
 	}
 }
@@ -55,7 +55,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tc.Percent == nil && !tc.Ext.Has(ExtKeyOpClass),
 				tax.ExtensionsRequires(ExtKeyExempt),
 			),
-			tax.ExtensionsRequires(ExtKeyIVAIGICRegime),
+			tax.ExtensionsRequires(ExtKeyRegime),
 			validation.Skip,
 		),
 	)

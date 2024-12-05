@@ -16,7 +16,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "01", tc.Ext.Get(ExtKeyIVAIGICRegime).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
 	t.Run("valid with country", func(t *testing.T) {
@@ -27,7 +27,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "01", tc.Ext.Get(ExtKeyIVAIGICRegime).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
 	t.Run("undefined rate", func(t *testing.T) {
@@ -54,10 +54,35 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateStandard,
 			Ext: tax.Extensions{
-				ExtKeyIVAIGICRegime: "03",
+				ExtKeyRegime: "03",
 			},
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "03", tc.Ext.Get(ExtKeyIVAIGICRegime).String())
+		assert.Equal(t, "03", tc.Ext.Get(ExtKeyRegime).String())
 	})
+}
+
+func TestValidateTaxCombo(t *testing.T) {
+	t.Run("valid", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateStandard,
+			Ext: tax.Extensions{
+				ExtKeyOpClass: "S1",
+				ExtKeyRegime:  "01",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.NoError(t, err)
+	})
+
+	t.Run("not in category", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryGST,
+			Rate:     tax.RateStandard,
+		}
+		err := validateTaxCombo(tc)
+		assert.NoError(t, err)
+	})
+
 }

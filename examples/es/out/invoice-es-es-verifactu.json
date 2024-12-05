@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "63c9a59c1ba0c5ecc7447760b081ce154779a0bc6bc1bdb71079d15e2356ee51"
+			"val": "76bad772eedf169425dc7434038175fca40fe38b6028e2683490f7623b103827"
 		}
 	},
 	"doc": {
@@ -76,8 +76,8 @@
 						"rate": "standard",
 						"percent": "21.0%",
 						"ext": {
-							"es-verifactu-iva-igic-regime": "01",
-							"es-verifactu-op-class": "S1"
+							"es-verifactu-op-class": "S1",
+							"es-verifactu-regime": "01"
 						}
 					}
 				],
@@ -97,8 +97,8 @@
 						"rate": "zero",
 						"percent": "0.0%",
 						"ext": {
-							"es-verifactu-iva-igic-regime": "01",
-							"es-verifactu-op-class": "S1"
+							"es-verifactu-op-class": "S1",
+							"es-verifactu-regime": "01"
 						}
 					}
 				],
@@ -116,8 +116,8 @@
 							{
 								"key": "standard",
 								"ext": {
-									"es-verifactu-iva-igic-regime": "01",
-									"es-verifactu-op-class": "S1"
+									"es-verifactu-op-class": "S1",
+									"es-verifactu-regime": "01"
 								},
 								"base": "1620.00",
 								"percent": "21.0%",
@@ -126,8 +126,8 @@
 							{
 								"key": "zero",
 								"ext": {
-									"es-verifactu-iva-igic-regime": "01",
-									"es-verifactu-op-class": "S1"
+									"es-verifactu-op-class": "S1",
+									"es-verifactu-regime": "01"
 								},
 								"base": "10.00",
 								"percent": "0.0%",
