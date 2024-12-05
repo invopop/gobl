@@ -9,6 +9,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `es-verifactu-v1`: added initial Spain VeriFactu addon.
+- `tax`: Extensions `Get` convenience method that helps when using extensions using sub-keys.
+- `tax`: `ExtensionsExclude` validator for checking that extensions do **not** include certain keys.
+- `tax`: `ExtValue.In` for comparing extension values.
+- `bill`: `Tax.MergeExtensions` convenience method for adding extensions to tax objects and avoid nil panics.
+- `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
+
+### Fixed
+
+- `bill`: corrected issues around correction definitions and merging types.
 
 ## [v0.206.1] - 2024-11-28
 
