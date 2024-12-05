@@ -49,16 +49,11 @@ func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 		ss.Merge(a.Scenarios)
 	}
 
-	inv.removePreviousScenarios(ss)
+	inv.removePreviousScenarioNotes(ss)
 	return ss.SummaryFor(inv)
 }
 
-func (inv *Invoice) removePreviousScenarios(ss *tax.ScenarioSet) {
-	if inv.Tax != nil && len(inv.Tax.Ext) > 0 {
-		for _, ek := range ss.ExtensionKeys() {
-			delete(inv.Tax.Ext, ek)
-		}
-	}
+func (inv *Invoice) removePreviousScenarioNotes(ss *tax.ScenarioSet) {
 	for _, n := range ss.Notes() {
 		for i, n2 := range inv.Notes {
 			if n.SameAs(n2) {
@@ -75,6 +70,7 @@ func (inv *Invoice) prepareScenarios() error {
 	if ss == nil {
 		return nil
 	}
+
 	for _, n := range ss.Notes {
 		// make sure we don't already have the same note in the invoice
 		for _, n2 := range inv.Notes {
@@ -87,16 +83,10 @@ func (inv *Invoice) prepareScenarios() error {
 			inv.Notes = append(inv.Notes, n)
 		}
 	}
+
 	// Apply extensions at the document level
-	for k, v := range ss.Ext {
-		if inv.Tax == nil {
-			inv.Tax = new(Tax)
-		}
-		if inv.Tax.Ext == nil {
-			inv.Tax.Ext = make(tax.Extensions)
-		}
-		// Always override
-		inv.Tax.Ext[k] = v
+	if len(ss.Ext) > 0 {
+		inv.Tax = inv.Tax.MergeExtensions(ss.Ext)
 	}
 
 	return nil

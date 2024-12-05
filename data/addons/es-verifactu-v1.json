@@ -1,0 +1,362 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "es-verifactu-v1",
+  "name": {
+    "en": "Spain Verifactu V1"
+  },
+  "extensions": [
+    {
+      "key": "es-verifactu-doc-type",
+      "name": {
+        "en": "Verifactu Invoice Type Code - L2",
+        "es": "Código de Tipo de Factura de Verifactu - L2"
+      },
+      "desc": {
+        "en": "Invoice type code used to identify the type of invoice being sent.\nSource: VeriFactu Ministerial Order:\n * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138"
+      },
+      "values": [
+        {
+          "value": "F1",
+          "name": {
+            "en": "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
+            "es": "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)"
+          }
+        },
+        {
+          "value": "F2",
+          "name": {
+            "en": "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
+            "es": "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)"
+          }
+        },
+        {
+          "value": "F3",
+          "name": {
+            "en": "Invoice issued as a replacement for simplified invoices that have been billed and declared.",
+            "es": "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas."
+          }
+        },
+        {
+          "value": "R1",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
+            "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA"
+          }
+        },
+        {
+          "value": "R2",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80.3",
+            "es": "Factura rectificativa: artículo 80.3"
+          }
+        },
+        {
+          "value": "R3",
+          "name": {
+            "en": "Rectified invoice: error based on law and Article 80.4",
+            "es": "Factura rectificativa: artículo 80.4"
+          }
+        },
+        {
+          "value": "R4",
+          "name": {
+            "en": "Rectified invoice: Other",
+            "es": "Factura rectificativa: Resto"
+          }
+        },
+        {
+          "value": "R5",
+          "name": {
+            "en": "Rectified invoice: simplified invoices",
+            "es": "Factura rectificativa: facturas simplificadas"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-correction-type",
+      "name": {
+        "en": "Verifactu Correction Type Code - L3",
+        "es": "Código de Tipo de Corrección de Verifactu - L3"
+      },
+      "desc": {
+        "en": "Correction type code used to identify the type of correction being made.\nThis value will be determined automatically according to the invoice type.\nCorrective invoices will be marked as \"S\", while credit and debit notes as \"I\"."
+      },
+      "values": [
+        {
+          "value": "S",
+          "name": {
+            "en": "Substitution",
+            "es": "Por Sustitución"
+          }
+        },
+        {
+          "value": "I",
+          "name": {
+            "en": "Differences",
+            "es": "Por Diferencias"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-op-class",
+      "name": {
+        "en": "Verifactu Operation Classification/Exemption Code - L9",
+        "es": "Código de Clasificación/Exención de Impuesto de Verifactu - L9"
+      },
+      "desc": {
+        "en": "Operation classification code used to identify if taxes should be applied to the line.\nSource: VeriFactu Ministerial Order:\n * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138\nFor details on how best to use and apply these and other codes, see the\nAEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
+      },
+      "values": [
+        {
+          "value": "S1",
+          "name": {
+            "en": "Subject and Not Exempt - Without reverse charge",
+            "es": "Operación Sujeta y No exenta - Sin inversión del sujeto pasivo"
+          }
+        },
+        {
+          "value": "S2",
+          "name": {
+            "en": "Subject and Not Exempt - With reverse charge",
+            "es": "Operación Sujeta y No exenta - Con Inversión del sujeto pasivo"
+          }
+        },
+        {
+          "value": "N1",
+          "name": {
+            "en": "Not Subject - Articles 7, 14, others",
+            "es": "Operación No Sujeta artículo 7, 14, otros"
+          }
+        },
+        {
+          "value": "N2",
+          "name": {
+            "en": "Not Subject - Due to location rules",
+            "es": "Operación No Sujeta por Reglas de localización"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-exempt",
+      "name": {
+        "en": "Verifactu Exemption Code - L10",
+        "es": "Código de Exención de Impuesto de Verifactu - L10"
+      },
+      "desc": {
+        "en": "Exemption code used to explain why the operation is exempt from taxes."
+      },
+      "values": [
+        {
+          "value": "E1",
+          "name": {
+            "en": "Exempt: pursuant to Article 20. Exemptions in internal operations.",
+            "es": "Exenta: por el artículo 20. Exenciones en operaciones interiores."
+          }
+        },
+        {
+          "value": "E2",
+          "name": {
+            "en": "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
+            "es": "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes."
+          }
+        },
+        {
+          "value": "E3",
+          "name": {
+            "en": "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
+            "es": "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones."
+          }
+        },
+        {
+          "value": "E4",
+          "name": {
+            "en": "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
+            "es": "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
+          }
+        },
+        {
+          "value": "E5",
+          "name": {
+            "en": "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
+            "es": "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro."
+          }
+        },
+        {
+          "value": "E6",
+          "name": {
+            "en": "Exempt: pursuant to other reasons",
+            "es": "Exenta: por otra causa"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-regime",
+      "name": {
+        "en": "VAT/IGIC Regime Code - L8A/B",
+        "es": "Código de Régimen de IVA/IGIC - L8A/B"
+      },
+      "desc": {
+        "en": "Identify the type of VAT or IGIC regime applied to the operation. This list combines lists L8A which include values for VAT, and L8B for IGIC."
+      },
+      "values": [
+        {
+          "value": "01",
+          "name": {
+            "en": "General regime operation",
+            "es": "Operación de régimen general"
+          }
+        },
+        {
+          "value": "02",
+          "name": {
+            "en": "Export",
+            "es": "Exportación"
+          }
+        },
+        {
+          "value": "03",
+          "name": {
+            "en": "Special regime for used goods, art objects, antiques and collectibles",
+            "es": "Operaciones a las que se aplique el régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección"
+          }
+        },
+        {
+          "value": "04",
+          "name": {
+            "en": "Special regime for investment gold",
+            "es": "Régimen especial del oro de inversión"
+          }
+        },
+        {
+          "value": "05",
+          "name": {
+            "en": "Special regime for travel agencies",
+            "es": "Régimen especial de las agencias de viajes"
+          }
+        },
+        {
+          "value": "06",
+          "name": {
+            "en": "Special regime for VAT/IGIC groups (Advanced Level)",
+            "es": "Régimen especial grupo de entidades en IVA/IGIC (Nivel Avanzado)"
+          }
+        },
+        {
+          "value": "07",
+          "name": {
+            "en": "Special cash accounting regime",
+            "es": "Régimen especial del criterio de caja"
+          }
+        },
+        {
+          "value": "08",
+          "name": {
+            "en": "Operations subject to a different regime",
+            "es": "Operaciones sujetas a un régimen diferente"
+          }
+        },
+        {
+          "value": "09",
+          "name": {
+            "en": "Billing of travel agency services acting as mediators in name and on behalf of others",
+            "es": "Facturación de las prestaciones de servicios de agencias de viaje que actúan como mediadoras en nombre y por cuenta ajena"
+          }
+        },
+        {
+          "value": "10",
+          "name": {
+            "en": "Collection of professional fees or rights on behalf of third parties",
+            "es": "Cobros por cuenta de terceros de honorarios profesionales o de derechos derivados de la propiedad industrial"
+          }
+        },
+        {
+          "value": "11",
+          "name": {
+            "en": "Business premises rental operations",
+            "es": "Operaciones de arrendamiento de local de negocio"
+          }
+        },
+        {
+          "value": "14",
+          "name": {
+            "en": "Invoice with pending VAT/IGIC accrual in work certifications for Public Administration",
+            "es": "Factura con IVA/IGIC pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública"
+          }
+        },
+        {
+          "value": "15",
+          "name": {
+            "en": "Invoice with pending VAT/IGIC accrual in successive tract operations",
+            "es": "Factura con IVA/IGIC pendiente de devengo en operaciones de tracto sucesivo"
+          }
+        },
+        {
+          "value": "17",
+          "name": {
+            "en": "Operation under OSS and IOSS regimes (VAT) / Special regime for retail traders. (IGIC)",
+            "es": "Operación acogida a alguno de los regímenes previstos en el capítulo XI del título IX (OSS e IOSS, IVA) / Régimen especial de comerciante minorista. (IGIC)"
+          }
+        },
+        {
+          "value": "18",
+          "name": {
+            "en": "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
+            "es": "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)"
+          }
+        },
+        {
+          "value": "19",
+          "name": {
+            "en": "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
+            "es": "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP)"
+          }
+        },
+        {
+          "value": "20",
+          "name": {
+            "en": "Simplified regime (VAT only)",
+            "es": "Régimen simplificado (IVA only)"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F1"
+          }
+        },
+        {
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F2"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "extensions": [
+        "es-verifactu-doc-type"
+      ]
+    }
+  ]
+}

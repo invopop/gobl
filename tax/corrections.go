@@ -50,13 +50,14 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	if cd.Schema != other.Schema {
 		return cd
 	}
-	return &CorrectionDefinition{
+	cd = &CorrectionDefinition{
 		Schema:         cd.Schema,
 		Types:          append(cd.Types, other.Types...),
 		Extensions:     append(cd.Extensions, other.Extensions...),
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
 		Stamps:         append(cd.Stamps, other.Stamps...),
 	}
+	return cd
 }
 
 // HasType returns true if the correction definition has a type that matches the one provided.

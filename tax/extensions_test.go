@@ -229,6 +229,41 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 	})
 }
 
+func TestExtensionsExcludeValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		err := validation.Validate(nil,
+			tax.ExtensionsExclude(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("empty", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsExclude(untdid.ExtKeyDocumentType),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("correct", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsExclude(untdid.ExtKeyDocumentType),
+		)
+		assert.ErrorContains(t, err, "untdid-document-type: must be blank")
+	})
+	t.Run("correct with extras", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+			iso.ExtKeySchemeID:        "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsExclude(untdid.ExtKeyCharge),
+		)
+		assert.NoError(t, err)
+	})
+}
+
 func TestExtensionsHasValues(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		err := validation.Validate(nil,
@@ -447,4 +482,35 @@ func TestExtensionLookup(t *testing.T) {
 	assert.Equal(t, cbc.Key("key1"), em.Lookup("foo"))
 	assert.Equal(t, cbc.Key("key2"), em.Lookup("bar"))
 	assert.Equal(t, cbc.KeyEmpty, em.Lookup("missing"))
+}
+
+func TestExtensionGet(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		assert.Equal(t, "", em.Get("key").String())
+	})
+	t.Run("with value", func(t *testing.T) {
+		em := tax.Extensions{
+			"key": "value",
+		}
+		assert.Equal(t, "value", em.Get("key").String())
+	})
+	t.Run("missing", func(t *testing.T) {
+		em := tax.Extensions{
+			"key": "value",
+		}
+		assert.Equal(t, "", em.Get("missing").String())
+	})
+	t.Run("with sub-keys", func(t *testing.T) {
+		em := tax.Extensions{
+			"key": "value",
+		}
+		assert.Equal(t, "value", em.Get("key+foo").String())
+	})
+}
+
+func TestExtValueIn(t *testing.T) {
+	ev := tax.ExtValue("IT")
+	assert.True(t, ev.In("IT", "ES"))
+	assert.False(t, ev.In("ES", "FR"))
 }

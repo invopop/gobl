@@ -36,7 +36,7 @@
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Extensions for region specific requirements."
+          "description": "Extensions for region specific requirements that may be added in the preceding\nor at the document level, according to the local rules."
         }
       },
       "type": "object",

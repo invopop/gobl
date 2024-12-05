@@ -267,6 +267,7 @@ func (inv *Invoice) Calculate() error {
 	if err := inv.calculate(); err != nil {
 		return err
 	}
+
 	if err := inv.prepareScenarios(); err != nil {
 		return err
 	}

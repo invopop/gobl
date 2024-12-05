@@ -27,6 +27,19 @@ type Tax struct {
 	tags []cbc.Key
 }
 
+// MergeExtensions makes it easier to add extensions to the tax object
+// by automatically handling nil data, and replying a new updated instance.
+func (t *Tax) MergeExtensions(ext tax.Extensions) *Tax {
+	if len(ext) == 0 {
+		return t
+	}
+	if t == nil {
+		t = new(Tax)
+	}
+	t.Ext = t.Ext.Merge(ext)
+	return t
+}
+
 // Normalize performs normalization on the tax and embedded objects using the
 // provided list of normalizers.
 func (t *Tax) Normalize(normalizers tax.Normalizers) {
