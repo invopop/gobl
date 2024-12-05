@@ -38,17 +38,17 @@ func validateTaxCombo(tc *tax.Combo) error {
 	case tax.CategoryVAT:
 		return validation.ValidateStruct(tc,
 			validation.Field(&tc.Ext,
-				tax.ExtensionsRequires(ExtKeyVATRate),
+				tax.ExtensionsRequire(ExtKeyVATRate),
 				validation.When(
 					tc.Percent == nil,
-					tax.ExtensionsRequires(ExtKeyExemption),
+					tax.ExtensionsRequire(ExtKeyExemption),
 				),
 				validation.When(
 					// MyDATA uses income category and type for accounting purposes
 					// and for them to be grouped with taxes. We ensure they're present
 					// here so that the
 					tc.Ext.Has(ExtKeyIncomeCat) || tc.Ext.Has(ExtKeyIncomeType),
-					tax.ExtensionsRequires(ExtKeyIncomeCat, ExtKeyIncomeType),
+					tax.ExtensionsRequire(ExtKeyIncomeCat, ExtKeyIncomeType),
 				),
 				validation.Skip,
 			),

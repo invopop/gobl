@@ -89,7 +89,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtensionsRequires(ExtKeyKSeFEffectiveDate),
+			tax.ExtensionsRequire(ExtKeyKSeFEffectiveDate),
 		),
 		validation.Field(&obj.Reason, validation.Required),
 	)

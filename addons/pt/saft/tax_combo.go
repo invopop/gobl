@@ -56,11 +56,11 @@ func validateTaxCombo(val any) error {
 				// country tax rate.
 				validation.When(
 					c.Country == "",
-					tax.ExtensionsRequires(ExtKeyTaxRate),
+					tax.ExtensionsRequire(ExtKeyTaxRate),
 				),
 				validation.When(
 					c.Percent == nil,
-					tax.ExtensionsRequires(ExtKeyExemption),
+					tax.ExtensionsRequire(ExtKeyExemption),
 				),
 				validation.Skip,
 			),

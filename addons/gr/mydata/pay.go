@@ -65,7 +65,7 @@ func validatePayInstructions(value any) error {
 			validation.Skip,
 		),
 		validation.Field(&i.Ext,
-			tax.ExtensionsRequires(ExtKeyPaymentMeans),
+			tax.ExtensionsRequire(ExtKeyPaymentMeans),
 			validation.Skip,
 		),
 	)
@@ -82,7 +82,7 @@ func validatePayAdvance(value any) error {
 			validation.Skip,
 		),
 		validation.Field(&a.Ext,
-			tax.ExtensionsRequires(ExtKeyPaymentMeans),
+			tax.ExtensionsRequire(ExtKeyPaymentMeans),
 			validation.Skip,
 		),
 	)

@@ -37,7 +37,7 @@ func normalizePayAdvance(adv *pay.Advance) {
 func validatePayAdvance(adv *pay.Advance) error {
 	return validation.ValidateStruct(adv,
 		validation.Field(&adv.Ext,
-			tax.ExtensionsRequires(untdid.ExtKeyPaymentMeans),
+			tax.ExtensionsRequire(untdid.ExtKeyPaymentMeans),
 			validation.Skip,
 		),
 	)
@@ -57,7 +57,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 func validatePayInstructions(instr *pay.Instructions) error {
 	return validation.ValidateStruct(instr,
 		validation.Field(&instr.Ext,
-			tax.ExtensionsRequires(untdid.ExtKeyPaymentMeans),
+			tax.ExtensionsRequire(untdid.ExtKeyPaymentMeans),
 			validation.Skip,
 		),
 	)

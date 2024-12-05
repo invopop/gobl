@@ -89,7 +89,7 @@ func validateBillInvoiceTax(value any) error {
 	}
 	return validation.ValidateStruct(tx,
 		validation.Field(&tx.Ext,
-			tax.ExtensionsRequires(untdid.ExtKeyDocumentType),
+			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
 			validation.Skip,
 		),
 	)

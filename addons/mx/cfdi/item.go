@@ -22,7 +22,7 @@ func validateItem(value any) error {
 	}
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Ext,
-			tax.ExtensionsRequires(ExtKeyProdServ),
+			tax.ExtensionsRequire(ExtKeyProdServ),
 			validation.By(validItemExtensions),
 			validation.Skip,
 		),

@@ -80,7 +80,7 @@ func validateInvoiceSupplier(value interface{}) error {
 			validation.When(
 				municipalityCodeRequired(obj.TaxID),
 				validation.Required,
-				tax.ExtensionsRequires(ExtKeyMunicipality),
+				tax.ExtensionsRequire(ExtKeyMunicipality),
 			),
 			validation.Skip,
 		),
@@ -120,7 +120,7 @@ func validateInvoiceCustomer(tags []cbc.Key) func(value any) error {
 				validation.When(
 					municipalityCodeRequired(obj.TaxID),
 					validation.Required,
-					tax.ExtensionsRequires(ExtKeyMunicipality),
+					tax.ExtensionsRequire(ExtKeyMunicipality),
 				),
 				validation.Skip,
 			),
@@ -154,11 +154,11 @@ func validateInvoicePreceding(typ cbc.Key) validation.RuleFunc {
 			validation.Field(&obj.Ext,
 				validation.When(
 					typ == bill.InvoiceTypeCreditNote,
-					tax.ExtensionsRequires(ExtKeyCreditCode),
+					tax.ExtensionsRequire(ExtKeyCreditCode),
 				),
 				validation.When(
 					typ == bill.InvoiceTypeDebitNote,
-					tax.ExtensionsRequires(ExtKeyDebitCode),
+					tax.ExtensionsRequire(ExtKeyDebitCode),
 				),
 			),
 			validation.Field(&obj.Reason, validation.Required),

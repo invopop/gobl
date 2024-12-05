@@ -71,7 +71,7 @@ func validateInvoiceTax(value any) error {
 	}
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Ext,
-			tax.ExtensionsRequires(ExtKeyInvoiceType),
+			tax.ExtensionsRequire(ExtKeyInvoiceType),
 			validation.Skip,
 		),
 	)
@@ -146,7 +146,7 @@ func validateInvoiceItem(value any) error {
 		validation.Field(&i.Ext,
 			validation.When(
 				i.Ext.Has(ExtKeyIncomeCat) || i.Ext.Has(ExtKeyIncomeType),
-				tax.ExtensionsRequires(ExtKeyIncomeCat, ExtKeyIncomeType),
+				tax.ExtensionsRequire(ExtKeyIncomeCat, ExtKeyIncomeType),
 			),
 			validation.Skip,
 		),

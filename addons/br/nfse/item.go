@@ -13,7 +13,7 @@ func validateItem(item *org.Item) error {
 
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Ext,
-			tax.ExtensionsRequires(ExtKeyService),
+			tax.ExtensionsRequire(ExtKeyService),
 			validation.Skip,
 		),
 	)
