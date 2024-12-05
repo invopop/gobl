@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -175,7 +176,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	err = inv.Validate()
 	assert.NoError(t, err)
 	assert.Contains(t, inv.Preceding[0].Ext, dian.ExtKeyCreditCode)
-	assert.Equal(t, inv.Preceding[0].Ext[dian.ExtKeyCreditCode], tax.ExtValue("2"))
+	assert.Equal(t, inv.Preceding[0].Ext[dian.ExtKeyCreditCode], cbc.Code("2"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()

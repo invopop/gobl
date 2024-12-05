@@ -49,10 +49,10 @@ type Scenario struct {
 	// Extension key that must be present in the document.
 	ExtKey cbc.Key `json:"ext_key,omitempty" jsonschema:"title=Extension Key"`
 
-	// Extension value that along side the key must be present for a match
-	// to happen. This cannot be used without an `ExtKey`. The value will
+	// Extension code that along side the key must be present for a match
+	// to happen. This cannot be used without an `cbc.Code`. The value will
 	// be copied to the note code if needed.
-	ExtValue ExtValue `json:"ext_value,omitempty" jsonschema:"title=Extension Value"`
+	ExtCode cbc.Code `json:"ext_code,omitempty" jsonschema:"title=Extension Code"`
 
 	// Filter defines a custom filter method for when the regular basic filters
 	// are not sufficient.
@@ -144,7 +144,7 @@ func (ss *ScenarioSet) SummaryFor(doc ScenarioDocument) *ScenarioSummary {
 	for _, s := range ss.List {
 		if s.match(doc) {
 			if s.Note != nil {
-				summary.addNote(s.Note.WithCode(s.ExtValue.String()))
+				summary.addNote(s.Note.WithCode(s.ExtCode))
 			}
 			for k, v := range s.Codes {
 				summary.Codes[k] = v
@@ -192,8 +192,8 @@ func (s *Scenario) match(doc ScenarioDocument) bool {
 			if !ok {
 				continue // try next extension
 			}
-			if s.ExtValue != "" {
-				if v == s.ExtValue {
+			if s.ExtCode != "" {
+				if v == s.ExtCode {
 					return true
 				}
 			} else {

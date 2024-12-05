@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestKeyDefinitionsWithValues(t *testing.T) {
-	kd := &cbc.KeyDefinition{
+func TestDefinitionsWithValues(t *testing.T) {
+	kd := &cbc.Definition{
 		Key: "key",
 		Name: i18n.String{
 			i18n.EN: "Name",
@@ -20,9 +20,9 @@ func TestKeyDefinitionsWithValues(t *testing.T) {
 			i18n.EN: "Description",
 			i18n.ES: "Descripción",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "value",
+				Code: "value",
 				Name: i18n.String{
 					i18n.EN: "Value",
 					i18n.ES: "Valor",
@@ -30,15 +30,15 @@ func TestKeyDefinitionsWithValues(t *testing.T) {
 			},
 		},
 	}
-	assert.True(t, kd.HasValue("value"))
-	assert.False(t, kd.HasValue("invalid"))
-	vd := kd.ValueDef("value")
+	assert.True(t, kd.HasCode("value"))
+	assert.False(t, kd.HasCode("invalid"))
+	vd := kd.CodeDef("value")
 	require.NotNil(t, vd)
 	assert.Equal(t, "Value", vd.Name[i18n.EN])
 }
 
-func TestKeyDefinitionWithPattern(t *testing.T) {
-	kd := &cbc.KeyDefinition{
+func TestDefinitionWithPattern(t *testing.T) {
+	kd := &cbc.Definition{
 		Key: "key",
 		Name: i18n.String{
 			i18n.EN: "Name",

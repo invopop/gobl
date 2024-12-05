@@ -61,10 +61,10 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags().Merge(invoiceTags),
 		},
-		IdentityKeys: identityKeyDefinitions,
-		Categories:   taxCategories,
-		Validator:    Validate,
-		Normalizer:   Normalize,
+		Identities: identityDefinitions,
+		Categories: taxCategories,
+		Validator:  Validate,
+		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

@@ -83,13 +83,13 @@ func validateInvoice(inv *bill.Invoice) error {
 	)
 }
 
-var docTypesStandard = []tax.ExtValue{ // Standard invoices
+var docTypesStandard = []cbc.Code{ // Standard invoices
 	"F1", "F2",
 }
-var docTypesCreditDebit = []tax.ExtValue{ // Credit or Debit notes
+var docTypesCreditDebit = []cbc.Code{ // Credit or Debit notes
 	"R1", "R2", "R3", "R4", "R5",
 }
-var docTypesCorrective = []tax.ExtValue{ // Substitutions
+var docTypesCorrective = []cbc.Code{ // Substitutions
 	"F3", "R1", "R2", "R3", "R4", "R5",
 }
 
@@ -101,21 +101,21 @@ func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
 				tax.ExtensionsRequire(ExtKeyDocType),
 				validation.When(
 					it.In(bill.InvoiceTypeStandard),
-					tax.ExtensionsHasValues(
+					tax.ExtensionsHasCodes(
 						ExtKeyDocType,
 						docTypesStandard...,
 					),
 				),
 				validation.When(
 					it.In(bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
-					tax.ExtensionsHasValues(
+					tax.ExtensionsHasCodes(
 						ExtKeyDocType,
 						docTypesCreditDebit...,
 					),
 				),
 				validation.When(
 					it.In(bill.InvoiceTypeCorrective),
-					tax.ExtensionsHasValues(
+					tax.ExtensionsHasCodes(
 						ExtKeyDocType,
 						docTypesCorrective...,
 					),

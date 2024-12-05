@@ -1,6 +1,7 @@
 package cfdi
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
@@ -17,7 +18,7 @@ func normalizeParty(p *org.Party) {
 			if p.Ext == nil {
 				p.Ext = make(tax.Extensions)
 			}
-			p.Ext[v.Key] = tax.ExtValue(v.Code)
+			p.Ext[v.Key] = cbc.Code(v.Code)
 		} else {
 			idents = append(idents, v)
 		}

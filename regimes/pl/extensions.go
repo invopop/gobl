@@ -12,16 +12,16 @@ const (
 	ExtKeyKSeFEffectiveDate = "pl-ksef-effective-date"
 )
 
-var extensionKeys = []*cbc.KeyDefinition{
+var extensionKeys = []*cbc.Definition{
 	{
 		Key: ExtKeyKSeFVATSpecial,
 		Name: i18n.String{
 			i18n.EN: "Special VAT Extensions for KSeF",
 			i18n.PL: "Rozszerzenia specjalne dla KSeF",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "taxi",
+				Code: "taxi",
 				Name: i18n.String{
 					i18n.EN: "Taxi Rate",
 					i18n.PL: "Ryczałt dla taksówek",
@@ -38,9 +38,9 @@ var extensionKeys = []*cbc.KeyDefinition{
 		Name: i18n.String{
 			i18n.EN: "Zero VAT Extensions for KSeF",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "wdt",
+				Code: "wdt",
 				Name: i18n.String{
 					i18n.EN: "WDT",
 					i18n.PL: "WDT",
@@ -48,7 +48,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				// TODO: description required
 			},
 			{
-				Value: "domestic",
+				Code: "domestic",
 				Name: i18n.String{
 					i18n.EN: "Domestic",
 					i18n.PL: "Krajowy",
@@ -56,7 +56,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				// TODO: description required
 			},
 			{
-				Value: "export",
+				Code: "export",
 				Name: i18n.String{
 					i18n.EN: "Export",
 					i18n.PL: "Eksport",
@@ -71,9 +71,9 @@ var extensionKeys = []*cbc.KeyDefinition{
 			i18n.EN: "Effective date code.",
 			i18n.PL: "Kod daty wejścia w życie.",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Original",
 					i18n.PL: "Pierwotna",
@@ -84,7 +84,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Correction",
 					i18n.PL: "Korygująca",
@@ -95,7 +95,7 @@ var extensionKeys = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "3",
+				Code: "3",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.PL: "Inna",

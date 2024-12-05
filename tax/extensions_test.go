@@ -36,23 +36,6 @@ func TestCleanExtensions(t *testing.T) {
 	assert.Equal(t, "foo", em2["key"].String())
 }
 
-func TestExtValue(t *testing.T) {
-	ev := tax.ExtValue("IT")
-	assert.Equal(t, "IT", ev.String())
-	assert.Equal(t, cbc.Code("IT"), ev.Code())
-	assert.Equal(t, cbc.KeyEmpty, ev.Key())
-
-	ev = tax.ExtValue("testing")
-	assert.Equal(t, "testing", ev.String())
-	assert.Equal(t, cbc.Key("testing"), ev.Key())
-	assert.Equal(t, cbc.Code("testing"), ev.Code())
-
-	ev = tax.ExtValue("A $tring")
-	assert.Equal(t, cbc.CodeEmpty, ev.Code())
-	assert.Equal(t, cbc.KeyEmpty, ev.Key())
-	assert.Equal(t, "A $tring", ev.String())
-}
-
 func TestExtValidation(t *testing.T) {
 	t.Run("with mexico", func(t *testing.T) {
 		t.Run("test patterns", func(t *testing.T) {
@@ -267,14 +250,14 @@ func TestExtensionsExcludeValidation(t *testing.T) {
 func TestExtensionsHasValues(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		err := validation.Validate(nil,
-			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+			tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389"),
 		)
 		assert.NoError(t, err)
 	})
 	t.Run("empty", func(t *testing.T) {
 		em := tax.Extensions{}
 		err := validation.Validate(em,
-			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+			tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389"),
 		)
 		assert.NoError(t, err)
 	})
@@ -283,7 +266,7 @@ func TestExtensionsHasValues(t *testing.T) {
 			iso.ExtKeySchemeID: "1234",
 		}
 		err := validation.Validate(em,
-			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+			tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389"),
 		)
 		assert.NoError(t, err)
 	})
@@ -292,7 +275,7 @@ func TestExtensionsHasValues(t *testing.T) {
 			untdid.ExtKeyDocumentType: "326",
 		}
 		err := validation.Validate(em,
-			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+			tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389"),
 		)
 		assert.NoError(t, err)
 	})
@@ -301,7 +284,7 @@ func TestExtensionsHasValues(t *testing.T) {
 			untdid.ExtKeyDocumentType: "102",
 		}
 		err := validation.Validate(em,
-			tax.ExtensionsHasValues(untdid.ExtKeyDocumentType, "326", "389"),
+			tax.ExtensionsHasCodes(untdid.ExtKeyDocumentType, "326", "389"),
 		)
 		assert.ErrorContains(t, err, "untdid-document-type: invalid value")
 	})
@@ -507,10 +490,4 @@ func TestExtensionGet(t *testing.T) {
 		}
 		assert.Equal(t, "value", em.Get("key+foo").String())
 	})
-}
-
-func TestExtValueIn(t *testing.T) {
-	ev := tax.ExtValue("IT")
-	assert.True(t, ev.In("IT", "ES"))
-	assert.False(t, ev.In("ES", "FR"))
 }

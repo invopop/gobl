@@ -29,7 +29,7 @@ const (
 // involved, we've focussed here on the most useful.
 var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
-	List: []*cbc.KeyDefinition{
+	List: []*cbc.Definition{
 		// *** Document Type Tags ***
 		// Sales:
 		{

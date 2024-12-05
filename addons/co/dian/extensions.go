@@ -13,7 +13,7 @@ const (
 	ExtKeyDebitCode    cbc.Key = "co-dian-debit-code"
 )
 
-var extensions = []*cbc.KeyDefinition{
+var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyMunicipality,
 		Name: i18n.String{
@@ -42,9 +42,9 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: "DIAN correction code for credit notes",
 			i18n.ES: "Código de corrección DIAN para notas de crédito",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Partial refund",
 					i18n.ES: "Devolución parcial",
@@ -55,7 +55,7 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Revoked",
 					i18n.ES: "Anulación",
@@ -66,7 +66,7 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "3",
+				Code: "3",
 				Name: i18n.String{
 					i18n.EN: "Discount",
 					i18n.ES: "Descuento",
@@ -77,7 +77,7 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "4",
+				Code: "4",
 				Name: i18n.String{
 					i18n.EN: "Adjustment",
 					i18n.ES: "Ajuste",
@@ -88,7 +88,7 @@ var extensions = []*cbc.KeyDefinition{
 				},
 			},
 			{
-				Value: "5",
+				Code: "5",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otros",
@@ -106,30 +106,30 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: "DIAN correction code for debit notes",
 			i18n.ES: "Código de corrección DIAN para notas de débito",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Interest",
 					i18n.ES: "Intereses",
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Pending charges",
 					i18n.ES: "Gastos por cobrar",
 				},
 			},
 			{
-				Value: "3",
+				Code: "3",
 				Name: i18n.String{
 					i18n.EN: "Change in value",
 					i18n.ES: "Cambio del valor",
 				},
 			},
 			{
-				Value: "4",
+				Code: "4",
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otros",

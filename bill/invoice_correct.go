@@ -89,7 +89,7 @@ func WithReason(reason string) schema.Option {
 
 // WithExtension adds a specific extension combination to the invoice's preceding data,
 // can be called multiple times.
-func WithExtension(key cbc.Key, code tax.ExtValue) schema.Option {
+func WithExtension(key cbc.Key, code cbc.Code) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		if opts.Ext == nil {
@@ -212,7 +212,7 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 					oneOf = make([]*jsonschema.Schema, 0, len(re.Values))
 					for _, c := range re.Values {
 						ci := &jsonschema.Schema{
-							Const: c.Value,
+							Const: c.Code,
 							Title: c.Name.String(),
 						}
 						if len(c.Desc) > 0 {

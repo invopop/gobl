@@ -17,7 +17,7 @@ const (
 
 var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
-	List: []*cbc.KeyDefinition{
+	List: []*cbc.Definition{
 		{
 			Key: TagInvoiceReceipt,
 			Name: i18n.String{

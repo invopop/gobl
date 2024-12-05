@@ -34,7 +34,7 @@ type AddonDef struct {
 	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
 
 	// Extensions defines the list of extensions that are associated with an add-on.
-	Extensions []*cbc.KeyDefinition `json:"extensions" jsonschema:"title=Extensions"`
+	Extensions []*cbc.Definition `json:"extensions" jsonschema:"title=Extensions"`
 
 	// Tags is slice of tag sets that define what can be assigned to each document schema.
 	Tags []*TagSet `json:"tags,omitempty" jsonschema:"title=Tags"`
@@ -46,11 +46,11 @@ type AddonDef struct {
 
 	// Identities that are specific for the add-on and may be validated against or
 	// used during conversion processes.
-	Identities []*cbc.KeyDefinition `json:"identities,omitempty" jsonschema:"title=Identities"`
+	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
 	// Inboxes is a list of keys that are used to identify where copies of
 	// documents can be sent.
-	Inboxes []*cbc.KeyDefinition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
+	Inboxes []*cbc.Definition `json:"inboxes,omitempty" jsonschema:"title=Inboxes"`
 
 	// Normalizer performs the normalization rules for the add-on.
 	Normalizer func(doc any) `json:"-"`

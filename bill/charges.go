@@ -30,7 +30,7 @@ const (
 	ChargeKeyCleaning  cbc.Key = "cleaning"
 )
 
-var chargeKeyDefinitions = []*cbc.KeyDefinition{
+var chargeKeyDefinitions = []*cbc.Definition{
 	{
 		Key:  ChargeKeyStampDuty,
 		Name: i18n.NewString("Stamp Duty"),
