@@ -15,7 +15,7 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
-// New provides the tax region definition for IN.
+// New provides the tax region definition for India.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
 		Country:  "IN",
@@ -30,7 +30,6 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
-		IdentityKeys: identityKeyDefinitions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -43,7 +42,6 @@ func New() *tax.RegimeDef {
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,
-		Extensions: extensions,
 	}
 }
 
@@ -53,9 +51,9 @@ func Validate(doc interface{}) error {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	case *org.Identity:
-		return validatePAN(obj)
+		return validateOrgIdentity(obj)
 	case *org.Item:
-		return validateItem(obj)
+		return validateOrgItem(obj)
 	}
 	return nil
 }
@@ -66,6 +64,6 @@ func Normalize(doc interface{}) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
 	case *org.Identity:
-		normalizePAN(obj)
+		normalizeOrgIdentity(obj)
 	}
 }
