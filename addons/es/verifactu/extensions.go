@@ -12,7 +12,7 @@ const (
 	ExtKeyOpClass        cbc.Key = "es-verifactu-op-class"
 	ExtKeyCorrectionType cbc.Key = "es-verifactu-correction-type"
 	ExtKeyExempt         cbc.Key = "es-verifactu-exempt"
-	ExtKeyTaxRegime      cbc.Key = "es-verifactu-tax-regime"
+	ExtKeyIVAIGICRegime  cbc.Key = "es-verifactu-iva-igic-regime"
 )
 
 var extensions = []*cbc.KeyDefinition{
@@ -222,14 +222,14 @@ var extensions = []*cbc.KeyDefinition{
 		},
 	},
 	{
-		Key: ExtKeyTaxRegime,
+		Key: ExtKeyIVAIGICRegime,
 		Name: i18n.String{
-			i18n.EN: "Tax Regime Code - L8A/B",
+			i18n.EN: "IVA/IGIC Regime Code - L8A/B",
 			i18n.ES: "Código de Régimen de IVA/IGIC - L8A/B",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				VAT regime code used to identify the type of VAT regime applied to the operation. This list combines lists 8A, which include values for IVA and 8B, which include values for IGIC.
+				Code list used to identify the type of VAT or IGIC regime applied to the operation. This list combines lists 8A, which include values for IVA and 8B, which include values for IGIC.
 			`),
 		},
 		Values: []*cbc.ValueDefinition{

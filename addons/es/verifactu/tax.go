@@ -33,9 +33,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tax.Extensions{ExtKeyOpClass: v},
 		)
 		// Set default tax regime to "01" (General regime operation) if not specified
-		if !tc.Ext.Has(ExtKeyTaxRegime) {
+		if !tc.Ext.Has(ExtKeyIVAIGICRegime) {
 			tc.Ext = tc.Ext.Merge(
-				tax.Extensions{ExtKeyTaxRegime: "01"},
+				tax.Extensions{ExtKeyIVAIGICRegime: "01"},
 			)
 		}
 	}
@@ -55,7 +55,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tc.Percent == nil && !tc.Ext.Has(ExtKeyOpClass),
 				tax.ExtensionsRequires(ExtKeyExempt),
 			),
-			tax.ExtensionsRequires(ExtKeyTaxRegime),
+			tax.ExtensionsRequires(ExtKeyIVAIGICRegime),
 			validation.Skip,
 		),
 	)
