@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: `Tax.MergeExtensions` convenience method for adding extensions to tax objects and avoid nil panics.
 - `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
 
+### Changed
+
+- `tax`: renamed `ExtensionsRequires` to `ExtensionsRequire`, to bring in line with `ExtensionsExclude`.
+
 ### Fixed
 
 - `bill`: corrected issues around correction definitions and merging types.

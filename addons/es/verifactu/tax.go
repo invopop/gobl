@@ -55,7 +55,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tc.Percent == nil && !tc.Ext.Has(ExtKeyOpClass),
 				tax.ExtensionsRequire(ExtKeyExempt),
 			),
-			tax.ExtensionsRequires(ExtKeyRegime),
+			tax.ExtensionsRequire(ExtKeyRegime),
 			validation.Skip,
 		),
 	)
