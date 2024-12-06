@@ -14,7 +14,7 @@ func init() {
 
 func newCatalogue() *tax.CatalogueDef {
 	return &tax.CatalogueDef{
-		Key:  "iso",
+		Key:  "cef",
 		Name: i18n.NewString("Connecting Europe Facility (CEF)"),
 		Extensions: []*cbc.Definition{
 			extVATEX,
