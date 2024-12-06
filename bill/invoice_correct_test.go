@@ -156,7 +156,7 @@ func TestCorrectWithOptions(t *testing.T) {
 	assert.Equal(t, pre.Code.String(), "123")
 	assert.Equal(t, pre.IssueDate, cal.NewDate(2022, 6, 13))
 	assert.Equal(t, pre.Reason, "test refund")
-	assert.Equal(t, pre.Ext[facturae.ExtKeyCorrection], tax.ExtValue("01"))
+	assert.Equal(t, pre.Ext[facturae.ExtKeyCorrection], cbc.Code("01"))
 	assert.Equal(t, i.Totals.Payable.String(), "900.00")
 }
 

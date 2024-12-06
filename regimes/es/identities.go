@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-var identityKeyDefinitions = []*cbc.KeyDefinition{
+var identityDefinitions = []*cbc.Definition{
 	{
 		Key: org.IdentityKeyPassport,
 		Name: i18n.String{

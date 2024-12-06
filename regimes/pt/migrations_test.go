@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/pt/saft"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,7 +21,7 @@ func TestTaxRateMigration(t *testing.T) {
 
 	t0 := inv.Lines[0].Taxes[0]
 	assert.Equal(t, tax.RateExempt, t0.Rate)
-	assert.Equal(t, tax.ExtValue("M01"), t0.Ext[saft.ExtKeyExemption])
+	assert.Equal(t, cbc.Code("M01"), t0.Ext[saft.ExtKeyExemption])
 
 	// Valid new rate
 	inv = validInvoice()
@@ -32,5 +33,5 @@ func TestTaxRateMigration(t *testing.T) {
 
 	t0 = inv.Lines[0].Taxes[0]
 	assert.Equal(t, tax.RateExempt, t0.Rate)
-	assert.Equal(t, tax.ExtValue("M02"), t0.Ext[saft.ExtKeyExemption])
+	assert.Equal(t, cbc.Code("M02"), t0.Ext[saft.ExtKeyExemption])
 }

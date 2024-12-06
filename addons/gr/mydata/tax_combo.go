@@ -7,7 +7,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-var taxComboMapVAT = map[cbc.Key]tax.ExtValue{
+var taxComboMapVAT = map[cbc.Key]cbc.Code{
 	tax.RateStandard:                            "1",
 	tax.RateReduced:                             "2",
 	tax.RateSuperReduced:                        "3",

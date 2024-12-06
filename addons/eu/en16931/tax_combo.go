@@ -2,6 +2,7 @@ package en16931
 
 import (
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -18,7 +19,7 @@ var taxCategoryMap = tax.Extensions{
 }
 
 // acceptedTaxCategories as defined by the EN 16931 code list values data.
-var acceptedTaxCategories = []tax.ExtValue{
+var acceptedTaxCategories = []cbc.Code{
 	"S", "Z", "E", "AE", "K", "G", "O", "L", "M",
 }
 
@@ -53,7 +54,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 	return validation.ValidateStruct(tc,
 		validation.Field(&tc.Ext,
 			tax.ExtensionsRequire(untdid.ExtKeyTaxCategory),
-			tax.ExtensionsHasValues(untdid.ExtKeyTaxCategory, acceptedTaxCategories...),
+			tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, acceptedTaxCategories...),
 			validation.Skip,
 		),
 	)

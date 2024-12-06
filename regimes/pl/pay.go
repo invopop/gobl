@@ -15,7 +15,7 @@ const (
 	MeansKeyMobile     cbc.Key = "mobile"
 )
 
-var paymentMeansKeyDefinitions = []*cbc.KeyDefinition{
+var paymentMeansKeyDefinitions = []*cbc.Definition{
 	{
 		Key: pay.MeansKeyCash,
 		Name: i18n.String{

@@ -31,7 +31,7 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},
-		IdentityKeys: identityKeyDefinitions, // identities.go
+		Identities: identityDefinitions, // identities.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

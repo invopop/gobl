@@ -27,7 +27,7 @@ const (
 
 // MeansKeyDefinitions includes all the payment means keys that
 // are accepted by GOBL.
-var MeansKeyDefinitions = []*cbc.KeyDefinition{
+var MeansKeyDefinitions = []*cbc.Definition{
 	{
 		Key:  MeansKeyAny,
 		Name: i18n.NewString("Any"),

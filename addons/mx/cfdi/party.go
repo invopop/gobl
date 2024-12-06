@@ -17,7 +17,7 @@ func normalizeParty(p *org.Party) {
 			if p.Ext == nil {
 				p.Ext = make(tax.Extensions)
 			}
-			p.Ext[v.Key] = tax.ExtValue(v.Code)
+			p.Ext[v.Key] = v.Code
 		} else {
 			idents = append(idents, v)
 		}

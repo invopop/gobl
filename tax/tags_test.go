@@ -12,7 +12,7 @@ import (
 func TestTagSetMerge(t *testing.T) {
 	ts1 := &tax.TagSet{
 		Schema: "bill/invoice",
-		List: []*cbc.KeyDefinition{
+		List: []*cbc.Definition{
 			{
 				Key: "test1",
 				Name: i18n.String{
@@ -23,7 +23,7 @@ func TestTagSetMerge(t *testing.T) {
 	}
 	ts2 := &tax.TagSet{
 		Schema: "bill/invoice",
-		List: []*cbc.KeyDefinition{
+		List: []*cbc.Definition{
 			{
 				Key: "test1",
 				Name: i18n.String{
@@ -49,7 +49,7 @@ func TestTagSetMerge(t *testing.T) {
 
 	ts4 := &tax.TagSet{
 		Schema: "note/message",
-		List: []*cbc.KeyDefinition{
+		List: []*cbc.Definition{
 			{
 				Key: "test3",
 				Name: i18n.String{
@@ -71,7 +71,7 @@ func TestTagSetMerge(t *testing.T) {
 func TestTaxSetKeys(t *testing.T) {
 	ts1 := &tax.TagSet{
 		Schema: "bill/invoice",
-		List: []*cbc.KeyDefinition{
+		List: []*cbc.Definition{
 			{
 				Key: "test1",
 				Name: i18n.String{

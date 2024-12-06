@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/br/nfse"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -60,7 +61,7 @@ func TestTaxComboNormalization(t *testing.T) {
 	tests := []struct {
 		name string
 		tc   *tax.Combo
-		out  tax.ExtValue
+		out  cbc.Code
 	}{
 		{
 			name: "no tax combo",

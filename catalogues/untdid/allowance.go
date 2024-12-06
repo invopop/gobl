@@ -12,7 +12,7 @@ const (
 	ExtKeyAllowance cbc.Key = "untdid-allowance"
 )
 
-var extAllowance = &cbc.KeyDefinition{
+var extAllowance = &cbc.Definition{
 	Key: ExtKeyAllowance,
 	Name: i18n.String{
 		i18n.EN: "UNTDID 5189 Allowance",
@@ -24,82 +24,82 @@ var extAllowance = &cbc.KeyDefinition{
 			values table which focusses on invoices and payments.
 		`),
 	},
-	Values: []*cbc.ValueDefinition{
+	Values: []*cbc.Definition{
 		{
-			Value: "41",
-			Name:  i18n.NewString("Bonus for works ahead of schedule"),
+			Code: "41",
+			Name: i18n.NewString("Bonus for works ahead of schedule"),
 		},
 		{
-			Value: "42",
-			Name:  i18n.NewString("Other bonus"),
+			Code: "42",
+			Name: i18n.NewString("Other bonus"),
 		},
 		{
-			Value: "60",
-			Name:  i18n.NewString("Manufacturer’s consumer discount"),
+			Code: "60",
+			Name: i18n.NewString("Manufacturer’s consumer discount"),
 		},
 		{
-			Value: "62",
-			Name:  i18n.NewString("Due to military status"),
+			Code: "62",
+			Name: i18n.NewString("Due to military status"),
 		},
 		{
-			Value: "63",
-			Name:  i18n.NewString("Due to work accident"),
+			Code: "63",
+			Name: i18n.NewString("Due to work accident"),
 		},
 		{
-			Value: "64",
-			Name:  i18n.NewString("Special agreement"),
+			Code: "64",
+			Name: i18n.NewString("Special agreement"),
 		},
 		{
-			Value: "65",
-			Name:  i18n.NewString("Production error discount"),
+			Code: "65",
+			Name: i18n.NewString("Production error discount"),
 		},
 		{
-			Value: "66",
-			Name:  i18n.NewString("New outlet discount"),
+			Code: "66",
+			Name: i18n.NewString("New outlet discount"),
 		},
 		{
-			Value: "67",
-			Name:  i18n.NewString("Sample discount"),
+			Code: "67",
+			Name: i18n.NewString("Sample discount"),
 		},
 		{
-			Value: "68",
-			Name:  i18n.NewString("End-of-range discount"),
+			Code: "68",
+			Name: i18n.NewString("End-of-range discount"),
 		},
 		{
-			Value: "70",
-			Name:  i18n.NewString("Incoterm discount"),
+			Code: "70",
+			Name: i18n.NewString("Incoterm discount"),
 		},
 		{
-			Value: "71",
-			Name:  i18n.NewString("Point of sales threshold allowance"),
+			Code: "71",
+			Name: i18n.NewString("Point of sales threshold allowance"),
 		},
 		{
-			Value: "88",
-			Name:  i18n.NewString("Material surcharge/deduction"),
+			Code: "88",
+			Name: i18n.NewString("Material surcharge/deduction"),
 		},
 		{
-			Value: "95",
-			Name:  i18n.NewString("Discount"),
+			Code: "95",
+			Name: i18n.NewString("Discount"),
 		},
 		{
-			Value: "100",
-			Name:  i18n.NewString("Special rebate"),
+			Code: "100",
+			Name: i18n.NewString("Special rebate"),
 		},
 		{
-			Value: "102",
-			Name:  i18n.NewString("Fixed long term"),
+			Code: "102",
+			Name: i18n.NewString("Fixed long term"),
 		},
 		{
-			Value: "103",
-			Name:  i18n.NewString("Temporary"),
+			Code: "103",
+			Name: i18n.NewString("Temporary"),
 		},
 		{
-			Value: "104",
-			Name:  i18n.NewString("Standard"),
+			Code: "104",
+			Name: i18n.NewString("Standard"),
 		},
 		{
-			Value: "105",
-			Name:  i18n.NewString("Yearly turnover"),
+			Code: "105",
+			Name: i18n.NewString("Yearly turnover"),
 		},
 	},
 }

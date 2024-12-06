@@ -11,7 +11,7 @@ const (
 	ExtKeySchemeID cbc.Key = "iso-scheme-id"
 )
 
-var extSchemeID = &cbc.KeyDefinition{
+var extSchemeID = &cbc.Definition{
 	Key:  ExtKeySchemeID,
 	Name: i18n.NewString("ISO/IEC 6523 Identifier scheme code"),
 	Desc: i18n.NewString(here.Doc(`

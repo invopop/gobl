@@ -24,7 +24,7 @@ const (
 )
 
 // InvoiceTypes describes each of the InvoiceTypes supported.
-var InvoiceTypes = []*cbc.KeyDefinition{
+var InvoiceTypes = []*cbc.Definition{
 	{
 		Key: InvoiceTypeStandard,
 		Name: i18n.String{

@@ -20,7 +20,7 @@ const (
 
 var taxNumberRegexPattern = regexp.MustCompile(`^\d{2,3}/\d{3}/\d{5}$`)
 
-var identityKeyDefinitions = []*cbc.KeyDefinition{
+var identityDefinitions = []*cbc.Definition{
 	{
 		Key: IdentityKeyTaxNumber,
 		Name: i18n.String{

@@ -33,7 +33,7 @@ const (
 	DiscountKeyYarlyTurnover    cbc.Key = "yearly-turnover"
 )
 
-var discountKeyDefinitions = []*cbc.KeyDefinition{
+var discountKeyDefinitions = []*cbc.Definition{
 	{
 		Key:  DiscountKeyEarlyCompletion,
 		Name: i18n.NewString("Bonus for works ahead of schedule"),

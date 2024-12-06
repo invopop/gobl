@@ -55,8 +55,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 
 		// Extension texts
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M01",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M01",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -64,8 +64,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M02",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M02",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -73,8 +73,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M04",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M04",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -82,8 +82,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M05",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M05",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -91,8 +91,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M06",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M06",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -100,8 +100,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M07",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M07",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -109,8 +109,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M09",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M09",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -118,8 +118,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M10",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M10",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -127,8 +127,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M11",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M11",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -136,8 +136,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M12",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M12",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -145,8 +145,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M13",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M13",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -154,8 +154,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M14",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M14",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -163,8 +163,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M15",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M15",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -172,8 +172,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M16",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M16",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -181,8 +181,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M19",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M19",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -190,8 +190,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M20",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M20",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -199,8 +199,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M21",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M21",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -208,8 +208,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M25",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M25",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -217,8 +217,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M30",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M30",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -226,8 +226,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M31",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M31",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -235,8 +235,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M32",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M32",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -244,8 +244,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M33",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M33",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -253,8 +253,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M40",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M40",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -262,8 +262,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M41",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M41",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -271,8 +271,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M42",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M42",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -280,8 +280,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M43",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M43",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,
@@ -289,8 +289,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 			},
 		},
 		{
-			ExtKey:   ExtKeyExemption,
-			ExtValue: "M99",
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M99",
 			Note: &cbc.Note{
 				Key:  cbc.NoteKeyLegal,
 				Src:  ExtKeyExemption,

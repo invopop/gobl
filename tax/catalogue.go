@@ -18,7 +18,7 @@ type CatalogueDef struct {
 	// Description is a human readable description of the catalogue.
 	Description i18n.String `json:"description"`
 	// Extensions defines all the extensions offered by the catalogue.
-	Extensions []*cbc.KeyDefinition `json:"extensions"`
+	Extensions []*cbc.Definition `json:"extensions"`
 }
 
 // RegisterCatalogueDef will register the catalogue in the global list of catalogues

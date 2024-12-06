@@ -11,7 +11,7 @@ const (
 	ExtKeyTaxCategory cbc.Key = "untdid-tax-category"
 )
 
-var extTaxCategory = &cbc.KeyDefinition{
+var extTaxCategory = &cbc.Definition{
 	Key: ExtKeyTaxCategory,
 	Name: i18n.String{
 		i18n.EN: "UNTDID 3505 Tax Category",
@@ -25,129 +25,129 @@ var extTaxCategory = &cbc.KeyDefinition{
 				Data from https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred5305.htm.
 			`),
 	},
-	Values: []*cbc.ValueDefinition{
+	Values: []*cbc.Definition{
 		{
-			Value: "A",
+			Code: "A",
 			Name: i18n.String{
 				i18n.EN: "Mixed tax rate",
 			},
 		},
 		{
-			Value: "AA",
+			Code: "AA",
 			Name: i18n.String{
 				i18n.EN: "Lower rate",
 			},
 		},
 		{
-			Value: "AB",
+			Code: "AB",
 			Name: i18n.String{
 				i18n.EN: "Exempt for resale",
 			},
 		},
 		{
-			Value: "AC",
+			Code: "AC",
 			Name: i18n.String{
 				i18n.EN: "Exempt for resale",
 			},
 		},
 		{
-			Value: "AD",
+			Code: "AD",
 			Name: i18n.String{
 				i18n.EN: "Value Added Tax (VAT) due from a previous invoice",
 			},
 		},
 		{
-			Value: "AE",
+			Code: "AE",
 			Name: i18n.String{
 				i18n.EN: "VAT Reverse Charge",
 			},
 		},
 		{
-			Value: "B",
+			Code: "B",
 			Name: i18n.String{
 				i18n.EN: "Transferred (VAT)",
 			},
 		},
 		{
-			Value: "C",
+			Code: "C",
 			Name: i18n.String{
 				i18n.EN: "Duty paid by supplier",
 			},
 		},
 		{
-			Value: "D",
+			Code: "D",
 			Name: i18n.String{
 				i18n.EN: "Value Added Tax (VAT) margin scheme - travel agents",
 			},
 		},
 		{
-			Value: "E",
+			Code: "E",
 			Name: i18n.String{
 				i18n.EN: "Exempt from tax",
 			},
 		},
 		{
-			Value: "F",
+			Code: "F",
 			Name: i18n.String{
 				i18n.EN: "Value Added Tax (VAT) margin scheme - second-hand goods",
 			},
 		},
 		{
-			Value: "G",
+			Code: "G",
 			Name: i18n.String{
 				i18n.EN: "Free export item, tax not charged",
 			},
 		},
 		{
-			Value: "H",
+			Code: "H",
 			Name: i18n.String{
 				i18n.EN: "Higher rate",
 			},
 		},
 		{
-			Value: "I",
+			Code: "I",
 			Name: i18n.String{
 				i18n.EN: "Value Added Tax (VAT) margin scheme - works of art",
 			},
 		},
 		{
-			Value: "J",
+			Code: "J",
 			Name: i18n.String{
 				i18n.EN: "Value Added Tax (VAT) margin scheme - collector's items and antiques",
 			},
 		},
 		{
-			Value: "K",
+			Code: "K",
 			Name: i18n.String{
 				i18n.EN: "VAT exempt for EEA intra-community supply of goods and services",
 			},
 		},
 		{
-			Value: "L",
+			Code: "L",
 			Name: i18n.String{
 				i18n.EN: "Canary Islands general indirect tax",
 			},
 		},
 		{
-			Value: "M",
+			Code: "M",
 			Name: i18n.String{
 				i18n.EN: "Tax for production, services and importation in Ceuta and Melilla",
 			},
 		},
 		{
-			Value: "O",
+			Code: "O",
 			Name: i18n.String{
 				i18n.EN: "Services outside scope of tax",
 			},
 		},
 		{
-			Value: "S",
+			Code: "S",
 			Name: i18n.String{
 				i18n.EN: "Standard Rate",
 			},
 		},
 		{
-			Value: "Z",
+			Code: "Z",
 			Name: i18n.String{
 				i18n.EN: "Zero rated goods",
 			},

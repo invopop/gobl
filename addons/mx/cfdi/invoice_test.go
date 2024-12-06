@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -86,7 +87,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
 	t.Run("with supplier address code", func(t *testing.T) {
 		inv := validInvoice()
@@ -101,7 +102,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
 }
 

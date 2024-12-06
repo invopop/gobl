@@ -15,7 +15,7 @@ const (
 	IdentityKeyNationalReg  = "br-nfse-national-reg"
 )
 
-var identities = []*cbc.KeyDefinition{
+var identities = []*cbc.Definition{
 	{
 		Key: IdentityKeyMunicipalReg,
 		Name: i18n.String{

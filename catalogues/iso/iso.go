@@ -16,7 +16,7 @@ func newCatalogue() *tax.CatalogueDef {
 	return &tax.CatalogueDef{
 		Key:  "iso",
 		Name: i18n.NewString("ISO/IEC Data Elements"),
-		Extensions: []*cbc.KeyDefinition{
+		Extensions: []*cbc.Definition{
 			extSchemeID,
 		},
 	}

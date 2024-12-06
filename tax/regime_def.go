@@ -60,19 +60,19 @@ type RegimeDef struct {
 	// Extensions defines the keys that can be used for extended or extra data inside the regime that
 	// is specific to the regime and cannot be easily determined from other GOBL structures.
 	// Typically these are used to define local codes for suppliers, customers, products, or tax rates.
-	Extensions []*cbc.KeyDefinition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
+	Extensions []*cbc.Definition `json:"extensions,omitempty" jsonschema:"title=Extensions"`
 
-	// Identity keys used in addition to regular tax identities and specific for the
+	// Identities used in addition to regular tax identities and specific for the
 	// regime that may be validated against.
-	IdentityKeys []*cbc.KeyDefinition `json:"identity_keys,omitempty" jsonschema:"title=Identity Keys"`
+	Identities []*cbc.Definition `json:"identities,omitempty" jsonschema:"title=Identities"`
 
 	// PaymentMeansKeys specific for the regime that extend the original
 	// base payment means keys.
-	PaymentMeansKeys []*cbc.KeyDefinition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
+	PaymentMeansKeys []*cbc.Definition `json:"payment_means_keys,omitempty" jsonschema:"title=Payment Means Keys"`
 
 	// InboxKeys specific to the regime that can be used to identify where a document
 	// should be forwarded to.
-	InboxKeys []*cbc.KeyDefinition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
+	InboxKeys []*cbc.Definition `json:"inbox_keys,omitempty" jsonschema:"title=Inbox Keys"`
 
 	Scenarios []*ScenarioSet `json:"scenarios,omitempty" jsonschema:"title=Scenarios"`
 
@@ -276,7 +276,7 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Zone),
 		validation.Field(&r.Currency),
 		validation.Field(&r.Tags),
-		validation.Field(&r.IdentityKeys),
+		validation.Field(&r.Identities),
 		validation.Field(&r.Extensions),
 		validation.Field(&r.PaymentMeansKeys),
 		validation.Field(&r.InboxKeys),
@@ -453,7 +453,7 @@ func (r *RegimeDef) RateDef(cat cbc.Code, key cbc.Key) *RateDef {
 }
 
 // ExtensionDef provides the extension definition with a matching key.
-func (r *RegimeDef) ExtensionDef(key cbc.Key) *cbc.KeyDefinition {
+func (r *RegimeDef) ExtensionDef(key cbc.Key) *cbc.Definition {
 	for _, e := range r.Extensions {
 		if e.Key == key {
 			return e

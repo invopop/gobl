@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `tax`: renamed `ExtensionsRequires` to `ExtensionsRequire`, to bring in line with `ExtensionsExclude`.
+- `cbc`: refactored `KeyDefinition` and `ValueDefinition` into a single `Definition` object that supports `key` and `code`.
+- `tax`: removed `ExtValue` and replaced with `cbc.Code` which is now much more flexible.
 
 ### Fixed
 

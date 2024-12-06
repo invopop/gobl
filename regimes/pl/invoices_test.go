@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -73,7 +74,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, inv.Preceding[0].Ext[pl.ExtKeyKSeFEffectiveDate], tax.ExtValue("1"))
+	assert.Equal(t, inv.Preceding[0].Ext[pl.ExtKeyKSeFEffectiveDate], cbc.Code("1"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()

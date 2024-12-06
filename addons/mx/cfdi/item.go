@@ -30,11 +30,11 @@ func validateItem(value any) error {
 }
 
 func validItemExtensions(value interface{}) error {
-	ids, ok := value.(tax.Extensions)
+	ext, ok := value.(tax.Extensions)
 	if !ok {
 		return nil
 	}
-	for k, v := range ids {
+	for k, v := range ext {
 		if k == ExtKeyProdServ {
 			if itemExtensionValidCodeRegexp.MatchString(string(v)) {
 				return nil
@@ -64,7 +64,7 @@ func normalizeItem(item *org.Item) {
 			if item.Ext == nil {
 				item.Ext = make(tax.Extensions)
 			}
-			item.Ext[v.Key] = tax.ExtValue(v.Code)
+			item.Ext[v.Key] = v.Code
 		} else {
 			idents = append(idents, v)
 		}
@@ -74,7 +74,7 @@ func normalizeItem(item *org.Item) {
 	for k, v := range item.Ext {
 		if k == ExtKeyProdServ {
 			if itemExtensionNormalizableCodeRegexp.MatchString(v.String()) {
-				item.Ext[k] = tax.ExtValue(v.String() + "00")
+				item.Ext[k] = cbc.Code(v.String() + "00")
 			}
 		}
 	}

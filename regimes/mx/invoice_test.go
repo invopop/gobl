@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -19,7 +20,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("migrate issue place from supplier ext when no tax ext", func(t *testing.T) {
@@ -28,7 +29,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("22000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("22000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("migrate issue place from supplier tax ID zone", func(t *testing.T) {
@@ -39,7 +40,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 		assert.False(t, inv.Supplier.Ext.Has("mx-cfdi-post-code"))
 	})
 	t.Run("does not migrate issue place from address when already present", func(t *testing.T) {
@@ -54,7 +55,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
 	t.Run("migrate issue place from supplier address code", func(t *testing.T) {
 		inv := baseInvoice()
@@ -69,7 +70,7 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		require.NotNil(t, inv.Tax)
-		assert.Equal(t, tax.ExtValue("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
+		assert.Equal(t, cbc.Code("12345"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
 	t.Run("migrate customer post code from ext", func(t *testing.T) {
 		inv := baseInvoice()
