@@ -5,6 +5,7 @@ package catalogues
 
 import (
 	// Ensure all the catalogues are registered
+	_ "github.com/invopop/gobl/catalogues/cef"
 	_ "github.com/invopop/gobl/catalogues/iso"
 	_ "github.com/invopop/gobl/catalogues/untdid"
 )

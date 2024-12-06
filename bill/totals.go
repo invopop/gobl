@@ -29,8 +29,6 @@ type Totals struct {
 	// Rounding amount to apply to the invoice in case the total and payable
 	// amounts don't quite match.
 	Rounding *num.Amount `json:"rounding,omitempty" jsonschema:"title=Rounding"`
-	// Total paid in outlays that need to be reimbursed
-	Outlays *num.Amount `json:"outlays,omitempty" jsonschema:"title=Outlay Totals"`
 	// Total amount to be paid after applying taxes and outlays.
 	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
 	// Total amount already paid in advance.
@@ -51,7 +49,6 @@ func (t *Totals) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&t.Tax),
 		validation.Field(&t.TotalWithTax),
 		validation.Field(&t.Rounding),
-		validation.Field(&t.Outlays),
 		validation.Field(&t.Payable),
 		validation.Field(&t.Advances),
 		validation.Field(&t.Due),
@@ -70,7 +67,6 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Tax = zero
 	t.TotalWithTax = zero
 	// t.Rounding = nil // may have been provided externally
-	t.Outlays = nil
 	t.Payable = zero
 	t.Advances = nil
 	t.Due = nil
@@ -99,9 +95,6 @@ func (t *Totals) round(zero num.Amount) {
 	t.Total = t.Total.Rescale(e)
 	t.Tax = t.Tax.Rescale(e)
 	t.TotalWithTax = t.TotalWithTax.Rescale(e)
-	if t.Outlays != nil {
-		*t.Outlays = t.Outlays.Rescale(e)
-	}
 	t.Payable = t.Payable.Rescale(e)
 	if t.Advances != nil {
 		*t.Advances = t.Advances.Rescale(e)
