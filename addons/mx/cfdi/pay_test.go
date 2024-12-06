@@ -19,7 +19,9 @@ func TestNormalizePayInstructions(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var instr *pay.Instructions
-		ad.Normalizer(instr)
+		assert.NotPanics(t, func() {
+			ad.Normalizer(instr)
+		})
 	})
 
 	t.Run("with match", func(t *testing.T) {
@@ -36,7 +38,9 @@ func TestNormalizePayAdvance(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var adv *pay.Advance
-		ad.Normalizer(adv)
+		assert.NotPanics(t, func() {
+			ad.Normalizer(adv)
+		})
 	})
 
 	t.Run("with match", func(t *testing.T) {
@@ -53,7 +57,9 @@ func TestValidatePayTerms(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		var terms *pay.Terms
-		ad.Validator(terms)
+		assert.NotPanics(t, func() {
+			assert.NoError(t, ad.Validator(terms))
+		})
 	})
 
 	t.Run("valid", func(t *testing.T) {
