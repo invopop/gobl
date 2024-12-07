@@ -68,3 +68,12 @@ func validateOrgItem(item *org.Item) error {
 		),
 	)
 }
+
+func validateOrgAttachment(a *org.Attachment) error {
+	return validation.ValidateStruct(a,
+		validation.Field(&a.Code,
+			validation.Required,
+			validation.Skip,
+		),
+	)
+}

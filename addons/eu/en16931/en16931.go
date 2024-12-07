@@ -77,6 +77,8 @@ func validate(doc any) error {
 		return validateTaxCombo(obj)
 	case *org.Item:
 		return validateOrgItem(obj)
+	case *org.Attachment:
+		return validateOrgAttachment(obj)
 	}
 	return nil
 }
