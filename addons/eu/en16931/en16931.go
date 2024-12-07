@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
@@ -69,6 +70,8 @@ func validate(doc any) error {
 		return validateBillInvoice(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *org.Attachment:
+		return validateOrgAttachment(obj)
 	}
 	return nil
 }

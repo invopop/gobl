@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
 - `in`: added Indian regime
 - `cef`: catalogue for CEF VATEX reason codes.
+- `org`: `Attachment` new structure for dealing with attachments.
+- `bill`: `Attachments` added to invoices.
+- `eu-en16931-v2017`: addon now includes additional validation for attachment codes.
 
 ### Changed
 
