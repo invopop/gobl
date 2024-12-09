@@ -172,7 +172,14 @@ func (p Percentage) MarshalText() ([]byte, error) {
 
 // Invert provides a new percentage value that is the inverse of the
 // current percentage.
+// Deprectatd: Use Negate instead.
 func (p Percentage) Invert() Percentage {
+	return p.Negate()
+}
+
+// Negate provides a new percentage value that is the negative inverse of the
+// current percentage.
+func (p Percentage) Negate() Percentage {
 	return Percentage{amount: p.amount.Invert()}
 }
 
