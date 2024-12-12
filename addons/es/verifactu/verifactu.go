@@ -17,6 +17,11 @@ const (
 const (
 	// StampQR contains the URL included in the QR code.
 	StampQR cbc.Key = "verifactu-qr"
+
+	// QRPrefix is the compulsory text to appear above the QR code.
+	QRPrefix string = "QR tributario:"
+	// QRSuffix is the compulsory text to appear below the QR code.
+	QRSuffix string = "VERI*FACTU"
 )
 
 func init() {
