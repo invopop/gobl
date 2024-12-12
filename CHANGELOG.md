@@ -15,16 +15,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: `Tax.MergeExtensions` convenience method for adding extensions to tax objects and avoid nil panics.
 - `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
 - `in`: added Indian regime
+- `cef`: catalogue for CEF VATEX reason codes.
+- `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item Type Identification) extenions.
 
 ### Changed
 
 - `tax`: renamed `ExtensionsRequires` to `ExtensionsRequire`, to bring in line with `ExtensionsExclude`.
 - `cbc`: refactored `KeyDefinition` and `ValueDefinition` into a single `Definition` object that supports `key` and `code`.
 - `tax`: removed `ExtValue` and replaced with `cbc.Code` which is now much more flexible.
+- `tax`: Catalogue definitions now loaded from JSON source as opposed to Go code. This improves memory efficiency, especially when the source data is large.
 
 ### Fixed
 
 - `bill`: corrected issues around correction definitions and merging types.
+- `bill`: removed `Outlays` from totals.
 
 ## [v0.206.1] - 2024-11-28
 

@@ -65,7 +65,7 @@
       ]
     }
   ],
-  "identity_keys": [
+  "identities": [
     {
       "key": "de-tax-number",
       "name": {

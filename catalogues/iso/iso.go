@@ -4,20 +4,14 @@ package iso
 
 import (
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterCatalogueDef(newCatalogue())
+	tax.RegisterCatalogueDef("iso.json")
 }
 
-func newCatalogue() *tax.CatalogueDef {
-	return &tax.CatalogueDef{
-		Key:  "iso",
-		Name: i18n.NewString("ISO/IEC Data Elements"),
-		Extensions: []*cbc.Definition{
-			extSchemeID,
-		},
-	}
-}
+const (
+	// ExtKeySchemeID is used by the ISO 6523 scheme identifier.
+	ExtKeySchemeID cbc.Key = "iso-scheme-id"
+)

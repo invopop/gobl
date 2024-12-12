@@ -4,7 +4,6 @@
   "name": {
     "en": "ISO/IEC Data Elements"
   },
-  "description": null,
   "extensions": [
     {
       "key": "iso-scheme-id",

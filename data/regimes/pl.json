@@ -81,7 +81,7 @@
       },
       "values": [
         {
-          "value": "taxi",
+          "code": "taxi",
           "name": {
             "en": "Taxi Rate",
             "pl": "Ryczałt dla taksówek"
@@ -100,21 +100,21 @@
       },
       "values": [
         {
-          "value": "wdt",
+          "code": "wdt",
           "name": {
             "en": "WDT",
             "pl": "WDT"
           }
         },
         {
-          "value": "domestic",
+          "code": "domestic",
           "name": {
             "en": "Domestic",
             "pl": "Krajowy"
           }
         },
         {
-          "value": "export",
+          "code": "export",
           "name": {
             "en": "Export",
             "pl": "Eksport"
@@ -130,7 +130,7 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Original",
             "pl": "Pierwotna"
@@ -141,7 +141,7 @@
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Correction",
             "pl": "Korygująca"
@@ -152,7 +152,7 @@
           }
         },
         {
-          "value": "3",
+          "code": "3",
           "name": {
             "en": "Other",
             "pl": "Inna"

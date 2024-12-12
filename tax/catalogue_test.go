@@ -20,3 +20,11 @@ func TestAllCatalogueDefs(t *testing.T) {
 	}
 	assert.True(t, match)
 }
+
+func TestRegisterCatalogueDef(t *testing.T) {
+	t.Run("missing source file", func(t *testing.T) {
+		assert.Panics(t, func() {
+			tax.RegisterCatalogueDef("missing.json")
+		})
+	})
+}

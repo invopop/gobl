@@ -11,9 +11,9 @@ import (
 // utility.
 type Definition struct {
 	// Key being defined.
-	Key Key `json:"key" jsonschema:"title=Key"`
+	Key Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Code this definition represents.
-	Code Code `json:"code" jsonschema:"title=Code"`
+	Code Code `json:"code,omitempty" jsonschema:"title=Code"`
 
 	// Short name for the key.
 	Name i18n.String `json:"name" jsonschema:"title=Name"`

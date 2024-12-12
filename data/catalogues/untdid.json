@@ -4,7 +4,6 @@
   "name": {
     "en": "UN/EDIFACT Data Elements"
   },
-  "description": null,
   "extensions": [
     {
       "key": "untdid-document-type",
@@ -12,331 +11,5244 @@
         "en": "UNTDID 1001 Document Type"
       },
       "desc": {
-        "en": "UNTDID 1001 code used to describe the type of document. Ths list is based\non the [EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments.\n\nOther tax regimes and addons may use their own subset of codes."
+        "en": "UNTDID 1001 code used to describe the type of document. Ths list is based on the [EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments.\n\nOther tax regimes and addons may use their own subset of codes."
       },
       "values": [
         {
-          "value": "71",
+          "code": "71",
           "name": {
             "en": "Request for payment"
           }
         },
         {
-          "value": "80",
+          "code": "80",
           "name": {
             "en": "Debit note related to goods or services"
           }
         },
         {
-          "value": "81",
+          "code": "81",
           "name": {
             "en": "Credit note related to goods or services"
           }
         },
         {
-          "value": "82",
+          "code": "82",
           "name": {
             "en": "Metered services invoice"
           }
         },
         {
-          "value": "83",
+          "code": "83",
           "name": {
             "en": "Credit note related to financial adjustments"
           }
         },
         {
-          "value": "84",
+          "code": "84",
           "name": {
             "en": "Debit note related to financial adjustments"
           }
         },
         {
-          "value": "102",
+          "code": "102",
           "name": {
             "en": "Tax notification"
           }
         },
         {
-          "value": "130",
+          "code": "130",
           "name": {
             "en": "Invoicing data sheet"
           }
         },
         {
-          "value": "202",
+          "code": "202",
           "name": {
             "en": "Direct payment valuation"
           }
         },
         {
-          "value": "203",
+          "code": "203",
           "name": {
             "en": "Provisional payment valuation"
           }
         },
         {
-          "value": "204",
+          "code": "204",
           "name": {
             "en": "Payment valuation"
           }
         },
         {
-          "value": "211",
+          "code": "211",
           "name": {
             "en": "Interim application for payment"
           }
         },
         {
-          "value": "218",
+          "code": "218",
           "name": {
             "en": "Final payment request based on completion of work"
           }
         },
         {
-          "value": "219",
+          "code": "219",
           "name": {
             "en": "Payment request for completed units"
           }
         },
         {
-          "value": "261",
+          "code": "261",
           "name": {
             "en": "Self billed credit note"
           }
         },
         {
-          "value": "262",
+          "code": "262",
           "name": {
             "en": "Consolidated credit note - goods and services"
           }
         },
         {
-          "value": "295",
+          "code": "295",
           "name": {
             "en": "Price variation invoice"
           }
         },
         {
-          "value": "296",
+          "code": "296",
           "name": {
             "en": "Credit note for price variation"
           }
         },
         {
-          "value": "308",
+          "code": "308",
           "name": {
             "en": "Delcredere credit note"
           }
         },
         {
-          "value": "325",
+          "code": "325",
           "name": {
             "en": "Proforma invoice"
           }
         },
         {
-          "value": "326",
+          "code": "326",
           "name": {
             "en": "Partial invoice"
           }
         },
         {
-          "value": "380",
+          "code": "380",
           "name": {
             "en": "Standard Invoice"
           }
         },
         {
-          "value": "381",
+          "code": "381",
           "name": {
             "en": "Credit note"
           }
         },
         {
-          "value": "382",
+          "code": "382",
           "name": {
             "en": "Commission note"
           }
         },
         {
-          "value": "383",
+          "code": "383",
           "name": {
             "en": "Debit note"
           }
         },
         {
-          "value": "384",
+          "code": "384",
           "name": {
             "en": "Corrected invoice"
           }
         },
         {
-          "value": "385",
+          "code": "385",
           "name": {
             "en": "Consolidated invoice"
           }
         },
         {
-          "value": "386",
+          "code": "386",
           "name": {
             "en": "Prepayment invoice"
           }
         },
         {
-          "value": "387",
+          "code": "387",
           "name": {
             "en": "Hire invoice"
           }
         },
         {
-          "value": "388",
+          "code": "388",
           "name": {
             "en": "Tax invoice"
           }
         },
         {
-          "value": "389",
+          "code": "389",
           "name": {
             "en": "Self-billed invoice"
           }
         },
         {
-          "value": "390",
+          "code": "390",
           "name": {
             "en": "Delcredere invoice"
           }
         },
         {
-          "value": "393",
+          "code": "393",
           "name": {
             "en": "Factored invoice"
           }
         },
         {
-          "value": "394",
+          "code": "394",
           "name": {
             "en": "Lease invoice"
           }
         },
         {
-          "value": "395",
+          "code": "395",
           "name": {
             "en": "Consignment invoice"
           }
         },
         {
-          "value": "396",
+          "code": "396",
           "name": {
             "en": "Factored credit note"
           }
         },
         {
-          "value": "420",
+          "code": "420",
           "name": {
             "en": "Optical Character Reading (OCR) payment credit note"
           }
         },
         {
-          "value": "456",
+          "code": "456",
           "name": {
             "en": "Debit advice"
           }
         },
         {
-          "value": "457",
+          "code": "457",
           "name": {
             "en": "Reversal of debit"
           }
         },
         {
-          "value": "458",
+          "code": "458",
           "name": {
             "en": "Reversal of credit"
           }
         },
         {
-          "value": "527",
+          "code": "527",
           "name": {
             "en": "Self billed debit note"
           }
         },
         {
-          "value": "532",
+          "code": "532",
           "name": {
             "en": "Forwarder's credit note"
           }
         },
         {
-          "value": "553",
+          "code": "553",
           "name": {
             "en": "Forwarder's invoice discrepancy report"
           }
         },
         {
-          "value": "575",
+          "code": "575",
           "name": {
             "en": "Insurer's invoice"
           }
         },
         {
-          "value": "623",
+          "code": "623",
           "name": {
             "en": "Forwarder's invoice"
           }
         },
         {
-          "value": "633",
+          "code": "633",
           "name": {
             "en": "Port charges documents"
           }
         },
         {
-          "value": "751",
+          "code": "751",
           "name": {
             "en": "Invoice information for accounting purposes"
           }
         },
         {
-          "value": "780",
+          "code": "780",
           "name": {
             "en": "Freight invoice"
           }
         },
         {
-          "value": "817",
+          "code": "817",
           "name": {
             "en": "Claim notification"
           }
         },
         {
-          "value": "870",
+          "code": "870",
           "name": {
             "en": "Consular invoice"
           }
         },
         {
-          "value": "875",
+          "code": "875",
           "name": {
             "en": "Partial construction invoice"
           }
         },
         {
-          "value": "876",
+          "code": "876",
           "name": {
             "en": "Partial final construction invoice"
           }
         },
         {
-          "value": "877",
+          "code": "877",
           "name": {
             "en": "Final construction invoice"
           }
         },
         {
-          "value": "935",
+          "code": "935",
           "name": {
             "en": "Customs invoice"
+          }
+        }
+      ]
+    },
+    {
+      "key": "untdid-reference",
+      "name": {
+        "en": "UNTDID 1153 Reference Code Qualifier"
+      },
+      "desc": {
+        "en": "UNTDID 1153 code used to describe the reference code qualifier. This list is based on the\n[EN16931 code list](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/Registry+of+supporting+artefacts+to+implement+EN16931#RegistryofsupportingartefactstoimplementEN16931-Codelists)\nvalues table which focusses on invoices and payments."
+      },
+      "values": [
+        {
+          "code": "AAA",
+          "name": {
+            "en": "Order acknowledgement document identifier"
+          }
+        },
+        {
+          "code": "AAB",
+          "name": {
+            "en": "Proforma invoice document identifier"
+          }
+        },
+        {
+          "code": "AAC",
+          "name": {
+            "en": "Documentary credit identifier"
+          }
+        },
+        {
+          "code": "AAD",
+          "name": {
+            "en": "Contract document addendum identifier"
+          }
+        },
+        {
+          "code": "AAE",
+          "name": {
+            "en": "Goods declaration number"
+          }
+        },
+        {
+          "code": "AAF",
+          "name": {
+            "en": "Debit card number"
+          }
+        },
+        {
+          "code": "AAG",
+          "name": {
+            "en": "Offer number"
+          }
+        },
+        {
+          "code": "AAH",
+          "name": {
+            "en": "Bank's batch interbank transaction reference number"
+          }
+        },
+        {
+          "code": "AAI",
+          "name": {
+            "en": "Bank's individual interbank transaction reference number"
+          }
+        },
+        {
+          "code": "AAJ",
+          "name": {
+            "en": "Delivery order number"
+          }
+        },
+        {
+          "code": "AAK",
+          "name": {
+            "en": "Despatch advice number"
+          }
+        },
+        {
+          "code": "AAL",
+          "name": {
+            "en": "Drawing number"
+          }
+        },
+        {
+          "code": "AAM",
+          "name": {
+            "en": "Waybill number"
+          }
+        },
+        {
+          "code": "AAN",
+          "name": {
+            "en": "Delivery schedule number"
+          }
+        },
+        {
+          "code": "AAO",
+          "name": {
+            "en": "Consignment identifier, consignee assigned"
+          }
+        },
+        {
+          "code": "AAP",
+          "name": {
+            "en": "Partial shipment identifier"
+          }
+        },
+        {
+          "code": "AAQ",
+          "name": {
+            "en": "Transport equipment identifier"
+          }
+        },
+        {
+          "code": "AAR",
+          "name": {
+            "en": "Municipality assigned business registry number"
+          }
+        },
+        {
+          "code": "AAS",
+          "name": {
+            "en": "Transport contract document identifier"
+          }
+        },
+        {
+          "code": "AAT",
+          "name": {
+            "en": "Master label number"
+          }
+        },
+        {
+          "code": "AAU",
+          "name": {
+            "en": "Despatch note document identifier"
+          }
+        },
+        {
+          "code": "AAV",
+          "name": {
+            "en": "Enquiry number"
+          }
+        },
+        {
+          "code": "AAW",
+          "name": {
+            "en": "Docket number"
+          }
+        },
+        {
+          "code": "AAX",
+          "name": {
+            "en": "Civil action number"
+          }
+        },
+        {
+          "code": "AAY",
+          "name": {
+            "en": "Carrier's agent reference number"
+          }
+        },
+        {
+          "code": "AAZ",
+          "name": {
+            "en": "Standard Carrier Alpha Code (SCAC) number"
+          }
+        },
+        {
+          "code": "ABA",
+          "name": {
+            "en": "Customs valuation decision number"
+          }
+        },
+        {
+          "code": "ABB",
+          "name": {
+            "en": "End use authorization number"
+          }
+        },
+        {
+          "code": "ABC",
+          "name": {
+            "en": "Anti-dumping case number"
+          }
+        },
+        {
+          "code": "ABD",
+          "name": {
+            "en": "Customs tariff number"
+          }
+        },
+        {
+          "code": "ABE",
+          "name": {
+            "en": "Declarant's reference number"
+          }
+        },
+        {
+          "code": "ABF",
+          "name": {
+            "en": "Repair estimate number"
+          }
+        },
+        {
+          "code": "ABG",
+          "name": {
+            "en": "Customs decision request number"
+          }
+        },
+        {
+          "code": "ABH",
+          "name": {
+            "en": "Sub-house bill of lading number"
+          }
+        },
+        {
+          "code": "ABI",
+          "name": {
+            "en": "Tax payment identifier"
+          }
+        },
+        {
+          "code": "ABJ",
+          "name": {
+            "en": "Quota number"
+          }
+        },
+        {
+          "code": "ABK",
+          "name": {
+            "en": "Transit (onward carriage) guarantee (bond) number"
+          }
+        },
+        {
+          "code": "ABL",
+          "name": {
+            "en": "Customs guarantee number"
+          }
+        },
+        {
+          "code": "ABM",
+          "name": {
+            "en": "Replacing part number"
+          }
+        },
+        {
+          "code": "ABN",
+          "name": {
+            "en": "Seller's catalogue number"
+          }
+        },
+        {
+          "code": "ABO",
+          "name": {
+            "en": "Originator's reference"
+          }
+        },
+        {
+          "code": "ABP",
+          "name": {
+            "en": "Declarant's Customs identity number"
+          }
+        },
+        {
+          "code": "ABQ",
+          "name": {
+            "en": "Importer reference number"
+          }
+        },
+        {
+          "code": "ABR",
+          "name": {
+            "en": "Export clearance instruction reference number"
+          }
+        },
+        {
+          "code": "ABS",
+          "name": {
+            "en": "Import clearance instruction reference number"
+          }
+        },
+        {
+          "code": "ABT",
+          "name": {
+            "en": "Goods declaration document identifier, Customs"
+          }
+        },
+        {
+          "code": "ABU",
+          "name": {
+            "en": "Article number"
+          }
+        },
+        {
+          "code": "ABV",
+          "name": {
+            "en": "Intra-plant routing"
+          }
+        },
+        {
+          "code": "ABW",
+          "name": {
+            "en": "Stock keeping unit number"
+          }
+        },
+        {
+          "code": "ABX",
+          "name": {
+            "en": "Text Element Identifier deletion reference"
+          }
+        },
+        {
+          "code": "ABY",
+          "name": {
+            "en": "Allotment identification (Air)"
+          }
+        },
+        {
+          "code": "ABZ",
+          "name": {
+            "en": "Vehicle licence number"
+          }
+        },
+        {
+          "code": "AC",
+          "name": {
+            "en": "Air cargo transfer manifest"
+          }
+        },
+        {
+          "code": "ACA",
+          "name": {
+            "en": "Cargo acceptance order reference number"
+          }
+        },
+        {
+          "code": "ACB",
+          "name": {
+            "en": "US government agency number"
+          }
+        },
+        {
+          "code": "ACC",
+          "name": {
+            "en": "Shipping unit identification"
+          }
+        },
+        {
+          "code": "ACD",
+          "name": {
+            "en": "Additional reference number"
+          }
+        },
+        {
+          "code": "ACE",
+          "name": {
+            "en": "Related document number"
+          }
+        },
+        {
+          "code": "ACF",
+          "name": {
+            "en": "Addressee reference"
+          }
+        },
+        {
+          "code": "ACG",
+          "name": {
+            "en": "ATA carnet number"
+          }
+        },
+        {
+          "code": "ACH",
+          "name": {
+            "en": "Packaging unit identification"
+          }
+        },
+        {
+          "code": "ACI",
+          "name": {
+            "en": "Outerpackaging unit identification"
+          }
+        },
+        {
+          "code": "ACJ",
+          "name": {
+            "en": "Customer material specification number"
+          }
+        },
+        {
+          "code": "ACK",
+          "name": {
+            "en": "Bank reference"
+          }
+        },
+        {
+          "code": "ACL",
+          "name": {
+            "en": "Principal reference number"
+          }
+        },
+        {
+          "code": "ACN",
+          "name": {
+            "en": "Collection advice document identifier"
+          }
+        },
+        {
+          "code": "ACO",
+          "name": {
+            "en": "Iron charge number"
+          }
+        },
+        {
+          "code": "ACP",
+          "name": {
+            "en": "Hot roll number"
+          }
+        },
+        {
+          "code": "ACQ",
+          "name": {
+            "en": "Cold roll number"
+          }
+        },
+        {
+          "code": "ACR",
+          "name": {
+            "en": "Railway wagon number"
+          }
+        },
+        {
+          "code": "ACT",
+          "name": {
+            "en": "Unique claims reference number of the sender"
+          }
+        },
+        {
+          "code": "ACU",
+          "name": {
+            "en": "Loss/event number"
+          }
+        },
+        {
+          "code": "ACV",
+          "name": {
+            "en": "Estimate order reference number"
+          }
+        },
+        {
+          "code": "ACW",
+          "name": {
+            "en": "Reference number to previous message"
+          }
+        },
+        {
+          "code": "ACX",
+          "name": {
+            "en": "Banker's acceptance"
+          }
+        },
+        {
+          "code": "ACY",
+          "name": {
+            "en": "Duty memo number"
+          }
+        },
+        {
+          "code": "ACZ",
+          "name": {
+            "en": "Equipment transport charge number"
+          }
+        },
+        {
+          "code": "ADA",
+          "name": {
+            "en": "Buyer's item number"
+          }
+        },
+        {
+          "code": "ADB",
+          "name": {
+            "en": "Matured certificate of deposit"
+          }
+        },
+        {
+          "code": "ADC",
+          "name": {
+            "en": "Loan"
+          }
+        },
+        {
+          "code": "ADD",
+          "name": {
+            "en": "Analysis number/test number"
+          }
+        },
+        {
+          "code": "ADE",
+          "name": {
+            "en": "Account number"
+          }
+        },
+        {
+          "code": "ADF",
+          "name": {
+            "en": "Treaty number"
+          }
+        },
+        {
+          "code": "ADG",
+          "name": {
+            "en": "Catastrophe number"
+          }
+        },
+        {
+          "code": "ADI",
+          "name": {
+            "en": "Bureau signing (statement reference)"
+          }
+        },
+        {
+          "code": "ADJ",
+          "name": {
+            "en": "Company / syndicate reference 1"
+          }
+        },
+        {
+          "code": "ADK",
+          "name": {
+            "en": "Company / syndicate reference 2"
+          }
+        },
+        {
+          "code": "ADL",
+          "name": {
+            "en": "Ordering customer consignment reference number"
+          }
+        },
+        {
+          "code": "ADM",
+          "name": {
+            "en": "Shipowner's authorization number"
+          }
+        },
+        {
+          "code": "ADN",
+          "name": {
+            "en": "Inland transport order number"
+          }
+        },
+        {
+          "code": "ADO",
+          "name": {
+            "en": "Container work order reference number"
+          }
+        },
+        {
+          "code": "ADP",
+          "name": {
+            "en": "Statement number"
+          }
+        },
+        {
+          "code": "ADQ",
+          "name": {
+            "en": "Unique market reference"
+          }
+        },
+        {
+          "code": "ADT",
+          "name": {
+            "en": "Group accounting"
+          }
+        },
+        {
+          "code": "ADU",
+          "name": {
+            "en": "Broker reference 1"
+          }
+        },
+        {
+          "code": "ADV",
+          "name": {
+            "en": "Broker reference 2"
+          }
+        },
+        {
+          "code": "ADW",
+          "name": {
+            "en": "Lloyd's claims office reference"
+          }
+        },
+        {
+          "code": "ADX",
+          "name": {
+            "en": "Secure delivery terms and conditions agreement reference"
+          }
+        },
+        {
+          "code": "ADY",
+          "name": {
+            "en": "Report number"
+          }
+        },
+        {
+          "code": "ADZ",
+          "name": {
+            "en": "Trader account number"
+          }
+        },
+        {
+          "code": "AE",
+          "name": {
+            "en": "Authorization for expense (AFE) number"
+          }
+        },
+        {
+          "code": "AEA",
+          "name": {
+            "en": "Government agency reference number"
+          }
+        },
+        {
+          "code": "AEB",
+          "name": {
+            "en": "Assembly number"
+          }
+        },
+        {
+          "code": "AEC",
+          "name": {
+            "en": "Symbol number"
+          }
+        },
+        {
+          "code": "AED",
+          "name": {
+            "en": "Commodity number"
+          }
+        },
+        {
+          "code": "AEE",
+          "name": {
+            "en": "Eur 1 certificate number"
+          }
+        },
+        {
+          "code": "AEF",
+          "name": {
+            "en": "Customer process specification number"
+          }
+        },
+        {
+          "code": "AEG",
+          "name": {
+            "en": "Customer specification number"
+          }
+        },
+        {
+          "code": "AEH",
+          "name": {
+            "en": "Applicable instructions or standards"
+          }
+        },
+        {
+          "code": "AEI",
+          "name": {
+            "en": "Registration number of previous Customs declaration"
+          }
+        },
+        {
+          "code": "AEJ",
+          "name": {
+            "en": "Post-entry reference"
+          }
+        },
+        {
+          "code": "AEK",
+          "name": {
+            "en": "Payment order number"
+          }
+        },
+        {
+          "code": "AEL",
+          "name": {
+            "en": "Delivery number (transport)"
+          }
+        },
+        {
+          "code": "AEM",
+          "name": {
+            "en": "Transport route"
+          }
+        },
+        {
+          "code": "AEN",
+          "name": {
+            "en": "Customer's unit inventory number"
+          }
+        },
+        {
+          "code": "AEO",
+          "name": {
+            "en": "Product reservation number"
+          }
+        },
+        {
+          "code": "AEP",
+          "name": {
+            "en": "Project number"
+          }
+        },
+        {
+          "code": "AEQ",
+          "name": {
+            "en": "Drawing list number"
+          }
+        },
+        {
+          "code": "AER",
+          "name": {
+            "en": "Project specification number"
+          }
+        },
+        {
+          "code": "AES",
+          "name": {
+            "en": "Primary reference"
+          }
+        },
+        {
+          "code": "AET",
+          "name": {
+            "en": "Request for cancellation number"
+          }
+        },
+        {
+          "code": "AEU",
+          "name": {
+            "en": "Supplier's control number"
+          }
+        },
+        {
+          "code": "AEV",
+          "name": {
+            "en": "Shipping note number"
+          }
+        },
+        {
+          "code": "AEW",
+          "name": {
+            "en": "Empty container bill number"
+          }
+        },
+        {
+          "code": "AEX",
+          "name": {
+            "en": "Non-negotiable maritime transport document number"
+          }
+        },
+        {
+          "code": "AEY",
+          "name": {
+            "en": "Substitute air waybill number"
+          }
+        },
+        {
+          "code": "AEZ",
+          "name": {
+            "en": "Despatch note (post parcels) number"
+          }
+        },
+        {
+          "code": "AF",
+          "name": {
+            "en": "Airlines flight identification number"
+          }
+        },
+        {
+          "code": "AFA",
+          "name": {
+            "en": "Through bill of lading number"
+          }
+        },
+        {
+          "code": "AFB",
+          "name": {
+            "en": "Cargo manifest number"
+          }
+        },
+        {
+          "code": "AFC",
+          "name": {
+            "en": "Bordereau number"
+          }
+        },
+        {
+          "code": "AFD",
+          "name": {
+            "en": "Customs item number"
+          }
+        },
+        {
+          "code": "AFE",
+          "name": {
+            "en": "Export Control Commodity number (ECCN)"
+          }
+        },
+        {
+          "code": "AFF",
+          "name": {
+            "en": "Marking/label reference"
+          }
+        },
+        {
+          "code": "AFG",
+          "name": {
+            "en": "Tariff number"
+          }
+        },
+        {
+          "code": "AFH",
+          "name": {
+            "en": "Replenishment purchase order number"
+          }
+        },
+        {
+          "code": "AFI",
+          "name": {
+            "en": "Immediate transportation no. for in bond movement"
+          }
+        },
+        {
+          "code": "AFJ",
+          "name": {
+            "en": "Transportation exportation no. for in bond movement"
+          }
+        },
+        {
+          "code": "AFK",
+          "name": {
+            "en": "Immediate exportation no. for in bond movement"
+          }
+        },
+        {
+          "code": "AFL",
+          "name": {
+            "en": "Associated invoices"
+          }
+        },
+        {
+          "code": "AFM",
+          "name": {
+            "en": "Secondary Customs reference"
+          }
+        },
+        {
+          "code": "AFN",
+          "name": {
+            "en": "Account party's reference"
+          }
+        },
+        {
+          "code": "AFO",
+          "name": {
+            "en": "Beneficiary's reference"
+          }
+        },
+        {
+          "code": "AFP",
+          "name": {
+            "en": "Second beneficiary's reference"
+          }
+        },
+        {
+          "code": "AFQ",
+          "name": {
+            "en": "Applicant's bank reference"
+          }
+        },
+        {
+          "code": "AFR",
+          "name": {
+            "en": "Issuing bank's reference"
+          }
+        },
+        {
+          "code": "AFS",
+          "name": {
+            "en": "Beneficiary's bank reference"
+          }
+        },
+        {
+          "code": "AFT",
+          "name": {
+            "en": "Direct payment valuation number"
+          }
+        },
+        {
+          "code": "AFU",
+          "name": {
+            "en": "Direct payment valuation request number"
+          }
+        },
+        {
+          "code": "AFV",
+          "name": {
+            "en": "Quantity valuation number"
+          }
+        },
+        {
+          "code": "AFW",
+          "name": {
+            "en": "Quantity valuation request number"
+          }
+        },
+        {
+          "code": "AFX",
+          "name": {
+            "en": "Bill of quantities number"
+          }
+        },
+        {
+          "code": "AFY",
+          "name": {
+            "en": "Payment valuation number"
+          }
+        },
+        {
+          "code": "AFZ",
+          "name": {
+            "en": "Situation number"
+          }
+        },
+        {
+          "code": "AGA",
+          "name": {
+            "en": "Agreement to pay number"
+          }
+        },
+        {
+          "code": "AGB",
+          "name": {
+            "en": "Contract party reference number"
+          }
+        },
+        {
+          "code": "AGC",
+          "name": {
+            "en": "Account party's bank reference"
+          }
+        },
+        {
+          "code": "AGD",
+          "name": {
+            "en": "Agent's bank reference"
+          }
+        },
+        {
+          "code": "AGE",
+          "name": {
+            "en": "Agent's reference"
+          }
+        },
+        {
+          "code": "AGF",
+          "name": {
+            "en": "Applicant's reference"
+          }
+        },
+        {
+          "code": "AGG",
+          "name": {
+            "en": "Dispute number"
+          }
+        },
+        {
+          "code": "AGH",
+          "name": {
+            "en": "Credit rating agency's reference number"
+          }
+        },
+        {
+          "code": "AGI",
+          "name": {
+            "en": "Request number"
+          }
+        },
+        {
+          "code": "AGJ",
+          "name": {
+            "en": "Single transaction sequence number"
+          }
+        },
+        {
+          "code": "AGK",
+          "name": {
+            "en": "Application reference number"
+          }
+        },
+        {
+          "code": "AGL",
+          "name": {
+            "en": "Delivery verification certificate"
+          }
+        },
+        {
+          "code": "AGM",
+          "name": {
+            "en": "Number of temporary importation document"
+          }
+        },
+        {
+          "code": "AGN",
+          "name": {
+            "en": "Reference number quoted on statement"
+          }
+        },
+        {
+          "code": "AGO",
+          "name": {
+            "en": "Sender's reference to the original message"
+          }
+        },
+        {
+          "code": "AGP",
+          "name": {
+            "en": "Company issued equipment ID"
+          }
+        },
+        {
+          "code": "AGQ",
+          "name": {
+            "en": "Domestic flight number"
+          }
+        },
+        {
+          "code": "AGR",
+          "name": {
+            "en": "International flight number"
+          }
+        },
+        {
+          "code": "AGS",
+          "name": {
+            "en": "Employer identification number of service bureau"
+          }
+        },
+        {
+          "code": "AGT",
+          "name": {
+            "en": "Service group identification number"
+          }
+        },
+        {
+          "code": "AGU",
+          "name": {
+            "en": "Member number"
+          }
+        },
+        {
+          "code": "AGV",
+          "name": {
+            "en": "Previous member number"
+          }
+        },
+        {
+          "code": "AGW",
+          "name": {
+            "en": "Scheme/plan number"
+          }
+        },
+        {
+          "code": "AGX",
+          "name": {
+            "en": "Previous scheme/plan number"
+          }
+        },
+        {
+          "code": "AGY",
+          "name": {
+            "en": "Receiving party's member identification"
+          }
+        },
+        {
+          "code": "AGZ",
+          "name": {
+            "en": "Payroll number"
+          }
+        },
+        {
+          "code": "AHA",
+          "name": {
+            "en": "Packaging specification number"
+          }
+        },
+        {
+          "code": "AHB",
+          "name": {
+            "en": "Authority issued equipment identification"
+          }
+        },
+        {
+          "code": "AHC",
+          "name": {
+            "en": "Training flight number"
+          }
+        },
+        {
+          "code": "AHD",
+          "name": {
+            "en": "Fund code number"
+          }
+        },
+        {
+          "code": "AHE",
+          "name": {
+            "en": "Signal code number"
+          }
+        },
+        {
+          "code": "AHF",
+          "name": {
+            "en": "Major force program number"
+          }
+        },
+        {
+          "code": "AHG",
+          "name": {
+            "en": "Nomination number"
+          }
+        },
+        {
+          "code": "AHH",
+          "name": {
+            "en": "Laboratory registration number"
+          }
+        },
+        {
+          "code": "AHI",
+          "name": {
+            "en": "Transport contract reference number"
+          }
+        },
+        {
+          "code": "AHJ",
+          "name": {
+            "en": "Payee's reference number"
+          }
+        },
+        {
+          "code": "AHK",
+          "name": {
+            "en": "Payer's reference number"
+          }
+        },
+        {
+          "code": "AHL",
+          "name": {
+            "en": "Creditor's reference number"
+          }
+        },
+        {
+          "code": "AHM",
+          "name": {
+            "en": "Debtor's reference number"
+          }
+        },
+        {
+          "code": "AHN",
+          "name": {
+            "en": "Joint venture reference number"
+          }
+        },
+        {
+          "code": "AHO",
+          "name": {
+            "en": "Chamber of Commerce registration number"
+          }
+        },
+        {
+          "code": "AHP",
+          "name": {
+            "en": "Tax registration number"
+          }
+        },
+        {
+          "code": "AHQ",
+          "name": {
+            "en": "Wool identification number"
+          }
+        },
+        {
+          "code": "AHR",
+          "name": {
+            "en": "Wool tax reference number"
+          }
+        },
+        {
+          "code": "AHS",
+          "name": {
+            "en": "Meat processing establishment registration number"
+          }
+        },
+        {
+          "code": "AHT",
+          "name": {
+            "en": "Quarantine/treatment status reference number"
+          }
+        },
+        {
+          "code": "AHU",
+          "name": {
+            "en": "Request for quote number"
+          }
+        },
+        {
+          "code": "AHV",
+          "name": {
+            "en": "Manual processing authority number"
+          }
+        },
+        {
+          "code": "AHX",
+          "name": {
+            "en": "Rate note number"
+          }
+        },
+        {
+          "code": "AHY",
+          "name": {
+            "en": "Freight Forwarder number"
+          }
+        },
+        {
+          "code": "AHZ",
+          "name": {
+            "en": "Customs release code"
+          }
+        },
+        {
+          "code": "AIA",
+          "name": {
+            "en": "Compliance code number"
+          }
+        },
+        {
+          "code": "AIB",
+          "name": {
+            "en": "Department of transportation bond number"
+          }
+        },
+        {
+          "code": "AIC",
+          "name": {
+            "en": "Export establishment number"
+          }
+        },
+        {
+          "code": "AID",
+          "name": {
+            "en": "Certificate of conformity"
+          }
+        },
+        {
+          "code": "AIE",
+          "name": {
+            "en": "Ministerial certificate of homologation"
+          }
+        },
+        {
+          "code": "AIF",
+          "name": {
+            "en": "Previous delivery instruction number"
+          }
+        },
+        {
+          "code": "AIG",
+          "name": {
+            "en": "Passport number"
+          }
+        },
+        {
+          "code": "AIH",
+          "name": {
+            "en": "Common transaction reference number"
+          }
+        },
+        {
+          "code": "AII",
+          "name": {
+            "en": "Bank's common transaction reference number"
+          }
+        },
+        {
+          "code": "AIJ",
+          "name": {
+            "en": "Customer's individual transaction reference number"
+          }
+        },
+        {
+          "code": "AIK",
+          "name": {
+            "en": "Bank's individual transaction reference number"
+          }
+        },
+        {
+          "code": "AIL",
+          "name": {
+            "en": "Customer's common transaction reference number"
+          }
+        },
+        {
+          "code": "AIM",
+          "name": {
+            "en": "Individual transaction reference number"
+          }
+        },
+        {
+          "code": "AIN",
+          "name": {
+            "en": "Product sourcing agreement number"
+          }
+        },
+        {
+          "code": "AIO",
+          "name": {
+            "en": "Customs transhipment number"
+          }
+        },
+        {
+          "code": "AIP",
+          "name": {
+            "en": "Customs preference inquiry number"
+          }
+        },
+        {
+          "code": "AIQ",
+          "name": {
+            "en": "Packing plant number"
+          }
+        },
+        {
+          "code": "AIR",
+          "name": {
+            "en": "Original certificate number"
+          }
+        },
+        {
+          "code": "AIS",
+          "name": {
+            "en": "Processing plant number"
+          }
+        },
+        {
+          "code": "AIT",
+          "name": {
+            "en": "Slaughter plant number"
+          }
+        },
+        {
+          "code": "AIU",
+          "name": {
+            "en": "Charge card account number"
+          }
+        },
+        {
+          "code": "AIV",
+          "name": {
+            "en": "Event reference number"
+          }
+        },
+        {
+          "code": "AIW",
+          "name": {
+            "en": "Transport section reference number"
+          }
+        },
+        {
+          "code": "AIX",
+          "name": {
+            "en": "Referred product for mechanical analysis"
+          }
+        },
+        {
+          "code": "AIY",
+          "name": {
+            "en": "Referred product for chemical analysis"
+          }
+        },
+        {
+          "code": "AIZ",
+          "name": {
+            "en": "Consolidated invoice number"
+          }
+        },
+        {
+          "code": "AJA",
+          "name": {
+            "en": "Part reference indicator in a drawing"
+          }
+        },
+        {
+          "code": "AJB",
+          "name": {
+            "en": "U.S. Code of Federal Regulations (CFR)"
+          }
+        },
+        {
+          "code": "AJC",
+          "name": {
+            "en": "Purchasing activity clause number"
+          }
+        },
+        {
+          "code": "AJD",
+          "name": {
+            "en": "U.S. Defense Federal Acquisition Regulation Supplement"
+          }
+        },
+        {
+          "code": "AJE",
+          "name": {
+            "en": "Agency clause number"
+          }
+        },
+        {
+          "code": "AJF",
+          "name": {
+            "en": "Circular publication number"
+          }
+        },
+        {
+          "code": "AJG",
+          "name": {
+            "en": "U.S. Federal Acquisition Regulation"
+          }
+        },
+        {
+          "code": "AJH",
+          "name": {
+            "en": "U.S. General Services Administration Regulation"
+          }
+        },
+        {
+          "code": "AJI",
+          "name": {
+            "en": "U.S. Federal Information Resources Management Regulation"
+          }
+        },
+        {
+          "code": "AJJ",
+          "name": {
+            "en": "Paragraph"
+          }
+        },
+        {
+          "code": "AJK",
+          "name": {
+            "en": "Special instructions number"
+          }
+        },
+        {
+          "code": "AJL",
+          "name": {
+            "en": "Site specific procedures, terms, and conditions number"
+          }
+        },
+        {
+          "code": "AJM",
+          "name": {
+            "en": "Master solicitation procedures, terms, and conditions"
+          }
+        },
+        {
+          "code": "AJN",
+          "name": {
+            "en": "U.S. Department of Veterans Affairs Acquisition Regulation"
+          }
+        },
+        {
+          "code": "AJO",
+          "name": {
+            "en": "Military Interdepartmental Purchase Request (MIPR) number"
+          }
+        },
+        {
+          "code": "AJP",
+          "name": {
+            "en": "Foreign military sales number"
+          }
+        },
+        {
+          "code": "AJQ",
+          "name": {
+            "en": "Defense priorities allocation system priority rating"
+          }
+        },
+        {
+          "code": "AJR",
+          "name": {
+            "en": "Wage determination number"
+          }
+        },
+        {
+          "code": "AJS",
+          "name": {
+            "en": "Agreement number"
+          }
+        },
+        {
+          "code": "AJT",
+          "name": {
+            "en": "Standard Industry Classification (SIC) number"
+          }
+        },
+        {
+          "code": "AJU",
+          "name": {
+            "en": "End item number"
+          }
+        },
+        {
+          "code": "AJV",
+          "name": {
+            "en": "Federal supply schedule item number"
+          }
+        },
+        {
+          "code": "AJW",
+          "name": {
+            "en": "Technical document number"
+          }
+        },
+        {
+          "code": "AJX",
+          "name": {
+            "en": "Technical order number"
+          }
+        },
+        {
+          "code": "AJY",
+          "name": {
+            "en": "Suffix"
+          }
+        },
+        {
+          "code": "AJZ",
+          "name": {
+            "en": "Transportation account number"
+          }
+        },
+        {
+          "code": "AKA",
+          "name": {
+            "en": "Container disposition order reference number"
+          }
+        },
+        {
+          "code": "AKB",
+          "name": {
+            "en": "Container prefix"
+          }
+        },
+        {
+          "code": "AKC",
+          "name": {
+            "en": "Transport equipment return reference"
+          }
+        },
+        {
+          "code": "AKD",
+          "name": {
+            "en": "Transport equipment survey reference"
+          }
+        },
+        {
+          "code": "AKE",
+          "name": {
+            "en": "Transport equipment survey report number"
+          }
+        },
+        {
+          "code": "AKF",
+          "name": {
+            "en": "Transport equipment stuffing order"
+          }
+        },
+        {
+          "code": "AKG",
+          "name": {
+            "en": "Vehicle Identification Number (VIN)"
+          }
+        },
+        {
+          "code": "AKH",
+          "name": {
+            "en": "Government bill of lading"
+          }
+        },
+        {
+          "code": "AKI",
+          "name": {
+            "en": "Ordering customer's second reference number"
+          }
+        },
+        {
+          "code": "AKJ",
+          "name": {
+            "en": "Direct debit reference"
+          }
+        },
+        {
+          "code": "AKK",
+          "name": {
+            "en": "Meter reading at the beginning of the delivery"
+          }
+        },
+        {
+          "code": "AKL",
+          "name": {
+            "en": "Meter reading at the end of delivery"
+          }
+        },
+        {
+          "code": "AKM",
+          "name": {
+            "en": "Replenishment purchase order range start number"
+          }
+        },
+        {
+          "code": "AKN",
+          "name": {
+            "en": "Third bank's reference"
+          }
+        },
+        {
+          "code": "AKO",
+          "name": {
+            "en": "Action authorization number"
+          }
+        },
+        {
+          "code": "AKP",
+          "name": {
+            "en": "Appropriation number"
+          }
+        },
+        {
+          "code": "AKQ",
+          "name": {
+            "en": "Product change authority number"
+          }
+        },
+        {
+          "code": "AKR",
+          "name": {
+            "en": "General cargo consignment reference number"
+          }
+        },
+        {
+          "code": "AKS",
+          "name": {
+            "en": "Catalogue sequence number"
+          }
+        },
+        {
+          "code": "AKT",
+          "name": {
+            "en": "Forwarding order number"
+          }
+        },
+        {
+          "code": "AKU",
+          "name": {
+            "en": "Transport equipment survey reference number"
+          }
+        },
+        {
+          "code": "AKV",
+          "name": {
+            "en": "Lease contract reference"
+          }
+        },
+        {
+          "code": "AKW",
+          "name": {
+            "en": "Transport costs reference number"
+          }
+        },
+        {
+          "code": "AKX",
+          "name": {
+            "en": "Transport equipment stripping order"
+          }
+        },
+        {
+          "code": "AKY",
+          "name": {
+            "en": "Prior policy number"
+          }
+        },
+        {
+          "code": "AKZ",
+          "name": {
+            "en": "Policy number"
+          }
+        },
+        {
+          "code": "ALA",
+          "name": {
+            "en": "Procurement budget number"
+          }
+        },
+        {
+          "code": "ALB",
+          "name": {
+            "en": "Domestic inventory management code"
+          }
+        },
+        {
+          "code": "ALC",
+          "name": {
+            "en": "Customer reference number assigned to previous balance of"
+          }
+        },
+        {
+          "code": "ALD",
+          "name": {
+            "en": "Previous credit advice reference number"
+          }
+        },
+        {
+          "code": "ALE",
+          "name": {
+            "en": "Reporting form number"
+          }
+        },
+        {
+          "code": "ALF",
+          "name": {
+            "en": "Authorization number for exception to dangerous goods"
+          }
+        },
+        {
+          "code": "ALG",
+          "name": {
+            "en": "Dangerous goods security number"
+          }
+        },
+        {
+          "code": "ALH",
+          "name": {
+            "en": "Dangerous goods transport licence number"
+          }
+        },
+        {
+          "code": "ALI",
+          "name": {
+            "en": "Previous rental agreement number"
+          }
+        },
+        {
+          "code": "ALJ",
+          "name": {
+            "en": "Next rental agreement reason number"
+          }
+        },
+        {
+          "code": "ALK",
+          "name": {
+            "en": "Consignee's invoice number"
+          }
+        },
+        {
+          "code": "ALL",
+          "name": {
+            "en": "Message batch number"
+          }
+        },
+        {
+          "code": "ALM",
+          "name": {
+            "en": "Previous delivery schedule number"
+          }
+        },
+        {
+          "code": "ALN",
+          "name": {
+            "en": "Physical inventory recount reference number"
+          }
+        },
+        {
+          "code": "ALO",
+          "name": {
+            "en": "Receiving advice number"
+          }
+        },
+        {
+          "code": "ALP",
+          "name": {
+            "en": "Returnable container reference number"
+          }
+        },
+        {
+          "code": "ALQ",
+          "name": {
+            "en": "Returns notice number"
+          }
+        },
+        {
+          "code": "ALR",
+          "name": {
+            "en": "Sales forecast number"
+          }
+        },
+        {
+          "code": "ALS",
+          "name": {
+            "en": "Sales report number"
+          }
+        },
+        {
+          "code": "ALT",
+          "name": {
+            "en": "Previous tax control number"
+          }
+        },
+        {
+          "code": "ALU",
+          "name": {
+            "en": "AGERD (Aerospace Ground Equipment Requirement Data) number"
+          }
+        },
+        {
+          "code": "ALV",
+          "name": {
+            "en": "Registered capital reference"
+          }
+        },
+        {
+          "code": "ALW",
+          "name": {
+            "en": "Standard number of inspection document"
+          }
+        },
+        {
+          "code": "ALX",
+          "name": {
+            "en": "Model"
+          }
+        },
+        {
+          "code": "ALY",
+          "name": {
+            "en": "Financial management reference"
+          }
+        },
+        {
+          "code": "ALZ",
+          "name": {
+            "en": "NOTIfication for COLlection number (NOTICOL)"
+          }
+        },
+        {
+          "code": "AMA",
+          "name": {
+            "en": "Previous request for metered reading reference number"
+          }
+        },
+        {
+          "code": "AMB",
+          "name": {
+            "en": "Next rental agreement number"
+          }
+        },
+        {
+          "code": "AMC",
+          "name": {
+            "en": "Reference number of a request for metered reading"
+          }
+        },
+        {
+          "code": "AMD",
+          "name": {
+            "en": "Hastening number"
+          }
+        },
+        {
+          "code": "AME",
+          "name": {
+            "en": "Repair data request number"
+          }
+        },
+        {
+          "code": "AMF",
+          "name": {
+            "en": "Consumption data request number"
+          }
+        },
+        {
+          "code": "AMG",
+          "name": {
+            "en": "Profile number"
+          }
+        },
+        {
+          "code": "AMH",
+          "name": {
+            "en": "Case number"
+          }
+        },
+        {
+          "code": "AMI",
+          "name": {
+            "en": "Government quality assurance and control level Number"
+          }
+        },
+        {
+          "code": "AMJ",
+          "name": {
+            "en": "Payment plan reference"
+          }
+        },
+        {
+          "code": "AMK",
+          "name": {
+            "en": "Replaced meter unit number"
+          }
+        },
+        {
+          "code": "AML",
+          "name": {
+            "en": "Replenishment purchase order range end number"
+          }
+        },
+        {
+          "code": "AMM",
+          "name": {
+            "en": "Insurer assigned reference number"
+          }
+        },
+        {
+          "code": "AMN",
+          "name": {
+            "en": "Canadian excise entry number"
+          }
+        },
+        {
+          "code": "AMO",
+          "name": {
+            "en": "Premium rate table"
+          }
+        },
+        {
+          "code": "AMP",
+          "name": {
+            "en": "Advise through bank's reference"
+          }
+        },
+        {
+          "code": "AMQ",
+          "name": {
+            "en": "US, Department of Transportation bond surety code"
+          }
+        },
+        {
+          "code": "AMR",
+          "name": {
+            "en": "US, Food and Drug Administration establishment indicator"
+          }
+        },
+        {
+          "code": "AMS",
+          "name": {
+            "en": "US, Federal Communications Commission (FCC) import"
+          }
+        },
+        {
+          "code": "AMT",
+          "name": {
+            "en": "Goods and Services Tax identification number"
+          }
+        },
+        {
+          "code": "AMU",
+          "name": {
+            "en": "Integrated logistic support cross reference number"
+          }
+        },
+        {
+          "code": "AMV",
+          "name": {
+            "en": "Department number"
+          }
+        },
+        {
+          "code": "AMW",
+          "name": {
+            "en": "Buyer's catalogue number"
+          }
+        },
+        {
+          "code": "AMX",
+          "name": {
+            "en": "Financial settlement party's reference number"
+          }
+        },
+        {
+          "code": "AMY",
+          "name": {
+            "en": "Standard's version number"
+          }
+        },
+        {
+          "code": "AMZ",
+          "name": {
+            "en": "Pipeline number"
+          }
+        },
+        {
+          "code": "ANA",
+          "name": {
+            "en": "Account servicing bank's reference number"
+          }
+        },
+        {
+          "code": "ANB",
+          "name": {
+            "en": "Completed units payment request reference"
+          }
+        },
+        {
+          "code": "ANC",
+          "name": {
+            "en": "Payment in advance request reference"
+          }
+        },
+        {
+          "code": "AND",
+          "name": {
+            "en": "Parent file"
+          }
+        },
+        {
+          "code": "ANE",
+          "name": {
+            "en": "Sub file"
+          }
+        },
+        {
+          "code": "ANF",
+          "name": {
+            "en": "CAD file layer convention"
+          }
+        },
+        {
+          "code": "ANG",
+          "name": {
+            "en": "Technical regulation"
+          }
+        },
+        {
+          "code": "ANH",
+          "name": {
+            "en": "Plot file"
+          }
+        },
+        {
+          "code": "ANI",
+          "name": {
+            "en": "File conversion journal"
+          }
+        },
+        {
+          "code": "ANJ",
+          "name": {
+            "en": "Authorization number"
+          }
+        },
+        {
+          "code": "ANK",
+          "name": {
+            "en": "Reference number assigned by third party"
+          }
+        },
+        {
+          "code": "ANL",
+          "name": {
+            "en": "Deposit reference number"
+          }
+        },
+        {
+          "code": "ANM",
+          "name": {
+            "en": "Named bank's reference"
+          }
+        },
+        {
+          "code": "ANN",
+          "name": {
+            "en": "Drawee's reference"
+          }
+        },
+        {
+          "code": "ANO",
+          "name": {
+            "en": "Case of need party's reference"
+          }
+        },
+        {
+          "code": "ANP",
+          "name": {
+            "en": "Collecting bank's reference"
+          }
+        },
+        {
+          "code": "ANQ",
+          "name": {
+            "en": "Remitting bank's reference"
+          }
+        },
+        {
+          "code": "ANR",
+          "name": {
+            "en": "Principal's bank reference"
+          }
+        },
+        {
+          "code": "ANS",
+          "name": {
+            "en": "Presenting bank's reference"
+          }
+        },
+        {
+          "code": "ANT",
+          "name": {
+            "en": "Consignee's reference"
+          }
+        },
+        {
+          "code": "ANU",
+          "name": {
+            "en": "Financial transaction reference number"
+          }
+        },
+        {
+          "code": "ANV",
+          "name": {
+            "en": "Credit reference number"
+          }
+        },
+        {
+          "code": "ANW",
+          "name": {
+            "en": "Receiving bank's authorization number"
+          }
+        },
+        {
+          "code": "ANX",
+          "name": {
+            "en": "Clearing reference"
+          }
+        },
+        {
+          "code": "ANY",
+          "name": {
+            "en": "Sending bank's reference number"
+          }
+        },
+        {
+          "code": "AOA",
+          "name": {
+            "en": "Documentary payment reference"
+          }
+        },
+        {
+          "code": "AOD",
+          "name": {
+            "en": "Accounting file reference"
+          }
+        },
+        {
+          "code": "AOE",
+          "name": {
+            "en": "Sender's file reference number"
+          }
+        },
+        {
+          "code": "AOF",
+          "name": {
+            "en": "Receiver's file reference number"
+          }
+        },
+        {
+          "code": "AOG",
+          "name": {
+            "en": "Source document internal reference"
+          }
+        },
+        {
+          "code": "AOH",
+          "name": {
+            "en": "Principal's reference"
+          }
+        },
+        {
+          "code": "AOI",
+          "name": {
+            "en": "Debit reference number"
+          }
+        },
+        {
+          "code": "AOJ",
+          "name": {
+            "en": "Calendar"
+          }
+        },
+        {
+          "code": "AOK",
+          "name": {
+            "en": "Work shift"
+          }
+        },
+        {
+          "code": "AOL",
+          "name": {
+            "en": "Work breakdown structure"
+          }
+        },
+        {
+          "code": "AOM",
+          "name": {
+            "en": "Organisation breakdown structure"
+          }
+        },
+        {
+          "code": "AON",
+          "name": {
+            "en": "Work task charge number"
+          }
+        },
+        {
+          "code": "AOO",
+          "name": {
+            "en": "Functional work group"
+          }
+        },
+        {
+          "code": "AOP",
+          "name": {
+            "en": "Work team"
+          }
+        },
+        {
+          "code": "AOQ",
+          "name": {
+            "en": "Department"
+          }
+        },
+        {
+          "code": "AOR",
+          "name": {
+            "en": "Statement of work"
+          }
+        },
+        {
+          "code": "AOS",
+          "name": {
+            "en": "Work package"
+          }
+        },
+        {
+          "code": "AOT",
+          "name": {
+            "en": "Planning package"
+          }
+        },
+        {
+          "code": "AOU",
+          "name": {
+            "en": "Cost account"
+          }
+        },
+        {
+          "code": "AOV",
+          "name": {
+            "en": "Work order"
+          }
+        },
+        {
+          "code": "AOW",
+          "name": {
+            "en": "Transportation Control Number (TCN)"
+          }
+        },
+        {
+          "code": "AOX",
+          "name": {
+            "en": "Constraint notation"
+          }
+        },
+        {
+          "code": "AOY",
+          "name": {
+            "en": "ETERMS reference"
+          }
+        },
+        {
+          "code": "AOZ",
+          "name": {
+            "en": "Implementation version number"
+          }
+        },
+        {
+          "code": "AP",
+          "name": {
+            "en": "Accounts receivable number"
+          }
+        },
+        {
+          "code": "APA",
+          "name": {
+            "en": "Incorporated legal reference"
+          }
+        },
+        {
+          "code": "APB",
+          "name": {
+            "en": "Payment instalment reference number"
+          }
+        },
+        {
+          "code": "APC",
+          "name": {
+            "en": "Equipment owner reference number"
+          }
+        },
+        {
+          "code": "APD",
+          "name": {
+            "en": "Cedent's claim number"
+          }
+        },
+        {
+          "code": "APE",
+          "name": {
+            "en": "Reinsurer's claim number"
+          }
+        },
+        {
+          "code": "APF",
+          "name": {
+            "en": "Price/sales catalogue response reference number"
+          }
+        },
+        {
+          "code": "APG",
+          "name": {
+            "en": "General purpose message reference number"
+          }
+        },
+        {
+          "code": "APH",
+          "name": {
+            "en": "Invoicing data sheet reference number"
+          }
+        },
+        {
+          "code": "API",
+          "name": {
+            "en": "Inventory report reference number"
+          }
+        },
+        {
+          "code": "APJ",
+          "name": {
+            "en": "Ceiling formula reference number"
+          }
+        },
+        {
+          "code": "APK",
+          "name": {
+            "en": "Price variation formula reference number"
+          }
+        },
+        {
+          "code": "APL",
+          "name": {
+            "en": "Reference to account servicing bank's message"
+          }
+        },
+        {
+          "code": "APM",
+          "name": {
+            "en": "Party sequence number"
+          }
+        },
+        {
+          "code": "APN",
+          "name": {
+            "en": "Purchaser's request reference"
+          }
+        },
+        {
+          "code": "APO",
+          "name": {
+            "en": "Contractor request reference"
+          }
+        },
+        {
+          "code": "APP",
+          "name": {
+            "en": "Accident reference number"
+          }
+        },
+        {
+          "code": "APQ",
+          "name": {
+            "en": "Commercial account summary reference number"
+          }
+        },
+        {
+          "code": "APR",
+          "name": {
+            "en": "Contract breakdown reference"
+          }
+        },
+        {
+          "code": "APS",
+          "name": {
+            "en": "Contractor registration number"
+          }
+        },
+        {
+          "code": "APT",
+          "name": {
+            "en": "Applicable coefficient identification number"
+          }
+        },
+        {
+          "code": "APU",
+          "name": {
+            "en": "Special budget account number"
+          }
+        },
+        {
+          "code": "APV",
+          "name": {
+            "en": "Authorisation for repair reference"
+          }
+        },
+        {
+          "code": "APW",
+          "name": {
+            "en": "Manufacturer defined repair rates reference"
+          }
+        },
+        {
+          "code": "APX",
+          "name": {
+            "en": "Original submitter log number"
+          }
+        },
+        {
+          "code": "APY",
+          "name": {
+            "en": "Original submitter, parent Data Maintenance Request (DMR)"
+          }
+        },
+        {
+          "code": "APZ",
+          "name": {
+            "en": "Original submitter, child Data Maintenance Request (DMR)"
+          }
+        },
+        {
+          "code": "AQA",
+          "name": {
+            "en": "Entry point assessment log number"
+          }
+        },
+        {
+          "code": "AQB",
+          "name": {
+            "en": "Entry point assessment log number, parent DMR"
+          }
+        },
+        {
+          "code": "AQC",
+          "name": {
+            "en": "Entry point assessment log number, child DMR"
+          }
+        },
+        {
+          "code": "AQD",
+          "name": {
+            "en": "Data structure tag"
+          }
+        },
+        {
+          "code": "AQE",
+          "name": {
+            "en": "Central secretariat log number"
+          }
+        },
+        {
+          "code": "AQF",
+          "name": {
+            "en": "Central secretariat log number, parent Data Maintenance"
+          }
+        },
+        {
+          "code": "AQG",
+          "name": {
+            "en": "Central secretariat log number, child Data Maintenance"
+          }
+        },
+        {
+          "code": "AQH",
+          "name": {
+            "en": "International assessment log number"
+          }
+        },
+        {
+          "code": "AQI",
+          "name": {
+            "en": "International assessment log number, parent Data"
+          }
+        },
+        {
+          "code": "AQJ",
+          "name": {
+            "en": "International assessment log number, child Data Maintenance"
+          }
+        },
+        {
+          "code": "AQK",
+          "name": {
+            "en": "Status report number"
+          }
+        },
+        {
+          "code": "AQL",
+          "name": {
+            "en": "Message design group number"
+          }
+        },
+        {
+          "code": "AQM",
+          "name": {
+            "en": "US Customs Service (USCS) entry code"
+          }
+        },
+        {
+          "code": "AQN",
+          "name": {
+            "en": "Beginning job sequence number"
+          }
+        },
+        {
+          "code": "AQO",
+          "name": {
+            "en": "Sender's clause number"
+          }
+        },
+        {
+          "code": "AQP",
+          "name": {
+            "en": "Dun and Bradstreet Canada's 8 digit Standard Industrial"
+          }
+        },
+        {
+          "code": "AQQ",
+          "name": {
+            "en": "Activite Principale Exercee (APE) identifier"
+          }
+        },
+        {
+          "code": "AQR",
+          "name": {
+            "en": "Dun and Bradstreet US 8 digit Standard Industrial"
+          }
+        },
+        {
+          "code": "AQS",
+          "name": {
+            "en": "Nomenclature Activity Classification Economy (NACE)"
+          }
+        },
+        {
+          "code": "AQT",
+          "name": {
+            "en": "Norme Activite Francaise (NAF) identifier"
+          }
+        },
+        {
+          "code": "AQU",
+          "name": {
+            "en": "Registered contractor activity type"
+          }
+        },
+        {
+          "code": "AQV",
+          "name": {
+            "en": "Statistic Bundes Amt (SBA) identifier"
+          }
+        },
+        {
+          "code": "AQW",
+          "name": {
+            "en": "State or province assigned entity identification"
+          }
+        },
+        {
+          "code": "AQX",
+          "name": {
+            "en": "Institute of Security and Future Market Development (ISFMD)"
+          }
+        },
+        {
+          "code": "AQY",
+          "name": {
+            "en": "File identification number"
+          }
+        },
+        {
+          "code": "AQZ",
+          "name": {
+            "en": "Bankruptcy procedure number"
+          }
+        },
+        {
+          "code": "ARA",
+          "name": {
+            "en": "National government business identification number"
+          }
+        },
+        {
+          "code": "ARB",
+          "name": {
+            "en": "Prior Data Universal Number System (DUNS) number"
+          }
+        },
+        {
+          "code": "ARC",
+          "name": {
+            "en": "Companies Registry Office (CRO) number"
+          }
+        },
+        {
+          "code": "ARD",
+          "name": {
+            "en": "Costa Rican judicial number"
+          }
+        },
+        {
+          "code": "ARE",
+          "name": {
+            "en": "Numero de Identificacion Tributaria (NIT)"
+          }
+        },
+        {
+          "code": "ARF",
+          "name": {
+            "en": "Patron number"
+          }
+        },
+        {
+          "code": "ARG",
+          "name": {
+            "en": "Registro Informacion Fiscal (RIF) number"
+          }
+        },
+        {
+          "code": "ARH",
+          "name": {
+            "en": "Registro Unico de Contribuyente (RUC) number"
+          }
+        },
+        {
+          "code": "ARI",
+          "name": {
+            "en": "Tokyo SHOKO Research (TSR) business identifier"
+          }
+        },
+        {
+          "code": "ARJ",
+          "name": {
+            "en": "Personal identity card number"
+          }
+        },
+        {
+          "code": "ARK",
+          "name": {
+            "en": "Systeme Informatique pour le Repertoire des ENtreprises"
+          }
+        },
+        {
+          "code": "ARL",
+          "name": {
+            "en": "Systeme Informatique pour le Repertoire des ETablissements"
+          }
+        },
+        {
+          "code": "ARM",
+          "name": {
+            "en": "Publication issue number"
+          }
+        },
+        {
+          "code": "ARN",
+          "name": {
+            "en": "Original filing number"
+          }
+        },
+        {
+          "code": "ARO",
+          "name": {
+            "en": "Document page identifier"
+          }
+        },
+        {
+          "code": "ARP",
+          "name": {
+            "en": "Public filing registration number"
+          }
+        },
+        {
+          "code": "ARQ",
+          "name": {
+            "en": "Regiristo Federal de Contribuyentes"
+          }
+        },
+        {
+          "code": "ARR",
+          "name": {
+            "en": "Social security number"
+          }
+        },
+        {
+          "code": "ARS",
+          "name": {
+            "en": "Document volume number"
+          }
+        },
+        {
+          "code": "ART",
+          "name": {
+            "en": "Book number"
+          }
+        },
+        {
+          "code": "ARU",
+          "name": {
+            "en": "Stock exchange company identifier"
+          }
+        },
+        {
+          "code": "ARV",
+          "name": {
+            "en": "Imputation account"
+          }
+        },
+        {
+          "code": "ARW",
+          "name": {
+            "en": "Financial phase reference"
+          }
+        },
+        {
+          "code": "ARX",
+          "name": {
+            "en": "Technical phase reference"
+          }
+        },
+        {
+          "code": "ARY",
+          "name": {
+            "en": "Prior contractor registration number"
+          }
+        },
+        {
+          "code": "ARZ",
+          "name": {
+            "en": "Stock adjustment number"
+          }
+        },
+        {
+          "code": "ASA",
+          "name": {
+            "en": "Dispensation reference"
+          }
+        },
+        {
+          "code": "ASB",
+          "name": {
+            "en": "Investment reference number"
+          }
+        },
+        {
+          "code": "ASC",
+          "name": {
+            "en": "Assuming company"
+          }
+        },
+        {
+          "code": "ASD",
+          "name": {
+            "en": "Budget chapter"
+          }
+        },
+        {
+          "code": "ASE",
+          "name": {
+            "en": "Duty free products security number"
+          }
+        },
+        {
+          "code": "ASF",
+          "name": {
+            "en": "Duty free products receipt authorisation number"
+          }
+        },
+        {
+          "code": "ASG",
+          "name": {
+            "en": "Party information message reference"
+          }
+        },
+        {
+          "code": "ASH",
+          "name": {
+            "en": "Formal statement reference"
+          }
+        },
+        {
+          "code": "ASI",
+          "name": {
+            "en": "Proof of delivery reference number"
+          }
+        },
+        {
+          "code": "ASJ",
+          "name": {
+            "en": "Supplier's credit claim reference number"
+          }
+        },
+        {
+          "code": "ASK",
+          "name": {
+            "en": "Picture of actual product"
+          }
+        },
+        {
+          "code": "ASL",
+          "name": {
+            "en": "Picture of a generic product"
+          }
+        },
+        {
+          "code": "ASM",
+          "name": {
+            "en": "Trading partner identification number"
+          }
+        },
+        {
+          "code": "ASN",
+          "name": {
+            "en": "Prior trading partner identification number"
+          }
+        },
+        {
+          "code": "ASO",
+          "name": {
+            "en": "Password"
+          }
+        },
+        {
+          "code": "ASP",
+          "name": {
+            "en": "Formal report number"
+          }
+        },
+        {
+          "code": "ASQ",
+          "name": {
+            "en": "Fund account number"
+          }
+        },
+        {
+          "code": "ASR",
+          "name": {
+            "en": "Safe custody number"
+          }
+        },
+        {
+          "code": "ASS",
+          "name": {
+            "en": "Master account number"
+          }
+        },
+        {
+          "code": "AST",
+          "name": {
+            "en": "Group reference number"
+          }
+        },
+        {
+          "code": "ASU",
+          "name": {
+            "en": "Accounting transmission number"
+          }
+        },
+        {
+          "code": "ASV",
+          "name": {
+            "en": "Product data file number"
+          }
+        },
+        {
+          "code": "ASW",
+          "name": {
+            "en": "Cadastro Geral do Contribuinte (CGC)"
+          }
+        },
+        {
+          "code": "ASX",
+          "name": {
+            "en": "Foreign resident identification number"
+          }
+        },
+        {
+          "code": "ASY",
+          "name": {
+            "en": "CD-ROM"
+          }
+        },
+        {
+          "code": "ASZ",
+          "name": {
+            "en": "Physical medium"
+          }
+        },
+        {
+          "code": "ATA",
+          "name": {
+            "en": "Financial cancellation reference number"
+          }
+        },
+        {
+          "code": "ATB",
+          "name": {
+            "en": "Purchase for export Customs agreement number"
+          }
+        },
+        {
+          "code": "ATC",
+          "name": {
+            "en": "Judgment number"
+          }
+        },
+        {
+          "code": "ATD",
+          "name": {
+            "en": "Secretariat number"
+          }
+        },
+        {
+          "code": "ATE",
+          "name": {
+            "en": "Previous banking status message reference"
+          }
+        },
+        {
+          "code": "ATF",
+          "name": {
+            "en": "Last received banking status message reference"
+          }
+        },
+        {
+          "code": "ATG",
+          "name": {
+            "en": "Bank's documentary procedure reference"
+          }
+        },
+        {
+          "code": "ATH",
+          "name": {
+            "en": "Customer's documentary procedure reference"
+          }
+        },
+        {
+          "code": "ATI",
+          "name": {
+            "en": "Safe deposit box number"
+          }
+        },
+        {
+          "code": "ATJ",
+          "name": {
+            "en": "Receiving Bankgiro number"
+          }
+        },
+        {
+          "code": "ATK",
+          "name": {
+            "en": "Sending Bankgiro number"
+          }
+        },
+        {
+          "code": "ATL",
+          "name": {
+            "en": "Bankgiro reference"
+          }
+        },
+        {
+          "code": "ATM",
+          "name": {
+            "en": "Guarantee number"
+          }
+        },
+        {
+          "code": "ATN",
+          "name": {
+            "en": "Collection instrument number"
+          }
+        },
+        {
+          "code": "ATO",
+          "name": {
+            "en": "Converted Postgiro number"
+          }
+        },
+        {
+          "code": "ATP",
+          "name": {
+            "en": "Cost centre alignment number"
+          }
+        },
+        {
+          "code": "ATQ",
+          "name": {
+            "en": "Kamer Van Koophandel (KVK) number"
+          }
+        },
+        {
+          "code": "ATR",
+          "name": {
+            "en": "Institut Belgo-Luxembourgeois de Codification (IBLC) number"
+          }
+        },
+        {
+          "code": "ATS",
+          "name": {
+            "en": "External object reference"
+          }
+        },
+        {
+          "code": "ATT",
+          "name": {
+            "en": "Exceptional transport authorisation number"
+          }
+        },
+        {
+          "code": "ATU",
+          "name": {
+            "en": "Clave Unica de Identificacion Tributaria (CUIT)"
+          }
+        },
+        {
+          "code": "ATV",
+          "name": {
+            "en": "Registro Unico Tributario (RUT)"
+          }
+        },
+        {
+          "code": "ATW",
+          "name": {
+            "en": "Flat rack container bundle identification number"
+          }
+        },
+        {
+          "code": "ATX",
+          "name": {
+            "en": "Transport equipment acceptance order reference"
+          }
+        },
+        {
+          "code": "ATY",
+          "name": {
+            "en": "Transport equipment release order reference"
+          }
+        },
+        {
+          "code": "ATZ",
+          "name": {
+            "en": "Ship's stay reference number"
+          }
+        },
+        {
+          "code": "AU",
+          "name": {
+            "en": "Authorization to meet competition number"
+          }
+        },
+        {
+          "code": "AUA",
+          "name": {
+            "en": "Place of positioning reference"
+          }
+        },
+        {
+          "code": "AUB",
+          "name": {
+            "en": "Party reference"
+          }
+        },
+        {
+          "code": "AUC",
+          "name": {
+            "en": "Issued prescription identification"
+          }
+        },
+        {
+          "code": "AUD",
+          "name": {
+            "en": "Collection reference"
+          }
+        },
+        {
+          "code": "AUE",
+          "name": {
+            "en": "Travel service"
+          }
+        },
+        {
+          "code": "AUF",
+          "name": {
+            "en": "Consignment stock contract"
+          }
+        },
+        {
+          "code": "AUG",
+          "name": {
+            "en": "Importer's letter of credit reference"
+          }
+        },
+        {
+          "code": "AUH",
+          "name": {
+            "en": "Performed prescription identification"
+          }
+        },
+        {
+          "code": "AUI",
+          "name": {
+            "en": "Image reference"
+          }
+        },
+        {
+          "code": "AUJ",
+          "name": {
+            "en": "Proposed purchase order reference number"
+          }
+        },
+        {
+          "code": "AUK",
+          "name": {
+            "en": "Application for financial support reference number"
+          }
+        },
+        {
+          "code": "AUL",
+          "name": {
+            "en": "Manufacturing quality agreement number"
+          }
+        },
+        {
+          "code": "AUM",
+          "name": {
+            "en": "Software editor reference"
+          }
+        },
+        {
+          "code": "AUN",
+          "name": {
+            "en": "Software reference"
+          }
+        },
+        {
+          "code": "AUO",
+          "name": {
+            "en": "Software quality reference"
+          }
+        },
+        {
+          "code": "AUP",
+          "name": {
+            "en": "Consolidated orders' reference"
+          }
+        },
+        {
+          "code": "AUQ",
+          "name": {
+            "en": "Customs binding ruling number"
+          }
+        },
+        {
+          "code": "AUR",
+          "name": {
+            "en": "Customs non-binding ruling number"
+          }
+        },
+        {
+          "code": "AUS",
+          "name": {
+            "en": "Delivery route reference"
+          }
+        },
+        {
+          "code": "AUT",
+          "name": {
+            "en": "Net area supplier reference"
+          }
+        },
+        {
+          "code": "AUU",
+          "name": {
+            "en": "Time series reference"
+          }
+        },
+        {
+          "code": "AUV",
+          "name": {
+            "en": "Connecting point to central grid"
+          }
+        },
+        {
+          "code": "AUW",
+          "name": {
+            "en": "Marketing plan identification number (MPIN)"
+          }
+        },
+        {
+          "code": "AUX",
+          "name": {
+            "en": "Entity reference number, previous"
+          }
+        },
+        {
+          "code": "AUY",
+          "name": {
+            "en": "International Standard Industrial Classification (ISIC)"
+          }
+        },
+        {
+          "code": "AUZ",
+          "name": {
+            "en": "Customs pre-approval ruling number"
+          }
+        },
+        {
+          "code": "AV",
+          "name": {
+            "en": "Account payable number"
+          }
+        },
+        {
+          "code": "AVA",
+          "name": {
+            "en": "First financial institution's transaction reference"
+          }
+        },
+        {
+          "code": "AVB",
+          "name": {
+            "en": "Product characteristics directory"
+          }
+        },
+        {
+          "code": "AVC",
+          "name": {
+            "en": "Supplier's customer reference number"
+          }
+        },
+        {
+          "code": "AVD",
+          "name": {
+            "en": "Inventory report request number"
+          }
+        },
+        {
+          "code": "AVE",
+          "name": {
+            "en": "Metering point"
+          }
+        },
+        {
+          "code": "AVF",
+          "name": {
+            "en": "Passenger reservation number"
+          }
+        },
+        {
+          "code": "AVG",
+          "name": {
+            "en": "Slaughterhouse approval number"
+          }
+        },
+        {
+          "code": "AVH",
+          "name": {
+            "en": "Meat cutting plant approval number"
+          }
+        },
+        {
+          "code": "AVI",
+          "name": {
+            "en": "Customer travel service identifier"
+          }
+        },
+        {
+          "code": "AVJ",
+          "name": {
+            "en": "Export control classification number"
+          }
+        },
+        {
+          "code": "AVK",
+          "name": {
+            "en": "Broker reference 3"
+          }
+        },
+        {
+          "code": "AVL",
+          "name": {
+            "en": "Consignment information"
+          }
+        },
+        {
+          "code": "AVM",
+          "name": {
+            "en": "Goods item information"
+          }
+        },
+        {
+          "code": "AVN",
+          "name": {
+            "en": "Dangerous Goods information"
+          }
+        },
+        {
+          "code": "AVO",
+          "name": {
+            "en": "Pilotage services exemption number"
+          }
+        },
+        {
+          "code": "AVP",
+          "name": {
+            "en": "Person registration number"
+          }
+        },
+        {
+          "code": "AVQ",
+          "name": {
+            "en": "Place of packing approval number"
+          }
+        },
+        {
+          "code": "AVR",
+          "name": {
+            "en": "Original Mandate Reference"
+          }
+        },
+        {
+          "code": "AVS",
+          "name": {
+            "en": "Mandate Reference"
+          }
+        },
+        {
+          "code": "AVT",
+          "name": {
+            "en": "Reservation station indentifier"
+          }
+        },
+        {
+          "code": "AVU",
+          "name": {
+            "en": "Unique goods shipment identifier"
+          }
+        },
+        {
+          "code": "AVV",
+          "name": {
+            "en": "Framework Agreement Number"
+          }
+        },
+        {
+          "code": "AVW",
+          "name": {
+            "en": "Hash value"
+          }
+        },
+        {
+          "code": "AVX",
+          "name": {
+            "en": "Movement reference number"
+          }
+        },
+        {
+          "code": "AVY",
+          "name": {
+            "en": "Economic Operators Registration and Identification Number"
+          }
+        },
+        {
+          "code": "AVZ",
+          "name": {
+            "en": "Local Reference Number"
+          }
+        },
+        {
+          "code": "AWA",
+          "name": {
+            "en": "Rate code number"
+          }
+        },
+        {
+          "code": "AWB",
+          "name": {
+            "en": "Air waybill number"
+          }
+        },
+        {
+          "code": "AWC",
+          "name": {
+            "en": "Documentary credit amendment number"
+          }
+        },
+        {
+          "code": "AWD",
+          "name": {
+            "en": "Advising bank's reference"
+          }
+        },
+        {
+          "code": "AWE",
+          "name": {
+            "en": "Cost centre"
+          }
+        },
+        {
+          "code": "AWF",
+          "name": {
+            "en": "Work item quantity determination"
+          }
+        },
+        {
+          "code": "AWG",
+          "name": {
+            "en": "Internal data process number"
+          }
+        },
+        {
+          "code": "AWH",
+          "name": {
+            "en": "Category of work reference"
+          }
+        },
+        {
+          "code": "AWI",
+          "name": {
+            "en": "Policy form number"
+          }
+        },
+        {
+          "code": "AWJ",
+          "name": {
+            "en": "Net area"
+          }
+        },
+        {
+          "code": "AWK",
+          "name": {
+            "en": "Service provider"
+          }
+        },
+        {
+          "code": "AWL",
+          "name": {
+            "en": "Error position"
+          }
+        },
+        {
+          "code": "AWM",
+          "name": {
+            "en": "Service category reference"
+          }
+        },
+        {
+          "code": "AWN",
+          "name": {
+            "en": "Connected location"
+          }
+        },
+        {
+          "code": "AWO",
+          "name": {
+            "en": "Related party"
+          }
+        },
+        {
+          "code": "AWP",
+          "name": {
+            "en": "Latest accounting entry record reference"
+          }
+        },
+        {
+          "code": "AWQ",
+          "name": {
+            "en": "Accounting entry"
+          }
+        },
+        {
+          "code": "AWR",
+          "name": {
+            "en": "Document reference, original"
+          }
+        },
+        {
+          "code": "AWS",
+          "name": {
+            "en": "Hygienic Certificate number, national"
+          }
+        },
+        {
+          "code": "AWT",
+          "name": {
+            "en": "Administrative Reference Code"
+          }
+        },
+        {
+          "code": "AWU",
+          "name": {
+            "en": "Pick-up sheet number"
+          }
+        },
+        {
+          "code": "AWV",
+          "name": {
+            "en": "Phone number"
+          }
+        },
+        {
+          "code": "AWW",
+          "name": {
+            "en": "Buyer's fund number"
+          }
+        },
+        {
+          "code": "AWX",
+          "name": {
+            "en": "Company trading account number"
+          }
+        },
+        {
+          "code": "AWY",
+          "name": {
+            "en": "Reserved goods identifier"
+          }
+        },
+        {
+          "code": "AWZ",
+          "name": {
+            "en": "Handling and movement reference number"
+          }
+        },
+        {
+          "code": "AXA",
+          "name": {
+            "en": "Instruction to despatch reference number"
+          }
+        },
+        {
+          "code": "AXB",
+          "name": {
+            "en": "Instruction for returns number"
+          }
+        },
+        {
+          "code": "AXC",
+          "name": {
+            "en": "Metered services consumption report number"
+          }
+        },
+        {
+          "code": "AXD",
+          "name": {
+            "en": "Order status enquiry number"
+          }
+        },
+        {
+          "code": "AXE",
+          "name": {
+            "en": "Firm booking reference number"
+          }
+        },
+        {
+          "code": "AXF",
+          "name": {
+            "en": "Product inquiry number"
+          }
+        },
+        {
+          "code": "AXG",
+          "name": {
+            "en": "Split delivery number"
+          }
+        },
+        {
+          "code": "AXH",
+          "name": {
+            "en": "Service relation number"
+          }
+        },
+        {
+          "code": "AXI",
+          "name": {
+            "en": "Serial shipping container code"
+          }
+        },
+        {
+          "code": "AXJ",
+          "name": {
+            "en": "Test specification number"
+          }
+        },
+        {
+          "code": "AXK",
+          "name": {
+            "en": "Transport status report number"
+          }
+        },
+        {
+          "code": "AXL",
+          "name": {
+            "en": "Tooling contract number"
+          }
+        },
+        {
+          "code": "AXM",
+          "name": {
+            "en": "Formula reference number"
+          }
+        },
+        {
+          "code": "AXN",
+          "name": {
+            "en": "Pre-agreement number"
+          }
+        },
+        {
+          "code": "AXO",
+          "name": {
+            "en": "Product certification number"
+          }
+        },
+        {
+          "code": "AXP",
+          "name": {
+            "en": "Consignment contract number"
+          }
+        },
+        {
+          "code": "AXQ",
+          "name": {
+            "en": "Product specification reference number"
+          }
+        },
+        {
+          "code": "AXR",
+          "name": {
+            "en": "Payroll deduction advice reference"
+          }
+        },
+        {
+          "code": "AXS",
+          "name": {
+            "en": "TRACES party identification"
+          }
+        },
+        {
+          "code": "BA",
+          "name": {
+            "en": "Beginning meter reading actual"
+          }
+        },
+        {
+          "code": "BC",
+          "name": {
+            "en": "Buyer's contract number"
+          }
+        },
+        {
+          "code": "BD",
+          "name": {
+            "en": "Bid number"
+          }
+        },
+        {
+          "code": "BE",
+          "name": {
+            "en": "Beginning meter reading estimated"
+          }
+        },
+        {
+          "code": "BH",
+          "name": {
+            "en": "House bill of lading number"
+          }
+        },
+        {
+          "code": "BM",
+          "name": {
+            "en": "Bill of lading number"
+          }
+        },
+        {
+          "code": "BN",
+          "name": {
+            "en": "Consignment identifier, carrier assigned"
+          }
+        },
+        {
+          "code": "BO",
+          "name": {
+            "en": "Blanket order number"
+          }
+        },
+        {
+          "code": "BR",
+          "name": {
+            "en": "Broker or sales office number"
+          }
+        },
+        {
+          "code": "BT",
+          "name": {
+            "en": "Batch number/lot number"
+          }
+        },
+        {
+          "code": "BTP",
+          "name": {
+            "en": "Battery and accumulator producer registration number"
+          }
+        },
+        {
+          "code": "BW",
+          "name": {
+            "en": "Blended with number"
+          }
+        },
+        {
+          "code": "CAS",
+          "name": {
+            "en": "IATA Cargo Agent CASS Address number"
+          }
+        },
+        {
+          "code": "CAT",
+          "name": {
+            "en": "Matching of entries, balanced"
+          }
+        },
+        {
+          "code": "CAU",
+          "name": {
+            "en": "Entry flagging"
+          }
+        },
+        {
+          "code": "CAV",
+          "name": {
+            "en": "Matching of entries, unbalanced"
+          }
+        },
+        {
+          "code": "CAW",
+          "name": {
+            "en": "Document reference, internal"
+          }
+        },
+        {
+          "code": "CAX",
+          "name": {
+            "en": "European Value Added Tax identification"
+          }
+        },
+        {
+          "code": "CAY",
+          "name": {
+            "en": "Cost accounting document"
+          }
+        },
+        {
+          "code": "CAZ",
+          "name": {
+            "en": "Grid operator's customer reference number"
+          }
+        },
+        {
+          "code": "CBA",
+          "name": {
+            "en": "Ticket control number"
+          }
+        },
+        {
+          "code": "CBB",
+          "name": {
+            "en": "Order shipment grouping reference"
+          }
+        },
+        {
+          "code": "CD",
+          "name": {
+            "en": "Credit note number"
+          }
+        },
+        {
+          "code": "CEC",
+          "name": {
+            "en": "Ceding company"
+          }
+        },
+        {
+          "code": "CED",
+          "name": {
+            "en": "Debit letter number"
+          }
+        },
+        {
+          "code": "CFE",
+          "name": {
+            "en": "Consignee's further order"
+          }
+        },
+        {
+          "code": "CFF",
+          "name": {
+            "en": "Animal farm licence number"
+          }
+        },
+        {
+          "code": "CFO",
+          "name": {
+            "en": "Consignor's further order"
+          }
+        },
+        {
+          "code": "CG",
+          "name": {
+            "en": "Consignee's order number"
+          }
+        },
+        {
+          "code": "CH",
+          "name": {
+            "en": "Customer catalogue number"
+          }
+        },
+        {
+          "code": "CK",
+          "name": {
+            "en": "Cheque number"
+          }
+        },
+        {
+          "code": "CKN",
+          "name": {
+            "en": "Checking number"
+          }
+        },
+        {
+          "code": "CM",
+          "name": {
+            "en": "Credit memo number"
+          }
+        },
+        {
+          "code": "CMR",
+          "name": {
+            "en": "Road consignment note number"
+          }
+        },
+        {
+          "code": "CN",
+          "name": {
+            "en": "Carrier's reference number"
+          }
+        },
+        {
+          "code": "CNO",
+          "name": {
+            "en": "Charges note document attachment indicator"
+          }
+        },
+        {
+          "code": "COF",
+          "name": {
+            "en": "Call off order number"
+          }
+        },
+        {
+          "code": "CP",
+          "name": {
+            "en": "Condition of purchase document number"
+          }
+        },
+        {
+          "code": "CR",
+          "name": {
+            "en": "Customer reference number"
+          }
+        },
+        {
+          "code": "CRN",
+          "name": {
+            "en": "Transport means journey identifier"
+          }
+        },
+        {
+          "code": "CS",
+          "name": {
+            "en": "Condition of sale document number"
+          }
+        },
+        {
+          "code": "CST",
+          "name": {
+            "en": "Team assignment number"
+          }
+        },
+        {
+          "code": "CT",
+          "name": {
+            "en": "Contract number"
+          }
+        },
+        {
+          "code": "CU",
+          "name": {
+            "en": "Consignment identifier, consignor assigned"
+          }
+        },
+        {
+          "code": "CV",
+          "name": {
+            "en": "Container operators reference number"
+          }
+        },
+        {
+          "code": "CW",
+          "name": {
+            "en": "Package number"
+          }
+        },
+        {
+          "code": "CZ",
+          "name": {
+            "en": "Cooperation contract number"
+          }
+        },
+        {
+          "code": "DA",
+          "name": {
+            "en": "Deferment approval number"
+          }
+        },
+        {
+          "code": "DAN",
+          "name": {
+            "en": "Debit account number"
+          }
+        },
+        {
+          "code": "DB",
+          "name": {
+            "en": "Buyer's debtor number"
+          }
+        },
+        {
+          "code": "DI",
+          "name": {
+            "en": "Distributor invoice number"
+          }
+        },
+        {
+          "code": "DL",
+          "name": {
+            "en": "Debit note number"
+          }
+        },
+        {
+          "code": "DM",
+          "name": {
+            "en": "Document identifier"
+          }
+        },
+        {
+          "code": "DQ",
+          "name": {
+            "en": "Delivery note number"
+          }
+        },
+        {
+          "code": "DR",
+          "name": {
+            "en": "Dock receipt number"
+          }
+        },
+        {
+          "code": "EA",
+          "name": {
+            "en": "Ending meter reading actual"
+          }
+        },
+        {
+          "code": "EB",
+          "name": {
+            "en": "Embargo permit number"
+          }
+        },
+        {
+          "code": "ED",
+          "name": {
+            "en": "Export declaration"
+          }
+        },
+        {
+          "code": "EE",
+          "name": {
+            "en": "Ending meter reading estimated"
+          }
+        },
+        {
+          "code": "EEP",
+          "name": {
+            "en": "Electrical and electronic equipment producer registration"
+          }
+        },
+        {
+          "code": "EI",
+          "name": {
+            "en": "Employer's identification number"
+          }
+        },
+        {
+          "code": "EN",
+          "name": {
+            "en": "Embargo number"
+          }
+        },
+        {
+          "code": "EQ",
+          "name": {
+            "en": "Equipment number"
+          }
+        },
+        {
+          "code": "ER",
+          "name": {
+            "en": "Container/equipment receipt number"
+          }
+        },
+        {
+          "code": "ERN",
+          "name": {
+            "en": "Exporter's reference number"
+          }
+        },
+        {
+          "code": "ET",
+          "name": {
+            "en": "Excess transportation number"
+          }
+        },
+        {
+          "code": "EX",
+          "name": {
+            "en": "Export permit identifier"
+          }
+        },
+        {
+          "code": "FC",
+          "name": {
+            "en": "Fiscal number"
+          }
+        },
+        {
+          "code": "FF",
+          "name": {
+            "en": "Consignment identifier, freight forwarder assigned"
+          }
+        },
+        {
+          "code": "FI",
+          "name": {
+            "en": "File line identifier"
+          }
+        },
+        {
+          "code": "FLW",
+          "name": {
+            "en": "Flow reference number"
+          }
+        },
+        {
+          "code": "FN",
+          "name": {
+            "en": "Freight bill number"
+          }
+        },
+        {
+          "code": "FO",
+          "name": {
+            "en": "Foreign exchange"
+          }
+        },
+        {
+          "code": "FS",
+          "name": {
+            "en": "Final sequence number"
+          }
+        },
+        {
+          "code": "FT",
+          "name": {
+            "en": "Free zone identifier"
+          }
+        },
+        {
+          "code": "FV",
+          "name": {
+            "en": "File version number"
+          }
+        },
+        {
+          "code": "FX",
+          "name": {
+            "en": "Foreign exchange contract number"
+          }
+        },
+        {
+          "code": "GA",
+          "name": {
+            "en": "Standard's number"
+          }
+        },
+        {
+          "code": "GC",
+          "name": {
+            "en": "Government contract number"
+          }
+        },
+        {
+          "code": "GD",
+          "name": {
+            "en": "Standard's code number"
+          }
+        },
+        {
+          "code": "GDN",
+          "name": {
+            "en": "General declaration number"
+          }
+        },
+        {
+          "code": "GN",
+          "name": {
+            "en": "Government reference number"
+          }
+        },
+        {
+          "code": "HS",
+          "name": {
+            "en": "Harmonised system number"
+          }
+        },
+        {
+          "code": "HWB",
+          "name": {
+            "en": "House waybill number"
+          }
+        },
+        {
+          "code": "IA",
+          "name": {
+            "en": "Internal vendor number"
+          }
+        },
+        {
+          "code": "IB",
+          "name": {
+            "en": "In bond number"
+          }
+        },
+        {
+          "code": "ICA",
+          "name": {
+            "en": "IATA cargo agent code number"
+          }
+        },
+        {
+          "code": "ICE",
+          "name": {
+            "en": "Insurance certificate reference number"
+          }
+        },
+        {
+          "code": "ICO",
+          "name": {
+            "en": "Insurance contract reference number"
+          }
+        },
+        {
+          "code": "II",
+          "name": {
+            "en": "Initial sample inspection report number"
+          }
+        },
+        {
+          "code": "IL",
+          "name": {
+            "en": "Internal order number"
+          }
+        },
+        {
+          "code": "INB",
+          "name": {
+            "en": "Intermediary broker"
+          }
+        },
+        {
+          "code": "INN",
+          "name": {
+            "en": "Interchange number new"
+          }
+        },
+        {
+          "code": "INO",
+          "name": {
+            "en": "Interchange number old"
+          }
+        },
+        {
+          "code": "IP",
+          "name": {
+            "en": "Import permit identifier"
+          }
+        },
+        {
+          "code": "IS",
+          "name": {
+            "en": "Invoice number suffix"
+          }
+        },
+        {
+          "code": "IT",
+          "name": {
+            "en": "Internal customer number"
+          }
+        },
+        {
+          "code": "IV",
+          "name": {
+            "en": "Invoice document identifier"
+          }
+        },
+        {
+          "code": "JB",
+          "name": {
+            "en": "Job number"
+          }
+        },
+        {
+          "code": "JE",
+          "name": {
+            "en": "Ending job sequence number"
+          }
+        },
+        {
+          "code": "LA",
+          "name": {
+            "en": "Shipping label serial number"
+          }
+        },
+        {
+          "code": "LAN",
+          "name": {
+            "en": "Loading authorisation identifier"
+          }
+        },
+        {
+          "code": "LAR",
+          "name": {
+            "en": "Lower number in range"
+          }
+        },
+        {
+          "code": "LB",
+          "name": {
+            "en": "Lockbox"
+          }
+        },
+        {
+          "code": "LC",
+          "name": {
+            "en": "Letter of credit number"
+          }
+        },
+        {
+          "code": "LI",
+          "name": {
+            "en": "Document line identifier"
+          }
+        },
+        {
+          "code": "LO",
+          "name": {
+            "en": "Load planning number"
+          }
+        },
+        {
+          "code": "LRC",
+          "name": {
+            "en": "Reservation office identifier"
+          }
+        },
+        {
+          "code": "LS",
+          "name": {
+            "en": "Bar coded label serial number"
+          }
+        },
+        {
+          "code": "MA",
+          "name": {
+            "en": "Ship notice/manifest number"
+          }
+        },
+        {
+          "code": "MB",
+          "name": {
+            "en": "Master bill of lading number"
+          }
+        },
+        {
+          "code": "MF",
+          "name": {
+            "en": "Manufacturer's part number"
+          }
+        },
+        {
+          "code": "MG",
+          "name": {
+            "en": "Meter unit number"
+          }
+        },
+        {
+          "code": "MH",
+          "name": {
+            "en": "Manufacturing order number"
+          }
+        },
+        {
+          "code": "MR",
+          "name": {
+            "en": "Message recipient"
+          }
+        },
+        {
+          "code": "MRN",
+          "name": {
+            "en": "Mailing reference number"
+          }
+        },
+        {
+          "code": "MS",
+          "name": {
+            "en": "Message sender"
+          }
+        },
+        {
+          "code": "MSS",
+          "name": {
+            "en": "Manufacturer's material safety data sheet number"
+          }
+        },
+        {
+          "code": "MWB",
+          "name": {
+            "en": "Master air waybill number"
+          }
+        },
+        {
+          "code": "NA",
+          "name": {
+            "en": "North American hazardous goods classification number"
+          }
+        },
+        {
+          "code": "NF",
+          "name": {
+            "en": "Nota Fiscal"
+          }
+        },
+        {
+          "code": "OH",
+          "name": {
+            "en": "Current invoice number"
+          }
+        },
+        {
+          "code": "OI",
+          "name": {
+            "en": "Previous invoice number"
+          }
+        },
+        {
+          "code": "ON",
+          "name": {
+            "en": "Order document identifier, buyer assigned"
+          }
+        },
+        {
+          "code": "OP",
+          "name": {
+            "en": "Original purchase order"
+          }
+        },
+        {
+          "code": "OR",
+          "name": {
+            "en": "General order number"
+          }
+        },
+        {
+          "code": "PB",
+          "name": {
+            "en": "Payer's financial institution account number"
+          }
+        },
+        {
+          "code": "PC",
+          "name": {
+            "en": "Production code"
+          }
+        },
+        {
+          "code": "PD",
+          "name": {
+            "en": "Promotion deal number"
+          }
+        },
+        {
+          "code": "PE",
+          "name": {
+            "en": "Plant number"
+          }
+        },
+        {
+          "code": "PF",
+          "name": {
+            "en": "Prime contractor contract number"
+          }
+        },
+        {
+          "code": "PI",
+          "name": {
+            "en": "Price list version number"
+          }
+        },
+        {
+          "code": "PK",
+          "name": {
+            "en": "Packing list number"
+          }
+        },
+        {
+          "code": "PL",
+          "name": {
+            "en": "Price list number"
+          }
+        },
+        {
+          "code": "POR",
+          "name": {
+            "en": "Purchase order response number"
+          }
+        },
+        {
+          "code": "PP",
+          "name": {
+            "en": "Purchase order change number"
+          }
+        },
+        {
+          "code": "PQ",
+          "name": {
+            "en": "Payment reference"
+          }
+        },
+        {
+          "code": "PR",
+          "name": {
+            "en": "Price quote number"
+          }
+        },
+        {
+          "code": "PS",
+          "name": {
+            "en": "Purchase order number suffix"
+          }
+        },
+        {
+          "code": "PW",
+          "name": {
+            "en": "Prior purchase order number"
+          }
+        },
+        {
+          "code": "PY",
+          "name": {
+            "en": "Payee's financial institution account number"
+          }
+        },
+        {
+          "code": "RA",
+          "name": {
+            "en": "Remittance advice number"
+          }
+        },
+        {
+          "code": "RC",
+          "name": {
+            "en": "Rail/road routing code"
+          }
+        },
+        {
+          "code": "RCN",
+          "name": {
+            "en": "Railway consignment note number"
+          }
+        },
+        {
+          "code": "RE",
+          "name": {
+            "en": "Release number"
+          }
+        },
+        {
+          "code": "REN",
+          "name": {
+            "en": "Consignment receipt identifier"
+          }
+        },
+        {
+          "code": "RF",
+          "name": {
+            "en": "Export reference number"
+          }
+        },
+        {
+          "code": "RR",
+          "name": {
+            "en": "Payer's financial institution transit routing No.(ACH"
+          }
+        },
+        {
+          "code": "RT",
+          "name": {
+            "en": "Payee's financial institution transit routing No."
+          }
+        },
+        {
+          "code": "SA",
+          "name": {
+            "en": "Sales person number"
+          }
+        },
+        {
+          "code": "SB",
+          "name": {
+            "en": "Sales region number"
+          }
+        },
+        {
+          "code": "SD",
+          "name": {
+            "en": "Sales department number"
+          }
+        },
+        {
+          "code": "SE",
+          "name": {
+            "en": "Serial number"
+          }
+        },
+        {
+          "code": "SEA",
+          "name": {
+            "en": "Allocated seat"
+          }
+        },
+        {
+          "code": "SF",
+          "name": {
+            "en": "Ship from"
+          }
+        },
+        {
+          "code": "SH",
+          "name": {
+            "en": "Previous highest schedule number"
+          }
+        },
+        {
+          "code": "SI",
+          "name": {
+            "en": "SID (Shipper's identifying number for shipment)"
+          }
+        },
+        {
+          "code": "SM",
+          "name": {
+            "en": "Sales office number"
+          }
+        },
+        {
+          "code": "SN",
+          "name": {
+            "en": "Transport equipment seal identifier"
+          }
+        },
+        {
+          "code": "SP",
+          "name": {
+            "en": "Scan line"
+          }
+        },
+        {
+          "code": "SQ",
+          "name": {
+            "en": "Equipment sequence number"
+          }
+        },
+        {
+          "code": "SRN",
+          "name": {
+            "en": "Shipment reference number"
+          }
+        },
+        {
+          "code": "SS",
+          "name": {
+            "en": "Sellers reference number"
+          }
+        },
+        {
+          "code": "STA",
+          "name": {
+            "en": "Station reference number"
+          }
+        },
+        {
+          "code": "SW",
+          "name": {
+            "en": "Swap order number"
+          }
+        },
+        {
+          "code": "SZ",
+          "name": {
+            "en": "Specification number"
+          }
+        },
+        {
+          "code": "TB",
+          "name": {
+            "en": "Trucker's bill of lading"
+          }
+        },
+        {
+          "code": "TCR",
+          "name": {
+            "en": "Terminal operator's consignment reference"
+          }
+        },
+        {
+          "code": "TE",
+          "name": {
+            "en": "Telex message number"
+          }
+        },
+        {
+          "code": "TF",
+          "name": {
+            "en": "Transfer number"
+          }
+        },
+        {
+          "code": "TI",
+          "name": {
+            "en": "TIR carnet number"
+          }
+        },
+        {
+          "code": "TIN",
+          "name": {
+            "en": "Transport instruction number"
+          }
+        },
+        {
+          "code": "TL",
+          "name": {
+            "en": "Tax exemption licence number"
+          }
+        },
+        {
+          "code": "TN",
+          "name": {
+            "en": "Transaction reference number"
+          }
+        },
+        {
+          "code": "TP",
+          "name": {
+            "en": "Test report number"
+          }
+        },
+        {
+          "code": "UAR",
+          "name": {
+            "en": "Upper number of range"
+          }
+        },
+        {
+          "code": "UC",
+          "name": {
+            "en": "Ultimate customer's reference number"
+          }
+        },
+        {
+          "code": "UCN",
+          "name": {
+            "en": "Unique consignment reference number"
+          }
+        },
+        {
+          "code": "UN",
+          "name": {
+            "en": "United Nations Dangerous Goods identifier"
+          }
+        },
+        {
+          "code": "UO",
+          "name": {
+            "en": "Ultimate customer's order number"
+          }
+        },
+        {
+          "code": "URI",
+          "name": {
+            "en": "Uniform Resource Identifier"
+          }
+        },
+        {
+          "code": "VA",
+          "name": {
+            "en": "VAT registration number"
+          }
+        },
+        {
+          "code": "VC",
+          "name": {
+            "en": "Vendor contract number"
+          }
+        },
+        {
+          "code": "VGR",
+          "name": {
+            "en": "Transport equipment gross mass verification reference"
+          }
+        },
+        {
+          "code": "VM",
+          "name": {
+            "en": "Vessel identifier"
+          }
+        },
+        {
+          "code": "VN",
+          "name": {
+            "en": "Order number (vendor)"
+          }
+        },
+        {
+          "code": "VON",
+          "name": {
+            "en": "Voyage number"
+          }
+        },
+        {
+          "code": "VOR",
+          "name": {
+            "en": "Transport equipment gross mass verification order reference"
+          }
+        },
+        {
+          "code": "VP",
+          "name": {
+            "en": "Vendor product number"
+          }
+        },
+        {
+          "code": "VR",
+          "name": {
+            "en": "Vendor ID number"
+          }
+        },
+        {
+          "code": "VS",
+          "name": {
+            "en": "Vendor order number suffix"
+          }
+        },
+        {
+          "code": "VT",
+          "name": {
+            "en": "Motor vehicle identification number"
+          }
+        },
+        {
+          "code": "VV",
+          "name": {
+            "en": "Voucher number"
+          }
+        },
+        {
+          "code": "WE",
+          "name": {
+            "en": "Warehouse entry number"
+          }
+        },
+        {
+          "code": "WM",
+          "name": {
+            "en": "Weight agreement number"
+          }
+        },
+        {
+          "code": "WN",
+          "name": {
+            "en": "Well number"
+          }
+        },
+        {
+          "code": "WR",
+          "name": {
+            "en": "Warehouse receipt number"
+          }
+        },
+        {
+          "code": "WS",
+          "name": {
+            "en": "Warehouse storage location number"
+          }
+        },
+        {
+          "code": "WY",
+          "name": {
+            "en": "Rail waybill number"
+          }
+        },
+        {
+          "code": "XA",
+          "name": {
+            "en": "Company/place registration number"
+          }
+        },
+        {
+          "code": "XC",
+          "name": {
+            "en": "Cargo control number"
+          }
+        },
+        {
+          "code": "XP",
+          "name": {
+            "en": "Previous cargo control number"
+          }
+        },
+        {
+          "code": "ZZZ",
+          "name": {
+            "en": "Mutually defined reference number"
           }
         }
       ]
@@ -351,505 +5263,505 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Instrument not defined"
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Automated clearing house credit"
           }
         },
         {
-          "value": "3",
+          "code": "3",
           "name": {
             "en": "Automated clearing house debit"
           }
         },
         {
-          "value": "4",
+          "code": "4",
           "name": {
             "en": "ACH demand debit reversal"
           }
         },
         {
-          "value": "5",
+          "code": "5",
           "name": {
             "en": "ACH demand credit reversal"
           }
         },
         {
-          "value": "6",
+          "code": "6",
           "name": {
             "en": "ACH demand credit"
           }
         },
         {
-          "value": "7",
+          "code": "7",
           "name": {
             "en": "ACH demand debit"
           }
         },
         {
-          "value": "8",
+          "code": "8",
           "name": {
             "en": "Hold"
           }
         },
         {
-          "value": "9",
+          "code": "9",
           "name": {
             "en": "National or regional clearing"
           }
         },
         {
-          "value": "10",
+          "code": "10",
           "name": {
             "en": "In cash"
           }
         },
         {
-          "value": "11",
+          "code": "11",
           "name": {
             "en": "ACH savings credit reversal"
           }
         },
         {
-          "value": "12",
+          "code": "12",
           "name": {
             "en": "ACH savings debit reversal"
           }
         },
         {
-          "value": "13",
+          "code": "13",
           "name": {
             "en": "ACH savings credit"
           }
         },
         {
-          "value": "14",
+          "code": "14",
           "name": {
             "en": "ACH savings debit"
           }
         },
         {
-          "value": "15",
+          "code": "15",
           "name": {
             "en": "Bookentry credit"
           }
         },
         {
-          "value": "16",
+          "code": "16",
           "name": {
             "en": "Bookentry debit"
           }
         },
         {
-          "value": "17",
+          "code": "17",
           "name": {
             "en": "ACH demand cash concentration/disbursement (CCD) credit"
           }
         },
         {
-          "value": "18",
+          "code": "18",
           "name": {
             "en": "ACH demand cash concentration/disbursement (CCD) debit"
           }
         },
         {
-          "value": "19",
+          "code": "19",
           "name": {
             "en": "ACH demand corporate trade payment (CTP) credit"
           }
         },
         {
-          "value": "20",
+          "code": "20",
           "name": {
             "en": "Cheque"
           }
         },
         {
-          "value": "21",
+          "code": "21",
           "name": {
             "en": "Banker's draft"
           }
         },
         {
-          "value": "22",
+          "code": "22",
           "name": {
             "en": "Certified banker's draft"
           }
         },
         {
-          "value": "23",
+          "code": "23",
           "name": {
             "en": "Bank cheque (issued by a banking or similar establishment)"
           }
         },
         {
-          "value": "24",
+          "code": "24",
           "name": {
             "en": "Bill of exchange awaiting acceptance"
           }
         },
         {
-          "value": "25",
+          "code": "25",
           "name": {
             "en": "Certified cheque"
           }
         },
         {
-          "value": "26",
+          "code": "26",
           "name": {
             "en": "Local cheque"
           }
         },
         {
-          "value": "27",
+          "code": "27",
           "name": {
             "en": "ACH demand corporate trade payment (CTP) debit"
           }
         },
         {
-          "value": "28",
+          "code": "28",
           "name": {
             "en": "ACH demand corporate trade exchange (CTX) credit"
           }
         },
         {
-          "value": "29",
+          "code": "29",
           "name": {
             "en": "ACH demand corporate trade exchange (CTX) debit"
           }
         },
         {
-          "value": "30",
+          "code": "30",
           "name": {
             "en": "Credit transfer"
           }
         },
         {
-          "value": "31",
+          "code": "31",
           "name": {
             "en": "Debit transfer"
           }
         },
         {
-          "value": "32",
+          "code": "32",
           "name": {
             "en": "ACH demand cash concentration/disbursement plus (CCD+)"
           }
         },
         {
-          "value": "33",
+          "code": "33",
           "name": {
             "en": "ACH demand cash concentration/disbursement plus (CCD+)"
           }
         },
         {
-          "value": "34",
+          "code": "34",
           "name": {
             "en": "ACH prearranged payment and deposit (PPD)"
           }
         },
         {
-          "value": "35",
+          "code": "35",
           "name": {
             "en": "ACH savings cash concentration/disbursement (CCD) credit"
           }
         },
         {
-          "value": "36",
+          "code": "36",
           "name": {
             "en": "ACH savings cash concentration/disbursement (CCD) debit"
           }
         },
         {
-          "value": "37",
+          "code": "37",
           "name": {
             "en": "ACH savings corporate trade payment (CTP) credit"
           }
         },
         {
-          "value": "38",
+          "code": "38",
           "name": {
             "en": "ACH savings corporate trade payment (CTP) debit"
           }
         },
         {
-          "value": "39",
+          "code": "39",
           "name": {
             "en": "ACH savings corporate trade exchange (CTX) credit"
           }
         },
         {
-          "value": "40",
+          "code": "40",
           "name": {
             "en": "ACH savings corporate trade exchange (CTX) debit"
           }
         },
         {
-          "value": "41",
+          "code": "41",
           "name": {
             "en": "ACH savings cash concentration/disbursement plus (CCD+)"
           }
         },
         {
-          "value": "42",
+          "code": "42",
           "name": {
             "en": "Payment to bank account"
           }
         },
         {
-          "value": "43",
+          "code": "43",
           "name": {
             "en": "ACH savings cash concentration/disbursement plus (CCD+)"
           }
         },
         {
-          "value": "44",
+          "code": "44",
           "name": {
             "en": "Accepted bill of exchange"
           }
         },
         {
-          "value": "45",
+          "code": "45",
           "name": {
             "en": "Referenced home-banking credit transfer"
           }
         },
         {
-          "value": "46",
+          "code": "46",
           "name": {
             "en": "Interbank debit transfer"
           }
         },
         {
-          "value": "47",
+          "code": "47",
           "name": {
             "en": "Home-banking debit transfer"
           }
         },
         {
-          "value": "48",
+          "code": "48",
           "name": {
             "en": "Bank card"
           }
         },
         {
-          "value": "49",
+          "code": "49",
           "name": {
             "en": "Direct debit"
           }
         },
         {
-          "value": "50",
+          "code": "50",
           "name": {
             "en": "Payment by postgiro"
           }
         },
         {
-          "value": "51",
+          "code": "51",
           "name": {
             "en": "FR, norme 6 97-Telereglement CFONB (French Organisation for"
           }
         },
         {
-          "value": "52",
+          "code": "52",
           "name": {
             "en": "Urgent commercial payment"
           }
         },
         {
-          "value": "53",
+          "code": "53",
           "name": {
             "en": "Urgent Treasury Payment"
           }
         },
         {
-          "value": "54",
+          "code": "54",
           "name": {
             "en": "Credit card"
           }
         },
         {
-          "value": "55",
+          "code": "55",
           "name": {
             "en": "Debit card"
           }
         },
         {
-          "value": "56",
+          "code": "56",
           "name": {
             "en": "Bankgiro"
           }
         },
         {
-          "value": "57",
+          "code": "57",
           "name": {
             "en": "Standing agreement"
           }
         },
         {
-          "value": "58",
+          "code": "58",
           "name": {
             "en": "SEPA credit transfer"
           }
         },
         {
-          "value": "59",
+          "code": "59",
           "name": {
             "en": "SEPA direct debit"
           }
         },
         {
-          "value": "60",
+          "code": "60",
           "name": {
             "en": "Promissory note"
           }
         },
         {
-          "value": "61",
+          "code": "61",
           "name": {
             "en": "Promissory note signed by the debtor"
           }
         },
         {
-          "value": "62",
+          "code": "62",
           "name": {
             "en": "Promissory note signed by the debtor and endorsed by a bank"
           }
         },
         {
-          "value": "63",
+          "code": "63",
           "name": {
             "en": "Promissory note signed by the debtor and endorsed by a"
           }
         },
         {
-          "value": "64",
+          "code": "64",
           "name": {
             "en": "Promissory note signed by a bank"
           }
         },
         {
-          "value": "65",
+          "code": "65",
           "name": {
             "en": "Promissory note signed by a bank and endorsed by another"
           }
         },
         {
-          "value": "66",
+          "code": "66",
           "name": {
             "en": "Promissory note signed by a third party"
           }
         },
         {
-          "value": "67",
+          "code": "67",
           "name": {
             "en": "Promissory note signed by a third party and endorsed by a"
           }
         },
         {
-          "value": "68",
+          "code": "68",
           "name": {
             "en": "Online payment service"
           }
         },
         {
-          "value": "69",
+          "code": "69",
           "name": {
             "en": "Transfer Advice"
           }
         },
         {
-          "value": "70",
+          "code": "70",
           "name": {
             "en": "Bill drawn by the creditor on the debtor"
           }
         },
         {
-          "value": "74",
+          "code": "74",
           "name": {
             "en": "Bill drawn by the creditor on a bank"
           }
         },
         {
-          "value": "75",
+          "code": "75",
           "name": {
             "en": "Bill drawn by the creditor, endorsed by another bank"
           }
         },
         {
-          "value": "76",
+          "code": "76",
           "name": {
             "en": "Bill drawn by the creditor on a bank and endorsed by a"
           }
         },
         {
-          "value": "77",
+          "code": "77",
           "name": {
             "en": "Bill drawn by the creditor on a third party"
           }
         },
         {
-          "value": "78",
+          "code": "78",
           "name": {
             "en": "Bill drawn by creditor on third party, accepted and"
           }
         },
         {
-          "value": "91",
+          "code": "91",
           "name": {
             "en": "Not transferable banker's draft"
           }
         },
         {
-          "value": "92",
+          "code": "92",
           "name": {
             "en": "Not transferable local cheque"
           }
         },
         {
-          "value": "93",
+          "code": "93",
           "name": {
             "en": "Reference giro"
           }
         },
         {
-          "value": "94",
+          "code": "94",
           "name": {
             "en": "Urgent giro"
           }
         },
         {
-          "value": "95",
+          "code": "95",
           "name": {
             "en": "Free format giro"
           }
         },
         {
-          "value": "96",
+          "code": "96",
           "name": {
             "en": "Requested method for payment was not used"
           }
         },
         {
-          "value": "97",
+          "code": "97",
           "name": {
             "en": "Clearing between partners"
           }
         },
         {
-          "value": "98",
+          "code": "98",
           "name": {
             "en": "JP, Electronically Recorded Monetary Claims"
           }
         },
         {
-          "value": "ZZZ",
+          "code": "ZZZ",
           "name": {
             "en": "Mutually defined"
           }
@@ -866,115 +5778,115 @@
       },
       "values": [
         {
-          "value": "41",
+          "code": "41",
           "name": {
             "en": "Bonus for works ahead of schedule"
           }
         },
         {
-          "value": "42",
+          "code": "42",
           "name": {
             "en": "Other bonus"
           }
         },
         {
-          "value": "60",
+          "code": "60",
           "name": {
             "en": "Manufacturer’s consumer discount"
           }
         },
         {
-          "value": "62",
+          "code": "62",
           "name": {
             "en": "Due to military status"
           }
         },
         {
-          "value": "63",
+          "code": "63",
           "name": {
             "en": "Due to work accident"
           }
         },
         {
-          "value": "64",
+          "code": "64",
           "name": {
             "en": "Special agreement"
           }
         },
         {
-          "value": "65",
+          "code": "65",
           "name": {
             "en": "Production error discount"
           }
         },
         {
-          "value": "66",
+          "code": "66",
           "name": {
             "en": "New outlet discount"
           }
         },
         {
-          "value": "67",
+          "code": "67",
           "name": {
             "en": "Sample discount"
           }
         },
         {
-          "value": "68",
+          "code": "68",
           "name": {
             "en": "End-of-range discount"
           }
         },
         {
-          "value": "70",
+          "code": "70",
           "name": {
             "en": "Incoterm discount"
           }
         },
         {
-          "value": "71",
+          "code": "71",
           "name": {
             "en": "Point of sales threshold allowance"
           }
         },
         {
-          "value": "88",
+          "code": "88",
           "name": {
             "en": "Material surcharge/deduction"
           }
         },
         {
-          "value": "95",
+          "code": "95",
           "name": {
             "en": "Discount"
           }
         },
         {
-          "value": "100",
+          "code": "100",
           "name": {
             "en": "Special rebate"
           }
         },
         {
-          "value": "102",
+          "code": "102",
           "name": {
             "en": "Fixed long term"
           }
         },
         {
-          "value": "103",
+          "code": "103",
           "name": {
             "en": "Temporary"
           }
         },
         {
-          "value": "104",
+          "code": "104",
           "name": {
             "en": "Standard"
           }
         },
         {
-          "value": "105",
+          "code": "105",
           "name": {
             "en": "Yearly turnover"
           }
@@ -991,129 +5903,1244 @@
       },
       "values": [
         {
-          "value": "A",
+          "code": "A",
           "name": {
             "en": "Mixed tax rate"
           }
         },
         {
-          "value": "AA",
+          "code": "AA",
           "name": {
             "en": "Lower rate"
           }
         },
         {
-          "value": "AB",
+          "code": "AB",
           "name": {
             "en": "Exempt for resale"
           }
         },
         {
-          "value": "AC",
+          "code": "AC",
           "name": {
             "en": "Exempt for resale"
           }
         },
         {
-          "value": "AD",
+          "code": "AD",
           "name": {
             "en": "Value Added Tax (VAT) due from a previous invoice"
           }
         },
         {
-          "value": "AE",
+          "code": "AE",
           "name": {
             "en": "VAT Reverse Charge"
           }
         },
         {
-          "value": "B",
+          "code": "B",
           "name": {
             "en": "Transferred (VAT)"
           }
         },
         {
-          "value": "C",
+          "code": "C",
           "name": {
             "en": "Duty paid by supplier"
           }
         },
         {
-          "value": "D",
+          "code": "D",
           "name": {
             "en": "Value Added Tax (VAT) margin scheme - travel agents"
           }
         },
         {
-          "value": "E",
+          "code": "E",
           "name": {
             "en": "Exempt from tax"
           }
         },
         {
-          "value": "F",
+          "code": "F",
           "name": {
             "en": "Value Added Tax (VAT) margin scheme - second-hand goods"
           }
         },
         {
-          "value": "G",
+          "code": "G",
           "name": {
             "en": "Free export item, tax not charged"
           }
         },
         {
-          "value": "H",
+          "code": "H",
           "name": {
             "en": "Higher rate"
           }
         },
         {
-          "value": "I",
+          "code": "I",
           "name": {
             "en": "Value Added Tax (VAT) margin scheme - works of art"
           }
         },
         {
-          "value": "J",
+          "code": "J",
           "name": {
             "en": "Value Added Tax (VAT) margin scheme - collector's items and antiques"
           }
         },
         {
-          "value": "K",
+          "code": "K",
           "name": {
             "en": "VAT exempt for EEA intra-community supply of goods and services"
           }
         },
         {
-          "value": "L",
+          "code": "L",
           "name": {
             "en": "Canary Islands general indirect tax"
           }
         },
         {
-          "value": "M",
+          "code": "M",
           "name": {
             "en": "Tax for production, services and importation in Ceuta and Melilla"
           }
         },
         {
-          "value": "O",
+          "code": "O",
           "name": {
             "en": "Services outside scope of tax"
           }
         },
         {
-          "value": "S",
+          "code": "S",
           "name": {
             "en": "Standard Rate"
           }
         },
         {
-          "value": "Z",
+          "code": "Z",
           "name": {
             "en": "Zero rated goods"
+          }
+        }
+      ]
+    },
+    {
+      "key": "untdid-item-type",
+      "name": {
+        "en": "UNTDID 7143 Item Type Identification Code"
+      },
+      "desc": {
+        "en": ""
+      },
+      "values": [
+        {
+          "code": "AA",
+          "name": {
+            "en": "Product version number"
+          }
+        },
+        {
+          "code": "AB",
+          "name": {
+            "en": "Assembly"
+          }
+        },
+        {
+          "code": "AC",
+          "name": {
+            "en": "HIBC (Health Industry Bar Code)"
+          }
+        },
+        {
+          "code": "AD",
+          "name": {
+            "en": "Cold roll number"
+          }
+        },
+        {
+          "code": "AE",
+          "name": {
+            "en": "Hot roll number"
+          }
+        },
+        {
+          "code": "AF",
+          "name": {
+            "en": "Slab number"
+          }
+        },
+        {
+          "code": "AG",
+          "name": {
+            "en": "Software revision number"
+          }
+        },
+        {
+          "code": "AH",
+          "name": {
+            "en": "UPC (Universal Product Code) Consumer package code (1-5-5)"
+          }
+        },
+        {
+          "code": "AI",
+          "name": {
+            "en": "UPC (Universal Product Code) Consumer package code (1-5-5-1)"
+          }
+        },
+        {
+          "code": "AJ",
+          "name": {
+            "en": "Sample number"
+          }
+        },
+        {
+          "code": "AK",
+          "name": {
+            "en": "Pack number"
+          }
+        },
+        {
+          "code": "AL",
+          "name": {
+            "en": "UPC (Universal Product Code) Shipping container code (1-2-5-5)"
+          }
+        },
+        {
+          "code": "AM",
+          "name": {
+            "en": "UPC (Universal Product Code)/EAN (European article number) Shipping container code (1-2-5-5-1)"
+          }
+        },
+        {
+          "code": "AN",
+          "name": {
+            "en": "UPC (Universal Product Code) suffix"
+          }
+        },
+        {
+          "code": "AO",
+          "name": {
+            "en": "State label code"
+          }
+        },
+        {
+          "code": "AP",
+          "name": {
+            "en": "Heat number"
+          }
+        },
+        {
+          "code": "AQ",
+          "name": {
+            "en": "Coupon number"
+          }
+        },
+        {
+          "code": "AR",
+          "name": {
+            "en": "Resource number"
+          }
+        },
+        {
+          "code": "AS",
+          "name": {
+            "en": "Work task number"
+          }
+        },
+        {
+          "code": "AT",
+          "name": {
+            "en": "Price look up number"
+          }
+        },
+        {
+          "code": "AU",
+          "name": {
+            "en": "NSN (North Atlantic Treaty Organization Stock Number)"
+          }
+        },
+        {
+          "code": "AV",
+          "name": {
+            "en": "Refined product code"
+          }
+        },
+        {
+          "code": "AW",
+          "name": {
+            "en": "Exhibit"
+          }
+        },
+        {
+          "code": "AX",
+          "name": {
+            "en": "End item"
+          }
+        },
+        {
+          "code": "AY",
+          "name": {
+            "en": "Federal supply classification"
+          }
+        },
+        {
+          "code": "AZ",
+          "name": {
+            "en": "Engineering data list"
+          }
+        },
+        {
+          "code": "BA",
+          "name": {
+            "en": "Milestone event number"
+          }
+        },
+        {
+          "code": "BB",
+          "name": {
+            "en": "Lot number"
+          }
+        },
+        {
+          "code": "BC",
+          "name": {
+            "en": "National drug code 4-4-2 format"
+          }
+        },
+        {
+          "code": "BD",
+          "name": {
+            "en": "National drug code 5-3-2 format"
+          }
+        },
+        {
+          "code": "BE",
+          "name": {
+            "en": "National drug code 5-4-1 format"
+          }
+        },
+        {
+          "code": "BF",
+          "name": {
+            "en": "National drug code 5-4-2 format"
+          }
+        },
+        {
+          "code": "BG",
+          "name": {
+            "en": "National drug code"
+          }
+        },
+        {
+          "code": "BH",
+          "name": {
+            "en": "Part number"
+          }
+        },
+        {
+          "code": "BI",
+          "name": {
+            "en": "Local Stock Number (LSN)"
+          }
+        },
+        {
+          "code": "BJ",
+          "name": {
+            "en": "Next higher assembly number"
+          }
+        },
+        {
+          "code": "BK",
+          "name": {
+            "en": "Data category"
+          }
+        },
+        {
+          "code": "BL",
+          "name": {
+            "en": "Control number"
+          }
+        },
+        {
+          "code": "BM",
+          "name": {
+            "en": "Special material identification code"
+          }
+        },
+        {
+          "code": "BN",
+          "name": {
+            "en": "Locally assigned control number"
+          }
+        },
+        {
+          "code": "BO",
+          "name": {
+            "en": "Buyer's colour"
+          }
+        },
+        {
+          "code": "BP",
+          "name": {
+            "en": "Buyer's part number"
+          }
+        },
+        {
+          "code": "BQ",
+          "name": {
+            "en": "Variable measure product code"
+          }
+        },
+        {
+          "code": "BR",
+          "name": {
+            "en": "Financial phase"
+          }
+        },
+        {
+          "code": "BS",
+          "name": {
+            "en": "Contract breakdown"
+          }
+        },
+        {
+          "code": "BT",
+          "name": {
+            "en": "Technical phase"
+          }
+        },
+        {
+          "code": "BU",
+          "name": {
+            "en": "Dye lot number"
+          }
+        },
+        {
+          "code": "BV",
+          "name": {
+            "en": "Daily statement of activities"
+          }
+        },
+        {
+          "code": "BW",
+          "name": {
+            "en": "Periodical statement of activities within a bilaterally agreed time period"
+          }
+        },
+        {
+          "code": "BX",
+          "name": {
+            "en": "Calendar week statement of activities"
+          }
+        },
+        {
+          "code": "BY",
+          "name": {
+            "en": "Calendar month statement of activities"
+          }
+        },
+        {
+          "code": "BZ",
+          "name": {
+            "en": "Original equipment number"
+          }
+        },
+        {
+          "code": "CC",
+          "name": {
+            "en": "Industry commodity code"
+          }
+        },
+        {
+          "code": "CG",
+          "name": {
+            "en": "Commodity grouping"
+          }
+        },
+        {
+          "code": "CL",
+          "name": {
+            "en": "Colour number"
+          }
+        },
+        {
+          "code": "CR",
+          "name": {
+            "en": "Contract number"
+          }
+        },
+        {
+          "code": "CV",
+          "name": {
+            "en": "Customs article number"
+          }
+        },
+        {
+          "code": "DR",
+          "name": {
+            "en": "Drawing revision number"
+          }
+        },
+        {
+          "code": "DW",
+          "name": {
+            "en": "Drawing"
+          }
+        },
+        {
+          "code": "EC",
+          "name": {
+            "en": "Engineering change level"
+          }
+        },
+        {
+          "code": "EF",
+          "name": {
+            "en": "Material code"
+          }
+        },
+        {
+          "code": "EMD",
+          "name": {
+            "en": "EMDN (European Medical Device Nomenclature)"
+          }
+        },
+        {
+          "code": "EN",
+          "name": {
+            "en": "International Article Numbering Association (EAN)"
+          }
+        },
+        {
+          "code": "FS",
+          "name": {
+            "en": "Fish species"
+          }
+        },
+        {
+          "code": "GB",
+          "name": {
+            "en": "Buyer's internal product group code"
+          }
+        },
+        {
+          "code": "GMN",
+          "name": {
+            "en": "Global model number"
+          }
+        },
+        {
+          "code": "GN",
+          "name": {
+            "en": "National product group code"
+          }
+        },
+        {
+          "code": "GS",
+          "name": {
+            "en": "General specification number"
+          }
+        },
+        {
+          "code": "HS",
+          "name": {
+            "en": "Harmonised system"
+          }
+        },
+        {
+          "code": "IB",
+          "name": {
+            "en": "ISBN (International Standard Book Number)"
+          }
+        },
+        {
+          "code": "IN",
+          "name": {
+            "en": "Buyer's item number"
+          }
+        },
+        {
+          "code": "IS",
+          "name": {
+            "en": "ISSN (International Standard Serial Number)"
+          }
+        },
+        {
+          "code": "IT",
+          "name": {
+            "en": "Buyer's style number"
+          }
+        },
+        {
+          "code": "IZ",
+          "name": {
+            "en": "Buyer's size code"
+          }
+        },
+        {
+          "code": "MA",
+          "name": {
+            "en": "Machine number"
+          }
+        },
+        {
+          "code": "MF",
+          "name": {
+            "en": "Manufacturer's (producer's) article number"
+          }
+        },
+        {
+          "code": "MN",
+          "name": {
+            "en": "Model number"
+          }
+        },
+        {
+          "code": "MP",
+          "name": {
+            "en": "Product/service identification number"
+          }
+        },
+        {
+          "code": "NB",
+          "name": {
+            "en": "Batch number"
+          }
+        },
+        {
+          "code": "ON",
+          "name": {
+            "en": "Customer order number"
+          }
+        },
+        {
+          "code": "PD",
+          "name": {
+            "en": "Part number description"
+          }
+        },
+        {
+          "code": "PL",
+          "name": {
+            "en": "Purchaser's order line number"
+          }
+        },
+        {
+          "code": "PO",
+          "name": {
+            "en": "Purchase order number"
+          }
+        },
+        {
+          "code": "PV",
+          "name": {
+            "en": "Promotional variant number"
+          }
+        },
+        {
+          "code": "QS",
+          "name": {
+            "en": "Buyer's qualifier for size"
+          }
+        },
+        {
+          "code": "RC",
+          "name": {
+            "en": "Returnable container number"
+          }
+        },
+        {
+          "code": "RN",
+          "name": {
+            "en": "Release number"
+          }
+        },
+        {
+          "code": "RU",
+          "name": {
+            "en": "Run number"
+          }
+        },
+        {
+          "code": "RY",
+          "name": {
+            "en": "Record keeping of model year"
+          }
+        },
+        {
+          "code": "SA",
+          "name": {
+            "en": "Supplier's article number"
+          }
+        },
+        {
+          "code": "SG",
+          "name": {
+            "en": "Standard group of products (mixed assortment)"
+          }
+        },
+        {
+          "code": "SK",
+          "name": {
+            "en": "SKU (Stock keeping unit)"
+          }
+        },
+        {
+          "code": "SN",
+          "name": {
+            "en": "Serial number"
+          }
+        },
+        {
+          "code": "SRS",
+          "name": {
+            "en": "RSK number"
+          }
+        },
+        {
+          "code": "SRT",
+          "name": {
+            "en": "IFLS (Institut Francais du Libre Service) 5 digit product"
+          }
+        },
+        {
+          "code": "SRU",
+          "name": {
+            "en": "IFLS (Institut Francais du Libre Service) 9 digit product"
+          }
+        },
+        {
+          "code": "SRV",
+          "name": {
+            "en": "GS1 Global Trade Item Number"
+          }
+        },
+        {
+          "code": "SRW",
+          "name": {
+            "en": "EDIS (Energy Data Identification System)"
+          }
+        },
+        {
+          "code": "SRX",
+          "name": {
+            "en": "Slaughter number"
+          }
+        },
+        {
+          "code": "SRY",
+          "name": {
+            "en": "Official animal number"
+          }
+        },
+        {
+          "code": "SRZ",
+          "name": {
+            "en": "Harmonized tariff schedule"
+          }
+        },
+        {
+          "code": "SS",
+          "name": {
+            "en": "Supplier's supplier article number"
+          }
+        },
+        {
+          "code": "SSA",
+          "name": {
+            "en": "46 Level DOT Code"
+          }
+        },
+        {
+          "code": "SSB",
+          "name": {
+            "en": "Airline Tariff 6D"
+          }
+        },
+        {
+          "code": "SSC",
+          "name": {
+            "en": "Title 49 Code of Federal Regulations"
+          }
+        },
+        {
+          "code": "SSD",
+          "name": {
+            "en": "International Civil Aviation Administration code"
+          }
+        },
+        {
+          "code": "SSE",
+          "name": {
+            "en": "Hazardous Materials ID DOT"
+          }
+        },
+        {
+          "code": "SSF",
+          "name": {
+            "en": "Endorsement"
+          }
+        },
+        {
+          "code": "SSG",
+          "name": {
+            "en": "Air Force Regulation 71-4"
+          }
+        },
+        {
+          "code": "SSH",
+          "name": {
+            "en": "Breed"
+          }
+        },
+        {
+          "code": "SSI",
+          "name": {
+            "en": "Chemical Abstract Service (CAS) registry number"
+          }
+        },
+        {
+          "code": "SSJ",
+          "name": {
+            "en": "Engine model designation"
+          }
+        },
+        {
+          "code": "SSK",
+          "name": {
+            "en": "Institutional Meat Purchase Specifications (IMPS) Number"
+          }
+        },
+        {
+          "code": "SSL",
+          "name": {
+            "en": "Price Look-Up code (PLU)"
+          }
+        },
+        {
+          "code": "SSM",
+          "name": {
+            "en": "International Maritime Organization (IMO) Code"
+          }
+        },
+        {
+          "code": "SSN",
+          "name": {
+            "en": "Bureau of Explosives 600-A (rail)"
+          }
+        },
+        {
+          "code": "SSO",
+          "name": {
+            "en": "United Nations Dangerous Goods List"
+          }
+        },
+        {
+          "code": "SSP",
+          "name": {
+            "en": "International Code of Botanical Nomenclature (ICBN)"
+          }
+        },
+        {
+          "code": "SSQ",
+          "name": {
+            "en": "International Code of Zoological Nomenclature (ICZN)"
+          }
+        },
+        {
+          "code": "SSR",
+          "name": {
+            "en": "International Code of Nomenclature for Cultivated Plants"
+          }
+        },
+        {
+          "code": "SSS",
+          "name": {
+            "en": "Distributor’s article identifier"
+          }
+        },
+        {
+          "code": "SST",
+          "name": {
+            "en": "Norwegian Classification system ENVA"
+          }
+        },
+        {
+          "code": "SSU",
+          "name": {
+            "en": "Supplier assigned classification"
+          }
+        },
+        {
+          "code": "SSV",
+          "name": {
+            "en": "Mexican classification system AMECE"
+          }
+        },
+        {
+          "code": "SSW",
+          "name": {
+            "en": "German classification system CCG"
+          }
+        },
+        {
+          "code": "SSX",
+          "name": {
+            "en": "Finnish classification system EANFIN"
+          }
+        },
+        {
+          "code": "SSY",
+          "name": {
+            "en": "Canadian classification system ICC"
+          }
+        },
+        {
+          "code": "SSZ",
+          "name": {
+            "en": "French classification system IFLS5"
+          }
+        },
+        {
+          "code": "ST",
+          "name": {
+            "en": "Style number"
+          }
+        },
+        {
+          "code": "STA",
+          "name": {
+            "en": "Dutch classification system CBL"
+          }
+        },
+        {
+          "code": "STB",
+          "name": {
+            "en": "Japanese classification system JICFS"
+          }
+        },
+        {
+          "code": "STC",
+          "name": {
+            "en": "European Union dairy subsidy eligibility classification"
+          }
+        },
+        {
+          "code": "STD",
+          "name": {
+            "en": "GS1 Spain classification system"
+          }
+        },
+        {
+          "code": "STE",
+          "name": {
+            "en": "GS1 Poland classification system"
+          }
+        },
+        {
+          "code": "STF",
+          "name": {
+            "en": "Federal Agency on Technical Regulating and Metrology of the"
+          }
+        },
+        {
+          "code": "STG",
+          "name": {
+            "en": "Efficient Consumer Response (ECR) Austria classification"
+          }
+        },
+        {
+          "code": "STH",
+          "name": {
+            "en": "GS1 Italy classification system"
+          }
+        },
+        {
+          "code": "STI",
+          "name": {
+            "en": "CPV (Common Procurement Vocabulary)"
+          }
+        },
+        {
+          "code": "STJ",
+          "name": {
+            "en": "IFDA (International Foodservice Distributors Association)"
+          }
+        },
+        {
+          "code": "STK",
+          "name": {
+            "en": "AHFS (American Hospital Formulary Service) pharmacologic -"
+          }
+        },
+        {
+          "code": "STL",
+          "name": {
+            "en": "ATC (Anatomical Therapeutic Chemical) classification system"
+          }
+        },
+        {
+          "code": "STM",
+          "name": {
+            "en": "CLADIMED (Classification des Dispositifs Médicaux)"
+          }
+        },
+        {
+          "code": "STN",
+          "name": {
+            "en": "CMDR (Canadian Medical Device Regulations) classification"
+          }
+        },
+        {
+          "code": "STO",
+          "name": {
+            "en": "CNDM (Classificazione Nazionale dei Dispositivi Medici)"
+          }
+        },
+        {
+          "code": "STP",
+          "name": {
+            "en": "UK DM\u0026D (Dictionary of Medicines \u0026 Devices) standard coding"
+          }
+        },
+        {
+          "code": "STQ",
+          "name": {
+            "en": "eCl@ss"
+          }
+        },
+        {
+          "code": "STR",
+          "name": {
+            "en": "EDMA (European Diagnostic Manufacturers Association)"
+          }
+        },
+        {
+          "code": "STS",
+          "name": {
+            "en": "EGAR (European Generic Article Register)"
+          }
+        },
+        {
+          "code": "STT",
+          "name": {
+            "en": "GMDN (Global Medical Devices Nomenclature)"
+          }
+        },
+        {
+          "code": "STU",
+          "name": {
+            "en": "GPI (Generic Product Identifier)"
+          }
+        },
+        {
+          "code": "STV",
+          "name": {
+            "en": "HCPCS (Healthcare Common Procedure Coding System)"
+          }
+        },
+        {
+          "code": "STW",
+          "name": {
+            "en": "ICPS (International Classification for Patient Safety)"
+          }
+        },
+        {
+          "code": "STX",
+          "name": {
+            "en": "MedDRA (Medical Dictionary for Regulatory Activities)"
+          }
+        },
+        {
+          "code": "STY",
+          "name": {
+            "en": "Medical Columbus"
+          }
+        },
+        {
+          "code": "STZ",
+          "name": {
+            "en": "NAPCS (North American Product Classification System)"
+          }
+        },
+        {
+          "code": "SUA",
+          "name": {
+            "en": "NHS (National Health Services) eClass"
+          }
+        },
+        {
+          "code": "SUB",
+          "name": {
+            "en": "US FDA (Food and Drug Administration) Product Code"
+          }
+        },
+        {
+          "code": "SUC",
+          "name": {
+            "en": "SNOMED CT (Systematized Nomenclature of Medicine-Clinical"
+          }
+        },
+        {
+          "code": "SUD",
+          "name": {
+            "en": "UMDNS (Universal Medical Device Nomenclature System)"
+          }
+        },
+        {
+          "code": "SUE",
+          "name": {
+            "en": "GS1 Global Returnable Asset Identifier, non-serialised"
+          }
+        },
+        {
+          "code": "SUF",
+          "name": {
+            "en": "IMEI"
+          }
+        },
+        {
+          "code": "SUG",
+          "name": {
+            "en": "Waste Type (EMSA)"
+          }
+        },
+        {
+          "code": "SUH",
+          "name": {
+            "en": "Ship's store classification type"
+          }
+        },
+        {
+          "code": "SUI",
+          "name": {
+            "en": "Emergency fire code"
+          }
+        },
+        {
+          "code": "SUJ",
+          "name": {
+            "en": "Emergency spillage code"
+          }
+        },
+        {
+          "code": "SUK",
+          "name": {
+            "en": "IMDG packing group"
+          }
+        },
+        {
+          "code": "SUL",
+          "name": {
+            "en": "MARPOL Code IBC"
+          }
+        },
+        {
+          "code": "SUM",
+          "name": {
+            "en": "IMDG subsidiary risk class"
+          }
+        },
+        {
+          "code": "TG",
+          "name": {
+            "en": "Transport group number"
+          }
+        },
+        {
+          "code": "TSN",
+          "name": {
+            "en": "Taxonomic Serial Number"
+          }
+        },
+        {
+          "code": "TSO",
+          "name": {
+            "en": "IMDG main hazard class"
+          }
+        },
+        {
+          "code": "TSP",
+          "name": {
+            "en": "EU Combined Nomenclature"
+          }
+        },
+        {
+          "code": "TSQ",
+          "name": {
+            "en": "Therapeutic classification number"
+          }
+        },
+        {
+          "code": "TSR",
+          "name": {
+            "en": "European Waste Catalogue"
+          }
+        },
+        {
+          "code": "TSS",
+          "name": {
+            "en": "Price grouping code"
+          }
+        },
+        {
+          "code": "TST",
+          "name": {
+            "en": "UNSPSC"
+          }
+        },
+        {
+          "code": "TSU",
+          "name": {
+            "en": "EU RoHS Directive"
+          }
+        },
+        {
+          "code": "UA",
+          "name": {
+            "en": "Ultimate customer's article number"
+          }
+        },
+        {
+          "code": "UP",
+          "name": {
+            "en": "UPC (Universal product code)"
+          }
+        },
+        {
+          "code": "VN",
+          "name": {
+            "en": "Vendor item number"
+          }
+        },
+        {
+          "code": "VP",
+          "name": {
+            "en": "Vendor's (seller's) part number"
+          }
+        },
+        {
+          "code": "VS",
+          "name": {
+            "en": "Vendor's supplemental item number"
+          }
+        },
+        {
+          "code": "VX",
+          "name": {
+            "en": "Vendor specification number"
+          }
+        },
+        {
+          "code": "ZZZ",
+          "name": {
+            "en": "Mutually defined"
           }
         }
       ]
@@ -1128,1093 +7155,1093 @@
       },
       "values": [
         {
-          "value": "AA",
+          "code": "AA",
           "name": {
             "en": "Advertising"
           }
         },
         {
-          "value": "AAA",
+          "code": "AAA",
           "name": {
             "en": "Telecommunication"
           }
         },
         {
-          "value": "AAC",
+          "code": "AAC",
           "name": {
             "en": "Technical modification"
           }
         },
         {
-          "value": "AAD",
+          "code": "AAD",
           "name": {
             "en": "Job-order production"
           }
         },
         {
-          "value": "AAE",
+          "code": "AAE",
           "name": {
             "en": "Outlays"
           }
         },
         {
-          "value": "AAF",
+          "code": "AAF",
           "name": {
             "en": "Off-premises"
           }
         },
         {
-          "value": "AAH",
+          "code": "AAH",
           "name": {
             "en": "Additional processing"
           }
         },
         {
-          "value": "AAI",
+          "code": "AAI",
           "name": {
             "en": "Attesting"
           }
         },
         {
-          "value": "AAS",
+          "code": "AAS",
           "name": {
             "en": "Acceptance"
           }
         },
         {
-          "value": "AAT",
+          "code": "AAT",
           "name": {
             "en": "Rush delivery"
           }
         },
         {
-          "value": "AAV",
+          "code": "AAV",
           "name": {
             "en": "Special construction"
           }
         },
         {
-          "value": "AAY",
+          "code": "AAY",
           "name": {
             "en": "Airport facilities"
           }
         },
         {
-          "value": "AAZ",
+          "code": "AAZ",
           "name": {
             "en": "Concession"
           }
         },
         {
-          "value": "ABA",
+          "code": "ABA",
           "name": {
             "en": "Compulsory storage"
           }
         },
         {
-          "value": "ABB",
+          "code": "ABB",
           "name": {
             "en": "Fuel removal"
           }
         },
         {
-          "value": "ABC",
+          "code": "ABC",
           "name": {
             "en": "Into plane"
           }
         },
         {
-          "value": "ABD",
+          "code": "ABD",
           "name": {
             "en": "Overtime"
           }
         },
         {
-          "value": "ABF",
+          "code": "ABF",
           "name": {
             "en": "Tooling"
           }
         },
         {
-          "value": "ABK",
+          "code": "ABK",
           "name": {
             "en": "Miscellaneous"
           }
         },
         {
-          "value": "ABL",
+          "code": "ABL",
           "name": {
             "en": "Additional packaging"
           }
         },
         {
-          "value": "ABN",
+          "code": "ABN",
           "name": {
             "en": "Dunnage"
           }
         },
         {
-          "value": "ABR",
+          "code": "ABR",
           "name": {
             "en": "Containerisation"
           }
         },
         {
-          "value": "ABS",
+          "code": "ABS",
           "name": {
             "en": "Carton packing"
           }
         },
         {
-          "value": "ABT",
+          "code": "ABT",
           "name": {
             "en": "Hessian wrapped"
           }
         },
         {
-          "value": "ABU",
+          "code": "ABU",
           "name": {
             "en": "Polyethylene wrap packing"
           }
         },
         {
-          "value": "ABW",
+          "code": "ABW",
           "name": {
             "en": "Customs duty charge"
           }
         },
         {
-          "value": "ACF",
+          "code": "ACF",
           "name": {
             "en": "Miscellaneous treatment"
           }
         },
         {
-          "value": "ACG",
+          "code": "ACG",
           "name": {
             "en": "Enamelling treatment"
           }
         },
         {
-          "value": "ACH",
+          "code": "ACH",
           "name": {
             "en": "Heat treatment"
           }
         },
         {
-          "value": "ACI",
+          "code": "ACI",
           "name": {
             "en": "Plating treatment"
           }
         },
         {
-          "value": "ACJ",
+          "code": "ACJ",
           "name": {
             "en": "Painting"
           }
         },
         {
-          "value": "ACK",
+          "code": "ACK",
           "name": {
             "en": "Polishing"
           }
         },
         {
-          "value": "ACL",
+          "code": "ACL",
           "name": {
             "en": "Priming"
           }
         },
         {
-          "value": "ACM",
+          "code": "ACM",
           "name": {
             "en": "Preservation treatment"
           }
         },
         {
-          "value": "ACS",
+          "code": "ACS",
           "name": {
             "en": "Fitting"
           }
         },
         {
-          "value": "ADC",
+          "code": "ADC",
           "name": {
             "en": "Consolidation"
           }
         },
         {
-          "value": "ADE",
+          "code": "ADE",
           "name": {
             "en": "Bill of lading"
           }
         },
         {
-          "value": "ADJ",
+          "code": "ADJ",
           "name": {
             "en": "Airbag"
           }
         },
         {
-          "value": "ADK",
+          "code": "ADK",
           "name": {
             "en": "Transfer"
           }
         },
         {
-          "value": "ADL",
+          "code": "ADL",
           "name": {
             "en": "Slipsheet"
           }
         },
         {
-          "value": "ADM",
+          "code": "ADM",
           "name": {
             "en": "Binding"
           }
         },
         {
-          "value": "ADN",
+          "code": "ADN",
           "name": {
             "en": "Repair or replacement of broken returnable package"
           }
         },
         {
-          "value": "ADO",
+          "code": "ADO",
           "name": {
             "en": "Efficient logistics"
           }
         },
         {
-          "value": "ADP",
+          "code": "ADP",
           "name": {
             "en": "Merchandising"
           }
         },
         {
-          "value": "ADQ",
+          "code": "ADQ",
           "name": {
             "en": "Product mix"
           }
         },
         {
-          "value": "ADR",
+          "code": "ADR",
           "name": {
             "en": "Other services"
           }
         },
         {
-          "value": "ADT",
+          "code": "ADT",
           "name": {
             "en": "Pick-up"
           }
         },
         {
-          "value": "ADW",
+          "code": "ADW",
           "name": {
             "en": "Chronic illness"
           }
         },
         {
-          "value": "ADY",
+          "code": "ADY",
           "name": {
             "en": "New product introduction"
           }
         },
         {
-          "value": "ADZ",
+          "code": "ADZ",
           "name": {
             "en": "Direct delivery"
           }
         },
         {
-          "value": "AEA",
+          "code": "AEA",
           "name": {
             "en": "Diversion"
           }
         },
         {
-          "value": "AEB",
+          "code": "AEB",
           "name": {
             "en": "Disconnect"
           }
         },
         {
-          "value": "AEC",
+          "code": "AEC",
           "name": {
             "en": "Distribution"
           }
         },
         {
-          "value": "AED",
+          "code": "AED",
           "name": {
             "en": "Handling of hazardous cargo"
           }
         },
         {
-          "value": "AEF",
+          "code": "AEF",
           "name": {
             "en": "Rents and leases"
           }
         },
         {
-          "value": "AEH",
+          "code": "AEH",
           "name": {
             "en": "Location differential"
           }
         },
         {
-          "value": "AEI",
+          "code": "AEI",
           "name": {
             "en": "Aircraft refueling"
           }
         },
         {
-          "value": "AEJ",
+          "code": "AEJ",
           "name": {
             "en": "Fuel shipped into storage"
           }
         },
         {
-          "value": "AEK",
+          "code": "AEK",
           "name": {
             "en": "Cash on delivery"
           }
         },
         {
-          "value": "AEL",
+          "code": "AEL",
           "name": {
             "en": "Small order processing service"
           }
         },
         {
-          "value": "AEM",
+          "code": "AEM",
           "name": {
             "en": "Clerical or administrative services"
           }
         },
         {
-          "value": "AEN",
+          "code": "AEN",
           "name": {
             "en": "Guarantee"
           }
         },
         {
-          "value": "AEO",
+          "code": "AEO",
           "name": {
             "en": "Collection and recycling"
           }
         },
         {
-          "value": "AEP",
+          "code": "AEP",
           "name": {
             "en": "Copyright fee collection"
           }
         },
         {
-          "value": "AES",
+          "code": "AES",
           "name": {
             "en": "Veterinary inspection service"
           }
         },
         {
-          "value": "AET",
+          "code": "AET",
           "name": {
             "en": "Pensioner service"
           }
         },
         {
-          "value": "AEU",
+          "code": "AEU",
           "name": {
             "en": "Medicine free pass holder"
           }
         },
         {
-          "value": "AEV",
+          "code": "AEV",
           "name": {
             "en": "Environmental protection service"
           }
         },
         {
-          "value": "AEW",
+          "code": "AEW",
           "name": {
             "en": "Environmental clean-up service"
           }
         },
         {
-          "value": "AEX",
+          "code": "AEX",
           "name": {
             "en": "National cheque processing service outside account area"
           }
         },
         {
-          "value": "AEY",
+          "code": "AEY",
           "name": {
             "en": "National payment service outside account area"
           }
         },
         {
-          "value": "AEZ",
+          "code": "AEZ",
           "name": {
             "en": "National payment service within account area"
           }
         },
         {
-          "value": "AJ",
+          "code": "AJ",
           "name": {
             "en": "Adjustments"
           }
         },
         {
-          "value": "AU",
+          "code": "AU",
           "name": {
             "en": "Authentication"
           }
         },
         {
-          "value": "CA",
+          "code": "CA",
           "name": {
             "en": "Cataloguing"
           }
         },
         {
-          "value": "CAB",
+          "code": "CAB",
           "name": {
             "en": "Cartage"
           }
         },
         {
-          "value": "CAD",
+          "code": "CAD",
           "name": {
             "en": "Certification"
           }
         },
         {
-          "value": "CAE",
+          "code": "CAE",
           "name": {
             "en": "Certificate of conformance"
           }
         },
         {
-          "value": "CAF",
+          "code": "CAF",
           "name": {
             "en": "Certificate of origin"
           }
         },
         {
-          "value": "CAI",
+          "code": "CAI",
           "name": {
             "en": "Cutting"
           }
         },
         {
-          "value": "CAJ",
+          "code": "CAJ",
           "name": {
             "en": "Consular service"
           }
         },
         {
-          "value": "CAK",
+          "code": "CAK",
           "name": {
             "en": "Customer collection"
           }
         },
         {
-          "value": "CAL",
+          "code": "CAL",
           "name": {
             "en": "Payroll payment service"
           }
         },
         {
-          "value": "CAM",
+          "code": "CAM",
           "name": {
             "en": "Cash transportation"
           }
         },
         {
-          "value": "CAN",
+          "code": "CAN",
           "name": {
             "en": "Home banking service"
           }
         },
         {
-          "value": "CAO",
+          "code": "CAO",
           "name": {
             "en": "Bilateral agreement service"
           }
         },
         {
-          "value": "CAP",
+          "code": "CAP",
           "name": {
             "en": "Insurance brokerage service"
           }
         },
         {
-          "value": "CAQ",
+          "code": "CAQ",
           "name": {
             "en": "Cheque generation"
           }
         },
         {
-          "value": "CAR",
+          "code": "CAR",
           "name": {
             "en": "Preferential merchandising location"
           }
         },
         {
-          "value": "CAS",
+          "code": "CAS",
           "name": {
             "en": "Crane"
           }
         },
         {
-          "value": "CAT",
+          "code": "CAT",
           "name": {
             "en": "Special colour service"
           }
         },
         {
-          "value": "CAU",
+          "code": "CAU",
           "name": {
             "en": "Sorting"
           }
         },
         {
-          "value": "CAV",
+          "code": "CAV",
           "name": {
             "en": "Battery collection and recycling"
           }
         },
         {
-          "value": "CAW",
+          "code": "CAW",
           "name": {
             "en": "Product take back fee"
           }
         },
         {
-          "value": "CAX",
+          "code": "CAX",
           "name": {
             "en": "Quality control released"
           }
         },
         {
-          "value": "CAY",
+          "code": "CAY",
           "name": {
             "en": "Quality control held"
           }
         },
         {
-          "value": "CAZ",
+          "code": "CAZ",
           "name": {
             "en": "Quality control embargo"
           }
         },
         {
-          "value": "CD",
+          "code": "CD",
           "name": {
             "en": "Car loading"
           }
         },
         {
-          "value": "CG",
+          "code": "CG",
           "name": {
             "en": "Cleaning"
           }
         },
         {
-          "value": "CS",
+          "code": "CS",
           "name": {
             "en": "Cigarette stamping"
           }
         },
         {
-          "value": "CT",
+          "code": "CT",
           "name": {
             "en": "Count and recount"
           }
         },
         {
-          "value": "DAB",
+          "code": "DAB",
           "name": {
             "en": "Layout/design"
           }
         },
         {
-          "value": "DAC",
+          "code": "DAC",
           "name": {
             "en": "Assortment allowance"
           }
         },
         {
-          "value": "DAD",
+          "code": "DAD",
           "name": {
             "en": "Driver assigned unloading"
           }
         },
         {
-          "value": "DAF",
+          "code": "DAF",
           "name": {
             "en": "Debtor bound"
           }
         },
         {
-          "value": "DAG",
+          "code": "DAG",
           "name": {
             "en": "Dealer allowance"
           }
         },
         {
-          "value": "DAH",
+          "code": "DAH",
           "name": {
             "en": "Allowance transferable to the consumer"
           }
         },
         {
-          "value": "DAI",
+          "code": "DAI",
           "name": {
             "en": "Growth of business"
           }
         },
         {
-          "value": "DAJ",
+          "code": "DAJ",
           "name": {
             "en": "Introduction allowance"
           }
         },
         {
-          "value": "DAK",
+          "code": "DAK",
           "name": {
             "en": "Multi-buy promotion"
           }
         },
         {
-          "value": "DAL",
+          "code": "DAL",
           "name": {
             "en": "Partnership"
           }
         },
         {
-          "value": "DAM",
+          "code": "DAM",
           "name": {
             "en": "Return handling"
           }
         },
         {
-          "value": "DAN",
+          "code": "DAN",
           "name": {
             "en": "Minimum order not fulfilled charge"
           }
         },
         {
-          "value": "DAO",
+          "code": "DAO",
           "name": {
             "en": "Point of sales threshold allowance"
           }
         },
         {
-          "value": "DAP",
+          "code": "DAP",
           "name": {
             "en": "Wholesaling discount"
           }
         },
         {
-          "value": "DAQ",
+          "code": "DAQ",
           "name": {
             "en": "Documentary credits transfer commission"
           }
         },
         {
-          "value": "DL",
+          "code": "DL",
           "name": {
             "en": "Delivery"
           }
         },
         {
-          "value": "EG",
+          "code": "EG",
           "name": {
             "en": "Engraving"
           }
         },
         {
-          "value": "EP",
+          "code": "EP",
           "name": {
             "en": "Expediting"
           }
         },
         {
-          "value": "ER",
+          "code": "ER",
           "name": {
             "en": "Exchange rate guarantee"
           }
         },
         {
-          "value": "FAA",
+          "code": "FAA",
           "name": {
             "en": "Fabrication"
           }
         },
         {
-          "value": "FAB",
+          "code": "FAB",
           "name": {
             "en": "Freight equalization"
           }
         },
         {
-          "value": "FAC",
+          "code": "FAC",
           "name": {
             "en": "Freight extraordinary handling"
           }
         },
         {
-          "value": "FC",
+          "code": "FC",
           "name": {
             "en": "Freight service"
           }
         },
         {
-          "value": "FH",
+          "code": "FH",
           "name": {
             "en": "Filling/handling"
           }
         },
         {
-          "value": "FI",
+          "code": "FI",
           "name": {
             "en": "Financing"
           }
         },
         {
-          "value": "GAA",
+          "code": "GAA",
           "name": {
             "en": "Grinding"
           }
         },
         {
-          "value": "HAA",
+          "code": "HAA",
           "name": {
             "en": "Hose"
           }
         },
         {
-          "value": "HD",
+          "code": "HD",
           "name": {
             "en": "Handling"
           }
         },
         {
-          "value": "HH",
+          "code": "HH",
           "name": {
             "en": "Hoisting and hauling"
           }
         },
         {
-          "value": "IAA",
+          "code": "IAA",
           "name": {
             "en": "Installation"
           }
         },
         {
-          "value": "IAB",
+          "code": "IAB",
           "name": {
             "en": "Installation and warranty"
           }
         },
         {
-          "value": "ID",
+          "code": "ID",
           "name": {
             "en": "Inside delivery"
           }
         },
         {
-          "value": "IF",
+          "code": "IF",
           "name": {
             "en": "Inspection"
           }
         },
         {
-          "value": "IN",
+          "code": "IN",
           "name": {
             "en": "Insurance"
           }
         },
         {
-          "value": "IR",
+          "code": "IR",
           "name": {
             "en": "Installation and training"
           }
         },
         {
-          "value": "IS",
+          "code": "IS",
           "name": {
             "en": "Invoicing"
           }
         },
         {
-          "value": "KO",
+          "code": "KO",
           "name": {
             "en": "Koshering"
           }
         },
         {
-          "value": "L1",
+          "code": "L1",
           "name": {
             "en": "Carrier count"
           }
         },
         {
-          "value": "LA",
+          "code": "LA",
           "name": {
             "en": "Labelling"
           }
         },
         {
-          "value": "LAA",
+          "code": "LAA",
           "name": {
             "en": "Labour"
           }
         },
         {
-          "value": "LAB",
+          "code": "LAB",
           "name": {
             "en": "Repair and return"
           }
         },
         {
-          "value": "LF",
+          "code": "LF",
           "name": {
             "en": "Legalisation"
           }
         },
         {
-          "value": "MAE",
+          "code": "MAE",
           "name": {
             "en": "Mounting"
           }
         },
         {
-          "value": "MI",
+          "code": "MI",
           "name": {
             "en": "Mail invoice"
           }
         },
         {
-          "value": "ML",
+          "code": "ML",
           "name": {
             "en": "Mail invoice to each location"
           }
         },
         {
-          "value": "NAA",
+          "code": "NAA",
           "name": {
             "en": "Non-returnable containers"
           }
         },
         {
-          "value": "OA",
+          "code": "OA",
           "name": {
             "en": "Outside cable connectors"
           }
         },
         {
-          "value": "PA",
+          "code": "PA",
           "name": {
             "en": "Invoice with shipment"
           }
         },
         {
-          "value": "PAA",
+          "code": "PAA",
           "name": {
             "en": "Phosphatizing (steel treatment)"
           }
         },
         {
-          "value": "PC",
+          "code": "PC",
           "name": {
             "en": "Packing"
           }
         },
         {
-          "value": "PL",
+          "code": "PL",
           "name": {
             "en": "Palletizing"
           }
         },
         {
-          "value": "PRV",
+          "code": "PRV",
           "name": {
             "en": "Price variation"
           }
         },
         {
-          "value": "RAB",
+          "code": "RAB",
           "name": {
             "en": "Repacking"
           }
         },
         {
-          "value": "RAC",
+          "code": "RAC",
           "name": {
             "en": "Repair"
           }
         },
         {
-          "value": "RAD",
+          "code": "RAD",
           "name": {
             "en": "Returnable container"
           }
         },
         {
-          "value": "RAF",
+          "code": "RAF",
           "name": {
             "en": "Restocking"
           }
         },
         {
-          "value": "RE",
+          "code": "RE",
           "name": {
             "en": "Re-delivery"
           }
         },
         {
-          "value": "RF",
+          "code": "RF",
           "name": {
             "en": "Refurbishing"
           }
         },
         {
-          "value": "RH",
+          "code": "RH",
           "name": {
             "en": "Rail wagon hire"
           }
         },
         {
-          "value": "RV",
+          "code": "RV",
           "name": {
             "en": "Loading"
           }
         },
         {
-          "value": "SA",
+          "code": "SA",
           "name": {
             "en": "Salvaging"
           }
         },
         {
-          "value": "SAA",
+          "code": "SAA",
           "name": {
             "en": "Shipping and handling"
           }
         },
         {
-          "value": "SAD",
+          "code": "SAD",
           "name": {
             "en": "Special packaging"
           }
         },
         {
-          "value": "SAE",
+          "code": "SAE",
           "name": {
             "en": "Stamping"
           }
         },
         {
-          "value": "SAI",
+          "code": "SAI",
           "name": {
             "en": "Consignee unload"
           }
         },
         {
-          "value": "SG",
+          "code": "SG",
           "name": {
             "en": "Shrink-wrap"
           }
         },
         {
-          "value": "SH",
+          "code": "SH",
           "name": {
             "en": "Special handling"
           }
         },
         {
-          "value": "SM",
+          "code": "SM",
           "name": {
             "en": "Special finish"
           }
         },
         {
-          "value": "ST",
+          "code": "ST",
           "name": {
             "en": "Stamp duties"
           }
         },
         {
-          "value": "SU",
+          "code": "SU",
           "name": {
             "en": "Set-up"
           }
         },
         {
-          "value": "TAB",
+          "code": "TAB",
           "name": {
             "en": "Tank renting"
           }
         },
         {
-          "value": "TAC",
+          "code": "TAC",
           "name": {
             "en": "Testing"
           }
         },
         {
-          "value": "TT",
+          "code": "TT",
           "name": {
             "en": "Transportation - third party billing"
           }
         },
         {
-          "value": "TV",
+          "code": "TV",
           "name": {
             "en": "Transportation by vendor"
           }
         },
         {
-          "value": "TX",
+          "code": "TX",
           "name": {
             "en": "Tax"
           }
         },
         {
-          "value": "V1",
+          "code": "V1",
           "name": {
             "en": "Drop yard"
           }
         },
         {
-          "value": "V2",
+          "code": "V2",
           "name": {
             "en": "Drop dock"
           }
         },
         {
-          "value": "WH",
+          "code": "WH",
           "name": {
             "en": "Warehousing"
           }
         },
         {
-          "value": "XAA",
+          "code": "XAA",
           "name": {
             "en": "Combine all same day shipment"
           }
         },
         {
-          "value": "YY",
+          "code": "YY",
           "name": {
             "en": "Split pick-up"
           }
         },
         {
-          "value": "ZZZ",
+          "code": "ZZZ",
           "name": {
             "en": "Mutually defined"
           }

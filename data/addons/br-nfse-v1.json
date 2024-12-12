@@ -27,14 +27,14 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Has incentive",
             "pt": "Possui incentivo"
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Does not have incentive",
             "pt": "Não possui incentivo"
@@ -53,49 +53,49 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Liable",
             "pt": "Exigível"
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Not subject",
             "pt": "Não incidência"
           }
         },
         {
-          "value": "3",
+          "code": "3",
           "name": {
             "en": "Exempt",
             "pt": "Isenção"
           }
         },
         {
-          "value": "4",
+          "code": "4",
           "name": {
             "en": "Export",
             "pt": "Exportação"
           }
         },
         {
-          "value": "5",
+          "code": "5",
           "name": {
             "en": "Immune",
             "pt": "Imunidade"
           }
         },
         {
-          "value": "6",
+          "code": "6",
           "name": {
             "en": "Suspended Judicially",
             "pt": "Suspensa por Decisão Judicial"
           }
         },
         {
-          "value": "7",
+          "code": "7",
           "name": {
             "en": "Suspended Administratively",
             "pt": "Suspensa por Processo Administrativo"
@@ -135,14 +135,14 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Opt-in",
             "pt": "Optante"
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Opt-out",
             "pt": "Não optante"
@@ -161,42 +161,42 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Municipal micro-enterprise",
             "pt": "Microempresa municipal"
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Estimated",
             "pt": "Estimativa"
           }
         },
         {
-          "value": "3",
+          "code": "3",
           "name": {
             "en": "Professional Society",
             "pt": "Sociedade de profissionais"
           }
         },
         {
-          "value": "4",
+          "code": "4",
           "name": {
             "en": "Cooperative",
             "pt": "Cooperativa"
           }
         },
         {
-          "value": "5",
+          "code": "5",
           "name": {
             "en": "Single micro-entrepreneur (MEI)",
             "pt": "Microempreendedor individual (MEI)"
           }
         },
         {
-          "value": "6",
+          "code": "6",
           "name": {
             "en": "Micro-enterprise or Small Business (ME EPP)",
             "pt": "Microempresa ou Empresa de Pequeno Porte (ME EPP)."

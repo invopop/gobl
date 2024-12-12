@@ -19,6 +19,10 @@ func main() {
 	}
 }
 
+// generate will output the JSON definitions of the catalogues to the data directory.
+// Please not that in the case of Catalogues specifically, the source data is the JSON
+// output. This implies that any changes to structures or refactoring will be reflected
+// in the output, despite having the same source.
 func generate() error {
 	for _, cd := range tax.AllCatalogueDefs() {
 		doc, err := schema.NewObject(cd)

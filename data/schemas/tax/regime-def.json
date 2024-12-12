@@ -272,31 +272,23 @@
         },
         "extensions": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
           },
           "type": "array",
           "title": "Extensions",
           "description": "Extensions defines the keys that can be used for extended or extra data inside the regime that\nis specific to the regime and cannot be easily determined from other GOBL structures.\nTypically these are used to define local codes for suppliers, customers, products, or tax rates."
         },
-        "tax_identity_type_keys": {
+        "identities": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
           },
           "type": "array",
-          "title": "Tax Identity Type Keys",
-          "description": "Tax Identity types specific for the regime and may be validated\nagainst."
-        },
-        "identity_keys": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
-          },
-          "type": "array",
-          "title": "Identity Keys",
-          "description": "Identity keys used in addition to regular tax identities and specific for the\nregime that may be validated against."
+          "title": "Identities",
+          "description": "Identities used in addition to regular tax identities and specific for the\nregime that may be validated against."
         },
         "payment_means_keys": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
           },
           "type": "array",
           "title": "Payment Means Keys",
@@ -304,7 +296,7 @@
         },
         "inbox_keys": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
           },
           "type": "array",
           "title": "Inbox Keys",
@@ -369,10 +361,10 @@
           "title": "Extension Key",
           "description": "Extension key that must be present in the document."
         },
-        "ext_value": {
-          "type": "string",
-          "title": "Extension Value",
-          "description": "Extension value that along side the key must be present for a match\nto happen. This cannot be used without an `ExtKey`. The value will\nbe copied to the note code if needed."
+        "ext_code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Extension Code",
+          "description": "Extension code that along side the key must be present for a match\nto happen. This cannot be used without an `cbc.Code`. The value will\nbe copied to the note code if needed."
         },
         "note": {
           "$ref": "https://gobl.org/draft-0/cbc/note",
@@ -445,7 +437,7 @@
         },
         "list": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
           },
           "type": "array",
           "title": "List",

@@ -81,21 +81,21 @@
       },
       "values": [
         {
-          "value": "PT",
+          "code": "PT",
           "name": {
             "en": "Mainland Portugal",
             "pt": "Portugal Continental"
           }
         },
         {
-          "value": "PT-AC",
+          "code": "PT-AC",
           "name": {
             "en": "Azores",
             "pt": "Açores"
           }
         },
         {
-          "value": "PT-MA",
+          "code": "PT-MA",
           "name": {
             "en": "Madeira",
             "pt": "Madeira"

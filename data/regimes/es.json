@@ -121,7 +121,7 @@
       ]
     }
   ],
-  "identity_keys": [
+  "identities": [
     {
       "key": "passport",
       "name": {

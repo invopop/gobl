@@ -31,7 +31,7 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Partial refund",
             "es": "Devolución parcial"
@@ -42,7 +42,7 @@
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Revoked",
             "es": "Anulación"
@@ -53,7 +53,7 @@
           }
         },
         {
-          "value": "3",
+          "code": "3",
           "name": {
             "en": "Discount",
             "es": "Descuento"
@@ -64,7 +64,7 @@
           }
         },
         {
-          "value": "4",
+          "code": "4",
           "name": {
             "en": "Adjustment",
             "es": "Ajuste"
@@ -75,7 +75,7 @@
           }
         },
         {
-          "value": "5",
+          "code": "5",
           "name": {
             "en": "Other",
             "es": "Otros"
@@ -95,28 +95,28 @@
       },
       "values": [
         {
-          "value": "1",
+          "code": "1",
           "name": {
             "en": "Interest",
             "es": "Intereses"
           }
         },
         {
-          "value": "2",
+          "code": "2",
           "name": {
             "en": "Pending charges",
             "es": "Gastos por cobrar"
           }
         },
         {
-          "value": "3",
+          "code": "3",
           "name": {
             "en": "Change in value",
             "es": "Cambio del valor"
           }
         },
         {
-          "value": "4",
+          "code": "4",
           "name": {
             "en": "Other",
             "es": "Otros"

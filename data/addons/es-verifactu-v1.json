@@ -16,56 +16,56 @@
       },
       "values": [
         {
-          "value": "F1",
+          "code": "F1",
           "name": {
             "en": "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
             "es": "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)"
           }
         },
         {
-          "value": "F2",
+          "code": "F2",
           "name": {
             "en": "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
             "es": "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)"
           }
         },
         {
-          "value": "F3",
+          "code": "F3",
           "name": {
             "en": "Invoice issued as a replacement for simplified invoices that have been billed and declared.",
             "es": "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas."
           }
         },
         {
-          "value": "R1",
+          "code": "R1",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
             "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA"
           }
         },
         {
-          "value": "R2",
+          "code": "R2",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.3",
             "es": "Factura rectificativa: artículo 80.3"
           }
         },
         {
-          "value": "R3",
+          "code": "R3",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.4",
             "es": "Factura rectificativa: artículo 80.4"
           }
         },
         {
-          "value": "R4",
+          "code": "R4",
           "name": {
             "en": "Rectified invoice: Other",
             "es": "Factura rectificativa: Resto"
           }
         },
         {
-          "value": "R5",
+          "code": "R5",
           "name": {
             "en": "Rectified invoice: simplified invoices",
             "es": "Factura rectificativa: facturas simplificadas"
@@ -84,14 +84,14 @@
       },
       "values": [
         {
-          "value": "S",
+          "code": "S",
           "name": {
             "en": "Substitution",
             "es": "Por Sustitución"
           }
         },
         {
-          "value": "I",
+          "code": "I",
           "name": {
             "en": "Differences",
             "es": "Por Diferencias"
@@ -110,28 +110,28 @@
       },
       "values": [
         {
-          "value": "S1",
+          "code": "S1",
           "name": {
             "en": "Subject and Not Exempt - Without reverse charge",
             "es": "Operación Sujeta y No exenta - Sin inversión del sujeto pasivo"
           }
         },
         {
-          "value": "S2",
+          "code": "S2",
           "name": {
             "en": "Subject and Not Exempt - With reverse charge",
             "es": "Operación Sujeta y No exenta - Con Inversión del sujeto pasivo"
           }
         },
         {
-          "value": "N1",
+          "code": "N1",
           "name": {
             "en": "Not Subject - Articles 7, 14, others",
             "es": "Operación No Sujeta artículo 7, 14, otros"
           }
         },
         {
-          "value": "N2",
+          "code": "N2",
           "name": {
             "en": "Not Subject - Due to location rules",
             "es": "Operación No Sujeta por Reglas de localización"
@@ -150,42 +150,42 @@
       },
       "values": [
         {
-          "value": "E1",
+          "code": "E1",
           "name": {
             "en": "Exempt: pursuant to Article 20. Exemptions in internal operations.",
             "es": "Exenta: por el artículo 20. Exenciones en operaciones interiores."
           }
         },
         {
-          "value": "E2",
+          "code": "E2",
           "name": {
             "en": "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
             "es": "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes."
           }
         },
         {
-          "value": "E3",
+          "code": "E3",
           "name": {
             "en": "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
             "es": "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones."
           }
         },
         {
-          "value": "E4",
+          "code": "E4",
           "name": {
             "en": "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
             "es": "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones."
           }
         },
         {
-          "value": "E5",
+          "code": "E5",
           "name": {
             "en": "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
             "es": "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro."
           }
         },
         {
-          "value": "E6",
+          "code": "E6",
           "name": {
             "en": "Exempt: pursuant to other reasons",
             "es": "Exenta: por otra causa"
@@ -204,119 +204,119 @@
       },
       "values": [
         {
-          "value": "01",
+          "code": "01",
           "name": {
             "en": "General regime operation",
             "es": "Operación de régimen general"
           }
         },
         {
-          "value": "02",
+          "code": "02",
           "name": {
             "en": "Export",
             "es": "Exportación"
           }
         },
         {
-          "value": "03",
+          "code": "03",
           "name": {
             "en": "Special regime for used goods, art objects, antiques and collectibles",
             "es": "Operaciones a las que se aplique el régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección"
           }
         },
         {
-          "value": "04",
+          "code": "04",
           "name": {
             "en": "Special regime for investment gold",
             "es": "Régimen especial del oro de inversión"
           }
         },
         {
-          "value": "05",
+          "code": "05",
           "name": {
             "en": "Special regime for travel agencies",
             "es": "Régimen especial de las agencias de viajes"
           }
         },
         {
-          "value": "06",
+          "code": "06",
           "name": {
             "en": "Special regime for VAT/IGIC groups (Advanced Level)",
             "es": "Régimen especial grupo de entidades en IVA/IGIC (Nivel Avanzado)"
           }
         },
         {
-          "value": "07",
+          "code": "07",
           "name": {
             "en": "Special cash accounting regime",
             "es": "Régimen especial del criterio de caja"
           }
         },
         {
-          "value": "08",
+          "code": "08",
           "name": {
             "en": "Operations subject to a different regime",
             "es": "Operaciones sujetas a un régimen diferente"
           }
         },
         {
-          "value": "09",
+          "code": "09",
           "name": {
             "en": "Billing of travel agency services acting as mediators in name and on behalf of others",
             "es": "Facturación de las prestaciones de servicios de agencias de viaje que actúan como mediadoras en nombre y por cuenta ajena"
           }
         },
         {
-          "value": "10",
+          "code": "10",
           "name": {
             "en": "Collection of professional fees or rights on behalf of third parties",
             "es": "Cobros por cuenta de terceros de honorarios profesionales o de derechos derivados de la propiedad industrial"
           }
         },
         {
-          "value": "11",
+          "code": "11",
           "name": {
             "en": "Business premises rental operations",
             "es": "Operaciones de arrendamiento de local de negocio"
           }
         },
         {
-          "value": "14",
+          "code": "14",
           "name": {
             "en": "Invoice with pending VAT/IGIC accrual in work certifications for Public Administration",
             "es": "Factura con IVA/IGIC pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública"
           }
         },
         {
-          "value": "15",
+          "code": "15",
           "name": {
             "en": "Invoice with pending VAT/IGIC accrual in successive tract operations",
             "es": "Factura con IVA/IGIC pendiente de devengo en operaciones de tracto sucesivo"
           }
         },
         {
-          "value": "17",
+          "code": "17",
           "name": {
             "en": "Operation under OSS and IOSS regimes (VAT) / Special regime for retail traders. (IGIC)",
             "es": "Operación acogida a alguno de los regímenes previstos en el capítulo XI del título IX (OSS e IOSS, IVA) / Régimen especial de comerciante minorista. (IGIC)"
           }
         },
         {
-          "value": "18",
+          "code": "18",
           "name": {
             "en": "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
             "es": "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)"
           }
         },
         {
-          "value": "19",
+          "code": "19",
           "name": {
             "en": "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
             "es": "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP)"
           }
         },
         {
-          "value": "20",
+          "code": "20",
           "name": {
             "en": "Simplified regime (VAT only)",
             "es": "Régimen simplificado (IVA only)"
