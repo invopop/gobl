@@ -17,9 +17,11 @@ func newCatalogue() *tax.CatalogueDef {
 		Name: i18n.NewString("UN/EDIFACT Data Elements"),
 		Extensions: []*cbc.Definition{
 			extDocumentTypes, // 1001
+			extReference,     // 1153
 			extPaymentMeans,  // 4461
 			extAllowance,     // 5189
 			extTaxCategory,   // 5305
+			extItemTypes,     // 7143
 			extCharge,        // 7161
 		},
 	}

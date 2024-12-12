@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
 - `in`: added Indian regime
 - `cef`: catalogue for CEF VATEX reason codes.
+- `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item Type Identification) extenions.
 
 ### Changed
 

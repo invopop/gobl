@@ -15,7 +15,8 @@ import (
 // Common identity keys that may be used to identify something, like an item, document,
 // person, organisation, or company. Ideally, these will only be used when no other
 // more structured properties are available inside GOBL. The keys suggested here are
-// non-binding and can be used as a reference for other implementations.
+// non-binding and can be used as a reference for other implementations or mappings to
+// scheme identifiers such as UNTDID 1153.
 const (
 	IdentityKeySKU       cbc.Key = "sku"       // stock code unit ID
 	IdentityKeyItem      cbc.Key = "item"      // item number
@@ -26,17 +27,24 @@ const (
 	IdentityKeyNational  cbc.Key = "national"  // National ID card number
 	IdentityKeyForeign   cbc.Key = "foreign"   // Foreigner ID card number
 	IdentityKeyResident  cbc.Key = "resident"  // Resident ID card number
-	IdentityKeyOther     cbc.Key = "other"     // Other ID card number
+	IdentityKeyISBN      cbc.Key = "isbn"      // International Standard Book Number
+	IdentityKeyHSN       cbc.Key = "hsn"       // Harmonized System of Nomenclature
+	IdentityKeyGTIN      cbc.Key = "gtin"      // GS1 Global Trade Item Number
+	IdentityKeyEAN       cbc.Key = "ean"       // European Article Number
+	IdentityKeyUPC       cbc.Key = "upc"       // UPC (Universal Product Code)
+	IdentityKeyIMEI      cbc.Key = "imei"      // International Mobile Equipment Identity
+	IdentityKeyOther     cbc.Key = "other"
 )
 
-// Identity is used to define a code for a specific context.
+// Identity is used to define a code for a specific context. Identities can be used for
+// a variety of purposes, such as identifying a person, organisation, item, or document.
 type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
 	// Country from which the identity was issued.
 	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
-	// Uniquely classify this identity using a key instead of a code.
+	// Uniquely classify this identity using a key instead of a type.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
 	// a particular context, country, or tax regime, and cannot be used
