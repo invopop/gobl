@@ -7,14 +7,12 @@
   "extensions": [
     {
       "key": "pt-saft-invoice-type",
-      "code": "",
       "name": {
         "en": "Invoice Type",
         "pt": "Tipo de Fatura"
       },
       "values": [
         {
-          "key": "",
           "code": "FT",
           "name": {
             "en": "Standard Invoice",
@@ -22,7 +20,6 @@
           }
         },
         {
-          "key": "",
           "code": "FS",
           "name": {
             "en": "Simplified Invoice",
@@ -30,7 +27,6 @@
           }
         },
         {
-          "key": "",
           "code": "FR",
           "name": {
             "en": "Invoice-Receipt",
@@ -38,7 +34,6 @@
           }
         },
         {
-          "key": "",
           "code": "ND",
           "name": {
             "en": "Debit Note",
@@ -46,7 +41,6 @@
           }
         },
         {
-          "key": "",
           "code": "NC",
           "name": {
             "en": "Credit Note",
@@ -57,14 +51,12 @@
     },
     {
       "key": "pt-saft-tax-rate",
-      "code": "",
       "name": {
         "en": "Tax Rate Code",
         "pt": "Código da Taxa de Imposto"
       },
       "values": [
         {
-          "key": "",
           "code": "RED",
           "name": {
             "en": "Reduced",
@@ -72,7 +64,6 @@
           }
         },
         {
-          "key": "",
           "code": "INT",
           "name": {
             "en": "Intermediate",
@@ -80,7 +71,6 @@
           }
         },
         {
-          "key": "",
           "code": "NOR",
           "name": {
             "en": "Normal",
@@ -88,7 +78,6 @@
           }
         },
         {
-          "key": "",
           "code": "ISE",
           "name": {
             "en": "Exempt",
@@ -96,7 +85,6 @@
           }
         },
         {
-          "key": "",
           "code": "OUT",
           "name": {
             "en": "Other",
@@ -107,14 +95,12 @@
     },
     {
       "key": "pt-saft-exemption",
-      "code": "",
       "name": {
         "en": "Tax exemption reason code",
         "pt": "Código do motivo de isenção de imposto"
       },
       "values": [
         {
-          "key": "",
           "code": "M01",
           "name": {
             "en": "Article 16, No. 6 of the VAT code",
@@ -122,7 +108,6 @@
           }
         },
         {
-          "key": "",
           "code": "M02",
           "name": {
             "en": "Article 6 of the Decree-Law 198/90 of 19th June",
@@ -130,7 +115,6 @@
           }
         },
         {
-          "key": "",
           "code": "M04",
           "name": {
             "en": "Exempt pursuant to article 13 of the VAT code",
@@ -138,7 +122,6 @@
           }
         },
         {
-          "key": "",
           "code": "M05",
           "name": {
             "en": "Exempt pursuant to article 14 of the VAT code",
@@ -146,7 +129,6 @@
           }
         },
         {
-          "key": "",
           "code": "M06",
           "name": {
             "en": "Exempt pursuant to article 15 of the VAT code",
@@ -154,7 +136,6 @@
           }
         },
         {
-          "key": "",
           "code": "M07",
           "name": {
             "en": "Exempt pursuant to article 9 of the VAT code",
@@ -162,7 +143,6 @@
           }
         },
         {
-          "key": "",
           "code": "M09",
           "name": {
             "en": "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
@@ -170,7 +150,6 @@
           }
         },
         {
-          "key": "",
           "code": "M10",
           "name": {
             "en": "VAT - exemption scheme / Article 57 of the VAT code",
@@ -178,7 +157,6 @@
           }
         },
         {
-          "key": "",
           "code": "M11",
           "name": {
             "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
@@ -186,7 +164,6 @@
           }
         },
         {
-          "key": "",
           "code": "M12",
           "name": {
             "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
@@ -194,7 +171,6 @@
           }
         },
         {
-          "key": "",
           "code": "M13",
           "name": {
             "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
@@ -202,7 +178,6 @@
           }
         },
         {
-          "key": "",
           "code": "M14",
           "name": {
             "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
@@ -210,7 +185,6 @@
           }
         },
         {
-          "key": "",
           "code": "M15",
           "name": {
             "en": "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
@@ -218,7 +192,6 @@
           }
         },
         {
-          "key": "",
           "code": "M16",
           "name": {
             "en": "Exempt pursuant to Article 14 of the RITI",
@@ -226,7 +199,6 @@
           }
         },
         {
-          "key": "",
           "code": "M19",
           "name": {
             "en": "Other exemptions - Temporary exemptions determined by specific legislation",
@@ -234,7 +206,6 @@
           }
         },
         {
-          "key": "",
           "code": "M20",
           "name": {
             "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
@@ -242,7 +213,6 @@
           }
         },
         {
-          "key": "",
           "code": "M21",
           "name": {
             "en": "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
@@ -250,7 +220,6 @@
           }
         },
         {
-          "key": "",
           "code": "M25",
           "name": {
             "en": "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
@@ -258,7 +227,6 @@
           }
         },
         {
-          "key": "",
           "code": "M30",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
@@ -266,7 +234,6 @@
           }
         },
         {
-          "key": "",
           "code": "M31",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
@@ -274,7 +241,6 @@
           }
         },
         {
-          "key": "",
           "code": "M32",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
@@ -282,7 +248,6 @@
           }
         },
         {
-          "key": "",
           "code": "M33",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
@@ -290,7 +255,6 @@
           }
         },
         {
-          "key": "",
           "code": "M40",
           "name": {
             "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
@@ -298,7 +262,6 @@
           }
         },
         {
-          "key": "",
           "code": "M41",
           "name": {
             "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
@@ -306,7 +269,6 @@
           }
         },
         {
-          "key": "",
           "code": "M42",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
@@ -314,7 +276,6 @@
           }
         },
         {
-          "key": "",
           "code": "M43",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
@@ -322,7 +283,6 @@
           }
         },
         {
-          "key": "",
           "code": "M99",
           "name": {
             "en": "Not subject to tax or not taxed",

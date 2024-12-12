@@ -13,7 +13,6 @@
       "list": [
         {
           "key": "simplified",
-          "code": "",
           "name": {
             "de": "Vereinfachte Rechnung",
             "en": "Simplified Invoice",
@@ -29,7 +28,6 @@
         },
         {
           "key": "reverse-charge",
-          "code": "",
           "name": {
             "de": "Umkehr der Steuerschuld",
             "en": "Reverse Charge",
@@ -39,7 +37,6 @@
         },
         {
           "key": "self-billed",
-          "code": "",
           "name": {
             "de": "Rechnung durch den Leistungsempfänger",
             "en": "Self-billed",
@@ -49,7 +46,6 @@
         },
         {
           "key": "customer-rates",
-          "code": "",
           "name": {
             "de": "Kundensätze",
             "en": "Customer rates",
@@ -59,7 +55,6 @@
         },
         {
           "key": "partial",
-          "code": "",
           "name": {
             "de": "Teilweise",
             "en": "Partial",
@@ -69,7 +64,6 @@
         },
         {
           "key": "copy",
-          "code": "",
           "name": {
             "en": "Copy",
             "es": "Copia"
@@ -77,7 +71,6 @@
         },
         {
           "key": "summary",
-          "code": "",
           "name": {
             "en": "Summary",
             "es": "Recapitulativa"
@@ -85,7 +78,6 @@
         },
         {
           "key": "simplified-scheme",
-          "code": "",
           "name": {
             "en": "Simplified tax scheme",
             "es": "Contribuyente en régimen simplificado"
@@ -93,7 +85,6 @@
         },
         {
           "key": "travel-agency",
-          "code": "",
           "name": {
             "en": "Special scheme for travel agencies",
             "es": "Régimen especial de las agencias de viajes"
@@ -101,7 +92,6 @@
         },
         {
           "key": "second-hand-goods",
-          "code": "",
           "name": {
             "en": "Special scheme for second-hand goods",
             "es": "Régimen especial de los bienes usados"
@@ -109,7 +99,6 @@
         },
         {
           "key": "art",
-          "code": "",
           "name": {
             "en": "Special scheme of works of art",
             "es": "Régimen especial de los objetos de arte"
@@ -117,7 +106,6 @@
         },
         {
           "key": "antiques",
-          "code": "",
           "name": {
             "en": "Special scheme of antiques and collectables",
             "es": "Régimen especial de las antigüedades y objetos de colección"
@@ -125,7 +113,6 @@
         },
         {
           "key": "cash-basis",
-          "code": "",
           "name": {
             "en": "Special scheme on cash basis",
             "es": "Régimen especial del criterio de caja"
@@ -137,7 +124,6 @@
   "identities": [
     {
       "key": "passport",
-      "code": "",
       "name": {
         "en": "Passport",
         "es": "Pasaporte"
@@ -145,7 +131,6 @@
     },
     {
       "key": "foreign",
-      "code": "",
       "name": {
         "en": "National ID Card or similar from a foreign country",
         "es": "Documento oficial de identificación expedido por el país o territorio de residencia"
@@ -153,7 +138,6 @@
     },
     {
       "key": "resident",
-      "code": "",
       "name": {
         "en": "Residential permit",
         "es": "Certificado de residencia"
@@ -161,7 +145,6 @@
     },
     {
       "key": "other",
-      "code": "",
       "name": {
         "en": "An other type of source not listed",
         "es": "Otro documento probatorio"

@@ -13,7 +13,6 @@
       "list": [
         {
           "key": "simplified",
-          "code": "",
           "name": {
             "de": "Vereinfachte Rechnung",
             "en": "Simplified Invoice",
@@ -29,7 +28,6 @@
         },
         {
           "key": "reverse-charge",
-          "code": "",
           "name": {
             "de": "Umkehr der Steuerschuld",
             "en": "Reverse Charge",
@@ -39,7 +37,6 @@
         },
         {
           "key": "self-billed",
-          "code": "",
           "name": {
             "de": "Rechnung durch den Leistungsempfänger",
             "en": "Self-billed",
@@ -49,7 +46,6 @@
         },
         {
           "key": "customer-rates",
-          "code": "",
           "name": {
             "de": "Kundensätze",
             "en": "Customer rates",
@@ -59,7 +55,6 @@
         },
         {
           "key": "partial",
-          "code": "",
           "name": {
             "de": "Teilweise",
             "en": "Partial",
@@ -69,7 +64,6 @@
         },
         {
           "key": "invoice-receipt",
-          "code": "",
           "name": {
             "en": "Invoice-receipt",
             "pt": "Fatura-recibo"
@@ -81,14 +75,12 @@
   "extensions": [
     {
       "key": "pt-region",
-      "code": "",
       "name": {
         "en": "Region Code",
         "pt": "Código da Região"
       },
       "values": [
         {
-          "key": "",
           "code": "PT",
           "name": {
             "en": "Mainland Portugal",
@@ -96,7 +88,6 @@
           }
         },
         {
-          "key": "",
           "code": "PT-AC",
           "name": {
             "en": "Azores",
@@ -104,7 +95,6 @@
           }
         },
         {
-          "key": "",
           "code": "PT-MA",
           "name": {
             "en": "Madeira",

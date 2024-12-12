@@ -29,7 +29,6 @@
       "required": [
         "key",
         "name",
-        "description",
         "extensions"
       ],
       "description": "A CatalogueDef contains a set of re-useable extensions, scenarios, and validators that can be used by addons or tax regimes."

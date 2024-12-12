@@ -4,11 +4,9 @@
   "name": {
     "en": "ISO/IEC Data Elements"
   },
-  "description": null,
   "extensions": [
     {
       "key": "iso-scheme-id",
-      "code": "",
       "name": {
         "en": "ISO/IEC 6523 Identifier scheme code"
       },

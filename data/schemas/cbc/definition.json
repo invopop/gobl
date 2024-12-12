@@ -51,8 +51,6 @@
       },
       "type": "object",
       "required": [
-        "key",
-        "code",
         "name"
       ],
       "description": "Definition defines properties of a key, code, or other value that has a specific meaning or utility."

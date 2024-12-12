@@ -10,7 +10,6 @@
   "extensions": [
     {
       "key": "co-dian-municipality",
-      "code": "",
       "name": {
         "en": "DIAN Municipality Code",
         "es": "Código de municipio DIAN"
@@ -22,7 +21,6 @@
     },
     {
       "key": "co-dian-credit-code",
-      "code": "",
       "name": {
         "en": "Credit Code",
         "es": "Código de Crédito"
@@ -33,7 +31,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Partial refund",
@@ -45,7 +42,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Revoked",
@@ -57,7 +53,6 @@
           }
         },
         {
-          "key": "",
           "code": "3",
           "name": {
             "en": "Discount",
@@ -69,7 +64,6 @@
           }
         },
         {
-          "key": "",
           "code": "4",
           "name": {
             "en": "Adjustment",
@@ -81,7 +75,6 @@
           }
         },
         {
-          "key": "",
           "code": "5",
           "name": {
             "en": "Other",
@@ -92,7 +85,6 @@
     },
     {
       "key": "co-dian-debit-code",
-      "code": "",
       "name": {
         "en": "Debit Code",
         "es": "Código de Débito"
@@ -103,7 +95,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Interest",
@@ -111,7 +102,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Pending charges",
@@ -119,7 +109,6 @@
           }
         },
         {
-          "key": "",
           "code": "3",
           "name": {
             "en": "Change in value",
@@ -127,7 +116,6 @@
           }
         },
         {
-          "key": "",
           "code": "4",
           "name": {
             "en": "Other",
@@ -141,7 +129,6 @@
   "identities": [
     {
       "key": "co-civil-register",
-      "code": "",
       "name": {
         "en": "Civil Registry",
         "es": "Registro Civil"
@@ -152,7 +139,6 @@
     },
     {
       "key": "co-id-card",
-      "code": "",
       "name": {
         "en": "Identity Card",
         "es": "Tarjeta de Identidad"
@@ -163,7 +149,6 @@
     },
     {
       "key": "co-citizen-id",
-      "code": "",
       "name": {
         "en": "Citizen Identity Card",
         "es": "Cédula de ciudadanía"
@@ -174,7 +159,6 @@
     },
     {
       "key": "co-foreigner-id-card",
-      "code": "",
       "name": {
         "en": "Foreigner Identity Card",
         "es": "Tarjeta de Extranjería"
@@ -185,7 +169,6 @@
     },
     {
       "key": "co-foreigner-id",
-      "code": "",
       "name": {
         "en": "Foreigner Citizen Identity",
         "es": "Cédula de extranjería"
@@ -196,7 +179,6 @@
     },
     {
       "key": "co-passport",
-      "code": "",
       "name": {
         "en": "Passport",
         "es": "Pasaporte"
@@ -207,7 +189,6 @@
     },
     {
       "key": "co-foreign-id",
-      "code": "",
       "name": {
         "en": "Foreign Document",
         "es": "Documento de identificación extranjero"
@@ -218,7 +199,6 @@
     },
     {
       "key": "co-pep",
-      "code": "",
       "name": {
         "en": "PEP - Special Permit to Stay",
         "es": "PEP - Permiso Especial de Permanencia"
@@ -229,7 +209,6 @@
     },
     {
       "key": "co-nuip",
-      "code": "",
       "name": {
         "en": "NUIP - National Unique Personal Identification Number",
         "es": "NUIP - Número Único de Identificación Personal"

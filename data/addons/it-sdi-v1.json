@@ -7,7 +7,6 @@
   "extensions": [
     {
       "key": "it-sdi-format",
-      "code": "",
       "name": {
         "en": "SDI Transmission Format",
         "it": "Formato Trasmissione SDI"
@@ -17,7 +16,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "FPA12",
           "name": {
             "en": "Public Administration",
@@ -25,7 +23,6 @@
           }
         },
         {
-          "key": "",
           "code": "FPR12",
           "name": {
             "en": "Private Parties (default)",
@@ -36,7 +33,6 @@
     },
     {
       "key": "it-sdi-document-type",
-      "code": "",
       "name": {
         "en": "SDI Document Type",
         "it": "Tipo Documento SDI"
@@ -46,7 +42,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "TD01",
           "name": {
             "en": "Regular Invoice",
@@ -54,7 +49,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD02",
           "name": {
             "en": "Advance or down payment on invoice",
@@ -62,7 +56,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD03",
           "name": {
             "en": "Advance or down payment on freelance invoice",
@@ -70,7 +63,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD04",
           "name": {
             "en": "Credit Note",
@@ -78,7 +70,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD05",
           "name": {
             "en": "Debit Note",
@@ -86,7 +77,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD06",
           "name": {
             "en": "Freelancer invoice with retained taxes",
@@ -94,7 +84,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD07",
           "name": {
             "en": "Simplified Invoice",
@@ -102,7 +91,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD08",
           "name": {
             "en": "Simplified Credit Note",
@@ -110,7 +98,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD09",
           "name": {
             "en": "Simplified Debit Note",
@@ -118,7 +105,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD16",
           "name": {
             "en": "Reverse charge",
@@ -126,7 +112,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD17",
           "name": {
             "en": "Self-billed Import",
@@ -134,7 +119,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD18",
           "name": {
             "en": "Self-billed EU Goods Import",
@@ -142,7 +126,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD19",
           "name": {
             "en": "Self-billed Goods Import",
@@ -150,7 +133,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD20",
           "name": {
             "en": "Self-billed Regularization",
@@ -158,7 +140,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD21",
           "name": {
             "en": "Self-billed invoice when ceiling exceeded",
@@ -166,7 +147,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD22",
           "name": {
             "en": "Self-billed for goods extracted from VAT warehouse",
@@ -174,7 +154,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD23",
           "name": {
             "en": "Self-billed for goods extracted from VAT warehouse with VAT payment",
@@ -182,7 +161,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD24",
           "name": {
             "en": "Deferred invoice ex art.21, c.4, lett. a) DPR 633/72",
@@ -190,7 +168,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD25",
           "name": {
             "en": "Deferred invoice ex art.21, c.4, third period lett. b) DPR 633/72",
@@ -198,7 +175,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD26",
           "name": {
             "en": "Sale of depreciable assets and for internal transfers (ex art.36 DPR 633/72",
@@ -206,7 +182,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD27",
           "name": {
             "en": "Self-billed for self consumption or for free transfer without recourse",
@@ -214,7 +189,6 @@
           }
         },
         {
-          "key": "",
           "code": "TD28",
           "name": {
             "en": "Purchases from San Marino with VAT (paper invoice)",
@@ -225,14 +199,12 @@
     },
     {
       "key": "it-sdi-fiscal-regime",
-      "code": "",
       "name": {
         "en": "Fiscal Regime Code",
         "it": "Codice Regime Fiscale"
       },
       "values": [
         {
-          "key": "",
           "code": "RF01",
           "name": {
             "en": "Ordinary",
@@ -240,7 +212,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF02",
           "name": {
             "en": "Minimum taxpayers (Art. 1, section 96-117, Italian Law 244/07)",
@@ -248,7 +219,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF04",
           "name": {
             "en": "Agriculture and connected activities and fishing (Arts. 34 and 34-bis, Italian Presidential Decree 633/72)",
@@ -256,7 +226,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF05",
           "name": {
             "en": "Sale of salts and tobaccos (Art. 74, section 1, Italian Presidential Decree 633/72)",
@@ -264,7 +233,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF06",
           "name": {
             "en": "Match sales (Art. 74, section 1, Italian Presidential Decree 633/72)",
@@ -272,7 +240,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF07",
           "name": {
             "en": "Publishing (Art. 74, section 1, Italian Presidential Decree 633/72)",
@@ -280,7 +247,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF08",
           "name": {
             "en": "Management of public telephone services (Art. 74, section 1, Italian Presidential Decree 633/72)",
@@ -288,7 +254,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF09",
           "name": {
             "en": "Resale of public transport and parking documents (Art. 74, section 1, Italian Presidential Decree 633/72)",
@@ -296,7 +261,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF10",
           "name": {
             "en": "Entertainment, gaming and other activities referred to by the tariff attached to Italian Presidential Decree 640/72 (Art. 74, section 6, Italian Presidential Decree 633/72)",
@@ -304,7 +268,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF11",
           "name": {
             "en": "Travel and tourism agencies (Art. 74-ter, Italian Presidential Decree 633/72)",
@@ -312,7 +275,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF12",
           "name": {
             "en": "Farmhouse accommodation/restaurants (Art. 5, section 2, Italian law 413/91)",
@@ -320,7 +282,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF13",
           "name": {
             "en": "Door-to-door sales (Art. 25-bis, section 6, Italian Presidential Decree 600/73)",
@@ -328,7 +289,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF14",
           "name": {
             "en": "Resale of used goods, artworks, antiques or collector's items (Art. 36, Italian Decree Law 41/95)",
@@ -336,7 +296,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF15",
           "name": {
             "en": "Artwork, antiques or collector's items auction agencies (Art. 40-bis, Italian Decree Law 41/95)",
@@ -344,7 +303,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF16",
           "name": {
             "en": "VAT paid in cash by P.A. (Art. 6, section 5, Italian Presidential Decree 633/72)",
@@ -352,7 +310,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF17",
           "name": {
             "en": "VAT paid in cash by subjects with business turnover below Euro 200,000 (Art. 7, Italian Decree Law 185/2008)",
@@ -360,7 +317,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF19",
           "name": {
             "en": "Flat rate (Art. 1, section 54-89, Italian Law 190/2014)",
@@ -368,7 +324,6 @@
           }
         },
         {
-          "key": "",
           "code": "RF18",
           "name": {
             "en": "Other",
@@ -379,14 +334,12 @@
     },
     {
       "key": "it-sdi-exempt",
-      "code": "",
       "name": {
         "en": "Exemption Code",
         "it": "Natura Esenzione"
       },
       "values": [
         {
-          "key": "",
           "code": "N1",
           "name": {
             "en": "Excluded pursuant to Art. 15, DPR 633/72",
@@ -394,7 +347,6 @@
           }
         },
         {
-          "key": "",
           "code": "N2.1",
           "name": {
             "en": "Not subject pursuant to Art. 7, DPR 633/72",
@@ -402,7 +354,6 @@
           }
         },
         {
-          "key": "",
           "code": "N2.2",
           "name": {
             "en": "Not subject - other",
@@ -410,7 +361,6 @@
           }
         },
         {
-          "key": "",
           "code": "N3.1",
           "name": {
             "en": "Not taxable - exports",
@@ -418,7 +368,6 @@
           }
         },
         {
-          "key": "",
           "code": "N3.2",
           "name": {
             "en": "Not taxable - intra-community supplies",
@@ -426,7 +375,6 @@
           }
         },
         {
-          "key": "",
           "code": "N3.3",
           "name": {
             "en": "Not taxable - transfers to San Marino",
@@ -434,7 +382,6 @@
           }
         },
         {
-          "key": "",
           "code": "N3.4",
           "name": {
             "en": "Not taxable - export supplies of goods and services",
@@ -442,7 +389,6 @@
           }
         },
         {
-          "key": "",
           "code": "N3.5",
           "name": {
             "en": "Not taxable - declaration of intent",
@@ -450,7 +396,6 @@
           }
         },
         {
-          "key": "",
           "code": "N3.6",
           "name": {
             "en": "Not taxable - other",
@@ -458,7 +403,6 @@
           }
         },
         {
-          "key": "",
           "code": "N4",
           "name": {
             "en": "Exempt",
@@ -466,7 +410,6 @@
           }
         },
         {
-          "key": "",
           "code": "N5",
           "name": {
             "en": "Margin regime / VAT not exposed",
@@ -474,7 +417,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.1",
           "name": {
             "en": "Reverse charge - Transfer of scrap and of other recyclable materials",
@@ -482,7 +424,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.2",
           "name": {
             "en": "Reverse charge - Transfer of gold and pure silver pursuant to law 7/2000 as well as used jewelery to OPO",
@@ -490,7 +431,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.3",
           "name": {
             "en": "Reverse charge - Construction subcontracting",
@@ -498,7 +438,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.4",
           "name": {
             "en": "Reverse charge - Transfer of buildings",
@@ -506,7 +445,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.5",
           "name": {
             "en": "Reverse charge - Transfer of mobile phones",
@@ -514,7 +452,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.6",
           "name": {
             "en": "Reverse charge - Transfer of electronic products",
@@ -522,7 +459,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.7",
           "name": {
             "en": "Reverse charge - provisions in the construction and related sectors",
@@ -530,7 +466,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.8",
           "name": {
             "en": "Reverse charge - transactions in the energy sector",
@@ -538,7 +473,6 @@
           }
         },
         {
-          "key": "",
           "code": "N6.9",
           "name": {
             "en": "Reverse charge - other cases",
@@ -546,7 +480,6 @@
           }
         },
         {
-          "key": "",
           "code": "N7",
           "name": {
             "en": "VAT paid in other EU countries (telecommunications, tele-broadcasting and electronic services provision pursuant to Art. 7 -octies letter a, b, art. 74-sexies Italian Presidential Decree 633/72)",
@@ -557,14 +490,12 @@
     },
     {
       "key": "it-sdi-retained",
-      "code": "",
       "name": {
         "en": "Retained Tax Payment Reason Code",
         "it": "Causale Pagamento Ritenuta"
       },
       "values": [
         {
-          "key": "",
           "code": "A",
           "name": {
             "en": "Self-employment services falling within the exercise of habitual art or profession",
@@ -572,7 +503,6 @@
           }
         },
         {
-          "key": "",
           "code": "B",
           "name": {
             "en": "Economic use of intellectual works, industrial patents, and processes, formulas or information related to experiences gained in the industrial, commercial or scientific field, by the author or inventor",
@@ -580,7 +510,6 @@
           }
         },
         {
-          "key": "",
           "code": "C",
           "name": {
             "en": "Profits deriving from contracts of association in participation and from contracts of co-interest, when the contribution consists exclusively of the provision of labor",
@@ -588,7 +517,6 @@
           }
         },
         {
-          "key": "",
           "code": "D",
           "name": {
             "en": "Profits due to the promoting partners and founding partners of capital companies",
@@ -596,7 +524,6 @@
           }
         },
         {
-          "key": "",
           "code": "E",
           "name": {
             "en": "Bills of exchange protests levied by municipal secretaries",
@@ -604,7 +531,6 @@
           }
         },
         {
-          "key": "",
           "code": "F",
           "name": {
             "en": "Allowances paid to honorary justices of the peace and honorary deputy prosecutors",
@@ -612,7 +538,6 @@
           }
         },
         {
-          "key": "",
           "code": "G",
           "name": {
             "en": "Allowances paid for the cessation of professional sports activities",
@@ -620,7 +545,6 @@
           }
         },
         {
-          "key": "",
           "code": "H",
           "name": {
             "en": "Allowances paid for the termination of agency relationships of individuals and partnerships, excluding amounts accrued up to December 31, 2003, already allocated for competence and taxed as business income",
@@ -628,7 +552,6 @@
           }
         },
         {
-          "key": "",
           "code": "I",
           "name": {
             "en": "Allowances paid for the cessation of notarial functions",
@@ -636,7 +559,6 @@
           }
         },
         {
-          "key": "",
           "code": "J",
           "name": {
             "en": "Fees paid to occasional truffle collectors not identified for value-added tax purposes, in relation to the sale of truffles",
@@ -644,7 +566,6 @@
           }
         },
         {
-          "key": "",
           "code": "K",
           "name": {
             "en": "Universal civil service checks referred to in Article 16 of Legislative Decree no. 40 of March 6, 2017",
@@ -652,7 +573,6 @@
           }
         },
         {
-          "key": "",
           "code": "L",
           "name": {
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by those entitled free of charge (e.g. heirs and legatees of the author and inventor)",
@@ -660,7 +580,6 @@
           }
         },
         {
-          "key": "",
           "code": "L1",
           "name": {
             "en": "Income deriving from the economic use of intellectual works, industrial patents, and processes, formulas, and information related to experiences gained in the industrial, commercial or scientific field, which are received by subjects who have purchased the rights to their use for valuable consideration",
@@ -668,7 +587,6 @@
           }
         },
         {
-          "key": "",
           "code": "M",
           "name": {
             "en": "Self-employment services not carried out habitually",
@@ -676,7 +594,6 @@
           }
         },
         {
-          "key": "",
           "code": "M1",
           "name": {
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow",
@@ -684,7 +601,6 @@
           }
         },
         {
-          "key": "",
           "code": "M2",
           "name": {
             "en": "Self-employment services not carried out habitually for which there is an obligation to register with the Separate ENPAPI Management",
@@ -692,7 +608,6 @@
           }
         },
         {
-          "key": "",
           "code": "N",
           "name": {
             "en": "Travel allowances, flat-rate reimbursement of expenses, prizes, and fees paid: - in the direct exercise of amateur sports activities; - in relation to coordinated and continuous collaboration relationships of an administrative-managerial nature, not professional, provided in favor of amateur sports companies and associations, and choirs, bands, and amateur theater groups by the director and technical collaborators",
@@ -700,7 +615,6 @@
           }
         },
         {
-          "key": "",
           "code": "O",
           "name": {
             "en": "Self-employment services not carried out habitually, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
@@ -708,7 +622,6 @@
           }
         },
         {
-          "key": "",
           "code": "O1",
           "name": {
             "en": "Income deriving from the assumption of obligations to do, not to do, or to allow, for which there is no obligation to register with the separate management (Circ. INPS n. 104/2001)",
@@ -716,7 +629,6 @@
           }
         },
         {
-          "key": "",
           "code": "P",
           "name": {
             "en": "Fees paid to non-resident subjects without a permanent establishment for the use or concession of use of industrial, commercial or scientific equipment located in the State's territory or to Swiss companies or permanent establishments of Swiss companies meeting the requirements of Article 15, paragraph 2 of the Agreement between the European Community and the Swiss Confederation of October 26, 2004 (published in G.U.C.E. of December 29, 2004, no. L385/30)",
@@ -724,7 +636,6 @@
           }
         },
         {
-          "key": "",
           "code": "Q",
           "name": {
             "en": "Commissions paid to a single-mandate agent or commercial representative",
@@ -732,7 +643,6 @@
           }
         },
         {
-          "key": "",
           "code": "R",
           "name": {
             "en": "Commissions paid to a multi-mandate agent or commercial representative",
@@ -740,7 +650,6 @@
           }
         },
         {
-          "key": "",
           "code": "S",
           "name": {
             "en": "Commissions paid to a commission agent",
@@ -748,7 +657,6 @@
           }
         },
         {
-          "key": "",
           "code": "T",
           "name": {
             "en": "Commissions paid to a broker",
@@ -756,7 +664,6 @@
           }
         },
         {
-          "key": "",
           "code": "U",
           "name": {
             "en": "Commissions paid to a business finder",
@@ -764,7 +671,6 @@
           }
         },
         {
-          "key": "",
           "code": "V",
           "name": {
             "en": "Commissions paid to a home sales agent; commissions paid to an agent for door-to-door and street sales of daily newspapers and periodicals (Law of February 25, 1987, no. 67)",
@@ -772,7 +678,6 @@
           }
         },
         {
-          "key": "",
           "code": "V1",
           "name": {
             "en": "Income deriving from non-habitual commercial activities (e.g. commissions paid for occasional services to agents or commercial representatives, brokers, business finders)",
@@ -780,7 +685,6 @@
           }
         },
         {
-          "key": "",
           "code": "V2",
           "name": {
             "en": "Income from non-habitual services provided by direct home sales agents",
@@ -788,7 +692,6 @@
           }
         },
         {
-          "key": "",
           "code": "W",
           "name": {
             "en": "Considerations paid in 2021 for services related to subcontracting contracts to which the provisions contained in Article 25-ter of Presidential Decree no. 600 of September 29, 1973, have been applied",
@@ -796,7 +699,6 @@
           }
         },
         {
-          "key": "",
           "code": "X",
           "name": {
             "en": "Fees paid in 2004 by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
@@ -804,7 +706,6 @@
           }
         },
         {
-          "key": "",
           "code": "Y",
           "name": {
             "en": "Fees paid from January 1, 2005, to July 26, 2005, by resident companies or entities or by permanent establishments of foreign companies referred to in Article 26-quater, paragraph 1, letters a) and b) of Presidential Decree no. 600 of September 29, 1973, to companies or permanent establishments of companies located in another EU Member State meeting the requirements of the aforementioned Article 26-quater of Presidential Decree 600 of September 29, 1973, for which a refund of the withholding tax was made in 2006 pursuant to Article 4 of Legislative Decree no. 143 of May 30, 2005",
@@ -812,7 +713,6 @@
           }
         },
         {
-          "key": "",
           "code": "ZO",
           "name": {
             "en": "Different title from the previous ones",
@@ -823,14 +723,12 @@
     },
     {
       "key": "it-sdi-payment-means",
-      "code": "",
       "name": {
         "en": "Payment Means",
         "it": "Modalità di Pagamento"
       },
       "values": [
         {
-          "key": "",
           "code": "MP01",
           "name": {
             "en": "Cash",
@@ -838,7 +736,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP02",
           "name": {
             "en": "Check",
@@ -846,7 +743,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP03",
           "name": {
             "en": "Banker's Draft",
@@ -854,7 +750,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP04",
           "name": {
             "en": "Cash at Treasury",
@@ -862,7 +757,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP05",
           "name": {
             "en": "Bank Transfer",
@@ -870,7 +764,6 @@
           }
         },
         {
-          "key": "",
           "code": "Mp06",
           "name": {
             "en": "Promissory Note",
@@ -878,7 +771,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP07",
           "name": {
             "en": "Bank payment slip",
@@ -886,7 +778,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP08",
           "name": {
             "en": "Payment card",
@@ -894,7 +785,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP09",
           "name": {
             "en": "Direct Debit (RID)",
@@ -902,7 +792,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP10",
           "name": {
             "en": "Utilities Direct Debit (RID utenze)",
@@ -910,7 +799,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP11",
           "name": {
             "en": "Fast Direct Debit (RID veloce)",
@@ -918,7 +806,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP12",
           "name": {
             "en": "Direct Debit (RIBA)",
@@ -926,7 +813,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP13",
           "name": {
             "en": "Debit Transfer (MAV)",
@@ -934,7 +820,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP14",
           "name": {
             "en": "Tax Receipt",
@@ -942,7 +827,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP15",
           "name": {
             "en": "Transfer on special account",
@@ -950,7 +834,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP16",
           "name": {
             "en": "Direct Debit",
@@ -958,7 +841,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP17",
           "name": {
             "en": "Direct Debit Post Office",
@@ -966,7 +848,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP18",
           "name": {
             "en": "Post Office Cheque",
@@ -974,7 +855,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP19",
           "name": {
             "en": "SEPA Direct Debit",
@@ -982,7 +862,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP20",
           "name": {
             "en": "SEPA Core Direct Debit",
@@ -990,7 +869,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP21",
           "name": {
             "en": "SEPA B2B Direct Debit",
@@ -998,7 +876,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP22",
           "name": {
             "en": "Deductible Netting",
@@ -1006,7 +883,6 @@
           }
         },
         {
-          "key": "",
           "code": "MP23",
           "name": {
             "en": "PagoPA",
@@ -1017,14 +893,12 @@
     },
     {
       "key": "it-sdi-vat-liability",
-      "code": "",
       "name": {
         "en": "VAT Liability",
         "it": "Esigibilità dell'IVA"
       },
       "values": [
         {
-          "key": "",
           "code": "I",
           "name": {
             "en": "Immediate",
@@ -1032,7 +906,6 @@
           }
         },
         {
-          "key": "",
           "code": "D",
           "name": {
             "en": "Deferred",
@@ -1040,7 +913,6 @@
           }
         },
         {
-          "key": "",
           "code": "S",
           "name": {
             "en": "Split Payment",
@@ -1056,14 +928,12 @@
       "list": [
         {
           "key": "b2g",
-          "code": "",
           "name": {
             "en": "Business to Government"
           }
         },
         {
           "key": "freelance",
-          "code": "",
           "name": {
             "en": "Freelancer",
             "it": "Parcella"
@@ -1071,7 +941,6 @@
         },
         {
           "key": "ceiling-exceeded",
-          "code": "",
           "name": {
             "en": "Ceiling exceeded",
             "it": "Splafonamento"
@@ -1079,7 +948,6 @@
         },
         {
           "key": "san-marino-paper",
-          "code": "",
           "name": {
             "en": "Purchases from San Marino with VAT and paper invoice",
             "it": "Acquisti da San Marino con IVA e fattura cartacea"
@@ -1087,7 +955,6 @@
         },
         {
           "key": "import",
-          "code": "",
           "name": {
             "en": "Import",
             "it": "Importazione"
@@ -1095,7 +962,6 @@
         },
         {
           "key": "goods",
-          "code": "",
           "name": {
             "en": "Goods",
             "it": "Beni"
@@ -1103,7 +969,6 @@
         },
         {
           "key": "goods-eu",
-          "code": "",
           "name": {
             "en": "Goods from EU",
             "it": "Beni da UE"
@@ -1111,7 +976,6 @@
         },
         {
           "key": "goods-with-tax",
-          "code": "",
           "name": {
             "en": "Goods with tax",
             "it": "Beni con imposta"
@@ -1119,7 +983,6 @@
         },
         {
           "key": "goods-extracted",
-          "code": "",
           "name": {
             "en": "Goods extracted",
             "it": "Beni estratti"
@@ -1127,7 +990,6 @@
         },
         {
           "key": "deferred",
-          "code": "",
           "name": {
             "en": "Deferred",
             "it": "Differita"
@@ -1135,7 +997,6 @@
         },
         {
           "key": "regularization",
-          "code": "",
           "name": {
             "en": "Regularization",
             "it": "Regolarizzazione"
@@ -1143,7 +1004,6 @@
         },
         {
           "key": "third-period",
-          "code": "",
           "name": {
             "en": "Third period",
             "it": "Terzo periodo"
@@ -1151,7 +1011,6 @@
         },
         {
           "key": "depreciable-assets",
-          "code": "",
           "name": {
             "en": "Depreciable assets",
             "it": "Beni ammortizzabili"
@@ -1159,7 +1018,6 @@
         },
         {
           "key": "b2g",
-          "code": "",
           "name": {
             "en": "Business to Government"
           }
@@ -1532,7 +1390,6 @@
   "inboxes": [
     {
       "key": "it-sdi-code",
-      "code": "",
       "name": {
         "en": "SDI Destination Code",
         "it": "Codice Destinatario SDI"
@@ -1540,7 +1397,6 @@
     },
     {
       "key": "it-sdi-pec",
-      "code": "",
       "name": {
         "en": "SDI PEC Destination",
         "it": "PEC Destinatario SDI"

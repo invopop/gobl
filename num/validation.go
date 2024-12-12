@@ -38,18 +38,18 @@ var (
 )
 
 // Min checks if the value is greater than or equal to the provided amount or percentage
-func Min(min interface{}) ThresholdRule {
+func Min(value any) ThresholdRule {
 	return ThresholdRule{
-		threshold: interfaceToAmount(min),
+		threshold: interfaceToAmount(value),
 		operator:  greaterEqualThan,
 		err:       validation.ErrMinGreaterEqualThanRequired,
 	}
 }
 
 // Max checks if the value is less than or equal to the provided amount or percentage
-func Max(max interface{}) ThresholdRule {
+func Max(value any) ThresholdRule {
 	return ThresholdRule{
-		threshold: interfaceToAmount(max),
+		threshold: interfaceToAmount(value),
 		operator:  lessEqualThan,
 		err:       validation.ErrMaxLessEqualThanRequired,
 	}

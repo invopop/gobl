@@ -7,14 +7,12 @@
   "extensions": [
     {
       "key": "es-facturae-doc-type",
-      "code": "",
       "name": {
         "en": "FacturaE: Document Type",
         "es": "FacturaE: Tipo de Documento"
       },
       "values": [
         {
-          "key": "",
           "code": "FC",
           "name": {
             "en": "Commercial Invoice",
@@ -22,7 +20,6 @@
           }
         },
         {
-          "key": "",
           "code": "FA",
           "name": {
             "en": "Simplified Invoice",
@@ -30,7 +27,6 @@
           }
         },
         {
-          "key": "",
           "code": "AF",
           "name": {
             "en": "Self-billed Invoice",
@@ -41,14 +37,12 @@
     },
     {
       "key": "es-facturae-invoice-class",
-      "code": "",
       "name": {
         "en": "FacturaE: Invoice Class",
         "es": "FacturaE: Clase de Factura"
       },
       "values": [
         {
-          "key": "",
           "code": "OO",
           "name": {
             "en": "Original",
@@ -56,7 +50,6 @@
           }
         },
         {
-          "key": "",
           "code": "OR",
           "name": {
             "en": "Corrective Original",
@@ -64,7 +57,6 @@
           }
         },
         {
-          "key": "",
           "code": "OC",
           "name": {
             "en": "Summary Original",
@@ -72,7 +64,6 @@
           }
         },
         {
-          "key": "",
           "code": "CO",
           "name": {
             "en": "Copy of the Original",
@@ -80,7 +71,6 @@
           }
         },
         {
-          "key": "",
           "code": "CR",
           "name": {
             "en": "Copy of the Corrective",
@@ -88,7 +78,6 @@
           }
         },
         {
-          "key": "",
           "code": "CC",
           "name": {
             "en": "Copy of the Summary",
@@ -99,7 +88,6 @@
     },
     {
       "key": "es-facturae-correction",
-      "code": "",
       "name": {
         "en": "FacturaE Change",
         "es": "Cambio de FacturaE"
@@ -110,7 +98,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "01",
           "name": {
             "en": "Invoice code",
@@ -118,7 +105,6 @@
           }
         },
         {
-          "key": "",
           "code": "02",
           "name": {
             "en": "Invoice series",
@@ -126,7 +112,6 @@
           }
         },
         {
-          "key": "",
           "code": "03",
           "name": {
             "en": "Issue date",
@@ -134,7 +119,6 @@
           }
         },
         {
-          "key": "",
           "code": "04",
           "name": {
             "en": "Name and surnames/Corporate name - Issuer (Sender)",
@@ -142,7 +126,6 @@
           }
         },
         {
-          "key": "",
           "code": "05",
           "name": {
             "en": "Name and surnames/Corporate name - Receiver",
@@ -150,7 +133,6 @@
           }
         },
         {
-          "key": "",
           "code": "06",
           "name": {
             "en": "Issuer's Tax Identification Number",
@@ -158,7 +140,6 @@
           }
         },
         {
-          "key": "",
           "code": "07",
           "name": {
             "en": "Receiver's Tax Identification Number",
@@ -166,7 +147,6 @@
           }
         },
         {
-          "key": "",
           "code": "08",
           "name": {
             "en": "Supplier's address",
@@ -174,7 +154,6 @@
           }
         },
         {
-          "key": "",
           "code": "09",
           "name": {
             "en": "Customer's address",
@@ -182,7 +161,6 @@
           }
         },
         {
-          "key": "",
           "code": "10",
           "name": {
             "en": "Item line",
@@ -190,7 +168,6 @@
           }
         },
         {
-          "key": "",
           "code": "11",
           "name": {
             "en": "Applicable Tax Rate",
@@ -198,7 +175,6 @@
           }
         },
         {
-          "key": "",
           "code": "12",
           "name": {
             "en": "Applicable Tax Amount",
@@ -206,7 +182,6 @@
           }
         },
         {
-          "key": "",
           "code": "13",
           "name": {
             "en": "Applicable Date/Period",
@@ -214,7 +189,6 @@
           }
         },
         {
-          "key": "",
           "code": "14",
           "name": {
             "en": "Invoice Class",
@@ -222,7 +196,6 @@
           }
         },
         {
-          "key": "",
           "code": "15",
           "name": {
             "en": "Legal literals",
@@ -230,7 +203,6 @@
           }
         },
         {
-          "key": "",
           "code": "16",
           "name": {
             "en": "Taxable Base",
@@ -238,7 +210,6 @@
           }
         },
         {
-          "key": "",
           "code": "80",
           "name": {
             "en": "Calculation of tax outputs",
@@ -246,7 +217,6 @@
           }
         },
         {
-          "key": "",
           "code": "81",
           "name": {
             "en": "Calculation of tax inputs",
@@ -254,7 +224,6 @@
           }
         },
         {
-          "key": "",
           "code": "82",
           "name": {
             "en": "Taxable Base modified due to return of packages and packaging materials",
@@ -262,7 +231,6 @@
           }
         },
         {
-          "key": "",
           "code": "83",
           "name": {
             "en": "Taxable Base modified due to discounts and rebates",
@@ -270,7 +238,6 @@
           }
         },
         {
-          "key": "",
           "code": "84",
           "name": {
             "en": "Taxable Base modified due to firm court ruling or administrative decision",
@@ -278,7 +245,6 @@
           }
         },
         {
-          "key": "",
           "code": "85",
           "name": {
             "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",

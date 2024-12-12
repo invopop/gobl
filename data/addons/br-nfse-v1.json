@@ -7,7 +7,6 @@
   "extensions": [
     {
       "key": "br-nfse-cnae",
-      "code": "",
       "name": {
         "en": "CNAE code",
         "pt": "Código CNAE"
@@ -19,7 +18,6 @@
     },
     {
       "key": "br-nfse-fiscal-incentive",
-      "code": "",
       "name": {
         "en": "Fiscal Incentive",
         "pt": "Incentivo Fiscal"
@@ -29,7 +27,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Has incentive",
@@ -37,7 +34,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Does not have incentive",
@@ -48,7 +44,6 @@
     },
     {
       "key": "br-nfse-iss-liability",
-      "code": "",
       "name": {
         "en": "ISS Liability",
         "pt": "Exigibilidade ISS"
@@ -58,7 +53,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Liable",
@@ -66,7 +60,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Not subject",
@@ -74,7 +67,6 @@
           }
         },
         {
-          "key": "",
           "code": "3",
           "name": {
             "en": "Exempt",
@@ -82,7 +74,6 @@
           }
         },
         {
-          "key": "",
           "code": "4",
           "name": {
             "en": "Export",
@@ -90,7 +81,6 @@
           }
         },
         {
-          "key": "",
           "code": "5",
           "name": {
             "en": "Immune",
@@ -98,7 +88,6 @@
           }
         },
         {
-          "key": "",
           "code": "6",
           "name": {
             "en": "Suspended Judicially",
@@ -106,7 +95,6 @@
           }
         },
         {
-          "key": "",
           "code": "7",
           "name": {
             "en": "Suspended Administratively",
@@ -117,7 +105,6 @@
     },
     {
       "key": "br-nfse-municipality",
-      "code": "",
       "name": {
         "en": "IGBE Municipality Code",
         "pt": "Código do Município do IBGE"
@@ -129,7 +116,6 @@
     },
     {
       "key": "br-nfse-service",
-      "code": "",
       "name": {
         "en": "Service Code",
         "pt": "Código Item Lista Serviço"
@@ -140,7 +126,6 @@
     },
     {
       "key": "br-nfse-simples",
-      "code": "",
       "name": {
         "en": "Opting for “Simples Nacional” regime",
         "pt": "Optante pelo Simples Nacional"
@@ -150,7 +135,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Opt-in",
@@ -158,7 +142,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Opt-out",
@@ -169,7 +152,6 @@
     },
     {
       "key": "br-nfse-special-regime",
-      "code": "",
       "name": {
         "en": "Special Tax Regime",
         "pt": "Regime Especial de Tributação"
@@ -179,7 +161,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Municipal micro-enterprise",
@@ -187,7 +168,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Estimated",
@@ -195,7 +175,6 @@
           }
         },
         {
-          "key": "",
           "code": "3",
           "name": {
             "en": "Professional Society",
@@ -203,7 +182,6 @@
           }
         },
         {
-          "key": "",
           "code": "4",
           "name": {
             "en": "Cooperative",
@@ -211,7 +189,6 @@
           }
         },
         {
-          "key": "",
           "code": "5",
           "name": {
             "en": "Single micro-entrepreneur (MEI)",
@@ -219,7 +196,6 @@
           }
         },
         {
-          "key": "",
           "code": "6",
           "name": {
             "en": "Micro-enterprise or Small Business (ME EPP)",
@@ -233,7 +209,6 @@
   "identities": [
     {
       "key": "br-nfse-municipal-reg",
-      "code": "",
       "name": {
         "en": "Company Municipal Registration",
         "pt": "Inscrição Municipal da Empresa"
@@ -241,7 +216,6 @@
     },
     {
       "key": "br-nfse-national-reg",
-      "code": "",
       "name": {
         "en": "Company National Registration",
         "pt": "Inscrição Nacional da Empresa"

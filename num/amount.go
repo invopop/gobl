@@ -211,8 +211,8 @@ func (a Amount) RescaleDown(exp uint32) Amount {
 // RescaleRange will rescale the amount so that it fits within the provided
 // range of exponents. This is useful for ensuring that amounts are within
 // a certain range of accuracy.
-func (a Amount) RescaleRange(min, max uint32) Amount {
-	return a.RescaleUp(min).RescaleDown(max)
+func (a Amount) RescaleRange(minimum, maximum uint32) Amount {
+	return a.RescaleUp(minimum).RescaleDown(maximum)
 }
 
 // MatchPrecision will rescale the exponent value of the amount so that it

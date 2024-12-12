@@ -13,7 +13,6 @@
       "list": [
         {
           "key": "simplified",
-          "code": "",
           "name": {
             "de": "Vereinfachte Rechnung",
             "en": "Simplified Invoice",
@@ -29,7 +28,6 @@
         },
         {
           "key": "reverse-charge",
-          "code": "",
           "name": {
             "de": "Umkehr der Steuerschuld",
             "en": "Reverse Charge",
@@ -39,7 +37,6 @@
         },
         {
           "key": "self-billed",
-          "code": "",
           "name": {
             "de": "Rechnung durch den Leistungsempfänger",
             "en": "Self-billed",
@@ -49,7 +46,6 @@
         },
         {
           "key": "customer-rates",
-          "code": "",
           "name": {
             "de": "Kundensätze",
             "en": "Customer rates",
@@ -59,7 +55,6 @@
         },
         {
           "key": "partial",
-          "code": "",
           "name": {
             "de": "Teilweise",
             "en": "Partial",
@@ -69,7 +64,6 @@
         },
         {
           "key": "settlement",
-          "code": "",
           "name": {
             "en": "Settlement Invoice",
             "pl": "Faktura Rozliczeniowa"
@@ -81,14 +75,12 @@
   "extensions": [
     {
       "key": "pl-ksef-vat-special",
-      "code": "",
       "name": {
         "en": "Special VAT Extensions for KSeF",
         "pl": "Rozszerzenia specjalne dla KSeF"
       },
       "values": [
         {
-          "key": "",
           "code": "taxi",
           "name": {
             "en": "Taxi Rate",
@@ -103,13 +95,11 @@
     },
     {
       "key": "pl-ksef-vat-zero",
-      "code": "",
       "name": {
         "en": "Zero VAT Extensions for KSeF"
       },
       "values": [
         {
-          "key": "",
           "code": "wdt",
           "name": {
             "en": "WDT",
@@ -117,7 +107,6 @@
           }
         },
         {
-          "key": "",
           "code": "domestic",
           "name": {
             "en": "Domestic",
@@ -125,7 +114,6 @@
           }
         },
         {
-          "key": "",
           "code": "export",
           "name": {
             "en": "Export",
@@ -136,14 +124,12 @@
     },
     {
       "key": "pl-ksef-effective-date",
-      "code": "",
       "name": {
         "en": "Effective date code.",
         "pl": "Kod daty wejścia w życie."
       },
       "values": [
         {
-          "key": "",
           "code": "1",
           "name": {
             "en": "Original",
@@ -155,7 +141,6 @@
           }
         },
         {
-          "key": "",
           "code": "2",
           "name": {
             "en": "Correction",
@@ -167,7 +152,6 @@
           }
         },
         {
-          "key": "",
           "code": "3",
           "name": {
             "en": "Other",
@@ -184,7 +168,6 @@
   "payment_means_keys": [
     {
       "key": "cash",
-      "code": "",
       "name": {
         "en": "Cash",
         "pl": "Gotówka"
@@ -195,7 +178,6 @@
     },
     {
       "key": "card",
-      "code": "",
       "name": {
         "en": "Card",
         "pl": "Karta"
@@ -206,7 +188,6 @@
     },
     {
       "key": "other+coupon",
-      "code": "",
       "name": {
         "en": "Coupon",
         "pl": "Bon"
@@ -217,7 +198,6 @@
     },
     {
       "key": "cheque",
-      "code": "",
       "name": {
         "en": "Cheque",
         "pl": "Czek"
@@ -228,7 +208,6 @@
     },
     {
       "key": "online+loan",
-      "code": "",
       "name": {
         "en": "Loan",
         "pl": "Kredyt"
@@ -239,7 +218,6 @@
     },
     {
       "key": "credit-transfer",
-      "code": "",
       "name": {
         "en": "Wire Transfer",
         "pl": "Przelew"
@@ -250,7 +228,6 @@
     },
     {
       "key": "other+mobile",
-      "code": "",
       "name": {
         "en": "Mobile",
         "pl": "Mobilna"

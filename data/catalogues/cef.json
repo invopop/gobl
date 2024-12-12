@@ -4,11 +4,9 @@
   "name": {
     "en": "Connecting Europe Facility (CEF)"
   },
-  "description": null,
   "extensions": [
     {
       "key": "cef-vatex",
-      "code": "",
       "name": {
         "en": "CET VATEX - VAT exemption reason codes"
       },
@@ -17,413 +15,354 @@
       },
       "values": [
         {
-          "key": "",
           "code": "VATEX-EU-79-C",
           "name": {
             "en": "Exempt based on article 79, point c of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132",
           "name": {
             "en": "Exempt based on article 132 of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1A",
           "name": {
             "en": "Exempt based on article 132, section 1 (a) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1B",
           "name": {
             "en": "Exempt based on article 132, section 1 (b) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1C",
           "name": {
             "en": "Exempt based on article 132, section 1 (c) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1D",
           "name": {
             "en": "Exempt based on article 132, section 1 (d) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1E",
           "name": {
             "en": "Exempt based on article 132, section 1 (e) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1F",
           "name": {
             "en": "Exempt based on article 132, section 1 (f) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1G",
           "name": {
             "en": "Exempt based on article 132, section 1 (g) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1H",
           "name": {
             "en": "Exempt based on article 132, section 1 (h) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1I",
           "name": {
             "en": "Exempt based on article 132, section 1 (i) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1J",
           "name": {
             "en": "Exempt based on article 132, section 1 (j) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1K",
           "name": {
             "en": "Exempt based on article 132, section 1 (k) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1L",
           "name": {
             "en": "Exempt based on article 132, section 1 (l) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1M",
           "name": {
             "en": "Exempt based on article 132, section 1 (m) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1N",
           "name": {
             "en": "Exempt based on article 132, section 1 (n) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1O",
           "name": {
             "en": "Exempt based on article 132, section 1 (o) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1P",
           "name": {
             "en": "Exempt based on article 132, section 1 (p) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-132-1Q",
           "name": {
             "en": "Exempt based on article 132, section 1 (q) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143",
           "name": {
             "en": "Exempt based on article 143 of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1A",
           "name": {
             "en": "Exempt based on article 143, section 1 (a) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1B",
           "name": {
             "en": "Exempt based on article 143, section 1 (b) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1C",
           "name": {
             "en": "Exempt based on article 143, section 1 (c) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1D",
           "name": {
             "en": "Exempt based on article 143, section 1 (d) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1E",
           "name": {
             "en": "Exempt based on article 143, section 1 (e) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1F",
           "name": {
             "en": "Exempt based on article 143, section 1 (f) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1FA",
           "name": {
             "en": "Exempt based on article 143, section 1 (fa) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1G",
           "name": {
             "en": "Exempt based on article 143, section 1 (g) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1H",
           "name": {
             "en": "Exempt based on article 143, section 1 (h) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1I",
           "name": {
             "en": "Exempt based on article 143, section 1 (i) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1J",
           "name": {
             "en": "Exempt based on article 143, section 1 (j) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1K",
           "name": {
             "en": "Exempt based on article 143, section 1 (k) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-143-1L",
           "name": {
             "en": "Exempt based on article 143, section 1 (l) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148",
           "name": {
             "en": "Exempt based on article 148 of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-A",
           "name": {
             "en": "Exempt based on article 148, section (a) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-B",
           "name": {
             "en": "Exempt based on article 148, section (b) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-C",
           "name": {
             "en": "Exempt based on article 148, section (c) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-D",
           "name": {
             "en": "Exempt based on article 148, section (d) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-E",
           "name": {
             "en": "Exempt based on article 148, section (e) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-F",
           "name": {
             "en": "Exempt based on article 148, section (f) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-148-G",
           "name": {
             "en": "Exempt based on article 148, section (g) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151",
           "name": {
             "en": "Exempt based on article 151 of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151-1A",
           "name": {
             "en": "Exempt based on article 151, section 1 (a) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151-1AA",
           "name": {
             "en": "Exempt based on article 151, section 1 (aa) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151-1B",
           "name": {
             "en": "Exempt based on article 151, section 1 (b) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151-1C",
           "name": {
             "en": "Exempt based on article 151, section 1 (c) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151-1D",
           "name": {
             "en": "Exempt based on article 151, section 1 (d) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-151-1E",
           "name": {
             "en": "Exempt based on article 151, section 1 (e) of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-309",
           "name": {
             "en": "Exempt based on article 309 of Council Directive 2006/112/EC"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-AE",
           "name": {
             "en": "Reverse charge"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-D",
           "name": {
             "en": "Travel agents VAT scheme."
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-F",
           "name": {
             "en": "Second hand goods VAT scheme."
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-G",
           "name": {
             "en": "Export outside the EU"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-I",
           "name": {
             "en": "Works of art VAT scheme."
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-IC",
           "name": {
             "en": "Intra-community supply"
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-J",
           "name": {
             "en": "Collectors items and antiques VAT scheme."
           }
         },
         {
-          "key": "",
           "code": "VATEX-EU-O",
           "name": {
             "en": "Not subject to VAT"
           }
         },
         {
-          "key": "",
           "code": "VATEX-FR-FRANCHISE",
           "name": {
             "en": "France domestic VAT franchise in base"
           }
         },
         {
-          "key": "",
           "code": "VATEX-FR-CNWVAT",
           "name": {
             "en": "France domestic Credit Notes without VAT, due to supplier forfeit of VAT for discount"

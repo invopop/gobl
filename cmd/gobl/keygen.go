@@ -99,8 +99,8 @@ func (k *keygenOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if outfile == "-" {
-		fmt.Fprintln(cmd.OutOrStdout(), string(priv))
-		return nil
+		_, err := fmt.Fprintln(cmd.OutOrStdout(), string(priv))
+		return err
 	}
 	if err = writeKey(outfile, priv, 0o600, k.overwrite); err != nil {
 		return err
@@ -137,13 +137,13 @@ func writeKey(filename string, key []byte, mode os.FileMode, force bool) error {
 	return safeRename(tmp.Name(), filename, force)
 }
 
-func safeRename(old, new string, force bool) error {
+func safeRename(old, in string, force bool) error {
 	if force {
-		return os.Rename(old, new)
+		return os.Rename(old, in)
 	}
-	err := os.Link(old, new)
+	err := os.Link(old, in)
 	if err != nil {
-		return fmt.Errorf("target %q exists", new)
+		return fmt.Errorf("target %q exists", in)
 	}
 	return os.Remove(old)
 }

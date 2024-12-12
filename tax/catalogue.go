@@ -1,10 +1,17 @@
 package tax
 
 import (
+	"encoding/json"
+	"path"
 	"sort"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/data"
 	"github.com/invopop/gobl/i18n"
+)
+
+const (
+	cataloguesPath = "catalogues"
 )
 
 // A CatalogueDef contains a set of re-useable extensions, scenarios, and validators that
@@ -16,14 +23,26 @@ type CatalogueDef struct {
 	// Name is the name of the catalogue.
 	Name i18n.String `json:"name"`
 	// Description is a human readable description of the catalogue.
-	Description i18n.String `json:"description"`
+	Description i18n.String `json:"description,omitempty"`
 	// Extensions defines all the extensions offered by the catalogue.
 	Extensions []*cbc.Definition `json:"extensions"`
 }
 
 // RegisterCatalogueDef will register the catalogue in the global list of catalogues
 // and ensure the extensions it contains are available in GOBL.
-func RegisterCatalogueDef(catalogue *CatalogueDef) {
+//
+// Unlike other sources, catalogues are loaded from JSON files in the `catalogues`
+// directory of the embedded data filesystem.
+func RegisterCatalogueDef(filename string) {
+	catalogue := &CatalogueDef{}
+	out, err := data.Content.ReadFile(path.Join(cataloguesPath, filename))
+	if err != nil {
+		panic(err)
+	}
+	if err := json.Unmarshal(out, catalogue); err != nil {
+		panic(err)
+	}
+
 	for _, ext := range catalogue.Extensions {
 		RegisterExtension(ext)
 	}

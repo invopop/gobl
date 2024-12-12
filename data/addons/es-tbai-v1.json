@@ -7,7 +7,6 @@
   "extensions": [
     {
       "key": "es-tbai-region",
-      "code": "",
       "name": {
         "en": "TicketBAI Region Code",
         "es": "Código de Región TicketBAI"
@@ -17,7 +16,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "VI",
           "name": {
             "en": "Araba",
@@ -25,7 +23,6 @@
           }
         },
         {
-          "key": "",
           "code": "BI",
           "name": {
             "en": "Bizkaia",
@@ -33,7 +30,6 @@
           }
         },
         {
-          "key": "",
           "code": "SS",
           "name": {
             "en": "Gipuzkoa",
@@ -44,7 +40,6 @@
     },
     {
       "key": "es-tbai-product",
-      "code": "",
       "name": {
         "en": "TicketBAI Product Key",
         "es": "Clave de Producto TicketBAI"
@@ -54,7 +49,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "goods",
           "name": {
             "en": "Delivery of goods",
@@ -62,7 +56,6 @@
           }
         },
         {
-          "key": "",
           "code": "services",
           "name": {
             "en": "Provision of services",
@@ -70,7 +63,6 @@
           }
         },
         {
-          "key": "",
           "code": "resale",
           "name": {
             "en": "Resale of goods without modification by vendor in the simplified regime",
@@ -81,7 +73,6 @@
     },
     {
       "key": "es-tbai-exemption",
-      "code": "",
       "name": {
         "en": "TicketBAI Exemption code",
         "es": "Código de Exención de TicketBAI"
@@ -91,7 +82,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "E1",
           "name": {
             "en": "Exempt: pursuant to Article 20 of the Foral VAT Law",
@@ -99,7 +89,6 @@
           }
         },
         {
-          "key": "",
           "code": "E2",
           "name": {
             "en": "Exempt: pursuant to Article 21 of the Foral VAT Law",
@@ -107,7 +96,6 @@
           }
         },
         {
-          "key": "",
           "code": "E3",
           "name": {
             "en": "Exempt: pursuant to Article 22 of the Foral VAT Law",
@@ -115,7 +103,6 @@
           }
         },
         {
-          "key": "",
           "code": "E4",
           "name": {
             "en": "Exempt: pursuant to Articles 23 and 24 of the Foral VAT Law",
@@ -123,7 +110,6 @@
           }
         },
         {
-          "key": "",
           "code": "E5",
           "name": {
             "en": "Exempt: pursuant to Article 25 of the Foral VAT law",
@@ -131,7 +117,6 @@
           }
         },
         {
-          "key": "",
           "code": "E6",
           "name": {
             "en": "Exempt: pursuant to other reasons",
@@ -139,7 +124,6 @@
           }
         },
         {
-          "key": "",
           "code": "OT",
           "name": {
             "en": "Not subject: pursuant to Article 7 of the VAT Law - other cases of non-subject",
@@ -147,7 +131,6 @@
           }
         },
         {
-          "key": "",
           "code": "RL",
           "name": {
             "en": "Not subject: pursuant to localization rules",
@@ -155,7 +138,6 @@
           }
         },
         {
-          "key": "",
           "code": "VT",
           "name": {
             "en": "Not subject: sales made on behalf of third parties (amount not computable for VAT or IRPF purposes)",
@@ -163,7 +145,6 @@
           }
         },
         {
-          "key": "",
           "code": "IE",
           "name": {
             "en": "Not subject in the TAI due to localization rules, but foreign tax, IPS/IGIC or VAT from another EU member state is passed on",
@@ -171,7 +152,6 @@
           }
         },
         {
-          "key": "",
           "code": "S2",
           "name": {
             "en": "Subject and not exempt: with reverse charge",
@@ -182,7 +162,6 @@
     },
     {
       "key": "es-tbai-correction",
-      "code": "",
       "name": {
         "en": "TicketBAI Rectification Type Code",
         "es": "TicketBAI Código de Factura Rectificativa"
@@ -192,7 +171,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "R1",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 One, Two and Six of the Provincial Tax Law of VAT",
@@ -201,7 +179,6 @@
           }
         },
         {
-          "key": "",
           "code": "R2",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 Three of the Provincial Tax Law of VAT",
@@ -210,7 +187,6 @@
           }
         },
         {
-          "key": "",
           "code": "R3",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 Four of the Provincial Tax Law of VAT",
@@ -219,7 +195,6 @@
           }
         },
         {
-          "key": "",
           "code": "R4",
           "name": {
             "en": "Rectified invoice: Other",
@@ -228,7 +203,6 @@
           }
         },
         {
-          "key": "",
           "code": "R5",
           "name": {
             "en": "Rectified invoice: simplified invoices",

@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: renamed `ExtensionsRequires` to `ExtensionsRequire`, to bring in line with `ExtensionsExclude`.
 - `cbc`: refactored `KeyDefinition` and `ValueDefinition` into a single `Definition` object that supports `key` and `code`.
 - `tax`: removed `ExtValue` and replaced with `cbc.Code` which is now much more flexible.
+- `tax`: Catalogue definitions now loaded from JSON source as opposed to Go code. This improves memory efficiency, especially when the source data is large.
 
 ### Fixed
 

@@ -7,7 +7,6 @@
   "extensions": [
     {
       "key": "es-verifactu-doc-type",
-      "code": "",
       "name": {
         "en": "Verifactu Invoice Type Code - L2",
         "es": "Código de Tipo de Factura de Verifactu - L2"
@@ -17,7 +16,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "F1",
           "name": {
             "en": "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
@@ -25,7 +23,6 @@
           }
         },
         {
-          "key": "",
           "code": "F2",
           "name": {
             "en": "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
@@ -33,7 +30,6 @@
           }
         },
         {
-          "key": "",
           "code": "F3",
           "name": {
             "en": "Invoice issued as a replacement for simplified invoices that have been billed and declared.",
@@ -41,7 +37,6 @@
           }
         },
         {
-          "key": "",
           "code": "R1",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
@@ -49,7 +44,6 @@
           }
         },
         {
-          "key": "",
           "code": "R2",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.3",
@@ -57,7 +51,6 @@
           }
         },
         {
-          "key": "",
           "code": "R3",
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.4",
@@ -65,7 +58,6 @@
           }
         },
         {
-          "key": "",
           "code": "R4",
           "name": {
             "en": "Rectified invoice: Other",
@@ -73,7 +65,6 @@
           }
         },
         {
-          "key": "",
           "code": "R5",
           "name": {
             "en": "Rectified invoice: simplified invoices",
@@ -84,7 +75,6 @@
     },
     {
       "key": "es-verifactu-correction-type",
-      "code": "",
       "name": {
         "en": "Verifactu Correction Type Code - L3",
         "es": "Código de Tipo de Corrección de Verifactu - L3"
@@ -94,7 +84,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "S",
           "name": {
             "en": "Substitution",
@@ -102,7 +91,6 @@
           }
         },
         {
-          "key": "",
           "code": "I",
           "name": {
             "en": "Differences",
@@ -113,7 +101,6 @@
     },
     {
       "key": "es-verifactu-op-class",
-      "code": "",
       "name": {
         "en": "Verifactu Operation Classification/Exemption Code - L9",
         "es": "Código de Clasificación/Exención de Impuesto de Verifactu - L9"
@@ -123,7 +110,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "S1",
           "name": {
             "en": "Subject and Not Exempt - Without reverse charge",
@@ -131,7 +117,6 @@
           }
         },
         {
-          "key": "",
           "code": "S2",
           "name": {
             "en": "Subject and Not Exempt - With reverse charge",
@@ -139,7 +124,6 @@
           }
         },
         {
-          "key": "",
           "code": "N1",
           "name": {
             "en": "Not Subject - Articles 7, 14, others",
@@ -147,7 +131,6 @@
           }
         },
         {
-          "key": "",
           "code": "N2",
           "name": {
             "en": "Not Subject - Due to location rules",
@@ -158,7 +141,6 @@
     },
     {
       "key": "es-verifactu-exempt",
-      "code": "",
       "name": {
         "en": "Verifactu Exemption Code - L10",
         "es": "Código de Exención de Impuesto de Verifactu - L10"
@@ -168,7 +150,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "E1",
           "name": {
             "en": "Exempt: pursuant to Article 20. Exemptions in internal operations.",
@@ -176,7 +157,6 @@
           }
         },
         {
-          "key": "",
           "code": "E2",
           "name": {
             "en": "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
@@ -184,7 +164,6 @@
           }
         },
         {
-          "key": "",
           "code": "E3",
           "name": {
             "en": "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
@@ -192,7 +171,6 @@
           }
         },
         {
-          "key": "",
           "code": "E4",
           "name": {
             "en": "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
@@ -200,7 +178,6 @@
           }
         },
         {
-          "key": "",
           "code": "E5",
           "name": {
             "en": "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
@@ -208,7 +185,6 @@
           }
         },
         {
-          "key": "",
           "code": "E6",
           "name": {
             "en": "Exempt: pursuant to other reasons",
@@ -219,7 +195,6 @@
     },
     {
       "key": "es-verifactu-regime",
-      "code": "",
       "name": {
         "en": "VAT/IGIC Regime Code - L8A/B",
         "es": "Código de Régimen de IVA/IGIC - L8A/B"
@@ -229,7 +204,6 @@
       },
       "values": [
         {
-          "key": "",
           "code": "01",
           "name": {
             "en": "General regime operation",
@@ -237,7 +211,6 @@
           }
         },
         {
-          "key": "",
           "code": "02",
           "name": {
             "en": "Export",
@@ -245,7 +218,6 @@
           }
         },
         {
-          "key": "",
           "code": "03",
           "name": {
             "en": "Special regime for used goods, art objects, antiques and collectibles",
@@ -253,7 +225,6 @@
           }
         },
         {
-          "key": "",
           "code": "04",
           "name": {
             "en": "Special regime for investment gold",
@@ -261,7 +232,6 @@
           }
         },
         {
-          "key": "",
           "code": "05",
           "name": {
             "en": "Special regime for travel agencies",
@@ -269,7 +239,6 @@
           }
         },
         {
-          "key": "",
           "code": "06",
           "name": {
             "en": "Special regime for VAT/IGIC groups (Advanced Level)",
@@ -277,7 +246,6 @@
           }
         },
         {
-          "key": "",
           "code": "07",
           "name": {
             "en": "Special cash accounting regime",
@@ -285,7 +253,6 @@
           }
         },
         {
-          "key": "",
           "code": "08",
           "name": {
             "en": "Operations subject to a different regime",
@@ -293,7 +260,6 @@
           }
         },
         {
-          "key": "",
           "code": "09",
           "name": {
             "en": "Billing of travel agency services acting as mediators in name and on behalf of others",
@@ -301,7 +267,6 @@
           }
         },
         {
-          "key": "",
           "code": "10",
           "name": {
             "en": "Collection of professional fees or rights on behalf of third parties",
@@ -309,7 +274,6 @@
           }
         },
         {
-          "key": "",
           "code": "11",
           "name": {
             "en": "Business premises rental operations",
@@ -317,7 +281,6 @@
           }
         },
         {
-          "key": "",
           "code": "14",
           "name": {
             "en": "Invoice with pending VAT/IGIC accrual in work certifications for Public Administration",
@@ -325,7 +288,6 @@
           }
         },
         {
-          "key": "",
           "code": "15",
           "name": {
             "en": "Invoice with pending VAT/IGIC accrual in successive tract operations",
@@ -333,7 +295,6 @@
           }
         },
         {
-          "key": "",
           "code": "17",
           "name": {
             "en": "Operation under OSS and IOSS regimes (VAT) / Special regime for retail traders. (IGIC)",
@@ -341,7 +302,6 @@
           }
         },
         {
-          "key": "",
           "code": "18",
           "name": {
             "en": "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
@@ -349,7 +309,6 @@
           }
         },
         {
-          "key": "",
           "code": "19",
           "name": {
             "en": "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
@@ -357,7 +316,6 @@
           }
         },
         {
-          "key": "",
           "code": "20",
           "name": {
             "en": "Simplified regime (VAT only)",

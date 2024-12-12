@@ -4,20 +4,14 @@ package cef
 
 import (
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
 func init() {
-	tax.RegisterCatalogueDef(newCatalogue())
+	tax.RegisterCatalogueDef("cef.json")
 }
 
-func newCatalogue() *tax.CatalogueDef {
-	return &tax.CatalogueDef{
-		Key:  "cef",
-		Name: i18n.NewString("Connecting Europe Facility (CEF)"),
-		Extensions: []*cbc.Definition{
-			extVATEX,
-		},
-	}
-}
+const (
+	// ExtKeyVATEX is used for the CEF VATEX exemption codes.
+	ExtKeyVATEX cbc.Key = "cef-vatex"
+)
