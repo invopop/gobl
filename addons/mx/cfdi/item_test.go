@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -54,6 +55,10 @@ func TestItemValidation(t *testing.T) {
 			},
 			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
 		},
+		{
+			name: "nil",
+			item: nil,
+		},
 	}
 
 	addon := tax.AddonForKey(cfdi.V4)
@@ -74,8 +79,8 @@ func TestItemValidation(t *testing.T) {
 func TestItemIdentityNormalization(t *testing.T) {
 	addon := tax.AddonForKey(cfdi.V4)
 	tests := []struct {
-		Code     tax.ExtValue
-		Expected tax.ExtValue
+		Code     cbc.Code
+		Expected cbc.Code
 	}{
 		{
 			Code:     "123456",
@@ -101,7 +106,7 @@ func TestItemIdentityNormalization(t *testing.T) {
 	inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ] = "010101"
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, tax.ExtValue("01010100"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+	assert.Equal(t, cbc.Code("01010100"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
 }
 
 func TestItemIdentityMigration(t *testing.T) {
@@ -113,9 +118,14 @@ func TestItemIdentityMigration(t *testing.T) {
 			Key:  cfdi.ExtKeyProdServ,
 			Code: "01010101",
 		},
+		{
+			Key:  "other",
+			Code: "1234",
+		},
 	}
 
 	err := inv.Calculate()
 	require.NoError(t, err)
-	assert.Equal(t, tax.ExtValue("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+	assert.Equal(t, cbc.Code("01010101"), inv.Lines[0].Item.Ext[cfdi.ExtKeyProdServ])
+	assert.Equal(t, "1234", inv.Lines[0].Item.Identities[0].Code.String())
 }

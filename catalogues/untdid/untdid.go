@@ -15,7 +15,7 @@ func newCatalogue() *tax.CatalogueDef {
 	return &tax.CatalogueDef{
 		Key:  "untdid",
 		Name: i18n.NewString("UN/EDIFACT Data Elements"),
-		Extensions: []*cbc.KeyDefinition{
+		Extensions: []*cbc.Definition{
 			extDocumentTypes, // 1001
 			extPaymentMeans,  // 4461
 			extAllowance,     // 5189

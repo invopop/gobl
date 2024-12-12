@@ -22,7 +22,7 @@ const (
 
 var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
-	List: []*cbc.KeyDefinition{
+	List: []*cbc.Definition{
 		// Copy of the original document
 		{
 			Key: TagCopy,

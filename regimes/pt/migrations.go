@@ -126,7 +126,7 @@ var taxRateVATExemptMigrationMap = []struct {
 	{
 		Key: TaxRateExempt.With(TaxRateSmallRetail),
 		Ext: tax.Extensions{
-			KeyATTaxCode:           tax.ExtValue("exempt"),
+			KeyATTaxCode:           cbc.Code("exempt"),
 			oldExtKeyExemptionCode: "M09",
 		},
 	},
@@ -145,7 +145,7 @@ var taxRateVATExemptMigrationMap = []struct {
 	{
 		Key: TaxRateExempt.With(TaxRateMargin).With(TaxRateTravel),
 		Ext: tax.Extensions{
-			KeyATTaxCode:           tax.ExtValue("exempt"),
+			KeyATTaxCode:           cbc.Code("exempt"),
 			oldExtKeyExemptionCode: "M12",
 		},
 	},

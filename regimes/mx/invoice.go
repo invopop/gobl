@@ -33,8 +33,8 @@ func migrateTaxIDZoneToExtPostCode(p *org.Party) {
 		if p.Ext == nil {
 			p.Ext = make(tax.Extensions)
 		}
-		p.Ext[extKeyPostCode] = tax.ExtValue(p.TaxID.Zone) //nolint:staticcheck
-		p.TaxID.Zone = ""                                  //nolint:staticcheck
+		p.Ext[extKeyPostCode] = cbc.Code(p.TaxID.Zone) //nolint:staticcheck
+		p.TaxID.Zone = ""                              //nolint:staticcheck
 	}
 }
 
@@ -52,7 +52,7 @@ func migrateSupplierExtPostCodeToInvoice(inv *bill.Invoice) {
 	} else if len(inv.Supplier.Addresses) > 0 {
 		addr := inv.Supplier.Addresses[0]
 		if addr.Code != "" {
-			ext[extKeyIssuePlace] = tax.ExtValue(addr.Code)
+			ext[extKeyIssuePlace] = addr.Code
 		}
 	}
 	if len(ext) > 0 {
@@ -69,7 +69,7 @@ func migrateCustomerExtPostCodeToAddress(inv *bill.Invoice) {
 		if len(inv.Customer.Addresses) == 0 {
 			inv.Customer.Addresses = []*org.Address{{}}
 		}
-		inv.Customer.Addresses[0].Code = inv.Customer.Ext[extKeyPostCode].Code()
+		inv.Customer.Addresses[0].Code = inv.Customer.Ext[extKeyPostCode]
 	}
 }
 

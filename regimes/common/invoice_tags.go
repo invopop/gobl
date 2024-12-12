@@ -9,7 +9,7 @@ import (
 
 var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
-	List: []*cbc.KeyDefinition{
+	List: []*cbc.Definition{
 		// Simplified invoices are issued when the complete fiscal details of
 		// a customer are not available.
 		{

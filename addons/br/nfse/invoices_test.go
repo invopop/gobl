@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -232,7 +233,7 @@ func TestSuppliersNormalization(t *testing.T) {
 	tests := []struct {
 		name     string
 		supplier *org.Party
-		out      tax.ExtValue
+		out      cbc.Code
 	}{
 		{
 			name:     "no supplier",

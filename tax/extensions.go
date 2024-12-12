@@ -33,14 +33,10 @@ import (
 // examples of how to define and use extensions.
 
 // Extensions is a map of extension keys to values.
-type Extensions map[cbc.Key]ExtValue
-
-// ExtValue is a string value that has helper methods to help determine
-// if it is a code, key, or regular string.
-type ExtValue string
+type Extensions map[cbc.Key]cbc.Code
 
 type extensionCollection struct {
-	list map[cbc.Key]*cbc.KeyDefinition
+	list map[cbc.Key]*cbc.Definition
 }
 
 // extensionsDefs is a global register of all extension definitions
@@ -49,23 +45,23 @@ var extensionDefs = newExtensionCollection()
 
 func newExtensionCollection() *extensionCollection {
 	return &extensionCollection{
-		list: make(map[cbc.Key]*cbc.KeyDefinition),
+		list: make(map[cbc.Key]*cbc.Definition),
 	}
 }
 
-func (c *extensionCollection) add(kd *cbc.KeyDefinition) {
+func (c *extensionCollection) add(kd *cbc.Definition) {
 	c.list[kd.Key] = kd
 }
 
 // RegisterExtension is used to add any extension definitions to the global
 // register. This is not expected to be called directly, but rather will
 // be used by the regimes and addons during their registration processes.
-func RegisterExtension(kd *cbc.KeyDefinition) {
+func RegisterExtension(kd *cbc.Definition) {
 	extensionDefs.add(kd)
 }
 
 // ExtensionForKey returns the extension definition for the given key or nil.
-func ExtensionForKey(key cbc.Key) *cbc.KeyDefinition {
+func ExtensionForKey(key cbc.Key) *cbc.Definition {
 	return extensionDefs.list[key]
 }
 
@@ -90,7 +86,7 @@ func (em Extensions) Validate() error {
 			err[ks] = errors.New("undefined")
 			continue
 		}
-		if len(kd.Values) > 0 && !kd.HasValue(ev.String()) {
+		if len(kd.Values) > 0 && !kd.HasCode(ev) {
 			err[ks] = fmt.Errorf("value '%s' invalid", ev)
 		}
 		if kd.Pattern != "" {
@@ -114,7 +110,7 @@ func (em Extensions) Validate() error {
 // or the extensions map is nil. If the key is composed of sub-keys and
 // no precise match is found, the key will be split until one of the sub
 // components is found.
-func (em Extensions) Get(k cbc.Key) ExtValue {
+func (em Extensions) Get(k cbc.Key) cbc.Code {
 	if len(em) == 0 {
 		return ""
 	}
@@ -189,7 +185,7 @@ func (em Extensions) Merge(other Extensions) Extensions {
 
 // Lookup returns the key for the provided value or an empty
 // key if not found. This is useful for reverse lookups.
-func (em Extensions) Lookup(val ExtValue) cbc.Key {
+func (em Extensions) Lookup(val cbc.Code) cbc.Key {
 	for k, v := range em {
 		if v == val {
 			return k
@@ -282,18 +278,18 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 	return nil
 }
 
-// ExtensionsHasValues returns a validation rule that ensures the extension map's
-// key has one of the provided **values**.
-func ExtensionsHasValues(key cbc.Key, values ...ExtValue) validation.Rule {
+// ExtensionsHasCodes returns a validation rule that ensures the extension map's
+// key has one of the provided **codes**.
+func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
 	return validateExtCodeValues{
 		key:    key,
-		values: values,
+		values: codes,
 	}
 }
 
 type validateExtCodeValues struct {
 	key    cbc.Key
-	values []ExtValue
+	values []cbc.Code
 }
 
 func (v validateExtCodeValues) Validate(value interface{}) error {
@@ -331,37 +327,4 @@ func (Extensions) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.PatternProperties = map[string]*jsonschema.Schema{
 		cbc.KeyPattern: prop,
 	}
-}
-
-// String provides the string representation.
-func (ev ExtValue) String() string {
-	return string(ev)
-}
-
-// In returns true if the value is in the provided list.
-func (ev ExtValue) In(values ...ExtValue) bool {
-	for _, v := range values {
-		if ev == v {
-			return true
-		}
-	}
-	return false
-}
-
-// Key returns the key value or empty if the value is a Code.
-func (ev ExtValue) Key() cbc.Key {
-	k := cbc.Key(ev)
-	if err := k.Validate(); err == nil {
-		return k
-	}
-	return cbc.KeyEmpty
-}
-
-// Code returns the code value or empty if the value is a Key.
-func (ev ExtValue) Code() cbc.Code {
-	c := cbc.Code(ev)
-	if err := c.Validate(); err == nil {
-		return c
-	}
-	return cbc.CodeEmpty
 }

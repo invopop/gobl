@@ -75,9 +75,9 @@ func TestScenarioSetSummary(t *testing.T) {
 				},
 			},
 			{
-				Types:    []cbc.Key{bill.InvoiceTypeStandard},
-				ExtKey:   "yy-test",
-				ExtValue: "BAR",
+				Types:   []cbc.Key{bill.InvoiceTypeStandard},
+				ExtKey:  "yy-test",
+				ExtCode: "BAR",
 				Note: &cbc.Note{
 					Key:  cbc.NoteKeyLegal,
 					Code: "note2",

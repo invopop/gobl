@@ -10,9 +10,8 @@ func init() {
 		Code(""),
 		CodeMap{},
 		Key(""),
-		KeyDefinition{},
+		Definition{},
 		Meta{},
 		Note{},
-		ValueDefinition{},
 	)
 }

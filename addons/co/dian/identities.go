@@ -23,7 +23,7 @@ const (
 	KeyCompanyID cbc.Key = "dian-company-id"
 )
 
-var identities = []*cbc.KeyDefinition{
+var identities = []*cbc.Definition{
 	{
 		Key: IdentityKeyCivilRegister,
 		Name: i18n.String{

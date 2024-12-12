@@ -1,6 +1,7 @@
 package co
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
@@ -19,7 +20,7 @@ func normalizeParty(p *org.Party) {
 		if p.Ext == nil {
 			p.Ext = make(tax.Extensions)
 		}
-		p.Ext[extKeyDIANMunicipality] = tax.ExtValue(p.TaxID.Zone) //nolint:staticcheck
-		p.TaxID.Zone = ""                                          //nolint:staticcheck
+		p.Ext[extKeyDIANMunicipality] = cbc.Code(p.TaxID.Zone) //nolint:staticcheck
+		p.TaxID.Zone = ""                                      //nolint:staticcheck
 	}
 }

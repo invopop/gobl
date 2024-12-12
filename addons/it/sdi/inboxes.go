@@ -11,7 +11,7 @@ const (
 	KeyInboxPEC  cbc.Key = "it-sdi-pec"
 )
 
-var inboxes = []*cbc.KeyDefinition{
+var inboxes = []*cbc.Definition{
 	{
 		Key: KeyInboxCode,
 		Name: i18n.String{

@@ -24,9 +24,9 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",
 		},
-		TimeZone:     "Europe/Rome",
-		IdentityKeys: identityKeyDefinitions, // identities.go
-		Scenarios:    scenarios,              // scenarios.go
+		TimeZone:   "Europe/Rome",
+		Identities: identityKeyDefinitions, // identities.go
+		Scenarios:  scenarios,              // scenarios.go
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},

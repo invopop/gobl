@@ -26,7 +26,7 @@ type TagSet struct {
 	Schema string `json:"schema" jsonschema:"title=Schema"`
 
 	// List of tags for the schema
-	List []*cbc.KeyDefinition `json:"list" jsonschema:"title=List"`
+	List []*cbc.Definition `json:"list" jsonschema:"title=List"`
 }
 
 // TagSetForSchema will return the tag set for the provided schema, or nil if it does not exist.

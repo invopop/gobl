@@ -3,12 +3,13 @@ package xrechnung
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
 // BR-DE-17 - restricted subset of UNTDID document type codes
-var validInvoiceUNTDIDDocumentTypeValues = []tax.ExtValue{
+var validInvoiceUNTDIDDocumentTypeValues = []cbc.Code{
 	"326", // Partial
 	"380", // Commercial
 	"384", // Corrected
@@ -47,7 +48,7 @@ func validateInvoiceTax(value any) error {
 	}
 	return validation.ValidateStruct(tx,
 		validation.Field(&tx.Ext,
-			tax.ExtensionsHasValues(untdid.ExtKeyTaxCategory, validInvoiceUNTDIDDocumentTypeValues...),
+			tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, validInvoiceUNTDIDDocumentTypeValues...),
 			validation.Skip,
 		),
 	)

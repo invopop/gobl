@@ -21,7 +21,7 @@ const (
 	ExtKeySpecialRegime   = "br-nfse-special-regime"
 )
 
-var extensions = []*cbc.KeyDefinition{
+var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyCNAE,
 		Name: i18n.String{
@@ -45,16 +45,16 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: "Fiscal Incentive",
 			i18n.PT: "Incentivo Fiscal",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Has incentive",
 					i18n.PT: "Possui incentivo",
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Does not have incentive",
 					i18n.PT: "Não possui incentivo",
@@ -78,51 +78,51 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: "ISS Liability",
 			i18n.PT: "Exigibilidade ISS",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Liable",
 					i18n.PT: "Exigível",
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Not subject",
 					i18n.PT: "Não incidência",
 				},
 			},
 			{
-				Value: "3",
+				Code: "3",
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.PT: "Isenção",
 				},
 			},
 			{
-				Value: "4",
+				Code: "4",
 				Name: i18n.String{
 					i18n.EN: "Export",
 					i18n.PT: "Exportação",
 				},
 			},
 			{
-				Value: "5",
+				Code: "5",
 				Name: i18n.String{
 					i18n.EN: "Immune",
 					i18n.PT: "Imunidade",
 				},
 			},
 			{
-				Value: "6",
+				Code: "6",
 				Name: i18n.String{
 					i18n.EN: "Suspended Judicially",
 					i18n.PT: "Suspensa por Decisão Judicial",
 				},
 			},
 			{
-				Value: "7",
+				Code: "7",
 				Name: i18n.String{
 					i18n.EN: "Suspended Administratively",
 					i18n.PT: "Suspensa por Processo Administrativo",
@@ -181,16 +181,16 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: "Opting for “Simples Nacional” regime",
 			i18n.PT: "Optante pelo Simples Nacional",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Opt-in",
 					i18n.PT: "Optante",
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Opt-out",
 					i18n.PT: "Não optante",
@@ -216,44 +216,44 @@ var extensions = []*cbc.KeyDefinition{
 			i18n.EN: "Special Tax Regime",
 			i18n.PT: "Regime Especial de Tributação",
 		},
-		Values: []*cbc.ValueDefinition{
+		Values: []*cbc.Definition{
 			{
-				Value: "1",
+				Code: "1",
 				Name: i18n.String{
 					i18n.EN: "Municipal micro-enterprise",
 					i18n.PT: "Microempresa municipal",
 				},
 			},
 			{
-				Value: "2",
+				Code: "2",
 				Name: i18n.String{
 					i18n.EN: "Estimated",
 					i18n.PT: "Estimativa",
 				},
 			},
 			{
-				Value: "3",
+				Code: "3",
 				Name: i18n.String{
 					i18n.EN: "Professional Society",
 					i18n.PT: "Sociedade de profissionais",
 				},
 			},
 			{
-				Value: "4",
+				Code: "4",
 				Name: i18n.String{
 					i18n.EN: "Cooperative",
 					i18n.PT: "Cooperativa",
 				},
 			},
 			{
-				Value: "5",
+				Code: "5",
 				Name: i18n.String{
 					i18n.EN: "Single micro-entrepreneur (MEI)",
 					i18n.PT: "Microempreendedor individual (MEI)",
 				},
 			},
 			{
-				Value: "6",
+				Code: "6",
 				Name: i18n.String{
 					i18n.EN: "Micro-enterprise or Small Business (ME EPP)",
 					i18n.PT: "Microempresa ou Empresa de Pequeno Porte (ME EPP).",
