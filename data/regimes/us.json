@@ -12,6 +12,7 @@
       "list": [
         {
           "key": "simplified",
+          "code": "",
           "name": {
             "de": "Vereinfachte Rechnung",
             "en": "Simplified Invoice",
@@ -27,6 +28,7 @@
         },
         {
           "key": "reverse-charge",
+          "code": "",
           "name": {
             "de": "Umkehr der Steuerschuld",
             "en": "Reverse Charge",
@@ -36,6 +38,7 @@
         },
         {
           "key": "self-billed",
+          "code": "",
           "name": {
             "de": "Rechnung durch den Leistungsempfänger",
             "en": "Self-billed",
@@ -45,6 +48,7 @@
         },
         {
           "key": "customer-rates",
+          "code": "",
           "name": {
             "de": "Kundensätze",
             "en": "Customer rates",
@@ -54,6 +58,7 @@
         },
         {
           "key": "partial",
+          "code": "",
           "name": {
             "de": "Teilweise",
             "en": "Partial",

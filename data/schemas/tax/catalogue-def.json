@@ -19,7 +19,7 @@
         },
         "extensions": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key-definition"
+            "$ref": "https://gobl.org/draft-0/cbc/definition"
           },
           "type": "array",
           "description": "Extensions defines all the extensions offered by the catalogue."

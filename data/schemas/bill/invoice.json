@@ -1075,11 +1075,6 @@
           "title": "Rounding",
           "description": "Rounding amount to apply to the invoice in case the total and payable\namounts don't quite match."
         },
-        "outlays": {
-          "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Outlay Totals",
-          "description": "Total paid in outlays that need to be reimbursed"
-        },
         "payable": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Payable",

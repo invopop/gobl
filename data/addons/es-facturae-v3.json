@@ -7,27 +7,31 @@
   "extensions": [
     {
       "key": "es-facturae-doc-type",
+      "code": "",
       "name": {
         "en": "FacturaE: Document Type",
         "es": "FacturaE: Tipo de Documento"
       },
       "values": [
         {
-          "value": "FC",
+          "key": "",
+          "code": "FC",
           "name": {
             "en": "Commercial Invoice",
             "es": "Factura Comercial"
           }
         },
         {
-          "value": "FA",
+          "key": "",
+          "code": "FA",
           "name": {
             "en": "Simplified Invoice",
             "es": "Factura Simplificada"
           }
         },
         {
-          "value": "AF",
+          "key": "",
+          "code": "AF",
           "name": {
             "en": "Self-billed Invoice",
             "es": "Auto-Factura"
@@ -37,48 +41,55 @@
     },
     {
       "key": "es-facturae-invoice-class",
+      "code": "",
       "name": {
         "en": "FacturaE: Invoice Class",
         "es": "FacturaE: Clase de Factura"
       },
       "values": [
         {
-          "value": "OO",
+          "key": "",
+          "code": "OO",
           "name": {
             "en": "Original",
             "es": "Original"
           }
         },
         {
-          "value": "OR",
+          "key": "",
+          "code": "OR",
           "name": {
             "en": "Corrective Original",
             "es": "Original Rectificativa"
           }
         },
         {
-          "value": "OC",
+          "key": "",
+          "code": "OC",
           "name": {
             "en": "Summary Original",
             "es": "Original Recapitulativa"
           }
         },
         {
-          "value": "CO",
+          "key": "",
+          "code": "CO",
           "name": {
             "en": "Copy of the Original",
             "es": "Duplicado Original"
           }
         },
         {
-          "value": "CR",
+          "key": "",
+          "code": "CR",
           "name": {
             "en": "Copy of the Corrective",
             "es": "Duplicado Rectificativa"
           }
         },
         {
-          "value": "CC",
+          "key": "",
+          "code": "CC",
           "name": {
             "en": "Copy of the Summary",
             "es": "Duplicado Recapitulativa"
@@ -88,6 +99,7 @@
     },
     {
       "key": "es-facturae-correction",
+      "code": "",
       "name": {
         "en": "FacturaE Change",
         "es": "Cambio de FacturaE"
@@ -98,154 +110,176 @@
       },
       "values": [
         {
-          "value": "01",
+          "key": "",
+          "code": "01",
           "name": {
             "en": "Invoice code",
             "es": "Número de la factura"
           }
         },
         {
-          "value": "02",
+          "key": "",
+          "code": "02",
           "name": {
             "en": "Invoice series",
             "es": "Serie de la factura"
           }
         },
         {
-          "value": "03",
+          "key": "",
+          "code": "03",
           "name": {
             "en": "Issue date",
             "es": "Fecha expedición"
           }
         },
         {
-          "value": "04",
+          "key": "",
+          "code": "04",
           "name": {
             "en": "Name and surnames/Corporate name - Issuer (Sender)",
             "es": "Nombre y apellidos/Razón Social-Emisor"
           }
         },
         {
-          "value": "05",
+          "key": "",
+          "code": "05",
           "name": {
             "en": "Name and surnames/Corporate name - Receiver",
             "es": "Nombre y apellidos/Razón Social-Receptor"
           }
         },
         {
-          "value": "06",
+          "key": "",
+          "code": "06",
           "name": {
             "en": "Issuer's Tax Identification Number",
             "es": "Identificación fiscal Emisor/obligado"
           }
         },
         {
-          "value": "07",
+          "key": "",
+          "code": "07",
           "name": {
             "en": "Receiver's Tax Identification Number",
             "es": "Identificación fiscal Receptor"
           }
         },
         {
-          "value": "08",
+          "key": "",
+          "code": "08",
           "name": {
             "en": "Supplier's address",
             "es": "Domicilio Emisor/Obligado"
           }
         },
         {
-          "value": "09",
+          "key": "",
+          "code": "09",
           "name": {
             "en": "Customer's address",
             "es": "Domicilio Receptor"
           }
         },
         {
-          "value": "10",
+          "key": "",
+          "code": "10",
           "name": {
             "en": "Item line",
             "es": "Detalle Operación"
           }
         },
         {
-          "value": "11",
+          "key": "",
+          "code": "11",
           "name": {
             "en": "Applicable Tax Rate",
             "es": "Porcentaje impositivo a aplicar"
           }
         },
         {
-          "value": "12",
+          "key": "",
+          "code": "12",
           "name": {
             "en": "Applicable Tax Amount",
             "es": "Cuota tributaria a aplicar"
           }
         },
         {
-          "value": "13",
+          "key": "",
+          "code": "13",
           "name": {
             "en": "Applicable Date/Period",
             "es": "Fecha/Periodo a aplicar"
           }
         },
         {
-          "value": "14",
+          "key": "",
+          "code": "14",
           "name": {
             "en": "Invoice Class",
             "es": "Clase de factura"
           }
         },
         {
-          "value": "15",
+          "key": "",
+          "code": "15",
           "name": {
             "en": "Legal literals",
             "es": "Literales legales"
           }
         },
         {
-          "value": "16",
+          "key": "",
+          "code": "16",
           "name": {
             "en": "Taxable Base",
             "es": "Base imponible"
           }
         },
         {
-          "value": "80",
+          "key": "",
+          "code": "80",
           "name": {
             "en": "Calculation of tax outputs",
             "es": "Cálculo de cuotas repercutidas"
           }
         },
         {
-          "value": "81",
+          "key": "",
+          "code": "81",
           "name": {
             "en": "Calculation of tax inputs",
             "es": "Cálculo de cuotas retenidas"
           }
         },
         {
-          "value": "82",
+          "key": "",
+          "code": "82",
           "name": {
             "en": "Taxable Base modified due to return of packages and packaging materials",
             "es": "Base imponible modificada por devolución de envases / embalajes"
           }
         },
         {
-          "value": "83",
+          "key": "",
+          "code": "83",
           "name": {
             "en": "Taxable Base modified due to discounts and rebates",
             "es": "Base imponible modificada por descuentos y bonificaciones"
           }
         },
         {
-          "value": "84",
+          "key": "",
+          "code": "84",
           "name": {
             "en": "Taxable Base modified due to firm court ruling or administrative decision",
             "es": "Base imponible modificada por resolución firme, judicial o administrativa"
           }
         },
         {
-          "value": "85",
+          "key": "",
+          "code": "85",
           "name": {
             "en": "Taxable Base modified due to unpaid outputs where there is a judgement opening insolvency proceedings",
             "es": "Base imponible modificada cuotas repercutidas no satisfechas. Auto de declaración de concurso"

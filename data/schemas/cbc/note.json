@@ -138,7 +138,7 @@
           "description": "Key specifying subject of the text"
         },
         "code": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
           "description": "Code used for additional data that may be required to identify the note."
         },

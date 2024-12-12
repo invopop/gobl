@@ -8,6 +8,7 @@
   "extensions": [
     {
       "key": "iso-scheme-id",
+      "code": "",
       "name": {
         "en": "ISO/IEC 6523 Identifier scheme code"
       },

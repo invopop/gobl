@@ -6,7 +6,7 @@
     "Extensions": {
       "patternProperties": {
         "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
-          "type": "string"
+          "$ref": "https://gobl.org/draft-0/cbc/code"
         }
       },
       "type": "object",

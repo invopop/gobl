@@ -7,41 +7,47 @@
   "extensions": [
     {
       "key": "pt-saft-invoice-type",
+      "code": "",
       "name": {
         "en": "Invoice Type",
         "pt": "Tipo de Fatura"
       },
       "values": [
         {
-          "value": "FT",
+          "key": "",
+          "code": "FT",
           "name": {
             "en": "Standard Invoice",
             "pt": "Fatura"
           }
         },
         {
-          "value": "FS",
+          "key": "",
+          "code": "FS",
           "name": {
             "en": "Simplified Invoice",
             "pt": "Fatura Simplificada"
           }
         },
         {
-          "value": "FR",
+          "key": "",
+          "code": "FR",
           "name": {
             "en": "Invoice-Receipt",
             "pt": "Fatura-Recibo"
           }
         },
         {
-          "value": "ND",
+          "key": "",
+          "code": "ND",
           "name": {
             "en": "Debit Note",
             "pt": "Nota de Débito"
           }
         },
         {
-          "value": "NC",
+          "key": "",
+          "code": "NC",
           "name": {
             "en": "Credit Note",
             "pt": "Nota de Crédito"
@@ -51,41 +57,47 @@
     },
     {
       "key": "pt-saft-tax-rate",
+      "code": "",
       "name": {
         "en": "Tax Rate Code",
         "pt": "Código da Taxa de Imposto"
       },
       "values": [
         {
-          "value": "RED",
+          "key": "",
+          "code": "RED",
           "name": {
             "en": "Reduced",
             "pt": "Redução"
           }
         },
         {
-          "value": "INT",
+          "key": "",
+          "code": "INT",
           "name": {
             "en": "Intermediate",
             "pt": "Intermédio"
           }
         },
         {
-          "value": "NOR",
+          "key": "",
+          "code": "NOR",
           "name": {
             "en": "Normal",
             "pt": "Normal"
           }
         },
         {
-          "value": "ISE",
+          "key": "",
+          "code": "ISE",
           "name": {
             "en": "Exempt",
             "pt": "Isento"
           }
         },
         {
-          "value": "OUT",
+          "key": "",
+          "code": "OUT",
           "name": {
             "en": "Other",
             "pt": "Outro"
@@ -95,195 +107,223 @@
     },
     {
       "key": "pt-saft-exemption",
+      "code": "",
       "name": {
         "en": "Tax exemption reason code",
         "pt": "Código do motivo de isenção de imposto"
       },
       "values": [
         {
-          "value": "M01",
+          "key": "",
+          "code": "M01",
           "name": {
             "en": "Article 16, No. 6 of the VAT code",
             "pt": "Artigo 16.°, n.° 6 do CIVA"
           }
         },
         {
-          "value": "M02",
+          "key": "",
+          "code": "M02",
           "name": {
             "en": "Article 6 of the Decree-Law 198/90 of 19th June",
             "pt": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
           }
         },
         {
-          "value": "M04",
+          "key": "",
+          "code": "M04",
           "name": {
             "en": "Exempt pursuant to article 13 of the VAT code",
             "pt": "Isento artigo 13.° do CIVA"
           }
         },
         {
-          "value": "M05",
+          "key": "",
+          "code": "M05",
           "name": {
             "en": "Exempt pursuant to article 14 of the VAT code",
             "pt": "Isento artigo 14.° do CIVA"
           }
         },
         {
-          "value": "M06",
+          "key": "",
+          "code": "M06",
           "name": {
             "en": "Exempt pursuant to article 15 of the VAT code",
             "pt": "Isento artigo 15.° do CIVA"
           }
         },
         {
-          "value": "M07",
+          "key": "",
+          "code": "M07",
           "name": {
             "en": "Exempt pursuant to article 9 of the VAT code",
             "pt": "Isento artigo 9.° do CIVA"
           }
         },
         {
-          "value": "M09",
+          "key": "",
+          "code": "M09",
           "name": {
             "en": "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
             "pt": "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
           }
         },
         {
-          "value": "M10",
+          "key": "",
+          "code": "M10",
           "name": {
             "en": "VAT - exemption scheme / Article 57 of the VAT code",
             "pt": "IVA - regime de isenção / Artigo 57.° do CIVA"
           }
         },
         {
-          "value": "M11",
+          "key": "",
+          "code": "M11",
           "name": {
             "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
             "pt": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
           }
         },
         {
-          "value": "M12",
+          "key": "",
+          "code": "M12",
           "name": {
             "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
             "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
           }
         },
         {
-          "value": "M13",
+          "key": "",
+          "code": "M13",
           "name": {
             "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
         {
-          "value": "M14",
+          "key": "",
+          "code": "M14",
           "name": {
             "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
         {
-          "value": "M15",
+          "key": "",
+          "code": "M15",
           "name": {
             "en": "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
         {
-          "value": "M16",
+          "key": "",
+          "code": "M16",
           "name": {
             "en": "Exempt pursuant to Article 14 of the RITI",
             "pt": "Isento artigo 14.° do RITI"
           }
         },
         {
-          "value": "M19",
+          "key": "",
+          "code": "M19",
           "name": {
             "en": "Other exemptions - Temporary exemptions determined by specific legislation",
             "pt": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
           }
         },
         {
-          "value": "M20",
+          "key": "",
+          "code": "M20",
           "name": {
             "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
             "pt": "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA"
           }
         },
         {
-          "value": "M21",
+          "key": "",
+          "code": "M21",
           "name": {
             "en": "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
             "pt": "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
           }
         },
         {
-          "value": "M25",
+          "key": "",
+          "code": "M25",
           "name": {
             "en": "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
             "pt": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
           }
         },
         {
-          "value": "M30",
+          "key": "",
+          "code": "M30",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA"
           }
         },
         {
-          "value": "M31",
+          "key": "",
+          "code": "M31",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA"
           }
         },
         {
-          "value": "M32",
+          "key": "",
+          "code": "M32",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA"
           }
         },
         {
-          "value": "M33",
+          "key": "",
+          "code": "M33",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA"
           }
         },
         {
-          "value": "M40",
+          "key": "",
+          "code": "M40",
           "name": {
             "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
             "pt": "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário"
           }
         },
         {
-          "value": "M41",
+          "key": "",
+          "code": "M41",
           "name": {
             "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
             "pt": "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI"
           }
         },
         {
-          "value": "M42",
+          "key": "",
+          "code": "M42",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro"
           }
         },
         {
-          "value": "M43",
+          "key": "",
+          "code": "M43",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
             "pt": "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro"
           }
         },
         {
-          "value": "M99",
+          "key": "",
+          "code": "M99",
           "name": {
             "en": "Not subject to tax or not taxed",
             "pt": "Não sujeito ou não tributado"
@@ -341,7 +381,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M01",
+          "ext_code": "M01",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -350,7 +390,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M02",
+          "ext_code": "M02",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -359,7 +399,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M04",
+          "ext_code": "M04",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -368,7 +408,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M05",
+          "ext_code": "M05",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -377,7 +417,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M06",
+          "ext_code": "M06",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -386,7 +426,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M07",
+          "ext_code": "M07",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -395,7 +435,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M09",
+          "ext_code": "M09",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -404,7 +444,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M10",
+          "ext_code": "M10",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -413,7 +453,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M11",
+          "ext_code": "M11",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -422,7 +462,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M12",
+          "ext_code": "M12",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -431,7 +471,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M13",
+          "ext_code": "M13",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -440,7 +480,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M14",
+          "ext_code": "M14",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -449,7 +489,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M15",
+          "ext_code": "M15",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -458,7 +498,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M16",
+          "ext_code": "M16",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -467,7 +507,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M19",
+          "ext_code": "M19",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -476,7 +516,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M20",
+          "ext_code": "M20",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -485,7 +525,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M21",
+          "ext_code": "M21",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -494,7 +534,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M25",
+          "ext_code": "M25",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -503,7 +543,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M30",
+          "ext_code": "M30",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -512,7 +552,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M31",
+          "ext_code": "M31",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -521,7 +561,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M32",
+          "ext_code": "M32",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -530,7 +570,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M33",
+          "ext_code": "M33",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -539,7 +579,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M40",
+          "ext_code": "M40",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -548,7 +588,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M41",
+          "ext_code": "M41",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -557,7 +597,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M42",
+          "ext_code": "M42",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -566,7 +606,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M43",
+          "ext_code": "M43",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
@@ -575,7 +615,7 @@
         },
         {
           "ext_key": "pt-saft-exemption",
-          "ext_value": "M99",
+          "ext_code": "M99",
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
