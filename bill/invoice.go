@@ -89,7 +89,7 @@ type Invoice struct {
 
 	// Unstructured information that is relevant to the invoice, such as correction or additional
 	// legal details.
-	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// Additional complementary objects that add relevant information to the invoice.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`

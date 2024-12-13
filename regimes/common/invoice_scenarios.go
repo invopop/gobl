@@ -3,6 +3,7 @@ package common
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -12,8 +13,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Reverse Charges
 		{
 			Tags: []cbc.Key{tax.TagReverseCharge},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  tax.TagReverseCharge,
 				Text: "Reverse charge: Customer to account for VAT to the relevant tax authority.",
 			},

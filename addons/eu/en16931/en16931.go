@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
@@ -56,6 +57,8 @@ func normalize(doc any) {
 		normalizeBillCharge(obj)
 	case *bill.LineCharge:
 		normalizeBillLineCharge(obj)
+	case *org.Note:
+		normalizeOrgNote(obj)
 	}
 }
 

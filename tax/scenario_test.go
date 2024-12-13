@@ -59,8 +59,8 @@ func TestScenarioSetSummary(t *testing.T) {
 				Ext: tax.Extensions{
 					"xx-test": "simple",
 				},
-				Note: &cbc.Note{
-					Key:  cbc.NoteKeyLegal,
+				Note: &tax.ScenarioNote{
+					Key:  org.NoteKeyLegal,
 					Code: "note1",
 					Text: "This is a note1",
 				},
@@ -68,8 +68,8 @@ func TestScenarioSetSummary(t *testing.T) {
 			{
 				Types: []cbc.Key{bill.InvoiceTypeStandard},
 				Tags:  []cbc.Key{tax.TagSimplified, tax.TagPartial},
-				Note: &cbc.Note{
-					Key:  cbc.NoteKeyLegal,
+				Note: &tax.ScenarioNote{
+					Key:  org.NoteKeyLegal,
 					Code: "note1",
 					Text: "This will replace previous note1",
 				},
@@ -78,8 +78,8 @@ func TestScenarioSetSummary(t *testing.T) {
 				Types:   []cbc.Key{bill.InvoiceTypeStandard},
 				ExtKey:  "yy-test",
 				ExtCode: "BAR",
-				Note: &cbc.Note{
-					Key:  cbc.NoteKeyLegal,
+				Note: &tax.ScenarioNote{
+					Key:  org.NoteKeyLegal,
 					Code: "note2",
 					Text: "This is a note 2",
 				},
@@ -87,16 +87,16 @@ func TestScenarioSetSummary(t *testing.T) {
 			{
 				Types:  []cbc.Key{bill.InvoiceTypeStandard},
 				ExtKey: "zz-test",
-				Note: &cbc.Note{
-					Key:  cbc.NoteKeyLegal,
+				Note: &tax.ScenarioNote{
+					Key:  org.NoteKeyLegal,
 					Code: "note2",
 					Text: "This is a note 3",
 				},
 			},
 			{
 				Types: []cbc.Key{bill.InvoiceTypeDebitNote},
-				Note: &cbc.Note{
-					Key:  cbc.NoteKeyLegal,
+				Note: &tax.ScenarioNote{
+					Key:  org.NoteKeyLegal,
 					Code: "note3",
 					Text: "This should not be used",
 				},

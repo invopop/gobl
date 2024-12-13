@@ -77,7 +77,7 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Notes,
-			cbc.ValidateNotesHasKey(cbc.NoteKeyGeneral),
+			org.ValidateNotesHasKey(org.NoteKeyGeneral),
 			validation.Skip,
 		),
 	)

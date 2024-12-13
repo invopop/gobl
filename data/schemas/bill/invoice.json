@@ -585,7 +585,7 @@
         },
         "notes": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/note"
+            "$ref": "https://gobl.org/draft-0/org/note"
           },
           "type": "array",
           "title": "Notes",
@@ -679,7 +679,7 @@
         },
         "notes": {
           "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/note"
+            "$ref": "https://gobl.org/draft-0/org/note"
           },
           "type": "array",
           "title": "Notes",
