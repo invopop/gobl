@@ -2,6 +2,7 @@ package bill
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -54,7 +55,8 @@ func (inv *Invoice) scenarioSummary() *tax.ScenarioSummary {
 }
 
 func (inv *Invoice) removePreviousScenarioNotes(ss *tax.ScenarioSet) {
-	for _, n := range ss.Notes() {
+	for _, sn := range ss.Notes() {
+		n := org.NoteFromScenario(sn)
 		for i, n2 := range inv.Notes {
 			if n.SameAs(n2) {
 				// remove from array
@@ -71,7 +73,8 @@ func (inv *Invoice) prepareScenarios() error {
 		return nil
 	}
 
-	for _, n := range ss.Notes {
+	for _, sn := range ss.Notes {
+		n := org.NoteFromScenario(sn)
 		// make sure we don't already have the same note in the invoice
 		for _, n2 := range inv.Notes {
 			if n.SameAs(n2) {

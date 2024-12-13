@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `gr-mydata`: added `gr-mydata-other-tax` extension to set the category of other taxes in charges.
+- `untdid`: 4451 - `untdid-text-subject` (Text Subject Qualifer) catalogue.
 
 ## [v0.207.0] - 2024-12-12
 

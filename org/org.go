@@ -14,6 +14,7 @@ func init() {
 		Inbox{},
 		Item{},
 		Name{},
+		Note{},
 		Party{},
 		Person{},
 		Registration{},
