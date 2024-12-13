@@ -102,6 +102,21 @@ func TestSimplifiedInvoiceValidation(t *testing.T) {
 	assert.NoError(t, inv.Validate())
 }
 
+func TestOtherInvoiceTypeValidation(t *testing.T) {
+	inv := validInvoice()
+	inv.Type = bill.InvoiceTypeOther
+	inv.Tax = &bill.Tax{
+		Ext: tax.Extensions{
+			mydata.ExtKeyInvoiceType: "8.2",
+		},
+	}
+	inv.Customer.TaxID = nil
+	inv.Customer.Addresses = nil
+
+	require.NoError(t, inv.Calculate())
+	assert.NoError(t, inv.Validate())
+}
+
 func TestPrecedingValidation(t *testing.T) {
 	inv := validInvoice()
 

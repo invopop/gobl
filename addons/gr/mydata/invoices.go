@@ -26,7 +26,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!IsRetail(inv),
+				requiresValidCustomer(inv),
 				validation.Required,
 				validation.By(validateBusinessParty),
 				validation.By(validateBusinessCustomer),
@@ -38,10 +38,6 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.By(validateInvoiceLine),
 				validation.Skip,
 			),
-			validation.Skip,
-		),
-		validation.Field(&inv.Charges,
-			validation.Empty.Error("not supported by mydata"),
 			validation.Skip,
 		),
 		validation.Field(&inv.Discounts,
@@ -182,13 +178,18 @@ func validateInvoicePreceding(value any) error {
 	)
 }
 
-// IsRetail returns true if the invoice type corresponds to a retail invoice.
-func IsRetail(inv *bill.Invoice) bool {
-	if inv.Tax == nil || inv.Tax.Ext == nil {
-		return false
+// requiresValidCustomer returns true if the invoice type requires a customer.
+func requiresValidCustomer(inv *bill.Invoice) bool {
+	// Invoice type categories that require a valid customer.
+	typeCats := []string{"1", "2", "5"}
+
+	it := inv.Tax.Ext[ExtKeyInvoiceType].String()
+
+	for _, prefix := range typeCats {
+		if strings.HasPrefix(it, prefix+".") {
+			return true
+		}
 	}
 
-	it := inv.Tax.Ext[ExtKeyInvoiceType]
-
-	return strings.HasPrefix(string(it), InvoiceTypeRetailPrefix)
+	return false
 }

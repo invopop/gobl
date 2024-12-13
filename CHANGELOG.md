@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `in`: added Indian regime
 - `cef`: catalogue for CEF VATEX reason codes.
 - `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item Type Identification) extenions.
+- `gr-mydata`: added `gr-mydata-other-tax` extension to set the category of other taxes in charges.
 
 ### Changed
 
