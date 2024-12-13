@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `untdid`: 4451 - `untdid-text-subject` (Text Subject Qualifer) catalogue.
+
 ## [v0.207.0] - 2024-12-12
 
 ### Added

@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -197,9 +196,9 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 			},
 		},
-		Notes: []*cbc.Note{
+		Notes: []*org.Note{
 			{
-				Key:  cbc.NoteKeyGeneral,
+				Key:  org.NoteKeyGeneral,
 				Text: "This is a test invoice",
 			},
 		},

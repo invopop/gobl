@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -46,8 +46,8 @@ func TestScenarios(t *testing.T) {
 			Country: "IT",
 			Code:    "12345678903",
 		}
-		inv.Notes = append(inv.Notes, &cbc.Note{
-			Key:  cbc.NoteKeyLegal,
+		inv.Notes = append(inv.Notes, &org.Note{
+			Key:  org.NoteKeyLegal,
 			Src:  tax.TagReverseCharge,
 			Text: "Random to replace",
 		})

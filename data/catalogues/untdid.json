@@ -5254,6 +5254,2423 @@
       ]
     },
     {
+      "key": "untdid-text-subject",
+      "name": {
+        "en": "UNTDID 4451 Text Subject Qualifier"
+      },
+      "desc": {
+        "en": "Code specifying subject of a free text."
+      },
+      "values": [
+        {
+          "code": "AAA",
+          "name": {
+            "en": "Goods item description"
+          }
+        },
+        {
+          "code": "AAB",
+          "name": {
+            "en": "Payment term"
+          }
+        },
+        {
+          "code": "AAC",
+          "name": {
+            "en": "Dangerous goods additional information"
+          }
+        },
+        {
+          "code": "AAD",
+          "name": {
+            "en": "Dangerous goods technical name"
+          }
+        },
+        {
+          "code": "AAE",
+          "name": {
+            "en": "Acknowledgement description"
+          }
+        },
+        {
+          "code": "AAF",
+          "name": {
+            "en": "Rate additional information"
+          }
+        },
+        {
+          "code": "AAG",
+          "name": {
+            "en": "Party instructions"
+          }
+        },
+        {
+          "code": "AAI",
+          "name": {
+            "en": "General information"
+          }
+        },
+        {
+          "code": "AAJ",
+          "name": {
+            "en": "Additional conditions of sale/purchase"
+          }
+        },
+        {
+          "code": "AAK",
+          "name": {
+            "en": "Price conditions"
+          }
+        },
+        {
+          "code": "AAL",
+          "name": {
+            "en": "Goods dimensions in characters"
+          }
+        },
+        {
+          "code": "AAM",
+          "name": {
+            "en": "Equipment re-usage restrictions"
+          }
+        },
+        {
+          "code": "AAN",
+          "name": {
+            "en": "Handling restriction"
+          }
+        },
+        {
+          "code": "AAO",
+          "name": {
+            "en": "Error description (free text)"
+          }
+        },
+        {
+          "code": "AAP",
+          "name": {
+            "en": "Response (free text)"
+          }
+        },
+        {
+          "code": "AAQ",
+          "name": {
+            "en": "Package content's description"
+          }
+        },
+        {
+          "code": "AAR",
+          "name": {
+            "en": "Terms of delivery"
+          }
+        },
+        {
+          "code": "AAS",
+          "name": {
+            "en": "Bill of lading remarks"
+          }
+        },
+        {
+          "code": "AAT",
+          "name": {
+            "en": "Mode of settlement information"
+          }
+        },
+        {
+          "code": "AAU",
+          "name": {
+            "en": "Consignment invoice information"
+          }
+        },
+        {
+          "code": "AAV",
+          "name": {
+            "en": "Clearance invoice information"
+          }
+        },
+        {
+          "code": "AAW",
+          "name": {
+            "en": "Letter of credit information"
+          }
+        },
+        {
+          "code": "AAX",
+          "name": {
+            "en": "License information"
+          }
+        },
+        {
+          "code": "AAY",
+          "name": {
+            "en": "Certification statements"
+          }
+        },
+        {
+          "code": "AAZ",
+          "name": {
+            "en": "Additional export information"
+          }
+        },
+        {
+          "code": "ABA",
+          "name": {
+            "en": "Tariff statements"
+          }
+        },
+        {
+          "code": "ABB",
+          "name": {
+            "en": "Medical history"
+          }
+        },
+        {
+          "code": "ABC",
+          "name": {
+            "en": "Conditions of sale or purchase"
+          }
+        },
+        {
+          "code": "ABD",
+          "name": {
+            "en": "Contract document type"
+          }
+        },
+        {
+          "code": "ABE",
+          "name": {
+            "en": "Additional terms and/or conditions (documentary credit)"
+          }
+        },
+        {
+          "code": "ABF",
+          "name": {
+            "en": "Instructions or information about standby documentary"
+          }
+        },
+        {
+          "code": "ABG",
+          "name": {
+            "en": "Instructions or information about partial shipment(s)"
+          }
+        },
+        {
+          "code": "ABH",
+          "name": {
+            "en": "Instructions or information about transhipment(s)"
+          }
+        },
+        {
+          "code": "ABI",
+          "name": {
+            "en": "Additional handling instructions documentary credit"
+          }
+        },
+        {
+          "code": "ABJ",
+          "name": {
+            "en": "Domestic routing information"
+          }
+        },
+        {
+          "code": "ABK",
+          "name": {
+            "en": "Chargeable category of equipment"
+          }
+        },
+        {
+          "code": "ABL",
+          "name": {
+            "en": "Government information"
+          }
+        },
+        {
+          "code": "ABM",
+          "name": {
+            "en": "Onward routing information"
+          }
+        },
+        {
+          "code": "ABN",
+          "name": {
+            "en": "Accounting information"
+          }
+        },
+        {
+          "code": "ABO",
+          "name": {
+            "en": "Discrepancy information"
+          }
+        },
+        {
+          "code": "ABP",
+          "name": {
+            "en": "Confirmation instructions"
+          }
+        },
+        {
+          "code": "ABQ",
+          "name": {
+            "en": "Method of issuance"
+          }
+        },
+        {
+          "code": "ABR",
+          "name": {
+            "en": "Documents delivery instructions"
+          }
+        },
+        {
+          "code": "ABS",
+          "name": {
+            "en": "Additional conditions"
+          }
+        },
+        {
+          "code": "ABT",
+          "name": {
+            "en": "Information/instructions about additional amounts covered"
+          }
+        },
+        {
+          "code": "ABU",
+          "name": {
+            "en": "Deferred payment termed additional"
+          }
+        },
+        {
+          "code": "ABV",
+          "name": {
+            "en": "Acceptance terms additional"
+          }
+        },
+        {
+          "code": "ABW",
+          "name": {
+            "en": "Negotiation terms additional"
+          }
+        },
+        {
+          "code": "ABX",
+          "name": {
+            "en": "Document name and documentary requirements"
+          }
+        },
+        {
+          "code": "ABZ",
+          "name": {
+            "en": "Instructions/information about revolving documentary credit"
+          }
+        },
+        {
+          "code": "ACA",
+          "name": {
+            "en": "Documentary requirements"
+          }
+        },
+        {
+          "code": "ACB",
+          "name": {
+            "en": "Additional information"
+          }
+        },
+        {
+          "code": "ACC",
+          "name": {
+            "en": "Factor assignment clause"
+          }
+        },
+        {
+          "code": "ACD",
+          "name": {
+            "en": "Reason"
+          }
+        },
+        {
+          "code": "ACE",
+          "name": {
+            "en": "Dispute"
+          }
+        },
+        {
+          "code": "ACF",
+          "name": {
+            "en": "Additional attribute information"
+          }
+        },
+        {
+          "code": "ACG",
+          "name": {
+            "en": "Absence declaration"
+          }
+        },
+        {
+          "code": "ACH",
+          "name": {
+            "en": "Aggregation statement"
+          }
+        },
+        {
+          "code": "ACI",
+          "name": {
+            "en": "Compilation statement"
+          }
+        },
+        {
+          "code": "ACJ",
+          "name": {
+            "en": "Definitional exception"
+          }
+        },
+        {
+          "code": "ACK",
+          "name": {
+            "en": "Privacy statement"
+          }
+        },
+        {
+          "code": "ACL",
+          "name": {
+            "en": "Quality statement"
+          }
+        },
+        {
+          "code": "ACM",
+          "name": {
+            "en": "Statistical description"
+          }
+        },
+        {
+          "code": "ACN",
+          "name": {
+            "en": "Statistical definition"
+          }
+        },
+        {
+          "code": "ACO",
+          "name": {
+            "en": "Statistical name"
+          }
+        },
+        {
+          "code": "ACP",
+          "name": {
+            "en": "Statistical title"
+          }
+        },
+        {
+          "code": "ACQ",
+          "name": {
+            "en": "Off-dimension information"
+          }
+        },
+        {
+          "code": "ACR",
+          "name": {
+            "en": "Unexpected stops information"
+          }
+        },
+        {
+          "code": "ACS",
+          "name": {
+            "en": "Principles"
+          }
+        },
+        {
+          "code": "ACT",
+          "name": {
+            "en": "Terms and definition"
+          }
+        },
+        {
+          "code": "ACU",
+          "name": {
+            "en": "Segment name"
+          }
+        },
+        {
+          "code": "ACV",
+          "name": {
+            "en": "Simple data element name"
+          }
+        },
+        {
+          "code": "ACW",
+          "name": {
+            "en": "Scope"
+          }
+        },
+        {
+          "code": "ACX",
+          "name": {
+            "en": "Message type name"
+          }
+        },
+        {
+          "code": "ACY",
+          "name": {
+            "en": "Introduction"
+          }
+        },
+        {
+          "code": "ACZ",
+          "name": {
+            "en": "Glossary"
+          }
+        },
+        {
+          "code": "ADA",
+          "name": {
+            "en": "Functional definition"
+          }
+        },
+        {
+          "code": "ADB",
+          "name": {
+            "en": "Examples"
+          }
+        },
+        {
+          "code": "ADC",
+          "name": {
+            "en": "Cover page"
+          }
+        },
+        {
+          "code": "ADD",
+          "name": {
+            "en": "Dependency (syntax) notes"
+          }
+        },
+        {
+          "code": "ADE",
+          "name": {
+            "en": "Code value name"
+          }
+        },
+        {
+          "code": "ADF",
+          "name": {
+            "en": "Code list name"
+          }
+        },
+        {
+          "code": "ADG",
+          "name": {
+            "en": "Clarification of usage"
+          }
+        },
+        {
+          "code": "ADH",
+          "name": {
+            "en": "Composite data element name"
+          }
+        },
+        {
+          "code": "ADI",
+          "name": {
+            "en": "Field of application"
+          }
+        },
+        {
+          "code": "ADJ",
+          "name": {
+            "en": "Type of assets and liabilities"
+          }
+        },
+        {
+          "code": "ADK",
+          "name": {
+            "en": "Promotion information"
+          }
+        },
+        {
+          "code": "ADL",
+          "name": {
+            "en": "Meter condition"
+          }
+        },
+        {
+          "code": "ADM",
+          "name": {
+            "en": "Meter reading information"
+          }
+        },
+        {
+          "code": "ADN",
+          "name": {
+            "en": "Type of transaction reason"
+          }
+        },
+        {
+          "code": "ADO",
+          "name": {
+            "en": "Type of survey question"
+          }
+        },
+        {
+          "code": "ADP",
+          "name": {
+            "en": "Carrier's agent counter information"
+          }
+        },
+        {
+          "code": "ADQ",
+          "name": {
+            "en": "Description of work item on equipment"
+          }
+        },
+        {
+          "code": "ADR",
+          "name": {
+            "en": "Message definition"
+          }
+        },
+        {
+          "code": "ADS",
+          "name": {
+            "en": "Booked item information"
+          }
+        },
+        {
+          "code": "ADT",
+          "name": {
+            "en": "Source of document"
+          }
+        },
+        {
+          "code": "ADU",
+          "name": {
+            "en": "Note"
+          }
+        },
+        {
+          "code": "ADV",
+          "name": {
+            "en": "Fixed part of segment clarification text"
+          }
+        },
+        {
+          "code": "ADW",
+          "name": {
+            "en": "Characteristics of goods"
+          }
+        },
+        {
+          "code": "ADX",
+          "name": {
+            "en": "Additional discharge instructions"
+          }
+        },
+        {
+          "code": "ADY",
+          "name": {
+            "en": "Container stripping instructions"
+          }
+        },
+        {
+          "code": "ADZ",
+          "name": {
+            "en": "CSC (Container Safety Convention) plate information"
+          }
+        },
+        {
+          "code": "AEA",
+          "name": {
+            "en": "Cargo remarks"
+          }
+        },
+        {
+          "code": "AEB",
+          "name": {
+            "en": "Temperature control instructions"
+          }
+        },
+        {
+          "code": "AEC",
+          "name": {
+            "en": "Text refers to expected data"
+          }
+        },
+        {
+          "code": "AED",
+          "name": {
+            "en": "Text refers to received data"
+          }
+        },
+        {
+          "code": "AEE",
+          "name": {
+            "en": "Section clarification text"
+          }
+        },
+        {
+          "code": "AEF",
+          "name": {
+            "en": "Information to the beneficiary"
+          }
+        },
+        {
+          "code": "AEG",
+          "name": {
+            "en": "Information to the applicant"
+          }
+        },
+        {
+          "code": "AEH",
+          "name": {
+            "en": "Instructions to the beneficiary"
+          }
+        },
+        {
+          "code": "AEI",
+          "name": {
+            "en": "Instructions to the applicant"
+          }
+        },
+        {
+          "code": "AEJ",
+          "name": {
+            "en": "Controlled atmosphere"
+          }
+        },
+        {
+          "code": "AEK",
+          "name": {
+            "en": "Take off annotation"
+          }
+        },
+        {
+          "code": "AEL",
+          "name": {
+            "en": "Price variation narrative"
+          }
+        },
+        {
+          "code": "AEM",
+          "name": {
+            "en": "Documentary credit amendment instructions"
+          }
+        },
+        {
+          "code": "AEN",
+          "name": {
+            "en": "Standard method narrative"
+          }
+        },
+        {
+          "code": "AEO",
+          "name": {
+            "en": "Project narrative"
+          }
+        },
+        {
+          "code": "AEP",
+          "name": {
+            "en": "Radioactive goods, additional information"
+          }
+        },
+        {
+          "code": "AEQ",
+          "name": {
+            "en": "Bank-to-bank information"
+          }
+        },
+        {
+          "code": "AER",
+          "name": {
+            "en": "Reimbursement instructions"
+          }
+        },
+        {
+          "code": "AES",
+          "name": {
+            "en": "Reason for amending a message"
+          }
+        },
+        {
+          "code": "AET",
+          "name": {
+            "en": "Instructions to the paying and/or accepting and/or"
+          }
+        },
+        {
+          "code": "AEU",
+          "name": {
+            "en": "Interest instructions"
+          }
+        },
+        {
+          "code": "AEV",
+          "name": {
+            "en": "Agent commission"
+          }
+        },
+        {
+          "code": "AEW",
+          "name": {
+            "en": "Remitting bank instructions"
+          }
+        },
+        {
+          "code": "AEX",
+          "name": {
+            "en": "Instructions to the collecting bank"
+          }
+        },
+        {
+          "code": "AEY",
+          "name": {
+            "en": "Collection amount instructions"
+          }
+        },
+        {
+          "code": "AEZ",
+          "name": {
+            "en": "Internal auditing information"
+          }
+        },
+        {
+          "code": "AFA",
+          "name": {
+            "en": "Constraint"
+          }
+        },
+        {
+          "code": "AFB",
+          "name": {
+            "en": "Comment"
+          }
+        },
+        {
+          "code": "AFC",
+          "name": {
+            "en": "Semantic note"
+          }
+        },
+        {
+          "code": "AFD",
+          "name": {
+            "en": "Help text"
+          }
+        },
+        {
+          "code": "AFE",
+          "name": {
+            "en": "Legend"
+          }
+        },
+        {
+          "code": "AFF",
+          "name": {
+            "en": "Batch code structure"
+          }
+        },
+        {
+          "code": "AFG",
+          "name": {
+            "en": "Product application"
+          }
+        },
+        {
+          "code": "AFH",
+          "name": {
+            "en": "Customer complaint"
+          }
+        },
+        {
+          "code": "AFI",
+          "name": {
+            "en": "Probable cause of fault"
+          }
+        },
+        {
+          "code": "AFJ",
+          "name": {
+            "en": "Defect description"
+          }
+        },
+        {
+          "code": "AFK",
+          "name": {
+            "en": "Repair description"
+          }
+        },
+        {
+          "code": "AFL",
+          "name": {
+            "en": "Review comments"
+          }
+        },
+        {
+          "code": "AFM",
+          "name": {
+            "en": "Title"
+          }
+        },
+        {
+          "code": "AFN",
+          "name": {
+            "en": "Description of amount"
+          }
+        },
+        {
+          "code": "AFO",
+          "name": {
+            "en": "Responsibilities"
+          }
+        },
+        {
+          "code": "AFP",
+          "name": {
+            "en": "Supplier"
+          }
+        },
+        {
+          "code": "AFQ",
+          "name": {
+            "en": "Purchase region"
+          }
+        },
+        {
+          "code": "AFR",
+          "name": {
+            "en": "Affiliation"
+          }
+        },
+        {
+          "code": "AFS",
+          "name": {
+            "en": "Borrower"
+          }
+        },
+        {
+          "code": "AFT",
+          "name": {
+            "en": "Line of business"
+          }
+        },
+        {
+          "code": "AFU",
+          "name": {
+            "en": "Financial institution"
+          }
+        },
+        {
+          "code": "AFV",
+          "name": {
+            "en": "Business founder"
+          }
+        },
+        {
+          "code": "AFW",
+          "name": {
+            "en": "Business history"
+          }
+        },
+        {
+          "code": "AFX",
+          "name": {
+            "en": "Banking arrangements"
+          }
+        },
+        {
+          "code": "AFY",
+          "name": {
+            "en": "Business origin"
+          }
+        },
+        {
+          "code": "AFZ",
+          "name": {
+            "en": "Brand names' description"
+          }
+        },
+        {
+          "code": "AGA",
+          "name": {
+            "en": "Business financing details"
+          }
+        },
+        {
+          "code": "AGB",
+          "name": {
+            "en": "Competition"
+          }
+        },
+        {
+          "code": "AGC",
+          "name": {
+            "en": "Construction process details"
+          }
+        },
+        {
+          "code": "AGD",
+          "name": {
+            "en": "Construction specialty"
+          }
+        },
+        {
+          "code": "AGE",
+          "name": {
+            "en": "Contract information"
+          }
+        },
+        {
+          "code": "AGF",
+          "name": {
+            "en": "Corporate filing"
+          }
+        },
+        {
+          "code": "AGG",
+          "name": {
+            "en": "Customer information"
+          }
+        },
+        {
+          "code": "AGH",
+          "name": {
+            "en": "Copyright notice"
+          }
+        },
+        {
+          "code": "AGI",
+          "name": {
+            "en": "Contingent debt"
+          }
+        },
+        {
+          "code": "AGJ",
+          "name": {
+            "en": "Conviction details"
+          }
+        },
+        {
+          "code": "AGK",
+          "name": {
+            "en": "Equipment"
+          }
+        },
+        {
+          "code": "AGL",
+          "name": {
+            "en": "Workforce description"
+          }
+        },
+        {
+          "code": "AGM",
+          "name": {
+            "en": "Exemption"
+          }
+        },
+        {
+          "code": "AGN",
+          "name": {
+            "en": "Future plans"
+          }
+        },
+        {
+          "code": "AGO",
+          "name": {
+            "en": "Interviewee conversation information"
+          }
+        },
+        {
+          "code": "AGP",
+          "name": {
+            "en": "Intangible asset"
+          }
+        },
+        {
+          "code": "AGQ",
+          "name": {
+            "en": "Inventory"
+          }
+        },
+        {
+          "code": "AGR",
+          "name": {
+            "en": "Investment"
+          }
+        },
+        {
+          "code": "AGS",
+          "name": {
+            "en": "Intercompany relations information"
+          }
+        },
+        {
+          "code": "AGT",
+          "name": {
+            "en": "Joint venture"
+          }
+        },
+        {
+          "code": "AGU",
+          "name": {
+            "en": "Loan"
+          }
+        },
+        {
+          "code": "AGV",
+          "name": {
+            "en": "Long term debt"
+          }
+        },
+        {
+          "code": "AGW",
+          "name": {
+            "en": "Location"
+          }
+        },
+        {
+          "code": "AGX",
+          "name": {
+            "en": "Current legal structure"
+          }
+        },
+        {
+          "code": "AGY",
+          "name": {
+            "en": "Marital contract"
+          }
+        },
+        {
+          "code": "AGZ",
+          "name": {
+            "en": "Marketing activities"
+          }
+        },
+        {
+          "code": "AHA",
+          "name": {
+            "en": "Merger"
+          }
+        },
+        {
+          "code": "AHB",
+          "name": {
+            "en": "Marketable securities"
+          }
+        },
+        {
+          "code": "AHC",
+          "name": {
+            "en": "Business debt"
+          }
+        },
+        {
+          "code": "AHD",
+          "name": {
+            "en": "Original legal structure"
+          }
+        },
+        {
+          "code": "AHE",
+          "name": {
+            "en": "Employee sharing arrangements"
+          }
+        },
+        {
+          "code": "AHF",
+          "name": {
+            "en": "Organization details"
+          }
+        },
+        {
+          "code": "AHG",
+          "name": {
+            "en": "Public record details"
+          }
+        },
+        {
+          "code": "AHH",
+          "name": {
+            "en": "Price range"
+          }
+        },
+        {
+          "code": "AHI",
+          "name": {
+            "en": "Qualifications"
+          }
+        },
+        {
+          "code": "AHJ",
+          "name": {
+            "en": "Registered activity"
+          }
+        },
+        {
+          "code": "AHK",
+          "name": {
+            "en": "Criminal sentence"
+          }
+        },
+        {
+          "code": "AHL",
+          "name": {
+            "en": "Sales method"
+          }
+        },
+        {
+          "code": "AHM",
+          "name": {
+            "en": "Educational institution information"
+          }
+        },
+        {
+          "code": "AHN",
+          "name": {
+            "en": "Status details"
+          }
+        },
+        {
+          "code": "AHO",
+          "name": {
+            "en": "Sales"
+          }
+        },
+        {
+          "code": "AHP",
+          "name": {
+            "en": "Spouse information"
+          }
+        },
+        {
+          "code": "AHQ",
+          "name": {
+            "en": "Educational degree information"
+          }
+        },
+        {
+          "code": "AHR",
+          "name": {
+            "en": "Shareholding information"
+          }
+        },
+        {
+          "code": "AHS",
+          "name": {
+            "en": "Sales territory"
+          }
+        },
+        {
+          "code": "AHT",
+          "name": {
+            "en": "Accountant's comments"
+          }
+        },
+        {
+          "code": "AHU",
+          "name": {
+            "en": "Exemption law location"
+          }
+        },
+        {
+          "code": "AHV",
+          "name": {
+            "en": "Share classifications"
+          }
+        },
+        {
+          "code": "AHW",
+          "name": {
+            "en": "Forecast"
+          }
+        },
+        {
+          "code": "AHX",
+          "name": {
+            "en": "Event location"
+          }
+        },
+        {
+          "code": "AHY",
+          "name": {
+            "en": "Facility occupancy"
+          }
+        },
+        {
+          "code": "AHZ",
+          "name": {
+            "en": "Import and export details"
+          }
+        },
+        {
+          "code": "AIA",
+          "name": {
+            "en": "Additional facility information"
+          }
+        },
+        {
+          "code": "AIB",
+          "name": {
+            "en": "Inventory value"
+          }
+        },
+        {
+          "code": "AIC",
+          "name": {
+            "en": "Education"
+          }
+        },
+        {
+          "code": "AID",
+          "name": {
+            "en": "Event"
+          }
+        },
+        {
+          "code": "AIE",
+          "name": {
+            "en": "Agent"
+          }
+        },
+        {
+          "code": "AIF",
+          "name": {
+            "en": "Domestically agreed financial statement details"
+          }
+        },
+        {
+          "code": "AIG",
+          "name": {
+            "en": "Other current asset description"
+          }
+        },
+        {
+          "code": "AIH",
+          "name": {
+            "en": "Other current liability description"
+          }
+        },
+        {
+          "code": "AII",
+          "name": {
+            "en": "Former business activity"
+          }
+        },
+        {
+          "code": "AIJ",
+          "name": {
+            "en": "Trade name use"
+          }
+        },
+        {
+          "code": "AIK",
+          "name": {
+            "en": "Signing authority"
+          }
+        },
+        {
+          "code": "AIL",
+          "name": {
+            "en": "Guarantee"
+          }
+        },
+        {
+          "code": "AIM",
+          "name": {
+            "en": "Holding company operation"
+          }
+        },
+        {
+          "code": "AIN",
+          "name": {
+            "en": "Consignment routing"
+          }
+        },
+        {
+          "code": "AIO",
+          "name": {
+            "en": "Letter of protest"
+          }
+        },
+        {
+          "code": "AIP",
+          "name": {
+            "en": "Question"
+          }
+        },
+        {
+          "code": "AIQ",
+          "name": {
+            "en": "Party information"
+          }
+        },
+        {
+          "code": "AIR",
+          "name": {
+            "en": "Area boundaries description"
+          }
+        },
+        {
+          "code": "AIS",
+          "name": {
+            "en": "Advertisement information"
+          }
+        },
+        {
+          "code": "AIT",
+          "name": {
+            "en": "Financial statement details"
+          }
+        },
+        {
+          "code": "AIU",
+          "name": {
+            "en": "Access instructions"
+          }
+        },
+        {
+          "code": "AIV",
+          "name": {
+            "en": "Liquidity"
+          }
+        },
+        {
+          "code": "AIW",
+          "name": {
+            "en": "Credit line"
+          }
+        },
+        {
+          "code": "AIX",
+          "name": {
+            "en": "Warranty terms"
+          }
+        },
+        {
+          "code": "AIY",
+          "name": {
+            "en": "Division description"
+          }
+        },
+        {
+          "code": "AIZ",
+          "name": {
+            "en": "Reporting instruction"
+          }
+        },
+        {
+          "code": "AJA",
+          "name": {
+            "en": "Examination result"
+          }
+        },
+        {
+          "code": "AJB",
+          "name": {
+            "en": "Laboratory result"
+          }
+        },
+        {
+          "code": "ALC",
+          "name": {
+            "en": "Allowance/charge information"
+          }
+        },
+        {
+          "code": "ALD",
+          "name": {
+            "en": "X-ray result"
+          }
+        },
+        {
+          "code": "ALE",
+          "name": {
+            "en": "Pathology result"
+          }
+        },
+        {
+          "code": "ALF",
+          "name": {
+            "en": "Intervention description"
+          }
+        },
+        {
+          "code": "ALG",
+          "name": {
+            "en": "Summary of admittance"
+          }
+        },
+        {
+          "code": "ALH",
+          "name": {
+            "en": "Medical treatment course detail"
+          }
+        },
+        {
+          "code": "ALI",
+          "name": {
+            "en": "Prognosis"
+          }
+        },
+        {
+          "code": "ALJ",
+          "name": {
+            "en": "Instruction to patient"
+          }
+        },
+        {
+          "code": "ALK",
+          "name": {
+            "en": "Instruction to physician"
+          }
+        },
+        {
+          "code": "ALL",
+          "name": {
+            "en": "All documents"
+          }
+        },
+        {
+          "code": "ALM",
+          "name": {
+            "en": "Medicine treatment"
+          }
+        },
+        {
+          "code": "ALN",
+          "name": {
+            "en": "Medicine dosage and administration"
+          }
+        },
+        {
+          "code": "ALO",
+          "name": {
+            "en": "Availability of patient"
+          }
+        },
+        {
+          "code": "ALP",
+          "name": {
+            "en": "Reason for service request"
+          }
+        },
+        {
+          "code": "ALQ",
+          "name": {
+            "en": "Purpose of service"
+          }
+        },
+        {
+          "code": "ARR",
+          "name": {
+            "en": "Arrival conditions"
+          }
+        },
+        {
+          "code": "ARS",
+          "name": {
+            "en": "Service requester's comment"
+          }
+        },
+        {
+          "code": "AUT",
+          "name": {
+            "en": "Authentication"
+          }
+        },
+        {
+          "code": "AUU",
+          "name": {
+            "en": "Requested location description"
+          }
+        },
+        {
+          "code": "AUV",
+          "name": {
+            "en": "Medicine administration condition"
+          }
+        },
+        {
+          "code": "AUW",
+          "name": {
+            "en": "Patient information"
+          }
+        },
+        {
+          "code": "AUX",
+          "name": {
+            "en": "Precautionary measure"
+          }
+        },
+        {
+          "code": "AUY",
+          "name": {
+            "en": "Service characteristic"
+          }
+        },
+        {
+          "code": "AUZ",
+          "name": {
+            "en": "Planned event comment"
+          }
+        },
+        {
+          "code": "AVA",
+          "name": {
+            "en": "Expected delay comment"
+          }
+        },
+        {
+          "code": "AVB",
+          "name": {
+            "en": "Transport requirements comment"
+          }
+        },
+        {
+          "code": "AVC",
+          "name": {
+            "en": "Temporary approval condition"
+          }
+        },
+        {
+          "code": "AVD",
+          "name": {
+            "en": "Customs Valuation Information"
+          }
+        },
+        {
+          "code": "AVE",
+          "name": {
+            "en": "Value Added Tax (VAT) margin scheme"
+          }
+        },
+        {
+          "code": "AVF",
+          "name": {
+            "en": "Maritime Declaration of Health"
+          }
+        },
+        {
+          "code": "BAG",
+          "name": {
+            "en": "Passenger baggage information"
+          }
+        },
+        {
+          "code": "BAH",
+          "name": {
+            "en": "Maritime Declaration of Health"
+          }
+        },
+        {
+          "code": "BAI",
+          "name": {
+            "en": "Additional product information address"
+          }
+        },
+        {
+          "code": "BAJ",
+          "name": {
+            "en": "Information to be printed on despatch advice"
+          }
+        },
+        {
+          "code": "BAK",
+          "name": {
+            "en": "Missing goods remarks"
+          }
+        },
+        {
+          "code": "BAL",
+          "name": {
+            "en": "Non-acceptance information"
+          }
+        },
+        {
+          "code": "BAM",
+          "name": {
+            "en": "Returns information"
+          }
+        },
+        {
+          "code": "BAN",
+          "name": {
+            "en": "Sub-line item information"
+          }
+        },
+        {
+          "code": "BAO",
+          "name": {
+            "en": "Test information"
+          }
+        },
+        {
+          "code": "BAP",
+          "name": {
+            "en": "External link"
+          }
+        },
+        {
+          "code": "BAQ",
+          "name": {
+            "en": "VAT exemption reason"
+          }
+        },
+        {
+          "code": "BAR",
+          "name": {
+            "en": "Processing Instructions"
+          }
+        },
+        {
+          "code": "BAS",
+          "name": {
+            "en": "Relay Instructions"
+          }
+        },
+        {
+          "code": "BAT",
+          "name": {
+            "en": "SIMA applicable"
+          }
+        },
+        {
+          "code": "BAU",
+          "name": {
+            "en": "Appeals program code"
+          }
+        },
+        {
+          "code": "BAV",
+          "name": {
+            "en": "SIMA subject"
+          }
+        },
+        {
+          "code": "BAW",
+          "name": {
+            "en": "Surtax applicable"
+          }
+        },
+        {
+          "code": "BAX",
+          "name": {
+            "en": "SIMA security bond"
+          }
+        },
+        {
+          "code": "BAY",
+          "name": {
+            "en": "Surtax subject"
+          }
+        },
+        {
+          "code": "BAZ",
+          "name": {
+            "en": "Safeguard applicable"
+          }
+        },
+        {
+          "code": "BBA",
+          "name": {
+            "en": "Safeguard applicable"
+          }
+        },
+        {
+          "code": "BBB",
+          "name": {
+            "en": "Safeguard subject"
+          }
+        },
+        {
+          "code": "BLC",
+          "name": {
+            "en": "Transport contract document clause"
+          }
+        },
+        {
+          "code": "BLD",
+          "name": {
+            "en": "Instruction to prepare the patient"
+          }
+        },
+        {
+          "code": "BLE",
+          "name": {
+            "en": "Medicine treatment comment"
+          }
+        },
+        {
+          "code": "BLF",
+          "name": {
+            "en": "Examination result comment"
+          }
+        },
+        {
+          "code": "BLG",
+          "name": {
+            "en": "Service request comment"
+          }
+        },
+        {
+          "code": "BLH",
+          "name": {
+            "en": "Prescription reason"
+          }
+        },
+        {
+          "code": "BLI",
+          "name": {
+            "en": "Prescription comment"
+          }
+        },
+        {
+          "code": "BLJ",
+          "name": {
+            "en": "Clinical investigation comment"
+          }
+        },
+        {
+          "code": "BLK",
+          "name": {
+            "en": "Medicinal specification comment"
+          }
+        },
+        {
+          "code": "BLL",
+          "name": {
+            "en": "Economic contribution comment"
+          }
+        },
+        {
+          "code": "BLM",
+          "name": {
+            "en": "Status of a plan"
+          }
+        },
+        {
+          "code": "BLN",
+          "name": {
+            "en": "Random sample test information"
+          }
+        },
+        {
+          "code": "BLO",
+          "name": {
+            "en": "Period of time"
+          }
+        },
+        {
+          "code": "BLP",
+          "name": {
+            "en": "Legislation"
+          }
+        },
+        {
+          "code": "BLQ",
+          "name": {
+            "en": "Security measures requested"
+          }
+        },
+        {
+          "code": "BLR",
+          "name": {
+            "en": "Transport contract document remark"
+          }
+        },
+        {
+          "code": "BLS",
+          "name": {
+            "en": "Previous port of call security information"
+          }
+        },
+        {
+          "code": "BLT",
+          "name": {
+            "en": "Security information"
+          }
+        },
+        {
+          "code": "BLU",
+          "name": {
+            "en": "Waste information"
+          }
+        },
+        {
+          "code": "BLV",
+          "name": {
+            "en": "B2C marketing information, short description"
+          }
+        },
+        {
+          "code": "BLW",
+          "name": {
+            "en": "B2B marketing information, long description"
+          }
+        },
+        {
+          "code": "BLX",
+          "name": {
+            "en": "B2C marketing information, long description"
+          }
+        },
+        {
+          "code": "BLY",
+          "name": {
+            "en": "Product ingredients"
+          }
+        },
+        {
+          "code": "BLZ",
+          "name": {
+            "en": "Location short name"
+          }
+        },
+        {
+          "code": "BMA",
+          "name": {
+            "en": "Packaging material information"
+          }
+        },
+        {
+          "code": "BMB",
+          "name": {
+            "en": "Filler material information"
+          }
+        },
+        {
+          "code": "BMC",
+          "name": {
+            "en": "Ship-to-ship activity information"
+          }
+        },
+        {
+          "code": "BMD",
+          "name": {
+            "en": "Package material description"
+          }
+        },
+        {
+          "code": "BME",
+          "name": {
+            "en": "Consumer level package marking"
+          }
+        },
+        {
+          "code": "BMF",
+          "name": {
+            "en": "SIMA measure in force"
+          }
+        },
+        {
+          "code": "BMG",
+          "name": {
+            "en": "Pre-CARM"
+          }
+        },
+        {
+          "code": "BMH",
+          "name": {
+            "en": "SIMA measure type"
+          }
+        },
+        {
+          "code": "CCI",
+          "name": {
+            "en": "Customs clearance instructions"
+          }
+        },
+        {
+          "code": "CCJ",
+          "name": {
+            "en": "Sub Type Code"
+          }
+        },
+        {
+          "code": "CCK",
+          "name": {
+            "en": "SIMA information"
+          }
+        },
+        {
+          "code": "CCL",
+          "name": {
+            "en": "Time limit end"
+          }
+        },
+        {
+          "code": "CCM",
+          "name": {
+            "en": "Time limit start"
+          }
+        },
+        {
+          "code": "CCN",
+          "name": {
+            "en": "Warehouse time limit"
+          }
+        },
+        {
+          "code": "CCO",
+          "name": {
+            "en": "Value for duty information"
+          }
+        },
+        {
+          "code": "CEX",
+          "name": {
+            "en": "Customs clearance instructions export"
+          }
+        },
+        {
+          "code": "CHG",
+          "name": {
+            "en": "Change information"
+          }
+        },
+        {
+          "code": "CIP",
+          "name": {
+            "en": "Customs clearance instruction import"
+          }
+        },
+        {
+          "code": "CLP",
+          "name": {
+            "en": "Clearance place requested"
+          }
+        },
+        {
+          "code": "CLR",
+          "name": {
+            "en": "Loading remarks"
+          }
+        },
+        {
+          "code": "COI",
+          "name": {
+            "en": "Order information"
+          }
+        },
+        {
+          "code": "CUR",
+          "name": {
+            "en": "Customer remarks"
+          }
+        },
+        {
+          "code": "CUS",
+          "name": {
+            "en": "Customs declaration information"
+          }
+        },
+        {
+          "code": "DAR",
+          "name": {
+            "en": "Damage remarks"
+          }
+        },
+        {
+          "code": "DCL",
+          "name": {
+            "en": "Document issuer declaration"
+          }
+        },
+        {
+          "code": "DEL",
+          "name": {
+            "en": "Delivery information"
+          }
+        },
+        {
+          "code": "DIN",
+          "name": {
+            "en": "Delivery instructions"
+          }
+        },
+        {
+          "code": "DOC",
+          "name": {
+            "en": "Documentation instructions"
+          }
+        },
+        {
+          "code": "DUT",
+          "name": {
+            "en": "Duty declaration"
+          }
+        },
+        {
+          "code": "EUR",
+          "name": {
+            "en": "Effective used routing"
+          }
+        },
+        {
+          "code": "FBC",
+          "name": {
+            "en": "First block to be printed on the transport contract"
+          }
+        },
+        {
+          "code": "GBL",
+          "name": {
+            "en": "Government bill of lading information"
+          }
+        },
+        {
+          "code": "GEN",
+          "name": {
+            "en": "Entire transaction set"
+          }
+        },
+        {
+          "code": "GS7",
+          "name": {
+            "en": "Further information concerning GGVS par. 7"
+          }
+        },
+        {
+          "code": "HAN",
+          "name": {
+            "en": "Consignment handling instruction"
+          }
+        },
+        {
+          "code": "HAZ",
+          "name": {
+            "en": "Hazard information"
+          }
+        },
+        {
+          "code": "ICN",
+          "name": {
+            "en": "Consignment information for consignee"
+          }
+        },
+        {
+          "code": "IIN",
+          "name": {
+            "en": "Insurance instructions"
+          }
+        },
+        {
+          "code": "IMI",
+          "name": {
+            "en": "Invoice mailing instructions"
+          }
+        },
+        {
+          "code": "IND",
+          "name": {
+            "en": "Commercial invoice item description"
+          }
+        },
+        {
+          "code": "INS",
+          "name": {
+            "en": "Insurance information"
+          }
+        },
+        {
+          "code": "INV",
+          "name": {
+            "en": "Invoice instruction"
+          }
+        },
+        {
+          "code": "IRP",
+          "name": {
+            "en": "Information for railway purpose"
+          }
+        },
+        {
+          "code": "ITR",
+          "name": {
+            "en": "Inland transport details"
+          }
+        },
+        {
+          "code": "ITS",
+          "name": {
+            "en": "Testing instructions"
+          }
+        },
+        {
+          "code": "LAN",
+          "name": {
+            "en": "Location Alias"
+          }
+        },
+        {
+          "code": "LIN",
+          "name": {
+            "en": "Line item"
+          }
+        },
+        {
+          "code": "LOI",
+          "name": {
+            "en": "Loading instruction"
+          }
+        },
+        {
+          "code": "MCO",
+          "name": {
+            "en": "Miscellaneous charge order"
+          }
+        },
+        {
+          "code": "MDH",
+          "name": {
+            "en": "Maritime Declaration of Health"
+          }
+        },
+        {
+          "code": "MKS",
+          "name": {
+            "en": "Additional marks/numbers information"
+          }
+        },
+        {
+          "code": "ORI",
+          "name": {
+            "en": "Order instruction"
+          }
+        },
+        {
+          "code": "OSI",
+          "name": {
+            "en": "Other service information"
+          }
+        },
+        {
+          "code": "PAC",
+          "name": {
+            "en": "Packing/marking information"
+          }
+        },
+        {
+          "code": "PAI",
+          "name": {
+            "en": "Payment instructions information"
+          }
+        },
+        {
+          "code": "PAY",
+          "name": {
+            "en": "Payables information"
+          }
+        },
+        {
+          "code": "PKG",
+          "name": {
+            "en": "Packaging information"
+          }
+        },
+        {
+          "code": "PKT",
+          "name": {
+            "en": "Packaging terms information"
+          }
+        },
+        {
+          "code": "PMD",
+          "name": {
+            "en": "Payment detail/remittance information"
+          }
+        },
+        {
+          "code": "PMT",
+          "name": {
+            "en": "Payment information"
+          }
+        },
+        {
+          "code": "PRD",
+          "name": {
+            "en": "Product information"
+          }
+        },
+        {
+          "code": "PRF",
+          "name": {
+            "en": "Price calculation formula"
+          }
+        },
+        {
+          "code": "PRI",
+          "name": {
+            "en": "Priority information"
+          }
+        },
+        {
+          "code": "PUR",
+          "name": {
+            "en": "Purchasing information"
+          }
+        },
+        {
+          "code": "QIN",
+          "name": {
+            "en": "Quarantine instructions"
+          }
+        },
+        {
+          "code": "QQD",
+          "name": {
+            "en": "Quality demands/requirements"
+          }
+        },
+        {
+          "code": "QUT",
+          "name": {
+            "en": "Quotation instruction/information"
+          }
+        },
+        {
+          "code": "RAH",
+          "name": {
+            "en": "Risk and handling information"
+          }
+        },
+        {
+          "code": "REG",
+          "name": {
+            "en": "Regulatory information"
+          }
+        },
+        {
+          "code": "RET",
+          "name": {
+            "en": "Return to origin information"
+          }
+        },
+        {
+          "code": "REV",
+          "name": {
+            "en": "Receivables"
+          }
+        },
+        {
+          "code": "RQR",
+          "name": {
+            "en": "Consignment route"
+          }
+        },
+        {
+          "code": "SAF",
+          "name": {
+            "en": "Safety information"
+          }
+        },
+        {
+          "code": "SIC",
+          "name": {
+            "en": "Consignment documentary instruction"
+          }
+        },
+        {
+          "code": "SIN",
+          "name": {
+            "en": "Special instructions"
+          }
+        },
+        {
+          "code": "SLR",
+          "name": {
+            "en": "Ship line requested"
+          }
+        },
+        {
+          "code": "SPA",
+          "name": {
+            "en": "Special permission for transport, generally"
+          }
+        },
+        {
+          "code": "SPG",
+          "name": {
+            "en": "Special permission concerning the goods to be transported"
+          }
+        },
+        {
+          "code": "SPH",
+          "name": {
+            "en": "Special handling"
+          }
+        },
+        {
+          "code": "SPP",
+          "name": {
+            "en": "Special permission concerning package"
+          }
+        },
+        {
+          "code": "SPT",
+          "name": {
+            "en": "Special permission concerning transport means"
+          }
+        },
+        {
+          "code": "SRN",
+          "name": {
+            "en": "Subsidiary risk number (IATA/DGR)"
+          }
+        },
+        {
+          "code": "SSR",
+          "name": {
+            "en": "Special service request"
+          }
+        },
+        {
+          "code": "SUR",
+          "name": {
+            "en": "Supplier remarks"
+          }
+        },
+        {
+          "code": "TCA",
+          "name": {
+            "en": "Consignment tariff"
+          }
+        },
+        {
+          "code": "TDT",
+          "name": {
+            "en": "Consignment transport"
+          }
+        },
+        {
+          "code": "TRA",
+          "name": {
+            "en": "Transportation information"
+          }
+        },
+        {
+          "code": "TRR",
+          "name": {
+            "en": "Requested tariff"
+          }
+        },
+        {
+          "code": "TXD",
+          "name": {
+            "en": "Tax declaration"
+          }
+        },
+        {
+          "code": "WHI",
+          "name": {
+            "en": "Warehouse instruction/information"
+          }
+        },
+        {
+          "code": "ZZZ",
+          "name": {
+            "en": "Mutually defined"
+          }
+        }
+      ]
+    },
+    {
       "key": "untdid-payment-means",
       "name": {
         "en": "UNTDID 4461 Payment Means"

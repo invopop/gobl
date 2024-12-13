@@ -367,7 +367,7 @@
           "description": "Extension code that along side the key must be present for a match\nto happen. This cannot be used without an `cbc.Code`. The value will\nbe copied to the note code if needed."
         },
         "note": {
-          "$ref": "https://gobl.org/draft-0/cbc/note",
+          "$ref": "#/$defs/ScenarioNote",
           "title": "Note",
           "description": "A note to be added to the document if the scenario is applied."
         },
@@ -384,6 +384,40 @@
       },
       "type": "object",
       "description": "Scenario is used to describe a tax scenario of a document based on the combination of document type and tag used."
+    },
+    "ScenarioNote": {
+      "properties": {
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key specifying subject of the text"
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code used for additional data that may be required to identify the note."
+        },
+        "src": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Source",
+          "description": "Source of this note, especially useful when auto-generated."
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The contents of the note"
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension data"
+        }
+      },
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "description": "ScenarioNote represents the structure of the note that needs to be added to the document."
     },
     "ScenarioSet": {
       "properties": {
