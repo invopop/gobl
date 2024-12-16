@@ -14,7 +14,7 @@ Find example GR GOBL files in the [`examples`](../../examples/gr) (uncalculated 
 
 ### Invoice Type
 
-The Greek tax authority (IAPR) requires the invoice type to be specified as part of the invoice. In GOBL, this type can be set using the `gr-mydata-invoice-type` extension in the tax section.
+The Greek tax authority (IAPR) requires the invoice type to be specified as part of the invoice. In GOBL, this type can be set using the `gr-mydata-invoice-type` extension in the tax section and setting the GOBL invoice type to `other`.
 
 Alternatively, GOBL will set the extension for you based on the type and the tax tags you set in your GOBL invoice. The table below shows how this mapping is done:
 
@@ -40,9 +40,10 @@ For example, this is how you set the IAPR invoice type explicitly:
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
   // ...
+  "type": "other",
   "tax": {
     "ext": {
-      "gr-mydata-invoice-type": "2.1"
+      "gr-mydata-invoice-type": "2.3"
     }
   }
 }
@@ -56,7 +57,7 @@ And this is how you'll get the same result by using the GOBL type and tags:
   // ...
   "type": "standard",
   "tax": {
-    "tags": ["services"]
+    "tags": ["services", "export"]
   }
 }
 ```
@@ -271,6 +272,46 @@ For example:
         "gr-mydata-income-cat": "category1_1",
         "gr-mydata-income-type": "E3_561_001",
       }
+    }
+  }
+]
+```
+
+### Other Taxes
+
+Certain myDATA invoice types (_e.g._, 8.2 for the accommodation tax) require a category for other taxes to be provided. In GOBL, you can use the `gr-mydata-other-tax` extension at charge level with any of values in the table below:
+
+| Value | Description                                                                                                   |
+| ----- | ------------------------------------------------------------------------------------------------------------- |
+| 1     | a1) 20% fire insurance premiums                                                                               |
+| 2     | a2) 20% fire insurance premiums                                                                               |
+| 3     | b) 4% life insurance premiums                                                                                 |
+| 4     | c) 15% other insurance premiums                                                                               |
+| 5     | d) 0% tax-exempt insurance premiums                                                                           |
+| 6     | Hotels 1-2 stars 0,50 €                                                                                       |
+| 7     | Hotels 3 stars 1,50 €                                                                                         |
+| 8     | Hotels 4 stars 3,00 €                                                                                         |
+| 9     | Hotels 5 stars 4,00 €                                                                                         |
+| 10    | Rental rooms - Furnished rooms - Apartments 0,50 €                                                            |
+| 11    | Special 5% tax on tv-broadcast commercials (EFTD)                                                             |
+| 12    | 10% luxury tax on the taxable value of intra-community acquired goods and those imported from third countries |
+| 13    | 10% luxury tax on the selling price before VAT for domestically produced goods                                |
+| 14    | 80% Public fees on the admission ticket price for casinos                                                     |
+| 15    | Fire industry insurance premiums 20%                                                                          |
+| 16    | Customs duties- Taxes                                                                                         |
+| 17    | Other Taxes                                                                                                   |
+| 18    | Charges of other Taxes                                                                                        |
+| 19    | Special consumption tax                                                                                       |
+
+For example:
+
+```js
+"charges": [
+  {
+    "amount": "3.00",
+    "reason": "Accommodation tax",
+    "ext": {
+      "gr-mydata-other-tax": "8",
     }
   }
 ]

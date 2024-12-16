@@ -13,8 +13,7 @@ const (
 	ExtKeyIncomeCat    = "gr-mydata-income-cat"
 	ExtKeyIncomeType   = "gr-mydata-income-type"
 	ExtKeyPaymentMeans = "gr-mydata-payment-means"
-
-	InvoiceTypeRetailPrefix = "11."
+	ExtKeyOtherTax     = "gr-mydata-other-tax"
 )
 
 var extensions = []*cbc.Definition{
@@ -1020,6 +1019,148 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Sales on behalf of farmers through an agricultural cooperative e.t.c.",
 					i18n.EL: "Πωλήσεις για λογαριασμό αγροτών μέσω αγροτικού συνεταιρισμού κ.λ.π.",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyOtherTax,
+		Name: i18n.String{
+			i18n.EN: "Other taxes category",
+			i18n.EL: "Κατηγορία Λοιπών Φόρων",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "a1) 20% fire insurance premiums",
+					i18n.EL: "α1) Ασφάλιστρα κλάδου πυρός 20%",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "a2) 20% fire insurance premiums",
+					i18n.EL: "α2) Ασφάλιστρα κλάδου πυρός 20%",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "b) 4% life insurance premiums",
+					i18n.EL: "β) Ασφάλιστρα κλάδου ζωής 4%",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "c) 15% other insurance premiums",
+					i18n.EL: "γ) Ασφάλιστρα λοιπών κλάδων 15%",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "d) 0% tax-exempt insurance premiums",
+					i18n.EL: "δ) Απαλλασσόμενα φόρου ασφάλιστρα 0%",
+				},
+			},
+			{
+				Code: "6",
+				Name: i18n.String{
+					i18n.EN: "Hotels 1-2 stars 0,50 €",
+					i18n.EL: "Ξενοδοχεία 1-2 αστέρων 0,50 €",
+				},
+			},
+			{
+				Code: "7",
+				Name: i18n.String{
+					i18n.EN: "Hotels 3 stars 1,50 €",
+					i18n.EL: "Ξενοδοχεία 3 αστέρων 1,50 €",
+				},
+			},
+			{
+				Code: "8",
+				Name: i18n.String{
+					i18n.EN: "Hotels 4 stars 3,00 €",
+					i18n.EL: "Ξενοδοχεία 4 αστέρων 3,00 €",
+				},
+			},
+			{
+				Code: "9",
+				Name: i18n.String{
+					i18n.EN: "Hotels 5 stars 4,00 €",
+					i18n.EL: "Ξενοδοχεία 5 αστέρων 4,00 €",
+				},
+			},
+			{
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "Rental rooms - Furnished rooms - Apartments 0,50 €",
+					i18n.EL: "Ενοικιαζόμενα δωμάτια - Επιπλωμένα δωμάτια - Διαμερίσματα 0,50 €",
+				},
+			},
+			{
+				Code: "11",
+				Name: i18n.String{
+					i18n.EN: "Special 5% tax on tv-broadcast commercials (EFTD)",
+					i18n.EL: "Ειδικός φόρος στις διαφημίσεις που προβάλλονται από την τηλεόραση (ΕΦΔΤ) 5%",
+				},
+			},
+			{
+				Code: "12",
+				Name: i18n.String{
+					i18n.EN: "10% luxury tax on the taxable value of intra-community acquired goods and those imported from third countries",
+					i18n.EL: "Φόρος πολυτελείας 10% επί της φορολογητέας αξίας για τα ενδοκοινοτικά αποκτήματα και εισαγόμενα από τρίτες χώρες",
+				},
+			},
+			{
+				Code: "13",
+				Name: i18n.String{
+					i18n.EN: "10% luxury tax on the selling price before VAT for domestically produced goods",
+					i18n.EL: "Φόρος πολυτελείας 10% επί της τιμής πώλησης προ Φ.Π.Α. για τα εγχωρίως παραγόμενα",
+				},
+			},
+			{
+				Code: "14",
+				Name: i18n.String{
+					i18n.EN: "80% Public fees on the admission ticket price for casinos",
+					i18n.EL: "Δικαιώματα του Δημοσίου στα εισιτήρια των καζίνο (80% επί του εισιτηρίου)",
+				},
+			},
+			{
+				Code: "15",
+				Name: i18n.String{
+					i18n.EN: "Fire industry insurance premiums 20%",
+					i18n.EL: "Ασφάλιστρα κλάδου πυρός 20%",
+				},
+			},
+			{
+				Code: "16",
+				Name: i18n.String{
+					i18n.EN: "Customs duties- Taxes",
+					i18n.EL: "Λοιποί Τελωνειακοί Δασμοί-Φόροι",
+				},
+			},
+			{
+				Code: "17",
+				Name: i18n.String{
+					i18n.EN: "Other Taxes",
+					i18n.EL: "Λοιποί Φόροι",
+				},
+			},
+			{
+				Code: "18",
+				Name: i18n.String{
+					i18n.EN: "Charges of other Taxes",
+					i18n.EL: "Επιβαρύνσεις Λοιπών Φόρων",
+				},
+			},
+			{
+				Code: "19",
+				Name: i18n.String{
+					i18n.EN: "Special consumption tax",
+					i18n.EL: "ΕΦΚ",
 				},
 			},
 		},

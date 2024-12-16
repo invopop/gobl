@@ -1010,6 +1010,148 @@
           }
         }
       ]
+    },
+    {
+      "key": "gr-mydata-other-tax",
+      "name": {
+        "el": "Κατηγορία Λοιπών Φόρων",
+        "en": "Other taxes category"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "el": "α1) Ασφάλιστρα κλάδου πυρός 20%",
+            "en": "a1) 20% fire insurance premiums"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "el": "α2) Ασφάλιστρα κλάδου πυρός 20%",
+            "en": "a2) 20% fire insurance premiums"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "el": "β) Ασφάλιστρα κλάδου ζωής 4%",
+            "en": "b) 4% life insurance premiums"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "el": "γ) Ασφάλιστρα λοιπών κλάδων 15%",
+            "en": "c) 15% other insurance premiums"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "el": "δ) Απαλλασσόμενα φόρου ασφάλιστρα 0%",
+            "en": "d) 0% tax-exempt insurance premiums"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "el": "Ξενοδοχεία 1-2 αστέρων 0,50 €",
+            "en": "Hotels 1-2 stars 0,50 €"
+          }
+        },
+        {
+          "code": "7",
+          "name": {
+            "el": "Ξενοδοχεία 3 αστέρων 1,50 €",
+            "en": "Hotels 3 stars 1,50 €"
+          }
+        },
+        {
+          "code": "8",
+          "name": {
+            "el": "Ξενοδοχεία 4 αστέρων 3,00 €",
+            "en": "Hotels 4 stars 3,00 €"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "el": "Ξενοδοχεία 5 αστέρων 4,00 €",
+            "en": "Hotels 5 stars 4,00 €"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "el": "Ενοικιαζόμενα δωμάτια - Επιπλωμένα δωμάτια - Διαμερίσματα 0,50 €",
+            "en": "Rental rooms - Furnished rooms - Apartments 0,50 €"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "el": "Ειδικός φόρος στις διαφημίσεις που προβάλλονται από την τηλεόραση (ΕΦΔΤ) 5%",
+            "en": "Special 5% tax on tv-broadcast commercials (EFTD)"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "el": "Φόρος πολυτελείας 10% επί της φορολογητέας αξίας για τα ενδοκοινοτικά αποκτήματα και εισαγόμενα από τρίτες χώρες",
+            "en": "10% luxury tax on the taxable value of intra-community acquired goods and those imported from third countries"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "el": "Φόρος πολυτελείας 10% επί της τιμής πώλησης προ Φ.Π.Α. για τα εγχωρίως παραγόμενα",
+            "en": "10% luxury tax on the selling price before VAT for domestically produced goods"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "el": "Δικαιώματα του Δημοσίου στα εισιτήρια των καζίνο (80% επί του εισιτηρίου)",
+            "en": "80% Public fees on the admission ticket price for casinos"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "el": "Ασφάλιστρα κλάδου πυρός 20%",
+            "en": "Fire industry insurance premiums 20%"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "el": "Λοιποί Τελωνειακοί Δασμοί-Φόροι",
+            "en": "Customs duties- Taxes"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "el": "Λοιποί Φόροι",
+            "en": "Other Taxes"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "el": "Επιβαρύνσεις Λοιπών Φόρων",
+            "en": "Charges of other Taxes"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "el": "ΕΦΚ",
+            "en": "Special consumption tax"
+          }
+        }
+      ]
     }
   ],
   "tags": [

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `gr-mydata`: added `gr-mydata-other-tax` extension to set the category of other taxes in charges.
+
 ## [v0.207.0] - 2024-12-12
 
 ### Added
