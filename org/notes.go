@@ -219,7 +219,7 @@ type Note struct {
 	Text string `json:"text" jsonschema:"title=Text"`
 	// Additional information about the note
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-	// Extension data with
+	// Extension data
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
