@@ -42,7 +42,7 @@ func (rl *ReceiptLine) ValidateWithContext(ctx context.Context) error {
 }
 
 // JSONSchemaExtend extends the schema with additional property details
-func (rtl ReceiptLine) JSONSchemaExtend(js *jsonschema.Schema) {
+func (rl ReceiptLine) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	// Extend type list
 	if its, ok := props.Get("type"); ok {

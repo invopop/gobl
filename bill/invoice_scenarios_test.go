@@ -24,7 +24,7 @@ func TestScenarios(t *testing.T) {
 		inv := baseInvoiceWithLines(t)
 		inv.SetTags("random")
 		assert.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "$tags: 'random' undefined.")
+		assert.ErrorContains(t, inv.Validate(), "$tags: (0: 'random' undefined.).")
 	})
 
 	t.Run("scenario for new note", func(t *testing.T) {

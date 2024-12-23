@@ -24,7 +24,7 @@ const (
 )
 
 // ReceiptTypes defines the list of potential payment types.
-var ReceiptTypes = []*cbc.KeyDefinition{
+var ReceiptTypes = []*cbc.Definition{
 	{
 		Key: ReceiptTypePayment,
 		Name: i18n.String{
@@ -62,7 +62,7 @@ const (
 )
 
 // ReceiptLineTypes defines the list of potential receipt line types.
-var ReceiptLineTypes = []*cbc.KeyDefinition{
+var ReceiptLineTypes = []*cbc.Definition{
 	{
 		Key: ReceiptLineTypeDebit,
 		Name: i18n.String{
@@ -137,7 +137,7 @@ type Receipt struct {
 
 	// Unstructured information that is relevant to the receipt, such as correction or additional
 	// legal details.
-	Notes []*cbc.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
 	// Additional complementary objects that add relevant information to the receipt.
 	Complements []*schema.Object `json:"complements,omitempty" jsonschema:"title=Complements"`
@@ -214,7 +214,7 @@ func (rct *Receipt) normalizers() tax.Normalizers {
 	if r := rct.RegimeDef(); r != nil {
 		normalizers = normalizers.Append(r.Normalizer)
 	}
-	for _, a := range rct.GetAddonDefs() {
+	for _, a := range rct.AddonDefs() {
 		normalizers = normalizers.Append(a.Normalizer)
 	}
 	return normalizers
@@ -258,7 +258,7 @@ func (rct *Receipt) calculate() error {
 }
 
 // JSONSchemaExtend extends the schema with additional property details
-func (rt Receipt) JSONSchemaExtend(js *jsonschema.Schema) {
+func (rct Receipt) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties
 	// Extend type list
 	if its, ok := props.Get("type"); ok {
@@ -271,8 +271,8 @@ func (rt Receipt) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	rt.Regime.JSONSchemaExtend(js)
-	rt.Addons.JSONSchemaExtend(js)
+	rct.Regime.JSONSchemaExtend(js)
+	rct.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
