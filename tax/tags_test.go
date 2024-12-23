@@ -13,7 +13,7 @@ import (
 func TestTagSetForSchema(t *testing.T) {
 	ts1 := &tax.TagSet{
 		Schema: "bill/invoice",
-		List: []*cbc.KeyDefinition{
+		List: []*cbc.Definition{
 			{
 				Key: "test1",
 				Name: i18n.String{
@@ -24,7 +24,7 @@ func TestTagSetForSchema(t *testing.T) {
 	}
 	ts2 := &tax.TagSet{
 		Schema: "bill/receipt",
-		List: []*cbc.KeyDefinition{
+		List: []*cbc.Definition{
 			{
 				Key: "test2",
 				Name: i18n.String{
