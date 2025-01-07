@@ -172,3 +172,161 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 
 	return rateTotal
 }
+
+// Negate provides a new total with all the values inverted (positive to negative and vice versa).
+func (t *Total) Negate() *Total {
+	nt := t.Clone()
+	for _, ct := range nt.Categories {
+		ct.Amount = ct.Amount.Negate()
+		ct.amount = ct.amount.Negate()
+		for _, rt := range ct.Rates {
+			rt.Base = rt.Base.Negate()
+			rt.Amount = rt.Amount.Negate()
+		}
+	}
+	nt.Sum = t.Sum.Negate()
+	nt.sum = t.sum.Negate()
+	return nt
+}
+
+// Matches returns true if the two totals have the same percent, surchage,
+// and extensions, but potentially different amounts. Keys are ignored during
+// comparisons as only the output is relevant.
+func (rt *RateTotal) Matches(rt2 *RateTotal) bool {
+	if rt.Ext.Equals(rt2.Ext) {
+		if rt.Country == rt2.Country {
+			if rt.Percent == nil && rt2.Percent == nil {
+				return true
+			}
+			if rt.Percent != nil && rt2.Percent != nil {
+				if rt.Percent.Equals(*rt2.Percent) {
+					if rt.Surcharge == nil && rt2.Surcharge == nil {
+						return true
+					}
+					if rt.Surcharge != nil && rt2.Surcharge != nil {
+						if rt.Surcharge.Percent.Equals(rt2.Surcharge.Percent) {
+							return true
+						}
+					}
+				}
+			}
+		}
+	}
+	return false
+}
+
+// Clone creates a new total with the same values as the original, but in an
+// independent object.
+func (t *Total) Clone() *Total {
+	if t == nil {
+		return nil
+	}
+	nt := new(Total)
+	nt.Categories = make([]*CategoryTotal, len(t.Categories))
+	for i, ct := range t.Categories {
+		nt.Categories[i] = new(CategoryTotal)
+		nt.Categories[i].Code = ct.Code
+		nt.Categories[i].Retained = ct.Retained
+		nt.Categories[i].Amount = ct.Amount
+		nt.Categories[i].amount = ct.amount
+		nt.Categories[i].Surcharge = ct.Surcharge
+		nt.Categories[i].Rates = make([]*RateTotal, len(ct.Rates))
+		for j, rt := range ct.Rates {
+			nt.Categories[i].Rates[j] = new(RateTotal)
+			nt.Categories[i].Rates[j].Key = rt.Key
+			nt.Categories[i].Rates[j].Country = rt.Country
+			nt.Categories[i].Rates[j].Ext = rt.Ext
+			nt.Categories[i].Rates[j].Base = rt.Base
+			nt.Categories[i].Rates[j].Percent = rt.Percent
+			nt.Categories[i].Rates[j].Amount = rt.Amount
+			if rt.Surcharge != nil {
+				nt.Categories[i].Rates[j].Surcharge = &RateTotalSurcharge{
+					Percent: rt.Surcharge.Percent,
+					Amount:  rt.Surcharge.Amount,
+				}
+			}
+		}
+	}
+	nt.Sum = t.Sum
+	nt.sum = t.sum
+	return nt
+}
+
+// Merge will combine two totals objects into a new one, summing up the values
+// of the categories and rates. The original totals will not be modified.
+// The totals may contain zero amounts if the amounts in the second total are negative.
+func (t *Total) Merge(t2 *Total) *Total {
+	// Create a new total with the same categories
+	nt := t.Clone()
+
+	// Now merge the second total
+	for _, ct := range t2.Categories {
+		// Find the category in the nt total
+		var catTotal *CategoryTotal
+		for _, mct := range nt.Categories {
+			if mct.Code == ct.Code {
+				catTotal = mct
+				break
+			}
+		}
+		if catTotal == nil {
+			catTotal = new(CategoryTotal)
+			catTotal.Code = ct.Code
+			catTotal.Retained = ct.Retained
+			catTotal.Amount = ct.Amount
+			catTotal.amount = ct.amount
+			catTotal.Surcharge = ct.Surcharge
+			catTotal.Rates = append(catTotal.Rates, ct.Rates...)
+			nt.Categories = append(nt.Categories, catTotal)
+		} else {
+			catTotal.Amount = catTotal.Amount.Add(ct.Amount)
+			if ct.Surcharge != nil && catTotal.Surcharge != nil {
+				ns := catTotal.Surcharge.Add(*ct.Surcharge)
+				catTotal.Surcharge = &ns
+			} else {
+				catTotal.Surcharge = ct.Surcharge
+			}
+			// Merge the rates
+			for _, rt := range ct.Rates {
+				// Find the rate in the nt category
+				var rateTotal *RateTotal
+				for _, mrt := range catTotal.Rates {
+					// match against the values, not the key
+					if mrt.Matches(rt) {
+						rateTotal = mrt
+						break
+					}
+				}
+				if rateTotal == nil {
+					rateTotal = new(RateTotal)
+					rateTotal.Key = rt.Key
+					rateTotal.Country = rt.Country
+					rateTotal.Ext = rt.Ext
+					rateTotal.Base = rt.Base
+					rateTotal.Percent = rt.Percent
+					if rt.Surcharge != nil {
+						rateTotal.Surcharge = &RateTotalSurcharge{
+							Percent: rt.Surcharge.Percent,
+							Amount:  rt.Surcharge.Amount,
+						}
+					}
+					rateTotal.Amount = rt.Amount
+					catTotal.Rates = append(catTotal.Rates, rateTotal)
+				} else {
+					// Merge the amounts
+					rateTotal.Base = rateTotal.Base.Add(rt.Base)
+					rateTotal.Amount = rateTotal.Amount.Add(rt.Amount)
+					if rt.Surcharge != nil {
+						rateTotal.Surcharge.Amount = rateTotal.Surcharge.Amount.Add(rt.Surcharge.Amount)
+					}
+				}
+			}
+		}
+	}
+
+	// Merge the sum
+	nt.Sum = nt.Sum.Add(t2.Sum)
+	nt.sum = nt.sum.Add(t2.sum)
+
+	return nt
+}

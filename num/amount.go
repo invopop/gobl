@@ -245,7 +245,13 @@ func (a Amount) Remove(percent Percentage) Amount {
 }
 
 // Invert the value.
+// Deprecated: Use Negate instead.
 func (a Amount) Invert() Amount {
+	return a.Negate()
+}
+
+// Negate inverts the value, positive to negative and vice versa.
+func (a Amount) Negate() Amount {
 	return Amount{value: -a.value, exp: a.exp}
 }
 
