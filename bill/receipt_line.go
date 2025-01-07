@@ -18,7 +18,9 @@ type ReceiptLine struct {
 	// Line number inside the parent (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 
-	// Direction for the flow of money, either debit (+) or credit (-)
+	// Direction for the flow of money, either debit (+) or credit (-) from the perspective
+	// of the supplier's asset account. Debiting an asset account increases its value, implying
+	// incoming payment. Crediting an asset account decreases its value, implying outgoing payment.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 
 	// The document reference related to the payment.
