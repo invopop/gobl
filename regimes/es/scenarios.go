@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -98,8 +99,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Reverse Charges
 		{
 			Tags: []cbc.Key{tax.TagReverseCharge},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  tax.TagReverseCharge,
 				Text: "Reverse Charge / Inversión del sujeto pasivo.",
 			},
@@ -107,8 +108,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Simplified Scheme (Modules)
 		{
 			Tags: []cbc.Key{TagSimplifiedScheme},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  TagSimplifiedScheme,
 				Text: "Factura expedida por contibuyente en régimen simplificado.",
 			},
@@ -116,8 +117,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Customer issued invoices
 		{
 			Tags: []cbc.Key{tax.TagSelfBilled},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  tax.TagSelfBilled,
 				Text: "Facturación por el destinatario.",
 			},
@@ -125,8 +126,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Travel agency
 		{
 			Tags: []cbc.Key{TagTravelAgency},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  TagTravelAgency,
 				Text: "Régimen especial de las agencias de viajes.",
 			},
@@ -134,8 +135,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Secondhand stuff
 		{
 			Tags: []cbc.Key{TagSecondHandGoods},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  TagSecondHandGoods,
 				Text: "Régimen especial de los bienes usados.",
 			},
@@ -143,8 +144,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Art
 		{
 			Tags: []cbc.Key{TagArt},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  TagArt,
 				Text: "Régimen especial de los objetos de arte.",
 			},
@@ -152,8 +153,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Antiques
 		{
 			Tags: []cbc.Key{TagAntiques},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  TagAntiques,
 				Text: "Régimen especial de las antigüedades y objetos de colección.",
 			},
@@ -161,8 +162,8 @@ var invoiceScenarios = &tax.ScenarioSet{
 		// Special Regime of "Cash Criteria"
 		{
 			Tags: []cbc.Key{TagCashBasis},
-			Note: &cbc.Note{
-				Key:  cbc.NoteKeyLegal,
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
 				Src:  TagCashBasis,
 				Text: "Régimen especial del criterio de caja.",
 			},

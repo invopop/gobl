@@ -18,6 +18,10 @@ const (
 	// qualifiers.
 	ExtKeyReference cbc.Key = "untdid-reference"
 
+	// ExtKeyTextSubject for the UNTDID 4451 "Text Subject Qualifier" mostly used
+	// in notes.
+	ExtKeyTextSubject cbc.Key = "untdid-text-subject"
+
 	// ExtKeyPaymentMeans is used to identify the UNTDID 4461 payment means code.
 	ExtKeyPaymentMeans cbc.Key = "untdid-payment-means"
 
