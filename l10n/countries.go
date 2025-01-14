@@ -2,254 +2,503 @@ package l10n
 
 // List of all ISO 3166-2 country codes that we know about.
 const (
+	// Afghanistan
 	AF Code = "AF"
+	// Åland Islands
 	AX Code = "AX"
+	// Albania
 	AL Code = "AL"
+	// Algeria
 	DZ Code = "DZ"
+	// American Samoa
 	AS Code = "AS"
+	// Andorra
 	AD Code = "AD"
+	// Angola
 	AO Code = "AO"
+	// Anguilla
 	AI Code = "AI"
+	// Antarctica
 	AQ Code = "AQ"
+	// Antigua and Barbuda
 	AG Code = "AG"
+	// Argentina
 	AR Code = "AR"
+	// Armenia
 	AM Code = "AM"
+	// Aruba
 	AW Code = "AW"
+	// Australia
 	AU Code = "AU"
+	// Austria
 	AT Code = "AT"
+	// Azerbaijan
 	AZ Code = "AZ"
+	// Bahamas
 	BS Code = "BS"
+	// Bahrain
 	BH Code = "BH"
+	// Bangladesh
 	BD Code = "BD"
+	// Barbados
 	BB Code = "BB"
+	// Belarus
 	BY Code = "BY"
+	// Belgium
 	BE Code = "BE"
+	// Belize
 	BZ Code = "BZ"
+	// Benin
 	BJ Code = "BJ"
+	// Bermuda
 	BM Code = "BM"
+	// Bhutan
 	BT Code = "BT"
+	// Bolivia, Plurinational State of
 	BO Code = "BO"
+	// Bonaire, Sint Eustatius and Saba
 	BQ Code = "BQ"
+	// Bosnia and Herzegovina
 	BA Code = "BA"
+	// Botswana
 	BW Code = "BW"
+	// Bouvet Island
 	BV Code = "BV"
+	// Brazil
 	BR Code = "BR"
+	// British Indian Ocean Territory
 	IO Code = "IO"
+	// Brunei Darussalam
 	BN Code = "BN"
+	// Bulgaria
 	BG Code = "BG"
+	// Burkina Faso
 	BF Code = "BF"
+	// Burundi
 	BI Code = "BI"
+	// Cabo Verde
 	CV Code = "CV"
+	// Cambodia
 	KH Code = "KH"
+	// Cameroon
 	CM Code = "CM"
+	// Canada
 	CA Code = "CA"
+	// Cayman Islands
 	KY Code = "KY"
+	// Central African Republic
 	CF Code = "CF"
+	// Chad
 	TD Code = "TD"
+	// Chile
 	CL Code = "CL"
+	// China
 	CN Code = "CN"
+	// Christmas Island
 	CX Code = "CX"
+	// Cocos (Keeling) Islands
 	CC Code = "CC"
+	// Colombia
 	CO Code = "CO"
+	// Comoros
 	KM Code = "KM"
+	// Congo
 	CG Code = "CG"
+	// Congo, Democratic Republic of the
 	CD Code = "CD"
+	// Cook Islands
 	CK Code = "CK"
+	// Costa Rica
 	CR Code = "CR"
+	// Côte d'Ivoire
 	CI Code = "CI"
+	// Croatia
 	HR Code = "HR"
+	// Cuba
 	CU Code = "CU"
+	// Curaçao
 	CW Code = "CW"
+	// Cyprus
 	CY Code = "CY"
+	// Czechia
 	CZ Code = "CZ"
+	// Denmark
 	DK Code = "DK"
+	// Djibouti
 	DJ Code = "DJ"
+	// Dominica
 	DM Code = "DM"
+	// Dominican Republic
 	DO Code = "DO"
+	// Ecuador
 	EC Code = "EC"
+	// Egypt
 	EG Code = "EG"
+	// El Salvador
 	SV Code = "SV"
+	// Equatorial Guinea
 	GQ Code = "GQ"
+	// Eritrea
 	ER Code = "ER"
+	// Estonia
 	EE Code = "EE"
+	// Eswatini
 	SZ Code = "SZ"
+	// Ethiopia
 	ET Code = "ET"
+	// Falkland Islands
 	FK Code = "FK"
+	// Faroe Islands
 	FO Code = "FO"
+	// Fiji
 	FJ Code = "FJ"
+	// Finland
 	FI Code = "FI"
+	// France
 	FR Code = "FR"
+	// French Guiana
 	GF Code = "GF"
+	// French Polynesia
 	PF Code = "PF"
+	// French Southern Territories
 	TF Code = "TF"
+	// Gabon
 	GA Code = "GA"
+	// Gambia
 	GM Code = "GM"
+	// Georgia
 	GE Code = "GE"
+	// Germany
 	DE Code = "DE"
+	// Ghana
 	GH Code = "GH"
+	// Gibraltar
 	GI Code = "GI"
+	// Greece
 	GR Code = "GR"
+	// Greenland
 	GL Code = "GL"
+	// Grenada
 	GD Code = "GD"
+	// Guadeloupe
 	GP Code = "GP"
+	// Guam
 	GU Code = "GU"
+	// Guatemala
 	GT Code = "GT"
+	// Guernsey
 	GG Code = "GG"
+	// Guinea
 	GN Code = "GN"
+	// Guinea-Bissau
 	GW Code = "GW"
+	// Guyana
 	GY Code = "GY"
+	// Haiti
 	HT Code = "HT"
+	// Heard Island and McDonald Islands
 	HM Code = "HM"
+	// Holy See (the)
 	VA Code = "VA"
+	// Honduras
 	HN Code = "HN"
+	// Hong Kong
 	HK Code = "HK"
+	// Hungary
 	HU Code = "HU"
+	// Iceland
 	IS Code = "IS"
+	// India
 	IN Code = "IN"
+	// Indonesia
 	ID Code = "ID"
+	// Iran, Islamic Republic of
 	IR Code = "IR"
+	// Iraq
 	IQ Code = "IQ"
+	// Ireland
 	IE Code = "IE"
+	// Isle of Man
 	IM Code = "IM"
+	// Israel
 	IL Code = "IL"
+	// Italy
 	IT Code = "IT"
+	// Jamaica
 	JM Code = "JM"
+	// Japan
 	JP Code = "JP"
+	// Jersey
 	JE Code = "JE"
+	// Jordan
 	JO Code = "JO"
+	// Kazakhstan
 	KZ Code = "KZ"
+	// Kenya
 	KE Code = "KE"
+	// Kiribati
 	KI Code = "KI"
+	// Korea, Democratic People's Republic of
 	KP Code = "KP"
+	// Korea, Republic of
 	KR Code = "KR"
+	// Kuwait
 	KW Code = "KW"
+	// Kyrgyzstan
 	KG Code = "KG"
+	// Lao People's Democratic Republic
 	LA Code = "LA"
+	// Latvia
 	LV Code = "LV"
+	// Lebanon
 	LB Code = "LB"
+	// Lesotho
 	LS Code = "LS"
+	// Liberia
 	LR Code = "LR"
+	// Libya
 	LY Code = "LY"
+	// Liechtenstein
 	LI Code = "LI"
+	// Lithuania
 	LT Code = "LT"
+	// Luxembourg
 	LU Code = "LU"
+	// Macao
 	MO Code = "MO"
+	// Madagascar
 	MG Code = "MG"
+	// Malawi
 	MW Code = "MW"
+	// Malaysia
 	MY Code = "MY"
+	// Maldives
 	MV Code = "MV"
+	// Mali
 	ML Code = "ML"
+	// Malta
 	MT Code = "MT"
+	// Marshall Islands
 	MH Code = "MH"
+	// Martinique
 	MQ Code = "MQ"
+	// Mauritania
 	MR Code = "MR"
+	// Mauritius
 	MU Code = "MU"
+	// Mayotte
 	YT Code = "YT"
+	// Mexico
 	MX Code = "MX"
+	// Micronesia, Federated States of
 	FM Code = "FM"
+	// Moldova, Republic of
 	MD Code = "MD"
+	// Monaco
 	MC Code = "MC"
+	// Mongolia
 	MN Code = "MN"
+	// Montenegro
 	ME Code = "ME"
+	// Montserrat
 	MS Code = "MS"
+	// Morocco
 	MA Code = "MA"
+	// Mozambique
 	MZ Code = "MZ"
+	// Myanmar
 	MM Code = "MM"
+	// Namibia
 	NA Code = "NA"
+	// Nauru
 	NR Code = "NR"
+	// Nepal
 	NP Code = "NP"
+	// Netherlands
 	NL Code = "NL"
+	// New Caledonia
 	NC Code = "NC"
+	// New Zealand
 	NZ Code = "NZ"
+	// Nicaragua
 	NI Code = "NI"
+	// Niger
 	NE Code = "NE"
+	// Nigeria
 	NG Code = "NG"
+	// Niue
 	NU Code = "NU"
+	// Norfolk Island
 	NF Code = "NF"
+	// North Macedonia
 	MK Code = "MK"
+	// Northern Mariana Islands
 	MP Code = "MP"
+	// Norway
 	NO Code = "NO"
+	// Oman
 	OM Code = "OM"
+	// Pakistan
 	PK Code = "PK"
+	// Palau
 	PW Code = "PW"
+	// Palestine, State of
 	PS Code = "PS"
+	// Panama
 	PA Code = "PA"
+	// Papua New Guinea
 	PG Code = "PG"
+	// Paraguay
 	PY Code = "PY"
+	// Peru
 	PE Code = "PE"
+	// Philippines
 	PH Code = "PH"
+	// Pitcairn
 	PN Code = "PN"
+	// Poland
 	PL Code = "PL"
+	// Portugal
 	PT Code = "PT"
+	// Puerto Rico
 	PR Code = "PR"
+	// Qatar
 	QA Code = "QA"
+	// Réunion
 	RE Code = "RE"
+	// Romania
 	RO Code = "RO"
+	// Russian Federation
 	RU Code = "RU"
+	// Rwanda
 	RW Code = "RW"
+	// Saint Barthélemy
 	BL Code = "BL"
+	// Saint Helena, Ascension and Tristan da Cunha
 	SH Code = "SH"
+	// Saint Kitts and Nevis
 	KN Code = "KN"
+	// Saint Lucia
 	LC Code = "LC"
+	// Saint Martin (French part)
 	MF Code = "MF"
+	// Saint Pierre and Miquelon
 	PM Code = "PM"
+	// Saint Vincent and the Grenadines
 	VC Code = "VC"
+	// Samoa
 	WS Code = "WS"
+	// San Marino
 	SM Code = "SM"
+	// Sao Tome and Principe
 	ST Code = "ST"
+	// Saudi Arabia
 	SA Code = "SA"
+	// Senegal
 	SN Code = "SN"
+	// Serbia
 	RS Code = "RS"
+	// Seychelles
 	SC Code = "SC"
+	// Sierra Leone
 	SL Code = "SL"
+	// Singapore
 	SG Code = "SG"
+	// Sint Maarten (Dutch part)
 	SX Code = "SX"
+	// Slovakia
 	SK Code = "SK"
+	// Slovenia
 	SI Code = "SI"
+	// Solomon Islands
 	SB Code = "SB"
+	// Somalia
 	SO Code = "SO"
+	// South Africa
 	ZA Code = "ZA"
+	// South Georgia and the South Sandwich Islands
 	GS Code = "GS"
+	// South Sudan
 	SS Code = "SS"
+	// Spain
 	ES Code = "ES"
+	// Sri Lanka
 	LK Code = "LK"
+	// Sudan
 	SD Code = "SD"
+	// Suriname
 	SR Code = "SR"
+	// Svalbard and Jan Mayen
 	SJ Code = "SJ"
+	// Sweden
 	SE Code = "SE"
+	// Switzerland
 	CH Code = "CH"
+	// Syrian Arab Republic
 	SY Code = "SY"
+	// Taiwan (Province of China)
 	TW Code = "TW"
+	// Tajikistan
 	TJ Code = "TJ"
+	// Tanzania, the United Republic of
 	TZ Code = "TZ"
+	// Thailand
 	TH Code = "TH"
+	// Timor-Leste
 	TL Code = "TL"
+	// Togo
 	TG Code = "TG"
+	// Tokelau
 	TK Code = "TK"
+	// Tonga
 	TO Code = "TO"
+	// Trinidad and Tobago
 	TT Code = "TT"
+	// Tunisia
 	TN Code = "TN"
+	// Türkiye
 	TR Code = "TR"
+	// Turkmenistan
 	TM Code = "TM"
+	// Turks and Caicos Islands
 	TC Code = "TC"
+	// Tuvalu
 	TV Code = "TV"
+	// Uganda
 	UG Code = "UG"
+	// Ukraine
 	UA Code = "UA"
+	// United Arab Emirates
 	AE Code = "AE"
-	GB Code = "GB" // Great Britain and Northern Ireland
-	US Code = "US" // United States
+	// United Kingdom
+	GB Code = "GB"
+	// United States of America
+	US Code = "US"
+	// United States Minor Outlying Islands
 	UM Code = "UM"
+	// Uruguay
 	UY Code = "UY"
+	// Uzbekistan
 	UZ Code = "UZ"
+	// Vanuatu
 	VU Code = "VU"
+	// Venezuela, Bolivarian Republic of
 	VE Code = "VE"
+	// Viet Nam
 	VN Code = "VN"
+	// Virgin Islands (British)
 	VG Code = "VG"
+	// Virgin Islands (U.S.)
 	VI Code = "VI"
+	// Wallis and Futuna
 	WF Code = "WF"
+	// Western Sahara
 	EH Code = "EH"
+	// Yemen
 	YE Code = "YE"
+	// Zambia
 	ZM Code = "ZM"
+	// Zimbabwe
 	ZW Code = "ZW"
 )
 
@@ -258,7 +507,6 @@ const (
 	EL Code = "EL" // Greece
 	XI Code = "XI" // Northern Ireland
 	XU Code = "XU" // United Kingdom except Northern Ireland
-	EU Code = "EU" // European Union special code
 )
 
 // Countries provides an array of country definitions including
@@ -523,5 +771,5 @@ var countries = CountryDefs{
 	{EL, "GRC", "Greece", "gr", false, true, GR},
 	{XI, "GBR", "United Kingdom (Northern Ireland)", "ie", false, true, GB},
 	{XU, "GBR", "United Kingdom (excluding Northern Ireland)", "uk", false, true, GB},
-	{EU, "EUE", "European Union", "eu", false, true, ""}, // ISO/IEC 7501-1
+	{EU, "EUE", "European Union", "eu", false, true, ""}, // ISO/IEC 7501-1 extension
 }
