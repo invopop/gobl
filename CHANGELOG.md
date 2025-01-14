@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `l10n`: support for unions, including filtering members by date.
+- `l10n`: european union including members.
+
 ## [v0.208.0] - 2025-01-07
 
 ### Added
