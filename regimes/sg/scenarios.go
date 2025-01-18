@@ -22,10 +22,18 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 		// Simplified Tax Invoice or Reciept
 		{
-			Tags: []cbc.Key{tax.TagSimplified, TagInvoiceReceipt},
+			Tags: []cbc.Key{tax.TagSimplified},
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  tax.TagSimplified,
+				Text: "Price Payable includes GST",
+			},
+		},
+		{
+			Tags: []cbc.Key{TagInvoiceReceipt},
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
+				Src:  TagInvoiceReceipt,
 				Text: "Price Payable includes GST",
 			},
 		},

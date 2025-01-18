@@ -40,21 +40,6 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Skip,
 			),
 		),
-		validation.Field(&inv.Customer,
-			validation.When(
-				!inv.HasTags(tax.TagSimplified),
-				validation.Required,
-			),
-			validation.Skip,
-		),
-		validation.Field(&inv.Tax.PricesInclude,
-			validation.When(
-				!inv.HasTags(tax.TagSimplified),
-				validation.Required,
-				validation.In(tax.CategoryGST),
-			),
-			validation.Skip,
-		),
 	)
 }
 

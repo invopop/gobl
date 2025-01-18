@@ -1,6 +1,7 @@
 package in_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
@@ -70,7 +71,9 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	i.SetTags(tax.TagSimplified)
 	i.Customer = nil
 	require.NoError(t, i.Calculate())
+	fmt.Println(i.Notes)
 	assert.Len(t, i.Notes, 1)
+
 	assert.Equal(t, i.Notes[0].Src, tax.TagSimplified)
 	assert.Equal(t, i.Notes[0].Text, "Simplified Tax Invoice")
 }
