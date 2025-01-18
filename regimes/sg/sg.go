@@ -1,4 +1,4 @@
-// Package de provides the tax region definition for Germany.
+// Package sg provides the tax region definition for Singapore.
 package sg
 
 import (

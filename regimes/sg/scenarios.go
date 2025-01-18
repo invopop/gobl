@@ -1,4 +1,4 @@
-// Package in provides tax scenarios specific to India GST regulations.
+// Package sg provides tax scenarios specific to Singapore GST regulations.
 package sg
 
 import (
