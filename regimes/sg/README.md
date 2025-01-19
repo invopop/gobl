@@ -2,6 +2,8 @@
 
 This document provides an overview of the tax regime in Singapore
 
+Find example SG GOBL files in the [`examples`](../../examples/sg) (uncalculated documents) and [`examples/out`](../../examples/sg/out) (calculated envelopes) subdirectories.
+
 ---
 
 ## Overview of GST
@@ -67,5 +69,7 @@ There are multiple possiblities when it comes to GST reg nums. They can be a Uni
 [GST General Guide for Businesses](https://www.iras.gov.sg/media/docs/default-source/e-tax/etaxguide_gst_gst-general-guide-for-businesses(1).pdf?sfvrsn=8a66716d_97)
 
 [GST Rates](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/basics-of-gst/current-gst-rates)
+
+
 
 
