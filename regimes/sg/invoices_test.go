@@ -70,6 +70,7 @@ func TestValidReceiptInvoice(t *testing.T) {
 	inv := validInvoice()
 	inv.SetTags(sg.TagInvoiceReceipt)
 	inv.Customer = nil
+	inv.Supplier.Addresses = nil
 
 	require.NoError(t, inv.Calculate())
 	assert.Len(t, inv.Notes, 1)
@@ -89,4 +90,18 @@ func TestValidSimplifiedInvoice(t *testing.T) {
 	assert.Equal(t, inv.Notes[0].Src, tax.TagSimplified)
 	assert.Equal(t, inv.Notes[0].Text, "Price Payable includes GST")
 	require.NoError(t, inv.Validate())
+}
+
+func TestInvalidInvoice(t *testing.T) {
+	inv := validInvoice()
+	inv.Supplier.TaxID.Code = "1234567A"
+	require.Error(t, inv.Validate())
+
+	inv = validInvoice()
+	inv.Customer = nil
+	require.Error(t, inv.Validate())
+
+	inv = validInvoice()
+	inv.Supplier.Addresses = nil
+	require.Error(t, inv.Validate())
 }
