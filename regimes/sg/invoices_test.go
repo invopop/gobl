@@ -32,6 +32,13 @@ func validInvoice() *bill.Invoice {
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
+			Addresses: []*org.Address{
+				{
+					Street:  "Test Street",
+					Code:    "123456",
+					Country: l10n.SG.ISO(),
+				},
+			},
 		},
 		Code:     "0001",
 		Currency: "SGD",

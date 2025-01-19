@@ -20,6 +20,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "This supply is subject to reverse charge. GST to be accounted for by the recipient.",
 			},
 		},
+
 		// Simplified Tax Invoice or Reciept
 		{
 			Tags: []cbc.Key{tax.TagSimplified},
