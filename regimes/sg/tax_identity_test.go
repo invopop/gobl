@@ -1,7 +1,6 @@
 package sg_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
@@ -31,7 +30,6 @@ func TestValidateTaxIdentity(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		fmt.Println(tt.name)
 		tID := &tax.Identity{
 			Code: cbc.Code(tt.code),
 		}

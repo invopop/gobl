@@ -44,10 +44,7 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.When(
 				inv.HasTags(TagInvoiceReceipt) || inv.HasTags(tax.TagSimplified),
 				validation.Skip,
-			).Else(
-				validation.By(validateInvoiceCustomer),
-				validation.Skip,
-			),
+			).Else(validation.Required),
 		),
 	)
 }
@@ -82,21 +79,6 @@ func validateRecieptSupplier(value any) error {
 			validation.Required,
 			tax.RequireIdentityCode,
 			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceCustomer(value any) error {
-	p, ok := value.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Name,
-			validation.Required,
-		),
-		validation.Field(&p.Addresses,
-			validation.Required,
 		),
 	)
 }

@@ -20,6 +20,8 @@ Singapore offers a simple GST model with a standard rate along with a few except
 
 ## Invoicing methods
 
+There are three main methods for invoicing which will be described below. Other methods like credit notes and reverse billing have to follow the structure of a normal Tax Invoice.
+
 ### Tax Invoice
 
 This invoice, reference in GOBL by the use of the tax tag "standard" represents a basic Invoice. This Invoice has to meet certain requirements:
