@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `sg`: added Singapore regime
+
 ## [v0.208.0] - 2025-01-07
 
 ### Added

@@ -363,6 +363,10 @@
               "title": "Portugal"
             },
             {
+              "const": "SG",
+              "title": "Singapore"
+            },
+            {
               "const": "US",
               "title": "United States of America"
             }
