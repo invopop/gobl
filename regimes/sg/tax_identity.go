@@ -11,6 +11,7 @@ import (
 
 // Reference: https://lookuptax.com/docs/tax-identification-number/singapore-tax-id-guide#nric-number
 // Reference: https://mytax.iras.gov.sg/ESVWeb/default.aspx?target=GSTListingSearch
+// All these tax codes are valid options for a GST registration number.
 
 var (
 	taxCodeRegexps = []*regexp.Regexp{
@@ -26,7 +27,10 @@ var (
 // validateTaxIdentity checks to ensure the NIT code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTaxCode)),
+		validation.Field(&tID.Code,
+			validation.By(validateTaxCode),
+			validation.Skip,
+		),
 	)
 }
 

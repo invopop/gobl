@@ -1,0 +1,178 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Singapore"
+  },
+  "time_zone": "Asia/Singapore",
+  "country": "SG",
+  "currency": "SGD",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "simplified",
+          "name": {
+            "de": "Vereinfachte Rechnung",
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada",
+            "it": "Fattura Semplificata"
+          },
+          "desc": {
+            "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+            "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+            "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+            "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "de": "Umkehr der Steuerschuld",
+            "en": "Reverse Charge",
+            "es": "Inversión del Sujeto Pasivo",
+            "it": "Inversione del soggetto passivo"
+          }
+        },
+        {
+          "key": "self-billed",
+          "name": {
+            "de": "Rechnung durch den Leistungsempfänger",
+            "en": "Self-billed",
+            "es": "Facturación por el destinatario",
+            "it": "Autofattura"
+          }
+        },
+        {
+          "key": "customer-rates",
+          "name": {
+            "de": "Kundensätze",
+            "en": "Customer rates",
+            "es": "Tarifas aplicables al destinatario",
+            "it": "Aliquote applicabili al destinatario"
+          }
+        },
+        {
+          "key": "partial",
+          "name": {
+            "de": "Teilweise",
+            "en": "Partial",
+            "es": "Parcial",
+            "it": "Parziale"
+          }
+        },
+        {
+          "key": "receipt",
+          "name": {
+            "en": "Receipt"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "This supply is subject to reverse charge. GST to be accounted for by the recipient."
+          }
+        },
+        {
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Price Payable includes GST"
+          }
+        },
+        {
+          "tags": [
+            "receipt"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "receipt",
+            "text": "Price Payable includes GST"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "rates": [
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Zero-rated supplies are goods and services that are taxable at 0%: this referes to international services and export of goods."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard rate"
+          },
+          "desc": {
+            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "9%"
+            }
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "desc": {
+            "en": "Certain goods and services are exempt from GST: this includes financial services, sale and lease of residential properties, digital payment tokens, and the import of investment precious metals."
+          },
+          "exempt": true
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Goods and Services Tax (GST)"
+          },
+          "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/"
+        }
+      ]
+    }
+  ]
+}

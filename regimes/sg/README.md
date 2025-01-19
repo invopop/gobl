@@ -58,4 +58,12 @@ This type of invoice can be issued to a non-GST registered costumer. This invoic
 
 ### GST Registration Number
 
-There are multiple possiblities when it comes to GST reg nums. They can be a Unique Entity Number (UEN) which refers to business, they can be a National Registration Identity Card (NRIC) number or a Foreign Identification Number which refer to people, and they can be a proper GST reg num emmited by IRAS. Each code has its own validation rules along which have been implemented
+There are multiple possiblities when it comes to GST reg nums. They can be a Unique Entity Number (UEN) which refers to business, they can be a National Registration Identity Card (NRIC) number or a Foreign Identification Number which refer to people, and they can be a unique GST reg num emmited by IRAS. Each code has its own validation rules along which have been implemented. Each type of code is still a valid GST registration number and must be included in all invoices.
+
+### References
+
+[GST General Guide for Businesses](https://www.iras.gov.sg/media/docs/default-source/e-tax/etaxguide_gst_gst-general-guide-for-businesses(1).pdf?sfvrsn=8a66716d_97)
+
+[GST Rates](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/basics-of-gst/current-gst-rates)
+
+
