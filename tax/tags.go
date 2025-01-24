@@ -2,6 +2,7 @@ package tax
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/validation"
@@ -129,9 +130,11 @@ func (tv *tagValidation) Validate(val interface{}) error {
 		}
 		list = ts.List
 	}
-	for _, k := range list {
+	for i, k := range list {
 		if !k.In(tv.keys...) {
-			return fmt.Errorf("'%s' undefined", k)
+			return validation.Errors{
+				strconv.Itoa(i): fmt.Errorf("'%s' undefined", k),
+			}
 		}
 	}
 	return nil
