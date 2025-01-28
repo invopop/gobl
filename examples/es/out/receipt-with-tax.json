@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5d8b112d7d49c62d6ea34dd7e245f92209ea2fe92a72e516f5d04181a8365a20"
+			"val": "cbb26a902872460a14862ad4558d7eedbf2de02c84fbe7c6ec3ee753e1d5b26f"
 		}
 	},
 	"doc": {
@@ -52,10 +52,11 @@
 			{
 				"i": 0,
 				"document": {
-					"type": "standard",
+					"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 					"issue_date": "2025-01-10",
 					"series": "SAMPLE",
-					"code": "001"
+					"code": "001",
+					"description": "Invoice"
 				},
 				"debit": "1972.30",
 				"tax": {

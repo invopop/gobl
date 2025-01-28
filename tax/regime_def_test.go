@@ -89,7 +89,9 @@ func TestRegimeDefValidateObject(t *testing.T) {
 func TestRegimeDefNormalizeObject(t *testing.T) {
 	t.Run("nil regime", func(t *testing.T) {
 		var r *tax.RegimeDef
-		r.NormalizeObject(&org.Note{})
+		assert.NotPanics(t, func() {
+			r.NormalizeObject(&org.Note{})
+		})
 	})
 }
 
