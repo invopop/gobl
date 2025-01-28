@@ -100,7 +100,7 @@ func (inv *Invoice) Validate() error {
 // ValidateWithContext checks to ensure the invoice is valid and contains all the
 // information we need.
 func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
-	ctx = inv.ValidationContext(ctx)
+	ctx = inv.validationContext(ctx)
 
 	var exRule validation.Rule
 	exRule = validation.Skip
@@ -303,9 +303,9 @@ func (inv *Invoice) supportedTags() []cbc.Key {
 	return ts.Keys()
 }
 
-// ValidationContext builds a context with all the validators that the invoice might
+// validationContext builds a context with all the validators that the invoice might
 // need for execution.
-func (inv *Invoice) ValidationContext(ctx context.Context) context.Context {
+func (inv *Invoice) validationContext(ctx context.Context) context.Context {
 	if r := inv.RegimeDef(); r != nil {
 		ctx = r.WithContext(ctx)
 	}

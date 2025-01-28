@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/currency"
@@ -58,6 +59,30 @@ func TestReceiptCalculate(t *testing.T) {
 		require.NoError(t, r.Calculate())
 		assert.Equal(t, "21.00", r.Tax.Sum.String())
 	})
+
+	t.Run("with multiple tax lines", func(t *testing.T) {
+		r := testReceiptPaymentWithTax(t)
+		r.Lines = append(r.Lines, &bill.ReceiptLine{
+			Debit: num.NewAmount(10000, 2),
+			Tax: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code: "VAT",
+						Rates: []*tax.RateTotal{
+							{
+								Base:    num.MakeAmount(10000, 2),
+								Percent: num.NewPercentage(10, 2),
+							},
+						},
+					},
+				},
+			},
+		})
+		require.NoError(t, r.Calculate())
+		assert.Len(t, r.Tax.Categories, 1)
+		assert.Len(t, r.Tax.Categories[0].Rates, 2)
+		assert.Equal(t, "31.00", r.Tax.Sum.String())
+	})
 }
 
 func TestReceiptValidate(t *testing.T) {
@@ -72,6 +97,79 @@ func TestReceiptValidate(t *testing.T) {
 		require.NoError(t, rct.Calculate())
 		rct.Supplier = nil
 		assert.ErrorContains(t, rct.Validate(), "supplier: cannot be blank")
+	})
+
+	t.Run("with addon", func(t *testing.T) {
+		rct := testReceiptPaymentMinimal(t)
+		rct.Addons.SetAddons(tbai.V1)
+		require.NoError(t, rct.Calculate())
+		require.NoError(t, rct.Validate())
+	})
+}
+
+func TestReceiptExchangeRates(t *testing.T) {
+	t.Run("debit basic", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Currency = currency.EUR
+		r.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.USD,
+				To:     currency.EUR,
+				Amount: num.MakeAmount(96, 2),
+			},
+		}
+		r.Lines[0].Currency = currency.USD
+		require.NoError(t, r.Calculate())
+
+		assert.Equal(t, "96.00", r.Total.String())
+	})
+
+	t.Run("debit missing rate", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Currency = currency.EUR
+		r.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.USD,
+				To:     currency.EUR,
+				Amount: num.MakeAmount(96, 2),
+			},
+		}
+		r.Lines[0].Currency = currency.GBP
+		require.ErrorContains(t, r.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).)")
+	})
+
+	t.Run("credit basic", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Currency = currency.EUR
+		r.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.USD,
+				To:     currency.EUR,
+				Amount: num.MakeAmount(96, 2),
+			},
+		}
+		r.Lines[0].Currency = currency.USD
+		r.Lines[0].Credit = r.Lines[0].Debit
+		r.Lines[0].Debit = nil
+		require.NoError(t, r.Calculate())
+
+		assert.Equal(t, "-96.00", r.Total.String())
+	})
+
+	t.Run("credit missing rate", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Currency = currency.EUR
+		r.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.USD,
+				To:     currency.EUR,
+				Amount: num.MakeAmount(96, 2),
+			},
+		}
+		r.Lines[0].Credit = r.Lines[0].Debit
+		r.Lines[0].Debit = nil
+		r.Lines[0].Currency = currency.GBP
+		require.ErrorContains(t, r.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).).")
 	})
 }
 

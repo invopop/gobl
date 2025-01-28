@@ -19,7 +19,7 @@ type ReceiptLine struct {
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 
 	// The document reference related to the payment.
-	Document *org.DocumentRef `json:"document" jsonschema:"title=Document"`
+	Document *org.DocumentRef `json:"document,omitempty" jsonschema:"title=Document"`
 
 	// Currency used for the payment if different from the document currency.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
@@ -36,12 +36,16 @@ type ReceiptLine struct {
 	// Total balance to be paid for this line from the customer to the supplier
 	// in the currency of the document.
 	Total num.Amount `json:"total" jsonschema:"title=Total" jsonschema_extras:"calculated=true"`
+
+	// Set of specific notes for this line that may be required for
+	// clarification.
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
 // ValidateWithContext ensures that the fields contained in the ReceiptLine look correct.
 func (rl *ReceiptLine) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, rl,
-		validation.Field(&rl.Document, validation.Required),
+		validation.Field(&rl.Document),
 		validation.Field(&rl.Currency),
 		validation.Field(&rl.Debit,
 			validation.When(
@@ -52,6 +56,7 @@ func (rl *ReceiptLine) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&rl.Credit),
 		validation.Field(&rl.Tax),
 		validation.Field(&rl.Total, validation.Required),
+		validation.Field(&rl.Notes),
 	)
 }
 
@@ -63,7 +68,9 @@ func (rl *ReceiptLine) calculate(cur currency.Code, rates []*currency.ExchangeRa
 		if rl.Currency != "" {
 			na := currency.Convert(rates, rl.Currency, cur, *rl.Debit)
 			if na == nil {
-				return fmt.Errorf("no exchange rate found for %s to %s", rl.Currency, cur)
+				return validation.Errors{
+					"currency": fmt.Errorf("no exchange rate found for %s to %s", rl.Currency, cur),
+				}
 			}
 			a = *na
 		} else {
@@ -75,9 +82,11 @@ func (rl *ReceiptLine) calculate(cur currency.Code, rates []*currency.ExchangeRa
 	if rl.Credit != nil {
 		var a num.Amount
 		if rl.Currency != "" {
-			na := currency.Convert(rates, rl.Currency, cur, *rl.Debit)
+			na := currency.Convert(rates, rl.Currency, cur, *rl.Credit)
 			if na == nil {
-				return fmt.Errorf("no exchange rate found for %s to %s", rl.Currency, cur)
+				return validation.Errors{
+					"currency": fmt.Errorf("no exchange rate found for %s to %s", rl.Currency, cur),
+				}
 			}
 			a = *na
 		} else {

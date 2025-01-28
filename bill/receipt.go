@@ -34,9 +34,10 @@ var ReceiptTypes = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				A payment receipt sent from the supplier to a customer reflecting that the referenced
-				documents have been paid. This is the default type and may be required by some tax
-				regimes in order to communicate the payment of invoices.
+				A payment receipt sent from the supplier to a customer indicating that they have
+				received a transfer of funds from the customer directly or a payer.
+				This is the default receipt type and may be required by some tax
+				regimes in order to communicate the payment of specific documents and invoices.
 			`),
 		},
 	},
@@ -132,6 +133,7 @@ func (rct *Receipt) Validate() error {
 
 // ValidateWithContext ensures that the fields contained in the Receipt look correct.
 func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
+	ctx = rct.validationContext(ctx)
 	r := rct.RegimeDef()
 	return tax.ValidateStructWithContext(ctx, rct,
 		validation.Field(&rct.Regime),
@@ -165,6 +167,18 @@ func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&rct.Complements),
 		validation.Field(&rct.Meta),
 	)
+}
+
+// validationContext builds a context with all the validators that the receipt might
+// need for execution.
+func (rct *Receipt) validationContext(ctx context.Context) context.Context {
+	if r := rct.RegimeDef(); r != nil {
+		ctx = r.WithContext(ctx)
+	}
+	for _, a := range rct.AddonDefs() {
+		ctx = a.WithContext(ctx)
+	}
+	return ctx
 }
 
 // Calculate performs all the normalizations and calculations required for the invoice
