@@ -1,0 +1,456 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/receipt",
+  "$ref": "#/$defs/Receipt",
+  "$defs": {
+    "Ordering": {
+      "properties": {
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Identifier assigned by the customer or buyer for internal routing purposes."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Any additional Codes, IDs, SKUs, or other regional or custom\nidentifiers that may be used to identify the order."
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/cal/period",
+          "title": "Period",
+          "description": "Period of time that the invoice document refers to often used in addition to the details\nprovided in the individual line items."
+        },
+        "buyer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Buyer",
+          "description": "Party who is responsible for issuing payment, if not the same as the customer."
+        },
+        "seller": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Seller",
+          "description": "Seller is the party liable to pay taxes on the transaction if not the same as the supplier."
+        },
+        "projects": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Projects",
+          "description": "Projects this invoice refers to."
+        },
+        "contracts": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Contracts",
+          "description": "The identification of contracts."
+        },
+        "purchases": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Purchase Orders",
+          "description": "Purchase orders issued by the customer or buyer."
+        },
+        "sales": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Sales Orders",
+          "description": "Sales orders issued by the supplier or seller."
+        },
+        "receiving": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Receiving Advice",
+          "description": "Receiving Advice."
+        },
+        "despatch": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Despatch Advice",
+          "description": "Despatch advice."
+        },
+        "tender": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Tender Advice",
+          "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
+        }
+      },
+      "type": "object",
+      "description": "Ordering provides additional information about the ordering process including references to other documents and alternative parties involved in the order-to-delivery process."
+    },
+    "Receipt": {
+      "properties": {
+        "$regime": {
+          "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
+          "oneOf": [
+            {
+              "const": "AE",
+              "title": "United Arab Emirates"
+            },
+            {
+              "const": "AT",
+              "title": "Austria"
+            },
+            {
+              "const": "BE",
+              "title": "Belgium"
+            },
+            {
+              "const": "BR",
+              "title": "Brazil"
+            },
+            {
+              "const": "CA",
+              "title": "Canada"
+            },
+            {
+              "const": "CH",
+              "title": "Switzerland"
+            },
+            {
+              "const": "CO",
+              "title": "Colombia"
+            },
+            {
+              "const": "DE",
+              "title": "Germany"
+            },
+            {
+              "const": "EL",
+              "title": "Greece"
+            },
+            {
+              "const": "ES",
+              "title": "Spain"
+            },
+            {
+              "const": "FR",
+              "title": "France"
+            },
+            {
+              "const": "GB",
+              "title": "United Kingdom"
+            },
+            {
+              "const": "IN",
+              "title": "India"
+            },
+            {
+              "const": "IT",
+              "title": "Italy"
+            },
+            {
+              "const": "MX",
+              "title": "Mexico"
+            },
+            {
+              "const": "NL",
+              "title": "The Netherlands"
+            },
+            {
+              "const": "PL",
+              "title": "Poland"
+            },
+            {
+              "const": "PT",
+              "title": "Portugal"
+            },
+            {
+              "const": "US",
+              "title": "United States of America"
+            }
+          ],
+          "title": "Tax Regime"
+        },
+        "$addons": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key",
+            "oneOf": [
+              {
+                "const": "br-nfse-v1",
+                "title": "Brazil NFS-e 1.X"
+              },
+              {
+                "const": "co-dian-v2",
+                "title": "Colombia DIAN UBL 2.X"
+              },
+              {
+                "const": "de-xrechnung-v3",
+                "title": "German XRechnung 3.X"
+              },
+              {
+                "const": "es-facturae-v3",
+                "title": "Spain FacturaE"
+              },
+              {
+                "const": "es-tbai-v1",
+                "title": "Spain TicketBAI"
+              },
+              {
+                "const": "es-verifactu-v1",
+                "title": "Spain Verifactu V1"
+              },
+              {
+                "const": "eu-en16931-v2017",
+                "title": "EN 16931-1:2017"
+              },
+              {
+                "const": "gr-mydata-v1",
+                "title": "Greece MyData v1.x"
+              },
+              {
+                "const": "it-sdi-v1",
+                "title": "Italy SDI FatturaPA v1.x"
+              },
+              {
+                "const": "mx-cfdi-v4",
+                "title": "Mexican SAT CFDI v4.X"
+              },
+              {
+                "const": "pt-saft-v1",
+                "title": "Portugal SAF-T"
+              }
+            ]
+          },
+          "type": "array",
+          "title": "Addons",
+          "description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
+        },
+        "$tags": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Tags",
+          "description": "Tags are used to help identify specific tax scenarios or requirements that will\napply changes to the contents of the invoice. Tags by design should always be optional,\nit should always be possible to build a valid invoice without any tags."
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "type": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "payment",
+              "title": "Payment",
+              "description": "A payment receipt sent from the supplier to a customer indicating that they have\nreceived a transfer of funds from the customer directly or a payer.\nThis is the default receipt type and may be required by some tax\nregimes in order to communicate the payment of specific documents and invoices."
+            },
+            {
+              "const": "remittance",
+              "title": "Remittance",
+              "description": "A remittance advice sent from the customer to the supplier reflecting that payment for\nthe referenced documents has been made."
+            }
+          ],
+          "title": "Type",
+          "description": "Type of receipt document being issued.",
+          "calculated": true
+        },
+        "method": {
+          "$ref": "https://gobl.org/draft-0/pay/instructions",
+          "title": "Method",
+          "description": "Details on how the payment was made based on the original instructions."
+        },
+        "series": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Series",
+          "description": "Used as a prefix to group codes."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Sequential code used to identify this payment in tax declarations."
+        },
+        "issue_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Issue Date",
+          "description": "When the payment was issued.",
+          "calculated": true
+        },
+        "value_date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Value Date",
+          "description": "When the taxes of this payment become accountable, if none set, the issue date is assumed."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency for all payment totals.",
+          "calculated": true
+        },
+        "exchange_rates": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/currency/exchange-rate"
+          },
+          "type": "array",
+          "title": "Exchange Rates",
+          "description": "Exchange rates to be used when converting the payment's monetary values into other currencies."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extensions for additional codes that may be required."
+        },
+        "preceding": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/document-ref"
+          },
+          "type": "array",
+          "title": "Preceding Details",
+          "description": "Key information regarding previous versions of this document."
+        },
+        "supplier": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Supplier",
+          "description": "The taxable entity who is responsible for supplying goods or services."
+        },
+        "customer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Customer",
+          "description": "Legal entity that receives the goods or services."
+        },
+        "payee": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Payee",
+          "description": "Legal entity that receives the payment if not the supplier."
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/ReceiptLine"
+          },
+          "type": "array",
+          "title": "Lines",
+          "description": "List of documents that are being paid for."
+        },
+        "ordering": {
+          "$ref": "#/$defs/Ordering",
+          "title": "Ordering",
+          "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax",
+          "description": "Summary of the taxes applied to the payment for tax regimes that require\nthis information to be communicated."
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Total amount to be paid in this receipt, either positive or negative according to the\nline types and totals."
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Unstructured information that is relevant to the receipt, such as correction or additional\nlegal details."
+        },
+        "complements": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/schema/object"
+          },
+          "type": "array",
+          "title": "Complements",
+          "description": "Additional complementary objects that add relevant information to the receipt."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional semi-structured data that doesn't fit into the body of the invoice."
+        }
+      },
+      "type": "object",
+      "required": [
+        "type",
+        "code",
+        "issue_date",
+        "currency",
+        "supplier",
+        "lines",
+        "total"
+      ],
+      "description": "A Receipt is used to link an invoice or invoices with a payment transaction.",
+      "recommended": [
+        "$regime"
+      ]
+    },
+    "ReceiptLine": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number inside the parent (calculated)",
+          "calculated": true
+        },
+        "document": {
+          "$ref": "https://gobl.org/draft-0/org/document-ref",
+          "title": "Document",
+          "description": "The document reference related to the payment."
+        },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency used for the payment if different from the document currency."
+        },
+        "debit": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Debit",
+          "description": "Amount received by the supplier for ordinary payments."
+        },
+        "credit": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Credit",
+          "description": "Amount received by the customer in case of refunds."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax",
+          "description": "Tax total breakdown from the original document, only if required by a specific tax regime\nor addon."
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Total balance to be paid for this line from the customer to the supplier\nin the currency of the document.",
+          "calculated": true
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Set of specific notes for this line that may be required for\nclarification."
+        }
+      },
+      "type": "object",
+      "required": [
+        "i",
+        "total"
+      ],
+      "description": "ReceiptLine defines the details of a line required in an invoice."
+    }
+  }
+}

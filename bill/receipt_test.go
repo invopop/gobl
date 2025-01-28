@@ -33,7 +33,7 @@ func TestReceiptCalculate(t *testing.T) {
 		r := testReceiptPaymentMinimal(t)
 		r.Supplier = nil
 		assert.NotPanics(t, func() {
-			r.Calculate()
+			assert.ErrorContains(t, r.Calculate(), "currency: required, unable to determine")
 		})
 	})
 
@@ -41,7 +41,7 @@ func TestReceiptCalculate(t *testing.T) {
 		r := testReceiptPaymentMinimal(t)
 		r.Supplier.TaxID = nil
 		assert.NotPanics(t, func() {
-			r.Calculate()
+			assert.ErrorContains(t, r.Calculate(), "currency: required, unable to determine")
 		})
 	})
 

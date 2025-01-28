@@ -6,10 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+This significant release adds support for the new `bill.Receipt` schema, to be used to represent payments (sent from suppliers) and remittance advice (sent from customers). This is still in testing phases, so may still require significant changes.
+
 ### Added
 
+- `bill`: new `Receipt` model, including `ReceiptLine`.
 - `l10n`: support for unions, including filtering members by date.
 - `l10n`: european union including members.
+- `num`: `Negate` method in amounts and percentages.
+
+### Changed
+
+- `tax`: (internal) tax total calculation moved to `Total` model from calculator.
+- `num`: `Invert` now has deprecated warning.
+- `tax`: `CalculatorRoundingRule` renamed to just `RoundingRule`.
 
 ## [v0.208.0] - 2025-01-07
 
