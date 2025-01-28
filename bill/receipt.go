@@ -2,6 +2,7 @@ package bill
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/invopop/gobl/cal"
@@ -234,6 +235,11 @@ func (rct *Receipt) calculate() error {
 	// Convert empty or invalid currency to the regime's currency
 	if rct.Currency == currency.CodeEmpty && r != nil {
 		rct.Currency = r.Currency
+	}
+	if rct.Currency == currency.CodeEmpty {
+		return validation.Errors{
+			"currency": fmt.Errorf("required, unable to determine"),
+		}
 	}
 
 	for i, l := range rct.Lines {

@@ -503,4 +503,45 @@ func TestTotalCalculate(t *testing.T) {
 		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Rates[0].Amount.Value())
 		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
 	})
+
+	t.Run("basic with retained surcharge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+							},
+						},
+					},
+				},
+				{
+					Code:     "IRPF",
+					Retained: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(150, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+							},
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		data, _ := json.Marshal(tt)
+		fmt.Printf("TOTAL: %s\n", string(data))
+		assert.Equal(t, "6.00", tt.Sum.String())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Amount.Value())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Rates[0].Amount.Value())
+		assert.Equal(t, "15.00", tt.Category("IRPF").Rates[0].Amount.String())
+		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
+	})
 }

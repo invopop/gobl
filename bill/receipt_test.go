@@ -29,6 +29,22 @@ func TestReceiptCalculate(t *testing.T) {
 		assert.Equal(t, r.Supplier.TaxID.Code.String(), "B98602642", "should normalize")
 	})
 
+	t.Run("missing supplier", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Supplier = nil
+		assert.NotPanics(t, func() {
+			r.Calculate()
+		})
+	})
+
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Supplier.TaxID = nil
+		assert.NotPanics(t, func() {
+			r.Calculate()
+		})
+	})
+
 	t.Run("with debits and credits", func(t *testing.T) {
 		r := testReceiptPaymentMinimal(t)
 		r.Lines = append(r.Lines, &bill.ReceiptLine{
