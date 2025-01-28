@@ -2,8 +2,28 @@ package tax
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+)
+
+// RoundingRule defines the method to use for rounding specifically when
+// calculating totals
+type RoundingRule string
+
+const (
+	// RoundingRuleSumThenRound is the default method of calculating the totals
+	// in GOBL, and provides the best results for most cases as the precision
+	// is maintained to the maximum amount possible. The tradeoff however is
+	// that sometimes the totals may not sum exactly based on what is visible.
+	RoundingRuleSumThenRound RoundingRule = "sum-then-round"
+
+	// RoundingRuleRoundThenSum is the alternative method of calculating the totals
+	// that will first round all the amounts to the currency's precision before
+	// making the sums. Totals using this approach can always be recalculated using
+	// the amounts presented, but can lead to rounding errors in the case of
+	// pre-payments and when line item prices include tax.
+	RoundingRuleRoundThenSum RoundingRule = "round-then-sum"
 )
 
 // CategoryTotal groups together all rates inside a given category.
@@ -174,7 +194,11 @@ func (t *Total) rateTotalFor(c *Combo, zero num.Amount) *RateTotal {
 }
 
 // Negate provides a new total with all the values inverted (positive to negative and vice versa).
+// Will return nil if total is nil.
 func (t *Total) Negate() *Total {
+	if t == nil {
+		return nil
+	}
 	nt := t.Clone()
 	for _, ct := range nt.Categories {
 		ct.Amount = ct.Amount.Negate()
@@ -329,4 +353,93 @@ func (t *Total) Merge(t2 *Total) *Total {
 	nt.sum = nt.sum.Add(t2.sum)
 
 	return nt
+}
+
+// Calculate will go through all the categories and rates to calculate the final
+// sum of the taxes. The rounding rule will be applied to the final sums.
+func (t *Total) Calculate(cur currency.Code, rr RoundingRule) {
+	if t == nil {
+		return
+	}
+	zero := cur.Def().Zero()
+	t.calculateFinalSum(zero, rr)
+	t.round(zero)
+}
+
+func (t *Total) calculateFinalSum(zero num.Amount, rr RoundingRule) {
+	// Now go through each category to apply the percentage and calculate the final sums
+	t.Sum = zero
+	for _, ct := range t.Categories {
+		t.calculateBaseCategoryTotal(ct, zero, rr)
+
+		t.Sum = rr.matchPrecision(t.Sum, ct.Amount)
+		if ct.Retained {
+			t.Sum = t.Sum.Subtract(ct.Amount)
+			if ct.Surcharge != nil {
+				t.Sum = t.Sum.Subtract(*ct.Surcharge)
+			}
+		} else {
+			t.Sum = t.Sum.Add(ct.Amount)
+			if ct.Surcharge != nil {
+				t.Sum = t.Sum.Add(*ct.Surcharge)
+			}
+		}
+	}
+}
+
+func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, rr RoundingRule) {
+	ct.Amount = zero
+	for _, rt := range ct.Rates {
+		if rt.Percent == nil {
+			rt.Amount = zero
+			continue // exempt, nothing else to do
+		}
+		base := rt.Base
+		rt.Amount = rt.Percent.Of(rt.Base)
+		ct.Amount = rr.matchPrecision(ct.Amount, rt.Amount)
+		ct.Amount = ct.Amount.Add(rt.Amount)
+		if rt.Surcharge != nil {
+			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(base)
+			if ct.Surcharge == nil {
+				ct.Surcharge = &zero
+			}
+			a := rt.Surcharge.Amount
+			x := *ct.Surcharge
+			x = rr.matchPrecision(x, a)
+			x = x.Add(a)
+			ct.Surcharge = &x
+		}
+	}
+}
+
+// matchPrecision will decide what precision to maintain on the amount based on
+// the rounding rule.
+func (rr RoundingRule) matchPrecision(a, b num.Amount) num.Amount {
+	switch rr {
+	case RoundingRuleRoundThenSum:
+		return a // maintain original precision
+	}
+	return a.MatchPrecision(b)
+}
+
+// round will go through all the values generated and round them to the currency's
+// preferred precision. The final precise sum will be available in the t.sum variable
+// still.
+func (t *Total) round(zero num.Amount) {
+	for _, ct := range t.Categories {
+		for _, rt := range ct.Rates {
+			rt.Amount = rt.Amount.Rescale(zero.Exp())
+			rt.Base = rt.Base.Rescale(zero.Exp())
+			if rt.Surcharge != nil {
+				rt.Surcharge.Amount = rt.Surcharge.Amount.Rescale(zero.Exp())
+			}
+		}
+		ct.amount = ct.Amount
+		ct.Amount = ct.Amount.Rescale(zero.Exp())
+		if ct.Surcharge != nil {
+			*ct.Surcharge = ct.Surcharge.Rescale(zero.Exp())
+		}
+	}
+	t.sum = t.Sum
+	t.Sum = t.Sum.Rescale(zero.Exp())
 }

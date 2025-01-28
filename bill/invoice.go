@@ -448,7 +448,8 @@ func (inv *Invoice) calculate() error {
 	}
 	t.Taxes = new(tax.Total)
 	tc := &tax.TotalCalculator{
-		Zero:     zero,
+		Currency: inv.Currency,
+		Rounding: r.GetRoundingRule(),
 		Country:  inv.Regime.Country,
 		Tags:     inv.GetTags(),
 		Date:     *date,

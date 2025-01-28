@@ -2,13 +2,13 @@ package bill
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
-	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -18,43 +18,73 @@ type ReceiptLine struct {
 	// Line number inside the parent (calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 
-	// Direction for the flow of money, either debit (+) or credit (-) from the perspective
-	// of the supplier's asset account. Debiting an asset account increases its value, implying
-	// incoming payment. Crediting an asset account decreases its value, implying outgoing payment.
-	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-
 	// The document reference related to the payment.
 	Document *org.DocumentRef `json:"document" jsonschema:"title=Document"`
 
-	// Tax total breakdown from the original document, if required and available.
+	// Currency used for the payment if different from the document currency.
+	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
+
+	// Amount received by the supplier for ordinary payments.
+	Debit *num.Amount `json:"debit,omitempty" jsonschema:"title=Debit"`
+	// Amount received by the customer in case of refunds.
+	Credit *num.Amount `json:"credit,omitempty" jsonschema:"title=Credit"`
+
+	// Tax total breakdown from the original document, only if required by a specific tax regime
+	// or addon.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 
-	// Total amount to be paid for this line.
-	Total num.Amount `json:"total" jsonschema:"title=Total"`
+	// Total balance to be paid for this line from the customer to the supplier
+	// in the currency of the document.
+	Total num.Amount `json:"total" jsonschema:"title=Total" jsonschema_extras:"calculated=true"`
 }
 
 // ValidateWithContext ensures that the fields contained in the ReceiptLine look correct.
 func (rl *ReceiptLine) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, rl,
-		validation.Field(&rl.Type, validation.Required, isValidReceiptLineType),
 		validation.Field(&rl.Document, validation.Required),
+		validation.Field(&rl.Currency),
+		validation.Field(&rl.Debit,
+			validation.When(
+				rl.Credit == nil,
+				validation.Required.Error("must have either debit or credit"),
+			),
+		),
+		validation.Field(&rl.Credit),
 		validation.Field(&rl.Tax),
 		validation.Field(&rl.Total, validation.Required),
 	)
 }
 
-// JSONSchemaExtend extends the schema with additional property details
-func (rl ReceiptLine) JSONSchemaExtend(js *jsonschema.Schema) {
-	props := js.Properties
-	// Extend type list
-	if its, ok := props.Get("type"); ok {
-		its.OneOf = make([]*jsonschema.Schema, len(ReceiptLineTypes))
-		for i, kd := range InvoiceTypes {
-			its.OneOf[i] = &jsonschema.Schema{
-				Const:       kd.Key.String(),
-				Title:       kd.Name.String(),
-				Description: kd.Desc.String(),
+// calculate will ensure the total amount is calculated correctly
+func (rl *ReceiptLine) calculate(cur currency.Code, rates []*currency.ExchangeRate) error {
+	rl.Total = cur.Def().Zero()
+	if rl.Debit != nil {
+		var a num.Amount
+		if rl.Currency != "" {
+			na := currency.Convert(rates, rl.Currency, cur, *rl.Debit)
+			if na == nil {
+				return fmt.Errorf("no exchange rate found for %s to %s", rl.Currency, cur)
 			}
+			a = *na
+		} else {
+			a = *rl.Debit
 		}
+		rl.Total.MatchPrecision(a)
+		rl.Total = rl.Total.Add(a)
 	}
+	if rl.Credit != nil {
+		var a num.Amount
+		if rl.Currency != "" {
+			na := currency.Convert(rates, rl.Currency, cur, *rl.Debit)
+			if na == nil {
+				return fmt.Errorf("no exchange rate found for %s to %s", rl.Currency, cur)
+			}
+			a = *na
+		} else {
+			a = *rl.Credit
+		}
+		rl.Total.MatchPrecision(a)
+		rl.Total = rl.Total.Subtract(a)
+	}
+	return nil
 }

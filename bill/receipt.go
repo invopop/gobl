@@ -2,6 +2,7 @@ package bill
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -10,6 +11,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -19,8 +21,8 @@ import (
 
 // Predefined list of the receipt types supported.
 const (
-	ReceiptTypePayment    = "payment"
-	ReceiptTypeRemittance = "remittance"
+	ReceiptTypePayment    cbc.Key = "payment"
+	ReceiptTypeRemittance cbc.Key = "remittance"
 )
 
 // ReceiptTypes defines the list of potential payment types.
@@ -31,7 +33,11 @@ var ReceiptTypes = []*cbc.Definition{
 			i18n.EN: "Payment",
 		},
 		Desc: i18n.String{
-			i18n.EN: "A payment receipt sent from the supplier to a customer reflecting that the referenced documents have been paid.",
+			i18n.EN: here.Doc(`
+				A payment receipt sent from the supplier to a customer reflecting that the referenced
+				documents have been paid. This is the default type and may be required by some tax
+				regimes in order to communicate the payment of invoices.
+			`),
 		},
 	},
 	{
@@ -40,7 +46,10 @@ var ReceiptTypes = []*cbc.Definition{
 			i18n.EN: "Remittance",
 		},
 		Desc: i18n.String{
-			i18n.EN: "A remittance advice sent from the customer to the supplier reflecting that the referenced documents have been paid.",
+			i18n.EN: here.Doc(`
+				A remittance advice sent from the customer to the supplier reflecting that payment for
+				the referenced documents has been made.
+			`),
 		},
 	},
 }
@@ -50,44 +59,6 @@ var isValidReceiptType = validation.In(validReceiptTypes()...)
 func validReceiptTypes() []interface{} {
 	list := make([]interface{}, len(ReceiptTypes))
 	for i, d := range ReceiptTypes {
-		list[i] = d.Key
-	}
-	return list
-}
-
-// Types of receipt line
-const (
-	ReceiptLineTypeDebit  = "debit"
-	ReceiptLineTypeCredit = "credit"
-)
-
-// ReceiptLineTypes defines the list of potential receipt line types.
-var ReceiptLineTypes = []*cbc.Definition{
-	{
-		Key: ReceiptLineTypeDebit,
-		Name: i18n.String{
-			i18n.EN: "Debit",
-		},
-		Desc: i18n.String{
-			i18n.EN: "Indicates that payment is debited from the customer and credited to the supplier.",
-		},
-	},
-	{
-		Key: ReceiptLineTypeCredit,
-		Name: i18n.String{
-			i18n.EN: "Credit",
-		},
-		Desc: i18n.String{
-			i18n.EN: "Indicates that payment is credited to the customer from the supplier.",
-		},
-	},
-}
-
-var isValidReceiptLineType = validation.In(validReceiptLineTypes()...)
-
-func validReceiptLineTypes() []interface{} {
-	list := make([]interface{}, len(ReceiptLineTypes))
-	for i, d := range ReceiptLineTypes {
 		list[i] = d.Key
 	}
 	return list
@@ -126,10 +97,18 @@ type Receipt struct {
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
 	// Legal entity that receives the goods or services.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
+	// Legal entity that receives the payment if not the supplier.
+	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 
 	// List of documents that are being paid for.
 	Lines []*ReceiptLine `json:"lines" jsonschema:"title=Lines"`
-	// Summary of the taxes applied to the payment.
+
+	// Ordering allows for additional information about the ordering process including references
+	// to other documents and alternative parties involved in the order-to-delivery process.
+	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
+
+	// Summary of the taxes applied to the payment for tax regimes that require
+	// this information to be communicated.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Total amount to be paid in this receipt, either positive or negative according to the
 	// line types and totals.
@@ -146,20 +125,40 @@ type Receipt struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Validate runs the validation rules for the receipt without the context.
+func (rct *Receipt) Validate() error {
+	return rct.ValidateWithContext(context.Background())
+}
+
 // ValidateWithContext ensures that the fields contained in the Receipt look correct.
 func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
-	return validation.ValidateStructWithContext(ctx, rct,
-		validation.Field(&rct.Type, validation.Required, isValidReceiptType),
+	r := rct.RegimeDef()
+	return tax.ValidateStructWithContext(ctx, rct,
+		validation.Field(&rct.Regime),
+		validation.Field(&rct.Addons),
+		validation.Field(&rct.UUID),
+		validation.Field(&rct.Type,
+			validation.Required,
+			isValidReceiptType,
+		),
 		validation.Field(&rct.Method, validation.Required),
 		validation.Field(&rct.Series),
 		validation.Field(&rct.Code, validation.Required),
-		validation.Field(&rct.IssueDate, validation.Required),
-		validation.Field(&rct.Currency, validation.Required),
+		validation.Field(&rct.IssueDate,
+			validation.Required,
+			cal.DateNotZero(),
+		),
+		validation.Field(&rct.Currency,
+			validation.Required,
+			currency.CanConvertInto(rct.ExchangeRates, r.GetCurrency()),
+		),
 		validation.Field(&rct.ExchangeRates),
 		validation.Field(&rct.Preceding),
 		validation.Field(&rct.Supplier, validation.Required),
 		validation.Field(&rct.Customer),
+		validation.Field(&rct.Payee),
 		validation.Field(&rct.Lines, validation.Required),
+		validation.Field(&rct.Ordering),
 		validation.Field(&rct.Tax),
 		validation.Field(&rct.Total, validation.Required),
 		validation.Field(&rct.Notes),
@@ -176,17 +175,8 @@ func (rct *Receipt) Calculate() error {
 	if rct.Regime.IsEmpty() {
 		rct.SetRegime(partyTaxCountry(rct.Supplier))
 	}
-
 	rct.Normalize(rct.normalizers())
-
-	if err := rct.calculate(); err != nil {
-		return err
-	}
-	//if err := rt.prepareScenarios(); err != nil {
-	//	return err
-	//}
-
-	return nil
+	return rct.calculate()
 }
 
 // Normalize is run as part of the Calculate method to ensure that the invoice
@@ -194,7 +184,7 @@ func (rct *Receipt) Calculate() error {
 // any add-ons alongside the tax regime.
 func (rct *Receipt) Normalize(normalizers tax.Normalizers) {
 	if rct.Type == cbc.KeyEmpty {
-		rct.Type = InvoiceTypeStandard
+		rct.Type = ReceiptTypePayment
 	}
 	rct.Series = cbc.NormalizeCode(rct.Series)
 	rct.Code = cbc.NormalizeCode(rct.Code)
@@ -207,6 +197,7 @@ func (rct *Receipt) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, rct.Customer)
 	tax.Normalize(normalizers, rct.Preceding)
 	tax.Normalize(normalizers, rct.Lines)
+	tax.Normalize(normalizers, rct.Ordering)
 }
 
 func (rct *Receipt) normalizers() tax.Normalizers {
@@ -223,16 +214,26 @@ func (rct *Receipt) normalizers() tax.Normalizers {
 func (rct *Receipt) calculate() error {
 	var tt *tax.Total
 	var total *num.Amount
-	for _, l := range rct.Lines {
+
+	r := rct.RegimeDef()
+
+	// Convert empty or invalid currency to the regime's currency
+	if rct.Currency == currency.CodeEmpty && r != nil {
+		rct.Currency = r.Currency
+	}
+
+	for i, l := range rct.Lines {
+		if err := l.calculate(rct.Currency, rct.ExchangeRates); err != nil {
+			return validation.Errors{
+				"lines": validation.Errors{
+					strconv.Itoa(i): err,
+				},
+			}
+		}
+
+		l.Tax.Calculate(rct.Currency, r.GetRoundingRule())
 		lt := l.Tax.Clone()
 		a := l.Total
-
-		// Negate the amounts if we're dealing with credit amounts
-		switch l.Type {
-		case ReceiptLineTypeCredit:
-			lt = lt.Negate()
-			a = a.Negate()
-		}
 
 		// Merge the line taxes
 		if l.Tax != nil {
@@ -253,7 +254,6 @@ func (rct *Receipt) calculate() error {
 	}
 	rct.Tax = tt
 	rct.Total = *total
-
 	return nil
 }
 
@@ -263,7 +263,7 @@ func (rct Receipt) JSONSchemaExtend(js *jsonschema.Schema) {
 	// Extend type list
 	if its, ok := props.Get("type"); ok {
 		its.OneOf = make([]*jsonschema.Schema, len(ReceiptTypes))
-		for i, kd := range InvoiceTypes {
+		for i, kd := range ReceiptTypes {
 			its.OneOf[i] = &jsonschema.Schema{
 				Const:       kd.Key.String(),
 				Title:       kd.Name.String(),
@@ -277,7 +277,6 @@ func (rct Receipt) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
 			"$regime",
-			"lines",
 		},
 	}
 }

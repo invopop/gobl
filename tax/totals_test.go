@@ -2,8 +2,10 @@ package tax_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -65,6 +67,13 @@ func TestTotalClone(t *testing.T) {
 }
 
 func TestTotalNegate(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			_ = tt.Negate()
+		})
+	})
+
 	tt := &tax.Total{
 		Categories: []*tax.CategoryTotal{
 			{
@@ -434,5 +443,64 @@ func TestTotalMerge(t *testing.T) {
 		assert.Equal(t, int64(4300), tt3.Category("VAT").Amount.Value())
 		assert.Equal(t, int64(2100), tt3.Category("VAT").Rates[0].Amount.Value())
 		assert.Equal(t, int64(2000), tt3.Category("VAT").Rates[1].Amount.Value())
+	})
+}
+
+func TestTotalCalculate(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		})
+	})
+	t.Run("empty", func(t *testing.T) {
+		tt := &tax.Total{}
+		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		assert.Equal(t, int64(0), tt.Sum.Value())
+	})
+	t.Run("basic", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		assert.Equal(t, int64(2100), tt.Sum.Value())
+		assert.Equal(t, int64(2100), tt.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2100), tt.Category("VAT").Rates[0].Amount.Value())
+	})
+	t.Run("basic with surcharge", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Surcharge: &tax.RateTotalSurcharge{
+								Percent: num.MakePercentage(10, 3),
+							},
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		data, _ := json.Marshal(tt)
+		fmt.Printf("TOTAL: %s\n", string(data))
+		assert.Equal(t, int64(2200), tt.Sum.Value())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Amount.Value())
+		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Rates[0].Amount.Value())
+		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
 	})
 }

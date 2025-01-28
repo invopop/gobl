@@ -1219,7 +1219,7 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 	return i
 }
 
-func TestRegimeJSONSchemaExtend(t *testing.T) {
+func TestInvoiceJSONSchemaExtend(t *testing.T) {
 	eg := `{
 		"properties": {
 			"$regime": {
