@@ -1,8 +1,6 @@
 package en16931_test
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	_ "github.com/invopop/gobl"
@@ -23,8 +21,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "380", inv.Tax.Ext[untdid.ExtKeyDocumentType].String())
 		err := inv.Validate()
-		data, _ := json.Marshal(inv)
-		fmt.Printf("%s\b", string(data))
 		assert.NoError(t, err)
 	})
 	t.Run("missing tax", func(t *testing.T) {
