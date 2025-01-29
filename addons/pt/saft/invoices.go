@@ -14,16 +14,16 @@ import (
 
 // Series and code patterns
 const (
-	seriesPattern   = "^[^ ]+ [^/^ ]+$"
-	codePattern     = "^[0-9]+$"
-	fullCodePattern = "^[^ ]+ [^/^ ]+/[0-9]+$"
+	fullCodePattern = "^[^ ]+ [^/^ ]+/[0-9]+$" // extracted from the SAFT-PT XSD to validate the code when the series is not present (e.g. "FT SERIES-A/123")
+	seriesPattern   = "^[^ ]+ [^/^ ]+$"        // based on the fullCodePattern, to validate the series when present (e.g. "FT SERIES-A")
+	codePattern     = "^[0-9]+$"               // based on the fullCodePattern, to validate the code when the series is present (e.g. "123")
 )
 
 // Series and code regexps
 var (
+	fullCodeRegexp = regexp.MustCompile(fullCodePattern)
 	seriesRegexp   = regexp.MustCompile(seriesPattern)
 	codeRegexp     = regexp.MustCompile(codePattern)
-	fullCodeRegexp = regexp.MustCompile(fullCodePattern)
 )
 
 func validateInvoice(inv *bill.Invoice) error {
