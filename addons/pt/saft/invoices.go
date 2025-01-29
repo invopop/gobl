@@ -7,7 +7,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -46,10 +45,6 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.By(validatePrefix(inv)),
 				validation.Match(fullCodeRegexp),
 			),
-			validation.Skip,
-		),
-		validation.Field(&inv.Currency,
-			validation.In(currency.EUR).Error("must be EUR"),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,

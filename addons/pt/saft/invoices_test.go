@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -63,20 +62,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("valid invoice", func(t *testing.T) {
 		inv := validInvoice()
 		require.NoError(t, addon.Validator(inv))
-	})
-
-	t.Run("invalid currency", func(t *testing.T) {
-		inv := validInvoice()
-
-		inv.Currency = "USD"
-		inv.ExchangeRates = []*currency.ExchangeRate{
-			{
-				From:   "USD",
-				To:     "EUR",
-				Amount: num.MakeAmount(12, 1),
-			},
-		}
-		require.ErrorContains(t, addon.Validator(inv), "currency: must be EUR")
 	})
 
 	t.Run("missing invoice type", func(t *testing.T) {
