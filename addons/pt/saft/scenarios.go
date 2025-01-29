@@ -18,14 +18,14 @@ var invoiceScenarios = &tax.ScenarioSet{
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Ext: tax.Extensions{
-				ExtKeyInvoiceType: "FT",
+				ExtKeyInvoiceType: InvoiceTypeStandard,
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeStandard},
 			Tags:  []cbc.Key{tax.TagSimplified},
 			Ext: tax.Extensions{
-				ExtKeyInvoiceType: "FS",
+				ExtKeyInvoiceType: InvoiceTypeSimplified,
 			},
 		},
 		{
@@ -38,19 +38,19 @@ var invoiceScenarios = &tax.ScenarioSet{
 				return inv.HasTags(pt.TagInvoiceReceipt) || inv.Totals.Paid()
 			},
 			Ext: tax.Extensions{
-				ExtKeyInvoiceType: "FR",
+				ExtKeyInvoiceType: InvoiceTypeInvoiceReceipt,
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeDebitNote},
 			Ext: tax.Extensions{
-				ExtKeyInvoiceType: "ND",
+				ExtKeyInvoiceType: InvoiceTypeDebitNote,
 			},
 		},
 		{
 			Types: []cbc.Key{bill.InvoiceTypeCreditNote},
 			Ext: tax.Extensions{
-				ExtKeyInvoiceType: "NC",
+				ExtKeyInvoiceType: InvoiceTypeCreditNote,
 			},
 		},
 

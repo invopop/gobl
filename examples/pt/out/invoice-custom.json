@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "690387bcae5e045ed6f50f56761758503275b7fdcc58d6ea7cffd714478c5734"
+			"val": "a737a8ac839cbc6eb27a9ba29fe0db2f12a8a9705cd6adec8c8b933bdf65b78d"
 		}
 	},
 	"doc": {
@@ -47,7 +47,11 @@
 				"quantity": "1",
 				"item": {
 					"name": "Noite em quarto duplo",
-					"price": "100.00"
+					"price": "100.00",
+					"unit": "item",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
 				},
 				"sum": "100.00",
 				"taxes": [
@@ -55,6 +59,7 @@
 						"cat": "VAT",
 						"percent": "22%",
 						"ext": {
+							"pt-region": "PT",
 							"pt-saft-tax-rate": "NOR"
 						}
 					}
@@ -72,6 +77,7 @@
 						"rates": [
 							{
 								"ext": {
+									"pt-region": "PT",
 									"pt-saft-tax-rate": "NOR"
 								},
 								"base": "100.00",

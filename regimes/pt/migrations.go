@@ -264,9 +264,9 @@ func migrateTaxIDZoneToLines(inv *bill.Invoice) {
 	inv.Supplier.TaxID.Zone = ""    //nolint:staticcheck
 	switch zone {
 	case "20":
-		ext[ExtKeyRegion] = "PT-AC"
+		ext[ExtKeyRegion] = RegionAzores
 	case "30":
-		ext[ExtKeyRegion] = "PT-MA"
+		ext[ExtKeyRegion] = RegionMadeira
 	default:
 		// nothing to do
 		return

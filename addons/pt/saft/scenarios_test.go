@@ -5,49 +5,12 @@ import (
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func validInvoice() *bill.Invoice {
-	return &bill.Invoice{
-		Regime: tax.WithRegime("PT"),
-		Addons: tax.WithAddons(saft.V1),
-		Supplier: &org.Party{
-			TaxID: &tax.Identity{
-				Code:    "123456789",
-				Country: "PT",
-			},
-			Name: "Test Supplier",
-		},
-		Customer: &org.Party{
-			Name: "Test Customer",
-		},
-		Code:      "INV/1",
-		Currency:  "EUR",
-		IssueDate: cal.MakeDate(2023, 1, 1),
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.MakeAmount(100, 0),
-				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Rate:     "standard",
-					},
-				},
-			},
-		},
-	}
-}
 
 func TestInvoice(t *testing.T) {
 	t.Run("regular", func(t *testing.T) {
@@ -69,6 +32,7 @@ func TestInvoice(t *testing.T) {
 				},
 			},
 		}
+		inv.Series = "FR SERIES-A"
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "FR", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
 		assert.NoError(t, inv.Validate())

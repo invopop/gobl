@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6a215711707e43b560bdccc9d44f2ab1c0b35553d2960f05f29a2ace7b185dca"
+			"val": "5146af90acbfa2d3ef5feba75f4932a1e1785db34f606de61331e4e6493578f3"
 		}
 	},
 	"doc": {
@@ -47,7 +47,11 @@
 				"quantity": "1",
 				"item": {
 					"name": "Noite em quarto duplo",
-					"price": "100.00"
+					"price": "100.00",
+					"unit": "item",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
 				},
 				"sum": "100.00",
 				"taxes": [
@@ -55,6 +59,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
+							"pt-region": "PT",
 							"pt-saft-exemption": "M40",
 							"pt-saft-tax-rate": "ISE"
 						}
@@ -67,7 +72,11 @@
 				"quantity": "2",
 				"item": {
 					"name": "Noite em quarto triplo",
-					"price": "120.00"
+					"price": "120.00",
+					"unit": "item",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
 				},
 				"sum": "240.00",
 				"taxes": [
@@ -75,6 +84,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
+							"pt-region": "PT",
 							"pt-saft-exemption": "M40",
 							"pt-saft-tax-rate": "ISE"
 						}
@@ -94,6 +104,7 @@
 							{
 								"key": "exempt",
 								"ext": {
+									"pt-region": "PT",
 									"pt-saft-exemption": "M40",
 									"pt-saft-tax-rate": "ISE"
 								},

@@ -10,6 +10,34 @@ const (
 	ExtKeyExemption   cbc.Key = "pt-saft-exemption"
 	ExtKeyTaxRate     cbc.Key = "pt-saft-tax-rate"
 	ExtKeyInvoiceType cbc.Key = "pt-saft-invoice-type"
+	ExtKeyProductType cbc.Key = "pt-saft-product-type"
+)
+
+// Invoice types
+const (
+	InvoiceTypeStandard       cbc.Code = "FT"
+	InvoiceTypeSimplified     cbc.Code = "FS"
+	InvoiceTypeInvoiceReceipt cbc.Code = "FR"
+	InvoiceTypeDebitNote      cbc.Code = "ND"
+	InvoiceTypeCreditNote     cbc.Code = "NC"
+)
+
+// Tax rates
+const (
+	TaxRateReduced      cbc.Code = "RED"
+	TaxRateIntermediate cbc.Code = "INT"
+	TaxRateNormal       cbc.Code = "NOR"
+	TaxRateExempt       cbc.Code = "ISE"
+	TaxRateOther        cbc.Code = "OUT"
+)
+
+// Product Types
+const (
+	ProductTypeProduct cbc.Code = "P"
+	ProductTypeService cbc.Code = "S"
+	ProductTypeOther   cbc.Code = "O"
+	ProductTypeExcise  cbc.Code = "E"
+	ProductTypeFee     cbc.Code = "I"
 )
 
 var extensions = []*cbc.Definition{
@@ -21,35 +49,35 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "FT",
+				Code: InvoiceTypeStandard,
 				Name: i18n.String{
 					i18n.EN: "Standard Invoice",
 					i18n.PT: "Fatura",
 				},
 			},
 			{
-				Code: "FS",
+				Code: InvoiceTypeSimplified,
 				Name: i18n.String{
 					i18n.EN: "Simplified Invoice",
 					i18n.PT: "Fatura Simplificada",
 				},
 			},
 			{
-				Code: "FR",
+				Code: InvoiceTypeInvoiceReceipt,
 				Name: i18n.String{
 					i18n.EN: "Invoice-Receipt",
 					i18n.PT: "Fatura-Recibo",
 				},
 			},
 			{
-				Code: "ND",
+				Code: InvoiceTypeDebitNote,
 				Name: i18n.String{
 					i18n.EN: "Debit Note",
 					i18n.PT: "Nota de Débito",
 				},
 			},
 			{
-				Code: "NC",
+				Code: InvoiceTypeCreditNote,
 				Name: i18n.String{
 					i18n.EN: "Credit Note",
 					i18n.PT: "Nota de Crédito",
@@ -65,35 +93,35 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "RED",
+				Code: TaxRateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced",
 					i18n.PT: "Redução",
 				},
 			},
 			{
-				Code: "INT",
+				Code: TaxRateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate",
 					i18n.PT: "Intermédio",
 				},
 			},
 			{
-				Code: "NOR",
+				Code: TaxRateNormal,
 				Name: i18n.String{
 					i18n.EN: "Normal",
 					i18n.PT: "Normal",
 				},
 			},
 			{
-				Code: "ISE",
+				Code: TaxRateExempt,
 				Name: i18n.String{
 					i18n.EN: "Exempt",
 					i18n.PT: "Isento",
 				},
 			},
 			{
-				Code: "OUT",
+				Code: TaxRateOther,
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.PT: "Outro",
@@ -295,6 +323,62 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Not subject to tax or not taxed",
 					i18n.PT: "Não sujeito ou não tributado",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyProductType,
+		Name: i18n.String{
+			i18n.EN: "Product Type",
+			i18n.PT: "Tipo de Produto",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ProductTypeProduct,
+				Name: i18n.String{
+					i18n.EN: "Products",
+					i18n.PT: "Produtos",
+				},
+			},
+			{
+				Code: ProductTypeService,
+				Name: i18n.String{
+					i18n.EN: "Services",
+					i18n.PT: "Serviços",
+				},
+			},
+			{
+				Code: ProductTypeOther,
+				Name: i18n.String{
+					i18n.EN: "Other",
+					i18n.PT: "Outros",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Other (e.g., debited postage, advances received or disposal of assets)",
+					i18n.PT: "Outros (ex., portes debitados, adiantamentos recebidos ou alienação de ativos)",
+				},
+			},
+			{
+				Code: ProductTypeExcise,
+				Name: i18n.String{
+					i18n.EN: "Excise Duties",
+					i18n.PT: "Impostos Especiais",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Excise Duties (e.g., IABA, ISP, IT)",
+					i18n.PT: "Impostos Especiais de Consumo (ex., IABA, ISP, IT)",
+				},
+			},
+			{
+				Code: ProductTypeFee,
+				Name: i18n.String{
+					i18n.EN: "Taxes/Fees",
+					i18n.PT: "Impostos/Taxas",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Taxes, fees and parafiscal charges (except VAT and IS which should be reflected in table 2.5 - TaxTable and Excise Duties, which should be filled in with code 'E')",
+					i18n.PT: "Impostos, taxas e encargos parafiscais – exceto IVA e IS que deverão ser refletidos na tabela 2.5 – Tabela de impostos (TaxTable) e Impostos Especiais de Consumo, que deverão ser preenchidos com o código 'E'.",
 				},
 			},
 		},

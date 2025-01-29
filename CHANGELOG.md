@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `l10n`: support for unions, including filtering members by date.
 - `l10n`: european union including members.
+- `pt`, `pt-saft-v1`: completed regime and addon with new extensions, normalizations and validations.
 
 ## [v0.208.0] - 2025-01-07
 

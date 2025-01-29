@@ -30,14 +30,14 @@ var taxCategories = []*tax.CategoryDef{
 				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-AC",
+							ExtKeyRegion: RegionAzores,
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(160, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-MA",
+							ExtKeyRegion: RegionMadeira,
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(220, 3),
@@ -57,14 +57,14 @@ var taxCategories = []*tax.CategoryDef{
 				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-AC",
+							ExtKeyRegion: RegionAzores,
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(90, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-MA",
+							ExtKeyRegion: RegionMadeira,
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(120, 3),
@@ -84,21 +84,21 @@ var taxCategories = []*tax.CategoryDef{
 				Values: []*tax.RateValueDef{
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-AC",
+							ExtKeyRegion: RegionAzores,
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-MA",
+							ExtKeyRegion: RegionMadeira,
 						},
 						Since:   cal.NewDate(2024, 10, 1),
 						Percent: num.MakePercentage(40, 3),
 					},
 					{
 						Ext: tax.Extensions{
-							ExtKeyRegion: "PT-MA",
+							ExtKeyRegion: RegionMadeira,
 						},
 						Since:   cal.NewDate(2011, 1, 1),
 						Percent: num.MakePercentage(50, 3),
