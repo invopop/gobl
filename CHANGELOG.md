@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `l10n`: support for unions, including filtering members by date.
 - `l10n`: european union including members.
+- `eu-en16931-v2017`: validate presence of item unit (BR-23).
+- `fr-facturx-v1`: addon placeholder dependent on `eu-en16931-v2017`
+- `de-zugferd-v2`: addon placeholder dependent on `eu-en16931-v2017`
+
+### Changed
+
+- `eu-en16931-v2017`: improving validation of tax combos.
 
 ## [v0.208.0] - 2025-01-07
 
