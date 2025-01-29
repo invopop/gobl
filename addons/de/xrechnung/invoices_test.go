@@ -88,6 +88,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Item: &org.Item{
 					Name:  "Test Item",
 					Price: num.MakeAmount(10000, 2),
+					Unit:  "item",
 				},
 				Taxes: tax.Set{
 					{
