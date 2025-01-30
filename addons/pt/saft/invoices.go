@@ -28,7 +28,6 @@ var (
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
-			validation.Required,
 			validation.By(validateTax),
 			validation.Skip,
 		),
@@ -60,7 +59,7 @@ func validateInvoice(inv *bill.Invoice) error {
 func validateTax(val any) error {
 	t, _ := val.(*bill.Tax)
 	if t == nil {
-		return nil
+		t = new(bill.Tax)
 	}
 
 	return validation.ValidateStruct(t,

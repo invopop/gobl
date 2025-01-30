@@ -68,7 +68,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := validInvoice()
 
 		inv.Tax = nil
-		assert.ErrorContains(t, addon.Validator(inv), "tax: cannot be blank")
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-invoice-type: required")
 
 		inv.Tax = new(bill.Tax)
 		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-invoice-type: required")
