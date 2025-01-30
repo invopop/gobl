@@ -1,10 +1,32 @@
 package saft
 
 import (
+	"slices"
+
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
+
+// List of units typically used for services. Used to infer a default product type.
+var serviceUnits = []org.Unit{
+	org.UnitEmpty,
+	org.UnitKilometre,
+	org.UnitWatt,
+	org.UnitKilowatt,
+	org.UnitKilowattHour,
+	org.UnitRate,
+	org.UnitMonth,
+	org.UnitDay,
+	org.UnitSecond,
+	org.UnitHour,
+	org.UnitMinute,
+	org.UnitItem,
+	org.UnitService,
+	org.UnitJob,
+	org.UnitActivity,
+	org.UnitTrip,
+}
 
 func validateItem(item *org.Item) error {
 	if item == nil {
@@ -35,7 +57,11 @@ func setDefaultProductType(item *org.Item) {
 	}
 
 	if _, ok := item.Ext[ExtKeyProductType]; !ok {
-		item.Ext[ExtKeyProductType] = ProductTypeService
+		if slices.Contains(serviceUnits, item.Unit) {
+			item.Ext[ExtKeyProductType] = ProductTypeService
+		} else {
+			item.Ext[ExtKeyProductType] = ProductTypeGoods
+		}
 	}
 }
 

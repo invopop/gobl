@@ -33,7 +33,7 @@ const (
 
 // Product Types
 const (
-	ProductTypeProduct cbc.Code = "P"
+	ProductTypeGoods   cbc.Code = "P"
 	ProductTypeService cbc.Code = "S"
 	ProductTypeOther   cbc.Code = "O"
 	ProductTypeExcise  cbc.Code = "E"
@@ -335,9 +335,9 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: ProductTypeProduct,
+				Code: ProductTypeGoods,
 				Name: i18n.String{
-					i18n.EN: "Products",
+					i18n.EN: "Goods",
 					i18n.PT: "Produtos",
 				},
 			},

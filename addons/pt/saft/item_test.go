@@ -105,6 +105,20 @@ func TestItemExtProductTypeNormalization(t *testing.T) {
 			},
 			out: "S",
 		},
+		{
+			name: "goods unit set",
+			item: &org.Item{
+				Unit: "kg",
+			},
+			out: "P",
+		},
+		{
+			name: "service unit set",
+			item: &org.Item{
+				Unit: "service",
+			},
+			out: "S",
+		},
 	}
 
 	addon := tax.AddonForKey(saft.V1)
