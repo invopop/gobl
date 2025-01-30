@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
@@ -25,8 +26,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 	var tests = []struct {
 		desc        string
 		country     l10n.TaxCountryCode // default "ES"
-		tags        []cbc.Key           // default empty
-		ext         tax.Extensions      // default empty
+		rounding    tax.RoundingRule
+		tags        []cbc.Key      // default empty
+		ext         tax.Extensions // default empty
 		lines       []tax.TaxableLine
 		date        *cal.Date
 		taxIncluded cbc.Code
@@ -1199,8 +1201,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 		},
 		{
-			desc:    "round-then-sum calculation",
-			country: "GR", // Greece uses round-then-sum calculation
+			desc:     "round-then-sum calculation",
+			country:  "GR", // Greece uses round-then-sum calculation
+			rounding: tax.RoundingRuleRoundThenSum,
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -1261,7 +1264,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 			tc := &tax.TotalCalculator{
 				Country:  country,
 				Tags:     test.tags,
-				Zero:     zero,
+				Currency: currency.EUR,
+				Rounding: test.rounding,
 				Date:     d,
 				Lines:    test.lines,
 				Includes: test.taxIncluded,

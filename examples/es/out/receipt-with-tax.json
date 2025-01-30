@@ -1,0 +1,99 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "cbb26a902872460a14862ad4558d7eedbf2de02c84fbe7c6ec3ee753e1d5b26f"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/receipt",
+		"$regime": "ES",
+		"uuid": "0194ad4c-3462-7695-a40c-66a30ccc1405",
+		"type": "payment",
+		"method": {
+			"key": "credit-transfer"
+		},
+		"series": "RCT",
+		"code": "0001",
+		"issue_date": "2025-01-28",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 0,
+				"document": {
+					"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+					"issue_date": "2025-01-10",
+					"series": "SAMPLE",
+					"code": "001",
+					"description": "Invoice"
+				},
+				"debit": "1972.30",
+				"tax": {
+					"categories": [
+						{
+							"code": "VAT",
+							"rates": [
+								{
+									"base": "1630.00",
+									"percent": "21.0%",
+									"amount": "342.30"
+								}
+							],
+							"amount": "342.30"
+						}
+					],
+					"sum": "342.30"
+				},
+				"total": "1972.30"
+			}
+		],
+		"tax": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"base": "1630.00",
+							"percent": "21.0%",
+							"amount": "342.30"
+						}
+					],
+					"amount": "342.30"
+				}
+			],
+			"sum": "342.30"
+		},
+		"total": "1972.30"
+	}
+}

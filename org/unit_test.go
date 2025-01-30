@@ -40,4 +40,16 @@ func TestUnitUNECE(t *testing.T) {
 
 	u = org.Unit("random-something")
 	assert.Equal(t, u.UNECE(), cbc.Code("ZZ"))
+
+	u = org.Unit("")
+	assert.Equal(t, u.UNECE(), cbc.CodeEmpty)
+}
+
+func TestUnitJSONSChema(t *testing.T) {
+	u := org.Unit("h")
+	schema := u.JSONSchema()
+	assert.Equal(t, schema.Title, "Unit")
+	assert.Equal(t, schema.OneOf[0].Const, org.UnitDefinitions[0].Unit)
+	last := schema.OneOf[len(schema.OneOf)-1]
+	assert.Equal(t, last.Pattern, org.UnitPatternUNECE)
 }

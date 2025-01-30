@@ -298,7 +298,17 @@ func TestAmountMatchPrecision(t *testing.T) {
 	assert.Equal(t, a.Exp(), r.Exp(), "expected no precision change")
 }
 
+func TestAmountNegate(t *testing.T) {
+	a := num.MakeAmount(1234, 2)
+	a = a.Negate()
+	assert.Equal(t, "-12.34", a.String())
+	a = num.MakeAmount(-1234, 2)
+	a = a.Negate()
+	assert.Equal(t, "12.34", a.String())
+}
+
 func TestAmountInvert(t *testing.T) {
+	// deprecatd
 	a := num.MakeAmount(1234, 2)
 	a = a.Invert()
 	assert.Equal(t, "-12.34", a.String())

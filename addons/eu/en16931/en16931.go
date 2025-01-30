@@ -43,6 +43,8 @@ func newAddon() *tax.AddonDef {
 
 func normalize(doc any) {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeBillInvoice(obj)
 	case *pay.Advance:
 		normalizePayAdvance(obj)
 	case *pay.Instructions:
@@ -72,6 +74,8 @@ func validate(doc any) error {
 		return validateBillInvoice(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *org.Item:
+		return validateOrgItem(obj)
 	}
 	return nil
 }
