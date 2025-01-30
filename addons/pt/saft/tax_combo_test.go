@@ -23,9 +23,19 @@ func TestTaxComboNormalize(t *testing.T) {
 		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
 	})
 
+	t.Run("unsupported", func(t *testing.T) {
+		combo := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateSuperReduced,
+		}
+		ad.Normalizer(combo)
+		assert.Empty(t, combo.Ext)
+	})
+
 	t.Run("nil", func(t *testing.T) {
 		assert.NotPanics(t, func() {
-			ad.Normalizer(&tax.Combo{})
+			var c *tax.Combo
+			ad.Normalizer(c)
 		})
 	})
 

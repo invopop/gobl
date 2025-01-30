@@ -132,6 +132,14 @@ func TestTaxComboNormalization(t *testing.T) {
 			out: "ES",
 		},
 		{
+			name: "foreign tax EU",
+			tc: &tax.Combo{
+				Category: tax.CategoryVAT,
+				Country:  l10n.EU.Tax(),
+			},
+			out: "",
+		},
+		{
 			name: "other category",
 			tc: &tax.Combo{
 				Category: tax.CategoryGST,

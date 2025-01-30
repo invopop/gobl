@@ -58,8 +58,8 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func validateTax(val any) error {
-	t, ok := val.(*bill.Tax)
-	if !ok {
+	t, _ := val.(*bill.Tax)
+	if t == nil {
 		return nil
 	}
 
