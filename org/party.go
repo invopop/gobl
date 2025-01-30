@@ -92,7 +92,7 @@ func (p *Party) Validate() error {
 
 // ValidateWithContext is used to check the party's data meets minimum expectations.
 func (p *Party) ValidateWithContext(ctx context.Context) error {
-	ctx = p.ValidationContext(ctx)
+	ctx = p.validationContext(ctx)
 	return tax.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.Regime),
 		validation.Field(&p.Name),
@@ -111,8 +111,8 @@ func (p *Party) ValidateWithContext(ctx context.Context) error {
 	)
 }
 
-// ValidationContext returns a context with the regime's validation rules.
-func (p *Party) ValidationContext(ctx context.Context) context.Context {
+// validationContext returns a context with the regime's validation rules.
+func (p *Party) validationContext(ctx context.Context) context.Context {
 	if r := p.RegimeDef(); r != nil {
 		ctx = r.WithContext(ctx)
 	}

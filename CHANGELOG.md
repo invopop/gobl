@@ -6,16 +6,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+This significant release adds support for the new `bill.Receipt` schema, to be used to represent payments (sent from suppliers) and remittance advice (sent from customers). This is still in testing phases, so may still require significant changes.
+
 ### Added
 
+- `bill`: new `Receipt` model, including `ReceiptLine`.
 - `l10n`: support for unions, including filtering members by date.
 - `l10n`: european union including members.
-- `eu-en16931-v2017`: validate presence of item unit (BR-23).
+- `num`: `Negate` method in amounts and percentages.
 - `fr-facturx-v1`: addon placeholder dependent on `eu-en16931-v2017`
 - `de-zugferd-v2`: addon placeholder dependent on `eu-en16931-v2017`
 
 ### Changed
 
+- `tax`: (internal) tax total calculation moved to `Total` model from calculator.
+- `num`: `Invert` now has deprecated warning.
+- `tax`: `CalculatorRoundingRule` renamed to just `RoundingRule`
+- `eu-en16931-v2017`: validate presence of item unit (BR-23).
 - `eu-en16931-v2017`: improving validation of tax combos.
 
 ## [v0.208.0] - 2025-01-07

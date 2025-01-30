@@ -51,7 +51,7 @@ type RegimeDef struct {
 
 	// Rounding rule to use when calculating the tax totals, default is always
 	// `sum-then-round`.
-	CalculatorRoundingRule CalculatorRoundingRule `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
+	CalculatorRoundingRule RoundingRule `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
 
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
@@ -124,7 +124,7 @@ type CategoryDef struct {
 	// List of sources for the information contained in this category.
 	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
-	// Extensions key-value pairs that will be copied to the tax combo if this
+	// Extension key-value pairs that will be copied to the tax combo if this
 	// category is used.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 
@@ -215,6 +215,23 @@ func RegimeDefFromContext(ctx context.Context) *RegimeDef {
 // Code provides a unique code for this tax regime based on the country.
 func (r *RegimeDef) Code() cbc.Code {
 	return cbc.Code(r.Country)
+}
+
+// GetCurrency is a convenience method that will always return
+// a code, even if the RegimeDef is nil.
+func (r *RegimeDef) GetCurrency() currency.Code {
+	if r != nil {
+		return r.Currency
+	}
+	return currency.CodeEmpty
+}
+
+// GetRoundingRule provides the regime's rounding rule, or the default.
+func (r *RegimeDef) GetRoundingRule() RoundingRule {
+	if r != nil && r.CalculatorRoundingRule != "" {
+		return r.CalculatorRoundingRule
+	}
+	return RoundingRuleSumThenRound
 }
 
 // ValidateObject performs validation on the provided object in the context
@@ -442,26 +459,6 @@ func (r *RegimeDef) CategoryDef(code cbc.Code) *CategoryDef {
 	return nil
 }
 
-// RateDef provides the rate definition for the provided category code
-// and rate key.
-func (r *RegimeDef) RateDef(cat cbc.Code, key cbc.Key) *RateDef {
-	c := r.CategoryDef(cat)
-	if c == nil {
-		return nil
-	}
-	return c.RateDef(key)
-}
-
-// ExtensionDef provides the extension definition with a matching key.
-func (r *RegimeDef) ExtensionDef(key cbc.Key) *cbc.Definition {
-	for _, e := range r.Extensions {
-		if e.Key == key {
-			return e
-		}
-	}
-	return nil
-}
-
 // RateDef provides the rate definition with a matching key for
 // the category. Key comparison is made using two loops. The first
 // will find an exact match, while the second will see if the provided
@@ -484,7 +481,7 @@ func (c *CategoryDef) RateDef(key cbc.Key) *RateDef {
 func (r *RateDef) Value(date cal.Date, tags []cbc.Key, ext Extensions) *RateValueDef {
 	for _, rv := range r.Values {
 		if len(rv.Tags) > 0 {
-			if !rv.HasATag(tags) {
+			if !rv.hasAnyTag(tags) {
 				continue
 			}
 		}
@@ -500,9 +497,9 @@ func (r *RateDef) Value(date cal.Date, tags []cbc.Key, ext Extensions) *RateValu
 	return nil
 }
 
-// HasATag returns true if the rate value has a tag that matches
+// hasAnyTag returns true if the rate value has a tag that matches
 // one of those provided.
-func (rv *RateValueDef) HasATag(tags []cbc.Key) bool {
+func (rv *RateValueDef) hasAnyTag(tags []cbc.Key) bool {
 	for _, t := range rv.Tags {
 		for _, tag := range tags {
 			if t == tag {

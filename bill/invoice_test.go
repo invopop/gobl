@@ -1169,7 +1169,7 @@ func TestInvoiceTagsValidation(t *testing.T) {
 	inv.SetTags("invalid-tag")
 	assert.NoError(t, inv.Calculate())
 	err = inv.ValidateWithContext(ctx)
-	assert.ErrorContains(t, err, "tags: 'invalid-tag' undefined")
+	assert.ErrorContains(t, err, "$tags: (0: 'invalid-tag' undefined.).")
 }
 
 func baseInvoiceWithLines(t *testing.T) *bill.Invoice {
@@ -1219,7 +1219,7 @@ func baseInvoice(t *testing.T, lines ...*bill.Line) *bill.Invoice {
 	return i
 }
 
-func TestRegimeJSONSchemaExtend(t *testing.T) {
+func TestInvoiceJSONSchemaExtend(t *testing.T) {
 	eg := `{
 		"properties": {
 			"$regime": {
