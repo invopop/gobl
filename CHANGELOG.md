@@ -27,6 +27,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `tax`: `CalculatorRoundingRule` renamed to just `RoundingRule`
 - `eu-en16931-v2017`: validate presence of item unit (BR-23).
 - `eu-en16931-v2017`: improving validation of tax combos.
+- `eu-en16931-v2017`: normalization with reasonable defaults for minimal invoices.
 
 ## [v0.208.0] - 2025-01-07
 
