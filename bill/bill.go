@@ -16,4 +16,5 @@ func init() {
 // Constants used to help identify document schemas
 const (
 	ShortSchemaInvoice = "bill/invoice"
+	ShortSchemaReceipt = "bill/receipt"
 )
