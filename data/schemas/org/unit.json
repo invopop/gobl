@@ -300,7 +300,7 @@
       ],
       "type": "string",
       "title": "Unit",
-      "description": "Unit describes how the quantity of the product should be interpreted either using a GOBL key, or UN/ECE code."
+      "description": "Unit defines how the quantity of the product should be interpreted either using a GOBL key (like 'kg'), or UN/ECE code (like 'KGM')."
     }
   }
 }

@@ -209,8 +209,7 @@ func (u Unit) Validate() error {
 	return validation.Validate(string(u), isValidUnit.Error("must be a valid value or UN/ECE code"))
 }
 
-// UNECE provides the unit's UN/ECE equivalent
-// value.
+// UNECE provides the unit's UN/ECE equivalent value.
 func (u Unit) UNECE() cbc.Code {
 	if u == UnitEmpty {
 		return cbc.CodeEmpty
@@ -233,7 +232,7 @@ func (u Unit) JSONSchema() *jsonschema.Schema {
 		Title:       "Unit",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(UnitDefinitions)),
-		Description: "Unit describes how the quantity of the product should be interpreted either using a GOBL key, or UN/ECE code.",
+		Description: "Unit defines how the quantity of the product should be interpreted either using a GOBL key (like 'kg'), or UN/ECE code (like 'KGM').",
 	}
 	for i, v := range UnitDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{
