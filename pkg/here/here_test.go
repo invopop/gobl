@@ -43,7 +43,33 @@ var tests = []testCase{
 		Foo
 		Bar
 	`, "Foo\nBar"},
-	{"\n\u3000zenkaku space", "\x80\x80zenkaku space"},
+	{`
+		This is a code block:
+
+		~~~go
+		var x = 1
+		~~~
+	`, "This is a code block:\n\n```go\nvar x = 1\n```"},
+	{
+		`With ~code~ blocks`,
+		"With `code` blocks",
+	},
+	{
+		`With \~code\~ allowed tildes`,
+		"With ~code~ allowed tildes",
+	},
+	{`
+		Code block with tildes:
+
+		~~~
+		x := ~foo~
+		md := "Random test \~1"
+		~~~
+	`, "Code block with tildes:\n\n```\nx := `foo`\nmd := \"Random test ~1\"\n```"},
+	{
+		`This is a ~code~ example with \~ tildes`,
+		"This is a `code` example with ~ tildes",
+	},
 }
 
 func TestDoc(t *testing.T) {

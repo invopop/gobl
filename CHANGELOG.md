@@ -16,6 +16,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `num`: `Negate` method in amounts and percentages.
 - `fr-facturx-v1`: addon placeholder dependent on `eu-en16931-v2017`
 - `de-zugferd-v2`: addon placeholder dependent on `eu-en16931-v2017`
+- `here`: package will now convert unescaped `~` to backticks in documents.
 
 ### Changed
 
