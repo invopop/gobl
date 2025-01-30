@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 )
 
 // Map of GOBL keys to the corresponding UNTDID 4451 code.
@@ -49,4 +50,12 @@ func normalizeOrgNote(n *org.Note) {
 			untdid.ExtKeyTextSubject: code,
 		})
 	}
+}
+
+func validateOrgItem(item *org.Item) error {
+	return validation.ValidateStruct(item,
+		validation.Field(&item.Unit,
+			validation.Required.Error("cannot be blank (BR-23)"),
+		),
+	)
 }

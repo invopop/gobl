@@ -386,6 +386,10 @@
                 "title": "German XRechnung 3.X"
               },
               {
+                "const": "de-zugferd-v2",
+                "title": "German ZUGFeRD 2.X"
+              },
+              {
                 "const": "es-facturae-v3",
                 "title": "Spain FacturaE"
               },
@@ -400,6 +404,10 @@
               {
                 "const": "eu-en16931-v2017",
                 "title": "EN 16931-1:2017"
+              },
+              {
+                "const": "fr-facturx-v1",
+                "title": "French Factur-X v1"
               },
               {
                 "const": "gr-mydata-v1",

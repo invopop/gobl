@@ -54,7 +54,6 @@ func TestTaxComboNormalization(t *testing.T) {
 		assert.Equal(t, "M", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Equal(t, "7%", c.Percent.String())
 	})
-
 	t.Run("missing rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -109,6 +108,19 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.NoError(t, ad.Validator(c))
 		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
+	})
+
+	t.Run("IPSI mismatch", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Percent:  num.NewPercentage(7, 2),
+			Ext: tax.Extensions{
+				untdid.ExtKeyTaxCategory: en16931.TaxCategoryIGIC,
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.ErrorContains(t, err, "ext: (untdid-tax-category: invalid value.)")
 	})
 
 	t.Run("nil", func(t *testing.T) {

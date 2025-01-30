@@ -40,6 +40,12 @@ var chargeKeyMap = tax.Extensions{
 	bill.ChargeKeyCleaning:  "CG",
 }
 
+func normalizeBillInvoice(m *bill.Invoice) {
+	if m.Tax == nil {
+		m.Tax = &bill.Tax{}
+	}
+}
+
 func normalizeBillDiscount(m *bill.Discount) {
 	if val, ok := discountKeyMap[m.Key]; ok {
 		m.Ext = m.Ext.Merge(tax.Extensions{
@@ -77,6 +83,10 @@ func validateBillInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Tax,
 			validation.Required,
 			validation.By(validateBillInvoiceTax),
+			validation.Skip,
+		),
+		validation.Field(&inv.Lines,
+			validation.Required, // BR-16 - at least one line
 			validation.Skip,
 		),
 	)
