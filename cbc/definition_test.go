@@ -31,6 +31,38 @@ func TestDefinitionValidation(t *testing.T) {
 		err = kd.Validate()
 		assert.ErrorContains(t, err, "pattern: error parsing regexp: missing closing ]: `[`")
 	})
+	t.Run("with source", func(t *testing.T) {
+		kd := &cbc.Definition{
+			Key: "key",
+			Name: i18n.String{
+				i18n.EN: "Name",
+			},
+			Sources: []*cbc.Source{
+				{
+					Title: i18n.NewString("Test"),
+					URL:   "http://example.com",
+				},
+			},
+		}
+		err := kd.Validate()
+		assert.NoError(t, err)
+	})
+	t.Run("with bad source", func(t *testing.T) {
+		kd := &cbc.Definition{
+			Key: "key",
+			Name: i18n.String{
+				i18n.EN: "Name",
+			},
+			Sources: []*cbc.Source{
+				{
+					Title: i18n.NewString("Test"),
+					URL:   "http:\\\\example.com",
+				},
+			},
+		}
+		err := kd.Validate()
+		assert.ErrorContains(t, err, "sources: (0: (url: must be a valid URL.).)")
+	})
 }
 
 func TestDefinitionsWithValues(t *testing.T) {
