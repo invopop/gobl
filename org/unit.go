@@ -68,6 +68,7 @@ const (
 	UnitKit          Unit = `kit`
 	UnitBaseBox      Unit = `basebox`
 	UnitBulkPack     Unit = `pk`
+	UnitOne          Unit = `one`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -157,6 +158,7 @@ var UnitDefinitions = []DefUnit{
 	{UnitKit, "Kits", "A unit of count defining the number of kits (kit: tub, barrel or pail).", "KT"},
 	{UnitBaseBox, "Base Boxes", "A unit of area of 112 sheets of tin mil products (tin plate, tin free steel or black plate) 14 by 20 inches, or 31,360 square inches.", "BB"},
 	{UnitBulkPack, "Bulk Packs", "A unit of count defining the number of items per bulk pack.", "AB"},
+	{UnitOne, "One", "A single generic unit of a service or product.", "C62"},
 
 	// Recommendations Nº 21
 	// source: https://unece.org/trade/documents/2021/06/uncefact-rec21
@@ -232,7 +234,7 @@ func (u Unit) JSONSchema() *jsonschema.Schema {
 		Title:       "Unit",
 		Type:        "string",
 		OneOf:       make([]*jsonschema.Schema, len(UnitDefinitions)),
-		Description: "Unit defines how the quantity of the product should be interpreted either using a GOBL key (like 'kg'), or UN/ECE code (like 'KGM').",
+		Description: "Unit defines how the quantity of the product should be interpreted either using a GOBL lower-case key (e.g. 'kg'), or UN/ECE code upper-case code (e.g. 'KGM').",
 	}
 	for i, v := range UnitDefinitions {
 		s.OneOf[i] = &jsonschema.Schema{
@@ -244,7 +246,7 @@ func (u Unit) JSONSchema() *jsonschema.Schema {
 	// Add the UN/ECE unit code pattern as an alternative to the pre-defined units.
 	s.OneOf = append(s.OneOf, &jsonschema.Schema{
 		Pattern:     UnitPatternUNECE,
-		Description: "UN/ECE Unit Code from Recommendation 20",
+		Description: "UN/ECE Unit Code from Recommendations 20 and 21",
 	})
 	return s
 }

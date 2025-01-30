@@ -54,12 +54,30 @@ func TestTaxComboNormalization(t *testing.T) {
 		assert.Equal(t, "M", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Equal(t, "7%", c.Percent.String())
 	})
-	t.Run("missing rate", func(t *testing.T) {
+	t.Run("missing rate, without percent", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 		}
 		ad.Normalizer(c)
-		assert.Empty(t, c.Ext)
+		assert.Equal(t, "E", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
+
+	t.Run("missing rate, with percent", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Percent:  num.NewPercentage(19, 3),
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
+
+	t.Run("missing rate, with zero percent", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Percent:  num.NewPercentage(0, 3),
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, "Z", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 }
 
@@ -135,6 +153,7 @@ func TestTaxComboValidation(t *testing.T) {
 			Percent:  num.NewPercentage(19, 2),
 		}
 		ad.Normalizer(c)
+		c.Ext = nil // override
 		err := ad.Validator(c)
 		assert.ErrorContains(t, err, "ext: (untdid-tax-category: required.)")
 	})

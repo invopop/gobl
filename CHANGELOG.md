@@ -18,6 +18,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `de-zugferd-v2`: addon placeholder dependent on `eu-en16931-v2017`
 - `here`: package will now convert unescaped `~` to backticks in documents.
 - `cbc`: `Source` type, for defining sources of data.
+- `org`: Unit `one` for generic use-cases.
 
 ### Changed
 
@@ -32,7 +33,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 ### Added
 
 - `gr-mydata`: added `gr-mydata-other-tax` extension to set the category of other taxes in charges.
-- `untdid`: 4451 - `untdid-text-subject` (Text Subject Qualifer) catalogue.
+- `untdid`: 4451 - `untdid-text-subject` (Text Subject Qualifier) catalogue.
 
 ### Changed
 
