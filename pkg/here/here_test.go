@@ -70,6 +70,10 @@ var tests = []testCase{
 		`This is a ~code~ example with \~ tildes`,
 		"This is a `code` example with ~ tildes",
 	},
+	{
+		`With escaped something \n in text`,
+		`With escaped something \n in text`,
+	},
 }
 
 func TestDoc(t *testing.T) {
