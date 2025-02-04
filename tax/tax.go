@@ -47,6 +47,9 @@ type Validator func(doc any) error
 // contextWithValidator will add the provided validator to the current validators.
 // This should be prepared from the Addon or Regime itself.
 func contextWithValidator(ctx context.Context, v Validator) context.Context {
+	if v == nil {
+		return ctx
+	}
 	list := append(Validators(ctx), v)
 	return context.WithValue(ctx, validtorsKey, list)
 }
