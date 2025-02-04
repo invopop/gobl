@@ -7,12 +7,10 @@ import (
 
 // SAF-T Extension Keys
 const (
-	ExtKeyExemption    cbc.Key = "pt-saft-exemption"
-	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
-	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
-	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
-	ExtKeyReceiptType  cbc.Key = "pt-saft-receipt-type"
-	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
+	ExtKeyExemption   cbc.Key = "pt-saft-exemption"
+	ExtKeyTaxRate     cbc.Key = "pt-saft-tax-rate"
+	ExtKeyInvoiceType cbc.Key = "pt-saft-invoice-type"
+	ExtKeyProductType cbc.Key = "pt-saft-product-type"
 )
 
 // Invoice types
@@ -22,12 +20,6 @@ const (
 	InvoiceTypeInvoiceReceipt cbc.Code = "FR"
 	InvoiceTypeDebitNote      cbc.Code = "ND"
 	InvoiceTypeCreditNote     cbc.Code = "NC"
-)
-
-// Payment types
-const (
-	ReceiptTypeCash  cbc.Code = "RC"
-	ReceiptTypeOther cbc.Code = "RG"
 )
 
 // Tax rates
@@ -89,29 +81,6 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Credit Note",
 					i18n.PT: "Nota de Crédito",
-				},
-			},
-		},
-	},
-	{
-		Key: ExtKeyReceiptType,
-		Name: i18n.String{
-			i18n.EN: "Receipt Type",
-			i18n.PT: "Tipo de recibo",
-		},
-		Values: []*cbc.Definition{
-			{
-				Code: ReceiptTypeCash,
-				Name: i18n.String{
-					i18n.EN: "Receipt under the VAT Cash scheme",
-					i18n.PT: "Recibo no âmbito do regime de IVA de Caixa",
-				},
-			},
-			{
-				Code: ReceiptTypeOther,
-				Name: i18n.String{
-					i18n.EN: "Other Receipt",
-					i18n.PT: "Outro Recibo",
 				},
 			},
 		},
@@ -410,113 +379,6 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: "Taxes, fees and parafiscal charges (except VAT and IS which should be reflected in table 2.5 - TaxTable and Excise Duties, which should be filled in with code 'E')",
 					i18n.PT: "Impostos, taxas e encargos parafiscais – exceto IVA e IS que deverão ser refletidos na tabela 2.5 – Tabela de impostos (TaxTable) e Impostos Especiais de Consumo, que deverão ser preenchidos com o código 'E'.",
-				},
-			},
-		},
-	},
-	{
-		Key: ExtKeyPaymentMeans,
-		Name: i18n.String{
-			i18n.EN: "Payment Means",
-			i18n.PT: "Meio de Pagamento",
-		},
-		Values: []*cbc.Definition{
-			{
-				Code: "CC",
-				Name: i18n.String{
-					i18n.EN: "Credit card",
-					i18n.PT: "Cartão crédito",
-				},
-			},
-			{
-				Code: "CD",
-				Name: i18n.String{
-					i18n.EN: "Debit card",
-					i18n.PT: "Cartão débito",
-				},
-			},
-			{
-				Code: "CH",
-				Name: i18n.String{
-					i18n.EN: "Bank cheque",
-					i18n.PT: "Cheque bancário",
-				},
-			},
-			{
-				Code: "CI",
-				Name: i18n.String{
-					i18n.EN: "International documentary credit",
-					i18n.PT: "Letter of credit",
-				},
-			},
-			{
-				Code: "CO",
-				Name: i18n.String{
-					i18n.EN: "Gift cheque or card",
-					i18n.PT: "Cheque ou cartão oferta",
-				},
-			},
-			{
-				Code: "CS",
-				Name: i18n.String{
-					i18n.EN: "Settlement of balances in current account",
-					i18n.PT: "Compensação de saldos em conta corrente",
-				},
-			},
-			{
-				Code: "DE",
-				Name: i18n.String{
-					i18n.EN: "Electronic money",
-					i18n.PT: "Dinheiro eletrónico",
-				},
-			},
-			{
-				Code: "LC",
-				Name: i18n.String{
-					i18n.EN: "Commercial bill",
-					i18n.PT: "Letra comercial",
-				},
-			},
-			{
-				Code: "MB",
-				Name: i18n.String{
-					i18n.EN: "Multibanco payment references",
-					i18n.PT: "Referências de pagamento para Multibanco",
-				},
-			},
-			{
-				Code: "NU",
-				Name: i18n.String{
-					i18n.EN: "Cash",
-					i18n.PT: "Numerário",
-				},
-			},
-			{
-				Code: "OU",
-				Name: i18n.String{
-					i18n.EN: "Other",
-					i18n.PT: "Outro",
-				},
-			},
-			{
-				Code: "PR",
-				Name: i18n.String{
-					i18n.EN: "Barter",
-					i18n.PT: "Permuta de bens",
-				},
-			},
-			{
-				Code: "TB",
-				Name: i18n.String{
-					i18n.EN: "Bank transfer or direct debit",
-					i18n.PT: "Transferência bancária ou débito direto autorizado",
-				},
-			},
-			{
-				Code: "TR",
-				Name: i18n.String{
-					i18n.EN: "Supplementary compensation",
-					i18n.PT: "Títulos de compensação extrassalarial",
 				},
 			},
 		},

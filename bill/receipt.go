@@ -273,9 +273,7 @@ func (rct *Receipt) calculate() error {
 		}
 	}
 	rct.Tax = tt
-	if total != nil {
-		rct.Total = *total // TODO: Review and test
-	}
+	rct.Total = *total
 	return nil
 }
 
