@@ -8,8 +8,14 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// Add-on-specific tags
+const (
+	TagVATCash cbc.Key = "vat-cash"
+)
+
 var scenarios = []*tax.ScenarioSet{
 	invoiceScenarios,
+	receiptScenarios,
 }
 
 var invoiceScenarios = &tax.ScenarioSet{
@@ -296,6 +302,25 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
 				Text: "Não sujeito ou não tributado",
+			},
+		},
+	},
+}
+
+var receiptScenarios = &tax.ScenarioSet{
+	Schema: bill.ShortSchemaReceipt,
+	List: []*tax.Scenario{
+		{
+			Types: []cbc.Key{bill.ReceiptTypePayment},
+			Ext: tax.Extensions{
+				ExtKeyReceiptType: ReceiptTypeOther,
+			},
+		},
+		{
+			Types: []cbc.Key{bill.ReceiptTypePayment},
+			Tags:  []cbc.Key{TagVATCash},
+			Ext: tax.Extensions{
+				ExtKeyReceiptType: ReceiptTypeCash,
 			},
 		},
 	},
