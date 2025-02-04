@@ -59,9 +59,6 @@ func validateInvoice(inv *bill.Invoice) error {
 func validateTax(val any) error {
 	t, _ := val.(*bill.Tax)
 	if t == nil {
-		// If no tax is given, init a blank one so that we can return meaningful
-		// validation errors. The blank tax object is not assigned to the invoice
-		// and so the original document doesn't actually change.
 		t = new(bill.Tax)
 	}
 
