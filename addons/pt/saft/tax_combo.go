@@ -1,6 +1,7 @@
 package saft
 
 import (
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -16,26 +17,34 @@ func TaxRateExtensions() tax.Extensions {
 }
 
 var taxRateMap = tax.Extensions{
-	tax.RateReduced:      "RED",
-	tax.RateIntermediate: "INT",
-	tax.RateStandard:     "NOR",
-	tax.RateExempt:       "ISE",
-	tax.RateOther:        "OUT",
+	tax.RateReduced:      TaxRateReduced,
+	tax.RateIntermediate: TaxRateIntermediate,
+	tax.RateStandard:     TaxRateNormal,
+	tax.RateExempt:       TaxRateExempt,
+	tax.RateOther:        TaxRateOther,
 }
 
 func normalizeTaxCombo(combo *tax.Combo) {
+	if combo == nil {
+		return
+	}
+
 	// copy the SAF-T tax rate code to the line
 	switch combo.Category {
 	case tax.CategoryVAT:
+		if combo.Ext == nil {
+			combo.Ext = make(tax.Extensions)
+		}
+		if combo.Country != "" && combo.Country != l10n.PT.Tax() {
+			combo.Ext[ExtKeyTaxRate] = TaxRateOther
+			return
+		}
 		if combo.Rate.IsEmpty() {
 			return
 		}
 		k, ok := taxRateMap[combo.Rate]
 		if !ok {
 			return
-		}
-		if combo.Ext == nil {
-			combo.Ext = make(tax.Extensions)
 		}
 		combo.Ext[ExtKeyTaxRate] = k
 	}
@@ -50,14 +59,7 @@ func validateTaxCombo(val any) error {
 	case tax.CategoryVAT:
 		return validation.ValidateStruct(c,
 			validation.Field(&c.Ext,
-				// NOTE! We know that some tax rate is required in portugal, but
-				// we don't know what it should be for foreign countries.
-				// Until this is known, we're removing the validation for the
-				// country tax rate.
-				validation.When(
-					c.Country == "",
-					tax.ExtensionsRequire(ExtKeyTaxRate),
-				),
+				tax.ExtensionsRequire(ExtKeyTaxRate),
 				validation.When(
 					c.Percent == nil,
 					tax.ExtensionsRequire(ExtKeyExemption),

@@ -290,6 +290,62 @@
           }
         }
       ]
+    },
+    {
+      "key": "pt-saft-product-type",
+      "name": {
+        "en": "Product Type",
+        "pt": "Tipo de Produto"
+      },
+      "values": [
+        {
+          "code": "P",
+          "name": {
+            "en": "Products",
+            "pt": "Produtos"
+          }
+        },
+        {
+          "code": "S",
+          "name": {
+            "en": "Services",
+            "pt": "Serviços"
+          }
+        },
+        {
+          "code": "O",
+          "name": {
+            "en": "Other",
+            "pt": "Outros"
+          },
+          "desc": {
+            "en": "Other (e.g., debited postage, advances received or disposal of assets)",
+            "pt": "Outros (ex., portes debitados, adiantamentos recebidos ou alienação de ativos)"
+          }
+        },
+        {
+          "code": "E",
+          "name": {
+            "en": "Excise Duties",
+            "pt": "Impostos Especiais"
+          },
+          "desc": {
+            "en": "Excise Duties (e.g., IABA, ISP, IT)",
+            "pt": "Impostos Especiais de Consumo (ex., IABA, ISP, IT)"
+          }
+        },
+        {
+          "code": "I",
+          "name": {
+            "en": "Taxes/Fees",
+            "pt": "Impostos/Taxas"
+          },
+          "desc": {
+            "en": "Taxes, fees and parafiscal charges (except VAT and IS which should be reflected in table 2.5 - TaxTable and Excise Duties, which should be filled in with code 'E')",
+            "pt": "Impostos, taxas e encargos parafiscais – exceto IVA e IS que deverão ser refletidos na tabela 2.5 – Tabela de impostos (TaxTable) e Impostos Especiais de Consumo, que deverão ser preenchidos com o código 'E'."
+          }
+        }
+      ]
     }
   ],
   "scenarios": [

@@ -14,41 +14,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func validInvoice() *bill.Invoice {
-	return &bill.Invoice{
-		Regime: tax.WithRegime("PT"),
-		Addons: tax.WithAddons(saft.V1),
-		Supplier: &org.Party{
-			TaxID: &tax.Identity{
-				Code:    "123456789",
-				Country: "PT",
-			},
-			Name: "Test Supplier",
-		},
-		Customer: &org.Party{
-			Name: "Test Customer",
-		},
-		Code:      "INV/1",
-		Currency:  "EUR",
-		IssueDate: cal.MakeDate(2023, 1, 1),
-		Lines: []*bill.Line{
-			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "Test Item",
-					Price: num.MakeAmount(100, 0),
-				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Rate:     "standard",
-					},
-				},
-			},
-		},
-	}
-}
-
 func TestInvoice(t *testing.T) {
 	t.Run("regular", func(t *testing.T) {
 		inv := validInvoice()
@@ -69,6 +34,7 @@ func TestInvoice(t *testing.T) {
 				},
 			},
 		}
+		inv.Series = "FR SERIES-A"
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "FR", inv.Tax.Ext[saft.ExtKeyInvoiceType].String())
 		assert.NoError(t, inv.Validate())
@@ -100,5 +66,44 @@ func TestInvoice(t *testing.T) {
 		inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption] = "M04"
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
+	})
+}
+
+func validReceipt() *bill.Receipt {
+	return &bill.Receipt{
+		Type: bill.ReceiptTypePayment,
+		Supplier: &org.Party{
+			TaxID: &tax.Identity{
+				Country: "PT",
+			},
+		},
+		Code:      "123",
+		IssueDate: cal.MakeDate(2024, 3, 10),
+		Lines: []*bill.ReceiptLine{
+			{
+				Debit: num.NewAmount(100, 2),
+			},
+		},
+		Method: &pay.Instructions{
+			Key: "credit-transfer",
+		},
+	}
+}
+
+func TestReceipt(t *testing.T) {
+	t.Run("general", func(t *testing.T) {
+		r := validReceipt()
+		r.SetAddons(saft.V1)
+		require.NoError(t, r.Calculate())
+		assert.Equal(t, "RG", r.Ext[saft.ExtKeyReceiptType].String())
+		assert.NoError(t, r.Validate())
+	})
+
+	t.Run("VAT cash", func(t *testing.T) {
+		r := validReceipt()
+		r.SetAddons(saft.V1)
+		require.NoError(t, r.Calculate())
+		assert.Equal(t, "RC", r.Ext[saft.ExtKeyReceiptType].String())
+		assert.NoError(t, r.Validate())
 	})
 }

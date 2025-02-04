@@ -24,10 +24,11 @@ const (
 
 // AT official codes to include in stamps.
 const (
-	StampProviderATATCUD cbc.Key = "at-atcud"
-	StampProviderATQR    cbc.Key = "at-qr"
-	StampProviderATHash  cbc.Key = "at-hash"
-	StampProviderATAppID cbc.Key = "at-app-id"
+	StampProviderATATCUD    cbc.Key = "at-atcud"
+	StampProviderATQR       cbc.Key = "at-qr"
+	StampProviderATHash     cbc.Key = "at-hash"
+	StampProviderATHashFull cbc.Key = "at-hash-full"
+	StampProviderATAppID    cbc.Key = "at-app-id"
 )
 
 // New instantiates a new Portugal regime for the given zone.
@@ -66,6 +67,8 @@ func Validate(doc any) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }
@@ -78,5 +81,7 @@ func Normalize(doc any) {
 		migrateInvoiceRates(obj)
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }

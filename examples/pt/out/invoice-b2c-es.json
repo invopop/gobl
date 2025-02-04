@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e1b83e50c70045c2e08f60c678c5b04378cda692f4ba6a3b226c4d639e68e7b2"
+			"val": "d7ab8dc7d74b644897ca6bfc0b8ff3d98ba5ab5928024b97f46f28041ea0a685"
 		}
 	},
 	"doc": {
@@ -50,7 +50,11 @@
 				"quantity": "2",
 				"item": {
 					"name": "Random services",
-					"price": "100.00"
+					"price": "100.00",
+					"unit": "item",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
 				},
 				"sum": "200.00",
 				"taxes": [
@@ -60,7 +64,8 @@
 						"rate": "standard",
 						"percent": "21.0%",
 						"ext": {
-							"pt-saft-tax-rate": "NOR"
+							"pt-region": "ES",
+							"pt-saft-tax-rate": "OUT"
 						}
 					}
 				],
@@ -79,7 +84,8 @@
 								"key": "standard",
 								"country": "ES",
 								"ext": {
-									"pt-saft-tax-rate": "NOR"
+									"pt-region": "ES",
+									"pt-saft-tax-rate": "OUT"
 								},
 								"base": "200.00",
 								"percent": "21.0%",

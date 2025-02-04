@@ -15,7 +15,7 @@ Find example PT GOBL files in the [`examples`](../../examples/pt) (uncalculated 
 
 ### `InvoiceType` (Tipo de documento)
 
-AT's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
+SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
 
 | Code | Name                                                                     | GOBL Type     | GOBL Tax Tag      |
 | ---- | ------------------------------------------------------------------------ | ------------- | ----------------- |
@@ -27,19 +27,81 @@ AT's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax do
 
 ### `TaxCountryRegion` (País ou região do imposto)
 
-AT's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation (Portugal mainland, Açores or Madeira) in a Portuguese invoice. Each region has their own tax rates which can be determined automatically.
+SAF-T's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation (Portugal mainland, Açores or Madeira) in a Portuguese invoice. Each region has their own tax rates which can be determined automatically.
 
 To set the specific a region different to Portugal mainland, the `pt-region` extension of each line's VAT tax should be set to one of the following values:
 
 | Code  | Description                                         |
 | ----- | --------------------------------------------------- |
-| PT    | Mainland Portugal (default, no need to be explicit) |
+| PT    | Mainland Portugal (default)                         |
 | PT-AC | Açores                                              |
 | PT-MA | Madeira                                             |
 
+For example:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "lines": [
+    {
+      // [...]
+      "item": {
+        "name": "Some service",
+        "price": "25.00"
+      },
+      "tax": [
+        {
+            "cat": "VAT",
+            "rate": "exempt",
+            "ext": {
+              "pt-region": "PT-AC",
+              // [...]
+            }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### `ProductType` (Indicador de produto ou serviço)
+
+SAF-T's `ProductType` (Indicador de produto ou serviço) indicates the type of each line item in an invoice. The `pt-saft-product-type` extension used at line item level allows to set the product type to one of the allowed values:
+
+| Code | Description                        |
+| ---- | ---------------------------------- |
+| P    | Products (default)                 |
+| S    | Services                           |
+| O    | Other                              |
+| E    | Excise Duties                      |
+| I    | Taxes, fees and parafiscal charges |
+
+For example:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "lines": [
+    {
+      // [...]
+      "item": {
+        "name": "Some service",
+        "price": "25.00",
+        "ext": {
+          "pt-saft-product-type": "S"
+        }
+      },
+      // [...]
+    }
+  ]
+}
+```
+
 ### VAT Tax Rates
 
-The AT `TaxCode` (Código do imposto) is required for invoice items that apply VAT. GOBL helps determine this code using the `rate` field, which in Portuguese invoices is required. The following table lists the supported tax codes and how GOBL will map them:
+The SAF-T's `TaxCode` (Código do imposto) is required for invoice items that apply VAT. GOBL provides the `pt-saft-tax-rate` extension to set this code at line tax level. It also determines it automatically this code using the `rate` field (when present). The following table lists the supported tax codes and how GOBL will map them:
 
 | Code | Name            | GOBL Tax Rate                         |
 | ---- | --------------- | ------------------------------------- |
@@ -98,6 +160,8 @@ For example, you could define an invoice line exempt of tax as follows:
             "cat": "VAT",
             "rate": "exempt",
             "ext": {
+              // [...]
+              "pt-saft-tax-rate": "ISE",
               "pt-exemption-code": "M19"
             }
         }

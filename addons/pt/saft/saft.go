@@ -2,8 +2,11 @@
 package saft
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -33,13 +36,27 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
+	case *org.Item:
+		normalizeItem(obj)
+	case *pay.Instructions:
+		normalizePayInstructions(obj)
+	case *pay.Advance:
+		normalizePayAdvance(obj)
 	}
 }
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
+	case *bill.Invoice:
+		return validateInvoice(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *org.Item:
+		return validateItem(obj)
+	case *pay.Instructions:
+		return validatePayInstructions(obj)
+	case *pay.Advance:
+		return validatePayAdvance(obj)
 	}
 	return nil
 }
