@@ -53,7 +53,7 @@
         },
         "sources": {
           "items": {
-            "$ref": "#/$defs/Source"
+            "$ref": "https://gobl.org/draft-0/cbc/source"
           },
           "type": "array",
           "title": "Sources",
@@ -441,26 +441,6 @@
         "list"
       ],
       "description": "ScenarioSet is a collection of tax scenarios for a given schema that can be used to determine special codes or notes that need to be included in the final document."
-    },
-    "Source": {
-      "properties": {
-        "title": {
-          "$ref": "https://gobl.org/draft-0/i18n/string",
-          "title": "Title",
-          "description": "Title of the linked source to help distinguish between this and other links."
-        },
-        "url": {
-          "type": "string",
-          "format": "uri",
-          "title": "URL",
-          "description": "URL for the website."
-        }
-      },
-      "type": "object",
-      "required": [
-        "url"
-      ],
-      "description": "Source describes where the information for the taxes comes from."
     },
     "TagSet": {
       "properties": {

@@ -2,6 +2,7 @@ package ch
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -19,7 +20,7 @@ var taxCategories = []*tax.CategoryDef{
 		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
 					i18n.EN: "Current Swiss VAT rates | FTA",

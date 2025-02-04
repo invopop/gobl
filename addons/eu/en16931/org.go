@@ -52,6 +52,15 @@ func normalizeOrgNote(n *org.Note) {
 	}
 }
 
+func normalizeOrgItem(item *org.Item) {
+	if item == nil {
+		return
+	}
+	if item.Unit == org.UnitEmpty {
+		item.Unit = org.UnitOne
+	}
+}
+
 func validateOrgItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Unit,

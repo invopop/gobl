@@ -48,6 +48,22 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	switch tc.Category {
 	case tax.CategoryVAT:
 		if tc.Rate.IsEmpty() {
+			if !tc.Ext.Has(untdid.ExtKeyTaxCategory) {
+				// Try setting reasonable defaults for national invoices.
+				if tc.Percent == nil {
+					tc.Ext = tc.Ext.Merge(
+						tax.Extensions{untdid.ExtKeyTaxCategory: TaxCategoryExempt},
+					)
+				} else if tc.Percent.IsZero() {
+					tc.Ext = tc.Ext.Merge(
+						tax.Extensions{untdid.ExtKeyTaxCategory: TaxCategoryZero},
+					)
+				} else {
+					tc.Ext = tc.Ext.Merge(
+						tax.Extensions{untdid.ExtKeyTaxCategory: TaxCategoryStandard},
+					)
+				}
+			}
 			return
 		}
 		k, ok := vatRateCategoryMap[tc.Rate]

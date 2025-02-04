@@ -53,7 +53,7 @@ func New() *tax.RegimeDef {
 				Title: i18n.String{
 					i18n.EN: "General Sales Tax",
 				},
-				Sources: []*tax.Source{
+				Sources: []*cbc.Source{
 					{
 						Title: i18n.String{
 							i18n.EN: "GST/HST provincial rates table",

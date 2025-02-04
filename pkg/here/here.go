@@ -16,9 +16,9 @@
 //
 //	"\n\tFoo\n\tBar\n"
 //
-// I dont't want this!
+// This doesn't look good when incorporating texts into markdown or other formats.
 //
-// However this problem is solved by package heredoc.
+// `here` solves this problem by removing unnecessary indentation based on the minimum indentation detected:
 //
 //	doc := here.Doc(`
 //		Foo
@@ -28,6 +28,15 @@
 // Is equivalent to
 //
 //	"Foo\nBar\n"
+//
+// Given that the backtick in Go cannot be re-used in blocks, `here` will automatically
+// replace all tildes (~) with backticks (`), unless escaped.
+//
+//	"This is a ~code~ example with \~ tildes"
+//
+// Will be converted to:
+//
+//	"This is a `code` example with ~ tildes"
 package here
 
 import (
@@ -52,6 +61,7 @@ func Doc(raw string) string {
 	minIndentSize := getMinIndent(lines, skipFirstLine)
 	lines = removeIndentation(lines, minIndentSize, skipFirstLine)
 	lines = removeEmptyTailLines(lines)
+	lines = replaceTildesWithBackticks(lines)
 
 	return strings.Join(lines, "\n")
 }
@@ -114,6 +124,39 @@ func removeEmptyTailLines(lines []string) []string {
 		lines = lines[:i]
 	}
 	return lines
+}
+
+func replaceTildesWithBackticks(lines []string) []string {
+	for i := range lines {
+		lines[i] = replaceTildes(lines[i], '`')
+	}
+	return lines
+}
+
+func replaceTildes(input string, s rune) string {
+	var sb strings.Builder
+	escaped := false
+	for _, ch := range input {
+		if ch == '\\' {
+			escaped = true
+			continue
+		}
+		if ch == '~' {
+			if escaped {
+				sb.WriteRune('~') // Remove escape character
+			} else {
+				sb.WriteRune(s) // Replace ~ with rune
+			}
+		} else {
+			if escaped {
+				sb.WriteRune('\\')
+			}
+			sb.WriteRune(ch)
+		}
+		escaped = false
+	}
+
+	return sb.String()
 }
 
 // Docf returns unindented and formatted string as here-document.

@@ -3,6 +3,7 @@ package mydata
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // Regime extension codes.
@@ -22,6 +23,54 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "VAT rate",
 			i18n.EL: "Κατηγορία ΦΠΑ",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Greece has three VAT rates: standard, reduced and super-reduced. Each of these rates are reduced by 
+				30% on the islands of Leros, Lesbos, Kos, Samos and Chios. The tax authority identifies each rate
+				with a specific VAT category.
+
+				The IAPR VAT category code must be set using the ~gr-mydata-vat-rate~ extension of
+				a line's tax to one of the codes.
+
+				| Code | Description                 | GOBL Rate              |
+				| ---- | --------------------------- | ---------------------- |
+				| ~1~  | Standard rate               | ~standard~             |
+				| ~2~  | Reduced rate                | ~reduced~              |
+				| ~3~  | Super-reduced rate          | ~super-reduced~        |
+				| ~4~  | Standard rate (Island)      | ~standard+island~      |
+				| ~5~  | Reduced rate (Island)       | ~reduced+island~       |
+				| ~6~  | Super-reduced rate (Island) | ~super-reduced+island~ |
+				| ~7~  | Without VAT                 | ~exempt~               |
+				| ~8~  | Records without VAT         |                        |
+
+				Please, note that GOBL will automatically set the proper ~gr-mydata-vat-rate~ code and tax percent automatically when the line tax uses any of the GOBL rates specified in the table above. For example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"lines": [
+						{
+							"i": 1,
+							"quantity": "20",
+							"item": {
+								"name": "Υπηρεσίες Ανάπτυξης",
+								"price": "90.00",
+							},
+							"sum": "1800.00",
+							"taxes": [
+								{
+									"cat": "VAT",
+									"rate": "standard+island"
+								}
+							],
+							"total": "1800.00"
+						}
+					],
+				}
+				~~~				
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -87,6 +136,61 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Invoice type",
 			i18n.EL: "Είδος παραστατικού",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The Greek tax authority (IAPR) requires an invoice type code to be specified as part of the invoice. GOBL will
+				automatically set the correct code based on the invoice's ~type~ and ~$tags~ values.
+				
+				However, you can also set the code manually using the ~gr-mydata-invoice-type~ extension in the tax
+				section of the invoice, and setting the invoice's ~type~ to ~other~.
+
+				The following table lists how the combination of ~type~ and ~$tags~ values are mapped to the
+				IAPR MyDATA invoice type code:
+				
+				| Type   | Description                                     | GOBL Type     | GOBL Tags                  |
+				| ------ | ----------------------------------------------- | ------------- |----------------------------|
+				| ~1.1~  | Sales Invoice                                   | ~standard~    | ~goods~                    |
+				| ~1.2~  | Sales Invoice/Intra-community Supplies          | ~standard~    | ~goods~, ~export~, ~eu~    |
+				| ~1.3~  | Sales Invoice/Third Country Supplies            | ~standard~    | ~goods~, ~export~          |
+				| ~1.4~  | Sales Invoice/Sale on Behalf of Third Parties   | ~standard~    | ~goods~, ~self-billed~     |
+				| ~2.1~  | Service Rendered Invoice                        | ~standard~    | ~services~                 |
+				| ~2.2~  | Intra-community Service Rendered Invoice        | ~standard~    | ~services~, ~export~, ~eu~ |
+				| ~2.3~  | Third Country Service Rendered Invoice          | ~standard~    | ~services~, ~export~       |
+				| ~5.1~  | Credit Invoice/Associated                       | ~credit-note~ |                            |
+				| ~11.1~ | Retail Sales Receipt                            | ~standard~    | ~goods~, ~simplified~      |
+				| ~11.2~ | Service Rendered Receipt                        | ~standard~    | ~services~, ~simplified~   |
+				| ~11.3~ | Simplified Invoice                              | ~standard~    | ~simplified~               |
+				| ~11.4~ | Retail Sales Credit Note                        | ~credit-note~ | ~simplified~               |
+				| ~11.5~ | Retail Sales Receipt on Behalf of Third Parties | ~credit-note~ | ~goods~, ~simplified~, ~self-billed~ |
+			
+				For example, this is how you set the IAPR invoice type explicitly:
+
+				~~~json
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"type": "other",
+					"tax": {
+						"ext": {
+							"gr-mydata-invoice-type": "2.3"
+						}
+					}
+				}
+				~~~
+
+				And this is how you'll get the same result by using the GOBL type and tags:
+
+				~~~json
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					"$addons": ["gr-mydata-v1"],
+					"$tags": ["services", "export"],
+					// ...
+					"type": "standard",
+				}
+				~~~
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -412,6 +516,34 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Payment means",
 			i18n.EL: "Τρόπος Πληρωμής",
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The IAPR requires invoices to specify a payment method code. In a GOBL invoice,
+				the payment means is set using the ~key~ field in the payment instructions.
+				The following table lists all the IAPR payment methods and how GOBL will map from
+				the payment instructions key to each of them:
+
+				| Code | Name                             | GOBL Payment Instruction Key |
+				| ---- | -------------------------------- | ---------------------------- |
+				| ~1~  | Domestic Payments Account Number | ~credit-transfer~            |
+				| ~2~  | Foreign Payments Account Number  | ~credit-transfer+foreign~    |
+				| ~3~  | Cash                             | ~cash~                       |
+				| ~4~  | Check                            | ~cheque~                     |
+				| ~5~  | On credit                        | ~promissory-note~            |
+				| ~6~  | Web Banking                      | ~online~                     |
+				| ~7~  | POS / e-POS                      | ~card~                       |
+
+				For example:
+
+				~~~js
+				"payment": {
+					"instructions": {
+						"key": "credit-transfer+foreign" // Will set the IAPR Payment Method to "2"
+					}
+				}
+				~~~
+			`),
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "1",
@@ -469,6 +601,41 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "VAT exemption cause",
 			i18n.EL: "Κατηγορία Αιτίας Εξαίρεσης ΦΠΑ",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Greece invoices can be exempt of VAT for different causes and the tax authority
+				require a specific cause code to be provided.
+
+				In a GOBL invoice, the ~rate~ of a line's tax need to be set to ~exempt~, and
+				the ~ext~ map's ~gr-mydata-exemption~ property needs to be set.
+				
+				For example:
+
+				~~~js
+				"lines": [
+					{
+						"i": 1,
+						"quantity": "20",
+						"item": {
+							"name": "Υπηρεσίες Ανάπτυξης",
+							"price": "90.00",
+						},
+						"sum": "1800.00",
+						"taxes": [
+							{
+								"cat": "VAT",
+								"rate": "exempt",
+								"ext": {
+									"gr-mydata-exemption": "30"
+								}
+							}
+						],
+						"total": "1800.00"
+					}
+				]
+				~~~
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -696,6 +863,32 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Income Classification Category",
 			i18n.EL: "Κωδικός Κατηγορίας Χαρακτηρισμού Εσόδων",
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Invoices reported to the Greek tax authority via myDATA can optionally include information
+				about the income classification of each invoice item.
+
+				In a GOBL invoice, the ~gr-mydata-income-cat~ and ~gr-mydata-income-type~ extensions can be
+				set at the item level to any of the values expected by the IAPR. For example:
+
+				~~~json
+				"lines": [
+					{
+						"i": 1,
+						"quantity": "20",
+						"item": {
+						"name": "Υπηρεσίες Ανάπτυξης",
+						"price": "90.00",
+						"ext": {
+							"gr-mydata-income-cat": "category1_1",
+							"gr-mydata-income-type": "E3_561_001",
+						}
+						}
+					}
+				]
+				~~~
+			`),
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "category1_1",
@@ -781,6 +974,11 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Income Classification Type",
 			i18n.EL: "Κωδικός Τύπου Χαρακτηρισμού Εσόδων",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				See the Income Classification Category for more information.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -1028,6 +1226,27 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Other taxes category",
 			i18n.EL: "Κατηγορία Λοιπών Φόρων",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Certain myDATA invoice types (_e.g._, 8.2 for the accommodation tax) require a category
+				for other taxes to be provided. In GOBL, you can use the ~gr-mydata-other-tax~ extension
+				at charge level.
+
+				For example:
+
+				~~~json
+				"charges": [
+					{
+						"amount": "3.00",
+						"reason": "Accommodation tax",
+						"ext": {
+							"gr-mydata-other-tax": "8",
+						}
+					}
+				]
+				~~~
+			`),
 		},
 		Values: []*cbc.Definition{
 			{

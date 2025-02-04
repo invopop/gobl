@@ -23,6 +23,9 @@ type Definition struct {
 	// with the key.
 	Meta Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 
+	// Where the information was sourced from.
+	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+
 	// Values defines the possible values associated with the key, which themselves will
 	// either be keys or codes depending on the context.
 	Values []*Definition `json:"values,omitempty" jsonschema:"title=Values"`
@@ -53,6 +56,7 @@ func (d *Definition) Validate() error {
 		),
 		validation.Field(&d.Name, validation.Required),
 		validation.Field(&d.Desc),
+		validation.Field(&d.Sources),
 		validation.Field(&d.Values),
 		validation.Field(&d.Pattern, validation.By(validRegexpPattern)),
 	)

@@ -9,8 +9,9 @@ func init() {
 	schema.Register(schema.GOBL.Add("cbc"),
 		Code(""),
 		CodeMap{},
-		Key(""),
 		Definition{},
+		Key(""),
 		Meta{},
+		Source{},
 	)
 }

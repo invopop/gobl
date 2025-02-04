@@ -30,6 +30,14 @@
           "title": "Meta",
           "description": "Meta defines any additional details that may be useful or associated\nwith the key."
         },
+        "sources": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/source"
+          },
+          "type": "array",
+          "title": "Sources",
+          "description": "Where the information was sourced from."
+        },
         "values": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/definition"

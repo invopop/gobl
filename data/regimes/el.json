@@ -193,6 +193,12 @@
       "sources": [
         {
           "title": {
+            "en": "VAT Rates"
+          },
+          "url": "https://www.gov.gr/en/sdg/taxes/vat/general/basic-vat-rates"
+        },
+        {
+          "title": {
             "el": "Φόρος Προστιθέμενης Αξίας/Φόρος Αγαθών και Υπηρεσιών (ΦΠΑ/GST) (1976-2023)",
             "en": "Value Added Tax/Goods and Services Tax (VAT/GST) (1976-2023)"
           },

@@ -14,7 +14,6 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/validation"
-	"github.com/invopop/validation/is"
 )
 
 const (
@@ -122,7 +121,7 @@ type CategoryDef struct {
 	Map cbc.CodeMap `json:"map,omitempty" jsonschema:"title=Map"`
 
 	// List of sources for the information contained in this category.
-	Sources []*Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
 
 	// Extension key-value pairs that will be copied to the tax combo if this
 	// category is used.
@@ -131,14 +130,6 @@ type CategoryDef struct {
 	// Meta contains additional information about the category that is relevant
 	// for local frequently used formats.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-}
-
-// Source describes where the information for the taxes comes from.
-type Source struct {
-	// Title of the linked source to help distinguish between this and other links.
-	Title i18n.String `json:"title,omitempty" jsonschema:"title=Title"`
-	// URL for the website.
-	URL string `json:"url" jsonschema:"title=URL,format=uri"`
 }
 
 // RateDef defines a single rate inside a category
@@ -389,14 +380,6 @@ func (c *CategoryDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&c.Map),
 	)
 	return err
-}
-
-// Validate ensures the Source's contents are correct.
-func (s *Source) Validate() error {
-	return validation.ValidateStruct(s,
-		validation.Field(&s.Title),
-		validation.Field(&s.URL, validation.Required, is.URL),
-	)
 }
 
 // ValidateWithContext checks that our tax definition is valid. This is only really
