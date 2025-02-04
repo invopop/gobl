@@ -3,6 +3,7 @@ package ae
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -19,7 +20,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Value Added Tax",
 			i18n.AR: "ضريبة القيمة المضافة",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
 					i18n.EN: "Federal Tax Authority - UAE VAT Regulations",

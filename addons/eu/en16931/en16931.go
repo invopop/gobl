@@ -33,6 +33,9 @@ func newAddon() *tax.AddonDef {
 
 				This addon ensures the basic rules and mappings are applied to the GOBL document
 				ensure that it is compliant and easily convertible to other formats.
+
+				We strongly recommend checking the output and specifically the extension codes
+				used to ensure that any assumptions do not need be adjusted. 
 			`),
 		},
 		Scenarios:  scenarios,
@@ -61,6 +64,8 @@ func normalize(doc any) {
 		normalizeBillLineCharge(obj)
 	case *org.Note:
 		normalizeOrgNote(obj)
+	case *org.Item:
+		normalizeOrgItem(obj)
 	}
 }
 

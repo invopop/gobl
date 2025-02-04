@@ -25,7 +25,11 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Value Added Tax",
 			i18n.EL: "Φόρος προστιθέμενης αξίας",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("VAT Rates"),
+				URL:   "https://www.gov.gr/en/sdg/taxes/vat/general/basic-vat-rates",
+			},
 			{
 				Title: i18n.String{
 					i18n.EN: "Value Added Tax/Goods and Services Tax (VAT/GST) (1976-2023)",

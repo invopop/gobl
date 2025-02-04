@@ -33,6 +33,9 @@ type AddonDef struct {
 	// Description of the add-on
 	Description i18n.String `json:"description,omitempty" jsonschema:"title=Description"`
 
+	// Sources is a list of sources that are used to provide the data for the add-on.
+	Sources []*cbc.Source `json:"sources,omitempty" jsonschema:"title=Sources"`
+
 	// Extensions defines the list of extensions that are associated with an add-on.
 	Extensions []*cbc.Definition `json:"extensions" jsonschema:"title=Extensions"`
 

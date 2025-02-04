@@ -37,3 +37,42 @@ func TestOrgNoteNormalize(t *testing.T) {
 		assert.Equal(t, "AAI", n.Ext[untdid.ExtKeyTextSubject].String())
 	})
 }
+
+func TestOrgItemNormalize(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("accepts nil", func(t *testing.T) {
+		var item *org.Item
+		assert.NotPanics(t, func() {
+			ad.Normalizer(item)
+		})
+	})
+
+	t.Run("sets default", func(t *testing.T) {
+		item := &org.Item{}
+		ad.Normalizer(item)
+		assert.Equal(t, org.UnitOne, item.Unit)
+	})
+
+	t.Run("maintains valid", func(t *testing.T) {
+		item := &org.Item{
+			Unit: org.UnitHour,
+		}
+		ad.Normalizer(item)
+		assert.Equal(t, org.UnitHour, item.Unit)
+	})
+}
+
+func TestOrgItemValidate(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("missing unit", func(t *testing.T) {
+		item := &org.Item{}
+		assert.ErrorContains(t, ad.Validator(item), "unit: cannot be blank (BR-23).")
+	})
+
+	t.Run("validates unit", func(t *testing.T) {
+		item := &org.Item{
+			Unit: org.UnitOne,
+		}
+		assert.NoError(t, ad.Validator(item))
+	})
+}

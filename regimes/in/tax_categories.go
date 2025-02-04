@@ -27,7 +27,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Central Goods and Services Tax",
 			i18n.HI: "केंद्रीय माल और सेवा कर",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
 					i18n.EN: "Central GST Regulations",
@@ -49,7 +49,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "State Goods and Services Tax",
 			i18n.HI: "राज्य माल और सेवा कर",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
 					i18n.EN: "State GST Regulations",
@@ -71,7 +71,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Integrated Goods and Services Tax",
 			i18n.HI: "एकीकृत माल और सेवा कर",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
 					i18n.EN: "Integrated GST Regulations",
@@ -93,7 +93,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Union Territory Goods and Services Tax",
 			i18n.HI: "केंद्र शासित प्रदेश माल और सेवा कर",
 		},
-		Sources: []*tax.Source{
+		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
 					i18n.EN: "Union Territory GST Regulations",
