@@ -21,11 +21,14 @@ var serviceUnits = []org.Unit{
 	org.UnitSecond,
 	org.UnitHour,
 	org.UnitMinute,
-	org.UnitItem,
 	org.UnitService,
 	org.UnitJob,
 	org.UnitActivity,
 	org.UnitTrip,
+
+	// Ambivalent units but we default to service
+	org.UnitItem,
+	org.UnitOne,
 }
 
 func validateItem(item *org.Item) error {
@@ -71,6 +74,6 @@ func setDefaultUnit(item *org.Item) {
 	}
 
 	if item.Unit == "" {
-		item.Unit = org.UnitItem
+		item.Unit = org.UnitOne
 	}
 }

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d7ab8dc7d74b644897ca6bfc0b8ff3d98ba5ab5928024b97f46f28041ea0a685"
+			"val": "2f931d947ec5ae081abb21617faf30f62dc47ef9041c3abf9a273b5db0d02d2f"
 		}
 	},
 	"doc": {
@@ -51,7 +51,7 @@
 				"item": {
 					"name": "Random services",
 					"price": "100.00",
-					"unit": "item",
+					"unit": "one",
 					"ext": {
 						"pt-saft-product-type": "S"
 					}
