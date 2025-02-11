@@ -79,33 +79,43 @@ func TestPayInstructionsNormalization(t *testing.T) {
 func TestPayAdvanceNormalization(t *testing.T) {
 	tests := []struct {
 		name string
-		key  cbc.Key
-		ext  tax.Extensions
+		adv  *pay.Advance
 		out  cbc.Code
 	}{
 		{
+			name: "nil",
+		},
+		{
 			name: "card, no ext",
-			key:  pay.MeansKeyCard,
-			out:  "CC",
+			adv: &pay.Advance{
+				Key: pay.MeansKeyCard,
+			},
+			out: "CC",
 		},
 		{
 			name: "card, ext",
-			key:  pay.MeansKeyCard,
-			ext: tax.Extensions{
-				saft.ExtKeyPaymentMeans: "CB",
+			adv: &pay.Advance{
+				Key: pay.MeansKeyCard,
+				Ext: tax.Extensions{
+					saft.ExtKeyPaymentMeans: "CB",
+				},
 			},
 			out: "CC",
 		},
 		{
 			name: "other, no ext",
-			key:  pay.MeansKeyOther,
-			out:  "OU",
+			adv: &pay.Advance{
+				Key: pay.MeansKeyOther,
+			},
+			out: "OU",
 		},
 		{
 			name: "other, ext",
-			key:  pay.MeansKeyOther,
-			ext: tax.Extensions{
-				saft.ExtKeyPaymentMeans: "CB",
+			adv: &pay.Advance{
+				Key: pay.MeansKeyOther,
+				Ext: tax.Extensions{
+					saft.ExtKeyPaymentMeans: "CB",
+				},
 			},
 			out: "CB",
 		},
@@ -113,14 +123,14 @@ func TestPayAdvanceNormalization(t *testing.T) {
 
 	addon := tax.AddonForKey(saft.V1)
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			a := &pay.Advance{
-				Key: test.key,
-				Ext: test.ext,
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			addon.Normalizer(tt.adv)
+			if tt.adv == nil {
+				// Nothing to check. Not panicking is enough.
+				return
 			}
-			addon.Normalizer(a)
-			assert.Equal(t, test.out, a.Ext[saft.ExtKeyPaymentMeans])
+			assert.Equal(t, tt.out, tt.adv.Ext[saft.ExtKeyPaymentMeans])
 		})
 	}
 }

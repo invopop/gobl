@@ -111,6 +111,9 @@ func TestReceiptValidation(t *testing.T) {
 
 		rct.Supplier.TaxID = nil
 		assert.ErrorContains(t, addon.Validator(rct), "supplier: (tax_id: cannot be blank.")
+
+		rct.Supplier = nil
+		assert.NoError(t, addon.Validator(rct))
 	})
 
 	t.Run("missing customer name", func(t *testing.T) {
@@ -124,6 +127,9 @@ func TestReceiptValidation(t *testing.T) {
 
 		rct.Customer.TaxID = nil
 		assert.NoError(t, addon.Validator(rct))
+
+		rct.Customer = nil
+		assert.NoError(t, addon.Validator(rct))
 	})
 
 	t.Run("missing line document", func(t *testing.T) {
@@ -131,6 +137,9 @@ func TestReceiptValidation(t *testing.T) {
 		rct.Lines[0].Document = nil
 
 		assert.ErrorContains(t, addon.Validator(rct), "lines: (0: (document: cannot be blank")
+
+		rct.Lines[0] = nil
+		assert.NoError(t, addon.Validator(rct))
 	})
 
 	t.Run("missing line document issue date", func(t *testing.T) {
@@ -157,6 +166,9 @@ func TestReceiptValidation(t *testing.T) {
 		err := addon.Validator(rct)
 		assert.ErrorContains(t, err, "pt-region: required")
 		assert.ErrorContains(t, err, "pt-saft-tax-rate: required")
+
+		rct.Lines[0].Tax.Categories[0].Rates[0] = nil
+		assert.NoError(t, addon.Validator(rct))
 	})
 
 	t.Run("negative amounts", func(t *testing.T) {
