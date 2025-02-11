@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "88c970d2e4aa21a7fd711856c45fcf847a4af61bce0d4c2dafb2c1550f9701fc"
+			"val": "01ca58456fb5549d7786c607e1970defce128c794de702a5d0af95ca798c91a4"
 		}
 	},
 	"doc": {
@@ -57,6 +57,10 @@
 			{
 				"i": 1,
 				"quantity": "20",
+				"identifier": {
+					"label": "Subscription",
+					"code": "SUB1234-ABC"
+				},
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
