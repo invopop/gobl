@@ -25,7 +25,7 @@ type Item struct {
 	uuid.Identify
 	// Primary reference code that identifies this item.
 	// Additional codes can be provided in the 'identities' property.
-	Ref string `json:"ref,omitempty" jsonschema:"title=Ref"`
+	Ref cbc.Code `json:"ref,omitempty" jsonschema:"title=Ref"`
 	// Special key used to classify the item sometimes required by some regimes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Brief name of the item
@@ -70,6 +70,7 @@ func (i *Item) Normalize(normalizers tax.Normalizers) {
 func (i *Item) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
+		validation.Field(&i.Ref),
 		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),
 		validation.Field(&i.Identities),

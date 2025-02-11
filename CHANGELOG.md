@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: `Line` now incudes three new fields intended for greater EN16931 compatibility: `identifier`, `order`, and `cost`.
+
 ### Fixed
 
 - `eu-en16931-v2017`: removing validation of advanced payment means extension.

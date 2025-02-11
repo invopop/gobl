@@ -29,6 +29,9 @@ customer:
 
 lines:
   - quantity: 20
+    identifier:
+      label: "Subscription"
+      code: "SUB1234-ABC"
     item:
       name: "Development services"
       price: "90.00"

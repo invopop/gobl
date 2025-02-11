@@ -647,10 +647,30 @@
           "title": "Quantity",
           "description": "Number of items"
         },
+        "identifier": {
+          "$ref": "https://gobl.org/draft-0/org/identity",
+          "title": "Identifier",
+          "description": "Single identifier provided by the supplier for an object on which the\nline item is based and is not considered a universal identity. Examples\ninclude a subscription number, telephone number, meter point, etc.\nUtilize the label property to provide a description of the identifier."
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/cal/period",
+          "title": "Period",
+          "description": "A period of time relevant to when the service or item is delivered."
+        },
+        "order": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Order Reference",
+          "description": "Order reference for a specific line within a purchase order provided by the buyer."
+        },
+        "cost": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Cost Reference",
+          "description": "Buyer accounting reference cost code to associate with the line."
+        },
         "item": {
           "$ref": "https://gobl.org/draft-0/org/item",
           "title": "Item",
-          "description": "Details about what is being sold"
+          "description": "Details about the item, service or good, that is being sold"
         },
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",

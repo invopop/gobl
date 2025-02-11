@@ -877,12 +877,12 @@ var extensions = []*cbc.Definition{
 						"i": 1,
 						"quantity": "20",
 						"item": {
-						"name": "Υπηρεσίες Ανάπτυξης",
-						"price": "90.00",
-						"ext": {
-							"gr-mydata-income-cat": "category1_1",
-							"gr-mydata-income-type": "E3_561_001",
-						}
+							"name": "Υπηρεσίες Ανάπτυξης",
+							"price": "90.00",
+							"ext": {
+								"gr-mydata-income-cat": "category1_1",
+								"gr-mydata-income-type": "E3_561_001",
+							}
 						}
 					}
 				]
