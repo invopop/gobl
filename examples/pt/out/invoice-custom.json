@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a737a8ac839cbc6eb27a9ba29fe0db2f12a8a9705cd6adec8c8b933bdf65b78d"
+			"val": "dd680a51dff5404c7e7273e45c176ba8f33790a9298ac79b8167f7a6ce5f7d7a"
 		}
 	},
 	"doc": {
@@ -48,7 +48,7 @@
 				"item": {
 					"name": "Noite em quarto duplo",
 					"price": "100.00",
-					"unit": "item",
+					"unit": "one",
 					"ext": {
 						"pt-saft-product-type": "S"
 					}

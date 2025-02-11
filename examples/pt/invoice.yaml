@@ -26,3 +26,9 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+payment:
+  advances:
+    - amount: 100.00
+      desc: "Adiantamento"
+      date: "2023-01-30"
+      key: "credit-transfer"

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `pt-saft-v1`: support for payments and receipts
+
+### Changed
+
+- `pt-saft-v1`: changed default unit to `one`
+- `bill.Receipt`: fixed panic calculating receipts with no lines
+- `bill.Receipt`: require code only to sign
+
 ## [v0.209.0] - 2025-02-04
 
 This significant release adds support for the new `bill.Receipt` schema, to be used to represent payments (sent from suppliers) and remittance advice (sent from customers). This is still in testing phases, so may still require significant changes.

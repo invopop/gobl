@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5146af90acbfa2d3ef5feba75f4932a1e1785db34f606de61331e4e6493578f3"
+			"val": "ddde5a861581b82d0d7a6f455492e21fa07ea152938b28cc677cceb46d86a5de"
 		}
 	},
 	"doc": {
@@ -48,7 +48,7 @@
 				"item": {
 					"name": "Noite em quarto duplo",
 					"price": "100.00",
-					"unit": "item",
+					"unit": "one",
 					"ext": {
 						"pt-saft-product-type": "S"
 					}
@@ -73,7 +73,7 @@
 				"item": {
 					"name": "Noite em quarto triplo",
 					"price": "120.00",
-					"unit": "item",
+					"unit": "one",
 					"ext": {
 						"pt-saft-product-type": "S"
 					}

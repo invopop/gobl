@@ -152,7 +152,7 @@ func TestItemUnitNormalization(t *testing.T) {
 		{
 			name: "unit not present",
 			item: &org.Item{},
-			out:  "item",
+			out:  "one",
 		},
 	}
 

@@ -99,6 +99,13 @@ func TestReceiptCalculate(t *testing.T) {
 		assert.Len(t, r.Tax.Categories[0].Rates, 2)
 		assert.Equal(t, "31.00", r.Tax.Sum.String())
 	})
+
+	t.Run("missing lines", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Lines = nil
+		require.NoError(t, r.Calculate())
+		assert.Equal(t, num.AmountZero, r.Total)
+	})
 }
 
 func TestReceiptValidate(t *testing.T) {
