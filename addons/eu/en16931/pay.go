@@ -23,26 +23,6 @@ var paymentMeansMap = tax.Extensions{
 	pay.MeansKeyDirectDebit.With(pay.MeansKeySEPA):    "59",
 }
 
-func normalizePayAdvance(adv *pay.Advance) {
-	if adv == nil {
-		return
-	}
-	if val, ok := paymentMeansMap[adv.Key]; ok {
-		adv.Ext = adv.Ext.Merge(
-			tax.Extensions{untdid.ExtKeyPaymentMeans: val},
-		)
-	}
-}
-
-func validatePayAdvance(adv *pay.Advance) error {
-	return validation.ValidateStruct(adv,
-		validation.Field(&adv.Ext,
-			tax.ExtensionsRequire(untdid.ExtKeyPaymentMeans),
-			validation.Skip,
-		),
-	)
-}
-
 func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
@@ -57,6 +37,7 @@ func normalizePayInstructions(instr *pay.Instructions) {
 func validatePayInstructions(instr *pay.Instructions) error {
 	return validation.ValidateStruct(instr,
 		validation.Field(&instr.Ext,
+			// BR-49
 			tax.ExtensionsRequire(untdid.ExtKeyPaymentMeans),
 			validation.Skip,
 		),

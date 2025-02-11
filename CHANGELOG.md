@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `eu-en16931-v2017`: removing validation of advanced payment means extension.
+
 ## [v0.209.0] - 2025-02-04
 
 This significant release adds support for the new `bill.Receipt` schema, to be used to represent payments (sent from suppliers) and remittance advice (sent from customers). This is still in testing phases, so may still require significant changes.

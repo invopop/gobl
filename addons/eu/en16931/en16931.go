@@ -48,8 +48,6 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeBillInvoice(obj)
-	case *pay.Advance:
-		normalizePayAdvance(obj)
 	case *pay.Instructions:
 		normalizePayInstructions(obj)
 	case *tax.Combo:
@@ -71,8 +69,6 @@ func normalize(doc any) {
 
 func validate(doc any) error {
 	switch obj := doc.(type) {
-	case *pay.Advance:
-		return validatePayAdvance(obj)
 	case *pay.Instructions:
 		return validatePayInstructions(obj)
 	case *bill.Invoice:
