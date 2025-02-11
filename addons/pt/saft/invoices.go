@@ -26,24 +26,19 @@ var (
 )
 
 func validateInvoice(inv *bill.Invoice) error {
+	it := invoiceType(inv)
+
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
 			validation.By(validateTax),
 			validation.Skip,
 		),
 		validation.Field(&inv.Series,
-			validation.By(validatePrefix(inv)),
-			validation.Match(seriesRegexp),
+			validateSeriesFormat(it),
 			validation.Skip,
 		),
 		validation.Field(&inv.Code,
-			validation.When(inv.Series != "",
-				validation.Match(codeRegexp),
-			),
-			validation.When(inv.Series == "",
-				validation.By(validatePrefix(inv)),
-				validation.Match(fullCodeRegexp),
-			),
+			validateCodeFormat(inv.Series, it),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -73,22 +68,66 @@ func validateTax(val any) error {
 	)
 }
 
-func validatePrefix(inv *bill.Invoice) validation.RuleFunc {
-	return func(val any) error {
+// validateSeriesFormat validates the format of the series to meet the requirements of the
+// AT (e.g. "FT SERIES-A"). The series is allowed to be empty, in which case the code is
+// expected to be a full code (e.g. "FT SERIES-A/123") (see `validateCodeFormat`).
+func validateSeriesFormat(docType cbc.Code) validation.Rule {
+	return validation.By(func(val any) error {
 		s, ok := val.(cbc.Code)
 		if !ok || s == "" {
 			return nil
 		}
 
-		if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil || inv.Tax.Ext[ExtKeyInvoiceType] == cbc.CodeEmpty {
-			return nil
+		if docType != cbc.CodeEmpty {
+			prefix := docType.String() + " "
+			if !strings.HasPrefix(s.String(), prefix) {
+				return fmt.Errorf("must start with '%s'", prefix)
+			}
 		}
 
-		prefix := inv.Tax.Ext[ExtKeyInvoiceType].String() + " "
-		if !strings.HasPrefix(s.String(), prefix) {
-			return fmt.Errorf("must start with '%s'", prefix)
+		if !seriesRegexp.MatchString(s.String()) {
+			return fmt.Errorf("must be in a valid format")
 		}
 
 		return nil
+	})
+}
+
+// validateCodeFormat validates the format of the code to meet the requirements of the
+// AT. If the series is present, the code must be a valid number (e.g. 123). If the series
+// is missing, the code is expected to be a full code (e.g. "FT SERIES-A/123").
+func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
+	return validation.By(func(val any) error {
+		c, ok := val.(cbc.Code)
+		if !ok || c == "" {
+			return nil
+		}
+
+		if series != cbc.CodeEmpty {
+			if !codeRegexp.MatchString(c.String()) {
+				return fmt.Errorf("must be in a valid format")
+			}
+			return nil
+		}
+
+		if docType != cbc.CodeEmpty {
+			prefix := docType.String() + " "
+			if !strings.HasPrefix(c.String(), prefix) {
+				return fmt.Errorf("must start with '%s'", prefix)
+			}
+		}
+
+		if !fullCodeRegexp.MatchString(c.String()) {
+			return fmt.Errorf("must be in a valid format")
+		}
+		return nil
+	})
+}
+
+func invoiceType(inv *bill.Invoice) cbc.Code {
+	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
+		return cbc.CodeEmpty
 	}
+
+	return inv.Tax.Ext[ExtKeyInvoiceType]
 }

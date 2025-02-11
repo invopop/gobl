@@ -50,6 +50,29 @@
       ]
     },
     {
+      "key": "pt-saft-receipt-type",
+      "name": {
+        "en": "Receipt Type",
+        "pt": "Tipo de recibo"
+      },
+      "values": [
+        {
+          "code": "RC",
+          "name": {
+            "en": "Receipt under the VAT Cash scheme",
+            "pt": "Recibo no âmbito do regime de IVA de Caixa"
+          }
+        },
+        {
+          "code": "RG",
+          "name": {
+            "en": "Other Receipt",
+            "pt": "Outro Recibo"
+          }
+        }
+      ]
+    },
+    {
       "key": "pt-saft-tax-rate",
       "name": {
         "en": "Tax Rate Code",
@@ -343,6 +366,113 @@
           "desc": {
             "en": "Taxes, fees and parafiscal charges (except VAT and IS which should be reflected in table 2.5 - TaxTable and Excise Duties, which should be filled in with code 'E')",
             "pt": "Impostos, taxas e encargos parafiscais – exceto IVA e IS que deverão ser refletidos na tabela 2.5 – Tabela de impostos (TaxTable) e Impostos Especiais de Consumo, que deverão ser preenchidos com o código 'E'."
+          }
+        }
+      ]
+    },
+    {
+      "key": "pt-saft-payment-means",
+      "name": {
+        "en": "Payment Means",
+        "pt": "Meio de Pagamento"
+      },
+      "values": [
+        {
+          "code": "CC",
+          "name": {
+            "en": "Credit card",
+            "pt": "Cartão crédito"
+          }
+        },
+        {
+          "code": "CD",
+          "name": {
+            "en": "Debit card",
+            "pt": "Cartão débito"
+          }
+        },
+        {
+          "code": "CH",
+          "name": {
+            "en": "Bank cheque",
+            "pt": "Cheque bancário"
+          }
+        },
+        {
+          "code": "CI",
+          "name": {
+            "en": "International documentary credit",
+            "pt": "Letter of credit"
+          }
+        },
+        {
+          "code": "CO",
+          "name": {
+            "en": "Gift cheque or card",
+            "pt": "Cheque ou cartão oferta"
+          }
+        },
+        {
+          "code": "CS",
+          "name": {
+            "en": "Settlement of balances in current account",
+            "pt": "Compensação de saldos em conta corrente"
+          }
+        },
+        {
+          "code": "DE",
+          "name": {
+            "en": "Electronic money",
+            "pt": "Dinheiro eletrónico"
+          }
+        },
+        {
+          "code": "LC",
+          "name": {
+            "en": "Commercial bill",
+            "pt": "Letra comercial"
+          }
+        },
+        {
+          "code": "MB",
+          "name": {
+            "en": "Multibanco payment references",
+            "pt": "Referências de pagamento para Multibanco"
+          }
+        },
+        {
+          "code": "NU",
+          "name": {
+            "en": "Cash",
+            "pt": "Numerário"
+          }
+        },
+        {
+          "code": "OU",
+          "name": {
+            "en": "Other",
+            "pt": "Outro"
+          }
+        },
+        {
+          "code": "PR",
+          "name": {
+            "en": "Barter",
+            "pt": "Permuta de bens"
+          }
+        },
+        {
+          "code": "TB",
+          "name": {
+            "en": "Bank transfer or direct debit",
+            "pt": "Transferência bancária ou débito direto autorizado"
+          }
+        },
+        {
+          "code": "TR",
+          "name": {
+            "en": "Supplementary compensation",
+            "pt": "Títulos de compensação extrassalarial"
           }
         }
       ]

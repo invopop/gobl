@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c11342a1cbc36347e3a763dd4a22bf2db053b72b0a3935cbf729e29e80ae874a"
+			"val": "cb699176e14b5b52bdb176c35c6ccd94e3df75cc04a0758e8eb88cf9a9b8a3a4"
 		}
 	},
 	"doc": {
@@ -68,6 +68,19 @@
 				"total": "100.00"
 			}
 		],
+		"payment": {
+			"advances": [
+				{
+					"date": "2023-01-30",
+					"key": "credit-transfer",
+					"description": "Adiantamento",
+					"amount": "100.00",
+					"ext": {
+						"pt-saft-payment-means": "TB"
+					}
+				}
+			]
+		},
 		"totals": {
 			"sum": "100.00",
 			"total": "100.00",
@@ -94,7 +107,9 @@
 			},
 			"tax": "23.00",
 			"total_with_tax": "123.00",
-			"payable": "123.00"
+			"payable": "123.00",
+			"advance": "100.00",
+			"due": "23.00"
 		}
 	}
 }
