@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -146,7 +147,12 @@ func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&rct.Method, validation.Required),
 		validation.Field(&rct.Series),
-		validation.Field(&rct.Code, validation.Required),
+		validation.Field(&rct.Code,
+			validation.When(
+				internal.IsSigned(ctx),
+				validation.Required.Error("required to sign receipt"),
+			),
+		),
 		validation.Field(&rct.IssueDate,
 			validation.Required,
 			cal.DateNotZero(),
