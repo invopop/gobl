@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `eu-en16931-v2017`: removing validation of advanced payment means extension.
+- `pay`: `Card` fields now optional.
 
 ## [v0.209.0] - 2025-02-04
 
