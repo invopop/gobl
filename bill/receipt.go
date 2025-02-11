@@ -156,6 +156,7 @@ func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
 			currency.CanConvertInto(rct.ExchangeRates, r.GetCurrency()),
 		),
 		validation.Field(&rct.ExchangeRates),
+		validation.Field(&rct.Ext),
 		validation.Field(&rct.Preceding),
 		validation.Field(&rct.Supplier, validation.Required),
 		validation.Field(&rct.Customer),
@@ -273,7 +274,9 @@ func (rct *Receipt) calculate() error {
 		}
 	}
 	rct.Tax = tt
-	rct.Total = *total
+	if total != nil {
+		rct.Total = *total
+	}
 	return nil
 }
 
