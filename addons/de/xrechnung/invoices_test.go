@@ -132,7 +132,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (identities: missing key de-tax-number; tax_id: cannot be blank.).")
+		assert.ErrorContains(t, err, "supplier: (identities: missing key 'de-tax-number'; tax_id: cannot be blank.).")
 	})
 	t.Run("missing supplier tax ID but has tax number", func(t *testing.T) {
 		// this is validation is performed in the DE regime, but we're
