@@ -79,6 +79,9 @@
         "en": "Region Code",
         "pt": "Código da Região"
       },
+      "desc": {
+        "en": "SAF-T's `TaxCountryRegion` (País ou região do imposto) specifies the region of taxation\n(Portugal mainland, Açores, Madeira or any ISO country) in a Portuguese invoice. Each\nregion has their own tax rates which can be determined automatically.\n\nTo set the specific a region different to Portugal mainland, the `pt-region` extension of\neach line's VAT tax should be set to one of the following values:\n\n| Code  | Description                                         |\n| ----- | --------------------------------------------------- |\n| PT    | Mainland Portugal (default)                         |\n| PT-AC | Açores                                              |\n| PT-MA | Madeira                                             |\n| ...   | Any ISO country code (e.g. ES, FR, DE, etc.)        |\n\nFor example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service\",\n\t\t\t\t\"price\": \"25.00\"\n\t\t\t},\n\t\t\t\"tax\": [\n\t\t\t\t{\n\t\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\t\"rate\": \"exempt\",\n\t\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\t\"pt-region\": \"PT-AC\",\n\t\t\t\t\t\t\t// ...\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n```"
+      },
       "values": [
         {
           "code": "PT",

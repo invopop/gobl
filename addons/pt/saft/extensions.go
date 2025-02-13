@@ -3,6 +3,7 @@ package saft
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // SAF-T Extension Keys
@@ -55,6 +56,41 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Invoice Type",
 			i18n.PT: "Tipo de Fatura",
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~InvoiceType~ (Tipo de documento) specifies the type of a sales invoice. In GOBL,
+				this type can be set using the ~pt-saft-invoice-type~ extension in the tax section. GOBL
+				will set the extension for you based on the type and the tax tags you set in your invoice.
+				The table below shows how this mapping is done:
+
+				| Code | Name                                                                    | GOBL Type     | GOBL Tax Tag      |
+				| ---- | ----------------------------------------------------------------------- | ------------- | ----------------- |
+				| FT   | Fatura, emitida nos termos do artigo 36.o do Código do IVA              | ~standard~    |                   |
+				| FS   | Fatura simplificada, emitida nos termos do artigo 40.o do Código do IVA | ~standard~    | ~simplified~      |
+				| FR   | Fatura-recibo                                                           | ~standard~    | ~invoice-receipt~ |
+				| ND   | Nota de débito                                                          | ~credit-note~ |                   |
+				| NC   | Nota de crédito                                                         | ~debit-note~  |                   |
+
+				For example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					"$tags": [
+						"invoice-receipt"
+					],
+					// ...
+					"type": "standard",
+					// ...
+					"tax": {
+						"ext": {
+							"pt-saft-invoice-type": "FR"
+						}
+					},
+					// ...
+				~~~
+			`),
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: InvoiceTypeStandard,
@@ -99,6 +135,34 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Receipt Type",
 			i18n.PT: "Tipo de recibo",
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				To report payment receipts to the AT, GOBL provides conversion from ~bill.Receipt~
+				documents. In a payment, the SAF-T's ~PaymentType~ (Tipo de documento) field specifies its
+				type. In GOBL, this type can be set using the ~pt-saft-receipt-type~ extension. GOBL will
+				set the extension automatically based on the type and the tax tags you set. The table
+				below shows how this mapping is done:
+
+				| Code | Name                                       | GOBL Type | GOBL Tax Tag |
+				| ---- | ------------------------------------------ | --------- | ------------ |
+				| RG   | Outro Recibo                               | ~payment~ |              |
+				| RC   | Recibo no âmbito do regime de IVA de Caixa | ~payment~ | ~vat-cash~   |
+
+				For example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/receipt",
+					// ...
+					"type": "payment",
+					// ...
+					"ext": {
+						"pt-saft-receipt-type": "RG"
+					},
+					// ...
+				~~~
+			`),
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: ReceiptTypeCash,
@@ -121,6 +185,21 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Tax Rate Code",
 			i18n.PT: "Código da Taxa de Imposto",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The SAF-T's ~TaxCode~ (Código do imposto) is required for invoice items that apply VAT.
+				GOBL provides the ~pt-saft-tax-rate~ extension to set this code at line tax level. It also
+				determines it automatically this code using the ~rate~ field (when present). The following
+				table lists the supported tax codes and how GOBL will map them:
+
+				| Code   | Name            | GOBL Tax Rate  |
+				| ------ | --------------- | -------------- |
+				| ~NOR–  | Tipo Geral      | ~standard~     |
+				| ~INT–  | Taxa Intermédia | ~intermediate~ |
+				| ~RED–  | Taxa Reduzida   | ~reduced~      |
+				| ~ISE–  | Isenta          | ~exempt~       |
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -165,6 +244,73 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Tax exemption reason code",
 			i18n.PT: "Código do motivo de isenção de imposto",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				AT's ~TaxExemptionCode~ (Código do motivo de isenção de imposto) is a code that
+				specifies the reason the VAT tax is exempt in a Portuguese invoice. When the ~exempt~ tag
+				is used, one of the following must be defined in the ~ext~ map's ~pt-exemption-code~
+				property:
+
+				| Code  | Description                                                                                              |
+				| ----- | -------------------------------------------------------------------------------------------------------- |
+				| ~M01~ | Artigo 16.°, n.° 6 do CIVA                                                                               |
+				| ~M02~ | Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho                                                     |
+				| ~M04~ | Isento artigo 13.° do CIVA                                                                               |
+				| ~M05~ | Isento artigo 14.° do CIVA                                                                               |
+				| ~M06~ | Isento artigo 15.° do CIVA                                                                               |
+				| ~M07~ | Isento artigo 9.° do CIVA                                                                                |
+				| ~M09~ | IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA                                      |
+				| ~M10~ | IVA - regime de isenção / Artigo 57.° do CIVA                                                            |
+				| ~M11~ | Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto                                    |
+				| ~M12~ | Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho                  |
+				| ~M13~ | Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro               |
+				| ~M14~ | Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro                   |
+				| ~M15~ | Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro |
+				| ~M16~ | Isento artigo 14.° do RITI                                                                               |
+				| ~M19~ | Outras isenções - Isenções temporárias determinadas em diploma próprio                                   |
+				| ~M20~ | IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA                                                     |
+				| ~M21~ | IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA                   |
+				| ~M25~ | Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA                                          |
+				| ~M30~ | IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA                                                |
+				| ~M31~ | IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA                                                |
+				| ~M32~ | IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA                                                |
+				| ~M33~ | IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA                                                |
+				| ~M40~ | IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário                                   |
+				| ~M41~ | IVA - autoliquidação / Artigo 8.° n.° 3 do RITI                                                          |
+				| ~M42~ | IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro                                         |
+				| ~M43~ | IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro                                         |
+				| ~M99~ | Não sujeito ou não tributado                                                                             |
+
+				For example, you could define an invoice line exempt of tax as follows:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"lines": [
+						{
+							// ...
+							"item": {
+								"name": "Some service exempt of tax",
+								"price": "25.00"
+							},
+							"tax": [
+								{
+										"cat": "VAT",
+										"rate": "exempt",
+										"ext": {
+											// ...
+											"pt-saft-tax-rate": "ISE",
+											"pt-exemption-code": "M19"
+										}
+								}
+							]
+						}
+					]
+				}
+				~~~
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -364,6 +510,43 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Product Type",
 			i18n.PT: "Tipo de Produto",
 		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~ProductType~ (Indicador de produto ou serviço) indicates the type of each line
+				item in an invoice. The ~pt-saft-product-type~ extension used at line item level allows to
+				set the product type to one of the allowed values:
+
+				| Code | Description                        |
+				| ---- | ---------------------------------- |
+				| P    | Products (default)                 |
+				| S    | Services                           |
+				| O    | Other                              |
+				| E    | Excise Duties                      |
+				| I    | Taxes, fees and parafiscal charges |
+
+				For example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"lines": [
+						{
+							// ...
+							"item": {
+								"name": "Some service",
+								"price": "25.00",
+								"ext": {
+									"pt-saft-product-type": "S"
+								}
+							},
+							// ...
+						}
+					]
+				}
+				~~~
+			`),
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: ProductTypeGoods,
@@ -419,6 +602,73 @@ var extensions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "Payment Means",
 			i18n.PT: "Meio de Pagamento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The SAF-T's ~PaymentMechanism~ (Meios de pagamento) field specifies the payment means in a
+				sales invoice or payment. GOBL provides the ~pt-saft-payment-means~ extension to set this
+				value in your ~bill.Invoice~ advances or in you ~bill.Receipt~ method. GOBL maps certain
+				payment mean keys automatically to this extension:
+
+				| Code | Name                                               | GOBL Payment Mean                                     |
+				| ---- | -------------------------------------------------- | ----------------------------------------------------- |
+				| CC   | Cartão crédito                                     | ~card~                                                |
+				| CD   | Cartão débito                                      | (*)                                                   |
+				| CH   | Cheque bancário                                    | ~cheque~                                              |
+				| CI   | Letter of credit                                   | (*)                                                   |
+				| CO   | Cheque ou cartão oferta                            | (*)                                                   |
+				| CS   | Compensação de saldos em conta corrente            | ~netting~                                             |
+				| DE   | Dinheiro eletrónico                                | ~online~                                              |
+				| LC   | Letra comercial                                    | ~promissory-note~                                     |
+				| MB   | Referências de pagamento para Multibanco           | (*)                                                   |
+				| NU   | Numerário                                          | ~cash~                                                |
+				| OU   | Outro                                              | ~other~                                               |
+				| PR   | Permuta de bens                                    | (*)                                                   |
+				| TB   | Transferência bancária ou débito direto autorizado | ~credit-transfer~, ~debit-transfer~ or ~direct-debit~ |
+				| TR   | Títulos de compensação extrassalarial              | (*)                                                   |
+
+				(*) For codes not mapped from a GOBL Payment Mean, use ~other~ and explicitly set the
+				extension.
+
+				For example, in an GOBL invoice:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"payment": {
+						"advances": [
+							{
+								"date": "2023-01-30",
+								"key": "credit-transfer",
+								"description": "Adiantamento",
+								"amount": "100.00",
+								"ext": {
+									"pt-saft-payment-means": "TB"
+								}
+							}
+						]
+					},
+					// ...
+				}
+				~~~
+
+				For example, in a GOBL receipt:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/receipt",
+					// ...
+					"method": {
+						"key": "other",
+						"detail": "Compensação extrassalarial",
+						"ext": {
+							"pt-saft-payment-means": "TR"
+						}
+					},
+					// ...
+				}
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
