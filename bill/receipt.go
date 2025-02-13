@@ -250,6 +250,7 @@ func (rct *Receipt) calculate() error {
 	}
 
 	for i, l := range rct.Lines {
+		l.Index = i + 1
 		if err := l.calculate(rct.Currency, rct.ExchangeRates); err != nil {
 			return validation.Errors{
 				"lines": validation.Errors{

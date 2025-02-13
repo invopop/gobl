@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pt-saft-v1`: changed default unit to `one`
 - `bill.Receipt`: fixed panic calculating receipts with no lines
 - `bill.Receipt`: require code only to sign
+- `bill.Receipt`: calculate line indexes
 
 ## [v0.209.0] - 2025-02-04
 

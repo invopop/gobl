@@ -106,6 +106,16 @@ func TestReceiptCalculate(t *testing.T) {
 		require.NoError(t, r.Calculate())
 		assert.Equal(t, num.AmountZero, r.Total)
 	})
+
+	t.Run("line indexes", func(t *testing.T) {
+		r := testReceiptPaymentMinimal(t)
+		r.Lines = append(r.Lines, &bill.ReceiptLine{
+			Index: 23,
+		})
+		require.NoError(t, r.Calculate())
+		assert.Equal(t, 1, r.Lines[0].Index)
+		assert.Equal(t, 2, r.Lines[1].Index)
+	})
 }
 
 func TestReceiptValidate(t *testing.T) {
