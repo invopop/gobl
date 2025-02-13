@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
@@ -21,7 +22,18 @@ type Line struct {
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 	// Number of items
 	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
-	// Details about what is being sold
+	// Single identifier provided by the supplier for an object on which the
+	// line item is based and is not considered a universal identity. Examples
+	// include a subscription number, telephone number, meter point, etc.
+	// Utilize the label property to provide a description of the identifier.
+	Identifier *org.Identity `json:"identifier,omitempty" jsonschema:"title=Identifier"`
+	// A period of time relevant to when the service or item is delivered.
+	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
+	// Order reference for a specific line within a purchase order provided by the buyer.
+	Order cbc.Code `json:"order,omitempty" jsonschema:"title=Order Reference"`
+	// Buyer accounting reference cost code to associate with the line.
+	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost Reference"`
+	// Details about the item, service or good, that is being sold
 	Item *org.Item `json:"item" jsonschema:"title=Item"`
 	// Result of quantity multiplied by the item's price (calculated)
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
@@ -58,6 +70,10 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&l.UUID),
 		validation.Field(&l.Index, validation.Required),
 		validation.Field(&l.Quantity, validation.Required),
+		validation.Field(&l.Identifier),
+		validation.Field(&l.Period),
+		validation.Field(&l.Order),
+		validation.Field(&l.Cost),
 		validation.Field(&l.Item, validation.Required),
 		validation.Field(&l.Sum, validation.Required),
 		validation.Field(&l.Discounts),
@@ -75,6 +91,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)
 	normalizers.Each(l)
+	tax.Normalize(normalizers, l.Identifier)
 	tax.Normalize(normalizers, l.Taxes)
 	tax.Normalize(normalizers, l.Item)
 	tax.Normalize(normalizers, l.Discounts)

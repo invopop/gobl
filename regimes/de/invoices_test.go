@@ -58,7 +58,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv = validInvoice()
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing key de-tax-number; tax_id: cannot be blank.).")
+		assert.ErrorContains(t, inv.Validate(), "supplier: (identities: missing key 'de-tax-number'; tax_id: cannot be blank.).")
 	})
 
 	t.Run("simplified invoice - no tax details", func(t *testing.T) {

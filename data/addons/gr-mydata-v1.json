@@ -716,7 +716,7 @@
         "en": "Income Classification Category"
       },
       "desc": {
-        "en": "Invoices reported to the Greek tax authority via myDATA can optionally include information\nabout the income classification of each invoice item.\n\nIn a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be\nset at the item level to any of the values expected by the IAPR. For example:\n\n```json\n\"lines\": [\n\t{\n\t\t\"i\": 1,\n\t\t\"quantity\": \"20\",\n\t\t\"item\": {\n\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\"price\": \"90.00\",\n\t\t\"ext\": {\n\t\t\t\"gr-mydata-income-cat\": \"category1_1\",\n\t\t\t\"gr-mydata-income-type\": \"E3_561_001\",\n\t\t}\n\t\t}\n\t}\n]\n```"
+        "en": "Invoices reported to the Greek tax authority via myDATA can optionally include information\nabout the income classification of each invoice item.\n\nIn a GOBL invoice, the `gr-mydata-income-cat` and `gr-mydata-income-type` extensions can be\nset at the item level to any of the values expected by the IAPR. For example:\n\n```json\n\"lines\": [\n\t{\n\t\t\"i\": 1,\n\t\t\"quantity\": \"20\",\n\t\t\"item\": {\n\t\t\t\"name\": \"Υπηρεσίες Ανάπτυξης\",\n\t\t\t\"price\": \"90.00\",\n\t\t\t\"ext\": {\n\t\t\t\t\"gr-mydata-income-cat\": \"category1_1\",\n\t\t\t\t\"gr-mydata-income-type\": \"E3_561_001\",\n\t\t\t}\n\t\t}\n\t}\n]\n```"
       },
       "values": [
         {
