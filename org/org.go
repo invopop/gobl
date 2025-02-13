@@ -21,5 +21,6 @@ func init() {
 		Telephone{},
 		Unit(""),
 		Website{},
+		Attachment{},
 	)
 }

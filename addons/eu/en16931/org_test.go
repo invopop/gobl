@@ -76,3 +76,17 @@ func TestOrgItemValidate(t *testing.T) {
 		assert.NoError(t, ad.Validator(item))
 	})
 }
+
+func TestOrgAttachmentValidation(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("blank", func(t *testing.T) {
+		a := &org.Attachment{}
+		assert.ErrorContains(t, ad.Validator(a), "code: cannot be blank.")
+	})
+	t.Run("with code", func(t *testing.T) {
+		a := &org.Attachment{
+			Code: "123",
+		}
+		assert.NoError(t, ad.Validator(a))
+	})
+}
