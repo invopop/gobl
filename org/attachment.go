@@ -51,7 +51,7 @@ type Attachment struct {
 	// Data is the base64 encoded data of the attachment directly embedded
 	// inside the GOBL document. This should only be used when the URL cannot
 	// be used as it can dramatically increase the size of the JSON
-	// document, thus effectiving usability and performance.
+	// document, thus effecting usability and performance.
 	Data []byte `json:"data,omitempty" jsonschema:"title=Data"`
 }
 
