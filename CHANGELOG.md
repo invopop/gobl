@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.210.0] - 2025-02-19
+
 ### Added
 
 - `pt-saft-v1`: support for payments and receipts
