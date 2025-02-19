@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `pt-saft-v1`: changed default unit to `one`
 - `bill`: `Line` now incudes three new fields intended for greater EN16931 compatibility: `identifier`, `period`, `order`, and `cost`.
+- `org`: `Attachment` new structure for dealing with attachments.
+- `bill`: `Attachments` added to invoices.
+- `eu-en16931-v2017`: addon now includes additional validation for attachment codes.
 
 ### Fixed
 
@@ -73,7 +76,7 @@ This significant release adds support for the new `bill.Receipt` schema, to be u
 - `cbc`: `Key.Pop` method for splitting keys with sub-keys, e.g. `cbc.Key("a+b").Pop() == cbc.Key("a")`.
 - `in`: added Indian regime
 - `cef`: catalogue for CEF VATEX reason codes.
-- `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item Type Identification) extenions.
+- `untdid`: 1153 - `untdid-reference` (Reference Code Qualifier) and 7143 - `untdid-item-type` (Item Type Identification) extensions.
 
 ### Changed
 
