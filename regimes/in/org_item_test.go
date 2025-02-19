@@ -34,6 +34,6 @@ func TestOrgItemValidation(t *testing.T) {
 			},
 		}
 		err := tr.ValidateObject(i)
-		assert.ErrorContains(t, err, "identities: missing type HSN.")
+		assert.ErrorContains(t, err, "identities: missing type 'HSN'.")
 	})
 }

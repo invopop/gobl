@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `pt-saft-v1`: changed default unit to `one`
+- `bill`: `Line` now incudes three new fields intended for greater EN16931 compatibility: `identifier`, `period`, `order`, and `cost`.
+
+### Fixed
+
+- `eu-en16931-v2017`: removing validation of advanced payment means extension.
+- `pay`: `Card` fields now optional.
 - `bill.Receipt`: fixed panic calculating receipts with no lines
 - `bill.Receipt`: require code only to sign
 - `bill.Receipt`: calculate line indexes

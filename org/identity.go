@@ -130,10 +130,10 @@ func (v validateIdentitySet) matches(row *Identity) bool {
 func (v validateIdentitySet) String() string {
 	var parts []string
 	if v.typ != cbc.CodeEmpty {
-		parts = append(parts, fmt.Sprintf("type %s", v.typ))
+		parts = append(parts, fmt.Sprintf("type '%s'", v.typ))
 	}
 	if len(v.keys) != 0 {
-		parts = append(parts, fmt.Sprintf("key %s", strings.Join(cbc.KeyStrings(v.keys), ", ")))
+		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), ", ")))
 	}
 	return strings.Join(parts, ", ")
 }
@@ -165,7 +165,7 @@ func AddIdentity(in []*Identity, i *Identity) []*Identity {
 		return []*Identity{i}
 	}
 	for _, v := range in {
-		if v.Type == i.Type || v.Key == i.Key {
+		if v.Type == i.Type && v.Key == i.Key {
 			*v = *i // copy in place
 			return in
 		}

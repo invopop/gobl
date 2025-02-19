@@ -43,11 +43,11 @@ type Instructions struct {
 // to be stored openly.
 type Card struct {
 	// First 6 digits of the card's Primary Account Number (PAN).
-	First6 string `json:"first6" jsonschema:"title=First 6"`
+	First6 string `json:"first6,omitempty" jsonschema:"title=First 6"`
 	// Last 4 digits of the card's Primary Account Number (PAN).
-	Last4 string `json:"last4" jsonschema:"title=Last 4"`
+	Last4 string `json:"last4,omitempty" jsonschema:"title=Last 4"`
 	// Name of the person whom the card belongs to.
-	Holder string `json:"holder" jsonschema:"title=Holder Name"`
+	Holder string `json:"holder,omitempty" jsonschema:"title=Holder Name"`
 }
 
 // DirectDebit defines the data that will be used to make the direct debit.

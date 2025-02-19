@@ -151,7 +151,7 @@ func TestSuppliersValidation(t *testing.T) {
 		}
 		err := addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "identities: missing key br-nfse-municipal-reg;")
+			assert.Contains(t, err.Error(), "identities: missing key 'br-nfse-municipal-reg';")
 		}
 
 		sup.Identities = append(sup.Identities, &org.Identity{
@@ -160,7 +160,7 @@ func TestSuppliersValidation(t *testing.T) {
 		})
 		err = addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "identities: missing key br-nfse-municipal-reg;")
+			assert.NotContains(t, err.Error(), "identities: missing key 'br-nfse-municipal-reg';")
 		}
 	})
 

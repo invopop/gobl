@@ -22,11 +22,6 @@
         }
       },
       "type": "object",
-      "required": [
-        "first6",
-        "last4",
-        "holder"
-      ],
       "description": "Card contains simplified card holder data as a reference for the customer."
     },
     "CreditTransfer": {

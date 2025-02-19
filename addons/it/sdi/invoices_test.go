@@ -135,7 +135,7 @@ func TestCustomerValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		// ensure contains bother errors
-		assert.ErrorContains(t, err, "identities: missing key it-fiscal-code")
+		assert.ErrorContains(t, err, "identities: missing key 'it-fiscal-code'")
 		assert.ErrorContains(t, err, "tax_id: (code: cannot be blank.")
 	})
 
