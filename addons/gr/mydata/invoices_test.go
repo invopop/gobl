@@ -57,7 +57,7 @@ func validInvoice() *bill.Invoice {
 				},
 			},
 		},
-		Payment: &bill.Payment{
+		Payment: &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: pay.MeansKeyCreditTransfer,
 			},

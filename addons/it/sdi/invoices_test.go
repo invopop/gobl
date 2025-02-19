@@ -141,7 +141,7 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("payment advances", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Description: "Paid up front",
@@ -156,7 +156,7 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("payment terms missing instructions", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Terms: &pay.Terms{
 				DueDates: []*pay.DueDate{
 					{
@@ -173,7 +173,7 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("payment terms with no due dates", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Terms: &pay.Terms{
 				Key: "instant",
 			},
@@ -185,7 +185,7 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("payment terms with instructions", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Terms: &pay.Terms{
 				DueDates: []*pay.DueDate{
 					{

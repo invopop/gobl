@@ -160,7 +160,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 					Amount: num.MakeAmount(100, 2),
 				},
 			},
-			Payment: &bill.Payment{
+			Payment: &bill.PaymentDetails{
 				Advances: []*pay.Advance{
 					{
 						Description: "Test Advance",

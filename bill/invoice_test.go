@@ -936,7 +936,7 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
-		Payment: &bill.Payment{
+		Payment: &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Description: "Test Advance",
@@ -1004,7 +1004,7 @@ func TestCalculateInverted(t *testing.T) {
 				},
 			},
 		},
-		Payment: &bill.Payment{
+		Payment: &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Description: "Test Advance",

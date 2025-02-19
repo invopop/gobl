@@ -40,7 +40,7 @@ func (inv *Invoice) ConvertInto(cur currency.Code) (*Invoice, error) {
 	i2.Lines = inv.convertLines(ex)
 	i2.Discounts = inv.convertDiscounts(ex)
 	i2.Charges = inv.convertCharges(ex)
-	i2.Payment = inv.convertPayment(ex)
+	i2.Payment = inv.convertPaymentDetails(ex)
 	i2.Currency = cur
 
 	if err := i2.Calculate(); err != nil {
@@ -135,7 +135,7 @@ func (inv *Invoice) convertCharges(ex *currency.ExchangeRate) []*Charge {
 	return charges
 }
 
-func (inv *Invoice) convertPayment(ex *currency.ExchangeRate) *Payment {
+func (inv *Invoice) convertPaymentDetails(ex *currency.ExchangeRate) *PaymentDetails {
 	if inv.Payment == nil {
 		return nil
 	}

@@ -7,9 +7,9 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Delivery covers the details of the destination for the products described
+// DeliveryDetails covers the details of the destination for the products described
 // in the invoice body.
-type Delivery struct {
+type DeliveryDetails struct {
 	// The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes.
 	Receiver *org.Party `json:"receiver,omitempty" jsonschema:"title=Receiver"`
 	// Identities is used to define specific codes or IDs that may be used to
@@ -24,7 +24,7 @@ type Delivery struct {
 }
 
 // Validate the delivery details
-func (d *Delivery) Validate() error {
+func (d *DeliveryDetails) Validate() error {
 	return validation.ValidateStruct(d,
 		validation.Field(&d.Receiver),
 		validation.Field(&d.Identities),

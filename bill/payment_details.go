@@ -10,8 +10,8 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Payment contains details as to how the invoice should be paid.
-type Payment struct {
+// PaymentDetails contains details as to how the invoice should be paid.
+type PaymentDetails struct {
 	// The party responsible for receiving payment of the invoice, if not the supplier.
 	Payee *org.Party `json:"payee,omitempty" jsonschema:"title=Payee"`
 	// Payment terms or conditions.
@@ -23,7 +23,7 @@ type Payment struct {
 }
 
 // Normalize will try to normalize the payment's data.
-func (p *Payment) Normalize(normalizers tax.Normalizers) {
+func (p *PaymentDetails) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
 		return
 	}
@@ -35,7 +35,7 @@ func (p *Payment) Normalize(normalizers tax.Normalizers) {
 }
 
 // ValidateWithContext checks to make sure the payment data looks good
-func (p *Payment) ValidateWithContext(ctx context.Context) error {
+func (p *PaymentDetails) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.Payee),
 		validation.Field(&p.Terms),
@@ -45,21 +45,21 @@ func (p *Payment) ValidateWithContext(ctx context.Context) error {
 }
 
 // ResetAdvances clears the advances list.
-func (p *Payment) ResetAdvances() {
+func (p *PaymentDetails) ResetAdvances() {
 	if p == nil {
 		return
 	}
 	p.Advances = make([]*pay.Advance, 0)
 }
 
-func (p *Payment) calculateAdvances(zero num.Amount, totalWithTax num.Amount) {
+func (p *PaymentDetails) calculateAdvances(zero num.Amount, totalWithTax num.Amount) {
 	for _, a := range p.Advances {
 		a.CalculateFrom(totalWithTax)
 		a.Amount = a.Amount.MatchPrecision(zero)
 	}
 }
 
-func (p *Payment) totalAdvance(zero num.Amount) *num.Amount {
+func (p *PaymentDetails) totalAdvance(zero num.Amount) *num.Amount {
 	if p == nil || len(p.Advances) == 0 {
 		return nil
 	}

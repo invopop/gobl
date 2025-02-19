@@ -21,7 +21,7 @@ func TestPaymentMeansExtensions(t *testing.T) {
 
 func TestPayInstructionsNormalize(t *testing.T) {
 	inv := testInvoiceStandard(t)
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key: "online",
 			Ext: tax.Extensions{
@@ -53,7 +53,7 @@ func TestPayInstructionsNormalize(t *testing.T) {
 func TestPayInstructionsValidation(t *testing.T) {
 	inv := testInvoiceStandard(t)
 
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key: "cash",
 		},
@@ -69,7 +69,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	err := inv.Validate()
 	require.NoError(t, err)
 
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.PaymentDetails{
 		Advances: []*pay.Advance{
 			{
 				Key:         pay.MeansKeyDirectDebit.With("fooo"),
@@ -82,7 +82,7 @@ func TestPayInstructionsValidation(t *testing.T) {
 	err = inv.Validate()
 	assert.ErrorContains(t, err, "payment: (advances: (0: (ext: (it-sdi-payment-means: required.).).).)")
 
-	inv.Payment = &bill.Payment{
+	inv.Payment = &bill.PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key: pay.MeansKeyDirectDebit.With("fooo"),
 		},

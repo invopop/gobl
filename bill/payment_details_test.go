@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPaymentNormalize(t *testing.T) {
-	p := &Payment{
+func TestPaymentDetailsNormalize(t *testing.T) {
+	p := &PaymentDetails{
 		Instructions: &pay.Instructions{
 			Key:    "online",
 			Detail: "Some random payment",
@@ -26,10 +26,10 @@ func TestPaymentNormalize(t *testing.T) {
 	})
 }
 
-func TestPaymentCalculations(t *testing.T) {
+func TestPaymentDetailsCalculations(t *testing.T) {
 	zero := num.MakeAmount(0, 2)
 	total := num.MakeAmount(20000, 2)
-	p := &Payment{
+	p := &PaymentDetails{
 		Advances: []*pay.Advance{
 			{
 				Description: "Paid in advance",
@@ -40,7 +40,7 @@ func TestPaymentCalculations(t *testing.T) {
 	p.calculateAdvances(zero, total)
 	assert.Equal(t, "20.00", p.Advances[0].Amount.String())
 
-	p = &Payment{
+	p = &PaymentDetails{
 		Advances: []*pay.Advance{
 			{
 				Description: "Paid in advance",
@@ -54,7 +54,7 @@ func TestPaymentCalculations(t *testing.T) {
 	ta := p.totalAdvance(zero)
 	assert.Equal(t, "10.00", ta.String())
 
-	p = &Payment{
+	p = &PaymentDetails{
 		Advances: []*pay.Advance{
 			{
 				Description: "Paid in advance",
@@ -73,7 +73,7 @@ func TestPaymentCalculations(t *testing.T) {
 	t.Run("maintains precision", func(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
 		total := num.MakeAmount(20845, 3)
-		p := &Payment{
+		p := &PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Description: "Paid in advance",

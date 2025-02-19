@@ -48,7 +48,7 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
-			validation.By(validateInvoicePayment),
+			validation.By(validateInvoicePaymentDetails),
 			validation.Skip,
 		),
 	)
@@ -133,8 +133,8 @@ func validateCustomer(value interface{}) error {
 	)
 }
 
-func validateInvoicePayment(val any) error {
-	p, _ := val.(*bill.Payment)
+func validateInvoicePaymentDetails(val any) error {
+	p, _ := val.(*bill.PaymentDetails)
 	if p == nil {
 		return nil
 	}
