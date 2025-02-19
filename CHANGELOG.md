@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `bill`: renaming `Payment` to `PaymentDetails`, and `Delivery` to `DeliveryDetails`, to make room for new document types.
+- `bill`: renaming `Receipt` to `Payment`, and associated payment types to simply `advice` and `receipt`.
 
 ## [v0.210.0] - 2025-02-19
 

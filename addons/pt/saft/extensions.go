@@ -12,7 +12,7 @@ const (
 	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
 	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
 	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
-	ExtKeyReceiptType  cbc.Key = "pt-saft-receipt-type"
+	ExtKeyPaymentType  cbc.Key = "pt-saft-payment-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
 )
 
@@ -27,8 +27,8 @@ const (
 
 // Payment types
 const (
-	ReceiptTypeCash  cbc.Code = "RC"
-	ReceiptTypeOther cbc.Code = "RG"
+	PaymentTypeCash  cbc.Code = "RC"
+	PaymentTypeOther cbc.Code = "RG"
 )
 
 // Tax rates
@@ -133,31 +133,31 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyReceiptType,
+		Key: ExtKeyPaymentType,
 		Name: i18n.String{
-			i18n.EN: "Receipt Type",
-			i18n.PT: "Tipo de recibo",
+			i18n.EN: "Payment Type",
+			i18n.PT: "Tipo de Pagamento",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				To report payment receipts to the AT, GOBL provides conversion from ~bill.Receipt~
+				To report payment receipts to the AT, GOBL provides conversion from ~bill.Payment~
 				documents. In a payment, the SAF-T's ~PaymentType~ (Tipo de documento) field specifies its
-				type. In GOBL, this type can be set using the ~pt-saft-receipt-type~ extension. GOBL will
+				type. In GOBL, this type can be set using the ~pt-saft-payment-type~ extension. GOBL will
 				set the extension automatically based on the type and the tax tags you set. The table
 				below shows how this mapping is done:
 
 				| Code | Name                                       | GOBL Type | GOBL Tax Tag |
 				| ---- | ------------------------------------------ | --------- | ------------ |
-				| RG   | Outro Recibo                               | ~payment~ |              |
-				| RC   | Recibo no âmbito do regime de IVA de Caixa | ~payment~ | ~vat-cash~   |
+				| RG   | Outro Recibo                               | ~receipt~ |              |
+				| RC   | Recibo no âmbito do regime de IVA de Caixa | ~receipt~ | ~vat-cash~   |
 
 				For example:
 
 				~~~js
 				{
-					"$schema": "https://gobl.org/draft-0/bill/receipt",
+					"$schema": "https://gobl.org/draft-0/bill/payment",
 					// ...
-					"type": "payment",
+					"type": "receipt",
 					// ...
 					"ext": {
 						"pt-saft-receipt-type": "RG"
@@ -168,14 +168,14 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: ReceiptTypeCash,
+				Code: PaymentTypeCash,
 				Name: i18n.String{
 					i18n.EN: "Receipt under the VAT Cash scheme",
 					i18n.PT: "Recibo no âmbito do regime de IVA de Caixa",
 				},
 			},
 			{
-				Code: ReceiptTypeOther,
+				Code: PaymentTypeOther,
 				Name: i18n.String{
 					i18n.EN: "Other Receipt",
 					i18n.PT: "Outro Recibo",

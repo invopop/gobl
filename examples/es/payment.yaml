@@ -1,7 +1,7 @@
-$schema: "https://gobl.org/draft-0/bill/receipt"
+$schema: "https://gobl.org/draft-0/bill/payment"
 $regime: "ES"
 uuid: "0194ad4c-3462-7695-a40c-66a30ccc1405"
-type: "payment"
+type: "receipt"
 method:
   key: "credit-transfer"
 series: "RCT"

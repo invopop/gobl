@@ -18,36 +18,36 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestReceiptCalculate(t *testing.T) {
+func TestPaymentCalculate(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		require.NoError(t, r.Calculate())
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
 
-		assert.Equal(t, bill.ReceiptTypePayment, r.Type)
-		assert.Equal(t, currency.EUR, r.Currency)
-		assert.Equal(t, r.Regime.Country.String(), "ES")
-		assert.Equal(t, r.Supplier.TaxID.Code.String(), "B98602642", "should normalize")
+		assert.Equal(t, bill.PaymentTypeReceipt, p.Type)
+		assert.Equal(t, currency.EUR, p.Currency)
+		assert.Equal(t, p.Regime.Country.String(), "ES")
+		assert.Equal(t, p.Supplier.TaxID.Code.String(), "B98602642", "should normalize")
 	})
 
 	t.Run("missing supplier", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Supplier = nil
+		p := testPaymentMinimal(t)
+		p.Supplier = nil
 		assert.NotPanics(t, func() {
-			assert.ErrorContains(t, r.Calculate(), "currency: required, unable to determine")
+			assert.ErrorContains(t, p.Calculate(), "currency: required, unable to determine")
 		})
 	})
 
 	t.Run("missing supplier tax ID", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Supplier.TaxID = nil
+		p := testPaymentMinimal(t)
+		p.Supplier.TaxID = nil
 		assert.NotPanics(t, func() {
-			assert.ErrorContains(t, r.Calculate(), "currency: required, unable to determine")
+			assert.ErrorContains(t, p.Calculate(), "currency: required, unable to determine")
 		})
 	})
 
 	t.Run("with debits and credits", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Lines = append(r.Lines, &bill.ReceiptLine{
+		p := testPaymentMinimal(t)
+		p.Lines = append(p.Lines, &bill.PaymentLine{
 			Credit: num.NewAmount(5000, 2),
 			Document: &org.DocumentRef{
 				Type:      "credit-note",
@@ -56,29 +56,29 @@ func TestReceiptCalculate(t *testing.T) {
 				IssueDate: cal.NewDate(2025, 1, 24),
 			},
 		})
-		require.NoError(t, r.Calculate())
+		require.NoError(t, p.Calculate())
 
-		assert.Equal(t, "50.00", r.Total.String(), "should balance")
+		assert.Equal(t, "50.00", p.Total.String(), "should balance")
 	})
 
 	t.Run("with credit", func(t *testing.T) {
-		rct := testReceiptPaymentMinimal(t)
-		rct.Lines[0].Credit = num.NewAmount(5000, 2)
-		rct.Lines[0].Debit = nil
-		require.NoError(t, rct.Calculate())
+		pmt := testPaymentMinimal(t)
+		pmt.Lines[0].Credit = num.NewAmount(5000, 2)
+		pmt.Lines[0].Debit = nil
+		require.NoError(t, pmt.Calculate())
 
-		assert.Equal(t, "-50.00", rct.Total.String(), "should balance")
+		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
 	})
 
 	t.Run("with taxes", func(t *testing.T) {
-		r := testReceiptPaymentWithTax(t)
-		require.NoError(t, r.Calculate())
-		assert.Equal(t, "21.00", r.Tax.Sum.String())
+		p := testPaymentWithTax(t)
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "21.00", p.Tax.Sum.String())
 	})
 
 	t.Run("with multiple tax lines", func(t *testing.T) {
-		r := testReceiptPaymentWithTax(t)
-		r.Lines = append(r.Lines, &bill.ReceiptLine{
+		p := testPaymentWithTax(t)
+		p.Lines = append(p.Lines, &bill.PaymentLine{
 			Debit: num.NewAmount(10000, 2),
 			Tax: &tax.Total{
 				Categories: []*tax.CategoryTotal{
@@ -94,121 +94,121 @@ func TestReceiptCalculate(t *testing.T) {
 				},
 			},
 		})
-		require.NoError(t, r.Calculate())
-		assert.Len(t, r.Tax.Categories, 1)
-		assert.Len(t, r.Tax.Categories[0].Rates, 2)
-		assert.Equal(t, "31.00", r.Tax.Sum.String())
+		require.NoError(t, p.Calculate())
+		assert.Len(t, p.Tax.Categories, 1)
+		assert.Len(t, p.Tax.Categories[0].Rates, 2)
+		assert.Equal(t, "31.00", p.Tax.Sum.String())
 	})
 
 	t.Run("missing lines", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Lines = nil
-		require.NoError(t, r.Calculate())
-		assert.Equal(t, num.AmountZero, r.Total)
+		p := testPaymentMinimal(t)
+		p.Lines = nil
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, num.AmountZero, p.Total)
 	})
 
 	t.Run("line indexes", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Lines = append(r.Lines, &bill.ReceiptLine{
+		p := testPaymentMinimal(t)
+		p.Lines = append(p.Lines, &bill.PaymentLine{
 			Index: 23,
 		})
-		require.NoError(t, r.Calculate())
-		assert.Equal(t, 1, r.Lines[0].Index)
-		assert.Equal(t, 2, r.Lines[1].Index)
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, 1, p.Lines[0].Index)
+		assert.Equal(t, 2, p.Lines[1].Index)
 	})
 }
 
-func TestReceiptValidate(t *testing.T) {
+func TestPaymentValidate(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		require.NoError(t, r.Calculate())
-		require.NoError(t, r.Validate())
+		p := testPaymentMinimal(t)
+		require.NoError(t, p.Calculate())
+		require.NoError(t, p.Validate())
 	})
 
 	t.Run("with error", func(t *testing.T) {
-		rct := testReceiptPaymentMinimal(t)
-		require.NoError(t, rct.Calculate())
-		rct.Supplier = nil
-		assert.ErrorContains(t, rct.Validate(), "supplier: cannot be blank")
+		pmt := testPaymentMinimal(t)
+		require.NoError(t, pmt.Calculate())
+		pmt.Supplier = nil
+		assert.ErrorContains(t, pmt.Validate(), "supplier: cannot be blank")
 	})
 
 	t.Run("with addon", func(t *testing.T) {
-		rct := testReceiptPaymentMinimal(t)
-		rct.Addons.SetAddons(tbai.V1)
-		require.NoError(t, rct.Calculate())
-		require.NoError(t, rct.Validate())
+		pmt := testPaymentMinimal(t)
+		pmt.Addons.SetAddons(tbai.V1)
+		require.NoError(t, pmt.Calculate())
+		require.NoError(t, pmt.Validate())
 	})
 }
 
-func TestReceiptExchangeRates(t *testing.T) {
+func TestPaymentExchangeRates(t *testing.T) {
 	t.Run("debit basic", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Currency = currency.EUR
-		r.ExchangeRates = []*currency.ExchangeRate{
+		p := testPaymentMinimal(t)
+		p.Currency = currency.EUR
+		p.ExchangeRates = []*currency.ExchangeRate{
 			{
 				From:   currency.USD,
 				To:     currency.EUR,
 				Amount: num.MakeAmount(96, 2),
 			},
 		}
-		r.Lines[0].Currency = currency.USD
-		require.NoError(t, r.Calculate())
+		p.Lines[0].Currency = currency.USD
+		require.NoError(t, p.Calculate())
 
-		assert.Equal(t, "96.00", r.Total.String())
+		assert.Equal(t, "96.00", p.Total.String())
 	})
 
 	t.Run("debit missing rate", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Currency = currency.EUR
-		r.ExchangeRates = []*currency.ExchangeRate{
+		p := testPaymentMinimal(t)
+		p.Currency = currency.EUR
+		p.ExchangeRates = []*currency.ExchangeRate{
 			{
 				From:   currency.USD,
 				To:     currency.EUR,
 				Amount: num.MakeAmount(96, 2),
 			},
 		}
-		r.Lines[0].Currency = currency.GBP
-		require.ErrorContains(t, r.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).)")
+		p.Lines[0].Currency = currency.GBP
+		require.ErrorContains(t, p.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).)")
 	})
 
 	t.Run("credit basic", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Currency = currency.EUR
-		r.ExchangeRates = []*currency.ExchangeRate{
+		p := testPaymentMinimal(t)
+		p.Currency = currency.EUR
+		p.ExchangeRates = []*currency.ExchangeRate{
 			{
 				From:   currency.USD,
 				To:     currency.EUR,
 				Amount: num.MakeAmount(96, 2),
 			},
 		}
-		r.Lines[0].Currency = currency.USD
-		r.Lines[0].Credit = r.Lines[0].Debit
-		r.Lines[0].Debit = nil
-		require.NoError(t, r.Calculate())
+		p.Lines[0].Currency = currency.USD
+		p.Lines[0].Credit = p.Lines[0].Debit
+		p.Lines[0].Debit = nil
+		require.NoError(t, p.Calculate())
 
-		assert.Equal(t, "-96.00", r.Total.String())
+		assert.Equal(t, "-96.00", p.Total.String())
 	})
 
 	t.Run("credit missing rate", func(t *testing.T) {
-		r := testReceiptPaymentMinimal(t)
-		r.Currency = currency.EUR
-		r.ExchangeRates = []*currency.ExchangeRate{
+		p := testPaymentMinimal(t)
+		p.Currency = currency.EUR
+		p.ExchangeRates = []*currency.ExchangeRate{
 			{
 				From:   currency.USD,
 				To:     currency.EUR,
 				Amount: num.MakeAmount(96, 2),
 			},
 		}
-		r.Lines[0].Credit = r.Lines[0].Debit
-		r.Lines[0].Debit = nil
-		r.Lines[0].Currency = currency.GBP
-		require.ErrorContains(t, r.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).).")
+		p.Lines[0].Credit = p.Lines[0].Debit
+		p.Lines[0].Debit = nil
+		p.Lines[0].Currency = currency.GBP
+		require.ErrorContains(t, p.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).).")
 	})
 }
 
-func testReceiptPaymentMinimal(t *testing.T) *bill.Receipt {
+func testPaymentMinimal(t *testing.T) *bill.Payment {
 	t.Helper()
-	r := &bill.Receipt{
+	p := &bill.Payment{
 		Series:    "P1",
 		Code:      "0123",
 		IssueDate: cal.MakeDate(2025, 1, 24),
@@ -229,7 +229,7 @@ func testReceiptPaymentMinimal(t *testing.T) *bill.Receipt {
 				Code:    "54387763P",
 			},
 		},
-		Lines: []*bill.ReceiptLine{
+		Lines: []*bill.PaymentLine{
 			{
 				Document: &org.DocumentRef{
 					Series:    "F1",
@@ -240,12 +240,12 @@ func testReceiptPaymentMinimal(t *testing.T) *bill.Receipt {
 			},
 		},
 	}
-	return r
+	return p
 }
 
-func testReceiptPaymentWithTax(t *testing.T) *bill.Receipt {
-	rct := testReceiptPaymentMinimal(t)
-	rct.Lines[0].Tax = &tax.Total{
+func testPaymentWithTax(t *testing.T) *bill.Payment {
+	pmt := testPaymentMinimal(t)
+	pmt.Lines[0].Tax = &tax.Total{
 		Categories: []*tax.CategoryTotal{
 			{
 				Code: "VAT",
@@ -258,10 +258,10 @@ func testReceiptPaymentWithTax(t *testing.T) *bill.Receipt {
 			},
 		},
 	}
-	return rct
+	return pmt
 }
 
-func TestReceiptJSONSchemaExtend(t *testing.T) {
+func TestPaymentJSONSchemaExtend(t *testing.T) {
 	eg := `{
 		"properties": {
 			"$regime": {
@@ -270,7 +270,7 @@ func TestReceiptJSONSchemaExtend(t *testing.T) {
 			},
 			"$addons": {
 				"items": {
-            		"$ref": "https://gobl.org/draft-0/cbc/key",
+					"$ref": "https://gobl.org/draft-0/cbc/key",
 					"type": "array",
 					"title": "Addons",
 					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
@@ -285,16 +285,16 @@ func TestReceiptJSONSchemaExtend(t *testing.T) {
 			"type": {
 				"$ref": "https://gobl.org/draft-0/cbc/key",
 				"title": "Type",
-		        "description": "Type of invoice document subject to the requirements of the local tax regime.",
-        		"calculated": true
+				"description": "Type of invoice document subject to the requirements of the local tax regime.",
+				"calculated": true
 			}
 		}
 	}`
 	js := new(jsonschema.Schema)
 	require.NoError(t, json.Unmarshal([]byte(eg), js))
 
-	rct := bill.Receipt{}
-	rct.JSONSchemaExtend(js)
+	pmt := bill.Payment{}
+	pmt.JSONSchemaExtend(js)
 
 	assert.Equal(t, js.Properties.Len(), 4) // from this example
 
@@ -316,7 +316,7 @@ func TestReceiptJSONSchemaExtend(t *testing.T) {
 		prop, ok := js.Properties.Get("type")
 		require.True(t, ok)
 		assert.Greater(t, len(prop.OneOf), 1)
-		it := bill.ReceiptTypes[0]
+		it := bill.PaymentTypes[0]
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 	t.Run("recommended", func(t *testing.T) {

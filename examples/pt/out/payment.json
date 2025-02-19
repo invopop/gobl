@@ -1,0 +1,117 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "3136061fc7e316f57f95491356011cc401be9b54ce5b5655d50b4360842a0346"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/payment",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
+		"uuid": "d7388b17-d35f-4f2e-a33e-9bca2fae9089",
+		"type": "receipt",
+		"method": {
+			"key": "credit-transfer",
+			"detail": "Transferência bancária",
+			"ext": {
+				"pt-saft-payment-means": "TB"
+			}
+		},
+		"series": "RG SAMPLE",
+		"code": "1",
+		"issue_date": "2025-01-30",
+		"currency": "EUR",
+		"ext": {
+			"pt-saft-payment-type": "RG"
+		},
+		"supplier": {
+			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
+			"name": "Hotelzinho",
+			"tax_id": {
+				"country": "PT",
+				"code": "545259045"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"customer": {
+			"name": "Maria Santos Silva",
+			"tax_id": {
+				"country": "PT",
+				"code": "514329874"
+			},
+			"addresses": [
+				{
+					"street": "Rua da Maria",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"document": {
+					"issue_date": "2025-01-15",
+					"series": "FT SAMPLE",
+					"code": "1"
+				},
+				"debit": "123",
+				"tax": {
+					"categories": [
+						{
+							"code": "VAT",
+							"rates": [
+								{
+									"key": "standard",
+									"ext": {
+										"pt-region": "PT",
+										"pt-saft-tax-rate": "NOR"
+									},
+									"base": "100.00",
+									"percent": "23.0%",
+									"amount": "23.00"
+								}
+							],
+							"amount": "23.00"
+						}
+					],
+					"sum": "23.00"
+				},
+				"total": "123.00"
+			}
+		],
+		"tax": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"key": "standard",
+							"ext": {
+								"pt-region": "PT",
+								"pt-saft-tax-rate": "NOR"
+							},
+							"base": "100.00",
+							"percent": "23.0%",
+							"amount": "23.00"
+						}
+					],
+					"amount": "23.00"
+				}
+			],
+			"sum": "23.00"
+		},
+		"total": "123.00"
+	}
+}

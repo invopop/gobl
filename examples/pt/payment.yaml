@@ -1,7 +1,7 @@
-$schema: https://gobl.org/draft-0/bill/receipt
+$schema: https://gobl.org/draft-0/bill/payment
 $addons: ["pt-saft-v1"]
 uuid: "d7388b17-d35f-4f2e-a33e-9bca2fae9089"
-type: payment
+type: receipt
 method:
   key: credit-transfer
   detail: "Transferência bancária"
