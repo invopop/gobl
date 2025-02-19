@@ -90,6 +90,9 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 		code   cbc.Code
 		err    string
 	}{
+		// Nil case
+		{"", "", ""},
+
 		// Valid code and series
 		{"FT SERIES-A", "123", ""},
 		{"", "FT SERIES-A/123", ""},

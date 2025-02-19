@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "51ce572202226bd2dcd77002fdbc05498b0f7019711dc47ecf8e001867ce5c71"
+			"val": "cb699176e14b5b52bdb176c35c6ccd94e3df75cc04a0758e8eb88cf9a9b8a3a4"
 		}
 	},
 	"doc": {
@@ -48,7 +48,7 @@
 				"item": {
 					"name": "Noite em quarto duplo",
 					"price": "100.00",
-					"unit": "item",
+					"unit": "one",
 					"ext": {
 						"pt-saft-product-type": "S"
 					}
@@ -68,6 +68,19 @@
 				"total": "100.00"
 			}
 		],
+		"payment": {
+			"advances": [
+				{
+					"date": "2023-01-30",
+					"key": "credit-transfer",
+					"description": "Adiantamento",
+					"amount": "100.00",
+					"ext": {
+						"pt-saft-payment-means": "TB"
+					}
+				}
+			]
+		},
 		"totals": {
 			"sum": "100.00",
 			"total": "100.00",
@@ -94,7 +107,9 @@
 			},
 			"tax": "23.00",
 			"total_with_tax": "123.00",
-			"payable": "123.00"
+			"payable": "123.00",
+			"advance": "100.00",
+			"due": "23.00"
 		}
 	}
 }
