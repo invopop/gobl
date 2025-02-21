@@ -2,12 +2,9 @@ package bill
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -35,8 +32,11 @@ type Line struct {
 	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost Reference"`
 	// Details about the item, service or good, that is being sold
 	Item *org.Item `json:"item" jsonschema:"title=Item"`
+	// Breakdown of the line item for more detailed information. The sum of all lines
+	// will be used for the item price.
+	Breakdown []*SubLine `json:"breakdown,omitempty" jsonschema:"title=Breakdown"`
 	// Result of quantity multiplied by the item's price (calculated)
-	Sum num.Amount `json:"sum" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
+	Sum *num.Amount `json:"sum,omitempty" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
 	// Discounts applied to this line
 	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
 	// Charges applied to this line
@@ -44,8 +44,51 @@ type Line struct {
 	// Map of taxes to be applied and used in the invoice totals
 	Taxes tax.Set `json:"taxes,omitempty" jsonschema:"title=Taxes"`
 	// Total line amount after applying discounts to the sum (calculated).
-	Total num.Amount `json:"total" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
+	Total *num.Amount `json:"total,omitempty" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
+
+	// List of substituted lines. Useful for deliveries or corrective documents in order
+	// to indicate to the recipient which of the requested lines are being replaced.
+	// This is for purely informative purposes, and will not be used for calculations.
+	Substituted []*SubLine `json:"substituted,omitempty" jsonschema:"title=Substituted"`
+
 	// Set of specific notes for this line that may be required for
+	// clarification.
+	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// internal amount provided with greater precision
+	total num.Amount
+}
+
+// SubLine provides a simplified line that can be embedded inside other lines
+// to provide a more detailed breakdown of the items being sold or substituted.
+type SubLine struct {
+	uuid.Identify
+	// Line number inside the parent (calculated)
+	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
+	// Number of items
+	Quantity num.Amount `json:"quantity" jsonschema:"title=Quantity"`
+	// Single identifier provided by the supplier for an object on which the
+	// line item is based and is not considered a universal identity. Examples
+	// include a subscription number, telephone number, meter point, etc.
+	// Utilize the label property to provide a description of the identifier.
+	Identifier *org.Identity `json:"identifier,omitempty" jsonschema:"title=Identifier"`
+	// A period of time relevant to when the service or item is delivered.
+	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
+	// Order reference for a specific line within a purchase order provided by the buyer.
+	Order cbc.Code `json:"order,omitempty" jsonschema:"title=Order Reference"`
+	// Buyer accounting reference cost code to associate with the line.
+	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost Reference"`
+	// Details about the item, service or good, that is being sold
+	Item *org.Item `json:"item" jsonschema:"title=Item"`
+	// Result of quantity multiplied by the item's price (calculated)
+	Sum *num.Amount `json:"sum,omitempty" jsonschema:"title=Sum" jsonschema_extras:"calculated=true"`
+	// Discounts applied to this sub-line
+	Discounts []*LineDiscount `json:"discounts,omitempty" jsonschema:"title=Discounts"`
+	// Charges applied to this sub-line
+	Charges []*LineCharge `json:"charges,omitempty" jsonschema:"title=Charges"`
+	// Total sub-line amount after applying discounts to the sum (calculated).
+	Total *num.Amount `json:"total,omitempty" jsonschema:"title=Total"  jsonschema_extras:"calculated=true"`
+	// Set of specific notes for this sub-line that may be required for
 	// clarification.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 
@@ -63,6 +106,11 @@ func (l *Line) GetTotal() num.Amount {
 	return l.total
 }
 
+// Validate performs a validation check on the line without a context.
+func (l *Line) Validate() error {
+	return l.ValidateWithContext(context.Background())
+}
+
 // ValidateWithContext ensures the line contains everything required using
 // the provided context that should include the regime.
 func (l *Line) ValidateWithContext(ctx context.Context) error {
@@ -75,12 +123,54 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&l.Order),
 		validation.Field(&l.Cost),
 		validation.Field(&l.Item, validation.Required),
-		validation.Field(&l.Sum, validation.Required),
+		validation.Field(&l.Breakdown),
+		validation.Field(&l.Sum,
+			validation.When(
+				l.Item != nil && l.Item.Price != nil,
+				validation.Required,
+			),
+		),
 		validation.Field(&l.Discounts),
 		validation.Field(&l.Charges),
 		validation.Field(&l.Taxes),
-		validation.Field(&l.Total, validation.Required),
+		validation.Field(&l.Total,
+			validation.When(
+				l.Item != nil && l.Item.Price != nil,
+				validation.Required,
+			),
+		),
+		validation.Field(&l.Substituted),
 		validation.Field(&l.Notes),
+	)
+}
+
+// ValidateWithContext ensures the line contains everything required using
+// the provided context that should include the regime.
+func (sl *SubLine) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithContext(ctx, sl,
+		validation.Field(&sl.UUID),
+		validation.Field(&sl.Index, validation.Required),
+		validation.Field(&sl.Quantity, validation.Required),
+		validation.Field(&sl.Identifier),
+		validation.Field(&sl.Period),
+		validation.Field(&sl.Order),
+		validation.Field(&sl.Cost),
+		validation.Field(&sl.Item, validation.Required),
+		validation.Field(&sl.Sum,
+			validation.When(
+				sl.Item != nil && sl.Item.Price != nil,
+				validation.Required,
+			),
+		),
+		validation.Field(&sl.Discounts),
+		validation.Field(&sl.Charges),
+		validation.Field(&sl.Total,
+			validation.When(
+				sl.Item != nil && sl.Item.Price != nil,
+				validation.Required,
+			),
+		),
+		validation.Field(&sl.Notes),
 	)
 }
 
@@ -94,150 +184,102 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, l.Identifier)
 	tax.Normalize(normalizers, l.Taxes)
 	tax.Normalize(normalizers, l.Item)
+	tax.Normalize(normalizers, l.Breakdown)
 	tax.Normalize(normalizers, l.Discounts)
 	tax.Normalize(normalizers, l.Charges)
+	tax.Normalize(normalizers, l.Substituted)
 }
 
-// calculate figures out the totals according to quantity and discounts.
-func (l *Line) calculate(cur currency.Code, rates []*currency.ExchangeRate) error {
-	if l.Item == nil {
-		return nil
-	}
-
-	// Perform currency manipulation to ensure item's price is
-	// in the document's currency.
-	if err := l.calculateItemPrice(cur, rates); err != nil {
-		return err
-	}
-
-	// Increase price accuracy for calculations
-	zero := cur.Def().Zero()
-	price := l.Item.Price
-	price = price.RescaleUp(zero.Exp() + 2)
-
-	// Calculate the line sum and total
-	l.Sum = price.Multiply(l.Quantity)
-	l.total = l.Sum
-
-	for _, d := range l.Discounts {
-		if d.Percent != nil && !d.Percent.IsZero() {
-			d.Amount = d.Percent.Of(l.Sum) // always override
-		}
-		d.Amount = d.Amount.MatchPrecision(zero)
-		l.total = l.total.Subtract(d.Amount)
-		d.Amount = d.Amount.Rescale(l.Item.Price.Exp())
-	}
-
-	for _, c := range l.Charges {
-		if c.Percent != nil && !c.Percent.IsZero() {
-			c.Amount = c.Percent.Of(l.Sum) // always override
-		}
-		c.Amount = c.Amount.MatchPrecision(zero)
-		l.total = l.total.Add(c.Amount)
-		c.Amount = c.Amount.Rescale(l.Item.Price.Exp())
-	}
-
-	// Rescale the final sum and total
-	l.Sum = l.Sum.Rescale(l.Item.Price.Exp())
-	l.Total = l.total.Rescale(l.Item.Price.Exp())
-
-	return nil
+// Normalize performs normalization on the subline and embedded objects using the
+// provided list of normalizers.
+func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
+	sl.Discounts = CleanLineDiscounts(sl.Discounts)
+	sl.Charges = CleanLineCharges(sl.Charges)
+	normalizers.Each(sl)
+	tax.Normalize(normalizers, sl.Identifier)
+	tax.Normalize(normalizers, sl.Item)
+	tax.Normalize(normalizers, sl.Discounts)
+	tax.Normalize(normalizers, sl.Charges)
 }
 
-// calculateItemPrice will attempt to perform any currency conversion process on
-// the line item's data so that the currency always matches that of the
-// document.
-func (l *Line) calculateItemPrice(cur currency.Code, rates []*currency.ExchangeRate) error {
-	item := l.Item
-	icur := item.Currency
-	if icur == currency.CodeEmpty {
-		icur = cur
-	}
-	item.Price = item.Price.MatchPrecision(icur.Def().Zero())
-	if item.Currency == currency.CodeEmpty || item.Currency == cur {
-		return nil
-	}
-
-	// Grab a copy of the base price
-	nap := &currency.Amount{
-		Currency: item.Currency,
-		Value:    item.Price,
-	}
-
-	// First check the alt prices
-	for _, ap := range item.AltPrices {
-		if ap.Currency == cur {
-			item.Currency = ap.Currency
-			item.Price = ap.Value.MatchPrecision(ap.Currency.Def().Zero())
-			item.AltPrices = []*currency.Amount{nap}
-			return nil
-		}
-	}
-
-	// Try to perform a currency exchange
-	np := currency.Convert(rates, item.Currency, cur, item.Price)
-	if np == nil {
-		return fmt.Errorf("no exchange rate found from '%v' to '%v'", item.Currency, cur)
-	}
-	item.Price = *np
-	item.Currency = cur
-	item.AltPrices = []*currency.Amount{nap}
-	return nil
-}
-
-func (l *Line) removeIncludedTaxes(cat cbc.Code) *Line {
+func removeLineIncludedTaxes(line *Line, cat cbc.Code) *Line {
 	accuracy := defaultTaxRemovalAccuracy
-	rate := l.Taxes.Get(cat)
+	rate := line.Taxes.Get(cat)
 	if rate == nil || rate.Percent == nil {
-		return l
+		return line
 	}
 
-	l2 := *l
-	l2i := *l.Item
+	l2 := *line
+	l2i := *line.Item
 
 	l2i.AltPrices = nil // empty alternative prices
-	l2i.Price = l.Item.Price.Upscale(accuracy).Remove(*rate.Percent)
+	price := line.Item.Price.Upscale(accuracy).Remove(*rate.Percent)
+	l2i.Price = &price
 	// assume sum and total will be calculated automatically
 
-	if len(l2.Discounts) > 0 {
-		rows := make([]*LineDiscount, len(l2.Discounts))
-		for i, v := range l.Discounts {
-			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Remove(*rate.Percent)
-			rows[i] = &d
-		}
-		l2.Discounts = rows
-	}
-
-	if len(l2.Charges) > 0 {
-		rows := make([]*LineCharge, len(l2.Charges))
-		for i, v := range l.Charges {
-			d := *v
-			d.Amount = d.Amount.Upscale(accuracy).Remove(*rate.Percent)
-			rows[i] = &d
-		}
-		l2.Charges = rows
-	}
-
+	l2.Breakdown = removeSubLinesIncludedTaxes(line.Breakdown, rate, accuracy)
+	l2.Discounts = removeLineDiscountsIncludedTaxes(line.Discounts, rate, accuracy)
+	l2.Charges = removeLineChargesIncludedTaxes(line.Charges, rate, accuracy)
+	l2.Substituted = removeSubLinesIncludedTaxes(line.Substituted, rate, accuracy)
 	l2.Item = &l2i
+
 	return &l2
 }
 
-func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
-	for i, l := range lines {
-		l.Index = i + 1
-		if err := l.calculate(cur, rates); err != nil {
-			return validation.Errors{strconv.Itoa(i): err}
-		}
+func removeSubLinesIncludedTaxes(sls []*SubLine, tc *tax.Combo, exp uint32) []*SubLine {
+	if len(sls) == 0 {
+		return nil
 	}
-	return nil
+	rows := make([]*SubLine, len(sls))
+	for i, sl := range sls {
+		sl2 := *sl
+		sl2i := *sl.Item
+		sl2i.AltPrices = nil
+		price := sl.Item.Price.Upscale(exp).Remove(*tc.Percent)
+		sl2i.Price = &price
+		sl2.Discounts = removeLineDiscountsIncludedTaxes(sl.Discounts, tc, exp)
+		sl2.Charges = removeLineChargesIncludedTaxes(sl.Charges, tc, exp)
+		sl2.Item = &sl2i
+		rows[i] = &sl2
+	}
+	return rows
 }
 
-func calculateLineSum(lines []*Line, cur currency.Code) num.Amount {
-	sum := cur.Def().Zero()
-	for _, l := range lines {
-		sum = sum.MatchPrecision(l.total)
-		sum = sum.Add(l.total)
+func removeLineDiscountsIncludedTaxes(discounts []*LineDiscount, tc *tax.Combo, exp uint32) []*LineDiscount {
+	if len(discounts) == 0 {
+		return nil
 	}
-	return sum
+	rows := make([]*LineDiscount, len(discounts))
+	for i, v := range discounts {
+		d := *v
+		d.Amount = d.Amount.Upscale(exp).Remove(*tc.Percent)
+		rows[i] = &d
+	}
+	return rows
+}
+
+func removeLineChargesIncludedTaxes(charges []*LineCharge, tc *tax.Combo, exp uint32) []*LineCharge {
+	if len(charges) == 0 {
+		return nil
+	}
+	rows := make([]*LineCharge, len(charges))
+	for i, v := range charges {
+		d := *v
+		d.Amount = d.Amount.Upscale(exp).Remove(*tc.Percent)
+		rows[i] = &d
+	}
+	return rows
+}
+
+func lineItemHasPrice(value any) error {
+	line, ok := value.(*Line)
+	if line == nil || !ok {
+		return nil
+	}
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Item,
+			org.ItemPriceRequired(),
+			validation.Skip,
+		),
+	)
 }

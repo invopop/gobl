@@ -57,7 +57,7 @@ func validInvoice() *bill.Invoice {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "bogus",
-					Price: num.MakeAmount(10000, 2),
+					Price: num.NewAmount(10000, 2),
 					Unit:  org.UnitPackage,
 					Ext: tax.Extensions{
 						cfdi.ExtKeyProdServ: "01010101",
@@ -149,7 +149,7 @@ func TestLineValidation(t *testing.T) {
 
 	inv = validInvoice()
 
-	inv.Lines[0].Item.Price = num.MakeAmount(-1, 0)
+	inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
 	assertValidationError(t, inv, "lines: (0: (total: must be no less than 0.).)")
 }
 

@@ -7,7 +7,9 @@ import (
 
 func init() {
 	schema.Register(schema.GOBL.Add("bill"),
+		Delivery{},
 		Invoice{},
+		Order{},
 		Payment{},
 		CorrectionOptions{},
 	)

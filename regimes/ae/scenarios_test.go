@@ -39,7 +39,7 @@ func testInvoiceReverseCharge(t *testing.T) *bill.Invoice {
 				Quantity: num.MakeAmount(5, 0),
 				Item: &org.Item{
 					Name:  "Service Item",
-					Price: num.MakeAmount(5000, 2),
+					Price: num.NewAmount(5000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -71,7 +71,7 @@ func testInvoiceSimplified(t *testing.T) *bill.Invoice {
 				Quantity: num.MakeAmount(3, 0),
 				Item: &org.Item{
 					Name:  "Product Item",
-					Price: num.MakeAmount(2000, 2),
+					Price: num.NewAmount(2000, 2),
 				},
 				Taxes: tax.Set{
 					{

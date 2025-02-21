@@ -75,7 +75,7 @@ func (t *Totals) reset(zero num.Amount) {
 // Paid is a convenience method to quickly determine if the invoice has been
 // paid or not based on the total amount due.
 func (t *Totals) Paid() bool {
-	return t.Due != nil && t.Due.IsZero()
+	return t != nil && t.Due != nil && t.Due.IsZero()
 }
 
 // round goes through each value that is set and rescales to match

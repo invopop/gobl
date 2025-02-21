@@ -23,6 +23,7 @@ import (
 
 // Predefined list of the payment types supported.
 const (
+	PaymentTypeRequest cbc.Key = "request"
 	PaymentTypeReceipt cbc.Key = "receipt"
 	PaymentTypeAdvice  cbc.Key = "advice"
 )
@@ -30,16 +31,15 @@ const (
 // PaymentTypes defines the list of potential payment types.
 var PaymentTypes = []*cbc.Definition{
 	{
-		Key: PaymentTypeReceipt,
+		Key: PaymentTypeRequest,
 		Name: i18n.String{
-			i18n.EN: "Receipt",
+			i18n.EN: "Request",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				A payment receipt sent from the supplier to a customer indicating that they have
-				received a transfer of funds from the customer directly or a payer.
-				This is the default payment type and may be required by some tax
-				regimes in order to communicate the payment of specific documents and invoices.
+				A payment request sent from the supplier to a customer indicating that they are
+				requesting a transfer of funds from the customer directly or a payer.
+				This is used to request payment for specific documents and invoices.
 			`),
 		},
 	},
@@ -52,6 +52,20 @@ var PaymentTypes = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				A remittance advice sent from the customer to the supplier reflecting that payment for
 				the referenced documents has been made.
+			`),
+		},
+	},
+	{
+		Key: PaymentTypeReceipt,
+		Name: i18n.String{
+			i18n.EN: "Receipt",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				A payment receipt sent from the supplier to a customer indicating that they have
+				received a transfer of funds from the customer directly or a payer.
+				This is the default payment type and may be required by some tax
+				regimes in order to communicate the payment of specific documents and invoices.
 			`),
 		},
 	},

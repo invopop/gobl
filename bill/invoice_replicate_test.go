@@ -17,7 +17,7 @@ func TestInvoiceReplicate(t *testing.T) {
 			Quantity: num.MakeAmount(2, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}

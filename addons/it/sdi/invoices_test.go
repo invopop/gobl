@@ -64,7 +64,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Quantity: num.MakeAmount(10, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(10000, 2),
+					Price: num.NewAmount(10000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -287,7 +287,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 		Quantity: num.MakeAmount(10, 0),
 		Item: &org.Item{
 			Name:  "Test Item",
-			Price: num.MakeAmount(10000, 2),
+			Price: num.NewAmount(10000, 2),
 		},
 		// No taxes!
 	})

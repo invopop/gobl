@@ -3,20 +3,17 @@ package bill
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/internal"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/jsonschema"
-
 	"github.com/invopop/validation"
 )
 
@@ -150,6 +147,9 @@ func (inv *Invoice) ValidateWithContext(ctx context.Context) error {
 			validation.By(validateInvoiceCustomer),
 		),
 		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(lineItemHasPrice),
+			),
 			validation.When(
 				len(inv.Discounts) == 0 && len(inv.Charges) == 0,
 				validation.Required.Error("cannot be empty without discounts or charges"),
@@ -263,7 +263,7 @@ func (inv *Invoice) Calculate() error {
 
 	inv.Normalize(tax.ExtractNormalizers(inv))
 
-	if err := inv.calculate(); err != nil {
+	if err := calculate(inv); err != nil {
 		return err
 	}
 
@@ -329,217 +329,61 @@ func (inv *Invoice) validationContext(ctx context.Context) context.Context {
 // If after removing taxes the totals don't match, a rounding error will be added to the
 // invoice totals. In most scenarios this shouldn't be more than a cent or two.
 //
-// A new invoice object is returned, leaving the original instance untouched.
-func (inv *Invoice) RemoveIncludedTaxes() (*Invoice, error) {
-	if inv.Tax == nil || inv.Tax.PricesInclude.IsEmpty() {
-		return inv, nil // nothing to do!
-	}
-
-	if err := inv.Calculate(); err != nil {
-		return nil, err
-	}
-
-	i2 := *inv
-	i2.Totals = new(Totals)
-	i2.Lines = make([]*Line, len(inv.Lines))
-	for i, l := range inv.Lines {
-		i2.Lines[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
-	}
-
-	if len(inv.Discounts) > 0 {
-		i2.Discounts = make([]*Discount, len(inv.Discounts))
-		for i, l := range inv.Discounts {
-			i2.Discounts[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
-		}
-	}
-	if len(i2.Charges) > 0 {
-		i2.Charges = make([]*Charge, len(inv.Charges))
-		for i, l := range inv.Charges {
-			i2.Charges[i] = l.removeIncludedTaxes(inv.Tax.PricesInclude)
-		}
-	}
-
-	tx := *i2.Tax
-	tx.PricesInclude = ""
-	i2.Tax = &tx
-
-	if err := i2.Calculate(); err != nil {
-		return nil, err
-	}
-
-	// Account for any rounding errors that we just can't handle
-	if !inv.Totals.TotalWithTax.Equals(i2.Totals.TotalWithTax) {
-		rnd := inv.Totals.TotalWithTax.Subtract(i2.Totals.TotalWithTax)
-		i2.Totals.Rounding = &rnd
-		if err := i2.Calculate(); err != nil {
-			return nil, err
-		}
-	}
-
-	return &i2, nil
+// This method will replace the invoice contents in place, or return an error.
+func (inv *Invoice) RemoveIncludedTaxes() error {
+	return removeIncludedTaxes(inv)
 }
 
-// calculate does not assume that the tax regime is available.
-func (inv *Invoice) calculate() error {
-	r := inv.RegimeDef() // may be nil!
+/** Calculation Interface Methods **/
 
-	// Normalize data
-	if inv.IssueDate.IsZero() {
-		inv.IssueDate = cal.TodayIn(r.TimeLocation())
-	}
-	date := inv.ValueDate
-	if date == nil {
-		date = &inv.IssueDate
-	}
-
-	// Convert empty or invalid currency to the regime's currency
-	if inv.Currency == currency.CodeEmpty || inv.Currency.Def() == nil {
-		if r == nil {
-			return validation.Errors{"currency": errors.New("missing")}
-		}
-		inv.Currency = r.Currency
-	}
-
-	// Prepare the totals we'll need with amounts based on currency
-	if inv.Totals == nil {
-		inv.Totals = new(Totals)
-	}
-	t := inv.Totals
-	zero := inv.Currency.Def().Zero()
-	t.reset(zero)
-
-	// Do we need to deal with the customer-rates tag?
-	if inv.HasTags(tax.TagCustomerRates) {
-		inv.applyCustomerRates()
-	}
-
-	// Lines
-	if err := calculateLines(inv.Lines, inv.Currency, inv.ExchangeRates); err != nil {
-		return validation.Errors{"lines": err}
-	}
-	t.Sum = calculateLineSum(inv.Lines, inv.Currency)
-	t.Total = t.Sum
-
-	// Discount Lines
-	calculateDiscounts(inv.Discounts, t.Sum, zero)
-	if discounts := calculateDiscountSum(inv.Discounts, zero); discounts != nil {
-		t.Discount = discounts
-		t.Total = t.Total.Subtract(*discounts)
-	}
-
-	// Charge Lines
-	calculateCharges(inv.Charges, t.Sum, zero)
-	if charges := calculateChargeSum(inv.Charges, zero); charges != nil {
-		t.Charge = charges
-		t.Total = t.Total.Add(*charges)
-	}
-
-	// Build list of taxable lines
-	tls := make([]tax.TaxableLine, 0)
-	for _, l := range inv.Lines {
-		tls = append(tls, l)
-	}
-	for _, l := range inv.Discounts {
-		tls = append(tls, l)
-	}
-	for _, l := range inv.Charges {
-		tls = append(tls, l)
-	}
-
-	// Now figure out the tax totals
-	var pit cbc.Code
-	if inv.Tax != nil && inv.Tax.PricesInclude != "" {
-		pit = inv.Tax.PricesInclude
-	}
-	t.Taxes = new(tax.Total)
-	tc := &tax.TotalCalculator{
-		Currency: inv.Currency,
-		Rounding: r.GetRoundingRule(),
-		Country:  inv.Regime.Country,
-		Tags:     inv.GetTags(),
-		Date:     *date,
-		Lines:    tls,
-		Includes: pit,
-	}
-	if err := tc.Calculate(t.Taxes); err != nil {
-		return err
-	}
-
-	// Remove any included taxes from the total.
-	ct := t.Taxes.Category(pit)
-	if ct != nil {
-		ti := ct.PreciseAmount()
-		t.TaxIncluded = &ti
-		t.Total = t.Total.Subtract(ti)
-	}
-
-	// Finally calculate the total with *all* the taxes.
-	t.Tax = t.Taxes.PreciseSum()
-	t.TotalWithTax = t.Total.Add(t.Tax)
-	t.Payable = t.TotalWithTax
-	if t.Rounding != nil {
-		// BT-144 in EN16931
-		t.Payable = t.Payable.Add(*t.Rounding)
-	}
-
-	// Remove taxes object if it doesn't contain any categories
-	if len(t.Taxes.Categories) == 0 {
-		t.Taxes = nil
-	}
-
-	if inv.Payment != nil {
-		inv.Payment.calculateAdvances(zero, t.TotalWithTax)
-
-		// Deal with advances, if any
-		if t.Advances = inv.Payment.totalAdvance(zero); t.Advances != nil {
-			v := t.Payable.Subtract(*t.Advances)
-			t.Due = &v
-		}
-
-		// Calculate any due date amounts
-		inv.Payment.Terms.CalculateDues(zero, t.Payable)
-	}
-
-	t.round(zero)
-
-	// Complements
-	if err := calculateComplements(inv.Complements); err != nil {
-		return validation.Errors{"complements": err}
-	}
-
-	return nil
+func (inv *Invoice) getIssueDate() cal.Date {
+	return inv.IssueDate
+}
+func (inv *Invoice) getValueDate() *cal.Date {
+	return inv.ValueDate
+}
+func (inv *Invoice) getTax() *Tax {
+	return inv.Tax
+}
+func (inv *Invoice) getCustomer() *org.Party {
+	return inv.Customer
+}
+func (inv *Invoice) getCurrency() currency.Code {
+	return inv.Currency
+}
+func (inv *Invoice) getExchangeRates() []*currency.ExchangeRate {
+	return inv.ExchangeRates
+}
+func (inv *Invoice) getLines() []*Line {
+	return inv.Lines
+}
+func (inv *Invoice) getDiscounts() []*Discount {
+	return inv.Discounts
+}
+func (inv *Invoice) getCharges() []*Charge {
+	return inv.Charges
+}
+func (inv *Invoice) getPaymentDetails() *PaymentDetails {
+	return inv.Payment
+}
+func (inv *Invoice) getTotals() *Totals {
+	return inv.Totals
+}
+func (inv *Invoice) getComplements() []*schema.Object {
+	return inv.Complements
 }
 
-func (inv *Invoice) applyCustomerRates() {
-	if inv.Customer == nil || inv.Customer.TaxID == nil {
-		return
-	}
-	country := inv.Customer.TaxID.Country
-	for _, l := range inv.Lines {
-		addCountryToTaxes(l.Taxes, country)
-	}
-	for _, d := range inv.Discounts {
-		addCountryToTaxes(d.Taxes, country)
-	}
-	for _, c := range inv.Charges {
-		addCountryToTaxes(c.Taxes, country)
-	}
+func (inv *Invoice) setIssueDate(d cal.Date) {
+	inv.IssueDate = d
+}
+func (inv *Invoice) setCurrency(c currency.Code) {
+	inv.Currency = c
+}
+func (inv *Invoice) setTotals(t *Totals) {
+	inv.Totals = t
 }
 
-func addCountryToTaxes(ts tax.Set, country l10n.TaxCountryCode) {
-	for _, t := range ts {
-		t.Country = country
-	}
-}
-
-func calculateComplements(comps []*schema.Object) error {
-	for _, c := range comps {
-		if err := c.Calculate(); err != nil {
-			return err
-		}
-	}
-	return nil
-}
+/** ---- **/
 
 // UnmarshalJSON implements the json.Unmarshaler interface and provides any
 // data migrations that might be required.

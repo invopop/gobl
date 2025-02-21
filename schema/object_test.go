@@ -97,7 +97,7 @@ func exampleInvoice() *bill.Invoice {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Item",
-					Price: num.MakeAmount(4320, 2),
+					Price: num.NewAmount(4320, 2),
 				},
 				Taxes: tax.Set{
 					{

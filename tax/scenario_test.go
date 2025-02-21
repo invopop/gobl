@@ -203,7 +203,7 @@ func scenariosInvoiceExample() *bill.Invoice {
 				Quantity: num.MakeAmount(10, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(10000, 2),
+					Price: num.NewAmount(10000, 2),
 				},
 				Taxes: tax.Set{
 					{

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -47,6 +48,18 @@ func TestRegimeGetCurrency(t *testing.T) {
 		r := new(tax.RegimeDef)
 		r.Currency = currency.EUR
 		assert.Equal(t, r.CurrencyDef().Name, "Euro")
+	})
+}
+
+func TestRegimeDefGetCountry(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var r *tax.RegimeDef
+		assert.Empty(t, r.GetCountry())
+	})
+	t.Run("with", func(t *testing.T) {
+		r := new(tax.RegimeDef)
+		r.Country = "DE"
+		assert.Equal(t, l10n.DE.Tax(), r.GetCountry())
 	})
 }
 
