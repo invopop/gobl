@@ -20,7 +20,7 @@ Each document class has a subset of types to cover multiple situations. Its been
 - `bill`: `Delivery` document now supported.
 - `bill`: `Order` document now supported.
 - `bill`: `Payment` - `request` type now supported.
-- `bill`: `Line` now includes a `breakdown` array of sub-lines that will be used to calculate the item's price, including individual discounts and charges. This effectively implements grouping, while maintaining compatibility with all other formats that do not support breaddowns.
+- `bill`: `Line` now includes a `breakdown` array of sub-lines that will be used to calculate the item's price, including individual discounts and charges. This effectively implements grouping, while maintaining compatibility with all other formats that do not support breakdowns.
 - `bill`: `Line` new `substituted` array of sub-lines for informational purposes when the originally requested line could not be fulfilled, especially relevant for orders.
 
 ### Changed

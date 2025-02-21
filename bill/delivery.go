@@ -26,6 +26,7 @@ const (
 	DeliveryTypeReceipt cbc.Key = "receipt"
 )
 
+// DeliveryTypes provides the list of supported delivery documents in GOBL.
 var DeliveryTypes = []*cbc.Definition{
 	{
 		Key: DeliveryTypeAdvice,
