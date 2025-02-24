@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/node": "^20.4.9",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5",
+    "vite": "^4.5.9",
     "vite-plugin-dts": "^3.5.1"
   }
 }
