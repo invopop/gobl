@@ -468,7 +468,7 @@ func TestRemoveIncludedTax5(t *testing.T) {
 	assert.Equal(t, "1320.76", i2.Totals.Sum.String())
 	// in this case the total is different, but that's acceptable as long
 	// as the payable total is the same
-	//assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	// assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
@@ -595,7 +595,7 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 	*/
 
 	// Total changes slightly
-	//assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	// assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
 	assert.Equal(t, "743.81", i2.Totals.Total.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
@@ -723,8 +723,8 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 	i2, err := i.RemoveIncludedTaxes()
 	require.NoError(t, err)
 
-	//data, _ := json.MarshalIndent(i2, "", "  ")
-	//t.Log(string(data))
+	// data, _ := json.MarshalIndent(i2, "", "  ")
+	// t.Log(string(data))
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -785,8 +785,8 @@ func TestCalculateTotalsWithFractions(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	//data, _ := json.MarshalIndent(i, "", "  ")
-	//t.Log(string(data))
+	// data, _ := json.MarshalIndent(i, "", "  ")
+	// t.Log(string(data))
 
 	l0 := i.Lines[0]
 	assert.Equal(t, "3.05", l0.Item.Price.String())
@@ -1278,4 +1278,47 @@ func TestRegimeJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+}
+
+func TestCalculateTotalsWithTax(t *testing.T) {
+	i := &bill.Invoice{
+		Series:    "TEST",
+		Code:      "00123",
+		IssueDate: cal.MakeDate(2022, 6, 13),
+		Supplier: &org.Party{
+			Name: "Test Supplier",
+			TaxID: &tax.Identity{
+				Country: "DE",
+				Code:    "B98602642",
+			},
+		},
+		Customer: &org.Party{
+			Name: "Test Customer",
+			TaxID: &tax.Identity{
+				Country: "DE",
+				Code:    "54387763P",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(75, 2), // 0.75
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.MakeAmount(9850, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Percent:  num.NewPercentage(19, 2),
+					},
+				},
+			},
+		},
+	}
+
+	require.NoError(t, i.Calculate())
+
+	assert.Equal(t, "73.88", i.Totals.Total.String())
+	assert.Equal(t, "14.04", i.Totals.Tax.String())
+	assert.Equal(t, "87.92", i.Totals.TotalWithTax.String())
 }

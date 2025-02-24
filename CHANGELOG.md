@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- fixed invoice totals calculation to ensure that tax_with_totals is equal to total plus tax in edge cases.
+
 ## [v0.208.0] - 2025-01-07
 
 ### Added
