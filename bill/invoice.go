@@ -487,7 +487,7 @@ func (inv *Invoice) calculate() error {
 
 	// Finally calculate the total with *all* the taxes.
 	t.Tax = t.Taxes.PreciseSum()
-	t.TotalWithTax = t.Total.Add(t.Tax)
+	t.TotalWithTax = t.Total.Rescale(zero.Exp()).Add(t.Tax.Rescale(zero.Exp()))
 	t.Payable = t.TotalWithTax
 	if t.Rounding != nil {
 		// BT-144 in EN16931
