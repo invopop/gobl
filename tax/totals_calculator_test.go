@@ -26,7 +26,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 	var tests = []struct {
 		desc        string
 		country     l10n.TaxCountryCode // default "ES"
-		rounding    tax.RoundingRule
+		rounding    cbc.Key
 		tags        []cbc.Key      // default empty
 		ext         tax.Extensions // default empty
 		lines       []tax.TaxableLine

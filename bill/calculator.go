@@ -124,13 +124,22 @@ func calculate(doc billable) error {
 
 	// Now figure out the tax totals
 	var pit cbc.Code
-	if doc.getTax() != nil && doc.getTax().PricesInclude != "" {
-		pit = doc.getTax().PricesInclude
+	var rr cbc.Key
+	if tx := doc.getTax(); tx != nil {
+		if tx.PricesInclude != "" {
+			pit = tx.PricesInclude
+		}
+		if tx.Rounding != "" {
+			rr = tx.Rounding
+		}
+	}
+	if rr == "" {
+		rr = r.GetRoundingRule()
 	}
 	t.Taxes = new(tax.Total)
 	tc := &tax.TotalCalculator{
 		Currency: doc.getCurrency(),
-		Rounding: r.GetRoundingRule(),
+		Rounding: rr,
 		Country:  r.GetCountry(),
 		Tags:     doc.GetTags(),
 		Date:     *date,

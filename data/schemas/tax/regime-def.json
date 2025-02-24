@@ -258,7 +258,7 @@
           "description": "Currency used by the country."
         },
         "calculator_rounding_rule": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Calculator Rounding Rule",
           "description": "Rounding rule to use when calculating the tax totals, default is always\n`sum-then-round`."
         },

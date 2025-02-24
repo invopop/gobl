@@ -12,7 +12,7 @@ import (
 // data for calculating tax totals from TaxableLines.
 type TotalCalculator struct {
 	Country  l10n.TaxCountryCode
-	Rounding RoundingRule
+	Rounding cbc.Key
 	Currency currency.Code
 	Tags     []cbc.Key
 	Date     cal.Date
@@ -94,7 +94,7 @@ func (tc *TotalCalculator) calculateBaseRateTotals(taxLines []*taxLine, t *Total
 	for _, tl := range taxLines {
 		for _, c := range tl.taxes {
 			rt := t.rateTotalFor(c, tc.zero)
-			rt.Base = tc.Rounding.matchPrecision(rt.Base, tl.total)
+			rt.Base = matchRoundingPrecision(tc.Rounding, rt.Base, tl.total)
 			rt.Base = rt.Base.Add(tl.total)
 		}
 	}

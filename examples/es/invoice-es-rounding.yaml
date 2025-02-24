@@ -1,0 +1,44 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2025-02-01"
+series: "SAMPLE-R"
+code: "001"
+tax:
+  rounding: "round-then-sum"
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+lines:
+  - quantity: 20
+    identifier:
+      label: "Subscription"
+      code: "SUB1234-ABC"
+    item:
+      name: "Development services"
+      price: "12.36"
+      unit: "h"
+    discounts:
+      - percent: "12.5%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
