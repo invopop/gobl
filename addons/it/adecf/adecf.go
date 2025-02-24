@@ -1,6 +1,6 @@
-// Package scontrino handles the validation rules in order to use
+// Package adecf handles the validation rules in order to use
 // GOBL with the Italian Agenzia delle Entrate format.
-package scontrino
+package adecf
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -9,10 +9,10 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Key to identify the AdE scontrino addon
+// Key to identify the AdE adecf addon
 const (
 	// V1 for AdE format
-	V1 cbc.Key = "it-scontrino-v1"
+	V1 cbc.Key = "it-adecf-v1"
 )
 
 func init() {
@@ -23,18 +23,11 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "Italy AdE scontrino v1.x",
+			i18n.EN: "Italy AdE adecf v1.x",
 		},
 		Tags:       []*tax.TagSet{},
-		Normalizer: normalize,
+		Extensions: extensions,
 		Validator:  validate,
-	}
-}
-
-func normalize(doc any) {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		normalizeInvoice(obj)
 	}
 }
 
@@ -42,6 +35,8 @@ func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
+	case *tax.Combo:
+		return validateTaxCombo(obj)
 	}
 	return nil
 }

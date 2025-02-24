@@ -1,4 +1,4 @@
-package scontrino
+package adecf
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -6,10 +6,6 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
-
-func normalizeInvoice(inv *bill.Invoice) {
-	panic("check if required")
-}
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
@@ -19,9 +15,14 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(validateLine),
+				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.Skip,
 			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Tax,
+			validation.Required,
+			validation.By(validateTax),
 			validation.Skip,
 		),
 	)
@@ -29,7 +30,7 @@ func validateInvoice(inv *bill.Invoice) error {
 
 func validateSupplier(value interface{}) error {
 	supplier, ok := value.(*org.Party)
-	if !ok {
+	if supplier == nil || !ok {
 		return nil
 	}
 
@@ -42,18 +43,18 @@ func validateSupplier(value interface{}) error {
 	)
 }
 
-func validateLine(value interface{}) error {
-	line, ok := value.(*bill.Line)
-	if !ok {
-		return nil
+func validateTax(value interface{}) error {
+	taxes, ok := value.(*bill.Tax)
+	if taxes == nil || !ok {
+		return validation.ErrNilOrNotEmpty
 	}
 
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Taxes,
+	return validation.ValidateStruct(taxes,
+		validation.Field(&taxes.PricesInclude,
+			validation.In(tax.CategoryVAT),
 			validation.Required,
-			bill.RequireLineTaxCategory(tax.CategoryVAT),
 			validation.Skip,
 		),
-		validation.Field(&line.Quantity, validation.Required),
 	)
+
 }
