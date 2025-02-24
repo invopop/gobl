@@ -29,6 +29,13 @@ func TestDeliveryValidation(t *testing.T) {
 		require.NoError(t, dlv.Calculate())
 		require.NoError(t, dlv.Validate())
 	})
+
+	t.Run("with addons", func(t *testing.T) {
+		dlv := baseDeliveryWithLines(t)
+		dlv.Addons = tax.WithAddons("eu-en16931-v2017") // just for testing
+		require.NoError(t, dlv.Calculate())
+		require.NoError(t, dlv.Validate())
+	})
 }
 
 func TestDeliveryConvertInto(t *testing.T) {

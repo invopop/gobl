@@ -1,6 +1,7 @@
 package bill
 
 import (
+	"context"
 	"testing"
 
 	"github.com/invopop/gobl/num"
@@ -8,6 +9,34 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestPaymentDetailsValidation(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		p := &PaymentDetails{}
+		assert.NoError(t, p.ValidateWithContext(context.Background()))
+	})
+}
+
+func TestPaymentDetailsResetAdvances(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		p := &PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Description: "Paid in advance",
+					Amount:      num.MakeAmount(10, 0),
+				},
+			},
+		}
+		p.ResetAdvances()
+		assert.Empty(t, p.Advances)
+	})
+	t.Run("nil", func(t *testing.T) {
+		var p *PaymentDetails
+		assert.NotPanics(t, func() {
+			p.ResetAdvances()
+		})
+	})
+}
 
 func TestPaymentDetailsNormalize(t *testing.T) {
 	p := &PaymentDetails{
@@ -69,6 +98,11 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 	p.calculateAdvances(zero, total)
 	sum := p.totalAdvance(zero)
 	assert.Equal(t, "30.00", sum.String())
+
+	t.Run("nil", func(t *testing.T) {
+		var p *PaymentDetails
+		assert.Nil(t, p.totalAdvance(zero))
+	})
 
 	t.Run("maintains precision", func(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
