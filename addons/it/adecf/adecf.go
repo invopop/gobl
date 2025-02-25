@@ -25,12 +25,10 @@ func newAddon() *tax.AddonDef {
 		Name: i18n.String{
 			i18n.EN: "Italy AdE adecf v1.x",
 		},
-		Tags:       []*tax.TagSet{},
 		Extensions: extensions,
 		Validator:  validate,
 	}
 }
-
 func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:

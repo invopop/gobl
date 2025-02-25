@@ -9,8 +9,13 @@ import (
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Tax,
+			validation.Required,
+			validation.By(validateInvoiceTax),
+			validation.Skip,
+		),
 		validation.Field(&inv.Supplier,
-			validation.By(validateSupplier),
+			validation.By(validateInvoiceSupplier),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -20,15 +25,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Tax,
-			validation.Required,
-			validation.By(validateTax),
-			validation.Skip,
-		),
 	)
 }
 
-func validateSupplier(value interface{}) error {
+func validateInvoiceSupplier(value interface{}) error {
 	supplier, ok := value.(*org.Party)
 	if supplier == nil || !ok {
 		return nil
@@ -43,16 +43,16 @@ func validateSupplier(value interface{}) error {
 	)
 }
 
-func validateTax(value interface{}) error {
-	taxes, ok := value.(*bill.Tax)
-	if taxes == nil || !ok {
-		return validation.ErrNilOrNotEmpty
+func validateInvoiceTax(value interface{}) error {
+	t, ok := value.(*bill.Tax)
+	if !ok || t == nil {
+		return nil
 	}
 
-	return validation.ValidateStruct(taxes,
-		validation.Field(&taxes.PricesInclude,
-			validation.In(tax.CategoryVAT),
+	return validation.ValidateStruct(t,
+		validation.Field(&t.PricesInclude,
 			validation.Required,
+			validation.In(tax.CategoryVAT),
 			validation.Skip,
 		),
 	)

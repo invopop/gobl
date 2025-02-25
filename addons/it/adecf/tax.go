@@ -21,13 +21,12 @@ func validateTaxCombo(val any) error {
 				),
 				validation.Skip,
 			),
-			/*
-				validation.Field(&c.Percent,
-					validation.By(
-						validatePercentage,
-					),
-					validation.Skip,
-				),*/
+			validation.Field(&c.Percent,
+				validation.By(
+					validatePercentage,
+				),
+				validation.Skip,
+			),
 		)
 	}
 	return nil
@@ -35,7 +34,7 @@ func validateTaxCombo(val any) error {
 
 func validatePercentage(val any) error {
 	p, ok := val.(*num.Percentage)
-	if !ok {
+	if !ok || p == nil {
 		return nil
 	}
 
