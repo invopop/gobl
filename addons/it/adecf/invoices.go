@@ -43,6 +43,8 @@ func validateInvoiceSupplier(value interface{}) error {
 	)
 }
 
+// This done because the format requires tax to be calculated at item level
+// By forcing this we can ensure that the price already has the tax included
 func validateInvoiceTax(value interface{}) error {
 	t, ok := value.(*bill.Tax)
 	if !ok || t == nil {

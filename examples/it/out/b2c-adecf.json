@@ -1,92 +1,102 @@
 {
-	"$schema": "https://gobl.org/draft-0/bill/invoice",
-	"$regime": "IT",
-	"$addons": [
-		"it-adecf-v1"
-	],
-	"uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
-	"type": "standard",
-	"series": "FT",
-	"code": "020",
-	"issue_date": "2024-07-12",
-	"currency": "EUR",
-	"tax": {
-		"prices_include": "VAT"
-	},
-	"supplier": {
-		"name": "Cleaning SRL",
-		"tax_id": {
-			"country": "IT",
-			"code": "12345678903"
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "eef8e46b9a6cac86b1b4cf140f601192af04bf0f22bd3a9e5bb5b11cec0a2759"
 		}
 	},
-	"lines": [
-		{
-			"i": 1,
-			"quantity": "1",
-			"item": {
-				"name": "Cleaning services",
-				"price": "125.00"
-			},
-			"sum": "125.00",
-			"taxes": [
-				{
-					"cat": "VAT",
-					"ext": {
-						"it-adecf-exempt": "N3"
-					}
-				}
-			],
-			"total": "125.00"
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-adecf-v1"
+		],
+		"uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
+		"type": "standard",
+		"series": "FT",
+		"code": "020",
+		"issue_date": "2024-07-12",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT"
 		},
-		{
-			"i": 2,
-			"quantity": "3",
-			"item": {
-				"name": "Cleaning products",
-				"price": "137.50"
-			},
-			"sum": "412.50",
-			"taxes": [
-				{
-					"cat": "VAT",
-					"rate": "standard",
-					"percent": "22.0%"
-				}
-			],
-			"total": "412.50"
-		}
-	],
-	"totals": {
-		"sum": "537.50",
-		"tax_included": "74.39",
-		"total": "463.11",
-		"taxes": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
-						{
-							"ext": {
-								"it-adecf-exempt": "N3"
-							},
-							"base": "125.00",
-							"amount": "0.00"
-						},
-						{
-							"key": "standard",
-							"base": "338.11",
-							"percent": "22.0%",
-							"amount": "74.39"
+		"supplier": {
+			"name": "Cleaning SRL",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Cleaning services",
+					"price": "125.00"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"ext": {
+							"it-adecf-exempt": "N3"
 						}
-					],
-					"amount": "74.39"
-				}
-			],
-			"sum": "74.39"
-		},
-		"tax": "74.39",
-		"total_with_tax": "537.50",
-		"payable": "537.50"
+					}
+				],
+				"total": "125.00"
+			},
+			{
+				"i": 2,
+				"quantity": "3",
+				"item": {
+					"name": "Cleaning products",
+					"price": "137.50"
+				},
+				"sum": "412.50",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "22.0%"
+					}
+				],
+				"total": "412.50"
+			}
+		],
+		"totals": {
+			"sum": "537.50",
+			"tax_included": "74.39",
+			"total": "463.11",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"ext": {
+									"it-adecf-exempt": "N3"
+								},
+								"base": "125.00",
+								"amount": "0.00"
+							},
+							{
+								"key": "standard",
+								"base": "338.11",
+								"percent": "22.0%",
+								"amount": "74.39"
+							}
+						],
+						"amount": "74.39"
+					}
+				],
+				"sum": "74.39"
+			},
+			"tax": "74.39",
+			"total_with_tax": "537.50",
+			"payable": "537.50"
+		}
 	}
 }
