@@ -49,6 +49,17 @@ func TestCalculate(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "3.49", inv.Totals.Tax.String())
 	})
+	t.Run("with line errors", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:     "test item 1",
+				Currency: "USD",
+				Price:    num.NewAmount(942, 2),
+			},
+		})
+		require.ErrorContains(t, inv.Calculate(), "lines: (0: (item: no exchange rate found from 'USD' to 'EUR'.).)")
+	})
 }
 
 func TestRemoveIncludedTaxes(t *testing.T) {
