@@ -106,7 +106,6 @@ func TestInvoiceLineTaxes(t *testing.T) {
 				Name:  "Test Item 2",
 				Price: num.MakeAmount(10000, 2),
 			},
-			// No taxes!
 		})
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()

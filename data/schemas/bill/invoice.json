@@ -414,6 +414,10 @@
                 "title": "Greece MyData v1.x"
               },
               {
+                "const": "it-adecf-v1",
+                "title": "Italy AdE adecf v1.x"
+              },
+              {
                 "const": "it-sdi-v1",
                 "title": "Italy SDI FatturaPA v1.x"
               },

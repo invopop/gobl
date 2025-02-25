@@ -19,6 +19,10 @@ func init() {
 	tax.RegisterAddonDef(newAddon())
 }
 
+// This validation follows the rules of the Italian Agenzia delle Entrate
+// This addon will then be used to create documents using the following services
+// https://www.agenziaentrate.gov.it/portale/servizi/servizitrasversali/altri/cassetto-fiscale
+// https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi
 func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
