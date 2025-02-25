@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `it-adecf-v1`: implemented addon for AdE e-receipt format 
 - `pt-saft-v1`: support for payments and receipts
 
 ### Changed
