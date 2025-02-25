@@ -90,6 +90,11 @@ type Invoice struct {
 
 	// Additional semi-structured data that doesn't fit into the body of the invoice.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
+
+	// Attachments provide additional information or supporting documents that are not included
+	// in the main document. It is important that attachments are not used for alternative
+	// versions of the PDF, for that, see "links" inside the envelope headers.
+	Attachments []*org.Attachment `json:"attachments,omitempty" jsonschema:"title=Attachments"`
 }
 
 // Validate checks to ensure the invoice is valid and contains all the information we need.

@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/internal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
@@ -146,7 +147,12 @@ func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
 		),
 		validation.Field(&rct.Method, validation.Required),
 		validation.Field(&rct.Series),
-		validation.Field(&rct.Code, validation.Required),
+		validation.Field(&rct.Code,
+			validation.When(
+				internal.IsSigned(ctx),
+				validation.Required.Error("required to sign receipt"),
+			),
+		),
 		validation.Field(&rct.IssueDate,
 			validation.Required,
 			cal.DateNotZero(),
@@ -156,6 +162,7 @@ func (rct *Receipt) ValidateWithContext(ctx context.Context) error {
 			currency.CanConvertInto(rct.ExchangeRates, r.GetCurrency()),
 		),
 		validation.Field(&rct.ExchangeRates),
+		validation.Field(&rct.Ext),
 		validation.Field(&rct.Preceding),
 		validation.Field(&rct.Supplier, validation.Required),
 		validation.Field(&rct.Customer),
@@ -243,6 +250,7 @@ func (rct *Receipt) calculate() error {
 	}
 
 	for i, l := range rct.Lines {
+		l.Index = i + 1
 		if err := l.calculate(rct.Currency, rct.ExchangeRates); err != nil {
 			return validation.Errors{
 				"lines": validation.Errors{
@@ -273,7 +281,9 @@ func (rct *Receipt) calculate() error {
 		}
 	}
 	rct.Tax = tt
-	rct.Total = *total
+	if total != nil {
+		rct.Total = *total
+	}
 	return nil
 }
 

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/org/attachment",
+  "$ref": "#/$defs/Attachment",
+  "$defs": {
+    "Attachment": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key used to identify the attachment inside the document."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code used to identify the payload of the attachment."
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Filename of the attachment."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Details of why the attachment is being included and details on\nwhat it contains."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "title": "URL",
+          "description": "URL of where to find the attachment. Prefer using this field\nover the Data field."
+        },
+        "digest": {
+          "$ref": "https://gobl.org/draft-0/dsig/digest",
+          "title": "Digest",
+          "description": "Digest is used to verify the integrity of the attachment\nwhen downloaded from the URL."
+        },
+        "mime": {
+          "type": "string",
+          "title": "MIME Type",
+          "description": "MIME type of the attachment."
+        },
+        "data": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "title": "Data",
+          "description": "Data is the base64 encoded data of the attachment directly embedded\ninside the GOBL document. This should only be used when the URL cannot\nbe used as it can dramatically increase the size of the JSON\ndocument, thus effecting usability and performance."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "description": "An Attachment provides a structure to be used to attach documents inside a GOBL document, either as a reference via a URL, or directly as a base64 encoded string."
+    }
+  }
+}

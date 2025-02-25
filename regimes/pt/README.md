@@ -15,7 +15,7 @@ Find example PT GOBL files in the [`examples`](../../examples/pt) (uncalculated 
 
 ### `InvoiceType` (Tipo de documento)
 
-SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax document. The following table lists all the supported invoice types and how GOBL will map them with a combination of invoice type and tax tags:
+SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a sales invoice. In GOBL, this type can be set using the `pt-saft-invoice-type` extension in the tax section. GOBL will set the extension for you based on the type and the tax tags you set in your invoice. The table below shows how this mapping is done:
 
 | Code | Name                                                                     | GOBL Type     | GOBL Tax Tag      |
 | ---- | ------------------------------------------------------------------------ | ------------- | ----------------- |
@@ -24,6 +24,25 @@ SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a Portuguese tax
 | FR   | Fatura-recibo                                                            | `standard`    | `invoice-receipt` |
 | ND   | Nota de débito                                                          | `credit-note` |                   |
 | NC   | Nota de crédito                                                         | `debit-note`  |                   |
+
+For example:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$tags": [
+    "invoice-receipt"
+  ],
+  // [...]
+  "type": "standard",
+  // [...]
+  "tax": {
+    "ext": {
+      "pt-saft-invoice-type": "FR"
+    }
+  },
+  // [...]
+```
 
 ### `TaxCountryRegion` (País ou região do imposto)
 
@@ -170,3 +189,91 @@ For example, you could define an invoice line exempt of tax as follows:
   ]
 }
 ```
+
+### Payment receipts
+
+To report payment receipts to the AT, GOBL provides conversion from `bill.Receipt` documents. You can find an example of a valid Portugese receipt in the [`example folder`](../../examples/pt).
+
+In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its type. In GOBL, this type can be set using the `pt-saft-receipt-type` extension. GOBL will set the extension automatically based on the type and the tax tags you set. The table below shows how this mapping is done:
+
+| Code | Name                                       | GOBL Type | GOBL Tax Tag |
+| ---- | ------------------------------------------ | --------- | ------------ |
+| RG   | Outro Recibo                               | `payment` |              |
+| RC   | Recibo no âmbito do regime de IVA de Caixa | `payment` | `vat-cash`   |
+
+For example:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/receipt",
+  // [...]
+  "type": "payment",
+  // [...]
+  "ext": {
+    "pt-saft-receipt-type": "RG"
+  },
+  // [...]
+```
+
+### `PaymentMechanism` (Meios de pagamento)
+
+The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a sales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this value in your `bill.Invoice` advances or in you `bill.Receipt` method. GOBL maps certain payment mean keys automatically to this extension:
+
+| Code | Name | GOBL Payment Mean |
+| --- | --- | --- |
+| CC  | Cartão crédito | `card` |
+| CD  | Cartão débito | (*) |
+| CH  | Cheque bancário | `cheque` |
+| CI  | Letter of credit | (*) |
+| CO  | Cheque ou cartão oferta | (*) |
+| CS  | Compensação de saldos em conta corrente | `netting` |
+| DE  | Dinheiro eletrónico | `online` |
+| LC  | Letra comercial | `promissory-note` |
+| MB  | Referências de pagamento para Multibanco | (*) |
+| NU  | Numerário | `cash` |
+| OU  | Outro | `other` |
+| PR  | Permuta de bens | (*) |
+| TB  | Transferência bancária ou débito direto autorizado | `credit-transfer`, `debit-transfer` or `direct-debit` |
+| TR  | Títulos de compensação extrassalarial | (*) |
+
+(*) For codes not mapped from a GOBL Payment Mean, use `other` and explicitly set the extension.
+
+For example, in an GOBL invoice:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  // [...]
+  "payment": {
+    "advances": [
+      {
+        "date": "2023-01-30",
+        "key": "credit-transfer",
+        "description": "Adiantamento",
+        "amount": "100.00",
+        "ext": {
+          "pt-saft-payment-means": "TB"
+        }
+      }
+    ]
+  },
+  // [...]
+}
+```
+
+For example, in a GOBL receipt:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/receipt",
+  // [...]
+  "method": {
+    "key": "other",
+    "detail": "Compensação extrassalarial",
+    "ext": {
+      "pt-saft-payment-means": "TR"
+    }
+  },
+  // [...]
+}
+

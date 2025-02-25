@@ -4,6 +4,39 @@
   "name": {
     "en": "Portugal SAF-T"
   },
+  "description": {
+    "en": "Portugal doesn't have an e-invoicing format per se. Tax information is reported\nelectronically to the AT (Autoridade Tributária e Aduaneira) either periodically in\nbatches via a SAF-T (PT) report or individually in real time via a web service. This addon\nensures that the GOBL documents have all the required fields to be able to be reported to\nthe AT."
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Portaria n.o 302/2016 – SAF-T Data Structure \u0026 Taxonomies"
+      },
+      "url": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/legislacao/diplomas_legislativos/Documents/Portaria_302_2016.pdf",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Portaria n.o 195/2020 – Comunicação de Séries Documentais, Aspetos Específicos"
+      },
+      "url": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Genericos.pdf",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Portaria n.o 195/2020 – Especificações Técnicas Código QR"
+      },
+      "url": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Novas_regras_faturacao/Documents/Especificacoes_Tecnicas_Codigo_QR.pdf",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Comunicação dos elementos dos documentos de faturação à AT, por webservice"
+      },
+      "url": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf",
+      "content_type": "application/pdf"
+    }
+  ],
   "extensions": [
     {
       "key": "pt-saft-invoice-type",
@@ -11,12 +44,19 @@
         "en": "Invoice Type",
         "pt": "Tipo de Fatura"
       },
+      "desc": {
+        "en": "SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a sales invoice. In GOBL,\nthis type can be set using the `pt-saft-invoice-type` extension in the tax section. GOBL\nwill set the extension for you based on the type and the tax tags you set in your invoice.\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$tags\": [\n\t\t\"invoice-receipt\"\n\t],\n\t// ...\n\t\"type\": \"standard\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pt-saft-invoice-type\": \"FR\"\n\t\t}\n\t},\n\t// ...\n```"
+      },
       "values": [
         {
           "code": "FT",
           "name": {
             "en": "Standard Invoice",
             "pt": "Fatura"
+          },
+          "desc": {
+            "en": "Invoice issued under article 36 of the VAT code.",
+            "pt": "Fatura, emitida nos termos do artigo 36.o do Código do IVA"
           }
         },
         {
@@ -24,6 +64,10 @@
           "name": {
             "en": "Simplified Invoice",
             "pt": "Fatura Simplificada"
+          },
+          "desc": {
+            "en": "Simplified invoice issued under article 40 of the VAT code.",
+            "pt": "Fatura simplificada, emitida nos termos do artigo 40.o do Código do IVA"
           }
         },
         {
@@ -31,6 +75,10 @@
           "name": {
             "en": "Invoice-Receipt",
             "pt": "Fatura-Recibo"
+          },
+          "desc": {
+            "en": "Invoice issued after payment.",
+            "pt": "Fatura-recibo"
           }
         },
         {
@@ -50,10 +98,39 @@
       ]
     },
     {
+      "key": "pt-saft-receipt-type",
+      "name": {
+        "en": "Receipt Type",
+        "pt": "Tipo de recibo"
+      },
+      "desc": {
+        "en": "To report payment receipts to the AT, GOBL provides conversion from `bill.Receipt`\ndocuments. In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its\ntype. In GOBL, this type can be set using the `pt-saft-receipt-type` extension. GOBL will\nset the extension automatically based on the type and the tax tags you set. The table\nbelow shows how this mapping is done:\n\n| Code | Name                                       | GOBL Type | GOBL Tax Tag |\n| ---- | ------------------------------------------ | --------- | ------------ |\n| RG   | Outro Recibo                               | `payment` |              |\n| RC   | Recibo no âmbito do regime de IVA de Caixa | `payment` | `vat-cash`   |\n\nFor example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/receipt\",\n\t// ...\n\t\"type\": \"payment\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-receipt-type\": \"RG\"\n\t},\n\t// ...\n```"
+      },
+      "values": [
+        {
+          "code": "RC",
+          "name": {
+            "en": "Receipt under the VAT Cash scheme",
+            "pt": "Recibo no âmbito do regime de IVA de Caixa"
+          }
+        },
+        {
+          "code": "RG",
+          "name": {
+            "en": "Other Receipt",
+            "pt": "Outro Recibo"
+          }
+        }
+      ]
+    },
+    {
       "key": "pt-saft-tax-rate",
       "name": {
         "en": "Tax Rate Code",
         "pt": "Código da Taxa de Imposto"
+      },
+      "desc": {
+        "en": "The SAF-T's `TaxCode` (Código do imposto) is required for invoice items that apply VAT.\nGOBL provides the `pt-saft-tax-rate` extension to set this code at line tax level. It also\ndetermines it automatically this code using the `rate` field (when present). The following\ntable lists the supported tax codes and how GOBL will map them:\n\n| Code   | Name            | GOBL Tax Rate  |\n| ------ | --------------- | -------------- |\n| `NOR`  | Tipo Geral      | `standard`     |\n| `INT`  | Taxa Intermédia | `intermediate` |\n| `RED`  | Taxa Reduzida   | `reduced`      |\n| `ISE`  | Isenta          | `exempt`       |"
       },
       "values": [
         {
@@ -98,6 +175,9 @@
       "name": {
         "en": "Tax exemption reason code",
         "pt": "Código do motivo de isenção de imposto"
+      },
+      "desc": {
+        "en": "AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that\nspecifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag\nis used in a tax combo, the `ext` map's `pt-exemption-code` property is required.\n\nFor example, you could define an invoice line exempt of tax as follows:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service exempt of tax\",\n\t\t\t\t\"price\": \"25.00\"\n\t\t\t},\n\t\t\t\"tax\": [\n\t\t\t\t{\n\t\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\t\"rate\": \"exempt\",\n\t\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\t\"pt-saft-tax-rate\": \"ISE\",\n\t\t\t\t\t\t\t\"pt-saft-exemption\": \"M19\"\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n```"
       },
       "values": [
         {
@@ -297,6 +377,9 @@
         "en": "Product Type",
         "pt": "Tipo de Produto"
       },
+      "desc": {
+        "en": "SAF-T's `ProductType` (Indicador de produto ou serviço) indicates the type of each line\nitem in an invoice. The `pt-saft-product-type` extension used at line item level allows to\nset the product type to one of the allowed values.\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service\",\n\t\t\t\t\"price\": \"25.00\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pt-saft-product-type\": \"S\"\n\t\t\t\t}\n\t\t\t},\n\t\t\t// ...\n\t\t}\n\t]\n}\n```"
+      },
       "values": [
         {
           "code": "P",
@@ -343,6 +426,116 @@
           "desc": {
             "en": "Taxes, fees and parafiscal charges (except VAT and IS which should be reflected in table 2.5 - TaxTable and Excise Duties, which should be filled in with code 'E')",
             "pt": "Impostos, taxas e encargos parafiscais – exceto IVA e IS que deverão ser refletidos na tabela 2.5 – Tabela de impostos (TaxTable) e Impostos Especiais de Consumo, que deverão ser preenchidos com o código 'E'."
+          }
+        }
+      ]
+    },
+    {
+      "key": "pt-saft-payment-means",
+      "name": {
+        "en": "Payment Means",
+        "pt": "Meio de Pagamento"
+      },
+      "desc": {
+        "en": "The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a\nsales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this\nvalue in your `bill.Invoice` advances or in you `bill.Receipt` method. GOBL maps certain\npayment mean keys automatically to this extension:\n\n| Code | Name                                               | GOBL Payment Means                                    |\n| ---- | -------------------------------------------------- | ----------------------------------------------------- |\n| `CC` | Cartão crédito                                     | `card`                                                |\n| `CD` | Cartão débito                                      | (*)                                                   |\n| `CH` | Cheque bancário                                    | `cheque`                                              |\n| `CI` | Letter of credit                                   | (*)                                                   |\n| `CO` | Cheque ou cartão oferta                            | (*)                                                   |\n| `CS` | Compensação de saldos em conta corrente            | `netting`                                             |\n| `DE` | Dinheiro eletrónico                                | `online`                                              |\n| `LC` | Letra comercial                                    | `promissory-note`                                     |\n| `MB` | Referências de pagamento para Multibanco           | (*)                                                   |\n| `NU` | Numerário                                          | `cash`                                                |\n| `OU` | Outro                                              | `other`                                               |\n| `PR` | Permuta de bens                                    | (*)                                                   |\n| `TB` | Transferência bancária ou débito direto autorizado | `credit-transfer`, `debit-transfer` or `direct-debit` |\n| `TR` | Títulos de compensação extrassalarial              | (*)                                                   |\n\n(*) For codes not mapped from a GOBL Payment Mean, use `other` and explicitly set the\nextension.\n\nFor example, in an GOBL invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"payment\": {\n\t\t\"advances\": [\n\t\t\t{\n\t\t\t\t\"date\": \"2023-01-30\",\n\t\t\t\t\"key\": \"credit-transfer\",\n\t\t\t\t\"description\": \"Adiantamento\",\n\t\t\t\t\"amount\": \"100.00\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pt-saft-payment-means\": \"TB\"\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t},\n\t// ...\n}\n```\n\nFor example, in a GOBL receipt:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/receipt\",\n\t// ...\n\t\"method\": {\n\t\t\"key\": \"other\",\n\t\t\"detail\": \"Compensação extrassalarial\",\n\t\t\"ext\": {\n\t\t\t\"pt-saft-payment-means\": \"TR\"\n\t\t}\n\t},\n\t// ...\n}"
+      },
+      "values": [
+        {
+          "code": "CC",
+          "name": {
+            "en": "Credit card",
+            "pt": "Cartão crédito"
+          }
+        },
+        {
+          "code": "CD",
+          "name": {
+            "en": "Debit card",
+            "pt": "Cartão débito"
+          }
+        },
+        {
+          "code": "CH",
+          "name": {
+            "en": "Bank cheque",
+            "pt": "Cheque bancário"
+          }
+        },
+        {
+          "code": "CI",
+          "name": {
+            "en": "International documentary credit",
+            "pt": "Letter of credit"
+          }
+        },
+        {
+          "code": "CO",
+          "name": {
+            "en": "Gift cheque or card",
+            "pt": "Cheque ou cartão oferta"
+          }
+        },
+        {
+          "code": "CS",
+          "name": {
+            "en": "Settlement of balances in current account",
+            "pt": "Compensação de saldos em conta corrente"
+          }
+        },
+        {
+          "code": "DE",
+          "name": {
+            "en": "Electronic money",
+            "pt": "Dinheiro eletrónico"
+          }
+        },
+        {
+          "code": "LC",
+          "name": {
+            "en": "Commercial bill",
+            "pt": "Letra comercial"
+          }
+        },
+        {
+          "code": "MB",
+          "name": {
+            "en": "Multibanco payment references",
+            "pt": "Referências de pagamento para Multibanco"
+          }
+        },
+        {
+          "code": "NU",
+          "name": {
+            "en": "Cash",
+            "pt": "Numerário"
+          }
+        },
+        {
+          "code": "OU",
+          "name": {
+            "en": "Other",
+            "pt": "Outro"
+          }
+        },
+        {
+          "code": "PR",
+          "name": {
+            "en": "Barter",
+            "pt": "Permuta de bens"
+          }
+        },
+        {
+          "code": "TB",
+          "name": {
+            "en": "Bank transfer or direct debit",
+            "pt": "Transferência bancária ou débito direto autorizado"
+          }
+        },
+        {
+          "code": "TR",
+          "name": {
+            "en": "Supplementary compensation",
+            "pt": "Títulos de compensação extrassalarial"
           }
         }
       ]
