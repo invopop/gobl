@@ -35,10 +35,10 @@ lines:
       series: "SAMPLE"
       code: "001"
       description: "Invoice"
+      tax:
+        categories:
+          - code: "VAT"
+            rates:
+              - base: "1630.00"
+                percent: "21.0%"
     debit: "1972.30"
-    tax:
-      categories:
-        - code: "VAT"
-          rates:
-            - base: "1630.00"
-              percent: "21.0%"
