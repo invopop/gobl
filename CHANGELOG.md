@@ -23,12 +23,15 @@ Each document class has a subset of types to cover multiple situations. Its been
 - `bill`: `Line` now includes a `breakdown` array of sub-lines that will be used to calculate the item's price, including individual discounts and charges. This effectively implements grouping, while maintaining compatibility with all other formats that do not support breakdowns.
 - `bill`: `Line` new `substituted` array of sub-lines for informational purposes when the originally requested line could not be fulfilled, especially relevant for orders.
 - `bill`: `Tax` includes `rounding` field to be able to override the tax regimes default rounding mechanism.
+- `bill`: `CorrectionOptions` now includes `copy_tax` flag, and will automatically copy tax details from a previous document.
+- `org`: `DocumentRef` includes `tax` property with the Tax Totals of a previous document.
 
 ### Changed
 
 - `bill`: renaming `Payment` to `PaymentDetails`, and `Delivery` to `DeliveryDetails`, to make room for new document types.
 - `bill`: renaming `Receipt` to `Payment`, and associated payment types to simply `advice` and `receipt`.
 - `org`: `Item` price is now a pointer and optional, so that items without prices can be used in `bill.Order` and `bill.Delivery` documents. `bill.Invoice` continues to validate for the presence of an item's price, as expected.
+- `bill`: `PaymentLine` `tax` property moved to the `document`.
 
 ## [v0.210.0] - 2025-02-19
 
