@@ -3,11 +3,13 @@ package adecf
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 // Italian extension keys required by the AdE adecf format.
 const (
-	ExtKeyExempt cbc.Key = "it-adecf-exempt"
+	ExtKeyExempt  cbc.Key = "it-adecf-exempt"
+	ExtKeyProduct cbc.Key = "it-adecf-product"
 )
 
 var extensions = []*cbc.Definition{
@@ -59,6 +61,35 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Reverse charge",
 					i18n.IT: "Inversione contabile",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyProduct,
+		Name: i18n.String{
+			i18n.EN: "AdE CF Product Key",
+			i18n.IT: "Chiave Prodotto AdE CF",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Product keys are used by AdE CF to differentiate between goods
+				and services.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "goods",
+				Name: i18n.String{
+					i18n.EN: "Delivery of goods",
+					i18n.IT: "Consegna di beni",
+				},
+			},
+			{
+				Code: "services",
+				Name: i18n.String{
+					i18n.EN: "Provision of services",
+					i18n.IT: "Prestazione di servizi",
 				},
 			},
 		},
