@@ -62,10 +62,29 @@ func validateTax(val any) error {
 
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Ext,
-			tax.ExtensionsRequire(ExtKeyInvoiceType),
+			validation.By(validateTaxExt),
 			validation.Skip,
 		),
 	)
+}
+
+func validateTaxExt(val any) error {
+	ext, _ := val.(tax.Extensions)
+	if ext == nil {
+		ext = make(tax.Extensions) // Empty temporary map to return meaningful errors
+	}
+
+	msg := fmt.Sprintf("either `%s` or `%s` must be set", ExtKeyWorkType, ExtKeyInvoiceType)
+
+	if !ext.Has(ExtKeyWorkType) && !ext.Has(ExtKeyInvoiceType) {
+		return validation.NewError("invalid", msg)
+	}
+
+	if ext.Has(ExtKeyWorkType, ExtKeyInvoiceType) {
+		return validation.NewError("invalid", msg+", but not both")
+	}
+
+	return nil
 }
 
 // validateSeriesFormat validates the format of the series to meet the requirements of the
