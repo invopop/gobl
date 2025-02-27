@@ -11,8 +11,9 @@ const (
 	ExtKeyExemption    cbc.Key = "pt-saft-exemption"
 	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
 	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
-	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
+	ExtKeyWorkType     cbc.Key = "pt-saft-work-type"
 	ExtKeyPaymentType  cbc.Key = "pt-saft-payment-type"
+	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
 )
 
@@ -49,6 +50,24 @@ const (
 	ProductTypeFee     cbc.Code = "I"
 )
 
+// Work types
+const (
+	WorkTypeTableQueries      cbc.Code = "CM"
+	WorkTypeConsignmentCredit cbc.Code = "CC"
+	WorkTypeConsignmentInv    cbc.Code = "FC"
+	WorkTypeWorksheets        cbc.Code = "FO"
+	WorkTypePurchaseOrder     cbc.Code = "NE"
+	WorkTypeOther             cbc.Code = "OU"
+	WorkTypeBudgets           cbc.Code = "OR"
+	WorkTypeProforma          cbc.Code = "PF"
+	WorkTypeDocuments         cbc.Code = "DC"
+	WorkTypePremium           cbc.Code = "RP"
+	WorkTypeChargeback        cbc.Code = "RE"
+	WorkTypeCoInsurers        cbc.Code = "CS"
+	WorkTypeLeadCoInsurer     cbc.Code = "LD"
+	WorkTypeReinsurance       cbc.Code = "RA"
+)
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyInvoiceType,
@@ -61,6 +80,16 @@ var extensions = []*cbc.Definition{
 				SAF-T's ~InvoiceType~ (Tipo de documento) specifies the type of a sales invoice. In GOBL,
 				this type can be set using the ~pt-saft-invoice-type~ extension in the tax section. GOBL
 				will set the extension for you based on the type and the tax tags you set in your invoice.
+
+				The table below shows how this mapping is done:
+
+				| Code | Name                | GOBL Type     | GOBL Tax Tag    |
+				| ---- | ------------------- | ------------- | --------------- |
+				| ~FT~ | Standard Invoice    | ~standard~    |                 |
+				| ~FS~ | Simplified Invoice  | ~standard~    | ~simplified~    |
+				| ~FR~ | Invoice-Receipt     | ~standard~    | ~invoice-receipt~ |
+				| ~ND~ | Debit Note          | ~debit-note~  |                 |
+				| ~NC~ | Credit Note         | ~credit-note~ |                 |
 
 				Example:
 
@@ -556,6 +585,144 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: "Taxes, fees and parafiscal charges (except VAT and IS which should be reflected in table 2.5 - TaxTable and Excise Duties, which should be filled in with code 'E')",
 					i18n.PT: "Impostos, taxas e encargos parafiscais – exceto IVA e IS que deverão ser refletidos na tabela 2.5 – Tabela de impostos (TaxTable) e Impostos Especiais de Consumo, que deverão ser preenchidos com o código 'E'.",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyWorkType,
+		Name: i18n.String{
+			i18n.EN: "Document Type",
+			i18n.PT: "Tipo de documento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~WorkType~ (Tipo de documento de conferência) specifies the type of a working
+				document. In GOBL,this type can be set using the ~pt-saft-work-type~ extension. GOBL
+				will set the extension for you based on the type and the tax tags you set in your invoice
+				in a few cases.
+
+				The table below shows the cases where this mapping is done:
+
+				| Code | Name                      | GOBL Type    | GOBL Tax Tag |
+				| ---- | ------------------------- | ------------ | ------------ |
+				| ~PF~ | Pro forma invoice         | ~proforma~   |              |
+
+				Example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/document",
+					"type": "proforma",
+					// ...
+					"ext": {
+						"pt-saft-work-type": "PF"
+					},
+					// ...
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: WorkTypeTableQueries,
+				Name: i18n.String{
+					i18n.EN: "Table orders",
+					i18n.PT: "Consultas de mesa",
+				},
+			},
+			{
+				Code: WorkTypeConsignmentCredit,
+				Name: i18n.String{
+					i18n.EN: "Consignment credit note",
+					i18n.PT: "Credito de consignação",
+				},
+			},
+			{
+				Code: WorkTypeConsignmentInv,
+				Name: i18n.String{
+					i18n.EN: "VAT-compliant consignment invoice (Article 38)",
+					i18n.PT: "Fatura de consignação nos termos do art.º 38º do código do IVA",
+				},
+			},
+			{
+				Code: WorkTypeWorksheets,
+				Name: i18n.String{
+					i18n.EN: "Work orders",
+					i18n.PT: "Folhas de obra",
+				},
+			},
+			{
+				Code: WorkTypePurchaseOrder,
+				Name: i18n.String{
+					i18n.EN: "Purchase order",
+					i18n.PT: "Nota de Encomenda",
+				},
+			},
+			{
+				Code: WorkTypeOther,
+				Name: i18n.String{
+					i18n.EN: "Other documents",
+					i18n.PT: "Outros",
+				},
+			},
+			{
+				Code: WorkTypeBudgets,
+				Name: i18n.String{
+					i18n.EN: "Quotations",
+					i18n.PT: "Orçamentos",
+				},
+			},
+			{
+				Code: WorkTypeProforma,
+				Name: i18n.String{
+					i18n.EN: "Pro forma invoice",
+					i18n.PT: "Pró-forma",
+				},
+			},
+			{
+				Code: WorkTypeDocuments,
+				Name: i18n.String{
+					i18n.EN: "Delivery verification documents",
+					i18n.PT: "Documentos emitidos que sejam suscetíveis de apresentação ao cliente para conferência de mercadorias ou de prestação de serviços",
+				},
+				Desc: i18n.String{
+					i18n.EN: "For data up to 2017-06-30",
+					i18n.PT: "Para dados até 2017-06-30",
+				},
+			},
+			{
+				Code: WorkTypePremium,
+				Name: i18n.String{
+					i18n.EN: "Premium Receipt",
+					i18n.PT: "Prémio ou recibo de prémio",
+				},
+			},
+			{
+				Code: WorkTypeChargeback,
+				Name: i18n.String{
+					i18n.EN: "Chargeback Receipt",
+					i18n.PT: "Estorno ou recibo de estorno",
+				},
+			},
+			{
+				Code: WorkTypeCoInsurers,
+				Name: i18n.String{
+					i18n.EN: "Co-insurers Allocation",
+					i18n.PT: "Imputação a co-seguradoras",
+				},
+			},
+			{
+				Code: WorkTypeLeadCoInsurer,
+				Name: i18n.String{
+					i18n.EN: "Lead Co-insurer Allocation",
+					i18n.PT: "Imputação a co-seguradora líder",
+				},
+			},
+			{
+				Code: WorkTypeReinsurance,
+				Name: i18n.String{
+					i18n.EN: "Accepted Reinsurance",
+					i18n.PT: "Resseguro aceite",
 				},
 			},
 		},

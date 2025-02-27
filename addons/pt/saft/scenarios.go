@@ -53,6 +53,12 @@ var invoiceScenarios = &tax.ScenarioSet{
 				ExtKeyInvoiceType: InvoiceTypeCreditNote,
 			},
 		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeProforma},
+			Ext: tax.Extensions{
+				ExtKeyWorkType: WorkTypeProforma,
+			},
+		},
 
 		// Extension texts
 		{
