@@ -41,23 +41,23 @@ func validPayment() *bill.Payment {
 			{
 				Document: &org.DocumentRef{
 					IssueDate: cal.NewDate(2024, 3, 1),
-				},
-				Debit: num.NewAmount(100, 2),
-				Tax: &tax.Total{
-					Categories: []*tax.CategoryTotal{
-						{
-							Code: tax.CategoryVAT,
-							Rates: []*tax.RateTotal{
-								{
-									Ext: tax.Extensions{
-										pt.ExtKeyRegion:    "PT",
-										saft.ExtKeyTaxRate: "NOR",
+					Tax: &tax.Total{
+						Categories: []*tax.CategoryTotal{
+							{
+								Code: tax.CategoryVAT,
+								Rates: []*tax.RateTotal{
+									{
+										Ext: tax.Extensions{
+											pt.ExtKeyRegion:    "PT",
+											saft.ExtKeyTaxRate: "NOR",
+										},
 									},
 								},
 							},
 						},
 					},
 				},
+				Debit: num.NewAmount(100, 2),
 			},
 		},
 		Method: &pay.Instructions{
@@ -136,7 +136,7 @@ func TestPaymentValidation(t *testing.T) {
 		pmt := validPayment()
 		pmt.Lines[0].Document = nil
 
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (document: cannot be blank")
+		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (document: cannot be blank.).)")
 
 		pmt.Lines[0] = nil
 		assert.NoError(t, addon.Validator(pmt))
@@ -151,23 +151,23 @@ func TestPaymentValidation(t *testing.T) {
 
 	t.Run("missing VAT category in line tax", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Lines[0].Tax = nil
+		pmt.Lines[0].Document.Tax = nil
 
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (tax: cannot be blank")
+		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (document: (tax: cannot be blank.).).).")
 
-		pmt.Lines[0].Tax = new(tax.Total)
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (tax: missing category VAT")
+		pmt.Lines[0].Document.Tax = new(tax.Total)
+		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (document: (tax: missing category VAT.).).).")
 	})
 
 	t.Run("missing line tax required extensions", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Lines[0].Tax.Categories[0].Rates[0].Ext = nil
+		pmt.Lines[0].Document.Tax.Categories[0].Rates[0].Ext = nil
 
 		err := addon.Validator(pmt)
 		assert.ErrorContains(t, err, "pt-region: required")
 		assert.ErrorContains(t, err, "pt-saft-tax-rate: required")
 
-		pmt.Lines[0].Tax.Categories[0].Rates[0] = nil
+		pmt.Lines[0].Document.Tax.Categories[0].Rates[0] = nil
 		assert.NoError(t, addon.Validator(pmt))
 	})
 

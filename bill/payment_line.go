@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
@@ -28,10 +27,6 @@ type PaymentLine struct {
 	Debit *num.Amount `json:"debit,omitempty" jsonschema:"title=Debit"`
 	// Amount received by the customer in case of refunds.
 	Credit *num.Amount `json:"credit,omitempty" jsonschema:"title=Credit"`
-
-	// Tax total breakdown from the original document, only if required by a specific tax regime
-	// or addon.
-	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 
 	// Total balance to be paid for this line from the customer to the supplier
 	// in the currency of the document.
@@ -54,7 +49,6 @@ func (pl *PaymentLine) ValidateWithContext(ctx context.Context) error {
 			),
 		),
 		validation.Field(&pl.Credit),
-		validation.Field(&pl.Tax),
 		validation.Field(&pl.Total, validation.Required),
 		validation.Field(&pl.Notes),
 	)

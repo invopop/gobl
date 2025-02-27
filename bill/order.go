@@ -308,6 +308,9 @@ func (ord *Order) getValueDate() *cal.Date {
 func (ord *Order) getTax() *Tax {
 	return ord.Tax
 }
+func (ord *Order) getPreceding() []*org.DocumentRef {
+	return ord.Preceding
+}
 func (ord *Order) getCustomer() *org.Party {
 	return ord.Customer
 }

@@ -63,7 +63,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.SetTags(tax.TagSimplified)
 		require.NoError(t, inv.Calculate())
 
-		require.NoError(t, inv.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
+		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax(), bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F3")
 		assert.Empty(t, inv.Tax.Ext[verifactu.ExtKeyCorrectionType])
@@ -75,7 +75,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: cannot be blank")
 	})
 
-	t.Run("correction invoice preceding requires issue date", func(t *testing.T) {
+	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Preceding = []*org.DocumentRef{
@@ -83,7 +83,7 @@ func TestInvoiceValidation(t *testing.T) {
 				Code: "123",
 			},
 		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank.).)")
+		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
 
 	t.Run("correction invoice with preceding", func(t *testing.T) {
@@ -98,6 +98,19 @@ func TestInvoiceValidation(t *testing.T) {
 				Ext: tax.Extensions{
 					verifactu.ExtKeyDocType: "R1",
 				},
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(21, 2),
+								},
+							},
+						},
+					},
+				},
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -106,6 +119,7 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
 		assert.Empty(t, inv.Preceding[0].Ext)
+		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 
 }

@@ -345,6 +345,9 @@ func (inv *Invoice) getValueDate() *cal.Date {
 func (inv *Invoice) getTax() *Tax {
 	return inv.Tax
 }
+func (inv *Invoice) getPreceding() []*org.DocumentRef {
+	return inv.Preceding
+}
 func (inv *Invoice) getCustomer() *org.Party {
 	return inv.Customer
 }
