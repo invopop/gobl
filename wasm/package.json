@@ -28,6 +28,6 @@
   },
   "dependencies": {
     "http-server": "^14.1.0",
-    "wait-on": "^6.0.1"
+    "wait-on": "^8.0.2"
   }
 }
