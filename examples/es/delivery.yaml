@@ -1,10 +1,8 @@
-$schema: "https://gobl.org/draft-0/bill/receipt"
+$schema: "https://gobl.org/draft-0/bill/delivery"
 $regime: "ES"
 uuid: "0194ad4c-3462-7695-a40c-66a30ccc1405"
-type: "payment"
-method:
-  key: "credit-transfer"
-series: "RCT"
+type: "note"
+series: "DLV"
 code: "0001"
 issue_date: "2025-01-28"
 supplier:
@@ -28,17 +26,11 @@ customer:
     code: "54387763P"
   name: "Sample Consumer"
 
+tracking:
+  code: "X123435"
+
 lines:
-  - document:
-      uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
-      issue_date: "2025-01-10"
-      series: "SAMPLE"
-      code: "001"
-      description: "Invoice"
-    debit: "1972.30"
-    tax:
-      categories:
-        - code: "VAT"
-          rates:
-            - base: "1630.00"
-              percent: "21.0%"
+  - quantity: 10
+    item:
+      name: "Promo Mugs"
+      price: "12.50"

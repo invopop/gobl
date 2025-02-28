@@ -20,7 +20,7 @@ func invoiceTemplate(t *testing.T) *bill.Invoice {
 func TestValidateInvoice(t *testing.T) {
 	t.Run("valid invoice with SEPA credit transfer", func(t *testing.T) {
 		inv := invoiceTemplate(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: "credit-transfer+sepa",
 				CreditTransfer: []*pay.CreditTransfer{
@@ -37,7 +37,7 @@ func TestValidateInvoice(t *testing.T) {
 
 	t.Run("invalid invoice with missing IBAN for SEPA credit transfer", func(t *testing.T) {
 		inv := invoiceTemplate(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: pay.MeansKeyCreditTransfer.With(pay.MeansKeySEPA),
 				CreditTransfer: []*pay.CreditTransfer{
@@ -54,7 +54,7 @@ func TestValidateInvoice(t *testing.T) {
 
 	t.Run("valid invoice with card payment", func(t *testing.T) {
 		inv := invoiceTemplate(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key:  pay.MeansKeyCard,
 				Card: &pay.Card{},
@@ -66,7 +66,7 @@ func TestValidateInvoice(t *testing.T) {
 
 	t.Run("valid invoice with SEPA direct debit", func(t *testing.T) {
 		inv := invoiceTemplate(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: "direct-debit+sepa",
 				DirectDebit: &pay.DirectDebit{
@@ -82,7 +82,7 @@ func TestValidateInvoice(t *testing.T) {
 
 	t.Run("invalid invoice with missing mandate reference for direct debit", func(t *testing.T) {
 		inv := invoiceTemplate(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: "direct-debit+sepa",
 				DirectDebit: &pay.DirectDebit{
@@ -98,7 +98,7 @@ func TestValidateInvoice(t *testing.T) {
 
 	t.Run("invalid invoice with invalid payment key", func(t *testing.T) {
 		inv := invoiceTemplate(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: cbc.Key("invalid-key"),
 			},

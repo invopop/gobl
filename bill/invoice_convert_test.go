@@ -22,7 +22,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(12050, 2),
+					Price: num.NewAmount(12050, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -63,7 +63,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(12050, 2),
+					Price: num.NewAmount(12050, 2),
 					AltPrices: []*currency.Amount{
 						{
 							Currency: currency.USD,
@@ -126,7 +126,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 					Quantity: num.MakeAmount(10, 0),
 					Item: &org.Item{
 						Name:  "Test Item",
-						Price: num.MakeAmount(10000, 2),
+						Price: num.NewAmount(10000, 2),
 					},
 					Taxes: tax.Set{
 						{
@@ -160,7 +160,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 					Amount: num.MakeAmount(100, 2),
 				},
 			},
-			Payment: &bill.Payment{
+			Payment: &bill.PaymentDetails{
 				Advances: []*pay.Advance{
 					{
 						Description: "Test Advance",

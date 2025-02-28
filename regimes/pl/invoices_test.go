@@ -59,7 +59,7 @@ func creditNote() *bill.Invoice {
 				Quantity: num.MakeAmount(1, 3),
 				Item: &org.Item{
 					Name:  "bogus",
-					Price: num.MakeAmount(1000, 3),
+					Price: num.NewAmount(1000, 3),
 				},
 			},
 		},

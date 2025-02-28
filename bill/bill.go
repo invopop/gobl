@@ -7,14 +7,18 @@ import (
 
 func init() {
 	schema.Register(schema.GOBL.Add("bill"),
+		Delivery{},
 		Invoice{},
-		Receipt{},
+		Order{},
+		Payment{},
 		CorrectionOptions{},
 	)
 }
 
 // Constants used to help identify document schemas
 const (
-	ShortSchemaInvoice = "bill/invoice"
-	ShortSchemaReceipt = "bill/receipt"
+	ShortSchemaOrder    = "bill/order"
+	ShortSchemaDelivery = "bill/delivery"
+	ShortSchemaInvoice  = "bill/invoice"
+	ShortSchemaPayment  = "bill/payment"
 )

@@ -24,7 +24,7 @@ func TestInvoice(t *testing.T) {
 
 	t.Run("prepaid", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Percent:     num.NewPercentage(1, 0),

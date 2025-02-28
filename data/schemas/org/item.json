@@ -80,8 +80,7 @@
       },
       "type": "object",
       "required": [
-        "name",
-        "price"
+        "name"
       ],
       "description": "Item is used to describe a single product or service."
     }

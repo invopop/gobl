@@ -46,7 +46,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Payment,
 			validation.Required,
-			validation.By(validateInvoicePayment),
+			validation.By(validateInvoicePaymentDetails),
 			validation.Skip,
 		),
 		validation.Field(&inv.Preceding,
@@ -149,8 +149,8 @@ func validateInvoiceItem(value any) error {
 	)
 }
 
-func validateInvoicePayment(value any) error {
-	p, ok := value.(*bill.Payment)
+func validateInvoicePaymentDetails(value any) error {
+	p, ok := value.(*bill.PaymentDetails)
 	if !ok || p == nil {
 		return nil
 	}

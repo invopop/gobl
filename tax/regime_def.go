@@ -217,6 +217,14 @@ func (r *RegimeDef) GetCurrency() currency.Code {
 	return currency.CodeEmpty
 }
 
+// GetCountry provides the country code for the regime, or an empty string.
+func (r *RegimeDef) GetCountry() l10n.TaxCountryCode {
+	if r != nil {
+		return r.Country
+	}
+	return ""
+}
+
 // GetRoundingRule provides the regime's rounding rule, or the default.
 func (r *RegimeDef) GetRoundingRule() RoundingRule {
 	if r != nil && r.CalculatorRoundingRule != "" {

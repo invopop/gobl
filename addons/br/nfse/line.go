@@ -10,8 +10,8 @@ func validateLine(line *bill.Line) error {
 	if line == nil {
 		return nil
 	}
-
 	return validation.Validate(line,
 		bill.RequireLineTaxCategory(br.TaxCategoryISS),
+		validation.Skip,
 	)
 }

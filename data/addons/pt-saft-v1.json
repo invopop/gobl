@@ -98,13 +98,13 @@
       ]
     },
     {
-      "key": "pt-saft-receipt-type",
+      "key": "pt-saft-payment-type",
       "name": {
-        "en": "Receipt Type",
-        "pt": "Tipo de recibo"
+        "en": "Payment Type",
+        "pt": "Tipo de Pagamento"
       },
       "desc": {
-        "en": "To report payment receipts to the AT, GOBL provides conversion from `bill.Receipt`\ndocuments. In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its\ntype. In GOBL, this type can be set using the `pt-saft-receipt-type` extension. GOBL will\nset the extension automatically based on the type and the tax tags you set. The table\nbelow shows how this mapping is done:\n\n| Code | Name                                       | GOBL Type | GOBL Tax Tag |\n| ---- | ------------------------------------------ | --------- | ------------ |\n| RG   | Outro Recibo                               | `payment` |              |\n| RC   | Recibo no âmbito do regime de IVA de Caixa | `payment` | `vat-cash`   |\n\nFor example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/receipt\",\n\t// ...\n\t\"type\": \"payment\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-receipt-type\": \"RG\"\n\t},\n\t// ...\n```"
+        "en": "To report payment receipts to the AT, GOBL provides conversion from `bill.Payment`\ndocuments. In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its\ntype. In GOBL, this type can be set using the `pt-saft-payment-type` extension. GOBL will\nset the extension automatically based on the type and the tax tags you set. The table\nbelow shows how this mapping is done:\n\n| Code | Name                                       | GOBL Type | GOBL Tax Tag |\n| ---- | ------------------------------------------ | --------- | ------------ |\n| RG   | Outro Recibo                               | `receipt` |              |\n| RC   | Recibo no âmbito do regime de IVA de Caixa | `receipt` | `vat-cash`   |\n\nFor example:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/payment\",\n\t// ...\n\t\"type\": \"receipt\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-receipt-type\": \"RG\"\n\t},\n\t// ...\n```"
       },
       "values": [
         {
