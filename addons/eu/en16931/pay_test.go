@@ -32,7 +32,7 @@ func TestPayInstructions(t *testing.T) {
 
 	t.Run("validation", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Payment = &bill.Payment{
+		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: pay.MeansKeyCreditTransfer,
 			},

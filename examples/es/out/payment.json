@@ -1,0 +1,66 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5e2fd1035c96a5ef0cfa083b1eb0a72290883b456f6030bc051b67ee060391dc"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/payment",
+		"$regime": "ES",
+		"uuid": "0194ad4c-3462-7695-a40c-66a30ccc1405",
+		"type": "receipt",
+		"method": {
+			"key": "credit-transfer"
+		},
+		"series": "RCT",
+		"code": "0001",
+		"issue_date": "2025-01-28",
+		"currency": "EUR",
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"document": {
+					"type": "standard",
+					"issue_date": "2025-01-10",
+					"series": "SAMPLE",
+					"code": "001"
+				},
+				"debit": "1630.00",
+				"total": "1630.00"
+			}
+		],
+		"total": "1630.00"
+	}
+}

@@ -1,7 +1,7 @@
-$schema: https://gobl.org/draft-0/bill/receipt
+$schema: https://gobl.org/draft-0/bill/payment
 $addons: ["pt-saft-v1"]
 uuid: "d7388b17-d35f-4f2e-a33e-9bca2fae9089"
-type: payment
+type: receipt
 method:
   key: credit-transfer
   detail: "Transferência bancária"
@@ -33,14 +33,14 @@ lines:
       issue_date: "2025-01-15"
       series: "FT SAMPLE"
       code: "1"
+      tax:
+        categories:
+          - code: VAT
+            rates:
+              - key: standard
+                base: 100.00
+                percent: "23.0%"
+                ext:
+                  pt-region: PT
+                  pt-saft-tax-rate: NOR
     debit: 123.00
-    tax:
-      categories:
-        - code: VAT
-          rates:
-            - key: standard
-              base: 100.00
-              percent: "23.0%"
-              ext:
-                pt-region: PT
-                pt-saft-tax-rate: NOR

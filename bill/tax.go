@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -15,6 +16,13 @@ type Tax struct {
 	// useful for B2C retailers with customers who prefer final prices inclusive of
 	// tax.
 	PricesInclude cbc.Code `json:"prices_include,omitempty" jsonschema:"title=Prices Include"`
+
+	// Rounding model used to perform tax calculations on the invoice. This
+	// will be configured automatically based on the tax regime, or
+	// `sum-then-round` by default, but you can override here if needed.
+	// Use with caution, as some conversion tools may make assumptions about
+	// the rounding model used.
+	Rounding cbc.Key `json:"rounding,omitempty" jsonschema:"title=Rounding Model"`
 
 	// Additional extensions that are applied to the invoice as a whole as opposed to specific
 	// sections.
@@ -54,6 +62,9 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 func (t *Tax) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.PricesInclude),
+		validation.Field(&t.Rounding,
+			cbc.InKeyDefs(tax.RoundingRules),
+		),
 		validation.Field(&t.Ext),
 		validation.Field(&t.Meta),
 	)
@@ -73,4 +84,18 @@ func (t *Tax) UnmarshalJSON(data []byte) error {
 	}
 	t.tags = aux.Tags
 	return nil
+}
+
+// JSONSchemaExtend is used to add the additional options to the JSON schema.
+func (t Tax) JSONSchemaExtend(schema *jsonschema.Schema) {
+	if p, ok := schema.Properties.Get("rounding"); ok {
+		p.OneOf = make([]*jsonschema.Schema, len(tax.RoundingRules))
+		for i, r := range tax.RoundingRules {
+			p.OneOf[i] = &jsonschema.Schema{
+				Const:       r.Key.String(),
+				Title:       r.Name.String(),
+				Description: r.Desc.String(),
+			}
+		}
+	}
 }

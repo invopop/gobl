@@ -356,7 +356,8 @@
       "schema": "bill/invoice",
       "extensions": [
         "es-verifactu-doc-type"
-      ]
+      ],
+      "copy_tax": true
     }
   ]
 }

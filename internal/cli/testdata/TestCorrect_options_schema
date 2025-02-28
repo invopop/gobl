@@ -4,6 +4,11 @@
         "CorrectionOptions": {
             "description": "CorrectionOptions defines a structure used to pass configuration options to correct a previous invoice.",
             "properties": {
+                "copy_tax": {
+                    "description": "CopyTax when true will copy the tax totals from the previous document to the\npreceding document data.",
+                    "title": "Copy Tax Totals",
+                    "type": "boolean"
+                },
                 "issue_date": {
                     "$ref": "https://gobl.org/draft-0/cal/date",
                     "description": "When the new corrective invoice's issue date should be set to.",

@@ -17,33 +17,33 @@ const (
 	TagVATCash cbc.Key = "vat-cash"
 )
 
-func validateReceipt(rct *bill.Receipt) error {
-	rt := receiptType(rct)
+func validatePayment(pmt *bill.Payment) error {
+	pt := paymentType(pmt)
 
-	return validation.ValidateStruct(rct,
-		validation.Field(&rct.Series,
-			validateSeriesFormat(rt),
+	return validation.ValidateStruct(pmt,
+		validation.Field(&pmt.Series,
+			validateSeriesFormat(pt),
 			validation.Skip,
 		),
-		validation.Field(&rct.Code,
-			validateCodeFormat(rct.Series, rt),
+		validation.Field(&pmt.Code,
+			validateCodeFormat(pmt.Series, pt),
 			validation.Skip,
 		),
-		validation.Field(&rct.Ext,
-			tax.ExtensionsRequire(ExtKeyReceiptType),
+		validation.Field(&pmt.Ext,
+			tax.ExtensionsRequire(ExtKeyPaymentType),
 			validation.Skip,
 		),
-		validation.Field(&rct.Supplier,
+		validation.Field(&pmt.Supplier,
 			validation.By(validateSupplier),
 			validation.Skip,
 		),
-		validation.Field(&rct.Customer,
+		validation.Field(&pmt.Customer,
 			validation.By(validateCustomer),
 			validation.Skip,
 		),
-		validation.Field(&rct.Lines,
+		validation.Field(&pmt.Lines,
 			validation.Each(
-				validation.By(validateReceiptLine),
+				validation.By(validatePaymentLine),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -79,29 +79,24 @@ func validateCustomer(val any) error {
 	)
 }
 
-func validateReceiptLine(val any) error {
-	rl, _ := val.(*bill.ReceiptLine)
-	if rl == nil {
+func validatePaymentLine(val any) error {
+	pl, _ := val.(*bill.PaymentLine)
+	if pl == nil {
 		return nil
 	}
 
-	return validation.ValidateStruct(rl,
-		validation.Field(&rl.Document,
-			validation.By(validateLineDocument),
+	return validation.ValidateStruct(pl,
+		validation.Field(&pl.Document,
+			validation.By(validatePaymentLineDocument),
 			validation.Required,
 			validation.Skip,
 		),
-		validation.Field(&rl.Tax,
-			validation.By(validateLineTax),
-			validation.Required,
-			validation.Skip,
-		),
-		validation.Field(&rl.Debit, num.Min(num.AmountZero)),
-		validation.Field(&rl.Credit, num.Min(num.AmountZero)),
+		validation.Field(&pl.Debit, num.Min(num.AmountZero)),
+		validation.Field(&pl.Credit, num.Min(num.AmountZero)),
 	)
 }
 
-func validateLineDocument(val any) error {
+func validatePaymentLineDocument(val any) error {
 	ld, _ := val.(*org.DocumentRef)
 	if ld == nil {
 		return nil
@@ -112,10 +107,15 @@ func validateLineDocument(val any) error {
 			validation.Required,
 			validation.Skip,
 		),
+		validation.Field(&ld.Tax,
+			validation.By(validatePaymentLineDocumentTax),
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }
 
-func validateLineTax(val any) error {
+func validatePaymentLineDocumentTax(val any) error {
 	lt, _ := val.(*tax.Total)
 	if lt == nil {
 		return nil
@@ -151,23 +151,23 @@ func validateLineTaxRate(val any) error {
 	)
 }
 
-func receiptType(rct *bill.Receipt) cbc.Code {
-	if rct == nil || rct.Ext == nil {
+func paymentType(pmt *bill.Payment) cbc.Code {
+	if pmt == nil || pmt.Ext == nil {
 		return cbc.CodeEmpty
 	}
 
-	return rct.Ext[ExtKeyReceiptType]
+	return pmt.Ext[ExtKeyPaymentType]
 }
 
-func normalizeReceipt(rct *bill.Receipt) {
-	if rct.Ext == nil {
-		rct.Ext = tax.Extensions{}
+func normalizePayment(pmt *bill.Payment) {
+	if pmt.Ext == nil {
+		pmt.Ext = tax.Extensions{}
 	}
 
 	// TODO: This could be done with scenarios when supported
-	if rct.HasTags(TagVATCash) {
-		rct.Ext[ExtKeyReceiptType] = ReceiptTypeCash
+	if pmt.HasTags(TagVATCash) {
+		pmt.Ext[ExtKeyPaymentType] = PaymentTypeCash
 	} else {
-		rct.Ext[ExtKeyReceiptType] = ReceiptTypeOther
+		pmt.Ext[ExtKeyPaymentType] = PaymentTypeOther
 	}
 }

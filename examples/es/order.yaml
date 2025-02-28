@@ -1,0 +1,34 @@
+$schema: "https://gobl.org/draft-0/bill/order"
+$regime: "ES"
+uuid: "0194ad4c-3462-7695-a40c-66a30ccc1405"
+type: "purchase"
+series: "ORD"
+code: "0001"
+issue_date: "2025-01-28"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Promo Mugs"
+      price: "12.50"

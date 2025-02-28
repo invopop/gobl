@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/LastPossum/kamino"
 	_ "github.com/invopop/gobl" // load regions
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
@@ -28,7 +29,7 @@ func TestInvoiceRegimeCurrency(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 			Taxes: tax.Set{
 				{
@@ -44,7 +45,7 @@ func TestInvoiceRegimeCurrency(t *testing.T) {
 
 	assert.Equal(t, currency.EUR, i.Currency, "should set currency automatically")
 	assert.Equal(t, "10.00", i.Lines[0].Item.Price.String(), "should update price precision")
-	i.Lines[0].Item.Price = num.MakeAmount(10000, 3)
+	i.Lines[0].Item.Price = num.NewAmount(10000, 3)
 	require.NoError(t, i.Calculate())
 	assert.Equal(t, "10.000", i.Lines[0].Item.Price.String(), "should not update price precision")
 }
@@ -55,7 +56,7 @@ func TestInvoiceRegimeCurrencyCLP(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}
@@ -72,7 +73,7 @@ func TestInvoiceInvalidCurrency(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}
@@ -88,7 +89,7 @@ func TestInvoiceRegimeCurrencyWithDiscounts(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}
@@ -117,7 +118,7 @@ func TestInvoiceCurrencyValidation(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}
@@ -143,7 +144,7 @@ func TestInvoiceAutoSetIssueDate(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}
@@ -164,7 +165,7 @@ func TestInvoiceNoTax(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10, 0),
+				Price: num.NewAmount(10, 0),
 			},
 		},
 	}
@@ -179,7 +180,7 @@ func TestRemoveIncludedTax(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(100000, 2),
+				Price: num.NewAmount(100000, 2),
 			},
 			Taxes: tax.Set{
 				{
@@ -199,8 +200,9 @@ func TestRemoveIncludedTax(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	assert.Equal(t, "1000.00", i.Lines[0].Item.Price.String())
 
@@ -242,7 +244,7 @@ func TestRemoveIncludedTax2(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Item",
-					Price: num.MakeAmount(4320, 2),
+					Price: num.NewAmount(4320, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -255,14 +257,14 @@ func TestRemoveIncludedTax2(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Item 2",
-					Price: num.MakeAmount(259, 2),
+					Price: num.NewAmount(259, 2),
 				},
 			},
 			{
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Item 3",
-					Price: num.MakeAmount(300, 2),
+					Price: num.NewAmount(300, 2),
 				},
 			},
 		},
@@ -270,8 +272,10 @@ func TestRemoveIncludedTax2(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
+
 	l0 := i2.Lines[0]
 	assert.Equal(t, "40.7547", l0.Item.Price.String())
 	assert.Equal(t, "40.7547", l0.Total.String())
@@ -306,7 +310,7 @@ func TestRemoveIncludedTax3(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Item",
-					Price: num.MakeAmount(23666, 2),
+					Price: num.NewAmount(23666, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -319,7 +323,7 @@ func TestRemoveIncludedTax3(t *testing.T) {
 				Quantity: num.MakeAmount(2, 0),
 				Item: &org.Item{
 					Name:  "Item 2",
-					Price: num.MakeAmount(23667, 2),
+					Price: num.NewAmount(23667, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -332,7 +336,7 @@ func TestRemoveIncludedTax3(t *testing.T) {
 				Quantity: num.MakeAmount(12, 0),
 				Item: &org.Item{
 					Name:  "Item 3",
-					Price: num.MakeAmount(1000, 2),
+					Price: num.NewAmount(1000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -345,7 +349,7 @@ func TestRemoveIncludedTax3(t *testing.T) {
 				Quantity: num.MakeAmount(18, 0),
 				Item: &org.Item{
 					Name:  "Local tax",
-					Price: num.MakeAmount(150, 2),
+					Price: num.NewAmount(150, 2),
 				},
 			},
 		},
@@ -353,8 +357,10 @@ func TestRemoveIncludedTax3(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
+
 	assert.Equal(t, "223.2642", i2.Lines[0].Total.String())
 	assert.Equal(t, "106.1952", i2.Lines[2].Total.String())
 
@@ -399,27 +405,28 @@ func TestRemoveIncludedTax4(t *testing.T) {
 				Quantity: num.MakeAmount(20, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(400, 2),
+					Price: num.NewAmount(400, 2),
 				},
 			},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
-			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.MakeAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
+			{Quantity: num.MakeAmount(1, 0), Item: &org.Item{Name: "X", Price: num.NewAmount(40365, 2)}, Taxes: tax.Set{{Category: "VAT", Percent: num.NewPercentage(6, 2)}}},
 		},
 	}
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	data, _ := json.Marshal(i2.Lines)
 	t.Logf("TOTALS: %v", string(data))
@@ -435,7 +442,7 @@ func TestRemoveIncludedTax5(t *testing.T) {
 			Quantity: num.MakeAmount(32, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(4375, 2),
+				Price: num.NewAmount(4375, 2),
 			},
 			Taxes: tax.Set{
 				{
@@ -447,8 +454,10 @@ func TestRemoveIncludedTax5(t *testing.T) {
 	}
 	i := baseInvoice(t, lines...)
 	require.NoError(t, i.Calculate())
-	i2, err := i.RemoveIncludedTaxes()
+
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -479,7 +488,7 @@ func TestRemoveIncludedTax6WithDiscount(t *testing.T) {
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(9338, 2),
+				Price: num.NewAmount(9338, 2),
 			},
 			Discounts: []*bill.LineDiscount{
 				{
@@ -507,8 +516,9 @@ func TestRemoveIncludedTax6WithDiscount(t *testing.T) {
 		t.Logf("TOTALS: %v", string(data))
 	*/
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -551,7 +561,7 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 				Quantity: num.MakeAmount(100, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(1000, 2),
+					Price: num.NewAmount(1000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -571,9 +581,9 @@ func TestRemoveIncludedTaxQuantity(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
-	require.NotNil(t, i2)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -625,7 +635,7 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 				Quantity: num.MakeAmount(364, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(5178, 2),
+					Price: num.NewAmount(5178, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -638,7 +648,7 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Test Item 2",
-					Price: num.MakeAmount(5208, 2),
+					Price: num.NewAmount(5208, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -652,8 +662,9 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	assert.Empty(t, i2.Tax.PricesInclude)
 	l0 := i2.Lines[0]
@@ -706,7 +717,7 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 				Quantity: num.MakeAmount(99999, 3),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(5178, 2),
+					Price: num.NewAmount(5178, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -720,8 +731,9 @@ func TestRemoveIncludedTaxDeep2(t *testing.T) {
 
 	require.NoError(t, i.Calculate())
 
-	i2, err := i.RemoveIncludedTaxes()
+	i2, err := kamino.Clone(i)
 	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
 
 	//data, _ := json.MarshalIndent(i2, "", "  ")
 	//t.Log(string(data))
@@ -758,7 +770,7 @@ func TestCalculateTotalsWithFractions(t *testing.T) {
 				Quantity: num.MakeAmount(2010, 2),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(305, 2),
+					Price: num.NewAmount(305, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -771,7 +783,7 @@ func TestCalculateTotalsWithFractions(t *testing.T) {
 				Quantity: num.MakeAmount(2010, 2),
 				Item: &org.Item{
 					Name:  "Test Item 2",
-					Price: num.MakeAmount(305, 2),
+					Price: num.NewAmount(305, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -801,7 +813,7 @@ func TestApplyCustomerRates(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(100000, 2),
+					Price: num.NewAmount(100000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -823,7 +835,7 @@ func TestApplyCustomerRates(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(100000, 2),
+					Price: num.NewAmount(100000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -845,7 +857,7 @@ func TestApplyCustomerRates(t *testing.T) {
 				Quantity: num.MakeAmount(1, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(100000, 2),
+					Price: num.NewAmount(100000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -890,7 +902,7 @@ func TestApplyCustomerRates(t *testing.T) {
 	})
 }
 
-func TestCalculate(t *testing.T) {
+func TestInvoiceCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
@@ -914,7 +926,7 @@ func TestCalculate(t *testing.T) {
 				Quantity: num.MakeAmount(10, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(10000, 2),
+					Price: num.NewAmount(10000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -936,7 +948,7 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
-		Payment: &bill.Payment{
+		Payment: &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Description: "Test Advance",
@@ -982,7 +994,7 @@ func TestCalculateInverted(t *testing.T) {
 				Quantity: num.MakeAmount(10, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.MakeAmount(10000, 2),
+					Price: num.NewAmount(10000, 2),
 				},
 				Taxes: tax.Set{
 					{
@@ -1004,7 +1016,7 @@ func TestCalculateInverted(t *testing.T) {
 				},
 			},
 		},
-		Payment: &bill.Payment{
+		Payment: &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
 					Description: "Test Advance",
@@ -1029,7 +1041,7 @@ func TestInvoiceForUnknownRegime(t *testing.T) {
 			Quantity: num.MakeAmount(32, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(4375, 2),
+				Price: num.NewAmount(4375, 2),
 			},
 			Taxes: tax.Set{
 				{
@@ -1140,7 +1152,15 @@ func TestValidation(t *testing.T) {
 		inv := baseInvoice(t)
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "lines: cannot be empty without discounts or charges.")
+		assert.ErrorContains(t, err, "lines: cannot be empty without discounts or charges; totals: cannot be blank")
+	})
+
+	t.Run("missing line item prices", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Lines[0].Item.Price = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "lines: (0: (item: (price: cannot be blank.).).)")
 	})
 
 	t.Run("missing lines with charge", func(t *testing.T) {
@@ -1178,7 +1198,7 @@ func baseInvoiceWithLines(t *testing.T) *bill.Invoice {
 			Quantity: num.MakeAmount(10, 0),
 			Item: &org.Item{
 				Name:  "Test Item",
-				Price: num.MakeAmount(10000, 2),
+				Price: num.NewAmount(10000, 2),
 			},
 			Taxes: tax.Set{
 				{

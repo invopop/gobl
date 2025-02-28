@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -23,6 +24,8 @@ type DocumentRef struct {
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Source document's code or other identifier.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	// Currency used in the document, if different from the default currency.
+	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Line index numbers inside the document, if relevant.
 	Lines []int `json:"lines,omitempty" jsonschema:"title=Lines"`
 	// List of additional codes, IDs, or SKUs which can be used to identify the document or its contents, agreed upon by the supplier and customer.
@@ -37,6 +40,9 @@ type DocumentRef struct {
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Link to the source document.
 	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
+	// Tax total breakdown from the original document in the provided currency. Should
+	// only be included if required by a specific tax regime or addon.
+	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Extensions for additional codes that may be required.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Meta contains additional information about the document.
@@ -53,6 +59,18 @@ func (dr *DocumentRef) Normalize(normalizers tax.Normalizers) {
 	dr.Code = cbc.NormalizeCode(dr.Code)
 	normalizers.Each(dr)
 	tax.Normalize(normalizers, dr.Identities)
+	tax.Normalize(normalizers, dr.Tax)
+}
+
+// Calculate will ensure the tax total is recalculated according to the
+// rounding rule and currency precision provided. Users of this should first
+// check the optional currency property of the document ref to see if that
+// should be used instead.
+func (dr *DocumentRef) Calculate(cur currency.Code, rr cbc.Key) {
+	if dr == nil || dr.Tax == nil {
+		return
+	}
+	dr.Tax.Calculate(cur, rr)
 }
 
 // Validate ensures the Document looks correct.
@@ -71,9 +89,11 @@ func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
 			validation.Match(cbc.CodePatternRegexp),
 			validation.Required,
 		),
+		validation.Field(&dr.Currency),
 		validation.Field(&dr.URL, is.URL),
 		validation.Field(&dr.Stamps),
 		validation.Field(&dr.Period),
+		validation.Field(&dr.Tax),
 		validation.Field(&dr.Ext),
 		validation.Field(&dr.Meta),
 	)

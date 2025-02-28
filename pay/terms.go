@@ -23,12 +23,12 @@ type Terms struct {
 	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates"`
 	// Description of the conditions for payment.
 	Notes string `json:"notes,omitempty" jsonschema:"title=Notes"`
+	// Extensions to the terms for local codes.
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // Pre-defined Payment Terms based on UNTDID 4279
 const (
-	// None defined
-	TermKeyNA cbc.Key = ""
 	// End of Month
 	TermKeyEndOfMonth cbc.Key = "end-of-month"
 	// Due on a specific date
@@ -47,6 +47,8 @@ const (
 	TermKeyAdvanced cbc.Key = "advanced"
 	// Payment on Delivery
 	TermKeyDelivery cbc.Key = "delivery"
+	// Not yet defined
+	TermKeyUndefined cbc.Key = "undefined"
 )
 
 // TermKeyDef holds a definition of a single payment term key
@@ -64,7 +66,6 @@ type TermKeyDef struct {
 // TermKeyDefinitions includes all the currently accepted
 // GOBL Payment Term definitions.
 var TermKeyDefinitions = []TermKeyDef{
-	{TermKeyNA, "NA", "Not yet defined", "16"},
 	{TermKeyEndOfMonth, "End of Month", "End of month", "2"},
 	{TermKeyDueDate, "Due Date", "Due on a specific date", "3"},
 	{TermKeyDeferred, "Deferred", "Deferred until after the due date", "4"},
@@ -74,6 +75,7 @@ var TermKeyDefinitions = []TermKeyDef{
 	{TermKeyPending, "Pending", "Seller to advise buyer in separate transaction", "13"},
 	{TermKeyAdvanced, "Advanced", "Payment made in advance", "32"},
 	{TermKeyDelivery, "Delivery", "Payment on Delivery", "52"}, // Cash on Delivery (COD)
+	{TermKeyUndefined, "Undefined", "Not yet defined", "16"},
 }
 
 // DueDate contains an amount that should be paid by the given date.
@@ -83,6 +85,15 @@ type DueDate struct {
 	Amount   num.Amount      `json:"amount" jsonschema:"title=Amount,description=How much needs to be paid by the date."`
 	Percent  *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent,description=Percentage of the total that should be paid by the date."`
 	Currency currency.Code   `json:"currency,omitempty" jsonschema:"title=Currency,description=If different from the parent document's base currency."`
+}
+
+// Normalize will try to normalize the payment terms.
+func (t *Terms) Normalize(normalizers tax.Normalizers) {
+	if t == nil {
+		return
+	}
+	t.Ext = tax.CleanExtensions(t.Ext)
+	normalizers.Each(t)
 }
 
 // UNTDID4279 returns the UNTDID 4279 code associated with the terms key.
@@ -119,6 +130,7 @@ func (t *Terms) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, t,
 		validation.Field(&t.Key, isValidTermKey),
 		validation.Field(&t.DueDates),
+		validation.Field(&t.Ext),
 	)
 }
 
@@ -136,7 +148,7 @@ func validTermKeys() []interface{} {
 func (dd *DueDate) Validate() error {
 	return validation.ValidateStruct(dd,
 		validation.Field(&dd.Date, validation.Required),
-		validation.Field(&dd.Amount, validation.Required),
+		validation.Field(&dd.Amount, validation.Required, num.NotZero),
 		validation.Field(&dd.Percent),
 		validation.Field(&dd.Currency),
 	)

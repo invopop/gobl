@@ -1,14 +1,36 @@
 package bill_test
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestTaxValidation(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		tx := &bill.Tax{}
+		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+	})
+	t.Run("with rounding", func(t *testing.T) {
+		tx := &bill.Tax{
+			Rounding: "round-then-sum",
+		}
+		assert.NoError(t, tx.ValidateWithContext(context.Background()))
+	})
+	t.Run("with invalid rounding", func(t *testing.T) {
+		tx := &bill.Tax{
+			Rounding: "round-then-fail",
+		}
+		err := tx.ValidateWithContext(context.Background())
+		assert.ErrorContains(t, err, "rounding: must be a valid value")
+	})
+}
 
 func TestInvoiceTaxTagsMigration(t *testing.T) {
 	// Sample document taken from spanish examples.
@@ -157,4 +179,25 @@ func TestTaxMergeExtensions(t *testing.T) {
 		assert.Equal(t, "reduced", tx.Ext["vat-cat"].String())
 		assert.Equal(t, "bar", tx.Ext["vat-test"].String())
 	})
+}
+
+func TestTaxJSONSchemaExtend(t *testing.T) {
+	eg := `{
+		"properties": {
+			"rounding": {
+				"type": "string",
+				"title": "Rounding"
+			}	
+		}
+	}`
+	schema := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), schema))
+
+	tax := new(bill.Tax)
+	tax.JSONSchemaExtend(schema)
+
+	prop, ok := schema.Properties.Get("rounding")
+	require.True(t, ok)
+	assert.Len(t, prop.OneOf, 2)
+	assert.Equal(t, "sum-then-round", prop.OneOf[0].Const)
 }

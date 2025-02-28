@@ -6,6 +6,7 @@ toolchain go1.22.5
 
 require (
 	cloud.google.com/go v0.110.2
+	github.com/LastPossum/kamino v0.0.2
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/google/go-cmp v0.6.0
@@ -18,7 +19,7 @@ require (
 	github.com/magefile/mage v1.15.0
 	github.com/spf13/cobra v1.8.1
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	gitlab.com/flimzy/testy v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 )

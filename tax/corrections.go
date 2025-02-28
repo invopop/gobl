@@ -23,6 +23,8 @@ type CorrectionDefinition struct {
 	ReasonRequired bool `json:"reason_required,omitempty" jsonschema:"title=Reason Required"`
 	// Stamps that must be copied from the preceding document.
 	Stamps []cbc.Key `json:"stamps,omitempty" jsonschema:"title=Stamps"`
+	// Copy tax from the preceding document to the document ref.
+	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
 }
 
 // Def provides the correction definition in the set for the
@@ -50,12 +52,16 @@ func (cd *CorrectionDefinition) Merge(other *CorrectionDefinition) *CorrectionDe
 	if cd.Schema != other.Schema {
 		return cd
 	}
+	if other.CopyTax {
+		cd.CopyTax = other.CopyTax
+	}
 	cd = &CorrectionDefinition{
 		Schema:         cd.Schema,
 		Types:          append(cd.Types, other.Types...),
 		Extensions:     append(cd.Extensions, other.Extensions...),
 		ReasonRequired: cd.ReasonRequired || other.ReasonRequired,
 		Stamps:         append(cd.Stamps, other.Stamps...),
+		CopyTax:        cd.CopyTax,
 	}
 	return cd
 }

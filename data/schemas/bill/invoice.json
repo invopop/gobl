@@ -121,7 +121,7 @@
       ],
       "description": "Charge represents a surchange applied to the complete document independent from the individual lines."
     },
-    "Delivery": {
+    "DeliveryDetails": {
       "properties": {
         "receiver": {
           "$ref": "https://gobl.org/draft-0/org/party",
@@ -153,7 +153,7 @@
         }
       },
       "type": "object",
-      "description": "Delivery covers the details of the destination for the products described in the invoice body."
+      "description": "DeliveryDetails covers the details of the destination for the products described in the invoice body."
     },
     "Discount": {
       "properties": {
@@ -580,12 +580,12 @@
           "description": "Ordering details including document references and buyer or seller parties."
         },
         "payment": {
-          "$ref": "#/$defs/Payment",
+          "$ref": "#/$defs/PaymentDetails",
           "title": "Payment Details",
           "description": "Information on when, how, and to whom the invoice should be paid."
         },
         "delivery": {
-          "$ref": "#/$defs/Delivery",
+          "$ref": "#/$defs/DeliveryDetails",
           "title": "Delivery Details",
           "description": "Specific details on delivery of the goods referenced in the invoice."
         },
@@ -684,6 +684,14 @@
           "title": "Item",
           "description": "Details about the item, service or good, that is being sold"
         },
+        "breakdown": {
+          "items": {
+            "$ref": "#/$defs/SubLine"
+          },
+          "type": "array",
+          "title": "Breakdown",
+          "description": "Breakdown of the line item for more detailed information. The sum of all lines\nwill be used for the item price."
+        },
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Sum",
@@ -717,6 +725,14 @@
           "description": "Total line amount after applying discounts to the sum (calculated).",
           "calculated": true
         },
+        "substituted": {
+          "items": {
+            "$ref": "#/$defs/SubLine"
+          },
+          "type": "array",
+          "title": "Substituted",
+          "description": "List of substituted lines. Useful for deliveries or corrective documents in order\nto indicate to the recipient which of the requested lines are being replaced.\nThis is for purely informative purposes, and will not be used for calculations."
+        },
         "notes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/note"
@@ -730,9 +746,7 @@
       "required": [
         "i",
         "quantity",
-        "item",
-        "sum",
-        "total"
+        "item"
       ],
       "description": "Line is a single row in an invoice."
     },
@@ -1018,7 +1032,7 @@
       "type": "object",
       "description": "Ordering provides additional information about the ordering process including references to other documents and alternative parties involved in the order-to-delivery process."
     },
-    "Payment": {
+    "PaymentDetails": {
       "properties": {
         "payee": {
           "$ref": "https://gobl.org/draft-0/org/party",
@@ -1045,7 +1059,96 @@
         }
       },
       "type": "object",
-      "description": "Payment contains details as to how the invoice should be paid."
+      "description": "PaymentDetails contains details as to how the invoice should be paid."
+    },
+    "SubLine": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number inside the parent (calculated)",
+          "calculated": true
+        },
+        "quantity": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Quantity",
+          "description": "Number of items"
+        },
+        "identifier": {
+          "$ref": "https://gobl.org/draft-0/org/identity",
+          "title": "Identifier",
+          "description": "Single identifier provided by the supplier for an object on which the\nline item is based and is not considered a universal identity. Examples\ninclude a subscription number, telephone number, meter point, etc.\nUtilize the label property to provide a description of the identifier."
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/cal/period",
+          "title": "Period",
+          "description": "A period of time relevant to when the service or item is delivered."
+        },
+        "order": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Order Reference",
+          "description": "Order reference for a specific line within a purchase order provided by the buyer."
+        },
+        "cost": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Cost Reference",
+          "description": "Buyer accounting reference cost code to associate with the line."
+        },
+        "item": {
+          "$ref": "https://gobl.org/draft-0/org/item",
+          "title": "Item",
+          "description": "Details about the item, service or good, that is being sold"
+        },
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum",
+          "description": "Result of quantity multiplied by the item's price (calculated)",
+          "calculated": true
+        },
+        "discounts": {
+          "items": {
+            "$ref": "#/$defs/LineDiscount"
+          },
+          "type": "array",
+          "title": "Discounts",
+          "description": "Discounts applied to this sub-line"
+        },
+        "charges": {
+          "items": {
+            "$ref": "#/$defs/LineCharge"
+          },
+          "type": "array",
+          "title": "Charges",
+          "description": "Charges applied to this sub-line"
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Total sub-line amount after applying discounts to the sum (calculated).",
+          "calculated": true
+        },
+        "notes": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/note"
+          },
+          "type": "array",
+          "title": "Notes",
+          "description": "Set of specific notes for this sub-line that may be required for\nclarification."
+        }
+      },
+      "type": "object",
+      "required": [
+        "i",
+        "quantity",
+        "item"
+      ],
+      "description": "SubLine provides a simplified line that can be embedded inside other lines to provide a more detailed breakdown of the items being sold or substituted."
     },
     "Tax": {
       "properties": {
@@ -1053,6 +1156,23 @@
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Prices Include",
           "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
+        },
+        "rounding": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "sum-then-round",
+              "title": "Sum Then Round",
+              "description": "The default method of calculating the totals in GOBL, and provides the best results\nfor most cases as the precision is maintained to the maximum amount possible. The\ntradeoff however is that sometimes the totals may not sum exactly based on what is visible."
+            },
+            {
+              "const": "round-then-sum",
+              "title": "Round Then Sum",
+              "description": "The alternative method of calculating the totals that will first round all the amounts\nto the currency's precision before making the sums. Totals using this approach can always\nbe recalculated using the amounts presented, but can lead to rounding errors in the case\nof pre-payments and when line item prices include tax."
+            }
+          ],
+          "title": "Rounding Model",
+          "description": "Rounding model used to perform tax calculations on the invoice. This\nwill be configured automatically based on the tax regime, or\n`sum-then-round` by default, but you can override here if needed.\nUse with caution, as some conversion tools may make assumptions about\nthe rounding model used."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",

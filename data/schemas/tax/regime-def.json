@@ -112,6 +112,11 @@
           "type": "array",
           "title": "Stamps",
           "description": "Stamps that must be copied from the preceding document."
+        },
+        "copy_tax": {
+          "type": "boolean",
+          "title": "Copy Tax Totals",
+          "description": "Copy tax from the preceding document to the document ref."
         }
       },
       "type": "object",
@@ -258,7 +263,7 @@
           "description": "Currency used by the country."
         },
         "calculator_rounding_rule": {
-          "type": "string",
+          "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Calculator Rounding Rule",
           "description": "Rounding rule to use when calculating the tax totals, default is always\n`sum-then-round`."
         },
