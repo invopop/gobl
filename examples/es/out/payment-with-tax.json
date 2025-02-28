@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "05d74b9ae69f614ede4c5223e023a9b1a5eefc9e7f6908144db683af52b90b2d"
+			"val": "597fac54321f65e167ff4b7faf9b74aaaf32ea1b7cccb51d34a4fc0c2c0b36a1"
 		}
 	},
 	"doc": {
@@ -56,25 +56,25 @@
 					"issue_date": "2025-01-10",
 					"series": "SAMPLE",
 					"code": "001",
-					"description": "Invoice"
+					"description": "Invoice",
+					"tax": {
+						"categories": [
+							{
+								"code": "VAT",
+								"rates": [
+									{
+										"base": "1630.00",
+										"percent": "21.0%",
+										"amount": "342.30"
+									}
+								],
+								"amount": "342.30"
+							}
+						],
+						"sum": "342.30"
+					}
 				},
 				"debit": "1972.30",
-				"tax": {
-					"categories": [
-						{
-							"code": "VAT",
-							"rates": [
-								{
-									"base": "1630.00",
-									"percent": "21.0%",
-									"amount": "342.30"
-								}
-							],
-							"amount": "342.30"
-						}
-					],
-					"sum": "342.30"
-				},
 				"total": "1972.30"
 			}
 		],

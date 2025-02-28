@@ -26,6 +26,7 @@ type billable interface {
 	getIssueDate() cal.Date
 	getValueDate() *cal.Date
 	getTax() *Tax
+	getPreceding() []*org.DocumentRef
 	getCustomer() *org.Party
 	getCurrency() currency.Code
 	getExchangeRates() []*currency.ExchangeRate
@@ -79,6 +80,9 @@ func calculate(doc billable) error {
 	if err := calculateComplements(doc.getComplements()); err != nil {
 		return validation.Errors{"complements": err}
 	}
+
+	// Preceding
+	calculateOrgDocumentRefs(doc.getPreceding(), doc.getCurrency(), r.GetRoundingRule())
 
 	// Lines
 	if err := calculateLines(doc.getLines(), doc.getCurrency(), doc.getExchangeRates()); err != nil {
@@ -189,6 +193,15 @@ func calculate(doc billable) error {
 	doc.setTotals(t)
 
 	return nil
+}
+
+func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.Key) {
+	for _, drs := range drs {
+		if drs.Currency != currency.CodeEmpty {
+			cur = drs.Currency
+		}
+		drs.Calculate(cur, rr)
+	}
 }
 
 func canRemoveIncludedTaxes(doc billable) bool {

@@ -80,14 +80,16 @@ func TestPaymentCalculate(t *testing.T) {
 		p := testPaymentWithTax(t)
 		p.Lines = append(p.Lines, &bill.PaymentLine{
 			Debit: num.NewAmount(10000, 2),
-			Tax: &tax.Total{
-				Categories: []*tax.CategoryTotal{
-					{
-						Code: "VAT",
-						Rates: []*tax.RateTotal{
-							{
-								Base:    num.MakeAmount(10000, 2),
-								Percent: num.NewPercentage(10, 2),
+			Document: &org.DocumentRef{
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(10, 2),
+								},
 							},
 						},
 					},
@@ -245,7 +247,7 @@ func testPaymentMinimal(t *testing.T) *bill.Payment {
 
 func testPaymentWithTax(t *testing.T) *bill.Payment {
 	pmt := testPaymentMinimal(t)
-	pmt.Lines[0].Tax = &tax.Total{
+	pmt.Lines[0].Document.Tax = &tax.Total{
 		Categories: []*tax.CategoryTotal{
 			{
 				Code: "VAT",

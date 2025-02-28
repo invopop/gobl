@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3136061fc7e316f57f95491356011cc401be9b54ce5b5655d50b4360842a0346"
+			"val": "c45f037455d0b5b2cb68022a23a52ce45f4a7d24561d8c4ce92956e061fbf54e"
 		}
 	},
 	"doc": {
@@ -64,30 +64,30 @@
 				"document": {
 					"issue_date": "2025-01-15",
 					"series": "FT SAMPLE",
-					"code": "1"
+					"code": "1",
+					"tax": {
+						"categories": [
+							{
+								"code": "VAT",
+								"rates": [
+									{
+										"key": "standard",
+										"ext": {
+											"pt-region": "PT",
+											"pt-saft-tax-rate": "NOR"
+										},
+										"base": "100.00",
+										"percent": "23.0%",
+										"amount": "23.00"
+									}
+								],
+								"amount": "23.00"
+							}
+						],
+						"sum": "23.00"
+					}
 				},
 				"debit": "123",
-				"tax": {
-					"categories": [
-						{
-							"code": "VAT",
-							"rates": [
-								{
-									"key": "standard",
-									"ext": {
-										"pt-region": "PT",
-										"pt-saft-tax-rate": "NOR"
-									},
-									"base": "100.00",
-									"percent": "23.0%",
-									"amount": "23.00"
-								}
-							],
-							"amount": "23.00"
-						}
-					],
-					"sum": "23.00"
-				},
 				"total": "123.00"
 			}
 		],

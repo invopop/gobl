@@ -273,20 +273,27 @@ func (pmt *Payment) calculate() error {
 			}
 		}
 
-		l.Tax.Calculate(pmt.Currency, r.GetRoundingRule())
-		lt := l.Tax.Clone()
-		a := l.Total
+		var lt *tax.Total
+		if l.Document != nil {
+			cur := l.Document.Currency
+			if cur == currency.CodeEmpty {
+				cur = pmt.Currency
+			}
+			l.Document.Calculate(cur, r.GetRoundingRule())
+			lt = l.Document.Tax.Clone()
 
-		// Merge the line taxes
-		if l.Tax != nil {
-			if tt == nil {
-				tt = lt
-			} else {
-				tt = tt.Merge(lt)
+			// Merge the line document taxes
+			if l.Document.Tax != nil {
+				if tt == nil {
+					tt = lt
+				} else {
+					tt = tt.Merge(lt)
+				}
 			}
 		}
 
 		// Finally add the totals
+		a := l.Total
 		if total == nil {
 			total = &a
 		} else {

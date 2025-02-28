@@ -36,6 +36,9 @@ type CorrectionOptions struct {
 	// Extensions for region specific requirements that may be added in the preceding
 	// or at the document level, according to the local rules.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
+	// CopyTax when true will copy the tax totals from the previous document to the
+	// preceding document data.
+	CopyTax bool `json:"copy_tax,omitempty" jsonschema:"title=Copy Tax Totals"`
 
 	// In case we want to use a raw json object as a source of the options.
 	data json.RawMessage `json:"-"`
@@ -105,6 +108,15 @@ func WithIssueDate(date cal.Date) schema.Option {
 	return func(o interface{}) {
 		opts := o.(*CorrectionOptions)
 		opts.IssueDate = &date
+	}
+}
+
+// WithCopyTax will ensure the tax is copied from the previous document to the
+// corrective document preceding row.
+func WithCopyTax() schema.Option {
+	return func(o interface{}) {
+		opts := o.(*CorrectionOptions)
+		opts.CopyTax = true
 	}
 }
 
@@ -244,6 +256,10 @@ func (inv *Invoice) CorrectionOptionsSchema() (interface{}, error) {
 		cos.Required = append(cos.Required, "reason")
 	}
 
+	if cd.CopyTax {
+		recommended = append(recommended, "copy_tax")
+	}
+
 	if len(recommended) > 0 {
 		cos.Extras = map[string]any{
 			schema.Recommended: recommended,
@@ -276,6 +292,9 @@ func (inv *Invoice) Correct(opts ...schema.Option) error {
 		IssueDate: inv.IssueDate.Clone(),
 		Reason:    o.Reason,
 		Ext:       o.Ext,
+	}
+	if o.CopyTax && inv.Totals != nil {
+		pre.Tax = inv.Totals.Taxes.Clone()
 	}
 	inv.UUID = ""
 	inv.Type = o.Type

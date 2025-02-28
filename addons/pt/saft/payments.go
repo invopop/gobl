@@ -87,12 +87,7 @@ func validatePaymentLine(val any) error {
 
 	return validation.ValidateStruct(pl,
 		validation.Field(&pl.Document,
-			validation.By(validateLineDocument),
-			validation.Required,
-			validation.Skip,
-		),
-		validation.Field(&pl.Tax,
-			validation.By(validateLineTax),
+			validation.By(validatePaymentLineDocument),
 			validation.Required,
 			validation.Skip,
 		),
@@ -101,7 +96,7 @@ func validatePaymentLine(val any) error {
 	)
 }
 
-func validateLineDocument(val any) error {
+func validatePaymentLineDocument(val any) error {
 	ld, _ := val.(*org.DocumentRef)
 	if ld == nil {
 		return nil
@@ -112,10 +107,15 @@ func validateLineDocument(val any) error {
 			validation.Required,
 			validation.Skip,
 		),
+		validation.Field(&ld.Tax,
+			validation.By(validatePaymentLineDocumentTax),
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }
 
-func validateLineTax(val any) error {
+func validatePaymentLineDocumentTax(val any) error {
 	lt, _ := val.(*tax.Total)
 	if lt == nil {
 		return nil

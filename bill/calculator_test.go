@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -59,6 +61,31 @@ func TestCalculate(t *testing.T) {
 			},
 		})
 		require.ErrorContains(t, inv.Calculate(), "lines: (0: (item: no exchange rate found from 'USD' to 'EUR'.).)")
+	})
+	t.Run("with preceding docs and taxes", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "ABC",
+				IssueDate: cal.NewDate(2022, 11, 6),
+				Currency:  currency.EUR,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: tax.CategoryVAT,
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(1000, 2),
+									Percent: num.NewPercentage(21, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "2.10", inv.Preceding[0].Tax.Sum.String())
 	})
 }
 

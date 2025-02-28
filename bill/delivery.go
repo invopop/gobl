@@ -338,6 +338,9 @@ func (dlv *Delivery) getValueDate() *cal.Date {
 func (dlv *Delivery) getTax() *Tax {
 	return dlv.Tax
 }
+func (dlv *Delivery) getPreceding() []*org.DocumentRef {
+	return dlv.Preceding
+}
 func (dlv *Delivery) getCustomer() *org.Party {
 	return dlv.Customer
 }

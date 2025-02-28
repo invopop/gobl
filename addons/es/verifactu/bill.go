@@ -15,6 +15,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 		Extensions: []cbc.Key{
 			ExtKeyDocType,
 		},
+		CopyTax: true,
 	},
 }
 
@@ -156,8 +157,8 @@ func validateInvoicePreceding(val any) error {
 		return nil
 	}
 	return validation.ValidateStruct(p,
-		validation.Field(&p.IssueDate,
-			validation.Required,
-		),
+		validation.Field(&p.IssueDate, validation.Required),
+		// Tax data of previous invoices is required by Verifactu.
+		validation.Field(&p.Tax, validation.Required),
 	)
 }

@@ -31,6 +31,11 @@
           "title": "Code",
           "description": "Source document's code or other identifier."
         },
+        "currency": {
+          "$ref": "https://gobl.org/draft-0/currency/code",
+          "title": "Currency",
+          "description": "Currency used in the document, if different from the default currency."
+        },
         "lines": {
           "items": {
             "type": "integer"
@@ -75,6 +80,11 @@
           "format": "uri",
           "title": "URL",
           "description": "Link to the source document."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax",
+          "description": "Tax total breakdown from the original document in the provided currency. Should\nonly be included if required by a specific tax regime or addon."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",

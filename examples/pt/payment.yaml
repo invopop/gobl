@@ -33,14 +33,14 @@ lines:
       issue_date: "2025-01-15"
       series: "FT SAMPLE"
       code: "1"
+      tax:
+        categories:
+          - code: VAT
+            rates:
+              - key: standard
+                base: 100.00
+                percent: "23.0%"
+                ext:
+                  pt-region: PT
+                  pt-saft-tax-rate: NOR
     debit: 123.00
-    tax:
-      categories:
-        - code: VAT
-          rates:
-            - key: standard
-              base: 100.00
-              percent: "23.0%"
-              ext:
-                pt-region: PT
-                pt-saft-tax-rate: NOR

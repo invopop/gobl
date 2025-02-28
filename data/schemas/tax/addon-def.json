@@ -127,6 +127,11 @@
           "type": "array",
           "title": "Stamps",
           "description": "Stamps that must be copied from the preceding document."
+        },
+        "copy_tax": {
+          "type": "boolean",
+          "title": "Copy Tax Totals",
+          "description": "Copy tax from the preceding document to the document ref."
         }
       },
       "type": "object",
