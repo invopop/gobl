@@ -30,7 +30,7 @@ func validateInvoice(inv *bill.Invoice) error {
 
 func validateInvoiceSupplier(value interface{}) error {
 	supplier, ok := value.(*org.Party)
-	if supplier == nil || !ok {
+	if !ok || supplier == nil {
 		return nil
 	}
 
