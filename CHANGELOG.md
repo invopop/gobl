@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.211.0] - 2025-02-28
+
 Another significant release that adds more documents related to the order-to-payment billing flows, and renames the "Receipt" document to simply "Payment". There are now 4 primary billing documents:
 
 - Order
@@ -14,6 +16,8 @@ Another significant release that adds more documents related to the order-to-pay
 - Payment (renamed from Receipt)
 
 Each document class has a subset of types to cover multiple situations. Its been tough, but we've tried to keep naming as simple and down to earth as possible so that every combination of document class and type should be easy to understand.
+
+**NOTE:** the new billing document types are still considered experimental and subject to significant changes. Please use with caution.
 
 ### Added
 
