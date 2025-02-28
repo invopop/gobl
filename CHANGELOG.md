@@ -22,6 +22,7 @@ Each document class has a subset of types to cover multiple situations. Its been
 - `bill`: `Payment` - `request` type now supported.
 - `bill`: `Line` now includes a `breakdown` array of sub-lines that will be used to calculate the item's price, including individual discounts and charges. This effectively implements grouping, while maintaining compatibility with all other formats that do not support breakdowns.
 - `bill`: `Line` new `substituted` array of sub-lines for informational purposes when the originally requested line could not be fulfilled, especially relevant for orders.
+- `bill`: `Tax` includes `rounding` field to be able to override the tax regimes default rounding mechanism.
 
 ### Changed
 

@@ -50,7 +50,7 @@ type RegimeDef struct {
 
 	// Rounding rule to use when calculating the tax totals, default is always
 	// `sum-then-round`.
-	CalculatorRoundingRule RoundingRule `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
+	CalculatorRoundingRule cbc.Key `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
 
 	// Tags that can be applied at the document level to identify additional
 	// considerations.
@@ -226,7 +226,7 @@ func (r *RegimeDef) GetCountry() l10n.TaxCountryCode {
 }
 
 // GetRoundingRule provides the regime's rounding rule, or the default.
-func (r *RegimeDef) GetRoundingRule() RoundingRule {
+func (r *RegimeDef) GetRoundingRule() cbc.Key {
 	if r != nil && r.CalculatorRoundingRule != "" {
 		return r.CalculatorRoundingRule
 	}

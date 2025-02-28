@@ -7,25 +7,6 @@ import (
 	"github.com/invopop/gobl/num"
 )
 
-// RoundingRule defines the method to use for rounding specifically when
-// calculating totals
-type RoundingRule string
-
-const (
-	// RoundingRuleSumThenRound is the default method of calculating the totals
-	// in GOBL, and provides the best results for most cases as the precision
-	// is maintained to the maximum amount possible. The tradeoff however is
-	// that sometimes the totals may not sum exactly based on what is visible.
-	RoundingRuleSumThenRound RoundingRule = "sum-then-round"
-
-	// RoundingRuleRoundThenSum is the alternative method of calculating the totals
-	// that will first round all the amounts to the currency's precision before
-	// making the sums. Totals using this approach can always be recalculated using
-	// the amounts presented, but can lead to rounding errors in the case of
-	// pre-payments and when line item prices include tax.
-	RoundingRuleRoundThenSum RoundingRule = "round-then-sum"
-)
-
 // CategoryTotal groups together all rates inside a given category.
 type CategoryTotal struct {
 	Code      cbc.Code     `json:"code" jsonschema:"title=Code"`
@@ -357,7 +338,7 @@ func (t *Total) Merge(t2 *Total) *Total {
 
 // Calculate will go through all the categories and rates to calculate the final
 // sum of the taxes. The rounding rule will be applied to the final sums.
-func (t *Total) Calculate(cur currency.Code, rr RoundingRule) {
+func (t *Total) Calculate(cur currency.Code, rr cbc.Key) {
 	if t == nil {
 		return
 	}
@@ -366,13 +347,13 @@ func (t *Total) Calculate(cur currency.Code, rr RoundingRule) {
 	t.round(zero)
 }
 
-func (t *Total) calculateFinalSum(zero num.Amount, rr RoundingRule) {
+func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
 	// Now go through each category to apply the percentage and calculate the final sums
 	t.Sum = zero
 	for _, ct := range t.Categories {
 		t.calculateBaseCategoryTotal(ct, zero, rr)
 
-		t.Sum = rr.matchPrecision(t.Sum, ct.Amount)
+		t.Sum = matchRoundingPrecision(rr, t.Sum, ct.Amount)
 		if ct.Retained {
 			t.Sum = t.Sum.Subtract(ct.Amount)
 			if ct.Surcharge != nil {
@@ -387,7 +368,7 @@ func (t *Total) calculateFinalSum(zero num.Amount, rr RoundingRule) {
 	}
 }
 
-func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, rr RoundingRule) {
+func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, rr cbc.Key) {
 	ct.Amount = zero
 	for _, rt := range ct.Rates {
 		if rt.Percent == nil {
@@ -396,7 +377,7 @@ func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, r
 		}
 		base := rt.Base
 		rt.Amount = rt.Percent.Of(rt.Base)
-		ct.Amount = rr.matchPrecision(ct.Amount, rt.Amount)
+		ct.Amount = matchRoundingPrecision(rr, ct.Amount, rt.Amount)
 		ct.Amount = ct.Amount.Add(rt.Amount)
 		if rt.Surcharge != nil {
 			rt.Surcharge.Amount = rt.Surcharge.Percent.Of(base)
@@ -405,7 +386,7 @@ func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, r
 			}
 			a := rt.Surcharge.Amount
 			x := *ct.Surcharge
-			x = rr.matchPrecision(x, a)
+			x = matchRoundingPrecision(rr, x, a)
 			x = x.Add(a)
 			ct.Surcharge = &x
 		}
@@ -414,7 +395,7 @@ func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, r
 
 // matchPrecision will decide what precision to maintain on the amount based on
 // the rounding rule.
-func (rr RoundingRule) matchPrecision(a, b num.Amount) num.Amount {
+func matchRoundingPrecision(rr cbc.Key, a, b num.Amount) num.Amount {
 	switch rr {
 	case RoundingRuleRoundThenSum:
 		return a // maintain original precision

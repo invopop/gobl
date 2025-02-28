@@ -902,7 +902,7 @@ func TestApplyCustomerRates(t *testing.T) {
 	})
 }
 
-func TestCalculate(t *testing.T) {
+func TestInvoiceCalculate(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
 		Tax: &bill.Tax{
