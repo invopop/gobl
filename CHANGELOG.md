@@ -45,6 +45,7 @@ Each document class has a subset of types to cover multiple situations. Its been
 
 ### Added
 
+- `it-adecf-v1`: implemented addon for AdE e-receipt format 
 - `pt-saft-v1`: support for payments and receipts
 
 ### Changed

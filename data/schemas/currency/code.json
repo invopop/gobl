@@ -38,12 +38,12 @@
           "title": "Macanese Pataca"
         },
         {
-          "const": "HTG",
-          "title": "Haitian Gourde"
+          "const": "BWP",
+          "title": "Botswana Pula"
         },
         {
-          "const": "AZN",
-          "title": "Azerbaijani Manat"
+          "const": "MVR",
+          "title": "Maldivian Rufiyaa"
         },
         {
           "const": "BAM",
@@ -94,8 +94,8 @@
           "title": "Bhutanese Ngultrum"
         },
         {
-          "const": "BWP",
-          "title": "Botswana Pula"
+          "const": "MWK",
+          "title": "Malawian Kwacha"
         },
         {
           "const": "BYN",
@@ -138,8 +138,8 @@
           "title": "Colombian Peso"
         },
         {
-          "const": "CRC",
-          "title": "Costa Rican Colón"
+          "const": "MXN",
+          "title": "Mexican Peso"
         },
         {
           "const": "CUC",
@@ -166,8 +166,8 @@
           "title": "Danish Krone"
         },
         {
-          "const": "MXN",
-          "title": "Mexican Peso"
+          "const": "DOP",
+          "title": "Dominican Peso"
         },
         {
           "const": "DZD",
@@ -238,8 +238,8 @@
           "title": "Honduran Lempira"
         },
         {
-          "const": "MWK",
-          "title": "Malawian Kwacha"
+          "const": "HTG",
+          "title": "Haitian Gourde"
         },
         {
           "const": "HUF",
@@ -378,16 +378,16 @@
           "title": "Mauritian Rupee"
         },
         {
-          "const": "PLN",
-          "title": "Polish Złoty"
+          "const": "AZN",
+          "title": "Azerbaijani Manat"
         },
         {
           "const": "AWG",
           "title": "Aruban Florin"
         },
         {
-          "const": "DOP",
-          "title": "Dominican Peso"
+          "const": "CRC",
+          "title": "Costa Rican Colón"
         },
         {
           "const": "MYR",
@@ -446,8 +446,8 @@
           "title": "Pakistani Rupee"
         },
         {
-          "const": "MVR",
-          "title": "Maldivian Rufiyaa"
+          "const": "PLN",
+          "title": "Polish Złoty"
         },
         {
           "const": "PYG",
