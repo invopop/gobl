@@ -13,6 +13,7 @@ const (
 	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
 	ExtKeyWorkType     cbc.Key = "pt-saft-work-type"
 	ExtKeyPaymentType  cbc.Key = "pt-saft-payment-type"
+	ExtKeyMovementType cbc.Key = "pt-saft-movement-type"
 	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
 )
@@ -66,6 +67,15 @@ const (
 	WorkTypeCoInsurers        cbc.Code = "CS"
 	WorkTypeLeadCoInsurer     cbc.Code = "LD"
 	WorkTypeReinsurance       cbc.Code = "RA"
+)
+
+// Movement types
+const (
+	MovementTypeDeliveryNote cbc.Code = "GR"
+	MovementTypeWaybill      cbc.Code = "GT"
+	MovementTypeFixedAssets  cbc.Code = "GA"
+	MovementTypeConsignment  cbc.Code = "GC"
+	MovementTypeReturn       cbc.Code = "GD"
 )
 
 var extensions = []*cbc.Definition{
@@ -400,7 +410,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "M15",
 				Name: i18n.String{
-					i18n.EN: "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
+					i18n.EN: "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
 					i18n.PT: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro",
 				},
 			},
@@ -897,6 +907,83 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Supplementary compensation",
 					i18n.PT: "Títulos de compensação extrassalarial",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyMovementType,
+		Name: i18n.String{
+			i18n.EN: "Movement Type",
+			i18n.PT: "Tipo de documento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~MovementType~ (Tipo de documento de movimentação de mercadorias) specifies the type of
+				a delivery document. In GOBL,this type can be set using the ~pt-saft-movement-type~ extension.
+				If not provided explicitly, GOBL will set the extension for you based on the type of your delivery
+				document.
+
+				The table below shows how this mapping is done:
+
+				| Code | Name                | GOBL Type     |
+				| ---- | ------------------- | ------------- |
+				| ~GR~ | Delivery note       | ~note~        |
+				| ~GT~ | Waybill             | ~waybill~     |
+
+				Example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/delivery",
+					// ...
+					"type": "note",
+					// ...
+					"ext": {
+						"pt-saft-movement-type": "GR"
+					},
+					// ...
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: MovementTypeDeliveryNote,
+				Name: i18n.String{
+					i18n.EN: "Delivery note",
+					i18n.PT: "Guia de remessa",
+				},
+			},
+			{
+				Code: MovementTypeWaybill,
+				Name: i18n.String{
+					i18n.EN: "Waybill",
+					i18n.PT: "Guia de transporte",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Include global waybills here",
+					i18n.PT: "Incluir aqui as guias globais",
+				},
+			},
+			{
+				Code: MovementTypeFixedAssets,
+				Name: i18n.String{
+					i18n.EN: "Guide to the movement own fixed assets",
+					i18n.PT: "Guia de movimentação de ativos fixos próprios",
+				},
+			},
+			{
+				Code: MovementTypeConsignment,
+				Name: i18n.String{
+					i18n.EN: "Consignment note",
+					i18n.PT: "Guia de consignação",
+				},
+			},
+			{
+				Code: MovementTypeReturn,
+				Name: i18n.String{
+					i18n.EN: "Returns slip or note",
+					i18n.PT: "Guia ou nota de devolução",
 				},
 			},
 		},
