@@ -30,6 +30,10 @@ Each document class has a subset of types to cover multiple situations. Its been
 - `bill`: renaming `Receipt` to `Payment`, and associated payment types to simply `advice` and `receipt`.
 - `org`: `Item` price is now a pointer and optional, so that items without prices can be used in `bill.Order` and `bill.Delivery` documents. `bill.Invoice` continues to validate for the presence of an item's price, as expected.
 
+### Fixed
+
+- `pay`: `Terms`, replaced `NA` option with explicit `undefined` key, to avoid defining empty constants in JSON.
+
 ## [v0.210.0] - 2025-02-19
 
 ### Added
