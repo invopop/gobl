@@ -71,7 +71,7 @@ jobs:
         uses: actions/setup-node@v3
         if: ${{ steps.bump.new_tag == steps.bump.tag }}
         with:
-          node-version: 16.x
+          node-version: 22.x
           cache: "npm"
           cache-dependency-path: "./wasm/worker/package-lock.json"
 
