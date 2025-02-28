@@ -11,8 +11,10 @@ const (
 	ExtKeyExemption    cbc.Key = "pt-saft-exemption"
 	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
 	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
-	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
+	ExtKeyWorkType     cbc.Key = "pt-saft-work-type"
 	ExtKeyPaymentType  cbc.Key = "pt-saft-payment-type"
+	ExtKeyMovementType cbc.Key = "pt-saft-movement-type"
+	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
 )
 
@@ -49,6 +51,28 @@ const (
 	ProductTypeFee     cbc.Code = "I"
 )
 
+// Work types
+const (
+	WorkTypeTableQueries      cbc.Code = "CM"
+	WorkTypeConsignmentCredit cbc.Code = "CC"
+	WorkTypeConsignmentInv    cbc.Code = "FC"
+	WorkTypeWorksheets        cbc.Code = "FO"
+	WorkTypePurchaseOrder     cbc.Code = "NE"
+	WorkTypeOther             cbc.Code = "OU"
+	WorkTypeBudgets           cbc.Code = "OR"
+	WorkTypeProforma          cbc.Code = "PF"
+	WorkTypeDocuments         cbc.Code = "DC"
+)
+
+// Movement types
+const (
+	MovementTypeDeliveryNote cbc.Code = "GR"
+	MovementTypeWaybill      cbc.Code = "GT"
+	MovementTypeFixedAssets  cbc.Code = "GA"
+	MovementTypeConsignment  cbc.Code = "GC"
+	MovementTypeReturn       cbc.Code = "GD"
+)
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyInvoiceType,
@@ -61,6 +85,16 @@ var extensions = []*cbc.Definition{
 				SAF-T's ~InvoiceType~ (Tipo de documento) specifies the type of a sales invoice. In GOBL,
 				this type can be set using the ~pt-saft-invoice-type~ extension in the tax section. GOBL
 				will set the extension for you based on the type and the tax tags you set in your invoice.
+
+				The table below shows how this mapping is done:
+
+				| Code | Name                | GOBL Type     | GOBL Tax Tag    |
+				| ---- | ------------------- | ------------- | --------------- |
+				| ~FT~ | Standard Invoice    | ~standard~    |                 |
+				| ~FS~ | Simplified Invoice  | ~standard~    | ~simplified~    |
+				| ~FR~ | Invoice-Receipt     | ~standard~    | ~invoice-receipt~ |
+				| ~ND~ | Debit Note          | ~debit-note~  |                 |
+				| ~NC~ | Credit Note         | ~credit-note~ |                 |
 
 				Example:
 
@@ -371,7 +405,7 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "M15",
 				Name: i18n.String{
-					i18n.EN: "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
+					i18n.EN: "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
 					i18n.PT: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro",
 				},
 			},
@@ -561,6 +595,109 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
+		Key: ExtKeyWorkType,
+		Name: i18n.String{
+			i18n.EN: "Document Type",
+			i18n.PT: "Tipo de documento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~WorkType~ (Tipo de documento de conferência) specifies the type of a working
+				document. In GOBL,this type can be set using the ~pt-saft-work-type~ extension. GOBL
+				will set the extension for you based on the type and the tax tags you set in your invoice
+				in a few cases.
+
+				The table below shows the cases where this mapping is done:
+
+				| Code | Name                      | GOBL Type    | GOBL Tax Tag |
+				| ---- | ------------------------- | ------------ | ------------ |
+				| ~PF~ | Pro forma invoice         | ~proforma~   |              |
+
+				Example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/document",
+					"type": "proforma",
+					// ...
+					"ext": {
+						"pt-saft-work-type": "PF"
+					},
+					// ...
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: WorkTypeTableQueries,
+				Name: i18n.String{
+					i18n.EN: "Table orders",
+					i18n.PT: "Consultas de mesa",
+				},
+			},
+			{
+				Code: WorkTypeConsignmentCredit,
+				Name: i18n.String{
+					i18n.EN: "Consignment credit note",
+					i18n.PT: "Credito de consignação",
+				},
+			},
+			{
+				Code: WorkTypeConsignmentInv,
+				Name: i18n.String{
+					i18n.EN: "VAT-compliant consignment invoice (Article 38)",
+					i18n.PT: "Fatura de consignação nos termos do art.º 38º do código do IVA",
+				},
+			},
+			{
+				Code: WorkTypeWorksheets,
+				Name: i18n.String{
+					i18n.EN: "Work orders",
+					i18n.PT: "Folhas de obra",
+				},
+			},
+			{
+				Code: WorkTypePurchaseOrder,
+				Name: i18n.String{
+					i18n.EN: "Purchase order",
+					i18n.PT: "Nota de Encomenda",
+				},
+			},
+			{
+				Code: WorkTypeOther,
+				Name: i18n.String{
+					i18n.EN: "Other documents",
+					i18n.PT: "Outros",
+				},
+			},
+			{
+				Code: WorkTypeBudgets,
+				Name: i18n.String{
+					i18n.EN: "Quotations",
+					i18n.PT: "Orçamentos",
+				},
+			},
+			{
+				Code: WorkTypeProforma,
+				Name: i18n.String{
+					i18n.EN: "Pro forma invoice",
+					i18n.PT: "Pró-forma",
+				},
+			},
+			{
+				Code: WorkTypeDocuments,
+				Name: i18n.String{
+					i18n.EN: "Delivery verification documents",
+					i18n.PT: "Documentos emitidos que sejam suscetíveis de apresentação ao cliente para conferência de mercadorias ou de prestação de serviços",
+				},
+				Desc: i18n.String{
+					i18n.EN: "For data up to 2017-06-30",
+					i18n.PT: "Para dados até 2017-06-30",
+				},
+			},
+		},
+	},
+	{
 		Key: ExtKeyPaymentMeans,
 		Name: i18n.String{
 			i18n.EN: "Payment Means",
@@ -730,6 +867,83 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Supplementary compensation",
 					i18n.PT: "Títulos de compensação extrassalarial",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyMovementType,
+		Name: i18n.String{
+			i18n.EN: "Movement Type",
+			i18n.PT: "Tipo de documento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~MovementType~ (Tipo de documento de movimentação de mercadorias) specifies the type of
+				a delivery document. In GOBL,this type can be set using the ~pt-saft-movement-type~ extension.
+				If not provided explicitly, GOBL will set the extension for you based on the type of your delivery
+				document.
+
+				The table below shows how this mapping is done:
+
+				| Code | Name                | GOBL Type     |
+				| ---- | ------------------- | ------------- |
+				| ~GR~ | Delivery note       | ~note~        |
+				| ~GT~ | Waybill             | ~waybill~     |
+
+				Example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/delivery",
+					// ...
+					"type": "note",
+					// ...
+					"ext": {
+						"pt-saft-movement-type": "GR"
+					},
+					// ...
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: MovementTypeDeliveryNote,
+				Name: i18n.String{
+					i18n.EN: "Delivery note",
+					i18n.PT: "Guia de remessa",
+				},
+			},
+			{
+				Code: MovementTypeWaybill,
+				Name: i18n.String{
+					i18n.EN: "Waybill",
+					i18n.PT: "Guia de transporte",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Include global waybills here",
+					i18n.PT: "Incluir aqui as guias globais",
+				},
+			},
+			{
+				Code: MovementTypeFixedAssets,
+				Name: i18n.String{
+					i18n.EN: "Guide to the movement own fixed assets",
+					i18n.PT: "Guia de movimentação de ativos fixos próprios",
+				},
+			},
+			{
+				Code: MovementTypeConsignment,
+				Name: i18n.String{
+					i18n.EN: "Consignment note",
+					i18n.PT: "Guia de consignação",
+				},
+			},
+			{
+				Code: MovementTypeReturn,
+				Name: i18n.String{
+					i18n.EN: "Returns slip or note",
+					i18n.PT: "Guia ou nota de devolução",
 				},
 			},
 		},

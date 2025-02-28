@@ -64,14 +64,33 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, addon.Validator(inv))
 	})
 
-	t.Run("missing invoice type", func(t *testing.T) {
+	t.Run("missing doc type", func(t *testing.T) {
 		inv := validInvoice()
 
 		inv.Tax = nil
-		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-invoice-type: required")
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: either `pt-saft-work-type` or `pt-saft-invoice-type` must be set")
 
 		inv.Tax = new(bill.Tax)
-		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-invoice-type: required")
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: either `pt-saft-work-type` or `pt-saft-invoice-type` must be set")
+	})
+
+	t.Run("both doc types set", func(t *testing.T) {
+		inv := validInvoice()
+
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeyInvoiceType: saft.InvoiceTypeStandard,
+			saft.ExtKeyWorkType:    saft.WorkTypeProforma,
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: either `pt-saft-work-type` or `pt-saft-invoice-type` must be set, but not both")
+	})
+
+	t.Run("work doc type only", func(t *testing.T) {
+		inv := validInvoice()
+
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeyWorkType: saft.WorkTypeProforma,
+		}
+		require.NoError(t, addon.Validator(inv))
 	})
 
 	t.Run("missing VAT category in lines", func(t *testing.T) {
