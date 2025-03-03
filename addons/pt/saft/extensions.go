@@ -1,6 +1,9 @@
 package saft
 
 import (
+	"errors"
+
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
@@ -77,6 +80,38 @@ const (
 	MovementTypeConsignment  cbc.Code = "GC"
 	MovementTypeReturn       cbc.Code = "GD"
 )
+
+// DocType is convenience function that returns the SAF-T document type code for the given
+// document.
+func DocType(doc any) (cbc.Code, error) {
+	switch d := doc.(type) {
+	case *bill.Invoice:
+		if d == nil || d.Tax == nil || d.Tax.Ext == nil {
+			return cbc.CodeEmpty, nil
+		}
+		if d.Tax.Ext.Has(ExtKeyInvoiceType) {
+			return d.Tax.Ext[ExtKeyInvoiceType], nil
+		}
+		return d.Tax.Ext[ExtKeyWorkType], nil
+	case *bill.Payment:
+		if d == nil || d.Ext == nil {
+			return cbc.CodeEmpty, nil
+		}
+		return d.Ext[ExtKeyPaymentType], nil
+	case *bill.Delivery:
+		if d == nil || d.Tax == nil || d.Tax.Ext == nil {
+			return cbc.CodeEmpty, nil
+		}
+		return d.Tax.Ext[ExtKeyMovementType], nil
+	case *bill.Order:
+		if d == nil || d.Tax == nil || d.Tax.Ext == nil {
+			return cbc.CodeEmpty, nil
+		}
+		return d.Tax.Ext[ExtKeyWorkType], nil
+	default:
+		return cbc.CodeEmpty, errors.New("unsupported document type")
+	}
+}
 
 var extensions = []*cbc.Definition{
 	{
@@ -747,7 +782,7 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				The SAF-T's ~PaymentMechanism~ (Meios de pagamento) field specifies the payment means in a
 				sales invoice or payment. GOBL provides the ~pt-saft-payment-means~ extension to set this
-				value in your ~bill.Invoice~ advances or in you ~bill.Receipt~ method. GOBL maps certain
+				value in your ~bill.Invoice~ advances or in you ~bill.Payment~ method. GOBL maps certain
 				payment mean keys automatically to this extension:
 
 				| Code | Name                                               | GOBL Payment Means                                    |
