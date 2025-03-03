@@ -87,6 +87,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("work doc type only", func(t *testing.T) {
 		inv := validInvoice()
 
+		inv.Series = "PF SERIES-A"
 		inv.Tax.Ext = tax.Extensions{
 			saft.ExtKeyWorkType: saft.WorkTypeProforma,
 		}

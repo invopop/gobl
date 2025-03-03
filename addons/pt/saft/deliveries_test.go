@@ -31,6 +31,58 @@ func TestDeliveryValidation(t *testing.T) {
 		dlv.Tax = new(bill.Tax)
 		assert.ErrorContains(t, addon.Validator(dlv), "tax: (ext: (pt-saft-movement-type: required")
 	})
+
+	t.Run("missing despatch date", func(t *testing.T) {
+		dlv := validDelivery()
+		dlv.DespatchDate = nil
+		assert.ErrorContains(t, addon.Validator(dlv), "despatch_date: cannot be blank")
+	})
+
+	t.Run("invalid series format", func(t *testing.T) {
+		dlv := validDelivery()
+
+		dlv.Series = "SERIES-A"
+		assert.ErrorContains(t, addon.Validator(dlv), "series: must start with 'GR '")
+	})
+
+	t.Run("invalid code format", func(t *testing.T) {
+		dlv := validDelivery()
+
+		dlv.Code = "ABCD"
+		assert.ErrorContains(t, addon.Validator(dlv), "code: must be in a valid format")
+	})
+
+	t.Run("valid full code", func(t *testing.T) {
+		dlv := validDelivery()
+
+		dlv.Series = ""
+		dlv.Code = "GR SERIES-A/123"
+		assert.NoError(t, addon.Validator(dlv))
+	})
+
+	t.Run("invalid full code", func(t *testing.T) {
+		dlv := validDelivery()
+
+		dlv.Series = ""
+		dlv.Code = "ABCDEF"
+		assert.ErrorContains(t, addon.Validator(dlv), "code: must start with 'GR '")
+	})
+
+	t.Run("missing supplier tax ID", func(t *testing.T) {
+		dlv := validDelivery()
+
+		dlv.Supplier.TaxID = nil
+		assert.ErrorContains(t, addon.Validator(dlv), "supplier: (tax_id: cannot be blank")
+
+		dlv.Supplier.TaxID = &tax.Identity{
+			Country: "PT",
+			Code:    "",
+		}
+		assert.ErrorContains(t, addon.Validator(dlv), "supplier: (tax_id: (code: cannot be blank")
+
+		dlv.Supplier = nil
+		assert.NoError(t, addon.Validator(dlv))
+	})
 }
 
 func TestDeliveryNormalization(t *testing.T) {
@@ -103,6 +155,7 @@ func validDelivery() *bill.Delivery {
 			},
 			Name: "Test Customer",
 		},
+		DespatchDate: date,
 		Lines: []*bill.Line{
 			{
 				Item: &org.Item{
@@ -110,6 +163,11 @@ func validDelivery() *bill.Delivery {
 					Price: &price,
 				},
 				Quantity: quantity,
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+					},
+				},
 			},
 		},
 		Tax: &bill.Tax{
@@ -117,5 +175,6 @@ func validDelivery() *bill.Delivery {
 				saft.ExtKeyMovementType: saft.MovementTypeDeliveryNote,
 			},
 		},
+		Totals: &bill.Totals{},
 	}
 }

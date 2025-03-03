@@ -8,11 +8,26 @@ import (
 
 // validateDelivery ensures that the delivery has the required movement type extension.
 func validateDelivery(dlv *bill.Delivery) error {
+	dt, _ := DocType(dlv)
+
 	return validation.ValidateStruct(dlv,
+		validation.Field(&dlv.Supplier,
+			validation.By(validateSupplier),
+			validation.Skip,
+		),
+		validation.Field(&dlv.Series,
+			validateSeriesFormat(dt),
+			validation.Skip,
+		),
+		validation.Field(&dlv.Code,
+			validateCodeFormat(dlv.Series, dt),
+			validation.Skip,
+		),
 		validation.Field(&dlv.Tax,
 			validation.By(validateDeliveryTax),
 			validation.Skip,
 		),
+		validation.Field(&dlv.DespatchDate, validation.Required),
 	)
 }
 

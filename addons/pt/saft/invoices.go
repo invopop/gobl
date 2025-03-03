@@ -26,7 +26,7 @@ var (
 )
 
 func validateInvoice(inv *bill.Invoice) error {
-	it := invoiceType(inv)
+	dt, _ := DocType(inv)
 
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
@@ -34,11 +34,11 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Series,
-			validateSeriesFormat(it),
+			validateSeriesFormat(dt),
 			validation.Skip,
 		),
 		validation.Field(&inv.Code,
-			validateCodeFormat(inv.Series, it),
+			validateCodeFormat(inv.Series, dt),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -141,12 +141,4 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
-}
-
-func invoiceType(inv *bill.Invoice) cbc.Code {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
-		return cbc.CodeEmpty
-	}
-
-	return inv.Tax.Ext[ExtKeyInvoiceType]
 }
