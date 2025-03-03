@@ -192,9 +192,8 @@ func calculateDiscounts(lines []*Discount, sum, zero num.Amount) {
 				base = l.Base.RescaleUp(exp)
 				exp = base.Exp()
 			}
-			l.Amount = l.Percent.Of(base)
-			l.amount = l.Amount
-			l.Amount = l.Amount.Rescale(exp)
+			l.amount = l.Percent.Of(base)
+			l.Amount = l.amount.Rescale(exp)
 		} else {
 			l.Amount = l.Amount.MatchPrecision(zero)
 			l.amount = l.Amount

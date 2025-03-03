@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
-func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
+func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		if err := calculateLine(l, cur, rates); err != nil {
+		if err := calculateLine(l, cur, rates, rr); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
 		}
 	}
@@ -30,7 +32,7 @@ func calculateLineSum(lines []*Line, cur currency.Code) num.Amount {
 }
 
 // calculate figures out the totals according to quantity and discounts.
-func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate) error {
+func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	if l.Item == nil { // implies invalid, so just skip
 		return nil
 	}
@@ -82,7 +84,11 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate) e
 			}
 		}
 		// Increase price accuracy for calculations
-		price = l.Item.Price.RescaleUp(zero.Exp() + 2)
+		exp := zero.Exp()
+		if rr == tax.RoundingRuleSumThenRound {
+			exp += 2
+		}
+		price = l.Item.Price.RescaleUp(exp)
 	}
 
 	if l.Item.Price == nil {

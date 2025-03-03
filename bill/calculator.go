@@ -62,14 +62,30 @@ func calculate(doc billable) error {
 		}
 		doc.setCurrency(r.Currency)
 	}
+	cur := doc.getCurrency()
 
 	t := doc.getTotals()
 	// Prepare the totals we'll need with amounts based on currency
 	if t == nil {
 		t = new(Totals)
 	}
-	zero := doc.getCurrency().Def().Zero()
+	zero := cur.Def().Zero()
 	t.reset(zero)
+
+	// Figure out rounding rules and if prices include tax early
+	var pit cbc.Code
+	var rr cbc.Key
+	if tx := doc.getTax(); tx != nil {
+		if tx.PricesInclude != "" {
+			pit = tx.PricesInclude
+		}
+		if tx.Rounding != "" {
+			rr = tx.Rounding
+		}
+	}
+	if rr == "" {
+		rr = r.GetRoundingRule()
+	}
 
 	// Do we need to deal with the customer-rates tag?
 	if doc.HasTags(tax.TagCustomerRates) {
@@ -82,13 +98,13 @@ func calculate(doc billable) error {
 	}
 
 	// Preceding
-	calculateOrgDocumentRefs(doc.getPreceding(), doc.getCurrency(), r.GetRoundingRule())
+	calculateOrgDocumentRefs(doc.getPreceding(), cur, rr)
 
 	// Lines
-	if err := calculateLines(doc.getLines(), doc.getCurrency(), doc.getExchangeRates()); err != nil {
+	if err := calculateLines(doc.getLines(), cur, doc.getExchangeRates(), rr); err != nil {
 		return validation.Errors{"lines": err}
 	}
-	t.Sum = calculateLineSum(doc.getLines(), doc.getCurrency())
+	t.Sum = calculateLineSum(doc.getLines(), cur)
 	t.Total = t.Sum
 
 	// Discount Lines
@@ -127,19 +143,6 @@ func calculate(doc billable) error {
 	}
 
 	// Now figure out the tax totals
-	var pit cbc.Code
-	var rr cbc.Key
-	if tx := doc.getTax(); tx != nil {
-		if tx.PricesInclude != "" {
-			pit = tx.PricesInclude
-		}
-		if tx.Rounding != "" {
-			rr = tx.Rounding
-		}
-	}
-	if rr == "" {
-		rr = r.GetRoundingRule()
-	}
 	t.Taxes = new(tax.Total)
 	tc := &tax.TotalCalculator{
 		Currency: doc.getCurrency(),
