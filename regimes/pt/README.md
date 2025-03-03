@@ -192,7 +192,7 @@ For example, you could define an invoice line exempt of tax as follows:
 
 ### Payment receipts
 
-To report payment receipts to the AT, GOBL provides conversion from `bill.Receipt` documents. You can find an example of a valid Portugese receipt in the [`example folder`](../../examples/pt).
+To report payment receipts to the AT, GOBL provides conversion from `bill.Payment` documents. You can find an example of a valid Portugese receipt in the [`example folder`](../../examples/pt).
 
 In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its type. In GOBL, this type can be set using the `pt-saft-receipt-type` extension. GOBL will set the extension automatically based on the type and the tax tags you set. The table below shows how this mapping is done:
 
@@ -217,7 +217,7 @@ For example:
 
 ### `PaymentMechanism` (Meios de pagamento)
 
-The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a sales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this value in your `bill.Invoice` advances or in you `bill.Receipt` method. GOBL maps certain payment mean keys automatically to this extension:
+The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a sales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this value in your `bill.Invoice` advances or in you `bill.Payment` method. GOBL maps certain payment mean keys automatically to this extension:
 
 | Code | Name | GOBL Payment Mean |
 | --- | --- | --- |
