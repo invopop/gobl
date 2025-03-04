@@ -163,7 +163,7 @@ func (Charge) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithChargeKey(schema)
 }
 
-func calculateCharges(lines []*Charge, sum, zero num.Amount) {
+func calculateCharges(lines []*Charge, sum, zero num.Amount, rr cbc.Key) {
 	// COPIED FROM discount.go
 	if len(lines) == 0 {
 		return
@@ -178,10 +178,22 @@ func calculateCharges(lines []*Charge, sum, zero num.Amount) {
 				exp = base.Exp()
 			}
 			l.amount = l.Percent.Of(base)
-			l.Amount = l.amount.Rescale(exp)
+			switch rr {
+			case tax.RoundingRuleRoundThenSum:
+				l.amount = l.amount.Rescale(zero.Exp())
+				l.Amount = l.amount
+			default:
+				l.Amount = l.amount.Rescale(exp)
+			}
 		} else {
-			l.Amount = l.Amount.MatchPrecision(zero)
+			switch rr {
+			case tax.RoundingRuleRoundThenSum:
+				l.Amount = l.Amount.Rescale(zero.Exp())
+			default:
+				l.Amount = l.Amount.MatchPrecision(zero)
+			}
 			l.amount = l.Amount
+
 		}
 	}
 }

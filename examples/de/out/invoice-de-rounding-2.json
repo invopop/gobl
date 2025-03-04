@@ -4,15 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "99b57ea4d7b2fb712da78625e70c57787a860465018ee47d565a552b6737cbf1"
+			"val": "31492df7850f9564211b20a4b92ce91c773741c9b80b4dd4543d351ab2c67aec"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "DE",
-		"uuid": "01955bce-429b-777b-8ded-01c45b138c3b",
+		"uuid": "019560ad-4787-7b03-aa93-7b37803f6bc4",
 		"type": "standard",
-		"code": "RG-1234",
+		"code": "RG-001",
 		"issue_date": "2025-02-10",
 		"currency": "EUR",
 		"tax": {
@@ -43,10 +43,10 @@
 				"item": {
 					"name": "Item 1",
 					"currency": "EUR",
-					"price": "4800.00",
+					"price": "4800.0000",
 					"unit": "piece"
 				},
-				"sum": "4800.00",
+				"sum": "4800.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -64,10 +64,10 @@
 				"item": {
 					"name": "Item 2",
 					"currency": "EUR",
-					"price": "951.60",
+					"price": "951.6000",
 					"unit": "piece"
 				},
-				"sum": "1903.20",
+				"sum": "1903.2000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -85,10 +85,10 @@
 				"item": {
 					"name": "Item 3",
 					"currency": "EUR",
-					"price": "984.69",
+					"price": "984.6900",
 					"unit": "piece"
 				},
-				"sum": "984.69",
+				"sum": "984.6900",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -106,10 +106,10 @@
 				"item": {
 					"name": "Item 4",
 					"currency": "EUR",
-					"price": "951.60",
+					"price": "951.6000",
 					"unit": "piece"
 				},
-				"sum": "3806.40",
+				"sum": "3806.4000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -127,10 +127,10 @@
 				"item": {
 					"name": "Item 5",
 					"currency": "EUR",
-					"price": "760.98",
+					"price": "760.9800",
 					"unit": "piece"
 				},
-				"sum": "1141.47",
+				"sum": "1141.4700",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -146,12 +146,12 @@
 				"i": 6,
 				"quantity": "9.0000",
 				"item": {
-					"name": "Item 6",
+					"name": "Item 7",
 					"currency": "EUR",
-					"price": "697.57",
+					"price": "697.5650",
 					"unit": "piece"
 				},
-				"sum": "6278.13",
+				"sum": "6278.0850",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -161,7 +161,7 @@
 						}
 					}
 				],
-				"total": "6278.13"
+				"total": "6278.09"
 			},
 			{
 				"i": 7,
@@ -169,10 +169,10 @@
 				"item": {
 					"name": "Item 7",
 					"currency": "EUR",
-					"price": "443.91",
+					"price": "443.9050",
 					"unit": "piece"
 				},
-				"sum": "2441.51",
+				"sum": "2441.4775",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -182,7 +182,7 @@
 						}
 					}
 				],
-				"total": "2441.51"
+				"total": "2441.48"
 			},
 			{
 				"i": 8,
@@ -190,10 +190,10 @@
 				"item": {
 					"name": "Item 8",
 					"currency": "EUR",
-					"price": "697.57",
+					"price": "697.5650",
 					"unit": "piece"
 				},
-				"sum": "1743.93",
+				"sum": "1743.9125",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -203,7 +203,7 @@
 						}
 					}
 				],
-				"total": "1743.93"
+				"total": "1743.91"
 			},
 			{
 				"i": 9,
@@ -211,10 +211,10 @@
 				"item": {
 					"name": "Item 9",
 					"currency": "EUR",
-					"price": "1023.68",
+					"price": "1023.6800",
 					"unit": "piece"
 				},
-				"sum": "2047.36",
+				"sum": "2047.3600",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -232,10 +232,10 @@
 				"item": {
 					"name": "Item 10",
 					"currency": "EUR",
-					"price": "20902.50",
+					"price": "20902.5000",
 					"unit": "piece"
 				},
-				"sum": "20902.50",
+				"sum": "20902.5000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -253,10 +253,10 @@
 				"item": {
 					"name": "Item 11",
 					"currency": "EUR",
-					"price": "9275.00",
+					"price": "9275.0000",
 					"unit": "piece"
 				},
-				"sum": "9275.00",
+				"sum": "9275.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -274,10 +274,10 @@
 				"item": {
 					"name": "Item 12",
 					"currency": "EUR",
-					"price": "2597.00",
+					"price": "2597.0000",
 					"unit": "piece"
 				},
-				"sum": "2597.00",
+				"sum": "2597.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -295,10 +295,10 @@
 				"item": {
 					"name": "Item 13",
 					"currency": "EUR",
-					"price": "2008.50",
+					"price": "2008.5000",
 					"unit": "piece"
 				},
-				"sum": "2008.50",
+				"sum": "2008.5000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -316,10 +316,10 @@
 				"item": {
 					"name": "Item 14",
 					"currency": "EUR",
-					"price": "848.00",
+					"price": "848.0000",
 					"unit": "piece"
 				},
-				"sum": "1696.00",
+				"sum": "1696.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -337,10 +337,10 @@
 				"item": {
 					"name": "Item 15",
 					"currency": "EUR",
-					"price": "3180.00",
+					"price": "3180.0000",
 					"unit": "piece"
 				},
-				"sum": "3180.00",
+				"sum": "3180.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -358,10 +358,10 @@
 				"item": {
 					"name": "Item 16",
 					"currency": "EUR",
-					"price": "1484.00",
+					"price": "1484.0000",
 					"unit": "piece"
 				},
-				"sum": "1484.00",
+				"sum": "1484.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -379,10 +379,10 @@
 				"item": {
 					"name": "Item 17",
 					"currency": "EUR",
-					"price": "1890.00",
+					"price": "1890.0000",
 					"unit": "piece"
 				},
-				"sum": "1890.00",
+				"sum": "1890.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -400,10 +400,10 @@
 				"item": {
 					"name": "Item 18",
 					"currency": "EUR",
-					"price": "2046.68",
+					"price": "2046.6800",
 					"unit": "piece"
 				},
-				"sum": "2046.68",
+				"sum": "2046.6800",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -421,10 +421,10 @@
 				"item": {
 					"name": "Item 19",
 					"currency": "EUR",
-					"price": "465.00",
+					"price": "465.0000",
 					"unit": "piece"
 				},
-				"sum": "930.00",
+				"sum": "930.0000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -442,10 +442,10 @@
 				"item": {
 					"name": "Item 20",
 					"currency": "EUR",
-					"price": "451.52",
+					"price": "451.5200",
 					"unit": "piece"
 				},
-				"sum": "451.52",
+				"sum": "451.5200",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -463,10 +463,10 @@
 				"item": {
 					"name": "Item 21",
 					"currency": "EUR",
-					"price": "528.55",
+					"price": "528.5500",
 					"unit": "piece"
 				},
-				"sum": "528.55",
+				"sum": "528.5500",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -484,10 +484,10 @@
 				"item": {
 					"name": "Item 22",
 					"currency": "EUR",
-					"price": "10.40",
+					"price": "10.4000",
 					"unit": "piece"
 				},
-				"sum": "10.40",
+				"sum": "10.4000",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -503,7 +503,7 @@
 		"discounts": [
 			{
 				"i": 1,
-				"reason": "Discount 1",
+				"reason": "D1",
 				"amount": "200213.66",
 				"taxes": [
 					{
@@ -520,7 +520,7 @@
 			},
 			{
 				"i": 2,
-				"reason": "Discount 2",
+				"reason": "D2",
 				"amount": "13992.35",
 				"taxes": [
 					{
@@ -537,7 +537,7 @@
 			},
 			{
 				"i": 3,
-				"reason": "Discount 3",
+				"reason": "D3",
 				"amount": "11993.56",
 				"taxes": [
 					{
@@ -554,9 +554,9 @@
 			}
 		],
 		"totals": {
-			"sum": "72146.84",
+			"sum": "72146.75",
 			"discount": "226199.57",
-			"total": "-154052.73",
+			"total": "-154052.82",
 			"taxes": {
 				"categories": [
 					{
@@ -566,25 +566,19 @@
 								"ext": {
 									"untdid-tax-category": "S"
 								},
-								"base": "-154052.73",
+								"base": "-154052.82",
 								"percent": "19%",
-								"amount": "-29270.02"
+								"amount": "-29270.04"
 							}
 						],
-						"amount": "-29270.02"
+						"amount": "-29270.04"
 					}
 				],
-				"sum": "-29270.02"
+				"sum": "-29270.04"
 			},
-			"tax": "-29270.02",
-			"total_with_tax": "-183322.75",
-			"payable": "-183322.75"
-		},
-		"notes": [
-			{
-				"key": "general",
-				"text": "Testing rounding rules."
-			}
-		]
+			"tax": "-29270.04",
+			"total_with_tax": "-183322.86",
+			"payable": "-183322.86"
+		}
 	}
 }

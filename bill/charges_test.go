@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -27,7 +28,7 @@ func TestChargeTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30000, 2)
-		calculateCharges(ls, base, zero)
+		calculateCharges(ls, base, zero, tax.RoundingRuleSumThenRound)
 		sum := calculateChargeSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, 1, ls[0].Index)
@@ -42,7 +43,7 @@ func TestChargeTotals(t *testing.T) {
 		assert.Equal(t, "40.00", ls[2].Amount.String())
 
 		ls = []*Charge{}
-		calculateCharges(ls, base, zero)
+		calculateCharges(ls, base, zero, tax.RoundingRuleSumThenRound)
 		sum = calculateChargeSum(ls, zero)
 		assert.Nil(t, sum)
 	})
@@ -60,7 +61,7 @@ func TestChargeTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, base, zero)
+		calculateCharges(ls, base, zero, tax.RoundingRuleSumThenRound)
 		sum := calculateChargeSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, "6.17", ls[1].Amount.String())
@@ -77,7 +78,7 @@ func TestChargeTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, base, zero)
+		calculateCharges(ls, base, zero, tax.RoundingRuleSumThenRound)
 		sum := calculateChargeSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, "10.02", ls[0].Amount.String())
@@ -94,7 +95,7 @@ func TestChargeTotals(t *testing.T) {
 		}
 		zero := num.MakeAmount(0, 2)
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, base, zero)
+		calculateCharges(ls, base, zero, tax.RoundingRuleSumThenRound)
 		sum := calculateChargeSum(ls, zero)
 		require.NotNil(t, sum)
 		assert.Equal(t, "10.0247", ls[0].Amount.String())
