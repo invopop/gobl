@@ -12,12 +12,12 @@
                 "country": "ES"
             }
         },
-        "issue_date": "2024-09-18",
+        "issue_date": "2025-03-04",
         "lines": [
             {
                 "discounts": [
                     {
-                        "amount": "180.00",
+                        "amount": "180.0000",
                         "percent": "10%",
                         "reason": "Special discount"
                     }
@@ -126,13 +126,13 @@
             "total_with_tax": "1717.20"
         },
         "type": "standard",
-        "uuid": "019205ab-ac49-72cf-8266-f8261d898b74"
+        "uuid": "0195634a-b7a4-757b-9878-a2af7fa3dce9"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "7196267028039b271cb71b87fec25e1321806be5b7f36a0cf807fdbacdc08a56"
+            "val": "c2beac8f56bde14c045b34d3338b65b0a12415c03ee48fd26cf99bab6ef8036d"
         },
-        "uuid": "019205ab-ac49-72d6-acdc-be2fada07fbc"
+        "uuid": "0195634a-b7a4-7581-b7f9-4aa4eb1986c0"
     }
 }
