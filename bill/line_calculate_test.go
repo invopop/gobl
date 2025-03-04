@@ -154,7 +154,7 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Total.String())
 		assert.Equal(t, "24.9134", line.Item.Price.String())
-		assert.Equal(t, "49.8268", line.Total.String())
+		assert.Equal(t, "49.83", line.Total.String())
 	})
 	t.Run("sublines: match precision with all sublines", func(t *testing.T) {
 		line := &Line{
@@ -186,7 +186,7 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "24.9134", line.Breakdown[0].Total.String())
 		assert.Equal(t, "24.91356", line.Breakdown[1].Total.String())
 		assert.Equal(t, "49.82696", line.Item.Price.String())
-		assert.Equal(t, "99.65392", line.Total.String())
+		assert.Equal(t, "99.65", line.Total.String())
 	})
 	t.Run("sublines: without price", func(t *testing.T) {
 		line := &Line{
@@ -247,7 +247,7 @@ func TestLineCalculate(t *testing.T) {
 				Quantity: num.MakeAmount(3, 0),
 				Item: &org.Item{
 					Name:  "Test Item",
-					Price: num.NewAmount(1259, 2),
+					Price: num.NewAmount(125934, 4),
 				},
 				Discounts: []*LineDiscount{
 					{
@@ -259,10 +259,38 @@ func TestLineCalculate(t *testing.T) {
 		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleRoundThenSum)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
-		assert.Equal(t, "35.13", sum.String())
-		assert.Equal(t, "35.13", lines[0].total.String())
+		assert.Equal(t, "35.14", sum.String())
+		assert.Equal(t, "37.7802", lines[0].Sum.String())
+		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "35.14", lines[0].total.String())
+		assert.Equal(t, "35.14", lines[0].Total.String())
 	})
+
 	t.Run("lines with sum-then-round", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(125934, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "35.1356", sum.String())
+		assert.Equal(t, "37.7802", lines[0].Sum.String())
+		assert.Equal(t, "2.6446", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "35.1356", lines[0].total.String())
+		assert.Equal(t, "35.14", lines[0].Total.String())
+	})
+	t.Run("lines with sum-then-round, regular precision", func(t *testing.T) {
 		lines := []*Line{
 			{
 				Quantity: num.MakeAmount(3, 0),

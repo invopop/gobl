@@ -108,15 +108,15 @@ func calculate(doc billable) error {
 	t.Total = t.Sum
 
 	// Discount Lines
-	calculateDiscounts(doc.getDiscounts(), t.Sum, zero, rr)
-	if discounts := calculateDiscountSum(doc.getDiscounts(), zero); discounts != nil {
+	calculateDiscounts(doc.getDiscounts(), cur, t.Sum, rr)
+	if discounts := calculateDiscountSum(doc.getDiscounts(), cur); discounts != nil {
 		t.Discount = discounts
 		t.Total = t.Total.Subtract(*discounts)
 	}
 
 	// Charge Lines
-	calculateCharges(doc.getCharges(), t.Sum, zero, rr)
-	if charges := calculateChargeSum(doc.getCharges(), zero); charges != nil {
+	calculateCharges(doc.getCharges(), cur, t.Sum, rr)
+	if charges := calculateChargeSum(doc.getCharges(), cur); charges != nil {
 		t.Charge = charges
 		t.Total = t.Total.Add(*charges)
 	}

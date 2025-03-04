@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9ae32594671727c34c4ad306ca1b9b6b5d8d1990c14ba0dffe6ef074d89657d5"
+			"val": "1441427e0c1f5eb0ba8a59979db6ab72a0fe376b66d9d17e959eb7ea11b34827"
 		}
 	},
 	"doc": {
@@ -80,7 +80,7 @@
 					{
 						"reason": "Special discount",
 						"percent": "5%",
-						"amount": "90.00"
+						"amount": "90.0000"
 					}
 				],
 				"taxes": [
