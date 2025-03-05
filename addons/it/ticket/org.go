@@ -1,4 +1,4 @@
-package adecf
+package ticket
 
 import (
 	"github.com/invopop/gobl/org"

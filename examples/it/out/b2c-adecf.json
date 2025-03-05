@@ -11,7 +11,7 @@
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "IT",
 		"$addons": [
-			"it-adecf-v1"
+			"it-ticket-v1"
 		],
 		"uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
 		"type": "standard",
@@ -37,7 +37,7 @@
 					"name": "Cleaning services",
 					"price": "125.00",
 					"ext": {
-						"it-adecf-product": "services"
+						"it-ticket-product": "services"
 					}
 				},
 				"sum": "125.00",
@@ -45,7 +45,7 @@
 					{
 						"cat": "VAT",
 						"ext": {
-							"it-adecf-exempt": "N3"
+							"it-ticket-exempt": "N3"
 						}
 					}
 				],
@@ -58,7 +58,7 @@
 					"name": "Cleaning products",
 					"price": "137.50",
 					"ext": {
-						"it-adecf-product": "services"
+						"it-ticket-product": "services"
 					}
 				},
 				"sum": "412.50",
@@ -83,7 +83,7 @@
 						"rates": [
 							{
 								"ext": {
-									"it-adecf-exempt": "N3"
+									"it-ticket-exempt": "N3"
 								},
 								"base": "125.00",
 								"amount": "0.00"

@@ -1,6 +1,8 @@
-package adecf
+package ticket
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -34,24 +36,25 @@ func validateTaxCombo(val any) error {
 		return nil
 	}
 
-	if c.Category == tax.CategoryVAT {
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				validation.When(
-					c.Percent == nil,
-					tax.ExtensionsRequire(ExtKeyExempt),
-				),
-				validation.Skip,
-			),
-			validation.Field(&c.Percent,
-				validation.By(
-					validatePercentage,
-				),
-				validation.Skip,
-			),
-		)
+	if c.Category != tax.CategoryVAT {
+		return nil
 	}
-	return nil
+
+	return validation.ValidateStruct(c,
+		validation.Field(&c.Ext,
+			validation.When(
+				c.Percent == nil,
+				tax.ExtensionsRequire(ExtKeyExempt),
+			),
+			validation.Skip,
+		),
+		validation.Field(&c.Percent,
+			validation.By(
+				validatePercentage,
+			),
+			validation.Skip,
+		),
+	)
 }
 
 func validatePercentage(val any) error {
@@ -65,5 +68,5 @@ func validatePercentage(val any) error {
 			return nil
 		}
 	}
-	return validation.NewError("validation_percentage_percentage", "Invalid percentage")
+	return errors.New("must be a valid value")
 }

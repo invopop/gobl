@@ -1,4 +1,4 @@
-package adecf
+package ticket
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -6,6 +6,15 @@ import (
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
+
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv.Tax == nil {
+		inv.Tax = new(bill.Tax)
+	}
+	if inv.Tax.PricesInclude == "" {
+		inv.Tax.PricesInclude = tax.CategoryVAT
+	}
+}
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,

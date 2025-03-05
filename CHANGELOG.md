@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `it-adecf-v1`: implemented addon for AdE e-receipt format 
+- `it-ticket-v1`: implemented addon for AdE e-receipt format 
 
 ## [v0.211.0] - 2025-02-28
 

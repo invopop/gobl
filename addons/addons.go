@@ -19,8 +19,8 @@ import (
 	_ "github.com/invopop/gobl/addons/eu/en16931"
 	_ "github.com/invopop/gobl/addons/fr/facturx"
 	_ "github.com/invopop/gobl/addons/gr/mydata"
-	_ "github.com/invopop/gobl/addons/it/adecf"
 	_ "github.com/invopop/gobl/addons/it/sdi"
+	_ "github.com/invopop/gobl/addons/it/ticket"
 	_ "github.com/invopop/gobl/addons/mx/cfdi"
 	_ "github.com/invopop/gobl/addons/pt/saft"
 )

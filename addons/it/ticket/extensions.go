@@ -1,4 +1,4 @@
-package adecf
+package ticket
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -6,10 +6,10 @@ import (
 	"github.com/invopop/gobl/pkg/here"
 )
 
-// Italian extension keys required by the AdE adecf format.
+// Italian extension keys required by the AdE ticket format.
 const (
-	ExtKeyExempt  cbc.Key = "it-adecf-exempt"
-	ExtKeyProduct cbc.Key = "it-adecf-product"
+	ExtKeyExempt  cbc.Key = "it-ticket-exempt"
+	ExtKeyProduct cbc.Key = "it-ticket-product"
 )
 
 var extensions = []*cbc.Definition{

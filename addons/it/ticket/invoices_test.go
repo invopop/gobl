@@ -1,10 +1,10 @@
-package adecf_test
+package ticket_test
 
 import (
 	"testing"
 
 	_ "github.com/invopop/gobl"
-	"github.com/invopop/gobl/addons/it/adecf"
+	"github.com/invopop/gobl/addons/it/ticket"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
@@ -18,7 +18,7 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
 		Regime:   tax.WithRegime("IT"),
-		Addons:   tax.WithAddons(adecf.V1),
+		Addons:   tax.WithAddons(ticket.V1),
 		Code:     "123TEST",
 		Currency: "EUR",
 		Tax: &bill.Tax{
@@ -63,7 +63,7 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 					{
 						Category: "VAT",
 						Ext: tax.Extensions{
-							adecf.ExtKeyExempt: "N4",
+							ticket.ExtKeyExempt: "N4",
 						},
 					},
 				},
@@ -139,7 +139,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 		})
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.EqualError(t, err, "lines: (2: (taxes: (0: (ext: (it-adecf-exempt: required.).).).).).")
+		require.EqualError(t, err, "lines: (2: (taxes: (0: (ext: (it-ticket-exempt: required.).).).).).")
 	})
 
 	t.Run("item with Invalid Percentage", func(t *testing.T) {
@@ -166,7 +166,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 func TestInvoiceTax(t *testing.T) {
 	t.Run("invalid PricesInclude", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.PricesInclude = "invalid"
+		inv.Tax.PricesInclude = tax.CategoryVAT
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		require.EqualError(t, err, "tax: (prices_include: must be a valid value.).")
