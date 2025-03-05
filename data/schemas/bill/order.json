@@ -720,6 +720,10 @@
                 "title": "Italy SDI FatturaPA v1.x"
               },
               {
+                "const": "it-ticket-v1",
+                "title": "Italy AdE ticket v1.x"
+              },
+              {
                 "const": "mx-cfdi-v4",
                 "title": "Mexican SAT CFDI v4.X"
               },

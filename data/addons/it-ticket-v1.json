@@ -4,6 +4,22 @@
   "name": {
     "en": "Italy AdE ticket v1.x"
   },
+  "sources": [
+    {
+      "title": {
+        "en": "Italian AdE Cassetto Fiscale"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Italian AdE Fattura e Corrispettivi"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi",
+      "content_type": "application/pdf"
+    }
+  ],
   "extensions": [
     {
       "key": "it-ticket-exempt",
@@ -52,6 +68,32 @@
           "name": {
             "en": "Reverse charge",
             "it": "Inversione contabile"
+          }
+        }
+      ]
+    },
+    {
+      "key": "it-ticket-product",
+      "name": {
+        "en": "AdE CF Product Key",
+        "it": "Chiave Prodotto AdE CF"
+      },
+      "desc": {
+        "en": "Product keys are used by AdE CF to differentiate between goods\nand services."
+      },
+      "values": [
+        {
+          "code": "goods",
+          "name": {
+            "en": "Delivery of goods",
+            "it": "Consegna di beni"
+          }
+        },
+        {
+          "code": "services",
+          "name": {
+            "en": "Provision of services",
+            "it": "Prestazione di servizi"
           }
         }
       ]

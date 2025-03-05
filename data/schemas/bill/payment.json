@@ -222,12 +222,12 @@
                 "title": "Greece MyData v1.x"
               },
               {
-                "const": "it-ticket-v1",
-                "title": "Italy AdE ticket v1.x"
-              },
-              {
                 "const": "it-sdi-v1",
                 "title": "Italy SDI FatturaPA v1.x"
+              },
+              {
+                "const": "it-ticket-v1",
+                "title": "Italy AdE ticket v1.x"
               },
               {
                 "const": "mx-cfdi-v4",
