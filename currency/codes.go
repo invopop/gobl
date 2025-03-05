@@ -16,12 +16,22 @@ const (
 	CAD Code = "CAD"
 	// Japanese Yen (¥)
 	JPY Code = "JPY"
-	// Belarusian Ruble (Br)
-	BYR Code = "BYR"
-	// Macanese Pataca (P)
-	MOP Code = "MOP"
-	// Haitian Gourde (G)
-	HTG Code = "HTG"
+	// United Arab Emirates Dirham (د.إ)
+	AED Code = "AED"
+	// Afghan Afghani (؋)
+	AFN Code = "AFN"
+	// Albanian Lek (L)
+	ALL Code = "ALL"
+	// Armenian Dram (դր.)
+	AMD Code = "AMD"
+	// Netherlands Antillean Gulden (ƒ)
+	ANG Code = "ANG"
+	// Angolan Kwanza (Kz)
+	AOA Code = "AOA"
+	// Argentine Peso ($)
+	ARS Code = "ARS"
+	// Aruban Florin (ƒ)
+	AWG Code = "AWG"
 	// Azerbaijani Manat (₼)
 	AZN Code = "AZN"
 	// Bosnia and Herzegovina Convertible Mark (КМ)
@@ -52,12 +62,10 @@ const (
 	BWP Code = "BWP"
 	// Belarusian Ruble (Br)
 	BYN Code = "BYN"
-	// Argentine Peso ($)
-	ARS Code = "ARS"
+	// Belarusian Ruble (Br)
+	BYR Code = "BYR"
 	// Belize Dollar ($)
 	BZD Code = "BZD"
-	// Angolan Kwanza (Kz)
-	AOA Code = "AOA"
 	// Congolese Franc (Fr)
 	CDF Code = "CDF"
 	// Swiss Franc (CHF)
@@ -84,8 +92,8 @@ const (
 	DJF Code = "DJF"
 	// Danish Krone (kr.)
 	DKK Code = "DKK"
-	// Mexican Peso ($)
-	MXN Code = "MXN"
+	// Dominican Peso ($)
+	DOP Code = "DOP"
 	// Algerian Dinar (د.ج)
 	DZD Code = "DZD"
 	// Egyptian Pound (ج.م)
@@ -94,14 +102,10 @@ const (
 	ERN Code = "ERN"
 	// Ethiopian Birr (Br)
 	ETB Code = "ETB"
-	// Netherlands Antillean Gulden (ƒ)
-	ANG Code = "ANG"
 	// Fijian Dollar ($)
 	FJD Code = "FJD"
 	// Falkland Pound (£)
 	FKP Code = "FKP"
-	// Armenian Dram (դր.)
-	AMD Code = "AMD"
 	// Georgian Lari (₾)
 	GEL Code = "GEL"
 	// Ghanaian Cedi (₵)
@@ -120,8 +124,8 @@ const (
 	HKD Code = "HKD"
 	// Honduran Lempira (L)
 	HNL Code = "HNL"
-	// Malawian Kwacha (MK)
-	MWK Code = "MWK"
+	// Haitian Gourde (G)
+	HTG Code = "HTG"
 	// Hungarian Forint (Ft)
 	HUF Code = "HUF"
 	// Indonesian Rupiah (Rp)
@@ -140,8 +144,6 @@ const (
 	JMD Code = "JMD"
 	// Jordanian Dinar (د.ا)
 	JOD Code = "JOD"
-	// Albanian Lek (L)
-	ALL Code = "ALL"
 	// Kenyan Shilling (KSh)
 	KES Code = "KES"
 	// Kyrgyzstani Som (som)
@@ -184,18 +186,18 @@ const (
 	MMK Code = "MMK"
 	// Mongolian Tögrög (₮)
 	MNT Code = "MNT"
-	// United Arab Emirates Dirham (د.إ)
-	AED Code = "AED"
+	// Macanese Pataca (P)
+	MOP Code = "MOP"
 	// Mauritanian Ouguiya (UM)
 	MRU Code = "MRU"
 	// Mauritian Rupee (₨)
 	MUR Code = "MUR"
-	// Polish Złoty (zł)
-	PLN Code = "PLN"
-	// Aruban Florin (ƒ)
-	AWG Code = "AWG"
-	// Dominican Peso ($)
-	DOP Code = "DOP"
+	// Maldivian Rufiyaa (MVR)
+	MVR Code = "MVR"
+	// Malawian Kwacha (MK)
+	MWK Code = "MWK"
+	// Mexican Peso ($)
+	MXN Code = "MXN"
 	// Malaysian Ringgit (RM)
 	MYR Code = "MYR"
 	// Mozambican Metical (MTn)
@@ -224,8 +226,8 @@ const (
 	PHP Code = "PHP"
 	// Pakistani Rupee (₨)
 	PKR Code = "PKR"
-	// Maldivian Rufiyaa (MVR)
-	MVR Code = "MVR"
+	// Polish Złoty (zł)
+	PLN Code = "PLN"
 	// Paraguayan Guaraní (₲)
 	PYG Code = "PYG"
 	// Qatari Riyal (ر.ق)
@@ -296,8 +298,6 @@ const (
 	UAH Code = "UAH"
 	// Ugandan Shilling (USh)
 	UGX Code = "UGX"
-	// Afghan Afghani (؋)
-	AFN Code = "AFN"
 	// Uruguayan Peso ($U)
 	UYU Code = "UYU"
 	// Uzbekistan Som (so'm)

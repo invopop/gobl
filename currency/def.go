@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
-	"sort"
+	"slices"
 
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/yaml"
@@ -204,8 +204,8 @@ func (ds *defs) load(src fs.FS, root string) error {
 
 	// Sort the byPriority list by the priority field
 	// in ascending order.
-	sort.Slice(ds.byPriority, func(i, j int) bool {
-		return ds.byPriority[i].Priority < ds.byPriority[j].Priority
+	slices.SortStableFunc(ds.byPriority, func(def1, def2 *Def) int {
+		return def1.Priority - def2.Priority
 	})
 
 	return nil

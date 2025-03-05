@@ -330,7 +330,7 @@
     "smallest_denomination": 1
   },
   {
-    "priority": 50,
+    "priority": 100,
     "iso_code": "BYR",
     "name": "Belarusian Ruble",
     "symbol": "Br",

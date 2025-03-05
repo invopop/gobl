@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `it-ticket-v1`: implemented addon for AdE e-receipt format 
+
 ## [v0.211.0] - 2025-02-28
 
 Another significant release that adds more documents related to the order-to-payment billing flows, and renames the "Receipt" document to simply "Payment". There are now 4 primary billing documents:

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "it-ticket-v1",
+  "name": {
+    "en": "Italy AdE ticket v1.x"
+  },
+  "sources": [
+    {
+      "title": {
+        "en": "Italian AdE Cassetto Fiscale"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi",
+      "content_type": "application/pdf"
+    },
+    {
+      "title": {
+        "en": "Italian AdE Fattura e Corrispettivi"
+      },
+      "url": "https://www.agenziaentrate.gov.it/portale/schede/comunicazioni/fatture-e-corrispettivi",
+      "content_type": "application/pdf"
+    }
+  ],
+  "extensions": [
+    {
+      "key": "it-ticket-exempt",
+      "name": {
+        "en": "Exemption Code",
+        "it": "Natura Esenzione"
+      },
+      "values": [
+        {
+          "code": "N1",
+          "name": {
+            "en": "Excluded pursuant to Art. 15, DPR 633/72",
+            "it": "Escluse ex. art. 15 del D.P.R. 633/1972"
+          }
+        },
+        {
+          "code": "N2",
+          "name": {
+            "en": "Not subject",
+            "it": "Non soggette"
+          }
+        },
+        {
+          "code": "N3",
+          "name": {
+            "en": "Not taxable",
+            "it": "Non imponibili"
+          }
+        },
+        {
+          "code": "N4",
+          "name": {
+            "en": "Exempt",
+            "it": "Esenti"
+          }
+        },
+        {
+          "code": "N5",
+          "name": {
+            "en": "Margin regime / VAT not exposed",
+            "it": "Regime del margine/IVA non esposta in fattura"
+          }
+        },
+        {
+          "code": "N6",
+          "name": {
+            "en": "Reverse charge",
+            "it": "Inversione contabile"
+          }
+        }
+      ]
+    },
+    {
+      "key": "it-ticket-product",
+      "name": {
+        "en": "AdE CF Product Key",
+        "it": "Chiave Prodotto AdE CF"
+      },
+      "desc": {
+        "en": "Product keys are used by AdE CF to differentiate between goods\nand services."
+      },
+      "values": [
+        {
+          "code": "goods",
+          "name": {
+            "en": "Delivery of goods",
+            "it": "Consegna di beni"
+          }
+        },
+        {
+          "code": "services",
+          "name": {
+            "en": "Provision of services",
+            "it": "Prestazione di servizi"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": null,
+  "corrections": null
+}
