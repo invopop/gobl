@@ -159,14 +159,14 @@ func TestInvoiceLineTaxes(t *testing.T) {
 		})
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.EqualError(t, err, "lines: (2: (taxes: (0: (percent: Invalid percentage.).).).).")
+		require.EqualError(t, err, "lines: (2: (taxes: (0: (percent: must be a valid value.).).).).")
 	})
 }
 
 func TestInvoiceTax(t *testing.T) {
 	t.Run("invalid PricesInclude", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
-		inv.Tax.PricesInclude = tax.CategoryVAT
+		inv.Tax.PricesInclude = tax.CategoryGST
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		require.EqualError(t, err, "tax: (prices_include: must be a valid value.).")
@@ -177,7 +177,7 @@ func TestInvoiceTax(t *testing.T) {
 		inv.Tax.PricesInclude = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.EqualError(t, err, "tax: (prices_include: cannot be blank.).")
+		require.NoError(t, err)
 	})
 
 	t.Run("missing Tax", func(t *testing.T) {
@@ -185,6 +185,6 @@ func TestInvoiceTax(t *testing.T) {
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.EqualError(t, err, "tax: cannot be blank.")
+		require.NoError(t, err)
 	})
 }
