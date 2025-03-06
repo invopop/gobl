@@ -12,6 +12,7 @@ func init() {
 		Order{},
 		Payment{},
 		CorrectionOptions{},
+		Line{},
 	)
 }
 

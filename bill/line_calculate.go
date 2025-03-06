@@ -102,7 +102,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 	sum := price.Multiply(l.Quantity)
 	total := tax.ApplyRoundingRule(rr, cur, sum)
 	total = calculateLineDiscounts(l.Discounts, sum, total, cur)
-	total = calculateLineCharges(l.Charges, sum, total, cur)
+	total = calculateLineCharges(l.Charges, l.Quantity, sum, total, cur)
 
 	// Rescale the final sum to match item's price
 	sum = sum.Rescale(l.Item.Price.Exp())
@@ -142,7 +142,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 	sum := price.Multiply(sl.Quantity)
 	total := sum
 	total = calculateLineDiscounts(sl.Discounts, sum, total, cur)
-	total = calculateLineCharges(sl.Charges, sum, total, cur)
+	total = calculateLineCharges(sl.Charges, sl.Quantity, sum, total, cur)
 
 	// Rescale the final sum and total
 	sl.total = total
@@ -173,7 +173,7 @@ func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cu
 	return total
 }
 
-func calculateLineCharges(charges []*LineCharge, sum, total num.Amount, cur currency.Code) num.Amount {
+func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount, cur currency.Code) num.Amount {
 	cd := cur.Def()
 	for _, c := range charges {
 		if c.Percent != nil && !c.Percent.IsZero() {
@@ -184,6 +184,15 @@ func calculateLineCharges(charges []*LineCharge, sum, total num.Amount, cur curr
 			}
 			c.Amount = c.Percent.Of(sum) // always override
 		}
+		// Charges also support setting a rate and quantity
+		if c.Rate != nil {
+			q := quantity
+			if c.Quantity != nil {
+				q = *c.Quantity
+			}
+			c.Amount = c.Rate.Multiply(q)
+		}
+
 		total = total.Add(c.Amount)
 		// As per EN16931 specs, charge amounts have same number of
 		// decimal places as the currency.

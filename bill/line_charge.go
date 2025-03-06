@@ -3,6 +3,7 @@ package bill
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -23,6 +24,13 @@ type LineCharge struct {
 	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
 	// Percentage of base or parent line's sum
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
+	// Quantity of units to apply the charge to when using the rate instead of
+	// the line's quantity.
+	Quantity *num.Amount `json:"quantity,omitempty" jsonschema:"title=Quantity"`
+	// Unit to associate with the quantity when using the rate.
+	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
+	// Rate defines a price per unit to use instead of the percentage.
+	Rate *num.Amount `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Fixed or resulting charge amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
 	// Extension codes that apply to the charge
@@ -47,6 +55,28 @@ func (lc *LineCharge) Validate() error {
 			validation.When(
 				lc.Base != nil,
 				validation.Required,
+			),
+		),
+		validation.Field(&lc.Quantity,
+			validation.When(
+				lc.Base != nil || lc.Percent != nil,
+				validation.Empty.Error("must be blank with base or percent"),
+			),
+		),
+		validation.Field(&lc.Unit,
+			validation.When(
+				lc.Quantity == nil,
+				validation.Empty.Error("must be blank without quantity"),
+			),
+		),
+		validation.Field(&lc.Rate,
+			validation.When(
+				lc.Base != nil || lc.Percent != nil,
+				validation.Empty.Error("must be blank with base or percent"),
+			),
+			validation.When(
+				lc.Quantity != nil,
+				validation.Required.Error("cannot be blank with quantity"),
 			),
 		),
 		validation.Field(&lc.Amount, validation.Required, num.NotZero),
