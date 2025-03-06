@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `bill`: Line discount and charge `base` property, to use instead of the line sum in order to comply with EN16931.
+- `bill`: line discount and charge `base` property, to use instead of the line sum in order to comply with EN16931.
+- `bill`: line Charge support for Quantity and Rate special cases for charges like tariffs that result in a fixed amount base on a rate, like, 1 cent for every 100g of sugar.
 
 ### Changed
 
