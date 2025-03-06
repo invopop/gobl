@@ -2,7 +2,9 @@ package tax
 
 import (
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pkg/here"
 )
 
@@ -50,4 +52,16 @@ var RoundingRules = []*cbc.Definition{
 			`),
 		},
 	},
+}
+
+// ApplyRoundingRule applies the given rounding rule to the amount
+// using the currency's base precision as a reference.
+func ApplyRoundingRule(rr cbc.Key, cur currency.Code, amount num.Amount) num.Amount {
+	exp := cur.Def().Subunits
+	switch rr {
+	case RoundingRuleRoundThenSum:
+		return amount.Rescale(exp)
+	default:
+		return amount.RescaleUp(exp)
+	}
 }

@@ -51,7 +51,7 @@ func TestLineValidation(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t)))
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound))
 		require.NoError(t, validation.Validate(lines))
 	})
 	t.Run("sublines: with error", func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestLineValidation(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t)))
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound))
 		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (item: (name: cannot be blank.).).).)")
 	})
 	t.Run("sublines: missing sum and total", func(t *testing.T) {
@@ -90,7 +90,7 @@ func TestLineValidation(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t)))
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound))
 		lines[0].Breakdown[0].Total = nil
 		lines[0].Breakdown[0].Sum = nil
 		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (sum: cannot be blank; total: cannot be blank.).).)")
@@ -171,7 +171,6 @@ func TestLinePriceNormalization(t *testing.T) {
 		err := calculateLineItemPrice(line.Item, currency.EUR, exampleRates(t))
 		assert.ErrorContains(t, err, "no exchange rate found from 'MXN' to 'EUR")
 	})
-
 }
 
 func TestLineNormalize(t *testing.T) {
@@ -231,11 +230,12 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
-		assert.Equal(t, "8.2645", line.Total.String())
+		assert.Equal(t, "8.2645", line.total.String())
+		assert.Equal(t, "8.26", line.Total.String())
 	})
 	t.Run("basic with VAT and discounts", func(t *testing.T) {
 		line := &Line{
@@ -257,11 +257,11 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
-		assert.Equal(t, "8.1819", line.Total.String())
+		assert.Equal(t, "8.18", line.Total.String())
 	})
 	t.Run("basic with VAT and charges", func(t *testing.T) {
 		line := &Line{
@@ -283,11 +283,11 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
-		assert.Equal(t, "8.3471", line.Total.String())
+		assert.Equal(t, "8.35", line.Total.String())
 	})
 
 	t.Run("sublines: basic with VAT", func(t *testing.T) {
@@ -312,9 +312,9 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
 		assert.Equal(t, "8.2645", line.Breakdown[0].Item.Price.String())
 	})

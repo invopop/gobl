@@ -67,7 +67,7 @@ func TestDeliveryConvertInto(t *testing.T) {
 		d2, err := dlv.ConvertInto(currency.EUR)
 		assert.NoError(t, err)
 		assert.Equal(t, currency.EUR, d2.Currency)
-		assert.Equal(t, "87.5970", d2.Lines[0].Total.String())
+		assert.Equal(t, "87.60", d2.Lines[0].Total.String())
 	})
 	t.Run("same currency", func(t *testing.T) {
 		dlv := baseDeliveryWithLines(t)

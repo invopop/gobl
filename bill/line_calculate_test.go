@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -22,12 +23,12 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, exampleRates(t))
+		err := calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		assert.ErrorContains(t, err, "0: (item: no exchange rate found from 'MXN' to 'EUR'.).")
 	})
 	t.Run("missing item", func(t *testing.T) {
 		line := &Line{}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 	})
 	t.Run("invalid item price", func(t *testing.T) {
@@ -39,7 +40,7 @@ func TestLineCalculate(t *testing.T) {
 				Price:    num.NewAmount(1000, 2),
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		assert.ErrorContains(t, err, "item: no exchange rate found from 'MXN' to 'EUR'")
 	})
 	t.Run("substituted: basic", func(t *testing.T) {
@@ -59,7 +60,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Equal(t, 1, line.Substituted[0].Index)
 		assert.Equal(t, "150.00", line.Substituted[0].Total.String())
@@ -83,7 +84,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.ErrorContains(t, err, "substituted: (0: no exchange rate found from 'MXN' to 'EUR'.)")
 	})
 	t.Run("sublines: basic", func(t *testing.T) {
@@ -101,7 +102,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Equal(t, "10.00", line.Item.Price.String())
 	})
@@ -127,7 +128,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Equal(t, "30.00", line.Item.Price.String())
 	})
@@ -147,13 +148,13 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Equal(t, "12.4567", line.Breakdown[0].Item.Price.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Total.String())
 		assert.Equal(t, "24.9134", line.Item.Price.String())
-		assert.Equal(t, "49.8268", line.Total.String())
+		assert.Equal(t, "49.83", line.Total.String())
 	})
 	t.Run("sublines: match precision with all sublines", func(t *testing.T) {
 		line := &Line{
@@ -178,14 +179,14 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Equal(t, "12.4567", line.Breakdown[0].Item.Price.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Total.String())
 		assert.Equal(t, "24.91356", line.Breakdown[1].Total.String())
 		assert.Equal(t, "49.82696", line.Item.Price.String())
-		assert.Equal(t, "99.65392", line.Total.String())
+		assert.Equal(t, "99.65", line.Total.String())
 	})
 	t.Run("sublines: without price", func(t *testing.T) {
 		line := &Line{
@@ -201,7 +202,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Nil(t, line.Item.Price)
 	})
@@ -216,7 +217,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.NoError(t, err)
 		assert.Nil(t, line.Item.Price)
 	})
@@ -236,7 +237,130 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t))
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
 		require.ErrorContains(t, err, "breakdown: (0: no exchange rate found from 'MXN' to 'EUR'.).")
+	})
+
+	t.Run("lines with round-then-sum", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(125934, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleRoundThenSum)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "35.14", sum.String())
+		assert.Equal(t, "37.7802", lines[0].Sum.String())
+		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "35.14", lines[0].total.String())
+		assert.Equal(t, "35.14", lines[0].Total.String())
+	})
+
+	t.Run("lines with sum-then-round", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(125934, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "35.1356", sum.String())
+		assert.Equal(t, "37.7802", lines[0].Sum.String())
+		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "35.1356", lines[0].total.String())
+		assert.Equal(t, "35.14", lines[0].Total.String())
+	})
+	t.Run("lines with sum-then-round, regular precision", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "35.1261", sum.String())
+		assert.Equal(t, "35.13", lines[0].Total.String())
+		assert.Equal(t, "35.1261", lines[0].total.String())
+	})
+
+	t.Run("lines with discount base", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Base:    num.NewAmount(51256, 3),
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "34.1800", sum.String())
+		assert.Equal(t, "51.26", lines[0].Discounts[0].Base.String())
+		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "34.18", lines[0].Total.String())
+		assert.Equal(t, "34.1800", lines[0].total.String())
+	})
+
+	t.Run("lines with charge base", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Charges: []*LineCharge{
+					{
+						Base:    num.NewAmount(512, 2),
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "40.4139", sum.String())
+		assert.Equal(t, "2.64", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "40.41", lines[0].Total.String())
+		assert.Equal(t, "40.4139", lines[0].total.String())
 	})
 }

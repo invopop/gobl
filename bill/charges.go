@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -163,8 +164,9 @@ func (Charge) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithChargeKey(schema)
 }
 
-func calculateCharges(lines []*Charge, sum, zero num.Amount) {
+func calculateCharges(lines []*Charge, cur currency.Code, sum num.Amount, rr cbc.Key) {
 	// COPIED FROM discount.go
+	zero := cur.Def().Zero()
 	if len(lines) == 0 {
 		return
 	}
@@ -172,26 +174,23 @@ func calculateCharges(lines []*Charge, sum, zero num.Amount) {
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
 			base := sum
-			exp := zero.Exp()
 			if l.Base != nil {
-				base = l.Base.RescaleUp(exp)
-				exp = base.Exp()
+				base = l.Base.RescaleUp(zero.Exp())
 			}
-			l.Amount = l.Percent.Of(base)
-			l.amount = l.Amount
-			l.Amount = l.Amount.Rescale(exp)
+			l.amount = l.Percent.Of(base)
+			l.amount = tax.ApplyRoundingRule(rr, cur, l.amount)
 		} else {
-			l.Amount = l.Amount.MatchPrecision(zero)
-			l.amount = l.Amount
+			l.amount = l.Amount.Rescale(zero.Exp())
 		}
+		l.Amount = l.amount.Rescale(zero.Exp())
 	}
 }
 
-func calculateChargeSum(charges []*Charge, zero num.Amount) *num.Amount {
+func calculateChargeSum(charges []*Charge, cur currency.Code) *num.Amount {
 	if len(charges) == 0 {
 		return nil
 	}
-	total := zero
+	total := cur.Def().Zero()
 	for _, l := range charges {
 		total = total.MatchPrecision(l.amount)
 		total = total.Add(l.amount)

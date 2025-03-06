@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "cc154d9d8a558a6059fc50abbceab5ea88c32f8895c37a87738960fb8c626ef9"
+			"val": "e4069b64030924c89af0989d456b722cf896c1cbc68dc8541e464576516b25c3"
 		}
 	},
 	"doc": {
@@ -94,7 +94,7 @@
 						"percent": "16.0%"
 					}
 				],
-				"total": "200.2020"
+				"total": "200.20"
 			}
 		],
 		"payment": {
