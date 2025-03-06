@@ -6,10 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: Line discount and charge `base` property, to use instead of the line sum in order to comply with EN16931.
+
 ### Changed
 
 - `bill`: line totals will be rounded to currency precision for presentation only
-- `bill`: Discount and Charge amounts always rounded to currency's precision
+- `bill`: document Discount and Charge base and amounts always rounded to currency's precision
+- `bill`: line Discount and Charge base and amounts always rounded to currency's precision
 - `bill`: `round-then-sum` rounding rule _now_ implies that line totals will not be calculated with additional precision, this brings closer aliance with EN16931 requirements.
 
 ## [v0.211.0] - 2025-02-28

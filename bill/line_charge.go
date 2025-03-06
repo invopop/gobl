@@ -19,7 +19,9 @@ type LineCharge struct {
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the charge was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Percentage if fixed amount not applied
+	// Base for percent calculations instead of the line's sum
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
+	// Percentage of base or parent line's sum
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Fixed or resulting charge amount to apply (calculated if percent present).
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
@@ -40,7 +42,13 @@ func (lc *LineCharge) Validate() error {
 	return validation.ValidateStruct(lc,
 		validation.Field(&lc.Key),
 		validation.Field(&lc.Code),
-		validation.Field(&lc.Percent),
+		validation.Field(&lc.Base),
+		validation.Field(&lc.Percent,
+			validation.When(
+				lc.Base != nil,
+				validation.Required,
+			),
+		),
 		validation.Field(&lc.Amount, validation.Required, num.NotZero),
 		validation.Field(&lc.Ext),
 	)

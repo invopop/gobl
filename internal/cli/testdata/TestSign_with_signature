@@ -17,7 +17,7 @@
             {
                 "discounts": [
                     {
-                        "amount": "180.0000",
+                        "amount": "180.00",
                         "percent": "10%",
                         "reason": "Special discount"
                     }
@@ -131,12 +131,12 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "5f103aa74ca56eda4205846b41bde5597569bab40a459bbb8436619c05c63da0"
+            "val": "f46d4faf052c8e38a90f4659fda55e0f39ad1910d6014e68756a6a5afd4ab3cf"
         },
         "uuid": "4905f174-0384-11ed-9fa6-b24117999d50"
     },
     "sigs": [
         "eyJhbGciOiJFUzI1NiIsImtpZCI6IjBhMjg2MDAwLTM2MGEtNGU2Ni04MWFhLTU2ZDQ0YmI4ZjEwNyJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImY0NmQ0ZmFmMDUyYzhlMzhhOTBmNDY1OWZkYTU1ZTBmMzlhZDE5MTBkNjAxNGU2ODc1NmE2YTVhZmQ0YWIzY2YifX0.Pv6PCi-IYWPlzPwVC826Z6hy0Gc7OXi6-LNrOsbJPc1YDoUhpyr-mswpnI0Mkp8qdtk7v_lVKCHw3EOqHE-JPg",
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjVmMTAzYWE3NGNhNTZlZGE0MjA1ODQ2YjQxYmRlNTU5NzU2OWJhYjQwYTQ1OWJiYjg0MzY2MTljMDVjNjNkYTAifX0.WMu-271NZKyEsaUe9t68GCrk9oGhIm828IuUl3v8yc9Rh8j7S-RyPYTC66_PHJVqjskVA8IYY5bAtnJN5hugzA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImY0NmQ0ZmFmMDUyYzhlMzhhOTBmNDY1OWZkYTU1ZTBmMzlhZDE5MTBkNjAxNGU2ODc1NmE2YTVhZmQ0YWIzY2YifX0.FSPa4OJyGNuh-BIDYl1oUKZBONvOagx3EJcSL4C-Nayd030ByCuGzPd4GWloK5njABC8cujXrfXq6KsdEqsGUg"
     ]
 }

@@ -17,7 +17,7 @@
             {
                 "discounts": [
                     {
-                        "amount": "180.0000",
+                        "amount": "180.00",
                         "percent": "10%",
                         "reason": "Special discount"
                     }
@@ -137,13 +137,13 @@
             "total_with_tax": "1717.20"
         },
         "type": "credit-note",
-        "uuid": "0195634a-b799-7bca-b24b-c65a0f459bd8"
+        "uuid": "01956a9d-10a1-7562-89e6-bc040f79546a"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "b9e152835a28b8744bb140b28bc7d9e31945c53a77e3b53c8719c36da908c2ef"
+            "val": "2ed1a613f7fcea31e8f09b1b921a516cbd4f84191dece37a3651bd0322696b3f"
         },
-        "uuid": "0195634a-b799-7bc4-b397-53e1e932b770"
+        "uuid": "01956a9d-10a1-7557-8e0f-0f4173650c2e"
     }
 }

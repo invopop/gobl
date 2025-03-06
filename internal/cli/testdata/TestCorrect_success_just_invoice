@@ -15,7 +15,7 @@
         {
             "discounts": [
                 {
-                    "amount": "180.0000",
+                    "amount": "180.00",
                     "percent": "10%",
                     "reason": "Special discount"
                 }

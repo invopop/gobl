@@ -17,7 +17,7 @@
             {
                 "discounts": [
                     {
-                        "amount": "180.0000",
+                        "amount": "180.00",
                         "percent": "10%",
                         "reason": "Special discount"
                     }
@@ -131,7 +131,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "5f103aa74ca56eda4205846b41bde5597569bab40a459bbb8436619c05c63da0"
+            "val": "f46d4faf052c8e38a90f4659fda55e0f39ad1910d6014e68756a6a5afd4ab3cf"
         },
         "uuid": "4905f174-0384-11ed-9fa6-b24117999d50"
     }

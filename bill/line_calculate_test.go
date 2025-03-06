@@ -286,7 +286,7 @@ func TestLineCalculate(t *testing.T) {
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "35.1356", sum.String())
 		assert.Equal(t, "37.7802", lines[0].Sum.String())
-		assert.Equal(t, "2.6446", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "35.1356", lines[0].total.String())
 		assert.Equal(t, "35.14", lines[0].Total.String())
 	})
@@ -311,5 +311,56 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "35.1261", sum.String())
 		assert.Equal(t, "35.13", lines[0].Total.String())
 		assert.Equal(t, "35.1261", lines[0].total.String())
+	})
+
+	t.Run("lines with discount base", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Base:    num.NewAmount(51256, 3),
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "34.1800", sum.String())
+		assert.Equal(t, "51.26", lines[0].Discounts[0].Base.String())
+		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "34.18", lines[0].Total.String())
+		assert.Equal(t, "34.1800", lines[0].total.String())
+	})
+
+	t.Run("lines with charge base", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Charges: []*LineCharge{
+					{
+						Base:    num.NewAmount(512, 2),
+						Percent: num.NewPercentage(7, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "40.4139", sum.String())
+		assert.Equal(t, "2.64", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "40.41", lines[0].Total.String())
+		assert.Equal(t, "40.4139", lines[0].total.String())
 	})
 }

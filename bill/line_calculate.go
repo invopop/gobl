@@ -100,9 +100,9 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 
 	// Calculate the line sum and total
 	sum := price.Multiply(l.Quantity)
-	total := sum
-	total = calculateLineDiscounts(l.Discounts, *l.Item.Price, sum, total, cur, rr)
-	total = calculateLineCharges(l.Charges, *l.Item.Price, sum, total, cur, rr)
+	total := tax.ApplyRoundingRule(rr, cur, sum)
+	total = calculateLineDiscounts(l.Discounts, sum, total, cur)
+	total = calculateLineCharges(l.Charges, sum, total, cur)
 
 	// Rescale the final sum to match item's price
 	sum = sum.Rescale(l.Item.Price.Exp())
@@ -114,7 +114,9 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 	return nil
 }
 
-// calculate figures out the totals according to quantity and discounts.
+// calculateSubline figures out the totals according to quantity and discounts.
+// We don't apply rounding rules here, as the objective is to have
+// maximum precision to determine the final line item price.
 func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.ExchangeRate) error {
 	if sl.Item == nil {
 		return nil
@@ -139,8 +141,8 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 	// Calculate the line sum and total
 	sum := price.Multiply(sl.Quantity)
 	total := sum
-	total = calculateLineDiscounts(sl.Discounts, *sl.Item.Price, sum, total, cur, tax.RoundingRuleSumThenRound)
-	total = calculateLineCharges(sl.Charges, *sl.Item.Price, sum, total, cur, tax.RoundingRuleSumThenRound)
+	total = calculateLineDiscounts(sl.Discounts, sum, total, cur)
+	total = calculateLineCharges(sl.Charges, sum, total, cur)
 
 	// Rescale the final sum and total
 	sl.total = total
@@ -152,26 +154,40 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 	return nil
 }
 
-func calculateLineDiscounts(discounts []*LineDiscount, price, sum, total num.Amount, cur currency.Code, rr cbc.Key) num.Amount {
+func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cur currency.Code) num.Amount {
+	cd := cur.Def()
 	for _, d := range discounts {
 		if d.Percent != nil && !d.Percent.IsZero() {
-			d.Amount = d.Percent.Of(sum) // always override
+			base := sum
+			if d.Base != nil {
+				base = cd.Rescale(*d.Base)
+				d.Base = &base
+			}
+			d.Amount = d.Percent.Of(base) // always override
 		}
-		d.Amount = d.Amount.MatchPrecision(price)
-		d.Amount = tax.ApplyRoundingRule(rr, cur, d.Amount)
 		total = total.Subtract(d.Amount)
+		// As per EN16931 specs, discount amounts have same number of
+		// decimal places as the currency.
+		d.Amount = cd.Rescale(d.Amount)
 	}
 	return total
 }
 
-func calculateLineCharges(charges []*LineCharge, price, sum, total num.Amount, cur currency.Code, rr cbc.Key) num.Amount {
+func calculateLineCharges(charges []*LineCharge, sum, total num.Amount, cur currency.Code) num.Amount {
+	cd := cur.Def()
 	for _, c := range charges {
 		if c.Percent != nil && !c.Percent.IsZero() {
+			base := sum
+			if c.Base != nil {
+				base = cd.Rescale(*c.Base)
+				c.Base = &base
+			}
 			c.Amount = c.Percent.Of(sum) // always override
 		}
-		c.Amount = c.Amount.MatchPrecision(price)
-		c.Amount = tax.ApplyRoundingRule(rr, cur, c.Amount)
 		total = total.Add(c.Amount)
+		// As per EN16931 specs, charge amounts have same number of
+		// decimal places as the currency.
+		c.Amount = cd.Rescale(c.Amount)
 	}
 	return total
 }
