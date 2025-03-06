@@ -3,6 +3,7 @@ package bill
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
@@ -26,6 +27,8 @@ type LineCharge struct {
 	// Quantity of units to apply the charge to when using the rate instead of
 	// the line's quantity.
 	Quantity *num.Amount `json:"quantity,omitempty" jsonschema:"title=Quantity"`
+	// Unit to associate with the quantity when using the rate.
+	Unit org.Unit `json:"unit,omitempty" jsonschema:"title=Unit"`
 	// Rate defines a price per unit to use instead of the percentage.
 	Rate *num.Amount `json:"rate,omitempty" jsonschema:"title=Rate"`
 	// Fixed or resulting charge amount to apply (calculated if percent present).
@@ -58,6 +61,12 @@ func (lc *LineCharge) Validate() error {
 			validation.When(
 				lc.Base != nil || lc.Percent != nil,
 				validation.Empty.Error("must be blank with base or percent"),
+			),
+		),
+		validation.Field(&lc.Unit,
+			validation.When(
+				lc.Quantity == nil,
+				validation.Empty.Error("must be blank without quantity"),
 			),
 		),
 		validation.Field(&lc.Rate,

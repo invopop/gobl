@@ -59,7 +59,8 @@ func TestLineChargeValidation(t *testing.T) {
 		l := &bill.LineCharge{
 			Code:     "IEPS",
 			Quantity: num.NewAmount(100, 0), // e.g. grams
-			Rate:     num.NewAmount(2, 0),   // 1 per gram
+			Unit:     "g",
+			Rate:     num.NewAmount(2, 0), // 1 per gram
 			Amount:   num.MakeAmount(200, 2),
 		}
 		assert.NoError(t, l.Validate())
@@ -72,6 +73,15 @@ func TestLineChargeValidation(t *testing.T) {
 		}
 		assert.ErrorContains(t, l.Validate(), "rate: cannot be blank with quantity")
 	})
+	t.Run("missing rate with quantity", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:   "IEPS",
+			Unit:   "l",
+			Amount: num.MakeAmount(200, 2),
+		}
+		assert.ErrorContains(t, l.Validate(), "unit: must be blank without quantity")
+	})
+
 	t.Run("quantity with base", func(t *testing.T) {
 		l := &bill.LineCharge{
 			Code:     "IEPS",

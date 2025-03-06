@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "345c1f4117675519c295f2b21d29155c643a72feec6d937d318892d306ac304d"
+			"val": "6cc5f630ba8d603a49162f681cd0536a3c010ffc835702780f8b2455c72d3822"
 		}
 	},
 	"doc": {
@@ -72,6 +72,7 @@
 					{
 						"code": "IEPS",
 						"quantity": "0.400",
+						"unit": "l",
 						"rate": "1.00",
 						"amount": "0.40"
 					}

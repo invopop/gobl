@@ -35,7 +35,8 @@ lines:
       - code: "IEPS"
         percent: "25%"
       - code: "IEPS"
-        quantity: "0.400" # litres
+        quantity: "0.400"
+        unit: "l" # Litre
         rate: "1.00" # price per litre
     taxes:
       - cat: "VAT"
