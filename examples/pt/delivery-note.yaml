@@ -1,5 +1,6 @@
 $schema: https://gobl.org/draft-0/bill/delivery
 $addons: ["pt-saft-v1"]
+uuid: 019570af-1b60-7eca-98a8-d99b3cabfce8
 type: note
 currency: EUR
 issue_date: "2023-01-30"

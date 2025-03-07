@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "042a1fe6e975a1f98368d371cb04f8cd1c290347cc9431f5a61141afa13f0f1b"
+			"val": "8c5ee9f157b8ea1955fd8b0d0fad607ed89c240b15ed5ef426634ae3843eb766"
 		}
 	},
 	"doc": {
@@ -13,7 +13,7 @@
 		"$addons": [
 			"pt-saft-v1"
 		],
-		"uuid": "01957075-578b-781e-bbc5-20c1e2c830df",
+		"uuid": "019570af-1b60-7eca-98a8-d99b3cabfce8",
 		"type": "note",
 		"series": "GR SERIES-A",
 		"code": "123",

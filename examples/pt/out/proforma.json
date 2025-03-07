@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "848c2b76571f2e7c0580e47720dbc5c3ba91e4ab57ef57449bbb79936dd07585"
+			"val": "149e6af80d5c26cfbb59a92afbe220809232faa51fb0c842d2386343c3447fe8"
 		}
 	},
 	"doc": {
@@ -13,7 +13,7 @@
 		"$addons": [
 			"pt-saft-v1"
 		],
-		"uuid": "01957075-5791-7975-89b9-2ccbcb15d6e0",
+		"uuid": "019570af-1b66-7dd6-afd1-4f4c8baad3e4",
 		"type": "proforma",
 		"series": "PF SERIES-A",
 		"code": "123",

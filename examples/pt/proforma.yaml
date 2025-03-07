@@ -1,5 +1,6 @@
 $schema: https://gobl.org/draft-0/bill/invoice
 $addons: ["pt-saft-v1"]
+uuid: "019570af-1b66-7dd6-afd1-4f4c8baad3e4"
 type: proforma
 currency: EUR
 series: "PF SERIES-A"
