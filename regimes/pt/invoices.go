@@ -46,6 +46,7 @@ func (v *invoiceValidator) validate() error {
 				bill.InvoiceTypeCreditNote,
 				bill.InvoiceTypeDebitNote,
 				bill.InvoiceTypeProforma,
+				bill.InvoiceTypeOther,
 			),
 			validation.Skip,
 		),
