@@ -1,0 +1,67 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "8c5ee9f157b8ea1955fd8b0d0fad607ed89c240b15ed5ef426634ae3843eb766"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/delivery",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
+		"uuid": "019570af-1b60-7eca-98a8-d99b3cabfce8",
+		"type": "note",
+		"series": "GR SERIES-A",
+		"code": "123",
+		"issue_date": "2023-01-30",
+		"currency": "EUR",
+		"despatch_date": "2023-01-31",
+		"tax": {
+			"ext": {
+				"pt-saft-movement-type": "GR"
+			}
+		},
+		"supplier": {
+			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
+			"name": "Hotelzinho",
+			"tax_id": {
+				"country": "PT",
+				"code": "545259045"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"receiver": {
+			"name": "Maria Santos Silva",
+			"addresses": [
+				{
+					"street": "Rua da Maria",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "OLED 32-inch TV",
+					"unit": "unit",
+					"ext": {
+						"pt-saft-product-type": "P"
+					}
+				}
+			}
+		]
+	}
+}
