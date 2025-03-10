@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `bill`: reverting back to maintaining precision in line totals for `precise` rounding for consistency with old data. Use `currency` rounding for compatibility with EN16931 specs.
 - `bill`: line sum rounded to currency precision in `currency` rounding.
 
 ## [v0.212.0] - 2025-03-10

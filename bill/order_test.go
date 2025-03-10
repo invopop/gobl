@@ -60,7 +60,7 @@ func TestOrderConvertInto(t *testing.T) {
 		o2, err := ord.ConvertInto(currency.EUR)
 		assert.NoError(t, err)
 		assert.Equal(t, currency.EUR, o2.Currency)
-		assert.Equal(t, "87.60", o2.Lines[0].Total.String())
+		assert.Equal(t, "87.5970", o2.Lines[0].Total.String())
 	})
 	t.Run("same currency", func(t *testing.T) {
 		ord := baseOrderWithLines(t)

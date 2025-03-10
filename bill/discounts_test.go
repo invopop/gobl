@@ -188,10 +188,10 @@ func TestDiscountTotals(t *testing.T) {
 		assert.Equal(t, "10.0247", ls[0].Amount.String())
 		assert.Equal(t, "10.0247", sum.String())
 		roundDiscounts(ls, currency.EUR)
-		assert.Equal(t, "10.02", ls[0].Amount.String())
+		assert.Equal(t, "10.0247", ls[0].Amount.String())
 	})
 
-	t.Run("with fixed base high precision, round-then-sum", func(t *testing.T) {
+	t.Run("with fixed base high precision, currency precision", func(t *testing.T) {
 		ls := []*Discount{
 			{
 				Reason:  "Discount",
@@ -203,9 +203,9 @@ func TestDiscountTotals(t *testing.T) {
 		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleCurrency)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
+		assert.Equal(t, "10.02", sum.String())
 		assert.Equal(t, "50.1234", ls[0].Base.String())
 		assert.Equal(t, "10.02", ls[0].Amount.String())
-		assert.Equal(t, "10.02", sum.String())
 		roundDiscounts(ls, currency.EUR)
 		assert.Equal(t, "50.1234", ls[0].Base.String(), "maintain original precision")
 		assert.Equal(t, "10.02", ls[0].Amount.String())

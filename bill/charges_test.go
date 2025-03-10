@@ -165,7 +165,7 @@ func TestChargeTotals(t *testing.T) {
 		assert.Equal(t, "10.0247", ls[0].Amount.String())
 		assert.Equal(t, "10.0247", sum.String())
 		roundCharges(ls, currency.EUR)
-		assert.Equal(t, "10.02", ls[0].Amount.String())
+		assert.Equal(t, "10.0247", ls[0].Amount.String())
 	})
 
 	t.Run("with fixed base high precision, round-then-sum", func(t *testing.T) {
