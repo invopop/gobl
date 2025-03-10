@@ -208,9 +208,9 @@ func calculateDiscountSum(discounts []*Discount, cur currency.Code) *num.Amount 
 	return &total
 }
 
-func (d *Discount) round(cur currency.Code) {
+func (m *Discount) round(cur currency.Code) {
 	cd := cur.Def()
-	d.Amount = cd.Rescale(d.Amount)
+	m.Amount = cd.Rescale(m.Amount)
 }
 
 func roundDiscounts(lines []*Discount, cur currency.Code) {

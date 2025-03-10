@@ -16,7 +16,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: line totals will be rounded to currency precision for presentation only
 - `bill`: document Discount and Charge base and amounts always rounded to currency's precision
 - `bill`: line Discount and Charge base and amounts always rounded to currency's precision
-- `bill`: `round-then-sum` rounding rule _now_ implies that line totals will not be calculated with additional precision, this brings closer aliance with EN16931 requirements.
+- `tax`: renamed rounding rules `sum-then-round` to `precise`, and `round-then-sum` to `currency`, to more accurately reflect their objectives.
+- `bill`: `currency` rounding rule implies that line totals will be calculated with the currency's precisions, bringing closer alliance with EN16931 requirements.
 
 ## [v0.211.0] - 2025-02-28
 

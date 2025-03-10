@@ -450,12 +450,12 @@ func TestTotalCalculate(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var tt *tax.Total
 		assert.NotPanics(t, func() {
-			tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+			tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		})
 	})
 	t.Run("empty", func(t *testing.T) {
 		tt := &tax.Total{}
-		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		assert.Equal(t, int64(0), tt.Sum.Value())
 	})
 	t.Run("basic", func(t *testing.T) {
@@ -472,7 +472,7 @@ func TestTotalCalculate(t *testing.T) {
 				},
 			},
 		}
-		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		assert.Equal(t, int64(2100), tt.Sum.Value())
 		assert.Equal(t, int64(2100), tt.Category("VAT").Amount.Value())
 		assert.Equal(t, int64(2100), tt.Category("VAT").Rates[0].Amount.Value())
@@ -495,7 +495,7 @@ func TestTotalCalculate(t *testing.T) {
 				},
 			},
 		}
-		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		data, _ := json.Marshal(tt)
 		fmt.Printf("TOTAL: %s\n", string(data))
 		assert.Equal(t, int64(2200), tt.Sum.Value())
@@ -535,7 +535,7 @@ func TestTotalCalculate(t *testing.T) {
 				},
 			},
 		}
-		tt.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		data, _ := json.Marshal(tt)
 		fmt.Printf("TOTAL: %s\n", string(data))
 		assert.Equal(t, "6.00", tt.Sum.String())

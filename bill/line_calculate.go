@@ -98,7 +98,7 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 	}
 	// Increase price accuracy for calculations
 	exp := zero.Exp()
-	if rr == tax.RoundingRuleSumThenRound {
+	if rr == tax.RoundingRulePrecise {
 		exp += linePrecisionExtra
 	}
 	price := l.Item.Price.RescaleUp(exp)
@@ -139,7 +139,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 	// Increase price accuracy for calculations depending on rounding rule
 	zero := cur.Def().Zero()
 	price := *sl.Item.Price
-	if rr == tax.RoundingRuleSumThenRound {
+	if rr == tax.RoundingRulePrecise {
 		price = price.RescaleUp(zero.Exp() + linePrecisionExtra)
 	}
 

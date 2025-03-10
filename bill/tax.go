@@ -54,6 +54,13 @@ func (t *Tax) Normalize(normalizers tax.Normalizers) {
 	if t == nil {
 		return
 	}
+	// migration for old rounding rules
+	switch t.Rounding {
+	case "sum-then-round":
+		t.Rounding = tax.RoundingRulePrecise
+	case "round-then-sum":
+		t.Rounding = tax.RoundingRuleCurrency
+	}
 	t.Ext = tax.CleanExtensions(t.Ext)
 	normalizers.Each(t)
 }

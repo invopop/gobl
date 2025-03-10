@@ -48,7 +48,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30000, 2)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, 1, ls[0].Index)
@@ -67,7 +67,7 @@ func TestDiscountTotals(t *testing.T) {
 		assert.Equal(t, "40.00", ls[2].Amount.String())
 
 		ls = []*Discount{}
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum = calculateDiscountSum(ls, currency.EUR)
 		assert.Nil(t, sum)
 	})
@@ -84,7 +84,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.00", ls[0].Amount.String())
@@ -106,7 +106,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleRoundThenSum)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleCurrency)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.00", ls[0].Amount.String())
@@ -126,7 +126,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.12", ls[0].Base.String()) // with 2 extra points
@@ -145,7 +145,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleRoundThenSum)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleCurrency)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.12", ls[0].Base.String()) // with 2 extra points
@@ -164,7 +164,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.1762", ls[0].Amount.String())
@@ -182,7 +182,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "10.0247", ls[0].Amount.String())
@@ -200,7 +200,7 @@ func TestDiscountTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleRoundThenSum)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRuleCurrency)
 		sum := calculateDiscountSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.1234", ls[0].Base.String())

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8952bce519c44b1341449add39f95790c289259b2c1416baa1c5f470ac66e893"
+			"val": "2fe5a4732df38948f87a18cfb523773a0368fc95def13488d74536d322e172cc"
 		}
 	},
 	"doc": {
@@ -17,7 +17,7 @@
 		"issue_date": "2025-02-01",
 		"currency": "EUR",
 		"tax": {
-			"rounding": "round-then-sum"
+			"rounding": "currency"
 		},
 		"supplier": {
 			"name": "Provide One S.L.",

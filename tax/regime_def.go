@@ -230,7 +230,7 @@ func (r *RegimeDef) GetRoundingRule() cbc.Key {
 	if r != nil && r.CalculatorRoundingRule != "" {
 		return r.CalculatorRoundingRule
 	}
-	return RoundingRuleSumThenRound
+	return RoundingRulePrecise
 }
 
 // ValidateObject performs validation on the provided object in the context

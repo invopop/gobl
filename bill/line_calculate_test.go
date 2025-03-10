@@ -25,12 +25,12 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		assert.ErrorContains(t, err, "0: (item: no exchange rate found from 'MXN' to 'EUR'.).")
 	})
 	t.Run("missing item", func(t *testing.T) {
 		line := &Line{}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 	})
 	t.Run("invalid item price", func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestLineCalculate(t *testing.T) {
 				Price:    num.NewAmount(1000, 2),
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		assert.ErrorContains(t, err, "item: no exchange rate found from 'MXN' to 'EUR'")
 	})
 	t.Run("substituted: basic", func(t *testing.T) {
@@ -62,7 +62,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 		assert.Equal(t, 1, line.Substituted[0].Index)
 		assert.Equal(t, "150.0000", line.Substituted[0].Total.String())
@@ -88,7 +88,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.ErrorContains(t, err, "substituted: (0: no exchange rate found from 'MXN' to 'EUR'.)")
 	})
 	t.Run("sublines: basic", func(t *testing.T) {
@@ -106,7 +106,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		line.round(currency.EUR)
 		require.NoError(t, err)
 		assert.Equal(t, "10.00", line.Item.Price.String())
@@ -138,7 +138,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 		assert.Equal(t, "30.00", line.Item.Price.String())
 	})
@@ -158,7 +158,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 		assert.Equal(t, "12.4567", line.Breakdown[0].Item.Price.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
@@ -195,7 +195,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 		assert.Equal(t, "12.4567", line.Breakdown[0].Item.Price.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
@@ -225,7 +225,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 		assert.Nil(t, line.Item.Price)
 	})
@@ -240,7 +240,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.NoError(t, err)
 		assert.Nil(t, line.Item.Price)
 	})
@@ -260,7 +260,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound)
+		err := calculateLine(line, currency.EUR, exampleRates(t), tax.RoundingRulePrecise)
 		require.ErrorContains(t, err, "breakdown: (0: no exchange rate found from 'MXN' to 'EUR'.).")
 	})
 
@@ -279,7 +279,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleRoundThenSum)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleCurrency)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "35.14", sum.String())
@@ -308,7 +308,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "35.1356", sum.String())
@@ -336,7 +336,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "35.1261", sum.String())
@@ -359,7 +359,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "34.1821", sum.String())
@@ -388,7 +388,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleRoundThenSum)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleCurrency)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "34.18", sum.String())
@@ -418,7 +418,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
 		assert.NoError(t, err)
 		data, _ := json.Marshal(lines)
 		fmt.Printf("%s", string(data))
@@ -446,7 +446,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "37.8300", sum.String())
@@ -470,7 +470,7 @@ func TestLineCalculate(t *testing.T) {
 				},
 			},
 		}
-		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleSumThenRound)
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "39.7700", sum.String())

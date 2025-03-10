@@ -193,9 +193,9 @@ func calculateChargeSum(charges []*Charge, cur currency.Code) *num.Amount {
 	return &total
 }
 
-func (c *Charge) round(cur currency.Code) {
+func (m *Charge) round(cur currency.Code) {
 	cd := cur.Def()
-	c.Amount = cd.Rescale(c.Amount)
+	m.Amount = cd.Rescale(m.Amount)
 }
 
 func roundCharges(lines []*Charge, cur currency.Code) {

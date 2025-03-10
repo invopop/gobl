@@ -397,7 +397,7 @@ func (t *Total) calculateBaseCategoryTotal(ct *CategoryTotal, zero num.Amount, r
 // the rounding rule.
 func matchRoundingPrecision(rr cbc.Key, a, b num.Amount) num.Amount {
 	switch rr {
-	case RoundingRuleRoundThenSum:
+	case RoundingRuleCurrency:
 		return a // maintain original precision
 	}
 	return a.MatchPrecision(b)

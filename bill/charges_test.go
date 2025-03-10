@@ -48,7 +48,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30000, 2)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, 1, ls[0].Index)
@@ -65,7 +65,7 @@ func TestChargeTotals(t *testing.T) {
 		assert.Equal(t, "40.00", ls[2].Amount.String())
 
 		ls = []*Charge{}
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum = calculateChargeSum(ls, currency.EUR)
 		assert.Nil(t, sum)
 	})
@@ -82,7 +82,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.00", ls[0].Amount.String())
@@ -104,7 +104,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleRoundThenSum)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleCurrency)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.00", ls[0].Amount.String())
@@ -123,7 +123,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "10.0240", ls[0].Amount.String())
@@ -140,7 +140,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.1762", ls[0].Amount.String())
@@ -158,7 +158,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleSumThenRound)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.1234", ls[0].Base.String())
@@ -177,7 +177,7 @@ func TestChargeTotals(t *testing.T) {
 			},
 		}
 		base := num.MakeAmount(30844212, 6)
-		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleRoundThenSum)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRuleCurrency)
 		sum := calculateChargeSum(ls, currency.EUR)
 		require.NotNil(t, sum)
 		assert.Equal(t, "50.1234", ls[0].Base.String())
