@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.212.0] - 2025-03-10
+
+Significant refinements to rounding and clarifying the naming for more clarity and widespread usage.
+
 ### Added
 
-- `it-ticket-v1`: implemented addon for AdE e-receipt format 
+- `it-ticket-v1`: implemented addon for AdE e-receipt format
 - `bill`: line discount and charge `base` property, to use instead of the line sum in order to comply with EN16931.
 - `bill`: line Charge support for Quantity and Rate special cases for charges like tariffs that result in a fixed amount base on a rate, like, 1 cent for every 100g of sugar.
 
