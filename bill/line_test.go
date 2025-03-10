@@ -51,7 +51,7 @@ func TestLineValidation(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
 		require.NoError(t, validation.Validate(lines))
 	})
 	t.Run("sublines: with error", func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestLineValidation(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
 		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (item: (name: cannot be blank.).).).)")
 	})
 	t.Run("sublines: missing sum and total", func(t *testing.T) {
@@ -90,7 +90,7 @@ func TestLineValidation(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLines(lines, currency.EUR, exampleRates(t), tax.RoundingRulePrecise))
 		lines[0].Breakdown[0].Total = nil
 		lines[0].Breakdown[0].Sum = nil
 		require.ErrorContains(t, validation.Validate(lines), "0: (breakdown: (0: (sum: cannot be blank; total: cannot be blank.).).)")
@@ -230,12 +230,11 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
-		assert.Equal(t, "8.2645", line.total.String())
-		assert.Equal(t, "8.26", line.Total.String())
+		assert.Equal(t, "8.2645", line.Total.String())
 	})
 	t.Run("basic with VAT and discounts", func(t *testing.T) {
 		line := &Line{
@@ -257,11 +256,11 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
-		assert.Equal(t, "8.18", line.Total.String())
+		assert.Equal(t, "8.1819", line.Total.String())
 	})
 	t.Run("basic with VAT and charges", func(t *testing.T) {
 		line := &Line{
@@ -283,11 +282,11 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
-		assert.Equal(t, "8.35", line.Total.String())
+		assert.Equal(t, "8.3471", line.Total.String())
 	})
 
 	t.Run("sublines: basic with VAT", func(t *testing.T) {
@@ -312,10 +311,46 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 				},
 			},
 		}
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		line = removeLineIncludedTaxes(line, tax.CategoryVAT)
-		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRuleSumThenRound))
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
 		assert.Equal(t, "8.2645", line.Item.Price.String())
 		assert.Equal(t, "8.2645", line.Breakdown[0].Item.Price.String())
+	})
+}
+
+func TestLineGetTaxes(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		line := &Line{
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(210, 3),
+				},
+			},
+		}
+		assert.Equal(t, tax.Set{
+			{
+				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
+			},
+		}, line.GetTaxes())
+	})
+	t.Run("nil total", func(t *testing.T) {
+		line := &Line{}
+		assert.Nil(t, line.GetTaxes())
+	})
+}
+
+func TestLineGetTotal(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		line := &Line{
+			Total: num.NewAmount(1000, 2),
+		}
+		assert.Equal(t, "10.00", line.GetTotal().String())
+	})
+	t.Run("zero total", func(t *testing.T) {
+		line := &Line{}
+		assert.Equal(t, "0", line.GetTotal().String())
 	})
 }

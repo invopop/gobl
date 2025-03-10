@@ -10,7 +10,7 @@
     "GR"
   ],
   "currency": "EUR",
-  "calculator_rounding_rule": "round-then-sum",
+  "calculator_rounding_rule": "currency",
   "tags": [
     {
       "schema": "bill/invoice",

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "99b57ea4d7b2fb712da78625e70c57787a860465018ee47d565a552b6737cbf1"
+			"val": "aaf04e1d57dcb0d783bf9baea6df731fc01df2650e0766b0585700481d63526a"
 		}
 	},
 	"doc": {
@@ -16,7 +16,7 @@
 		"issue_date": "2025-02-10",
 		"currency": "EUR",
 		"tax": {
-			"rounding": "round-then-sum",
+			"rounding": "currency",
 			"ext": {
 				"untdid-document-type": "380"
 			}
