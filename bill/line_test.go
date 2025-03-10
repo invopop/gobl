@@ -318,3 +318,39 @@ func TestLineRemoveIncludedTaxes(t *testing.T) {
 		assert.Equal(t, "8.2645", line.Breakdown[0].Item.Price.String())
 	})
 }
+
+func TestLineGetTaxes(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		line := &Line{
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(210, 3),
+				},
+			},
+		}
+		assert.Equal(t, tax.Set{
+			{
+				Category: tax.CategoryVAT,
+				Percent:  num.NewPercentage(210, 3),
+			},
+		}, line.GetTaxes())
+	})
+	t.Run("nil total", func(t *testing.T) {
+		line := &Line{}
+		assert.Nil(t, line.GetTaxes())
+	})
+}
+
+func TestLineGetTotal(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		line := &Line{
+			Total: num.NewAmount(1000, 2),
+		}
+		assert.Equal(t, "10.00", line.GetTotal().String())
+	})
+	t.Run("zero total", func(t *testing.T) {
+		line := &Line{}
+		assert.Equal(t, "0", line.GetTotal().String())
+	})
+}
