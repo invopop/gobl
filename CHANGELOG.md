@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: line discount and charge `base` property, to use instead of the line sum in order to comply with EN16931.
+- `bill`: line Charge support for Quantity and Rate special cases for charges like tariffs that result in a fixed amount base on a rate, like, 1 cent for every 100g of sugar.
+
+### Changed
+
+- `bill`: line totals will be rounded to currency precision for presentation only
+- `bill`: document Discount and Charge base and amounts always rounded to currency's precision
+- `bill`: line Discount and Charge base and amounts always rounded to currency's precision
+- `tax`: renamed rounding rules `sum-then-round` to `precise`, and `round-then-sum` to `currency`, to more accurately reflect their objectives.
+- `bill`: `currency` rounding rule implies that line totals will be calculated with the currency's precisions, bringing closer alliance with EN16931 requirements.
+
 ## [v0.211.0] - 2025-02-28
 
 Another significant release that adds more documents related to the order-to-payment billing flows, and renames the "Receipt" document to simply "Payment". There are now 4 primary billing documents:

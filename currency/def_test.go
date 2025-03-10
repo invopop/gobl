@@ -104,6 +104,37 @@ func TestDefZero(t *testing.T) {
 	})
 }
 
+func TestDefRescale(t *testing.T) {
+	t.Run("with USD", func(t *testing.T) {
+		d := currency.USD.Def()
+		a := num.MakeAmount(123456, 4)
+		assert.Equal(t, "12.35", d.Rescale(a).String())
+	})
+	t.Run("with CLP", func(t *testing.T) {
+		d := currency.CLP.Def()
+		a := num.MakeAmount(123456, 2)
+		assert.Equal(t, "1235", d.Rescale(a).String())
+	})
+}
+
+func TestDefRescaleUp(t *testing.T) {
+	t.Run("with USD", func(t *testing.T) {
+		d := currency.USD.Def()
+		a := num.MakeAmount(123, 0)
+		assert.Equal(t, "123.00", d.RescaleUp(a).String())
+	})
+	t.Run("with USD extra precision", func(t *testing.T) {
+		d := currency.USD.Def()
+		a := num.MakeAmount(123456, 4)
+		assert.Equal(t, "12.3456", d.RescaleUp(a).String())
+	})
+	t.Run("with CLP", func(t *testing.T) {
+		d := currency.CLP.Def()
+		a := num.MakeAmount(1234, 0)
+		assert.Equal(t, "1234", d.RescaleUp(a).String())
+	})
+}
+
 func TestDefByISONumber(t *testing.T) {
 	t.Run("with 978", func(t *testing.T) {
 		d := currency.ByISONumber("978")

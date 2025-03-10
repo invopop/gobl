@@ -25,17 +25,83 @@ func TestLineChargeNormalize(t *testing.T) {
 }
 
 func TestLineChargeValidation(t *testing.T) {
-	l := &bill.LineCharge{
-		Key:    "foo",
-		Code:   "BAR",
-		Amount: num.MakeAmount(100, 2),
-	}
-	err := l.Validate()
-	assert.NoError(t, err)
+	t.Run("basic", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Key:    "foo",
+			Code:   "BAR",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := l.Validate()
+		assert.NoError(t, err)
 
-	l.Amount = num.MakeAmount(0, 2)
-	err = l.Validate()
-	assert.ErrorContains(t, err, "amount: must not be zero")
+		l.Amount = num.MakeAmount(0, 2)
+		err = l.Validate()
+		assert.ErrorContains(t, err, "amount: must not be zero")
+	})
+	t.Run("with base", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code: "IEPS",
+			Base: num.NewAmount(3000, 2),
+		}
+		err := l.Validate()
+		assert.ErrorContains(t, err, "percent: cannot be blank")
+	})
+	t.Run("valid with base", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:    "IEPS",
+			Base:    num.NewAmount(3000, 2),
+			Percent: num.NewPercentage(4, 3),
+			Amount:  num.MakeAmount(120, 2),
+		}
+		assert.NoError(t, l.Validate())
+	})
+	t.Run("valid with rate and quantity", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:     "IEPS",
+			Quantity: num.NewAmount(100, 0), // e.g. grams
+			Unit:     "g",
+			Rate:     num.NewAmount(2, 0), // 1 per gram
+			Amount:   num.MakeAmount(200, 2),
+		}
+		assert.NoError(t, l.Validate())
+	})
+	t.Run("missing rate with quantity", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:     "IEPS",
+			Quantity: num.NewAmount(100, 0), // e.g. grams
+			Amount:   num.MakeAmount(200, 2),
+		}
+		assert.ErrorContains(t, l.Validate(), "rate: cannot be blank with quantity")
+	})
+	t.Run("missing rate with quantity", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:   "IEPS",
+			Unit:   "l",
+			Amount: num.MakeAmount(200, 2),
+		}
+		assert.ErrorContains(t, l.Validate(), "unit: must be blank without quantity")
+	})
+
+	t.Run("quantity with base", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:     "IEPS",
+			Base:     num.NewAmount(3000, 2),
+			Percent:  num.NewPercentage(4, 3),
+			Quantity: num.NewAmount(100, 0), // e.g. grams
+			Amount:   num.MakeAmount(200, 2),
+		}
+		assert.ErrorContains(t, l.Validate(), "quantity: must be blank with base or percent")
+	})
+	t.Run("rate with base", func(t *testing.T) {
+		l := &bill.LineCharge{
+			Code:    "IEPS",
+			Base:    num.NewAmount(3000, 2),
+			Percent: num.NewPercentage(4, 3),
+			Rate:    num.NewAmount(1, 0),
+			Amount:  num.MakeAmount(200, 2),
+		}
+		assert.ErrorContains(t, l.Validate(), "rate: must be blank with base or percent")
+	})
 }
 
 func TestLineChargeJSONSchema(t *testing.T) {

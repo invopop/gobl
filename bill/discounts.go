@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -118,9 +119,6 @@ type Discount struct {
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-
-	// internal amount for calculations
-	amount num.Amount
 }
 
 // Normalize performs normalization on the line and embedded objects using the
@@ -179,7 +177,8 @@ func (Discount) JSONSchemaExtend(schema *jsonschema.Schema) {
 	extendJSONSchemaWithDiscountKey(schema)
 }
 
-func calculateDiscounts(lines []*Discount, sum, zero num.Amount) {
+func calculateDiscounts(lines []*Discount, cur currency.Code, sum num.Amount, rr cbc.Key) {
+	zero := cur.Def().Zero()
 	if len(lines) == 0 {
 		return
 	}
@@ -187,31 +186,37 @@ func calculateDiscounts(lines []*Discount, sum, zero num.Amount) {
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
 			base := sum
-			exp := zero.Exp()
 			if l.Base != nil {
-				base = l.Base.RescaleUp(exp)
-				exp = base.Exp()
+				base = l.Base.RescaleUp(zero.Exp() + linePrecisionExtra)
+				base = tax.ApplyRoundingRule(rr, cur, base)
 			}
 			l.Amount = l.Percent.Of(base)
-			l.amount = l.Amount
-			l.Amount = l.Amount.Rescale(exp)
-		} else {
-			l.Amount = l.Amount.MatchPrecision(zero)
-			l.amount = l.Amount
 		}
+		l.Amount = tax.ApplyRoundingRule(rr, cur, l.Amount)
 	}
 }
 
-func calculateDiscountSum(discounts []*Discount, zero num.Amount) *num.Amount {
+func calculateDiscountSum(discounts []*Discount, cur currency.Code) *num.Amount {
 	if len(discounts) == 0 {
 		return nil
 	}
-	total := zero
+	total := cur.Def().Zero()
 	for _, l := range discounts {
-		total = total.MatchPrecision(l.amount)
-		total = total.Add(l.amount)
+		total = total.MatchPrecision(l.Amount)
+		total = total.Add(l.Amount)
 	}
 	return &total
+}
+
+func (m *Discount) round(cur currency.Code) {
+	cd := cur.Def()
+	m.Amount = cd.Rescale(m.Amount)
+}
+
+func roundDiscounts(lines []*Discount, cur currency.Code) {
+	for _, l := range lines {
+		l.round(cur)
+	}
 }
 
 func extendJSONSchemaWithDiscountKey(schema *jsonschema.Schema) {

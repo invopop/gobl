@@ -17,7 +17,9 @@ type LineDiscount struct {
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Text description as to why the discount was applied
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
-	// Percentage to apply to the line total to calcaulte the discount amount
+	// Base for percent calculations instead of the line's sum.
+	Base *num.Amount `json:"base,omitempty" jsonschema:"title=Base"`
+	// Percentage to apply to the base or line sum to calculate the discount amount
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// Fixed discount amount to apply (calculated if percent present)
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount" jsonschema_extras:"calculated=true"`
@@ -38,7 +40,13 @@ func (ld *LineDiscount) Validate() error {
 	return validation.ValidateStruct(ld,
 		validation.Field(&ld.Key),
 		validation.Field(&ld.Code),
-		validation.Field(&ld.Percent),
+		validation.Field(&ld.Base),
+		validation.Field(&ld.Percent,
+			validation.When(
+				ld.Base != nil,
+				validation.Required,
+			),
+		),
 		validation.Field(&ld.Amount, validation.Required, num.NotZero),
 		validation.Field(&ld.Ext),
 	)

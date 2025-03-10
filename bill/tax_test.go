@@ -19,16 +19,33 @@ func TestTaxValidation(t *testing.T) {
 	})
 	t.Run("with rounding", func(t *testing.T) {
 		tx := &bill.Tax{
-			Rounding: "round-then-sum",
+			Rounding: "precise",
 		}
 		assert.NoError(t, tx.ValidateWithContext(context.Background()))
 	})
 	t.Run("with invalid rounding", func(t *testing.T) {
 		tx := &bill.Tax{
-			Rounding: "round-then-fail",
+			Rounding: "currency-foo",
 		}
 		err := tx.ValidateWithContext(context.Background())
 		assert.ErrorContains(t, err, "rounding: must be a valid value")
+	})
+}
+
+func TestTaxNormalize(t *testing.T) {
+	t.Run("switch rounding, sum-then-round", func(t *testing.T) {
+		tx := &bill.Tax{
+			Rounding: "sum-then-round",
+		}
+		tx.Normalize(tax.Normalizers{})
+		assert.Equal(t, "precise", tx.Rounding.String())
+	})
+	t.Run("switch rounding, round-then-sum", func(t *testing.T) {
+		tx := &bill.Tax{
+			Rounding: "round-then-sum",
+		}
+		tx.Normalize(tax.Normalizers{})
+		assert.Equal(t, "currency", tx.Rounding.String())
 	})
 }
 
@@ -199,5 +216,6 @@ func TestTaxJSONSchemaExtend(t *testing.T) {
 	prop, ok := schema.Properties.Get("rounding")
 	require.True(t, ok)
 	assert.Len(t, prop.OneOf, 2)
-	assert.Equal(t, "sum-then-round", prop.OneOf[0].Const)
+	assert.Equal(t, "precise", prop.OneOf[0].Const)
+	assert.Equal(t, "currency", prop.OneOf[1].Const)
 }
