@@ -103,9 +103,6 @@ type Charge struct {
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Additional semi-structured information.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
-
-	// internal amount for calculations
-	amount num.Amount
 }
 
 // Normalize performs normalization on the line and embedded objects using the
@@ -175,14 +172,12 @@ func calculateCharges(lines []*Charge, cur currency.Code, sum num.Amount, rr cbc
 		if l.Percent != nil && !l.Percent.IsZero() {
 			base := sum
 			if l.Base != nil {
-				base = l.Base.RescaleUp(zero.Exp())
+				base = l.Base.RescaleUp(zero.Exp() + linePrecisionExtra)
+				base = tax.ApplyRoundingRule(rr, cur, base)
 			}
-			l.amount = l.Percent.Of(base)
-			l.amount = tax.ApplyRoundingRule(rr, cur, l.amount)
-		} else {
-			l.amount = l.Amount.Rescale(zero.Exp())
+			l.Amount = l.Percent.Of(base)
 		}
-		l.Amount = l.amount.Rescale(zero.Exp())
+		l.Amount = tax.ApplyRoundingRule(rr, cur, l.Amount)
 	}
 }
 
@@ -192,10 +187,21 @@ func calculateChargeSum(charges []*Charge, cur currency.Code) *num.Amount {
 	}
 	total := cur.Def().Zero()
 	for _, l := range charges {
-		total = total.MatchPrecision(l.amount)
-		total = total.Add(l.amount)
+		total = total.MatchPrecision(l.Amount)
+		total = total.Add(l.Amount)
 	}
 	return &total
+}
+
+func (c *Charge) round(cur currency.Code) {
+	cd := cur.Def()
+	c.Amount = cd.Rescale(c.Amount)
+}
+
+func roundCharges(lines []*Charge, cur currency.Code) {
+	for _, l := range lines {
+		l.round(cur)
+	}
 }
 
 func extendJSONSchemaWithChargeKey(schema *jsonschema.Schema) {

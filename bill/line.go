@@ -54,9 +54,6 @@ type Line struct {
 	// Set of specific notes for this line that may be required for
 	// clarification.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
-
-	// internal amount provided with greater precision
-	total num.Amount
 }
 
 // SubLine provides a simplified line that can be embedded inside other lines
@@ -91,19 +88,21 @@ type SubLine struct {
 	// Set of specific notes for this sub-line that may be required for
 	// clarification.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
-
-	// internal amount provided with greater precision
-	total num.Amount
 }
 
 // GetTaxes responds with the array of tax rates applied to this line.
+// This implements the tax.TaxableLine interface.
 func (l *Line) GetTaxes() tax.Set {
 	return l.Taxes
 }
 
 // GetTotal provides the final total for this line, excluding any tax calculations.
+// This implements the tax.TaxableLine interface.
 func (l *Line) GetTotal() num.Amount {
-	return l.total
+	if l.Total == nil {
+		return num.AmountZero
+	}
+	return *l.Total
 }
 
 // Validate performs a validation check on the line without a context.
