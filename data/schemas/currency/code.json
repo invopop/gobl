@@ -30,16 +30,36 @@
           "title": "Japanese Yen"
         },
         {
-          "const": "BYR",
-          "title": "Belarusian Ruble"
+          "const": "AED",
+          "title": "United Arab Emirates Dirham"
         },
         {
-          "const": "MOP",
-          "title": "Macanese Pataca"
+          "const": "AFN",
+          "title": "Afghan Afghani"
         },
         {
-          "const": "HTG",
-          "title": "Haitian Gourde"
+          "const": "ALL",
+          "title": "Albanian Lek"
+        },
+        {
+          "const": "AMD",
+          "title": "Armenian Dram"
+        },
+        {
+          "const": "ANG",
+          "title": "Netherlands Antillean Gulden"
+        },
+        {
+          "const": "AOA",
+          "title": "Angolan Kwanza"
+        },
+        {
+          "const": "ARS",
+          "title": "Argentine Peso"
+        },
+        {
+          "const": "AWG",
+          "title": "Aruban Florin"
         },
         {
           "const": "AZN",
@@ -102,16 +122,12 @@
           "title": "Belarusian Ruble"
         },
         {
-          "const": "ARS",
-          "title": "Argentine Peso"
+          "const": "BYR",
+          "title": "Belarusian Ruble"
         },
         {
           "const": "BZD",
           "title": "Belize Dollar"
-        },
-        {
-          "const": "AOA",
-          "title": "Angolan Kwanza"
         },
         {
           "const": "CDF",
@@ -166,8 +182,8 @@
           "title": "Danish Krone"
         },
         {
-          "const": "MXN",
-          "title": "Mexican Peso"
+          "const": "DOP",
+          "title": "Dominican Peso"
         },
         {
           "const": "DZD",
@@ -186,20 +202,12 @@
           "title": "Ethiopian Birr"
         },
         {
-          "const": "ANG",
-          "title": "Netherlands Antillean Gulden"
-        },
-        {
           "const": "FJD",
           "title": "Fijian Dollar"
         },
         {
           "const": "FKP",
           "title": "Falkland Pound"
-        },
-        {
-          "const": "AMD",
-          "title": "Armenian Dram"
         },
         {
           "const": "GEL",
@@ -238,8 +246,8 @@
           "title": "Honduran Lempira"
         },
         {
-          "const": "MWK",
-          "title": "Malawian Kwacha"
+          "const": "HTG",
+          "title": "Haitian Gourde"
         },
         {
           "const": "HUF",
@@ -276,10 +284,6 @@
         {
           "const": "JOD",
           "title": "Jordanian Dinar"
-        },
-        {
-          "const": "ALL",
-          "title": "Albanian Lek"
         },
         {
           "const": "KES",
@@ -366,8 +370,8 @@
           "title": "Mongolian Tögrög"
         },
         {
-          "const": "AED",
-          "title": "United Arab Emirates Dirham"
+          "const": "MOP",
+          "title": "Macanese Pataca"
         },
         {
           "const": "MRU",
@@ -378,16 +382,16 @@
           "title": "Mauritian Rupee"
         },
         {
-          "const": "PLN",
-          "title": "Polish Złoty"
+          "const": "MVR",
+          "title": "Maldivian Rufiyaa"
         },
         {
-          "const": "AWG",
-          "title": "Aruban Florin"
+          "const": "MWK",
+          "title": "Malawian Kwacha"
         },
         {
-          "const": "DOP",
-          "title": "Dominican Peso"
+          "const": "MXN",
+          "title": "Mexican Peso"
         },
         {
           "const": "MYR",
@@ -446,8 +450,8 @@
           "title": "Pakistani Rupee"
         },
         {
-          "const": "MVR",
-          "title": "Maldivian Rufiyaa"
+          "const": "PLN",
+          "title": "Polish Złoty"
         },
         {
           "const": "PYG",
@@ -588,10 +592,6 @@
         {
           "const": "UGX",
           "title": "Ugandan Shilling"
-        },
-        {
-          "const": "AFN",
-          "title": "Afghan Afghani"
         },
         {
           "const": "UYU",
