@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `bill`: line sum rounded to currency precision in `currency` rounding.
+
 ## [v0.212.0] - 2025-03-10
 
 Significant refinements to rounding and clarifying the naming for more clarity and widespread usage.

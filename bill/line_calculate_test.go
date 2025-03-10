@@ -283,12 +283,12 @@ func TestLineCalculate(t *testing.T) {
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "35.14", sum.String())
-		assert.Equal(t, "37.7802", lines[0].Sum.String())
-		assert.Equal(t, "2.6446", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "37.78", lines[0].Sum.String())
+		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "35.14", lines[0].Total.String())
 		roundLines(lines, currency.EUR)
 		assert.Equal(t, "35.14", sum.String())
-		assert.Equal(t, "37.7802", lines[0].Sum.String())
+		assert.Equal(t, "37.78", lines[0].Sum.String())
 		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "35.14", lines[0].Total.String())
 	})
@@ -363,16 +363,17 @@ func TestLineCalculate(t *testing.T) {
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "34.1821", sum.String())
+		assert.Equal(t, "37.7700", lines[0].Sum.String())
 		assert.Equal(t, "51.256", lines[0].Discounts[0].Base.String())
 		assert.Equal(t, "3.5879", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.1821", lines[0].Total.String())
 		roundLines(lines, currency.EUR)
-		assert.Equal(t, "34.1821", sum.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
 		assert.Equal(t, "51.256", lines[0].Discounts[0].Base.String(), "maintain original precision")
 		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.18", lines[0].Total.String())
 	})
-	t.Run("lines with discount base, discrete rounding", func(t *testing.T) {
+	t.Run("lines with discount base, currency rounding", func(t *testing.T) {
 		lines := []*Line{
 			{
 				Quantity: num.MakeAmount(3, 0),
@@ -396,10 +397,63 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.18", lines[0].Total.String())
 		roundLines(lines, currency.EUR)
-		assert.Equal(t, "34.18", sum.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
 		assert.Equal(t, "51.256", lines[0].Discounts[0].Base.String(), "maintain original written precision")
 		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.18", lines[0].Total.String())
+	})
+
+	t.Run("lines with discount percent, precise", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(20, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(903324, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(10, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "1625.9832", sum.String())
+		assert.Equal(t, "180.6648", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.9832", lines[0].Total.String())
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "1806.6480", lines[0].Sum.String())
+		assert.Equal(t, "180.66", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.98", lines[0].Total.String())
+	})
+	t.Run("lines with discount percent, currency rounding", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(20, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(903324, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(10, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleCurrency)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "1625.98", sum.String())
+		assert.Equal(t, "180.67", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.98", lines[0].Total.String())
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "1806.65", lines[0].Sum.String())
+		assert.Equal(t, "180.67", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.98", lines[0].Total.String())
 	})
 
 	t.Run("lines with charge base", func(t *testing.T) {

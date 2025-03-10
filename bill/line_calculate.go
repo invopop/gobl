@@ -105,7 +105,8 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 
 	// Calculate the line sum and total
 	sum := price.Multiply(l.Quantity)
-	total := tax.ApplyRoundingRule(rr, cur, sum)
+	sum = tax.ApplyRoundingRule(rr, cur, sum)
+	total := sum
 	total = calculateLineDiscounts(l.Discounts, sum, total, cur, rr)
 	total = calculateLineCharges(l.Charges, l.Quantity, sum, total, cur, rr)
 
@@ -145,6 +146,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 
 	// Calculate the line sum and total
 	sum := price.Multiply(sl.Quantity)
+	sum = tax.ApplyRoundingRule(rr, cur, sum)
 	total := sum
 	total = calculateLineDiscounts(sl.Discounts, sum, total, cur, rr)
 	total = calculateLineCharges(sl.Charges, sl.Quantity, sum, total, cur, rr)
@@ -270,7 +272,7 @@ func (l *Line) round(cur currency.Code) {
 	if l.Sum != nil {
 		// Ensure sum precision is aligned with price
 		e := l.Item.Price.Exp()
-		sum := l.Sum.Rescale(e)
+		sum := l.Sum.RescaleDown(e)
 		l.Sum = &sum
 	}
 	if l.Total != nil {
@@ -307,7 +309,7 @@ func (sl *SubLine) round(cur currency.Code) {
 	if sl.Sum != nil {
 		// Ensure sum precision is aligned with price
 		e := sl.Item.Price.Exp()
-		sum := sl.Sum.Rescale(e)
+		sum := sl.Sum.RescaleDown(e)
 		sl.Sum = &sum
 	}
 	if sl.Total != nil {
