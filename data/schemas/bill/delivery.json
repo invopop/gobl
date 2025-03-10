@@ -705,13 +705,13 @@
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "oneOf": [
             {
-              "const": "sum-then-round",
-              "title": "Sum Then Round",
+              "const": "precise",
+              "title": "Precise",
               "description": "The default method of calculating the totals in GOBL, and provides the best results\nfor most cases as the precision is maintained to the maximum amount possible. The\ntradeoff however is that sometimes the totals may not sum exactly based on what is visible."
             },
             {
-              "const": "round-then-sum",
-              "title": "Round Then Sum",
+              "const": "currency",
+              "title": "Currency",
               "description": "The alternative method of calculating the totals that will first round all the amounts\nto the currency's precision before making the sums. Totals using this approach can always\nbe recalculated using the amounts presented, but can lead to rounding errors in the case\nof pre-payments and when line item prices include tax."
             }
           ],
