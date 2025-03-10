@@ -131,7 +131,7 @@ func TestDateTimeValidation(t *testing.T) {
 
 func TestDateTimeThisSecond(t *testing.T) {
 	d := cal.ThisSecond()
-	tn := time.Now()
+	tn := time.Now().UTC()
 	// note: this test may fail if minute changes between
 	// the two "Now()" calls
 	assert.Equal(t, d.Date.Year, tn.Year())

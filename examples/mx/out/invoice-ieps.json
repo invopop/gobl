@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e4069b64030924c89af0989d456b722cf896c1cbc68dc8541e464576516b25c3"
+			"val": "6cc5f630ba8d603a49162f681cd0536a3c010ffc835702780f8b2455c72d3822"
 		}
 	},
 	"doc": {
@@ -14,29 +14,15 @@
 			"mx-cfdi-v4"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
-		"type": "credit-note",
-		"series": "CN",
-		"code": "0003",
-		"issue_date": "2023-05-29",
+		"type": "standard",
+		"series": "TEST",
+		"code": "00001",
+		"issue_date": "2023-07-10",
 		"currency": "MXN",
-		"preceding": [
-			{
-				"issue_date": "2023-07-10",
-				"series": "TEST",
-				"code": "0001",
-				"stamps": [
-					{
-						"prv": "sat-uuid",
-						"val": "1fac4464-1111-0000-1111-cd37179db12e"
-					}
-				]
-			}
-		],
 		"tax": {
 			"ext": {
-				"mx-cfdi-doc-type": "E",
-				"mx-cfdi-issue-place": "21000",
-				"mx-cfdi-rel-type": "01"
+				"mx-cfdi-doc-type": "I",
+				"mx-cfdi-issue-place": "21000"
 			}
 		},
 		"supplier": {
@@ -45,17 +31,8 @@
 				"country": "MX",
 				"code": "EKU9003173C9"
 			},
-			"addresses": [
-				{
-					"street": "Calle 1",
-					"locality": "Ciudad de México",
-					"region": "CDMX",
-					"code": "21000",
-					"country": "MX"
-				}
-			],
 			"ext": {
-				"mx-cfdi-fiscal-regime": "615"
+				"mx-cfdi-fiscal-regime": "601"
 			}
 		},
 		"customer": {
@@ -66,27 +43,40 @@
 			},
 			"addresses": [
 				{
-					"code": "65000"
+					"code": "86991"
 				}
 			],
 			"ext": {
-				"mx-cfdi-fiscal-regime": "624",
+				"mx-cfdi-fiscal-regime": "601",
 				"mx-cfdi-use": "G01"
 			}
 		},
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "2",
+				"quantity": "1",
 				"item": {
-					"name": "Cigarros",
-					"price": "100.1010",
-					"unit": "piece",
+					"name": "Redbull with lots of sugar",
+					"price": "30.00",
 					"ext": {
-						"mx-cfdi-prod-serv": "50211502"
+						"mx-cfdi-prod-serv": "90101500"
 					}
 				},
-				"sum": "200.2020",
+				"sum": "30.00",
+				"charges": [
+					{
+						"code": "IEPS",
+						"percent": "25%",
+						"amount": "7.50"
+					},
+					{
+						"code": "IEPS",
+						"quantity": "0.400",
+						"unit": "l",
+						"rate": "1.00",
+						"amount": "0.40"
+					}
+				],
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -94,17 +84,17 @@
 						"percent": "16.0%"
 					}
 				],
-				"total": "200.20"
+				"total": "37.90"
 			}
 		],
 		"payment": {
 			"terms": {
-				"notes": "Pago a 30 días."
+				"notes": "Condiciones de pago"
 			}
 		},
 		"totals": {
-			"sum": "200.20",
-			"total": "200.20",
+			"sum": "37.90",
+			"total": "37.90",
 			"taxes": {
 				"categories": [
 					{
@@ -112,19 +102,19 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "200.20",
+								"base": "37.90",
 								"percent": "16.0%",
-								"amount": "32.03"
+								"amount": "6.06"
 							}
 						],
-						"amount": "32.03"
+						"amount": "6.06"
 					}
 				],
-				"sum": "32.03"
+				"sum": "6.06"
 			},
-			"tax": "32.03",
-			"total_with_tax": "232.23",
-			"payable": "232.23"
+			"tax": "6.06",
+			"total_with_tax": "43.96",
+			"payable": "43.96"
 		}
 	}
 }

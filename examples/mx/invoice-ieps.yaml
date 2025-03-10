@@ -1,0 +1,46 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons:
+  - "mx-cfdi-v4"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+issue_date: "2023-07-10"
+series: "TEST"
+code: "00001"
+tax:
+  ext:
+    mx-cfdi-issue-place: "21000"
+supplier:
+  name: "ESCUELA KEMPER URGATE"
+  ext:
+    mx-cfdi-fiscal-regime: "601"
+  tax_id:
+    country: "MX"
+    code: "EKU9003173C9"
+customer:
+  name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
+  ext:
+    mx-cfdi-post-code: "86991"
+    mx-cfdi-fiscal-regime: "601"
+    mx-cfdi-use: "G01"
+  tax_id:
+    country: "MX"
+    code: "URE180429TM6"
+lines:
+  - quantity: "1"
+    item:
+      name: "Redbull with lots of sugar"
+      price: "30.00"
+      ext:
+        mx-cfdi-prod-serv: "90101500"
+    charges:
+      - code: "IEPS"
+        percent: "25%"
+      - code: "IEPS"
+        quantity: "0.400"
+        unit: "l" # Litre
+        rate: "1.00" # price per litre
+    taxes:
+      - cat: "VAT"
+        rate: "standard"
+payment:
+  terms:
+    notes: "Condiciones de pago"

@@ -43,11 +43,11 @@ func TestCalculate(t *testing.T) {
 			},
 		})
 		inv.Tax.PricesInclude = ""
-		inv.Tax.Rounding = tax.RoundingRuleRoundThenSum
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "3.48", inv.Totals.Tax.String())
 
-		inv.Tax.Rounding = tax.RoundingRuleSumThenRound
+		inv.Tax.Rounding = tax.RoundingRulePrecise
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "3.49", inv.Totals.Tax.String())
 	})

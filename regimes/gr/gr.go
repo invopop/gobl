@@ -36,7 +36,7 @@ func New() *tax.RegimeDef {
 			i18n.EL: "Ελλάδα",
 		},
 		TimeZone:               "Europe/Athens",
-		CalculatorRoundingRule: tax.RoundingRuleRoundThenSum,
+		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},

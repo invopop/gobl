@@ -4,16 +4,22 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
-func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate) error {
+const (
+	linePrecisionExtra uint32 = 2
+)
+
+func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	for i, l := range lines {
 		l.Index = i + 1
-		if err := calculateLine(l, cur, rates); err != nil {
+		if err := calculateLine(l, cur, rates, rr); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
 		}
 	}
@@ -23,26 +29,27 @@ func calculateLines(lines []*Line, cur currency.Code, rates []*currency.Exchange
 func calculateLineSum(lines []*Line, cur currency.Code) num.Amount {
 	sum := cur.Def().Zero()
 	for _, l := range lines {
-		sum = sum.MatchPrecision(l.total)
-		sum = sum.Add(l.total)
+		if l.Total != nil {
+			sum = sum.MatchPrecision(*l.Total)
+			sum = sum.Add(*l.Total)
+		}
 	}
 	return sum
 }
 
 // calculate figures out the totals according to quantity and discounts.
-func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate) error {
+func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	if l.Item == nil { // implies invalid, so just skip
 		return nil
 	}
 	zero := cur.Def().Zero()
-	price := zero
 
 	if len(l.Substituted) > 0 {
 		// Calculate the substituted line items, which have no consequence on the
 		// final calculations, but still need some kind of normalization.
 		for i, sl := range l.Substituted {
 			sl.Index = i + 1
-			if err := calculateSubLine(sl, cur, rates); err != nil {
+			if err := calculateSubLine(sl, cur, rates, rr); err != nil {
 				return validation.Errors{
 					"substituted": validation.Errors{strconv.Itoa(i): err},
 				}
@@ -50,14 +57,14 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate) e
 		}
 	}
 
+	// Use the breakdown to calculate and replace the item price
+	// while also maintaining precision.
 	if len(l.Breakdown) > 0 {
-		// Use the breakdown to calculate and replace the item price
-		// while also maintaining precision.
 		np := zero
 		hasPrice := false
 		for i, sl := range l.Breakdown {
 			sl.Index = i + 1
-			if err := calculateSubLine(sl, cur, rates); err != nil {
+			if err := calculateSubLine(sl, cur, rates, rr); err != nil {
 				return validation.Errors{
 					"breakdown": validation.Errors{strconv.Itoa(i): err},
 				}
@@ -65,24 +72,14 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate) e
 			if sl.Total != nil {
 				hasPrice = true
 				np = np.MatchPrecision(*sl.Total).Add(*sl.Total)
-				price = price.MatchPrecision(sl.total).Add(sl.total)
 			}
 		}
 		if hasPrice {
+			np = np.Rescale(determineSubLinePrecision(l.Breakdown))
 			l.Item.Currency = cur
 			l.Item.Price = &np
 			l.Item.AltPrices = nil
 		}
-	} else if l.Item.Price != nil {
-		// Perform currency manipulation to ensure item's price is
-		// in the document's currency.
-		if err := calculateLineItemPrice(l.Item, cur, rates); err != nil {
-			return validation.Errors{
-				"item": err,
-			}
-		}
-		// Increase price accuracy for calculations
-		price = l.Item.Price.RescaleUp(zero.Exp() + 2)
 	}
 
 	if l.Item.Price == nil {
@@ -92,24 +89,37 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate) e
 		return nil
 	}
 
+	// Perform currency manipulation to ensure item's price is
+	// in the document's currency.
+	if err := calculateLineItemPrice(l.Item, cur, rates); err != nil {
+		return validation.Errors{
+			"item": err,
+		}
+	}
+	// Increase price accuracy for calculations
+	exp := zero.Exp()
+	if rr == tax.RoundingRulePrecise {
+		exp += linePrecisionExtra
+	}
+	price := l.Item.Price.RescaleUp(exp)
+
 	// Calculate the line sum and total
 	sum := price.Multiply(l.Quantity)
-	total := sum
-	total = calculateLineDiscounts(l.Discounts, *l.Item.Price, sum, total, zero)
-	total = calculateLineCharges(l.Charges, *l.Item.Price, sum, total, zero)
+	total := tax.ApplyRoundingRule(rr, cur, sum)
+	total = calculateLineDiscounts(l.Discounts, sum, total, cur, rr)
+	total = calculateLineCharges(l.Charges, l.Quantity, sum, total, cur, rr)
 
-	// Rescale the final sum and total
-	l.total = total
-	total = total.Rescale(l.Item.Price.Exp())
-	sum = sum.Rescale(l.Item.Price.Exp())
+	// Assume the updated sum and total
 	l.Sum = &sum
 	l.Total = &total
 
 	return nil
 }
 
-// calculate figures out the totals according to quantity and discounts.
-func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.ExchangeRate) error {
+// calculateSubline figures out the totals according to quantity and discounts.
+// We don't apply rounding rules here, as the objective is to have
+// maximum precision to determine the final line item price.
+func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	if sl.Item == nil {
 		return nil
 	}
@@ -126,46 +136,63 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 		return err
 	}
 
-	// Increase price accuracy for calculations
+	// Increase price accuracy for calculations depending on rounding rule
 	zero := cur.Def().Zero()
-	price := sl.Item.Price.RescaleUp(zero.Exp() + 2)
+	price := *sl.Item.Price
+	if rr == tax.RoundingRulePrecise {
+		price = price.RescaleUp(zero.Exp() + linePrecisionExtra)
+	}
 
 	// Calculate the line sum and total
 	sum := price.Multiply(sl.Quantity)
 	total := sum
-	total = calculateLineDiscounts(sl.Discounts, *sl.Item.Price, sum, total, zero)
-	total = calculateLineCharges(sl.Charges, *sl.Item.Price, sum, total, zero)
+	total = calculateLineDiscounts(sl.Discounts, sum, total, cur, rr)
+	total = calculateLineCharges(sl.Charges, sl.Quantity, sum, total, cur, rr)
 
 	// Rescale the final sum and total
-	sl.total = total
-	total = total.Rescale(sl.Item.Price.Exp())
-	sum = sum.Rescale(sl.Item.Price.Exp())
 	sl.Sum = &sum
 	sl.Total = &total
 
 	return nil
 }
 
-func calculateLineDiscounts(discounts []*LineDiscount, price, sum, total, zero num.Amount) num.Amount {
+func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cur currency.Code, rr cbc.Key) num.Amount {
+	cd := cur.Def()
 	for _, d := range discounts {
 		if d.Percent != nil && !d.Percent.IsZero() {
-			d.Amount = d.Percent.Of(sum) // always override
+			base := sum
+			if d.Base != nil {
+				base = d.Base.RescaleUp(cd.Subunits + linePrecisionExtra)
+				base = tax.ApplyRoundingRule(rr, cur, base)
+			}
+			d.Amount = d.Percent.Of(base) // always override
 		}
-		d.Amount = d.Amount.MatchPrecision(zero)
 		total = total.Subtract(d.Amount)
-		d.Amount = d.Amount.Rescale(price.Exp())
 	}
 	return total
 }
 
-func calculateLineCharges(charges []*LineCharge, price, sum, total, zero num.Amount) num.Amount {
+func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount, cur currency.Code, rr cbc.Key) num.Amount {
+	cd := cur.Def()
 	for _, c := range charges {
 		if c.Percent != nil && !c.Percent.IsZero() {
-			c.Amount = c.Percent.Of(sum) // always override
+			base := sum
+			if c.Base != nil {
+				base = c.Base.RescaleUp(cd.Subunits + linePrecisionExtra)
+				base = tax.ApplyRoundingRule(rr, cur, base)
+			}
+			c.Amount = c.Percent.Of(base) // always override
 		}
-		c.Amount = c.Amount.MatchPrecision(zero)
+		// Charges also support setting a rate and quantity
+		if c.Rate != nil {
+			q := quantity
+			if c.Quantity != nil {
+				q = *c.Quantity
+			}
+			c.Amount = c.Rate.Multiply(q)
+		}
+
 		total = total.Add(c.Amount)
-		c.Amount = c.Amount.Rescale(price.Exp())
 	}
 	return total
 }
@@ -210,4 +237,82 @@ func calculateLineItemPrice(item *org.Item, cur currency.Code, rates []*currency
 	item.Currency = cur
 	item.AltPrices = []*currency.Amount{nap}
 	return nil
+}
+
+// determineSubLinePrecision will iterate through the provided sublines to try and
+// determine the precision to use for the final price.
+func determineSubLinePrecision(sls []*SubLine) uint32 {
+	e := uint32(0)
+	for _, sl := range sls {
+		if sl.Item == nil || sl.Item.Price == nil {
+			continue
+		}
+		x := sl.Item.Price.Exp()
+		if x > e {
+			e = x
+		}
+	}
+	return e
+}
+
+// roundLines is a convenience function to round all the lines in a document.
+func roundLines(lines []*Line, cur currency.Code) {
+	for _, l := range lines {
+		l.round(cur)
+	}
+}
+
+// round performs a rounding operation on the lines totals so that everything
+// is aligned with the currency's precision. This is defined in the EN16931
+// standard as the correct way to round totals.
+func (l *Line) round(cur currency.Code) {
+	cd := cur.Def()
+	if l.Sum != nil {
+		// Ensure sum precision is aligned with price
+		e := l.Item.Price.Exp()
+		sum := l.Sum.Rescale(e)
+		l.Sum = &sum
+	}
+	if l.Total != nil {
+		total := cd.Rescale(*l.Total)
+		l.Total = &total
+	}
+	for _, d := range l.Discounts {
+		d.round(cur)
+	}
+	for _, c := range l.Charges {
+		c.round(cur)
+	}
+	for _, sl := range l.Breakdown {
+		sl.round(cur)
+	}
+	for _, sl := range l.Substituted {
+		sl.round(cur)
+	}
+}
+
+func (d *LineDiscount) round(cur currency.Code) {
+	cd := cur.Def()
+	d.Amount = cd.Rescale(d.Amount)
+}
+
+func (c *LineCharge) round(cur currency.Code) {
+	cd := cur.Def()
+	c.Amount = cd.Rescale(c.Amount)
+}
+
+// round performs a rounding operation on the sub-line's totals
+// so that everything is aligned with the currency's precision.
+func (sl *SubLine) round(cur currency.Code) {
+	if sl.Sum != nil {
+		// Ensure sum precision is aligned with price
+		e := sl.Item.Price.Exp()
+		sum := sl.Sum.Rescale(e)
+		sl.Sum = &sum
+	}
+	if sl.Total != nil {
+		cd := cur.Def()
+		total := cd.Rescale(*sl.Total)
+		sl.Total = &total
+	}
 }

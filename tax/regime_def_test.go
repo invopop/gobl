@@ -66,16 +66,16 @@ func TestRegimeDefGetCountry(t *testing.T) {
 func TestRegimeGetRoundingRule(t *testing.T) {
 	t.Run("with", func(t *testing.T) {
 		r := new(tax.RegimeDef)
-		r.CalculatorRoundingRule = tax.RoundingRuleRoundThenSum
-		assert.Equal(t, tax.RoundingRuleRoundThenSum, r.GetRoundingRule())
+		r.CalculatorRoundingRule = tax.RoundingRuleCurrency
+		assert.Equal(t, tax.RoundingRuleCurrency, r.GetRoundingRule())
 	})
 	t.Run("without", func(t *testing.T) {
 		r := new(tax.RegimeDef)
-		assert.Equal(t, tax.RoundingRuleSumThenRound, r.GetRoundingRule())
+		assert.Equal(t, tax.RoundingRulePrecise, r.GetRoundingRule())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var r *tax.RegimeDef
-		assert.Equal(t, tax.RoundingRuleSumThenRound, r.GetRoundingRule())
+		assert.Equal(t, tax.RoundingRulePrecise, r.GetRoundingRule())
 	})
 }
 
