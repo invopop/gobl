@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.212.1] - 2025-03-11
+
 ### Changed
 
 - `bill`: reverting back to maintaining precision in line totals for `precise` rounding for consistency with old data. Use `currency` rounding for compatibility with EN16931 specs.
