@@ -168,9 +168,9 @@ func TestLineCalculate(t *testing.T) {
 		line.round(currency.EUR)
 		assert.Equal(t, "12.4567", line.Breakdown[0].Item.Price.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
-		assert.Equal(t, "24.91", line.Breakdown[0].Total.String())
+		assert.Equal(t, "24.9134", line.Breakdown[0].Total.String())
 		assert.Equal(t, "24.9134", line.Item.Price.String())
-		assert.Equal(t, "49.83", line.Total.String())
+		assert.Equal(t, "49.8268", line.Total.String())
 	})
 	t.Run("sublines: match precision with all sublines", func(t *testing.T) {
 		line := &Line{
@@ -206,10 +206,10 @@ func TestLineCalculate(t *testing.T) {
 		line.round(currency.EUR)
 		assert.Equal(t, "12.4567", line.Breakdown[0].Item.Price.String())
 		assert.Equal(t, "24.9134", line.Breakdown[0].Sum.String())
-		assert.Equal(t, "24.91", line.Breakdown[0].Total.String())
-		assert.Equal(t, "24.91", line.Breakdown[1].Total.String())
+		assert.Equal(t, "24.9134", line.Breakdown[0].Total.String())
+		assert.Equal(t, "24.91356", line.Breakdown[1].Total.String())
 		assert.Equal(t, "49.82696", line.Item.Price.String())
-		assert.Equal(t, "99.65", line.Total.String())
+		assert.Equal(t, "99.65392", line.Total.String())
 	})
 	t.Run("sublines: without price", func(t *testing.T) {
 		line := &Line{
@@ -283,12 +283,12 @@ func TestLineCalculate(t *testing.T) {
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "35.14", sum.String())
-		assert.Equal(t, "37.7802", lines[0].Sum.String())
-		assert.Equal(t, "2.6446", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "37.78", lines[0].Sum.String())
+		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "35.14", lines[0].Total.String())
 		roundLines(lines, currency.EUR)
 		assert.Equal(t, "35.14", sum.String())
-		assert.Equal(t, "37.7802", lines[0].Sum.String())
+		assert.Equal(t, "37.78", lines[0].Sum.String())
 		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "35.14", lines[0].Total.String())
 	})
@@ -318,8 +318,8 @@ func TestLineCalculate(t *testing.T) {
 		roundLines(lines, currency.EUR)
 		assert.Equal(t, "35.1356", sum.String())
 		assert.Equal(t, "37.7802", lines[0].Sum.String())
-		assert.Equal(t, "2.64", lines[0].Discounts[0].Amount.String())
-		assert.Equal(t, "35.14", lines[0].Total.String())
+		assert.Equal(t, "2.6446", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "35.1356", lines[0].Total.String())
 	})
 	t.Run("lines with sum-then-round, regular precision", func(t *testing.T) {
 		lines := []*Line{
@@ -363,16 +363,17 @@ func TestLineCalculate(t *testing.T) {
 		assert.NoError(t, err)
 		sum := calculateLineSum(lines, currency.EUR)
 		assert.Equal(t, "34.1821", sum.String())
+		assert.Equal(t, "37.7700", lines[0].Sum.String())
 		assert.Equal(t, "51.256", lines[0].Discounts[0].Base.String())
 		assert.Equal(t, "3.5879", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.1821", lines[0].Total.String())
 		roundLines(lines, currency.EUR)
-		assert.Equal(t, "34.1821", sum.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
 		assert.Equal(t, "51.256", lines[0].Discounts[0].Base.String(), "maintain original precision")
 		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.18", lines[0].Total.String())
 	})
-	t.Run("lines with discount base, discrete rounding", func(t *testing.T) {
+	t.Run("lines with discount base, currency rounding", func(t *testing.T) {
 		lines := []*Line{
 			{
 				Quantity: num.MakeAmount(3, 0),
@@ -396,10 +397,97 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.18", lines[0].Total.String())
 		roundLines(lines, currency.EUR)
-		assert.Equal(t, "34.18", sum.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
 		assert.Equal(t, "51.256", lines[0].Discounts[0].Base.String(), "maintain original written precision")
 		assert.Equal(t, "3.59", lines[0].Discounts[0].Amount.String())
 		assert.Equal(t, "34.18", lines[0].Total.String())
+	})
+
+	t.Run("lines with discount percent, precise", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(20, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(903324, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(10, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "1625.9832", sum.String())
+		assert.Equal(t, "180.6648", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.9832", lines[0].Total.String())
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "1806.6480", lines[0].Sum.String())
+		assert.Equal(t, "180.6648", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.9832", lines[0].Total.String())
+	})
+	t.Run("lines with discount percent, currency rounding", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(20, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(903324, 4),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(10, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRuleCurrency)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "1625.98", sum.String())
+		assert.Equal(t, "180.67", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.98", lines[0].Total.String())
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "1806.65", lines[0].Sum.String())
+		assert.Equal(t, "180.67", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "1625.98", lines[0].Total.String())
+	})
+
+	t.Run("lines with discount & charge low-precision precise", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(20, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(9033, 2),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Amount: num.MakeAmount(20, 0),
+					},
+				},
+				Charges: []*LineCharge{
+					{
+						Amount: num.MakeAmount(10, 0),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "1796.6000", sum.String())
+		assert.Equal(t, "20.00", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "10.00", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "1796.6000", lines[0].Total.String())
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "1806.60", lines[0].Sum.String())
+		assert.Equal(t, "20.00", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "10.00", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "1796.60", lines[0].Total.String())
 	})
 
 	t.Run("lines with charge base", func(t *testing.T) {
@@ -477,5 +565,9 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "2.00", lines[0].Charges[0].Amount.String())
 		assert.Equal(t, "37.7700", lines[0].Sum.String())
 		assert.Equal(t, "39.7700", lines[0].Total.String())
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "2.00", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
+		assert.Equal(t, "39.77", lines[0].Total.String())
 	})
 }

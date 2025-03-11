@@ -105,7 +105,8 @@ func calculateLine(l *Line, cur currency.Code, rates []*currency.ExchangeRate, r
 
 	// Calculate the line sum and total
 	sum := price.Multiply(l.Quantity)
-	total := tax.ApplyRoundingRule(rr, cur, sum)
+	sum = tax.ApplyRoundingRule(rr, cur, sum)
+	total := sum
 	total = calculateLineDiscounts(l.Discounts, sum, total, cur, rr)
 	total = calculateLineCharges(l.Charges, l.Quantity, sum, total, cur, rr)
 
@@ -145,6 +146,7 @@ func calculateSubLine(sl *SubLine, cur currency.Code, rates []*currency.Exchange
 
 	// Calculate the line sum and total
 	sum := price.Multiply(sl.Quantity)
+	sum = tax.ApplyRoundingRule(rr, cur, sum)
 	total := sum
 	total = calculateLineDiscounts(sl.Discounts, sum, total, cur, rr)
 	total = calculateLineCharges(sl.Charges, sl.Quantity, sum, total, cur, rr)
@@ -162,11 +164,14 @@ func calculateLineDiscounts(discounts []*LineDiscount, sum, total num.Amount, cu
 		if d.Percent != nil && !d.Percent.IsZero() {
 			base := sum
 			if d.Base != nil {
+				b := d.Base.RescaleUp(cd.Subunits)
+				d.Base = &b
 				base = d.Base.RescaleUp(cd.Subunits + linePrecisionExtra)
 				base = tax.ApplyRoundingRule(rr, cur, base)
 			}
 			d.Amount = d.Percent.Of(base) // always override
 		}
+		d.Amount = cd.RescaleUp(d.Amount)
 		total = total.Subtract(d.Amount)
 	}
 	return total
@@ -178,6 +183,8 @@ func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount
 		if c.Percent != nil && !c.Percent.IsZero() {
 			base := sum
 			if c.Base != nil {
+				b := c.Base.RescaleUp(cd.Subunits)
+				c.Base = &b
 				base = c.Base.RescaleUp(cd.Subunits + linePrecisionExtra)
 				base = tax.ApplyRoundingRule(rr, cur, base)
 			}
@@ -191,7 +198,7 @@ func calculateLineCharges(charges []*LineCharge, quantity, sum, total num.Amount
 			}
 			c.Amount = c.Rate.Multiply(q)
 		}
-
+		c.Amount = cd.RescaleUp(c.Amount)
 		total = total.Add(c.Amount)
 	}
 	return total
@@ -262,57 +269,56 @@ func roundLines(lines []*Line, cur currency.Code) {
 	}
 }
 
-// round performs a rounding operation on the lines totals so that everything
-// is aligned with the currency's precision. This is defined in the EN16931
-// standard as the correct way to round totals.
+// round performs a rounding operation on key numbers of the line
+// so that no number exceeds the item price's or currency's precision.
+// This method is only useful for precision rounding, as currency
+// round will automatically apply the correct rounding rules.
 func (l *Line) round(cur currency.Code) {
-	cd := cur.Def()
+	e := cur.Def().Subunits
+	if l.Item.Price != nil {
+		e = l.Item.Price.Exp()
+	}
 	if l.Sum != nil {
-		// Ensure sum precision is aligned with price
-		e := l.Item.Price.Exp()
-		sum := l.Sum.Rescale(e)
+		sum := l.Sum.RescaleDown(e)
 		l.Sum = &sum
 	}
 	if l.Total != nil {
-		total := cd.Rescale(*l.Total)
+		e := l.Item.Price.Exp()
+		total := l.Total.RescaleDown(e)
 		l.Total = &total
 	}
 	for _, d := range l.Discounts {
-		d.round(cur)
+		d.round(e)
 	}
 	for _, c := range l.Charges {
-		c.round(cur)
+		c.round(e)
 	}
 	for _, sl := range l.Breakdown {
-		sl.round(cur)
+		sl.round(e)
 	}
 	for _, sl := range l.Substituted {
-		sl.round(cur)
+		sl.round(e)
 	}
 }
 
-func (d *LineDiscount) round(cur currency.Code) {
-	cd := cur.Def()
-	d.Amount = cd.Rescale(d.Amount)
+func (d *LineDiscount) round(e uint32) {
+	d.Amount = d.Amount.RescaleDown(e)
 }
 
-func (c *LineCharge) round(cur currency.Code) {
-	cd := cur.Def()
-	c.Amount = cd.Rescale(c.Amount)
+func (c *LineCharge) round(e uint32) {
+	c.Amount = c.Amount.RescaleDown(e)
 }
 
 // round performs a rounding operation on the sub-line's totals
 // so that everything is aligned with the currency's precision.
-func (sl *SubLine) round(cur currency.Code) {
+func (sl *SubLine) round(e uint32) {
 	if sl.Sum != nil {
 		// Ensure sum precision is aligned with price
-		e := sl.Item.Price.Exp()
-		sum := sl.Sum.Rescale(e)
+		sum := sl.Sum.RescaleDown(e)
 		sl.Sum = &sum
 	}
 	if sl.Total != nil {
-		cd := cur.Def()
-		total := cd.Rescale(*sl.Total)
+		total := sl.Total.RescaleDown(e)
 		sl.Total = &total
 	}
 }
