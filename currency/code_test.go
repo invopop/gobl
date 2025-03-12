@@ -25,3 +25,12 @@ func TestCode(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "currency code FOOO not defined")
 }
+
+func TestCodeJSONSchema(t *testing.T) {
+	var c currency.Code
+	s := c.JSONSchema()
+	assert.Equal(t, "Currency Code", s.Title)
+	assert.Equal(t, "string", s.Type)
+	assert.Len(t, s.OneOf, 180)
+	assert.Equal(t, currency.USD, s.OneOf[0].Const)
+}
