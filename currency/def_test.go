@@ -87,6 +87,21 @@ func TestDefFormat(t *testing.T) {
 		a := num.MakeAmount(123456, 2)
 		assert.Equal(t, "€1.234,56", f.Amount(a))
 	})
+
+	t.Run("with numeral system", func(t *testing.T) {
+		d := currency.USD.Def()
+		f := d.Formatter(currency.WithNumeralSystem(num.NumeralArabic))
+		a := num.MakeAmount(123456, 2)
+		assert.Equal(t, "$١,٢٣٤.٥٦", f.Amount(a))
+	})
+}
+
+func TestDefFormatPercentage(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		d := currency.USD.Def()
+		p := num.MakePercentage(100, 3)
+		assert.Equal(t, "10.0%", d.FormatPercentage(p))
+	})
 }
 
 func TestDefZero(t *testing.T) {

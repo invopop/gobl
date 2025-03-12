@@ -21,6 +21,6 @@ func (a *Amount) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.Label),
 		validation.Field(&a.Currency, validation.Required),
-		validation.Field(&a.Value, validation.Required),
+		validation.Field(&a.Value),
 	)
 }
