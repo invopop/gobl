@@ -3,7 +3,6 @@
     "doc": {
         "$regime": "ES",
         "$schema": "https://gobl.org/draft-0/bill/invoice",
-        "code": "",
         "currency": "EUR",
         "customer": {
             "name": "Sample Consumer",
@@ -12,7 +11,7 @@
                 "country": "ES"
             }
         },
-        "issue_date": "2025-03-06",
+        "issue_date": "2025-03-13",
         "lines": [
             {
                 "discounts": [
@@ -126,13 +125,13 @@
             "total_with_tax": "1717.20"
         },
         "type": "standard",
-        "uuid": "01956a9d-10a5-7026-8461-f45c0a9a833f"
+        "uuid": "01959046-b5f4-7064-a79c-da272c10967b"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "57e1126e3682139fbe74a26f5af2c824743faf1fcb3775627417a9326870eb64"
+            "val": "3afd59842622cf2702a44db94b7b45d83512142c3a76ac06abd7d144351d4fdf"
         },
-        "uuid": "01956a9d-10a5-702b-9b9e-d4198f5cee20"
+        "uuid": "01959046-b5f4-706a-be32-b0cc62ccc60c"
     }
 }

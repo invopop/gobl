@@ -71,15 +71,7 @@ var PaymentTypes = []*cbc.Definition{
 	},
 }
 
-var isValidPaymentType = validation.In(validPaymentTypes()...)
-
-func validPaymentTypes() []interface{} {
-	list := make([]interface{}, len(PaymentTypes))
-	for i, d := range PaymentTypes {
-		list[i] = d.Key
-	}
-	return list
-}
+var isValidPaymentType = cbc.InKeyDefs(PaymentTypes)
 
 // A Payment is used to link an invoice or invoices with a payment transaction.
 type Payment struct {
@@ -92,10 +84,14 @@ type Payment struct {
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
 	// Details on how the payment was made based on the original instructions.
 	Method *pay.Instructions `json:"method,omitempty" jsonschema:"title=Method"`
-	// Used as a prefix to group codes.
+	// Series is used to identify groups of payments by date, business area, project,
+	// type, customer, a combination of any, or other company specific data.
+	// If the output format does not support the series as a separate field, it will be
+	// prepended to the code for presentation with a dash (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Sequential code used to identify this payment in tax declarations.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	// Code is a sequential identifier that uniquely identifies the payment. The code can
+	// be left empty initially, but is **required** to **sign** the document.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the payment was issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// When the taxes of this payment become accountable, if none set, the issue date is assumed.
@@ -328,6 +324,9 @@ func (pmt Payment) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
 			"$regime",
+			"series",
+			"code",
+			"lines",
 		},
 	}
 }
