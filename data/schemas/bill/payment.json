@@ -288,12 +288,12 @@
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
-          "description": "Used as a prefix to group codes."
+          "description": "Series is used to identify groups of payments by date, business area, project,\ntype, customer, a combination of any, or other company specific data.\nIf the output format does not support the series as a separate field, it will be\nprepended to the code for presentation with a dash (`-`) for separation."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Sequential code used to identify this payment in tax declarations."
+          "description": "Code is a sequential identifier that uniquely identifies the payment. The code can\nbe left empty initially, but is **required** to **sign** the document."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -396,7 +396,6 @@
       "type": "object",
       "required": [
         "type",
-        "code",
         "issue_date",
         "currency",
         "supplier",
@@ -405,7 +404,10 @@
       ],
       "description": "A Payment is used to link an invoice or invoices with a payment transaction.",
       "recommended": [
-        "$regime"
+        "$regime",
+        "series",
+        "code",
+        "lines"
       ]
     },
     "PaymentLine": {

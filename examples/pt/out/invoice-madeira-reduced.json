@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8a4ae8548fe4ae85d94314bdffddf1896051df6a915592b33c1b19529090055e"
+			"val": "506a18400ed6bda4911f98eb7f8dd94d9328c3d3420257e7fee9beed40c042a1"
 		}
 	},
 	"doc": {
@@ -15,7 +15,6 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"code": "",
 		"issue_date": "2024-10-02",
 		"currency": "EUR",
 		"tax": {

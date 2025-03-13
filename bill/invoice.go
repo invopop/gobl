@@ -32,33 +32,39 @@ type Invoice struct {
 	tax.Tags
 	uuid.Identify
 
-	// Type of invoice document subject to the requirements of the local tax regime.
+	// Type of invoice document. May be restricted by local tax regime requirements.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Used as a prefix to group codes.
+	// Series is used to identify groups of invoices by date, business area, project,
+	// type of document, customer type, a combination of any or other company specific data.
+	// If the output format does not support the series as a separate field, it will be
+	// prepended to the code for presentation with a dash (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Sequential code used to identify this invoice in tax declarations.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// When the invoice was created.
+	// Code is a sequential identifier that uniquely identifies the invoice. The code can
+	// be left empty initially, but is **required** to **sign** the invoice.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+	// Issue date for when the invoice was created and issued. Todays date is used if
+	// none is set. There are often legal restrictions on how far back an invoice
+	// can be issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
-	// Currency for all invoice totals.
+	// Currency for all invoice amounts and totals, unless explicitly stated otherwise.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency" jsonschema_extras:"calculated=true"`
 	// Exchange rates to be used when converting the invoices monetary values into other currencies.
 	ExchangeRates []*currency.ExchangeRate `json:"exchange_rates,omitempty" jsonschema:"title=Exchange Rates"`
 
-	// Key information regarding previous invoices and potentially details as to why they
-	// were corrected.
+	// Document references for previous invoices that this document replaces or extends.
 	Preceding []*org.DocumentRef `json:"preceding,omitempty" jsonschema:"title=Preceding Details"`
 
-	// Special tax configuration for billing.
+	// Special billing tax configuration options.
 	Tax *Tax `json:"tax,omitempty" jsonschema:"title=Tax"`
 
 	// The entity supplying the goods or services and usually responsible for paying taxes.
 	Supplier *org.Party `json:"supplier" jsonschema:"title=Supplier"`
-	// Legal entity receiving the goods or services, may be nil in certain circumstances such as simplified invoices.
+	// Legal entity receiving the goods or services, may be nil in certain circumstances
+	// such as simplified invoices.
 	Customer *org.Party `json:"customer,omitempty" jsonschema:"title=Customer"`
 
 	// List of invoice lines representing each of the items sold to the customer.
@@ -426,6 +432,8 @@ func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
 			"$regime",
+			"series",
+			"code",
 			"lines",
 		},
 	}
