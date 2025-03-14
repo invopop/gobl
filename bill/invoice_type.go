@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
-	"github.com/invopop/validation"
 )
 
 // Predefined list of the invoice type codes officially supported.
@@ -105,15 +104,7 @@ var InvoiceTypes = []*cbc.Definition{
 	},
 }
 
-var isValidInvoiceType = validation.In(validInvoiceTypes()...)
-
-func validInvoiceTypes() []interface{} {
-	list := make([]interface{}, len(InvoiceTypes))
-	for i, d := range InvoiceTypes {
-		list[i] = d.Key
-	}
-	return list
-}
+var isValidInvoiceType = cbc.InKeyDefs(InvoiceTypes)
 
 // UNTDID1001 provides the official code number assigned with the Invoice type.
 func (i *Invoice) UNTDID1001() cbc.Code {
