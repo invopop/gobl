@@ -87,6 +87,21 @@ func TestDefFormat(t *testing.T) {
 		a := num.MakeAmount(123456, 2)
 		assert.Equal(t, "€1.234,56", f.Amount(a))
 	})
+
+	t.Run("with numeral system", func(t *testing.T) {
+		d := currency.USD.Def()
+		f := d.Formatter(currency.WithNumeralSystem(num.NumeralArabic))
+		a := num.MakeAmount(123456, 2)
+		assert.Equal(t, "$١,٢٣٤.٥٦", f.Amount(a))
+	})
+}
+
+func TestDefFormatPercentage(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		d := currency.USD.Def()
+		p := num.MakePercentage(100, 3)
+		assert.Equal(t, "10.0%", d.FormatPercentage(p))
+	})
 }
 
 func TestDefZero(t *testing.T) {
@@ -101,6 +116,37 @@ func TestDefZero(t *testing.T) {
 	t.Run("with zero BTC", func(t *testing.T) {
 		d := currency.BTC.Def()
 		assert.Equal(t, "0.00000000", d.Zero().String())
+	})
+}
+
+func TestDefRescale(t *testing.T) {
+	t.Run("with USD", func(t *testing.T) {
+		d := currency.USD.Def()
+		a := num.MakeAmount(123456, 4)
+		assert.Equal(t, "12.35", d.Rescale(a).String())
+	})
+	t.Run("with CLP", func(t *testing.T) {
+		d := currency.CLP.Def()
+		a := num.MakeAmount(123456, 2)
+		assert.Equal(t, "1235", d.Rescale(a).String())
+	})
+}
+
+func TestDefRescaleUp(t *testing.T) {
+	t.Run("with USD", func(t *testing.T) {
+		d := currency.USD.Def()
+		a := num.MakeAmount(123, 0)
+		assert.Equal(t, "123.00", d.RescaleUp(a).String())
+	})
+	t.Run("with USD extra precision", func(t *testing.T) {
+		d := currency.USD.Def()
+		a := num.MakeAmount(123456, 4)
+		assert.Equal(t, "12.3456", d.RescaleUp(a).String())
+	})
+	t.Run("with CLP", func(t *testing.T) {
+		d := currency.CLP.Def()
+		a := num.MakeAmount(1234, 0)
+		assert.Equal(t, "1234", d.RescaleUp(a).String())
 	})
 }
 

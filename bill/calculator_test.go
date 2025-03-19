@@ -43,11 +43,11 @@ func TestCalculate(t *testing.T) {
 			},
 		})
 		inv.Tax.PricesInclude = ""
-		inv.Tax.Rounding = tax.RoundingRuleRoundThenSum
+		inv.Tax.Rounding = tax.RoundingRuleCurrency
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "3.48", inv.Totals.Tax.String())
 
-		inv.Tax.Rounding = tax.RoundingRuleSumThenRound
+		inv.Tax.Rounding = tax.RoundingRulePrecise
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "3.49", inv.Totals.Tax.String())
 	})
@@ -95,6 +95,18 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.RemoveIncludedTaxes())
+	})
+
+	t.Run("with currency rounding", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Tax = &bill.Tax{
+			PricesInclude: tax.CategoryVAT,
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.RemoveIncludedTaxes())
+		assert.Equal(t, "826.45", inv.Totals.Sum.String())
+		assert.Equal(t, "173.55", inv.Totals.Tax.String())
+		assert.Equal(t, "1000.00", inv.Totals.Payable.String())
 	})
 
 	t.Run("from discounts", func(t *testing.T) {

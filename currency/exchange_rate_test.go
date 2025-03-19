@@ -127,6 +127,11 @@ func TestExchangeRateValidationRule(t *testing.T) {
 
 	err = validation.Validate(currency.CodeEmpty, currency.CanConvertInto(rates, currency.USD))
 	assert.NoError(t, err)
+
+	t.Run("same rate", func(t *testing.T) {
+		err := validation.Validate(currency.USD, currency.CanConvertInto(rates, currency.USD))
+		assert.NoError(t, err)
+	})
 }
 
 func sampleRates() []*currency.ExchangeRate {

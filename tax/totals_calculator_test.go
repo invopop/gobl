@@ -1201,9 +1201,9 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 		},
 		{
-			desc:     "round-then-sum calculation",
-			country:  "GR", // Greece uses round-then-sum calculation
-			rounding: tax.RoundingRuleRoundThenSum,
+			desc:     "currency rounding calculation",
+			country:  "GR", // Greece uses currency rounding
+			rounding: tax.RoundingRuleCurrency,
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{

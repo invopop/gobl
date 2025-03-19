@@ -48,7 +48,7 @@ func TestDocumentRefCalculate(t *testing.T) {
 			IssueDate: cal.NewDate(2022, 11, 6),
 		}
 		assert.NotPanics(t, func() {
-			dr.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+			dr.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		})
 	})
 	t.Run("with tax", func(t *testing.T) {
@@ -69,7 +69,7 @@ func TestDocumentRefCalculate(t *testing.T) {
 			},
 		}
 		assert.NotPanics(t, func() {
-			dr.Calculate(currency.EUR, tax.RoundingRuleSumThenRound)
+			dr.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		})
 		assert.Equal(t, "2.10", dr.Tax.Sum.String())
 	})

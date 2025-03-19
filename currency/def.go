@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
-	"sort"
+	"slices"
 
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/yaml"
@@ -125,6 +125,18 @@ func (d *Def) Zero() num.Amount {
 	return num.MakeAmount(0, d.Subunits)
 }
 
+// Rescale takes the provided amount and ensures its scale matches
+// that of the currency.
+func (d *Def) Rescale(a num.Amount) num.Amount {
+	return a.Rescale(d.Subunits)
+}
+
+// RescaleUp ensures tha the amount has *at least* the same
+// precision as the currency.
+func (d *Def) RescaleUp(a num.Amount) num.Amount {
+	return a.RescaleUp(d.Subunits)
+}
+
 // Definitions provides an array of all currency definitions
 // ordered by priority.
 func Definitions() []*Def {
@@ -204,8 +216,8 @@ func (ds *defs) load(src fs.FS, root string) error {
 
 	// Sort the byPriority list by the priority field
 	// in ascending order.
-	sort.Slice(ds.byPriority, func(i, j int) bool {
-		return ds.byPriority[i].Priority < ds.byPriority[j].Priority
+	slices.SortStableFunc(ds.byPriority, func(def1, def2 *Def) int {
+		return def1.Priority - def2.Priority
 	})
 
 	return nil
