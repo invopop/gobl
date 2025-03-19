@@ -1,0 +1,31 @@
+$schema: https://gobl.org/draft-0/bill/delivery
+$addons: ["pt-saft-v1"]
+uuid: 019570af-1b60-7eca-98a8-d99b3cabfce8
+type: note
+currency: EUR
+issue_date: "2023-01-30"
+despatch_date: "2023-01-31"
+series: "GR SERIES-A"
+code: "123"
+supplier:
+  uuid: 9de7584f-ea5c-42a7-b159-5e4c6a280a5c
+  tax_id:
+    country: PT
+    code: "545259045"
+  name: Hotelzinho
+  addresses:
+    - street: Rua do Hotelzinho
+      code: 1000-000
+      locality: Lisboa
+receiver:
+  name: Maria Santos Silva
+  addresses:
+    - street: Rua da Maria
+      code: 1000-000
+      locality: Lisboa
+lines:
+  - i: 1
+    quantity: 1
+    item:
+      name: OLED 32-inch TV
+      unit: unit

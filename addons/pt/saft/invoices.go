@@ -3,6 +3,7 @@ package saft
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/invopop/gobl/bill"
@@ -25,8 +26,14 @@ var (
 	codeRegexp     = regexp.MustCompile(codePattern)
 )
 
+var invoiceWorkTypes = []cbc.Code{
+	WorkTypeProforma,
+	WorkTypeConsignmentInv,
+	WorkTypeConsignmentCredit,
+}
+
 func validateInvoice(inv *bill.Invoice) error {
-	it := invoiceType(inv)
+	dt := invoiceDocType(inv)
 
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
@@ -34,11 +41,11 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Series,
-			validateSeriesFormat(it),
+			validateSeriesFormat(dt),
 			validation.Skip,
 		),
 		validation.Field(&inv.Code,
-			validateCodeFormat(inv.Series, it),
+			validateCodeFormat(inv.Series, dt),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
@@ -49,6 +56,16 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 	)
+}
+
+func invoiceDocType(inv *bill.Invoice) cbc.Code {
+	if inv.Tax == nil || inv.Tax.Ext == nil {
+		return cbc.CodeEmpty
+	}
+	if inv.Tax.Ext.Has(ExtKeyInvoiceType) {
+		return inv.Tax.Ext[ExtKeyInvoiceType]
+	}
+	return inv.Tax.Ext[ExtKeyWorkType]
 }
 
 func validateTax(val any) error {
@@ -62,10 +79,37 @@ func validateTax(val any) error {
 
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Ext,
-			tax.ExtensionsRequire(ExtKeyInvoiceType),
+			validation.By(validateTaxExt),
 			validation.Skip,
 		),
 	)
+}
+
+func validateTaxExt(val any) error {
+	ext, _ := val.(tax.Extensions)
+	if ext == nil {
+		ext = make(tax.Extensions) // Empty temporary map to return meaningful errors
+	}
+
+	msg := fmt.Sprintf("either `%s` or `%s` must be set", ExtKeyWorkType, ExtKeyInvoiceType)
+
+	if !ext.Has(ExtKeyWorkType) && !ext.Has(ExtKeyInvoiceType) {
+		return validation.NewError("invalid", msg)
+	}
+
+	if ext.Has(ExtKeyWorkType, ExtKeyInvoiceType) {
+		return validation.NewError("invalid", msg+", but not both")
+	}
+
+	if wt, ok := ext[ExtKeyWorkType]; ok {
+		if !slices.Contains(invoiceWorkTypes, wt) {
+			return validation.Errors{
+				ExtKeyWorkType.String(): fmt.Errorf("value '%s' invalid", wt),
+			}
+		}
+	}
+
+	return nil
 }
 
 // validateSeriesFormat validates the format of the series to meet the requirements of the
@@ -122,12 +166,4 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
-}
-
-func invoiceType(inv *bill.Invoice) cbc.Code {
-	if inv == nil || inv.Tax == nil || inv.Tax.Ext == nil {
-		return cbc.CodeEmpty
-	}
-
-	return inv.Tax.Ext[ExtKeyInvoiceType]
 }

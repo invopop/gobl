@@ -129,7 +129,7 @@ The SAF-T's `TaxCode` (Código do imposto) is required for invoice items that a
 | RED  | Taxa Reduzida   | `reduced`                             |
 | ISE  | Isenta          | `exempt` + extension code (see below) |
 
-AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag is used, one of the following must be defined in the `ext` map's `pt-exemption-code` property:
+AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that specifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag is used, one of the following must be defined in the `ext` map's `pt-saft-exemption` property:
 
 | Code  | Description                                                                                              |
 | ----- | -------------------------------------------------------------------------------------------------------- |
@@ -181,7 +181,7 @@ For example, you could define an invoice line exempt of tax as follows:
             "ext": {
               // [...]
               "pt-saft-tax-rate": "ISE",
-              "pt-exemption-code": "M19"
+              "pt-saft-exemption": "M19"
             }
         }
       ]
@@ -190,11 +190,11 @@ For example, you could define an invoice line exempt of tax as follows:
 }
 ```
 
-### Payment receipts
+### Payment receipts (Documento de recibo emitido)
 
-To report payment receipts to the AT, GOBL provides conversion from `bill.Receipt` documents. You can find an example of a valid Portugese receipt in the [`example folder`](../../examples/pt).
+To report payment receipts to the AT, GOBL provides conversion from `bill.Payment` documents. You can find an example of a valid Portugese receipt in the [`example folder`](../../examples/pt).
 
-In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its type. In GOBL, this type can be set using the `pt-saft-receipt-type` extension. GOBL will set the extension automatically based on the type and the tax tags you set. The table below shows how this mapping is done:
+In a payment, the SAF-T's `PaymentType` (Tipo de documento) field specifies its type. In GOBL, this type can be set using the `pt-saft-payment-type` extension. GOBL will set the extension automatically based on the type and the tax tags you set. The table below shows how this mapping is done:
 
 | Code | Name                                       | GOBL Type | GOBL Tax Tag |
 | ---- | ------------------------------------------ | --------- | ------------ |
@@ -210,14 +210,15 @@ For example:
   "type": "payment",
   // [...]
   "ext": {
-    "pt-saft-receipt-type": "RG"
+    "pt-saft-payment-type": "RG"
   },
   // [...]
+}
 ```
 
 ### `PaymentMechanism` (Meios de pagamento)
 
-The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a sales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this value in your `bill.Invoice` advances or in you `bill.Receipt` method. GOBL maps certain payment mean keys automatically to this extension:
+The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a sales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this value in your `bill.Invoice` advances or in you `bill.Payment` method. GOBL maps certain payment mean keys automatically to this extension:
 
 | Code | Name | GOBL Payment Mean |
 | --- | --- | --- |
@@ -276,4 +277,95 @@ For example, in a GOBL receipt:
   },
   // [...]
 }
+```
+
+### Work documents (Documentos de conferência)
+
+To report work documents to the AT, GOBL provides conversion from `bill.Invoice` and `bill.Order` documents. You can find examples of valid Portuguese work documents in the [`example folder`](../../examples/pt).
+
+The SAF-T's `WorkType` field (Tipo de documento de conferência) specifies the type of a work document. In GOBL, this type can be set using the `pt-saft-work-type` extension in the tax section of the document. Certain work types are only valid for invoices while others are only valid for orders. For some document types, GOBL will automatically set the appropriate work type extension.
+
+The table below shows the supported work type codes and their compatibility:
+
+| Code | Name                            | GOBL Document | GOBL Type  |
+| ---- | ------------------------------- | ------------- | ---------- |
+| PF   | Pró-forma                       | Invoice       | `proforma` |
+| FC   | Fatura de consignação           | Invoice       |            |
+| CC   | Credito de consignação          | Invoice       |            |
+| CM   | Consultas de mesa               | Order         |            |
+| FO   | Folhas de obra                  | Order         |            |
+| NE   | Nota de Encomenda               | Order         | `purchase` |
+| OU   | Outros                          | Order         |            |
+| OR   | Orçamentos                      | Order         | `quote`    |
+| DC   | Documentos de conferência       | Order         |            |
+| RP   | Prémio ou recibo de prémio      | Order         |            |
+| RE   | Estorno ou recibo de estorno    | Order         |            |
+| CS   | Imputação a co-seguradoras      | Order         |            |
+| LD   | Imputação a co-seguradora líder | Order         |            |
+| RA   | Resseguro aceite                | Order         |            |
+
+Example for a proforma invoice:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "type": "proforma",
+  // [...]
+  "tax": {
+    "ext": {
+      "pt-saft-work-type": "PF"
+    }
+  },
+  // [...]
+}
+```
+
+Example for a purchase order:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/order",
+  "type": "purchase",
+  // [...]
+  "tax": {
+    "ext": {
+      "pt-saft-work-type": "NE"
+    }
+  },
+  // [...]
+}
+```
+
+### Stock Movements (Documentos de movimentação de mercadorias)
+
+To report stock movements to the AT, GOBL provides conversion from `bill.Invoice` documents. You can find an example of a valid Portugese delivery note in the [`example folder`](../../examples/pt).
+
+SAF-T's `MovementType` (Tipo de documento de movimentação de mercadorias) specifies the type of a delivery document. In GOBL, this type can be set using the `pt-saft-movement-type` extension. If not provided explicitly, GOBL will set the extension for you based on the type of your delivery document.
+
+The table below shows how this mapping is done:
+
+| Code | Name                | GOBL Type     |
+| ---- | ------------------- | ------------- |
+| GR   | Delivery note       | `note`        |
+| GT   | Waybill             | `waybill`     |
+| GA   | Fixed assets guide  |               |
+| GC   | Consignment note    |               |
+| GD   | Returns slip        |               |
+
+For example:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/delivery",
+  // [...]
+  "type": "note",
+  // [...]
+  "tax": {
+    "ext": {
+      "pt-saft-movement-type": "GR"
+    }
+  },
+  // [...]
+}
+```
 

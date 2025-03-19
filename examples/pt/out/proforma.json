@@ -1,0 +1,100 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "149e6af80d5c26cfbb59a92afbe220809232faa51fb0c842d2386343c3447fe8"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
+		"uuid": "019570af-1b66-7dd6-afd1-4f4c8baad3e4",
+		"type": "proforma",
+		"series": "PF SERIES-A",
+		"code": "123",
+		"issue_date": "2023-01-30",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"pt-saft-work-type": "PF"
+			}
+		},
+		"supplier": {
+			"name": "Hotelzinho",
+			"tax_id": {
+				"country": "PT",
+				"code": "545259045"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"customer": {
+			"name": "Maria Santos Silva"
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Noite em quarto duplo",
+					"price": "100.00",
+					"unit": "one",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "23.0%",
+						"ext": {
+							"pt-region": "PT",
+							"pt-saft-tax-rate": "NOR"
+						}
+					}
+				],
+				"total": "100.00"
+			}
+		],
+		"totals": {
+			"sum": "100.00",
+			"total": "100.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"pt-region": "PT",
+									"pt-saft-tax-rate": "NOR"
+								},
+								"base": "100.00",
+								"percent": "23.0%",
+								"amount": "23.00"
+							}
+						],
+						"amount": "23.00"
+					}
+				],
+				"sum": "23.00"
+			},
+			"tax": "23.00",
+			"total_with_tax": "123.00",
+			"payable": "123.00"
+		}
+	}
+}

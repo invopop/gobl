@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
+
 ## [v0.212.1] - 2025-03-11
 
 ### Changed

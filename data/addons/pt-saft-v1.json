@@ -45,7 +45,7 @@
         "pt": "Tipo de Fatura"
       },
       "desc": {
-        "en": "SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a sales invoice. In GOBL,\nthis type can be set using the `pt-saft-invoice-type` extension in the tax section. GOBL\nwill set the extension for you based on the type and the tax tags you set in your invoice.\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$tags\": [\n\t\t\"invoice-receipt\"\n\t],\n\t// ...\n\t\"type\": \"standard\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pt-saft-invoice-type\": \"FR\"\n\t\t}\n\t},\n\t// ...\n```"
+        "en": "SAF-T's `InvoiceType` (Tipo de documento) specifies the type of a sales invoice. In GOBL,\nthis type can be set using the `pt-saft-invoice-type` extension in the tax section. GOBL\nwill set the extension for you based on the type and the tax tags you set in your invoice.\n\nThe table below shows how this mapping is done:\n\n| Code | Name                | GOBL Type     | GOBL Tax Tag    |\n| ---- | ------------------- | ------------- | --------------- |\n| `FT` | Standard Invoice    | `standard`    |                 |\n| `FS` | Simplified Invoice  | `standard`    | `simplified`    |\n| `FR` | Invoice-Receipt     | `standard`    | `invoice-receipt` |\n| `ND` | Debit Note          | `debit-note`  |                 |\n| `NC` | Credit Note         | `credit-note` |                 |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"$tags\": [\n\t\t\"invoice-receipt\"\n\t],\n\t// ...\n\t\"type\": \"standard\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pt-saft-invoice-type\": \"FR\"\n\t\t}\n\t},\n\t// ...\n```"
       },
       "values": [
         {
@@ -267,7 +267,7 @@
         {
           "code": "M15",
           "name": {
-            "en": "Margin scheme - Collector’s items and antiques / Decree-Law No. 199/96 of 18th October",
+            "en": "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
           }
         },
@@ -431,13 +431,127 @@
       ]
     },
     {
+      "key": "pt-saft-work-type",
+      "name": {
+        "en": "Document Type",
+        "pt": "Tipo de documento"
+      },
+      "desc": {
+        "en": "SAF-T's `WorkType` (Tipo de documento de conferência) specifies the type of a working\ndocument. In GOBL, this type can be set using the `pt-saft-work-type` extension in either\n`bill.Invoice` or `bill.Order` documents. GOBL will set the extension for you based on the\ndocument type in some cases.\n\nThe table below shows the supported work type codes and their compatibility with GOBL objects:\n\n| Code   | Name                            | GOBL Doc | GOBL Type  |\n| ------ | ------------------------------- | -------- | ---------- |\n| `PF`   | Pró-forma                       | Invoice  | `proforma` |\n| `FC`   | Fatura de consignação           | Invoice  |            |\n| `CC`   | Credito de consignação          | Invoice  |            |\n| `CM`   | Consultas de mesa               | Order    |            |\n| `FO`   | Folhas de obra                  | Order    |            |\n| `NE`   | Nota de Encomenda               | Order    | `purchase` |\n| `OU`   | Outros                          | Order    |            |\n| `OR`   | Orçamentos                      | Order    | `quote`    |\n| `DC`   | Documentos de conferência       | Order    |            |\n| `RP`   | Prémio ou recibo de prémio      | Order    |            |\n| `RE`   | Estorno ou recibo de estorno    | Order    |            |\n| `CS`   | Imputação a co-seguradoras      | Order    |            |\n| `LD`   | Imputação a co-seguradora líder | Order    |            |\n| `RA`   | Resseguro aceite                | Order    |            |\n\nExample for a proforma invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t\"type\": \"proforma\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pt-saft-work-type\": \"PF\"\n\t\t}\n\t},\n\t// ...\n```\n\nExample for a purchase order:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/order\",\n\t\"type\": \"purchase\",\n\t// ...\n\t\"tax\": {\n\t\t\"ext\": {\n\t\t\t\"pt-saft-work-type\": \"NE\"\n\t\t}\n\t},\n\t// ...\n```"
+      },
+      "values": [
+        {
+          "code": "CM",
+          "name": {
+            "en": "Table orders",
+            "pt": "Consultas de mesa"
+          }
+        },
+        {
+          "code": "CC",
+          "name": {
+            "en": "Consignment credit note",
+            "pt": "Credito de consignação"
+          }
+        },
+        {
+          "code": "FC",
+          "name": {
+            "en": "VAT-compliant consignment invoice (Article 38)",
+            "pt": "Fatura de consignação nos termos do art.º 38º do código do IVA"
+          }
+        },
+        {
+          "code": "FO",
+          "name": {
+            "en": "Work orders",
+            "pt": "Folhas de obra"
+          }
+        },
+        {
+          "code": "NE",
+          "name": {
+            "en": "Purchase order",
+            "pt": "Nota de Encomenda"
+          }
+        },
+        {
+          "code": "OU",
+          "name": {
+            "en": "Other documents",
+            "pt": "Outros"
+          }
+        },
+        {
+          "code": "OR",
+          "name": {
+            "en": "Quotations",
+            "pt": "Orçamentos"
+          }
+        },
+        {
+          "code": "PF",
+          "name": {
+            "en": "Pro forma invoice",
+            "pt": "Pró-forma"
+          }
+        },
+        {
+          "code": "DC",
+          "name": {
+            "en": "Delivery verification documents",
+            "pt": "Documentos emitidos que sejam suscetíveis de apresentação ao cliente para conferência de mercadorias ou de prestação de serviços"
+          },
+          "desc": {
+            "en": "For data up to 2017-06-30",
+            "pt": "Para dados até 2017-06-30"
+          }
+        },
+        {
+          "code": "RP",
+          "name": {
+            "en": "Premium Receipt",
+            "pt": "Prémio ou recibo de prémio"
+          }
+        },
+        {
+          "code": "RE",
+          "name": {
+            "en": "Chargeback Receipt",
+            "pt": "Estorno ou recibo de estorno"
+          }
+        },
+        {
+          "code": "CS",
+          "name": {
+            "en": "Co-insurers Allocation",
+            "pt": "Imputação a co-seguradoras"
+          }
+        },
+        {
+          "code": "LD",
+          "name": {
+            "en": "Lead Co-insurer Allocation",
+            "pt": "Imputação a co-seguradora líder"
+          }
+        },
+        {
+          "code": "RA",
+          "name": {
+            "en": "Accepted Reinsurance",
+            "pt": "Resseguro aceite"
+          }
+        }
+      ]
+    },
+    {
       "key": "pt-saft-payment-means",
       "name": {
         "en": "Payment Means",
         "pt": "Meio de Pagamento"
       },
       "desc": {
-        "en": "The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a\nsales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this\nvalue in your `bill.Invoice` advances or in you `bill.Receipt` method. GOBL maps certain\npayment mean keys automatically to this extension:\n\n| Code | Name                                               | GOBL Payment Means                                    |\n| ---- | -------------------------------------------------- | ----------------------------------------------------- |\n| `CC` | Cartão crédito                                     | `card`                                                |\n| `CD` | Cartão débito                                      | (*)                                                   |\n| `CH` | Cheque bancário                                    | `cheque`                                              |\n| `CI` | Letter of credit                                   | (*)                                                   |\n| `CO` | Cheque ou cartão oferta                            | (*)                                                   |\n| `CS` | Compensação de saldos em conta corrente            | `netting`                                             |\n| `DE` | Dinheiro eletrónico                                | `online`                                              |\n| `LC` | Letra comercial                                    | `promissory-note`                                     |\n| `MB` | Referências de pagamento para Multibanco           | (*)                                                   |\n| `NU` | Numerário                                          | `cash`                                                |\n| `OU` | Outro                                              | `other`                                               |\n| `PR` | Permuta de bens                                    | (*)                                                   |\n| `TB` | Transferência bancária ou débito direto autorizado | `credit-transfer`, `debit-transfer` or `direct-debit` |\n| `TR` | Títulos de compensação extrassalarial              | (*)                                                   |\n\n(*) For codes not mapped from a GOBL Payment Mean, use `other` and explicitly set the\nextension.\n\nFor example, in an GOBL invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"payment\": {\n\t\t\"advances\": [\n\t\t\t{\n\t\t\t\t\"date\": \"2023-01-30\",\n\t\t\t\t\"key\": \"credit-transfer\",\n\t\t\t\t\"description\": \"Adiantamento\",\n\t\t\t\t\"amount\": \"100.00\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pt-saft-payment-means\": \"TB\"\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t},\n\t// ...\n}\n```\n\nFor example, in a GOBL receipt:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/receipt\",\n\t// ...\n\t\"method\": {\n\t\t\"key\": \"other\",\n\t\t\"detail\": \"Compensação extrassalarial\",\n\t\t\"ext\": {\n\t\t\t\"pt-saft-payment-means\": \"TR\"\n\t\t}\n\t},\n\t// ...\n}"
+        "en": "The SAF-T's `PaymentMechanism` (Meios de pagamento) field specifies the payment means in a\nsales invoice or payment. GOBL provides the `pt-saft-payment-means` extension to set this\nvalue in your `bill.Invoice` advances or in you `bill.Payment` method. GOBL maps certain\npayment mean keys automatically to this extension:\n\n| Code | Name                                               | GOBL Payment Means                                    |\n| ---- | -------------------------------------------------- | ----------------------------------------------------- |\n| `CC` | Cartão crédito                                     | `card`                                                |\n| `CD` | Cartão débito                                      | (*)                                                   |\n| `CH` | Cheque bancário                                    | `cheque`                                              |\n| `CI` | Letter of credit                                   | (*)                                                   |\n| `CO` | Cheque ou cartão oferta                            | (*)                                                   |\n| `CS` | Compensação de saldos em conta corrente            | `netting`                                             |\n| `DE` | Dinheiro eletrónico                                | `online`                                              |\n| `LC` | Letra comercial                                    | `promissory-note`                                     |\n| `MB` | Referências de pagamento para Multibanco           | (*)                                                   |\n| `NU` | Numerário                                          | `cash`                                                |\n| `OU` | Outro                                              | `other`                                               |\n| `PR` | Permuta de bens                                    | (*)                                                   |\n| `TB` | Transferência bancária ou débito direto autorizado | `credit-transfer`, `debit-transfer` or `direct-debit` |\n| `TR` | Títulos de compensação extrassalarial              | (*)                                                   |\n\n(*) For codes not mapped from a GOBL Payment Mean, use `other` and explicitly set the\nextension.\n\nFor example, in an GOBL invoice:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"payment\": {\n\t\t\"advances\": [\n\t\t\t{\n\t\t\t\t\"date\": \"2023-01-30\",\n\t\t\t\t\"key\": \"credit-transfer\",\n\t\t\t\t\"description\": \"Adiantamento\",\n\t\t\t\t\"amount\": \"100.00\",\n\t\t\t\t\"ext\": {\n\t\t\t\t\t\"pt-saft-payment-means\": \"TB\"\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t},\n\t// ...\n}\n```\n\nFor example, in a GOBL receipt:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/receipt\",\n\t// ...\n\t\"method\": {\n\t\t\"key\": \"other\",\n\t\t\"detail\": \"Compensação extrassalarial\",\n\t\t\"ext\": {\n\t\t\t\"pt-saft-payment-means\": \"TR\"\n\t\t}\n\t},\n\t// ...\n}"
       },
       "values": [
         {
@@ -539,6 +653,57 @@
           }
         }
       ]
+    },
+    {
+      "key": "pt-saft-movement-type",
+      "name": {
+        "en": "Movement Type",
+        "pt": "Tipo de documento"
+      },
+      "desc": {
+        "en": "SAF-T's `MovementType` (Tipo de documento de movimentação de mercadorias) specifies the type of\na delivery document. In GOBL,this type can be set using the `pt-saft-movement-type` extension.\nIf not provided explicitly, GOBL will set the extension for you based on the type of your delivery\ndocument.\n\nThe table below shows how this mapping is done:\n\n| Code | Name                | GOBL Type     |\n| ---- | ------------------- | ------------- |\n| `GR` | Delivery note       | `note`        |\n| `GT` | Waybill             | `waybill`     |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/delivery\",\n\t// ...\n\t\"type\": \"note\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-movement-type\": \"GR\"\n\t},\n\t// ...\n```"
+      },
+      "values": [
+        {
+          "code": "GR",
+          "name": {
+            "en": "Delivery note",
+            "pt": "Guia de remessa"
+          }
+        },
+        {
+          "code": "GT",
+          "name": {
+            "en": "Waybill",
+            "pt": "Guia de transporte"
+          },
+          "desc": {
+            "en": "Include global waybills here",
+            "pt": "Incluir aqui as guias globais"
+          }
+        },
+        {
+          "code": "GA",
+          "name": {
+            "en": "Guide to the movement own fixed assets",
+            "pt": "Guia de movimentação de ativos fixos próprios"
+          }
+        },
+        {
+          "code": "GC",
+          "name": {
+            "en": "Consignment note",
+            "pt": "Guia de consignação"
+          }
+        },
+        {
+          "code": "GD",
+          "name": {
+            "en": "Returns slip or note",
+            "pt": "Guia ou nota de devolução"
+          }
+        }
+      ]
     }
   ],
   "scenarios": [
@@ -586,6 +751,14 @@
           ],
           "ext": {
             "pt-saft-invoice-type": "NC"
+          }
+        },
+        {
+          "type": [
+            "proforma"
+          ],
+          "ext": {
+            "pt-saft-work-type": "PF"
           }
         },
         {

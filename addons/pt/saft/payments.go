@@ -18,15 +18,15 @@ const (
 )
 
 func validatePayment(pmt *bill.Payment) error {
-	pt := paymentType(pmt)
+	dt := paymentDocType(pmt)
 
 	return validation.ValidateStruct(pmt,
 		validation.Field(&pmt.Series,
-			validateSeriesFormat(pt),
+			validateSeriesFormat(dt),
 			validation.Skip,
 		),
 		validation.Field(&pmt.Code,
-			validateCodeFormat(pmt.Series, pt),
+			validateCodeFormat(pmt.Series, dt),
 			validation.Skip,
 		),
 		validation.Field(&pmt.Ext,
@@ -49,6 +49,13 @@ func validatePayment(pmt *bill.Payment) error {
 			validation.Skip,
 		),
 	)
+}
+
+func paymentDocType(pmt *bill.Payment) cbc.Code {
+	if pmt.Ext == nil {
+		return cbc.CodeEmpty
+	}
+	return pmt.Ext[ExtKeyPaymentType]
 }
 
 func validateSupplier(val any) error {
@@ -149,14 +156,6 @@ func validateLineTaxRate(val any) error {
 			validation.Skip,
 		),
 	)
-}
-
-func paymentType(pmt *bill.Payment) cbc.Code {
-	if pmt == nil || pmt.Ext == nil {
-		return cbc.CodeEmpty
-	}
-
-	return pmt.Ext[ExtKeyPaymentType]
 }
 
 func normalizePayment(pmt *bill.Payment) {
