@@ -24,11 +24,12 @@ const (
 
 // AT official codes to include in stamps.
 const (
-	StampProviderATATCUD    cbc.Key = "at-atcud"
-	StampProviderATQR       cbc.Key = "at-qr"
-	StampProviderATHash     cbc.Key = "at-hash"
-	StampProviderATHashFull cbc.Key = "at-hash-full"
-	StampProviderATAppID    cbc.Key = "at-app-id"
+	StampProviderATATCUD     cbc.Key = "at-atcud"
+	StampProviderATQR        cbc.Key = "at-qr"
+	StampProviderATHash      cbc.Key = "at-hash"
+	StampProviderATHashFull  cbc.Key = "at-hash-full"
+	StampProviderATAppID     cbc.Key = "at-app-id"
+	StampProviderATTimestamp cbc.Key = "at-ts"
 )
 
 // New instantiates a new Portugal regime for the given zone.
