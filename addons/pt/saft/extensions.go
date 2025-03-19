@@ -1,9 +1,6 @@
 package saft
 
 import (
-	"errors"
-
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/pkg/here"
@@ -13,27 +10,14 @@ import (
 const (
 	ExtKeyExemption    cbc.Key = "pt-saft-exemption"
 	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
-	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
-	ExtKeyWorkType     cbc.Key = "pt-saft-work-type"
-	ExtKeyPaymentType  cbc.Key = "pt-saft-payment-type"
-	ExtKeyMovementType cbc.Key = "pt-saft-movement-type"
 	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
-)
 
-// Invoice types
-const (
-	InvoiceTypeStandard       cbc.Code = "FT"
-	InvoiceTypeSimplified     cbc.Code = "FS"
-	InvoiceTypeInvoiceReceipt cbc.Code = "FR"
-	InvoiceTypeDebitNote      cbc.Code = "ND"
-	InvoiceTypeCreditNote     cbc.Code = "NC"
-)
-
-// Payment types
-const (
-	PaymentTypeCash  cbc.Code = "RC"
-	PaymentTypeOther cbc.Code = "RG"
+	// Document types extensions
+	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
+	ExtKeyWorkType     cbc.Key = "pt-saft-work-type"
+	ExtKeyMovementType cbc.Key = "pt-saft-movement-type"
+	ExtKeyPaymentType  cbc.Key = "pt-saft-payment-type"
 )
 
 // Tax rates
@@ -54,8 +38,20 @@ const (
 	ProductTypeFee     cbc.Code = "I"
 )
 
-// Work types
+// Document types
 const (
+	InvoiceTypeStandard       cbc.Code = "FT"
+	InvoiceTypeSimplified     cbc.Code = "FS"
+	InvoiceTypeInvoiceReceipt cbc.Code = "FR"
+	InvoiceTypeDebitNote      cbc.Code = "ND"
+	InvoiceTypeCreditNote     cbc.Code = "NC"
+
+	MovementTypeDeliveryNote cbc.Code = "GR"
+	MovementTypeWaybill      cbc.Code = "GT"
+	MovementTypeFixedAssets  cbc.Code = "GA"
+	MovementTypeConsignment  cbc.Code = "GC"
+	MovementTypeReturn       cbc.Code = "GD"
+
 	WorkTypeTableQueries      cbc.Code = "CM"
 	WorkTypeConsignmentCredit cbc.Code = "CC"
 	WorkTypeConsignmentInv    cbc.Code = "FC"
@@ -70,48 +66,10 @@ const (
 	WorkTypeCoInsurers        cbc.Code = "CS"
 	WorkTypeLeadCoInsurer     cbc.Code = "LD"
 	WorkTypeReinsurance       cbc.Code = "RA"
-)
 
-// Movement types
-const (
-	MovementTypeDeliveryNote cbc.Code = "GR"
-	MovementTypeWaybill      cbc.Code = "GT"
-	MovementTypeFixedAssets  cbc.Code = "GA"
-	MovementTypeConsignment  cbc.Code = "GC"
-	MovementTypeReturn       cbc.Code = "GD"
+	PaymentTypeCash  cbc.Code = "RC"
+	PaymentTypeOther cbc.Code = "RG"
 )
-
-// DocType is convenience function that returns the SAF-T document type code for the given
-// document.
-func DocType(doc any) (cbc.Code, error) {
-	switch d := doc.(type) {
-	case *bill.Invoice:
-		if d == nil || d.Tax == nil || d.Tax.Ext == nil {
-			return cbc.CodeEmpty, nil
-		}
-		if d.Tax.Ext.Has(ExtKeyInvoiceType) {
-			return d.Tax.Ext[ExtKeyInvoiceType], nil
-		}
-		return d.Tax.Ext[ExtKeyWorkType], nil
-	case *bill.Payment:
-		if d == nil || d.Ext == nil {
-			return cbc.CodeEmpty, nil
-		}
-		return d.Ext[ExtKeyPaymentType], nil
-	case *bill.Delivery:
-		if d == nil || d.Tax == nil || d.Tax.Ext == nil {
-			return cbc.CodeEmpty, nil
-		}
-		return d.Tax.Ext[ExtKeyMovementType], nil
-	case *bill.Order:
-		if d == nil || d.Tax == nil || d.Tax.Ext == nil {
-			return cbc.CodeEmpty, nil
-		}
-		return d.Tax.Ext[ExtKeyWorkType], nil
-	default:
-		return cbc.CodeEmpty, errors.New("unsupported document type")
-	}
-}
 
 var extensions = []*cbc.Definition{
 	{
@@ -643,25 +601,55 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				SAF-T's ~WorkType~ (Tipo de documento de conferência) specifies the type of a working
-				document. In GOBL,this type can be set using the ~pt-saft-work-type~ extension. GOBL
-				will set the extension for you based on the type and the tax tags you set in your invoice
-				in a few cases.
+				document. In GOBL, this type can be set using the ~pt-saft-work-type~ extension in either
+				~bill.Invoice~ or ~bill.Order~ documents. GOBL will set the extension for you based on the
+				document type in some cases.
 
-				The table below shows the cases where this mapping is done:
+				The table below shows the supported work type codes and their compatibility with GOBL objects:
 
-				| Code | Name                      | GOBL Type    | GOBL Tax Tag |
-				| ---- | ------------------------- | ------------ | ------------ |
-				| ~PF~ | Pro forma invoice         | ~proforma~   |              |
+				| Code   | Name                            | GOBL Doc | GOBL Type  |
+				| ------ | ------------------------------- | -------- | ---------- |
+				| ~PF~   | Pró-forma                       | Invoice  | ~proforma~ |
+				| ~FC~   | Fatura de consignação           | Invoice  |            |
+				| ~CC~   | Credito de consignação          | Invoice  |            |
+				| ~CM~   | Consultas de mesa               | Order    |            |
+				| ~FO~   | Folhas de obra                  | Order    |            |
+				| ~NE~   | Nota de Encomenda               | Order    | ~purchase~ |
+				| ~OU~   | Outros                          | Order    |            |
+				| ~OR~   | Orçamentos                      | Order    | ~quote~    |
+				| ~DC~   | Documentos de conferência       | Order    |            |
+				| ~RP~   | Prémio ou recibo de prémio      | Order    |            |
+				| ~RE~   | Estorno ou recibo de estorno    | Order    |            |
+				| ~CS~   | Imputação a co-seguradoras      | Order    |            |
+				| ~LD~   | Imputação a co-seguradora líder | Order    |            |
+				| ~RA~   | Resseguro aceite                | Order    |            |
 
-				Example:
+				Example for a proforma invoice:
 
 				~~~js
 				{
-					"$schema": "https://gobl.org/draft-0/bill/document",
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
 					"type": "proforma",
 					// ...
-					"ext": {
-						"pt-saft-work-type": "PF"
+					"tax": {
+						"ext": {
+							"pt-saft-work-type": "PF"
+						}
+					},
+					// ...
+				~~~
+
+				Example for a purchase order:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/order",
+					"type": "purchase",
+					// ...
+					"tax": {
+						"ext": {
+							"pt-saft-work-type": "NE"
+						}
 					},
 					// ...
 				~~~

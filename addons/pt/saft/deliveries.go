@@ -2,13 +2,14 @@ package saft
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
 // validateDelivery ensures that the delivery has the required movement type extension.
 func validateDelivery(dlv *bill.Delivery) error {
-	dt, _ := DocType(dlv)
+	dt := movementDocType(dlv)
 
 	return validation.ValidateStruct(dlv,
 		validation.Field(&dlv.Supplier,
@@ -29,6 +30,13 @@ func validateDelivery(dlv *bill.Delivery) error {
 		),
 		validation.Field(&dlv.DespatchDate, validation.Required),
 	)
+}
+
+func movementDocType(dlv *bill.Delivery) cbc.Code {
+	if dlv.Tax == nil || dlv.Tax.Ext == nil {
+		return cbc.CodeEmpty
+	}
+	return dlv.Tax.Ext[ExtKeyMovementType]
 }
 
 func validateDeliveryTax(val any) error {

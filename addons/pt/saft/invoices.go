@@ -3,6 +3,7 @@ package saft
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/invopop/gobl/bill"
@@ -25,8 +26,14 @@ var (
 	codeRegexp     = regexp.MustCompile(codePattern)
 )
 
+var invoiceWorkTypes = []cbc.Code{
+	WorkTypeProforma,
+	WorkTypeConsignmentInv,
+	WorkTypeConsignmentCredit,
+}
+
 func validateInvoice(inv *bill.Invoice) error {
-	dt, _ := DocType(inv)
+	dt := invoiceDocType(inv)
 
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
@@ -49,6 +56,16 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 	)
+}
+
+func invoiceDocType(inv *bill.Invoice) cbc.Code {
+	if inv.Tax == nil || inv.Tax.Ext == nil {
+		return cbc.CodeEmpty
+	}
+	if inv.Tax.Ext.Has(ExtKeyInvoiceType) {
+		return inv.Tax.Ext[ExtKeyInvoiceType]
+	}
+	return inv.Tax.Ext[ExtKeyWorkType]
 }
 
 func validateTax(val any) error {
@@ -82,6 +99,14 @@ func validateTaxExt(val any) error {
 
 	if ext.Has(ExtKeyWorkType, ExtKeyInvoiceType) {
 		return validation.NewError("invalid", msg+", but not both")
+	}
+
+	if wt, ok := ext[ExtKeyWorkType]; ok {
+		if !slices.Contains(invoiceWorkTypes, wt) {
+			return validation.Errors{
+				ExtKeyWorkType.String(): fmt.Errorf("value '%s' invalid", wt),
+			}
+		}
 	}
 
 	return nil

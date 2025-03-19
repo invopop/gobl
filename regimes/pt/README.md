@@ -281,25 +281,56 @@ For example, in a GOBL receipt:
 
 ### Work documents (Documentos de conferência)
 
-To report work documents to the AT, GOBL provides conversion from `bill.Invoice` documents. You can find an example of a valid Portugese proforma work document in the [`example folder`](../../examples/pt).
+To report work documents to the AT, GOBL provides conversion from `bill.Invoice` and `bill.Order` documents. You can find examples of valid Portuguese work documents in the [`example folder`](../../examples/pt).
 
-The SAF-T's `WorkType` field (Tipo de documento de conferência) specifies the type of a work document. In GOBL, this type can be set using the `pt-saft-work-type` extension. GOBL will set the extension for you based on the type and the tax tags you set in your document in a few cases.
+The SAF-T's `WorkType` field (Tipo de documento de conferência) specifies the type of a work document. In GOBL, this type can be set using the `pt-saft-work-type` extension in the tax section of the document. Certain work types are only valid for invoices while others are only valid for orders. For some document types, GOBL will automatically set the appropriate work type extension.
 
-The table below shows the cases where this mapping is done:
+The table below shows the supported work type codes and their compatibility:
 
-| Code | Name                      | GOBL Type    | GOBL Tax Tag |
-| ---- | ------------------------- | ------------ | ------------ |
-| PF   | Pro forma invoice         | `proforma`   |              |
+| Code | Name                            | GOBL Document | GOBL Type  |
+| ---- | ------------------------------- | ------------- | ---------- |
+| PF   | Pró-forma                       | Invoice       | `proforma` |
+| FC   | Fatura de consignação           | Invoice       |            |
+| CC   | Credito de consignação          | Invoice       |            |
+| CM   | Consultas de mesa               | Order         |            |
+| FO   | Folhas de obra                  | Order         |            |
+| NE   | Nota de Encomenda               | Order         | `purchase` |
+| OU   | Outros                          | Order         |            |
+| OR   | Orçamentos                      | Order         | `quote`    |
+| DC   | Documentos de conferência       | Order         |            |
+| RP   | Prémio ou recibo de prémio      | Order         |            |
+| RE   | Estorno ou recibo de estorno    | Order         |            |
+| CS   | Imputação a co-seguradoras      | Order         |            |
+| LD   | Imputação a co-seguradora líder | Order         |            |
+| RA   | Resseguro aceite                | Order         |            |
 
-For example:
+Example for a proforma invoice:
 
 ```js
 {
-  "$schema": "https://gobl.org/draft-0/bill/document",
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
   "type": "proforma",
   // [...]
-  "ext": {
-    "pt-saft-work-type": "PF"
+  "tax": {
+    "ext": {
+      "pt-saft-work-type": "PF"
+    }
+  },
+  // [...]
+}
+```
+
+Example for a purchase order:
+
+```js
+{
+  "$schema": "https://gobl.org/draft-0/bill/order",
+  "type": "purchase",
+  // [...]
+  "tax": {
+    "ext": {
+      "pt-saft-work-type": "NE"
+    }
   },
   // [...]
 }

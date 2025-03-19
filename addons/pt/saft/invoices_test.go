@@ -94,6 +94,15 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, addon.Validator(inv))
 	})
 
+	t.Run("invalid work type", func(t *testing.T) {
+		inv := validInvoice()
+
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeyWorkType: saft.WorkTypeBudgets, // Budgets is not valid in invoices, only in orders
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "value 'OR' invalid")
+	})
+
 	t.Run("missing VAT category in lines", func(t *testing.T) {
 		inv := validInvoice()
 

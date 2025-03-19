@@ -18,7 +18,7 @@ const (
 )
 
 func validatePayment(pmt *bill.Payment) error {
-	dt, _ := DocType(pmt)
+	dt := paymentDocType(pmt)
 
 	return validation.ValidateStruct(pmt,
 		validation.Field(&pmt.Series,
@@ -49,6 +49,13 @@ func validatePayment(pmt *bill.Payment) error {
 			validation.Skip,
 		),
 	)
+}
+
+func paymentDocType(pmt *bill.Payment) cbc.Code {
+	if pmt.Ext == nil {
+		return cbc.CodeEmpty
+	}
+	return pmt.Ext[ExtKeyPaymentType]
 }
 
 func validateSupplier(val any) error {
