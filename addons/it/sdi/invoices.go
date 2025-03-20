@@ -1,6 +1,7 @@
 package sdi
 
 import (
+	"errors"
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
@@ -43,6 +44,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Lines,
 			validation.Each(
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
+				validation.By(validateLine),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -131,6 +133,37 @@ func validateCustomer(value interface{}) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateLine(val any) error {
+	line, _ := val.(*bill.Line)
+	if line == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Item,
+			validation.Required,
+			validation.By(validateItem),
+		),
+	)
+}
+
+// validateItem ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateItem(val any) error {
+	item, _ := val.(*org.Item)
+	if item == nil {
+		return nil
+	}
+	for _, r := range item.Name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("name contains characters outside of Latin and Latin-1 range")
+		}
+	}
+	return nil
 }
 
 func validateInvoicePaymentDetails(val any) error {

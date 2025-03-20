@@ -282,16 +282,26 @@ func TestRetainedTaxesValidation(t *testing.T) {
 }
 
 func TestInvoiceLineTaxes(t *testing.T) {
-	inv := testInvoiceStandard(t)
-	inv.Lines = append(inv.Lines, &bill.Line{
-		Quantity: num.MakeAmount(10, 0),
-		Item: &org.Item{
-			Name:  "Test Item",
-			Price: num.NewAmount(10000, 2),
-		},
-		// No taxes!
+	t.Run("missing item", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, &bill.Line{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(10000, 2),
+			},
+			// No taxes!
+		})
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.EqualError(t, err, "lines: (1: (taxes: missing category VAT.).).")
 	})
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	require.EqualError(t, err, "lines: (1: (taxes: missing category VAT.).).")
+
+	t.Run("invalid item name", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Item.Name = "Test Item €"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.EqualError(t, err, "lines: (0: (item: name contains characters outside of Latin and Latin-1 range.).).")
+	})
 }
