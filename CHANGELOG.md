@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `it-sdi-v1`: validation for non latin and latin-1 characters in item names.
 - `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
 
 ## [v0.212.1] - 2025-03-11

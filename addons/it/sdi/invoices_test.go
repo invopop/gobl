@@ -282,7 +282,7 @@ func TestRetainedTaxesValidation(t *testing.T) {
 }
 
 func TestInvoiceLineTaxes(t *testing.T) {
-	t.Run("missing item", func(t *testing.T) {
+	t.Run("missing item tax category", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(10, 0),
