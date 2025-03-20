@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `bill`: line rounding will now check for nil item and nil item price.
 - `bill`: reverting back to maintaining precision in line totals for `precise` rounding for consistency with old data. Use `currency` rounding for compatibility with EN16931 specs.
 - `bill`: line sum rounded to currency precision in `currency` rounding.
 

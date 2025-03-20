@@ -275,17 +275,16 @@ func roundLines(lines []*Line, cur currency.Code) {
 // round will automatically apply the correct rounding rules.
 func (l *Line) round(cur currency.Code) {
 	e := cur.Def().Subunits
-	if l.Item.Price != nil {
+	if l.Item != nil && l.Item.Price != nil {
 		e = l.Item.Price.Exp()
+		if l.Total != nil {
+			total := l.Total.RescaleDown(e)
+			l.Total = &total
+		}
 	}
 	if l.Sum != nil {
 		sum := l.Sum.RescaleDown(e)
 		l.Sum = &sum
-	}
-	if l.Total != nil {
-		e := l.Item.Price.Exp()
-		total := l.Total.RescaleDown(e)
-		l.Total = &total
 	}
 	for _, d := range l.Discounts {
 		d.round(e)

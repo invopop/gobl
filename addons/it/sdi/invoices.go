@@ -145,6 +145,7 @@ func validateLine(val any) error {
 		validation.Field(&line.Item,
 			validation.Required,
 			validation.By(validateItem),
+			validation.Skip,
 		),
 	)
 }
@@ -156,11 +157,25 @@ func validateItem(val any) error {
 	if item == nil {
 		return nil
 	}
-	for _, r := range item.Name {
+
+	return validation.ValidateStruct(item,
+		validation.Field(&item.Name,
+			validation.By(validateItemName),
+			validation.Skip,
+		),
+	)
+}
+
+func validateItemName(val any) error {
+	name, ok := val.(string)
+	if !ok {
+		return nil
+	}
+	for _, r := range name {
 		// Check if the character is outside Latin and Latin-1 range
 		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
 		if r > 255 {
-			return errors.New("name contains characters outside of Latin and Latin-1 range")
+			return errors.New("contains characters outside of Latin and Latin-1 range")
 		}
 	}
 	return nil
