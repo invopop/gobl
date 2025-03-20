@@ -322,7 +322,7 @@ func TestPaymentJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 	t.Run("recommended", func(t *testing.T) {
-		assert.Len(t, js.Extras[schema.Recommended], 1)
+		assert.Len(t, js.Extras[schema.Recommended], 4)
 	})
 
 }

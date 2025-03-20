@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
 
+## Changed
+
+- `bill`: `code` field now "recommended" in Order, Delivery, Invoice, & Payment schemas, but should not raise JSON Schema warnings. Validation will continue to fail when signing.
+
 ## [v0.212.1] - 2025-03-11
 
 ### Changed

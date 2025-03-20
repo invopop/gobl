@@ -1,7 +1,6 @@
 {
     "$regime": "ES",
     "$schema": "https://gobl.org/draft-0/bill/invoice",
-    "code": "",
     "currency": "EUR",
     "customer": {
         "name": "Sample Consumer",
@@ -10,7 +9,7 @@
             "country": "ES"
         }
     },
-    "issue_date": "2024-09-16",
+    "issue_date": "2025-03-13",
     "lines": [
         {
             "discounts": [
@@ -124,5 +123,5 @@
         "total_with_tax": "1717.20"
     },
     "type": "standard",
-    "uuid": "0191fb27-f9da-74e3-8c2a-8c39b05c2987"
+    "uuid": "01959046-b5f3-776b-91f7-30de3498d5f0"
 }

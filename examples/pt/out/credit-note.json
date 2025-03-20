@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "db749c4e502af8fa352426db5d6137b070b40e0f7bdc0dc60f2b90546db0bb43"
+			"val": "1d7284735c9e0c95ec790de9f3e7a7ce239134999b39ead2d9f0d15459fd23db"
 		}
 	},
 	"doc": {
@@ -15,7 +15,6 @@
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "credit-note",
-		"code": "",
 		"issue_date": "2023-01-30",
 		"currency": "EUR",
 		"preceding": [

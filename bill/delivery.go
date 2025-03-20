@@ -89,10 +89,14 @@ type Delivery struct {
 
 	// Type of delivery document.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"enum=advice,note,waybill,receipt"`
-	// Used as a prefix to group codes.
+	// Series is used to identify groups of deliveries by date, business area, project,
+	// type, customer, a combination of any, or other company specific data.
+	// If the output format does not support the series as a separate field, it will be
+	// prepended to the code for presentation with a dash (`-`) for separation.
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
-	// Sequential code used to identify this delivery in tax declarations.
-	Code cbc.Code `json:"code" jsonschema:"title=Code"`
+	// Code is a sequential identifier that uniquely identifies the delivery. The code can
+	// be left empty initially, but is **required** to **sign** the document.
+	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the delivery document is to be issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
 	// When the taxes of this delivery become accountable, if none set, the issue date is used.
@@ -401,6 +405,9 @@ func (dlv Delivery) JSONSchemaExtend(js *jsonschema.Schema) {
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
 			"$regime",
+			"series",
+			"code",
+			"lines",
 		},
 	}
 }
