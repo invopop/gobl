@@ -165,9 +165,6 @@ func (k *PublicKey) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON parses the JSON private key data. You should perform
 // validation on the key to ensure it was provided correctly.
 func (k *PrivateKey) UnmarshalJSON(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
 	if k.jwk == nil {
 		k.jwk = new(jose.JSONWebKey)
 	}
@@ -177,9 +174,6 @@ func (k *PrivateKey) UnmarshalJSON(data []byte) error {
 // UnmarshalJSON parses the JSON public key data. You should perform
 // validation on the key to ensure it was provided correctly.
 func (k *PublicKey) UnmarshalJSON(data []byte) error {
-	if len(data) == 0 {
-		return nil
-	}
 	if k.jwk == nil {
 		k.jwk = new(jose.JSONWebKey)
 	}
