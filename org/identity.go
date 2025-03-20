@@ -33,7 +33,6 @@ const (
 	IdentityKeyEAN       cbc.Key = "ean"       // European Article Number
 	IdentityKeyUPC       cbc.Key = "upc"       // UPC (Universal Product Code)
 	IdentityKeyIMEI      cbc.Key = "imei"      // International Mobile Equipment Identity
-	IdentityKeyPeppol    cbc.Key = "peppol"    // Peppol Participant Identifier
 	IdentityKeyDUNS      cbc.Key = "duns"      // Dun & Bradstreet D-U-N-S Number
 	IdentityKeyOther     cbc.Key = "other"
 )
