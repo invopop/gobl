@@ -100,6 +100,48 @@ func TestInvoiceNormalization(t *testing.T) {
 	})
 }
 
+func TestSupplierValidation(t *testing.T) {
+	t.Run("with supplier registration details", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Registration = &org.Registration{
+			Entry:  "123456",
+			Office: "Rome",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("with supplier missing registration details", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Registration = &org.Registration{
+			Entry: "123456",
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (registration: (office: cannot be blank.).).")
+	})
+
+	t.Run("with invalid tax ID code", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID = &tax.Identity{
+			Country: "IT",
+			Code:    "RSSGNN60R30H501U",
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "code: contains invalid characters")
+	})
+
+	t.Run("missing supplier", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		ad := tax.AddonForKey(sdi.V1)
+		inv.Supplier = nil
+		ad.Normalizer(inv)
+		assert.NoError(t, ad.Validator(inv))
+	})
+}
+
 func TestCustomerValidation(t *testing.T) {
 	id := &org.Identity{
 		Key:  it.IdentityKeyFiscalCode,
@@ -138,6 +180,37 @@ func TestCustomerValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "identities: missing key 'it-fiscal-code'")
 		assert.ErrorContains(t, err, "tax_id: (code: cannot be blank.")
 	})
+
+	t.Run("missing address", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Addresses = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: (addresses: cannot be blank.).")
+	})
+
+	t.Run("missing customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: cannot be blank.")
+	})
+
+}
+
+func TestTaxValidation(t *testing.T) {
+	t.Run("missing tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Tax = nil
+		ad := tax.AddonForKey(sdi.V1)
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
+		assert.ErrorContains(t, err, "tax: cannot be blank.")
+	})
+}
+
+func TestPaymentValidation(t *testing.T) {
 
 	t.Run("payment advances", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -203,37 +276,6 @@ func TestCustomerValidation(t *testing.T) {
 		assert.Equal(t, "MP08", inv.Payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String())
 	})
 
-	t.Run("with supplier registration details", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.Registration = &org.Registration{
-			Entry:  "123456",
-			Office: "Rome",
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
-	t.Run("with supplier missing registration details", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.Registration = &org.Registration{
-			Entry: "123456",
-		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "supplier: (registration: (office: cannot be blank.).).")
-	})
-}
-
-func TestSupplierValidation(t *testing.T) {
-	inv := testInvoiceStandard(t)
-	inv.Supplier.TaxID = &tax.Identity{
-		Country: "IT",
-		Code:    "RSSGNN60R30H501U",
-	}
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "code: contains invalid characters")
 }
 
 func TestSupplierAddressesValidation(t *testing.T) {
@@ -281,8 +323,9 @@ func TestRetainedTaxesValidation(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
-func TestInvoiceLine(t *testing.T) {
-	t.Run("missing item tax category", func(t *testing.T) {
+func TestInvoiceLineValidation(t *testing.T) {
+	ad := tax.AddonForKey(sdi.V1)
+	t.Run("missing item tax addon", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(10, 0),
@@ -292,16 +335,50 @@ func TestInvoiceLine(t *testing.T) {
 			},
 			// No taxes!
 		})
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
 		require.EqualError(t, err, "lines: (1: (taxes: missing category VAT.).).")
 	})
 
-	t.Run("invalid item name", func(t *testing.T) {
+	t.Run("invalid item tax category", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, &bill.Line{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(10000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "GST",
+					Rate:     "standard",
+				},
+			},
+		})
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
+		require.EqualError(t, err, "lines: (1: (taxes: missing category VAT.).).")
+	})
+
+	t.Run("missing line", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = []*bill.Line{nil}
+		ad.Normalizer(inv)
+		require.NoError(t, ad.Validator(inv))
+	})
+
+	t.Run("missing line item", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Item = nil
+		ad.Normalizer(inv)
+		require.NoError(t, ad.Validator(inv))
+	})
+
+	t.Run("with invalid item name", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Item.Name = "Test Item €"
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
 		require.EqualError(t, err, "lines: (0: (item: (name: contains characters outside of Latin and Latin-1 range.).).).")
 	})
 }

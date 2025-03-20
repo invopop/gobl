@@ -30,6 +30,7 @@ func normalizeSupplier(party *org.Party) {
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
+			validation.Required,
 			validation.By(validateTax),
 			validation.Skip,
 		),
@@ -38,13 +39,14 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
+			validation.Required,
 			validation.By(validateCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.By(validateLine),
+				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -57,8 +59,8 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 func validateTax(value any) error {
-	obj, _ := value.(*bill.Tax)
-	if obj == nil {
+	obj, ok := value.(*bill.Tax)
+	if !ok {
 		return nil
 	}
 	return validation.ValidateStruct(obj,
@@ -74,7 +76,7 @@ func validateTax(value any) error {
 
 func validateSupplier(value interface{}) error {
 	supplier, ok := value.(*org.Party)
-	if !ok {
+	if !ok || supplier == nil {
 		return nil
 	}
 
@@ -101,8 +103,8 @@ func validateSupplier(value interface{}) error {
 }
 
 func validateCustomer(value interface{}) error {
-	customer, _ := value.(*org.Party)
-	if customer == nil {
+	customer, ok := value.(*org.Party)
+	if !ok {
 		return nil
 	}
 
@@ -121,6 +123,7 @@ func validateCustomer(value interface{}) error {
 			validation.When(
 				isItalianParty(customer),
 				// TODO: address not required for simplified invoices
+				validation.Required,
 				validation.Each(validation.By(validateAddress)),
 			),
 			validation.Skip,
@@ -143,15 +146,12 @@ func validateLine(val any) error {
 
 	return validation.ValidateStruct(line,
 		validation.Field(&line.Item,
-			validation.Required,
 			validation.By(validateItem),
 			validation.Skip,
 		),
 	)
 }
 
-// validateItem ensures that the item name only contains characters
-// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
 func validateItem(val any) error {
 	item, _ := val.(*org.Item)
 	if item == nil {
@@ -166,11 +166,11 @@ func validateItem(val any) error {
 	)
 }
 
+// validateItemName ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
 func validateItemName(val any) error {
-	name, ok := val.(string)
-	if !ok {
-		return nil
-	}
+	name, _ := val.(string)
+
 	for _, r := range name {
 		// Check if the character is outside Latin and Latin-1 range
 		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
@@ -202,7 +202,7 @@ func hasTaxIDCode(party *org.Party) bool {
 }
 
 func hasFiscalCode(party *org.Party) bool {
-	if party == nil || party.TaxID == nil {
+	if party == nil {
 		return false
 	}
 	return org.IdentityForKey(party.Identities, it.IdentityKeyFiscalCode) != nil
@@ -218,7 +218,7 @@ func isItalianParty(party *org.Party) bool {
 
 func validateAddress(value interface{}) error {
 	v, ok := value.(*org.Address)
-	if v == nil || !ok {
+	if !ok {
 		return nil
 	}
 	// Post code and street in addition to the locality are required in Italian invoices.
