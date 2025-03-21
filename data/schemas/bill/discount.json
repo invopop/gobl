@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/discount",
+  "$ref": "#/$defs/Discount",
+  "$defs": {
+    "Discount": {
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid",
+          "title": "UUID",
+          "description": "Universally Unique Identifier."
+        },
+        "i": {
+          "type": "integer",
+          "title": "Index",
+          "description": "Line number inside the list of discounts (calculated)",
+          "calculated": true
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "anyOf": [
+            {
+              "const": "early-completion",
+              "title": "Bonus for works ahead of schedule"
+            },
+            {
+              "const": "military",
+              "title": "Military Discount"
+            },
+            {
+              "const": "work-accident",
+              "title": "Work Accident Discount"
+            },
+            {
+              "const": "special-agreement",
+              "title": "Special Agreement Discount"
+            },
+            {
+              "const": "production-error",
+              "title": "Production Error Discount"
+            },
+            {
+              "const": "new-outlet",
+              "title": "New Outlet Discount"
+            },
+            {
+              "const": "sample",
+              "title": "Sample Discount"
+            },
+            {
+              "const": "end-of-range",
+              "title": "End of Range Discount"
+            },
+            {
+              "const": "incoterm",
+              "title": "Incoterm Discount"
+            },
+            {
+              "const": "pos-threshold",
+              "title": "Point of Sale Threshold Discount"
+            },
+            {
+              "const": "special-rebate",
+              "title": "Special Rebate"
+            },
+            {
+              "const": "temporary",
+              "title": "Temporary"
+            },
+            {
+              "const": "standard",
+              "title": "Standard"
+            },
+            {
+              "const": "yearly-turnover",
+              "title": "Yearly Turnover"
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Other"
+            }
+          ],
+          "title": "Key",
+          "description": "Key for identifying the type of discount being applied."
+        },
+        "code": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Code",
+          "description": "Code to used to refer to the this discount by the issuer"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Reason",
+          "description": "Text description as to why the discount was applied"
+        },
+        "base": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Base",
+          "description": "Base represents the value used as a base for percent calculations instead\nof the invoice's sum of lines."
+        },
+        "percent": {
+          "$ref": "https://gobl.org/draft-0/num/percentage",
+          "title": "Percent",
+          "description": "Percentage to apply to the base or invoice's sum."
+        },
+        "amount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Amount",
+          "description": "Amount to apply (calculated if percent present).",
+          "calculated": true
+        },
+        "taxes": {
+          "$ref": "https://gobl.org/draft-0/tax/set",
+          "title": "Taxes",
+          "description": "List of taxes to apply to the discount"
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Extension codes that apply to the discount"
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional semi-structured information."
+        }
+      },
+      "type": "object",
+      "required": [
+        "i",
+        "amount"
+      ],
+      "description": "Discount represents an allowance applied to the complete document independent from the individual lines."
+    }
+  }
+}

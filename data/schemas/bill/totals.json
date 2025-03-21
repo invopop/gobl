@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/totals",
+  "$ref": "#/$defs/Totals",
+  "$defs": {
+    "Totals": {
+      "properties": {
+        "sum": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Sum",
+          "description": "Sum of all line item sums"
+        },
+        "discount": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Discount",
+          "description": "Sum of all document level discounts"
+        },
+        "charge": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Charge",
+          "description": "Sum of all document level charges"
+        },
+        "tax_included": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax Included",
+          "description": "If prices include tax, this is the total tax included in the price."
+        },
+        "total": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total",
+          "description": "Sum of all line sums minus the discounts, plus the charges, without tax."
+        },
+        "taxes": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax Totals",
+          "description": "Summary of all the taxes included in the invoice."
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Tax",
+          "description": "Total amount of tax to apply to the invoice."
+        },
+        "total_with_tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Total with Tax",
+          "description": "Grand total after all taxes have been applied."
+        },
+        "rounding": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Rounding",
+          "description": "Rounding amount to apply to the invoice in case the total and payable\namounts don't quite match."
+        },
+        "payable": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Payable",
+          "description": "Total amount to be paid after applying taxes and outlays."
+        },
+        "advance": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Advance",
+          "description": "Total amount already paid in advance."
+        },
+        "due": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Due",
+          "description": "How much actually needs to be paid now."
+        }
+      },
+      "type": "object",
+      "required": [
+        "sum",
+        "total",
+        "total_with_tax",
+        "payable"
+      ],
+      "description": "Totals contains the summaries of all calculations for the invoice."
+    }
+  }
+}
