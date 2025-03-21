@@ -571,3 +571,109 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "39.77", lines[0].Total.String())
 	})
 }
+
+func TestRoundLines(t *testing.T) {
+	t.Run("round lines with nil item", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Sum:      num.NewAmount(1000, 2),
+				Total:    num.NewAmount(1200, 2),
+				Charges: []*LineCharge{
+					{
+						Amount: num.MakeAmount(200, 2),
+					},
+				},
+				Discounts: []*LineDiscount{
+					{
+						Amount: num.MakeAmount(100, 2),
+					},
+				},
+				Breakdown: []*SubLine{
+					{
+						Sum:   num.NewAmount(500, 2),
+						Total: num.NewAmount(500, 2),
+					},
+				},
+				Substituted: []*SubLine{
+					{
+						Sum:   num.NewAmount(300, 2),
+						Total: num.NewAmount(300, 2),
+					},
+				},
+			},
+		}
+
+		// Should not panic when item is nil
+		roundLines(lines, currency.EUR)
+
+		// Check that values were rounded to currency precision
+		assert.Equal(t, "10.00", lines[0].Sum.String())
+		assert.Equal(t, "12.00", lines[0].Total.String())
+		assert.Equal(t, "2.00", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "1.00", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "5.00", lines[0].Breakdown[0].Sum.String())
+		assert.Equal(t, "5.00", lines[0].Breakdown[0].Total.String())
+		assert.Equal(t, "3.00", lines[0].Substituted[0].Sum.String())
+		assert.Equal(t, "3.00", lines[0].Substituted[0].Total.String())
+	})
+
+	t.Run("round lines with nil sum", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Total:    num.NewAmount(1200, 2),
+				Charges: []*LineCharge{
+					{
+						Amount: num.MakeAmount(200, 2),
+					},
+				},
+			},
+		}
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "12.00", lines[0].Total.String())
+		assert.Equal(t, "2.00", lines[0].Charges[0].Amount.String())
+	})
+
+	t.Run("round lines with nil total", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Sum:      num.NewAmount(1000, 2),
+				Charges: []*LineCharge{
+					{
+						Amount: num.MakeAmount(200, 2),
+					},
+				},
+			},
+		}
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "10.00", lines[0].Sum.String())
+		assert.Equal(t, "2.00", lines[0].Charges[0].Amount.String())
+	})
+
+	t.Run("round lines with nil item price", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item:     &org.Item{},
+				Total:    num.NewAmount(1200, 2),
+				Sum:      num.NewAmount(1000, 2),
+				Charges: []*LineCharge{
+					{
+						Amount: num.MakeAmount(200, 2),
+					},
+				},
+			},
+		}
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, "10.00", lines[0].Sum.String())
+		assert.Equal(t, "2.00", lines[0].Charges[0].Amount.String())
+	})
+
+	t.Run("round lines with no lines", func(t *testing.T) {
+		lines := []*Line{}
+		roundLines(lines, currency.EUR)
+		assert.Equal(t, 0, len(lines))
+	})
+}
