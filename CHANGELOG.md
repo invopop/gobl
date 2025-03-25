@@ -11,11 +11,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `it-sdi-v1`: validation for non latin and latin-1 characters in item names.
 - `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
 
+### Changed
+
+- `bill`: line rounding will now check for nil item and nil item price.
+
 ## [v0.212.1] - 2025-03-11
 
 ### Changed
 
-- `bill`: line rounding will now check for nil item and nil item price.
 - `bill`: reverting back to maintaining precision in line totals for `precise` rounding for consistency with old data. Use `currency` rounding for compatibility with EN16931 specs.
 - `bill`: line sum rounded to currency precision in `currency` rounding.
 
