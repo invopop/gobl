@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.213.0] - 2025-03-25
+
 ### Added
 
 - `it-sdi-v1`: validation for non latin and latin-1 characters in item names.
