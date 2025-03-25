@@ -10,6 +10,7 @@
     "GR"
   ],
   "currency": "EUR",
+  "tax_scheme": "VAT",
   "calculator_rounding_rule": "currency",
   "tags": [
     {

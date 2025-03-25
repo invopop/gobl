@@ -30,7 +30,8 @@ func New() *tax.RegimeDef {
 		AltCountryCodes: []l10n.Code{
 			"GR", // regular ISO code
 		},
-		Currency: currency.EUR,
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Greece",
 			i18n.EL: "Ελλάδα",

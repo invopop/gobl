@@ -6,6 +6,7 @@
   "time_zone": "Europe/Vienna",
   "country": "AT",
   "currency": "EUR",
+  "tax_scheme": "VAT",
   "tags": [
     {
       "schema": "bill/invoice",

@@ -48,6 +48,12 @@ type RegimeDef struct {
 	// Currency used by the country.
 	Currency currency.Code `json:"currency" jsonschema:"title=Currency"`
 
+	// TaxScheme defines the principal scheme of consumption tax that should be
+	// applied to the regime and associated with Tax IDs in some export formats
+	// such as UBL or CII. Some regimes may not have a Tax Scheme and as a
+	// consequence will not use tax identities, like the US.
+	TaxScheme cbc.Code `json:"tax_scheme,omitempty" jsonschema:"title=Tax Scheme"`
+
 	// Rounding rule to use when calculating the tax totals, default is always
 	// `sum-then-round`.
 	CalculatorRoundingRule cbc.Key `json:"calculator_rounding_rule,omitempty" jsonschema:"title=Calculator Rounding Rule"`
@@ -291,6 +297,7 @@ func (r *RegimeDef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&r.Country),
 		validation.Field(&r.Zone),
 		validation.Field(&r.Currency),
+		validation.Field(&r.TaxScheme),
 		validation.Field(&r.Tags),
 		validation.Field(&r.Identities),
 		validation.Field(&r.Extensions),

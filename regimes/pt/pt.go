@@ -35,8 +35,9 @@ const (
 // New instantiates a new Portugal regime for the given zone.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "PT",
-		Currency: currency.EUR,
+		Country:   "PT",
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Portugal",
 			i18n.PT: "Portugal",

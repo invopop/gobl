@@ -6,6 +6,7 @@
   "time_zone": "America/Toronto",
   "country": "CA",
   "currency": "CAD",
+  "tax_scheme": "GST",
   "corrections": [
     {
       "schema": "bill/invoice",

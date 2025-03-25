@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	_ "github.com/invopop/gobl" // load all mods
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -66,6 +67,23 @@ func TestTaxIdentity(t *testing.T) {
 		}
 		assert.ErrorContains(t, tID.Validate(), "code: must be in a valid format")
 	})
+
+	t.Run("with scheme", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "X3157928M",
+			Scheme:  tax.CategoryVAT,
+		}
+		assert.NoError(t, tID.Validate())
+	})
+	t.Run("with invalid scheme", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "X3157928M",
+			Scheme:  "Foo",
+		}
+		assert.ErrorContains(t, tID.Validate(), "scheme: must be in a valid format.")
+	})
 }
 
 func TestParseIdentity(t *testing.T) {
@@ -82,6 +100,31 @@ func TestParseIdentity(t *testing.T) {
 
 	_, err = tax.ParseIdentity("E")
 	assert.ErrorContains(t, err, "invalid tax identity code")
+}
+
+func TestIdentityGetScheme(t *testing.T) {
+	t.Run("use override", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "X3157928M",
+			Scheme:  "IPSI",
+		}
+		assert.Equal(t, cbc.Code("IPSI"), tID.GetScheme())
+	})
+	t.Run("use regime default", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "X3157928M",
+		}
+		assert.Equal(t, tax.CategoryVAT, tID.GetScheme())
+	})
+	t.Run("use empty", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "US",
+			Code:    "1234567",
+		}
+		assert.Equal(t, cbc.CodeEmpty, tID.GetScheme())
+	})
 }
 
 func TestValidationRules(t *testing.T) {
