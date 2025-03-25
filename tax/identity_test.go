@@ -118,13 +118,21 @@ func TestIdentityGetScheme(t *testing.T) {
 		}
 		assert.Equal(t, tax.CategoryVAT, tID.GetScheme())
 	})
-	t.Run("use empty", func(t *testing.T) {
+	t.Run("use empty for regime without default", func(t *testing.T) {
 		tID := &tax.Identity{
 			Country: "US",
 			Code:    "1234567",
 		}
 		assert.Equal(t, cbc.CodeEmpty, tID.GetScheme())
 	})
+	t.Run("use empty for no regime", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ZW", // Will need fixing when ZW supported :-)
+			Code:    "1234567",
+		}
+		assert.Equal(t, cbc.CodeEmpty, tID.GetScheme())
+	})
+
 }
 
 func TestValidationRules(t *testing.T) {
