@@ -43,7 +43,9 @@ jobs:
             - name: Set up Go
               uses: actions/setup-go@v5
               with:
-                  go-version-file: "go.mod"
+                  # Use fixed go version to avoid issues with lib/wasm location
+                  go-version: "1.24"
+                  # go-version-file: "go.mod"
 
             # Ensure we have a wasm_exec.js for the current version of Go
             - name: Copy Go WASM Exec
