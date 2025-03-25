@@ -10,6 +10,7 @@
   "time_zone": "Europe/Paris",
   "country": "FR",
   "currency": "EUR",
+  "tax_scheme": "VAT",
   "tags": [
     {
       "schema": "bill/invoice",

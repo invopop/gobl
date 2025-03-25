@@ -17,8 +17,9 @@ func init() {
 // New provides the tax region definition for India.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "IN",
-		Currency: currency.INR,
+		Country:   "IN",
+		Currency:  currency.INR,
+		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{
 			i18n.EN: "India",
 		},

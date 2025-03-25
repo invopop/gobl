@@ -17,8 +17,9 @@ func init() {
 // New provides the tax region definition for AE.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "AE",
-		Currency: currency.AED,
+		Country:   "AE",
+		Currency:  currency.AED,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "United Arab Emirates",
 			i18n.AR: "الإمارات العربية المتحدة",

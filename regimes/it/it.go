@@ -18,8 +18,9 @@ func init() {
 // New instantiates a new Italian regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "IT",
-		Currency: currency.EUR,
+		Country:   "IT",
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Italy",
 			i18n.IT: "Italia",

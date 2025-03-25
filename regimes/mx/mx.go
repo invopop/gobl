@@ -35,8 +35,9 @@ const (
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "MX",
-		Currency: currency.MXN,
+		Country:   "MX",
+		Currency:  currency.MXN,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Mexico",
 			i18n.ES: "México",

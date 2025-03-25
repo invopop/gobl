@@ -7,6 +7,7 @@
   "time_zone": "Europe/Amsterdam",
   "country": "NL",
   "currency": "EUR",
+  "tax_scheme": "VAT",
   "tags": [
     {
       "schema": "bill/invoice",

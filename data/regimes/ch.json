@@ -6,6 +6,7 @@
   "time_zone": "Europe/Zurich",
   "country": "CH",
   "currency": "CHF",
+  "tax_scheme": "VAT",
   "tags": [
     {
       "schema": "bill/invoice",

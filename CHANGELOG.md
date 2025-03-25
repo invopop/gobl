@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
+- `tax`: Regime Definition now supports a primary `TaxScheme` property for usage in converting to other formats.
+- `tax`: `Identity` now supports an override `Scheme` field and `GetScheme` method that will fallback to the Regime's tax scheme default.
 
 ## Changed
 

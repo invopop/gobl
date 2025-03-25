@@ -6,6 +6,7 @@
   "time_zone": "Asia/Kolkata",
   "country": "IN",
   "currency": "INR",
+  "tax_scheme": "GST",
   "scenarios": [
     {
       "schema": "bill/invoice",
