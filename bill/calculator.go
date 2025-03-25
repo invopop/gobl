@@ -192,7 +192,7 @@ func calculate(doc billable) error {
 		pd.Terms.CalculateDues(zero, t.Payable)
 	}
 
-	roundLines(doc.getLines(), cur)
+	roundLines(doc.getLines())
 	roundDiscounts(doc.getDiscounts(), cur)
 	roundCharges(doc.getCharges(), cur)
 	t.round(zero)

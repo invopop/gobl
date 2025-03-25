@@ -263,9 +263,9 @@ func determineSubLinePrecision(sls []*SubLine) uint32 {
 }
 
 // roundLines is a convenience function to round all the lines in a document.
-func roundLines(lines []*Line, cur currency.Code) {
+func roundLines(lines []*Line) {
 	for _, l := range lines {
-		l.round(cur)
+		l.round()
 	}
 }
 
@@ -273,11 +273,12 @@ func roundLines(lines []*Line, cur currency.Code) {
 // so that no number exceeds the item price's or currency's precision.
 // This method is only useful for precision rounding, as currency
 // round will automatically apply the correct rounding rules.
-func (l *Line) round(cur currency.Code) {
-	e := cur.Def().Subunits
-	if l.Item.Price != nil {
-		e = l.Item.Price.Exp()
+func (l *Line) round() {
+	if l.Item == nil || l.Item.Price == nil {
+		return
 	}
+	e := l.Item.Price.Exp()
+
 	if l.Sum != nil {
 		sum := l.Sum.RescaleDown(e)
 		l.Sum = &sum
@@ -287,6 +288,7 @@ func (l *Line) round(cur currency.Code) {
 		total := l.Total.RescaleDown(e)
 		l.Total = &total
 	}
+
 	for _, d := range l.Discounts {
 		d.round(e)
 	}

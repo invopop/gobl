@@ -8,12 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `it-sdi-v1`: validation for non latin and latin-1 characters in item names.
 - `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
 - `tax`: Regime Definition now supports a primary `TaxScheme` property for usage in converting to other formats.
 - `tax`: `Identity` now supports an override `Scheme` field and `GetScheme` method that will fallback to the Regime's tax scheme default.
 
-## Changed
+### Changed
 
+- `bill`: line rounding will now check for nil item and nil item price.
 - `bill`: `code` field now "recommended" in Order, Delivery, Invoice, & Payment schemas, but should not raise JSON Schema warnings. Validation will continue to fail when signing.
 - `bill`: more sub-schemas published for re-use by main document schemas.
 
