@@ -7,12 +7,21 @@ import (
 
 func init() {
 	schema.Register(schema.GOBL.Add("bill"),
+		// Primary schemas
+		CorrectionOptions{},
 		Delivery{},
 		Invoice{},
 		Order{},
 		Payment{},
-		CorrectionOptions{},
+		// Sub-schemas - used by primaries
+		Charge{},
+		Discount{},
 		Line{},
+		Ordering{},
+		PaymentDetails{},
+		DeliveryDetails{},
+		Tax{},
+		Totals{},
 	)
 }
 

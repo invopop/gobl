@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/delivery-details",
+  "$ref": "#/$defs/DeliveryDetails",
+  "$defs": {
+    "DeliveryDetails": {
+      "properties": {
+        "receiver": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Receiver",
+          "description": "The party who will receive delivery of the goods defined in the invoice and is not responsible for taxes."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Identities is used to define specific codes or IDs that may be used to\nidentify the delivery."
+        },
+        "date": {
+          "$ref": "https://gobl.org/draft-0/cal/date",
+          "title": "Date",
+          "description": "When the goods should be expected."
+        },
+        "period": {
+          "$ref": "https://gobl.org/draft-0/cal/period",
+          "title": "Period",
+          "description": "Period of time in which to expect delivery if a specific date is not available."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Additional custom data."
+        }
+      },
+      "type": "object",
+      "description": "DeliveryDetails covers the details of the destination for the products described in the invoice body."
+    }
+  }
+}

@@ -3,96 +3,6 @@
   "$id": "https://gobl.org/draft-0/bill/payment",
   "$ref": "#/$defs/Payment",
   "$defs": {
-    "Ordering": {
-      "properties": {
-        "code": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Code",
-          "description": "Identifier assigned by the customer or buyer for internal routing purposes."
-        },
-        "identities": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/identity"
-          },
-          "type": "array",
-          "title": "Identities",
-          "description": "Any additional Codes, IDs, SKUs, or other regional or custom\nidentifiers that may be used to identify the order."
-        },
-        "period": {
-          "$ref": "https://gobl.org/draft-0/cal/period",
-          "title": "Period",
-          "description": "Period of time that the invoice document refers to often used in addition to the details\nprovided in the individual line items."
-        },
-        "buyer": {
-          "$ref": "https://gobl.org/draft-0/org/party",
-          "title": "Buyer",
-          "description": "Party who is responsible for issuing payment, if not the same as the customer."
-        },
-        "seller": {
-          "$ref": "https://gobl.org/draft-0/org/party",
-          "title": "Seller",
-          "description": "Seller is the party liable to pay taxes on the transaction if not the same as the supplier."
-        },
-        "projects": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Projects",
-          "description": "Projects this invoice refers to."
-        },
-        "contracts": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Contracts",
-          "description": "The identification of contracts."
-        },
-        "purchases": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Purchase Orders",
-          "description": "Purchase orders issued by the customer or buyer."
-        },
-        "sales": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Sales Orders",
-          "description": "Sales orders issued by the supplier or seller."
-        },
-        "receiving": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Receiving Advice",
-          "description": "Receiving Advice."
-        },
-        "despatch": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Despatch Advice",
-          "description": "Despatch advice."
-        },
-        "tender": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/org/document-ref"
-          },
-          "type": "array",
-          "title": "Tender Advice",
-          "description": "Tender advice, the identification of the call for tender or lot the invoice relates to."
-        }
-      },
-      "type": "object",
-      "description": "Ordering provides additional information about the ordering process including references to other documents and alternative parties involved in the order-to-delivery process."
-    },
     "Payment": {
       "properties": {
         "$regime": {
@@ -288,12 +198,12 @@
         "series": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Series",
-          "description": "Used as a prefix to group codes."
+          "description": "Series is used to identify groups of payments by date, business area, project,\ntype, customer, a combination of any, or other company specific data.\nIf the output format does not support the series as a separate field, it will be\nprepended to the code for presentation with a dash (`-`) for separation."
         },
         "code": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
           "title": "Code",
-          "description": "Sequential code used to identify this payment in tax declarations."
+          "description": "Code is a sequential identifier that uniquely identifies the payment. The code can\nbe left empty initially, but is **required** to **sign** the document."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
@@ -357,7 +267,7 @@
           "description": "List of documents that are being paid for."
         },
         "ordering": {
-          "$ref": "#/$defs/Ordering",
+          "$ref": "https://gobl.org/draft-0/bill/ordering",
           "title": "Ordering",
           "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
         },
@@ -396,7 +306,6 @@
       "type": "object",
       "required": [
         "type",
-        "code",
         "issue_date",
         "currency",
         "supplier",
@@ -405,7 +314,10 @@
       ],
       "description": "A Payment is used to link an invoice or invoices with a payment transaction.",
       "recommended": [
-        "$regime"
+        "$regime",
+        "series",
+        "code",
+        "lines"
       ]
     },
     "PaymentLine": {

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/bill/tax",
+  "$ref": "#/$defs/Tax",
+  "$defs": {
+    "Tax": {
+      "properties": {
+        "prices_include": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Prices Include",
+          "description": "Category of the tax already included in the line item prices, especially\nuseful for B2C retailers with customers who prefer final prices inclusive of\ntax."
+        },
+        "rounding": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "precise",
+              "title": "Precise",
+              "description": "The default method of calculating the totals in GOBL, and provides the best results\nfor most cases as the precision is maintained to the maximum amount possible. The\ntradeoff however is that sometimes the totals may not sum exactly based on what is visible."
+            },
+            {
+              "const": "currency",
+              "title": "Currency",
+              "description": "The alternative method of calculating the totals that will first round all the amounts\nto the currency's precision before making the sums. Totals using this approach can always\nbe recalculated using the amounts presented, but can lead to rounding errors in the case\nof pre-payments and when line item prices include tax."
+            }
+          ],
+          "title": "Rounding Model",
+          "description": "Rounding model used to perform tax calculations on the invoice. This\nwill be configured automatically based on the tax regime, or\n`sum-then-round` by default, but you can override here if needed.\nUse with caution, as some conversion tools may make assumptions about\nthe rounding model used."
+        },
+        "ext": {
+          "$ref": "https://gobl.org/draft-0/tax/extensions",
+          "title": "Extensions",
+          "description": "Additional extensions that are applied to the invoice as a whole as opposed to specific\nsections."
+        },
+        "meta": {
+          "$ref": "https://gobl.org/draft-0/cbc/meta",
+          "title": "Meta",
+          "description": "Any additional data that may be required for processing, but should never\nbe relied upon by recipients."
+        }
+      },
+      "type": "object",
+      "description": "Tax defines a summary of the taxes which may be applied to an invoice."
+    }
+  }
+}
