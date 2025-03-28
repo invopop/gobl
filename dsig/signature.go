@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/invopop/jsonschema"
-	"github.com/square/go-jose/v3"
 )
 
 // Signature represents a stored JSON Web Signature and provides helper
@@ -34,6 +34,12 @@ func WithJKU(jku string) SignerOption {
 
 const (
 	headerJKU jose.HeaderKey = "jku"
+)
+
+var (
+	joseSignatureAlgorithms = []jose.SignatureAlgorithm{
+		jose.ES256,
+	}
 )
 
 // NewSignature instantiates a new Signature object by signing the provided
@@ -92,7 +98,7 @@ func ParseSignature(data string) (*Signature, error) {
 }
 
 func (s *Signature) parse(data string) error {
-	o, err := jose.ParseSigned(data)
+	o, err := jose.ParseSigned(data, joseSignatureAlgorithms)
 	if err != nil {
 		return fmt.Errorf("dsig: %w", err)
 	}

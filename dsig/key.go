@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/google/uuid"
-	"github.com/square/go-jose/v3"
 )
 
 const defaultKeyUse = "sig"

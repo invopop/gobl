@@ -16,6 +16,8 @@ type Ordering struct {
 	// Any additional Codes, IDs, SKUs, or other regional or custom
 	// identifiers that may be used to identify the order.
 	Identities []*org.Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	// Buyer accounting reference cost code associated with the document.
+	Cost cbc.Code `json:"cost,omitempty" jsonschema:"title=Cost,example=1287:65464"`
 	// Period of time that the invoice document refers to often used in addition to the details
 	// provided in the individual line items.
 	Period *cal.Period `json:"period,omitempty" jsonschema:"title=Period"`
@@ -45,6 +47,7 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 		return
 	}
 	o.Code = cbc.NormalizeCode(o.Code)
+	o.Cost = cbc.NormalizeCode(o.Cost)
 	normalizers.Each(o)
 	tax.Normalize(normalizers, o.Identities)
 	tax.Normalize(normalizers, o.Projects)
@@ -63,6 +66,7 @@ func (o *Ordering) Validate() error {
 	return validation.ValidateStruct(o,
 		validation.Field(&o.Code),
 		validation.Field(&o.Identities),
+		validation.Field(&o.Cost),
 		validation.Field(&o.Projects),
 		validation.Field(&o.Contracts),
 		validation.Field(&o.Purchases),
