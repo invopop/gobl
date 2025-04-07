@@ -11,8 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: `Ordering` with `cost` code for accounting.
 - `it-sdi-v1`: Normalize address codes with 0 padding.
 
-### Fixe
-
+### Fixed
 - `dsig`: Upgraded signing packages.
 
 ## [v0.213.0] - 2025-03-25
