@@ -62,6 +62,31 @@ func TestOrgItemNormalize(t *testing.T) {
 	})
 }
 
+func TestOrgInboxNormalize(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+
+	t.Run("accepts nil", func(t *testing.T) {
+		var i *org.Inbox
+		assert.NotPanics(t, func() {
+			ad.Normalizer(i)
+		})
+	})
+	t.Run("accepts empty", func(t *testing.T) {
+		i := &org.Inbox{}
+		assert.NotPanics(t, func() {
+			ad.Normalizer(i)
+		})
+	})
+	t.Run("normalizes scheme and code", func(t *testing.T) {
+		i := &org.Inbox{
+			Code: "0004:BAR",
+		}
+		ad.Normalizer(i)
+		assert.Equal(t, "0004", i.Scheme.String())
+		assert.Equal(t, "BAR", i.Code.String())
+	})
+}
+
 func TestOrgItemValidate(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("missing unit", func(t *testing.T) {

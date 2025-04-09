@@ -1,6 +1,8 @@
 package en16931
 
 import (
+	"regexp"
+
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -38,6 +40,10 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyOther:          "ZZZ",
 }
 
+var (
+	orgInboxRegexpSchemeCode = regexp.MustCompile(`(\d{4}):.*`)
+)
+
 func normalizeOrgNote(n *org.Note) {
 	if n == nil {
 		return
@@ -58,6 +64,16 @@ func normalizeOrgItem(item *org.Item) {
 	}
 	if item.Unit == org.UnitEmpty {
 		item.Unit = org.UnitOne
+	}
+}
+
+func normalizeOrgInbox(i *org.Inbox) {
+	if i == nil || i.Code == cbc.CodeEmpty {
+		return
+	}
+	if orgInboxRegexpSchemeCode.MatchString(i.Code.String()) {
+		i.Scheme = cbc.Code(i.Code.String()[0:4])
+		i.Code = cbc.Code(i.Code.String()[5:])
 	}
 }
 
