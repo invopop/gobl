@@ -79,6 +79,10 @@ func validate(doc any) error {
 		return validateOrgItem(obj)
 	case *org.Attachment:
 		return validateOrgAttachment(obj)
+	case *org.Party:
+		return validateOrgParty(obj)
+	case *org.Inbox:
+		return validateOrgInbox(obj)
 	}
 	return nil
 }

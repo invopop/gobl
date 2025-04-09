@@ -77,3 +77,29 @@ func validateOrgAttachment(a *org.Attachment) error {
 		),
 	)
 }
+
+func validateOrgParty(p *org.Party) error {
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Inboxes,
+			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
+			validation.Skip,
+		),
+	)
+}
+
+func validateOrgInbox(i *org.Inbox) error {
+	return validation.ValidateStruct(i,
+		validation.Field(&i.Scheme,
+			validation.When(i.Code != cbc.CodeEmpty,
+				validation.Required.Error("cannot be blank with code (BR-62, BR-63)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&i.Code,
+			validation.When(i.Scheme != cbc.CodeEmpty,
+				validation.Required.Error("cannot be blank with scheme"),
+			),
+			validation.Skip,
+		),
+	)
+}

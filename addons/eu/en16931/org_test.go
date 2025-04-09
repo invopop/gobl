@@ -90,3 +90,70 @@ func TestOrgAttachmentValidation(t *testing.T) {
 		assert.NoError(t, ad.Validator(a))
 	})
 }
+
+func TestOrgPartyValidate(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("no inboxes", func(t *testing.T) {
+		p := &org.Party{}
+		assert.NoError(t, ad.Validator(p))
+	})
+
+	t.Run("one inbox", func(t *testing.T) {
+		p := &org.Party{
+			Inboxes: []*org.Inbox{
+				{
+					Scheme: "scheme1",
+					Code:   "code1",
+				},
+			},
+		}
+		assert.NoError(t, ad.Validator(p))
+	})
+
+	t.Run("multiple inboxes", func(t *testing.T) {
+		p := &org.Party{
+			Inboxes: []*org.Inbox{
+				{
+					Scheme: "scheme1",
+					Code:   "code1",
+				},
+				{
+					Scheme: "scheme2",
+					Code:   "code2",
+				},
+			},
+		}
+		assert.ErrorContains(t, ad.Validator(p), "inboxes: cannot have more than one inbox (BT-34, BT-49).")
+	})
+}
+
+func TestOrgInboxValidate(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("missing scheme and code", func(t *testing.T) {
+		i := &org.Inbox{}
+		// Not specific for addon, but this is important to check
+		assert.ErrorContains(t, i.Validate(), "code: cannot be blank without url or email")
+	})
+
+	t.Run("missing scheme", func(t *testing.T) {
+		i := &org.Inbox{
+			Code: "code1",
+		}
+		assert.ErrorContains(t, ad.Validator(i), "scheme: cannot be blank with code (BR-62, BR-63)")
+	})
+
+	t.Run("missing code", func(t *testing.T) {
+		i := &org.Inbox{
+			Scheme: "scheme1",
+		}
+		assert.ErrorContains(t, ad.Validator(i), "code: cannot be blank")
+	})
+
+	t.Run("valid inbox", func(t *testing.T) {
+		i := &org.Inbox{
+			Scheme: "scheme1",
+			Code:   "code1",
+		}
+		assert.NoError(t, ad.Validator(i))
+	})
+}
