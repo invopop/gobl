@@ -10,8 +10,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: `Ordering` with `cost` code for accounting.
 - `it-sdi-v1`: Normalize address codes with 0 padding.
+- `eu-en16931-v2017`: Validating inboxes.
+- `org`: `Inbox` now with `scheme` field.
 
 ### Fixed
+
 - `dsig`: Upgraded signing packages.
 
 ## [v0.213.0] - 2025-03-25
