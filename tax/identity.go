@@ -28,17 +28,17 @@ type Identity struct {
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
+	// Scheme is an optional field that may be used to override the tax regime's
+	// default tax scheme. Many electronic formats such as UBL or CII define an
+	// equivalent field.
+	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
+
 	// Type is set according to the requirements of each regime, some have a single
 	// tax document type code, others require a choice to be made.
 	//
 	// Deprecated: Tax Identities should only be used for VAT or similar codes
 	// for companies. Use the identities array for other types of identification.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
-
-	// Scheme is an optional field that may be used to override the tax regime's
-	// default scheme. Many electronic formats such as UBL or CII define an
-	// equivalent field which may be added.
-	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
 
 	// Zone identifies a sub-locality within a country.
 	//
