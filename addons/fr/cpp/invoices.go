@@ -73,6 +73,7 @@ func validatePayment(val any) error {
 	if !ok {
 		return nil
 	}
+	// Rest of the validation is handled by en16931 addon
 	return validation.ValidateStruct(payment,
 		validation.Field(&payment.Instructions,
 			validation.Required,
