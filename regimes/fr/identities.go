@@ -5,18 +5,10 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
-)
-
-const (
-	// SIREN is the main local tax code used in france, we use the normalized VAT version for the tax ID.
-	IdentityKeySiren cbc.Key = "fr-siren"
-	// SIRET is the SIREN with a branch number.
-	IdentityKeySiret cbc.Key = "fr-siret"
 )
 
 var (
@@ -24,25 +16,8 @@ var (
 	taxCodeSIRETRegexp = regexp.MustCompile(`^\d{14}$`)
 )
 
-var identityKeyDefinitions = []*cbc.Definition{
-	{
-		Key: IdentityKeySiren,
-		Name: i18n.String{
-			i18n.EN: "SIREN",
-			i18n.FR: "SIREN",
-		},
-	},
-	{
-		Key: IdentityKeySiret,
-		Name: i18n.String{
-			i18n.EN: "SIRET",
-			i18n.FR: "SIRET",
-		},
-	},
-}
-
 func normalizeIdentity(id *org.Identity) {
-	if id == nil || (id.Key != IdentityKeySiren && id.Key != IdentityKeySiret) {
+	if id == nil || id.Type != IdentityTypeSiren && id.Type != IdentityTypeSiret {
 		return
 	}
 	code := strings.ToUpper(id.Code.String())
@@ -52,7 +27,7 @@ func normalizeIdentity(id *org.Identity) {
 }
 
 func validateIdentity(id *org.Identity) error {
-	if id == nil || (id.Key != IdentityKeySiren && id.Key != IdentityKeySiret) {
+	if id == nil || id.Type != IdentityTypeSiren && id.Type != IdentityTypeSiret {
 		return nil
 	}
 

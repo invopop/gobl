@@ -15,9 +15,11 @@ import (
 // Identification keys used for additional codes not
 // covered by the standard fields.
 const (
-	IdentityTypeRCS cbc.Code = "RCS" // Trade and Companies Register.
-	IdentityTypeRM  cbc.Code = "RM"  // Directory of Traders.
-	IdentityTypeNAF cbc.Code = "NAF" // Identifies the main branch of activity of the company or self-employed person.
+	IdentityTypeSiren cbc.Code = "SIREN" // SIREN is the main local tax code used in france, we use the normalized VAT version for the tax ID
+	IdentityTypeSiret cbc.Code = "SIRET" // SIRET is a SIREN with a branch number
+	IdentityTypeRCS   cbc.Code = "RCS"   // Trade and Companies Register.
+	IdentityTypeRM    cbc.Code = "RM"    // Directory of Traders.
+	IdentityTypeNAF   cbc.Code = "NAF"   // Identifies the main branch of activity of the company or self-employed person.
 )
 
 func init() {
@@ -42,7 +44,6 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Identities: identityKeyDefinitions,
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

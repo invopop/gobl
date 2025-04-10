@@ -15,7 +15,7 @@ func TestIdentityNormalization(t *testing.T) {
 
 	t.Run("normalize SIREN", func(t *testing.T) {
 		p1 := &org.Identity{
-			Key:  fr.IdentityKeySiren,
+			Type: fr.IdentityTypeSiren,
 			Code: "FR3412000. 68",
 		}
 		r.NormalizeObject(p1)
@@ -24,7 +24,7 @@ func TestIdentityNormalization(t *testing.T) {
 
 	t.Run("normalize SIRET", func(t *testing.T) {
 		p1 := &org.Identity{
-			Key:  fr.IdentityKeySiret,
+			Type: fr.IdentityTypeSiret,
 			Code: "FR 341200068-00001",
 		}
 		r.NormalizeObject(p1)
@@ -71,7 +71,7 @@ func TestIdentityValidation(t *testing.T) {
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				id := &org.Identity{Key: fr.IdentityKeySiren, Code: tt.code}
+				id := &org.Identity{Type: fr.IdentityTypeSiren, Code: tt.code}
 				err := fr.Validate(id)
 				if tt.err == "" {
 					assert.NoError(t, err)
@@ -121,7 +121,7 @@ func TestIdentityValidation(t *testing.T) {
 		}
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				id := &org.Identity{Key: fr.IdentityKeySiret, Code: tt.code}
+				id := &org.Identity{Type: fr.IdentityTypeSiret, Code: tt.code}
 				err := fr.Validate(id)
 				if tt.err == "" {
 					assert.NoError(t, err)

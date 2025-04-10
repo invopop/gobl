@@ -122,7 +122,7 @@ func TestInvoicePartyIdentities(t *testing.T) {
 		inv.Supplier.TaxID.Code = "44732829320"
 		inv.Supplier.Identities = []*org.Identity{
 			{
-				Key:  fr.IdentityKeySiren,
+				Type: fr.IdentityTypeSiren,
 				Code: cbc.Code(inv.Supplier.TaxID.Code.String()[2:]),
 			},
 		}

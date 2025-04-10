@@ -19,7 +19,7 @@ func normalizeParty(party *org.Party) {
 	}
 
 	for _, identity := range party.Identities {
-		if identity.Key == fr.IdentityKeySiren || identity.Key == fr.IdentityKeySiret {
+		if identity.Type == fr.IdentityTypeSiren || identity.Type == fr.IdentityTypeSiret {
 			return
 		}
 	}
@@ -31,7 +31,7 @@ func normalizeParty(party *org.Party) {
 			party.Identities = make([]*org.Identity, 0)
 		}
 		party.Identities = append(party.Identities, &org.Identity{
-			Key:  fr.IdentityKeySiren,
+			Type: fr.IdentityTypeSiren,
 			Code: cbc.Code(party.TaxID.Code.String()[2:]),
 		})
 	}
@@ -41,7 +41,7 @@ func normalizeParty(party *org.Party) {
 			party.Identities = make([]*org.Identity, 0)
 		}
 		party.Identities = append(party.Identities, &org.Identity{
-			Key:  fr.IdentityKeySiren,
+			Type: fr.IdentityTypeSiren,
 			Code: cbc.Code(party.TaxID.Code.String()),
 		})
 	}
@@ -51,7 +51,7 @@ func normalizeParty(party *org.Party) {
 			party.Identities = make([]*org.Identity, 0)
 		}
 		party.Identities = append(party.Identities, &org.Identity{
-			Key:  fr.IdentityKeySiret,
+			Type: fr.IdentityTypeSiret,
 			Code: cbc.Code(party.TaxID.Code.String()),
 		})
 	}
