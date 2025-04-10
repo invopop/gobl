@@ -1,0 +1,16 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "fr-choruspro-v1",
+  "requires": [
+    "eu-en16931-v2017"
+  ],
+  "name": {
+    "en": "French Chorus-Pro v1"
+  },
+  "description": {
+    "en": "Support for the Chorus-Pro add-on for GOBL. This addon ensures that all fields required by Chorus-Pro are present and valid.\nThis addon is does not enforce any specific format for the data, but will ensure that all required fields are present.\nThis addon extends the EN16931 addon to ensure that the data is compliant with the Chorus-Pro specifications.\n\n\nThis addon can then be used in addition to any format specific addon such as Factur-X, UBL, CII..."
+  },
+  "extensions": null,
+  "scenarios": null,
+  "corrections": null
+}

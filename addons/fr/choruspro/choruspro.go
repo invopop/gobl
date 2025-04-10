@@ -1,5 +1,5 @@
-// Package cpp implements the Chorus-Pro add-on for GOBL.
-package cpp
+// Package choruspro implements the Chorus-Pro add-on for GOBL.
+package choruspro
 
 import (
 	"github.com/invopop/gobl/addons/eu/en16931"
@@ -12,7 +12,7 @@ import (
 
 const (
 	// V1 is the key for the Chorus-Pro add-on version 1.x
-	V1 cbc.Key = "fr-cpp-v1"
+	V1 cbc.Key = "fr-choruspro-v1"
 )
 
 func init() {
@@ -37,6 +37,7 @@ func newAddon() *tax.AddonDef {
 
 				This addon can then be used in addition to any format specific addon such as Factur-X, UBL, CII...
 			`),
+			// List of formats: https://portail.chorus-pro.gouv.fr/aife_documentation?id=kb_article_view&sys_kb_id=03feffcec333d65043b12775e00131fa
 		},
 		Normalizer: normalize,
 		Validator:  validate,

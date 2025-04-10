@@ -1,9 +1,9 @@
-package cpp_test
+package choruspro_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/fr/cpp"
+	"github.com/invopop/gobl/addons/fr/choruspro"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -19,7 +19,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := &bill.Invoice{
 		Regime:   tax.WithRegime("FR"),
-		Addons:   tax.WithAddons(cpp.V1),
+		Addons:   tax.WithAddons(choruspro.V1),
 		Code:     "123TEST",
 		Currency: "EUR",
 		Tax: &bill.Tax{
@@ -128,6 +128,29 @@ func TestInvoicePartyIdentities(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("With no identities", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Supplier.Identities = nil
+		err := inv.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "cannot be blank")
+	})
+
+	t.Run("With invalid identity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Supplier.Identities = []*org.Identity{
+			{
+				Type: "INVALID",
+				Code: cbc.Code("1234567890"),
+			},
+		}
+		err := inv.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "at least one identity must be SIREN or SIRET")
 	})
 }
 
