@@ -6,6 +6,7 @@
   "time_zone": "Europe/Brussels",
   "country": "BE",
   "currency": "EUR",
+  "tax_scheme": "VAT",
   "tags": [
     {
       "schema": "bill/invoice",

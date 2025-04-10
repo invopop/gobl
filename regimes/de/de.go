@@ -18,8 +18,9 @@ func init() {
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "DE",
-		Currency: currency.EUR,
+		Country:   "DE",
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Germany",
 			i18n.DE: "Deutschland",

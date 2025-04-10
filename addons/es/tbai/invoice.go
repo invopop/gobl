@@ -61,7 +61,6 @@ func normalizeInvoiceTax(inv *bill.Invoice) {
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Series, validation.Required),
 		validation.Field(&inv.Tax,
 			validation.Required,
 			validation.By(validateInvoiceTax),
@@ -135,7 +134,6 @@ func validateInvoicePreceding(val any) error {
 	}
 	return validation.ValidateStruct(p,
 		validation.Field(&p.IssueDate, validation.Required),
-		validation.Field(&p.Series, validation.Required),
 		validation.Field(&p.Ext,
 			tax.ExtensionsRequire(ExtKeyCorrection),
 			validation.Skip,

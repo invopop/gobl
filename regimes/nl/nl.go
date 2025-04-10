@@ -18,8 +18,9 @@ func init() {
 // New provides the Dutch region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "NL",
-		Currency: currency.EUR,
+		Country:   "NL",
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "The Netherlands",
 			i18n.NL: "Nederland",

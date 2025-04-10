@@ -1,6 +1,8 @@
 package en16931
 
 import (
+	"regexp"
+
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -38,6 +40,10 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyOther:          "ZZZ",
 }
 
+var (
+	orgInboxRegexpSchemeCode = regexp.MustCompile(`(\d{4}):.*`)
+)
+
 func normalizeOrgNote(n *org.Note) {
 	if n == nil {
 		return
@@ -61,6 +67,16 @@ func normalizeOrgItem(item *org.Item) {
 	}
 }
 
+func normalizeOrgInbox(i *org.Inbox) {
+	if i == nil || i.Code == cbc.CodeEmpty {
+		return
+	}
+	if orgInboxRegexpSchemeCode.MatchString(i.Code.String()) {
+		i.Scheme = cbc.Code(i.Code.String()[0:4])
+		i.Code = cbc.Code(i.Code.String()[5:])
+	}
+}
+
 func validateOrgItem(item *org.Item) error {
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Unit,
@@ -73,6 +89,32 @@ func validateOrgAttachment(a *org.Attachment) error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.Code,
 			validation.Required,
+			validation.Skip,
+		),
+	)
+}
+
+func validateOrgParty(p *org.Party) error {
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Inboxes,
+			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
+			validation.Skip,
+		),
+	)
+}
+
+func validateOrgInbox(i *org.Inbox) error {
+	return validation.ValidateStruct(i,
+		validation.Field(&i.Scheme,
+			validation.When(i.Code != cbc.CodeEmpty,
+				validation.Required.Error("cannot be blank with code (BR-62, BR-63)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&i.Code,
+			validation.When(i.Scheme != cbc.CodeEmpty,
+				validation.Required.Error("cannot be blank with scheme"),
+			),
 			validation.Skip,
 		),
 	)

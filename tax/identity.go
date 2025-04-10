@@ -16,10 +16,10 @@ import (
 
 // Identity stores the details required to identify an entity for tax
 // purposes in a specific country. Typically this would be a code related
-// to a specific indirect tax like VAT or GST. Some countries, such as the
-// US, do not have a VAT system so will not have a code here.
+// to a specific indirect tax scheme like VAT or GST. Some countries, such as the
+// US, do not have an official tax scheme and should omit the `code` field.
 //
-// Other fiscal identities should be defined in a parties identities array
+// Other fiscal identities should be defined in a party identities array
 // with their own validation rules and country specific handling.
 type Identity struct {
 	// Tax country code for Where the tax identity was issued.
@@ -27,6 +27,11 @@ type Identity struct {
 
 	// Normalized code shown on the original identity document.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
+
+	// Scheme is an optional field that may be used to override the tax regime's
+	// default tax scheme. Many electronic formats such as UBL or CII define an
+	// equivalent field.
+	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
 
 	// Type is set according to the requirements of each regime, some have a single
 	// tax document type code, others require a choice to be made.
@@ -108,6 +113,19 @@ func (id *Identity) Calculate() error {
 	return nil
 }
 
+// GetScheme can be used to determine the tax identities Scheme
+// either from the value defined directly in the identity, or
+// from the tax regime.
+func (id *Identity) GetScheme() cbc.Code {
+	if id.Scheme != cbc.CodeEmpty {
+		return id.Scheme
+	}
+	if r := regimes.For(id.Country.Code()); r != nil {
+		return r.TaxScheme
+	}
+	return cbc.CodeEmpty
+}
+
 // Normalize will attempt to perform a regional tax normalization
 // on the tax identity. Identities are an exception to the normal
 // normalization rules as they cannot be normalized using addons.
@@ -132,6 +150,7 @@ func (id *Identity) Validate() error {
 			),
 			validation.Match(IdentityCodePatternRegexp),
 		),
+		validation.Field(&id.Scheme, validation.Match(IdentityCodePatternRegexp)),
 		validation.Field(&id.Zone, validation.Empty),
 		validation.Field(&id.Type),
 	)

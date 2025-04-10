@@ -51,8 +51,9 @@ const (
 // New provides the Spanish tax regime definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "ES",
-		Currency: currency.EUR,
+		Country:   "ES",
+		Currency:  currency.EUR,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Spain",
 			i18n.ES: "España",

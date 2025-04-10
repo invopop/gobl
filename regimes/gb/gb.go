@@ -33,6 +33,7 @@ func New() *tax.RegimeDef {
 		Country:         "GB",
 		AltCountryCodes: altCountryCodes,
 		Currency:        currency.GBP,
+		TaxScheme:       tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "United Kingdom",
 		},

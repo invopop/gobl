@@ -30,8 +30,9 @@ const (
 // New instantiates a new Polish regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "PL",
-		Currency: currency.PLN,
+		Country:   "PL",
+		Currency:  currency.PLN,
+		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "Poland",
 			i18n.PL: "Polska",

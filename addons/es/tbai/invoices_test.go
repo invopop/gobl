@@ -125,7 +125,8 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("without series", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Series = ""
-		assertValidationError(t, inv, "series: cannot be blank")
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
 	})
 
 	t.Run("without notes", func(t *testing.T) {
@@ -147,6 +148,7 @@ func TestInvoiceValidation(t *testing.T) {
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
+	t.Helper()
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	require.ErrorContains(t, err, expected)

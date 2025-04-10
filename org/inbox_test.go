@@ -3,10 +3,8 @@ package org_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -71,26 +69,14 @@ func TestInboxNormalize(t *testing.T) {
 			id.Normalize(nil)
 		})
 	})
-	t.Run("missing extensions", func(t *testing.T) {
+	t.Run("with scheme", func(t *testing.T) {
 		id := &org.Inbox{
-			Key:  cbc.Key("inbox"),
-			Code: "BAR",
-			Ext:  tax.Extensions{},
-		}
-		id.Normalize(nil)
-		assert.Equal(t, "inbox", id.Key.String())
-		assert.Nil(t, id.Ext)
-	})
-	t.Run("with extension", func(t *testing.T) {
-		id := &org.Inbox{
-			Code: "BAR",
-			Ext: tax.Extensions{
-				iso.ExtKeySchemeID: "0004",
-			},
+			Scheme: " 0004 ",
+			Code:   " BAR ",
 		}
 		id.Normalize(nil)
 		assert.Equal(t, "BAR", id.Code.String())
-		assert.Equal(t, "0004", id.Ext[iso.ExtKeySchemeID].String())
+		assert.Equal(t, "0004", id.Scheme.String())
 	})
 	t.Run("with email in code", func(t *testing.T) {
 		id := &org.Inbox{
@@ -115,10 +101,8 @@ func TestInboxNormalize(t *testing.T) {
 func TestInboxValidate(t *testing.T) {
 	t.Run("with basics", func(t *testing.T) {
 		id := &org.Inbox{
-			Code: "BAR",
-			Ext: tax.Extensions{
-				iso.ExtKeySchemeID: "0004",
-			},
+			Scheme: "0004",
+			Code:   "BAR",
 		}
 		err := id.Validate()
 		assert.NoError(t, err)

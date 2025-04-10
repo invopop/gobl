@@ -24,8 +24,9 @@ const (
 // New provides the tax region definition
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:  "CA",
-		Currency: currency.CAD,
+		Country:   "CA",
+		Currency:  currency.CAD,
+		TaxScheme: tax.CategoryGST,
 		Name: i18n.String{
 			i18n.EN: "Canada",
 		},

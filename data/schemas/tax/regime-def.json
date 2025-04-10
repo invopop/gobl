@@ -262,6 +262,11 @@
           "title": "Currency",
           "description": "Currency used by the country."
         },
+        "tax_scheme": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Tax Scheme",
+          "description": "TaxScheme defines the principal scheme of consumption tax that should be\napplied to the regime and associated with Tax IDs in some export formats\nsuch as UBL or CII. Some regimes may not have a Tax Scheme and as a\nconsequence will not use tax identities, like the US."
+        },
         "calculator_rounding_rule": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Calculator Rounding Rule",
