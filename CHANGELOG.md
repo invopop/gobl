@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `fr-choruspro-v1`: New addon for Chorus-Pro
+
+### Changed
+
+- `fr`: Add identity validation and normalization.
+
 ## [v0.214.1] - 2025-04-09
 
 ### Fixed
