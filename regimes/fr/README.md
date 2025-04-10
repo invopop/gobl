@@ -39,11 +39,11 @@ The SIREN and SIRET numbers may also be defined inside the `org.Party`'s `identi
   ],
   "identities": [
     {
-      "key": "fr-siret",
+      "type": "SIREN",
       "code": "732829320"
     },
     {
-      "key": "fr-siren",
+      "type": "SIRET",
       "code": "73282932000015"
     }
   ]

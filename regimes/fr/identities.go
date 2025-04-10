@@ -17,7 +17,7 @@ var (
 )
 
 func normalizeIdentity(id *org.Identity) {
-	if id == nil || id.Type != IdentityTypeSiren && id.Type != IdentityTypeSiret {
+	if id == nil || id.Type != IdentityTypeSIREN && id.Type != IdentityTypeSIRET {
 		return
 	}
 	code := strings.ToUpper(id.Code.String())
@@ -27,7 +27,7 @@ func normalizeIdentity(id *org.Identity) {
 }
 
 func validateIdentity(id *org.Identity) error {
-	if id == nil || id.Type != IdentityTypeSiren && id.Type != IdentityTypeSiret {
+	if id == nil || id.Type != IdentityTypeSIREN && id.Type != IdentityTypeSIRET {
 		return nil
 	}
 

@@ -3,6 +3,7 @@
     "$addons": ["fr-choruspro-v1"],
     "type": "standard",
     "series": "SAMPLE",
+    "uuid": "01961f64-4934-7715-8abc-42be69de5ca3",
     "code": "001",
     "issue_date": "2022-02-01",
     "currency": "EUR",

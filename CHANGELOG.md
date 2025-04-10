@@ -8,10 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `fr-choruspro-v1`: New addon for Chorus-Pro
 - `pt-saft-v1`: support for stock movements (from `bill.Delivery`) and work documents (from `bill.Invoice` and `bill.Order`)
 
 ## Changed
 
+- `fr`: Add identity validation and normalization.
 - `bill`: `code` field now "recommended" in Order, Delivery, Invoice, & Payment schemas, but should not raise JSON Schema warnings. Validation will continue to fail when signing.
 - `bill`: more sub-schemas published for re-use by main document schemas.
 

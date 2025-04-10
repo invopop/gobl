@@ -22,7 +22,7 @@ func normalizeParty(party *org.Party) {
 	}
 
 	for _, identity := range party.Identities {
-		if identity.Type == fr.IdentityTypeSiren || identity.Type == fr.IdentityTypeSiret {
+		if identity.Type == fr.IdentityTypeSIREN || identity.Type == fr.IdentityTypeSIRET {
 			return
 		}
 	}
@@ -35,7 +35,7 @@ func normalizeParty(party *org.Party) {
 			party.Identities = make([]*org.Identity, 0)
 		}
 		party.Identities = append(party.Identities, &org.Identity{
-			Type: fr.IdentityTypeSiren,
+			Type: fr.IdentityTypeSIREN,
 			Code: cbc.Code(party.TaxID.Code.String()[2:]),
 		})
 	}
@@ -45,7 +45,7 @@ func normalizeParty(party *org.Party) {
 			party.Identities = make([]*org.Identity, 0)
 		}
 		party.Identities = append(party.Identities, &org.Identity{
-			Type: fr.IdentityTypeSiren,
+			Type: fr.IdentityTypeSIRET,
 			Code: cbc.Code(party.TaxID.Code.String()),
 		})
 	}
@@ -55,7 +55,7 @@ func normalizeParty(party *org.Party) {
 			party.Identities = make([]*org.Identity, 0)
 		}
 		party.Identities = append(party.Identities, &org.Identity{
-			Type: fr.IdentityTypeSiret,
+			Type: fr.IdentityTypeSIRET,
 			Code: cbc.Code(party.TaxID.Code.String()),
 		})
 	}
@@ -117,7 +117,7 @@ func validateIdentities(val any) error {
 		return nil
 	}
 	for _, identity := range identities {
-		if identity.Type == fr.IdentityTypeSiren || identity.Type == fr.IdentityTypeSiret {
+		if identity.Type == fr.IdentityTypeSIREN || identity.Type == fr.IdentityTypeSIRET {
 			return nil
 		}
 	}
