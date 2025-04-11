@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -38,6 +39,12 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		// BR-DE-6
+		validation.Field(&inv.Customer,
+			validation.Required,
+			validation.By(validateParty),
+			validation.Skip,
+		),
 	)
 }
 
@@ -52,4 +59,33 @@ func validateInvoiceTax(value any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateParty(val any) error {
+	party, ok := val.(*org.Party)
+	if !ok {
+		return nil
+	}
+
+	// Check if either a person has a telephone number or the party has a telephone number
+	hasTelephone := len(party.Telephones) > 0
+
+	// If party doesn't have telephones directly, check if any person has telephones
+	if !hasTelephone {
+		for _, person := range party.People {
+			if len(person.Telephones) > 0 {
+				hasTelephone = true
+				break
+			}
+		}
+	}
+
+	if !hasTelephone {
+		return validation.NewError(
+			"xrechnung.party.telephone.required",
+			"Either the party or at least one person must have a telephone number",
+		)
+	}
+
+	return nil
 }
