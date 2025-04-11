@@ -22,6 +22,8 @@ supplier:
       locality: "Walldorf"
       code: "69190"
       country: "DE"
+  telephones:
+    - num: "+49100200300"
 
 customer:
   tax_id:
@@ -37,6 +39,8 @@ customer:
       region: "Madrid"
       code: "28002"
       country: "ES"
+  telephones:
+    - num: "+34100200300"
 
 lines:
   - quantity: 20

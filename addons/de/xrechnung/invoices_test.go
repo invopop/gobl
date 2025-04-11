@@ -71,6 +71,11 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 						Given:   "Max",
 						Surname: "Musterman",
 					},
+					Telephones: []*org.Telephone{
+						{
+							Number: "+49100200300",
+						},
+					},
 				},
 			},
 			Addresses: []*org.Address{
@@ -150,4 +155,11 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("missing customer telephone number", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.People[0].Telephones = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "Either the party or at least one person must have a telephone number.")
+	})
 }

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `de-xrechnung-v3`: Add missing validation for telephone numbers in parties.
+
 ## [v0.214.1] - 2025-04-09
 
 ### Fixed
