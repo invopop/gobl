@@ -1,16 +1,15 @@
-package choruspro_test
+package facturx_test
 
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/fr/choruspro"
+	"github.com/invopop/gobl/addons/fr/facturx"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regimes/fr"
+	_ "github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +18,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	inv := &bill.Invoice{
 		Regime:   tax.WithRegime("FR"),
-		Addons:   tax.WithAddons(choruspro.V1),
+		Addons:   tax.WithAddons(facturx.V1),
 		Code:     "123TEST",
 		Currency: "EUR",
 		Tax: &bill.Tax{
@@ -89,71 +88,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	return inv
 }
 
-func TestInvoicePartyIdentities(t *testing.T) {
-	t.Run("With SIREN and normal tax ID", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("With SIRET and normal tax ID", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.TaxID.Code = "39183804200000"
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("With SIRET and SIREN", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.TaxID.Code = "39183804200000"
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("With no SIREN or SIRET", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.TaxID.Code = "44732829320"
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("With extension set", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Supplier.TaxID.Code = "44732829320"
-		inv.Supplier.Identities = []*org.Identity{
-			{
-				Type: fr.IdentityTypeSIREN,
-				Code: cbc.Code(inv.Supplier.TaxID.Code.String()[2:]),
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("With no identities", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		require.NoError(t, inv.Calculate())
-		inv.Supplier.Identities = nil
-		err := inv.Validate()
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "cannot be blank")
-	})
-
-	t.Run("With invalid identity", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		require.NoError(t, inv.Calculate())
-		inv.Supplier.Identities = []*org.Identity{
-			{
-				Type: "INVALID",
-				Code: cbc.Code("1234567890"),
-			},
-		}
-		err := inv.Validate()
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "at least one identity must be SIREN or SIRET")
-	})
-}
-
 func TestInvoicePayment(t *testing.T) {
 	t.Run("With payment", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -172,6 +106,32 @@ func TestInvoicePayment(t *testing.T) {
 	t.Run("With no payment instructions", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Payment.Instructions = nil
+		err := inv.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "cannot be blank")
+	})
+}
+
+func TestInvoiceParty(t *testing.T) {
+	t.Run("With no party", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier = nil
+		err := inv.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "cannot be blank")
+	})
+
+	t.Run("With no addresses", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = nil
+		err := inv.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "cannot be blank")
+	})
+
+	t.Run("With no country", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses[0].Country = ""
 		err := inv.Validate()
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "cannot be blank")

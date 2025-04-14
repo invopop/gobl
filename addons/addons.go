@@ -17,7 +17,6 @@ import (
 	_ "github.com/invopop/gobl/addons/es/tbai"
 	_ "github.com/invopop/gobl/addons/es/verifactu"
 	_ "github.com/invopop/gobl/addons/eu/en16931"
-	_ "github.com/invopop/gobl/addons/fr/choruspro"
 	_ "github.com/invopop/gobl/addons/fr/facturx"
 	_ "github.com/invopop/gobl/addons/gr/mydata"
 	_ "github.com/invopop/gobl/addons/it/sdi"

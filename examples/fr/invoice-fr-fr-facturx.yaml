@@ -52,3 +52,7 @@ lines:
       price: "90.00"
     taxes:
       - cat: VAT
+
+payment:
+  instructions:
+    key: "credit-transfer+sepa"

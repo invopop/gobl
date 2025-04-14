@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "86f7d16ef44cfd11a138f95e07827c0c5b752f5b173c4b3433d5482deaac9309"
+			"val": "13c4482dc07fe8a815f2b8960928f0e61d0f54c2d83a45d5ea5a399c28b5040d"
 		}
 	},
 	"doc": {
@@ -115,6 +115,14 @@
 				"total": "90.00"
 			}
 		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer+sepa",
+				"ext": {
+					"untdid-payment-means": "58"
+				}
+			}
+		},
 		"totals": {
 			"sum": "1710.00",
 			"total": "1710.00",

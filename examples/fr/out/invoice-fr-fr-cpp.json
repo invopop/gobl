@@ -4,27 +4,18 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "881e3d7b01daf17b26d84e8a00349c17d74e2affb00d9f5622e1dbb5005c1724"
+			"val": "5227e1c65908b821a589608008f9a18a1ce40f54fc0a56a327ffd07544adae3e"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "FR",
-		"$addons": [
-			"eu-en16931-v2017",
-			"fr-choruspro-v1"
-		],
 		"uuid": "01961f64-4934-7715-8abc-42be69de5ca3",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
-		"tax": {
-			"ext": {
-				"untdid-document-type": "380"
-			}
-		},
 		"supplier": {
 			"name": "Provide One Inc.",
 			"tax_id": {
@@ -59,12 +50,6 @@
 				"country": "FR",
 				"code": "39356000000"
 			},
-			"identities": [
-				{
-					"type": "SIREN",
-					"code": "356000000"
-				}
-			],
 			"addresses": [
 				{
 					"num": "1",
@@ -100,10 +85,7 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "20%",
-						"ext": {
-							"untdid-tax-category": "S"
-						}
+						"percent": "20%"
 					}
 				],
 				"total": "1620.00"
@@ -111,10 +93,7 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "card",
-				"ext": {
-					"untdid-payment-means": "48"
-				}
+				"key": "card"
 			}
 		},
 		"totals": {
@@ -127,9 +106,6 @@
 						"rates": [
 							{
 								"key": "standard",
-								"ext": {
-									"untdid-tax-category": "S"
-								},
 								"base": "1620.00",
 								"percent": "20%",
 								"amount": "324.00"
