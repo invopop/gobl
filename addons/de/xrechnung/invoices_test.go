@@ -165,7 +165,6 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	// Test Tax scenarios
 	t.Run("nil tax", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
