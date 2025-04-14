@@ -133,5 +133,19 @@ func TestIdentityValidation(t *testing.T) {
 			})
 		}
 	})
+}
 
+func TestNonStandardIdentities(t *testing.T) {
+	t.Run("Validate inexistant identity", func(t *testing.T) {
+		id := &org.Identity{Type: "inexistent", Code: "1234567890"}
+		err := fr.Validate(id)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Normalize inexistant identity", func(t *testing.T) {
+		id := &org.Identity{Type: "inexistent", Code: "not-touched"}
+		r := tax.RegimeDefFor("FR")
+		r.NormalizeObject(id)
+		assert.Equal(t, "not-touched", id.Code.String())
+	})
 }
