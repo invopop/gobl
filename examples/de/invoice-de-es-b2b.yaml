@@ -14,6 +14,10 @@ supplier:
     country: "DE"
     code: "111111125" # random
   name: "Provide One GmbH"
+  people:
+    - name:
+        given: "John"
+        surname: "Doe"
   emails:
     - addr: "billing@example.com"
   addresses:
@@ -61,3 +65,6 @@ payment:
     credit_transfer:
       - iban: "DE89370400440532013000"
         name: "Random Bank Co."
+
+ordering:
+  code: "12345"

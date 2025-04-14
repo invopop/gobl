@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "d8d9faa3d785d9675475b1523a2e6b83c761fca6d786d67fb38803e0df22135c"
+			"val": "ca655476fea7712727f1e9908b0770480cd3c3563ae174da802b09a38aa926bf"
 		}
 	},
 	"doc": {
@@ -34,6 +34,14 @@
 				"country": "DE",
 				"code": "111111125"
 			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					}
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -110,6 +118,9 @@
 				"total": "1620.00"
 			}
 		],
+		"ordering": {
+			"code": "12345"
+		},
 		"payment": {
 			"instructions": {
 				"key": "credit-transfer+sepa",

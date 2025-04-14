@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "79a4278120bfb2e964e90c4b728d82a6043e92120d4245c23418e5464591ed2d"
+			"val": "15088ea983601e2c44f25a37dd6243c047fd820468c8f431502396315e93e6de"
 		}
 	},
 	"doc": {
@@ -31,6 +31,19 @@
 				"country": "DE",
 				"code": "111111125"
 			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					},
+					"emails": [
+						{
+							"addr": "billing@example.com"
+						}
+					]
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -38,11 +51,6 @@
 					"locality": "Walldorf",
 					"code": "69190",
 					"country": "DE"
-				}
-			],
-			"emails": [
-				{
-					"addr": "billing@example.com"
 				}
 			],
 			"telephones": [
@@ -107,6 +115,9 @@
 				"total": "1620.00"
 			}
 		],
+		"ordering": {
+			"code": "12345"
+		},
 		"payment": {
 			"instructions": {
 				"key": "credit-transfer+sepa",
