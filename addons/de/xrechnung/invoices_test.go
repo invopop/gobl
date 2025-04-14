@@ -165,6 +165,16 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	// Test Tax scenarios
+	t.Run("nil tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Tax = nil
+		add := tax.AddonForKey(xrechnung.V3)
+		err := add.Validator(inv)
+		assert.NoError(t, err)
+	})
+
 	// Test supplier telephone scenarios
 	t.Run("supplier with party telephones only", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
@@ -284,4 +294,12 @@ func TestInvoiceValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "addresses: cannot be blank.")
 	})
+
+	t.Run("nil delivery", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
 }

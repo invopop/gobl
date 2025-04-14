@@ -136,7 +136,7 @@ func validatePayment(val any) error {
 
 func validateSupplier(val any) error {
 	party, ok := val.(*org.Party)
-	if !ok {
+	if !ok || party == nil {
 		return nil
 	}
 
@@ -178,7 +178,7 @@ func validateSupplier(val any) error {
 
 func validateCustomer(val any) error {
 	party, ok := val.(*org.Party)
-	if !ok {
+	if !ok || party == nil {
 		return nil
 	}
 	return validation.ValidateStruct(party,
