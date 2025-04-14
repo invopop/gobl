@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "13c4482dc07fe8a815f2b8960928f0e61d0f54c2d83a45d5ea5a399c28b5040d"
+			"val": "a7b580a37c424e30a4b0a43feb75172e7f2972de2d039356f3be2ddb69eac757"
 		}
 	},
 	"doc": {
@@ -58,7 +58,8 @@
 					"num": "1",
 					"street": "Rue Sundacsakn",
 					"locality": "Saint-Germain-En-Laye",
-					"code": "75050"
+					"code": "75050",
+					"country": "FR"
 				}
 			],
 			"emails": [
@@ -117,9 +118,9 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "credit-transfer+sepa",
+				"key": "card",
 				"ext": {
-					"untdid-payment-means": "58"
+					"untdid-payment-means": "48"
 				}
 			}
 		},
