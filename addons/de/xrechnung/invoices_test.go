@@ -38,6 +38,16 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 						Given:   "Peter",
 						Surname: "Cursorstone",
 					},
+					Emails: []*org.Email{
+						{
+							Address: "peter@test.com",
+						},
+					},
+					Telephones: []*org.Telephone{
+						{
+							Number: "+49100200300",
+						},
+					},
 				},
 			},
 			Addresses: []*org.Address{
@@ -50,7 +60,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 			Emails: []*org.Email{
 				{
-					Address: "billing@cursor.com",
+					Address: "billing@test.com",
 				},
 			},
 			Telephones: []*org.Telephone{
@@ -87,6 +97,16 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 			},
 		},
+		Payment: &bill.PaymentDetails{
+			Instructions: &pay.Instructions{
+				Key: "credit-transfer+sepa",
+				CreditTransfer: []*pay.CreditTransfer{
+					{
+						IBAN: "DE89370400440532013000",
+					},
+				},
+			},
+		},
 		Lines: []*bill.Line{
 			{
 				Quantity: num.MakeAmount(10, 0),
@@ -111,16 +131,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		},
 		Ordering: &bill.Ordering{
 			Code: "1234567890",
-		},
-		Payment: &bill.PaymentDetails{
-			Instructions: &pay.Instructions{
-				Key: "credit-transfer",
-				CreditTransfer: []*pay.CreditTransfer{
-					{
-						IBAN: "DE89370400440532013000",
-					},
-				},
-			},
 		},
 	}
 	return inv
@@ -155,11 +165,123 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("missing customer telephone number", func(t *testing.T) {
+	// Test supplier telephone scenarios
+	t.Run("supplier with party telephones only", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Customer.People[0].Telephones = nil
+		inv.Supplier.People[0].Telephones = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("supplier with people telephones only", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("supplier missing both party and people telephones", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = nil
+		inv.Supplier.People[0].Telephones = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "Either the party or at least one person must have a telephone number.")
+		assert.ErrorContains(t, err, "either party.telephones or party.people[0].telephones is required")
+	})
+
+	// Test supplier email scenarios
+	t.Run("supplier with party emails only", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.People[0].Emails = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("supplier with people emails only", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Emails = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("supplier missing both party and people emails", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Emails = nil
+		inv.Supplier.People[0].Emails = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "either party.emails or party.people[0].emails is required")
+	})
+
+	// Test ordering scenarios
+	t.Run("ordering with code only", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Code: "1234567890",
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("ordering with identities only", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Identities: []*org.Identity{
+				{
+					Key:  "order-number",
+					Code: "1234567890",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("ordering missing both code and identities", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "either ordering code or identities with codes are required")
+	})
+
+	// Test delivery scenarios
+	t.Run("delivery with valid receiver", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = &bill.DeliveryDetails{
+			Receiver: &org.Party{
+				Name: "Delivery Receiver",
+				Addresses: []*org.Address{
+					{
+						Street:   "Delivery Street",
+						Locality: "Berlin",
+						Code:     "10115",
+						Country:  "DE",
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("delivery with missing receiver", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = &bill.DeliveryDetails{}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "receiver: cannot be blank.")
+	})
+
+	t.Run("delivery with receiver missing address", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Delivery = &bill.DeliveryDetails{
+			Receiver: &org.Party{
+				Name: "Delivery Receiver",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "addresses: cannot be blank.")
 	})
 }
