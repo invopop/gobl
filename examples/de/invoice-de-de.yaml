@@ -12,14 +12,21 @@ supplier:
     country: "DE"
     code: "111111125" # random
   name: "Provide One GmbH"
-  emails:
-    - addr: "billing@example.com"
+  people:
+    - name:
+        given: "John"
+        surname: "Doe"
+      emails:
+        - addr: "billing@example.com"
   addresses:
     - num: "16"
       street: "Dietmar-Hopp-Allee"
       locality: "Walldorf"
       code: "69190"
       country: "DE"
+  telephones:
+    - num: "+49100200300"
+
 
 customer:
   tax_id:
@@ -33,7 +40,9 @@ customer:
       street: "Werner-Heisenberg-Allee"
       locality: "München"
       code: "80939"
-      country": "DE"
+      country: "DE"
+  telephones:
+    - num: "+49100200300"
 
 lines:
   - quantity: 20
@@ -47,6 +56,9 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+        
+ordering:
+    code: "12345"
 
 payment:
   instructions:
