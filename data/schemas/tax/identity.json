@@ -16,15 +16,15 @@
           "title": "Code",
           "description": "Normalized code shown on the original identity document."
         },
+        "scheme": {
+          "$ref": "https://gobl.org/draft-0/cbc/code",
+          "title": "Scheme",
+          "description": "Scheme is an optional field that may be used to override the tax regime's\ndefault tax scheme. Many electronic formats such as UBL or CII define an\nequivalent field."
+        },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Type",
           "description": "Type is set according to the requirements of each regime, some have a single\ntax document type code, others require a choice to be made.\n\nDeprecated: Tax Identities should only be used for VAT or similar codes\nfor companies. Use the identities array for other types of identification."
-        },
-        "scheme": {
-          "$ref": "https://gobl.org/draft-0/cbc/code",
-          "title": "Scheme",
-          "description": "Scheme is an optional field that may be used to override the tax regime's\ndefault scheme. Many electronic formats such as UBL or CII define an\nequivalent field which may be added."
         },
         "zone": {
           "$ref": "https://gobl.org/draft-0/l10n/code",

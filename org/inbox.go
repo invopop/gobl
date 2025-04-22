@@ -12,16 +12,21 @@ import (
 )
 
 // Inbox is used to store data about a connection with a service that is responsible
-// for potentially receiving copies of GOBL envelopes or other document formats
-// defined locally.
+// for automatically receiving copies of GOBL envelopes or other document formats.
+//
+// In other formats, this may also be known as an "endpoint".
 type Inbox struct {
 	uuid.Identify
+
 	// Label for the inbox.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// Type of inbox being defined.
+	// Type of inbox being defined if required for clarification between multiple
+	// inboxes.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Role assigned to this inbox that may be relevant for the consumer.
-	Role cbc.Key `json:"role,omitempty" jsonschema:"title=Role"`
+	// Scheme ID of the code used to identify the inbox. This is context specific
+	// and usually an ISO 6523 code or CEF (Connecting Europe Facility) code.
+	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
+
 	// Code or ID that identifies the Inbox. Mutually exclusive with URL and Email.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// URL of the inbox that includes the protocol, server, and path. May
@@ -30,8 +35,6 @@ type Inbox struct {
 	URL string `json:"url,omitempty" jsonschema:"title=URL"`
 	// Email address for the inbox. Mutually exclusive with Code and URL.
 	Email string `json:"email,omitempty" jsonschema:"title=Email"`
-	// Extension code map for any additional regime or addon specific codes that may be required.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // Normalize will try to clean the inbox's data.
@@ -48,8 +51,8 @@ func (i *Inbox) Normalize(normalizers tax.Normalizers) {
 		i.URL = code
 		i.Code = ""
 	}
+	i.Scheme = cbc.NormalizeAlphanumericalCode(i.Scheme)
 	i.Code = cbc.NormalizeCode(i.Code)
-	i.Ext = tax.CleanExtensions(i.Ext)
 	normalizers.Each(i)
 }
 
@@ -63,7 +66,7 @@ func (i *Inbox) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Key),
-		validation.Field(&i.Role),
+		validation.Field(&i.Scheme),
 		validation.Field(&i.Code,
 			validation.When(
 				i.URL == "" && i.Email == "",
@@ -84,7 +87,6 @@ func (i *Inbox) ValidateWithContext(ctx context.Context) error {
 				validation.Empty.Error("must be blank with code or url"),
 			),
 		),
-		validation.Field(&i.Ext),
 	)
 }
 
