@@ -1,4 +1,4 @@
-// Package ae defines VAT tax categories specific to the United Arab Emirates.
+// Package no defines VAT tax categories specific to Norway
 package no
 
 import (
@@ -93,6 +93,34 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(0, 2),
 					},
 				},
+			},
+			{
+				Key: tax.RateZero.With(TagBooks),
+				Name: i18n.String{
+					i18n.EN: "Zero Rate - Books and Periodicals",
+					i18n.NO: "Nullsats - Bøker og Tidsskrifter",
+				},
+				Description: i18n.String{
+					i18n.EN: "Zero rate for books (including electronic books and parallel audio-book editions) and newspapers/magazines in the last retail sale (§ 6-4 MVAL).",
+					i18n.NO: "Nullsats for bøker (inkludert elektroniske bøker og parallelle lydbokutgaver) og aviser/tidsskrifter i siste detaljsalg (§ 6-4 MVAL).",
+				},
+				Values: []*tax.RateValueDef{
+					{
+						Percent: num.MakePercentage(0, 2),
+					},
+				},
+			},
+			{
+				Key: tax.RateExempt,
+				Name: i18n.String{
+					i18n.EN: "Exempt",
+					i18n.NO: "Fritatt",
+				},
+				Description: i18n.String{
+					i18n.EN: "Exempt from VAT. Applies to financial services, insurance, healthcare, and education.",
+					i18n.NO: "Fritatt for merverdiavgift. Gjelder finansielle tjenester, forsikring, helsetjenester og utdanning.",
+				},
+				Exempt: true,
 			},
 		},
 	},
