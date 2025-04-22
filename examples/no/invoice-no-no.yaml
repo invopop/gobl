@@ -1,0 +1,35 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "11111111-1111-1111-1111-111111111111"
+currency: "NOK"
+issue_date: "2023-07-01"
+series: "2023"
+code: "INV-1001"
+
+supplier:
+  tax_id:
+    country: "NO"
+    code: "974760673"
+  name: "Example AS"
+  addresses:
+    - num: "1"
+      street: "Storgata"
+      locality: "Oslo"
+      code: "0155"
+      country: "NO"
+customer:
+  name: "Customer AS"
+  addresses:
+    - num: "2"
+      street: "Kirkegata"
+      locality: "Bergen"
+      code: "5003"
+      country: "NO"
+
+lines:
+  - quantity: 2
+    item:
+      name: "Consulting services"
+      price: "1000.00"
+    taxes:
+      - cat: VAT
+        rate: standard

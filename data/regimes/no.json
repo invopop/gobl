@@ -1,0 +1,424 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Norway",
+    "no": "Norge"
+  },
+  "time_zone": "Europe/Oslo",
+  "country": "NO",
+  "currency": "NOK",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "simplified",
+          "name": {
+            "de": "Vereinfachte Rechnung",
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada",
+            "it": "Fattura Semplificata",
+            "no": "Forenklet faktura"
+          },
+          "desc": {
+            "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+            "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+            "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+            "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti.",
+            "no": "Brukt for B2C-transaksjoner når kundeopplysningene ikke er tilgjengelige, sjekk med lokale myndigheter for grenser."
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "de": "Umkehr der Steuerschuld",
+            "en": "Reverse Charge",
+            "es": "Inversión del Sujeto Pasivo",
+            "it": "Inversione del soggetto passivo",
+            "no": "Omvendt avgiftsplikt"
+          }
+        },
+        {
+          "key": "self-billed",
+          "name": {
+            "de": "Rechnung durch den Leistungsempfänger",
+            "en": "Self-billed",
+            "es": "Facturación por el destinatario",
+            "it": "Autofattura",
+            "no": "Selv-fakturert"
+          }
+        },
+        {
+          "key": "customer-rates",
+          "name": {
+            "de": "Kundensätze",
+            "en": "Customer rates",
+            "es": "Tarifas aplicables al destinatario",
+            "it": "Aliquote applicabili al destinatario",
+            "no": "Kundensatser"
+          }
+        },
+        {
+          "key": "partial",
+          "name": {
+            "de": "Teilweise",
+            "en": "Partial",
+            "es": "Parcial",
+            "it": "Parziale",
+            "no": "Delvis"
+          }
+        },
+        {
+          "key": "second-hand",
+          "name": {
+            "en": "Second-hand Goods",
+            "no": "Brukte varer"
+          }
+        },
+        {
+          "key": "books",
+          "name": {
+            "en": "Books and Periodicals",
+            "no": "Bøker og tidsskrifter"
+          }
+        },
+        {
+          "key": "ecommerce",
+          "name": {
+            "en": "VOEC E-commerce",
+            "no": "VOEC E-handel"
+          }
+        },
+        {
+          "key": "artworks",
+          "name": {
+            "en": "Works of Art",
+            "no": "Kunstgjenstander"
+          }
+        }
+      ]
+    }
+  ],
+  "extensions": [
+    {
+      "key": "no-exemption-code",
+      "name": {
+        "en": "Norwegian VAT Exemption Code",
+        "no": "Norsk kode for MVA-fritak"
+      },
+      "values": [
+        {
+          "code": "E1",
+          "name": {
+            "en": "Financial Services - § 3-6 MVAL",
+            "no": "Finansielle tjenester - § 3-6 MVAL"
+          }
+        },
+        {
+          "code": "E2",
+          "name": {
+            "en": "Insurance Services - § 3-10 MVAL",
+            "no": "Forsikringstjenester - § 3-10 MVAL"
+          }
+        },
+        {
+          "code": "E3",
+          "name": {
+            "en": "Books and Periodicals - § 6-4 MVAL",
+            "no": "Bøker og tidsskrifter - § 6-4 MVAL"
+          }
+        },
+        {
+          "code": "M1",
+          "name": {
+            "en": "Margin Scheme - Second-hand Goods - Chapter Va MVAL",
+            "no": "Avansesystem - Brukte varer - Kapittel Va MVAL"
+          }
+        },
+        {
+          "code": "M2",
+          "name": {
+            "en": "Margin Scheme - Works of Art - Chapter Va MVAL",
+            "no": "Avansesystem - Kunstgjenstander - Kapittel Va MVAL"
+          }
+        },
+        {
+          "code": "V1",
+          "name": {
+            "en": "VOEC Scheme - B2C E-commerce - § 3-30 MVAL",
+            "no": "VOEC-ordning - B2C E-handel - § 3-30 MVAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "no-margin-scheme",
+      "name": {
+        "en": "Norwegian Margin Scheme Type",
+        "no": "Type norsk avansesystem"
+      },
+      "values": [
+        {
+          "code": "second-hand",
+          "name": {
+            "en": "Second-hand Goods",
+            "no": "Brukte varer"
+          }
+        },
+        {
+          "code": "artworks",
+          "name": {
+            "en": "Works of Art",
+            "no": "Kunstgjenstander"
+          }
+        }
+      ]
+    },
+    {
+      "key": "no-voec",
+      "name": {
+        "en": "VOEC Scheme Details",
+        "no": "VOEC-ordning detaljer"
+      },
+      "values": [
+        {
+          "code": "registered",
+          "name": {
+            "en": "Registered in VOEC Scheme",
+            "no": "Registrert i VOEC-ordning"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "name": {
+            "en": "Reverse Charge",
+            "no": "Omvendt avgiftsplikt"
+          },
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse Charge"
+          }
+        },
+        {
+          "name": {
+            "en": "Simplified Invoice",
+            "no": "Forenklet faktura"
+          },
+          "tags": [
+            "simplified"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "simplified",
+            "text": "Simplified Invoice (for transactions below NOK 1,000)"
+          }
+        },
+        {
+          "name": {
+            "en": "Zero-Rated Export",
+            "no": "Nullsatseksport"
+          },
+          "tags": [
+            "zero"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "zero",
+            "text": "Zero-Rated Export"
+          }
+        },
+        {
+          "name": {
+            "en": "Second-hand Goods Margin Scheme",
+            "no": "Avansesystem for brukte varer"
+          },
+          "tags": [
+            "second-hand"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "second-hand",
+            "text": "Margin Scheme - Second-hand Goods (Chapter Va MVAL)"
+          }
+        },
+        {
+          "name": {
+            "en": "Works of Art Margin Scheme",
+            "no": "Avansesystem for kunstgjenstander"
+          },
+          "tags": [
+            "artworks"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "artworks",
+            "text": "Margin Scheme - Works of Art (Chapter Va MVAL)"
+          }
+        },
+        {
+          "name": {
+            "en": "VOEC E-commerce",
+            "no": "VOEC E-handel"
+          },
+          "tags": [
+            "ecommerce"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "ecommerce",
+            "text": "VOEC Scheme - B2C E-commerce (§ 3-30 MVAL)"
+          }
+        },
+        {
+          "name": {
+            "en": "Books and Periodicals",
+            "no": "Bøker og tidsskrifter"
+          },
+          "tags": [
+            "books"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "books",
+            "text": "Zero-Rated Books and Periodicals (§ 6-4 MVAL)"
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "no": "MVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "no": "Merverdiavgift"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "no": "Standard sats"
+          },
+          "desc": {
+            "en": "Applies to most goods and services.",
+            "no": "Gjelder for de fleste varer og tjenester."
+          },
+          "values": [
+            {
+              "percent": "25%"
+            }
+          ]
+        },
+        {
+          "key": "reduced-15",
+          "name": {
+            "en": "Reduced Rate (15%)",
+            "no": "Redusert sats (15%)"
+          },
+          "desc": {
+            "en": "Applies primarily to food and non-alcoholic beverages.",
+            "no": "Gjelder mat og alkoholfrie drikkevarer."
+          },
+          "values": [
+            {
+              "percent": "15%"
+            }
+          ]
+        },
+        {
+          "key": "reduced-12",
+          "name": {
+            "en": "Reduced Rate (12%)",
+            "no": "Redusert sats (12%)"
+          },
+          "desc": {
+            "en": "Applies to passenger transport, hotel accommodation, and cultural events.",
+            "no": "Gjelder persontransport, hotellovernatting og kulturelle arrangementer."
+          },
+          "values": [
+            {
+              "percent": "12%"
+            }
+          ]
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "no": "Nullsats"
+          },
+          "desc": {
+            "en": "Applies to exports and certain international services.",
+            "no": "Gjelder eksport og visse internasjonale tjenester."
+          },
+          "values": [
+            {
+              "percent": "0%"
+            }
+          ]
+        },
+        {
+          "key": "zero+books",
+          "name": {
+            "en": "Zero Rate - Books and Periodicals",
+            "no": "Nullsats - Bøker og Tidsskrifter"
+          },
+          "desc": {
+            "en": "Zero rate for books (including electronic books and parallel audio-book editions) and newspapers/magazines in the last retail sale (§ 6-4 MVAL).",
+            "no": "Nullsats for bøker (inkludert elektroniske bøker og parallelle lydbokutgaver) og aviser/tidsskrifter i siste detaljsalg (§ 6-4 MVAL)."
+          },
+          "values": [
+            {
+              "percent": "0%"
+            }
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt",
+            "no": "Fritatt"
+          },
+          "desc": {
+            "en": "Exempt from VAT. Applies to financial services, insurance, healthcare, and education.",
+            "no": "Fritatt for merverdiavgift. Gjelder finansielle tjenester, forsikring, helsetjenester og utdanning."
+          },
+          "exempt": true
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Norwegian Tax Administration - VAT Guidelines",
+            "no": "Skatteetaten – Merverdiavgiftsveiledning"
+          },
+          "url": "https://www.skatteetaten.no"
+        }
+      ]
+    }
+  ]
+}

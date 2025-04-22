@@ -1,0 +1,25 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "22222222-2222-2222-2222-222222222222"
+currency: "NOK"
+issue_date: "2023-07-02"
+series: "2023"
+code: "BOOK-1001"
+
+supplier:
+  tax_id:
+    country: "NO"
+    code: "974760673"
+  name: "Bookstore AS"
+customer:
+  name: "Reader AS"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Norwegian Novel"
+      price: "200.00"
+    taxes:
+      - cat: VAT
+        rate: rate-zero.books
+        ext:
+          no-exemption-code: "E3"

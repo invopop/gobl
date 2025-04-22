@@ -1,0 +1,28 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "44444444-4444-4444-4444-444444444444"
+currency: "NOK"
+issue_date: "2023-07-04"
+series: "2023"
+code: "VOEC-1001"
+
+supplier:
+  tax_id:
+    country: "NO"
+    code: "974760673"
+  name: "Intl Shop"
+customer:
+  name: "Norwegian Buyer"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Imported Gadget"
+      price: "2500.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+tax:
+  ext:
+    no-voec: "registered"
+    no-exemption-code: "V1"
+  tags: ["ecommerce"]

@@ -1,0 +1,25 @@
+{
+  "$schema":"https://gobl.org/draft-0/envelope",
+  "head":{ "uuid":"dddddddd-dddd-dddd-dddd-dddddddddddd","dig":{ "alg":"sha256","val":"900150983cd24fb0d6963f7d28e17f72" }},
+  "doc":{
+    "$schema":"https://gobl.org/draft-0/bill/invoice","$regime":"NO",
+    "$tags":["ecommerce"],
+    "ext":{ "no-voec":"registered","no-exemption-code":"V1" },
+    "uuid":"44444444-4444-4444-4444-444444444444","series":"2023","code":"VOEC-1001",
+    "issue_date":"2023-07-04","currency":"NOK",
+    "supplier":{ "name":"Intl Shop","tax_id":{ "country":"NO","code":"974760673" }},
+    "customer":{ "name":"Norwegian Buyer" },
+    "lines":[
+      {
+        "i":1,"quantity":"1","item":{ "name":"Imported Gadget","price":"2500.00" },
+        "taxes":[{ "cat":"VAT","rate":"standard","percent":"25.00%"}],
+        "sum":"2500.00","total":"3125.00"
+      }
+    ],
+    "totals":{
+      "sum":"2500.00","total":"3125.00",
+      "taxes":{"categories":[{"code":"VAT","rates":[{"base":"2500.00","percent":"25.00%","amount":"625.00"}],"amount":"625.00"}],"sum":"625.00"},
+      "tax":"625.00","total_with_tax":"3125.00","payable":"3125.00"
+    }
+  }
+}
