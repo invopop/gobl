@@ -31,6 +31,7 @@ Norway levies VAT on goods and services with several distinct rates. The rates, 
   Applies to:
   - Exports of goods and certain international transport services
   - Specific activities defined in Norwegian law (e.g., cross-border supplies)
+  - **Books and Periodicals**: Sales of books (including electronic books and parallel audio‑book editions) and newspapers/magazines are exempt from VAT in the last retail sale (§ 6‑4 MVAL).
 
 - **Exemptions**  
   Some goods and services are exempt from VAT. These typically include:
@@ -64,14 +65,8 @@ Norway levies VAT on goods and services with several distinct rates. The rates, 
 The Tax Registration Number, commonly reflected as an Organisation Number followed by "MVA", is a unique identifier for businesses registered for VAT.
 
 - **Format**: A 9-digit number (e.g., `123456789`) that, when appended with "MVA", becomes the VAT number.
-- **Validation**:
-  - The TRN uses a checksum process (similar in concept to the Luhn algorithm) to ensure its validity.
-  - The algorithm typically involves multiplying digits by weight factors, summing the results, and ensuring that the total modulo 10 is zero.
-  
-*Example*:  
-For the TRN `123456789`, an illustrative checksum is calculated as:  
-`(1×2 + 2×1 + 3×2 + 4×1 + 5×2 + 6×1 + 7×2 + 8×1 + 9×2) % 10 = 0`  
-If the checksum equals zero, the TRN is considered valid.
+- **VAT Number Validation**:
+  - The nine‑digit Organisation/MVA number is validated using a Modulus 11 checksum with weights [3, 2, 7, 6, 5, 4, 3, 2] on digits 1–8; the check digit is "11 − (sum mod 11)", with results of 10 invalid and 11 treated as 0.
 
 *Note: The specifics of the weight factors may vary. Businesses should refer to Skatteetaten’s guidelines on TRN validation for complete details.*
 
@@ -79,19 +74,10 @@ If the checksum equals zero, the TRN is considered valid.
 
 ## VAT Filing and Payment
 
-Businesses registered for VAT must adhere to strict filing and payment schedules. The filing frequency is determined by the business’s annual taxable turnover:
+Businesses registered for VAT must adhere to strict filing and payment schedules:
 
-- **Monthly Filing**:  
-  For businesses with an annual taxable turnover exceeding **NOK 6 million**.  
-  **Due Date**: Typically, the return and payment are due on the 10th day of the month following the reporting period.
-
-- **Quarterly Filing**:  
-  For businesses with an annual taxable turnover between **NOK 1 million** and **NOK 6 million**.  
-  **Due Date**: Returns and payments are generally due on the 10th day of the month following each quarter.
-
-- **Annual Filing**:  
-  For businesses with an annual taxable turnover below **NOK 1 million**.  
-  **Due Date**: The VAT return and payment are due on the 10th day of the month after the end of the financial year.
+- **Filing Periods**:
+  VAT returns must be filed six times per year, each covering two calendar months: Jan/Feb, Mar/Apr, May/Jun, Jul/Aug, Sep/Oct, Nov/Dec.
 
 ### Payment Methods and Penalties
 
@@ -100,6 +86,9 @@ Businesses registered for VAT must adhere to strict filing and payment schedules
 
 - **Penalties and Interest**:  
   Late filing or delayed payment may result in fines and interest charges. The interest rates for late payments are set by Skatteetaten and are subject to periodic adjustment.
+
+- **Late-Filing Penalties**:
+  Failure to file on time incurs daily fines ("tvangsmulkt") until the return is submitted, and any overdue VAT balance accrues statutory late-payment interest.
 
 *Businesses are advised to ensure prompt filing and payment to avoid penalties and to monitor any changes in the filing frequencies or deadlines published by the tax authorities.*
 
@@ -150,6 +139,10 @@ To ensure transparency and enable accurate tax reporting, Norwegian invoicing ru
   - For transactions below **NOK 1,000**, simplified invoices can be issued.
   - These must include: Invoice date, unique invoice number, seller’s name and address, description of goods or services, and the total payable amount (including VAT).
 
+### Public-Sector E-Invoicing
+Invoices to public contracting authorities must be sent electronically in EHF (Peppol BIS Billing) format via the ELMA registry (mandatory since 2 Apr 2019).
+Integration with this format could be a good addon for gobl.
+
 ---
 
 ## Additional Considerations
@@ -160,6 +153,12 @@ To ensure transparency and enable accurate tax reporting, Norwegian invoicing ru
   Norwegian businesses are increasingly required to use digital systems for filing VAT returns and maintaining electronic records.  
 - **Integration with Accounting Software**:  
   Many ERP and accounting systems in Norway are designed to integrate directly with Skatteetaten’s reporting systems to facilitate seamless compliance.
+
+### Margin Scheme (Chapter V(a) MVAL)
+Dealers in second‑hand goods, works of art, collectors' items or antiques may use the special "margin scheme" to calculate VAT on their profit margin rather than the full sale price.
+
+### VOEC (VAT On E‑Commerce)
+For B2C imports of goods valued up to NOK 3,000, non‑resident sellers must register in the VOEC scheme and collect 25% Norwegian VAT at checkout; such goods then clear customs duty‑free.
 
 ### Regular Updates
 
