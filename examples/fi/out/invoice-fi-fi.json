@@ -1,7 +1,7 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "01962129-97e4-7659-a51a-85f5c1e83ffc",
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
 			"val": "099bffb625efd6a27160a5e7fa514881e09ec7ef35e95fc13d8a7851e81509c6"
