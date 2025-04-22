@@ -8,11 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `bill`: `Ordering` with `cost` code for accounting.
-
-### Fixed
-
-- `dsig`: Upgraded signing packages.
+- Support for `Norwegian` regime
 
 ## [v0.213.0] - 2025-03-25
 
