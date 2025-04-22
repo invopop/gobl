@@ -26,10 +26,7 @@ func New() *tax.RegimeDef {
 		},
         TimeZone: "Europe/Oslo",
 		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
-		},
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
+			common.InvoiceTags().Merge(invoiceTags),
 		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
@@ -39,6 +36,8 @@ func New() *tax.RegimeDef {
 				},
 			},
 		},
+		Scenarios:  scenarios,
+		Extensions: extensionKeys,
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,
