@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- Support for `Norwegian` regime
+- `no` - Added support for Norwegian regime
 
 ## [v0.213.0] - 2025-03-25
 
