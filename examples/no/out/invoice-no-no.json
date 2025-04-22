@@ -1,16 +1,17 @@
 {
   "$schema": "https://gobl.org/draft-0/envelope",
   "head": {
-    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
     "dig": {
       "alg": "sha256",
-      "val": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "val": "a967ae8684f20b6076466a9350c6222a2c53c24735c5dc77199cb1eadaa944c3"
     }
   },
   "doc": {
     "$schema": "https://gobl.org/draft-0/bill/invoice",
     "$regime": "NO",
     "uuid": "11111111-1111-1111-1111-111111111111",
+    "type": "standard",
     "series": "2023",
     "code": "INV-1001",
     "issue_date": "2023-07-01",
@@ -19,13 +20,13 @@
       "name": "Example AS",
       "tax_id": { "country": "NO", "code": "974760673" },
       "addresses": [
-        { "i": 1, "num": "1", "street": "Storgata", "locality": "Oslo", "code": "0155", "country": "NO" }
+        { "num": "1", "street": "Storgata", "locality": "Oslo", "code": "0155", "country": "NO" }
       ]
     },
     "customer": {
       "name": "Customer AS",
       "addresses": [
-        { "i": 1, "num": "2", "street": "Kirkegata", "locality": "Bergen", "code": "5003", "country": "NO" }
+        { "num": "2", "street": "Kirkegata", "locality": "Bergen", "code": "5003", "country": "NO" }
       ]
     },
     "lines": [
@@ -33,19 +34,19 @@
         "i": 1,
         "quantity": "2",
         "item": { "name": "Consulting services", "price": "1000.00" },
-        "taxes": [ { "cat": "VAT", "rate": "standard", "percent": "25.00%" } ],
+        "taxes": [ { "cat": "VAT", "rate": "standard", "percent": "25%" } ],
         "sum": "2000.00",
-        "total": "2500.00"
+        "total": "2000.00"
       }
     ],
     "totals": {
       "sum": "2000.00",
-      "total": "2500.00",
+      "total": "2000.00",
       "taxes": {
         "categories": [
           {
             "code": "VAT",
-            "rates": [ { "base": "2000.00", "percent": "25.00%", "amount": "500.00" } ],
+            "rates": [ { "base": "2000.00", "percent": "25%", "amount": "500.00", "key": "standard"} ],
             "amount": "500.00"
           }
         ],

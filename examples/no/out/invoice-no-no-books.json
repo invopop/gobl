@@ -1,23 +1,79 @@
 {
-  "$schema": "https://gobl.org/draft-0/envelope",
-  "head": { "uuid": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", "dig": { "alg":"sha256","val":"d41d8cd98f00b204e9800998ecf8427e" } },
-  "doc": {
-    "$schema":"https://gobl.org/draft-0/bill/invoice","$regime":"NO",
-    "uuid":"22222222-2222-2222-2222-222222222222","series":"2023","code":"BOOK-1001",
-    "issue_date":"2023-07-02","currency":"NOK",
-    "supplier":{ "name":"Bookstore AS","tax_id":{ "country":"NO","code":"974760673" }},
-    "customer":{ "name":"Reader AS" },
-    "lines":[
-      {
-        "i":1,"quantity":"1","item":{ "name":"Norwegian Novel","price":"200.00" },
-        "taxes":[{ "cat":"VAT","rate":"rate-zero.books","percent":"0.00%","ext":{ "no-exemption-code":"E3" } }],
-        "sum":"200.00","total":"200.00"
-      }
-    ],
-    "totals":{
-      "sum":"200.00","total":"200.00",
-      "taxes":{"categories":[{"code":"VAT","rates":[{"base":"200.00","percent":"0.00%","amount":"0.00"}],"amount":"0.00"}],"sum":"0.00"},
-      "tax":"0.00","total_with_tax":"200.00","payable":"200.00"
+    "$schema": "https://gobl.org/draft-0/envelope",
+    "head": {
+        "uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+        "dig": {
+            "alg": "sha256",
+            "val": "d58538f04fc7ffb93f73df766f6f779c2b13ea494651d62d7c395702543ff57a"
+        }
+    },
+    "doc": {
+        "$schema": "https://gobl.org/draft-0/bill/invoice",
+        "$regime": "NO",
+        "uuid": "22222222-2222-2222-2222-222222222222",
+        "type": "standard",
+        "series": "2023",
+        "code": "BOOK-1001",
+        "issue_date": "2023-07-02",
+        "currency": "NOK",
+        "supplier": {
+            "name": "Bookstore AS",
+            "tax_id": {
+                "country": "NO",
+                "code": "974760673"
+            }
+        },
+        "customer": {
+            "name": "Reader AS"
+        },
+        "lines": [
+            {
+                "i": 1,
+                "quantity": "1",
+                "item": {
+                    "name": "Norwegian Novel",
+                    "price": "200.00"
+                },
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "zero",
+                        "percent": "0%",
+                        "ext": {
+                            "no-exemption-code": "E3"
+                        }
+                    }
+                ],
+                "sum": "200.00",
+                "total": "200.00"
+            }
+        ],
+        "totals": {
+            "sum": "200.00",
+            "total": "200.00",
+            "taxes": {
+                "categories": [
+                    {
+                        "code": "VAT",
+                        "rates": [
+                            {
+                                "base": "200.00",
+                                "percent": "0%",
+                                "amount": "0.00",
+                                "ext": {
+                                    "no-exemption-code": "E3"
+                                },
+                                "key": "zero"
+                            }
+                        ],
+                        "amount": "0.00"
+                    }
+                ],
+                "sum": "0.00"
+            },
+            "tax": "0.00",
+            "total_with_tax": "200.00",
+            "payable": "200.00"
+        }
     }
-  }
 }

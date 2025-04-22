@@ -20,6 +20,6 @@ lines:
       price: "200.00"
     taxes:
       - cat: VAT
-        rate: rate-zero.books
+        rate: zero
         ext:
           no-exemption-code: "E3"
