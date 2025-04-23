@@ -8,5 +8,6 @@ func init() {
 		Date{},
 		DateTime{},
 		Period{},
+		Time{},
 	)
 }

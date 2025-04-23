@@ -84,6 +84,11 @@ type Order struct {
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the invoice was created.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	// IssueTime is an optional field that may be useful to indicate the time of day when
+	// the order was issued. Some regions and formats may require this field to be set.
+	// An empty string will be automatically updated to reflect the current time, otherwise
+	// the field can be left with a nil value.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
@@ -306,6 +311,9 @@ func (ord *Order) ConvertInto(cur currency.Code) (*Order, error) {
 func (ord *Order) getIssueDate() cal.Date {
 	return ord.IssueDate
 }
+func (ord *Order) getIssueTime() *cal.Time {
+	return ord.IssueTime
+}
 func (ord *Order) getValueDate() *cal.Date {
 	return ord.ValueDate
 }
@@ -345,6 +353,9 @@ func (ord *Order) getComplements() []*schema.Object {
 
 func (ord *Order) setIssueDate(d cal.Date) {
 	ord.IssueDate = d
+}
+func (ord *Order) setIssueTime(t *cal.Time) {
+	ord.IssueTime = t
 }
 func (ord *Order) setCurrency(c currency.Code) {
 	ord.Currency = c

@@ -43,9 +43,14 @@ type Invoice struct {
 	// be left empty initially, but is **required** to **sign** the invoice.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// Issue date for when the invoice was created and issued. Todays date is used if
-	// none is set. There are often legal restrictions on how far back an invoice
-	// can be issued.
+	// none is set. There are often legal restrictions on how far back or in the future an
+	// invoice can be issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	// IssueTime is an optional field that may be useful to indicate the time of day when
+	// the invoice was issued. Some regions and formats may require this field to be set.
+	// An empty string will be automatically updated to reflect the current time, otherwise
+	// the field can be left with a nil value.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// Date when the operation defined by the invoice became effective.
 	OperationDate *cal.Date `json:"op_date,omitempty" jsonschema:"title=Operation Date"`
 	// When the taxes of this invoice become accountable, if none set, the issue date is used.
@@ -329,8 +334,7 @@ func (inv *Invoice) validationContext(ctx context.Context) context.Context {
 // RemoveIncludedTaxes is a special function that will go through all prices which may include
 // the tax included in the invoice, and remove them.
 //
-// This method will call "Calculate" on the invoice automatically both before and after
-// to ensure that the data matches.
+// This method will call "Calculate" on the invoice automatically after removing the taxes.
 //
 // If after removing taxes the totals don't match, a rounding error will be added to the
 // invoice totals. In most scenarios this shouldn't be more than a cent or two.
@@ -344,6 +348,9 @@ func (inv *Invoice) RemoveIncludedTaxes() error {
 
 func (inv *Invoice) getIssueDate() cal.Date {
 	return inv.IssueDate
+}
+func (inv *Invoice) getIssueTime() *cal.Time {
+	return inv.IssueTime
 }
 func (inv *Invoice) getValueDate() *cal.Date {
 	return inv.ValueDate
@@ -384,6 +391,9 @@ func (inv *Invoice) getComplements() []*schema.Object {
 
 func (inv *Invoice) setIssueDate(d cal.Date) {
 	inv.IssueDate = d
+}
+func (inv *Invoice) setIssueTime(t *cal.Time) {
+	inv.IssueTime = t
 }
 func (inv *Invoice) setCurrency(c currency.Code) {
 	inv.Currency = c

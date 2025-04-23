@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/cal/time",
+  "$ref": "#/$defs/Time",
+  "$defs": {
+    "Time": {
+      "type": "string",
+      "format": "time",
+      "title": "Time",
+      "description": "Civil time in simplified ISO format, like 13:45:30"
+    }
+  }
+}

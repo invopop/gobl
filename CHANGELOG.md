@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: Support for `issue_time` field, which will be updated automatically if provided with a zero value. Nil issue times will always be ignored.
+- `bill`: Payment will now set issue date automatically, alongside issue time if provided.
+- `mx-cfdi-v4`: Support for "Global" B2C invoice reporting that group together B2C sales into a single document.
+- `mx-cfdi-v4`: Automatically set the `issue_time` if not already provided.
+
 ## [v0.214.1] - 2025-04-09
 
 ### Fixed

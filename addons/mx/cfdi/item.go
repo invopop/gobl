@@ -15,20 +15,6 @@ var (
 	itemExtensionNormalizableCodeRegexp = regexp.MustCompile(`^\d{6}$`)
 )
 
-func validateItem(value any) error {
-	item, _ := value.(*org.Item)
-	if item == nil {
-		return nil
-	}
-	return validation.ValidateStruct(item,
-		validation.Field(&item.Ext,
-			tax.ExtensionsRequire(ExtKeyProdServ),
-			validation.By(validItemExtensions),
-			validation.Skip,
-		),
-	)
-}
-
 func validItemExtensions(value interface{}) error {
 	ext, ok := value.(tax.Extensions)
 	if !ok {
@@ -56,6 +42,9 @@ var migratedExtensionKeys = []cbc.Key{
 }
 
 func normalizeItem(item *org.Item) {
+	if item == nil {
+		return
+	}
 	// 2023-08-25: Migrate identities to extensions
 	// Pending removal after migrations completed.
 	idents := make([]*org.Identity, 0)

@@ -617,6 +617,222 @@
           }
         }
       ]
+    },
+    {
+      "key": "mx-cfdi-global-period",
+      "name": {
+        "en": "CFDI Global Period",
+        "es": "CFDI Global Periodicidad"
+      },
+      "desc": {
+        "en": "Period for when the sales where generated.",
+        "es": "Campo requerido para registrar el período al que corresponde la información del comprobante global."
+      },
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Daily",
+            "es": "Diario"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Weekly",
+            "es": "Semanal"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Biweekly",
+            "es": "Quincenal"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Monthly",
+            "es": "Mensual"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Bimonthly",
+            "es": "Bimestral"
+          }
+        }
+      ]
+    },
+    {
+      "key": "mx-cfdi-global-month",
+      "name": {
+        "en": "CFDI Global Month",
+        "es": "CFDI Global Meses"
+      },
+      "desc": {
+        "en": "Specific month or month range for the global invoice.",
+        "es": "Se debe registrar la clave del mes o los meses al que corresponde la información de las operaciones celebradas con el público en general, las distintas claves vigentes se encuentran incluidas en el catálogo c_Meses."
+      },
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "January",
+            "es": "Enero"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "February",
+            "es": "Febrero"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "March",
+            "es": "Marzo"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "April",
+            "es": "Abril"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "May",
+            "es": "Mayo"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "June",
+            "es": "Junio"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "July",
+            "es": "Julio"
+          }
+        },
+        {
+          "code": "08",
+          "name": {
+            "en": "August",
+            "es": "Agosto"
+          }
+        },
+        {
+          "code": "09",
+          "name": {
+            "en": "September",
+            "es": "Septiembre"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "October",
+            "es": "Octubre"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "November",
+            "es": "Noviembre"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "December",
+            "es": "Diciembre"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "January-February",
+            "es": "Enero-Febrero"
+          }
+        },
+        {
+          "code": "14",
+          "name": {
+            "en": "March-April",
+            "es": "Marzo-Abril"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "May-June",
+            "es": "Mayo-Junio"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "July-August",
+            "es": "Julio-Agosto"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "en": "September-October",
+            "es": "Septiembre-Octubre"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "en": "November-December",
+            "es": "Noviembre-Diciembre"
+          }
+        }
+      ]
+    },
+    {
+      "key": "mx-cfdi-global-year",
+      "name": {
+        "en": "CFDI Global Year",
+        "es": "CFDI Global Año"
+      },
+      "desc": {
+        "en": "",
+        "es": "Se debe registrar el año al que corresponde la información del comprobante global."
+      },
+      "pattern": "\\d{4}"
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "global",
+          "name": {
+            "en": "Global"
+          },
+          "desc": {
+            "en": "Apply global CFDI rules used for B2C invoices.",
+            "es": "Aplicar reglas CFDI globales utilizadas para facturas B2C."
+          }
+        }
+      ]
     }
   ],
   "scenarios": [

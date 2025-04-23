@@ -87,6 +87,16 @@ func TestCalculate(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "2.10", inv.Preceding[0].Tax.Sum.String())
 	})
+
+	t.Run("update issue date and time", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.IssueDate = cal.MakeDate(2022, 11, 6)
+		inv.IssueTime = cal.NewTime(0, 0, 0)
+		require.NoError(t, inv.Calculate())
+		tn := cal.ThisSecondIn(inv.RegimeDef().TimeLocation())
+		assert.Equal(t, tn.Date().String(), inv.IssueDate.String())
+		assert.Equal(t, tn.Time().String(), inv.IssueTime.String())
+	})
 }
 
 func TestRemoveIncludedTaxes(t *testing.T) {

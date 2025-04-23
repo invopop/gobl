@@ -3,6 +3,7 @@ package cfdi_test
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/mx/cfdi"
 	"github.com/invopop/gobl/bill"
@@ -24,6 +25,7 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "MXN",
 		IssueDate: cal.MakeDate(2023, 1, 1),
+		IssueTime: cal.NewTime(12, 34, 10),
 		Tax: &bill.Tax{
 			Ext: tax.Extensions{
 				cfdi.ExtKeyIssuePlace: "21000",
@@ -74,6 +76,27 @@ func validInvoice() *bill.Invoice {
 	}
 }
 
+func validInvoiceGlobal() *bill.Invoice {
+	inv := validInvoice()
+	inv.Tags = tax.WithTags(cfdi.TagGlobal)
+	inv.Lines[0].Item.Ref = "TEST1234"
+	inv.Tax.Ext = inv.Tax.Ext.Merge(tax.Extensions{
+		cfdi.ExtKeyGlobalPeriod: "04",
+		cfdi.ExtKeyGlobalMonth:  "01",
+		cfdi.ExtKeyGlobalYear:   "2025",
+	})
+	inv.Payment = &bill.PaymentDetails{
+		Advances: []*pay.Advance{
+			{
+				Key:         pay.MeansKeyCash,
+				Description: "Prepaid",
+				Percent:     num.NewPercentage(100, 2),
+			},
+		},
+	}
+	return inv
+}
+
 func TestValidInvoice(t *testing.T) {
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
@@ -104,6 +127,61 @@ func TestNormalizeInvoice(t *testing.T) {
 		require.NotNil(t, inv.Tax)
 		assert.Equal(t, cbc.Code("21000"), inv.Tax.Ext[cfdi.ExtKeyIssuePlace])
 	})
+	t.Run("with global tag, invalid", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tags = tax.WithTags(cfdi.TagGlobal)
+		require.NoError(t, inv.Calculate())
+		require.Nil(t, inv.Customer)
+	})
+	t.Run("should set time and date", func(t *testing.T) {
+		// These tests can fail very rarely if run on the exact transition of the milliseconds
+		tz, err := time.LoadLocation("America/Mexico_City")
+		require.NoError(t, err)
+		inv := validInvoice()
+		inv.IssueTime = nil
+		tn := time.Now().In(tz)
+		require.NoError(t, inv.Calculate())
+		assert.NotNil(t, inv.IssueTime)
+		assert.Equal(t, tn.Format("2006-01-02"), inv.IssueDate.String())
+		assert.Equal(t, tn.Format("15:04:05"), inv.IssueTime.String())
+	})
+}
+
+func TestInvoiceGlobalTagValidation(t *testing.T) {
+	t.Run("invalid", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tags = tax.WithTags(cfdi.TagGlobal)
+		require.NoError(t, inv.Calculate())
+		require.Nil(t, inv.Customer)
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "lines: (0: (item: (ref: must be set with global tag.).).)")
+		assert.ErrorContains(t, err, "tax: (ext: (mx-cfdi-global-month: required; mx-cfdi-global-period: required; mx-cfdi-global-year: required.).)")
+		assert.ErrorContains(t, err, "payment: cannot be blank;")
+	})
+	t.Run("success", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tags = tax.WithTags(cfdi.TagGlobal)
+		inv.Lines[0].Item.Ref = "TEST1234"
+		inv.Tax.Ext = inv.Tax.Ext.Merge(tax.Extensions{
+			cfdi.ExtKeyGlobalPeriod: "04",
+			cfdi.ExtKeyGlobalMonth:  "01",
+			cfdi.ExtKeyGlobalYear:   "2025",
+		})
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Key:         pay.MeansKeyCash,
+					Description: "Prepaid",
+					Percent:     num.NewPercentage(100, 2),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.Nil(t, inv.Customer)
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, cbc.Code("04"), inv.Tax.Ext[cfdi.ExtKeyGlobalPeriod])
+	})
+
 }
 
 func TestCustomerValidation(t *testing.T) {
@@ -249,4 +327,114 @@ func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	err := inv.Validate()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), expected)
+}
+
+func TestInvoiceLineItemValidation(t *testing.T) {
+	tests := []struct {
+		name string
+		tags tax.Tags
+		item *org.Item
+		err  string
+	}{
+		{
+			name: "valid item",
+			item: &org.Item{
+				Name:  "Test purchase",
+				Price: num.NewAmount(10000, 2),
+				Ext: tax.Extensions{
+					cfdi.ExtKeyProdServ: "12345678",
+				},
+			},
+		},
+		{
+			name: "missing extension",
+			item: &org.Item{
+				Name:  "Test purchase",
+				Price: num.NewAmount(10000, 2),
+			},
+			err: "ext: (mx-cfdi-prod-serv: required.)",
+		},
+		{
+			name: "empty extension",
+			item: &org.Item{
+				Name:  "Test purchase",
+				Price: num.NewAmount(10000, 2),
+				Ext:   tax.Extensions{},
+			},
+			err: "ext: (mx-cfdi-prod-serv: required.)",
+		},
+		{
+			name: "invalid extension key",
+			item: &org.Item{
+				Name:  "Test purchase",
+				Price: num.NewAmount(10000, 2),
+				Ext: tax.Extensions{
+					"random": "12345678",
+				},
+			},
+			err: "ext: (random: undefined.)",
+		},
+		{
+			name: "invalid code format",
+			item: &org.Item{
+				Name:  "Test purchase",
+				Price: num.NewAmount(10000, 2),
+				Ext: tax.Extensions{
+					cfdi.ExtKeyProdServ: "AbC2",
+				},
+			},
+			err: "ext: (mx-cfdi-prod-serv: must have 8 digits.)",
+		},
+		{
+			name: "nil",
+			item: nil,
+			err:  "ines: (0: (item: cannot be blank.).",
+		},
+		{
+			// see below for specific global tag tests
+			name: "with global tag",
+			tags: tax.WithTags(cfdi.TagGlobal),
+			item: &org.Item{
+				Ref:   "TEST1234",
+				Price: num.NewAmount(10000, 2),
+				Name:  "Test purchase",
+			},
+			err: "payment: cannot be blank; tax: (ext: (mx-cfdi-global-month: required; mx-cfdi-global-period: required; mx-cfdi-global-year: required.).)",
+		},
+	}
+
+	for _, ts := range tests {
+		t.Run(ts.name, func(t *testing.T) {
+			inv := validInvoice()
+			inv.Tags = ts.tags
+			inv.Lines[0].Item = ts.item
+			require.NoError(t, inv.Calculate())
+			err := inv.Validate()
+			if ts.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), ts.err)
+				}
+			}
+		})
+	}
+}
+
+func TestInvoiceLineItemGlobalValidation(t *testing.T) {
+	t.Run("valid", func(t *testing.T) {
+		inv := validInvoiceGlobal()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+	t.Run("missing ref", func(t *testing.T) {
+		inv := validInvoiceGlobal()
+		inv.Lines[0].Item = &org.Item{
+			Price: num.NewAmount(10000, 2),
+			Name:  "Test purchase",
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "lines: (0: (item: (ref: must be set with global tag.).).)")
+	})
 }

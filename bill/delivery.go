@@ -99,6 +99,11 @@ type Delivery struct {
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the delivery document is to be issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	// IssueTime is an optional field that may be useful to indicate the time of day when
+	// the delivery was issued. Some regions and formats may require this field to be set.
+	// An empty string will be automatically updated to reflect the current time, otherwise
+	// the field can be left with a nil value.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// When the taxes of this delivery become accountable, if none set, the issue date is used.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all delivery totals.
@@ -336,6 +341,9 @@ func (dlv *Delivery) ConvertInto(cur currency.Code) (*Delivery, error) {
 func (dlv *Delivery) getIssueDate() cal.Date {
 	return dlv.IssueDate
 }
+func (dlv *Delivery) getIssueTime() *cal.Time {
+	return dlv.IssueTime
+}
 func (dlv *Delivery) getValueDate() *cal.Date {
 	return dlv.ValueDate
 }
@@ -375,6 +383,9 @@ func (dlv *Delivery) getComplements() []*schema.Object {
 
 func (dlv *Delivery) setIssueDate(d cal.Date) {
 	dlv.IssueDate = d
+}
+func (dlv *Delivery) setIssueTime(t *cal.Time) {
+	dlv.IssueTime = t
 }
 func (dlv *Delivery) setCurrency(c currency.Code) {
 	dlv.Currency = c

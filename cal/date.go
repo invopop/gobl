@@ -92,6 +92,11 @@ func (d Date) Add(years, months, days int) Date {
 	return DateOf(t)
 }
 
+// WithTime appends the time to the date to create a DateTime object.
+func (d Date) WithTime(t Time) DateTime {
+	return MakeDateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, t.Second)
+}
+
 // UnmarshalJSON is used to parse a date from json and ensures that
 // we can handle invalid data reasonably.
 func (d *Date) UnmarshalJSON(data []byte) error {
