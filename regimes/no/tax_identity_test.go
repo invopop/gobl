@@ -41,3 +41,49 @@ func TestValidateTaxIdentity(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateTRNCode(t *testing.T) {
+	tests := []struct {
+		name  string
+		value interface{}
+		err   string
+	}{
+		{name: "non-cbc.Code input", value: 12345, err: ""},
+		{name: "empty code", value: cbc.Code(""), err: ""},
+		{name: "invalid format", value: cbc.Code("12345"), err: "must be a 9-digit number"},
+		{name: "invalid checksum", value: cbc.Code("123456789"), err: "invalid checksum for TRN"},
+		{name: "valid TRN", value: cbc.Code("290883970"), err: ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := no.ValidateTRNCode(tt.value)
+			if tt.err == "" {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.err)
+			}
+		})
+	}
+}
+
+func TestVlidateChecksum(t *testing.T) {
+	tests := []struct {
+		name string
+		trn  string
+		want bool
+	}{
+		{name: "valid checksum", trn: "290883970", want: true},
+		{name: "invalid checksum (10)", trn: "000000060", want: false},
+		{name: "invalid checksum (random)", trn: "123456789", want: false},
+		{name: "valid checksum (11 treated as 0)", trn: "974760673", want: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := no.VlidateChecksum(tt.trn)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}

@@ -9,17 +9,18 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
+	"fmt"
 )
 
 var trnRegex = regexp.MustCompile(`^\d{9}$`)
 
 func validateTaxIdentity(tID *tax.Identity) error {
 	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code, validation.By(validateTRNCode)),
+		validation.Field(&tID.Code, validation.By(ValidateTRNCode)),
 	)
 }
 
-func validateTRNCode(value interface{}) error {
+func ValidateTRNCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil
@@ -28,13 +29,13 @@ func validateTRNCode(value interface{}) error {
 	if !trnRegex.MatchString(s) {
 		return errors.New("must be a 9-digit number")
 	}
-	if !validateChecksum(s) {
+	if !VlidateChecksum(s) {
 		return errors.New("invalid checksum for TRN")
 	}
 	return nil
 }
 
-func validateChecksum(trn string) bool {
+func VlidateChecksum(trn string) bool {
 	weights := []int{3, 2, 7, 6, 5, 4, 3, 2}
 	sum := 0
 	for i, r := range trn[:8] {
@@ -43,6 +44,7 @@ func validateChecksum(trn string) bool {
 	}
 	mod := sum % 11
 	chk := 11 - mod
+	fmt.Printf("TRN: %s, sum: %d, mod: %d, chk: %d\n", trn, sum, mod, chk) // <-- Add this line
 	switch chk {
 	case 10:
 		return false
