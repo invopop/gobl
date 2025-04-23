@@ -211,6 +211,12 @@
           "description": "When the payment was issued.",
           "calculated": true
         },
+        "issue_time": {
+          "$ref": "https://gobl.org/draft-0/cal/time",
+          "title": "Issue Time",
+          "description": "IssueTime is an optional field that may be useful to indicate the time of day when\nthe payment was issued.",
+          "calculated": true
+        },
         "value_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Value Date",
