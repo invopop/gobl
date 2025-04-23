@@ -46,17 +46,7 @@ type billable interface {
 
 func calculate(doc billable) error {
 	r := doc.RegimeDef() // may be nil!
-
-	// Normalize issue date and time if needed
-	tz := r.TimeLocation()
-	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
-		dn := cal.ThisSecondIn(tz)
-		tn := dn.Time()
-		doc.setIssueDate(dn.Date())
-		doc.setIssueTime(&tn)
-	} else if doc.getIssueDate().IsZero() {
-		doc.setIssueDate(cal.TodayIn(tz))
-	}
+	calculateIssueDateAndTime(r, doc)
 
 	// Get the date used for tax calculations
 	date := doc.getValueDate()
@@ -209,6 +199,18 @@ func calculate(doc billable) error {
 	doc.setTotals(t)
 
 	return nil
+}
+
+func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) {
+	tz := r.TimeLocation()
+	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
+		dn := cal.ThisSecondIn(tz)
+		tn := dn.Time()
+		doc.setIssueDate(dn.Date())
+		doc.setIssueTime(&tn)
+	} else if doc.getIssueDate().IsZero() {
+		doc.setIssueDate(cal.TodayIn(tz))
+	}
 }
 
 func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.Key) {

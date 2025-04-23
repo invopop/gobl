@@ -388,7 +388,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 		{
 			name: "nil",
 			item: nil,
-			err:  "ines: (0: (item: cannot be blank.).",
+			err:  "lines: (0: (item: cannot be blank.).",
 		},
 		{
 			// see below for specific global tag tests

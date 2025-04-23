@@ -12,15 +12,7 @@ import (
 )
 
 func normalizeInvoice(inv *bill.Invoice) {
-	if inv.IssueTime == nil || inv.IssueTime.IsZero() {
-		// Overwrite the issue date and time to align with
-		// CFDI requirements for the emission date, unless both
-		// fields are already set.
-		tz := inv.RegimeDef().TimeLocation()
-		inv.IssueDate = cal.TodayIn(tz)
-		tn := cal.TimeNowIn(tz)
-		inv.IssueTime = &tn
-	}
+	normalizeInvoiceIssueDateAndTime(inv)
 	normalizeParty(inv.Supplier)
 	normalizeParty(inv.Customer)
 	if inv.Tags.HasTags(TagGlobal) {
@@ -29,6 +21,20 @@ func normalizeInvoice(inv *bill.Invoice) {
 	for _, line := range inv.Lines {
 		normalizeItem(line.Item)
 	}
+}
+
+func normalizeInvoiceIssueDateAndTime(inv *bill.Invoice) {
+	// Overwrite the issue date and time to align with
+	// CFDI requirements for the emission date, unless the
+	// issue time is already set.
+	if inv.IssueTime != nil && !inv.IssueTime.IsZero() {
+		return
+	}
+	tz := inv.RegimeDef().TimeLocation()
+	dn := cal.ThisSecondIn(tz)
+	tn := dn.Time()
+	inv.IssueDate = dn.Date()
+	inv.IssueTime = &tn
 }
 
 func validateInvoice(inv *bill.Invoice) error {
