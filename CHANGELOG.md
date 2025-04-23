@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.214.1] - 2025-04-09
+
+### Fixed
+
+- `es-tbai-v1`: removing series presence check
+
+## [v0.214.0] - 2025-04-09
+
 ### Added
 
 - `no` - Added support for Norwegian regime
