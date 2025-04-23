@@ -21,10 +21,10 @@ func New() *tax.RegimeDef {
 		Currency:  currency.NOK,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
-            i18n.EN: "Norway",
-            i18n.NO: "Norge",
+			i18n.EN: "Norway",
+			i18n.NO: "Norge",
 		},
-        TimeZone: "Europe/Oslo",
+		TimeZone: "Europe/Oslo",
 		Tags: []*tax.TagSet{
 			common.InvoiceTags().Merge(invoiceTags),
 		},
