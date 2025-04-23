@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
-	"fmt"
 )
 
 var trnRegex = regexp.MustCompile(`^\d{9}$`)
@@ -35,6 +34,8 @@ func ValidateTRNCode(value interface{}) error {
 	return nil
 }
 
+// ValidateChecksum validates the checksum of a Norwegian TRN (Tax Registration Number).
+// The weights are [3, 2, 7, 6, 5, 4, 3, 2] according to https://vatstack.com/articles/norway-vat-number-validation
 func VlidateChecksum(trn string) bool {
 	weights := []int{3, 2, 7, 6, 5, 4, 3, 2}
 	sum := 0
@@ -44,7 +45,6 @@ func VlidateChecksum(trn string) bool {
 	}
 	mod := sum % 11
 	chk := 11 - mod
-	fmt.Printf("TRN: %s, sum: %d, mod: %d, chk: %d\n", trn, sum, mod, chk) // <-- Add this line
 	switch chk {
 	case 10:
 		return false

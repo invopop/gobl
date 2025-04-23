@@ -16,9 +16,9 @@ func TestValidateTaxIdentity(t *testing.T) {
 		code cbc.Code
 		err  string
 	}{
-		{name: "valid TRN 1", code: "123456785"}, // Valid checksum
-		{name: "valid TRN 2", code: "290883970"}, // Corrected valid TRN (check digit computed as 0)
-		{name: "valid TRN 3", code: "974760673"}, // Valid checksum
+		{name: "valid TRN 1", code: "123456785"},
+		{name: "valid TRN 2", code: "290883970"}, 
+		{name: "valid TRN 3", code: "974760673"},
 
 		// Invalid formats
 		{name: "too short", code: "12345678", err: "must be a 9-digit number"},

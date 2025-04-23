@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Document tag keys - define any Norway-specific document tags here
 var invoiceTags = &tax.TagSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*cbc.Definition{
@@ -51,7 +50,6 @@ var scenarios = []*tax.ScenarioSet{
 var invoiceScenarios = &tax.ScenarioSet{
 	Schema: bill.ShortSchemaInvoice,
 	List: []*tax.Scenario{
-		// Reverse Charge
 		{
 			Tags: []cbc.Key{tax.TagReverseCharge},
 			Name: i18n.String{
@@ -64,7 +62,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "Reverse Charge",
 			},
 		},
-		// Simplified Invoice
 		{
 			Tags: []cbc.Key{tax.TagSimplified},
 			Name: i18n.String{
@@ -77,7 +74,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "Simplified Invoice (for transactions below NOK 1,000)",
 			},
 		},
-		// Zero-Rated Export
 		{
 			Tags: []cbc.Key{tax.RateZero},
 			Name: i18n.String{
@@ -90,7 +86,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "Zero-Rated Export",
 			},
 		},
-		// Second-hand goods margin scheme
 		{
 			Tags: []cbc.Key{TagSecondHand},
 			Name: i18n.String{
@@ -103,7 +98,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "Margin Scheme - Second-hand Goods (Chapter Va MVAL)",
 			},
 		},
-		// Artworks margin scheme
 		{
 			Tags: []cbc.Key{TagArtworks},
 			Name: i18n.String{
@@ -116,7 +110,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "Margin Scheme - Works of Art (Chapter Va MVAL)",
 			},
 		},
-		// E-commerce VOEC scheme
 		{
 			Tags: []cbc.Key{TagECommerce},
 			Name: i18n.String{
@@ -129,7 +122,6 @@ var invoiceScenarios = &tax.ScenarioSet{
 				Text: "VOEC Scheme - B2C E-commerce (§ 3-30 MVAL)",
 			},
 		},
-		// Books and periodicals zero-rating
 		{
 			Tags: []cbc.Key{TagBooks},
 			Name: i18n.String{

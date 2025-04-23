@@ -15,7 +15,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Create a standard valid invoice to use as a base
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Code:     "123TEST",
@@ -129,7 +128,6 @@ func voecInvoice() *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	// Test standard invoice validation
 	inv := validInvoice()
 	require.NoError(t, inv.Calculate())
 	require.NoError(t, inv.Validate())
