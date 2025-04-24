@@ -186,7 +186,7 @@ func calculate(doc billable) error {
 	}
 
 	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.TotalWithTax)
+		pd.calculateAdvances(zero, t.Payable)
 
 		// Deal with advances, if any
 		if t.Advances = pd.totalAdvance(zero); t.Advances != nil {
