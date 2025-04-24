@@ -101,8 +101,9 @@
         },
         "totals": {
             "payable": "1717.20",
+            "retained_tax": "243.00",
             "sum": "1620.00",
-            "tax": "97.20",
+            "tax": "340.20",
             "taxes": {
                 "categories": [
                     {
@@ -130,19 +131,20 @@
                         "retained": true
                     }
                 ],
-                "sum": "97.20"
+                "retained": "243.00",
+                "sum": "340.20"
             },
             "total": "1620.00",
-            "total_with_tax": "1717.20"
+            "total_with_tax": "1960.20"
         },
         "type": "credit-note",
-        "uuid": "01959046-b5ee-7b9e-97d1-f3f908800101"
+        "uuid": "019666e0-3e71-77ce-9238-dcabb446abf4"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "2d4a2237b2f55d4a3af4693a2d4bdb6aeac84d2c3c910ff59e17033d052fa998"
+            "val": "85d9fb506e078a473901bd3b9de2e06d6851a02cf0e0229a9eb4ad8056b3334d"
         },
-        "uuid": "01959046-b5ee-7b97-93b6-86b79b28492b"
+        "uuid": "019666e0-3e71-77c3-8d51-5961593fd49a"
     }
 }

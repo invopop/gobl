@@ -149,8 +149,9 @@
         },
         "totals": {
             "payable": "5637.50",
+            "retained_tax": "600.00",
             "sum": "5187.50",
-            "tax": "450.00",
+            "tax": "1050.00",
             "taxes": {
                 "categories": [
                     {
@@ -185,10 +186,11 @@
                         "retained": true
                     }
                 ],
-                "sum": "450.00"
+                "retained": "600.00",
+                "sum": "1050.00"
             },
             "total": "5187.50",
-            "total_with_tax": "5637.50"
+            "total_with_tax": "6237.50"
         },
         "type": "standard",
         "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
@@ -196,11 +198,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "02b5bfcb333c82b4f9ba02bcf2128b5649a964820cade97f45d926829fb811fa"
+            "val": "74fb4fa32e076fe1b5da2d649a1925aa0d50b9ec57a9656e7030845e6f73eee5"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAyYjViZmNiMzMzYzgyYjRmOWJhMDJiY2YyMTI4YjU2NDlhOTY0ODIwY2FkZTk3ZjQ1ZDkyNjgyOWZiODExZmEifX0.jjzi2ci3FpZUHb-TeGqfr5YbwNcVRvsmvbtOXTxZFdRTT1g52gB-nE05_39rkOeb8suaix0i5DtbQAIS1Wz00w"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6Ijc0ZmI0ZmEzMmUwNzZmZTFiNWRhMmQ2NDlhMTkyNWFhMGQ1MGI5ZWM1N2E5NjU2ZTcwMzA4NDVlNmY3M2VlZTUifX0.XObh9DVwnMfxupXE5XJ_N2AOUaHUXBlhh1gP2KkJVjLREGUwfMjoY9W2YXjpwuC_jcTq2NPzJPaDSPrVAM_CzQ"
     ]
 }

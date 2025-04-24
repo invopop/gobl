@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `bill`: `Totals` now separates retained from indirect taxes, with a new `RetainedTax` field applied between the `TotalWithTax` and `Payable` amounts.
+- `tax`: `Totals` will now calculate sum with separate `Retained` amount.
+
 ### Added
 
 - `bill`: Support for `issue_time` field, which will be updated automatically if provided with a zero value. Nil issue times will always be ignored.

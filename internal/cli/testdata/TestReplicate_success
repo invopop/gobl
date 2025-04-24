@@ -11,7 +11,7 @@
                 "country": "ES"
             }
         },
-        "issue_date": "2025-03-13",
+        "issue_date": "2025-04-24",
         "lines": [
             {
                 "discounts": [
@@ -90,8 +90,9 @@
         },
         "totals": {
             "payable": "1717.20",
+            "retained_tax": "243.00",
             "sum": "1620.00",
-            "tax": "97.20",
+            "tax": "340.20",
             "taxes": {
                 "categories": [
                     {
@@ -119,19 +120,20 @@
                         "retained": true
                     }
                 ],
-                "sum": "97.20"
+                "retained": "243.00",
+                "sum": "340.20"
             },
             "total": "1620.00",
-            "total_with_tax": "1717.20"
+            "total_with_tax": "1960.20"
         },
         "type": "standard",
-        "uuid": "01959046-b5f4-7064-a79c-da272c10967b"
+        "uuid": "019666e0-3e78-7965-9aa5-8ce9d5cf01e0"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "3afd59842622cf2702a44db94b7b45d83512142c3a76ac06abd7d144351d4fdf"
+            "val": "a38877940be1c912528f9f49bf30930228cbb6d4a54d00026700b95d2d761f6d"
         },
-        "uuid": "01959046-b5f4-706a-be32-b0cc62ccc60c"
+        "uuid": "019666e0-3e78-796e-9cbd-14f8d3dd3675"
     }
 }

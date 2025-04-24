@@ -166,9 +166,15 @@ func calculate(doc billable) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	t.Tax = t.Taxes.PreciseSum()
+	t.Tax = t.Taxes.Sum
 	t.TotalWithTax = t.Total.Add(t.Tax)
+	if t.Taxes.Retained != nil {
+		t.RetainedTax = t.Taxes.Retained
+	}
 	t.Payable = t.TotalWithTax
+	if t.RetainedTax != nil {
+		t.Payable = t.Payable.Subtract(*t.RetainedTax)
+	}
 	if t.Rounding != nil {
 		// BT-144 in EN16931
 		t.Payable = t.Payable.Add(*t.Rounding)

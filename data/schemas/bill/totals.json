@@ -45,15 +45,20 @@
           "title": "Total with Tax",
           "description": "Grand total after all taxes have been applied."
         },
+        "retained_tax": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Retained Tax",
+          "description": "Total tax retained or withheld to be paid to the tax authority by the customer or buyer."
+        },
         "rounding": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Rounding",
-          "description": "Rounding amount to apply to the invoice in case the total and payable\namounts don't quite match."
+          "description": "Rounding amount to apply to the invoice totals so that totals match expected\nvalues or for local currency rounding rules."
         },
         "payable": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Payable",
-          "description": "Total amount to be paid after applying taxes and outlays."
+          "description": "Total amount to be paid after applying taxes and rounding adjustments."
         },
         "advance": {
           "$ref": "https://gobl.org/draft-0/num/amount",

@@ -26,10 +26,12 @@ type Totals struct {
 	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Grand total after all taxes have been applied.
 	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
-	// Rounding amount to apply to the invoice in case the total and payable
-	// amounts don't quite match.
+	// Total tax retained or withheld to be paid to the tax authority by the customer or buyer.
+	RetainedTax *num.Amount `json:"retained_tax,omitempty" jsonschema:"title=Retained Tax"`
+	// Rounding amount to apply to the invoice totals so that totals match expected
+	// values or for local currency rounding rules.
 	Rounding *num.Amount `json:"rounding,omitempty" jsonschema:"title=Rounding"`
-	// Total amount to be paid after applying taxes and outlays.
+	// Total amount to be paid after applying taxes and rounding adjustments.
 	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
 	// Total amount already paid in advance.
 	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance"`
@@ -66,6 +68,7 @@ func (t *Totals) reset(zero num.Amount) {
 	t.Taxes = nil
 	t.Tax = zero
 	t.TotalWithTax = zero
+	t.RetainedTax = nil
 	// t.Rounding = nil // may have been provided externally
 	t.Payable = zero
 	t.Advances = nil
@@ -95,6 +98,9 @@ func (t *Totals) round(zero num.Amount) {
 	t.Total = t.Total.Rescale(e)
 	t.Tax = t.Tax.Rescale(e)
 	t.TotalWithTax = t.TotalWithTax.Rescale(e)
+	if t.RetainedTax != nil {
+		*t.RetainedTax = t.RetainedTax.Rescale(e)
+	}
 	t.Payable = t.Payable.Rescale(e)
 	if t.Advances != nil {
 		*t.Advances = t.Advances.Rescale(e)
