@@ -10,32 +10,31 @@ import (
 
 // Totals contains the summaries of all calculations for the invoice.
 type Totals struct {
-	// Sum of all line item sums
+	// Total of all line item amounts.
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
-	// Sum of all document level discounts
+	// Total of all discounts applied at the document level.
 	Discount *num.Amount `json:"discount,omitempty" jsonschema:"title=Discount"`
-	// Sum of all document level charges
+	// Total of all charges applied at the document level.
 	Charge *num.Amount `json:"charge,omitempty" jsonschema:"title=Charge"`
-	// If prices include tax, this is the total tax included in the price.
+	// Total tax amount included in the prices, if prices are tax-inclusive.
 	TaxIncluded *num.Amount `json:"tax_included,omitempty" jsonschema:"title=Tax Included"`
-	// Sum of all line sums minus the discounts, plus the charges, without tax.
+	// Net total amount after subtracting discounts and adding charges, excluding tax.
 	Total num.Amount `json:"total" jsonschema:"title=Total"`
-	// Summary of all the taxes included in the invoice.
+	// Detailed breakdown of all taxes applied to the invoice.
 	Taxes *tax.Total `json:"taxes,omitempty" jsonschema:"title=Tax Totals"`
-	// Total amount of tax to apply to the invoice.
+	// Total indirect tax amount to be applied to the invoice.
 	Tax num.Amount `json:"tax,omitempty" jsonschema:"title=Tax"`
-	// Grand total after all taxes have been applied.
+	// Final total amount after applying indirect taxes.
 	TotalWithTax num.Amount `json:"total_with_tax" jsonschema:"title=Total with Tax"`
-	// Total tax retained or withheld to be paid to the tax authority by the customer or buyer.
+	// Total tax amount retained or withheld by the customer to be paid to the tax authority.
 	RetainedTax *num.Amount `json:"retained_tax,omitempty" jsonschema:"title=Retained Tax"`
-	// Rounding amount to apply to the invoice totals so that totals match expected
-	// values or for local currency rounding rules.
+	// Adjustment amount applied to the invoice totals to meet rounding rules or expectations.
 	Rounding *num.Amount `json:"rounding,omitempty" jsonschema:"title=Rounding"`
-	// Total amount to be paid after applying taxes and rounding adjustments.
+	// Final amount to be paid after retained taxes and rounding adjustments.
 	Payable num.Amount `json:"payable" jsonschema:"title=Payable"`
-	// Total amount already paid in advance.
+	// Total amount already paid in advance by the customer.
 	Advances *num.Amount `json:"advance,omitempty" jsonschema:"title=Advance"`
-	// How much actually needs to be paid now.
+	// Remaining amount that needs to be paid.
 	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due"`
 }
 
