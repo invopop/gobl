@@ -22,8 +22,8 @@ func New() *tax.RegimeDef {
 			i18n.SE: "Sverige",
 		},
 		TimeZone:   "Europe/Stockholm",
-		// Identities: identityKeyDefinitions, // identities.go
-		// Categories: taxCategories,          // tax_categories.go
+		// Identities: identityKeyDefinitions,
+		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
