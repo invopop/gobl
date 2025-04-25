@@ -19,6 +19,8 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	)
 }
 
+// ValidateTRNCode validates a Norwegian Tax Registration Number (TRN).
+// It returns an error if the code format is invalid or the checksum verification fails.
 func ValidateTRNCode(value interface{}) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
@@ -28,7 +30,7 @@ func ValidateTRNCode(value interface{}) error {
 	if !trnRegex.MatchString(s) {
 		return errors.New("must be a 9-digit number")
 	}
-	if !VlidateChecksum(s) {
+	if !ValidateChecksum(s) {
 		return errors.New("invalid checksum for TRN")
 	}
 	return nil
@@ -36,7 +38,7 @@ func ValidateTRNCode(value interface{}) error {
 
 // ValidateChecksum validates the checksum of a Norwegian TRN (Tax Registration Number).
 // The weights are [3, 2, 7, 6, 5, 4, 3, 2] according to https://vatstack.com/articles/norway-vat-number-validation
-func VlidateChecksum(trn string) bool {
+func ValidateChecksum(trn string) bool {
 	weights := []int{3, 2, 7, 6, 5, 4, 3, 2}
 	sum := 0
 	for i, r := range trn[:8] {

@@ -17,7 +17,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		err  string
 	}{
 		{name: "valid TRN 1", code: "123456785"},
-		{name: "valid TRN 2", code: "290883970"}, 
+		{name: "valid TRN 2", code: "290883970"},
 		{name: "valid TRN 3", code: "974760673"},
 
 		// Invalid formats
@@ -68,7 +68,7 @@ func TestValidateTRNCode(t *testing.T) {
 	}
 }
 
-func TestVlidateChecksum(t *testing.T) {
+func TestValidateChecksum(t *testing.T) {
 	tests := []struct {
 		name string
 		trn  string
@@ -82,7 +82,7 @@ func TestVlidateChecksum(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := no.VlidateChecksum(tt.trn)
+			got := no.ValidateChecksum(tt.trn)
 			assert.Equal(t, tt.want, got)
 		})
 	}
