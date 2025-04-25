@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "02225106bf1fb373bc48663ad9eec3d50861d313616b8b392e66cdafab047c66"
+			"val": "15088ea983601e2c44f25a37dd6243c047fd820468c8f431502396315e93e6de"
 		}
 	},
 	"doc": {
@@ -31,6 +31,19 @@
 				"country": "DE",
 				"code": "111111125"
 			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					},
+					"emails": [
+						{
+							"addr": "billing@example.com"
+						}
+					]
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -40,9 +53,9 @@
 					"country": "DE"
 				}
 			],
-			"emails": [
+			"telephones": [
 				{
-					"addr": "billing@example.com"
+					"num": "+49100200300"
 				}
 			]
 		},
@@ -57,12 +70,18 @@
 					"num": "25",
 					"street": "Werner-Heisenberg-Allee",
 					"locality": "München",
-					"code": "80939"
+					"code": "80939",
+					"country": "DE"
 				}
 			],
 			"emails": [
 				{
 					"addr": "email@sample.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "+49100200300"
 				}
 			]
 		},
@@ -96,6 +115,9 @@
 				"total": "1620.00"
 			}
 		],
+		"ordering": {
+			"code": "12345"
+		},
 		"payment": {
 			"instructions": {
 				"key": "credit-transfer+sepa",
