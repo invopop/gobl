@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "8aaa0df9390444f233eaa74495a66b758df529a1a58513ce59fc6cded30d12e9"
+			"val": "ca655476fea7712727f1e9908b0770480cd3c3563ae174da802b09a38aa926bf"
 		}
 	},
 	"doc": {
@@ -34,6 +34,14 @@
 				"country": "DE",
 				"code": "111111125"
 			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					}
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -46,6 +54,11 @@
 			"emails": [
 				{
 					"addr": "billing@example.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "+49100200300"
 				}
 			]
 		},
@@ -68,6 +81,11 @@
 			"emails": [
 				{
 					"addr": "billing@example.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "+34100200300"
 				}
 			]
 		},
@@ -100,6 +118,9 @@
 				"total": "1620.00"
 			}
 		],
+		"ordering": {
+			"code": "12345"
+		},
 		"payment": {
 			"instructions": {
 				"key": "credit-transfer+sepa",

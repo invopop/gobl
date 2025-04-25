@@ -13,11 +13,10 @@ import (
 )
 
 var (
-	taxCodeVATRegexp   = regexp.MustCompile(`^\d{11}$`)
-	taxCodeSIRENRegexp = regexp.MustCompile(`^\d{9}$`)
+	taxCodeVATRegexp = regexp.MustCompile(`^\d{11}$`)
 )
 
-// normalizeTaxIdentity normalizes the SIREN code, if there are any errors,
+// normalizeTaxIdentity normalizes the SIREN or SIRET code, if there are any errors,
 // these will be picked up by validation.
 func normalizeTaxIdentity(tID *tax.Identity) {
 	if tID.Code == "" {
@@ -26,11 +25,15 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 
 	str := tID.Code.String()
-	// Check if we have a SIREN so we can try and normalize with the
+
+	// Check if we have a SIREN or SIRET so we can try and normalize with the
 	// check digit.
-	if len(str) == 9 {
+	if len(str) == 9 || len(str) == 14 {
 		if err := validateSIRENTaxCode(tID.Code); err != nil {
 			return
+		}
+		if len(str) == 14 {
+			str = str[:9]
 		}
 		chk := calculateVATCheckDigit(str)
 		tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
@@ -81,14 +84,14 @@ func validateSIRENTaxCode(value interface{}) error {
 	}
 	str := code.String()
 
-	if !taxCodeSIRENRegexp.MatchString(str) {
+	if !taxCodeSIRENRegexp.MatchString(str) && !taxCodeSIRETRegexp.MatchString(str) {
 		return errors.New("invalid format")
 	}
 
 	base := str[:8]
-	chk := str[8:]
+	chk := str[8]
 	v := common.ComputeLuhnCheckDigit(base)
-	if chk != v {
+	if string(chk) != v {
 		return errors.New("checksum mismatch")
 	}
 
