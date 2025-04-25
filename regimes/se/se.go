@@ -26,8 +26,8 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		// Identities: identityKeyDefinitions, // identities.go
-		// Categories: taxCategories,          // tax_categories.go
+		// Identities: identityKeyDefinitions,
+		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			common.InvoiceScenarios(),
 		},
