@@ -27,7 +27,28 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
-		// Validator:  Validate,
-		// Normalizer: Normalize,
+		Validator:  Validate,
+		Normalizer: Normalize,
+	}
+}
+
+// Validate checks the document type and determines if it can be validated.
+func Validate(doc any) error {
+	switch obj := doc.(type) {
+	// case *bill.Invoice:
+	// 	return validateInvoice(obj)
+	case *tax.Identity:
+		return validateTaxIdentity(obj)
+	}
+	return nil
+}
+
+// Normalize will perform any regime specific calculations.
+func Normalize(doc any) {
+	switch obj := doc.(type) {
+	case *tax.Identity:
+		normalizeTaxIdentity(obj)
+		// case *org.Identity:
+		// 	normalizeOrgIdentity(obj)
 	}
 }
