@@ -4,6 +4,7 @@ package se
 import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -22,7 +23,7 @@ func New() *tax.RegimeDef {
 			i18n.SE: "Sverige",
 		},
 		TimeZone:   "Europe/Stockholm",
-		// Identities: identityKeyDefinitions,
+		Identities: identityTypeDefinitions,
 		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
@@ -39,6 +40,8 @@ func Validate(doc any) error {
 	// 	return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
+	case *org.Identity:
+		return validateOrgIdentity(obj)
 	}
 	return nil
 }
@@ -48,7 +51,7 @@ func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
-		// case *org.Identity:
-		// 	normalizeOrgIdentity(obj)
+	case *org.Identity:
+		normalizeOrgIdentity(obj)
 	}
 }
