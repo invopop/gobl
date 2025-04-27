@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `se`: added Sweden regime.
+
+### Changed
+
+- `l10n`: add `CountriesMap` for easier access to country information.
+
 ## [v0.220.1] - 2025-07-09
 
 ### Fixes
