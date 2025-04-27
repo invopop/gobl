@@ -1,0 +1,125 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Sweden",
+    "se": "Sverige"
+  },
+  "time_zone": "Europe/Stockholm",
+  "country": "SE",
+  "currency": "SEK",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "ON",
+      "name": {
+        "en": "Organization Number",
+        "se": "Organisationsnummer"
+      },
+      "desc": {
+        "en": "Swedish company registration number.",
+        "se": "Svenskt företagsregistreringsnummer."
+      }
+    },
+    {
+      "code": "PN",
+      "name": {
+        "en": "Person Number",
+        "se": "Personnummer"
+      },
+      "desc": {
+        "en": "Swedish personal registration number.",
+        "se": "Svenskt personnummer."
+      }
+    },
+    {
+      "code": "CN",
+      "name": {
+        "en": "Coordination Number",
+        "se": "Samordningsnummer"
+      },
+      "desc": {
+        "en": "Swedish coordination number.",
+        "se": "Svenskt samordningsnummer."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "se": "Moms"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "se": "Moms"
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "se": "Normalskattesats"
+          },
+          "values": [
+            {
+              "since": "1990-01-01",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "First Reduced Rate",
+            "se": "Första reducerade skattesatsen"
+          },
+          "values": [
+            {
+              "since": "1996-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "key": "super-reduced",
+          "name": {
+            "en": "Second Reduced Rate",
+            "se": "Andra reducerade skattesatsen"
+          },
+          "values": [
+            {
+              "since": "1996-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt",
+            "se": "Momsfri"
+          },
+          "exempt": true
+        }
+      ]
+    }
+  ]
+}
