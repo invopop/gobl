@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
@@ -15,12 +16,13 @@ func init() {
 
 // New instantiates a new Swedish regime.
 func New() *tax.RegimeDef {
+	countryData := l10n.CountriesMap()[l10n.SE]
 	return &tax.RegimeDef{
-		Country:   "SE",
+		Country:   l10n.TaxCountryCode(countryData.Code),
 		Currency:  currency.SEK,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
-			i18n.EN: "Sweden",
+			i18n.EN: countryData.Name,
 			i18n.SE: "Sverige",
 		},
 		TimeZone:   "Europe/Stockholm",
