@@ -31,9 +31,9 @@ func TestDateTimeJSONParsing(t *testing.T) {
 
 		err = json.Unmarshal([]byte(`"2023-09-04T15:59:30"`), &dt)
 		assert.NoError(t, err)
-		assert.Equal(t, dt.Date.Year, 2023)
-		assert.Equal(t, dt.Date.Month, time.September)
-		assert.Equal(t, dt.Date.Day, 4)
+		assert.Equal(t, dt.Date().Year, 2023)
+		assert.Equal(t, dt.Date().Month, time.September)
+		assert.Equal(t, dt.Date().Day, 4)
 	})
 }
 
@@ -134,21 +134,23 @@ func TestDateTimeThisSecond(t *testing.T) {
 	tn := time.Now().UTC()
 	// note: this test may fail if minute changes between
 	// the two "Now()" calls
-	assert.Equal(t, d.Date.Year, tn.Year())
-	assert.Equal(t, d.Date.Month, tn.Month())
-	assert.Equal(t, d.Date.Day, tn.Day())
-	assert.Equal(t, d.Time.Hour, tn.Hour())
-	assert.Equal(t, d.Time.Minute, tn.Minute())
+	assert.Equal(t, d.Date().Year, tn.Year())
+	assert.Equal(t, d.Date().Month, tn.Month())
+	assert.Equal(t, d.Date().Day, tn.Day())
+	assert.Equal(t, d.Time().Hour, tn.Hour())
+	assert.Equal(t, d.Time().Minute, tn.Minute())
+	assert.Equal(t, d.Time().Nanosecond, 0)
 
 	l, err := time.LoadLocation("America/New_York")
 	require.NoError(t, err)
 	tn = time.Now().In(l)
 	d = cal.ThisSecondIn(l)
-	assert.Equal(t, d.Date.Year, tn.Year())
-	assert.Equal(t, d.Date.Month, tn.Month())
-	assert.Equal(t, d.Date.Day, tn.Day())
-	assert.Equal(t, d.Time.Hour, tn.Hour())
-	assert.Equal(t, d.Time.Minute, tn.Minute())
+	assert.Equal(t, d.Date().Year, tn.Year())
+	assert.Equal(t, d.Date().Month, tn.Month())
+	assert.Equal(t, d.Date().Day, tn.Day())
+	assert.Equal(t, d.Time().Hour, tn.Hour())
+	assert.Equal(t, d.Time().Minute, tn.Minute())
+	assert.Equal(t, d.Time().Nanosecond, 0)
 }
 
 func TestDateTimeClone(t *testing.T) {

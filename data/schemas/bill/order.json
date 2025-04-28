@@ -205,6 +205,12 @@
           "description": "When the invoice was created.",
           "calculated": true
         },
+        "issue_time": {
+          "$ref": "https://gobl.org/draft-0/cal/time",
+          "title": "Issue Time",
+          "description": "IssueTime is an optional field that may be useful to indicate the time of day when\nthe order was issued. Some regions and formats may require this field to be set.\nAn empty string will be automatically updated to reflect the current time, otherwise\nthe field can be left with a nil value.",
+          "calculated": true
+        },
         "op_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
           "title": "Operation Date",

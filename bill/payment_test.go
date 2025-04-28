@@ -118,6 +118,27 @@ func TestPaymentCalculate(t *testing.T) {
 		assert.Equal(t, 1, p.Lines[0].Index)
 		assert.Equal(t, 2, p.Lines[1].Index)
 	})
+
+	t.Run("without issue date", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.IssueDate = cal.Date{}
+		require.NoError(t, p.Calculate())
+		tn := cal.TodayIn(p.RegimeDef().TimeLocation())
+		assert.Equal(t, p.IssueDate, tn)
+		assert.Nil(t, p.IssueTime)
+	})
+
+	t.Run("with empty issue time", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.IssueDate = cal.Date{}
+		p.IssueTime = new(cal.Time)
+		require.NoError(t, p.Calculate())
+		tn := cal.ThisSecondIn(p.RegimeDef().TimeLocation())
+		assert.Equal(t, p.IssueDate.String(), tn.Date().String())
+		assert.Equal(t, p.IssueTime.Hour, tn.Time().Hour)
+		assert.Equal(t, p.IssueTime.Minute, tn.Time().Minute)
+		assert.Equal(t, p.IssueTime.Second, tn.Time().Second)
+	})
 }
 
 func TestPaymentValidate(t *testing.T) {

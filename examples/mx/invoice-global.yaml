@@ -1,14 +1,19 @@
 $schema: "https://gobl.org/draft-0/bill/invoice"
 $addons:
   - "mx-cfdi-v4"
+$tags:
+  - "global"
 uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
-issue_date: "2023-07-10"
+issue_date: "2025-04-01"
 issue_time: "12:00:00"
-series: "TEST"
-code: "00001"
+series: "GLOBAL"
+code: "0001"
 tax:
   ext:
     mx-cfdi-issue-place: "21000"
+    mx-cfdi-global-period: "04"
+    mx-cfdi-global-month: "03"
+    mx-cfdi-global-year: "2025"
 supplier:
   name: "ESCUELA KEMPER URGATE"
   ext:
@@ -16,22 +21,12 @@ supplier:
   tax_id:
     country: "MX"
     code: "EKU9003173C9"
-customer:
-  name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
-  ext:
-    mx-cfdi-post-code: "86991"
-    mx-cfdi-fiscal-regime: "601"
-    mx-cfdi-use: "G01"
-  tax_id:
-    country: "MX"
-    code: "URE180429TM6"
 lines:
   - quantity: "1"
     item:
-      name: "Cobro por tarjetas"
+      ref: "SALE1"
+      name: "Sale 1"
       price: "10.00"
-      ext:
-        mx-cfdi-prod-serv: "84141602"
     discounts:
       - percent: "10.0%"
     taxes:
@@ -39,14 +34,14 @@ lines:
         rate: "standard"
   - quantity: "1"
     item:
-      name: "Porcentaje sobre GMV"
-      price: "10.00"
-      unit: "service"
-      ext:
-        mx-cfdi-prod-serv: "80141628"
+      ref: "SALE2"
+      name: "Sale 2"
+      price: "20.00"
     taxes:
       - cat: "VAT"
         rate: "standard"
 payment:
-  terms:
-    notes: "Condiciones de pago"
+  advances:
+    - key: "cash"
+      percent: "100%"
+      description: "Prepaid"

@@ -17,6 +17,9 @@ const (
 	ExtKeyDocType      cbc.Key = "mx-cfdi-doc-type"      // name from XML field: TipoDeComprobante
 	ExtKeyTaxType      cbc.Key = "mx-cfdi-tax-type"      // name from XML field: TipoImpuesto
 	ExtKeyPaymentMeans cbc.Key = "mx-cfdi-payment-means" // name from XML field: FormaPago
+	ExtKeyGlobalPeriod cbc.Key = "mx-cfdi-global-period"
+	ExtKeyGlobalMonth  cbc.Key = "mx-cfdi-global-month"
+	ExtKeyGlobalYear   cbc.Key = "mx-cfdi-global-year"
 )
 
 var extensions = []*cbc.Definition{
@@ -650,5 +653,205 @@ var extensions = []*cbc.Definition{
 				},
 			},
 		},
+	},
+	{
+		Key: ExtKeyGlobalPeriod,
+		Name: i18n.String{
+			i18n.EN: "CFDI Global Period",
+			i18n.ES: "CFDI Global Periodicidad",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Period for when the sales where generated.",
+			i18n.ES: "Campo requerido para registrar el período al que corresponde la información del comprobante global.",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "Daily",
+					i18n.ES: "Diario",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "Weekly",
+					i18n.ES: "Semanal",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "Biweekly",
+					i18n.ES: "Quincenal",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "Monthly",
+					i18n.ES: "Mensual",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "Bimonthly",
+					i18n.ES: "Bimestral",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyGlobalMonth,
+		Name: i18n.String{
+			i18n.EN: "CFDI Global Month",
+			i18n.ES: "CFDI Global Meses",
+		},
+		Desc: i18n.String{
+			i18n.EN: "Specific month or month range for the global invoice.",
+			i18n.ES: "Se debe registrar la clave del mes o los meses al que corresponde la información de las operaciones celebradas con el público en general, las distintas claves vigentes se encuentran incluidas en el catálogo c_Meses.",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "01",
+				Name: i18n.String{
+					i18n.EN: "January",
+					i18n.ES: "Enero",
+				},
+			},
+			{
+				Code: "02",
+				Name: i18n.String{
+					i18n.EN: "February",
+					i18n.ES: "Febrero",
+				},
+			},
+			{
+				Code: "03",
+				Name: i18n.String{
+					i18n.EN: "March",
+					i18n.ES: "Marzo",
+				},
+			},
+			{
+				Code: "04",
+				Name: i18n.String{
+					i18n.EN: "April",
+					i18n.ES: "Abril",
+				},
+			},
+			{
+				Code: "05",
+				Name: i18n.String{
+					i18n.EN: "May",
+					i18n.ES: "Mayo",
+				},
+			},
+			{
+				Code: "06",
+				Name: i18n.String{
+					i18n.EN: "June",
+					i18n.ES: "Junio",
+				},
+			},
+			{
+				Code: "07",
+				Name: i18n.String{
+					i18n.EN: "July",
+					i18n.ES: "Julio",
+				},
+			},
+			{
+				Code: "08",
+				Name: i18n.String{
+					i18n.EN: "August",
+					i18n.ES: "Agosto",
+				},
+			},
+			{
+				Code: "09",
+				Name: i18n.String{
+					i18n.EN: "September",
+					i18n.ES: "Septiembre",
+				},
+			},
+			{
+
+				Code: "10",
+				Name: i18n.String{
+					i18n.EN: "October",
+					i18n.ES: "Octubre",
+				},
+			},
+			{
+				Code: "11",
+				Name: i18n.String{
+					i18n.EN: "November",
+					i18n.ES: "Noviembre",
+				},
+			},
+			{
+				Code: "12",
+				Name: i18n.String{
+					i18n.EN: "December",
+					i18n.ES: "Diciembre",
+				},
+			},
+			{
+				Code: "13",
+				Name: i18n.String{
+					i18n.EN: "January-February",
+					i18n.ES: "Enero-Febrero",
+				},
+			},
+			{
+				Code: "14",
+				Name: i18n.String{
+					i18n.EN: "March-April",
+					i18n.ES: "Marzo-Abril",
+				},
+			},
+			{
+				Code: "15",
+				Name: i18n.String{
+					i18n.EN: "May-June",
+					i18n.ES: "Mayo-Junio",
+				},
+			},
+			{
+				Code: "16",
+				Name: i18n.String{
+					i18n.EN: "July-August",
+					i18n.ES: "Julio-Agosto",
+				},
+			},
+			{
+				Code: "17",
+				Name: i18n.String{
+					i18n.EN: "September-October",
+					i18n.ES: "Septiembre-Octubre",
+				},
+			},
+			{
+				Code: "18",
+				Name: i18n.String{
+					i18n.EN: "November-December",
+					i18n.ES: "Noviembre-Diciembre",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyGlobalYear,
+		Name: i18n.String{
+			i18n.EN: "CFDI Global Year",
+			i18n.ES: "CFDI Global Año",
+		},
+		Desc: i18n.String{
+			i18n.ES: "Se debe registrar el año al que corresponde la información del comprobante global.",
+			i18n.EN: "",
+		},
+		Pattern: `\d{4}`,
 	},
 }

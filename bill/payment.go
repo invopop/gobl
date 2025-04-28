@@ -94,6 +94,9 @@ type Payment struct {
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 	// When the payment was issued.
 	IssueDate cal.Date `json:"issue_date" jsonschema:"title=Issue Date" jsonschema_extras:"calculated=true"`
+	// IssueTime is an optional field that may be useful to indicate the time of day when
+	// the payment was issued.
+	IssueTime *cal.Time `json:"issue_time,omitempty" jsonschema:"title=Issue Time" jsonschema_extras:"calculated=true"`
 	// When the taxes of this payment become accountable, if none set, the issue date is assumed.
 	ValueDate *cal.Date `json:"value_date,omitempty" jsonschema:"title=Value Date"`
 	// Currency for all payment totals.
@@ -248,6 +251,18 @@ func (pmt *Payment) calculate() error {
 	var total *num.Amount
 
 	r := pmt.RegimeDef()
+
+	// Set the issue date and time
+	tz := r.TimeLocation()
+	if pmt.IssueTime != nil && pmt.IssueTime.IsZero() {
+		// If setting the time, also set the date
+		tn := cal.ThisSecondIn(tz)
+		hn := tn.Time()
+		pmt.IssueDate = tn.Date()
+		pmt.IssueTime = &hn
+	} else if pmt.IssueDate.IsZero() {
+		pmt.IssueDate = cal.TodayIn(tz)
+	}
 
 	// Convert empty or invalid currency to the regime's currency
 	if pmt.Currency == currency.CodeEmpty && r != nil {

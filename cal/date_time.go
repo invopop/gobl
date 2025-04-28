@@ -44,26 +44,23 @@ func MakeDateTime(year int, month time.Month, day, hour, minute, second int) Dat
 // ThisSecond produces a new date time instance for the current UTC time
 // to the nearest second.
 func ThisSecond() DateTime {
-	t := time.Now().UTC()
-	return DateTime{
-		civil.DateTimeOf(t),
-	}
+	return ThisSecondIn(time.UTC)
 }
 
 // ThisSecondIn provides a new date time using the current time from the provided
 // location as a reference.
 func ThisSecondIn(loc *time.Location) DateTime {
 	t := time.Now().In(loc)
-	return DateTime{
-		civil.DateTimeOf(t),
-	}
+	ct := civil.DateTimeOf(t)
+	ct.Time.Nanosecond = 0 // ignore nanoseconds
+	return DateTime{ct}
 }
 
 // DateTimeOf returns the DateTime from the provided time.
 func DateTimeOf(t time.Time) DateTime {
-	return DateTime{
-		civil.DateTimeOf(t),
-	}
+	ct := civil.DateTimeOf(t)
+	ct.Time.Nanosecond = 0 // ignore nanoseconds
+	return DateTime{ct}
 }
 
 // Clone returns a new pointer to a copy of the date time.
@@ -91,6 +88,20 @@ func (dt DateTime) In(loc *time.Location) time.Time {
 // TimeZ returns a new time.Time instance with the UTC location.
 func (dt DateTime) TimeZ() time.Time {
 	return dt.In(time.UTC)
+}
+
+// Date returns the date component of the date time.
+func (dt DateTime) Date() Date {
+	return Date{
+		Date: dt.DateTime.Date,
+	}
+}
+
+// Time returns the time component of the date time.
+func (dt DateTime) Time() Time {
+	return Time{
+		Time: dt.DateTime.Time,
+	}
 }
 
 // JSONSchema returns a custom json schema for the date time.

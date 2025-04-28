@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ffa42d4a4a84ea08fe3022ddd6110d6726b9535a3c67f99825bb34099152ba3d"
+			"val": "21967c52bf96b49463d82858a6a79ca9f16be9fd351e3ed1da3a9cdb566067c1"
 		}
 	},
 	"doc": {
@@ -13,16 +13,22 @@
 		"$addons": [
 			"mx-cfdi-v4"
 		],
+		"$tags": [
+			"global"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "TEST",
-		"code": "00001",
-		"issue_date": "2023-07-10",
+		"series": "GLOBAL",
+		"code": "0001",
+		"issue_date": "2025-04-01",
 		"issue_time": "12:00:00",
 		"currency": "MXN",
 		"tax": {
 			"ext": {
 				"mx-cfdi-doc-type": "I",
+				"mx-cfdi-global-month": "03",
+				"mx-cfdi-global-period": "04",
+				"mx-cfdi-global-year": "2025",
 				"mx-cfdi-issue-place": "21000"
 			}
 		},
@@ -36,32 +42,14 @@
 				"mx-cfdi-fiscal-regime": "601"
 			}
 		},
-		"customer": {
-			"name": "UNIVERSIDAD ROBOTICA ESPAÑOLA",
-			"tax_id": {
-				"country": "MX",
-				"code": "URE180429TM6"
-			},
-			"addresses": [
-				{
-					"code": "86991"
-				}
-			],
-			"ext": {
-				"mx-cfdi-fiscal-regime": "601",
-				"mx-cfdi-use": "G01"
-			}
-		},
 		"lines": [
 			{
 				"i": 1,
 				"quantity": "1",
 				"item": {
-					"name": "Cobro por tarjetas",
-					"price": "10.00",
-					"ext": {
-						"mx-cfdi-prod-serv": "84141602"
-					}
+					"ref": "SALE1",
+					"name": "Sale 1",
+					"price": "10.00"
 				},
 				"sum": "10.00",
 				"discounts": [
@@ -83,14 +71,11 @@
 				"i": 2,
 				"quantity": "1",
 				"item": {
-					"name": "Porcentaje sobre GMV",
-					"price": "10.00",
-					"unit": "service",
-					"ext": {
-						"mx-cfdi-prod-serv": "80141628"
-					}
+					"ref": "SALE2",
+					"name": "Sale 2",
+					"price": "20.00"
 				},
-				"sum": "10.00",
+				"sum": "20.00",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -98,17 +83,25 @@
 						"percent": "16.0%"
 					}
 				],
-				"total": "10.00"
+				"total": "20.00"
 			}
 		],
 		"payment": {
-			"terms": {
-				"notes": "Condiciones de pago"
-			}
+			"advances": [
+				{
+					"key": "cash",
+					"description": "Prepaid",
+					"percent": "100%",
+					"amount": "33.64",
+					"ext": {
+						"mx-cfdi-payment-means": "01"
+					}
+				}
+			]
 		},
 		"totals": {
-			"sum": "19.00",
-			"total": "19.00",
+			"sum": "29.00",
+			"total": "29.00",
 			"taxes": {
 				"categories": [
 					{
@@ -116,19 +109,21 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "19.00",
+								"base": "29.00",
 								"percent": "16.0%",
-								"amount": "3.04"
+								"amount": "4.64"
 							}
 						],
-						"amount": "3.04"
+						"amount": "4.64"
 					}
 				],
-				"sum": "3.04"
+				"sum": "4.64"
 			},
-			"tax": "3.04",
-			"total_with_tax": "22.04",
-			"payable": "22.04"
+			"tax": "4.64",
+			"total_with_tax": "33.64",
+			"payable": "33.64",
+			"advance": "33.64",
+			"due": "0.00"
 		}
 	}
 }

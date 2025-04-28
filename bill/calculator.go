@@ -24,6 +24,7 @@ type billable interface {
 	GetTags() []cbc.Key
 
 	getIssueDate() cal.Date
+	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
@@ -38,17 +39,16 @@ type billable interface {
 	getComplements() []*schema.Object
 
 	setIssueDate(cal.Date)
+	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
 	setTotals(*Totals)
 }
 
 func calculate(doc billable) error {
 	r := doc.RegimeDef() // may be nil!
+	calculateIssueDateAndTime(r, doc)
 
-	// Normalize data
-	if doc.getIssueDate().IsZero() {
-		doc.setIssueDate(cal.TodayIn(r.TimeLocation()))
-	}
+	// Get the date used for tax calculations
 	date := doc.getValueDate()
 	if date == nil {
 		id := doc.getIssueDate()
@@ -199,6 +199,18 @@ func calculate(doc billable) error {
 	doc.setTotals(t)
 
 	return nil
+}
+
+func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) {
+	tz := r.TimeLocation()
+	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
+		dn := cal.ThisSecondIn(tz)
+		tn := dn.Time()
+		doc.setIssueDate(dn.Date())
+		doc.setIssueTime(&tn)
+	} else if doc.getIssueDate().IsZero() {
+		doc.setIssueDate(cal.TodayIn(tz))
+	}
 }
 
 func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.Key) {
