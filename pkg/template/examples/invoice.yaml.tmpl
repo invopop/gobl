@@ -21,6 +21,10 @@ customer:
   tax_id:
     country: "{{ .customer_country }}"
     code: "{{ .customer_tax_code }}"
+  {{ if .customer_meta }}
+  meta:
+    {{ .customer_meta | indent 1 }}
+  {{ end }}
 
 lines:
   {{ range .lines }}

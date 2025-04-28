@@ -22,7 +22,7 @@ func Indent(count int, text string) string {
 }
 
 // Optional is useful when outputting strings to ensure that
-// empty values are outputted correctly.
+// nil values are outputted correctly.
 func Optional(in any) string {
 	if in == nil {
 		return ""
