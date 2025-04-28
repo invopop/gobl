@@ -123,6 +123,12 @@ func validateInvoiceTax(tags tax.Tags, preceding []*org.DocumentRef) validation.
 						ExtKeyGlobalMonth,
 						ExtKeyGlobalYear,
 					),
+				).Else(
+					tax.ExtensionsRequireAllOrNone(
+						ExtKeyGlobalPeriod,
+						ExtKeyGlobalMonth,
+						ExtKeyGlobalYear,
+					),
 				),
 				validation.When(
 					len(preceding) > 0,

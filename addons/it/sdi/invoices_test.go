@@ -24,6 +24,10 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				sdi.ExtKeyDocumentType: "TD01",
+				sdi.ExtKeyFormat:       "FPA12",
+			},
 		},
 		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
@@ -85,9 +89,18 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	inv := testInvoiceStandard(t)
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	t.Run("basic", func(t *testing.T) {
+
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+	t.Run("missing tax extensions", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Tax.Ext = nil
+		require.ErrorContains(t, inv.Validate(), "tax: (ext: (it-sdi-document-type: required; it-sdi-format: required.).)")
+	})
 }
 
 func TestInvoiceNormalization(t *testing.T) {
@@ -337,7 +350,7 @@ func TestInvoiceLineValidation(t *testing.T) {
 		})
 		ad.Normalizer(inv)
 		err := ad.Validator(inv)
-		require.EqualError(t, err, "lines: (1: (taxes: missing category VAT.).).")
+		require.ErrorContains(t, err, "lines: (1: (taxes: missing category VAT.).).")
 	})
 
 	t.Run("invalid item tax category", func(t *testing.T) {
@@ -357,7 +370,7 @@ func TestInvoiceLineValidation(t *testing.T) {
 		})
 		ad.Normalizer(inv)
 		err := ad.Validator(inv)
-		require.EqualError(t, err, "lines: (1: (taxes: missing category VAT.).).")
+		require.ErrorContains(t, err, "lines: (1: (taxes: missing category VAT.).).")
 	})
 
 	t.Run("missing line", func(t *testing.T) {

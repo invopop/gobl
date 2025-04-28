@@ -65,7 +65,7 @@ func validateTax(value any) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtensionsHas(
+			tax.ExtensionsRequire(
 				ExtKeyFormat,
 				ExtKeyDocumentType,
 			),
