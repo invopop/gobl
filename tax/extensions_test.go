@@ -134,40 +134,6 @@ func TestExtValidation(t *testing.T) {
 	})
 }
 
-func TestExtensionsHasValidation(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
-		err := validation.Validate(nil,
-			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
-		)
-		assert.NoError(t, err)
-	})
-	t.Run("empty", func(t *testing.T) {
-		em := tax.Extensions{}
-		err := validation.Validate(em,
-			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
-		)
-		assert.NoError(t, err)
-	})
-	t.Run("correct", func(t *testing.T) {
-		em := tax.Extensions{
-			untdid.ExtKeyDocumentType: "326",
-		}
-		err := validation.Validate(em,
-			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
-		)
-		assert.NoError(t, err)
-	})
-	t.Run("missing", func(t *testing.T) {
-		em := tax.Extensions{
-			iso.ExtKeySchemeID: "1234",
-		}
-		err := validation.Validate(em,
-			tax.ExtensionsHas(untdid.ExtKeyDocumentType),
-		)
-		assert.ErrorContains(t, err, "iso-scheme-id: invalid")
-	})
-}
-
 func TestExtensionsRequiresValidation(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		err := validation.Validate(nil,
@@ -207,6 +173,57 @@ func TestExtensionsRequiresValidation(t *testing.T) {
 		}
 		err := validation.Validate(em,
 			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
+		)
+		assert.ErrorContains(t, err, "untdid-document-type: required")
+	})
+}
+
+func TestExtensionsAllOrNoneValidation(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		err := validation.Validate(nil,
+			tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("empty", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("all present", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+			iso.ExtKeySchemeID:        "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("none present", func(t *testing.T) {
+		em := tax.Extensions{}
+		err := validation.Validate(em,
+			tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.NoError(t, err)
+	})
+	t.Run("some present", func(t *testing.T) {
+		em := tax.Extensions{
+			untdid.ExtKeyDocumentType: "326",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
+		)
+		assert.ErrorContains(t, err, "iso-scheme-id: required")
+	})
+	t.Run("some present reversed", func(t *testing.T) {
+		em := tax.Extensions{
+			iso.ExtKeySchemeID: "1234",
+		}
+		err := validation.Validate(em,
+			tax.ExtensionsRequireAllOrNone(untdid.ExtKeyDocumentType, iso.ExtKeySchemeID),
 		)
 		assert.ErrorContains(t, err, "untdid-document-type: required")
 	})

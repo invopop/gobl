@@ -213,19 +213,22 @@ func CleanExtensions(em Extensions) Extensions {
 	return nem
 }
 
-// ExtensionsHas returns a validation rule that ensures the extension map's
-// keys match those provided.
-func ExtensionsHas(keys ...cbc.Key) validation.Rule {
+// ExtensionsRequire returns a validation rule that ensures that all of
+// the provided keys are present.
+func ExtensionsRequire(keys ...cbc.Key) validation.Rule {
 	return validateExtCodeMap{
-		keys: keys,
+		operator: extCodeOpAnd,
+		keys:     keys,
 	}
 }
 
-// ExtensionsRequire returns a validation rule that ensures all the
-// extension map's keys match those provided in the list.
-func ExtensionsRequire(keys ...cbc.Key) validation.Rule {
+// ExtensionsRequireAllOrNone returns a validation rule that performs an XNOR
+// operation on the provided keys. If one of the keys is present, then
+// all of them must be present. If none of the keys are present,
+// then all of them must be absent.
+func ExtensionsRequireAllOrNone(keys ...cbc.Key) validation.Rule {
 	return validateExtCodeMap{
-		required: true,
+		operator: extCodeOpXNOr,
 		keys:     keys,
 	}
 }
@@ -234,15 +237,23 @@ func ExtensionsRequire(keys ...cbc.Key) validation.Rule {
 // an extensions map does **not** include the provided keys.
 func ExtensionsExclude(keys ...cbc.Key) validation.Rule {
 	return validateExtCodeMap{
-		exclude: true,
-		keys:    keys,
+		operator: extCodeOpNot,
+		keys:     keys,
 	}
 }
 
+type extCodeOp int
+
+const (
+	_                      = iota
+	extCodeOpAnd extCodeOp = 1 + iota
+	extCodeOpNot
+	extCodeOpXNOr
+)
+
 type validateExtCodeMap struct {
 	keys     []cbc.Key
-	required bool
-	exclude  bool
+	operator extCodeOp
 }
 
 func (v validateExtCodeMap) Validate(value interface{}) error {
@@ -252,22 +263,31 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 	}
 	err := make(validation.Errors)
 
-	if v.required {
+	switch v.operator {
+	case extCodeOpAnd:
 		for _, k := range v.keys {
 			if _, ok := em[k]; !ok {
 				err[k.String()] = errors.New("required")
 			}
 		}
-	} else if v.exclude {
+	case extCodeOpNot:
 		for _, k := range v.keys {
 			if _, ok := em[k]; ok {
 				err[k.String()] = errors.New("must be blank")
 			}
 		}
-	} else {
-		for k := range em {
-			if !k.In(v.keys...) {
-				err[k.String()] = errors.New("invalid")
+	case extCodeOpXNOr:
+		present := 0
+		for _, k := range v.keys {
+			if _, ok := em[k]; ok {
+				present++
+			}
+		}
+		if present > 0 && present != len(v.keys) {
+			for _, k := range v.keys {
+				if _, ok := em[k]; !ok {
+					err[k.String()] = errors.New("required")
+				}
 			}
 		}
 	}

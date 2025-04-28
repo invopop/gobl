@@ -149,8 +149,9 @@
         },
         "totals": {
             "payable": "5637.50",
+            "retained_tax": "600.00",
             "sum": "5187.50",
-            "tax": "450.00",
+            "tax": "1050.00",
             "taxes": {
                 "categories": [
                     {
@@ -185,10 +186,11 @@
                         "retained": true
                     }
                 ],
-                "sum": "450.00"
+                "retained": "600.00",
+                "sum": "1050.00"
             },
             "total": "5187.50",
-            "total_with_tax": "5637.50"
+            "total_with_tax": "6237.50"
         },
         "type": "standard",
         "uuid": "3d7fdbdc-d037-11eb-a068-3e7e00ce5635"
@@ -196,7 +198,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "c793f04d5ee66340bb1a8042a6ba80e71271d50325ca24942d3df50350170d1c"
+            "val": "404b52aa1443cb6d681670d102cacf5cb1b7b169842ec8a0002f74403a6035de"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

@@ -685,10 +685,9 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 		t.Logf("TOTALS: %v", string(data))
 	*/
 
+	assert.Equal(t, "17830.19", i.Totals.Total.String())
 	assert.Equal(t, "17830.20", i2.Totals.Total.String())
-	// assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
-	assert.Equal(t, "17830.20", i2.Totals.Total.String())
-	assert.Equal(t, "-0.02", i2.Totals.Rounding.String())
+	assert.Equal(t, "-0.01", i2.Totals.Rounding.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }

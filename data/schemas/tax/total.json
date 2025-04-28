@@ -113,7 +113,12 @@
         "sum": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Sum",
-          "description": "Total value of all the taxes applied."
+          "description": "Total value of all non-retained or indirect taxes."
+        },
+        "retained": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Retained",
+          "description": "Sum of retained or withheld tax amounts"
         }
       },
       "type": "object",

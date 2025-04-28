@@ -166,9 +166,15 @@ func calculate(doc billable) error {
 	}
 
 	// Finally calculate the total with *all* the taxes.
-	t.Tax = t.Taxes.PreciseSum()
+	t.Tax = t.Taxes.Sum
 	t.TotalWithTax = t.Total.Add(t.Tax)
+	if t.Taxes.Retained != nil {
+		t.RetainedTax = t.Taxes.Retained
+	}
 	t.Payable = t.TotalWithTax
+	if t.RetainedTax != nil {
+		t.Payable = t.Payable.Subtract(*t.RetainedTax)
+	}
 	if t.Rounding != nil {
 		// BT-144 in EN16931
 		t.Payable = t.Payable.Add(*t.Rounding)
@@ -180,7 +186,7 @@ func calculate(doc billable) error {
 	}
 
 	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.TotalWithTax)
+		pd.calculateAdvances(zero, t.Payable)
 
 		// Deal with advances, if any
 		if t.Advances = pd.totalAdvance(zero); t.Advances != nil {

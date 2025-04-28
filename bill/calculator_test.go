@@ -8,6 +8,8 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -96,6 +98,65 @@ func TestCalculate(t *testing.T) {
 		tn := cal.ThisSecondIn(inv.RegimeDef().TimeLocation())
 		assert.Equal(t, tn.Date().String(), inv.IssueDate.String())
 		assert.Equal(t, tn.Time().String(), inv.IssueTime.String())
+	})
+
+	t.Run("with retained taxes", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(942, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(21, 2),
+				},
+				{
+					Category: es.TaxCategoryIRPF,
+					Percent:  num.NewPercentage(15, 2),
+				},
+			},
+		})
+		inv.Tax.PricesInclude = ""
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "1.98", inv.Totals.Tax.String())
+		assert.Equal(t, "1.41", inv.Totals.RetainedTax.String())
+		assert.Equal(t, "9.99", inv.Totals.Payable.String())
+	})
+
+	t.Run("with retained taxes and advances", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(10000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(21, 2),
+				},
+				{
+					Category: es.TaxCategoryIRPF,
+					Percent:  num.NewPercentage(15, 2),
+				},
+			},
+		})
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Description: "Half paid",
+					Percent:     num.NewPercentage(50, 2),
+				},
+			},
+		}
+		inv.Tax.PricesInclude = ""
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "21.00", inv.Totals.Tax.String())
+		assert.Equal(t, "15.00", inv.Totals.RetainedTax.String())
+		assert.Equal(t, "106.00", inv.Totals.Payable.String())
+		assert.Equal(t, "53.00", inv.Totals.Due.String())
 	})
 }
 

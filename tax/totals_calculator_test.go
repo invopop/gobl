@@ -851,7 +851,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Amount: num.MakeAmount(1500, 2),
 					},
 				},
-				Sum: num.MakeAmount(2100, 2),
+				Sum:      num.MakeAmount(3600, 2),
+				Retained: num.NewAmount(1500, 2),
 			},
 		},
 
@@ -917,7 +918,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Amount: num.MakeAmount(1240, 2),
 					},
 				},
-				Sum: num.MakeAmount(1860, 2),
+				Sum:      num.MakeAmount(3099, 2),
+				Retained: num.NewAmount(1240, 2),
 			},
 		},
 		{
@@ -1197,7 +1199,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Amount: num.MakeAmount(4000, 2),
 					},
 				},
-				Sum: num.MakeAmount(400, 2),
+				Sum:      num.MakeAmount(4400, 2),
+				Retained: num.NewAmount(4000, 2),
 			},
 		},
 		{

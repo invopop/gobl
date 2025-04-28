@@ -98,9 +98,59 @@ func validInvoiceGlobal() *bill.Invoice {
 }
 
 func TestValidInvoice(t *testing.T) {
-	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	t.Run("basic", func(t *testing.T) {
+		inv := validInvoice()
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+	t.Run("with global period", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				cfdi.ExtKeyGlobalPeriod: "04",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		// Order is not guaranteed, so check for each error separately
+		require.ErrorContains(t, err, "mx-cfdi-global-month: required")
+		require.ErrorContains(t, err, "mx-cfdi-global-year: required")
+	})
+	t.Run("with global month", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				cfdi.ExtKeyGlobalMonth: "02",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "mx-cfdi-global-period: required")
+		require.ErrorContains(t, err, "mx-cfdi-global-year: required")
+	})
+	t.Run("with global year", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				cfdi.ExtKeyGlobalYear: "2025",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "mx-cfdi-global-month: required")
+		require.ErrorContains(t, err, "mx-cfdi-global-period: required")
+	})
+	t.Run("with global period and month", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				cfdi.ExtKeyGlobalPeriod: "04",
+				cfdi.ExtKeyGlobalMonth:  "02",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, inv.Validate(), "tax: (ext: (mx-cfdi-global-year: required.).)")
+	})
 }
 
 func TestNormalizeInvoice(t *testing.T) {
