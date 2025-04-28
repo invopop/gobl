@@ -80,7 +80,7 @@ func TestTemplateExecute(t *testing.T) {
 			  - "foo"
 			code: "{{ .code | optional }}"
 		`)
-		tmpl, err := template.New("invoice", string(data))
+		tmpl, err := template.New("invoice", data)
 		require.NoError(t, err)
 
 		row := map[string]any{
