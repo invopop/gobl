@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -221,12 +222,17 @@ func validateAddress(value interface{}) error {
 	if !ok {
 		return nil
 	}
+	if v.Street == "" && v.PostOfficeBox == "" {
+		return errors.New("either street or post office box must be set")
+	}
 	// Post code and street in addition to the locality are required in Italian invoices.
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Street, validation.Required),
 		validation.Field(&v.Code,
 			validation.Required,
-			validation.Match(regexp.MustCompile(`^\d{5}$`)),
+			validation.When(
+				v.Country.In(l10n.IT.ISO()),
+				validation.Match(regexp.MustCompile(`^\d{5}$`)),
+			),
 		),
 	)
 }
