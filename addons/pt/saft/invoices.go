@@ -8,6 +8,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -60,6 +61,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validatePaymentDetails(inv)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Totals,
+			validation.By(validateTotals(inv)),
+			validation.Skip,
+		),
 	)
 }
 
@@ -93,6 +98,22 @@ func validateAdvance(inv *bill.Invoice) validation.RuleFunc {
 			validation.Field(&adv.Date,
 				validation.Required,
 				validation.In(inv.IssueDate).Error("must be the same as the invoice issue date"),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateTotals(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		tot, _ := val.(*bill.Totals)
+		if tot == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(tot,
+			validation.Field(&tot.Due,
+				validation.When(isInvoiceReceipt(inv), num.Max(num.AmountZero)),
 				validation.Skip,
 			),
 		)
@@ -207,6 +228,10 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
+}
+
+func isInvoiceReceipt(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
 }
 
 func normalizeInvoice(inv *bill.Invoice) {
