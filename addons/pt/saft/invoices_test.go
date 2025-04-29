@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -158,4 +159,78 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestInvoicePaymentValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("invoice with valid advance", func(t *testing.T) {
+		inv := validInvoice()
+		date := cal.MakeDate(2023, 1, 1) // Same as invoice date
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date:   &date,
+					Amount: num.MakeAmount(50, 0),
+				},
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("advance with different date than invoice", func(t *testing.T) {
+		inv := validInvoice()
+		date := cal.MakeDate(2023, 1, 2) // Different than invoice date
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date:   &date,
+					Amount: num.MakeAmount(50, 0),
+				},
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "advances: (0: (date: must be the same as the invoice issue date")
+	})
+
+	t.Run("advance with nil date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date:   nil,
+					Amount: num.MakeAmount(50, 0),
+				},
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "advances: (0: (date: cannot be blank")
+	})
+}
+
+func TestInvoiceNormalization(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("set default advance date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date:   nil,
+					Amount: num.MakeAmount(50, 0),
+				},
+			},
+		}
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, &inv.IssueDate, inv.Payment.Advances[0].Date)
+	})
+
+	t.Run("nil payment details", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = nil
+
+		addon.Normalizer(inv)
+
+		assert.Nil(t, inv.Payment)
+	})
 }
