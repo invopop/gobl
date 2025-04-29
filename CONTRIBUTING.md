@@ -94,14 +94,4 @@ Add this to your `settings.json` file:
 
 ## Adding a new regime
 
-- Create a new directory in the `regimes` folder with the 2-letter country code (regime code).
-- Add the necessary files and code to the new directory.
-  - `<regime_code>.go`
-  - `tax_categories.go`
-  - `tax_identity.go`
-  - `corrections.go`
-  - `scenarios.go`
-  - `invoices.go`
-  - `invoices_test.go`
-- Add the new regime to the `regimes.go` file.
-- Add the new regime to the `regimes_test.go` file.
+Check [`regimes/README.md`](regimes/README.md) for more information.
