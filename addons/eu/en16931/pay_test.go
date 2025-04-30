@@ -2,10 +2,13 @@ package en16931_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -36,10 +39,52 @@ func TestPayInstructions(t *testing.T) {
 			Instructions: &pay.Instructions{
 				Key: pay.MeansKeyCreditTransfer,
 			},
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:   cal.NewDate(2025, time.January, 1),
+						Amount: num.MakeAmount(1000, 2),
+					},
+				},
+			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "30", inv.Payment.Instructions.Ext[untdid.ExtKeyPaymentMeans].String())
 		err := inv.Validate()
 		assert.NoError(t, err)
+	})
+}
+
+func TestValidateBillPayment(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with terms", func(t *testing.T) {
+		p := &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:   cal.NewDate(2025, time.January, 1),
+						Amount: num.MakeAmount(1000, 2),
+					},
+				},
+			},
+		}
+		err := ad.Validator(p)
+		assert.NoError(t, err)
+	})
+
+	t.Run("without terms", func(t *testing.T) {
+		p := &bill.PaymentDetails{}
+		err := ad.Validator(p)
+		assert.ErrorContains(t, err, "terms: cannot be blank")
+	})
+
+	t.Run("with empty due date", func(t *testing.T) {
+		p := &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{},
+			},
+		}
+		err := ad.Validator(p)
+		assert.ErrorContains(t, err, "terms: (due_dates: cannot be blank.).")
 	})
 }

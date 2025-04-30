@@ -75,8 +75,16 @@ func validate(doc any) error {
 		return validatePayInstructions(obj)
 	case *bill.Invoice:
 		return validateBillInvoice(obj)
+	case *bill.Line:
+		return validateBillLine(obj)
+	case *bill.PaymentDetails:
+		return validateBillPayment(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *bill.Discount:
+		return validateBillDiscount(obj)
+	case *bill.Charge:
+		return validateBillCharge(obj)
 	case *org.Item:
 		return validateOrgItem(obj)
 	case *org.Attachment:

@@ -9,15 +9,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// BR-DE-14 - set percent in convertor as this rule requires it, even if it is 0. BT-119
-// BR-DE-16 - covered by tax ID being required. BT-31
-// BR-DE-18 - references format of payment.terms.details. BT-20
-// BR-DE-20 - partialy covered by gobl validation of IBAN format. BT-84
-// BR-DE-21 - look at BT-24 mapping of gobl. BT-24
-// BR-DE-22 - refers to attachments. BG-24
-// BR-DE-27 - handled by gobl validation of phone number. BT-42
-// BR-DE-28 - handled by gobl validation of email address. BT-43
-
 // BR-DE-17 - restricted subset of UNTDID document type codes
 var validInvoiceUNTDIDDocumentTypeValues = []cbc.Code{
 	"326", // Partial
@@ -142,8 +133,6 @@ func validateSupplier(val any) error {
 
 	// Check if either party or people have telephones/emails
 	// BR-DE-6/BR-DE-7
-	hasPeopleTelephones := len(party.People) > 0 && len(party.People[0].Telephones) > 0
-	hasPeopleEmails := len(party.People) > 0 && len(party.People[0].Emails) > 0
 
 	return validation.ValidateStruct(party,
 		// BR-DE-2
@@ -160,7 +149,7 @@ func validateSupplier(val any) error {
 		// Check for either party or people telephones
 		validation.Field(&party.Telephones,
 			validation.When(
-				!hasPeopleTelephones,
+				len(party.People) > 0 && len(party.People[0].Telephones) > 0,
 				validation.Required.Error("either party.telephones or party.people[0].telephones is required"),
 			),
 			validation.Skip,
@@ -168,7 +157,7 @@ func validateSupplier(val any) error {
 		// Check for either party or people emails
 		validation.Field(&party.Emails,
 			validation.When(
-				!hasPeopleEmails,
+				len(party.People) > 0 && len(party.People[0].Emails) > 0,
 				validation.Required.Error("either party.emails or party.people[0].emails is required"),
 			),
 			validation.Skip,

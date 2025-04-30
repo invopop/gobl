@@ -89,6 +89,14 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Required, // BR-16 - at least one line
 			validation.Skip,
 		),
+		validation.Field(&inv.Payment,
+			validation.When(
+				//BR-CO-25
+				inv.Totals != nil && ((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) || !inv.Totals.Payable.IsZero()),
+				validation.Required,
+			),
+			validation.Skip,
+		),
 	)
 }
 
@@ -103,4 +111,58 @@ func validateBillInvoiceTax(value any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateBillLine(line *bill.Line) error {
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateBillLineDiscount),
+			),
+			validation.Skip,
+		),
+		validation.Field(&line.Charges,
+			validation.Each(
+				validation.By(validateBillLineCharge),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLineCharge(value any) error {
+	charge, ok := value.(*bill.LineCharge)
+	if !ok || charge == nil {
+		return nil
+	}
+	if charge.Reason == "" && (charge.Ext == nil || charge.Ext[untdid.ExtKeyCharge] == "") {
+		return validation.NewError("reason", "either a reason or a charge type extension is required")
+	}
+	return nil
+}
+
+func validateBillLineDiscount(value any) error {
+	discount, ok := value.(*bill.LineDiscount)
+	if !ok || discount == nil {
+		return nil
+	}
+	if discount.Reason == "" && (discount.Ext == nil || discount.Ext[untdid.ExtKeyAllowance] == "") {
+		return validation.NewError("reason", "either a reason or an allowance type extension is required")
+	}
+	return nil
+}
+
+func validateBillCharge(charge *bill.Charge) error {
+	if charge.Reason == "" && (charge.Ext == nil || charge.Ext[untdid.ExtKeyCharge] == "") {
+		return validation.NewError("reason", "either a reason or a charge type extension is required")
+	}
+	return nil
+}
+
+func validateBillDiscount(discount *bill.Discount) error {
+	if discount.Reason == "" && (discount.Ext == nil || discount.Ext[untdid.ExtKeyAllowance] == "") {
+		return validation.NewError("reason", "either a reason or an allowance type extension is required")
+	}
+	return nil
 }
