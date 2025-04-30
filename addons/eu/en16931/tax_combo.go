@@ -117,6 +117,7 @@ func validateTaxCombo(tc *tax.Combo) error {
 				// we enforce BT-121 to simplify future xml validation. BR-E-10
 				tax.ExtensionsRequire(cef.ExtKeyVATEX),
 			),
+			validation.Skip,
 		),
 	)
 }
