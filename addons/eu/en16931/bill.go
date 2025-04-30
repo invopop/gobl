@@ -132,6 +132,7 @@ func validateBillLine(line *bill.Line) error {
 }
 
 func validateBillLineCharge(value any) error {
+	// BR-44
 	charge, ok := value.(*bill.LineCharge)
 	if !ok || charge == nil {
 		return nil
@@ -143,6 +144,7 @@ func validateBillLineCharge(value any) error {
 }
 
 func validateBillLineDiscount(value any) error {
+	// BR-41
 	discount, ok := value.(*bill.LineDiscount)
 	if !ok || discount == nil {
 		return nil
@@ -154,6 +156,7 @@ func validateBillLineDiscount(value any) error {
 }
 
 func validateBillCharge(charge *bill.Charge) error {
+	// BR-36
 	if charge.Reason == "" && (charge.Ext == nil || charge.Ext[untdid.ExtKeyCharge] == "") {
 		return validation.NewError("reason", "either a reason or a charge type extension is required")
 	}
@@ -161,6 +164,7 @@ func validateBillCharge(charge *bill.Charge) error {
 }
 
 func validateBillDiscount(discount *bill.Discount) error {
+	// BR-33
 	if discount.Reason == "" && (discount.Ext == nil || discount.Ext[untdid.ExtKeyAllowance] == "") {
 		return validation.NewError("reason", "either a reason or an allowance type extension is required")
 	}
