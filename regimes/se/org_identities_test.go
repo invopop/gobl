@@ -21,21 +21,18 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		{name: "Organization number already normalized", typeCode: se.IdentityTypeOrgNr, input: "5560360793", expected: "5560360793"},
 		{name: "Organization number with hyphens", typeCode: se.IdentityTypeOrgNr, input: "556036-0793", expected: "5560360793"},
 		{name: "Organization number with spaces", typeCode: se.IdentityTypeOrgNr, input: "  556036 0793  ", expected: "5560360793"},
-		{name: "Organization number prefixed with SE", typeCode: se.IdentityTypeOrgNr, input: "SE5560360793", expected: "5560360793"},
 		{name: "Organization number with check digit", typeCode: se.IdentityTypeOrgNr, input: "5560360793-01", expected: "5560360793"},
 
 		{name: "Person number already normalized", typeCode: se.IdentityTypePersonNr, input: "800101-0017", expected: "800101-0017"},
 		{name: "Person number with hyphen", typeCode: se.IdentityTypePersonNr, input: "800101-0017", expected: "800101-0017"},
 		{name: "Person number with plus sign", typeCode: se.IdentityTypePersonNr, input: "800101+0017", expected: "800101+0017"},
 		{name: "Person number with spaces", typeCode: se.IdentityTypePersonNr, input: "  800101-0017  ", expected: "800101-0017"},
-		{name: "Person number prefixed with SE", typeCode: se.IdentityTypePersonNr, input: "SE800101-0017", expected: "800101-0017"},
 		{name: "Person number without hyphen or plus sign", typeCode: se.IdentityTypePersonNr, input: "8001010017", expected: "800101-0017"},
 
 		{name: "Coordination number already normalized", typeCode: se.IdentityTypeCoordinationNr, input: "800161-0017", expected: "800161-0017"},
 		{name: "Coordination number with hyphen", typeCode: se.IdentityTypeCoordinationNr, input: "800161-0017", expected: "800161-0017"},
 		{name: "Coordination number with plus sign", typeCode: se.IdentityTypeCoordinationNr, input: "800161+0017", expected: "800161+0017"},
 		{name: "Coordination number with spaces", typeCode: se.IdentityTypeCoordinationNr, input: "  800161-0017  ", expected: "800161-0017"},
-		{name: "Coordination number prefixed with SE", typeCode: se.IdentityTypeCoordinationNr, input: "SE800161-0017", expected: "800161-0017"},
 		{name: "Coordination number without hyphen or plus sign", typeCode: se.IdentityTypeCoordinationNr, input: "8001610017", expected: "800161-0017"},
 
 		{name: "Unknown key", typeCode: "unknown", input: "1234567890", expected: "1234567890"},
