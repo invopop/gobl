@@ -10,34 +10,24 @@ import (
 
 // invoiceValidator adds validation checks to invoices which are relevant
 // for the region.
-type invoiceValidator struct {
-	inv *bill.Invoice
-}
-
 func validateInvoice(inv *bill.Invoice) error {
-	v := &invoiceValidator{inv: inv}
-	return v.validate()
-}
-
-func (v *invoiceValidator) validate() error {
-	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
 			validation.Required,
-			validation.By(v.validateOrgParty),
-			validation.By(v.validateSupplier),
+			validation.By(validateOrgParty),
+			validation.By(validateSupplier),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
 			validation.Required,
-			validation.By(v.validateOrgParty),
-			validation.By(v.validateCustomer),
+			validation.By(validateOrgParty),
+			validation.By(validateCustomer),
 			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) validateOrgParty(value any) error {
+func validateOrgParty(value any) error {
 	party, ok := value.(*org.Party)
 	if !ok || party == nil {
 		return nil
@@ -57,7 +47,7 @@ func (v *invoiceValidator) validateOrgParty(value any) error {
 
 // validateSupplier checks the supplier's tax ID and organization number requirements.
 // The supplier's VAT number and ID Number are always required.
-func (v *invoiceValidator) validateSupplier(value any) error {
+func validateSupplier(value any) error {
 	party, ok := value.(*org.Party)
 	if !ok || party == nil {
 		return nil
@@ -90,7 +80,7 @@ func (v *invoiceValidator) validateSupplier(value any) error {
 
 // validateCustomer checks the customer's tax ID and organization number requirements.
 // However, the customer may not include any identities, just a name and address.
-func (v *invoiceValidator) validateCustomer(value any) error {
+func validateCustomer(value any) error {
 	party, ok := value.(*org.Party)
 	if !ok || party == nil {
 		return nil

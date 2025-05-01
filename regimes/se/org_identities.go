@@ -80,15 +80,15 @@ func normalizeOrgIdentity(id *org.Identity) {
 	case IdentityTypeOrgNr:
 		// Organization numbers should be numeric only, with no separators
 		code := cbc.NormalizeNumericalCode(id.Code).String()
-		// Only if we have 12 digits, i.e the check digit is present
-		// can we safely remove the check digit
-		if len(code) == taxCodeLength-2 {
+		// Only if we have 12 digits, i.e the check digits are present
+		// can we safely remove them
+		if len(code) == taxCodeLength {
 			code = strings.TrimSuffix(code, taxCodeCheckDigit)
 		}
 
-		// If we don't have 10 digits (14-(2+2)), it's likely not valid and no safe operation
+		// If we don't have the expected number of digits, it's likely not valid and no safe operation
 		// can be performed.
-		if len(code) != taxCodeLength-4 {
+		if len(code) != taxCodeLengthWithoutCheckDigits {
 			return
 		}
 
@@ -101,7 +101,7 @@ func normalizeOrgIdentity(id *org.Identity) {
 		// If there's no separator but we have the right number of digits,
 		// insert a hyphen at the right position, since it's the most
 		// statistically likely separator.
-		if len(code) == 10 && !strings.ContainsAny(code, "-+") {
+		if len(code) == taxCodeLengthWithoutCheckDigits && !strings.ContainsAny(code, "-+") {
 			code = code[:6] + "-" + code[6:]
 		} else {
 			// Extract digits and keep the separator
@@ -112,9 +112,9 @@ func normalizeOrgIdentity(id *org.Identity) {
 				}
 			}
 
-			// If we don't have 10 digits (14-(2+2)), it's likely not valid and no safe operation
+			// If we don't have the expected number of digits, it's likely not valid and no safe operation
 			// can be performed.
-			if len(digitsOnly) != taxCodeLength-4 {
+			if len(digitsOnly) != taxCodeLengthWithoutCheckDigits {
 				return
 			}
 
@@ -140,7 +140,7 @@ func normalizeOrgIdentity(id *org.Identity) {
 //   - For individual numbers, it checks if the number is 10 digits long and if the Luhn checksum is valid.
 //
 // If the number is not valid, it returns an error.
-// 
+//
 // If the organization type is not valid, it returns nil.
 func validateOrgIdentity(id *org.Identity) error {
 	if id == nil {

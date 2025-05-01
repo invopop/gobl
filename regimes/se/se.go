@@ -53,7 +53,7 @@ func Validate(doc any) error {
 func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
-		normalizeTaxIdentity(obj)
+		tax.NormalizeIdentity(obj)
 	case *org.Identity:
 		normalizeOrgIdentity(obj)
 	}
