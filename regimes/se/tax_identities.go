@@ -10,21 +10,13 @@ import (
 )
 
 const (
-	taxCodeCountryPrefix = "SE"
-	taxCodeLength        = 14
-	taxCodeCheckDigit    = "01"
+	// The full length of a Swedish tax ID, including the check digits.
+	taxCodeLength = 12
+	// The length of the code before the check digits.
+	taxCodeLengthWithoutCheckDigits = 10
+	// The check digits of a Swedish tax ID.
+	taxCodeCheckDigit = "01"
 )
-
-// normalizeTaxIdentity performs normalization specific to Swedish tax IDs,
-// ensuring the code is normalized and the country prefix is added if missing.
-func normalizeTaxIdentity(id *tax.Identity) {
-	tax.NormalizeIdentity(id)
-	// TO-DO: decide if this is necessary. If not, we may need to remove the check digit suffix.
-	// Re-add the SE prefix if missing.
-	if id.Code.String()[:2] != taxCodeCountryPrefix {
-		id.Code = cbc.Code(taxCodeCountryPrefix + id.Code.String())
-	}
-}
 
 // validateTaxIdentity performs validation specific to Swedish tax IDs.
 // Assumes the code has already been normalized.
@@ -37,8 +29,8 @@ func validateTaxIdentity(tID *tax.Identity) error {
 }
 
 // validateTaxCode validates the tax code for Swedish tax identities.
-// Assumes the code has already been normalized, containing the country prefix
-// and check digits.
+// Assumes the code has already been normalized, is made of 12 numeric characters,
+// retaining the checksum at the end, plus 2 control digits "01".
 func validateTaxCode(value any) error {
 	code, ok := value.(cbc.Code)
 	if !ok {
@@ -47,21 +39,22 @@ func validateTaxCode(value any) error {
 	if code == "" {
 		return nil
 	}
-	// Normalised Swedish tax IDs must be 14 characters long.
+
+	// Normalised Swedish tax IDs must have a specific length.
 	if len(code) != taxCodeLength {
 		return errors.New("invalid length")
 	}
-	// Swedish tax IDs must start with "SE".
-	if code[:2] != taxCodeCountryPrefix {
-		return ErrInvalidTaxIDCountryPrefix
-	}
 	// Swedish tax IDs must finish in "01".
-	if code[12:] != taxCodeCheckDigit {
+	if code[10:] != taxCodeCheckDigit {
 		return errors.New("invalid check digit, expected 01")
 	}
-	// Swedish tax IDs must be exclusively numeric after the prefix.
-	if _, err := strconv.Atoi(string(code[2:])); err != nil {
+	// Swedish tax IDs must be exclusively numeric.
+	if _, err := strconv.Atoi(string(code)); err != nil {
 		return errors.New("invalid characters, expected numeric")
+	}
+	// The code prior to the check digit must be Luhn-valid.
+	if !(code[:10]).IsValidLuhnChecksum() {
+		return errors.New("invalid identification number checksum")
 	}
 	return nil
 }
