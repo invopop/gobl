@@ -1,0 +1,56 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$version: v0.214.1
+$regime: MY
+currency: MYR
+
+series: INV
+code: "2025-0001"
+issue_date: "2025-04-24"
+
+supplier:
+  tax_id:
+    country: "MY"
+    code: "201901234567"
+  name: "Tech Solutions Sdn Bhd"
+  alias: "TechSol"
+  emails:
+    - addr: "billing@techsol.my"
+  addresses:
+    - street: "123 Jalan Bukit Bintang"
+      locality: "Kuala Lumpur"
+      region: "Wilayah Persekutuan"
+      code: "55100"
+      country: "MY"
+
+customer:
+  name: "Innovatech Berhad"
+  tax_id:
+    country: "MY"
+    code: "202001234567"
+  emails:
+    - addr: "accounts@innovatech.my"
+  addresses:
+    - street: "456 Jalan Tun Razak"
+      locality: "Kuala Lumpur"
+      region: "Wilayah Persekutuan"
+      code: "50400"
+      country: "MY"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Cloud Hosting Services - April 2025"
+      price: 50000
+      unit: "unit"
+    taxes:
+      - cat: service-tax
+        percent: "6.0%"
+
+  - quantity: 2
+    item:
+      name: "IT Support - Onsite Visit"
+      price: 15000
+      unit: "h"
+    taxes:
+      - cat: service-tax
+        percent: "6.0%"

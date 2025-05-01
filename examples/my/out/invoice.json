@@ -1,0 +1,111 @@
+{
+    "$schema": "https://gobl.org/draft-0/bill/invoice",
+    "$regime": "MY",
+    "type": "standard",
+    "series": "INV",
+    "code": "2025-0001",
+    "issue_date": "2025-04-24",
+    "currency": "MYR",
+    "supplier": {
+            "name": "Tech Solutions Sdn Bhd",
+            "alias": "TechSol",
+            "tax_id": {
+                    "country": "MY",
+                    "code": "201901234567"
+            },
+            "addresses": [
+                    {
+                            "street": "123 Jalan Bukit Bintang",
+                            "locality": "Kuala Lumpur",
+                            "region": "Wilayah Persekutuan",
+                            "code": "55100",
+                            "country": "MY"
+                    }
+            ],
+            "emails": [
+                    {
+                            "addr": "billing@techsol.my"
+                    }
+            ]
+    },
+    "customer": {
+            "name": "Innovatech Berhad",
+            "tax_id": {
+                    "country": "MY",
+                    "code": "202001234567"
+            },
+            "addresses": [
+                    {
+                            "street": "456 Jalan Tun Razak",
+                            "locality": "Kuala Lumpur",
+                            "region": "Wilayah Persekutuan",
+                            "code": "50400",
+                            "country": "MY"
+                    }
+            ],
+            "emails": [
+                    {
+                            "addr": "accounts@innovatech.my"
+                    }
+            ]
+    },
+    "lines": [
+            {
+                    "i": 1,
+                    "quantity": "1",
+                    "item": {
+                            "name": "Cloud Hosting Services - April 2025",
+                            "price": "50000.00",
+                            "unit": "unit"
+                    },
+                    "sum": "50000.00",
+                    "taxes": [
+                            {
+                                    "cat": "service-tax",
+                                    "percent": "6.0%"
+                            }
+                    ],
+                    "total": "50000.00"
+            },
+            {
+                    "i": 2,
+                    "quantity": "2",
+                    "item": {
+                            "name": "IT Support - Onsite Visit",
+                            "price": "15000.00",
+                            "unit": "h"
+                    },
+                    "sum": "30000.00",
+                    "taxes": [
+                            {
+                                    "cat": "service-tax",
+                                    "percent": "6.0%"
+                            }
+                    ],
+                    "total": "30000.00"
+            }
+    ],
+    "totals": {
+            "sum": "80000.00",
+            "total": "80000.00",
+            "taxes": {
+                    "categories": [
+                            {
+                                    "code": "service-tax",
+                                    "rates": [
+                                            {
+                                                    "base": "80000.00",
+                                                    "percent": "6.0%",
+                                                    "amount": "4800.00"
+                                            }
+                                    ],
+                                    "amount": "4800.00"
+                            }
+                    ],
+                    "sum": "4800.00"
+            },
+            "tax": "4800.00",
+            "total_with_tax": "84800.00",
+            "payable": "84800.00"
+    }
+}

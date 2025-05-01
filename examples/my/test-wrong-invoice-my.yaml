@@ -1,0 +1,37 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$version: v0.214.1
+$regime: MY
+currency: MYR
+
+series: INV
+code: "2025-0002"
+issue_date: "2025-04-24"
+
+supplier:
+  name: "Tech Solutions Sdn Bhd"
+  alias: "TechSol"
+  emails:
+    - addr: "billing@techsol.my"
+  addresses:
+    - street: "123 Jalan Bukit Bintang"
+      locality: "Kuala Lumpur"
+      region: "Wilayah Persekutuan"
+      code: "55100"
+      country: "MY"
+
+customer:
+  name: "Innovatech Berhad"
+  tax_id:
+    country: "MY"
+    code: "INVALID"
+  emails:
+    - addr: "accounts@innovatech.my"
+  addresses:
+    - street: "456 Jalan Tun Razak"
+      locality: "Kuala Lumpur"
+      region: "Wilayah Persekutuan"
+      code: "50400"
+      country: "MY"
+
+# Only 0 lines → should trigger validation error
+lines: []
