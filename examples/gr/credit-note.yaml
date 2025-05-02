@@ -1,0 +1,63 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$addons: ["gr-mydata-v1"]
+uuid: "01913765-afb5-7023-af18-ca996d41a2ad"
+type: credit-note
+series: NC
+code: "001"
+issue_date: "2024-07-08"
+currency: EUR
+
+preceding:
+- uuid: "01909263-09c2-7000-8ac8-a83478ac96f5"
+  type: standard
+  issue_date: "2024-07-08"
+  series: GPR
+  code: "001"
+  stamps:
+  - prv: iapr-mark
+    val: "400001932212332"
+
+supplier:
+  name: Ελληνικά Τρόφιμα Α.Ε.
+  tax_id:
+    country: EL
+    code: "177472438"
+  addresses:
+  - num: "45"
+    street: Οδός Εγνατίας
+    locality: Θεσσαλονίκη
+    code: "54625"
+    country: GR
+
+customer:
+  name: Αιγαίο Λιανική Α.Ε.
+  tax_id:
+    country: EL
+    code: "841442160"
+  addresses:
+  - num: "45"
+    street: Οδός Εγνατίας
+    locality: Θεσσαλονίκη
+    code: "54625"
+    country: GR
+
+lines:
+- i: 1
+  quantity: "20"
+  item:
+    name: Υπηρεσίες Ανάπτυξης
+    price: "90.00"
+    unit: l
+  discounts:
+  - percent: 10%
+    amount: "180.00"
+  taxes:
+  - cat: VAT
+    rate: standard
+    percent: 24%
+    ext:
+      gr-mydata-vat-rate: "1"
+
+payment:
+  instructions:
+    key: cash
