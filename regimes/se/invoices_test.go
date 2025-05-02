@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
@@ -78,6 +79,40 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 					Price: num.NewAmount(110110, 2),
 					Unit:  org.UnitHour,
 				},
+			},
+		},
+	}
+	return i
+}
+
+func testInvoiceSimplified(t *testing.T) *bill.Invoice {
+	t.Helper()
+	i := &bill.Invoice{
+		Series:   "TEST",
+		Code:     "0002",
+		Currency: currency.SEK,
+		Supplier: &org.Party{
+			// This is required due to bill.Invoice.validateSupplier only.
+			// In Sweden, simplified invoices only require a supplier tax ID.
+			Name: "Simplified Supplier",
+			TaxID: &tax.Identity{
+				Country: l10n.TaxCountryCode(l10n.SE),
+				Code:    "556036079301",
+			},
+		},
+		Lines: []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Software Engineering Services",
+					Price: num.NewAmount(40000, 2),
+					Unit:  org.UnitHour,
+				},
+			},
+		},
+		Tags: tax.Tags{
+			List: []cbc.Key{
+				tax.TagSimplified,
 			},
 		},
 	}
@@ -166,6 +201,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetRegime("SE")
 		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("simplified invoice", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceSimplified(t)
+		inv.SetRegime("SE")
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
