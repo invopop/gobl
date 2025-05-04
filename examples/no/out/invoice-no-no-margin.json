@@ -1,0 +1,24 @@
+{
+  "$schema":"https://gobl.org/draft-0/envelope",
+  "head":{ "uuid":"cccccccc-cccc-cccc-cccc-cccccccccccc","dig":{ "alg":"sha256","val":"0cc175b9c0f1b6a831c399e269772661" }},
+  "doc":{
+    "$schema":"https://gobl.org/draft-0/bill/invoice","$regime":"NO",
+    "$tags":["second-hand"],
+    "uuid":"33333333-3333-3333-3333-333333333333","series":"2023","code":"MARGIN-1001",
+    "issue_date":"2023-07-03","currency":"NOK",
+    "supplier":{ "name":"Antique AS","tax_id":{ "country":"NO","code":"974760673" }},
+    "customer":{ "name":"Collector AS" },
+    "lines":[
+      {
+        "i":1,"quantity":"1","item":{ "name":"Vintage Chair","price":"5000.00" },
+        "taxes":[{ "cat":"VAT","percent":"0.00%","rate":"exempt","ext":{ "no-exemption-code":"M1" }}],
+        "sum":"5000.00","total":"5000.00"
+      }
+    ],
+    "totals":{
+      "sum":"5000.00","total":"5000.00",
+      "taxes":{"categories":[{"code":"VAT","rates":[{"base":"5000.00","percent":"0.00%","amount":"0.00"}],"amount":"0.00"}],"sum":"0.00"},
+      "tax":"0.00","total_with_tax":"5000.00","payable":"5000.00"
+    }
+  }
+}
