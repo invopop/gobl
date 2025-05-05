@@ -16,8 +16,11 @@ const (
 	V1 cbc.Key = "it-ticket-v1"
 )
 
-// StampDocumentNumber is the key to identify the document number provided by the AdE once the ticket is accepted
-const StampDocumentNumber cbc.Key = "ticket-doc-number"
+// Official stamps or codes validated by government agencies
+const (
+	// StampRef is the key to identify the reference provided by the AdE once the ticket is accepted
+	StampRef cbc.Key = "ticket-it-ref"
+)
 
 func init() {
 	tax.RegisterAddonDef(newAddon())
