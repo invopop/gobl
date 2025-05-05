@@ -17,7 +17,8 @@ const (
 )
 
 const (
-	StampDocumentNumber cbc.Key = "ticket-doc-number" // Document number provided by the AdE once accepted
+	// Document number provided by the AdE once the ticket is accepted
+	StampDocumentNumber cbc.Key = "ticket-doc-number"
 )
 
 func init() {

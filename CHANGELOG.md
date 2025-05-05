@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `it-ticket-v1`: Stamp key for document number added.
+
 ## [v0.215.0] - 2025-04-28
 
 ### Changed
