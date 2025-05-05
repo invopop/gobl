@@ -111,7 +111,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  TagSimplifiedScheme,
-				Text: "Factura expedida por contibuyente en régimen simplificado.",
+				Text: "Factura expedida por contribuyente en régimen simplificado.",
 			},
 		},
 		// Customer issued invoices
