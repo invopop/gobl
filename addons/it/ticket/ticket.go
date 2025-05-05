@@ -16,6 +16,10 @@ const (
 	V1 cbc.Key = "it-ticket-v1"
 )
 
+const (
+	StampDocumentNumber cbc.Key = "ticket-doc-number" // Document number provided by the AdE once accepted
+)
+
 func init() {
 	tax.RegisterAddonDef(newAddon())
 }
