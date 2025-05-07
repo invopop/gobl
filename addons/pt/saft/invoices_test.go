@@ -283,6 +283,14 @@ func TestInvoicePaymentValidation(t *testing.T) {
 		}
 		assert.ErrorContains(t, addon.Validator(inv), "advances: (0: (date: cannot be blank")
 	})
+
+	t.Run("nil advance", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{nil},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
 }
 
 func TestInvoicePrecedingValidation(t *testing.T) {
@@ -326,6 +334,12 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 			},
 		}
 		assert.ErrorContains(t, addon.Validator(inv), "preceding: (0: (issue_date: too late")
+	})
+
+	t.Run("nil preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{nil}
+		require.NoError(t, addon.Validator(inv))
 	})
 }
 
