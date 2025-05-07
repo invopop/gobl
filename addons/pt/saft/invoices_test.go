@@ -225,6 +225,50 @@ func TestInvoicePaymentValidation(t *testing.T) {
 	})
 }
 
+func TestInvoicePrecedingValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("preceding document with no date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				IssueDate: nil,
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("valid preceding document date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				IssueDate: cal.NewDate(2022, 12, 31), // Before invoice date
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("preceding document with same date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				IssueDate: cal.NewDate(2023, 1, 1), // Same as invoice date
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("preceding document with future date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				IssueDate: cal.NewDate(2023, 1, 2), // After invoice date
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "preceding: (0: (issue_date: too late")
+	})
+}
+
 func TestInvoiceNormalization(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
 

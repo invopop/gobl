@@ -7,8 +7,10 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -63,6 +65,13 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Totals,
 			validation.By(validateTotals(inv)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Preceding,
+			validation.Each(
+				validation.By(validatePreceding(inv)),
+				validation.Skip,
+			),
 			validation.Skip,
 		),
 	)
@@ -172,6 +181,22 @@ func validateTaxExt(val any) error {
 	}
 
 	return nil
+}
+
+func validatePreceding(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		ref, ok := val.(*org.DocumentRef)
+		if !ok {
+			return nil
+		}
+
+		return validation.ValidateStruct(ref,
+			validation.Field(&ref.IssueDate,
+				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
 }
 
 // validateSeriesFormat validates the format of the series to meet the requirements of the
