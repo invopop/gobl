@@ -30,11 +30,17 @@ var (
 	codeRegexp     = regexp.MustCompile(codePattern)
 )
 
+// invoiceWorkTypes is the list of work document types that map from GOBL invoices
 var invoiceWorkTypes = []cbc.Code{
 	WorkTypeProforma,
 	WorkTypeConsignmentInv,
 	WorkTypeConsignmentCredit,
 }
+
+// simplifiedMaxAmount is the maximum amount allowed for simplified invoices according to
+// Article 40 of the Portuguese VAT Code. This is the most permissive limit (for retail
+// sales) since we cannot distinguish between retail and non-retail sales.
+var simplifiedMaxAmount = num.MakeAmount(1000, 0)
 
 func validateInvoice(inv *bill.Invoice) error {
 	dt := invoiceDocType(inv)
@@ -123,6 +129,10 @@ func validateTotals(inv *bill.Invoice) validation.RuleFunc {
 		return validation.ValidateStruct(tot,
 			validation.Field(&tot.Due,
 				validation.When(isInvoiceReceipt(inv), num.Max(num.AmountZero)),
+				validation.Skip,
+			),
+			validation.Field(&tot.TotalWithTax,
+				validation.When(isSimplified(inv), num.Max(simplifiedMaxAmount)),
 				validation.Skip,
 			),
 		)
@@ -257,6 +267,10 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 
 func isInvoiceReceipt(inv *bill.Invoice) bool {
 	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
+}
+
+func isSimplified(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeSimplified
 }
 
 func normalizeInvoice(inv *bill.Invoice) {

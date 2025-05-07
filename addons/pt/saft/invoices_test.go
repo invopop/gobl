@@ -131,6 +131,66 @@ func TestInvoiceValidation(t *testing.T) {
 	})
 }
 
+func TestSimplifiedInvoiceValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	tests := []struct {
+		name  string
+		typ   cbc.Code
+		total num.Amount
+		err   string
+	}{
+		{
+			name:  "simplified invoice just below limit",
+			typ:   saft.InvoiceTypeSimplified,
+			total: num.MakeAmount(99999, 2), // 999.99
+		},
+		{
+			name:  "simplified invoice exactly at limit",
+			typ:   saft.InvoiceTypeSimplified,
+			total: num.MakeAmount(100000, 2), // 1000.00
+		},
+		{
+			name:  "simplified invoice just over limit",
+			typ:   saft.InvoiceTypeSimplified,
+			total: num.MakeAmount(100001, 2), // 1000.01
+			err:   "must be no greater than 1000",
+		},
+		{
+			name:  "standard invoice over simplified limit",
+			typ:   saft.InvoiceTypeStandard,
+			total: num.MakeAmount(100001, 2), // 1000.01
+		},
+		{
+			name:  "invoice-receipt over simplified limit",
+			typ:   saft.InvoiceTypeInvoiceReceipt,
+			total: num.MakeAmount(100001, 2), // 1000.01
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			inv := validInvoice()
+			series := fmt.Sprintf("%s SERIES-A", test.typ)
+			inv.Series = cbc.Code(series)
+			inv.Tax.Ext = tax.Extensions{
+				saft.ExtKeyInvoiceType: test.typ,
+			}
+			inv.Totals = &bill.Totals{
+				TotalWithTax: test.total,
+			}
+
+			err := addon.Validator(inv)
+
+			if test.err != "" {
+				assert.ErrorContains(t, err, test.err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestInvoiceSeriesValidation(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
 
