@@ -19,7 +19,7 @@ const (
 // Official stamps or codes validated by government agencies
 const (
 	// StampRef is the key to identify the reference provided by the AdE once the ticket is accepted
-	StampRef cbc.Key = "ticket-it-ref"
+	StampRef cbc.Key = "ade-ref"
 )
 
 func init() {
