@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `pt-saft-v1`: additional validations to prevent non-compliant invoices.
+
 ## [v0.215.0] - 2025-04-28
 
 ### Changed

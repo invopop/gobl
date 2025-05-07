@@ -7,7 +7,11 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -26,11 +30,17 @@ var (
 	codeRegexp     = regexp.MustCompile(codePattern)
 )
 
+// invoiceWorkTypes is the list of work document types that map from GOBL invoices
 var invoiceWorkTypes = []cbc.Code{
 	WorkTypeProforma,
 	WorkTypeConsignmentInv,
 	WorkTypeConsignmentCredit,
 }
+
+// simplifiedMaxAmount is the maximum amount allowed for simplified invoices according to
+// Article 40 of the Portuguese VAT Code. This is the most permissive limit (for retail
+// sales) since we cannot distinguish between retail and non-retail sales.
+var simplifiedMaxAmount = num.MakeAmount(1000, 0)
 
 func validateInvoice(inv *bill.Invoice) error {
 	dt := invoiceDocType(inv)
@@ -55,7 +65,78 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Payment,
+			validation.By(validatePaymentDetails(inv)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Totals,
+			validation.By(validateTotals(inv)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Preceding,
+			validation.Each(
+				validation.By(validatePreceding(inv)),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
 	)
+}
+
+func validatePaymentDetails(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		pay, _ := val.(*bill.PaymentDetails)
+		if pay == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(pay,
+			validation.Field(&pay.Advances,
+				validation.Each(
+					validation.By(validateAdvance(inv)),
+					validation.Skip,
+				),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateAdvance(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		adv, _ := val.(*pay.Advance)
+		if adv == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(adv,
+			validation.Field(&adv.Date,
+				validation.Required,
+				validation.In(inv.IssueDate).Error("must be the same as the invoice issue date"),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateTotals(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		tot, _ := val.(*bill.Totals)
+		if tot == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(tot,
+			validation.Field(&tot.Due,
+				validation.When(isInvoiceReceipt(inv), num.Max(num.AmountZero)),
+				validation.Skip,
+			),
+			validation.Field(&tot.TotalWithTax,
+				validation.When(isSimplified(inv), num.Max(simplifiedMaxAmount)),
+				validation.Skip,
+			),
+		)
+	}
 }
 
 func invoiceDocType(inv *bill.Invoice) cbc.Code {
@@ -112,6 +193,22 @@ func validateTaxExt(val any) error {
 	return nil
 }
 
+func validatePreceding(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		ref, ok := val.(*org.DocumentRef)
+		if !ok {
+			return nil
+		}
+
+		return validation.ValidateStruct(ref,
+			validation.Field(&ref.IssueDate,
+				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
+}
+
 // validateSeriesFormat validates the format of the series to meet the requirements of the
 // AT (e.g. "FT SERIES-A"). The series is allowed to be empty, in which case the code is
 // expected to be a full code (e.g. "FT SERIES-A/123") (see `validateCodeFormat`).
@@ -166,4 +263,26 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
+}
+
+func isInvoiceReceipt(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
+}
+
+func isSimplified(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeSimplified
+}
+
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv.Payment == nil {
+		return
+	}
+
+	// Set the issue date as the default date for advances
+	for _, adv := range inv.Payment.Advances {
+		if adv.Date == nil {
+			date := inv.IssueDate
+			adv.Date = &date
+		}
+	}
 }
