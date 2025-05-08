@@ -23,6 +23,9 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 		Currency: "EUR",
 		Tax: &bill.Tax{
 			PricesInclude: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				ticket.ExtKeyLottery: "12345678",
+			},
 		},
 		Type: bill.InvoiceTypeStandard,
 		Supplier: &org.Party{
@@ -183,6 +186,22 @@ func TestInvoiceTax(t *testing.T) {
 	t.Run("missing Tax", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.NoError(t, err)
+	})
+
+	t.Run("lottery code length", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.EqualError(t, err, "tax: (ext: lottery code must be 8 characters long.).")
+	})
+
+	t.Run("lottery code empty", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Tax.Ext[ticket.ExtKeyLottery] = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		require.NoError(t, err)

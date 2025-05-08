@@ -10,6 +10,7 @@ import (
 const (
 	ExtKeyExempt  cbc.Key = "it-ticket-exempt"
 	ExtKeyProduct cbc.Key = "it-ticket-product"
+	ExtKeyLottery cbc.Key = "it-ticket-lottery"
 )
 
 var extensions = []*cbc.Definition{
@@ -91,6 +92,27 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Provision of services",
 					i18n.IT: "Prestazione di servizi",
 				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyLottery,
+		Name: i18n.String{
+			i18n.EN: "AdE Lottery Code",
+			i18n.IT: "Codice Lotteria AdE",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Lottery key is used to identify the lottery number (Codice lotteria).
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Agenzia delle Entrate",
+					i18n.IT: "Agenzia delle Entrate",
+				},
+				URL: "https://www.agenziaentrate.gov.it/portale/documents/20143/4952835/Specifiche+Tecniche+Lotteria+Istantanea_V1.pdf/211eae00-0e0e-66b9-a077-895eb0d9fc51",
 			},
 		},
 	},

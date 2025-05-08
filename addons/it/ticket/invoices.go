@@ -64,8 +64,23 @@ func validateInvoiceTax(value interface{}) error {
 		validation.Field(&t.PricesInclude,
 			validation.Required,
 			validation.In(tax.CategoryVAT),
+		),
+		validation.Field(&t.Ext,
+			validation.By(validateInvoiceTaxExtensions),
 			validation.Skip,
 		),
 	)
+}
 
+func validateInvoiceTaxExtensions(value interface{}) error {
+	ext, ok := value.(tax.Extensions)
+	if !ok || ext == nil {
+		return nil
+	}
+
+	if ext.Has(ExtKeyLottery) && len(ext.Get(ExtKeyLottery)) != 8 {
+		return validation.NewError("lottery_code_length", "lottery code must be 8 characters long")
+	}
+
+	return nil
 }
