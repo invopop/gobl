@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `it-ticket-v1`: Stamp key for document number added.
+- `it-ticket-v1`: Extension for customer lottery code
 
 ## [v0.215.0] - 2025-04-28
 

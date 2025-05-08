@@ -97,6 +97,25 @@
           }
         }
       ]
+    },
+    {
+      "key": "it-ticket-lottery",
+      "name": {
+        "en": "AdE Lottery Code",
+        "it": "Codice Lotteria AdE"
+      },
+      "desc": {
+        "en": "Lottery key is used to identify the lottery number (Codice lotteria)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Agenzia delle Entrate",
+            "it": "Agenzia delle Entrate"
+          },
+          "url": "https://www.agenziaentrate.gov.it/portale/documents/20143/4952835/Specifiche+Tecniche+Lotteria+Istantanea_V1.pdf/211eae00-0e0e-66b9-a077-895eb0d9fc51"
+        }
+      ]
     }
   ],
   "scenarios": null,
