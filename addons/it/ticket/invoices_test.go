@@ -179,31 +179,35 @@ func TestInvoiceTax(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.PricesInclude = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.NoError(t, err)
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("missing Tax", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax = nil
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.NoError(t, err)
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("lottery code length", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567"
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.EqualError(t, err, "tax: (ext: lottery code must be 8 characters long.).")
+		require.EqualError(t, inv.Validate(), "tax: (ext: (it-ticket-lottery: does not match pattern.).).")
 	})
 
 	t.Run("lottery code empty", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Tax.Ext[ticket.ExtKeyLottery] = ""
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.NoError(t, err)
+		require.NoError(t, inv.Validate())
 	})
+
+	t.Run("lottery code uppercase", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Tax.Ext[ticket.ExtKeyLottery] = "1234567a"
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "1234567A", string(inv.Tax.Ext[ticket.ExtKeyLottery]))
+	})
+
 }

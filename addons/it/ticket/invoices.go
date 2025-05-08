@@ -1,7 +1,10 @@
 package ticket
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -13,6 +16,9 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 	if inv.Tax.PricesInclude == "" {
 		inv.Tax.PricesInclude = tax.CategoryVAT
+	}
+	if inv.Tax.Ext != nil && inv.Tax.Ext.Has(ExtKeyLottery) {
+		inv.Tax.Ext[ExtKeyLottery] = cbc.Code(strings.ToUpper(string(inv.Tax.Ext[ExtKeyLottery])))
 	}
 }
 
@@ -65,22 +71,5 @@ func validateInvoiceTax(value interface{}) error {
 			validation.Required,
 			validation.In(tax.CategoryVAT),
 		),
-		validation.Field(&t.Ext,
-			validation.By(validateInvoiceTaxExtensions),
-			validation.Skip,
-		),
 	)
-}
-
-func validateInvoiceTaxExtensions(value interface{}) error {
-	ext, ok := value.(tax.Extensions)
-	if !ok || ext == nil {
-		return nil
-	}
-
-	if ext.Has(ExtKeyLottery) && len(ext.Get(ExtKeyLottery)) != 8 {
-		return validation.NewError("lottery_code_length", "lottery code must be 8 characters long")
-	}
-
-	return nil
 }

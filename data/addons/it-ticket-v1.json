@@ -105,7 +105,7 @@
         "it": "Codice Lotteria AdE"
       },
       "desc": {
-        "en": "Lottery key is used to identify the lottery number (Codice lotteria)."
+        "en": "Lottery key is used to identify the lottery number (Codice lotteria). \nThis lottery code is provided by the customer at the time of purchase. \nIt is used to identify the customer in the lottery system provided by the Agenzia delle Entrate."
       },
       "sources": [
         {
@@ -115,7 +115,8 @@
           },
           "url": "https://www.agenziaentrate.gov.it/portale/documents/20143/4952835/Specifiche+Tecniche+Lotteria+Istantanea_V1.pdf/211eae00-0e0e-66b9-a077-895eb0d9fc51"
         }
-      ]
+      ],
+      "pattern": "^[A-Za-z0-9]{8}$"
     }
   ],
   "scenarios": null,

@@ -19,6 +19,7 @@ const (
 // Official stamps or codes validated by government agencies
 const (
 	// StampRef is the key to identify the reference provided by the AdE once the ticket is accepted
+	// This code needs to be printed on the ticket
 	StampRef cbc.Key = "ade-ref"
 )
 

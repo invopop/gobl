@@ -103,7 +103,9 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Lottery key is used to identify the lottery number (Codice lotteria).
+				Lottery key is used to identify the lottery number (Codice lotteria). 
+				This lottery code is provided by the customer at the time of purchase. 
+				It is used to identify the customer in the lottery system provided by the Agenzia delle Entrate.
 			`),
 		},
 		Sources: []*cbc.Source{
@@ -115,5 +117,6 @@ var extensions = []*cbc.Definition{
 				URL: "https://www.agenziaentrate.gov.it/portale/documents/20143/4952835/Specifiche+Tecniche+Lotteria+Istantanea_V1.pdf/211eae00-0e0e-66b9-a077-895eb0d9fc51",
 			},
 		},
+		Pattern: "^[A-Z0-9]{8}$",
 	},
 }
