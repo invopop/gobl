@@ -120,12 +120,8 @@ func validateCustomer(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&customer.Addresses,
-			validation.When(
-				isItalianParty(customer),
-				// TODO: address not required for simplified invoices
-				validation.Required,
-				validation.Each(validation.By(validateAddress)),
-			),
+			validation.Required,
+			validation.Each(validation.By(validateAddress)),
 			validation.Skip,
 		),
 		validation.Field(&customer.Identities,

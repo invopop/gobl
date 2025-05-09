@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill.Line`: Add extensions to line.
+- `it-ticket-v1`: Stamp key for document number added and void document number.
+- `it-ticket-v1`: Extension for customer lottery code.
+- `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
+- `it-ticket-v1`: Add corrections to addon with document number stamp. 
+
+### Removed
+
+- `it-sdi-v1` : Removing `isItalian` check on customer address 
+
 ## [v0.215.0] - 2025-04-28
 
 ### Changed

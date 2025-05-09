@@ -54,6 +54,9 @@ type Line struct {
 	// Set of specific notes for this line that may be required for
 	// clarification.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
+
+	// Extension codes that apply to the line
+	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // SubLine provides a simplified line that can be embedded inside other lines
