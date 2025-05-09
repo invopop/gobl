@@ -8,8 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `it-ticket-v1`: Stamp key for document number added.
-- `it-ticket-v1`: Extension for customer lottery code
+- `bill.Line`: Add extensions to line.
+- `it-ticket-v1`: Stamp key for document number added and void document number.
+- `it-ticket-v1`: Extension for customer lottery code.
+- `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
+- `it-ticket-v1`: Add corrections to addon with document number stamp. 
 
 ### Removed
 
