@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `bill`: Fixed imprecise due total calculation
+
 ## [v0.215.0] - 2025-04-28
 
 ### Changed

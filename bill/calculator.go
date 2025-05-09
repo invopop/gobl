@@ -175,6 +175,8 @@ func calculate(doc billable) error {
 	if t.RetainedTax != nil {
 		t.Payable = t.Payable.Subtract(*t.RetainedTax)
 	}
+	// early rescale the payable amount so that the following calculations use the effective amount
+	t.Payable = t.Payable.Rescale(zero.Exp())
 	if t.Rounding != nil {
 		// BT-144 in EN16931
 		t.Payable = t.Payable.Add(*t.Rounding)

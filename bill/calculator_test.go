@@ -125,6 +125,33 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "9.99", inv.Totals.Payable.String())
 	})
 
+	t.Run("with advances", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(273585, 4),
+			},
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Percent:  num.NewPercentage(6, 2),
+				},
+			},
+		})
+		inv.Tax.PricesInclude = ""
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Amount: num.MakeAmount(29001, 2),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "290.01", inv.Totals.Payable.String())
+		assert.Equal(t, "0.00", inv.Totals.Due.String())
+	})
+
 	t.Run("with retained taxes and advances", func(t *testing.T) {
 		inv := baseInvoice(t, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
