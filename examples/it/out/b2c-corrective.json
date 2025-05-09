@@ -1,0 +1,143 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "5565b63f57e66cddf0b64b1d6fa0d5234cfae3cc59a38fc9e764aee948f97c35"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-ticket-v1"
+		],
+		"uuid": "0190a63a-1a80-7e1e-a868-08c7859b6470",
+		"type": "corrective",
+		"issue_date": "2025-05-09",
+		"currency": "EUR",
+		"preceding": [
+			{
+				"type": "standard",
+				"issue_date": "2022-06-13",
+				"code": "123TEST",
+				"stamps": [
+					{
+						"prv": "ade-ref",
+						"val": "1234567890"
+					}
+				]
+			}
+		],
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"it-ticket-lottery": "12345678"
+			}
+		},
+		"supplier": {
+			"name": "Test Supplier",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Test Item 0",
+					"price": "100.00",
+					"ext": {
+						"it-ticket-product": "services"
+					}
+				},
+				"sum": "1000.00",
+				"discounts": [
+					{
+						"reason": "Testing",
+						"percent": "10%",
+						"amount": "100.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "22.0%"
+					}
+				],
+				"total": "900.00",
+				"ext": {
+					"it-ticket-line": "1234567890"
+				}
+			},
+			{
+				"i": 2,
+				"quantity": "13",
+				"item": {
+					"name": "Test Item 1",
+					"price": "10.00",
+					"ext": {
+						"it-ticket-line": "services",
+						"it-ticket-product": "services"
+					}
+				},
+				"sum": "130.00",
+				"discounts": [
+					{
+						"reason": "Testing",
+						"percent": "10%",
+						"amount": "13.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"ext": {
+							"it-ticket-exempt": "N4"
+						}
+					}
+				],
+				"total": "117.00",
+				"ext": {
+					"it-ticket-line": "1234567890"
+				}
+			}
+		],
+		"totals": {
+			"sum": "1017.00",
+			"tax_included": "162.30",
+			"total": "854.70",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "737.70",
+								"percent": "22.0%",
+								"amount": "162.30"
+							},
+							{
+								"ext": {
+									"it-ticket-exempt": "N4"
+								},
+								"base": "117.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "162.30"
+					}
+				],
+				"sum": "162.30"
+			},
+			"tax": "162.30",
+			"total_with_tax": "1017.00",
+			"payable": "1017.00"
+		}
+	}
+}

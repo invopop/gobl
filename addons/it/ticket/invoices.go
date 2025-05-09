@@ -10,6 +10,16 @@ import (
 	"github.com/invopop/validation"
 )
 
+var invoiceCorrectionDefinitions = tax.CorrectionSet{
+	{
+		Schema: bill.ShortSchemaInvoice,
+		Types:  []cbc.Key{bill.InvoiceTypeCorrective},
+		Stamps: []cbc.Key{
+			StampRef,
+		},
+	},
+}
+
 func normalizeInvoice(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
@@ -33,14 +43,40 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceSupplier),
 			validation.Skip,
 		),
+		validation.Field(&inv.Preceding,
+			validation.When(
+				inv.Type.In(bill.InvoiceTypeCorrective),
+				validation.Required,
+			),
+			validation.Skip,
+		),
 		validation.Field(&inv.Lines,
 			validation.Each(
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
+				validation.By(validateInvoiceLine(inv.Type)),
 				validation.Skip,
 			),
 			validation.Skip,
 		),
 	)
+}
+
+func validateInvoiceLine(invType cbc.Key) validation.RuleFunc {
+	return func(value interface{}) error {
+		line, ok := value.(*bill.Line)
+		if !ok || line == nil {
+			return nil
+		}
+		if invType.In(bill.InvoiceTypeCorrective) {
+			return validation.ValidateStruct(line,
+				validation.Field(&line.Ext,
+					tax.ExtensionsRequire(ExtKeyLine),
+					validation.Skip,
+				),
+			)
+		}
+		return nil
+	}
 }
 
 func validateInvoiceSupplier(value interface{}) error {
@@ -70,6 +106,7 @@ func validateInvoiceTax(value interface{}) error {
 		validation.Field(&t.PricesInclude,
 			validation.Required,
 			validation.In(tax.CategoryVAT),
+			validation.Skip,
 		),
 	)
 }

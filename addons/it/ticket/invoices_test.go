@@ -1,12 +1,14 @@
 package ticket_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/it/ticket"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -83,9 +85,33 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 }
 
 func TestInvoiceValidation(t *testing.T) {
-	inv := exampleStandardInvoice(t)
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	t.Run("standard invoice", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("test correction", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Lines[0].Ext = tax.Extensions{
+			ticket.ExtKeyLine: "1234567890",
+		}
+		inv.Lines[1].Ext = tax.Extensions{
+			ticket.ExtKeyLine: "1234567890",
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Correct(bill.Corrective, bill.WithStamps([]*head.Stamp{
+			{
+				Provider: ticket.StampRef,
+				Value:    "1234567890",
+			},
+		})))
+		require.NoError(t, inv.Validate())
+
+		json, err := json.MarshalIndent(inv, "", "  ")
+		require.NoError(t, err)
+		t.Log(string(json))
+	})
 }
 
 func TestSupplierValidation(t *testing.T) {

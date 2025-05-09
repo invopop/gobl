@@ -116,9 +116,29 @@
           "url": "https://www.agenziaentrate.gov.it/portale/documents/20143/4952835/Specifiche+Tecniche+Lotteria+Istantanea_V1.pdf/211eae00-0e0e-66b9-a077-895eb0d9fc51"
         }
       ],
-      "pattern": "^[A-Za-z0-9]{8}$"
+      "pattern": "^[A-Z0-9]{8}$"
+    },
+    {
+      "key": "it-ticket-line",
+      "name": {
+        "en": "AdE Line Code",
+        "it": "Codice Linea AdE"
+      },
+      "desc": {
+        "en": "Item code is used to identify the line item in the AdE system."
+      }
     }
   ],
   "scenarios": null,
-  "corrections": null
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "corrective"
+      ],
+      "stamps": [
+        "ade-ref"
+      ]
+    }
+  ]
 }
