@@ -1,6 +1,7 @@
 package bill_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/bill"
@@ -123,6 +124,55 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "1.98", inv.Totals.Tax.String())
 		assert.Equal(t, "1.41", inv.Totals.RetainedTax.String())
 		assert.Equal(t, "9.99", inv.Totals.Payable.String())
+	})
+
+	t.Run("with advances and rounding", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(90005, 3),
+			},
+		})
+		inv.Tax.PricesInclude = ""
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Amount: num.MakeAmount(9001, 2),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		data, _ := json.MarshalIndent(inv.Totals, "", "  ")
+		t.Logf("TOTALS: %s", string(data))
+		assert.Equal(t, "90.01", inv.Totals.Payable.String())
+		assert.Equal(t, "0.00", inv.Totals.Due.String())
+	})
+
+	t.Run("with precision advances, calculated twice", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(90005, 3),
+			},
+		})
+		inv.Tax.PricesInclude = ""
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Amount: num.MakeAmount(900050, 4),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		data, _ := json.MarshalIndent(inv.Totals, "", "  ")
+		t.Logf("TOTALS: %s", string(data))
+		assert.Equal(t, "90.01", inv.Totals.Advances.String())
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "90.01", inv.Totals.Advances.String())
+		assert.Equal(t, "90.01", inv.Totals.Payable.String())
+		assert.Equal(t, "0.00", inv.Totals.Due.String())
 	})
 
 	t.Run("with retained taxes and advances", func(t *testing.T) {

@@ -95,6 +95,9 @@ func (t *Totals) round(zero num.Amount) {
 		*t.TaxIncluded = t.TaxIncluded.Rescale(e)
 	}
 	t.Total = t.Total.Rescale(e)
+	if t.Taxes != nil {
+		t.Taxes.Round(zero)
+	}
 	t.Tax = t.Tax.Rescale(e)
 	t.TotalWithTax = t.TotalWithTax.Rescale(e)
 	if t.RetainedTax != nil {

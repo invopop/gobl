@@ -52,10 +52,11 @@ func (p *PaymentDetails) ResetAdvances() {
 	p.Advances = make([]*pay.Advance, 0)
 }
 
-func (p *PaymentDetails) calculateAdvances(zero num.Amount, totalWithTax num.Amount) {
+func (p *PaymentDetails) calculateAdvances(zero num.Amount, payable num.Amount) {
 	for _, a := range p.Advances {
-		a.CalculateFrom(totalWithTax)
-		a.Amount = a.Amount.MatchPrecision(zero)
+		a.CalculateFrom(payable)
+		// Payments must always have currency precision
+		a.Amount = a.Amount.Rescale(zero.Exp())
 	}
 }
 
@@ -63,11 +64,10 @@ func (p *PaymentDetails) totalAdvance(zero num.Amount) *num.Amount {
 	if p == nil || len(p.Advances) == 0 {
 		return nil
 	}
+	// Payments always maintain currency precision
 	sum := zero
 	for _, a := range p.Advances {
-		sum = sum.MatchPrecision(a.Amount)
 		sum = sum.Add(a.Amount)
-		a.Amount = a.Amount.Rescale(zero.Exp())
 	}
 	return &sum
 }
