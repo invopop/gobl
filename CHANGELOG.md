@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `it-ticket-v1`: Stamp key for document number added.
 - `it-ticket-v1`: Extension for customer lottery code
 
+### Removed
+
+- `it-sdi-v1` : Removing `isItalian` check on customer address 
+
 ## [v0.215.0] - 2025-04-28
 
 ### Changed
