@@ -165,7 +165,7 @@ func calculate(doc billable) error {
 		t.Total = t.Total.Subtract(ti)
 	}
 
-	// Finally calculate the total with *all* the taxes.
+	// Calculate the total with *all* the taxes.
 	t.Tax = t.Taxes.Sum
 	t.TotalWithTax = t.Total.Add(t.Tax)
 	if t.Taxes.Retained != nil {
@@ -175,35 +175,36 @@ func calculate(doc billable) error {
 	if t.RetainedTax != nil {
 		t.Payable = t.Payable.Subtract(*t.RetainedTax)
 	}
-	// early rescale the payable amount so that the following calculations use the effective amount
-	t.Payable = t.Payable.Rescale(zero.Exp())
-	if t.Rounding != nil {
-		// BT-144 in EN16931
-		t.Payable = t.Payable.Add(*t.Rounding)
-	}
-
 	// Remove taxes object if it doesn't contain any categories
 	if len(t.Taxes.Categories) == 0 {
 		t.Taxes = nil
 	}
 
-	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.Payable)
-
-		// Deal with advances, if any
-		if t.Advances = pd.totalAdvance(zero); t.Advances != nil {
-			v := t.Payable.Subtract(*t.Advances)
-			t.Due = &v
-		}
-
-		// Calculate any due date amounts
-		pd.Terms.CalculateDues(zero, t.Payable)
-	}
-
+	// Before calculating the amount due and advances, we need to round
+	// everything. Payments reflect real monetary values and can never
+	// be fractions of the currency.
 	roundLines(doc.getLines())
 	roundDiscounts(doc.getDiscounts(), cur)
 	roundCharges(doc.getCharges(), cur)
 	t.round(zero)
+
+	if t.Rounding != nil {
+		// BT-144 in EN16931
+		t.Payable = t.Payable.Add(*t.Rounding)
+	}
+	if pd := doc.getPaymentDetails(); pd != nil {
+		pd.calculateAdvances(zero, t.Payable)
+		// Deal with advances, if any. Note that in the current
+		// implementation multiple percentage advances are likely to
+		// suffer rounding errors. It usually better for users to use
+		// fixed payment amounts if possible.
+		if t.Advances = pd.totalAdvance(zero); t.Advances != nil {
+			v := t.Payable.Subtract(*t.Advances)
+			t.Due = &v
+		}
+		// Calculate any due date amounts
+		pd.Terms.CalculateDues(zero, t.Payable)
+	}
 	doc.setTotals(t)
 
 	return nil

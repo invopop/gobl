@@ -1278,6 +1278,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 			if test.err != nil && assert.Error(t, err) {
 				assert.ErrorIs(t, err, test.err)
 			}
+			tot.Round(currency.EUR.Def().Zero())
 			if test.errContent != "" && assert.Error(t, err) {
 				assert.Contains(t, err.Error(), test.errContent)
 			}
