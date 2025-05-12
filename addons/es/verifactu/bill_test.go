@@ -122,6 +122,58 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 
+	t.Run("invalid exempt code E2 with regime 01", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Category = tax.CategoryVAT
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{
+			verifactu.ExtKeyRegime: "01",
+			verifactu.ExtKeyExempt: "E2",
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: (0: (ext: When verifactu regime is 01, exempt code cannot be E2 or E3.).).).).")
+	})
+
+	t.Run("invalid exempt code E3 with regime 01", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Category = tax.CategoryVAT
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{
+			verifactu.ExtKeyRegime: "01",
+			verifactu.ExtKeyExempt: "E3",
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: (0: (ext: When verifactu regime is 01, exempt code cannot be E2 or E3.).).).).")
+	})
+
+	t.Run("valid exempt code E1 with regime 01", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Category = tax.CategoryVAT
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{
+			verifactu.ExtKeyRegime: "01",
+			verifactu.ExtKeyExempt: "E1",
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("valid exempt code E2 with regime 02", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Category = tax.CategoryVAT
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{
+			verifactu.ExtKeyRegime: "02",
+			verifactu.ExtKeyExempt: "E2",
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("IGIC tax with regime 01 and invalid exempt code", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes[0].Category = "IGIC"
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{
+			verifactu.ExtKeyRegime: "01",
+			verifactu.ExtKeyExempt: "E3",
+		}
+		assertValidationError(t, inv, "lines: (0: (taxes: (0: (ext: When verifactu regime is 01, exempt code cannot be E2 or E3.).).).).")
+	})
+
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

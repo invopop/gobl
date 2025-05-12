@@ -77,6 +77,13 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceTax(inv.Type)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(validateInvoiceLine),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
 		validation.Field(&inv.Notes,
 			org.ValidateNotesHasKey(org.NoteKeyGeneral),
 			validation.Skip,
@@ -161,4 +168,49 @@ func validateInvoicePreceding(val any) error {
 		// Tax data of previous invoices is required by Verifactu.
 		validation.Field(&p.Tax, validation.Required),
 	)
+}
+
+func validateInvoiceLine(value any) error {
+	obj, _ := value.(*bill.Line)
+	if obj == nil {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Taxes,
+			validation.Each(
+				validation.By(validateInvoiceLineTax),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceLineTax(value any) error {
+	obj, ok := value.(*tax.Combo)
+	if obj == nil || !ok {
+		return nil
+	}
+	return validation.ValidateStruct(obj,
+		validation.Field(&obj.Ext,
+			validation.When(
+				(obj.Category == tax.CategoryVAT || obj.Category == es.TaxCategoryIGIC) && obj.Ext.Get(ExtKeyRegime) == "01",
+				validation.By(validateInvoiceLineTaxExtRegime01),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceLineTaxExtRegime01(value any) error {
+	obj, ok := value.(tax.Extensions)
+	if !ok {
+		println("obj is not tax.Extensions type")
+		return nil
+	}
+	if obj.Get(ExtKeyExempt).In("E2", "E3") {
+		return validation.NewError("exempt_not_allowed", "When verifactu regime is 01, exempt code cannot be E2 or E3")
+	}
+	return nil
 }
