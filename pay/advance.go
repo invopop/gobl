@@ -66,11 +66,13 @@ func (a *Advance) Validate() error {
 // ValidateWithContext checks the advance looks okay inside the context.
 func (a *Advance) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, a,
-		validation.Field(&a.Amount, validation.Required),
+		validation.Field(&a.Date),
 		validation.Field(&a.Key, HasValidMeansKey),
+		validation.Field(&a.Ref),
 		validation.Field(&a.Description, validation.Required),
 		validation.Field(&a.Percent),
 		validation.Field(&a.Amount),
+		validation.Field(&a.Currency),
 		validation.Field(&a.Card),
 		validation.Field(&a.CreditTransfer),
 		validation.Field(&a.Ext),
@@ -80,9 +82,9 @@ func (a *Advance) ValidateWithContext(ctx context.Context) error {
 
 // CalculateFrom will update the amount using the rate of the provided
 // total, if defined.
-func (a *Advance) CalculateFrom(totalWithTax num.Amount) {
+func (a *Advance) CalculateFrom(payable num.Amount) {
 	if a.Percent != nil {
-		a.Amount = a.Percent.Of(totalWithTax)
+		a.Amount = a.Percent.Of(payable)
 	}
 }
 
