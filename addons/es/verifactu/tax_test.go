@@ -107,8 +107,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			},
 		}
 		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "E2")
+		assert.ErrorContains(t, err, "E2")
 	})
 
 	t.Run("excludes E3 exemption code with regime 01", func(t *testing.T) {
