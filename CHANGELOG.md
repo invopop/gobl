@@ -35,6 +35,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `mx-cfdi-v4`: Support for "Global" B2C invoice reporting that group together B2C sales into a single document.
 - `mx-cfdi-v4`: Automatically set the `issue_time` if not already provided.
 - `tax`: `ExtensionsRequireAllOrNone` validation rule.
+- `es-verifactu-v1`: validation for export exemption codes.
+- `tax`: `ExtensionsExcludeCodes` validation rule.
 
 ### Removed
 

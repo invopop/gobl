@@ -56,6 +56,11 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tax.ExtensionsRequire(ExtKeyExempt),
 			),
 			tax.ExtensionsRequire(ExtKeyRegime),
+			// https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf (Page 10, section 15.5)
+			validation.When(
+				tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) && tc.Ext.Get(ExtKeyRegime) == "01",
+				tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
+			),
 			validation.Skip,
 		),
 	)
