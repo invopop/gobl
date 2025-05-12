@@ -104,7 +104,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 		assert.Nil(t, p.totalAdvance(zero))
 	})
 
-	t.Run("maintains precision", func(t *testing.T) {
+	t.Run("uses currency precision", func(t *testing.T) {
 		zero := num.MakeAmount(0, 2)
 		total := num.MakeAmount(20845, 3)
 		p := &PaymentDetails{
@@ -117,8 +117,7 @@ func TestPaymentDetailsCalculations(t *testing.T) {
 		}
 		p.calculateAdvances(zero, total)
 		a := p.totalAdvance(zero)
-
 		assert.Equal(t, "20.85", p.Advances[0].Amount.String())
-		assert.Equal(t, "20.845", a.String())
+		assert.Equal(t, "20.85", a.String())
 	})
 }

@@ -115,7 +115,7 @@
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "How much as a percentage of the total with tax was paid"
+          "description": "Percentage of the total amount payable that was paid. Note that\nmultiple advances with percentages may lead to rounding errors,\nespecially when the total advances sums to 100%. We recommend only\nincluding one advance with a percent value per document."
         },
         "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
