@@ -119,13 +119,13 @@
       "pattern": "^[A-Z0-9]{8}$"
     },
     {
-      "key": "it-ticket-line",
+      "key": "it-ticket-line-ref",
       "name": {
-        "en": "AdE Line Code",
-        "it": "Codice Linea AdE"
+        "en": "AdE Line Reference",
+        "it": "Riferimento Linea AdE"
       },
       "desc": {
-        "en": "Item code is used to identify the line item in the AdE system."
+        "en": "Reference code provided by the AdE to be able to identify the specific line in credit notes."
       }
     }
   ],
