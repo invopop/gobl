@@ -301,58 +301,30 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 // ExtensionsHasCodes returns a validation rule that ensures the extension map's
 // key has one of the provided **codes**.
 func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCodeValues{
-		key:    key,
-		values: codes,
+	return validateExtCode{
+		key:       key,
+		values:    codes,
+		inclusion: true,
 	}
-}
-
-type validateExtCodeValues struct {
-	key    cbc.Key
-	values []cbc.Code
-}
-
-func (v validateExtCodeValues) Validate(value interface{}) error {
-	em, ok := value.(Extensions)
-	if !ok {
-		return nil
-	}
-	err := make(validation.Errors)
-
-	if ev, ok := em[v.key]; ok {
-		match := false
-		for _, val := range v.values {
-			if ev == val {
-				match = true
-				break
-			}
-		}
-		if !match {
-			err[v.key.String()] = errors.New("invalid value")
-		}
-	}
-
-	if len(err) > 0 {
-		return err
-	}
-	return nil
 }
 
 // ExtensionsExcludeCodes returns a validation rule that ensures the extension map's
 // key does not have any of the provided **codes**.
 func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCodeExcludeValues{
-		key:    key,
-		values: codes,
+	return validateExtCode{
+		key:       key,
+		values:    codes,
+		inclusion: false,
 	}
 }
 
-type validateExtCodeExcludeValues struct {
-	key    cbc.Key
-	values []cbc.Code
+type validateExtCode struct {
+	key       cbc.Key
+	values    []cbc.Code
+	inclusion bool
 }
 
-func (v validateExtCodeExcludeValues) Validate(value interface{}) error {
+func (v validateExtCode) Validate(value interface{}) error {
 	em, ok := value.(Extensions)
 	if !ok {
 		return nil
@@ -360,10 +332,25 @@ func (v validateExtCodeExcludeValues) Validate(value interface{}) error {
 	err := make(validation.Errors)
 
 	if ev, ok := em[v.key]; ok {
-		for _, val := range v.values {
-			if ev == val {
-				err[v.key.String()] = fmt.Errorf("value '%s' not allowed", ev)
-				break
+		if v.inclusion {
+			// Inclusion mode: value must be in the list
+			match := false
+			for _, val := range v.values {
+				if ev == val {
+					match = true
+					break
+				}
+			}
+			if !match {
+				err[v.key.String()] = errors.New("invalid value")
+			}
+		} else {
+			// Exclusion mode: value must NOT be in the list
+			for _, val := range v.values {
+				if ev == val {
+					err[v.key.String()] = fmt.Errorf("value '%s' not allowed", ev)
+					break
+				}
 			}
 		}
 	}
