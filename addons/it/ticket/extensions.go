@@ -11,7 +11,7 @@ const (
 	ExtKeyExempt  cbc.Key = "it-ticket-exempt"
 	ExtKeyProduct cbc.Key = "it-ticket-product"
 	ExtKeyLottery cbc.Key = "it-ticket-lottery"
-	ExtKeyLine    cbc.Key = "it-ticket-line"
+	ExtKeyLine    cbc.Key = "it-ticket-line-ref"
 )
 
 var extensions = []*cbc.Definition{
@@ -123,12 +123,12 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyLine,
 		Name: i18n.String{
-			i18n.EN: "AdE Line Code",
-			i18n.IT: "Codice Linea AdE",
+			i18n.EN: "AdE Line Reference",
+			i18n.IT: "Riferimento Linea AdE",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Item code is used to identify the line item in the AdE system.
+				Reference code provided by the AdE to be able to identify the specific line in credit notes.
 			`),
 		},
 	},

@@ -1,8 +1,6 @@
 package ticket
 
 import (
-	"strings"
-
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -28,7 +26,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 		inv.Tax.PricesInclude = tax.CategoryVAT
 	}
 	if inv.Tax.Ext != nil && inv.Tax.Ext.Has(ExtKeyLottery) {
-		inv.Tax.Ext[ExtKeyLottery] = cbc.Code(strings.ToUpper(string(inv.Tax.Ext[ExtKeyLottery])))
+		inv.Tax.Ext[ExtKeyLottery] = cbc.NormalizeAlphanumericalCode(inv.Tax.Ext[ExtKeyLottery])
 	}
 }
 

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5565b63f57e66cddf0b64b1d6fa0d5234cfae3cc59a38fc9e764aee948f97c35"
+			"val": "7de7b7cf6d7a546758fec93d776dcf87894aae243910eabee06d111606892668"
 		}
 	},
 	"doc": {
@@ -71,7 +71,7 @@
 				],
 				"total": "900.00",
 				"ext": {
-					"it-ticket-line": "1234567890"
+					"it-ticket-line-ref": "1234567890"
 				}
 			},
 			{
@@ -81,7 +81,6 @@
 					"name": "Test Item 1",
 					"price": "10.00",
 					"ext": {
-						"it-ticket-line": "services",
 						"it-ticket-product": "services"
 					}
 				},
@@ -103,7 +102,7 @@
 				],
 				"total": "117.00",
 				"ext": {
-					"it-ticket-line": "1234567890"
+					"it-ticket-line-ref": "1234567890"
 				}
 			}
 		],

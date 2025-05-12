@@ -60,7 +60,7 @@
             }
             ],
             "ext": {
-                "it-ticket-line": "1234567890"
+                "it-ticket-line-ref": "1234567890"
             }
         },
         {
@@ -70,7 +70,7 @@
             "name": "Test Item 1",
             "price": "10.00",
             "ext": {
-                "it-ticket-line": "services"
+                "it-ticket-product": "services"
             }
             },
             "discounts": [
@@ -90,7 +90,7 @@
             ],
             "total": "117.00",
             "ext": {
-                "it-ticket-line": "1234567890"
+                "it-ticket-line-ref": "1234567890"
             }
         }
     ]
