@@ -56,6 +56,10 @@ func validateTaxCombo(tc *tax.Combo) error {
 				tax.ExtensionsRequire(ExtKeyExempt),
 			),
 			tax.ExtensionsRequire(ExtKeyRegime),
+			validation.When(
+				(tc.Category == tax.CategoryVAT || tc.Category == es.TaxCategoryIGIC) && tc.Ext.Get(ExtKeyRegime) == "01",
+				tax.ExtensionsExcludeCodes(ExtKeyExempt, "E2", "E3"),
+			),
 			validation.Skip,
 		),
 	)

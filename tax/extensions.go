@@ -338,6 +338,42 @@ func (v validateExtCodeValues) Validate(value interface{}) error {
 	return nil
 }
 
+// ExtensionsExcludeCodes returns a validation rule that ensures the extension map's
+// key does not have any of the provided **codes**.
+func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
+	return validateExtCodeExcludeValues{
+		key:    key,
+		values: codes,
+	}
+}
+
+type validateExtCodeExcludeValues struct {
+	key    cbc.Key
+	values []cbc.Code
+}
+
+func (v validateExtCodeExcludeValues) Validate(value interface{}) error {
+	em, ok := value.(Extensions)
+	if !ok {
+		return nil
+	}
+	err := make(validation.Errors)
+
+	if ev, ok := em[v.key]; ok {
+		for _, val := range v.values {
+			if ev == val {
+				err[v.key.String()] = fmt.Errorf("value '%s' not allowed", ev)
+				break
+			}
+		}
+	}
+
+	if len(err) > 0 {
+		return err
+	}
+	return nil
+}
+
 // JSONSchemaExtend provides extra details about the extension map which are
 // not automatically determined. In this case we add validation for the map's
 // keys.
