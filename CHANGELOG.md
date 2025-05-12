@@ -8,7 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `bill`: Fixed imprecise due total calculation
+- `bill`: Rounding _before_ payment calculations.
+- `tax`: Rounding bug in totals calculations.
+
+### Added
+
+- `tax`: Totals now have public `Round` method.
 
 ## [v0.215.0] - 2025-04-28
 

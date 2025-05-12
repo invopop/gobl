@@ -29,7 +29,10 @@ type Advance struct {
 	Grant bool `json:"grant,omitempty" jsonschema:"title=Grant"`
 	// Details about the advance.
 	Description string `json:"description" jsonschema:"title=Description"`
-	// How much as a percentage of the total with tax was paid
+	// Percentage of the total amount payable that was paid. Note that
+	// multiple advances with percentages may lead to rounding errors,
+	// especially when the total advances sums to 100%. We recommend only
+	// including one advance with a percent value per document.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent"`
 	// How much was paid.
 	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
