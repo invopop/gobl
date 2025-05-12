@@ -331,7 +331,6 @@ func (t *Total) Calculate(cur currency.Code, rr cbc.Key) {
 	}
 	zero := cur.Def().Zero()
 	t.calculateFinalSum(zero, rr)
-	t.round(zero)
 }
 
 func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
@@ -396,10 +395,9 @@ func matchRoundingPrecision(rr cbc.Key, a, b num.Amount) num.Amount {
 	return a.MatchPrecision(b)
 }
 
-// round will go through all the values generated and round them to the currency's
-// preferred precision. The final precise sum will be available in the t.sum variable
-// still.
-func (t *Total) round(zero num.Amount) {
+// Round will go through all the values generated and round them to the currency's
+// preferred precision.
+func (t *Total) Round(zero num.Amount) {
 	for _, ct := range t.Categories {
 		for _, rt := range ct.Rates {
 			rt.Amount = rt.Amount.Rescale(zero.Exp())

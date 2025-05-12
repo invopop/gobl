@@ -13,10 +13,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `it-ticket-v1`: Extension for customer lottery code.
 - `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
 - `it-ticket-v1`: Add corrections to addon with document number stamp. 
+- `tax`: Totals now have public `Round` method.
 
 ### Removed
 
 - `it-sdi-v1` : Removing `isItalian` check on customer address 
+
+### Fixed
+
+- `bill`: Rounding _before_ payment calculations.
+- `tax`: Rounding bug in totals calculations.
 
 ## [v0.215.0] - 2025-04-28
 
