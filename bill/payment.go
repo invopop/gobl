@@ -319,6 +319,78 @@ func (pmt *Payment) calculate() error {
 	return nil
 }
 
+/** Accessor methods for generic handling via interfaces. **/
+
+func (pmt *Payment) GetSeries() cbc.Code {
+	return pmt.Series
+}
+func (pmt *Payment) GetCode() cbc.Code {
+	return pmt.Code
+}
+func (pmt *Payment) GetIssueDate() cal.Date {
+	return pmt.IssueDate
+}
+func (pmt *Payment) GetIssueTime() *cal.Time {
+	return pmt.IssueTime
+}
+func (pmt *Payment) GetValueDate() *cal.Date {
+	return pmt.ValueDate
+}
+func (pmt *Payment) GetTax() *Tax {
+	return nil // no tax for payments
+}
+func (pmt *Payment) GetPreceding() []*org.DocumentRef {
+	return pmt.Preceding
+}
+func (pmt *Payment) GetSupplier() *org.Party {
+	return pmt.Supplier
+}
+func (pmt *Payment) GetCustomer() *org.Party {
+	return pmt.Customer
+}
+func (pmt *Payment) GetCurrency() currency.Code {
+	return pmt.Currency
+}
+func (pmt *Payment) GetExchangeRates() []*currency.ExchangeRate {
+	return pmt.ExchangeRates
+}
+func (pmt *Payment) GetLines() []*Line {
+	return nil // no lines for payments
+}
+func (pmt *Payment) GetDiscounts() []*Discount {
+	return nil // no discounts for payments
+}
+func (pmt *Payment) GetCharges() []*Charge {
+	return nil // no charges for payments
+}
+func (pmt *Payment) GetPaymentDetails() *PaymentDetails {
+	return nil // no payment details for deliveries
+}
+func (pmt *Payment) GetTotals() *Totals {
+	return nil // no totals for payments
+}
+func (pmt *Payment) GetComplements() []*schema.Object {
+	return pmt.Complements
+}
+
+func (pmt *Payment) SetCode(c cbc.Code) {
+	pmt.Code = c
+}
+func (pmt *Payment) SetIssueDate(d cal.Date) {
+	pmt.IssueDate = d
+}
+func (pmt *Payment) SetIssueTime(t *cal.Time) {
+	pmt.IssueTime = t
+}
+func (pmt *Payment) SetCurrency(c currency.Code) {
+	pmt.Currency = c
+}
+func (pmt *Payment) SetTotals(t *Totals) {
+	// no totals for payments
+}
+
+/** ---- **/
+
 // JSONSchemaExtend extends the schema with additional property details
 func (pmt Payment) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties

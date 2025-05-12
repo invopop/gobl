@@ -344,61 +344,73 @@ func (inv *Invoice) RemoveIncludedTaxes() error {
 	return removeIncludedTaxes(inv)
 }
 
-/** Calculation Interface Methods **/
+/** Accessor methods for generic handling via interfaces. **/
 
-func (inv *Invoice) getIssueDate() cal.Date {
+func (inv *Invoice) GetSeries() cbc.Code {
+	return inv.Series
+}
+func (inv *Invoice) GetCode() cbc.Code {
+	return inv.Code
+}
+func (inv *Invoice) GetIssueDate() cal.Date {
 	return inv.IssueDate
 }
-func (inv *Invoice) getIssueTime() *cal.Time {
+func (inv *Invoice) GetIssueTime() *cal.Time {
 	return inv.IssueTime
 }
-func (inv *Invoice) getValueDate() *cal.Date {
+func (inv *Invoice) GetValueDate() *cal.Date {
 	return inv.ValueDate
 }
-func (inv *Invoice) getTax() *Tax {
+func (inv *Invoice) GetTax() *Tax {
 	return inv.Tax
 }
-func (inv *Invoice) getPreceding() []*org.DocumentRef {
+func (inv *Invoice) GetPreceding() []*org.DocumentRef {
 	return inv.Preceding
 }
-func (inv *Invoice) getCustomer() *org.Party {
+func (inv *Invoice) GetSupplier() *org.Party {
+	return inv.Supplier
+}
+func (inv *Invoice) GetCustomer() *org.Party {
 	return inv.Customer
 }
-func (inv *Invoice) getCurrency() currency.Code {
+func (inv *Invoice) GetCurrency() currency.Code {
 	return inv.Currency
 }
-func (inv *Invoice) getExchangeRates() []*currency.ExchangeRate {
+func (inv *Invoice) GetExchangeRates() []*currency.ExchangeRate {
 	return inv.ExchangeRates
 }
-func (inv *Invoice) getLines() []*Line {
+func (inv *Invoice) GetLines() []*Line {
 	return inv.Lines
 }
-func (inv *Invoice) getDiscounts() []*Discount {
+func (inv *Invoice) GetDiscounts() []*Discount {
 	return inv.Discounts
 }
-func (inv *Invoice) getCharges() []*Charge {
+func (inv *Invoice) GetCharges() []*Charge {
 	return inv.Charges
 }
-func (inv *Invoice) getPaymentDetails() *PaymentDetails {
+func (inv *Invoice) GetPaymentDetails() *PaymentDetails {
 	return inv.Payment
 }
-func (inv *Invoice) getTotals() *Totals {
+func (inv *Invoice) GetTotals() *Totals {
 	return inv.Totals
 }
-func (inv *Invoice) getComplements() []*schema.Object {
+func (inv *Invoice) GetComplements() []*schema.Object {
 	return inv.Complements
 }
 
-func (inv *Invoice) setIssueDate(d cal.Date) {
+func (inv *Invoice) SetCode(c cbc.Code) {
+	inv.Code = c
+}
+func (inv *Invoice) SetIssueDate(d cal.Date) {
 	inv.IssueDate = d
 }
-func (inv *Invoice) setIssueTime(t *cal.Time) {
+func (inv *Invoice) SetIssueTime(t *cal.Time) {
 	inv.IssueTime = t
 }
-func (inv *Invoice) setCurrency(c currency.Code) {
+func (inv *Invoice) SetCurrency(c currency.Code) {
 	inv.Currency = c
 }
-func (inv *Invoice) setTotals(t *Totals) {
+func (inv *Invoice) SetTotals(t *Totals) {
 	inv.Totals = t
 }
 

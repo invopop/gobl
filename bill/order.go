@@ -306,61 +306,73 @@ func (ord *Order) ConvertInto(cur currency.Code) (*Order, error) {
 	return &o2, nil
 }
 
-/** Calculation Interface Methods **/
+/** Accessor methods for generic handling via interfaces. **/
 
-func (ord *Order) getIssueDate() cal.Date {
+func (ord *Order) GetSeries() cbc.Code {
+	return ord.Series
+}
+func (ord *Order) GetCode() cbc.Code {
+	return ord.Code
+}
+func (ord *Order) GetIssueDate() cal.Date {
 	return ord.IssueDate
 }
-func (ord *Order) getIssueTime() *cal.Time {
+func (ord *Order) GetIssueTime() *cal.Time {
 	return ord.IssueTime
 }
-func (ord *Order) getValueDate() *cal.Date {
+func (ord *Order) GetValueDate() *cal.Date {
 	return ord.ValueDate
 }
-func (ord *Order) getTax() *Tax {
+func (ord *Order) GetTax() *Tax {
 	return ord.Tax
 }
-func (ord *Order) getPreceding() []*org.DocumentRef {
+func (ord *Order) GetPreceding() []*org.DocumentRef {
 	return ord.Preceding
 }
-func (ord *Order) getCustomer() *org.Party {
+func (ord *Order) GetSupplier() *org.Party {
+	return ord.Supplier
+}
+func (ord *Order) GetCustomer() *org.Party {
 	return ord.Customer
 }
-func (ord *Order) getCurrency() currency.Code {
+func (ord *Order) GetCurrency() currency.Code {
 	return ord.Currency
 }
-func (ord *Order) getExchangeRates() []*currency.ExchangeRate {
+func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
 	return ord.ExchangeRates
 }
-func (ord *Order) getLines() []*Line {
+func (ord *Order) GetLines() []*Line {
 	return ord.Lines
 }
-func (ord *Order) getDiscounts() []*Discount {
+func (ord *Order) GetDiscounts() []*Discount {
 	return ord.Discounts
 }
-func (ord *Order) getCharges() []*Charge {
+func (ord *Order) GetCharges() []*Charge {
 	return ord.Charges
 }
-func (ord *Order) getPaymentDetails() *PaymentDetails {
+func (ord *Order) GetPaymentDetails() *PaymentDetails {
 	return ord.Payment
 }
-func (ord *Order) getTotals() *Totals {
+func (ord *Order) GetTotals() *Totals {
 	return ord.Totals
 }
-func (ord *Order) getComplements() []*schema.Object {
+func (ord *Order) GetComplements() []*schema.Object {
 	return ord.Complements
 }
 
-func (ord *Order) setIssueDate(d cal.Date) {
+func (ord *Order) SetCode(c cbc.Code) {
+	ord.Code = c
+}
+func (ord *Order) SetIssueDate(d cal.Date) {
 	ord.IssueDate = d
 }
-func (ord *Order) setIssueTime(t *cal.Time) {
+func (ord *Order) SetIssueTime(t *cal.Time) {
 	ord.IssueTime = t
 }
-func (ord *Order) setCurrency(c currency.Code) {
+func (ord *Order) SetCurrency(c currency.Code) {
 	ord.Currency = c
 }
-func (ord *Order) setTotals(t *Totals) {
+func (ord *Order) SetTotals(t *Totals) {
 	ord.Totals = t
 }
 

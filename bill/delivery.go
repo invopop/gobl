@@ -336,61 +336,73 @@ func (dlv *Delivery) ConvertInto(cur currency.Code) (*Delivery, error) {
 	return &d2, nil
 }
 
-/** Calculation Interface Methods **/
+/** Accessor methods for generic handling via interfaces. **/
 
-func (dlv *Delivery) getIssueDate() cal.Date {
+func (dlv *Delivery) GetSeries() cbc.Code {
+	return dlv.Series
+}
+func (dlv *Delivery) GetCode() cbc.Code {
+	return dlv.Code
+}
+func (dlv *Delivery) GetIssueDate() cal.Date {
 	return dlv.IssueDate
 }
-func (dlv *Delivery) getIssueTime() *cal.Time {
+func (dlv *Delivery) GetIssueTime() *cal.Time {
 	return dlv.IssueTime
 }
-func (dlv *Delivery) getValueDate() *cal.Date {
+func (dlv *Delivery) GetValueDate() *cal.Date {
 	return dlv.ValueDate
 }
-func (dlv *Delivery) getTax() *Tax {
+func (dlv *Delivery) GetTax() *Tax {
 	return dlv.Tax
 }
-func (dlv *Delivery) getPreceding() []*org.DocumentRef {
+func (dlv *Delivery) GetPreceding() []*org.DocumentRef {
 	return dlv.Preceding
 }
-func (dlv *Delivery) getCustomer() *org.Party {
+func (dlv *Delivery) GetSupplier() *org.Party {
+	return dlv.Supplier
+}
+func (dlv *Delivery) GetCustomer() *org.Party {
 	return dlv.Customer
 }
-func (dlv *Delivery) getCurrency() currency.Code {
+func (dlv *Delivery) GetCurrency() currency.Code {
 	return dlv.Currency
 }
-func (dlv *Delivery) getExchangeRates() []*currency.ExchangeRate {
+func (dlv *Delivery) GetExchangeRates() []*currency.ExchangeRate {
 	return dlv.ExchangeRates
 }
-func (dlv *Delivery) getLines() []*Line {
+func (dlv *Delivery) GetLines() []*Line {
 	return dlv.Lines
 }
-func (dlv *Delivery) getDiscounts() []*Discount {
+func (dlv *Delivery) GetDiscounts() []*Discount {
 	return dlv.Discounts
 }
-func (dlv *Delivery) getCharges() []*Charge {
+func (dlv *Delivery) GetCharges() []*Charge {
 	return dlv.Charges
 }
-func (dlv *Delivery) getPaymentDetails() *PaymentDetails {
+func (dlv *Delivery) GetPaymentDetails() *PaymentDetails {
 	return nil // no payment for deliveries
 }
-func (dlv *Delivery) getTotals() *Totals {
+func (dlv *Delivery) GetTotals() *Totals {
 	return dlv.Totals
 }
-func (dlv *Delivery) getComplements() []*schema.Object {
+func (dlv *Delivery) GetComplements() []*schema.Object {
 	return dlv.Complements
 }
 
-func (dlv *Delivery) setIssueDate(d cal.Date) {
+func (dlv *Delivery) SetCode(c cbc.Code) {
+	dlv.Code = c
+}
+func (dlv *Delivery) SetIssueDate(d cal.Date) {
 	dlv.IssueDate = d
 }
-func (dlv *Delivery) setIssueTime(t *cal.Time) {
+func (dlv *Delivery) SetIssueTime(t *cal.Time) {
 	dlv.IssueTime = t
 }
-func (dlv *Delivery) setCurrency(c currency.Code) {
+func (dlv *Delivery) SetCurrency(c currency.Code) {
 	dlv.Currency = c
 }
-func (dlv *Delivery) setTotals(t *Totals) {
+func (dlv *Delivery) SetTotals(t *Totals) {
 	dlv.Totals = t
 }
 
