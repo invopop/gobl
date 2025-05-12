@@ -15,14 +15,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `it-ticket-v1`: Add corrections to addon with document number stamp. 
 - `tax`: Totals now have public `Round` method.
 
-### Removed
-
-- `it-sdi-v1` : Removing `isItalian` check on customer address 
-
 ### Fixed
 
 - `bill`: Rounding _before_ payment calculations.
 - `tax`: Rounding bug in totals calculations.
+- `it-sdi-v1` : Removed `isItalian` check on customer address 
 
 ## [v0.215.0] - 2025-04-28
 
