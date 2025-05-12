@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.216.0] - 2025-05-12
+
 ### Added
 
 - `bill.Line`: Add extensions to line.
