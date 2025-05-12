@@ -306,63 +306,120 @@ func (ord *Order) ConvertInto(cur currency.Code) (*Order, error) {
 	return &o2, nil
 }
 
-/** Calculation Interface Methods **/
+/** Billable interface implementation **/
 
-func (ord *Order) getIssueDate() cal.Date {
+// GetSeries returns the series of the order.
+func (ord *Order) GetSeries() cbc.Code {
+	return ord.Series
+}
+
+// GetCode returns the code of the order.
+func (ord *Order) GetCode() cbc.Code {
+	return ord.Code
+}
+
+// GetIssueDate returns the issue date of the order.
+func (ord *Order) GetIssueDate() cal.Date {
 	return ord.IssueDate
 }
-func (ord *Order) getIssueTime() *cal.Time {
+
+// GetIssueTime returns the issue time of the order.
+func (ord *Order) GetIssueTime() *cal.Time {
 	return ord.IssueTime
 }
-func (ord *Order) getValueDate() *cal.Date {
+
+// GetValueDate returns the value date of the order.
+func (ord *Order) GetValueDate() *cal.Date {
 	return ord.ValueDate
 }
-func (ord *Order) getTax() *Tax {
+
+// GetTax returns the tax configuration of the order.
+func (ord *Order) GetTax() *Tax {
 	return ord.Tax
 }
-func (ord *Order) getPreceding() []*org.DocumentRef {
+
+// GetPreceding returns the preceding document references of the order.
+func (ord *Order) GetPreceding() []*org.DocumentRef {
 	return ord.Preceding
 }
-func (ord *Order) getCustomer() *org.Party {
+
+// GetSupplier returns the supplier of the order.
+func (ord *Order) GetSupplier() *org.Party {
+	return ord.Supplier
+}
+
+// GetCustomer returns the customer of the order.
+func (ord *Order) GetCustomer() *org.Party {
 	return ord.Customer
 }
-func (ord *Order) getCurrency() currency.Code {
+
+// GetCurrency returns the currency of the order.
+func (ord *Order) GetCurrency() currency.Code {
 	return ord.Currency
 }
-func (ord *Order) getExchangeRates() []*currency.ExchangeRate {
+
+// GetExchangeRates returns the exchange rates of the order.
+func (ord *Order) GetExchangeRates() []*currency.ExchangeRate {
 	return ord.ExchangeRates
 }
-func (ord *Order) getLines() []*Line {
+
+// GetLines returns the lines of the order.
+func (ord *Order) GetLines() []*Line {
 	return ord.Lines
 }
-func (ord *Order) getDiscounts() []*Discount {
+
+// GetDiscounts returns the discounts of the order.
+func (ord *Order) GetDiscounts() []*Discount {
 	return ord.Discounts
 }
-func (ord *Order) getCharges() []*Charge {
+
+// GetCharges returns the charges of the order.
+func (ord *Order) GetCharges() []*Charge {
 	return ord.Charges
 }
-func (ord *Order) getPaymentDetails() *PaymentDetails {
+
+// GetPaymentDetails returns the payment details of the order.
+func (ord *Order) GetPaymentDetails() *PaymentDetails {
 	return ord.Payment
 }
-func (ord *Order) getTotals() *Totals {
+
+// GetTotals returns the totals of the order.
+func (ord *Order) GetTotals() *Totals {
 	return ord.Totals
 }
-func (ord *Order) getComplements() []*schema.Object {
+
+// GetComplements returns the complements of the order.
+func (ord *Order) GetComplements() []*schema.Object {
 	return ord.Complements
 }
 
-func (ord *Order) setIssueDate(d cal.Date) {
+// SetCode sets the code of the order.
+func (ord *Order) SetCode(c cbc.Code) {
+	ord.Code = c
+}
+
+// SetIssueDate sets the issue date of the order.
+func (ord *Order) SetIssueDate(d cal.Date) {
 	ord.IssueDate = d
 }
-func (ord *Order) setIssueTime(t *cal.Time) {
+
+// SetIssueTime sets the issue time of the order.
+func (ord *Order) SetIssueTime(t *cal.Time) {
 	ord.IssueTime = t
 }
-func (ord *Order) setCurrency(c currency.Code) {
+
+// SetCurrency sets the currency of the order.
+func (ord *Order) SetCurrency(c currency.Code) {
 	ord.Currency = c
 }
-func (ord *Order) setTotals(t *Totals) {
+
+// SetTotals sets the totals of the order.
+func (ord *Order) SetTotals(t *Totals) {
 	ord.Totals = t
 }
+
+// ensure the billable interface is fully implemented
+var _ billable = &Order{}
 
 /** ---- **/
 

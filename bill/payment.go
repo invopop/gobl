@@ -319,6 +319,123 @@ func (pmt *Payment) calculate() error {
 	return nil
 }
 
+/** Billable interface implementation **/
+
+// GetSeries returns the series of the payment.
+func (pmt *Payment) GetSeries() cbc.Code {
+	return pmt.Series
+}
+
+// GetCode returns the code of the payment.
+func (pmt *Payment) GetCode() cbc.Code {
+	return pmt.Code
+}
+
+// GetIssueDate returns the issue date of the payment.
+func (pmt *Payment) GetIssueDate() cal.Date {
+	return pmt.IssueDate
+}
+
+// GetIssueTime returns the issue time of the payment.
+func (pmt *Payment) GetIssueTime() *cal.Time {
+	return pmt.IssueTime
+}
+
+// GetValueDate returns the value date of the payment.
+func (pmt *Payment) GetValueDate() *cal.Date {
+	return pmt.ValueDate
+}
+
+// GetTax returns the tax configuration of the payment.
+func (pmt *Payment) GetTax() *Tax {
+	return nil // no tax for payments
+}
+
+// GetPreceding returns the preceding document references of the payment.
+func (pmt *Payment) GetPreceding() []*org.DocumentRef {
+	return pmt.Preceding
+}
+
+// GetSupplier returns the supplier of the payment.
+func (pmt *Payment) GetSupplier() *org.Party {
+	return pmt.Supplier
+}
+
+// GetCustomer returns the customer of the payment.
+func (pmt *Payment) GetCustomer() *org.Party {
+	return pmt.Customer
+}
+
+// GetCurrency returns the currency of the payment.
+func (pmt *Payment) GetCurrency() currency.Code {
+	return pmt.Currency
+}
+
+// GetExchangeRates returns the exchange rates of the payment.
+func (pmt *Payment) GetExchangeRates() []*currency.ExchangeRate {
+	return pmt.ExchangeRates
+}
+
+// GetLines returns the lines of the payment.
+func (pmt *Payment) GetLines() []*Line {
+	return nil // no lines for payments
+}
+
+// GetDiscounts returns the discounts of the payment.
+func (pmt *Payment) GetDiscounts() []*Discount {
+	return nil // no discounts for payments
+}
+
+// GetCharges returns the charges of the payment.
+func (pmt *Payment) GetCharges() []*Charge {
+	return nil // no charges for payments
+}
+
+// GetPaymentDetails returns the payment details of the payment.
+func (pmt *Payment) GetPaymentDetails() *PaymentDetails {
+	return nil // no payment details for deliveries
+}
+
+// GetTotals returns the totals of the payment.
+func (pmt *Payment) GetTotals() *Totals {
+	return nil // no totals for payments
+}
+
+// GetComplements returns the complements of the payment.
+func (pmt *Payment) GetComplements() []*schema.Object {
+	return pmt.Complements
+}
+
+// SetCode sets the code of the payment.
+func (pmt *Payment) SetCode(c cbc.Code) {
+	pmt.Code = c
+}
+
+// SetIssueDate sets the issue date of the payment.
+func (pmt *Payment) SetIssueDate(d cal.Date) {
+	pmt.IssueDate = d
+}
+
+// SetIssueTime sets the issue time of the payment.
+func (pmt *Payment) SetIssueTime(t *cal.Time) {
+	pmt.IssueTime = t
+}
+
+// SetCurrency sets the currency of the payment.
+func (pmt *Payment) SetCurrency(c currency.Code) {
+	pmt.Currency = c
+}
+
+// SetTotals sets the totals of the payment.
+func (pmt *Payment) SetTotals(_ *Totals) {
+	// no totals for payments
+}
+
+// ensure the billable interface is fully implemented
+var _ billable = &Payment{}
+
+/** ---- **/
+
 // JSONSchemaExtend extends the schema with additional property details
 func (pmt Payment) JSONSchemaExtend(js *jsonschema.Schema) {
 	props := js.Properties

@@ -336,63 +336,120 @@ func (dlv *Delivery) ConvertInto(cur currency.Code) (*Delivery, error) {
 	return &d2, nil
 }
 
-/** Calculation Interface Methods **/
+/** Billable interface implementation **/
 
-func (dlv *Delivery) getIssueDate() cal.Date {
+// GetSeries returns the series of the delivery.
+func (dlv *Delivery) GetSeries() cbc.Code {
+	return dlv.Series
+}
+
+// GetCode returns the code of the delivery.
+func (dlv *Delivery) GetCode() cbc.Code {
+	return dlv.Code
+}
+
+// GetIssueDate returns the issue date of the delivery.
+func (dlv *Delivery) GetIssueDate() cal.Date {
 	return dlv.IssueDate
 }
-func (dlv *Delivery) getIssueTime() *cal.Time {
+
+// GetIssueTime returns the issue time of the delivery.
+func (dlv *Delivery) GetIssueTime() *cal.Time {
 	return dlv.IssueTime
 }
-func (dlv *Delivery) getValueDate() *cal.Date {
+
+// GetValueDate returns the value date of the delivery.
+func (dlv *Delivery) GetValueDate() *cal.Date {
 	return dlv.ValueDate
 }
-func (dlv *Delivery) getTax() *Tax {
+
+// GetTax returns the tax configuration of the delivery.
+func (dlv *Delivery) GetTax() *Tax {
 	return dlv.Tax
 }
-func (dlv *Delivery) getPreceding() []*org.DocumentRef {
+
+// GetPreceding returns the preceding document references of the delivery.
+func (dlv *Delivery) GetPreceding() []*org.DocumentRef {
 	return dlv.Preceding
 }
-func (dlv *Delivery) getCustomer() *org.Party {
+
+// GetSupplier returns the supplier of the delivery.
+func (dlv *Delivery) GetSupplier() *org.Party {
+	return dlv.Supplier
+}
+
+// GetCustomer returns the customer of the delivery.
+func (dlv *Delivery) GetCustomer() *org.Party {
 	return dlv.Customer
 }
-func (dlv *Delivery) getCurrency() currency.Code {
+
+// GetCurrency returns the currency of the delivery.
+func (dlv *Delivery) GetCurrency() currency.Code {
 	return dlv.Currency
 }
-func (dlv *Delivery) getExchangeRates() []*currency.ExchangeRate {
+
+// GetExchangeRates returns the exchange rates of the delivery.
+func (dlv *Delivery) GetExchangeRates() []*currency.ExchangeRate {
 	return dlv.ExchangeRates
 }
-func (dlv *Delivery) getLines() []*Line {
+
+// GetLines returns the lines of the delivery.
+func (dlv *Delivery) GetLines() []*Line {
 	return dlv.Lines
 }
-func (dlv *Delivery) getDiscounts() []*Discount {
+
+// GetDiscounts returns the discounts of the delivery.
+func (dlv *Delivery) GetDiscounts() []*Discount {
 	return dlv.Discounts
 }
-func (dlv *Delivery) getCharges() []*Charge {
+
+// GetCharges returns the charges of the delivery.
+func (dlv *Delivery) GetCharges() []*Charge {
 	return dlv.Charges
 }
-func (dlv *Delivery) getPaymentDetails() *PaymentDetails {
-	return nil // no payment for deliveries
+
+// GetPaymentDetails returns the payment details of the delivery.
+func (dlv *Delivery) GetPaymentDetails() *PaymentDetails {
+	return nil // no payment details for deliveries
 }
-func (dlv *Delivery) getTotals() *Totals {
+
+// GetTotals returns the totals of the delivery.
+func (dlv *Delivery) GetTotals() *Totals {
 	return dlv.Totals
 }
-func (dlv *Delivery) getComplements() []*schema.Object {
+
+// GetComplements returns the complements of the delivery.
+func (dlv *Delivery) GetComplements() []*schema.Object {
 	return dlv.Complements
 }
 
-func (dlv *Delivery) setIssueDate(d cal.Date) {
+// SetCode sets the code of the delivery.
+func (dlv *Delivery) SetCode(c cbc.Code) {
+	dlv.Code = c
+}
+
+// SetIssueDate sets the issue date of the delivery.
+func (dlv *Delivery) SetIssueDate(d cal.Date) {
 	dlv.IssueDate = d
 }
-func (dlv *Delivery) setIssueTime(t *cal.Time) {
+
+// SetIssueTime sets the issue time of the delivery.
+func (dlv *Delivery) SetIssueTime(t *cal.Time) {
 	dlv.IssueTime = t
 }
-func (dlv *Delivery) setCurrency(c currency.Code) {
+
+// SetCurrency sets the currency of the delivery.
+func (dlv *Delivery) SetCurrency(c currency.Code) {
 	dlv.Currency = c
 }
-func (dlv *Delivery) setTotals(t *Totals) {
+
+// SetTotals sets the totals of the delivery.
+func (dlv *Delivery) SetTotals(t *Totals) {
 	dlv.Totals = t
 }
+
+// ensure the billable interface is fully implemented
+var _ billable = &Delivery{}
 
 /** ---- **/
 

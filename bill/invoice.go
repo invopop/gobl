@@ -344,63 +344,120 @@ func (inv *Invoice) RemoveIncludedTaxes() error {
 	return removeIncludedTaxes(inv)
 }
 
-/** Calculation Interface Methods **/
+/** Billable interface implementation **/
 
-func (inv *Invoice) getIssueDate() cal.Date {
+// GetSeries returns the series of the invoice.
+func (inv *Invoice) GetSeries() cbc.Code {
+	return inv.Series
+}
+
+// GetCode returns the code of the invoice.
+func (inv *Invoice) GetCode() cbc.Code {
+	return inv.Code
+}
+
+// GetIssueDate returns the issue date of the invoice.
+func (inv *Invoice) GetIssueDate() cal.Date {
 	return inv.IssueDate
 }
-func (inv *Invoice) getIssueTime() *cal.Time {
+
+// GetIssueTime returns the issue time of the invoice.
+func (inv *Invoice) GetIssueTime() *cal.Time {
 	return inv.IssueTime
 }
-func (inv *Invoice) getValueDate() *cal.Date {
+
+// GetValueDate returns the value date of the invoice.
+func (inv *Invoice) GetValueDate() *cal.Date {
 	return inv.ValueDate
 }
-func (inv *Invoice) getTax() *Tax {
+
+// GetTax returns the tax configuration of the invoice.
+func (inv *Invoice) GetTax() *Tax {
 	return inv.Tax
 }
-func (inv *Invoice) getPreceding() []*org.DocumentRef {
+
+// GetPreceding returns the preceding document references of the invoice.
+func (inv *Invoice) GetPreceding() []*org.DocumentRef {
 	return inv.Preceding
 }
-func (inv *Invoice) getCustomer() *org.Party {
+
+// GetSupplier returns the supplier of the invoice.
+func (inv *Invoice) GetSupplier() *org.Party {
+	return inv.Supplier
+}
+
+// GetCustomer returns the customer of the invoice.
+func (inv *Invoice) GetCustomer() *org.Party {
 	return inv.Customer
 }
-func (inv *Invoice) getCurrency() currency.Code {
+
+// GetCurrency returns the currency of the invoice.
+func (inv *Invoice) GetCurrency() currency.Code {
 	return inv.Currency
 }
-func (inv *Invoice) getExchangeRates() []*currency.ExchangeRate {
+
+// GetExchangeRates returns the exchange rates of the invoice.
+func (inv *Invoice) GetExchangeRates() []*currency.ExchangeRate {
 	return inv.ExchangeRates
 }
-func (inv *Invoice) getLines() []*Line {
+
+// GetLines returns the lines of the invoice.
+func (inv *Invoice) GetLines() []*Line {
 	return inv.Lines
 }
-func (inv *Invoice) getDiscounts() []*Discount {
+
+// GetDiscounts returns the discounts of the invoice.
+func (inv *Invoice) GetDiscounts() []*Discount {
 	return inv.Discounts
 }
-func (inv *Invoice) getCharges() []*Charge {
+
+// GetCharges returns the charges of the invoice.
+func (inv *Invoice) GetCharges() []*Charge {
 	return inv.Charges
 }
-func (inv *Invoice) getPaymentDetails() *PaymentDetails {
+
+// GetPaymentDetails returns the payment details of the invoice.
+func (inv *Invoice) GetPaymentDetails() *PaymentDetails {
 	return inv.Payment
 }
-func (inv *Invoice) getTotals() *Totals {
+
+// GetTotals returns the totals of the invoice.
+func (inv *Invoice) GetTotals() *Totals {
 	return inv.Totals
 }
-func (inv *Invoice) getComplements() []*schema.Object {
+
+// GetComplements returns the complements of the invoice.
+func (inv *Invoice) GetComplements() []*schema.Object {
 	return inv.Complements
 }
 
-func (inv *Invoice) setIssueDate(d cal.Date) {
+// SetCode sets the code of the invoice.
+func (inv *Invoice) SetCode(c cbc.Code) {
+	inv.Code = c
+}
+
+// SetIssueDate sets the issue date of the invoice.
+func (inv *Invoice) SetIssueDate(d cal.Date) {
 	inv.IssueDate = d
 }
-func (inv *Invoice) setIssueTime(t *cal.Time) {
+
+// SetIssueTime sets the issue time of the invoice.
+func (inv *Invoice) SetIssueTime(t *cal.Time) {
 	inv.IssueTime = t
 }
-func (inv *Invoice) setCurrency(c currency.Code) {
+
+// SetCurrency sets the currency of the invoice.
+func (inv *Invoice) SetCurrency(c currency.Code) {
 	inv.Currency = c
 }
-func (inv *Invoice) setTotals(t *Totals) {
+
+// SetTotals sets the totals of the invoice.
+func (inv *Invoice) SetTotals(t *Totals) {
 	inv.Totals = t
 }
+
+// ensure the billable interface is fully implemented
+var _ billable = &Invoice{}
 
 /** ---- **/
 

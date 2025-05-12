@@ -6,9 +6,11 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -197,4 +199,47 @@ func TestDeliveryJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+}
+
+func TestDeliveryBillable(t *testing.T) {
+	dlv := baseDeliveryWithLines(t)
+	dlv.IssueTime = cal.NewTime(10, 30, 0)
+	dlv.ValueDate = cal.NewDate(2023, 1, 15)
+	dlv.Currency = currency.EUR
+	dlv.ExchangeRates = []*currency.ExchangeRate{{}}
+	dlv.Complements = []*schema.Object{{}}
+
+	assert.Equal(t, dlv.Series, dlv.GetSeries())
+	assert.Equal(t, dlv.Code, dlv.GetCode())
+	assert.Equal(t, dlv.IssueDate, dlv.GetIssueDate())
+	assert.Equal(t, dlv.IssueTime, dlv.GetIssueTime())
+	assert.Equal(t, dlv.ValueDate, dlv.GetValueDate())
+	assert.Equal(t, dlv.Tax, dlv.GetTax())
+	assert.Equal(t, dlv.Preceding, dlv.GetPreceding())
+	assert.Equal(t, dlv.Currency, dlv.GetCurrency())
+	assert.Equal(t, dlv.ExchangeRates, dlv.GetExchangeRates())
+	assert.Equal(t, dlv.Supplier, dlv.GetSupplier())
+	assert.Equal(t, dlv.Customer, dlv.GetCustomer())
+	assert.Equal(t, dlv.Lines, dlv.GetLines())
+	assert.Equal(t, dlv.Discounts, dlv.GetDiscounts())
+	assert.Equal(t, dlv.Charges, dlv.GetCharges())
+	assert.Equal(t, dlv.Totals, dlv.GetTotals())
+	assert.Equal(t, dlv.Complements, dlv.GetComplements())
+	assert.Nil(t, dlv.GetPaymentDetails())
+
+	dlv.SetCode(cbc.Code("002"))
+	assert.Equal(t, cbc.Code("002"), dlv.Code)
+
+	dlv.SetIssueDate(cal.MakeDate(2023, 2, 1))
+	assert.Equal(t, cal.MakeDate(2023, 2, 1), dlv.IssueDate)
+
+	dlv.SetIssueTime(cal.NewTime(11, 30, 0))
+	assert.Equal(t, cal.NewTime(11, 30, 0), dlv.IssueTime)
+
+	dlv.SetCurrency(currency.USD)
+	assert.Equal(t, currency.USD, dlv.Currency)
+
+	newTotals := &bill.Totals{}
+	dlv.SetTotals(newTotals)
+	assert.Equal(t, newTotals, dlv.GetTotals())
 }

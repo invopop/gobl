@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/es/tbai"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -346,4 +347,47 @@ func TestPaymentJSONSchemaExtend(t *testing.T) {
 		assert.Len(t, js.Extras[schema.Recommended], 4)
 	})
 
+}
+
+func TestPaymentBillable(t *testing.T) {
+	pmt := testPaymentMinimal(t)
+	pmt.IssueTime = cal.NewTime(10, 30, 0)
+	pmt.ValueDate = cal.NewDate(2023, 1, 15)
+	pmt.Currency = currency.EUR
+	pmt.ExchangeRates = []*currency.ExchangeRate{{}}
+	pmt.Complements = []*schema.Object{{}}
+
+	assert.Equal(t, pmt.Series, pmt.GetSeries())
+	assert.Equal(t, pmt.Code, pmt.GetCode())
+	assert.Equal(t, pmt.IssueDate, pmt.GetIssueDate())
+	assert.Equal(t, pmt.IssueTime, pmt.GetIssueTime())
+	assert.Equal(t, pmt.ValueDate, pmt.GetValueDate())
+	assert.Equal(t, pmt.Preceding, pmt.GetPreceding())
+	assert.Equal(t, pmt.Currency, pmt.GetCurrency())
+	assert.Equal(t, pmt.ExchangeRates, pmt.GetExchangeRates())
+	assert.Equal(t, pmt.Supplier, pmt.GetSupplier())
+	assert.Equal(t, pmt.Customer, pmt.GetCustomer())
+	assert.Equal(t, pmt.Complements, pmt.GetComplements())
+	assert.Nil(t, pmt.GetDiscounts())
+	assert.Nil(t, pmt.GetCharges())
+	assert.Nil(t, pmt.GetPaymentDetails())
+	assert.Nil(t, pmt.GetTax())
+	assert.Nil(t, pmt.GetTotals())
+	assert.Nil(t, pmt.GetLines())
+
+	pmt.SetCode(cbc.Code("002"))
+	assert.Equal(t, cbc.Code("002"), pmt.Code)
+
+	pmt.SetIssueDate(cal.MakeDate(2023, 2, 1))
+	assert.Equal(t, cal.MakeDate(2023, 2, 1), pmt.IssueDate)
+
+	pmt.SetIssueTime(cal.NewTime(11, 30, 0))
+	assert.Equal(t, cal.NewTime(11, 30, 0), pmt.IssueTime)
+
+	pmt.SetCurrency(currency.USD)
+	assert.Equal(t, currency.USD, pmt.Currency)
+
+	newTotals := &bill.Totals{}
+	pmt.SetTotals(newTotals)
+	// Nothing to assert here
 }

@@ -6,9 +6,11 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -190,4 +192,47 @@ func TestOrderJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+}
+
+func TestOrderBillable(t *testing.T) {
+	ord := baseOrderWithLines(t)
+	ord.IssueTime = cal.NewTime(10, 30, 0)
+	ord.ValueDate = cal.NewDate(2023, 1, 15)
+	ord.Currency = currency.EUR
+	ord.ExchangeRates = []*currency.ExchangeRate{{}}
+	ord.Complements = []*schema.Object{{}}
+
+	assert.Equal(t, ord.Series, ord.GetSeries())
+	assert.Equal(t, ord.Code, ord.GetCode())
+	assert.Equal(t, ord.IssueDate, ord.GetIssueDate())
+	assert.Equal(t, ord.IssueTime, ord.GetIssueTime())
+	assert.Equal(t, ord.ValueDate, ord.GetValueDate())
+	assert.Equal(t, ord.Tax, ord.GetTax())
+	assert.Equal(t, ord.Preceding, ord.GetPreceding())
+	assert.Equal(t, ord.Currency, ord.GetCurrency())
+	assert.Equal(t, ord.ExchangeRates, ord.GetExchangeRates())
+	assert.Equal(t, ord.Supplier, ord.GetSupplier())
+	assert.Equal(t, ord.Customer, ord.GetCustomer())
+	assert.Equal(t, ord.Lines, ord.GetLines())
+	assert.Equal(t, ord.Discounts, ord.GetDiscounts())
+	assert.Equal(t, ord.Charges, ord.GetCharges())
+	assert.Equal(t, ord.Payment, ord.GetPaymentDetails())
+	assert.Equal(t, ord.Totals, ord.GetTotals())
+	assert.Equal(t, ord.Complements, ord.GetComplements())
+
+	ord.SetCode(cbc.Code("002"))
+	assert.Equal(t, cbc.Code("002"), ord.Code)
+
+	ord.SetIssueDate(cal.MakeDate(2023, 2, 1))
+	assert.Equal(t, cal.MakeDate(2023, 2, 1), ord.IssueDate)
+
+	ord.SetIssueTime(cal.NewTime(11, 30, 0))
+	assert.Equal(t, cal.NewTime(11, 30, 0), ord.IssueTime)
+
+	ord.SetCurrency(currency.USD)
+	assert.Equal(t, currency.USD, ord.Currency)
+
+	newTotals := &bill.Totals{}
+	ord.SetTotals(newTotals)
+	assert.Equal(t, newTotals, ord.GetTotals())
 }

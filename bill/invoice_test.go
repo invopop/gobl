@@ -17,6 +17,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -1342,4 +1343,47 @@ func TestInvoiceJSONSchemaExtend(t *testing.T) {
 		assert.Equal(t, it.Key.String(), prop.OneOf[0].Const)
 	})
 
+}
+
+func TestInvoiceBillable(t *testing.T) {
+	inv := baseInvoiceWithLines(t)
+	inv.IssueTime = cal.NewTime(10, 30, 0)
+	inv.ValueDate = cal.NewDate(2023, 1, 15)
+	inv.Currency = currency.EUR
+	inv.ExchangeRates = []*currency.ExchangeRate{{}}
+	inv.Complements = []*schema.Object{{}}
+
+	assert.Equal(t, inv.Series, inv.GetSeries())
+	assert.Equal(t, inv.Code, inv.GetCode())
+	assert.Equal(t, inv.IssueDate, inv.GetIssueDate())
+	assert.Equal(t, inv.IssueTime, inv.GetIssueTime())
+	assert.Equal(t, inv.ValueDate, inv.GetValueDate())
+	assert.Equal(t, inv.Tax, inv.GetTax())
+	assert.Equal(t, inv.Preceding, inv.GetPreceding())
+	assert.Equal(t, inv.Currency, inv.GetCurrency())
+	assert.Equal(t, inv.ExchangeRates, inv.GetExchangeRates())
+	assert.Equal(t, inv.Supplier, inv.GetSupplier())
+	assert.Equal(t, inv.Customer, inv.GetCustomer())
+	assert.Equal(t, inv.Lines, inv.GetLines())
+	assert.Equal(t, inv.Discounts, inv.GetDiscounts())
+	assert.Equal(t, inv.Charges, inv.GetCharges())
+	assert.Equal(t, inv.Payment, inv.GetPaymentDetails())
+	assert.Equal(t, inv.Totals, inv.GetTotals())
+	assert.Equal(t, inv.Complements, inv.GetComplements())
+
+	inv.SetCode(cbc.Code("002"))
+	assert.Equal(t, cbc.Code("002"), inv.Code)
+
+	inv.SetIssueDate(cal.MakeDate(2023, 2, 1))
+	assert.Equal(t, cal.MakeDate(2023, 2, 1), inv.IssueDate)
+
+	inv.SetIssueTime(cal.NewTime(11, 30, 0))
+	assert.Equal(t, cal.NewTime(11, 30, 0), inv.IssueTime)
+
+	inv.SetCurrency(currency.USD)
+	assert.Equal(t, currency.USD, inv.Currency)
+
+	newTotals := &bill.Totals{}
+	inv.SetTotals(newTotals)
+	assert.Equal(t, newTotals, inv.GetTotals())
 }
