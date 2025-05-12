@@ -301,7 +301,7 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 // ExtensionsHasCodes returns a validation rule that ensures the extension map's
 // key has one of the provided **codes**.
 func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCode{
+	return validateExtCodes{
 		key:       key,
 		values:    codes,
 		inclusion: true,
@@ -311,20 +311,20 @@ func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
 // ExtensionsExcludeCodes returns a validation rule that ensures the extension map's
 // key does not have any of the provided **codes**.
 func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCode{
+	return validateExtCodes{
 		key:       key,
 		values:    codes,
 		inclusion: false,
 	}
 }
 
-type validateExtCode struct {
+type validateExtCodes struct {
 	key       cbc.Key
 	values    []cbc.Code
 	inclusion bool
 }
 
-func (v validateExtCode) Validate(value interface{}) error {
+func (v validateExtCodes) Validate(value interface{}) error {
 	em, ok := value.(Extensions)
 	if !ok {
 		return nil
