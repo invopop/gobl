@@ -51,14 +51,18 @@ GOBL makes it easy to create business documents, like invoices, but check out so
 - [Docs](https://github.com/invopop/gobl.docs) - Content of the official GOBL Documentation Site [docs.gobl.org](https://docs.gobl.org).
 - [GOBL for Ruby](https://github.com/invopop/gobl.ruby) - Easily build or read GOBL documents in Ruby.
 
-Conversion to local formats
+Conversion to local and international formats:
 
+- [GOBL to HTML](https://github.com/invopop/gobl.html) - generate printable verisons of GOBL documents ready to be converted to PDF.
 - [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
 - [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.cfdi) - convert into the Mexican CFDI format.
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
 - [GOBL to FA_VAT / KSeF (Poland)](https://github.com/invopop/gobl.ksef) - convert to the Polish FA_VAT format and send to [KSeF](https://www.podatki.gov.pl/ksef/)
 - [GOBL to TicketBAI (Spain/Euskadi)](https://github.com/invopop/gobl.ticketbai) - convert into [TicketBAI](https://www.batuz.eus/fitxategiak/batuz/ticketbai/ticketBaiV1-2.xsd) documents, required in the Euskadi (northern region of Spain)
-- [GOBL to Factur-X (France) and XRechnung/ZUGFeRD (Germany)](https://github.com/invopop/gobl.xinvoice) - convert into Factur-X (FR) and [XRechnung/ZUGFeRD](https://xeinkauf.de/xrechnung) (DE) formats.
+- [GOBL to VERI\*FACTU (Spain)](https://github.com/invopop/gobl.verifactu) - convert and send to the Spanish tax authorities.
+- [GOBL UBL](https://github.com/invopop/gobl.ubl) - convert to and from the OASIS Universal Business Language, including support for local and global profiles such as for Peppol and XRechnung (Germany)
+- [GOBL CII](https://github.com/invopop/gobl.cii) - convert to and from the Cross Industry Invoice (CII) XML format, including regional variants including Factur-X (France), ZUGFeRD and XRechnung (Germany).
+- [GOBL to Stripe](https://github.com/invopop/gobl.stripe) - support for creating GOBL invoices from stripe API data.
 
 ## Usage
 
