@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `it-sdi-v1`: Do not enforce Italian postcode format on foreign addresses.
+
 ## [v0.216.0] - 2025-05-12
 
 ### Added
@@ -14,14 +18,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `it-ticket-v1`: Stamp key for document number added and void document number.
 - `it-ticket-v1`: Extension for customer lottery code.
 - `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
-- `it-ticket-v1`: Add corrections to addon with document number stamp. 
+- `it-ticket-v1`: Add corrections to addon with document number stamp.
 - `tax`: Totals now have public `Round` method.
 
 ### Fixed
 
 - `bill`: Rounding _before_ payment calculations.
 - `tax`: Rounding bug in totals calculations.
-- `it-sdi-v1` : Removed `isItalian` check on customer address 
+- `it-sdi-v1` : Removed `isItalian` check on customer address
 
 ## [v0.215.0] - 2025-04-28
 
