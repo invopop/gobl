@@ -23,4 +23,5 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v6
         with:
+          # TO-DO: Upgrade to 1.64.8
           version: v1.62

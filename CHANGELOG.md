@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `regime`: a template regime.
+- `tools`: explicit dependency for golangci-lint via tools.go.
+- A CONTRIBUTING.md file.
+
+### Changed
+
+- `num`: improved `MakePercentage` documentation.
+
+### Fixed
+
+- `es`: small typo in the description for simplified scheme description.
+
 ## [v0.216.0] - 2025-05-12
 
 ### Added
