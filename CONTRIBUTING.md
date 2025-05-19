@@ -61,7 +61,7 @@ Note: In Go 1.24 a new way to manage tools was introduced. Once this project upg
 
 [golangci-lint](https://golangci-lint.run/) is used to check the code for errors and style issues. The configuration is in the [`.golangci.yaml`](.golangci.yaml) file.
 
-Curent version is 1.64.8.
+Current version is 1.64.8.
 
 #### Running
 
