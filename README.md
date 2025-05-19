@@ -53,7 +53,7 @@ GOBL makes it easy to create business documents, like invoices, but check out so
 
 Conversion to local and international formats:
 
-- [GOBL to HTML](https://github.com/invopop/gobl.html) - generate printable verisons of GOBL documents ready to be converted to PDF.
+- [GOBL to HTML](https://github.com/invopop/gobl.html) - generate printable versions of GOBL documents ready to be converted to PDF.
 - [GOBL to FacturaE (Spain)](https://github.com/invopop/gobl.facturae) - convert into the [Spanish FacturaE](https://www.facturae.gob.es/Paginas/Index.aspx) format.
 - [GOBL to CFDI (Mexico)](https://github.com/invopop/gobl.cfdi) - convert into the Mexican CFDI format.
 - [GOBL to FatturaPA (Italy)](https://github.com/invopop/gobl.fatturapa) - convert into the [Italian FatturaPA](https://www.fatturapa.gov.it/it/index.html) format.
