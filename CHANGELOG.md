@@ -20,6 +20,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es`: small typo in the description for simplified scheme description.
 
+## [v0.216.0] - 2025-05-12
+
+### Added
+
+- `bill.Line`: Add extensions to line.
+- `it-ticket-v1`: Stamp key for document number added and void document number.
+- `it-ticket-v1`: Extension for customer lottery code.
+- `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
+- `it-ticket-v1`: Add corrections to addon with document number stamp. 
+- `tax`: Totals now have public `Round` method.
+
+### Fixed
+
+- `bill`: Rounding _before_ payment calculations.
+- `tax`: Rounding bug in totals calculations.
+- `it-sdi-v1` : Removed `isItalian` check on customer address 
+
 ## [v0.215.0] - 2025-04-28
 
 ### Changed
@@ -34,6 +51,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `mx-cfdi-v4`: Support for "Global" B2C invoice reporting that group together B2C sales into a single document.
 - `mx-cfdi-v4`: Automatically set the `issue_time` if not already provided.
 - `tax`: `ExtensionsRequireAllOrNone` validation rule.
+- `es-verifactu-v1`: validation for export exemption codes.
+- `tax`: `ExtensionsExcludeCodes` validation rule.
 
 ### Removed
 

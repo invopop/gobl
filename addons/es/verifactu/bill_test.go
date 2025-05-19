@@ -121,7 +121,6 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Empty(t, inv.Preceding[0].Ext)
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
-
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

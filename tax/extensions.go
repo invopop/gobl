@@ -301,18 +301,30 @@ func (v validateExtCodeMap) Validate(value interface{}) error {
 // ExtensionsHasCodes returns a validation rule that ensures the extension map's
 // key has one of the provided **codes**.
 func ExtensionsHasCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
-	return validateExtCodeValues{
-		key:    key,
-		values: codes,
+	return validateExtCodes{
+		key:       key,
+		values:    codes,
+		inclusion: true,
 	}
 }
 
-type validateExtCodeValues struct {
-	key    cbc.Key
-	values []cbc.Code
+// ExtensionsExcludeCodes returns a validation rule that ensures the extension map's
+// key does not have any of the provided **codes**.
+func ExtensionsExcludeCodes(key cbc.Key, codes ...cbc.Code) validation.Rule {
+	return validateExtCodes{
+		key:       key,
+		values:    codes,
+		inclusion: false,
+	}
 }
 
-func (v validateExtCodeValues) Validate(value interface{}) error {
+type validateExtCodes struct {
+	key       cbc.Key
+	values    []cbc.Code
+	inclusion bool
+}
+
+func (v validateExtCodes) Validate(value interface{}) error {
 	em, ok := value.(Extensions)
 	if !ok {
 		return nil
@@ -320,15 +332,26 @@ func (v validateExtCodeValues) Validate(value interface{}) error {
 	err := make(validation.Errors)
 
 	if ev, ok := em[v.key]; ok {
-		match := false
-		for _, val := range v.values {
-			if ev == val {
-				match = true
-				break
+		if v.inclusion {
+			// Inclusion mode: value must be in the list
+			match := false
+			for _, val := range v.values {
+				if ev == val {
+					match = true
+					break
+				}
 			}
-		}
-		if !match {
-			err[v.key.String()] = errors.New("invalid value")
+			if !match {
+				err[v.key.String()] = errors.New("invalid value")
+			}
+		} else {
+			// Exclusion mode: value must NOT be in the list
+			for _, val := range v.values {
+				if ev == val {
+					err[v.key.String()] = fmt.Errorf("value '%s' not allowed", ev)
+					break
+				}
+			}
 		}
 	}
 

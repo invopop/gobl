@@ -7,7 +7,10 @@
   "currency": "EUR",
   "issue_date": "2024-07-12",
   "tax": {
-    "prices_include": "VAT"
+    "prices_include": "VAT",
+    "ext": {
+      "it-ticket-lottery": "12345678"
+    }
   },
   "type": "standard",
   "supplier": {
