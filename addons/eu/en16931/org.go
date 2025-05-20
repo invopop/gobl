@@ -127,7 +127,7 @@ func validateOrgInbox(i *org.Inbox) error {
 
 func validateOrgAddress(a *org.Address) error {
 	return validation.ValidateStruct(a,
-		// Most addresses in EN16931 need a country: BR-9, BR-11, BR-57...
+		// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
 		validation.Field(&a.Country,
 			validation.Required,
 			validation.Skip,

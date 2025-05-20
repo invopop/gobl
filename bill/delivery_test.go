@@ -113,12 +113,22 @@ func baseDelivery(t *testing.T, lines ...*bill.Line) *bill.Delivery {
 				Country: "ES",
 				Code:    "B98602642",
 			},
+			Addresses: []*org.Address{
+				{
+					Country: "ES",
+				},
+			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: "ES",
 				Code:    "54387763P",
+			},
+			Addresses: []*org.Address{
+				{
+					Country: "ES",
+				},
 			},
 		},
 		Lines: lines,
