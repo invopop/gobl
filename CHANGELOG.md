@@ -10,6 +10,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `examples`: Add example for Belgium, specifically for PEPPOL.
 
+## [v0.216.3] - 2025-05-20
+
+### Changed
+
+- `tools`: removed as considered too opinionated for other projects using GOBL.
+- `org`: normalize inboxes with the `peppol` key, splitting participant ID between scheme and code.
+
+### Fixed
+
+- `cal`: JSON Schema pattern for time.
+
+## [v0.216.1] - 2025-05-20
+
+### Added
+
+- `regimes`: template.
+- `tools`: explicit dependency for golangci-lint via tools.go.
+- CONTRIBUTING.md file.
+
+### Changed
+
+- `num`: improved `MakePercentage` documentation.
+
+### Fixed
+
+- `es`: small typo in the description for simplified scheme description.
+- `it-sdi-v1`: Do not enforce Italian postcode format on foreign addresses.
+
 ## [v0.216.0] - 2025-05-12
 
 ### Added
@@ -18,14 +46,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `it-ticket-v1`: Stamp key for document number added and void document number.
 - `it-ticket-v1`: Extension for customer lottery code.
 - `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
-- `it-ticket-v1`: Add corrections to addon with document number stamp. 
+- `it-ticket-v1`: Add corrections to addon with document number stamp.
 - `tax`: Totals now have public `Round` method.
 
 ### Fixed
 
 - `bill`: Rounding _before_ payment calculations.
 - `tax`: Rounding bug in totals calculations.
-- `it-sdi-v1` : Removed `isItalian` check on customer address 
+- `it-sdi-v1` : Removed `isItalian` check on customer address
 
 ## [v0.215.0] - 2025-04-28
 

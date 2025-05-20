@@ -21,7 +21,7 @@ var (
 )
 
 // NewPercentage provides a new pointer to a Percentage value.
-// Using MakePercentage is recommend, but this is useful for handling
+// Using [MakePercentage] is recommended, but this is useful for handling
 // nil values.
 func NewPercentage(value int64, exp uint32) *Percentage {
 	p := MakePercentage(value, exp)
@@ -30,6 +30,10 @@ func NewPercentage(value int64, exp uint32) *Percentage {
 
 // MakePercentage will make a new Percentage instance with the provided
 // value and exponent.
+//
+// Example: To make a 16% rate, you would use
+//
+//	num.MakePercentage(16, 2)
 func MakePercentage(value int64, exp uint32) Percentage {
 	return Percentage{Amount{value: value, exp: exp}}
 }

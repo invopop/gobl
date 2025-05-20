@@ -68,8 +68,8 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 func (Time) JSONSchema() *jsonschema.Schema {
 	return &jsonschema.Schema{
 		Type:        "string",
-		Format:      "time",
 		Title:       "Time",
+		Pattern:     `^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$`,
 		Description: "Civil time in simplified ISO format, like 13:45:30",
 	}
 }

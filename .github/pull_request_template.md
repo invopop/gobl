@@ -2,6 +2,7 @@
 
 ## Pre-Review Checklist
 
+- [ ] I've read the CONTRIBUTING.md guide.
 - [ ] I have performed a self-review of my code.
 - [ ] I have added thorough tests with at **least** 90% code coverage.
 - [ ] I've modified or created example GOBL documents to show my changes in use, if appropriate.
@@ -11,4 +12,3 @@
 - [ ] I've been obsessive with pointer nil checks to avoid panics.
 - [ ] The CHANGELOG.md has been updated with an overview of my changes.
 - [ ] Requested a review from @samlown.
-

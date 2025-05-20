@@ -210,7 +210,7 @@ func Test_validate(t *testing.T) {
 			if opts.rootOpts == nil {
 				opts.rootOpts = &rootOpts{}
 			}
-			opts.rootOpts.indent = true
+			opts.indent = true
 			err := opts.runE(c, tt.args)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)

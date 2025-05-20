@@ -107,9 +107,9 @@ var InvoiceTypes = []*cbc.Definition{
 var isValidInvoiceType = cbc.InKeyDefs(InvoiceTypes)
 
 // UNTDID1001 provides the official code number assigned with the Invoice type.
-func (i *Invoice) UNTDID1001() cbc.Code {
+func (inv *Invoice) UNTDID1001() cbc.Code {
 	for _, d := range InvoiceTypes {
-		if d.Key == i.Type {
+		if d.Key == inv.Type {
 			return d.Map[UNTDID1001Key]
 		}
 	}
