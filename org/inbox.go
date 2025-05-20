@@ -66,7 +66,7 @@ func (i *Inbox) Normalize(normalizers tax.Normalizers) {
 		if i.Scheme == "" {
 			if len(i.Code) >= 5 && i.Code[4] == ':' {
 				numbers := i.Code[:4]
-				i.Scheme = cbc.Code(numbers)
+				i.Scheme = numbers
 				i.Code = i.Code[5:]
 			}
 		}

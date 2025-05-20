@@ -74,7 +74,7 @@ func (dt DateTime) Validate() error {
 	if dt.IsZero() {
 		return nil
 	}
-	if !dt.DateTime.IsValid() {
+	if !dt.IsValid() {
 		return errors.New("invalid date time")
 	}
 	return nil
@@ -162,12 +162,12 @@ func (d *dateTimeValidationRule) Validate(value interface{}) error {
 		}
 	}
 	if d.after != nil {
-		if !in.DateTime.After(d.after.DateTime) {
+		if !in.After(d.after.DateTime) {
 			return errors.New("too early")
 		}
 	}
 	if d.before != nil {
-		if !in.DateTime.Before(d.before.DateTime) {
+		if !in.Before(d.before.DateTime) {
 			return errors.New("too late")
 		}
 	}

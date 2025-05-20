@@ -57,8 +57,8 @@ go generate .
 Install locally and run:
 
 ```bash
-golangci-lint run ./...
-golangci-lint run ./... --fix # To autofix lint errors where possible
+golangci-lint run
+golangci-lint run --fix # To autofix lint errors where possible
 ```
 
 Note: we considered incorporating golangci-lint as a tool directly in the `go.mod`, but due the large amount of dependencies, decided not to do so.
