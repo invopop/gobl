@@ -96,6 +96,23 @@ func TestInboxNormalize(t *testing.T) {
 		assert.Empty(t, id.Email)
 		assert.Equal(t, "https://inbox.example.com", id.URL)
 	})
+	t.Run("with peppol participant code", func(t *testing.T) {
+		id := &org.Inbox{
+			Key:  org.InboxKeyPeppol,
+			Code: "0004:1234567890",
+		}
+		id.Normalize(nil)
+		assert.Equal(t, "1234567890", id.Code.String())
+		assert.Equal(t, "0004", id.Scheme.String())
+		assert.Equal(t, org.InboxKeyPeppol, id.Key)
+	})
+	t.Run("with peppol participant code without key", func(t *testing.T) {
+		id := &org.Inbox{
+			Code: "0004:1234567890",
+		}
+		id.Normalize(nil)
+		assert.Equal(t, "0004:1234567890", id.Code.String())
+	})
 }
 
 func TestInboxValidate(t *testing.T) {

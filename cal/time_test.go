@@ -108,5 +108,5 @@ func TestTimeJSONSChema(t *testing.T) {
 	schema := cal.Time{}.JSONSchema()
 	out, err := json.Marshal(schema)
 	require.NoError(t, err)
-	assert.JSONEq(t, `{"description":"Civil time in simplified ISO format, like 13:45:30", "format":"time", "title":"Time", "type":"string"}`, string(out))
+	assert.JSONEq(t, `{"description":"Civil time in simplified ISO format, like 13:45:30", "pattern":"^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", "title":"Time", "type":"string"}`, string(out))
 }
