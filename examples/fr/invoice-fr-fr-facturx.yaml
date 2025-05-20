@@ -52,7 +52,11 @@ lines:
       price: "90.00"
     taxes:
       - cat: VAT
+        ext:
+          cef-vatex: "VATEX-EU-79-C"
 
 payment:
   instructions:
     key: "card"
+  terms:
+    detail: "Please pay within 10 days"

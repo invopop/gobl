@@ -65,6 +65,10 @@ payment:
     credit_transfer:
       - iban: "DE89370400440532013000"
         name: "Random Bank Co."
+  terms:
+    due_dates:
+      - date: "2022-02-01"
+        amount: "1620.00"
 
 ordering:
   code: "12345"

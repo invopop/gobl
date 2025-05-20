@@ -8,15 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `en16931`: Missing rules such as BR-CO-25, BR
-
-### Changed
-
-- `fr`: Add identity validation and normalization.
-
-### Fixed
-
+- `en16931`: Add missing Business Rules with labels at implementation level.
 - `de-xrechnung-v3`: Add missing validation from CIUS
+- `fr`: Add identity validation and normalization.
 
 ## [v0.216.3] - 2025-05-20
 

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ca655476fea7712727f1e9908b0770480cd3c3563ae174da802b09a38aa926bf"
+			"val": "05da66aa13310f7ea5a0be1fd9b326b45492424705c25c630b35ddb1cbcf4e46"
 		}
 	},
 	"doc": {
@@ -13,9 +13,6 @@
 		"$addons": [
 			"eu-en16931-v2017",
 			"de-xrechnung-v3"
-		],
-		"$tags": [
-			"reverse-charge"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -39,7 +36,12 @@
 					"name": {
 						"given": "John",
 						"surname": "Doe"
-					}
+					},
+					"emails": [
+						{
+							"addr": "billing@example.com"
+						}
+					]
 				}
 			],
 			"addresses": [
@@ -51,11 +53,6 @@
 					"country": "DE"
 				}
 			],
-			"emails": [
-				{
-					"addr": "billing@example.com"
-				}
-			],
 			"telephones": [
 				{
 					"num": "+49100200300"
@@ -63,29 +60,28 @@
 			]
 		},
 		"customer": {
-			"name": "Provide One S.L.",
+			"name": "Sample Consumer",
 			"tax_id": {
-				"country": "ES",
-				"code": "B98602642"
+				"country": "DE",
+				"code": "282741168"
 			},
 			"addresses": [
 				{
-					"num": "42",
-					"street": "Calle Pradillo",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "28002",
-					"country": "ES"
+					"num": "25",
+					"street": "Werner-Heisenberg-Allee",
+					"locality": "München",
+					"code": "80939",
+					"country": "DE"
 				}
 			],
 			"emails": [
 				{
-					"addr": "billing@example.com"
+					"addr": "email@sample.com"
 				}
 			],
 			"telephones": [
 				{
-					"num": "+34100200300"
+					"num": "+49100200300"
 				}
 			]
 		},
@@ -109,9 +105,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt+reverse-charge",
+						"rate": "standard",
+						"percent": "19%",
 						"ext": {
-							"untdid-tax-category": "AE"
+							"untdid-tax-category": "S"
 						}
 					}
 				],
@@ -122,6 +119,9 @@
 			"code": "12345"
 		},
 		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			},
 			"instructions": {
 				"key": "credit-transfer+sepa",
 				"credit_transfer": [
@@ -144,29 +144,23 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "exempt+reverse-charge",
+								"key": "standard",
 								"ext": {
-									"untdid-tax-category": "AE"
+									"untdid-tax-category": "S"
 								},
 								"base": "1620.00",
-								"amount": "0.00"
+								"percent": "19%",
+								"amount": "307.80"
 							}
 						],
-						"amount": "0.00"
+						"amount": "307.80"
 					}
 				],
-				"sum": "0.00"
+				"sum": "307.80"
 			},
-			"tax": "0.00",
-			"total_with_tax": "1620.00",
-			"payable": "1620.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "reverse-charge",
-				"text": "Reverse Charge / Umkehr der Steuerschuld."
-			}
-		]
+			"tax": "307.80",
+			"total_with_tax": "1927.80",
+			"payable": "1927.80"
+		}
 	}
 }

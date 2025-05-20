@@ -149,7 +149,7 @@ func validateSupplier(val any) error {
 		// Check for either party or people telephones
 		validation.Field(&party.Telephones,
 			validation.When(
-				len(party.People) > 0 && len(party.People[0].Telephones) > 0,
+				len(party.People) > 0 && len(party.People[0].Telephones) == 0,
 				validation.Required.Error("either party.telephones or party.people[0].telephones is required"),
 			),
 			validation.Skip,
@@ -157,7 +157,7 @@ func validateSupplier(val any) error {
 		// Check for either party or people emails
 		validation.Field(&party.Emails,
 			validation.When(
-				len(party.People) > 0 && len(party.People[0].Emails) > 0,
+				len(party.People) > 0 && len(party.People[0].Emails) == 0,
 				validation.Required.Error("either party.emails or party.people[0].emails is required"),
 			),
 			validation.Skip,

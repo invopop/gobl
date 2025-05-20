@@ -66,3 +66,5 @@ payment:
     credit_transfer:
       - iban: "DE89370400440532013000"
         name: "Random Bank Co."
+  terms:
+    detail: "Please pay within 10 days"

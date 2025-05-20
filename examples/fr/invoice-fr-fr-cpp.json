@@ -4,20 +4,16 @@
     "series": "SAMPLE",
     "uuid": "01961f64-4934-7715-8abc-42be69de5ca3",
     "code": "001",
+    "$addons": ["fr-facturx-v1"],
     "issue_date": "2022-02-01",
     "currency": "EUR",
     "supplier": {
         "name": "Provide One Inc.",
         "tax_id": {
             "country": "FR",
-            "code": "44732829320"
+            "code": "356000000"
         },
-        "identities": [
-				{
-					"type": "SIREN",
-					"code": "732829320"
-				}
-			],
+        
         "addresses": [
             {
                 "num": "42",
@@ -38,14 +34,21 @@
         "name": "Sample Consumer",
         "tax_id": {
             "country": "FR",
-            "code": "39356000000"
+            "code": "44732829320"
         },
+        "identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320"
+				}
+			],
         "addresses": [
             {
                 "num": "1",
                 "street": "Rue Sundacsakn",
                 "locality": "Saint-Germain-En-Laye",
-                "code": "75050"
+                "code": "75050",
+                "country": "FR"
             }
         ],
         "emails": [
@@ -84,6 +87,14 @@
     "payment": {
         "instructions": {
             "key": "card"
+        },
+        "terms": {
+            "due_dates": [
+                {
+                    "date": "2022-02-01",
+                    "amount": "1944.00"
+                }
+            ]
         }
     },
     "totals": {

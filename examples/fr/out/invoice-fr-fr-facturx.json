@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a7b580a37c424e30a4b0a43feb75172e7f2972de2d039356f3be2ddb69eac757"
+			"val": "85c460e11711e78fc4f95cf2d83ae709cdd75c1f015223d339ced294e857cc1f"
 		}
 	},
 	"doc": {
@@ -109,6 +109,7 @@
 					{
 						"cat": "VAT",
 						"ext": {
+							"cef-vatex": "VATEX-EU-79-C",
 							"untdid-tax-category": "E"
 						}
 					}
@@ -117,6 +118,9 @@
 			}
 		],
 		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			},
 			"instructions": {
 				"key": "card",
 				"ext": {
@@ -142,6 +146,7 @@
 							},
 							{
 								"ext": {
+									"cef-vatex": "VATEX-EU-79-C",
 									"untdid-tax-category": "E"
 								},
 								"base": "90.00",

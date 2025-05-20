@@ -4,30 +4,33 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5227e1c65908b821a589608008f9a18a1ce40f54fc0a56a327ffd07544adae3e"
+			"val": "fd7609df14e4f991a170f69b269372901c7d133bf1d023588ddf33caae490226"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "FR",
+		"$addons": [
+			"eu-en16931-v2017",
+			"fr-facturx-v1"
+		],
 		"uuid": "01961f64-4934-7715-8abc-42be69de5ca3",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
 		"supplier": {
 			"name": "Provide One Inc.",
 			"tax_id": {
 				"country": "FR",
-				"code": "44732829320"
+				"code": "39356000000"
 			},
-			"identities": [
-				{
-					"type": "SIREN",
-					"code": "732829320"
-				}
-			],
 			"addresses": [
 				{
 					"num": "42",
@@ -48,14 +51,21 @@
 			"name": "Sample Consumer",
 			"tax_id": {
 				"country": "FR",
-				"code": "39356000000"
+				"code": "44732829320"
 			},
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320"
+				}
+			],
 			"addresses": [
 				{
 					"num": "1",
 					"street": "Rue Sundacsakn",
 					"locality": "Saint-Germain-En-Laye",
-					"code": "75050"
+					"code": "75050",
+					"country": "FR"
 				}
 			],
 			"emails": [
@@ -85,15 +95,29 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "20%"
+						"percent": "20%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
 					}
 				],
 				"total": "1620.00"
 			}
 		],
 		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2022-02-01",
+						"amount": "1944.00"
+					}
+				]
+			},
 			"instructions": {
-				"key": "card"
+				"key": "card",
+				"ext": {
+					"untdid-payment-means": "48"
+				}
 			}
 		},
 		"totals": {
@@ -106,6 +130,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
 								"base": "1620.00",
 								"percent": "20%",
 								"amount": "324.00"
