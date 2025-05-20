@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `examples`: Add example for Belgium, specifically for PEPPOL.
+
 ## [v0.216.0] - 2025-05-12
 
 ### Added
