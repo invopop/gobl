@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `fr-choruspro-v1`: New addon for Chorus-Pro
+- `en16931`: Missing rules such as BR-CO-25, BR
 
 ### Changed
 
@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `de-xrechnung-v3`: Add missing validation for telephone numbers in parties.
+- `de-xrechnung-v3`: Add missing validation from CIUS
 
 ## [v0.216.3] - 2025-05-20
 
