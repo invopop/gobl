@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `en16931`: Add missing Business Rules with labels at implementation level.
+- `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
 - `de-xrechnung-v3`: Add missing validation from CIUS
 - `fr`: Add identity validation and normalization.
 
