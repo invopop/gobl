@@ -333,6 +333,23 @@ func TestSupplierAddressesValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.NoError(t, err)
 	})
+
+	t.Run("Post office box missing street", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses[0].Street = ""
+		inv.Supplier.Addresses[0].PostOfficeBox = "1234"
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("Missing post office box and street", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses[0].Street = ""
+		inv.Supplier.Addresses[0].PostOfficeBox = ""
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "either street or post office box must be set")
+	})
 }
 
 func TestRetainedTaxesValidation(t *testing.T) {
