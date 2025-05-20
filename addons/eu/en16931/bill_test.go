@@ -2,13 +2,16 @@ package en16931_test
 
 import (
 	"testing"
+	"time"
 
 	_ "github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/eu/en16931"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -112,6 +115,16 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 			},
 		},
+		Payment: &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:   cal.NewDate(2025, time.January, 1),
+						Amount: num.MakeAmount(1000, 2),
+					},
+				},
+			},
+		},
 	}
 	return inv
 }
@@ -197,5 +210,206 @@ func TestNormalizeBillCharge(t *testing.T) {
 		}
 		ad.Normalizer(l)
 		assert.Nil(t, l.Ext)
+	})
+}
+
+func TestValidateBillDiscount(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with reason", func(t *testing.T) {
+		l := &bill.Discount{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("with extension", func(t *testing.T) {
+		l := &bill.Discount{
+			Ext: tax.Extensions{
+				untdid.ExtKeyAllowance: "67",
+			},
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("without reason or extension", func(t *testing.T) {
+		l := &bill.Discount{
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.ErrorContains(t, err, "either a reason or an allowance type extension is required")
+	})
+
+	t.Run("with reason and extension", func(t *testing.T) {
+		l := &bill.Discount{
+			Reason: "Product sample",
+			Ext: tax.Extensions{
+				untdid.ExtKeyAllowance: "67",
+			},
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+}
+
+func TestValidateBillCharge(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with reason", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason: "Product sample",
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("with extension", func(t *testing.T) {
+		l := &bill.Charge{
+			Ext: tax.Extensions{
+				untdid.ExtKeyCharge: "AAE",
+			},
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("without reason or extension", func(t *testing.T) {
+		l := &bill.Charge{
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.ErrorContains(t, err, "either a reason or a charge type extension is required")
+	})
+
+	t.Run("with reason and extension", func(t *testing.T) {
+		l := &bill.Charge{
+			Reason: "Product sample",
+			Ext: tax.Extensions{
+				untdid.ExtKeyCharge: "AAE",
+			},
+			Amount: num.MakeAmount(100, 2),
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+}
+
+func TestValidateBillLine(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("Discount with reason", func(t *testing.T) {
+		l := &bill.Line{
+			Discounts: []*bill.LineDiscount{
+				{
+					Reason: "Product sample",
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Discount with extension", func(t *testing.T) {
+		l := &bill.Line{
+			Discounts: []*bill.LineDiscount{
+				{
+					Ext: tax.Extensions{
+						untdid.ExtKeyAllowance: "67",
+					},
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Discount without reason or extension", func(t *testing.T) {
+		l := &bill.Line{
+			Discounts: []*bill.LineDiscount{
+				{
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.ErrorContains(t, err, "either a reason or an allowance type extension is required")
+	})
+
+	t.Run("Discount with reason and extension", func(t *testing.T) {
+		l := &bill.Line{
+			Discounts: []*bill.LineDiscount{
+				{
+					Reason: "Product sample",
+					Ext: tax.Extensions{
+						untdid.ExtKeyAllowance: "67",
+					},
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Charge with reason", func(t *testing.T) {
+		l := &bill.Line{
+			Charges: []*bill.LineCharge{
+				{
+					Reason: "Product sample",
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Charge with extension", func(t *testing.T) {
+		l := &bill.Line{
+			Charges: []*bill.LineCharge{
+				{
+					Ext: tax.Extensions{
+						untdid.ExtKeyCharge: "AAE",
+					},
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Charge without reason or extension", func(t *testing.T) {
+		l := &bill.Line{
+			Charges: []*bill.LineCharge{
+				{
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.ErrorContains(t, err, "either a reason or a charge type extension is required")
+	})
+
+	t.Run("Charge with reason and extension", func(t *testing.T) {
+		l := &bill.Line{
+			Charges: []*bill.LineCharge{
+				{
+					Reason: "Product sample",
+					Ext: tax.Extensions{
+						untdid.ExtKeyCharge: "AAE",
+					},
+					Amount: num.MakeAmount(100, 2),
+				},
+			},
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
 	})
 }

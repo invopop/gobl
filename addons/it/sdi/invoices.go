@@ -219,7 +219,11 @@ func validateAddress(value interface{}) error {
 	}
 	// Post code and street in addition to the locality are required in Italian invoices.
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Street, validation.Required),
+		validation.Field(&v.Street,
+			validation.When(v.PostOfficeBox == "",
+				validation.Required.Error("either street or post office box must be set"),
+			),
+		),
 		validation.Field(&v.Country, validation.Required),
 		validation.Field(&v.Code,
 			validation.When(v.Country.In("IT"),
