@@ -57,19 +57,13 @@ go generate .
 Install locally and run:
 
 ```bash
-golangci-lint run ./...
-```
-
-Note: we considered incorporating golangci-lint as a tool directly in the `go.mod`, but due the large amount of dependencies, decided not to do so.
-
-#### Running
-
-```bash
 golangci-lint run
 golangci-lint run --fix # To autofix lint errors where possible
 ```
 
-#### VS Code setup
+Note: we considered incorporating golangci-lint as a tool directly in the `go.mod`, but due the large amount of dependencies, decided not to do so.
+
+### VS Code setup
 
 [Official docs](https://golangci-lint.run/welcome/integrations/#visual-studio-code)
 

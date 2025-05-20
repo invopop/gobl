@@ -11,6 +11,12 @@ import (
 	"github.com/invopop/validation/is"
 )
 
+const (
+	// InboxKeyPeppol is the key used to identify a Peppol inbox and apply
+	// normalization rules for participant IDs.
+	InboxKeyPeppol cbc.Key = "peppol"
+)
+
 // Inbox is used to store data about a connection with a service that is responsible
 // for automatically receiving copies of GOBL envelopes or other document formats.
 //
@@ -53,6 +59,19 @@ func (i *Inbox) Normalize(normalizers tax.Normalizers) {
 	}
 	i.Scheme = cbc.NormalizeAlphanumericalCode(i.Scheme)
 	i.Code = cbc.NormalizeCode(i.Code)
+
+	// Custom normalizations
+	switch i.Key {
+	case InboxKeyPeppol:
+		if i.Scheme == "" {
+			if len(i.Code) >= 5 && i.Code[4] == ':' {
+				numbers := i.Code[:4]
+				i.Scheme = numbers
+				i.Code = i.Code[5:]
+			}
+		}
+	}
+
 	normalizers.Each(i)
 }
 

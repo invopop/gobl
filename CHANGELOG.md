@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.216.3] - 2025-05-20
+
+### Changed
+
+- `tools`: removed as considered too opinionated for other projects using GOBL.
+- `org`: normalize inboxes with the `peppol` key, splitting participant ID between scheme and code.
+
+### Fixed
+
+- `cal`: JSON Schema pattern for time.
+
 ## [v0.216.1] - 2025-05-20
 
 ### Added

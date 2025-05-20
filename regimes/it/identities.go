@@ -84,7 +84,7 @@ func validateFiscalCode(value interface{}) error {
 		if c < 10 {
 			c += 10 // move numbers to letters
 		}
-		if !(i%2 == 0) { // even as count starts from 1
+		if i%2 != 0 { // even as count starts from 1
 			sum += strings.Index(taxIDEvenChars, string(taxIDCharCode[c]))
 		} else { // odd
 			sum += strings.Index(taxIDOddChars, string(taxIDCharCode[c]))

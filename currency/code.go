@@ -33,7 +33,7 @@ func (c Code) Def() *Def {
 	return Get(c)
 }
 
-// Strings provides the currency code as a string.
+// String provides the currency code as a string.
 func (c Code) String() string {
 	return string(c)
 }
