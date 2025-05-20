@@ -50,19 +50,17 @@ GOBL uses the `go generate` command to automatically generate JSON schemas, defi
 go generate .
 ```
 
-#### Installing tools
-
-We use a [`tools.go`](tools.go) file to track the tools we use.
-
-Simply run `go mod tidy` to install them.
-
-Note: In Go 1.24 a new way to manage tools was introduced. Once this project upgrades to >1.24, we'll be able to use the `tools` directive in `go.mod` (`go get -tool ...`), remove the `tools.go` file and use `go tool golangci-lint run` to run the linter. For now, the above method is the right way.
-
 ### Linting and formatting
 
 [golangci-lint](https://golangci-lint.run/) is used to check the code for errors and style issues. The configuration is in the [`.golangci.yaml`](.golangci.yaml) file.
 
-Current version is 1.64.8.
+Install locally and run:
+
+```bash
+golangci-lint run ./...
+```
+
+Note: we considered incorporating golangci-lint as a tool directly in the `go.mod`, but due the large amount of dependencies, decided not to do so.
 
 #### Running
 
