@@ -9,8 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
-- `de-xrechnung-v3`: Add missing validation from CIUS
+- `de-xrechnung-v3`: Add missing validation from CIUS.
 - `fr`: Add identity validation and normalization.
+
+### Changed
+
+- `it-sdi-v1`: Modify address validation to accept postbox.
 
 ## [v0.216.3] - 2025-05-20
 
