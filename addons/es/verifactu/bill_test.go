@@ -75,9 +75,20 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: cannot be blank")
 	})
 
-	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+	t.Run("credit-note invoice preceding requires issue date", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code: "123",
+			},
+		}
+		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank.).")
+	})
+
+	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{
 			{
 				Code: "123",
@@ -124,6 +135,7 @@ func TestInvoiceValidation(t *testing.T) {
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
+	t.Helper()
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	require.ErrorContains(t, err, expected)
