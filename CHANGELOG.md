@@ -6,11 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.216.1] - 2025-05-20
+
 ### Added
 
-- `regime`: a template regime.
+- `regimes`: template.
 - `tools`: explicit dependency for golangci-lint via tools.go.
-- A CONTRIBUTING.md file.
+- CONTRIBUTING.md file.
 
 ### Changed
 
