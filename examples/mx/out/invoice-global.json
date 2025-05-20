@@ -1,0 +1,129 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "21967c52bf96b49463d82858a6a79ca9f16be9fd351e3ed1da3a9cdb566067c1"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "MX",
+		"$addons": [
+			"mx-cfdi-v4"
+		],
+		"$tags": [
+			"global"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "GLOBAL",
+		"code": "0001",
+		"issue_date": "2025-04-01",
+		"issue_time": "12:00:00",
+		"currency": "MXN",
+		"tax": {
+			"ext": {
+				"mx-cfdi-doc-type": "I",
+				"mx-cfdi-global-month": "03",
+				"mx-cfdi-global-period": "04",
+				"mx-cfdi-global-year": "2025",
+				"mx-cfdi-issue-place": "21000"
+			}
+		},
+		"supplier": {
+			"name": "ESCUELA KEMPER URGATE",
+			"tax_id": {
+				"country": "MX",
+				"code": "EKU9003173C9"
+			},
+			"ext": {
+				"mx-cfdi-fiscal-regime": "601"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"ref": "SALE1",
+					"name": "Sale 1",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"discounts": [
+					{
+						"percent": "10.0%",
+						"amount": "1.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "9.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"ref": "SALE2",
+					"name": "Sale 2",
+					"price": "20.00"
+				},
+				"sum": "20.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "16.0%"
+					}
+				],
+				"total": "20.00"
+			}
+		],
+		"payment": {
+			"advances": [
+				{
+					"key": "cash",
+					"description": "Prepaid",
+					"percent": "100%",
+					"amount": "33.64",
+					"ext": {
+						"mx-cfdi-payment-means": "01"
+					}
+				}
+			]
+		},
+		"totals": {
+			"sum": "29.00",
+			"total": "29.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "29.00",
+								"percent": "16.0%",
+								"amount": "4.64"
+							}
+						],
+						"amount": "4.64"
+					}
+				],
+				"sum": "4.64"
+			},
+			"tax": "4.64",
+			"total_with_tax": "33.64",
+			"payable": "33.64",
+			"advance": "33.64",
+			"due": "0.00"
+		}
+	}
+}

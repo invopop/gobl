@@ -99,8 +99,9 @@
     },
     "totals": {
         "payable": "1717.20",
+        "retained_tax": "243.00",
         "sum": "1620.00",
-        "tax": "97.20",
+        "tax": "340.20",
         "taxes": {
             "categories": [
                 {
@@ -128,10 +129,11 @@
                     "retained": true
                 }
             ],
-            "sum": "97.20"
+            "retained": "243.00",
+            "sum": "340.20"
         },
         "total": "1620.00",
-        "total_with_tax": "1717.20"
+        "total_with_tax": "1960.20"
     },
     "type": "credit-note"
 }

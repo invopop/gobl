@@ -18,6 +18,72 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `de-xrechnung-v3`: Add missing validation for telephone numbers in parties.
 
+## [v0.216.3] - 2025-05-20
+
+### Changed
+
+- `tools`: removed as considered too opinionated for other projects using GOBL.
+- `org`: normalize inboxes with the `peppol` key, splitting participant ID between scheme and code.
+
+### Fixed
+
+- `cal`: JSON Schema pattern for time.
+
+## [v0.216.1] - 2025-05-20
+
+### Added
+
+- `regimes`: template.
+- `tools`: explicit dependency for golangci-lint via tools.go.
+- CONTRIBUTING.md file.
+
+### Changed
+
+- `num`: improved `MakePercentage` documentation.
+
+### Fixed
+
+- `es`: small typo in the description for simplified scheme description.
+- `it-sdi-v1`: Do not enforce Italian postcode format on foreign addresses.
+
+## [v0.216.0] - 2025-05-12
+
+### Added
+
+- `bill.Line`: Add extensions to line.
+- `it-ticket-v1`: Stamp key for document number added and void document number.
+- `it-ticket-v1`: Extension for customer lottery code.
+- `it-ticket-v1`: Add line extension for line ID that will be issued by the AdE.
+- `it-ticket-v1`: Add corrections to addon with document number stamp.
+- `tax`: Totals now have public `Round` method.
+
+### Fixed
+
+- `bill`: Rounding _before_ payment calculations.
+- `tax`: Rounding bug in totals calculations.
+- `it-sdi-v1` : Removed `isItalian` check on customer address
+
+## [v0.215.0] - 2025-04-28
+
+### Changed
+
+- `bill`: `Totals` now separates retained from indirect taxes, with a new `RetainedTax` field applied between the `TotalWithTax` and `Payable` amounts.
+- `tax`: `Totals` will now calculate sum with separate `Retained` amount.
+
+### Added
+
+- `bill`: Support for `issue_time` field, which will be updated automatically if provided with a zero value. Nil issue times will always be ignored.
+- `bill`: Payment will now set issue date automatically, alongside issue time if provided.
+- `mx-cfdi-v4`: Support for "Global" B2C invoice reporting that group together B2C sales into a single document.
+- `mx-cfdi-v4`: Automatically set the `issue_time` if not already provided.
+- `tax`: `ExtensionsRequireAllOrNone` validation rule.
+- `es-verifactu-v1`: validation for export exemption codes.
+- `tax`: `ExtensionsExcludeCodes` validation rule.
+
+### Removed
+
+- `tax`: `ExtensionsHas` usage should be replaced with `ExtensionsRequire` validator.
+
 ## [v0.214.1] - 2025-04-09
 
 ### Fixed

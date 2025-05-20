@@ -4,7 +4,7 @@
 		"uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49",
 		"dig": {
 			"alg": "sha256",
-			"val": "7ea57c3e785626d1c68b32a83d47299a70794799b5bb10be96c942171e09873c"
+			"val": "6020467e6ba395d6e78d24bf1675bcbfe772d14a786b833f4501ed3c9632a97c"
 		}
 	},
 	"doc": {
@@ -188,10 +188,12 @@
 						"amount": "600.00"
 					}
 				],
-				"sum": "450.00"
+				"sum": "1050.00",
+				"retained": "600.00"
 			},
-			"tax": "450.00",
-			"total_with_tax": "5637.50",
+			"tax": "1050.00",
+			"total_with_tax": "6237.50",
+			"retained_tax": "600.00",
 			"payable": "5637.50"
 		}
 	},

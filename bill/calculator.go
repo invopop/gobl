@@ -24,6 +24,7 @@ type billable interface {
 	GetTags() []cbc.Key
 
 	getIssueDate() cal.Date
+	getIssueTime() *cal.Time
 	getValueDate() *cal.Date
 	getTax() *Tax
 	getPreceding() []*org.DocumentRef
@@ -38,17 +39,16 @@ type billable interface {
 	getComplements() []*schema.Object
 
 	setIssueDate(cal.Date)
+	setIssueTime(*cal.Time)
 	setCurrency(currency.Code)
 	setTotals(*Totals)
 }
 
 func calculate(doc billable) error {
 	r := doc.RegimeDef() // may be nil!
+	calculateIssueDateAndTime(r, doc)
 
-	// Normalize data
-	if doc.getIssueDate().IsZero() {
-		doc.setIssueDate(cal.TodayIn(r.TimeLocation()))
-	}
+	// Get the date used for tax calculations
 	date := doc.getValueDate()
 	if date == nil {
 		id := doc.getIssueDate()
@@ -165,40 +165,61 @@ func calculate(doc billable) error {
 		t.Total = t.Total.Subtract(ti)
 	}
 
-	// Finally calculate the total with *all* the taxes.
-	t.Tax = t.Taxes.PreciseSum()
+	// Calculate the total with *all* the taxes.
+	t.Tax = t.Taxes.Sum
 	t.TotalWithTax = t.Total.Add(t.Tax)
-	t.Payable = t.TotalWithTax
-	if t.Rounding != nil {
-		// BT-144 in EN16931
-		t.Payable = t.Payable.Add(*t.Rounding)
+	if t.Taxes.Retained != nil {
+		t.RetainedTax = t.Taxes.Retained
 	}
-
+	t.Payable = t.TotalWithTax
+	if t.RetainedTax != nil {
+		t.Payable = t.Payable.Subtract(*t.RetainedTax)
+	}
 	// Remove taxes object if it doesn't contain any categories
 	if len(t.Taxes.Categories) == 0 {
 		t.Taxes = nil
 	}
 
-	if pd := doc.getPaymentDetails(); pd != nil {
-		pd.calculateAdvances(zero, t.TotalWithTax)
-
-		// Deal with advances, if any
-		if t.Advances = pd.totalAdvance(zero); t.Advances != nil {
-			v := t.Payable.Subtract(*t.Advances)
-			t.Due = &v
-		}
-
-		// Calculate any due date amounts
-		pd.Terms.CalculateDues(zero, t.Payable)
-	}
-
+	// Before calculating the amount due and advances, we need to round
+	// everything. Payments reflect real monetary values and can never
+	// be fractions of the currency.
 	roundLines(doc.getLines())
 	roundDiscounts(doc.getDiscounts(), cur)
 	roundCharges(doc.getCharges(), cur)
 	t.round(zero)
+
+	if t.Rounding != nil {
+		// BT-144 in EN16931
+		t.Payable = t.Payable.Add(*t.Rounding)
+	}
+	if pd := doc.getPaymentDetails(); pd != nil {
+		pd.calculateAdvances(zero, t.Payable)
+		// Deal with advances, if any. Note that in the current
+		// implementation multiple percentage advances are likely to
+		// suffer rounding errors. It usually better for users to use
+		// fixed payment amounts if possible.
+		if t.Advances = pd.totalAdvance(zero); t.Advances != nil {
+			v := t.Payable.Subtract(*t.Advances)
+			t.Due = &v
+		}
+		// Calculate any due date amounts
+		pd.Terms.CalculateDues(zero, t.Payable)
+	}
 	doc.setTotals(t)
 
 	return nil
+}
+
+func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) {
+	tz := r.TimeLocation()
+	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
+		dn := cal.ThisSecondIn(tz)
+		tn := dn.Time()
+		doc.setIssueDate(dn.Date())
+		doc.setIssueTime(&tn)
+	} else if doc.getIssueDate().IsZero() {
+		doc.setIssueDate(cal.TodayIn(tz))
+	}
 }
 
 func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.Key) {

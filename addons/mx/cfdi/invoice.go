@@ -2,6 +2,7 @@ package cfdi
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -11,18 +12,35 @@ import (
 )
 
 func normalizeInvoice(inv *bill.Invoice) {
+	normalizeInvoiceIssueDateAndTime(inv)
 	normalizeParty(inv.Supplier)
 	normalizeParty(inv.Customer)
+	if inv.Tags.HasTags(TagGlobal) {
+		inv.Customer = nil
+	}
 	for _, line := range inv.Lines {
 		normalizeItem(line.Item)
 	}
+}
 
+func normalizeInvoiceIssueDateAndTime(inv *bill.Invoice) {
+	// Overwrite the issue date and time to align with
+	// CFDI requirements for the emission date, unless the
+	// issue time is already set.
+	if inv.IssueTime != nil && !inv.IssueTime.IsZero() {
+		return
+	}
+	tz := inv.RegimeDef().TimeLocation()
+	dn := cal.ThisSecondIn(tz)
+	tn := dn.Time()
+	inv.IssueDate = dn.Date()
+	inv.IssueTime = &tn
 }
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
-			validation.By(validateInvoiceTax(inv.Preceding)),
+			validation.By(validateInvoiceTax(inv.Tags, inv.Preceding)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
@@ -30,12 +48,17 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(validateInvoiceCustomer),
+			validation.When(
+				inv.Tags.HasTags(TagGlobal),
+				validation.Empty.Error("cannot be set with global tag"),
+			).Else(
+				validation.By(validateInvoiceCustomer),
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(validateInvoiceLine),
+				validation.By(validateInvoiceLine(inv.Tags)),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -52,10 +75,36 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Empty.Error("not supported"),
 			validation.Skip,
 		),
+		validation.Field(&inv.Payment,
+			validation.When(
+				inv.HasTags(TagGlobal),
+				validation.Required,
+				validation.By(validateInvoicePaymentDetails(inv.Tags)),
+			),
+			validation.Skip,
+		),
 	)
 }
 
-func validateInvoiceTax(preceding []*org.DocumentRef) validation.RuleFunc {
+func validateInvoicePaymentDetails(tags tax.Tags) validation.RuleFunc {
+	return func(value any) error {
+		payment, _ := value.(*bill.PaymentDetails)
+		if payment == nil {
+			return nil
+		}
+		return validation.ValidateStruct(payment,
+			validation.Field(&payment.Advances,
+				validation.When(
+					tags.HasTags(TagGlobal),
+					validation.Required.Error("must be set with global tag"),
+				),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceTax(tags tax.Tags, preceding []*org.DocumentRef) validation.RuleFunc {
 	return func(value any) error {
 		obj, _ := value.(*bill.Tax)
 		if obj == nil {
@@ -66,6 +115,20 @@ func validateInvoiceTax(preceding []*org.DocumentRef) validation.RuleFunc {
 				tax.ExtensionsRequire(
 					ExtKeyDocType,
 					ExtKeyIssuePlace,
+				),
+				validation.When(
+					tags.HasTags(TagGlobal),
+					tax.ExtensionsRequire(
+						ExtKeyGlobalPeriod,
+						ExtKeyGlobalMonth,
+						ExtKeyGlobalYear,
+					),
+				).Else(
+					tax.ExtensionsRequireAllOrNone(
+						ExtKeyGlobalPeriod,
+						ExtKeyGlobalMonth,
+						ExtKeyGlobalYear,
+					),
 				),
 				validation.When(
 					len(preceding) > 0,
@@ -142,16 +205,47 @@ func validateInvoiceSupplier(value any) error {
 	)
 }
 
-func validateInvoiceLine(value any) error {
-	line, _ := value.(*bill.Line)
-	if line == nil {
-		return nil
+func validateInvoiceLine(tags tax.Tags) validation.RuleFunc {
+	return func(value any) error {
+		line, _ := value.(*bill.Line)
+		if line == nil {
+			return nil
+		}
+		return validation.ValidateStruct(line,
+			validation.Field(&line.Quantity, num.Positive),
+			validation.Field(&line.Item, validation.By(validateInvoiceLineItem(tags))),
+			validation.Field(&line.Total, num.Min(num.AmountZero)),
+		)
 	}
-	return validation.ValidateStruct(line,
-		validation.Field(&line.Quantity, num.Positive),
-		validation.Field(&line.Item, validation.By(validateItem)),
-		validation.Field(&line.Total, num.Min(num.AmountZero)),
-	)
+}
+
+func validateInvoiceLineItem(tags tax.Tags) validation.RuleFunc {
+	return func(value any) error {
+		item, _ := value.(*org.Item)
+		if item == nil {
+			return nil
+		}
+		return validation.ValidateStruct(item,
+			validation.Field(&item.Ref,
+				validation.When(
+					tags.HasTags(TagGlobal),
+					validation.Required.Error("must be set with global tag"),
+				),
+				validation.Skip,
+			),
+			validation.Field(&item.Ext,
+				// When Global Tag is applied, the prod-serv code is
+				// is overridden during the conversion process so is not
+				// required here.
+				validation.When(
+					!tags.HasTags(TagGlobal),
+					tax.ExtensionsRequire(ExtKeyProdServ),
+					validation.By(validItemExtensions),
+				),
+				validation.Skip,
+			),
+		)
+	}
 }
 
 func validateInvoicePreceding(value interface{}) error {

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bf9567fd923b6a5962e91b333a730ef03759c3e82d42827de31796249266f11e"
+			"val": "a6e0342afc9a73f5cdb1142f6f9611976603397ba596ec0ee8d4cb0b1de1d625"
 		}
 	},
 	"doc": {
@@ -18,6 +18,7 @@
 		"series": "TEST",
 		"code": "00001",
 		"issue_date": "2023-07-10",
+		"issue_time": "12:00:00",
 		"currency": "MXN",
 		"tax": {
 			"ext": {
@@ -128,10 +129,12 @@
 						"amount": "123.00"
 					}
 				],
-				"sum": "-57.40"
+				"sum": "196.80",
+				"retained": "254.20"
 			},
-			"tax": "-57.40",
-			"total_with_tax": "1172.60",
+			"tax": "196.80",
+			"total_with_tax": "1426.80",
+			"retained_tax": "254.20",
 			"payable": "1172.60"
 		}
 	}

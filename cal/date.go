@@ -61,7 +61,7 @@ func (d Date) Validate() error {
 	if d.IsZero() {
 		return nil // there is a specific test for this
 	}
-	if !d.Date.IsValid() {
+	if !d.IsValid() {
 		return errors.New("invalid date")
 	}
 	return nil
@@ -90,6 +90,11 @@ func (d Date) Add(years, months, days int) Date {
 	t := d.Time()
 	t = t.AddDate(years, months, days)
 	return DateOf(t)
+}
+
+// WithTime appends the time to the date to create a DateTime object.
+func (d Date) WithTime(t Time) DateTime {
+	return MakeDateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, t.Second)
 }
 
 // UnmarshalJSON is used to parse a date from json and ensures that
@@ -142,17 +147,17 @@ func (d *dateValidationRule) Validate(value interface{}) error {
 		in = *inp
 	}
 	if d.notZero {
-		if in.Date.IsZero() {
+		if in.IsZero() {
 			return errors.New("required")
 		}
 	}
 	if d.after != nil {
-		if in.Date.DaysSince(d.after.Date) < 0 {
+		if in.DaysSince(d.after.Date) < 0 {
 			return errors.New("too early")
 		}
 	}
 	if d.before != nil {
-		if in.Date.DaysSince(d.before.Date) > 0 {
+		if in.DaysSince(d.before.Date) > 0 {
 			return errors.New("too late")
 		}
 	}

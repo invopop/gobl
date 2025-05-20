@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -85,4 +86,65 @@ func TestValidateTaxCombo(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("exempt with valid reason", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				ExtKeyRegime: "01",
+				ExtKeyExempt: "E1",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.NoError(t, err)
+	})
+
+	t.Run("excludes E2 exemption code with regime 01", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				ExtKeyRegime: "01",
+				ExtKeyExempt: "E2",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.ErrorContains(t, err, "E2")
+	})
+
+	t.Run("excludes E3 exemption code with regime 01", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				ExtKeyRegime: "01",
+				ExtKeyExempt: "E3",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "E3")
+	})
+
+	t.Run("allows E2 exemption code with non-01 regime", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				ExtKeyRegime: "02",
+				ExtKeyExempt: "E2",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.NoError(t, err)
+	})
+
+	t.Run("excludes E2 exemption code with regime 01 and IGIC category", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIGIC,
+			Ext: tax.Extensions{
+				ExtKeyRegime: "01",
+				ExtKeyExempt: "E2",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "E2")
+	})
 }

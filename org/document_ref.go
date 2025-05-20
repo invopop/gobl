@@ -71,6 +71,7 @@ func (dr *DocumentRef) Calculate(cur currency.Code, rr cbc.Key) {
 		return
 	}
 	dr.Tax.Calculate(cur, rr)
+	dr.Tax.Round(cur.Def().Zero())
 }
 
 // Validate ensures the Document looks correct.

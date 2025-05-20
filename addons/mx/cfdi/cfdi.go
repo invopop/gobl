@@ -24,6 +24,11 @@ const (
 	StampSerial    cbc.Key = "cfdi-serial" // Cert Serial - Número de Certificado del CFDI
 )
 
+// Tags used to add validation or normalization rules.
+const (
+	TagGlobal cbc.Key = "global"
+)
+
 func init() {
 	tax.RegisterAddonDef(newAddon())
 
@@ -41,8 +46,25 @@ func newAddon() *tax.AddonDef {
 			i18n.EN: "Mexican SAT CFDI v4.X",
 		},
 		Extensions: extensions,
-		Normalizer: normalize,
+		Tags: []*tax.TagSet{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				List: []*cbc.Definition{
+					{
+						Key: TagGlobal,
+						Name: i18n.String{
+							i18n.EN: "Global",
+						},
+						Desc: i18n.String{
+							i18n.EN: "Apply global CFDI rules used for B2C invoices.",
+							i18n.ES: "Aplicar reglas CFDI globales utilizadas para facturas B2C.",
+						},
+					},
+				},
+			},
+		},
 		Scenarios:  scenarios,
+		Normalizer: normalize,
 		Validator:  validate,
 	}
 }
@@ -66,8 +88,6 @@ func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
-	case *org.Item:
-		return validateItem(obj)
 	case *pay.Instructions:
 		return validatePayInstructions(obj)
 	case *pay.Advance:

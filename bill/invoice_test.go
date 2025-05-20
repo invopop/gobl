@@ -537,6 +537,50 @@ func TestRemoveIncludedTax6WithDiscount(t *testing.T) {
 	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
 }
 
+func TestRemoveIncludedTax7(t *testing.T) {
+	lines := []*bill.Line{
+		{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(2900, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(6, 2),
+				},
+			},
+		},
+	}
+	i := baseInvoice(t, lines...)
+	i.Payment = &bill.PaymentDetails{
+		Advances: []*pay.Advance{
+			{
+				Amount: num.MakeAmount(29000, 2),
+			},
+		},
+	}
+	require.NoError(t, i.Calculate())
+
+	assert.Equal(t, "290.00", i.Totals.Sum.String())
+	assert.Equal(t, i.Totals.Sum.String(), i.Totals.Payable.String())
+
+	i2, err := kamino.Clone(i)
+	require.NoError(t, err)
+	require.NoError(t, i2.RemoveIncludedTaxes())
+
+	assert.Empty(t, i2.Tax.PricesInclude)
+	l0 := i2.Lines[0]
+	assert.Equal(t, "27.3585", l0.Item.Price.String())
+
+	assert.Equal(t, "273.59", i2.Totals.Sum.String())
+	assert.Equal(t, "273.59", i2.Totals.Total.String(), "slightly different from original")
+	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())
+	assert.Equal(t, i.Totals.Payable.String(), i2.Totals.Payable.String())
+	assert.Equal(t, i.Totals.Due.String(), i2.Totals.Due.String())
+}
+
 func TestRemoveIncludedTaxQuantity(t *testing.T) {
 	i := &bill.Invoice{
 		Code: "123TEST",
@@ -685,8 +729,8 @@ func TestRemoveIncludedTaxDeep(t *testing.T) {
 		t.Logf("TOTALS: %v", string(data))
 	*/
 
-	assert.Equal(t, "17830.20", i2.Totals.Total.String())
-	// assert.Equal(t, i.Totals.Total.String(), i2.Totals.Total.String())
+	assert.Equal(t, "1069.81", i.Totals.Tax.String())
+	assert.Equal(t, "17830.19", i.Totals.Total.String())
 	assert.Equal(t, "17830.20", i2.Totals.Total.String())
 	assert.Equal(t, "-0.02", i2.Totals.Rounding.String())
 	assert.Equal(t, i.Totals.Tax.String(), i2.Totals.Tax.String())

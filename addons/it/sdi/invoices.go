@@ -66,7 +66,7 @@ func validateTax(value any) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtensionsHas(
+			tax.ExtensionsRequire(
 				ExtKeyFormat,
 				ExtKeyDocumentType,
 			),
@@ -121,12 +121,8 @@ func validateCustomer(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&customer.Addresses,
-			validation.When(
-				isItalianParty(customer),
-				// TODO: address not required for simplified invoices
-				validation.Required,
-				validation.Each(validation.By(validateAddress)),
-			),
+			validation.Required,
+			validation.Each(validation.By(validateAddress)),
 			validation.Skip,
 		),
 		validation.Field(&customer.Identities,
@@ -227,10 +223,18 @@ func validateAddress(value interface{}) error {
 	}
 	// Post code and street in addition to the locality are required in Italian invoices.
 	return validation.ValidateStruct(v,
+<<<<<<< HEAD
 		validation.Field(&v.Code,
 			validation.Required,
 			validation.When(
 				v.Country.In(l10n.IT.ISO()),
+=======
+		validation.Field(&v.Street, validation.Required),
+		validation.Field(&v.Country, validation.Required),
+		validation.Field(&v.Code,
+			validation.When(v.Country.In("IT"),
+				validation.Required,
+>>>>>>> main
 				validation.Match(regexp.MustCompile(`^\d{5}$`)),
 			),
 		),

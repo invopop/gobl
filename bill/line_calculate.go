@@ -303,12 +303,12 @@ func (l *Line) round() {
 	}
 }
 
-func (d *LineDiscount) round(e uint32) {
-	d.Amount = d.Amount.RescaleDown(e)
+func (ld *LineDiscount) round(e uint32) {
+	ld.Amount = ld.Amount.RescaleDown(e)
 }
 
-func (c *LineCharge) round(e uint32) {
-	c.Amount = c.Amount.RescaleDown(e)
+func (lc *LineCharge) round(e uint32) {
+	lc.Amount = lc.Amount.RescaleDown(e)
 }
 
 // round performs a rounding operation on the sub-line's totals

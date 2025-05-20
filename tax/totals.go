@@ -52,11 +52,10 @@ type RateTotalSurcharge struct {
 type Total struct {
 	// Grouping of all the taxes by their category
 	Categories []*CategoryTotal `json:"categories,omitempty" jsonschema:"title=Categories"`
-	// Total value of all the taxes applied.
+	// Total value of all non-retained or indirect taxes.
 	Sum num.Amount `json:"sum" jsonschema:"title=Sum"`
-
-	// Precise sum in the background, in case needed for calculations
-	sum num.Amount
+	// Sum of retained or withheld tax amounts
+	Retained *num.Amount `json:"retained,omitempty" jsonschema:"title=Retained"`
 }
 
 // PreciseAmount contains the intermediary amount generated from the calculator
@@ -67,16 +66,6 @@ func (ct *CategoryTotal) PreciseAmount() num.Amount {
 		return ct.amount
 	}
 	return ct.Amount
-}
-
-// PreciseSum contains an intermediary sum generated from the calculator
-// with the original precision. If no calculations were made on the totals,
-// such as when loading, the original sum will be provided instead.
-func (t *Total) PreciseSum() num.Amount {
-	if !t.sum.IsZero() {
-		return t.sum
-	}
-	return t.Sum
 }
 
 // newCategoryTotal prepares a category total calculation.
@@ -190,7 +179,6 @@ func (t *Total) Negate() *Total {
 		}
 	}
 	nt.Sum = t.Sum.Negate()
-	nt.sum = t.sum.Negate()
 	return nt
 }
 
@@ -253,7 +241,7 @@ func (t *Total) Clone() *Total {
 		}
 	}
 	nt.Sum = t.Sum
-	nt.sum = t.sum
+	nt.Retained = t.Retained
 	return nt
 }
 
@@ -331,7 +319,6 @@ func (t *Total) Merge(t2 *Total) *Total {
 
 	// Merge the sum
 	nt.Sum = nt.Sum.Add(t2.Sum)
-	nt.sum = nt.sum.Add(t2.sum)
 
 	return nt
 }
@@ -344,7 +331,6 @@ func (t *Total) Calculate(cur currency.Code, rr cbc.Key) {
 	}
 	zero := cur.Def().Zero()
 	t.calculateFinalSum(zero, rr)
-	t.round(zero)
 }
 
 func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
@@ -353,13 +339,19 @@ func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
 	for _, ct := range t.Categories {
 		t.calculateBaseCategoryTotal(ct, zero, rr)
 
-		t.Sum = matchRoundingPrecision(rr, t.Sum, ct.Amount)
 		if ct.Retained {
-			t.Sum = t.Sum.Subtract(ct.Amount)
-			if ct.Surcharge != nil {
-				t.Sum = t.Sum.Subtract(*ct.Surcharge)
+			if t.Retained == nil {
+				t.Retained = &zero
 			}
+			tr := *t.Retained
+			tr = matchRoundingPrecision(rr, tr, ct.Amount)
+			tr = tr.Add(ct.Amount)
+			if ct.Surcharge != nil {
+				tr = tr.Add(*ct.Surcharge)
+			}
+			t.Retained = &tr
 		} else {
+			t.Sum = matchRoundingPrecision(rr, t.Sum, ct.Amount)
 			t.Sum = t.Sum.Add(ct.Amount)
 			if ct.Surcharge != nil {
 				t.Sum = t.Sum.Add(*ct.Surcharge)
@@ -403,10 +395,9 @@ func matchRoundingPrecision(rr cbc.Key, a, b num.Amount) num.Amount {
 	return a.MatchPrecision(b)
 }
 
-// round will go through all the values generated and round them to the currency's
-// preferred precision. The final precise sum will be available in the t.sum variable
-// still.
-func (t *Total) round(zero num.Amount) {
+// Round will go through all the values generated and round them to the currency's
+// preferred precision.
+func (t *Total) Round(zero num.Amount) {
 	for _, ct := range t.Categories {
 		for _, rt := range ct.Rates {
 			rt.Amount = rt.Amount.Rescale(zero.Exp())
@@ -421,6 +412,8 @@ func (t *Total) round(zero num.Amount) {
 			*ct.Surcharge = ct.Surcharge.Rescale(zero.Exp())
 		}
 	}
-	t.sum = t.Sum
 	t.Sum = t.Sum.Rescale(zero.Exp())
+	if t.Retained != nil {
+		*t.Retained = t.Retained.Rescale(zero.Exp())
+	}
 }
