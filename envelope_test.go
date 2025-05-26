@@ -530,9 +530,6 @@ func TestEnvelopeVerifySignature(t *testing.T) {
 }
 
 func TestEnvelopeCorrectionOptionsSchema(t *testing.T) {
-	t.Run("valid schema", func(t *testing.T) {
-
-	})
 	t.Run("missing document", func(t *testing.T) {
 		e := gobl.NewEnvelope()
 		out, err := e.CorrectionOptionsSchema()
