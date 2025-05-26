@@ -124,15 +124,19 @@ func calculate(doc billable) error {
 	// Build list of taxable lines
 	tls := make([]tax.TaxableLine, 0)
 	for _, l := range doc.getLines() {
-		if l.Total != nil {
+		if l != nil && l.Total != nil {
 			tls = append(tls, l)
 		}
 	}
 	for _, l := range doc.getDiscounts() {
-		tls = append(tls, l)
+		if l != nil {
+			tls = append(tls, l)
+		}
 	}
 	for _, l := range doc.getCharges() {
-		tls = append(tls, l)
+		if l != nil {
+			tls = append(tls, l)
+		}
 	}
 
 	if len(tls) == 0 {
@@ -224,6 +228,9 @@ func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) {
 
 func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.Key) {
 	for _, drs := range drs {
+		if drs == nil {
+			continue
+		}
 		if drs.Currency != currency.CodeEmpty {
 			cur = drs.Currency
 		}
@@ -306,6 +313,9 @@ func addCountryToTaxes(ts tax.Set, country l10n.TaxCountryCode) {
 
 func calculateComplements(comps []*schema.Object) error {
 	for _, c := range comps {
+		if c == nil {
+			continue
+		}
 		if err := c.Calculate(); err != nil {
 			return err
 		}

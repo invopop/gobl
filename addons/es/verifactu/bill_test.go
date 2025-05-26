@@ -132,6 +132,15 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Empty(t, inv.Preceding[0].Ext)
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
+
+	t.Run("correction with nil preceding", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{nil}
+		ad := tax.AddonForKey(verifactu.V1)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, ad.Validator(inv))
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

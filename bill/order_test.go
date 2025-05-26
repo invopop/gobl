@@ -29,6 +29,28 @@ func TestOrderValidation(t *testing.T) {
 		require.NoError(t, ord.Calculate())
 		require.NoError(t, ord.Validate())
 	})
+
+	t.Run("with nil array entries", func(t *testing.T) {
+		ord := baseOrderWithLines(t)
+		ord.ExchangeRates = append(ord.ExchangeRates, nil)
+		ord.Preceding = append(ord.Preceding, nil)
+		ord.Lines = append(ord.Lines, nil)
+		ord.Discounts = append(ord.Discounts, nil)
+		ord.Charges = append(ord.Charges, nil)
+		ord.Notes = append(ord.Notes, nil)
+		ord.Complements = append(ord.Complements, nil)
+		ord.Attachments = append(ord.Attachments, nil)
+		require.NoError(t, ord.Calculate())
+		err := ord.Validate()
+		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
+		assert.ErrorContains(t, err, "preceding: (0: is required.)")
+		assert.ErrorContains(t, err, "lines: (1: is required.)")
+		assert.ErrorContains(t, err, "discounts: (0: is required.)")
+		assert.ErrorContains(t, err, "charges: (0: is required.)")
+		assert.ErrorContains(t, err, "notes: (0: is required.)")
+		assert.ErrorContains(t, err, "complements: (0: is required.)")
+		assert.ErrorContains(t, err, "attachments: (0: is required.)")
+	})
 }
 
 func TestOrderConvertInto(t *testing.T) {

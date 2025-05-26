@@ -18,6 +18,9 @@ const (
 
 func calculateLines(lines []*Line, cur currency.Code, rates []*currency.ExchangeRate, rr cbc.Key) error {
 	for i, l := range lines {
+		if l == nil {
+			continue
+		}
 		l.Index = i + 1
 		if err := calculateLine(l, cur, rates, rr); err != nil {
 			return validation.Errors{strconv.Itoa(i): err}
@@ -29,10 +32,11 @@ func calculateLines(lines []*Line, cur currency.Code, rates []*currency.Exchange
 func calculateLineSum(lines []*Line, cur currency.Code) num.Amount {
 	sum := cur.Def().Zero()
 	for _, l := range lines {
-		if l.Total != nil {
-			sum = sum.MatchPrecision(*l.Total)
-			sum = sum.Add(*l.Total)
+		if l == nil || l.Total == nil {
+			continue
 		}
+		sum = sum.MatchPrecision(*l.Total)
+		sum = sum.Add(*l.Total)
 	}
 	return sum
 }
@@ -274,7 +278,7 @@ func roundLines(lines []*Line) {
 // This method is only useful for precision rounding, as currency
 // round will automatically apply the correct rounding rules.
 func (l *Line) round() {
-	if l.Item == nil || l.Item.Price == nil {
+	if l == nil || l.Item == nil || l.Item.Price == nil {
 		return
 	}
 	e := l.Item.Price.Exp()

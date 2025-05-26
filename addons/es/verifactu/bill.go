@@ -22,7 +22,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 func normalizeInvoice(inv *bill.Invoice) {
 	// Try to move any preceding choices to the document level
 	for _, row := range inv.Preceding {
-		if len(row.Ext) == 0 {
+		if row == nil || len(row.Ext) == 0 {
 			continue
 		}
 		found := false
@@ -69,6 +69,7 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Each(
 				validation.By(validateInvoicePreceding(inv)),
+				validation.Skip,
 			),
 			validation.Skip,
 		),

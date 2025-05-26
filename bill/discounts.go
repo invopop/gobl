@@ -124,6 +124,9 @@ type Discount struct {
 // Normalize performs normalization on the line and embedded objects using the
 // provided list of normalizers.
 func (m *Discount) Normalize(normalizers tax.Normalizers) {
+	if m == nil {
+		return
+	}
 	m.Code = cbc.NormalizeCode(m.Code)
 	m.Taxes = tax.CleanSet(m.Taxes)
 	m.Ext = tax.CleanExtensions(m.Ext)
@@ -183,6 +186,9 @@ func calculateDiscounts(lines []*Discount, cur currency.Code, sum num.Amount, rr
 		return
 	}
 	for i, l := range lines {
+		if l == nil {
+			continue
+		}
 		l.Index = i + 1
 		if l.Percent != nil && !l.Percent.IsZero() {
 			base := sum
@@ -202,6 +208,9 @@ func calculateDiscountSum(discounts []*Discount, cur currency.Code) *num.Amount 
 	}
 	total := cur.Def().Zero()
 	for _, l := range discounts {
+		if l == nil {
+			continue
+		}
 		total = total.MatchPrecision(l.Amount)
 		total = total.Add(l.Amount)
 	}
