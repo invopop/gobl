@@ -228,7 +228,9 @@ func (m *Discount) round(cur currency.Code) {
 
 func roundDiscounts(lines []*Discount, cur currency.Code) {
 	for _, l := range lines {
-		l.round(cur)
+		if l != nil {
+			l.round(cur)
+		}
 	}
 }
 

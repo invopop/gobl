@@ -213,7 +213,9 @@ func (m *Charge) round(cur currency.Code) {
 
 func roundCharges(lines []*Charge, cur currency.Code) {
 	for _, l := range lines {
-		l.round(cur)
+		if l != nil {
+			l.round(cur)
+		}
 	}
 }
 

@@ -137,6 +137,11 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Preceding = []*org.DocumentRef{nil}
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				verifactu.ExtKeyDocType: "R1",
+			},
+		}
 		ad := tax.AddonForKey(verifactu.V1)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, ad.Validator(inv))
