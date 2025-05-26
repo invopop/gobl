@@ -282,7 +282,7 @@ func (e *Envelope) Correct(opts ...schema.Option) (*Envelope, error) {
 		return nil, wrapError(err)
 	}
 	if err := nd.Correct(opts...); err != nil {
-		return nil, wrapError(err)
+		return nil, ErrValidation.WithCause(err)
 	}
 
 	// Create a completely new envelope with a new set of data.
@@ -310,7 +310,7 @@ func (e *Envelope) Replicate() (*Envelope, error) {
 // that can be used to generate a JSON object to send when correcting a document.
 // If none are available, the result will be nil.
 func (e *Envelope) CorrectionOptionsSchema() (interface{}, error) {
-	if e.Document == nil {
+	if e.Document == nil || e.Document.IsEmpty() {
 		return nil, ErrNoDocument
 	}
 	opts, err := e.Document.CorrectionOptionsSchema()
