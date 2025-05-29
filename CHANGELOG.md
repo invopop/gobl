@@ -6,9 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## Fixed
+### Changed
 
-- `es-verifactu-v1`: validate presence of tax in preceding rows, only for corrective types.
+- `cbc`: Allow `,` (comma) as separator.
+- `org`: Telephone normalized and removing format restrictions.
+
+### Fixed
+
+- `es-verifactu-v1`: only validate presence of tax in preceding rows for corrective types.
 
 ## [v0.216.3] - 2025-05-20
 
