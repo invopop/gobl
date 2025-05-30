@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - `es-verifactu-v1`: only validate presence of tax in preceding rows for corrective types.
+- `org`: normalizing Item Ref field.
 
 ## [v0.216.3] - 2025-05-20
 
