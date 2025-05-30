@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `mx`: updated examples to use postcodes in the central timezone (most common)
+
 ## [v0.216.3] - 2025-05-20
 
 ### Changed
