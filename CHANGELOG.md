@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.217.0] - 2025-06-02
+
 ### Changed
 
 - `mx`: updated examples to use postcodes in the central timezone (most common)
-- `cbc`: Allow `,` (comma) as separator.
+- `cbc`: Code: allow `,` (comma) as separator.
 - `org`: Telephone normalized and format restrictions removed.
 
 ### Fixed
