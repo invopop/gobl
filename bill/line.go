@@ -179,6 +179,9 @@ func (sl *SubLine) ValidateWithContext(ctx context.Context) error {
 // Normalize performs normalization on the line and embedded objects using the
 // provided list of normalizers.
 func (l *Line) Normalize(normalizers tax.Normalizers) {
+	if l == nil {
+		return
+	}
 	l.Taxes = tax.CleanSet(l.Taxes)
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)

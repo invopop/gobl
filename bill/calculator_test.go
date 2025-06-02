@@ -90,6 +90,11 @@ func TestCalculate(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "2.10", inv.Preceding[0].Tax.Sum.String())
 	})
+	t.Run("with nil preceding", func(t *testing.T) {
+		inv := baseInvoiceWithLines(t)
+		inv.Preceding = []*org.DocumentRef{nil}
+		require.NoError(t, inv.Calculate())
+	})
 
 	t.Run("update issue date and time", func(t *testing.T) {
 		inv := baseInvoiceWithLines(t)

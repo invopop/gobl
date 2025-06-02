@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `mx`: updated examples to use postcodes in the central timezone (most common)
+- `cbc`: Allow `,` (comma) as separator.
+- `org`: Telephone normalized and format restrictions removed.
+
+### Fixed
+
+- `es-verifactu-v1`: only validate presence of tax in preceding rows for corrective types.
+- `org`: normalizing Item Ref field.
 
 ## [v0.216.3] - 2025-05-20
 

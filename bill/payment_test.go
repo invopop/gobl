@@ -161,6 +161,22 @@ func TestPaymentValidate(t *testing.T) {
 		require.NoError(t, pmt.Calculate())
 		require.NoError(t, pmt.Validate())
 	})
+
+	t.Run("with nil array entries", func(t *testing.T) {
+		pmt := testPaymentMinimal(t)
+		pmt.Lines = append(pmt.Lines, nil)
+		pmt.Notes = append(pmt.Notes, nil)
+		pmt.Preceding = append(pmt.Preceding, nil)
+		pmt.ExchangeRates = append(pmt.ExchangeRates, nil)
+		pmt.Complements = append(pmt.Complements, nil)
+		require.NoError(t, pmt.Calculate())
+		err := pmt.Validate()
+		assert.ErrorContains(t, err, "lines: (1: is required.)")
+		assert.ErrorContains(t, err, "notes: (0: is required.)")
+		assert.ErrorContains(t, err, "preceding: (0: is required.)")
+		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
+		assert.ErrorContains(t, err, "complements: (0: is required.)")
+	})
 }
 
 func TestPaymentExchangeRates(t *testing.T) {
