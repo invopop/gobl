@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
+- `mx`: updated examples to use postcodes in the central timezone (most common)
 - `cbc`: Allow `,` (comma) as separator.
 - `org`: Telephone normalized and format restrictions removed.
 

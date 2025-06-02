@@ -23,9 +23,9 @@ supplier:
     code: EKU9003173C9
   addresses:
     - street: "Calle 1"
-      locality: "Ciudad de México"
-      region: "CDMX"
-      code: "21000"
+      locality: "Guadalajara"
+      region: "Jalisco"
+      code: "44100"
       country: MX
   ext:
     mx-cfdi-fiscal-regime: "615"
