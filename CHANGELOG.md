@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `cbc`: Allow `,` (comma) as separator.
-- `org`: Telephone normalized and removing format restrictions.
+- `org`: Telephone normalized and format restrictions removed.
 
 ### Fixed
 

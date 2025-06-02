@@ -14,7 +14,7 @@ type Telephone struct {
 	uuid.Identify
 	// Identifier for this number.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
-	// Number to call.
+	// Free-text string that represents the telephone number.
 	Number string `json:"num" jsonschema:"title=Number"`
 }
 

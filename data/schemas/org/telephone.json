@@ -19,7 +19,7 @@
         "num": {
           "type": "string",
           "title": "Number",
-          "description": "Number to call."
+          "description": "Free-text string that represents the telephone number."
         }
       },
       "type": "object",
