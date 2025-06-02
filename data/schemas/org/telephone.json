@@ -19,7 +19,7 @@
         "num": {
           "type": "string",
           "title": "Number",
-          "description": "The number to be dialed in ITU E.164 international format."
+          "description": "Number to call."
         }
       },
       "type": "object",
