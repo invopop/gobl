@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.217.1] - 2025-06-02
+
+### Fixed
+
+- `tax`: Simple `Normalize` method support.
+
 ## [v0.217.0] - 2025-06-02
 
 ### Changed
