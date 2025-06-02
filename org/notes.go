@@ -292,6 +292,9 @@ func (n *Note) WithCode(code cbc.Code) *Note {
 //
 // For a more complete comparison, use Equals.
 func (n *Note) SameAs(n2 *Note) bool {
+	if n == nil || n2 == nil {
+		return false
+	}
 	return n.Key == n2.Key &&
 		n.Code == n2.Code &&
 		n.Src == n2.Src

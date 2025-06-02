@@ -22,7 +22,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 func normalizeInvoice(inv *bill.Invoice) {
 	// Try to move any preceding choices to the document level
 	for _, row := range inv.Preceding {
-		if len(row.Ext) == 0 {
+		if row == nil || len(row.Ext) == 0 {
 			continue
 		}
 		found := false
@@ -68,7 +68,8 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Required,
 			),
 			validation.Each(
-				validation.By(validateInvoicePreceding),
+				validation.By(validateInvoicePreceding(inv)),
+				validation.Skip,
 			),
 			validation.Skip,
 		),
@@ -151,14 +152,25 @@ func validateInvoiceCustomer(val any) error {
 	)
 }
 
-func validateInvoicePreceding(val any) error {
-	p, ok := val.(*org.DocumentRef)
-	if !ok || p == nil {
-		return nil
+func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		p, ok := val.(*org.DocumentRef)
+		if !ok || p == nil {
+			return nil
+		}
+		return validation.ValidateStruct(p,
+			validation.Field(&p.IssueDate,
+				validation.Required,
+				validation.Skip,
+			),
+			validation.Field(&p.Tax,
+				// Tax data of previous invoices is required for substitutions
+				validation.When(
+					inv.Type.In(bill.InvoiceTypeCorrective),
+					validation.Required,
+				),
+				validation.Skip,
+			),
+		)
 	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.IssueDate, validation.Required),
-		// Tax data of previous invoices is required by Verifactu.
-		validation.Field(&p.Tax, validation.Required),
-	)
 }

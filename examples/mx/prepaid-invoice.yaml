@@ -5,6 +5,9 @@ issue_date: "2023-07-10"
 issue_time: "12:00:00"
 series: "TEST"
 code: "00001"
+tax:
+  ext:
+    mx-cfdi-issue-place: "44100"
 supplier:
   name: "ESCUELA KEMPER URGATE"
   ext:
@@ -12,7 +15,6 @@ supplier:
   tax_id:
     country: "MX"
     code: "EKU9003173C9"
-    zone: "21000"
 customer:
   name: "UNIVERSIDAD ROBOTICA ESPAÑOLA"
   ext:

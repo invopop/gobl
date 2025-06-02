@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "21967c52bf96b49463d82858a6a79ca9f16be9fd351e3ed1da3a9cdb566067c1"
+			"val": "e6abaee5116352f0844a857ff5b279f5fdb8cea3eea77deca2463fbddc638a73"
 		}
 	},
 	"doc": {
@@ -29,7 +29,7 @@
 				"mx-cfdi-global-month": "03",
 				"mx-cfdi-global-period": "04",
 				"mx-cfdi-global-year": "2025",
-				"mx-cfdi-issue-place": "21000"
+				"mx-cfdi-issue-place": "44100"
 			}
 		},
 		"supplier": {

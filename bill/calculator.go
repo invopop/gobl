@@ -46,14 +46,7 @@ type billable interface {
 
 func calculate(doc billable) error {
 	r := doc.RegimeDef() // may be nil!
-	calculateIssueDateAndTime(r, doc)
-
-	// Get the date used for tax calculations
-	date := doc.getValueDate()
-	if date == nil {
-		id := doc.getIssueDate()
-		date = &id
-	}
+	date := calculateIssueDateAndTime(r, doc)
 
 	// Convert empty or invalid currency to the regime's currency
 	if doc.getCurrency() == currency.CodeEmpty || doc.getCurrency().Def() == nil {
@@ -121,20 +114,7 @@ func calculate(doc billable) error {
 		t.Total = t.Total.Add(*charges)
 	}
 
-	// Build list of taxable lines
-	tls := make([]tax.TaxableLine, 0)
-	for _, l := range doc.getLines() {
-		if l.Total != nil {
-			tls = append(tls, l)
-		}
-	}
-	for _, l := range doc.getDiscounts() {
-		tls = append(tls, l)
-	}
-	for _, l := range doc.getCharges() {
-		tls = append(tls, l)
-	}
-
+	tls := prepareTaxableLines(doc)
 	if len(tls) == 0 {
 		// This applies for orders and deliveries that might not have
 		// any pricing details.
@@ -180,6 +160,13 @@ func calculate(doc billable) error {
 		t.Taxes = nil
 	}
 
+	roundTotalsAndPreparePayments(doc, cur, t)
+
+	return nil
+}
+
+func roundTotalsAndPreparePayments(doc billable, cur currency.Code, t *Totals) {
+	zero := cur.Def().Zero()
 	// Before calculating the amount due and advances, we need to round
 	// everything. Payments reflect real monetary values and can never
 	// be fractions of the currency.
@@ -206,11 +193,30 @@ func calculate(doc billable) error {
 		pd.Terms.CalculateDues(zero, t.Payable)
 	}
 	doc.setTotals(t)
-
-	return nil
 }
 
-func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) {
+func prepareTaxableLines(doc billable) []tax.TaxableLine {
+	// Build list of taxable lines
+	tls := make([]tax.TaxableLine, 0)
+	for _, l := range doc.getLines() {
+		if l != nil && l.Total != nil {
+			tls = append(tls, l)
+		}
+	}
+	for _, l := range doc.getDiscounts() {
+		if l != nil {
+			tls = append(tls, l)
+		}
+	}
+	for _, l := range doc.getCharges() {
+		if l != nil {
+			tls = append(tls, l)
+		}
+	}
+	return tls
+}
+
+func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) *cal.Date {
 	tz := r.TimeLocation()
 	if doc.getIssueTime() != nil && doc.getIssueTime().IsZero() {
 		dn := cal.ThisSecondIn(tz)
@@ -220,10 +226,22 @@ func calculateIssueDateAndTime(r *tax.RegimeDef, doc billable) {
 	} else if doc.getIssueDate().IsZero() {
 		doc.setIssueDate(cal.TodayIn(tz))
 	}
+
+	// Get the date used for tax calculations
+	date := doc.getValueDate()
+	if date == nil {
+		id := doc.getIssueDate()
+		date = &id
+	}
+
+	return date
 }
 
 func calculateOrgDocumentRefs(drs []*org.DocumentRef, cur currency.Code, rr cbc.Key) {
 	for _, drs := range drs {
+		if drs == nil {
+			continue
+		}
 		if drs.Currency != currency.CodeEmpty {
 			cur = drs.Currency
 		}
@@ -306,6 +324,9 @@ func addCountryToTaxes(ts tax.Set, country l10n.TaxCountryCode) {
 
 func calculateComplements(comps []*schema.Object) error {
 	for _, c := range comps {
+		if c == nil {
+			continue
+		}
 		if err := c.Calculate(); err != nil {
 			return err
 		}
