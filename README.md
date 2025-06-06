@@ -12,6 +12,7 @@ Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/mai
 [![codecov](https://codecov.io/gh/invopop/gobl/graph/badge.svg?token=490W2CZVIT)](https://codecov.io/gh/invopop/gobl)
 [![GoDoc](https://godoc.org/github.com/invopop/gobl?status.svg)](https://godoc.org/github.com/invopop/gobl)
 ![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/invopop/gobl)
 
 [Official GOBL documentation site](https://docs.gobl.org).
 
