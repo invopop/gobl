@@ -48,6 +48,15 @@ func newAddon() *tax.AddonDef {
 				spécifiques françaises pour la facturation du secteur public.
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Chorus Pro Specifications",
+					i18n.FR: "Spécifications Chorus Pro",
+				},
+				URL: "https://communaute.chorus-pro.gouv.fr/wp-content/uploads/2018/11/External_Specifications_EDI_Appendix_V4.10.pdf",
+			},
+		},
 		Extensions: extensions,
 		Validator:  validate,
 		Normalizer: normalize,
