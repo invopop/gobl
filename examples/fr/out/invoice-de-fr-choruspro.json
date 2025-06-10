@@ -4,23 +4,34 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5ad4b0cfdb556563a8ec22cab5bd66346d9dcb6e8593a26d6829ee5618c38414"
+			"val": "a1722495f8e13d7da0cc5b366adc72018ecd6430f32a203b658aea3b84990be3"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "FR",
+		"$addons": [
+			"eu-en16931-v2017",
+			"fr-choruspro-v1"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
 		"issue_date": "2022-02-01",
 		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"fr-choruspro-framework": "A1",
+				"untdid-document-type": "380"
+			}
+		},
 		"supplier": {
 			"name": "Provide One Inc.",
 			"tax_id": {
-				"country": "FR",
-				"code": "44732829320"
+				"country": "DE",
+				"code": "111111125",
+				"scheme": "2"
 			},
 			"addresses": [
 				{
@@ -29,7 +40,7 @@
 					"locality": "Madrid",
 					"region": "Madrid",
 					"code": "28002",
-					"country": "ES"
+					"country": "DE"
 				}
 			],
 			"emails": [
@@ -42,12 +53,15 @@
 			"name": "Sample Consumer",
 			"tax_id": {
 				"country": "FR",
-				"code": "39356000000"
+				"code": "44732829320"
 			},
 			"identities": [
 				{
-					"type": "SIREN",
-					"code": "356000000"
+					"type": "SIRET",
+					"code": "73282932012345",
+					"ext": {
+						"fr-choruspro-scheme": "1"
+					}
 				}
 			],
 			"addresses": [
@@ -85,7 +99,10 @@
 					{
 						"cat": "VAT",
 						"rate": "standard",
-						"percent": "20%"
+						"percent": "20%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
 					}
 				],
 				"total": "1620.00"
@@ -101,6 +118,9 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
 								"base": "1620.00",
 								"percent": "20%",
 								"amount": "324.00"

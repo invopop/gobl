@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
@@ -77,7 +78,7 @@ func Validate(doc interface{}) error {
 // Normalize will attempt to clean the object passed to it.
 func Normalize(doc any) {
 	switch obj := doc.(type) {
-	case *tax.Identity:
-		normalizeTaxIdentity(obj)
+	case *org.Party:
+		normalizeParty(obj)
 	}
 }
