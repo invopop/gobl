@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5ad4b0cfdb556563a8ec22cab5bd66346d9dcb6e8593a26d6829ee5618c38414"
+			"val": "4f02ba19c7c0318dcfec65443e33061e8dfa97f0db398bd34c686c8a8f28ba3d"
 		}
 	},
 	"doc": {
@@ -44,12 +44,6 @@
 				"country": "FR",
 				"code": "39356000000"
 			},
-			"identities": [
-				{
-					"type": "SIREN",
-					"code": "356000000"
-				}
-			],
 			"addresses": [
 				{
 					"num": "1",

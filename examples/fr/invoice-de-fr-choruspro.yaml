@@ -11,7 +11,6 @@ supplier:
   tax_id:
     country: "DE"
     code: "111111125" # random
-    scheme: "2"
   name: "Provide One Inc."
   emails:
     - addr: "billing@example.com"
@@ -26,7 +25,10 @@ supplier:
 customer:
   tax_id:
     country: "FR"
-    code: "73282932012345"
+    code: "732829320"
+  identities:
+    - type: SIRET
+      code: "73282932012345"
   name: "Sample Consumer"
   emails:
     - addr: "email@sample.com"

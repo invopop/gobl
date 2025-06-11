@@ -1,8 +1,6 @@
 package choruspro_test
 
 import (
-	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/addons/fr/choruspro"
@@ -34,7 +32,13 @@ func validInvoice() *bill.Invoice {
 			Name: "Test Customer",
 			TaxID: &tax.Identity{
 				Country: "FR",
-				Code:    "39183804212345",
+				Code:    "391838042",
+			},
+			Identities: []*org.Identity{
+				{
+					Type: fr.IdentityTypeSIRET,
+					Code: "39183804212345",
+				},
 			},
 		},
 		Lines: []*bill.Line{
@@ -197,10 +201,7 @@ func TestValidateInvoice(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		doc, err := json.MarshalIndent(inv, "", "  ")
-		require.NoError(t, err)
-		fmt.Println(string(doc))
-		err = addon.Validator(inv)
+		err := addon.Validator(inv)
 		assert.NoError(t, err)
 		assert.Equal(t, cbc.Code("A2"), inv.Tax.Ext.Get(choruspro.ExtKeyFrameWork))
 	})

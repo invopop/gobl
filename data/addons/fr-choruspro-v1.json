@@ -12,6 +12,15 @@
     "en": "Support for the French Chorus Pro platform for B2G (Business-to-Government) electronic invoicing.\nThis addon provides the necessary structures and validations to ensure compliance with the \nChorus Pro specifications.\n\nIt requires the EN16931 addon as it expands on the European standard with French-specific\nrequirements for public sector invoicing.",
     "fr": "Support pour la plateforme française Chorus Pro pour la facturation électronique B2G \n(Business-to-Government). Cet addon fournit les structures et validations nécessaires \npour assurer la conformité avec les spécifications Chorus Pro.\n\nIl nécessite l'addon EN16931 car il étend le standard européen avec des exigences \nspécifiques françaises pour la facturation du secteur public."
   },
+  "sources": [
+    {
+      "title": {
+        "en": "Chorus Pro Specifications",
+        "fr": "Spécifications Chorus Pro"
+      },
+      "url": "https://communaute.chorus-pro.gouv.fr/wp-content/uploads/2018/11/External_Specifications_EDI_Appendix_V4.10.pdf"
+    }
+  ],
   "extensions": [
     {
       "key": "fr-choruspro-framework",
