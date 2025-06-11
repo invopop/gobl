@@ -6,15 +6,15 @@ import (
 )
 
 const (
-	// ExtKeyFrameWork is the key for the general information framework.
-	ExtKeyFrameWork cbc.Key = "fr-choruspro-framework"
+	// ExtKeyFramework is the key for the general information framework.
+	ExtKeyFramework cbc.Key = "fr-choruspro-framework"
 	// ExtKeyScheme is the key for the scheme.
 	ExtKeyScheme cbc.Key = "fr-choruspro-scheme"
 )
 
 var extensions = []*cbc.Definition{
 	{
-		Key: ExtKeyFrameWork,
+		Key: ExtKeyFramework,
 		Name: i18n.String{
 			i18n.EN: "General Information Framework",
 			i18n.FR: "Informations générales",

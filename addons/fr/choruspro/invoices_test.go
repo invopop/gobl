@@ -116,7 +116,7 @@ func TestValidateInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		// Remove framework extension
 		if inv.Tax != nil && inv.Tax.Ext != nil {
-			delete(inv.Tax.Ext, choruspro.ExtKeyFrameWork)
+			delete(inv.Tax.Ext, choruspro.ExtKeyFramework)
 		}
 		err := addon.Validator(inv)
 		assert.ErrorContains(t, err, "required")
@@ -133,7 +133,7 @@ func TestValidateInvoice(t *testing.T) {
 		if inv.Tax.Ext == nil {
 			inv.Tax.Ext = make(tax.Extensions)
 		}
-		inv.Tax.Ext[choruspro.ExtKeyFrameWork] = "A2"
+		inv.Tax.Ext[choruspro.ExtKeyFramework] = "A2"
 
 		err := addon.Validator(inv)
 		assert.ErrorContains(t, err, "If the invoice has type A2, it must be paid in full")
@@ -143,7 +143,7 @@ func TestValidateInvoice(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
 			Ext: tax.Extensions{
-				choruspro.ExtKeyFrameWork: "A2",
+				choruspro.ExtKeyFramework: "A2",
 			},
 		}
 		inv.Payment = &bill.PaymentDetails{
@@ -156,7 +156,7 @@ func TestValidateInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := addon.Validator(inv)
 		assert.NoError(t, err)
-		assert.Equal(t, cbc.Code("A2"), inv.Tax.Ext.Get(choruspro.ExtKeyFrameWork))
+		assert.Equal(t, cbc.Code("A2"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
 }
@@ -170,20 +170,20 @@ func TestNormalizeInvoice(t *testing.T) {
 
 		assert.NotNil(t, inv.Tax)
 		assert.NotNil(t, inv.Tax.Ext)
-		assert.Equal(t, cbc.Code("A1"), inv.Tax.Ext.Get(choruspro.ExtKeyFrameWork))
+		assert.Equal(t, cbc.Code("A1"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
 	t.Run("preserves existing framework", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Tax = &bill.Tax{
 			Ext: tax.Extensions{
-				choruspro.ExtKeyFrameWork: "A3",
+				choruspro.ExtKeyFramework: "A3",
 			},
 		}
 
 		require.NoError(t, inv.Calculate())
 
-		assert.Equal(t, cbc.Code("A3"), inv.Tax.Ext.Get(choruspro.ExtKeyFrameWork))
+		assert.Equal(t, cbc.Code("A3"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
 	addon := tax.AddonForKey(choruspro.V1)
@@ -196,7 +196,7 @@ func TestNormalizeInvoice(t *testing.T) {
 
 		assert.NotNil(t, inv.Tax)
 		assert.NotNil(t, inv.Tax.Ext)
-		assert.Equal(t, cbc.Code("A1"), inv.Tax.Ext.Get(choruspro.ExtKeyFrameWork))
+		assert.Equal(t, cbc.Code("A1"), inv.Tax.Ext.Get(choruspro.ExtKeyFramework))
 	})
 
 	t.Run("with nil invoice", func(t *testing.T) {

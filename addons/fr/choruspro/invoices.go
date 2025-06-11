@@ -20,7 +20,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Totals,
 			validation.When(
 				// A2 can only exist if invoice has been paid
-				inv.Tax != nil && inv.Tax.Ext != nil && inv.Tax.Ext.Get(ExtKeyFrameWork) == "A2",
+				inv.Tax != nil && inv.Tax.Ext != nil && inv.Tax.Ext.Get(ExtKeyFramework) == "A2",
 				validation.By(validatePaid),
 			)),
 	)
@@ -53,7 +53,7 @@ func validateTax(value interface{}) error {
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Ext,
 			validation.Required,
-			tax.ExtensionsRequire(ExtKeyFrameWork),
+			tax.ExtensionsRequire(ExtKeyFramework),
 		),
 	)
 }
@@ -73,10 +73,10 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 
 	// Set default framework type if not specified
-	if !inv.Tax.Ext.Has(ExtKeyFrameWork) {
+	if !inv.Tax.Ext.Has(ExtKeyFramework) {
 		inv.Tax.Ext = inv.Tax.Ext.Merge(
 			tax.Extensions{
-				ExtKeyFrameWork: "A1",
+				ExtKeyFramework: "A1",
 			},
 		)
 	}
