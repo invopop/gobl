@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a1722495f8e13d7da0cc5b366adc72018ecd6430f32a203b658aea3b84990be3"
+			"val": "04dd3611f06c6c1784dab8e9d401a941f5440d1171fee635ad97494cdb64b611"
 		}
 	},
 	"doc": {
@@ -30,8 +30,7 @@
 			"name": "Provide One Inc.",
 			"tax_id": {
 				"country": "DE",
-				"code": "111111125",
-				"scheme": "2"
+				"code": "111111125"
 			},
 			"addresses": [
 				{
@@ -47,7 +46,10 @@
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"ext": {
+				"fr-choruspro-scheme": "2"
+			}
 		},
 		"customer": {
 			"name": "Sample Consumer",
@@ -58,10 +60,7 @@
 			"identities": [
 				{
 					"type": "SIRET",
-					"code": "73282932012345",
-					"ext": {
-						"fr-choruspro-scheme": "1"
-					}
+					"code": "73282932012345"
 				}
 			],
 			"addresses": [
@@ -76,7 +75,10 @@
 				{
 					"addr": "email@sample.com"
 				}
-			]
+			],
+			"ext": {
+				"fr-choruspro-scheme": "1"
+			}
 		},
 		"lines": [
 			{

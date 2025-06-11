@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1725c04f0d55aa6dbf19f952f853ac614046247460743677450b844623508802"
+			"val": "72d8f9837b9634db3bd3e875d520a8b5fde6ed7e975b5f49b3030771ee36b98a"
 		}
 	},
 	"doc": {
@@ -35,10 +35,7 @@
 			"identities": [
 				{
 					"type": "SIRET",
-					"code": "73282932012345",
-					"ext": {
-						"fr-choruspro-scheme": "1"
-					}
+					"code": "73282932012345"
 				}
 			],
 			"addresses": [
@@ -55,7 +52,10 @@
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"ext": {
+				"fr-choruspro-scheme": "1"
+			}
 		},
 		"customer": {
 			"name": "Sample Consumer",
@@ -66,10 +66,7 @@
 			"identities": [
 				{
 					"type": "SIRET",
-					"code": "35600000012345",
-					"ext": {
-						"fr-choruspro-scheme": "1"
-					}
+					"code": "35600000012345"
 				}
 			],
 			"addresses": [
@@ -84,7 +81,10 @@
 				{
 					"addr": "email@sample.com"
 				}
-			]
+			],
+			"ext": {
+				"fr-choruspro-scheme": "1"
+			}
 		},
 		"lines": [
 			{
