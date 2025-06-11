@@ -87,21 +87,12 @@ func (s Set) Rate(cat cbc.Code) cbc.Key {
 }
 
 type setValidation struct {
-	categories  []cbc.Code
-	cat         cbc.Code
-	comboFields []*validation.FieldRules
+	categories []cbc.Code
 }
 
 // SetHasCategory validates that the set contains the given category.
 func SetHasCategory(categories ...cbc.Code) validation.Rule {
 	return &setValidation{categories: categories}
-}
-
-// SetComboRule provides a validation rule to apply to each combo with
-// a matching tax category. This is useful for ensuring that tax combos
-// contain the correct extensions.
-func SetComboRule(cat cbc.Code, fields ...*validation.FieldRules) validation.Rule {
-	return &setValidation{cat: cat, comboFields: fields}
 }
 
 func (sv *setValidation) Validate(value interface{}) error {
@@ -112,18 +103,6 @@ func (sv *setValidation) Validate(value interface{}) error {
 	for _, c := range sv.categories {
 		if s.Get(c) == nil {
 			return fmt.Errorf("missing category %s", c.String())
-		}
-	}
-	if sv.cat != "" {
-		for i, c := range s {
-			if c.Category == sv.cat {
-				err := validation.ValidateStruct(c, sv.comboFields...)
-				if err != nil {
-					return validation.Errors{
-						fmt.Sprintf("%d", i): err,
-					}
-				}
-			}
 		}
 	}
 	return nil

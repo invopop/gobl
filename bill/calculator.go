@@ -140,7 +140,7 @@ func calculate(doc billable) error {
 	// Remove any included taxes from the total.
 	ct := t.Taxes.Category(pit)
 	if ct != nil {
-		ti := ct.PreciseAmount()
+		ti := ct.Amount
 		t.TaxIncluded = &ti
 		t.Total = t.Total.Subtract(ti)
 	}

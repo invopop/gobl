@@ -315,6 +315,16 @@ var extensions = []*cbc.Definition{
 				~~~
 			`),
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.PT: "AT Tax Exemption Codes",
+					i18n.EN: "Códigos de motivo de isenção",
+				},
+				URL:         "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Tabela_Codigos_Motivo_Isencao.pdf",
+				ContentType: "applicaiton/pdf",
+			},
+		},
 		Values: []*cbc.Definition{
 			{
 				Code: "M01",

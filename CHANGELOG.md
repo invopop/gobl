@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `bill`: `Payment` will recalculate tax totals based on proportional amounts paid per-line, alongside the total advances and amount due.
+- `bill`: `PaymentLine` removed the `debit` and `credit` fields which were confusing, especially alongside the advances.
+- `bill`: `Payment` will check the line document's currency and require an exchange rate if different from the document's.
+
+### Added
+
+- `org`: `DocumentRef` now includes a `payable` field.
+- `bill`: `Payment`, includes calculated `advances` and `due` fields.
+- `bill`: `PaymentLine` includes `advances`.
+- `bill`: `PaymentDetails` supports extensions.
+- `mx-cfdi-v4`: Define payment method in document.
+
 ## [v0.217.1] - 2025-06-02
 
 ### Fixed

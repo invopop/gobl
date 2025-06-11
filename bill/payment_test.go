@@ -45,10 +45,10 @@ func TestPaymentCalculate(t *testing.T) {
 		})
 	})
 
-	t.Run("with debits and credits", func(t *testing.T) {
+	t.Run("with positive amount", func(t *testing.T) {
 		p := testPaymentMinimal(t)
 		p.Lines = append(p.Lines, &bill.PaymentLine{
-			Credit: num.NewAmount(5000, 2),
+			Amount: num.MakeAmount(5000, 2),
 			Document: &org.DocumentRef{
 				Type:      "credit-note",
 				Series:    "CN1",
@@ -57,16 +57,13 @@ func TestPaymentCalculate(t *testing.T) {
 			},
 		})
 		require.NoError(t, p.Calculate())
-
-		assert.Equal(t, "50.00", p.Total.String(), "should balance")
+		assert.Equal(t, "150.00", p.Total.String(), "should balance")
 	})
 
 	t.Run("with credit", func(t *testing.T) {
 		pmt := testPaymentMinimal(t)
-		pmt.Lines[0].Credit = num.NewAmount(5000, 2)
-		pmt.Lines[0].Debit = nil
+		pmt.Lines[0].Amount = num.MakeAmount(-5000, 2)
 		require.NoError(t, pmt.Calculate())
-
 		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
 	})
 
@@ -79,7 +76,7 @@ func TestPaymentCalculate(t *testing.T) {
 	t.Run("with multiple tax lines", func(t *testing.T) {
 		p := testPaymentWithTax(t)
 		p.Lines = append(p.Lines, &bill.PaymentLine{
-			Debit: num.NewAmount(10000, 2),
+			Amount: num.MakeAmount(10000, 2),
 			Document: &org.DocumentRef{
 				Tax: &tax.Total{
 					Categories: []*tax.CategoryTotal{
@@ -100,6 +97,29 @@ func TestPaymentCalculate(t *testing.T) {
 		assert.Len(t, p.Tax.Categories, 1)
 		assert.Len(t, p.Tax.Categories[0].Rates, 2)
 		assert.Equal(t, "31.00", p.Tax.Sum.String())
+	})
+
+	t.Run("with partial payments and taxes 50%", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Lines[0].Amount = num.MakeAmount(6050, 2) // half paid
+		p.Lines[0].Document.Payable = num.NewAmount(12100, 2)
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "60.50", p.Total.String(), "should be half of the total")
+		assert.Equal(t, "10.50", p.Tax.Sum.String(), "should be half of the tax")
+		assert.Equal(t, "60.50", p.Due.String(), "should be half of the payable amount")
+	})
+
+	t.Run("with partial payments and taxes ~25%", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Lines[0].Installment = 2
+		p.Lines[0].Advances = num.NewAmount(2000, 2) // 20€ already paid
+		p.Lines[0].Amount = num.MakeAmount(3025, 2)  // 25% paid, approx
+		p.Lines[0].Document.Payable = num.NewAmount(12100, 2)
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "30.25", p.Total.String(), "should be a quarter of the total")
+		assert.Equal(t, "5.25", p.Tax.Sum.String(), "should be a quarter of the tax")
+		assert.Equal(t, "70.75", p.Due.String(), "should be three quarters of the payable amount, minus 20€")
+		assert.Equal(t, 2, p.Lines[0].Installment, "should be the second installment")
 	})
 
 	t.Run("missing lines", func(t *testing.T) {
@@ -138,6 +158,72 @@ func TestPaymentCalculate(t *testing.T) {
 		assert.Equal(t, p.IssueTime.Hour, tn.Time().Hour)
 		assert.Equal(t, p.IssueTime.Minute, tn.Time().Minute)
 		assert.Equal(t, p.IssueTime.Second, tn.Time().Second)
+	})
+
+	t.Run("with different exchange rates", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Currency = currency.USD
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.EUR,
+				To:     currency.USD,
+				Amount: num.MakeAmount(110, 2),
+			},
+		}
+		p.Lines[0].Document.Currency = currency.EUR
+		require.NoError(t, p.Calculate())
+		assert.Equal(t, "100.00", p.Total.String(), "should convert to USD")
+		assert.Equal(t, "23.10", p.Tax.Sum.String())
+	})
+
+	t.Run("with missing exchange rates", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Currency = currency.MXN
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.EUR,
+				To:     currency.USD,
+				Amount: num.MakeAmount(110, 2),
+			},
+		}
+		p.Lines[0].Document.Currency = currency.EUR
+		require.ErrorContains(t, p.Calculate(), "exchange_rates: EUR to MXN missing.")
+	})
+
+	t.Run("with multiple and different exchange rates", func(t *testing.T) {
+		p := testPaymentWithTax(t)
+		p.Currency = currency.USD
+		p.ExchangeRates = []*currency.ExchangeRate{
+			{
+				From:   currency.EUR,
+				To:     currency.USD,
+				Amount: num.MakeAmount(110, 2),
+			},
+		}
+		p.Lines = append(p.Lines, &bill.PaymentLine{
+			Amount: num.MakeAmount(10000, 2),
+			Document: &org.DocumentRef{
+				Currency: currency.EUR,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(20000, 2),
+									Percent: num.NewPercentage(10, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		})
+		require.NoError(t, p.Calculate())
+		data, _ := json.MarshalIndent(p, "", "  ")
+		t.Logf("Payment JSON: %s", data)
+		assert.Equal(t, "200.00", p.Total.String(), "should convert to USD")
+		assert.Equal(t, "43.00", p.Tax.Sum.String())
 	})
 }
 
@@ -179,6 +265,7 @@ func TestPaymentValidate(t *testing.T) {
 	})
 }
 
+/*
 func TestPaymentExchangeRates(t *testing.T) {
 	t.Run("debit basic", func(t *testing.T) {
 		p := testPaymentMinimal(t)
@@ -244,6 +331,7 @@ func TestPaymentExchangeRates(t *testing.T) {
 		require.ErrorContains(t, p.Calculate(), "lines: (0: (currency: no exchange rate found for GBP to EUR.).).")
 	})
 }
+*/
 
 func testPaymentMinimal(t *testing.T) *bill.Payment {
 	t.Helper()
@@ -275,7 +363,7 @@ func testPaymentMinimal(t *testing.T) *bill.Payment {
 					Code:      "01234",
 					IssueDate: cal.NewDate(2025, 1, 24),
 				},
-				Debit: num.NewAmount(10000, 2),
+				Amount: num.MakeAmount(10000, 2),
 			},
 		},
 	}

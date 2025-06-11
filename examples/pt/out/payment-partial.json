@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2c8d3c74be713dc8af32d3233feb84e90358690e582ee9920febd8274911c0f8"
+			"val": "f3db7532c114cd08b6768153fd3d8c5d9e0a1ea8cef1f4f9e775ecf440c62f6c"
 		}
 	},
 	"doc": {
@@ -88,10 +88,13 @@
 					},
 					"payable": "123.00"
 				},
-				"amount": "123.00"
+				"advances": "25.00",
+				"amount": "50.00"
 			}
 		],
-		"total": "123.00",
+		"advances": "25.00",
+		"total": "50.00",
+		"due": "48.00",
 		"tax": {
 			"categories": [
 				{
@@ -103,15 +106,15 @@
 								"pt-region": "PT",
 								"pt-saft-tax-rate": "NOR"
 							},
-							"base": "100.00",
+							"base": "40.65",
 							"percent": "23.0%",
-							"amount": "23.00"
+							"amount": "9.35"
 						}
 					],
-					"amount": "23.00"
+					"amount": "9.35"
 				}
 			],
-			"sum": "23.00"
+			"sum": "9.35"
 		}
 	}
 }

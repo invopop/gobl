@@ -2,38 +2,35 @@ package bill
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
 )
 
-// PaymentLine defines the details of a line required in an invoice.
+// PaymentLine defines the details of a line item in a payment document.
 type PaymentLine struct {
 	uuid.Identify
-	// Line number inside the parent (calculated)
+
+	// Line number within the parent document (automatically calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 
-	// The document reference related to the payment.
+	// Reference to the document being paid
 	Document *org.DocumentRef `json:"document,omitempty" jsonschema:"title=Document"`
 
-	// Currency used for the payment if different from the document currency.
-	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
+	// When making multiple payments for a single document, this specifies the
+	// installment number for this payment line.
+	Installment int `json:"installment,omitempty" jsonschema:"title=Installment"`
 
-	// Amount received by the supplier for ordinary payments.
-	Debit *num.Amount `json:"debit,omitempty" jsonschema:"title=Debit"`
-	// Amount received by the customer in case of refunds.
-	Credit *num.Amount `json:"credit,omitempty" jsonschema:"title=Credit"`
+	// Amount already paid in previous installments, which may be required
+	// by some tax regimes or specific use cases.
+	Advances *num.Amount `json:"advances,omitempty" jsonschema:"title=Advances"`
 
-	// Total balance to be paid for this line from the customer to the supplier
-	// in the currency of the document.
-	Total num.Amount `json:"total" jsonschema:"title=Total" jsonschema_extras:"calculated=true"`
+	// Amount of the total payment allocated to the referenced document.
+	Amount num.Amount `json:"amount" jsonschema:"title=Amount"`
 
-	// Set of specific notes for this line that may be required for
-	// clarification.
+	// Additional notes specific to this line item for clarification purposes
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
 }
 
@@ -41,53 +38,9 @@ type PaymentLine struct {
 func (pl *PaymentLine) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, pl,
 		validation.Field(&pl.Document),
-		validation.Field(&pl.Currency),
-		validation.Field(&pl.Debit,
-			validation.When(
-				pl.Credit == nil,
-				validation.Required.Error("must have either debit or credit"),
-			),
-		),
-		validation.Field(&pl.Credit),
-		validation.Field(&pl.Total, validation.Required),
+		validation.Field(&pl.Installment, validation.Min(1), validation.Max(999)),
+		validation.Field(&pl.Advances, num.Max(pl.Amount)),
+		validation.Field(&pl.Amount),
 		validation.Field(&pl.Notes),
 	)
-}
-
-// calculate will ensure the total amount is calculated correctly
-func (pl *PaymentLine) calculate(cur currency.Code, rates []*currency.ExchangeRate) error {
-	pl.Total = cur.Def().Zero()
-	if pl.Debit != nil {
-		var a num.Amount
-		if pl.Currency != "" {
-			na := currency.Convert(rates, pl.Currency, cur, *pl.Debit)
-			if na == nil {
-				return validation.Errors{
-					"currency": fmt.Errorf("no exchange rate found for %s to %s", pl.Currency, cur),
-				}
-			}
-			a = *na
-		} else {
-			a = *pl.Debit
-		}
-		pl.Total.MatchPrecision(a)
-		pl.Total = pl.Total.Add(a)
-	}
-	if pl.Credit != nil {
-		var a num.Amount
-		if pl.Currency != "" {
-			na := currency.Convert(rates, pl.Currency, cur, *pl.Credit)
-			if na == nil {
-				return validation.Errors{
-					"currency": fmt.Errorf("no exchange rate found for %s to %s", pl.Currency, cur),
-				}
-			}
-			a = *na
-		} else {
-			a = *pl.Credit
-		}
-		pl.Total.MatchPrecision(a)
-		pl.Total = pl.Total.Subtract(a)
-	}
-	return nil
 }

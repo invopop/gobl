@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -24,7 +25,7 @@ type DocumentRef struct {
 	Series cbc.Code `json:"series,omitempty" jsonschema:"title=Series"`
 	// Source document's code or other identifier.
 	Code cbc.Code `json:"code" jsonschema:"title=Code"`
-	// Currency used in the document, if different from the default currency.
+	// Currency used in the document, if different from the parent's currency.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Line index numbers inside the document, if relevant.
 	Lines []int `json:"lines,omitempty" jsonschema:"title=Lines"`
@@ -36,13 +37,18 @@ type DocumentRef struct {
 	Reason string `json:"reason,omitempty" jsonschema:"title=Reason"`
 	// Additional details about the document.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
-	// Seals of approval from other organisations that may need to be listed.
+	// Seals of approval from other organizations that may need to be listed.
 	Stamps []*head.Stamp `json:"stamps,omitempty" jsonschema:"title=Stamps"`
 	// Link to the source document.
 	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
 	// Tax total breakdown from the original document in the provided currency. Should
 	// only be included if required by a specific tax regime or addon.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
+	// Payable is the total amount that is payable in the referenced document. Only needed
+	// for specific tax regimes or addons. This may be also be used in some scenarios
+	// to determine the proportion of the referenced document that has been paid, and
+	// calculate the remaining amount due and taxes.
+	Payable *num.Amount `json:"payable,omitempty" jsonschema:"title=Payable"`
 	// Extensions for additional codes that may be required.
 	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Meta contains additional information about the document.
@@ -95,6 +101,7 @@ func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&dr.Stamps),
 		validation.Field(&dr.Period),
 		validation.Field(&dr.Tax),
+		validation.Field(&dr.Payable),
 		validation.Field(&dr.Ext),
 		validation.Field(&dr.Meta),
 	)

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "597fac54321f65e167ff4b7faf9b74aaaf32ea1b7cccb51d34a4fc0c2c0b36a1"
+			"val": "5131e5f15557b94c07f7db428aa3f6e60f7d497e736fd1123e10693cf2710f21"
 		}
 	},
 	"doc": {
@@ -74,10 +74,10 @@
 						"sum": "342.30"
 					}
 				},
-				"debit": "1972.30",
-				"total": "1972.30"
+				"amount": "1972.30"
 			}
 		],
+		"total": "1972.30",
 		"tax": {
 			"categories": [
 				{
@@ -93,7 +93,6 @@
 				}
 			],
 			"sum": "342.30"
-		},
-		"total": "1972.30"
+		}
 	}
 }
