@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `fr-choruspro-v1`: Created addon for Chorus Pro to handle invoice types and identity schemes
+
+### Changed
+
+- `fr`: Removed unnecessary length check 
+
 ## [v0.217.1] - 2025-06-02
 
 ### Fixed
