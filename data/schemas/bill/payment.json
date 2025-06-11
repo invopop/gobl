@@ -190,6 +190,11 @@
           "description": "Type of payment document being issued.",
           "calculated": true
         },
+        "refund": {
+          "type": "boolean",
+          "title": "Refund",
+          "description": "Indicates whether this payment is a refund of a previous payment, effectively reversing\nthe flow of funds between the supplier and customer or their representatives."
+        },
         "method": {
           "$ref": "https://gobl.org/draft-0/pay/instructions",
           "title": "Method",
@@ -277,15 +282,10 @@
           "title": "Ordering",
           "description": "Ordering allows for additional information about the ordering process including references\nto other documents and alternative parties involved in the order-to-delivery process."
         },
-        "tax": {
-          "$ref": "https://gobl.org/draft-0/tax/total",
-          "title": "Tax",
-          "description": "Summary of the taxes applied to the payment for tax regimes that require\nthis information to be communicated."
-        },
         "total": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Total",
-          "description": "Total amount to be paid in this payment, either positive or negative according to the\nline types and totals."
+          "description": "Total amount to be paid in this payment, either positive or negative according to the\nline types and totals. Calculated automatically."
         },
         "notes": {
           "items": {
@@ -337,34 +337,43 @@
         "i": {
           "type": "integer",
           "title": "Index",
-          "description": "Line number inside the parent (calculated)",
+          "description": "Line number within the parent document (automatically calculated)",
           "calculated": true
         },
         "document": {
           "$ref": "https://gobl.org/draft-0/org/document-ref",
           "title": "Document",
-          "description": "The document reference related to the payment."
+          "description": "Reference to the document being paid"
         },
-        "currency": {
-          "$ref": "https://gobl.org/draft-0/currency/code",
-          "title": "Currency",
-          "description": "Currency used for the payment if different from the document currency."
+        "installment": {
+          "type": "integer",
+          "title": "Installment",
+          "description": "When making multiple payments for a single document, this specifies the\ninstallment number for this payment line."
         },
-        "debit": {
+        "payable": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Debit",
-          "description": "Amount received by the supplier for ordinary payments."
+          "title": "Payable",
+          "description": "Payable reflects the amount of the document that is payable. This will be\ncalculated from the embedded document's amount automatically and converted\nto the currency of the document."
         },
-        "credit": {
+        "advances": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Credit",
-          "description": "Amount received by the customer in case of refunds."
+          "title": "Advances",
+          "description": "Amount already paid in previous installments, which may be required\nby some tax regimes or specific use cases."
         },
-        "total": {
+        "amount": {
           "$ref": "https://gobl.org/draft-0/num/amount",
-          "title": "Total",
-          "description": "Total balance to be paid for this line from the customer to the supplier\nin the currency of the document.",
-          "calculated": true
+          "title": "Amount",
+          "description": "Amount of the total payment allocated to the referenced document."
+        },
+        "due": {
+          "$ref": "https://gobl.org/draft-0/num/amount",
+          "title": "Due",
+          "description": "Due reflects how much still needs to be paid"
+        },
+        "tax": {
+          "$ref": "https://gobl.org/draft-0/tax/total",
+          "title": "Tax",
+          "description": "Tax contains a breakdown of the taxes that will be applied to this payment line\nafter taking into account currency conversion and the relative amounts."
         },
         "notes": {
           "items": {
@@ -372,15 +381,15 @@
           },
           "type": "array",
           "title": "Notes",
-          "description": "Set of specific notes for this line that may be required for\nclarification."
+          "description": "Additional notes specific to this line item for clarification purposes"
         }
       },
       "type": "object",
       "required": [
         "i",
-        "total"
+        "amount"
       ],
-      "description": "PaymentLine defines the details of a line required in an invoice."
+      "description": "PaymentLine defines the details of a line item in a payment document."
     }
   }
 }

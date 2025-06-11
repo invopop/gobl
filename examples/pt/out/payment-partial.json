@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f3db7532c114cd08b6768153fd3d8c5d9e0a1ea8cef1f4f9e775ecf440c62f6c"
+			"val": "64c9da3b65a01437226a5fd24b7769c0b88ea0b2a3301a7efe10b2cdaa87757b"
 		}
 	},
 	"doc": {
@@ -88,33 +88,33 @@
 					},
 					"payable": "123.00"
 				},
+				"payable": "123.00",
 				"advances": "25.00",
-				"amount": "50.00"
-			}
-		],
-		"advances": "25.00",
-		"total": "50.00",
-		"due": "48.00",
-		"tax": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
+				"amount": "50.00",
+				"due": "48.00",
+				"tax": {
+					"categories": [
 						{
-							"key": "standard",
-							"ext": {
-								"pt-region": "PT",
-								"pt-saft-tax-rate": "NOR"
-							},
-							"base": "40.65",
-							"percent": "23.0%",
+							"code": "VAT",
+							"rates": [
+								{
+									"key": "standard",
+									"ext": {
+										"pt-region": "PT",
+										"pt-saft-tax-rate": "NOR"
+									},
+									"base": "40.65",
+									"percent": "23.0%",
+									"amount": "9.35"
+								}
+							],
 							"amount": "9.35"
 						}
 					],
-					"amount": "9.35"
+					"sum": "9.35"
 				}
-			],
-			"sum": "9.35"
-		}
+			}
+		],
+		"total": "50.00"
 	}
 }

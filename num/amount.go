@@ -112,9 +112,15 @@ func (a Amount) Add(a2 Amount) Amount {
 }
 
 // Subtract takes away the amount provided from the base.
-func (a Amount) Subtract(a2 Amount) Amount {
-	a2 = a2.Rescale(a.exp)
-	return Amount{a.value - a2.value, a.exp}
+func (a Amount) Subtract(b Amount) Amount {
+	b = b.Rescale(a.exp)
+	return Amount{a.value - b.value, a.exp}
+}
+
+// Sub will subtract the provided amount from the base amount.
+// This is a convenience method for the Subtract method.
+func (a Amount) Sub(b Amount) Amount {
+	return a.Subtract(b)
 }
 
 // Multiply the amount by the provided amount.

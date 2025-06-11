@@ -96,6 +96,38 @@ func TestValidationMax(t *testing.T) {
 	}
 }
 
+func TestValidationEquals(t *testing.T) {
+	tests := []struct {
+		tag       string
+		threshold any
+		value     any
+		err       string
+	}{
+		{"t1.1", MakeAmount(10, 0), MakeAmount(10, 0), ""},
+		{"t1.2", MakeAmount(10, 0), MakeAmount(5, 0), "must be equal to 10"},
+		{"t1.3", MakeAmount(10, 0), MakeAmount(-5, 0), "must be equal to 10"},
+		{"t1.4", MakeAmount(10, 0), nil, ""}, // ignore empty
+		{"t1.4", MakeAmount(10, 0), "", ""},  // ignore empty
+		{"t2.1", MakePercentage(10, 0), MakePercentage(10, 0), ""},
+		{"t2.2", MakePercentage(10, 0), MakePercentage(5, 0), "must be equal to 10"},
+		{"t2.3", MakePercentage(10, 0), MakePercentage(-5, 0), "must be equal to 10"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.tag, func(t *testing.T) {
+			r := Equals(test.threshold)
+			err := r.Validate(test.value)
+			if test.err == "" {
+				assert.NoError(t, err)
+			} else {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), test.err)
+				}
+			}
+		})
+	}
+}
+
 func TestValidationFixedRules(t *testing.T) {
 	tests := []struct {
 		tag   string
@@ -115,6 +147,14 @@ func TestValidationFixedRules(t *testing.T) {
 		{"t3.2", NotZero, MakeAmount(-10, 0), ""},
 		{"t3.3", NotZero, MakeAmount(0, 0), "must not be zero"},
 		{"t3.4", NotZero, nil, ""}, // out of scope!
+		{"t4.1", ZeroOrPositive, MakeAmount(10, 0), ""},
+		{"t4.2", ZeroOrPositive, MakeAmount(0, 0), ""},
+		{"t4.3", ZeroOrPositive, MakeAmount(-10, 0), "must be no less than 0"},
+		{"t4.4", ZeroOrPositive, nil, ""}, // ignore empty
+		{"t5.1", ZeroOrNegative, MakeAmount(-10, 0), ""},
+		{"t5.2", ZeroOrNegative, MakeAmount(0, 0), ""},
+		{"t5.3", ZeroOrNegative, MakeAmount(10, 0), "must be no greater than 0"},
+		{"t5.4", ZeroOrNegative, nil, ""}, // ignore empty
 	}
 
 	for _, test := range tests {

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5131e5f15557b94c07f7db428aa3f6e60f7d497e736fd1123e10693cf2710f21"
+			"val": "6cfde8996e951f8e9b5efdda21b2a5d68240374dd0bb648ff6f1fc9ff1f4e3da"
 		}
 	},
 	"doc": {
@@ -77,22 +77,6 @@
 				"amount": "1972.30"
 			}
 		],
-		"total": "1972.30",
-		"tax": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
-						{
-							"base": "1630.00",
-							"percent": "21.0%",
-							"amount": "342.30"
-						}
-					],
-					"amount": "342.30"
-				}
-			],
-			"sum": "342.30"
-		}
+		"total": "1972.30"
 	}
 }

@@ -81,6 +81,9 @@ type Payment struct {
 
 	// Type of payment document being issued.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
+	// Indicates whether this payment is a refund of a previous payment, effectively reversing
+	// the flow of funds between the supplier and customer or their representatives.
+	Refund bool `json:"refund,omitempty" jsonschema:"title=Refund"`
 	// Details on how the payment was made based on the original instructions.
 	Method *pay.Instructions `json:"method,omitempty" jsonschema:"title=Method"`
 	// Series is used to identify groups of payments by date, business area, project,
@@ -122,20 +125,9 @@ type Payment struct {
 	// to other documents and alternative parties involved in the order-to-delivery process.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
-	// Total advances from any advances registered in the lines. Calculated automatically.
-	Advances *num.Amount `json:"advances,omitempty" jsonschema:"title=Advances,calculated=true"`
 	// Total amount to be paid in this payment, either positive or negative according to the
 	// line types and totals. Calculated automatically.
 	Total num.Amount `json:"total" jsonschema:"title=Total,calculated=true"`
-	// Due reflects the amount that is still to be paid and will be calculated automatically
-	// based on the total and advance amounts, and may be require in some tax regimes or addons.
-	Due *num.Amount `json:"due,omitempty" jsonschema:"title=Due,calculated=true"`
-
-	// Summary of the taxes applied to the payment for tax regimes that require
-	// this information to be communicated. If payment lines contain `payable` amounts,
-	// these will be used to calculate the proportional amount of tax to apply automatically,
-	// otherwise the taxes will be added together, assuming 100% is paid.
-	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax,calculated=true"`
 
 	// Unstructured information that is relevant to the payment, such as correction or additional
 	// legal details.
@@ -196,8 +188,7 @@ func (pmt *Payment) ValidateWithContext(ctx context.Context) error {
 			validation.Each(validation.NotNil),
 		),
 		validation.Field(&pmt.Ordering),
-		validation.Field(&pmt.Tax),
-		validation.Field(&pmt.Total, validation.Required),
+		validation.Field(&pmt.Total, num.Positive, num.NotZero),
 		validation.Field(&pmt.Notes,
 			validation.Each(validation.NotNil),
 		),
@@ -245,7 +236,6 @@ func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(pmt)
 
 	tax.Normalize(normalizers, pmt.Method)
-	tax.Normalize(normalizers, pmt.Tax)
 	tax.Normalize(normalizers, pmt.Supplier)
 	tax.Normalize(normalizers, pmt.Customer)
 	tax.Normalize(normalizers, pmt.Preceding)
@@ -265,10 +255,8 @@ func (pmt *Payment) normalizers() tax.Normalizers {
 }
 
 func (pmt *Payment) calculate() error {
-	var tt *tax.Total
-	var total *num.Amount
-
 	r := pmt.RegimeDef()
+	rr := r.GetRoundingRule()
 
 	// Set the issue date and time
 	tz := r.TimeLocation()
@@ -292,58 +280,22 @@ func (pmt *Payment) calculate() error {
 		}
 	}
 
-	due := pmt.Currency.Def().Zero()
-	adv := pmt.Currency.Def().Zero()
+	var total *num.Amount
 	for i, l := range pmt.Lines {
 		if l == nil {
 			continue
 		}
 		l.Index = i + 1
 
-		var lt *tax.Total
-		if l.Document != nil {
-			var er *currency.ExchangeRate
-			cur := l.Document.Currency
-			if cur == currency.CodeEmpty {
-				cur = pmt.Currency
-			} else {
-				// If the document has a currency, we need to ensure there is an exchange
-				// rate so any taxes can be converted correctly.
-				if er = currency.MatchExchangeRate(pmt.ExchangeRates, cur, pmt.Currency); er == nil {
-					return validation.Errors{
-						"exchange_rates": fmt.Errorf("%s to %s missing", cur, pmt.Currency),
-					}
-				}
-			}
-			rr := r.GetRoundingRule()
-			l.Document.Calculate(cur, rr)
-			lt = l.Document.Tax.Clone()
-			lt.Exchange(er, rr)
-
-			// Perform extra calculations with the payable amount, if present.
-			if p := l.Document.Payable; p != nil {
-				// When calculating the taxes, determine if we need to rescale
-				// so that the taxes are proportional to the amount paid.
-				factor := l.Amount.Upscale(2).Divide(*p)
-				lt.Scale(factor, pmt.Currency, rr)
-				due = due.Add(*l.Document.Payable)
-				if l.Advances != nil {
-					due = due.Subtract(*l.Advances)
-				}
-				due = due.Subtract(l.Amount)
-			}
-
-			// Merge the line document taxes
-			if l.Document.Tax != nil {
-				if tt == nil {
-					tt = lt
-				} else {
-					tt = tt.Merge(lt)
-				}
+		if err := l.calculate(pmt.ExchangeRates, pmt.Currency, rr); err != nil {
+			return validation.Errors{
+				"lines": validation.Errors{
+					fmt.Sprintf("%d", l.Index): err,
+				},
 			}
 		}
 
-		// Finally add the totals
+		// Add the totals
 		a := l.Amount
 		if total == nil {
 			total = &a
@@ -351,25 +303,10 @@ func (pmt *Payment) calculate() error {
 			nt := total.Add(a)
 			total = &nt
 		}
-		if l.Advances != nil {
-			adv = adv.Add(*l.Advances)
-		}
 	}
 	if total != nil {
 		pmt.Total = *total
 	}
-	if adv.IsZero() {
-		pmt.Advances = nil
-	} else {
-		pmt.Advances = &adv
-	}
-	if due.IsZero() {
-		pmt.Due = nil
-	} else {
-		pmt.Due = &due
-	}
-	pmt.Tax = tt
-
 	return nil
 }
 

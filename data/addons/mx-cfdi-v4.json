@@ -452,6 +452,33 @@
       ]
     },
     {
+      "key": "mx-cfdi-payment-method",
+      "name": {
+        "en": "Payment Method",
+        "es": "Método de Pago"
+      },
+      "desc": {
+        "en": "Code defined in the CFDI catalogue \"c_MetodoPago\" for the payment method. Used in the 'MetodoPago' field.",
+        "es": "Código definido en el catálogo del CFDI \"c_MetodoPago\" para el método de pago. Usado en el campo 'MetodoPago'."
+      },
+      "values": [
+        {
+          "code": "PUE",
+          "name": {
+            "en": "Payment in a single exhibition",
+            "es": "Pago en una sola exhibición"
+          }
+        },
+        {
+          "code": "PPD",
+          "name": {
+            "en": "Payment in deferred installments",
+            "es": "Pago en parcialidades o diferido"
+          }
+        }
+      ]
+    },
+    {
       "key": "mx-cfdi-payment-means",
       "name": {
         "en": "Payment Means",
@@ -854,6 +881,24 @@
           "ext": {
             "mx-cfdi-doc-type": "E",
             "mx-cfdi-rel-type": "01"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note"
+          ],
+          "ext": {
+            "mx-cfdi-payment-method": "PUE"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note"
+          ],
+          "ext": {
+            "mx-cfdi-payment-method": "PPD"
           }
         }
       ]
