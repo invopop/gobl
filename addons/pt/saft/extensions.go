@@ -322,7 +322,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Códigos de motivo de isenção",
 				},
 				URL:         "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Tabela_Codigos_Motivo_Isencao.pdf",
-				ContentType: "applicaiton/pdf",
+				ContentType: "application/pdf",
 			},
 		},
 		Values: []*cbc.Definition{

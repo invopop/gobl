@@ -45,7 +45,7 @@ type DocumentRef struct {
 	// only be included if required by a specific tax regime or addon.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Payable is the total amount that is payable in the referenced document. Only needed
-	// for specific tax regimes or addons. This may be also be used in some scenarios
+	// for specific tax regimes or addons. This may also be used in some scenarios
 	// to determine the proportion of the referenced document that has been paid, and
 	// calculate the remaining amount due and taxes.
 	Payable *num.Amount `json:"payable,omitempty" jsonschema:"title=Payable"`

@@ -17,7 +17,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `org`: `DocumentRef` now includes a `payable` field.
 - `bill`: `Payment`, includes calculated `advances` and `due` fields.
 - `bill`: `PaymentLine` includes `advances`.
-- `bill`: `PaymentDetails` supports extensions.
 - `mx-cfdi-v4`: Define payment method in document.
 
 ## [v0.217.1] - 2025-06-02

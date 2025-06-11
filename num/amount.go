@@ -150,9 +150,9 @@ func (a Amount) Split(x int) (Amount, Amount) {
 // Compare two amounts and return an integer value according to the
 // sign of the difference:
 //
-//	-1 if a <  b
+//	-1 if a < b
 //	 0 if a == b
-//	 1 if a >  b
+//	 1 if a > b
 func (a Amount) Compare(b Amount) int {
 	a, b = rescaleAmountPair(a, b)
 	if a.value < b.value {

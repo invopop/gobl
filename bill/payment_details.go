@@ -20,8 +20,6 @@ type PaymentDetails struct {
 	Advances []*pay.Advance `json:"advances,omitempty" jsonschema:"title=Advances"`
 	// Details on how payment should be made.
 	Instructions *pay.Instructions `json:"instructions,omitempty" jsonschema:"title=Instructions"`
-	// Extension fields for additional payment details.
-	Ext tax.Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 }
 
 // Normalize will try to normalize the payment's data.
@@ -29,7 +27,6 @@ func (p *PaymentDetails) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
 		return
 	}
-	p.Ext = tax.CleanExtensions(p.Ext)
 	normalizers.Each(p)
 	tax.Normalize(normalizers, p.Payee)
 	tax.Normalize(normalizers, p.Terms)
@@ -44,7 +41,6 @@ func (p *PaymentDetails) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Terms),
 		validation.Field(&p.Advances),
 		validation.Field(&p.Instructions),
-		validation.Field(&p.Ext),
 	)
 }
 

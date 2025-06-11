@@ -134,7 +134,7 @@ type Payment struct {
 	// Summary of the taxes applied to the payment for tax regimes that require
 	// this information to be communicated. If payment lines contain `payable` amounts,
 	// these will be used to calculate the proportional amount of tax to apply automatically,
-	// otherwise the the taxes will be added together, assuming 100% is paid.
+	// otherwise the taxes will be added together, assuming 100% is paid.
 	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax,calculated=true"`
 
 	// Unstructured information that is relevant to the payment, such as correction or additional
