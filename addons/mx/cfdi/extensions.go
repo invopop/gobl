@@ -23,6 +23,14 @@ const (
 	ExtKeyGlobalYear    cbc.Key = "mx-cfdi-global-year"
 )
 
+// Payment Method Extension codes
+const (
+	// Paid in advance (Pago en una sola exhibición)
+	ExtCodePaymentMethodPUE cbc.Code = "PUE"
+	// Payment is due (Pago en parcialidades o diferido)
+	ExtCodePaymentMethodPPD cbc.Code = "PPD"
+)
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyDocType,
@@ -500,14 +508,14 @@ var extensions = []*cbc.Definition{
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "PUE",
+				Code: ExtCodePaymentMethodPUE,
 				Name: i18n.String{
 					i18n.EN: "Payment in a single exhibition",
 					i18n.ES: "Pago en una sola exhibición",
 				},
 			},
 			{
-				Code: "PPD",
+				Code: ExtCodePaymentMethodPPD,
 				Name: i18n.String{
 					i18n.EN: "Payment in deferred installments",
 					i18n.ES: "Pago en parcialidades o diferido",

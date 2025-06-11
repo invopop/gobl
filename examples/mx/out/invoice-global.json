@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e6abaee5116352f0844a857ff5b279f5fdb8cea3eea77deca2463fbddc638a73"
+			"val": "c43e682ca933e341ea5989871cd719f6dbb55f25a2c778b3452ee335c034518d"
 		}
 	},
 	"doc": {
@@ -29,7 +29,8 @@
 				"mx-cfdi-global-month": "03",
 				"mx-cfdi-global-period": "04",
 				"mx-cfdi-global-year": "2025",
-				"mx-cfdi-issue-place": "44100"
+				"mx-cfdi-issue-place": "44100",
+				"mx-cfdi-payment-method": "PUE"
 			}
 		},
 		"supplier": {
