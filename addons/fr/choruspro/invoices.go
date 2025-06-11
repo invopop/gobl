@@ -2,9 +2,7 @@ package choruspro
 
 import (
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/fr"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -35,30 +33,12 @@ func validateCustomer(value interface{}) error {
 	}
 
 	return validation.ValidateStruct(customer,
-		validation.Field(&customer.Identities,
-			validation.Required,
-			validation.Each(
-				validation.By(validateIdentity),
-				validation.Skip,
-			),
+		validation.Field(&customer.Ext,
+			tax.ExtensionsHasCodes(ExtKeyScheme, "1"),
 			validation.Skip,
 		),
-	)
-}
-
-func validateIdentity(value interface{}) error {
-	identity, ok := value.(*org.Identity)
-	if !ok {
-		return nil
-	}
-
-	return validation.ValidateStruct(identity,
-		validation.Field(&identity.Ext,
-			validation.When(
-				identity.Type == fr.IdentityTypeSIRET,
-				tax.ExtensionsRequire(ExtKeyScheme),
-				tax.ExtensionsHasCodes(ExtKeyScheme, "1"),
-			),
+		validation.Field(&customer.Identities,
+			validation.Required,
 			validation.Skip,
 		),
 	)
@@ -101,44 +81,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 		)
 	}
 
-	normalizeSupplier(inv.Supplier)
-
-}
-
-func normalizeSupplier(supplier *org.Party) {
-	if supplier == nil || supplier.TaxID == nil || supplier.TaxID.Code == "" {
-		return
-	}
-	if supplier.TaxID.Country != "FR" {
-		if l10n.Unions().Code(l10n.EU).HasMember(l10n.Code(supplier.TaxID.Country)) {
-			supplier.TaxID.Scheme = "2"
-		} else {
-			supplier.TaxID.Scheme = "3"
-		}
-	}
-}
-
-func normalizeParty(party *org.Party) {
-	// This is a workaround to ensure the addon normalizes after the regime
-	// has normalized the tax ID.
-	normalizeIdentities(party.Identities)
-}
-
-func normalizeIdentities(identities []*org.Identity) {
-	if identities == nil {
-		return
-	}
-
-	// If we have a SIRET, we need to set the scheme to 1
-	for _, identity := range identities {
-		if identity.Type == fr.IdentityTypeSIRET {
-			if identity.Ext == nil {
-				identity.Ext = make(tax.Extensions)
-			}
-			identity.Ext[ExtKeyScheme] = "1"
-			break
-		}
-	}
 }
 
 func validatePaid(value interface{}) error {
