@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `examples`: Add example for Belgium, specifically for PEPPOL.
+
 ### Changed
 
 - `bill`: `PaymentLine` will recalculate tax totals based on proportional amounts paid per-line, alongside the total advances and amount due.
