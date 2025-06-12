@@ -124,6 +124,10 @@
                 "title": "EN 16931-1:2017"
               },
               {
+                "const": "fr-choruspro-v1",
+                "title": "Chorus Pro"
+              },
+              {
                 "const": "fr-facturx-v1",
                 "title": "French Factur-X v1"
               },

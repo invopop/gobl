@@ -28,13 +28,11 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	str := tID.Code.String()
 	// Check if we have a SIREN so we can try and normalize with the
 	// check digit.
-	if len(str) == 9 {
-		if err := validateSIRENTaxCode(tID.Code); err != nil {
-			return
-		}
-		chk := calculateVATCheckDigit(str)
-		tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
+	if err := validateSIRENTaxCode(tID.Code); err != nil {
+		return
 	}
+	chk := calculateVATCheckDigit(str)
+	tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
 }
 
 // validateTaxIdentity checks to ensure the SIRET code looks okay.

@@ -1,0 +1,158 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "72d8f9837b9634db3bd3e875d520a8b5fde6ed7e975b5f49b3030771ee36b98a"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "FR",
+		"$addons": [
+			"eu-en16931-v2017",
+			"fr-choruspro-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2022-02-01",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"fr-choruspro-framework": "A2",
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Provide One Inc.",
+			"tax_id": {
+				"country": "FR",
+				"code": "44732829320"
+			},
+			"identities": [
+				{
+					"type": "SIRET",
+					"code": "73282932012345"
+				}
+			],
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			],
+			"ext": {
+				"fr-choruspro-scheme": "1"
+			}
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			},
+			"identities": [
+				{
+					"type": "SIRET",
+					"code": "35600000012345"
+				}
+			],
+			"addresses": [
+				{
+					"num": "1",
+					"street": "Rue Sundacsakn",
+					"locality": "Saint-Germain-En-Laye",
+					"code": "75050"
+				}
+			],
+			"emails": [
+				{
+					"addr": "email@sample.com"
+				}
+			],
+			"ext": {
+				"fr-choruspro-scheme": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "10%",
+						"amount": "180.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "20%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "1620.00"
+			}
+		],
+		"payment": {
+			"advances": [
+				{
+					"description": "Paid in full",
+					"percent": "100%",
+					"amount": "1944.00"
+				}
+			]
+		},
+		"totals": {
+			"sum": "1620.00",
+			"total": "1620.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "1620.00",
+								"percent": "20%",
+								"amount": "324.00"
+							}
+						],
+						"amount": "324.00"
+					}
+				],
+				"sum": "324.00"
+			},
+			"tax": "324.00",
+			"total_with_tax": "1944.00",
+			"payable": "1944.00",
+			"advance": "1944.00",
+			"due": "0.00"
+		}
+	}
+}
