@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "04dd3611f06c6c1784dab8e9d401a941f5440d1171fee635ad97494cdb64b611"
+			"val": "05bb3a5c469d338a9dbc0057401e2b941b594d91c1f814dbda1feda9fea7ee84"
 		}
 	},
 	"doc": {
@@ -68,7 +68,8 @@
 					"num": "1",
 					"street": "Rue Sundacsakn",
 					"locality": "Saint-Germain-En-Laye",
-					"code": "75050"
+					"code": "75050",
+					"country": "FR"
 				}
 			],
 			"emails": [

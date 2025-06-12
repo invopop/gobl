@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `bill`: `PaymentLine` removed the `debit` and `credit` fields which were confusing, especially alongside the advances. Please now use the `refund` flag.
 - `bill`: `Payment` will check the line document's currency and require an exchange rate if different from the document's.
 - `bill`: `Payment` `tax` field is no longer supported, we assume convertors will deal with tax for each payment line.
-- `fr`: Removed unnecessary length check 
+- `fr`: Removed unnecessary length check when validating the SIREN.
 
 ### Added
 
