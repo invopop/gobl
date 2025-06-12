@@ -44,4 +44,5 @@ lines:
                   pt-region: PT
                   pt-saft-tax-rate: NOR
       payable: "123.00"
-    amount: "123.00"
+    advances: "25.00"
+    amount: "50.00"

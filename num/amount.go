@@ -112,9 +112,15 @@ func (a Amount) Add(a2 Amount) Amount {
 }
 
 // Subtract takes away the amount provided from the base.
-func (a Amount) Subtract(a2 Amount) Amount {
-	a2 = a2.Rescale(a.exp)
-	return Amount{a.value - a2.value, a.exp}
+func (a Amount) Subtract(b Amount) Amount {
+	b = b.Rescale(a.exp)
+	return Amount{a.value - b.value, a.exp}
+}
+
+// Sub will subtract the provided amount from the base amount.
+// This is a convenience method for the Subtract method.
+func (a Amount) Sub(b Amount) Amount {
+	return a.Subtract(b)
 }
 
 // Multiply the amount by the provided amount.
@@ -150,15 +156,15 @@ func (a Amount) Split(x int) (Amount, Amount) {
 // Compare two amounts and return an integer value according to the
 // sign of the difference:
 //
-//	-1 if a <  a2
-//	 0 if a == a2
-//	 1 if a >  a2
-func (a Amount) Compare(a2 Amount) int {
-	a, a2 = rescaleAmountPair(a, a2)
-	if a.value < a2.value {
+//	-1 if a < b
+//	 0 if a == b
+//	 1 if a > b
+func (a Amount) Compare(b Amount) int {
+	a, b = rescaleAmountPair(a, b)
+	if a.value < b.value {
 		return -1
 	}
-	if a.value > a2.value {
+	if a.value > b.value {
 		return 1
 	}
 	return 0

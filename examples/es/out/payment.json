@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5e2fd1035c96a5ef0cfa083b1eb0a72290883b456f6030bc051b67ee060391dc"
+			"val": "23641cb9c70942cced2ee69ce0889f71a08c3604ff3643048cb66eb5daea28c6"
 		}
 	},
 	"doc": {
@@ -57,8 +57,7 @@
 					"series": "SAMPLE",
 					"code": "001"
 				},
-				"debit": "1630.00",
-				"total": "1630.00"
+				"amount": "1630.00"
 			}
 		],
 		"total": "1630.00"

@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
@@ -98,8 +97,6 @@ func validatePaymentLine(val any) error {
 			validation.Required,
 			validation.Skip,
 		),
-		validation.Field(&pl.Debit, num.Min(num.AmountZero)),
-		validation.Field(&pl.Credit, num.Min(num.AmountZero)),
 	)
 }
 

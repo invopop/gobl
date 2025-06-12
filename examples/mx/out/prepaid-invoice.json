@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c6d2ec51c3011e2b3ed0a0f767dae8ee70d0c88380bc7abcfa63bb4da3f70596"
+			"val": "9263b4af89e1311605e32b84168ef755e3680728c409a106c845a8b761eaac30"
 		}
 	},
 	"doc": {
@@ -23,7 +23,8 @@
 		"tax": {
 			"ext": {
 				"mx-cfdi-doc-type": "I",
-				"mx-cfdi-issue-place": "44100"
+				"mx-cfdi-issue-place": "44100",
+				"mx-cfdi-payment-method": "PUE"
 			}
 		},
 		"supplier": {

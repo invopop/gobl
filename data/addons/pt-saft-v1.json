@@ -179,6 +179,16 @@
       "desc": {
         "en": "AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that\nspecifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag\nis used in a tax combo, the `ext` map's `pt-exemption-code` property is required.\n\nFor example, you could define an invoice line exempt of tax as follows:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service exempt of tax\",\n\t\t\t\t\"price\": \"25.00\"\n\t\t\t},\n\t\t\t\"tax\": [\n\t\t\t\t{\n\t\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\t\"rate\": \"exempt\",\n\t\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\t\"pt-saft-tax-rate\": \"ISE\",\n\t\t\t\t\t\t\t\"pt-saft-exemption\": \"M19\"\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n```"
       },
+      "sources": [
+        {
+          "title": {
+            "en": "Códigos de motivo de isenção",
+            "pt": "AT Tax Exemption Codes"
+          },
+          "url": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Tabela_Codigos_Motivo_Isencao.pdf",
+          "content_type": "application/pdf"
+        }
+      ],
       "values": [
         {
           "code": "M01",
