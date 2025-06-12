@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `bill`: `PaymentLine` includes a `refund` boolean to indicate flow of funds, and impacts the `Payment`'s total potentially making it negative.
 - `org`: `DocumentRef` now includes a `payable` property.
-- `bill`: `PaymentLine` includes `payable`, `advances`, `due`, and `tax` properties.
+- `bill`: `PaymentLine` includes `description`, `installment`, `payable`, `advances`, `due`, and `tax` properties.
 - `mx-cfdi-v4`: Define payment method in document.
 
 ## [v0.217.1] - 2025-06-02

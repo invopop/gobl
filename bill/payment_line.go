@@ -31,6 +31,11 @@ type PaymentLine struct {
 	// installment number for this payment line.
 	Installment int `json:"installment,omitempty" jsonschema:"title=Installment"`
 
+	// Additional human readable description of the payment line which may be useful for
+	// explaining the purpose or special conditions. Notes should be used for more
+	// formal comments.
+	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+
 	// Payable reflects the amount of the document that is payable. This will be
 	// calculated from the embedded document's amount automatically and converted
 	// to the currency of the document.

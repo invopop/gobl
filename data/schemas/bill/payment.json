@@ -350,6 +350,11 @@
           "title": "Installment",
           "description": "When making multiple payments for a single document, this specifies the\ninstallment number for this payment line."
         },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Additional human readable description of the payment line which may be useful for\nexplaining the purpose or special conditions. Notes should be used for more\nformal comments."
+        },
         "payable": {
           "$ref": "https://gobl.org/draft-0/num/amount",
           "title": "Payable",
