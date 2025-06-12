@@ -37,7 +37,7 @@ customer:
       street: "Rue Sundacsakn"
       locality: "Saint-Germain-En-Laye"
       code: "75050"
-      country": "FR"
+      country: "FR"
 
 lines:
   - quantity: 20

@@ -139,7 +139,7 @@ func validateTaxID(scheme cbc.Code) validation.RuleFunc {
 			return validation.ValidateStruct(taxID,
 				validation.Field(&taxID.Country,
 					validation.Required,
-					validation.NotIn(l10n.TaxCountryCode(l10n.FR)).Error("Customer must be a non-French, EU company"),
+					validation.NotIn(l10n.TaxCountryCode(l10n.FR)).Error("Customer must be a non-EU company"),
 					validation.By(validateNonEUCompany),
 					validation.Skip,
 				),

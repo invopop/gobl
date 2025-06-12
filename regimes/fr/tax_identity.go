@@ -26,8 +26,8 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 
 	str := tID.Code.String()
-	// Check if we have a SIREN so we can try and normalize with the
-	// check digit.
+	// Check if we have a valid SIREN so we can try and
+	// normalize with the check digit.
 	if err := validateSIRENTaxCode(tID.Code); err != nil {
 		return
 	}
