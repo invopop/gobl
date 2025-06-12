@@ -92,6 +92,31 @@ func TestNormalizeParty(t *testing.T) {
 		assert.Nil(t, party.Ext)
 	})
 
+	t.Run("Normalizes EU company", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			TaxID: &tax.Identity{
+				Country: "DE",
+				Code:    "123456789",
+			},
+		}
+
+		addon.Normalizer(party)
+		assert.Equal(t, cbc.Code("2"), party.Ext.Get(choruspro.ExtKeyScheme))
+	})
+
+	t.Run("Normalizes non-EU company", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			TaxID: &tax.Identity{
+				Country: "US",
+				Code:    "123456789",
+			},
+		}
+		addon.Normalizer(party)
+		assert.Equal(t, cbc.Code("3"), party.Ext.Get(choruspro.ExtKeyScheme))
+	})
+
 	t.Run("handles nil identities", func(t *testing.T) {
 		party := &org.Party{
 			Name:       "Test Party",
@@ -294,6 +319,22 @@ func TestValidateParty(t *testing.T) {
 
 		err := addon.Validator(party)
 		assert.ErrorContains(t, err, "Customer must be a French company")
+	})
+
+	t.Run("scheme 4 ignores tax ID", func(t *testing.T) {
+		party := &org.Party{
+			Name: "Test Party",
+			TaxID: &tax.Identity{
+				Country: "US",
+				Code:    "123456789",
+			},
+			Ext: tax.Extensions{
+				choruspro.ExtKeyScheme: "4",
+			},
+		}
+
+		err := addon.Validator(party)
+		assert.NoError(t, err)
 	})
 
 	t.Run("missing scheme extension", func(t *testing.T) {
