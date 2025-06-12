@@ -9,17 +9,26 @@ import (
 // Mexican CFDI extension keys required by the SAT (tax authority in Mexico) in all
 // invoices and cannot be determined automatically.
 const (
-	ExtKeyIssuePlace   cbc.Key = "mx-cfdi-issue-place"
-	ExtKeyFiscalRegime cbc.Key = "mx-cfdi-fiscal-regime"
-	ExtKeyUse          cbc.Key = "mx-cfdi-use"
-	ExtKeyProdServ     cbc.Key = "mx-cfdi-prod-serv"     // name from XML field: ClaveProdServ
-	ExtKeyRelType      cbc.Key = "mx-cfdi-rel-type"      // name from XML field: TipoRelacion
-	ExtKeyDocType      cbc.Key = "mx-cfdi-doc-type"      // name from XML field: TipoDeComprobante
-	ExtKeyTaxType      cbc.Key = "mx-cfdi-tax-type"      // name from XML field: TipoImpuesto
-	ExtKeyPaymentMeans cbc.Key = "mx-cfdi-payment-means" // name from XML field: FormaPago
-	ExtKeyGlobalPeriod cbc.Key = "mx-cfdi-global-period"
-	ExtKeyGlobalMonth  cbc.Key = "mx-cfdi-global-month"
-	ExtKeyGlobalYear   cbc.Key = "mx-cfdi-global-year"
+	ExtKeyIssuePlace    cbc.Key = "mx-cfdi-issue-place"
+	ExtKeyFiscalRegime  cbc.Key = "mx-cfdi-fiscal-regime"
+	ExtKeyUse           cbc.Key = "mx-cfdi-use"
+	ExtKeyProdServ      cbc.Key = "mx-cfdi-prod-serv"      // name from XML field: ClaveProdServ
+	ExtKeyRelType       cbc.Key = "mx-cfdi-rel-type"       // name from XML field: TipoRelacion
+	ExtKeyDocType       cbc.Key = "mx-cfdi-doc-type"       // name from XML field: TipoDeComprobante
+	ExtKeyTaxType       cbc.Key = "mx-cfdi-tax-type"       // name from XML field: TipoImpuesto
+	ExtKeyPaymentMeans  cbc.Key = "mx-cfdi-payment-means"  // name from XML field: FormaPago
+	ExtKeyPaymentMethod cbc.Key = "mx-cfdi-payment-method" // name from XML field: MetodoPago
+	ExtKeyGlobalPeriod  cbc.Key = "mx-cfdi-global-period"
+	ExtKeyGlobalMonth   cbc.Key = "mx-cfdi-global-month"
+	ExtKeyGlobalYear    cbc.Key = "mx-cfdi-global-year"
+)
+
+// Payment Method Extension codes
+const (
+	// Paid in advance (Pago en una sola exhibición)
+	ExtCodePaymentMethodPUE cbc.Code = "PUE"
+	// Payment is due (Pago en parcialidades o diferido)
+	ExtCodePaymentMethodPPD cbc.Code = "PPD"
 )
 
 var extensions = []*cbc.Definition{
@@ -479,6 +488,37 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Payroll",
 					i18n.ES: "Nómina",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyPaymentMethod,
+		Name: i18n.String{
+			i18n.EN: "Payment Method",
+			i18n.ES: "Método de Pago",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Code defined in the CFDI catalogue "c_MetodoPago" for the payment method. Used in the 'MetodoPago' field.
+			`),
+			i18n.ES: here.Doc(`
+				Código definido en el catálogo del CFDI "c_MetodoPago" para el método de pago. Usado en el campo 'MetodoPago'.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtCodePaymentMethodPUE,
+				Name: i18n.String{
+					i18n.EN: "Payment in a single exhibition",
+					i18n.ES: "Pago en una sola exhibición",
+				},
+			},
+			{
+				Code: ExtCodePaymentMethodPPD,
+				Name: i18n.String{
+					i18n.EN: "Payment in deferred installments",
+					i18n.ES: "Pago en parcialidades o diferido",
 				},
 			},
 		},

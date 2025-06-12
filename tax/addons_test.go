@@ -76,6 +76,7 @@ func TestAddonWithContext(t *testing.T) {
 		vs := tax.Validators(ctx)
 		assert.Empty(t, vs)
 	})
+
 }
 
 func TestAddonsJSONSchemaEmbed(t *testing.T) {

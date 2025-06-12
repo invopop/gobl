@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "597fac54321f65e167ff4b7faf9b74aaaf32ea1b7cccb51d34a4fc0c2c0b36a1"
+			"val": "6cfde8996e951f8e9b5efdda21b2a5d68240374dd0bb648ff6f1fc9ff1f4e3da"
 		}
 	},
 	"doc": {
@@ -74,26 +74,9 @@
 						"sum": "342.30"
 					}
 				},
-				"debit": "1972.30",
-				"total": "1972.30"
+				"amount": "1972.30"
 			}
 		],
-		"tax": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
-						{
-							"base": "1630.00",
-							"percent": "21.0%",
-							"amount": "342.30"
-						}
-					],
-					"amount": "342.30"
-				}
-			],
-			"sum": "342.30"
-		},
 		"total": "1972.30"
 	}
 }

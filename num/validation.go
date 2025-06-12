@@ -14,6 +14,9 @@ type ThresholdRule struct {
 var (
 	// ErrIsZero indicates that the value is zero when it should not be.
 	ErrIsZero = validation.NewError("validation_is_zero", "must not be zero")
+
+	// ErrNotEqual indicates that the value is not equal to the expected amount or percentage.
+	ErrNotEqual = validation.NewError("validation_not_equal", "must be equal to {{.threshold}}")
 )
 
 const (
@@ -22,13 +25,18 @@ const (
 	lessThan
 	lessEqualThan
 	notZero
+	equals
 )
 
 var (
-	// Positive validates the that value is greater than or equal to zero.
+	// Positive validates the that value is greater than zero.
 	Positive = Min(MakeAmount(0, 0)).Exclusive()
-	// Negative validates the value is less than or equal to zero.
+	// ZeroOrPositive validates the that value is greater than or equal to zero.
+	ZeroOrPositive = Min(MakeAmount(0, 0))
+	// Negative validates the value is less than zero.
 	Negative = Max(MakeAmount(0, 0)).Exclusive()
+	// ZeroOrNegative validates the value is less than or equal to zero.
+	ZeroOrNegative = Max(MakeAmount(0, 0))
 	// NotZero validates that the value is not zero.
 	NotZero = ThresholdRule{
 		threshold: Amount{0, 0},
@@ -52,6 +60,15 @@ func Max(value any) ThresholdRule {
 		threshold: interfaceToAmount(value),
 		operator:  lessEqualThan,
 		err:       validation.ErrMaxLessEqualThanRequired,
+	}
+}
+
+// Equals checks if the value is equal to the provided amount or percentage
+func Equals(value any) ThresholdRule {
+	return ThresholdRule{
+		threshold: interfaceToAmount(value),
+		operator:  equals,
+		err:       ErrNotEqual,
 	}
 }
 
@@ -110,6 +127,8 @@ func (r ThresholdRule) compare(value Amount) bool {
 		return cmp == -1
 	case lessEqualThan:
 		return cmp == -1 || cmp == 0
+	case equals:
+		return cmp == 0
 	default:
 		return cmp == -1 || cmp == 1
 	}
