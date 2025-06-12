@@ -45,9 +45,10 @@ func TestPaymentCalculate(t *testing.T) {
 		})
 	})
 
-	t.Run("with positive amount", func(t *testing.T) {
+	t.Run("with positive amount and refunds", func(t *testing.T) {
 		p := testPaymentMinimal(t)
 		p.Lines = append(p.Lines, &bill.PaymentLine{
+			Refund: true,
 			Amount: num.MakeAmount(5000, 2),
 			Document: &org.DocumentRef{
 				Type:      "credit-note",
@@ -57,13 +58,15 @@ func TestPaymentCalculate(t *testing.T) {
 			},
 		})
 		require.NoError(t, p.Calculate())
-		assert.Equal(t, "150.00", p.Total.String(), "should balance")
+		assert.Equal(t, "50.00", p.Total.String(), "should balance")
 	})
 
 	t.Run("with credit", func(t *testing.T) {
 		pmt := testPaymentMinimal(t)
-		pmt.Lines[0].Amount = num.MakeAmount(-5000, 2)
+		pmt.Lines[0].Refund = true
+		pmt.Lines[0].Amount = num.MakeAmount(5000, 2)
 		require.NoError(t, pmt.Calculate())
+		require.NoError(t, pmt.Validate())
 		assert.Equal(t, "-50.00", pmt.Total.String(), "should balance")
 	})
 

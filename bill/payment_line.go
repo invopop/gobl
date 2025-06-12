@@ -20,6 +20,10 @@ type PaymentLine struct {
 	// Line number within the parent document (automatically calculated)
 	Index int `json:"i" jsonschema:"title=Index" jsonschema_extras:"calculated=true"`
 
+	// Indicates whether this payment is a refund of a previous payment, effectively reversing
+	// the flow of funds between the supplier and customer or their representatives.
+	Refund bool `json:"refund,omitempty" jsonschema:"title=Refund"`
+
 	// Reference to the document being paid
 	Document *org.DocumentRef `json:"document,omitempty" jsonschema:"title=Document"`
 

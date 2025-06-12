@@ -190,11 +190,6 @@
           "description": "Type of payment document being issued.",
           "calculated": true
         },
-        "refund": {
-          "type": "boolean",
-          "title": "Refund",
-          "description": "Indicates whether this payment is a refund of a previous payment, effectively reversing\nthe flow of funds between the supplier and customer or their representatives."
-        },
         "method": {
           "$ref": "https://gobl.org/draft-0/pay/instructions",
           "title": "Method",
@@ -339,6 +334,11 @@
           "title": "Index",
           "description": "Line number within the parent document (automatically calculated)",
           "calculated": true
+        },
+        "refund": {
+          "type": "boolean",
+          "title": "Refund",
+          "description": "Indicates whether this payment is a refund of a previous payment, effectively reversing\nthe flow of funds between the supplier and customer or their representatives."
         },
         "document": {
           "$ref": "https://gobl.org/draft-0/org/document-ref",

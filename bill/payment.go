@@ -81,9 +81,6 @@ type Payment struct {
 
 	// Type of payment document being issued.
 	Type cbc.Key `json:"type" jsonschema:"title=Type" jsonschema_extras:"calculated=true"`
-	// Indicates whether this payment is a refund of a previous payment, effectively reversing
-	// the flow of funds between the supplier and customer or their representatives.
-	Refund bool `json:"refund,omitempty" jsonschema:"title=Refund"`
 	// Details on how the payment was made based on the original instructions.
 	Method *pay.Instructions `json:"method,omitempty" jsonschema:"title=Method"`
 	// Series is used to identify groups of payments by date, business area, project,
@@ -188,7 +185,7 @@ func (pmt *Payment) ValidateWithContext(ctx context.Context) error {
 			validation.Each(validation.NotNil),
 		),
 		validation.Field(&pmt.Ordering),
-		validation.Field(&pmt.Total, num.Positive, num.NotZero),
+		validation.Field(&pmt.Total), // Totals may be zero or negative
 		validation.Field(&pmt.Notes,
 			validation.Each(validation.NotNil),
 		),
@@ -297,6 +294,9 @@ func (pmt *Payment) calculate() error {
 
 		// Add the totals
 		a := l.Amount
+		if l.Refund {
+			a = a.Negate()
+		}
 		if total == nil {
 			total = &a
 		} else {
