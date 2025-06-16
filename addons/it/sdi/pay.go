@@ -39,6 +39,7 @@ var paymentMeansKeyMap = tax.Extensions{
 	pay.MeansKeyPromissoryNote:                       "MP06",
 	pay.MeansKeyOther.With(MeansKeyPaymentSlip):      "MP07",
 	pay.MeansKeyCard:                                 "MP08",
+	pay.MeansKeyOnline:                               "MP08",
 	pay.MeansKeyDirectDebit.With(MeansKeyRID):        "MP09",
 	pay.MeansKeyDirectDebit.With(MeansKeyRIDUtility): "MP10",
 	pay.MeansKeyDirectDebit.With(MeansKeyRIDFast):    "MP11",
