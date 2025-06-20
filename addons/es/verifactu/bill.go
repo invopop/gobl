@@ -54,6 +54,39 @@ func normalizeInvoice(inv *bill.Invoice) {
 			delete(inv.Tax.Ext, ExtKeyCorrectionType)
 		}
 	}
+
+	normalizeInvoicePartyIdentity(inv.Customer)
+}
+
+func normalizeInvoicePartyIdentity(cus *org.Party) {
+	if cus == nil {
+		return
+	}
+	if cus.TaxID != nil && cus.TaxID.Country == "ES" && cus.TaxID.Code != "" {
+		// Spanish NIFs are already handled
+		return
+	}
+	if len(cus.Identities) == 0 {
+		// nothing to do if no identities
+		return
+	}
+	id := cus.Identities[0]
+	var code cbc.Code
+	switch id.Key {
+	case org.IdentityKeyPassport:
+		code = ExtCodeIdentityTypePassport
+	case org.IdentityKeyForeign:
+		code = ExtCodeIdentityTypeForeign
+	case org.IdentityKeyResident:
+		code = ExtCodeIdentityTypeResident
+	case org.IdentityKeyOther:
+		code = ExtCodeIdentityTypeOther
+	}
+	if !code.IsEmpty() {
+		id.Ext = id.Ext.Merge(tax.Extensions{
+			ExtKeyIdentityType: code,
+		})
+	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {
