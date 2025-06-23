@@ -97,6 +97,11 @@ func validatePaymentLine(val any) error {
 			validation.Required,
 			validation.Skip,
 		),
+		validation.Field(&pl.Tax,
+			validation.By(validatePaymentLineTax),
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }
 
@@ -111,15 +116,10 @@ func validatePaymentLineDocument(val any) error {
 			validation.Required,
 			validation.Skip,
 		),
-		validation.Field(&ld.Tax,
-			validation.By(validatePaymentLineDocumentTax),
-			validation.Required,
-			validation.Skip,
-		),
 	)
 }
 
-func validatePaymentLineDocumentTax(val any) error {
+func validatePaymentLineTax(val any) error {
 	lt, _ := val.(*tax.Total)
 	if lt == nil {
 		return nil
@@ -130,8 +130,29 @@ func validatePaymentLineDocumentTax(val any) error {
 		return errors.New("missing category VAT")
 	}
 
-	return validation.ValidateStruct(c,
-		validation.Field(&c.Rates,
+	return validation.ValidateStruct(lt,
+		validation.Field(&lt.Categories,
+			validation.Each(
+				validation.By(validateLineTaxCategory),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateLineTaxCategory(val any) error {
+	tc, _ := val.(*tax.CategoryTotal)
+	if tc == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(tc,
+		validation.Field(&tc.Rates,
+			// According to point 4.4.4.14.6. of Portaria nª 302/2016,
+			// multiple tax rates (even for the same document) must be
+			// reported broken down in different payment lines.
+			validation.Length(0, 1).Error("only one rate allowed per line"),
 			validation.Each(
 				validation.By(validateLineTaxRate),
 				validation.Skip,
