@@ -130,6 +130,10 @@ func TestNoteSameAs(t *testing.T) {
 		Code: "ABC",
 		Text: "This is a test ABC",
 	}))
+	t.Run("nils", func(t *testing.T) {
+		var n1, n2 *org.Note
+		assert.False(t, n1.SameAs(n2), "nil should not match nil")
+	})
 }
 
 func TestNoteEquals(t *testing.T) {

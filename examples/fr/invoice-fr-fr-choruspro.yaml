@@ -1,0 +1,64 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+$addons: ["fr-choruspro-v1"]
+currency: "EUR"
+issue_date: "2022-02-01"
+series: "SAMPLE"
+code: "001"
+
+tax:
+  ext:
+    fr-choruspro-framework: "A2"
+
+supplier:
+  tax_id:
+    country: "FR"
+    code: "732829320" # random
+  identities:
+    - type: SIRET
+      code: "73282932012345"
+  name: "Provide One Inc."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "FR"
+    code: "356000000"
+  identities:
+    - type: SIRET
+      code: "35600000012345"
+  name: "Sample Consumer"
+  emails:
+    - addr: "email@sample.com"
+  addresses:
+    - num: "1"
+      street: "Rue Sundacsakn"
+      locality: "Saint-Germain-En-Laye"
+      code: "75050"
+      country: "FR"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+    taxes:
+      - cat: VAT
+        rate: standard
+
+payment:
+  advances:
+    - percent: "100%"
+      description: "Paid in full"

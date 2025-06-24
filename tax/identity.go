@@ -30,7 +30,7 @@ type Identity struct {
 
 	// Scheme is an optional field that may be used to override the tax regime's
 	// default tax scheme. Many electronic formats such as UBL or CII define an
-	// equivalent field.
+	// equivalent field. Examples: `VAT`, `GST`, `ST`, etc.
 	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
 
 	// Type is set according to the requirements of each regime, some have a single

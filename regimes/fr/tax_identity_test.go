@@ -20,10 +20,6 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			Expected: "39356000000",
 		},
 		{
-			Code:     "35600000000000", // SIRET to VAT
-			Expected: "39356000000",
-		},
-		{
 			Code:     "44 73282 9320 ",
 			Expected: "44732829320",
 		},
@@ -38,6 +34,10 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		{
 			Code:     "FR44391838042",
 			Expected: "44391838042",
+		},
+		{
+			Code:     "391838043",
+			Expected: "391838043",
 		},
 		{
 			Code:     " INV-ALID ",

@@ -30,6 +30,14 @@ func TestItemNormalization(t *testing.T) {
 		assert.Equal(t, num.NewAmount(100, 2), i.Price)
 		assert.Nil(t, i.Ext)
 	})
+	t.Run("clean ref", func(t *testing.T) {
+		i := &org.Item{
+			Name: "test item",
+			Ref:  "  test-ref  ",
+		}
+		i.Normalize(nil)
+		assert.Equal(t, "test-ref", i.Ref.String())
+	})
 }
 
 func TestItemValidation(t *testing.T) {

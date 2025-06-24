@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
@@ -16,7 +15,7 @@ import (
 // covered by the standard fields.
 const (
 	IdentityTypeSIREN cbc.Code = "SIREN" // SIREN is the main local tax code used in france, we use the normalized VAT version for the tax ID.
-	IdentityTypeSIRET cbc.Code = "SIRET" // SIRET is a SIREN with a branch number
+	IdentityTypeSIRET cbc.Code = "SIRET" // SIRET number combines the SIREN with a branch number.
 	IdentityTypeRCS   cbc.Code = "RCS"   // Trade and Companies Register.
 	IdentityTypeRM    cbc.Code = "RM"    // Directory of Traders.
 	IdentityTypeNAF   cbc.Code = "NAF"   // Identifies the main branch of activity of the company or self-employed person.
@@ -71,8 +70,6 @@ func Validate(doc interface{}) error {
 		return validateInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateIdentity(obj)
 	}
 	return nil
 }
@@ -82,7 +79,5 @@ func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
-	case *org.Identity:
-		normalizeIdentity(obj)
 	}
 }

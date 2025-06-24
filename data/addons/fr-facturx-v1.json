@@ -8,7 +8,7 @@
     "en": "French Factur-X v1"
   },
   "description": {
-    "en": "Support for the French Factur-X 1.x standard for electronic invoicing.\nFactur-X is based on the European Norm (EN) 16931 and is mandatory for business-to-government\n(B2G) invoices in France. This addon provides the necessary structures and validations to\nensure compliance with the Factur-X specifications.\n\nCurrently this is just a placeholder addon as the EN16931 addon will provide \nall validation requirements.\n\nFor more information on Factur-X, visit [fnfe-mpe.org](https://fnfe-mpe.org/factur-x/factur-x_en/#)."
+    "en": "Support for the French Factur-X 1.x standard for electronic invoicing.\nFactur-X is based on the European Norm (EN) 16931 and is mandatory for business-to-government\n(B2G) invoices in France. This addon provides the necessary structures and validations to\nensure compliance with the Factur-X specifications.\n\nCurrently this is just a placeholder addon as the EN16931 addon will provide\nall validation requirements.\n\nFor more information on Factur-X, visit [fnfe-mpe.org](https://fnfe-mpe.org/factur-x/factur-x_en/#)."
   },
   "extensions": null,
   "scenarios": null,

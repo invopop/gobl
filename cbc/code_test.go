@@ -108,6 +108,11 @@ func TestNormalizeCode(t *testing.T) {
 			code: cbc.Code("0088:1234567891234"), // peppol example
 			want: cbc.Code("0088:1234567891234"),
 		},
+		{
+			name: "commas",
+			code: cbc.Code("FL-C 64-3,5"),
+			want: cbc.Code("FL-C 64-3,5"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -340,7 +345,7 @@ func TestCode_Validate(t *testing.T) {
 		},
 		{
 			name:    "too long",
-			code:    cbc.Code("123456789012345678901234567890ABC"),
+			code:    cbc.Code("123456789012345678901234567890ABC123456789012345678901234567890ABC"),
 			wantErr: "length must be between",
 		},
 	}
@@ -428,7 +433,7 @@ func TestCodeJSONSchema(t *testing.T) {
 	assert.Equal(t, "string", s.Type)
 	assert.Equal(t, "Code", s.Title)
 	assert.Equal(t, uint64(1), *s.MinLength)
-	assert.Equal(t, uint64(32), *s.MaxLength)
+	assert.Equal(t, uint64(64), *s.MaxLength)
 }
 
 func TestCodeMapJSONSchemaExtend(t *testing.T) {

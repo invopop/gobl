@@ -75,9 +75,20 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: cannot be blank")
 	})
 
-	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+	t.Run("credit-note invoice preceding requires issue date", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code: "123",
+			},
+		}
+		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank.).")
+	})
+
+	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{
 			{
 				Code: "123",
@@ -121,9 +132,24 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Empty(t, inv.Preceding[0].Ext)
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
+
+	t.Run("correction with nil preceding", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{nil}
+		inv.Tax = &bill.Tax{
+			Ext: tax.Extensions{
+				verifactu.ExtKeyDocType: "R1",
+			},
+		}
+		ad := tax.AddonForKey(verifactu.V1)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, ad.Validator(inv))
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
+	t.Helper()
 	require.NoError(t, inv.Calculate())
 	err := inv.Validate()
 	require.ErrorContains(t, err, expected)

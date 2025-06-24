@@ -27,22 +27,46 @@ var parseExampleEnvelope = `{
 }`
 
 func TestParse(t *testing.T) {
-	doc, err := gobl.Parse([]byte(parseExampleDoc))
-	assert.NoError(t, err)
-	assert.IsType(t, &note.Message{}, doc)
-	n, ok := doc.(*note.Message)
-	assert.True(t, ok)
-	assert.Equal(t, "Test Message", n.Title)
+	t.Run("basic note message", func(t *testing.T) {
+		doc, err := gobl.Parse([]byte(parseExampleDoc))
+		assert.NoError(t, err)
+		assert.IsType(t, &note.Message{}, doc)
+		n, ok := doc.(*note.Message)
+		assert.True(t, ok)
+		assert.Equal(t, "Test Message", n.Title)
+	})
 
-	doc, err = gobl.Parse([]byte(parseExampleEnvelope))
-	assert.NoError(t, err)
-	assert.IsType(t, &gobl.Envelope{}, doc)
-	env, ok := doc.(*gobl.Envelope)
-	assert.True(t, ok)
-	assert.Contains(t, env.Head.Digest.Value, "45ac3115c8569a1")
+	t.Run("check digest", func(t *testing.T) {
+		doc, err := gobl.Parse([]byte(parseExampleEnvelope))
+		assert.NoError(t, err)
+		assert.IsType(t, &gobl.Envelope{}, doc)
+		env, ok := doc.(*gobl.Envelope)
+		assert.True(t, ok)
+		assert.Contains(t, env.Head.Digest.Value, "45ac3115c8569a1")
+		n := env.Extract().(*note.Message)
+		assert.NotNil(t, n)
+		assert.Equal(t, "Test Message", n.Title)
 
-	n = env.Extract().(*note.Message)
-	assert.NotNil(t, n)
-	assert.Equal(t, "Test Message", n.Title)
+	})
 
+	t.Run("unknown schema", func(t *testing.T) {
+		_, err := gobl.Parse([]byte(`{"$schema": "https://gobl.org/draft-0/unknown"}`))
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrUnmarshal)
+		assert.ErrorContains(t, err, "unmarshal: json: Unmarshal(nil)")
+	})
+
+	t.Run("invalid JSON", func(t *testing.T) {
+		_, err := gobl.Parse([]byte(`{"$schema": "https://gobl.org/draft-0/note/message", "title": "Test Message"`))
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrUnmarshal)
+		assert.ErrorContains(t, err, "unmarshal: unexpected end of JSON input")
+	})
+
+	t.Run("empty schema", func(t *testing.T) {
+		_, err := gobl.Parse([]byte(`{"$schema": ""}`))
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gobl.ErrUnknownSchema)
+		assert.ErrorContains(t, err, "unknown-schema")
+	})
 }

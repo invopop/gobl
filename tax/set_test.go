@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -331,4 +332,37 @@ func TestCleanSet(t *testing.T) {
 	assert.Len(t, s, 1)
 	s = tax.CleanSet(s)
 	assert.Nil(t, s)
+}
+
+func TestSetHasCategory(t *testing.T) {
+	s := tax.Set{
+		{
+			Category: "VAT",
+			Rate:     "standard",
+		},
+		{
+			Category: "IRPF",
+			Rate:     "pro",
+		},
+	}
+	t.Run("has VAT", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasCategory("VAT"))
+		assert.NoError(t, err)
+	})
+	t.Run("has multiple", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasCategory(tax.CategoryVAT, es.TaxCategoryIRPF))
+		assert.NoError(t, err)
+	})
+	t.Run("missing category", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasCategory("FOO"))
+		assert.Error(t, err)
+		assert.Equal(t, "missing category FOO", err.Error())
+	})
+	t.Run("with different type", func(t *testing.T) {
+		var s2 string
+		assert.NotPanics(t, func() {
+			err := validation.Validate(s2, tax.SetHasCategory("FOO"))
+			assert.NoError(t, err)
+		})
+	})
 }

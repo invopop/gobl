@@ -33,8 +33,8 @@ func newAddon() *tax.AddonDef {
 				Factur-X is based on the European Norm (EN) 16931 and is mandatory for business-to-government
 				(B2G) invoices in France. This addon provides the necessary structures and validations to
 				ensure compliance with the Factur-X specifications.
-
-				Currently this is just a placeholder addon as the EN16931 addon will provide 
+				
+				Currently this is just a placeholder addon as the EN16931 addon will provide
 				all validation requirements.
 
 				For more information on Factur-X, visit [fnfe-mpe.org](https://fnfe-mpe.org/factur-x/factur-x_en/#).

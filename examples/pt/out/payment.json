@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c45f037455d0b5b2cb68022a23a52ce45f4a7d24561d8c4ce92956e061fbf54e"
+			"val": "c06e30f4d5517e6073d925ca6534827c273a96acceb013cdb04792f923ed06df"
 		}
 	},
 	"doc": {
@@ -85,33 +85,35 @@
 							}
 						],
 						"sum": "23.00"
-					}
+					},
+					"payable": "123.00"
 				},
-				"debit": "123",
-				"total": "123.00"
-			}
-		],
-		"tax": {
-			"categories": [
-				{
-					"code": "VAT",
-					"rates": [
+				"payable": "123.00",
+				"amount": "123.00",
+				"due": "0.00",
+				"tax": {
+					"categories": [
 						{
-							"key": "standard",
-							"ext": {
-								"pt-region": "PT",
-								"pt-saft-tax-rate": "NOR"
-							},
-							"base": "100.00",
-							"percent": "23.0%",
+							"code": "VAT",
+							"rates": [
+								{
+									"key": "standard",
+									"ext": {
+										"pt-region": "PT",
+										"pt-saft-tax-rate": "NOR"
+									},
+									"base": "100.00",
+									"percent": "23.0%",
+									"amount": "23.00"
+								}
+							],
 							"amount": "23.00"
 						}
 					],
-					"amount": "23.00"
+					"sum": "23.00"
 				}
-			],
-			"sum": "23.00"
-		},
+			}
+		],
 		"total": "123.00"
 	}
 }

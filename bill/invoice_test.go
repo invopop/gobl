@@ -1219,6 +1219,28 @@ func TestValidation(t *testing.T) {
 		err := inv.Validate()
 		assert.NoError(t, err)
 	})
+
+	t.Run("with nil array entries", func(t *testing.T) {
+		m := baseInvoiceWithLines(t)
+		m.ExchangeRates = append(m.ExchangeRates, nil)
+		m.Preceding = append(m.Preceding, nil)
+		m.Lines = append(m.Lines, nil)
+		m.Discounts = append(m.Discounts, nil)
+		m.Charges = append(m.Charges, nil)
+		m.Notes = append(m.Notes, nil)
+		m.Complements = append(m.Complements, nil)
+		m.Attachments = append(m.Attachments, nil)
+		require.NoError(t, m.Calculate())
+		err := m.Validate()
+		assert.ErrorContains(t, err, "exchange_rates: (0: is required.)")
+		assert.ErrorContains(t, err, "preceding: (0: is required.)")
+		assert.ErrorContains(t, err, "lines: (1: is required.)")
+		assert.ErrorContains(t, err, "discounts: (0: is required.)")
+		assert.ErrorContains(t, err, "charges: (0: is required.)")
+		assert.ErrorContains(t, err, "notes: (0: is required.)")
+		assert.ErrorContains(t, err, "complements: (0: is required.)")
+		assert.ErrorContains(t, err, "attachments: (0: is required.)")
+	})
 }
 
 func TestInvoiceTagsValidation(t *testing.T) {

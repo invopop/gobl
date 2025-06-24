@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/co/dian"
 	"github.com/invopop/gobl/addons/es/facturae"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
@@ -67,15 +68,24 @@ func ExampleNewEnvelope_complete() {
 }
 
 func TestEnvelop(t *testing.T) {
-	msg := &note.Message{
-		Content: testMessageContent,
-	}
-	msg.UUID = uuid.MustParse("871c1e6a-8b5c-11ec-af5f-3e7e00ce5635")
-	e, err := gobl.Envelop(msg)
-	require.NoError(t, err)
-	if assert.NotNil(t, e) {
-		assert.Equal(t, "cf75a55f8f00e57201685aebfa5765c908c1d22520858024610bbc2f6a494824", e.Head.Digest.Value)
-	}
+	t.Run("valid message", func(t *testing.T) {
+		msg := &note.Message{
+			Content: testMessageContent,
+		}
+		msg.UUID = uuid.MustParse("871c1e6a-8b5c-11ec-af5f-3e7e00ce5635")
+		e, err := gobl.Envelop(msg)
+		require.NoError(t, err)
+		if assert.NotNil(t, e) {
+			assert.Equal(t, "cf75a55f8f00e57201685aebfa5765c908c1d22520858024610bbc2f6a494824", e.Head.Digest.Value)
+		}
+	})
+	t.Run("invalid content", func(t *testing.T) {
+		e1 := gobl.NewEnvelope()
+		e2, err := gobl.Envelop(e1)
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "no-document")
+		assert.Nil(t, e2, "should not return envelope")
+	})
 }
 
 func TestEnvelopeDocument(t *testing.T) {
@@ -297,6 +307,15 @@ func TestEnvelopeSign(t *testing.T) {
 		env.Unsign()
 		assert.False(t, env.Signed())
 	})
+
+	t.Run("checks for header", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		env.Head = nil // remove header
+		err := env.Sign(testKey)
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "validation: header required")
+	})
 }
 func TestEnvelopeCorrect(t *testing.T) {
 	t.Run("correct invoice", func(t *testing.T) {
@@ -324,6 +343,27 @@ func TestEnvelopeCorrect(t *testing.T) {
 		require.NoError(t, err)
 		doc = e2.Extract().(*bill.Invoice)
 		assert.Equal(t, doc.Type, bill.InvoiceTypeCorrective, "corrected")
+	})
+
+	t.Run("correct with stamps", func(t *testing.T) {
+		data, err := os.ReadFile("./examples/co/out/simple.json")
+		require.NoError(t, err)
+		out, err := gobl.Parse(data)
+		require.NoError(t, err)
+		env, ok := out.(*gobl.Envelope)
+		require.True(t, ok)
+		env.Head.AddStamp(&head.Stamp{
+			Provider: dian.StampCUDE,
+			Value:    "1234567890",
+		})
+
+		_, err = env.Correct()
+		assert.ErrorContains(t, err, "validation: missing correction type")
+
+		e2, err := env.Correct(bill.Credit, bill.WithReason("test"))
+		require.NoError(t, err)
+		doc := e2.Extract().(*bill.Invoice)
+		assert.Equal(t, "1234567890", doc.Preceding[0].Stamps[0].Value, "should copy stamps")
 	})
 }
 
@@ -477,7 +517,50 @@ func TestEnvelopeVerify(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "signatures: (0: no key match found.)")
 	})
+}
 
+func TestEnvelopeVerifySignature(t *testing.T) {
+	t.Run("valid, no key", func(t *testing.T) {
+		env := gobl.NewEnvelope()
+		require.NoError(t, env.Insert(&note.Message{Content: "Test Message"}))
+		assert.NoError(t, env.Sign(testKey))
+		assert.NoError(t, env.VerifySignature(env.Signatures[0]))
+	})
+
+}
+
+func TestEnvelopeCorrectionOptionsSchema(t *testing.T) {
+	t.Run("missing document", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		out, err := e.CorrectionOptionsSchema()
+		assert.Error(t, err)
+		assert.Nil(t, out)
+		assert.ErrorContains(t, err, "no-document")
+	})
+	t.Run("nil document", func(t *testing.T) {
+		e := gobl.NewEnvelope()
+		out, err := e.CorrectionOptionsSchema()
+		assert.Error(t, err)
+		assert.Nil(t, out)
+		assert.ErrorContains(t, err, "no-document")
+	})
+	t.Run("valid document", func(t *testing.T) {
+		e := new(gobl.Envelope)
+
+		data, err := os.ReadFile("./examples/es/invoice-es-es.env.yaml")
+		require.NoError(t, err)
+		err = yaml.Unmarshal(data, e)
+		require.NoError(t, err)
+
+		out, err := e.CorrectionOptionsSchema()
+		require.NoError(t, err)
+		assert.NotNil(t, out)
+
+		data, err = json.Marshal(out)
+		require.NoError(t, err)
+		// look for little strings
+		assert.Contains(t, string(data), "\"const\":\"credit-note\",\"title\":\"Credit Note\"")
+	})
 }
 
 func testNoteExample() *note.Message {

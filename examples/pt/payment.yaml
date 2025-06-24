@@ -38,9 +38,10 @@ lines:
           - code: VAT
             rates:
               - key: standard
-                base: 100.00
+                base: "100.00"
                 percent: "23.0%"
                 ext:
                   pt-region: PT
                   pt-saft-tax-rate: NOR
-    debit: 123.00
+      payable: "123.00"
+    amount: "123.00"

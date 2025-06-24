@@ -34,4 +34,4 @@ lines:
       issue_date: "2025-01-10"
       series: "SAMPLE"
       code: "001"
-    debit: "1630.00"
+    amount: "1630.00"

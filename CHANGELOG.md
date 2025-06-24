@@ -15,6 +15,42 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `it-sdi-v1`: Modify address validation to accept postbox.
+## [v0.218.0] - 2025-06-12
+
+### Changed
+
+- `bill`: `PaymentLine` will recalculate tax totals based on proportional amounts paid per-line, alongside the total advances and amount due.
+- `bill`: `PaymentLine` removed the `debit` and `credit` fields which were confusing, especially alongside the advances. Please now use the `refund` flag.
+- `bill`: `Payment` will check the line document's currency and require an exchange rate if different from the document's.
+- `bill`: `Payment` `tax` field is no longer supported, we assume convertors will deal with tax for each payment line.
+- `fr`: Removed unnecessary length check when validating the SIREN.
+
+### Added
+
+- `bill`: `PaymentLine` includes a `refund` boolean to indicate flow of funds, and impacts the `Payment`'s total potentially making it negative.
+- `org`: `DocumentRef` now includes a `payable` property.
+- `bill`: `PaymentLine` includes `description`, `installment`, `payable`, `advances`, `due`, and `tax` properties.
+- `mx-cfdi-v4`: Define payment method in document.
+- `fr-choruspro-v1`: Created addon for Chorus Pro to handle invoice types and identity schemes
+
+## [v0.217.1] - 2025-06-02
+
+### Fixed
+
+- `tax`: Simple `Normalize` method support.
+
+## [v0.217.0] - 2025-06-02
+
+### Changed
+
+- `mx`: updated examples to use postcodes in the central timezone (most common)
+- `cbc`: Code: allow `,` (comma) as separator.
+- `org`: Telephone normalized and format restrictions removed.
+
+### Fixed
+
+- `es-verifactu-v1`: only validate presence of tax in preceding rows for corrective types.
+- `org`: normalizing Item Ref field.
 
 ## [v0.216.3] - 2025-05-20
 

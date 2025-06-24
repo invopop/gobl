@@ -196,7 +196,7 @@ func (r *RegimeDef) WithContext(ctx context.Context) context.Context {
 		return ctx
 	}
 	ctx = context.WithValue(ctx, keyRegime, r)
-	ctx = contextWithValidator(ctx, r.Validator)
+	ctx = ContextWithValidator(ctx, r.Validator)
 	return ctx
 }
 

@@ -57,7 +57,7 @@ func validPayment() *bill.Payment {
 						},
 					},
 				},
-				Debit: num.NewAmount(100, 2),
+				Amount: num.MakeAmount(100, 2),
 			},
 		},
 		Method: &pay.Instructions{
@@ -171,19 +171,6 @@ func TestPaymentValidation(t *testing.T) {
 		assert.NoError(t, addon.Validator(pmt))
 	})
 
-	t.Run("negative amounts", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Debit = num.NewAmount(-100, 2)
-
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (debit: must be no less than 0")
-
-		pmt.Lines[0].Credit = num.NewAmount(-100, 2)
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (credit: must be no less than 0")
-
-		pmt.Lines[0].Debit = &num.AmountZero
-		pmt.Lines[0].Credit = &num.AmountZero
-		assert.NoError(t, addon.Validator(pmt))
-	})
 }
 
 func TestPaymentNormalization(t *testing.T) {

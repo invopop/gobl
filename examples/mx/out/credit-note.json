@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "852345a0c557fa4eebf20f71381456aded0ed2dcdaa1e2c6916d8fddc1e7acdb"
+			"val": "2d4dcc31004fbefd2a9574264bb067a183f772fc81bb831a5d9f8da18df1d33f"
 		}
 	},
 	"doc": {
@@ -36,7 +36,8 @@
 		"tax": {
 			"ext": {
 				"mx-cfdi-doc-type": "E",
-				"mx-cfdi-issue-place": "21000",
+				"mx-cfdi-issue-place": "44100",
+				"mx-cfdi-payment-method": "PPD",
 				"mx-cfdi-rel-type": "01"
 			}
 		},
@@ -49,9 +50,9 @@
 			"addresses": [
 				{
 					"street": "Calle 1",
-					"locality": "Ciudad de México",
-					"region": "CDMX",
-					"code": "21000",
+					"locality": "Guadalajara",
+					"region": "Jalisco",
+					"code": "44100",
 					"country": "MX"
 				}
 			],
