@@ -28,6 +28,9 @@
         "en": "General Information Framework",
         "fr": "Informations générales"
       },
+      "desc": {
+        "en": "Due to the complexity of the values, GOBL will not apply scenarios. This means that during normalization the extension will be set to A1 if not present. This behavior is not deterministic and goes against GOBL principles."
+      },
       "values": [
         {
           "code": "A1",
