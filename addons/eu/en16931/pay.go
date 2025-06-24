@@ -67,7 +67,7 @@ func validateBillPaymentTerms(value any) error {
 
 	// BR-CO-25 Either DueDates or Detail must be provided
 	if len(terms.DueDates) == 0 && terms.Detail == "" {
-		return validation.NewError("terms", "either due_dates or detail must be provided")
+		return validation.NewError("BR-CO-25", "either due_dates or detail must be provided")
 	}
 
 	return nil

@@ -104,7 +104,7 @@ func validateOrdering(val any) error {
 
 	// BR-DE-15
 	if len(ordering.Identities) == 0 && ordering.Code == "" {
-		return validation.NewError("required", "either ordering code or identities with codes are required")
+		return validation.NewError("BR-DE-15", "either ordering code or identities with codes are required")
 	}
 
 	return nil
