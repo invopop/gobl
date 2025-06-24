@@ -21,6 +21,7 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: "Due to the complexity of the values, GOBL will not apply scenarios. This means that during normalization the extension will be set to A1 if not present. This behavior is not deterministic and goes against GOBL principles.",
+			i18n.FR: "En raison de la complexité des valeurs, GOBL ne s'appliquera pas aux scénarios. Cela signifie que pendant la normalisation, l'extension sera définie sur A1 si elle n'est pas présente. Ce comportement n'est pas déterministe et va à l'encontre des principes de GOBL.",
 		},
 		Values: []*cbc.Definition{
 			{
