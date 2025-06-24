@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `fr-choruspro-v1`: Added description to extension.
+
 ## [v0.218.0] - 2025-06-12
 
 ### Changed
