@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3a53d519b27568260ef3c83bc1e3c554afc1447e2ff01ea2a6ddd644b16f3511"
+			"val": "ae7602e940963dfcb49f8efdc1f4ef616ee62e096a3c3c73ce69d89880dde786"
 		}
 	},
 	"doc": {
@@ -125,7 +125,7 @@
 				"key": "legal",
 				"code": "M40",
 				"src": "pt-saft-exemption",
-				"text": "Reverse charge / Autoliquidação - Artigo 6.º n.º 6 alínea a) do Código do IVA, a contrário"
+				"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
 			}
 		]
 	}

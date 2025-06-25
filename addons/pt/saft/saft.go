@@ -97,6 +97,8 @@ func validate(doc any) error {
 		return validateTaxCombo(obj)
 	case *org.Item:
 		return validateItem(obj)
+	case *org.Note:
+		return validateNote(obj)
 	}
 	return nil
 }
