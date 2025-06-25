@@ -57,6 +57,18 @@ func TestInvoiceValidation(t *testing.T) {
 		require.ErrorContains(t, err, "text: the length must be no more than 500")
 	})
 
+	t.Run("note with wrong key", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLoading,
+				Text: strings.Repeat("a", 501),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 	t.Run("simplified invoice", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
