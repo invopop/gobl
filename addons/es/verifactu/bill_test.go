@@ -2,6 +2,7 @@ package verifactu_test
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/verifactu"
@@ -35,18 +36,25 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "es-verifactu-op-class: required")
 	})
 
-	t.Run("without notes", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Notes = nil
-		assertValidationError(t, inv, "notes: with key 'general' missing")
-	})
-
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
 		err := inv.Validate()
 		require.ErrorContains(t, err, "es-verifactu-doc-type: required")
+	})
+
+	t.Run("note too long", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyGeneral,
+				Text: strings.Repeat("a", 501),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "text: the length must be no more than 500")
 	})
 
 	t.Run("simplified invoice", func(t *testing.T) {
