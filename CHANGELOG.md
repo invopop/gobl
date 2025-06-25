@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `pt-saft-v1`: adapted and additional validations for the new `bill.Payment` structure
+- `pt-saft-v1`: updated `pt-exemption-code` extension list and related scenarios to use the texts complaint with the regulations.
 
 ## [v0.218.0] - 2025-06-12
 
