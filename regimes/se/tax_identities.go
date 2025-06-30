@@ -32,10 +32,8 @@ func validateTaxIdentity(tID *tax.Identity) error {
 // Assumes the code has already been normalized, is made of 12 numeric characters,
 // retaining the checksum at the end, plus 2 control digits "01".
 func validateTaxCode(value any) error {
-	code, ok := value.(cbc.Code)
-	if !ok {
-		return nil
-	}
+	// No need for nil check, as the identity type is validated before this function is called
+	code, _ := value.(cbc.Code)
 	if code == "" {
 		return nil
 	}
