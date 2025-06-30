@@ -128,6 +128,24 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
+	t.Run("missing supplier", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("SE")
+		inv.Supplier = nil
+		require.NoError(t, inv.Calculate())
+		require.Error(t, inv.Validate())
+	})
+
+	t.Run("missing customer", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("SE")
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.Error(t, inv.Validate())
+	})
+
 	t.Run("missing supplier tax ID", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
@@ -194,6 +212,9 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Supplier.Identities = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+		inv.Supplier.Identities = []*org.Identity{}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("missing customer identity", func(t *testing.T) {
@@ -203,6 +224,27 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+		inv.Customer.Identities = []*org.Identity{}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("invalid supplier identity", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("SE")
+		inv.Supplier.Identities[0].Type = "A"
+		require.NoError(t, inv.Calculate())
+		require.Error(t, inv.Validate())
+	})
+
+	t.Run("invalid customer identity", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.SetRegime("SE")
+		inv.Customer.Identities[0].Type = "A"
+		require.NoError(t, inv.Calculate())
+		require.Error(t, inv.Validate())
 	})
 
 	t.Run("simplified invoice", func(t *testing.T) {

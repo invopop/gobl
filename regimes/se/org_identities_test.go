@@ -42,6 +42,8 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		{name: "Coordination number with plus sign but wrong digit count", typeCode: se.IdentityTypeCoordinationNr, input: "8001+00177", expected: "8001+00177"},
 
 		{name: "Unknown key", typeCode: "unknown", input: "1234567890", expected: "1234567890"},
+		{name: "Empty code", typeCode: se.IdentityTypeOrgNr, input: "", expected: ""},
+		{name: "Non-numeric code", typeCode: se.IdentityTypeOrgNr, input: "ABCDEFGHIJK", expected: "ABCDEFGHIJK"},
 	}
 
 	for _, tt := range tests {
