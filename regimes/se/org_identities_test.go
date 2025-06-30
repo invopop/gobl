@@ -36,6 +36,8 @@ func TestOrgIdentityNormalize(t *testing.T) {
 		{name: "Coordination number without hyphen or plus sign", typeCode: se.IdentityTypeCoordinationNr, input: "8001610017", expected: "800161-0017"},
 
 		{name: "Unknown key", typeCode: "unknown", input: "1234567890", expected: "1234567890"},
+		{name: "Empty code", typeCode: se.IdentityTypeOrgNr, input: "", expected: ""},
+		{name: "Non-numeric code", typeCode: se.IdentityTypeOrgNr, input: "ABCDEFGHIJK", expected: "ABCDEFGHIJK"},
 	}
 
 	for _, tt := range tests {

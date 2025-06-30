@@ -42,6 +42,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		err  string
 	}{
 		{name: "valid Tax ID", code: "202100548901"},
+		{name: "empty Tax ID", code: ""},
 		{
 			name: "too short",
 			code: "20210054890",
