@@ -1,5 +1,5 @@
 // Package common provides re-usable regime related structures and data.
-package common
+package common //nolint:revive
 
 import (
 	"github.com/invopop/gobl/cbc"
