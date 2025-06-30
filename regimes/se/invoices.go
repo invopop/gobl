@@ -71,10 +71,8 @@ func validateOrgParty(value any) error {
 				party.TaxID != nil && party.TaxID.Country == l10n.TaxCountryCode(l10n.SE),
 				validation.Each(
 					validation.By(func(value any) error {
-						id, ok := value.(*org.Identity)
-						if !ok || id == nil {
-							return nil
-						}
+						// Casting to org.Identity is safe, as the identity type is validated before this function is called
+						id, _ := value.(*org.Identity)
 						if !id.Type.In(IdentityTypeOrgNr, IdentityTypePersonNr, IdentityTypeCoordinationNr) {
 							return validation.NewError("type", "must be one of: SE-ON, SE-PN, SE-CN")
 						}
@@ -90,10 +88,8 @@ func validateOrgParty(value any) error {
 // validateSupplier checks the supplier's tax ID requirements.
 // The supplier's VAT number is always required.
 func validateSupplier(value any) error {
-	party, ok := value.(*org.Party)
-	if !ok || party == nil {
-		return nil
-	}
+	// Casting to org.Party is safe, as the party is validated before this function is called
+	party, _ := value.(*org.Party)
 
 	return validation.ValidateStruct(party,
 		// Swedish Tax ID (VAT ID) is always required for the supplier,
@@ -114,10 +110,8 @@ func validateSupplier(value any) error {
 }
 
 func validateSupplierSimplifiedInvoice(value any) error {
-	party, ok := value.(*org.Party)
-	if !ok || party == nil {
-		return nil
-	}
+	// Casting to org.Party is safe, as the party is validated before this function is called
+	party, _ := value.(*org.Party)
 
 	return validation.ValidateStruct(party,
 		validation.Field(&party.Name,

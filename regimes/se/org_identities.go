@@ -72,10 +72,7 @@ var identityTypeDefinitions = []*cbc.Definition{
 //
 // If too many or too few numbers are present, it does nothing.
 func normalizeOrgIdentity(id *org.Identity) {
-	if id == nil {
-		return
-	}
-
+	// No need for nil check, as the identity type is validated before this function is called
 	switch id.Type {
 	case IdentityTypeOrgNr:
 		// Organization numbers should be numeric only, with no separators
@@ -143,9 +140,7 @@ func normalizeOrgIdentity(id *org.Identity) {
 //
 // If the organization type is not valid, it returns nil.
 func validateOrgIdentity(id *org.Identity) error {
-	if id == nil {
-		return nil
-	}
+	// No need for nil check, as the identity type is validated before this function is called
 
 	return validation.ValidateStruct(id,
 		validation.Field(&id.Code,
