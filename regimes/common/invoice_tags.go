@@ -19,12 +19,14 @@ var invoiceTags = &tax.TagSet{
 				i18n.ES: "Factura Simplificada",
 				i18n.IT: "Fattura Semplificata",
 				i18n.DE: "Vereinfachte Rechnung",
+				i18n.NO: "Forenklet faktura",
 			},
 			Desc: i18n.String{
 				i18n.EN: "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
 				i18n.ES: "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
 				i18n.IT: "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti.",
 				i18n.DE: "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+				i18n.NO: "Brukt for B2C-transaksjoner når kundeopplysningene ikke er tilgjengelige, sjekk med lokale myndigheter for grenser.",
 			},
 		},
 
@@ -38,6 +40,7 @@ var invoiceTags = &tax.TagSet{
 				i18n.ES: "Inversión del Sujeto Pasivo",
 				i18n.IT: "Inversione del soggetto passivo",
 				i18n.DE: "Umkehr der Steuerschuld",
+				i18n.NO: "Omvendt avgiftsplikt",
 			},
 		},
 
@@ -51,6 +54,7 @@ var invoiceTags = &tax.TagSet{
 				i18n.ES: "Facturación por el destinatario",
 				i18n.IT: "Autofattura",
 				i18n.DE: "Rechnung durch den Leistungsempfänger",
+				i18n.NO: "Selv-fakturert",
 			},
 		},
 
@@ -62,6 +66,7 @@ var invoiceTags = &tax.TagSet{
 				i18n.ES: "Tarifas aplicables al destinatario",
 				i18n.IT: "Aliquote applicabili al destinatario",
 				i18n.DE: "Kundensätze",
+				i18n.NO: "Kundensatser",
 			},
 		},
 
@@ -75,6 +80,7 @@ var invoiceTags = &tax.TagSet{
 				i18n.ES: "Parcial",
 				i18n.IT: "Parziale",
 				i18n.DE: "Teilweise",
+				i18n.NO: "Delvis",
 			},
 		},
 	},
