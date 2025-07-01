@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "942ce86c35ca97cb9bad4135eb8d3f08b1dddd5d2544568b402941ef69858b16"
+			"val": "5f1e7bafb3a72682ec484712fbeaac9fd540648f5fa8dd07ad4cd8d00ee41e94"
 		}
 	},
 	"doc": {
@@ -20,6 +20,7 @@
 				"label": "Representante",
 				"key": "representative",
 				"name": {
+					"given": "Juan",
 					"surname": "Pérez"
 				},
 				"identities": [

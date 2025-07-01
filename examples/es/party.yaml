@@ -8,7 +8,7 @@ people:
   - key: "representative"
     label: "Representante"
     name:
-      first: "Juan"
+      given: "Juan"
       surname: "Pérez"
     identities:
       - key: "national"
