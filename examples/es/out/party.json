@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "eb13b8883977bbd80419ce394072232e235c13c9325a4dda3693da85d86f3396"
+			"val": "942ce86c35ca97cb9bad4135eb8d3f08b1dddd5d2544568b402941ef69858b16"
 		}
 	},
 	"doc": {
@@ -15,6 +15,22 @@
 			"country": "ES",
 			"code": "B98602642"
 		},
+		"people": [
+			{
+				"label": "Representante",
+				"key": "representative",
+				"name": {
+					"surname": "Pérez"
+				},
+				"identities": [
+					{
+						"label": "NIF",
+						"key": "national",
+						"code": "60784097L"
+					}
+				]
+			}
+		],
 		"addresses": [
 			{
 				"num": "42",
