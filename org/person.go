@@ -15,10 +15,15 @@ type Person struct {
 	// Label can be used to identify the person in a given context in a single
 	// language, for example "Attn", "Contact", "Responsible", etc.
 	Label string `json:"label,omitempty" jsonschema:"title=Label,example=Attn"`
-	// Complete details on the name of the person
+	// Key used to identify the role of the person inside the context of the object.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
+	// Complete details on the name of the person.
 	Name *Name `json:"name" jsonschema:"title=Name"`
-	// What they do within an organization
+	// Role or job title of the responsibilities of the person within an organization.
 	Role string `json:"role,omitempty" jsonschema:"title=Role"`
+	// Set of codes used to identify the person, such as ID numbers, social security,
+	// driving licenses, etc. that can be attributed to the individual.
+	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Electronic mail addresses that belong to the person.
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
 	// Regular phone or mobile numbers
@@ -38,8 +43,11 @@ func (p *Person) Validate() error {
 func (p *Person) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, p,
 		validation.Field(&p.UUID),
+		validation.Field(&p.Label),
+		validation.Field(&p.Key),
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Label),
+		validation.Field(&p.Identities),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
 		validation.Field(&p.Avatars),

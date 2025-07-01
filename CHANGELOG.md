@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `es/verifactu`: map identity keys for specific codes.
+- `org`: `Person` new `key` and `identities` properties.
 
 ## [v0.218.0] - 2025-06-12
 
