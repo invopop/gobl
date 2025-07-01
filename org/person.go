@@ -3,6 +3,7 @@ package org
 import (
 	"context"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
@@ -24,12 +25,16 @@ type Person struct {
 	// Set of codes used to identify the person, such as ID numbers, social security,
 	// driving licenses, etc. that can be attributed to the individual.
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
+	// Regular post addresses for where information should be sent if needed.
+	Addresses []*Address `json:"addresses,omitempty" jsonschema:"title=Postal Addresses"`
 	// Electronic mail addresses that belong to the person.
 	Emails []*Email `json:"emails,omitempty" jsonschema:"title=Email Addresses"`
 	// Regular phone or mobile numbers
 	Telephones []*Telephone `json:"telephones,omitempty" jsonschema:"title=Telephone Numbers"`
 	// Avatars provider links to images or photos or the person.
 	Avatars []*Image `json:"avatars,omitempty" jsonschema:"title=Avatars"`
+	// Birthday of the person, if available.
+	Birthday *cal.Date `json:"birthday,omitempty" jsonschema:"title=Birthday"`
 	// Data about the data.
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
@@ -48,9 +53,11 @@ func (p *Person) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Name, validation.Required),
 		validation.Field(&p.Label),
 		validation.Field(&p.Identities),
+		validation.Field(&p.Addresses),
 		validation.Field(&p.Emails),
 		validation.Field(&p.Telephones),
 		validation.Field(&p.Avatars),
+		validation.Field(&p.Birthday),
 		validation.Field(&p.Meta),
 	)
 }
