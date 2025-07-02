@@ -2,11 +2,11 @@
 package gr
 
 import (
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -39,7 +39,7 @@ func New() *tax.RegimeDef {
 		TimeZone:               "Europe/Athens",
 		CalculatorRoundingRule: tax.RoundingRuleCurrency,
 		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
+			bill.InvoiceTags(),
 		},
 		Scenarios:   scenarios,
 		Corrections: corrections,
