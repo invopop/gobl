@@ -1,3 +1,4 @@
+//nolint:revive // "common" package name is acceptable here for shared regime utilities
 package common
 
 import "strconv"

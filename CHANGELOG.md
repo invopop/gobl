@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `it-sdi-v1`: Validate names and addresses contain only latin characters as required by SDI.
+
 ## [v0.218.0] - 2025-06-12
 
 ### Changed
