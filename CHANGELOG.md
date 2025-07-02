@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `mx-cfdi-v4`: Validate price greater than 0.
+
 ## [v0.218.0] - 2025-06-12
 
 ### Changed
