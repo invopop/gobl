@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`.
+
 ## [v0.218.0] - 2025-06-12
 
 ### Changed
