@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-verifactu-v1`: `taxes` field is required for each line
+
 ## [v0.218.0] - 2025-06-12
 
 ### Changed
