@@ -146,6 +146,33 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, ad.Validator(inv))
 	})
+
+	t.Run("line without taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = nil
+		assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).).")
+	})
+
+	t.Run("line with empty taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = tax.Set{}
+		assertValidationError(t, inv, "lines: (0: (taxes: cannot be blank.).).")
+	})
+
+	t.Run("multiple lines with one missing taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Add a second line without taxes
+		inv.Lines = append(inv.Lines, &bill.Line{
+			Quantity: num.MakeAmount(2, 0),
+			Item: &org.Item{
+				Name:  "another item",
+				Price: num.NewAmount(5000, 2),
+				Unit:  org.UnitPackage,
+			},
+			// Taxes intentionally omitted
+		})
+		assertValidationError(t, inv, "1: (taxes: cannot be blank.)")
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

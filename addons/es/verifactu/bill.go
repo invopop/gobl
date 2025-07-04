@@ -73,6 +73,13 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Lines,
+			validation.Each(
+				validation.By(validateInvoiceLine),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
 		validation.Field(&inv.Tax,
 			validation.Required,
 			validation.By(validateInvoiceTax(inv.Type)),
@@ -173,4 +180,18 @@ func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
 			),
 		)
 	}
+}
+
+func validateInvoiceLine(val any) error {
+	line, ok := val.(*bill.Line)
+	if !ok || line == nil {
+		return nil
+	}
+	return validation.ValidateStruct(line,
+		// Verifactu error 4102 Falta informar campo obligatorio.: Desglose
+		validation.Field(&line.Taxes,
+			validation.Required,
+			validation.Skip,
+		),
+	)
 }
