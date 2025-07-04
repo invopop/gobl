@@ -81,6 +81,10 @@ func validateSupplier(value interface{}) error {
 	}
 
 	return validation.ValidateStruct(supplier,
+		validation.Field(&supplier.Name,
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
 		validation.Field(&supplier.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
@@ -111,6 +115,10 @@ func validateCustomer(value interface{}) error {
 	// Customers must have either a Tax ID (PartitaIVA)
 	// or fiscal identity (codice fiscale)
 	return validation.ValidateStruct(customer,
+		validation.Field(&customer.Name,
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
 		validation.Field(&customer.TaxID,
 			validation.Required,
 			validation.When(
@@ -156,15 +164,15 @@ func validateItem(val any) error {
 
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Name,
-			validation.By(validateItemName),
+			validation.By(validateLatin1String),
 			validation.Skip,
 		),
 	)
 }
 
-// validateItemName ensures that the item name only contains characters
+// validateLatin1String ensures that the item name only contains characters
 // from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
-func validateItemName(val any) error {
+func validateLatin1String(val any) error {
 	name, _ := val.(string)
 
 	for _, r := range name {
@@ -219,8 +227,9 @@ func validateAddress(value interface{}) error {
 	}
 	// Post code and street in addition to the locality are required in Italian invoices.
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Street, validation.Required),
+		validation.Field(&v.Street, validation.Required, validation.By(validateLatin1String)),
 		validation.Field(&v.Country, validation.Required),
+		validation.Field(&v.Locality, validation.Required, validation.By(validateLatin1String)),
 		validation.Field(&v.Code,
 			validation.When(v.Country.In("IT"),
 				validation.Required,
