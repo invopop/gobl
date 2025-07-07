@@ -51,7 +51,6 @@ func (p *Person) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&p.Label),
 		validation.Field(&p.Key),
 		validation.Field(&p.Name, validation.Required),
-		validation.Field(&p.Label),
 		validation.Field(&p.Identities),
 		validation.Field(&p.Addresses),
 		validation.Field(&p.Emails),
