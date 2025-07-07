@@ -3,6 +3,7 @@ package choruspro
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 )
 
 const (
@@ -10,6 +11,12 @@ const (
 	ExtKeyFramework cbc.Key = "fr-choruspro-framework"
 	// ExtKeyScheme is the key for the scheme.
 	ExtKeyScheme cbc.Key = "fr-choruspro-scheme"
+)
+
+// Extensions codes that may be re-used
+const (
+	ExtFrameworkCodeSupplier cbc.Code = "A1"
+	ExtFrameworkCodePaid     cbc.Code = "A2"
 )
 
 var extensions = []*cbc.Definition{
@@ -20,8 +27,23 @@ var extensions = []*cbc.Definition{
 			i18n.FR: "Informations générales",
 		},
 		Desc: i18n.String{
-			i18n.EN: "Due to the complexity of the values, GOBL will not apply scenarios. This means that during normalization the extension will be set to A1 if not present. This behavior is not deterministic and goes against GOBL principles.",
-			i18n.FR: "En raison de la complexité des valeurs, GOBL ne s'appliquera pas aux scénarios. Cela signifie que pendant la normalisation, l'extension sera définie sur A1 si elle n'est pas présente. Ce comportement n'est pas déterministe et va à l'encontre des principes de GOBL.",
+			i18n.EN: here.Doc(`
+				The general information framework is used to provide additional context
+				about the entity submitting the document. If no value is provided, it will
+				default to "A1" (Submission by a supplier of an invoice), the most common
+				use-case.
+
+				This extension's value is not deterministic, meaning that it will not be
+				replaced by GOBL during normalization.
+			`),
+			i18n.FR: here.Doc(`
+				Le cadre d'informations générales est utilisé pour fournir un contexte
+				supplémentaire sur l'entité soumettant le document. Si aucune valeur
+				n'est fournie, elle sera par défaut "A1" (Dépôt par un fournisseur d'une facture), le cas d'utilisation le plus courant.
+
+				La valeur de cette extension n'est pas déterministe, ce qui signifie qu'elle
+				ne sera pas remplacée par GOBL lors de la normalisation.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -32,7 +54,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "A2",
+				Code: ExtFrameworkCodePaid,
 				Name: i18n.String{
 					i18n.EN: "Submission by a supplier of an invoice already paid",
 					i18n.FR: "Dépôt par un fournisseur d'une facture déjà payée",
