@@ -35,7 +35,7 @@ func newAddon() *tax.AddonDef {
 				ensure that it is compliant and easily convertible to other formats.
 
 				We strongly recommend checking the output and specifically the extension codes
-				used to ensure that any assumptions do not need be adjusted. 
+				used to ensure that any assumptions do not need be adjusted.
 			`),
 		},
 		Scenarios:  scenarios,
@@ -73,6 +73,8 @@ func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *pay.Instructions:
 		return validatePayInstructions(obj)
+	case *pay.Terms:
+		return validatePayTerms(obj)
 	case *bill.Invoice:
 		return validateBillInvoice(obj)
 	case *bill.Line:

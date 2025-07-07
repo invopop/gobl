@@ -55,16 +55,15 @@ func TestPayInstructions(t *testing.T) {
 	})
 }
 
-func TestValidateBillPayment(t *testing.T) {
+func TestPayTerms(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
-	t.Run("with terms", func(t *testing.T) {
-		p := &bill.PaymentDetails{
-			Terms: &pay.Terms{
-				DueDates: []*pay.DueDate{
-					{
-						Date:   cal.NewDate(2025, time.January, 1),
-						Amount: num.MakeAmount(1000, 2),
-					},
+
+	t.Run("valid", func(t *testing.T) {
+		p := &pay.Terms{
+			DueDates: []*pay.DueDate{
+				{
+					Date:   cal.NewDate(2025, time.January, 1),
+					Amount: num.MakeAmount(1000, 2),
 				},
 			},
 		}
@@ -72,26 +71,17 @@ func TestValidateBillPayment(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("without terms", func(t *testing.T) {
-		p := &bill.PaymentDetails{}
-		err := ad.Validator(p)
-		assert.ErrorContains(t, err, "terms: cannot be blank")
-	})
-
-	t.Run("with nil payment details", func(t *testing.T) {
-		var p *bill.PaymentDetails
-		err := ad.Validator(p)
-		assert.NoError(t, err)
-	})
-
 	t.Run("with empty due date", func(t *testing.T) {
-		p := &bill.PaymentDetails{
-			Terms: &pay.Terms{
-				DueDates: []*pay.DueDate{},
-			},
+		p := &pay.Terms{
+			DueDates: []*pay.DueDate{},
 		}
 		err := ad.Validator(p)
 		assert.ErrorContains(t, err, "either due_dates or detail must be provided.")
 	})
 
+	t.Run("with ni terms", func(t *testing.T) {
+		var p *pay.Terms
+		err := ad.Validator(p)
+		assert.NoError(t, err)
+	})
 }

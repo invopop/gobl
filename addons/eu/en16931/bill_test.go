@@ -412,4 +412,43 @@ func TestValidateBillLine(t *testing.T) {
 		err := ad.Validator(l)
 		assert.NoError(t, err)
 	})
+
+	t.Run("Line with nil charge and discount", func(t *testing.T) {
+		l := &bill.Line{
+			Discounts: nil,
+			Charges:   nil,
+		}
+		err := ad.Validator(l)
+		assert.NoError(t, err)
+	})
+}
+
+func TestValidateBillPayment(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("with terms", func(t *testing.T) {
+		p := &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date:   cal.NewDate(2025, time.January, 1),
+						Amount: num.MakeAmount(1000, 2),
+					},
+				},
+			},
+		}
+		err := ad.Validator(p)
+		assert.NoError(t, err)
+	})
+
+	t.Run("without terms", func(t *testing.T) {
+		p := &bill.PaymentDetails{}
+		err := ad.Validator(p)
+		assert.ErrorContains(t, err, "terms: cannot be blank")
+	})
+
+	t.Run("with nil payment details", func(t *testing.T) {
+		var p *bill.PaymentDetails
+		err := ad.Validator(p)
+		assert.NoError(t, err)
+	})
 }

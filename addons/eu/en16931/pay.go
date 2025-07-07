@@ -1,7 +1,6 @@
 package en16931
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
@@ -45,29 +44,14 @@ func validatePayInstructions(instr *pay.Instructions) error {
 	)
 }
 
-func validateBillPayment(payment *bill.PaymentDetails) error {
-	if payment == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(payment,
-		validation.Field(&payment.Terms,
-			validation.Required,
-			validation.By(validateBillPaymentTerms),
-			validation.Skip,
-		),
-	)
-}
-
-func validateBillPaymentTerms(value any) error {
-	terms, ok := value.(*pay.Terms)
-	if !ok {
+func validatePayTerms(terms *pay.Terms) error {
+	if terms == nil {
 		return nil
 	}
 
 	// BR-CO-25 Either DueDates or Detail must be provided
 	if len(terms.DueDates) == 0 && terms.Detail == "" {
-		return validation.NewError("BR-CO-25", "either due_dates or detail must be provided")
+		return validation.NewError("BR-CO-25", "either due_dates or detail must be provided.")
 	}
 
 	return nil
