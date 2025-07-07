@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
+
 ### Added
 - `it-sdi-v1`: Validate names and addresses contain only latin characters as required by SDI.
 - `org`: `Unit` additional standard units.
