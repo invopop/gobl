@@ -28,6 +28,10 @@
         "en": "General Information Framework",
         "fr": "Informations générales"
       },
+      "desc": {
+        "en": "The general information framework is used to provide additional context\nabout the entity submitting the document. If no value is provided, it will\ndefault to \"A1\" (Submission by a supplier of an invoice), the most common\nuse-case.\n\nThis extension's value is not deterministic, meaning that it will not be\nreplaced by GOBL during normalization.",
+        "fr": "Le cadre d'informations générales est utilisé pour fournir un contexte\nsupplémentaire sur l'entité soumettant le document. Si aucune valeur\nn'est fournie, elle sera par défaut \"A1\" (Dépôt par un fournisseur d'une facture), le cas d'utilisation le plus courant.\n\nLa valeur de cette extension n'est pas déterministe, ce qui signifie qu'elle\nne sera pas remplacée par GOBL lors de la normalisation."
+      },
       "values": [
         {
           "code": "A1",

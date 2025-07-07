@@ -6,8 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
+- `pt-saft-v1`: adapted and additional validations for the new `bill.Payment` structure
+- `pt-saft-v1`: updated `pt-exemption-code` extension list and related scenarios to use the texts complaint with the regulations.
+
 ### Added
+
 - `mx-cfdi-v4`: Validate price greater than 0.
+- `it-sdi-v1`: Validate names and addresses contain only latin characters as required by SDI.
+- `it-sdi-v1`: Payment means now support `online` key as a card payment.
+- `org`: `Unit` additional standard units.
+- `es/verifactu`: map identity keys for specific codes.
+- `org`: `Person` new `key`, `addresses`, and `identities` properties.
+
 
 ## [v0.218.0] - 2025-06-12
 
