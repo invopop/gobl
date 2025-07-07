@@ -1,14 +1,13 @@
-package common
+package bill
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
 )
 
 var invoiceTags = &tax.TagSet{
-	Schema: bill.ShortSchemaInvoice,
+	Schema: ShortSchemaInvoice,
 	List: []*cbc.Definition{
 		// Simplified invoices are issued when the complete fiscal details of
 		// a customer are not available.

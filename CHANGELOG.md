@@ -11,10 +11,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
 - `de-xrechnung-v3`: Add missing validation from CIUS.
 - `fr`: Add identity validation and normalization.
+- `es/verifactu`: map identity keys for specific codes.
+- `org`: `Person` new `key`, `addresses`, and `identities` properties.
 
 ### Changed
 
 - `it-sdi-v1`: Modify address validation to accept postbox.
+
 ## [v0.218.0] - 2025-06-12
 
 ### Changed
