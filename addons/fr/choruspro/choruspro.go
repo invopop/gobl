@@ -68,7 +68,7 @@ func validate(doc any) error {
 	case *bill.Invoice:
 		return validateInvoice(obj)
 	case *org.Party:
-		return validateParty(obj)
+		return validateOrgParty(obj)
 	}
 	return nil
 }
@@ -78,6 +78,6 @@ func normalize(doc any) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
 	case *org.Party:
-		normalizeParty(obj)
+		normalizeOrgParty(obj)
 	}
 }

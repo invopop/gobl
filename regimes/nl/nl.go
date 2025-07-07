@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -29,10 +28,10 @@ func New() *tax.RegimeDef {
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
-			common.InvoiceScenarios(),
+			bill.InvoiceScenarios(),
 		},
 		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
+			bill.InvoiceTags(),
 		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
