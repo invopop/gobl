@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
 - `pt-saft-v1`: adapted and additional validations for the new `bill.Payment` structure
+- `pt-saft-v1`: updated `pt-exemption-code` extension list and related scenarios to use the texts complaint with the regulations.
 
 ### Added
 
