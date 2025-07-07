@@ -323,6 +323,53 @@
           }
         }
       ]
+    },
+    {
+      "key": "es-verifactu-identity-type",
+      "name": {
+        "en": "Identity Type Code - L7",
+        "es": "Código de Tipo de Identidad - L7"
+      },
+      "desc": {
+        "en": "Identity code used to identify the type of identity document used by the customer.\n\nCodes \"01\" and \"02\" are not defined as they are explicitly inferred from the tax Identity\nand the associated country. In GOBL, the tax Identity implies association with VAT from\nSpanish invoices."
+      },
+      "values": [
+        {
+          "code": "03",
+          "name": {
+            "en": "Passport",
+            "es": "Pasaporte"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Foreign Identity Document",
+            "es": "Documento de Identidad Extranjero"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Spanish Resident Foreigner Identity Card",
+            "es": "Tarjeta de Identidad de Extranjero Residente"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Other Identity Document",
+            "es": "Otro Documento de Identidad"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Not registered in census",
+            "es": "No censado"
+          }
+        }
+      ]
     }
   ],
   "scenarios": [

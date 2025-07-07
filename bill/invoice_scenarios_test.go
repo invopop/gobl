@@ -126,3 +126,10 @@ func TestInvoiceGetExtensions(t *testing.T) {
 		assert.Len(t, ext, 1)
 	})
 }
+
+func TestInvoiceScenarios(t *testing.T) {
+	t.Run("provides list", func(t *testing.T) {
+		list := bill.InvoiceScenarios()
+		assert.Len(t, list.List, 1)
+	})
+}

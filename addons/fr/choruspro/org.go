@@ -9,7 +9,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-func normalizeParty(party *org.Party) {
+func normalizeOrgParty(party *org.Party) {
 	if party == nil {
 		return
 	}
@@ -56,7 +56,7 @@ func normalizeParty(party *org.Party) {
 	}
 }
 
-func validateParty(value interface{}) error {
+func validateOrgParty(value interface{}) error {
 	party, ok := value.(*org.Party)
 	if !ok || party == nil {
 		return nil
@@ -70,21 +70,21 @@ func validateParty(value interface{}) error {
 		validation.Field(&party.Identities,
 			validation.When(
 				party.Ext != nil,
-				validation.By(validateIdentities(party.Ext.Get(ExtKeyScheme))),
+				validation.By(validateOrgIdentities(party.Ext.Get(ExtKeyScheme))),
 			),
 			validation.Skip,
 		),
 		validation.Field(&party.TaxID,
 			validation.When(
 				party.Ext != nil,
-				validation.By(validateTaxID(party.Ext.Get(ExtKeyScheme))),
+				validation.By(validateOrgPartyTaxID(party.Ext.Get(ExtKeyScheme))),
 			),
 			validation.Skip,
 		),
 	)
 }
 
-func validateIdentities(scheme cbc.Code) validation.RuleFunc {
+func validateOrgIdentities(scheme cbc.Code) validation.RuleFunc {
 	return func(value interface{}) error {
 		identities, ok := value.([]*org.Identity)
 		if !ok || identities == nil {
@@ -110,7 +110,7 @@ func validateIdentities(scheme cbc.Code) validation.RuleFunc {
 	}
 }
 
-func validateTaxID(scheme cbc.Code) validation.RuleFunc {
+func validateOrgPartyTaxID(scheme cbc.Code) validation.RuleFunc {
 	return func(value interface{}) error {
 		taxID, ok := value.(*tax.Identity)
 		if !ok || taxID == nil {
