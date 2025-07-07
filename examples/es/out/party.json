@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "eb13b8883977bbd80419ce394072232e235c13c9325a4dda3693da85d86f3396"
+			"val": "c814dff123ca4616587fb8fcfb3491873201b622e358436b8b8dcb42ae7807e1"
 		}
 	},
 	"doc": {
@@ -15,6 +15,33 @@
 			"country": "ES",
 			"code": "B98602642"
 		},
+		"people": [
+			{
+				"label": "Representante",
+				"key": "representative",
+				"name": {
+					"given": "Juan",
+					"surname": "Pérez"
+				},
+				"identities": [
+					{
+						"label": "NIF",
+						"key": "national",
+						"code": "60784097L"
+					}
+				],
+				"addresses": [
+					{
+						"num": "42",
+						"street": "Calle Pradillo",
+						"locality": "Madrid",
+						"region": "Madrid",
+						"code": "28002",
+						"country": "ES"
+					}
+				]
+			}
+		],
 		"addresses": [
 			{
 				"num": "42",

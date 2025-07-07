@@ -6,6 +6,27 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+var invoiceScenarios = &tax.ScenarioSet{
+	Schema: ShortSchemaInvoice,
+	List: []*tax.Scenario{
+		// Reverse Charges
+		{
+			Tags: []cbc.Key{tax.TagReverseCharge},
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
+				Src:  tax.TagReverseCharge,
+				Text: "Reverse charge: Customer to account for VAT to the relevant tax authority.",
+			},
+		},
+	},
+}
+
+// InvoiceScenarios provides a standard set of scenarios to either be extended
+// or overridden by a regime or addon.
+func InvoiceScenarios() *tax.ScenarioSet {
+	return invoiceScenarios
+}
+
 // GetType provides the invoice type as part of the tax.ScenarioDocument interface.
 func (inv *Invoice) GetType() cbc.Key {
 	return inv.Type

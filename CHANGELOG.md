@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 - `it-sdi-v1`: Validate names and addresses contain only latin characters as required by SDI.
+- `es/verifactu`: map identity keys for specific codes.
+- `org`: `Person` new `key`, `addresses`, and `identities` properties.
 
 ## [v0.218.0] - 2025-06-12
 
