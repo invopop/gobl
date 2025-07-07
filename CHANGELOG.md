@@ -11,7 +11,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
 
 ### Added
+
 - `it-sdi-v1`: Validate names and addresses contain only latin characters as required by SDI.
+- `it-sdi-v1`: Payment means now support `online` key as a card payment.
 - `org`: `Unit` additional standard units.
 - `es/verifactu`: map identity keys for specific codes.
 - `org`: `Person` new `key`, `addresses`, and `identities` properties.
