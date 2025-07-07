@@ -78,6 +78,12 @@ func TestValidateBillPayment(t *testing.T) {
 		assert.ErrorContains(t, err, "terms: cannot be blank")
 	})
 
+	t.Run("with nil payment details", func(t *testing.T) {
+		var p *bill.PaymentDetails
+		err := ad.Validator(p)
+		assert.NoError(t, err)
+	})
+
 	t.Run("with empty due date", func(t *testing.T) {
 		p := &bill.PaymentDetails{
 			Terms: &pay.Terms{
@@ -87,4 +93,5 @@ func TestValidateBillPayment(t *testing.T) {
 		err := ad.Validator(p)
 		assert.ErrorContains(t, err, "either due_dates or detail must be provided.")
 	})
+
 }

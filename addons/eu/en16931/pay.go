@@ -61,7 +61,7 @@ func validateBillPayment(payment *bill.PaymentDetails) error {
 
 func validateBillPaymentTerms(value any) error {
 	terms, ok := value.(*pay.Terms)
-	if !ok || terms == nil {
+	if !ok {
 		return nil
 	}
 
