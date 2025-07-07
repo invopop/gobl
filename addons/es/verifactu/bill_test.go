@@ -2,6 +2,7 @@ package verifactu_test
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/verifactu"
@@ -13,6 +14,118 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestInvoicePartyNormalization(t *testing.T) {
+	t.Run("regular Spanish customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "ES",
+			Code:    "B12345678",
+		}
+		require.NoError(t, inv.Calculate())
+	})
+
+	t.Run("Spanish customer with identities should not be normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = &tax.Identity{
+			Country: "ES",
+			Code:    "B12345678",
+		}
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		// Should not have extension as Spanish NIFs are already handled
+		assert.Empty(t, inv.Customer.Identities[0].Ext)
+	})
+
+	t.Run("customer without identities", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		// Should not cause any issues
+	})
+
+	t.Run("passport identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+	})
+
+	t.Run("foreign identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyForeign,
+				Code: "FOR123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIdentityTypeForeign, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+	})
+
+	t.Run("resident identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyResident,
+				Code: "RES123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIdentityTypeResident, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+	})
+
+	t.Run("other identity normalization", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyOther,
+				Code: "OTH123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIdentityTypeOther, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+	})
+
+	t.Run("unknown identity key not normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  "unknown",
+				Code: "UNK123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Empty(t, inv.Customer.Identities[0].Ext)
+	})
+
+	t.Run("multiple identities only normalizes first", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+			{
+				Key:  org.IdentityKeyForeign,
+				Code: "FOR123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
+		assert.Empty(t, inv.Customer.Identities[1].Ext)
+	})
+}
 
 func TestInvoiceValidation(t *testing.T) {
 	t.Run("standard invoice", func(t *testing.T) {
@@ -35,18 +148,37 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "es-verifactu-op-class: required")
 	})
 
-	t.Run("without notes", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Notes = nil
-		assertValidationError(t, inv, "notes: with key 'general' missing")
-	})
-
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		inv.Tax.Ext = nil
 		err := inv.Validate()
 		require.ErrorContains(t, err, "es-verifactu-doc-type: required")
+	})
+
+	t.Run("note too long", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyGeneral,
+				Text: strings.Repeat("a", 501),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "text: the length must be no more than 500")
+	})
+
+	t.Run("note with wrong key", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLoading,
+				Text: strings.Repeat("a", 501),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("simplified invoice", func(t *testing.T) {
