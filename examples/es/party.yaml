@@ -14,6 +14,13 @@ people:
       - key: "national"
         label: "NIF"
         code: "60784097L"
+    addresses:
+      - num: "42"
+        street: "Calle Pradillo"
+        locality: "Madrid"
+        region: "Madrid"
+        code: "28002"
+        country: "ES"
 emails:
   - addr: "billing@example.com"
 addresses:

@@ -19,15 +19,36 @@
             "Attn"
           ]
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Key used to identify the role of the person inside the context of the object."
+        },
         "name": {
           "$ref": "https://gobl.org/draft-0/org/name",
           "title": "Name",
-          "description": "Complete details on the name of the person"
+          "description": "Complete details on the name of the person."
         },
         "role": {
           "type": "string",
           "title": "Role",
-          "description": "What they do within an organization"
+          "description": "Role or job title of the responsibilities of the person within an organization."
+        },
+        "identities": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/identity"
+          },
+          "type": "array",
+          "title": "Identities",
+          "description": "Set of codes used to identify the person, such as ID numbers, social security,\ndriving licenses, etc. that can be attributed to the individual."
+        },
+        "addresses": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/address"
+          },
+          "type": "array",
+          "title": "Postal Addresses",
+          "description": "Regular post addresses for where information should be sent if needed."
         },
         "emails": {
           "items": {

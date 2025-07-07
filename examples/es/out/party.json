@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5f1e7bafb3a72682ec484712fbeaac9fd540648f5fa8dd07ad4cd8d00ee41e94"
+			"val": "c814dff123ca4616587fb8fcfb3491873201b622e358436b8b8dcb42ae7807e1"
 		}
 	},
 	"doc": {
@@ -28,6 +28,16 @@
 						"label": "NIF",
 						"key": "national",
 						"code": "60784097L"
+					}
+				],
+				"addresses": [
+					{
+						"num": "42",
+						"street": "Calle Pradillo",
+						"locality": "Madrid",
+						"region": "Madrid",
+						"code": "28002",
+						"country": "ES"
 					}
 				]
 			}
