@@ -42,6 +42,9 @@ func CanonicalJSON(src io.Reader) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	if obj == nil {
+		return nil, nil // nothing to marshal
+	}
 	return obj.MarshalJSON()
 }
 
