@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "86f7d16ef44cfd11a138f95e07827c0c5b752f5b173c4b3433d5482deaac9309"
+			"val": "85c460e11711e78fc4f95cf2d83ae709cdd75c1f015223d339ced294e857cc1f"
 		}
 	},
 	"doc": {
@@ -58,7 +58,8 @@
 					"num": "1",
 					"street": "Rue Sundacsakn",
 					"locality": "Saint-Germain-En-Laye",
-					"code": "75050"
+					"code": "75050",
+					"country": "FR"
 				}
 			],
 			"emails": [
@@ -108,6 +109,7 @@
 					{
 						"cat": "VAT",
 						"ext": {
+							"cef-vatex": "VATEX-EU-79-C",
 							"untdid-tax-category": "E"
 						}
 					}
@@ -115,6 +117,17 @@
 				"total": "90.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			},
+			"instructions": {
+				"key": "card",
+				"ext": {
+					"untdid-payment-means": "48"
+				}
+			}
+		},
 		"totals": {
 			"sum": "1710.00",
 			"total": "1710.00",
@@ -133,6 +146,7 @@
 							},
 							{
 								"ext": {
+									"cef-vatex": "VATEX-EU-79-C",
 									"untdid-tax-category": "E"
 								},
 								"base": "90.00",
