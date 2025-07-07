@@ -415,8 +415,8 @@ func TestValidateBillLine(t *testing.T) {
 
 	t.Run("Line with nil charge and discount", func(t *testing.T) {
 		l := &bill.Line{
-			Discounts: nil,
-			Charges:   nil,
+			Discounts: []*bill.LineDiscount{nil},
+			Charges:   []*bill.LineCharge{nil},
 		}
 		err := ad.Validator(l)
 		assert.NoError(t, err)
