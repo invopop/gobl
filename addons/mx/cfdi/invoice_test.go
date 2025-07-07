@@ -419,6 +419,16 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 			err: "price: must be greater than 0",
 		},
 		{
+			name: "nil price",
+			item: &org.Item{
+				Name: "Test purchase",
+				Ext: tax.Extensions{
+					cfdi.ExtKeyProdServ: "12345678",
+				},
+			},
+			err: "price: cannot be blank",
+		},
+		{
 			name: "missing extension",
 			item: &org.Item{
 				Name:  "Test purchase",
