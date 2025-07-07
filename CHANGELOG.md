@@ -8,7 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`.
+- `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
+
+### Added
+
+- `es/verifactu`: map identity keys for specific codes.
+- `org`: `Person` new `key`, `addresses`, and `identities` properties.
 
 ## [v0.218.0] - 2025-06-12
 

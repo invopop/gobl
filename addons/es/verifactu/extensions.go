@@ -13,6 +13,17 @@ const (
 	ExtKeyCorrectionType cbc.Key = "es-verifactu-correction-type"
 	ExtKeyExempt         cbc.Key = "es-verifactu-exempt"
 	ExtKeyRegime         cbc.Key = "es-verifactu-regime"
+	ExtKeyIdentityType   cbc.Key = "es-verifactu-identity-type"
+)
+
+// Identity Type Codes
+const (
+	ExtCodeIdentityTypeVATID         cbc.Code = "02" // VAT ID
+	ExtCodeIdentityTypePassport      cbc.Code = "03" // Passport
+	ExtCodeIdentityTypeForeign       cbc.Code = "04" // Foreign Identity Document
+	ExtCodeIdentityTypeResident      cbc.Code = "05" // Spanish Resident Foreigner Identity Card
+	ExtCodeIdentityTypeOther         cbc.Code = "06" // Other Identity Document
+	ExtCodeIdentityTypeNotRegistered cbc.Code = "07" // Not registered in census
 )
 
 var extensions = []*cbc.Definition{
@@ -350,6 +361,59 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Simplified regime (VAT only)",
 					i18n.ES: "Régimen simplificado (IVA only)",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyIdentityType,
+		Name: i18n.String{
+			i18n.EN: "Identity Type Code - L7",
+			i18n.ES: "Código de Tipo de Identidad - L7",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Identity code used to identify the type of identity document used by the customer.
+
+				Codes "01" and "02" are not defined as they are explicitly inferred from the tax Identity
+				and the associated country. In GOBL, the tax Identity implies association with VAT from
+				Spanish invoices.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtCodeIdentityTypePassport,
+				Name: i18n.String{
+					i18n.EN: "Passport",
+					i18n.ES: "Pasaporte",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeForeign,
+				Name: i18n.String{
+					i18n.EN: "Foreign Identity Document",
+					i18n.ES: "Documento de Identidad Extranjero",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeResident,
+				Name: i18n.String{
+					i18n.EN: "Spanish Resident Foreigner Identity Card",
+					i18n.ES: "Tarjeta de Identidad de Extranjero Residente",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeOther,
+				Name: i18n.String{
+					i18n.EN: "Other Identity Document",
+					i18n.ES: "Otro Documento de Identidad",
+				},
+			},
+			{
+				Code: ExtCodeIdentityTypeNotRegistered,
+				Name: i18n.String{
+					i18n.EN: "Not registered in census",
+					i18n.ES: "No censado",
 				},
 			},
 		},

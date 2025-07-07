@@ -295,7 +295,7 @@ var extensions = []*cbc.Definition{
 					"lines": [
 						{
 							// ...
-							"item": {
+						"item": {
 								"name": "Some service exempt of tax",
 								"price": "25.00"
 							},
@@ -841,6 +841,7 @@ var extensions = []*cbc.Definition{
 					},
 					// ...
 				}
+				~~~
 			`),
 		},
 		Values: []*cbc.Definition{
