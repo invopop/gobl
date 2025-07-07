@@ -4,6 +4,23 @@ tax_id:
   country: "ES"
   code: "B-986.026.42" # test normalization
 name: "Provide One S.L."
+people:
+  - key: "representative"
+    label: "Representante"
+    name:
+      given: "Juan"
+      surname: "Pérez"
+    identities:
+      - key: "national"
+        label: "NIF"
+        code: "60784097L"
+    addresses:
+      - num: "42"
+        street: "Calle Pradillo"
+        locality: "Madrid"
+        region: "Madrid"
+        code: "28002"
+        country: "ES"
 emails:
   - addr: "billing@example.com"
 addresses:
