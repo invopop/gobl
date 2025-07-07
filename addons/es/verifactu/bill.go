@@ -112,7 +112,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Notes,
-			org.ValidateNotesHasKey(org.NoteKeyGeneral),
+			validation.Each(
+				validation.By(validateNote),
+				validation.Skip,
+			),
 			validation.Skip,
 		),
 	)
@@ -206,4 +209,17 @@ func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
 			),
 		)
 	}
+}
+
+func validateNote(val any) error {
+	note, ok := val.(*org.Note)
+	if !ok || note == nil || note.Key != org.NoteKeyGeneral {
+		return nil
+	}
+	return validation.ValidateStruct(note,
+		validation.Field(&note.Text,
+			validation.Length(0, 500),
+			validation.Skip,
+		),
+	)
 }

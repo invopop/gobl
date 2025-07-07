@@ -81,6 +81,10 @@ func validateSupplier(value interface{}) error {
 	}
 
 	return validation.ValidateStruct(supplier,
+		validation.Field(&supplier.Name,
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
 		validation.Field(&supplier.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,
@@ -111,6 +115,10 @@ func validateCustomer(value interface{}) error {
 	// Customers must have either a Tax ID (PartitaIVA)
 	// or fiscal identity (codice fiscale)
 	return validation.ValidateStruct(customer,
+		validation.Field(&customer.Name,
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
 		validation.Field(&customer.TaxID,
 			validation.Required,
 			validation.When(
@@ -156,15 +164,15 @@ func validateItem(val any) error {
 
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Name,
-			validation.By(validateItemName),
+			validation.By(validateLatin1String),
 			validation.Skip,
 		),
 	)
 }
 
-// validateItemName ensures that the item name only contains characters
+// validateLatin1String ensures that the item name only contains characters
 // from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
-func validateItemName(val any) error {
+func validateLatin1String(val any) error {
 	name, _ := val.(string)
 
 	for _, r := range name {
@@ -223,13 +231,31 @@ func validateAddress(value interface{}) error {
 			validation.When(v.PostOfficeBox == "",
 				validation.Required.Error("either street or post office box must be set"),
 			),
+			validation.By(validateLatin1String),
+			validation.Skip,
 		),
-		validation.Field(&v.Country, validation.Required),
+		validation.Field(&v.PostOfficeBox,
+			validation.When(v.Street == "",
+				validation.Required.Error("either street or post office box must be set"),
+			),
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
+		validation.Field(&v.Country,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&v.Locality,
+			validation.Required,
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
 		validation.Field(&v.Code,
 			validation.When(v.Country.In("IT"),
 				validation.Required,
 				validation.Match(regexp.MustCompile(`^\d{5}$`)),
 			),
+			validation.Skip,
 		),
 	)
 }
@@ -240,7 +266,13 @@ func validateInvoiceSupplierRegistration(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Entry, validation.Required),
-		validation.Field(&v.Office, validation.Required),
+		validation.Field(&v.Entry,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&v.Office,
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }

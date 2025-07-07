@@ -151,7 +151,7 @@ func TestValidateInvoice(t *testing.T) {
 		inv.Tax.Ext[choruspro.ExtKeyFramework] = "A2"
 
 		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "If the invoice has type A2, it must be paid in full")
+		assert.ErrorContains(t, err, "totals: must be paid in full for framework 'A2'.")
 	})
 
 	t.Run("framework A2 with paid invoice", func(t *testing.T) {

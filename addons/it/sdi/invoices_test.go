@@ -153,6 +153,32 @@ func TestSupplierValidation(t *testing.T) {
 		ad.Normalizer(inv)
 		assert.NoError(t, ad.Validator(inv))
 	})
+
+	t.Run("valid Latin-1 supplier name", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Test with valid Latin-1 characters including accented characters
+		inv.Supplier.Name = "Società di Test SRL àáâãäåæçèéêë"
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("invalid supplier name with non-Latin-1 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Test with emoji (outside Latin-1 range)
+		inv.Supplier.Name = "Test Supplier 😊"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (name: contains characters outside of Latin and Latin-1 range.).")
+	})
+
+	t.Run("invalid supplier name with Greek characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Test with Greek characters (outside Latin-1 range)
+		inv.Supplier.Name = "Test Supplier αβγδε"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (name: contains characters outside of Latin and Latin-1 range.).")
+	})
 }
 
 func TestCustomerValidation(t *testing.T) {
@@ -208,6 +234,23 @@ func TestCustomerValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "customer: cannot be blank.")
+	})
+
+	t.Run("valid Latin-1 customer name", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Test with valid Latin-1 characters including special symbols
+		inv.Customer.Name = "Cliente & Cia. S.p.A. ñöüß"
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("invalid customer name with Chinese characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Test with Chinese characters (outside Latin-1 range)
+		inv.Customer.Name = "测试客户"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: (name: contains characters outside of Latin and Latin-1 range.).")
 	})
 
 }
@@ -291,7 +334,7 @@ func TestPaymentValidation(t *testing.T) {
 
 }
 
-func TestSupplierAddressesValidation(t *testing.T) {
+func TestAddressesValidation(t *testing.T) {
 	t.Run("missing addresses", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses = nil
@@ -334,21 +377,72 @@ func TestSupplierAddressesValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("Post office box missing street", func(t *testing.T) {
+	t.Run("valid Latin-1 address fields", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Supplier.Addresses[0].Street = ""
-		inv.Supplier.Addresses[0].PostOfficeBox = "1234"
+		// Test with valid Latin-1 characters in address
+		inv.Supplier.Addresses[0].Street = "Via dell'Università ñ°"
+		inv.Supplier.Addresses[0].Locality = "Città di Castello àèìòù"
+		inv.Customer.Addresses[0].Street = "Rue de la Paix é"
+		inv.Customer.Addresses[0].Locality = "Saint-Étienne ç"
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
 
-	t.Run("Missing post office box and street", func(t *testing.T) {
+	t.Run("invalid supplier address street with emoji", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses[0].Street = "Via Test 🏠"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (addresses: (0: (street: contains characters outside of Latin and Latin-1 range.).).)")
+	})
+
+	t.Run("invalid supplier postbox  with emoji", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses[0].Street = ""
+		inv.Supplier.Addresses[0].PostOfficeBox = "post 🏠"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "contains characters outside of Latin and Latin-1 range")
+	})
+
+	t.Run("missing supplier address street and postbox", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Addresses[0].Street = ""
 		inv.Supplier.Addresses[0].PostOfficeBox = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "either street or post office box must be set")
+	})
+
+	t.Run("invalid customer address street with Japanese characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Addresses[0].Street = "テスト通り"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "customer: (addresses: (0: (street: contains characters outside of Latin and Latin-1 range.).).)")
+	})
+
+	t.Run("multiple address validation errors", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Set multiple invalid fields to test comprehensive validation
+		inv.Supplier.Name = "Test 中文"
+		inv.Customer.Name = "Cliente 🎉"
+		inv.Supplier.Addresses[0].Street = "Via Test 🏠"
+		inv.Customer.Addresses[0].Locality = "Città 한국어"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+
+		// Should contain multiple validation errors for Latin-1 violations
+		assert.ErrorContains(t, err, "contains characters outside of Latin and Latin-1 range")
+
+		// Check that all invalid fields are mentioned in the error
+		errStr := err.Error()
+		assert.Contains(t, errStr, "supplier")
+		assert.Contains(t, errStr, "customer")
+		assert.Contains(t, errStr, "name")
+		assert.Contains(t, errStr, "addresses")
+		assert.Contains(t, errStr, "street")
+		assert.Contains(t, errStr, "locality")
 	})
 }
 
