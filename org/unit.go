@@ -31,44 +31,53 @@ const (
 	UnitEmpty Unit = `` // No unit defined
 
 	// Measurement units
-	UnitMilligram    Unit = `mg`
-	UnitGram         Unit = `g`
-	UnitKilogram     Unit = `kg`
-	UnitMetricTon    Unit = `t`
-	UnitMillimetre   Unit = `mm`
-	UnitCentimetre   Unit = `cm`
-	UnitMetre        Unit = `m`
-	UnitKilometre    Unit = `km`
-	UnitInch         Unit = `in`
-	UnitFoot         Unit = `ft`
-	UnitSquareMetre  Unit = `m2`
-	UnitCubicMetre   Unit = `m3`
-	UnitMillilitre   Unit = "ml"
-	UnitCentilitre   Unit = `cl`
-	UnitLitre        Unit = `l`
-	UnitWatt         Unit = `w`
-	UnitKilowatt     Unit = `kw`
-	UnitKilowattHour Unit = `kwh`
-	UnitMonth        Unit = `mon`
-	UnitDay          Unit = `day`
-	UnitSecond       Unit = `s`
-	UnitHour         Unit = `h`
-	UnitMinute       Unit = `min`
-	UnitRate         Unit = `rate`
-	UnitPiece        Unit = `piece`
-	UnitItem         Unit = `item`
-	UnitActivity     Unit = `activity`
-	UnitService      Unit = `service`
-	UnitGroup        Unit = `group`
-	UnitSet          Unit = `set`
-	UnitTrip         Unit = `trip`
-	UnitJob          Unit = `job`
-	UnitAssortment   Unit = `assortment`
-	UnitOutfit       Unit = `outfit`
-	UnitKit          Unit = `kit`
-	UnitBaseBox      Unit = `basebox`
-	UnitBulkPack     Unit = `pk`
-	UnitOne          Unit = `one`
+	UnitMilligram        Unit = `mg`
+	UnitGram             Unit = `g`
+	UnitKilogram         Unit = `kg`
+	UnitMetricTon        Unit = `t`
+	UnitMillimetre       Unit = `mm`
+	UnitCentimetre       Unit = `cm`
+	UnitDecimetre        Unit = `dm`
+	UnitMetre            Unit = `m`
+	UnitKilometre        Unit = `km`
+	UnitInch             Unit = `in`
+	UnitFoot             Unit = `ft`
+	UnitSquareMilimetre  Unit = `mm2`
+	UnitSquareCentimetre Unit = `cm2`
+	UnitSquareDecimetre  Unit = `dm2`
+	UnitSquareMetre      Unit = `m2`
+	UnitHectare          Unit = `ha`
+	UnitAcre             Unit = `ac`
+	UnitCubicMilimetre   Unit = `mm3`
+	UnitCubicCentimetre  Unit = `cm3`
+	UnitCubicDecimetre   Unit = `dm3`
+	UnitCubicMetre       Unit = `m3`
+	UnitMillilitre       Unit = "ml"
+	UnitCentilitre       Unit = `cl`
+	UnitLitre            Unit = `l`
+	UnitWatt             Unit = `w`
+	UnitKilowatt         Unit = `kw`
+	UnitKilowattHour     Unit = `kwh`
+	UnitMonth            Unit = `mon`
+	UnitDay              Unit = `day`
+	UnitSecond           Unit = `s`
+	UnitHour             Unit = `h`
+	UnitMinute           Unit = `min`
+	UnitRate             Unit = `rate`
+	UnitPiece            Unit = `piece`
+	UnitItem             Unit = `item`
+	UnitActivity         Unit = `activity`
+	UnitService          Unit = `service`
+	UnitGroup            Unit = `group`
+	UnitSet              Unit = `set`
+	UnitTrip             Unit = `trip`
+	UnitJob              Unit = `job`
+	UnitAssortment       Unit = `assortment`
+	UnitOutfit           Unit = `outfit`
+	UnitKit              Unit = `kit`
+	UnitBaseBox          Unit = `basebox`
+	UnitBulkPack         Unit = `pk`
+	UnitOne              Unit = `one`
 
 	// Presentation Unit Codes
 	UnitBag       Unit = `bag`
@@ -126,11 +135,20 @@ var UnitDefinitions = []DefUnit{
 	{UnitMetricTon, "Metric tons", "", "TNE"},
 	{UnitMillimetre, "Milimetres", "", "MMT"},
 	{UnitCentimetre, "Centimetres", "", "CMT"},
+	{UnitDecimetre, "Decimetres", "A unit of length equal to one-tenth of a metre.", "DMT"},
 	{UnitMetre, "Metres", "", "MTR"},
 	{UnitKilometre, "Kilometers", "", "KMT"},
 	{UnitInch, "Inches", "", "INH"},
 	{UnitFoot, "Feet", "", "FOT"},
+	{UnitSquareMilimetre, "Square millimetres", "", "MMK"},
+	{UnitSquareCentimetre, "Square centimetres", "", "CMK"},
+	{UnitSquareDecimetre, "Square decimetres", "", "DMK"},
 	{UnitSquareMetre, "Square metres", "", "MTK"},
+	{UnitAcre, "Acres", "A unit of area equal to 43,560 square feet.", "ACR"},
+	{UnitHectare, "Hectares", "A unit of area equal to 10,000 square metres.", "HAR"},
+	{UnitCubicMilimetre, "Cubic millimetres", "", "MMQ"},
+	{UnitCubicCentimetre, "Cubic centimetres", "", "CMQ"},
+	{UnitCubicDecimetre, "Cubic decimetres", "", "DMQ"},
 	{UnitCubicMetre, "Cubic metres", "", "MTQ"},
 	{UnitMillilitre, "Millilitres", "", "MLT"},
 	{UnitCentilitre, "Centilitres", "", "CLT"},

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `org`: `Unit` additional standard units.
 - `es/verifactu`: map identity keys for specific codes.
 - `org`: `Person` new `key`, `addresses`, and `identities` properties.
 
