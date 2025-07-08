@@ -209,7 +209,8 @@ func TestNormalizeInvoice(t *testing.T) {
 func TestNormalizeBillLines(t *testing.T) {
 	addon := tax.AddonForKey(choruspro.V1)
 	t.Run("Remove decimal places", func(t *testing.T) {
-		q, _ := num.AmountFromString("1.000000")
+		q, err := num.AmountFromString("1.000000")
+		require.NoError(t, err)
 		line := &bill.Line{
 			Quantity: q,
 		}
@@ -220,7 +221,8 @@ func TestNormalizeBillLines(t *testing.T) {
 	})
 
 	t.Run("Remove trailing decimals", func(t *testing.T) {
-		q, _ := num.AmountFromString("1.5300000")
+		q, err := num.AmountFromString("1.5300000")
+		require.NoError(t, err)
 		line := &bill.Line{
 			Quantity: q,
 		}
@@ -231,7 +233,8 @@ func TestNormalizeBillLines(t *testing.T) {
 	})
 
 	t.Run("Remove trailing decimals", func(t *testing.T) {
-		q, _ := num.AmountFromString("13.342423")
+		q, err := num.AmountFromString("13.342423")
+		require.NoError(t, err)
 		line := &bill.Line{
 			Quantity: q,
 		}
