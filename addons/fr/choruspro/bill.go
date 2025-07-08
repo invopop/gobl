@@ -87,6 +87,13 @@ func normalizeInvoice(inv *bill.Invoice) {
 
 }
 
+func normalizeBillLine(line *bill.Line) {
+	if line == nil {
+		return
+	}
+	line.Quantity = line.Quantity.RescaleDown(4)
+}
+
 func validateInvoicePaid(value interface{}) error {
 	totals, ok := value.(*bill.Totals)
 	if !ok {

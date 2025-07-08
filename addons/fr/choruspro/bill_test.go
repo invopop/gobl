@@ -205,3 +205,55 @@ func TestNormalizeInvoice(t *testing.T) {
 		assert.Nil(t, inv)
 	})
 }
+
+func TestNormalizeBillLines(t *testing.T) {
+	addon := tax.AddonForKey(choruspro.V1)
+	t.Run("Remove decimal places", func(t *testing.T) {
+		q, _ := num.AmountFromString("1.000000")
+		line := &bill.Line{
+			Quantity: q,
+		}
+
+		addon.Normalizer(line)
+
+		assert.Equal(t, "1.0000", line.Quantity.String())
+	})
+
+	t.Run("Remove trailing decimals", func(t *testing.T) {
+		q, _ := num.AmountFromString("1.5300000")
+		line := &bill.Line{
+			Quantity: q,
+		}
+
+		addon.Normalizer(line)
+
+		assert.Equal(t, "1.5300", line.Quantity.String())
+	})
+
+	t.Run("Remove trailing decimals", func(t *testing.T) {
+		q, _ := num.AmountFromString("13.342423")
+		line := &bill.Line{
+			Quantity: q,
+		}
+
+		addon.Normalizer(line)
+
+		assert.Equal(t, "13.3424", line.Quantity.String())
+	})
+
+	t.Run("Empty quantity", func(t *testing.T) {
+		line := &bill.Line{
+			Quantity: num.Amount{},
+		}
+
+		addon.Normalizer(line)
+
+		assert.Equal(t, "0", line.Quantity.String())
+	})
+
+	t.Run("with nil line", func(t *testing.T) {
+		var line *bill.Line
+		addon.Normalizer(line)
+		assert.Nil(t, line)
+	})
+}
