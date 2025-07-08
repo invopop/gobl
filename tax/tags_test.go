@@ -182,9 +182,6 @@ func TestTagsJSONSchemaEmbedWithDefs(t *testing.T) {
 	ts := tax.Tags{}
 	ts.JSONSchemaExtendWithDefs(js, bill.DefaultInvoiceTags().List)
 
-	data, _ := json.Marshal(js)
-	t.Logf("JSON Schema: %s", data)
-
 	prop, ok := js.Properties.Get("$tags")
 	require.True(t, ok)
 	assert.Equal(t, 6, len(prop.Items.OneOf), "should have 5 tags plus 1 catch-all")

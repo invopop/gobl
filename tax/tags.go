@@ -14,7 +14,7 @@ import (
 type Tags struct {
 	// Tags are used to help identify specific tax scenarios or requirements that may
 	// apply changes to the contents of the document or imply a specific meaning.
-	// Convertors may use tags to help identify specific situations that do not have
+	// Converters may use tags to help identify specific situations that do not have
 	// a specific extension, for example; self-billed or partial invoices may be
 	// identified by their respective tags.
 	List []cbc.Key `json:"$tags,omitempty" jsonschema:"title=Tags"`
@@ -146,7 +146,7 @@ func (tv *tagValidation) Validate(val interface{}) error {
 // JSONSchemaExtendWithDefs will add the provided set of tags to the JSON schema
 // as default options for the `$tags` property. A default catch-all will also
 // be available.
-func (t Tags) JSONSchemaExtendWithDefs(js *jsonschema.Schema, defs []*cbc.Definition) {
+func (ts Tags) JSONSchemaExtendWithDefs(js *jsonschema.Schema, defs []*cbc.Definition) {
 	props := js.Properties
 	if asl, ok := props.Get("$tags"); ok {
 		list := make([]*jsonschema.Schema, len(defs))
