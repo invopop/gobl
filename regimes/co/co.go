@@ -22,10 +22,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
-		TimeZone: "America/Bogota",
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
+		TimeZone:   "America/Bogota",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{

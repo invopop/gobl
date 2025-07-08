@@ -5,15 +5,18 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
 // Tags defines the structure to use for allowing an object to be assigned tags
 // for use in determining how the content should be handled.
 type Tags struct {
-	// Tags are used to help identify specific tax scenarios or requirements that will
-	// apply changes to the contents of the invoice. Tags by design should always be optional,
-	// it should always be possible to build a valid invoice without any tags.
+	// Tags are used to help identify specific tax scenarios or requirements that may
+	// apply changes to the contents of the document or imply a specific meaning.
+	// Convertors may use tags to help identify specific situations that do not have
+	// a specific extension, for example; self-billed or partial invoices may be
+	// identified by their respective tags.
 	List []cbc.Key `json:"$tags,omitempty" jsonschema:"title=Tags"`
 }
 
@@ -138,4 +141,24 @@ func (tv *tagValidation) Validate(val interface{}) error {
 		}
 	}
 	return nil
+}
+
+// JSONSchemaExtendWithDefs will add the provided set of tags to the JSON schema
+// as default options for the `$tags` property. A default catch-all will also
+// be available.
+func (t Tags) JSONSchemaExtendWithDefs(js *jsonschema.Schema, defs []*cbc.Definition) {
+	props := js.Properties
+	if asl, ok := props.Get("$tags"); ok {
+		list := make([]*jsonschema.Schema, len(defs))
+		for i, ao := range defs {
+			list[i] = &jsonschema.Schema{
+				Const: ao.Key.String(),
+				Title: ao.Name.String(),
+			}
+		}
+		asl.Items.OneOf = append(list, &jsonschema.Schema{
+			Pattern: cbc.KeyPattern,
+			Title:   "Any",
+		})
+	}
 }
