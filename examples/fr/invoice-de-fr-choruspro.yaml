@@ -40,7 +40,7 @@ customer:
       country: "FR"
 
 lines:
-  - quantity: 20
+  - quantity: 20.000000
     item:
       name: "Development services"
       price: "90.00"

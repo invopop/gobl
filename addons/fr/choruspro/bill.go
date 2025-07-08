@@ -87,6 +87,14 @@ func normalizeInvoice(inv *bill.Invoice) {
 
 }
 
+// normalizeBillLine is necessary as Chorus Pro requires quantity to be rounded to 4 decimals
+func normalizeBillLine(line *bill.Line) {
+	if line == nil {
+		return
+	}
+	line.Quantity = line.Quantity.RescaleDown(4)
+}
+
 func validateInvoicePaid(value interface{}) error {
 	totals, ok := value.(*bill.Totals)
 	if !ok {
