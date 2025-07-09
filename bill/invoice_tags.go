@@ -3,10 +3,11 @@ package bill
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
-var invoiceTags = &tax.TagSet{
+var defaultInvoiceTags = &tax.TagSet{
 	Schema: ShortSchemaInvoice,
 	List: []*cbc.Definition{
 		// Simplified invoices are issued when the complete fiscal details of
@@ -15,15 +16,12 @@ var invoiceTags = &tax.TagSet{
 			Key: tax.TagSimplified,
 			Name: i18n.String{
 				i18n.EN: "Simplified Invoice",
-				i18n.ES: "Factura Simplificada",
-				i18n.IT: "Fattura Semplificata",
-				i18n.DE: "Vereinfachte Rechnung",
 			},
 			Desc: i18n.String{
-				i18n.EN: "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
-				i18n.ES: "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
-				i18n.IT: "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti.",
-				i18n.DE: "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+				i18n.EN: here.Doc(`
+					Used for B2C transactions when the client details are not available, check with
+					local authorities for limits.
+				`),
 			},
 		},
 
@@ -34,9 +32,13 @@ var invoiceTags = &tax.TagSet{
 			Key: tax.TagReverseCharge,
 			Name: i18n.String{
 				i18n.EN: "Reverse Charge",
-				i18n.ES: "Inversión del Sujeto Pasivo",
-				i18n.IT: "Inversione del soggetto passivo",
-				i18n.DE: "Umkehr der Steuerschuld",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Applied when the *customer* is responsible for paying taxes to the tax authorities. Often used
+					when the supplier is not registered for tax in the customer's country, or for special cases
+					inside the same country when the seller is unlikely to be able to collect the tax.
+				`),
 			},
 		},
 
@@ -47,9 +49,11 @@ var invoiceTags = &tax.TagSet{
 			Key: tax.TagSelfBilled,
 			Name: i18n.String{
 				i18n.EN: "Self-billed",
-				i18n.ES: "Facturación por el destinatario",
-				i18n.IT: "Autofattura",
-				i18n.DE: "Rechnung durch den Leistungsempfänger",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Used when the customer or third party issues the invoice on behalf of the supplier.
+				`),
 			},
 		},
 
@@ -58,9 +62,12 @@ var invoiceTags = &tax.TagSet{
 			Key: tax.TagCustomerRates,
 			Name: i18n.String{
 				i18n.EN: "Customer rates",
-				i18n.ES: "Tarifas aplicables al destinatario",
-				i18n.IT: "Aliquote applicabili al destinatario",
-				i18n.DE: "Kundensätze",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					When set, implies that taxes rates should be determined from the customer's location
+					as opposed to the supplier's. This is typically used for digital goods and services.
+				`),
 			},
 		},
 
@@ -71,15 +78,19 @@ var invoiceTags = &tax.TagSet{
 			Key: tax.TagPartial,
 			Name: i18n.String{
 				i18n.EN: "Partial",
-				i18n.ES: "Parcial",
-				i18n.IT: "Parziale",
-				i18n.DE: "Teilweise",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					Indicates that this invoice is a partial document, meaning it is not the final invoice
+					for the transaction. This is often used in construction or large projects where multiple
+					invoices are issued for different stages of the work.
+				`),
 			},
 		},
 	},
 }
 
-// InvoiceTags returns a base tag set for invoices.
-func InvoiceTags() *tax.TagSet {
-	return invoiceTags
+// DefaultInvoiceTags is a convenience function to get the default invoice tags.
+func DefaultInvoiceTags() *tax.TagSet {
+	return defaultInvoiceTags
 }

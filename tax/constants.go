@@ -22,7 +22,7 @@ const (
 	RateOther        cbc.Key = "other"
 )
 
-// Standard tax tags
+// Standard tax tags that can be used to indicate special circumstances.
 const (
 	TagSimplified    cbc.Key = "simplified"
 	TagReverseCharge cbc.Key = "reverse-charge"

@@ -23,11 +23,8 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Brazil",
 			i18n.PT: "Brasil",
 		},
-		TimeZone:  "America/Sao_Paulo",
-		Validator: Validate,
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
+		TimeZone:   "America/Sao_Paulo",
+		Validator:  Validate,
 		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{

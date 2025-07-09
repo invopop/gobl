@@ -30,9 +30,6 @@ func New() *tax.RegimeDef {
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
 		},
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

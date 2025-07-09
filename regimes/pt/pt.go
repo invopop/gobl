@@ -46,7 +46,7 @@ func New() *tax.RegimeDef {
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Tags: []*tax.TagSet{
-			bill.InvoiceTags().Merge(invoiceTags),
+			invoiceTags,
 		},
 		Corrections: []*tax.CorrectionDefinition{
 			{

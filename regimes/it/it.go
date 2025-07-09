@@ -27,9 +27,6 @@ func New() *tax.RegimeDef {
 		TimeZone:   "Europe/Rome",
 		Identities: identityKeyDefinitions, // identities.go
 		Scenarios:  scenarios,              // scenarios.go
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: categories, // categories.go
