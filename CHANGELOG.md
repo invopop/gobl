@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.220.0] - 2025-07-09
+
 ### Added
 
 - `bill`: `Ordering` now includes an `issuer` field.
