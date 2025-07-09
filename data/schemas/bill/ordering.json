@@ -38,6 +38,11 @@
           "title": "Seller",
           "description": "Seller is the party liable to pay taxes on the transaction if not the same as the supplier."
         },
+        "issuer": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Issuer",
+          "description": "Issuer represents a third party responsible for issuing the invoice, but is not\nresponsible for tax. Some tax regimes and formats require this field."
+        },
         "projects": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/document-ref"

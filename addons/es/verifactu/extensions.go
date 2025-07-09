@@ -8,12 +8,14 @@ import (
 
 // Extension keys for Verifactu
 const (
-	ExtKeyDocType        cbc.Key = "es-verifactu-doc-type"
-	ExtKeyOpClass        cbc.Key = "es-verifactu-op-class"
-	ExtKeyCorrectionType cbc.Key = "es-verifactu-correction-type"
-	ExtKeyExempt         cbc.Key = "es-verifactu-exempt"
-	ExtKeyRegime         cbc.Key = "es-verifactu-regime"
-	ExtKeyIdentityType   cbc.Key = "es-verifactu-identity-type"
+	ExtKeyDocType           cbc.Key = "es-verifactu-doc-type"
+	ExtKeyOpClass           cbc.Key = "es-verifactu-op-class"
+	ExtKeyCorrectionType    cbc.Key = "es-verifactu-correction-type"
+	ExtKeyExempt            cbc.Key = "es-verifactu-exempt"
+	ExtKeyRegime            cbc.Key = "es-verifactu-regime"
+	ExtKeyIdentityType      cbc.Key = "es-verifactu-identity-type"
+	ExtKeySimplifiedArt7273 cbc.Key = "es-verifactu-simplified-art7273"
+	ExtKeyIssuerType        cbc.Key = "es-verifactu-issuer-type"
 )
 
 // Identity Type Codes
@@ -24,6 +26,12 @@ const (
 	ExtCodeIdentityTypeResident      cbc.Code = "05" // Spanish Resident Foreigner Identity Card
 	ExtCodeIdentityTypeOther         cbc.Code = "06" // Other Identity Document
 	ExtCodeIdentityTypeNotRegistered cbc.Code = "07" // Not registered in census
+)
+
+// Issuer Type Codes
+const (
+	ExtCodeIssuerTypeThirdParty cbc.Code = "T" // Issued by Third Party
+	ExtCodeIssuerTypeCustomer   cbc.Code = "D" // Issued by Customer
 )
 
 var extensions = []*cbc.Definition{
@@ -414,6 +422,76 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Not registered in census",
 					i18n.ES: "No censado",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySimplifiedArt7273,
+		Name: i18n.String{
+			i18n.EN: "Simplified Invoice Art. 7.2 and 7.3, RD 1619/2012",
+			i18n.ES: "Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				This extensions covers a specific use-case when the customer specifically
+				requests that the invoice includes their fiscal details, but they are
+				not registered for tax.
+
+				Maps to the ~FacturaSimplificadaArt7273~ field in Verifactu documents.
+
+				Can only be true when the invoice type (~TipoFactura~) is one of: ~F1~,
+				~F3~, ~R1~, ~R2~, ~R3~, or ~R4~.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "S",
+				Name: i18n.String{
+					i18n.EN: "Yes",
+					i18n.ES: "Sí",
+				},
+			},
+			{
+				Code: "N",
+				Name: i18n.String{
+					i18n.EN: "No",
+					i18n.ES: "No",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyIssuerType,
+		Name: i18n.String{
+			i18n.EN: "Issuer Type Code - L6",
+			i18n.ES: "Emitida por Tercero o Destinatario - L6",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates whether the invoice is issued by a third party or by the customer
+				themselves.
+
+				The ~self-billed~ tag will automatically be set this extension in the invoice
+				to ~D~.
+
+				If the ~issuer~ field is set in the invoice's ordering section, then this
+				extension will be set to ~T~.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtCodeIssuerTypeThirdParty,
+				Name: i18n.String{
+					i18n.EN: "Issued by Third Party",
+					i18n.ES: "Emitida por Tercero",
+				},
+			},
+			{
+				Code: ExtCodeIssuerTypeCustomer,
+				Name: i18n.String{
+					i18n.EN: "Issued by Customer",
+					i18n.ES: "Emitida por Destinatario",
 				},
 			},
 		},

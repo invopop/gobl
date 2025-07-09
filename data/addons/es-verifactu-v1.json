@@ -2,8 +2,16 @@
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "es-verifactu-v1",
   "name": {
-    "en": "Spain Verifactu V1"
+    "en": "Spain VERI*FACTU V1"
   },
+  "sources": [
+    {
+      "title": {
+        "en": "VERI*FACTU error response code list"
+      },
+      "url": "https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties"
+    }
+  ],
   "extensions": [
     {
       "key": "es-verifactu-doc-type",
@@ -367,6 +375,58 @@
           "name": {
             "en": "Not registered in census",
             "es": "No censado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-simplified-art7273",
+      "name": {
+        "en": "Simplified Invoice Art. 7.2 and 7.3, RD 1619/2012",
+        "es": "Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012"
+      },
+      "desc": {
+        "en": "This extensions covers a specific use-case when the customer specifically\nrequests that the invoice includes their fiscal details, but they are\nnot registered for tax.\n\nMaps to the `FacturaSimplificadaArt7273` field in Verifactu documents.\n\nCan only be true when the invoice type (`TipoFactura`) is one of: `F1`,\n`F3`, `R1`, `R2`, `R3`, or `R4`."
+      },
+      "values": [
+        {
+          "code": "S",
+          "name": {
+            "en": "Yes",
+            "es": "Sí"
+          }
+        },
+        {
+          "code": "N",
+          "name": {
+            "en": "No",
+            "es": "No"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-issuer-type",
+      "name": {
+        "en": "Issuer Type Code - L6",
+        "es": "Emitida por Tercero o Destinatario - L6"
+      },
+      "desc": {
+        "en": "Indicates whether the invoice is issued by a third party or by the customer\nthemselves.\n\nThe `self-billed` tag will automatically be set this extension in the invoice\nto `D`.\n\nIf the `issuer` field is set in the invoice's ordering section, then this\nextension will be set to `T`."
+      },
+      "values": [
+        {
+          "code": "T",
+          "name": {
+            "en": "Issued by Third Party",
+            "es": "Emitida por Tercero"
+          }
+        },
+        {
+          "code": "D",
+          "name": {
+            "en": "Issued by Customer",
+            "es": "Emitida por Destinatario"
           }
         }
       ]

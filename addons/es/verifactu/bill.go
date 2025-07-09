@@ -55,6 +55,18 @@ func normalizeInvoice(inv *bill.Invoice) {
 		}
 	}
 
+	// Normalize the third party details
+	if inv.HasTags(tax.TagSelfBilled) {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeyIssuerType: ExtCodeIssuerTypeCustomer,
+		})
+	}
+	if inv.Ordering != nil && inv.Ordering.Issuer != nil {
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeyIssuerType: ExtCodeIssuerTypeThirdParty,
+		})
+	}
+
 	normalizeInvoicePartyIdentity(inv.Customer)
 }
 
