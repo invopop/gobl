@@ -125,6 +125,28 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		assert.Equal(t, verifactu.ExtCodeIdentityTypePassport, inv.Customer.Identities[0].Ext[verifactu.ExtKeyIdentityType])
 		assert.Empty(t, inv.Customer.Identities[1].Ext)
 	})
+
+	t.Run("self-billed", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIssuerTypeCustomer, inv.Tax.Ext[verifactu.ExtKeyIssuerType])
+	})
+
+	t.Run("with issuer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer",
+				TaxID: &tax.Identity{
+					Country: "ES",
+					Code:    "B12345678",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, verifactu.ExtCodeIssuerTypeThirdParty, inv.Tax.Ext[verifactu.ExtKeyIssuerType])
+	})
 }
 
 func TestInvoiceValidation(t *testing.T) {

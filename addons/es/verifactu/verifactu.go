@@ -27,7 +27,13 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "Spain Verifactu V1",
+			i18n.EN: "Spain VERI*FACTU V1",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.NewString("VERI*FACTU error response code list"),
+				URL:   "https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties",
+			},
 		},
 		Extensions:  extensions,
 		Validator:   validate,
