@@ -156,7 +156,7 @@ func (ts Tags) JSONSchemaExtendWithDefs(js *jsonschema.Schema, defs []*cbc.Defin
 				Title: ao.Name.String(),
 			}
 		}
-		asl.Items.OneOf = append(list, &jsonschema.Schema{
+		asl.Items.AnyOf = append(list, &jsonschema.Schema{
 			Pattern: cbc.KeyPattern,
 			Title:   "Any",
 		})

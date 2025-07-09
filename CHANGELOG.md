@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.220.1] - 2025-07-09
+
+### Fixes
+
+- `tax`: Correcting `$tags` JSON Schema properties from OneOf to AnyOf.
+
 ## [v0.220.0] - 2025-07-09
 
 ### Added
