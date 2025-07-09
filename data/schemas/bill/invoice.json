@@ -160,7 +160,7 @@
         "$tags": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key",
-            "oneOf": [
+            "anyOf": [
               {
                 "const": "simplified",
                 "title": "Simplified Invoice"
