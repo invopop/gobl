@@ -117,7 +117,7 @@
               },
               {
                 "const": "es-verifactu-v1",
-                "title": "Spain Verifactu V1"
+                "title": "Spain VERI*FACTU V1"
               },
               {
                 "const": "eu-en16931-v2017",
@@ -189,7 +189,7 @@
           },
           "type": "array",
           "title": "Tags",
-          "description": "Tags are used to help identify specific tax scenarios or requirements that may\napply changes to the contents of the document or imply a specific meaning.\nConvertors may use tags to help identify specific situations that do not have\na specific extension, for example; self-billed or partial invoices may be\nidentified by their respective tags."
+          "description": "Tags are used to help identify specific tax scenarios or requirements that may\napply changes to the contents of the document or imply a specific meaning.\nConverters may use tags to help identify specific situations that do not have\na specific extension, for example; self-billed or partial invoices may be\nidentified by their respective tags."
         },
         "uuid": {
           "type": "string",

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: `Ordering` now includes an `issuer` field.
+- `es/verifactu`: Support for `es-verifactu-simplified-art7273` and `es-verifactu-issuer-type` extensions.
+
 ### Changed
 
 - `bill`: All invoices will now have a default set of `$tags` that can be used.
