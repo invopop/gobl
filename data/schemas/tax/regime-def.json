@@ -350,6 +350,11 @@
           "title": "Name",
           "description": "Name of the scenario for further information."
         },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Description of the scenario for documentation purposes."
+        },
         "type": {
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key"

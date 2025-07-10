@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -33,6 +34,25 @@ func newAddon() *tax.AddonDef {
 			{
 				Title: i18n.NewString("VERI*FACTU error response code list"),
 				URL:   "https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties",
+			},
+		},
+		Tags: []*tax.TagSet{
+			{
+				Schema: bill.ShortSchemaInvoice,
+				List: []*cbc.Definition{
+					{
+						Key: tax.TagReplacement,
+						Name: i18n.String{
+							i18n.EN: "Replacement Invoice",
+							i18n.ES: "Factura de Sustitución",
+						},
+						Desc: i18n.NewString(here.Doc(`
+							Used under special circumstances to indicate that this invoice replaces a previously
+							issued simplified invoice. The previous document was correct, but the replacement is
+							necessary to provide tax details of the customer.
+						`)),
+					},
+				},
 			},
 		},
 		Extensions:  extensions,

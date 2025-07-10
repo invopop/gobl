@@ -18,14 +18,12 @@ const (
 	ExtKeyIssuerType        cbc.Key = "es-verifactu-issuer-type"
 )
 
-// Identity Type Codes
+// Identity Type Codes - limited subset assigned to identities.
 const (
-	ExtCodeIdentityTypeVATID         cbc.Code = "02" // VAT ID
-	ExtCodeIdentityTypePassport      cbc.Code = "03" // Passport
-	ExtCodeIdentityTypeForeign       cbc.Code = "04" // Foreign Identity Document
-	ExtCodeIdentityTypeResident      cbc.Code = "05" // Spanish Resident Foreigner Identity Card
-	ExtCodeIdentityTypeOther         cbc.Code = "06" // Other Identity Document
-	ExtCodeIdentityTypeNotRegistered cbc.Code = "07" // Not registered in census
+	ExtCodeIdentityTypePassport cbc.Code = "03" // Passport
+	ExtCodeIdentityTypeForeign  cbc.Code = "04" // Foreign Identity Document
+	ExtCodeIdentityTypeResident cbc.Code = "05" // Spanish Resident Foreigner Identity Card
+	ExtCodeIdentityTypeOther    cbc.Code = "06" // Other Identity Document
 )
 
 // Issuer Type Codes
@@ -55,12 +53,23 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
 					i18n.ES: "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						For regular invoices.
+					`),
+				},
 			},
 			{
 				Code: "F2",
 				Name: i18n.String{
 					i18n.EN: "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
 					i18n.ES: "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To use for B2C invoices where details about the customer are not
+						normally required.
+					`),
 				},
 			},
 			{
@@ -76,12 +85,25 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
 					i18n.ES: "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use this code when correcting most commercial invoices due to cancellations
+						or discounts. This is currently set as the default buy may be overridden if
+						needed.
+					`),
+				},
 			},
 			{
 				Code: "R2",
 				Name: i18n.String{
 					i18n.ES: "Factura rectificativa: artículo 80.3",
 					i18n.EN: "Rectified invoice: error based on law and Article 80.3",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To use for customer declared insolvency proceedings when a court
+						is involved.
+					`),
 				},
 			},
 			{
@@ -90,6 +112,12 @@ var extensions = []*cbc.Definition{
 					i18n.ES: "Factura rectificativa: artículo 80.4",
 					i18n.EN: "Rectified invoice: error based on law and Article 80.4",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						For unpaid invoices that are not declared as related to insolvency
+						and related to bad debt after a 6 or 12 month waiting period.
+					`),
+				},
 			},
 			{
 				Code: "R4",
@@ -97,12 +125,23 @@ var extensions = []*cbc.Definition{
 					i18n.ES: "Factura rectificativa: Resto",
 					i18n.EN: "Rectified invoice: Other",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Legal or court-imposed corrections that do not fall under any of
+						the other corrective reasons.
+					`),
+				},
 			},
 			{
 				Code: "R5",
 				Name: i18n.String{
 					i18n.ES: "Factura rectificativa: facturas simplificadas",
 					i18n.EN: "Rectified invoice: simplified invoices",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Always used when correcting simplified or B2C invoices.
+					`),
 				},
 			},
 		},
@@ -383,9 +422,37 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				Identity code used to identify the type of identity document used by the customer.
 
-				Codes "01" and "02" are not defined as they are explicitly inferred from the tax Identity
-				and the associated country. In GOBL, the tax Identity implies association with VAT from
-				Spanish invoices.
+				Codes ~01~, ~02~, and ~07~ are not defined as they are explicitly inferred from the
+				tax Identity and the associated country. ~01~ implies a Spanish NIF, ~02~ is applied
+				when the Tax ID is foreign VAT (or other tax) number, and ~07~ is used when the customer
+				is a company but does not have a VAT registration code in their home country, like
+				the US.
+
+				The following identity keys will be mapped automatically to an extension by the 
+				addon for the following keys:
+
+				- ~passport~: ~03~
+				- ~foreign~: ~04~
+				- ~resident~: ~05~
+				- ~other~: ~06~
+
+				Here is an example of how an identity will be normalized:
+
+				~~~
+				{
+					"identities": [
+						{
+							"key": "passport",
+							"country": "GB",
+							"code": "123456789",
+							"ext": {
+								"es-verifactu-identity-type": "03"
+							}
+						}
+					]
+				}
+				~~~
+
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -406,22 +473,15 @@ var extensions = []*cbc.Definition{
 			{
 				Code: ExtCodeIdentityTypeResident,
 				Name: i18n.String{
-					i18n.EN: "Spanish Resident Foreigner Identity Card",
-					i18n.ES: "Tarjeta de Identidad de Extranjero Residente",
+					i18n.EN: "Residential Certificate",
+					i18n.ES: "Certificado Residencia",
 				},
 			},
 			{
 				Code: ExtCodeIdentityTypeOther,
 				Name: i18n.String{
 					i18n.EN: "Other Identity Document",
-					i18n.ES: "Otro Documento de Identidad",
-				},
-			},
-			{
-				Code: ExtCodeIdentityTypeNotRegistered,
-				Name: i18n.String{
-					i18n.EN: "Not registered in census",
-					i18n.ES: "No censado",
+					i18n.ES: "Otro Documento Probatorio",
 				},
 			},
 		},
