@@ -1,0 +1,38 @@
+$schema: https://gobl.org/draft-0/bill/invoice
+$regime: SE
+uuid: 3aea7b56-59d8-4beb-90bd-f8f280d852a0
+currency: SEK
+series: "2025"
+code: "1234"
+issue_date: "2025-04-25"
+
+supplier:
+  name: Example Supplier AB
+  tax_id:
+    country: SE
+    code: "556036079301"
+  addresses:
+    - street: Exempelgatan 123
+      locality: Stockholm
+      country: SE
+      code: "111 20"
+
+customer:
+  name: Example Company AB
+  tax_id:
+    country: SE
+    code: "556703748501"
+  addresses:
+    - street: "Imaginärt Torg, 24"
+      locality: Stockholm
+      country: SE
+      code: "111 53"
+
+lines:
+  - quantity: "1"
+    item:
+      name: Software Engineering Services
+      price: "1000.00"
+    taxes:
+      - cat: VAT
+        rate: standard
