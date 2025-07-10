@@ -28,6 +28,9 @@
           "name": {
             "en": "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
             "es": "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)"
+          },
+          "desc": {
+            "en": "For regular invoices."
           }
         },
         {
@@ -35,6 +38,9 @@
           "name": {
             "en": "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
             "es": "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)"
+          },
+          "desc": {
+            "en": "To use for B2C invoices where details about the customer are not\nnormally required."
           }
         },
         {
@@ -49,6 +55,9 @@
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
             "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA"
+          },
+          "desc": {
+            "en": "Use this code when correcting most commercial invoices due to cancellations\nor discounts. This is currently set as the default buy may be overridden if\nneeded."
           }
         },
         {
@@ -56,6 +65,9 @@
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.3",
             "es": "Factura rectificativa: artículo 80.3"
+          },
+          "desc": {
+            "en": "To use for customer declared insolvency proceedings when a court\nis involved."
           }
         },
         {
@@ -63,6 +75,9 @@
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.4",
             "es": "Factura rectificativa: artículo 80.4"
+          },
+          "desc": {
+            "en": "For unpaid invoices that are not declared as related to insolvency\nand related to bad debt after a 6 or 12 month waiting period."
           }
         },
         {
@@ -70,6 +85,9 @@
           "name": {
             "en": "Rectified invoice: Other",
             "es": "Factura rectificativa: Resto"
+          },
+          "desc": {
+            "en": "Legal or court-imposed corrections that do not fall under any of\nthe other corrective reasons."
           }
         },
         {
@@ -77,6 +95,9 @@
           "name": {
             "en": "Rectified invoice: simplified invoices",
             "es": "Factura rectificativa: facturas simplificadas"
+          },
+          "desc": {
+            "en": "Always used when correcting simplified or B2C invoices."
           }
         }
       ]
@@ -339,7 +360,7 @@
         "es": "Código de Tipo de Identidad - L7"
       },
       "desc": {
-        "en": "Identity code used to identify the type of identity document used by the customer.\n\nCodes \"01\" and \"02\" are not defined as they are explicitly inferred from the tax Identity\nand the associated country. In GOBL, the tax Identity implies association with VAT from\nSpanish invoices."
+        "en": "Identity code used to identify the type of identity document used by the customer.\n\nCodes `01`, `02`, and `07` are not defined as they are explicitly inferred from the\ntax Identity and the associated country. `01` implies a Spanish NIF, `02` is applied\nwhen the Tax ID is foreign VAT (or other tax) number, and `07` is used when the customer\nis a company but does not have a VAT registration code in their home country, like\nthe US.\n\nThe following identity keys will be mapped automatically to an extension by the \naddon for the following keys:\n\n- `passport`: `03`\n- `foreign`: `04`\n- `resident`: `05`\n- `other`: `06`\n\nHere is an example of how an identity will be normalized:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-verifactu-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```"
       },
       "values": [
         {
@@ -359,22 +380,15 @@
         {
           "code": "05",
           "name": {
-            "en": "Spanish Resident Foreigner Identity Card",
-            "es": "Tarjeta de Identidad de Extranjero Residente"
+            "en": "Residential Certificate",
+            "es": "Certificado Residencia"
           }
         },
         {
           "code": "06",
           "name": {
             "en": "Other Identity Document",
-            "es": "Otro Documento de Identidad"
-          }
-        },
-        {
-          "code": "07",
-          "name": {
-            "en": "Not registered in census",
-            "es": "No censado"
+            "es": "Otro Documento Probatorio"
           }
         }
       ]
@@ -432,11 +446,35 @@
       ]
     }
   ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "replacement",
+          "name": {
+            "en": "Replacement Invoice",
+            "es": "Factura de Sustitución"
+          },
+          "desc": {
+            "en": "Used under special circumstances to indicate that this invoice replaces a previously\nissued simplified invoice. The previous document was correct, but the replacement is\nnecessary to provide tax details of the customer."
+          }
+        }
+      ]
+    }
+  ],
   "scenarios": [
     {
       "schema": "bill/invoice",
       "list": [
         {
+          "name": {
+            "en": "Standard Invoice",
+            "es": "Factura Estándar"
+          },
+          "desc": {
+            "en": "Standard invoice used for B2B transactions, where the complete fiscal details of the customer\nare available."
+          },
           "type": [
             "standard"
           ],
@@ -445,6 +483,13 @@
           }
         },
         {
+          "name": {
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada"
+          },
+          "desc": {
+            "en": "Used for B2C transactions when the client details are not available."
+          },
           "type": [
             "standard"
           ],
@@ -453,6 +498,44 @@
           ],
           "ext": {
             "es-verifactu-doc-type": "F2"
+          }
+        },
+        {
+          "name": {
+            "en": "Replacement Invoice",
+            "es": "Factura Emitida en Sustitución"
+          },
+          "desc": {
+            "en": "Used under special circumstances to indicate that this invoice replaces a previously\nissued simplified invoice. The previous document was correct, but the replacement is\nnecessary to provide tax details of the customer."
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "replacement"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F3"
+          }
+        },
+        {
+          "name": {
+            "en": "Simplified Corrective Invoice",
+            "es": "Factura Simplificada Correctiva"
+          },
+          "desc": {
+            "en": "This scenario covers when a simplified invoice is being corrected either\nwith a credit or debit note, or a corrective replacement invoice.\n\nIn VERI*FACTU, only the document type `R5` is supported for corrective\ninvoices."
+          },
+          "type": [
+            "corrective",
+            "credit-note",
+            "debit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "R5"
           }
         }
       ]

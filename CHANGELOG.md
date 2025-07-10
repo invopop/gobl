@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `es/verifactu`: Removing customer validation, adding new `replacement` tag to use when simplified invoices are replaced with a complete version.
+
 ## [v0.220.1] - 2025-07-09
 
 ### Fixes

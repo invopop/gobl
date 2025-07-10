@@ -156,12 +156,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F1")
 	})
-	t.Run("missing customer tax ID", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Customer.TaxID = nil
-		assertValidationError(t, inv, "customer: (tax_id: cannot be blank.)")
-	})
-
 	t.Run("without exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Rate = ""
@@ -219,8 +213,10 @@ func TestInvoiceValidation(t *testing.T) {
 
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax(), bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
 		require.NoError(t, inv.Validate())
-		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F3")
-		assert.Empty(t, inv.Tax.Ext[verifactu.ExtKeyCorrectionType])
+		// Should always set the doc type to R5, even if trying to override as the simplified
+		// tag has priority.
+		assert.Equal(t, "R5", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
+		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
 	})
 
 	t.Run("correction invoice requires preceding", func(t *testing.T) {
@@ -287,18 +283,36 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "21.00", inv.Preceding[0].Tax.Sum.String())
 	})
 
-	t.Run("correction with nil preceding", func(t *testing.T) {
+	t.Run("replacement without preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Preceding = []*org.DocumentRef{nil}
-		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
-				verifactu.ExtKeyDocType: "R1",
+		inv.SetTags("replacement")
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, inv.Validate(), "preceding: details of invoice being replaced must be included")
+	})
+
+	t.Run("replacement with preceding", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags("replacement")
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "SAMPLE",
+				Code:      "003",
+				IssueDate: cal.NewDate(2025, 7, 1),
 			},
 		}
-		ad := tax.AddonForKey(verifactu.V1)
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, ad.Validator(inv))
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCorrective
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code: "123",
+			},
+		}
+		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
 }
 

@@ -45,13 +45,20 @@ func normalizeInvoice(inv *bill.Invoice) {
 			ExtKeyCorrectionType: "I",
 		})
 	case bill.InvoiceTypeCorrective:
-		if inv.Tax == nil || inv.Tax.Ext.Get(ExtKeyDocType) != "F3" {
-			inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
-				ExtKeyCorrectionType: "S",
-			})
-		} else {
-			// Substitutions of simplified invoices cannot have a correction type
-			delete(inv.Tax.Ext, ExtKeyCorrectionType)
+		inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+			ExtKeyCorrectionType: "S",
+		})
+	}
+
+	// Set default correction type, unless already provided.
+	switch inv.Type {
+	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote, bill.InvoiceTypeCorrective:
+		tx := inv.Tax
+		// Don't try to override a previously set document type.
+		// This is non-deterministic.
+		if !tx.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
+			tx.Ext[ExtKeyDocType] = "R1"
+			inv.Tax = tx
 		}
 	}
 
@@ -103,14 +110,15 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
-		validation.Field(&inv.Customer,
-			validation.By(validateInvoiceCustomer),
-			validation.Skip,
-		),
 		validation.Field(&inv.Preceding,
 			validation.When(
 				inv.Type.In(es.InvoiceCorrectionTypes...),
 				validation.Required,
+			),
+			validation.When(
+				// Replacement invoices must have a reference to preceding doc.
+				inv.Tax != nil && inv.Tax.Ext.Get(ExtKeyDocType).In("F3"),
+				validation.Required.Error("details of invoice being replaced must be included"),
 			),
 			validation.Each(
 				validation.By(validateInvoicePreceding(inv)),
@@ -134,13 +142,10 @@ func validateInvoice(inv *bill.Invoice) error {
 }
 
 var docTypesStandard = []cbc.Code{ // Standard invoices
-	"F1", "F2",
+	"F1", "F2", "F3",
 }
 var docTypesCreditDebit = []cbc.Code{ // Credit or Debit notes
 	"R1", "R2", "R3", "R4", "R5",
-}
-var docTypesCorrective = []cbc.Code{ // Substitutions
-	"F3", "R1", "R2", "R3", "R4", "R5",
 }
 
 func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
@@ -157,17 +162,10 @@ func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
 					),
 				),
 				validation.When(
-					it.In(bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
+					it.In(bill.InvoiceTypeCorrective, bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
 					tax.ExtensionsHasCodes(
 						ExtKeyDocType,
 						docTypesCreditDebit...,
-					),
-				),
-				validation.When(
-					it.In(bill.InvoiceTypeCorrective),
-					tax.ExtensionsHasCodes(
-						ExtKeyDocType,
-						docTypesCorrective...,
 					),
 				),
 				validation.When(
@@ -178,26 +176,6 @@ func validateInvoiceTax(it cbc.Key) validation.RuleFunc {
 			),
 		)
 	}
-}
-
-func validateInvoiceCustomer(val any) error {
-	obj, ok := val.(*org.Party)
-	if !ok || obj == nil {
-		return nil
-	}
-	// Customers must have a tax ID to at least set the country,
-	// and Spanish ones should also have an ID. There are more complex
-	// rules for exports.
-	return validation.ValidateStruct(obj,
-		validation.Field(&obj.TaxID,
-			validation.Required,
-			validation.When(
-				obj.TaxID != nil && obj.TaxID.Country.In("ES"),
-				tax.RequireIdentityCode,
-			),
-			validation.Skip,
-		),
-	)
 }
 
 func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
