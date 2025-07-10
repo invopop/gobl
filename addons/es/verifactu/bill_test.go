@@ -163,7 +163,12 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Lines[0].Taxes[0].Ext = nil
 		assertValidationError(t, inv, "es-verifactu-op-class: required")
 	})
-
+	t.Run("standard invoice without customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, inv.Validate(), "customer: cannot be blank.")
+	})
 	t.Run("missing doc type", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
@@ -223,6 +228,14 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		assertValidationError(t, inv, "preceding: cannot be blank")
+	})
+	t.Run("correction invoice nil preceding", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{nil}
+		require.NoError(t, inv.Calculate())
+		ad := tax.AddonForKey(verifactu.V1)
+		assert.NoError(t, ad.Validator(inv))
 	})
 
 	t.Run("credit-note invoice preceding requires issue date", func(t *testing.T) {

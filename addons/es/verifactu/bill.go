@@ -117,12 +117,19 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.When(
 				// Replacement invoices must have a reference to preceding doc.
-				inv.Tax != nil && inv.Tax.Ext.Get(ExtKeyDocType).In("F3"),
+				inv.Tax.GetExt(ExtKeyDocType).In("F3"),
 				validation.Required.Error("details of invoice being replaced must be included"),
 			),
 			validation.Each(
 				validation.By(validateInvoicePreceding(inv)),
 				validation.Skip,
+			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Customer,
+			validation.When(
+				!inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // not simplified
+				validation.Required,
 			),
 			validation.Skip,
 		),

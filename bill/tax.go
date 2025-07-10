@@ -48,6 +48,24 @@ func (t *Tax) MergeExtensions(ext tax.Extensions) *Tax {
 	return t
 }
 
+// GetExt is a convenience method to retrieve an extension value while
+// providing nil checks on the tax object.
+func (t *Tax) GetExt(key cbc.Key) cbc.Code {
+	if t == nil {
+		return cbc.CodeEmpty
+	}
+	return t.Ext.Get(key)
+}
+
+// HasExt is a convenience method to check for an extension value while
+// providing nil checks on the tax object.
+func (t *Tax) HasExt(key cbc.Key) bool {
+	if t == nil {
+		return false
+	}
+	return t.Ext.Has(key)
+}
+
 // Normalize performs normalization on the tax and embedded objects using the
 // provided list of normalizers.
 func (t *Tax) Normalize(normalizers tax.Normalizers) {
