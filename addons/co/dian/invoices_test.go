@@ -181,35 +181,23 @@ func TestBasicInvoiceValidation(t *testing.T) {
 }
 
 func TestTaxResponsibilityExtensionValidation(t *testing.T) {
-	// Test that normalization automatically sets tax responsibility for Colombian parties
+	// Colombian parties
 	inv := baseInvoice()
-	// Remove from supplier
+	require.NoError(t, inv.Calculate()) // calculate before delete to avoid normalization
 	delete(inv.Supplier.Ext, dian.ExtKeyTaxResponsibility)
-	require.NoError(t, inv.Calculate())
+	delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
 	err := inv.Validate()
-	assert.NoError(t, err) // Should pass because normalization sets it automatically
+	assert.ErrorContains(t, err, "supplier: (ext: (co-dian-tax-responsibility: required.).)")
+	assert.ErrorContains(t, err, "customer: (ext: (co-dian-tax-responsibility: required.).)")
 
-	// Remove from customer
+	// Non-Colombian parties
 	inv = baseInvoice()
-	delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
-	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
-	assert.NoError(t, err) // Should pass because normalization sets it automatically
-
-	// Test with non-Colombian parties (should not set tax responsibility automatically)
-	inv = baseInvoice()
+	inv.Supplier.TaxID.Code = "E47180476"
 	inv.Supplier.TaxID.Country = "ES"
-	inv.Supplier.TaxID.Code = "A13180492"
+	inv.Customer.TaxID.Code = "C87547287"
 	inv.Customer.TaxID.Country = "ES"
-	inv.Customer.TaxID.Code = "A13180492"
 	delete(inv.Supplier.Ext, dian.ExtKeyTaxResponsibility)
 	delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
-	require.NoError(t, inv.Calculate())
-	err = inv.Validate()
-	assert.NoError(t, err) // Should pass, extension not required for non-Colombian
-
-	// Both present (should always pass)
-	inv = baseInvoice()
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.NoError(t, err)
