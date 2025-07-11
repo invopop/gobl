@@ -37,6 +37,9 @@ func baseInvoice() *bill.Invoice {
 					Region:   "Bogotá",
 				},
 			},
+			Ext: tax.Extensions{
+				dian.ExtKeyTaxResponsibility: "O-13",
+			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -50,6 +53,9 @@ func baseInvoice() *bill.Invoice {
 					Locality: "Sabanalarga",
 					Region:   "Atlántico",
 				},
+			},
+			Ext: tax.Extensions{
+				dian.ExtKeyTaxResponsibility: "O-47",
 			},
 		},
 		Lines: []*bill.Line{
@@ -95,6 +101,9 @@ func creditNote() *bill.Invoice {
 					Region:   "Bogotá",
 				},
 			},
+			Ext: tax.Extensions{
+				dian.ExtKeyTaxResponsibility: "O-47",
+			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -108,6 +117,9 @@ func creditNote() *bill.Invoice {
 					Locality: "Sabanalarga",
 					Region:   "Atlántico",
 				},
+			},
+			Ext: tax.Extensions{
+				dian.ExtKeyTaxResponsibility: "O-47",
 			},
 		},
 		Lines: []*bill.Line{
@@ -135,7 +147,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 
 	delete(inv.Supplier.Ext, dian.ExtKeyMunicipality)
 	err := inv.Validate()
-	assert.ErrorContains(t, err, "supplier: (ext: cannot be blank.).")
+	assert.ErrorContains(t, err, "supplier: (ext: (co-dian-municipality: required.).).")
 
 	inv.Supplier.Ext[dian.ExtKeyMunicipality] = "110011"
 	err = inv.Validate()
@@ -168,6 +180,41 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestTaxResponsibilityExtensionValidation(t *testing.T) {
+	// Test that normalization automatically sets tax responsibility for Colombian parties
+	inv := baseInvoice()
+	// Remove from supplier
+	delete(inv.Supplier.Ext, dian.ExtKeyTaxResponsibility)
+	require.NoError(t, inv.Calculate())
+	err := inv.Validate()
+	assert.NoError(t, err) // Should pass because normalization sets it automatically
+
+	// Remove from customer
+	inv = baseInvoice()
+	delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.NoError(t, err) // Should pass because normalization sets it automatically
+
+	// Test with non-Colombian parties (should not set tax responsibility automatically)
+	inv = baseInvoice()
+	inv.Supplier.TaxID.Country = "ES"
+	inv.Supplier.TaxID.Code = "A13180492"
+	inv.Customer.TaxID.Country = "ES"
+	inv.Customer.TaxID.Code = "A13180492"
+	delete(inv.Supplier.Ext, dian.ExtKeyTaxResponsibility)
+	delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.NoError(t, err) // Should pass, extension not required for non-Colombian
+
+	// Both present (should always pass)
+	inv = baseInvoice()
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.NoError(t, err)
+}
+
 func TestBasicCreditNoteValidation(t *testing.T) {
 	inv := creditNote()
 	inv.Preceding[0].Reason = "Correcting an error"
@@ -184,4 +231,105 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "preceding: (0: (ext: (foo: undefined.).).)")
 	}
 
+}
+
+func TestNormalizeInvoice(t *testing.T) {
+	addon := tax.AddonForKey(dian.V2)
+
+	t.Run("handles nil invoice", func(t *testing.T) {
+		var inv *bill.Invoice
+		assert.NotPanics(t, func() {
+			addon.Normalizer(inv)
+		})
+		assert.Nil(t, inv)
+	})
+
+	t.Run("sets default tax responsibility for Colombian supplier", func(t *testing.T) {
+		inv := baseInvoice()
+		// Remove existing tax responsibility
+		delete(inv.Supplier.Ext, dian.ExtKeyTaxResponsibility)
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, cbc.Code("R-99-PN"), inv.Supplier.Ext[dian.ExtKeyTaxResponsibility])
+	})
+
+	t.Run("sets default tax responsibility for Colombian customer", func(t *testing.T) {
+		inv := baseInvoice()
+		// Remove existing tax responsibility
+		delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, cbc.Code("R-99-PN"), inv.Customer.Ext[dian.ExtKeyTaxResponsibility])
+	})
+
+	t.Run("keeps existing tax responsibility for supplier", func(t *testing.T) {
+		inv := baseInvoice()
+		// Set a specific tax responsibility
+		inv.Supplier.Ext[dian.ExtKeyTaxResponsibility] = "O-13"
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, cbc.Code("O-13"), inv.Supplier.Ext[dian.ExtKeyTaxResponsibility])
+	})
+
+	t.Run("keeps existing tax responsibility for customer", func(t *testing.T) {
+		inv := baseInvoice()
+		// Set a specific tax responsibility
+		inv.Customer.Ext[dian.ExtKeyTaxResponsibility] = "O-47"
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, cbc.Code("O-47"), inv.Customer.Ext[dian.ExtKeyTaxResponsibility])
+	})
+
+	t.Run("does not set tax responsibility for non-Colombian supplier", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier.TaxID.Country = "ES"
+		delete(inv.Supplier.Ext, dian.ExtKeyTaxResponsibility)
+
+		addon.Normalizer(inv)
+
+		assert.Empty(t, inv.Supplier.Ext[dian.ExtKeyTaxResponsibility])
+	})
+
+	t.Run("does not set tax responsibility for non-Colombian customer", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Customer.TaxID.Country = "ES"
+		delete(inv.Customer.Ext, dian.ExtKeyTaxResponsibility)
+
+		addon.Normalizer(inv)
+
+		assert.Empty(t, inv.Customer.Ext[dian.ExtKeyTaxResponsibility])
+	})
+
+	t.Run("handles nil supplier", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier = nil
+
+		assert.NotPanics(t, func() {
+			addon.Normalizer(inv)
+		})
+	})
+
+	t.Run("handles nil customer", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Customer = nil
+
+		assert.NotPanics(t, func() {
+			addon.Normalizer(inv)
+		})
+	})
+
+	t.Run("handles nil extensions", func(t *testing.T) {
+		inv := baseInvoice()
+		inv.Supplier.Ext = nil
+		inv.Customer.Ext = nil
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, cbc.Code("R-99-PN"), inv.Supplier.Ext[dian.ExtKeyTaxResponsibility])
+		assert.Equal(t, cbc.Code("R-99-PN"), inv.Customer.Ext[dian.ExtKeyTaxResponsibility])
+	})
 }

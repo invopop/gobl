@@ -123,6 +123,57 @@
           }
         }
       ]
+    },
+    {
+      "key": "co-dian-tax-responsibility",
+      "name": {
+        "en": "Tax Responsibility",
+        "es": "Responsabilidad Fiscal"
+      },
+      "desc": {
+        "en": "The tax responsibility code as defined by the DIAN for Colombian electronic invoicing.\n\nFor advanced details refer to the DIAN technical annex documentation for the \"TaxLevelCode\" field.\nThe list of codes can be found in the DIAN toolbox zip:\n\n  * https://www.dian.gov.co/impuestos/factura-electronica/Documents/Caja-de-herramientas-FE-V1-9.zip\n    (see Anexo Tecnico/Tablas Referenciadas, table 13.2.6.1)"
+      },
+      "values": [
+        {
+          "code": "O-13",
+          "name": {
+            "en": "Major taxpayer",
+            "es": "Gran contribuyente"
+          }
+        },
+        {
+          "code": "O-15",
+          "name": {
+            "en": "Self-withholder",
+            "es": "Autorretenedor"
+          }
+        },
+        {
+          "code": "O-23",
+          "name": {
+            "en": "VAT withholding agent",
+            "es": "Agente de retención IVA"
+          }
+        },
+        {
+          "code": "O-47",
+          "name": {
+            "en": "Simple tax regime",
+            "es": "Régimen simple de tributación"
+          }
+        },
+        {
+          "code": "R-99-PN",
+          "name": {
+            "en": "Not applicable – Others",
+            "es": "No aplica – Otros"
+          },
+          "desc": {
+            "en": "Used when the issuer/acquirer does not have any of the first 4 responsibilities. Applies to legal entities, individuals, or final consumers.",
+            "es": "Se utiliza cuando el emisor/adquiriente no cuenta con las primeras 4 responsabilidades. Aplica para personas jurídicas, personas naturales o consumidor final."
+          }
+        }
+      ]
     }
   ],
   "scenarios": null,

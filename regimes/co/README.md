@@ -168,3 +168,30 @@ For example:
   }
 ],
 ```
+
+## Tax responsibility codes (TaxLevelCode)
+
+The DIAN requires that Colombian invoices specify the tax responsibilities of the supplier or customer using specific codes. In a GOBL invoice, you can provide these using the `co-dian-tax-responsibility` extension. If no value is provided, GOBL will automatically set `R-99-PN` as the default.
+
+| Code    | Description                   |
+| ------- | ----------------------------- |
+| O-13    | Gran contribuyente            |
+| O-15    | Autorretenedor                |
+| O-23    | Agente de retención IVA       |
+| O-47    | Régimen simple de tributación |
+| R-99-PN | No aplica – Otros             |
+
+For example:
+
+```js
+"customer": {
+  "name": "EXAMPLE CUSTOMER S.A.S.",
+  "tax_id": {
+    "country": "CO",
+    "code": "9014514812"
+  },
+  "ext": {
+    "co-dian-tax-responsibility": "O-13"
+  }
+}
+```

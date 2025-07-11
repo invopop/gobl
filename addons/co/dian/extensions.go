@@ -8,9 +8,10 @@ import (
 
 // Extension keys used in Colombia.
 const (
-	ExtKeyMunicipality cbc.Key = "co-dian-municipality"
-	ExtKeyCreditCode   cbc.Key = "co-dian-credit-code"
-	ExtKeyDebitCode    cbc.Key = "co-dian-debit-code"
+	ExtKeyMunicipality      cbc.Key = "co-dian-municipality"
+	ExtKeyCreditCode        cbc.Key = "co-dian-credit-code"
+	ExtKeyDebitCode         cbc.Key = "co-dian-debit-code"
+	ExtKeyTaxResponsibility cbc.Key = "co-dian-tax-responsibility"
 )
 
 var extensions = []*cbc.Definition{
@@ -133,6 +134,65 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.ES: "Otros",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyTaxResponsibility,
+		Name: i18n.String{
+			i18n.EN: "Tax Responsibility",
+			i18n.ES: "Responsabilidad Fiscal",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				The tax responsibility code as defined by the DIAN for Colombian electronic invoicing.
+
+				For advanced details refer to the DIAN technical annex documentation for the "TaxLevelCode" field.
+				The list of codes can be found in the DIAN toolbox zip:
+
+				  * https://www.dian.gov.co/impuestos/factura-electronica/Documents/Caja-de-herramientas-FE-V1-9.zip
+				    (see Anexo Tecnico/Tablas Referenciadas, table 13.2.6.1)
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "O-13",
+				Name: i18n.String{
+					i18n.EN: "Major taxpayer",
+					i18n.ES: "Gran contribuyente",
+				},
+			},
+			{
+				Code: "O-15",
+				Name: i18n.String{
+					i18n.EN: "Self-withholder",
+					i18n.ES: "Autorretenedor",
+				},
+			},
+			{
+				Code: "O-23",
+				Name: i18n.String{
+					i18n.EN: "VAT withholding agent",
+					i18n.ES: "Agente de retención IVA",
+				},
+			},
+			{
+				Code: "O-47",
+				Name: i18n.String{
+					i18n.EN: "Simple tax regime",
+					i18n.ES: "Régimen simple de tributación",
+				},
+			},
+			{
+				Code: "R-99-PN",
+				Name: i18n.String{
+					i18n.EN: "Not applicable – Others",
+					i18n.ES: "No aplica – Otros",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Used when the issuer/acquirer does not have any of the first 4 responsibilities. Applies to legal entities, individuals, or final consumers.",
+					i18n.ES: "Se utiliza cuando el emisor/adquiriente no cuenta con las primeras 4 responsabilidades. Aplica para personas jurídicas, personas naturales o consumidor final.",
 				},
 			},
 		},

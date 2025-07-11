@@ -14,7 +14,8 @@
       "code": "9014514812"
     },
     "ext": {
-      "co-dian-municipality": "11001"
+      "co-dian-municipality": "11001",
+      "co-dian-tax-responsibility": "O-23"
     },
     "addresses": [
       {
@@ -32,7 +33,8 @@
       "code": "9014514805"
     },
     "ext": {
-      "co-dian-municipality": "11001"
+      "co-dian-municipality": "11001",
+      "co-dian-tax-responsibility": "O-15"
     },
     "addresses": [
       {
