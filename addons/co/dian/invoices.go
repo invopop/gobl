@@ -26,6 +26,22 @@ var invoiceCorrectionDefinitions = []*tax.CorrectionDefinition{
 	},
 }
 
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+	normalizeTaxResponsibility(inv.Supplier)
+	normalizeTaxResponsibility(inv.Customer)
+}
+
+func normalizeTaxResponsibility(p *org.Party) {
+	if p == nil || !isColombian(p.TaxID) {
+		return
+	}
+	def := tax.Extensions{ExtKeyTaxResponsibility: "R-99-PN"}
+	p.Ext = def.Merge(p.Ext)
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Type,
@@ -82,6 +98,10 @@ func validateInvoiceSupplier(value interface{}) error {
 				validation.Required,
 				tax.ExtensionsRequire(ExtKeyMunicipality),
 			),
+			validation.When(
+				isColombian(obj.TaxID),
+				tax.ExtensionsRequire(ExtKeyTaxResponsibility),
+			),
 			validation.Skip,
 		),
 	)
@@ -121,6 +141,10 @@ func validateInvoiceCustomer(tags []cbc.Key) func(value any) error {
 					municipalityCodeRequired(obj.TaxID),
 					validation.Required,
 					tax.ExtensionsRequire(ExtKeyMunicipality),
+				),
+				validation.When(
+					isColombian(obj.TaxID),
+					tax.ExtensionsRequire(ExtKeyTaxResponsibility),
 				),
 				validation.Skip,
 			),
