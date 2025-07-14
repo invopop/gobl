@@ -169,9 +169,9 @@ For example:
 ],
 ```
 
-## Tax responsibility codes (TaxLevelCode)
+## Fiscal responsibility codes (TaxLevelCode)
 
-The DIAN requires that Colombian invoices specify the tax responsibilities of the supplier or customer using specific codes. In a GOBL invoice, you can provide these using the `co-dian-tax-responsibility` extension. If no value is provided, GOBL will automatically set `R-99-PN` as the default.
+The DIAN requires that Colombian invoices specify the fiscal responsibilities of the supplier or customer using specific codes. In a GOBL invoice, you can provide these using the `co-dian-fiscal-responsibility` extension. If no value is provided, GOBL will automatically set `R-99-PN` as the default.
 
 | Code    | Description                   |
 | ------- | ----------------------------- |
@@ -191,7 +191,7 @@ For example:
     "code": "9014514812"
   },
   "ext": {
-    "co-dian-tax-responsibility": "O-13"
+    "co-dian-fiscal-responsibility": "O-13"
   }
 }
 ```

@@ -15,7 +15,7 @@
     },
     "ext": {
       "co-dian-municipality": "11001",
-      "co-dian-tax-responsibility": "O-23"
+      "co-dian-fiscal-responsibility": "O-23"
     },
     "addresses": [
       {
@@ -34,7 +34,7 @@
     },
     "ext": {
       "co-dian-municipality": "11001",
-      "co-dian-tax-responsibility": "O-15"
+      "co-dian-fiscal-responsibility": "O-15"
     },
     "addresses": [
       {

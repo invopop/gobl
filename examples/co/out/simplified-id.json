@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f4003f9652358c91a8a439b1b4c780ded85ecc9988ffe93a820df718567ba999"
+			"val": "94766398b33568fd84054f820abb63191506f3a03d045ef7a057ca89c98e3c84"
 		}
 	},
 	"doc": {
@@ -30,8 +30,8 @@
 				"code": "9014514812"
 			},
 			"ext": {
-				"co-dian-municipality": "11001",
-				"co-dian-tax-responsibility": "O-23"
+				"co-dian-fiscal-responsibility": "O-23",
+				"co-dian-municipality": "11001"
 			}
 		},
 		"customer": {

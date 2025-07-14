@@ -8,10 +8,10 @@ import (
 
 // Extension keys used in Colombia.
 const (
-	ExtKeyMunicipality      cbc.Key = "co-dian-municipality"
-	ExtKeyCreditCode        cbc.Key = "co-dian-credit-code"
-	ExtKeyDebitCode         cbc.Key = "co-dian-debit-code"
-	ExtKeyTaxResponsibility cbc.Key = "co-dian-tax-responsibility"
+	ExtKeyMunicipality         cbc.Key = "co-dian-municipality"
+	ExtKeyCreditCode           cbc.Key = "co-dian-credit-code"
+	ExtKeyDebitCode            cbc.Key = "co-dian-debit-code"
+	ExtKeyFiscalResponsibility cbc.Key = "co-dian-fiscal-responsibility"
 )
 
 var extensions = []*cbc.Definition{
@@ -139,17 +139,17 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyTaxResponsibility,
+		Key: ExtKeyFiscalResponsibility,
 		Name: i18n.String{
-			i18n.EN: "Tax Responsibility",
-			i18n.ES: "Responsabilidad Fiscal",
+			i18n.EN: "Fiscal Responsibility Code",
+			i18n.ES: "Código de Responsabilidad Fiscal",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				The tax responsibility code as defined by the DIAN for Colombian electronic invoicing.
+				The fiscal responsibility code as defined by the DIAN for Colombian electronic invoicing.
+				Maps to the UBL's "TaxLevelCode" field.
 
-				For advanced details refer to the DIAN technical annex documentation for the "TaxLevelCode" field.
-				The list of codes can be found in the DIAN toolbox zip:
+				For further details and the list of codes, see:
 
 				  * https://www.dian.gov.co/impuestos/factura-electronica/Documents/Caja-de-herramientas-FE-V1-9.zip
 				    (see Anexo Tecnico/Tablas Referenciadas, table 13.2.6.1)

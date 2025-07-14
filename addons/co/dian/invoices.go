@@ -38,7 +38,7 @@ func normalizeTaxResponsibility(p *org.Party) {
 	if p == nil || !isColombian(p.TaxID) {
 		return
 	}
-	def := tax.Extensions{ExtKeyTaxResponsibility: "R-99-PN"}
+	def := tax.Extensions{ExtKeyFiscalResponsibility: "R-99-PN"}
 	p.Ext = def.Merge(p.Ext)
 }
 
@@ -100,7 +100,7 @@ func validateInvoiceSupplier(value interface{}) error {
 			),
 			validation.When(
 				isColombian(obj.TaxID),
-				tax.ExtensionsRequire(ExtKeyTaxResponsibility),
+				tax.ExtensionsRequire(ExtKeyFiscalResponsibility),
 			),
 			validation.Skip,
 		),
@@ -144,7 +144,7 @@ func validateInvoiceCustomer(tags []cbc.Key) func(value any) error {
 				),
 				validation.When(
 					isColombian(obj.TaxID),
-					tax.ExtensionsRequire(ExtKeyTaxResponsibility),
+					tax.ExtensionsRequire(ExtKeyFiscalResponsibility),
 				),
 				validation.Skip,
 			),

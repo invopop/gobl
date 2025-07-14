@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `co-dian-v2`: added `co-dian-tax-responsibility` extension for suppliers and customers
+- `co-dian-v2`: added `co-dian-fiscal-responsibility` extension for suppliers and customers
 
 ## [v0.220.1] - 2025-07-09
 
