@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `co-dian-v2`: added `co-dian-fiscal-responsibility` extension for suppliers and customers
 
+### Changed
+
+- `es-verifactu-v1`:
+  - Refining customer validation to support Tax ID or identity with extension.
+  - New `replacement` tag to use when simplified invoices are replaced with a complete version.
+  - Setting credit-note default document type to `R1` if not set in correction process.
+  - Improved extension documentation and usage.
+
 ## [v0.220.1] - 2025-07-09
 
 ### Fixes

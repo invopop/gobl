@@ -38,6 +38,9 @@ type Scenario struct {
 	// Name of the scenario for further information.
 	Name i18n.String `json:"name,omitempty" jsonschema:"title=Name"`
 
+	// Description of the scenario for documentation purposes.
+	Desc i18n.String `json:"desc,omitempty" jsonschema:"title=Description"`
+
 	/* Filters */
 
 	// Type of document, if present.

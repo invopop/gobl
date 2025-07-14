@@ -21,14 +21,52 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "DIAN Municipality Code",
 			i18n.ES: "Código de municipio DIAN",
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "DIAN Municipality Codes",
+				},
+				URL:         "https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf",
+				ContentType: "application/pdf",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Municipalities of Colombia - Github",
+				},
+				URL: "https://github.com/ALAxHxC/MunicipiosDane",
+			},
+		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				The municipality code as defined by the DIAN.
 
-				For further details on the list of possible codes, see:
+				Set the 5-digit code for the municipality where the issuer is located in both
+				the supplier and customer:
 
-				 * https://www.dian.gov.co/atencionciudadano/formulariosinstructivos/Formularios/2007/Codigos_municipios_2007.pdf
-				 * https://github.com/ALAxHxC/MunicipiosDane
+				~~~js
+				"supplier": {
+					"name": "EXAMPLE SUPPLIER S.A.S.",
+					"tax_id": {
+						"country": "CO",
+						"code": "9014514812"
+					},
+					"ext": {
+						"co-dian-municipality": "11001" // Bogotá, D.C.
+					},
+					// [...]
+				},
+				"customer": {
+					"name": "EXAMPLE CUSTOMER S.A.S.",
+					"tax_id": {
+						"country": "CO",
+						"code": "9014514805"
+					},
+					"ext": {
+						"co-dian-municipality": "05001" // Medellín
+					},
+					// [...]
+				},
+				~~~
 			`),
 		},
 		Pattern: `^\d{5}$`,
@@ -40,8 +78,37 @@ var extensions = []*cbc.Definition{
 			i18n.ES: "Código de Crédito",
 		},
 		Desc: i18n.String{
-			i18n.EN: "DIAN correction code for credit notes",
-			i18n.ES: "Código de corrección DIAN para notas de crédito",
+			i18n.EN: here.Doc(`
+				The DIAN correction code is required when issuing credit notes in Colombia
+				and is not automatically assigned by GOBL. It must be be included inside the
+				~preceding~ document references.
+
+				The extension will be offered as an option in the invoice correction process.
+
+				Usage example:
+
+				~~~js
+				"preceding": [
+					{
+						"uuid": "0190e063-7676-7000-8c58-2db7172a4e58",
+						"type": "standard",
+						"series": "SETT",
+						"code": "1010006",
+						"issue_date": "2024-07-23",
+						"reason": "Reason",
+						"stamps": [
+							{
+								"prv": "dian-cude",
+								"val": "57601dd1ab69213ccf8cfd5894f2e9fbfe23643f3a24e2f2526a5bb88d058a0842fffcb339694b6704dc105a9d813327"
+							}
+						],
+						"ext": {
+							"co-dian-credit-code": "3"
+						}
+					}
+				],
+				~~~
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -104,8 +171,12 @@ var extensions = []*cbc.Definition{
 			i18n.ES: "Código de Débito",
 		},
 		Desc: i18n.String{
-			i18n.EN: "DIAN correction code for debit notes",
-			i18n.ES: "Código de corrección DIAN para notas de débito",
+			i18n.EN: here.Doc(`
+				The DIAN correction code is required when issuing debit notes in Colombia
+				and is not automatically assigned by GOBL.
+
+				The extension will be offered as an option in the invoice correction process.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -144,15 +215,47 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Fiscal Responsibility Code",
 			i18n.ES: "Código de Responsabilidad Fiscal",
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "DIAN Fiscal Responsibility Codes, see Anexo Tecnico/Tablas Referenciadas, table 13.2.6.1",
+				},
+				URL:         "https://www.dian.gov.co/impuestos/factura-electronica/Documents/Caja-de-herramientas-FE-V1-9.zip",
+				ContentType: "application/zip",
+			},
+		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				The fiscal responsibility code as defined by the DIAN for Colombian electronic invoicing.
-				Maps to the UBL's "TaxLevelCode" field.
+				Maps to the UBL's ~TaxLevelCode~ field.
 
-				For further details and the list of codes, see:
+				The DIAN requires that Colombian invoices specify the fiscal responsibilities of the
+				supplier or customer using specific codes. If no value is provided, GOBL will
+				automatically set ~R-99-PN~ as the default.
 
-				  * https://www.dian.gov.co/impuestos/factura-electronica/Documents/Caja-de-herramientas-FE-V1-9.zip
-				    (see Anexo Tecnico/Tablas Referenciadas, table 13.2.6.1)
+				| Code    | Description                   |
+				| ------- | ----------------------------- |
+				| O-13    | Gran contribuyente            |
+				| O-15    | Autorretenedor                |
+				| O-23    | Agente de retención IVA       |
+				| O-47    | Régimen simple de tributación |
+				| R-99-PN | No aplica - Otros             |
+
+				For example:
+
+				~~~js
+				"customer": {
+					"name": "EXAMPLE CUSTOMER S.A.S.",
+					"tax_id": {
+						"country": "CO",
+						"code": "9014514812"
+					},
+					"ext": {
+						"co-dian-fiscal-responsibility": "O-13"
+					}
+				}
+				~~~
+
 			`),
 		},
 		Values: []*cbc.Definition{
