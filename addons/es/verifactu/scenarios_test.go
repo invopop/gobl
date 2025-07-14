@@ -49,7 +49,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		assert.Equal(t, "R2", i.Tax.Ext.Get(verifactu.ExtKeyDocType).String())
 	})
 
-	t.Run("simplified correcitve invoice", func(t *testing.T) {
+	t.Run("simplified corrective invoice", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.SetTags(tax.TagSimplified)
 		require.NoError(t, i.Calculate())

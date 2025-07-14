@@ -226,7 +226,7 @@ func TestIdentityForExtKey(t *testing.T) {
 		assert.Equal(t, "qux", id.Ext["baz"].String())
 		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
 	})
-	t.Run("nil extensiosn", func(t *testing.T) {
+	t.Run("nil extensions", func(t *testing.T) {
 		idents := []*org.Identity{
 			{
 				Code: "1234",
