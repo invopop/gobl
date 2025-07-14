@@ -8,6 +8,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -32,6 +33,27 @@ var invoiceWorkTypes = []cbc.Code{
 	WorkTypeConsignmentCredit,
 }
 
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+	normalizeInvoiceAdvances(inv)
+}
+
+func normalizeInvoiceAdvances(inv *bill.Invoice) {
+	if inv.Payment == nil {
+		return
+	}
+
+	// Set the issue date as the default date for advances
+	for _, adv := range inv.Payment.Advances {
+		if adv.Date == nil {
+			date := inv.IssueDate
+			adv.Date = &date
+		}
+	}
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	dt := invoiceDocType(inv)
 
@@ -53,6 +75,41 @@ func validateInvoice(inv *bill.Invoice) error {
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.Skip,
 			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Payment,
+			validation.By(validateInvoicePayment),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoicePayment(val any) error {
+	pay, _ := val.(*bill.PaymentDetails)
+	if pay == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(pay,
+		validation.Field(&pay.Advances,
+			validation.Each(
+				validation.By(validatePaymentAdvance),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validatePaymentAdvance(val any) error {
+	adv, _ := val.(*pay.Advance)
+	if adv == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(adv,
+		validation.Field(&adv.Date,
+			validation.Required,
 			validation.Skip,
 		),
 	)
