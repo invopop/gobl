@@ -2,10 +2,12 @@ package pt
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -61,6 +63,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Payment,
+			validation.By(validateInvoicePayment(inv)),
+			validation.Skip,
+		),
 	)
 }
 
@@ -105,4 +111,39 @@ func validateItem(val any) error {
 			num.Min(num.MakeAmount(0, 0)),
 		),
 	)
+}
+
+func validateInvoicePayment(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		pay, _ := val.(*bill.PaymentDetails)
+		if pay == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(pay,
+			validation.Field(&pay.Advances,
+				validation.Each(
+					validation.By(validateInvoiceAdvance(inv)),
+					validation.Skip,
+				),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceAdvance(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		adv, _ := val.(*pay.Advance)
+		if adv == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(adv,
+			validation.Field(&adv.Date,
+				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
 }
