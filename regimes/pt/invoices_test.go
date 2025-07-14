@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/pt"
@@ -47,32 +48,33 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestValidInvoice(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
 	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, reg.Validator(inv))
 }
 
 func TestValidSimplifiedInvoice(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
 	inv := validInvoice()
 	inv.SetTags(tax.TagSimplified, pt.TagInvoiceReceipt)
 	inv.Customer = nil
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, reg.Validator(inv))
 }
 
 func TestLineValidation(t *testing.T) {
-	inv := validInvoice()
-	inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be no less than 0.).)")
+	reg := tax.RegimeDefFor(l10n.PT)
 
-	inv = validInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (item: (price: must be no less than 0.).).)")
-}
+	t.Run("negative quantity", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
+		assert.ErrorContains(t, reg.Validator(inv), "lines: (0: (quantity: must be no less than 0.).)")
+	})
 
-func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), expected)
+	t.Run("negative price", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
+		assert.ErrorContains(t, reg.Validator(inv), "lines: (0: (item: (price: must be no less than 0.).).)")
+	})
 }
