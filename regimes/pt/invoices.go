@@ -49,6 +49,11 @@ func validateInvoice(inv *bill.Invoice) error {
 					bill.InvoiceTypeDebitNote,
 				),
 				validation.Required,
+				validation.Skip,
+			),
+			validation.Each(
+				validation.By(validatePreceding(inv)),
+				validation.Skip,
 			),
 			validation.Skip,
 		),
@@ -141,6 +146,22 @@ func validateInvoiceAdvance(inv *bill.Invoice) validation.RuleFunc {
 
 		return validation.ValidateStruct(adv,
 			validation.Field(&adv.Date,
+				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validatePreceding(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		ref, ok := val.(*org.DocumentRef)
+		if !ok {
+			return nil
+		}
+
+		return validation.ValidateStruct(ref,
+			validation.Field(&ref.IssueDate,
 				cal.DateBefore(inv.IssueDate),
 				validation.Skip,
 			),
