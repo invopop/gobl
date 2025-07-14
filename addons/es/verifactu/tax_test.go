@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -31,13 +32,34 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
-	t.Run("undefined rate", func(t *testing.T) {
+	t.Run("exempt", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateExempt,
 		}
 		normalizeTaxCombo(tc)
-		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, "N1", tc.Ext.Get(ExtKeyOpClass).String())
+	})
+	t.Run("exempt export", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateExempt.With(tax.TagExport),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, "N2", tc.Ext.Get(ExtKeyOpClass).String())
+	})
+	t.Run("surcharge", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category:  tax.CategoryVAT,
+			Rate:      tax.RateStandard.With(es.TaxRateEquivalence),
+			Percent:   num.NewPercentage(210, 3),
+			Surcharge: num.NewPercentage(50, 3),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "18", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
 	})
 
 	t.Run("foreign country", func(t *testing.T) {

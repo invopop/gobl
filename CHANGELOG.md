@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Changed
 
-- `es/verifactu`: Removing customer content validation, adding new `replacement` tag to use when simplified invoices are replaced with a complete version.
+- `es-verifactu-v1`:
+  - Refining customer validation to support Tax ID or identity with extension.
+  - New `replacement` tag to use when simplified invoices are replaced with a complete version.
+  - Setting credit-note default document type to `R1` if not set in correction process.
+  - Improved extension documentation and usage.
 
 ## [v0.220.1] - 2025-07-09
 

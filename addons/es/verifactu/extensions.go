@@ -36,14 +36,28 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyDocType,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Invoice Type Code - L2",
-			i18n.ES: "Código de Tipo de Factura de Verifactu - L2",
+			i18n.EN: "Invoice Type Code",
+			i18n.ES: "Código de Tipo de Factura",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Verifactu Ministerial Order",
+					i18n.ES: "Orden Ministerial de Verifactu",
+				},
+				URL: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138",
+			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Invoice type code used to identify the type of invoice being sent.
-				Source: VeriFactu Ministerial Order:
-				 * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138
+				Code used to identify the type of invoice being sent. This will be
+				determined automatically by GOBL during normalization according
+				to the scenario definitions.
+
+				The codes ~R2~, ~R3~, and ~R4~ are not covered by GOBL's scenarios
+				and will need to be set manually if needed.
+
+				Values correspond to L2 list.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -149,14 +163,21 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyCorrectionType,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Correction Type Code - L3",
-			i18n.ES: "Código de Tipo de Corrección de Verifactu - L3",
+			i18n.EN: "Verifactu Correction Type Code",
+			i18n.ES: "Código de Tipo de Corrección de Verifactu",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Correction type code used to identify the type of correction being made.
-				This value will be determined automatically according to the invoice type.
-				Corrective invoices will be marked as "S", while credit and debit notes as "I".
+				Correction type code used to identify the type of correction being
+				made. Values map to L3 list.
+				
+				Code is determined automatically according to the invoice type:
+
+				| Invoice Type		| Code |
+				|-------------------|------|
+				| ~corrective~		| ~S~  |
+				| ~credit-note~		| ~I~  |
+				| ~debit-note~		| ~I~  |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -179,14 +200,37 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyOpClass,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Operation Classification/Exemption Code - L9",
-			i18n.ES: "Código de Clasificación/Exención de Impuesto de Verifactu - L9",
+			i18n.EN: "Verifactu Operation Classification/Exemption Code",
+			i18n.ES: "Código de Clasificación/Exención de Impuesto de Verifactu",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Operation classification code used to identify if taxes should be applied to the line.
-				Source: VeriFactu Ministerial Order:
-				 * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138
+				VERI*FACTU makes a clear distinction between "subjected" and "exempt", while GOBL only
+				recognises "exempt", implying that there is simply no percentage. Mapping between the
+				two can thus become confusing.
+
+				GOBL will try to automatically map tax rates to operation classes, but if your
+				system requires needs to offer tighter control to users, it may be easier to
+				ask them to choose which combination of operation class and exemption code
+				applies to their use-case.
+
+				The following tax rates will be mapped automatically to operation classes:
+
+				| Tax Rate					| Operation Class |
+				|---------------------------|-----------------|
+				| ~standard~				| ~S1~            |
+				| ~reduced~					| ~S1~            |
+				| ~super-reduced~			| ~S1~            |
+				| ~zero~					| ~S1~            |
+				| ~exempt~					| ~N1~            |
+				| ~exempt+reverse-charge~	| ~S2~            |
+				| ~exempt+export~			| ~N2~            |
+
+				This extension maps to the field ~CalificacionOperacion~, and cannot be
+				provided alongside the ~es-verifactu-exempt~ extension. Values correspond
+				to the L9 list.
+
 				For details on how best to use and apply these and other codes, see the
 				AEAT FAQ:
 				 * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD
@@ -226,12 +270,20 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyExempt,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Exemption Code - L10",
-			i18n.ES: "Código de Exención de Impuesto de Verifactu - L10",
+			i18n.EN: "Verifactu Exemption Code",
+			i18n.ES: "Código de Exención de Impuesto de Verifactu",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Exemption code used to explain why the operation is exempt from taxes.
+
+				This extension maps to the field ~OperacionExenta~, and **cannot** be provided
+				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
+				L10 list.
+
+				No attempt will be made by GOBL to automatically map tax rates to exemption
+				reason codes, they will need to be determined and applied on a case-by-case
+				basis.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -282,12 +334,25 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegime,
 		Name: i18n.String{
-			i18n.EN: "VAT/IGIC Regime Code - L8A/B",
-			i18n.ES: "Código de Régimen de IVA/IGIC - L8A/B",
+			i18n.EN: "VAT/IGIC Regime Code",
+			i18n.ES: "Código de Régimen de IVA/IGIC",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Identify the type of VAT or IGIC regime applied to the operation. This list combines lists L8A which include values for VAT, and L8B for IGIC.
+				Identify the type of VAT or IGIC regime applied to the operation. This list combines
+				lists L8A which include values for VAT, and L8B for IGIC.
+
+				Maps to the field ~ClaveRegimen~, and is required for all VAT and IGIC operations.
+				Values correspond to L8A (VAT) and L8B (IGIC) lists.
+
+				The regime code must be assigned for each tax combo. If no regime code is provided,
+				GOBL will try to assign a code from the following tax combo contexts:
+
+				| Combo Context				| Regime Code |
+				|---------------------------|-------------|
+				| Rate ~standard~			| ~01~        |
+				| Rate has ~export~			| ~02~        |
+				| Has surcharge				| ~18~        |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -415,18 +480,18 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIdentityType,
 		Name: i18n.String{
-			i18n.EN: "Identity Type Code - L7",
-			i18n.ES: "Código de Tipo de Identidad - L7",
+			i18n.EN: "Identity Type Code",
+			i18n.ES: "Código de Tipo de Identidad",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Identity code used to identify the type of identity document used by the customer.
 
-				Codes ~01~, ~02~, and ~07~ are not defined as they are explicitly inferred from the
-				tax Identity and the associated country. ~01~ implies a Spanish NIF, ~02~ is applied
-				when the Tax ID is foreign VAT (or other tax) number, and ~07~ is used when the customer
-				is a company but does not have a VAT registration code in their home country, like
-				the US.
+				Codes ~01~ and ~02~ are not defined as they are explicitly inferred from the
+				tax Identity and the associated country. ~01~ implies a Spanish NIF, and ~02~ is applied
+				when the Tax ID is foreign VAT (or other tax) number.
+
+				Corresponds to the ~IDType~ field and L7 list.
 
 				The following identity keys will be mapped automatically to an extension by the 
 				addon for the following keys:
@@ -436,7 +501,24 @@ var extensions = []*cbc.Definition{
 				- ~resident~: ~05~
 				- ~other~: ~06~
 
-				Here is an example of how an identity will be normalized:
+				The ~07~ "not registered in census" code is not mapped automatically, but
+				can be provided directly if needed.
+
+				Here is an example of an identity:
+
+				~~~
+				{
+					"identities": [
+						{
+							"key": "passport",
+							"country": "GB",
+							"code": "123456789"
+						}
+					]
+				}
+				~~~
+
+				And in normlized form:
 
 				~~~
 				{
@@ -452,7 +534,6 @@ var extensions = []*cbc.Definition{
 					]
 				}
 				~~~
-
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -482,6 +563,15 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Other Identity Document",
 					i18n.ES: "Otro Documento Probatorio",
+				},
+			},
+			{
+				// We don't set a constant for this as there are no mappings that
+				// will be done automatically.
+				Code: "07",
+				Name: i18n.String{
+					i18n.EN: "Not registered in census",
+					i18n.ES: "No censado",
 				},
 			},
 		},
@@ -524,13 +614,16 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIssuerType,
 		Name: i18n.String{
-			i18n.EN: "Issuer Type Code - L6",
-			i18n.ES: "Emitida por Tercero o Destinatario - L6",
+			i18n.EN: "Issuer Type Code",
+			i18n.ES: "Emitida por Tercero o Destinatario",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Indicates whether the invoice is issued by a third party or by the customer
 				themselves.
+
+				Mapped to the field ~EmitidaPorTerceroODestinatario~ in Verifactu documents,
+				with list L6.
 
 				The ~self-billed~ tag will automatically be set this extension in the invoice
 				to ~D~.

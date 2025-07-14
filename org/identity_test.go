@@ -207,3 +207,39 @@ func TestIdentityForKey(t *testing.T) {
 		assert.Nil(t, org.IdentityForKey(idents, "baz"))
 	})
 }
+
+func TestIdentityForExtKey(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		idents := []*org.Identity{
+			{
+				Ext: tax.Extensions{
+					cbc.Key("foo"): "bar",
+				},
+			},
+			{
+				Ext: tax.Extensions{
+					cbc.Key("baz"): "qux",
+				},
+			},
+		}
+		id := org.IdentityForExtKey(idents, "baz")
+		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
+	})
+	t.Run("nil extensiosn", func(t *testing.T) {
+		idents := []*org.Identity{
+			{
+				Code: "1234",
+			},
+			{
+				Code: "5678",
+				Ext: tax.Extensions{
+					cbc.Key("baz"): "qux",
+				},
+			},
+		}
+		id := org.IdentityForExtKey(idents, "baz")
+		assert.Equal(t, "qux", id.Ext["baz"].String())
+		assert.Nil(t, org.IdentityForExtKey(idents, "nonexistent"))
+	})
+}

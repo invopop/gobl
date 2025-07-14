@@ -1,6 +1,8 @@
 package verifactu
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -53,12 +55,11 @@ func normalizeInvoice(inv *bill.Invoice) {
 	// Set default correction type, unless already provided.
 	switch inv.Type {
 	case bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote, bill.InvoiceTypeCorrective:
-		tx := inv.Tax
 		// Don't try to override a previously set document type.
-		// This is non-deterministic.
-		if !tx.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
-			tx.Ext[ExtKeyDocType] = "R1"
-			inv.Tax = tx
+		// This is non-deterministic. May be overwritten by user *or*
+		// scenarios.
+		if !inv.Tax.Ext.Get(ExtKeyDocType).In("R2", "R3", "R4", "R5") {
+			inv.Tax.Ext[ExtKeyDocType] = "R1"
 		}
 	}
 
@@ -131,6 +132,7 @@ func validateInvoice(inv *bill.Invoice) error {
 				!inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // not simplified
 				validation.Required,
 			),
+			validation.By(validateInvoiceCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
@@ -143,6 +145,25 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.By(validateNote),
 				validation.Skip,
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceCustomer(val any) error {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+	if p.TaxID == nil && org.IdentityForExtKey(p.Identities, ExtKeyIdentityType) == nil {
+		return fmt.Errorf("must have a tax_id, or an identity with ext '%s'", ExtKeyIdentityType)
+	}
+	return validation.ValidateStruct(p,
+		validation.Field(&p.TaxID,
+			// VERI*FACTU requires all Tax IDs to have a code. Sales into
+			// countries without a specific Tax ID code will have to enter
+			// something here regardless, or issue simplified invoices.
+			tax.RequireIdentityCode,
 			validation.Skip,
 		),
 	)

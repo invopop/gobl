@@ -327,6 +327,40 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
+
+	t.Run("customer nil", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		ad := tax.AddonForKey(verifactu.V1)
+		assert.NoError(t, ad.Validator(inv))
+	})
+	t.Run("customer with missing ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "customer: must have a tax_id, or an identity with ext 'es-verifactu-identity-type'")
+	})
+	t.Run("customer with missing Tax ID code", func(t *testing.T) {
+		// VERI*FACTU has no way to handle just a country without an actual code.
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "customer: (tax_id: (code: cannot be blank.).)")
+	})
+	t.Run("customer with identity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
