@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.220.2] - 2025-07-14
+
 ### Added
 
 - `co-dian-v2`: added `co-dian-fiscal-responsibility` extension for suppliers and customers
