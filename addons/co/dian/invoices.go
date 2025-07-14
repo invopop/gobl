@@ -30,11 +30,11 @@ func normalizeInvoice(inv *bill.Invoice) {
 	if inv == nil {
 		return
 	}
-	normalizeTaxResponsibility(inv.Supplier)
-	normalizeTaxResponsibility(inv.Customer)
+	normalizeInvoicePartyFiscalResponsibility(inv.Supplier)
+	normalizeInvoicePartyFiscalResponsibility(inv.Customer)
 }
 
-func normalizeTaxResponsibility(p *org.Party) {
+func normalizeInvoicePartyFiscalResponsibility(p *org.Party) {
 	if p == nil || !isColombian(p.TaxID) {
 		return
 	}

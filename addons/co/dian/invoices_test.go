@@ -180,7 +180,7 @@ func TestBasicInvoiceValidation(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestTaxResponsibilityExtensionValidation(t *testing.T) {
+func TestFiscalResponsibilityExtensionValidation(t *testing.T) {
 	// Colombian parties
 	inv := baseInvoice()
 	require.NoError(t, inv.Calculate()) // calculate before delete to avoid normalization
