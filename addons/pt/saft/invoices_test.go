@@ -151,6 +151,25 @@ func TestInvoiceValidation(t *testing.T) {
 
 		// Add source doc ref - should pass
 		inv.Tax.Ext[saft.ExtKeySourceRef] = "FTD FT SERIESA/123"
+	})
+
+	t.Run("unpaid invoice-receipt", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Series = "FR SERIES-A"
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeySourceBilling: saft.SourceBillingProduced,
+			saft.ExtKeyInvoiceType:   saft.InvoiceTypeInvoiceReceipt,
+		}
+		inv.Totals = &bill.Totals{
+			Due: num.NewAmount(10, 2), // Some payment due
+		}
+
+		assert.ErrorContains(t, addon.Validator(inv), "totals: (due: must be equal to 0")
+
+		inv.Totals.Due = num.NewAmount(0, 2) // Zero payment due
+		require.NoError(t, addon.Validator(inv))
+
+		inv.Totals.Due = nil // No payment due
 		require.NoError(t, addon.Validator(inv))
 	})
 }

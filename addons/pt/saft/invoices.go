@@ -9,6 +9,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -99,6 +100,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoicePayment),
 			validation.Skip,
 		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals(inv)),
+			validation.Skip,
+		),
 	)
 }
 
@@ -131,6 +136,25 @@ func validatePaymentAdvance(val any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateInvoiceTotals(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		tot, _ := val.(*bill.Totals)
+		if tot == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(tot,
+			validation.Field(&tot.Due,
+				validation.When(
+					isInvoiceReceipt(inv),
+					num.Equals(num.AmountZero),
+				),
+				validation.Skip,
+			),
+		)
+	}
 }
 
 func invoiceDocType(inv *bill.Invoice) cbc.Code {
@@ -281,4 +305,8 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
+}
+
+func isInvoiceReceipt(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
 }
