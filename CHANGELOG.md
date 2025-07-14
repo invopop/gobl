@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `co-dian-v2`: added `co-dian-fiscal-responsibility` extension for suppliers and customers
+
 ### Changed
 
 - `es-verifactu-v1`:

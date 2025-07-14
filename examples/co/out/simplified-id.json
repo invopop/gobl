@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1b80acf83b7ff709d71a8e43ea2dcee88591564497ac59d419e869ec6d9e574d"
+			"val": "94766398b33568fd84054f820abb63191506f3a03d045ef7a057ca89c98e3c84"
 		}
 	},
 	"doc": {
@@ -30,6 +30,7 @@
 				"code": "9014514812"
 			},
 			"ext": {
+				"co-dian-fiscal-responsibility": "O-23",
 				"co-dian-municipality": "11001"
 			}
 		},

@@ -15,7 +15,10 @@
       "code": "9014514812",
       "zone": "11001"
     },
-    "name": "EXAMPLE SUPPLIER S.A.S."
+    "name": "EXAMPLE SUPPLIER S.A.S.",
+    "ext": {
+      "co-dian-fiscal-responsibility": "O-23"
+    }
   },
   "lines": [
     {
