@@ -28,17 +28,7 @@ var invoiceTags = &tax.TagSet{
 	},
 }
 
-type invoiceValidator struct {
-	inv *bill.Invoice
-}
-
 func validateInvoice(inv *bill.Invoice) error {
-	v := &invoiceValidator{inv: inv}
-	return v.validate()
-}
-
-func (v *invoiceValidator) validate() error {
-	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Type,
 			validation.In(
@@ -61,20 +51,20 @@ func (v *invoiceValidator) validate() error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(v.supplier),
+			validation.By(validateSupplier),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(v.line),
-				validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
+				validation.By(validateInvoiceLine),
+				validation.Skip,
 			),
-			validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
+			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) supplier(val any) error {
+func validateSupplier(val any) error {
 	obj, _ := val.(*org.Party)
 	if obj == nil {
 		return nil
@@ -88,8 +78,8 @@ func (v *invoiceValidator) supplier(val any) error {
 	)
 }
 
-func (v *invoiceValidator) line(value interface{}) error {
-	line, _ := value.(*bill.Line)
+func validateInvoiceLine(val any) error {
+	line, _ := val.(*bill.Line)
 	if line == nil {
 		return nil
 	}
@@ -99,14 +89,14 @@ func (v *invoiceValidator) line(value interface{}) error {
 			num.Min(num.MakeAmount(0, 0)),
 		),
 		validation.Field(&line.Item,
-			validation.By(v.item),
+			validation.By(validateItem),
 			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) item(value interface{}) error {
-	item, _ := value.(*org.Item)
+func validateItem(val any) error {
+	item, _ := val.(*org.Item)
 	if item == nil {
 		return nil
 	}
