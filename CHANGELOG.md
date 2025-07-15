@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.220.3] - 2025-07-15
+
+### Added
+
+- `tax`: `Identity#InEU` method for checking if Identity is in the EU on a specific date.
+
+### Changed
+
+- `es-verifactu-v1`: refining copy related to identity handling.
+
 ## [v0.220.2] - 2025-07-14
 
 ### Added

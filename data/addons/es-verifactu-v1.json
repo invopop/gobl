@@ -140,11 +140,11 @@
     {
       "key": "es-verifactu-op-class",
       "name": {
-        "en": "Verifactu Operation Classification/Exemption Code",
-        "es": "Código de Clasificación/Exención de Impuesto de Verifactu"
+        "en": "Subject and Not Exempt Operation Class Code",
+        "es": "Clave de la Operación Sujeta y no Exenta o de la Operación no Sujeta."
       },
       "desc": {
-        "en": "Operation classification code used to identify if taxes should be applied to the line.\nVERI*FACTU makes a clear distinction between \"subjected\" and \"exempt\", while GOBL only\nrecognises \"exempt\", implying that there is simply no percentage. Mapping between the\ntwo can thus become confusing.\n\nGOBL will try to automatically map tax rates to operation classes, but if your\nsystem requires needs to offer tighter control to users, it may be easier to\nask them to choose which combination of operation class and exemption code\napplies to their use-case.\n\nThe following tax rates will be mapped automatically to operation classes:\n\n| Tax Rate\t\t\t\t\t| Operation Class |\n|---------------------------|-----------------|\n| `standard`\t\t\t\t| `S1`            |\n| `reduced`\t\t\t\t\t| `S1`            |\n| `super-reduced`\t\t\t| `S1`            |\n| `zero`\t\t\t\t\t| `S1`            |\n| `exempt`\t\t\t\t\t| `N1`            |\n| `exempt+reverse-charge`\t| `S2`            |\n| `exempt+export`\t\t\t| `N2`            |\n\nThis extension maps to the field `CalificacionOperacion`, and cannot be\nprovided alongside the `es-verifactu-exempt` extension. Values correspond\nto the L9 list.\n\nFor details on how best to use and apply these and other codes, see the\nAEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
+        "en": "Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.\n\nVERI*FACTU distinguishes between \"subject\" and \"exempt\" operations, while GOBL treats \"exempt\" as simply having no tax percentage. This difference can make mapping between systems complex.\n\nGOBL will attempt to automatically assign operation class codes based on tax rates, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.\n\nAutomatic mapping of tax rates to operation classes:\n\n| Tax Rate                | Operation Class |\n|-------------------------|-----------------|\n| `standard`              | `S1`            |\n| `reduced`               | `S1`            |\n| `super-reduced`         | `S1`            |\n| `zero`                  | `S1`            |\n| `exempt`                | `N1`            |\n| `exempt+reverse-charge` | `S2`            |\n| `exempt+export`         | `N2`            |\n\nThis extension maps to the `CalificacionOperacion` field and must not be used together with the `es-verifactu-exempt` extension. Values correspond to the L9 list.\n\nFor further guidance on applying these codes, refer to the AEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
       },
       "values": [
         {
@@ -369,9 +369,16 @@
         "es": "Código de Tipo de Identidad"
       },
       "desc": {
-        "en": "Identity code used to identify the type of identity document used by the customer.\n\nCodes `01` and `02` are not defined as they are explicitly inferred from the\ntax Identity and the associated country. `01` implies a Spanish NIF, and `02` is applied\nwhen the Tax ID is foreign VAT (or other tax) number.\n\nCorresponds to the `IDType` field and L7 list.\n\nThe following identity keys will be mapped automatically to an extension by the \naddon for the following keys:\n\n- `passport`: `03`\n- `foreign`: `04`\n- `resident`: `05`\n- `other`: `06`\n\nThe `07` \"not registered in census\" code is not mapped automatically, but\ncan be provided directly if needed.\n\nHere is an example of an identity:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\"\n\t\t}\n\t]\n}\n```\n\nAnd in normlized form:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-verifactu-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```"
+        "en": "Identity code used to identify the type of identity document used by the customer\ndefined in the L7 list.\n\nThe regular Party Tax Identity is preferred over using a specific identity type\ncode, and will be mapped automatically as follows:\n\n- Spanish Tax IDs will be mapped to the `NIF` field.\n- EU Tax IDs will be mapped to the `IDOtro` field with code `02`.\n- Non-EU Tax IDs will be mapped to the `IDOtro` field with code `04`.\n\nVERI*FACTU will perform validation on both Spanish and EU Tax IDs, so it is important\nto provide the correct details.\n\nThe following identity `key` values will be mapped automatically to an extension by the \naddon for the following keys:\n\n- `passport`: `03`\n- `foreign`: `04`\n- `resident`: `05`\n- `other`: `06`\n\nThe `07` \"not registered in census\" code is not mapped automatically, but\ncan be provided directly if needed.\n\nExample identity of a UK passport:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\"\n\t\t}\n\t]\n}\n```\n\nWill be normalized to:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-verifactu-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```"
       },
       "values": [
+        {
+          "code": "02",
+          "name": {
+            "en": "NIF-VAT Identity (VIES)",
+            "es": "NIF-VAT (VIES)"
+          }
+        },
         {
           "code": "03",
           "name": {

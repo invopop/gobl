@@ -13,6 +13,12 @@ func Unions() UnionDefs {
 	return unions
 }
 
+// Union is a convenience function to return the Union definition
+// for a given code.
+func Union(code Code) *UnionDef {
+	return unions.Code(code)
+}
+
 var unions = UnionDefs{
 	{
 		Code: EU,

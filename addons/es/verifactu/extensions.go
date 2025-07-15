@@ -20,6 +20,7 @@ const (
 
 // Identity Type Codes - limited subset assigned to identities.
 const (
+	ExtCodeIdentityTypeVAT      cbc.Code = "02" // NIF-VAT identity
 	ExtCodeIdentityTypePassport cbc.Code = "03" // Passport
 	ExtCodeIdentityTypeForeign  cbc.Code = "04" // Foreign Identity Document
 	ExtCodeIdentityTypeResident cbc.Code = "05" // Spanish Resident Foreigner Identity Card
@@ -200,41 +201,34 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyOpClass,
 		Name: i18n.String{
-			i18n.EN: "Verifactu Operation Classification/Exemption Code",
-			i18n.ES: "Código de Clasificación/Exención de Impuesto de Verifactu",
+			i18n.EN: "Subject and Not Exempt Operation Class Code",
+			i18n.ES: "Clave de la Operación Sujeta y no Exenta o de la Operación no Sujeta.",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Operation classification code used to identify if taxes should be applied to the line.
-				VERI*FACTU makes a clear distinction between "subjected" and "exempt", while GOBL only
-				recognises "exempt", implying that there is simply no percentage. Mapping between the
-				two can thus become confusing.
+				Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.
 
-				GOBL will try to automatically map tax rates to operation classes, but if your
-				system requires needs to offer tighter control to users, it may be easier to
-				ask them to choose which combination of operation class and exemption code
-				applies to their use-case.
+				VERI*FACTU distinguishes between "subject" and "exempt" operations, while GOBL treats "exempt" as simply having no tax percentage. This difference can make mapping between systems complex.
 
-				The following tax rates will be mapped automatically to operation classes:
+				GOBL will attempt to automatically assign operation class codes based on tax rates, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.
 
-				| Tax Rate					| Operation Class |
-				|---------------------------|-----------------|
-				| ~standard~				| ~S1~            |
-				| ~reduced~					| ~S1~            |
-				| ~super-reduced~			| ~S1~            |
-				| ~zero~					| ~S1~            |
-				| ~exempt~					| ~N1~            |
-				| ~exempt+reverse-charge~	| ~S2~            |
-				| ~exempt+export~			| ~N2~            |
+				Automatic mapping of tax rates to operation classes:
 
-				This extension maps to the field ~CalificacionOperacion~, and cannot be
-				provided alongside the ~es-verifactu-exempt~ extension. Values correspond
-				to the L9 list.
+				| Tax Rate                | Operation Class |
+				|-------------------------|-----------------|
+				| ~standard~              | ~S1~            |
+				| ~reduced~               | ~S1~            |
+				| ~super-reduced~         | ~S1~            |
+				| ~zero~                  | ~S1~            |
+				| ~exempt~                | ~N1~            |
+				| ~exempt+reverse-charge~ | ~S2~            |
+				| ~exempt+export~         | ~N2~            |
 
-				For details on how best to use and apply these and other codes, see the
-				AEAT FAQ:
+				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
+
+				For further guidance on applying these codes, refer to the AEAT FAQ:
 				 * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD
-			`),
+				`),
 		},
 		Values: []*cbc.Definition{
 			{
@@ -485,15 +479,20 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Identity code used to identify the type of identity document used by the customer.
+				Identity code used to identify the type of identity document used by the customer
+				defined in the L7 list.
 
-				Codes ~01~ and ~02~ are not defined as they are explicitly inferred from the
-				tax Identity and the associated country. ~01~ implies a Spanish NIF, and ~02~ is applied
-				when the Tax ID is foreign VAT (or other tax) number.
+				The regular Party Tax Identity is preferred over using a specific identity type
+				code, and will be mapped automatically as follows:
+				
+				- Spanish Tax IDs will be mapped to the ~NIF~ field.
+				- EU Tax IDs will be mapped to the ~IDOtro~ field with code ~02~.
+				- Non-EU Tax IDs will be mapped to the ~IDOtro~ field with code ~04~.
 
-				Corresponds to the ~IDType~ field and L7 list.
+				VERI*FACTU will perform validation on both Spanish and EU Tax IDs, so it is important
+				to provide the correct details.
 
-				The following identity keys will be mapped automatically to an extension by the 
+				The following identity ~key~ values will be mapped automatically to an extension by the 
 				addon for the following keys:
 
 				- ~passport~: ~03~
@@ -504,7 +503,7 @@ var extensions = []*cbc.Definition{
 				The ~07~ "not registered in census" code is not mapped automatically, but
 				can be provided directly if needed.
 
-				Here is an example of an identity:
+				Example identity of a UK passport:
 
 				~~~
 				{
@@ -518,7 +517,7 @@ var extensions = []*cbc.Definition{
 				}
 				~~~
 
-				And in normlized form:
+				Will be normalized to:
 
 				~~~
 				{
@@ -537,6 +536,13 @@ var extensions = []*cbc.Definition{
 			`),
 		},
 		Values: []*cbc.Definition{
+			{
+				Code: ExtCodeIdentityTypeVAT,
+				Name: i18n.String{
+					i18n.EN: "NIF-VAT Identity (VIES)",
+					i18n.ES: "NIF-VAT (VIES)",
+				},
+			},
 			{
 				Code: ExtCodeIdentityTypePassport,
 				Name: i18n.String{

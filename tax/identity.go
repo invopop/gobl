@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/schema"
@@ -162,6 +163,12 @@ func (id *Identity) Validate() error {
 		return r.ValidateObject(id)
 	}
 	return nil
+}
+
+// InEU checks if the tax identity is from a country that is part of the EU on
+// the given date.
+func (id *Identity) InEU(date cal.Date) bool {
+	return l10n.Union(l10n.EU).HasMemberOn(date, id.Country.Code())
 }
 
 func (v validateTaxID) Validate(value interface{}) error {

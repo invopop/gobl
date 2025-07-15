@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	_ "github.com/invopop/gobl" // load all mods
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -83,6 +84,14 @@ func TestTaxIdentity(t *testing.T) {
 			Scheme:  "Foo",
 		}
 		assert.ErrorContains(t, tID.Validate(), "scheme: must be in a valid format.")
+	})
+
+	t.Run("in EU", func(t *testing.T) {
+		tID := &tax.Identity{
+			Country: "ES",
+			Code:    "X3157928M",
+		}
+		assert.True(t, tID.InEU(cal.MakeDate(2025, 7, 15)))
 	})
 }
 
