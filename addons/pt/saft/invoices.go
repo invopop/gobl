@@ -104,6 +104,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceTotals(inv)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Preceding,
+			validation.Length(0, 1),
+			validation.Skip,
+		),
 	)
 }
 

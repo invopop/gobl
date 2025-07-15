@@ -383,3 +383,39 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 		assert.Nil(t, inv.Payment)
 	})
 }
+
+func TestInvoicePrecedingValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("nil preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = nil
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("valid preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("several preceding documents", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+			{
+				Code:      "INV/2",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "preceding: the length must be no more than 1")
+	})
+}
