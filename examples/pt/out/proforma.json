@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "149e6af80d5c26cfbb59a92afbe220809232faa51fb0c842d2386343c3447fe8"
+			"val": "c0130727f7cbb1efa720a5ef24faa9deb81ab4ef608345b0f7a829f17c9d3219"
 		}
 	},
 	"doc": {
@@ -18,6 +18,7 @@
 		"series": "PF SERIES-A",
 		"code": "123",
 		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
 			"ext": {

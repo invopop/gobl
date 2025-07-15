@@ -3,6 +3,7 @@ package saft_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
@@ -39,6 +40,7 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2023, 1, 1),
+		ValueDate: cal.NewDate(2022, 12, 31),
 		Lines: []*bill.Line{
 			{
 				Quantity: num.MakeAmount(1, 0),
@@ -129,6 +131,12 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Totals.Due = nil // No payment due
 		require.NoError(t, addon.Validator(inv))
 	})
+
+	t.Run("missing value date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = nil
+		assert.ErrorContains(t, addon.Validator(inv), "value_date: cannot be blank")
+	})
 }
 
 func TestInvoiceSeriesValidation(t *testing.T) {
@@ -205,7 +213,7 @@ func TestInvoicePaymentValidation(t *testing.T) {
 	})
 }
 
-func TestInvoicePaymentNormalization(t *testing.T) {
+func TestInvoiceNormalization(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
 
 	t.Run("nil invoice", func(t *testing.T) {
@@ -214,6 +222,45 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 			addon.Normalizer(inv)
 		})
 	})
+
+	t.Run("sets default value date from issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = nil
+		addon.Normalizer(inv)
+		assert.Equal(t, &inv.IssueDate, inv.ValueDate)
+	})
+
+	t.Run("sets default value date from operation date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2022, 12, 30)
+		inv.ValueDate = nil
+		addon.Normalizer(inv)
+		assert.Equal(t, inv.OperationDate, inv.ValueDate)
+	})
+
+	t.Run("keeps existing value date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2022, 12, 30)
+		addon.Normalizer(inv)
+		assert.Equal(t, cal.NewDate(2022, 12, 30), inv.ValueDate)
+	})
+
+	t.Run("sets today as value date when no issue date is set", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.Date{}
+		inv.ValueDate = nil
+
+		addon.Normalizer(inv)
+
+		loc, err := time.LoadLocation("Europe/Lisbon")
+		require.NoError(t, err)
+		today := cal.TodayIn(loc)
+		assert.Equal(t, &today, inv.ValueDate)
+	})
+}
+
+func TestInvoicePaymentNormalization(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
 
 	t.Run("set default advance date", func(t *testing.T) {
 		inv := validInvoice()

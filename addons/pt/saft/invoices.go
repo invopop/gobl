@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pay"
@@ -39,6 +40,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 		return
 	}
 	normalizeInvoiceAdvances(inv)
+	normalizeInvoiceValueDate(inv)
 }
 
 func normalizeInvoiceAdvances(inv *bill.Invoice) {
@@ -55,6 +57,36 @@ func normalizeInvoiceAdvances(inv *bill.Invoice) {
 	}
 }
 
+func normalizeInvoiceValueDate(inv *bill.Invoice) {
+	inv.ValueDate = determineValueDate(
+		inv.RegimeDef(),
+		&inv.IssueDate,
+		inv.OperationDate,
+		inv.ValueDate,
+	)
+}
+
+func determineValueDate(rd *tax.RegimeDef, idate, odate, vdate *cal.Date) *cal.Date {
+	if vdate != nil {
+		return vdate
+	}
+
+	if odate != nil {
+		return odate
+	}
+
+	if idate.IsZero() && rd != nil {
+		// This normalization runs before the default issue date is set,
+		// so we need to set the default value date to same default if the
+		// issue date is not set yet.
+		loc := rd.TimeLocation()
+		today := cal.TodayIn(loc)
+		return &today
+	}
+
+	return idate
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	dt := invoiceDocType(inv)
 
@@ -69,6 +101,10 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Code,
 			validateCodeFormat(inv.Series, dt),
+			validation.Skip,
+		),
+		validation.Field(&inv.ValueDate,
+			validation.Required,
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
