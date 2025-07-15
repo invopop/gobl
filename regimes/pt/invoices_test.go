@@ -64,6 +64,46 @@ func TestValidSimplifiedInvoice(t *testing.T) {
 	require.NoError(t, reg.Validator(inv))
 }
 
+func TestInvoiceValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("value date after issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2023, 1, 2)
+		assert.ErrorContains(t, reg.Validator(inv), "value_date: too late")
+	})
+
+	t.Run("value date on issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2023, 1, 1)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("value date before issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2022, 12, 31)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("operation date after issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2023, 1, 2)
+		assert.ErrorContains(t, reg.Validator(inv), "op_date: too late")
+	})
+
+	t.Run("operation date on issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2023, 1, 1)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("operation date before issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2022, 12, 31)
+		require.NoError(t, reg.Validator(inv))
+	})
+}
+
 func TestLineValidation(t *testing.T) {
 	reg := tax.RegimeDefFor(l10n.PT)
 
