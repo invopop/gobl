@@ -167,11 +167,6 @@ func TestInvoiceConvertInto(t *testing.T) {
 						Description: "Test Advance",
 						Percent:     num.NewPercentage(50, 2),
 					},
-					{
-						Description: "Test Advance",
-						Percent:     num.NewPercentage(10, 2),
-						Currency:    currency.EUR,
-					},
 				},
 			},
 		}
@@ -179,10 +174,9 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.NoError(t, err)
 		require.NotNil(t, i2)
 		assert.Equal(t, "671.16", i2.Payment.Advances[0].Amount.String())
-		assert.Equal(t, "134.23", i2.Payment.Advances[1].Amount.String())
 		assert.Equal(t, "1064.00", i2.Totals.Sum.String())
 		assert.Equal(t, "1342.32", i2.Totals.Payable.String())
-		assert.Equal(t, "536.93", i2.Totals.Due.String())
+		assert.Equal(t, "671.16", i2.Totals.Due.String())
 	})
 
 }

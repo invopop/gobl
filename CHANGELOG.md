@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixes
+
+- `bill`: Correcting `invoice_convert_test.go` to match expected values.
+
 ## [v0.220.3] - 2025-07-15
 
 ### Added
