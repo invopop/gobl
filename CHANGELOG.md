@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixes
 
-- `bill`: Correcting `invoice_convert_test.go` to match expected values.
+- `bill`: Correcting `ConvertInto` to handle local currency values.
 
 ## [v0.220.3] - 2025-07-15
 
