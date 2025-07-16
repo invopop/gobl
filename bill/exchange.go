@@ -70,7 +70,9 @@ func convertLineInto(ex *currency.ExchangeRate, line *Line) *Line {
 	}
 
 	l2i.Price = &price
-	l2i.Currency = ex.To
+	if l2i.Currency != "" {
+		l2i.Currency = ex.To
+	}
 	l2.Item = &l2i
 	return &l2
 }

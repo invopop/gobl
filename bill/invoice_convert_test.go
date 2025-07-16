@@ -173,6 +173,7 @@ func TestInvoiceConvertInto(t *testing.T) {
 		i2, err := i.ConvertInto(currency.USD)
 		assert.NoError(t, err)
 		require.NotNil(t, i2)
+		assert.Equal(t, currency.USD, i2.Currency)
 		assert.Equal(t, "671.16", i2.Payment.Advances[0].Amount.String())
 		assert.Equal(t, "1064.00", i2.Totals.Sum.String())
 		assert.Equal(t, "1342.32", i2.Totals.Payable.String())
