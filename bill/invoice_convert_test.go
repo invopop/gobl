@@ -125,8 +125,9 @@ func TestInvoiceConvertInto(t *testing.T) {
 				{
 					Quantity: num.MakeAmount(10, 0),
 					Item: &org.Item{
-						Name:  "Test Item",
-						Price: num.NewAmount(10000, 2),
+						Name:     "Test Item",
+						Currency: currency.EUR,
+						Price:    num.NewAmount(10000, 2),
 					},
 					Taxes: tax.Set{
 						{
@@ -177,4 +178,5 @@ func TestInvoiceConvertInto(t *testing.T) {
 		assert.Equal(t, "1342.32", i2.Totals.Payable.String())
 		assert.Equal(t, "671.16", i2.Totals.Due.String())
 	})
+
 }
