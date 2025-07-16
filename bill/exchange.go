@@ -126,6 +126,7 @@ func convertPaymentDetailsInto(ex *currency.ExchangeRate, pd *PaymentDetails) *P
 			Upscale(defaultCurrencyConversionAccuracy).
 			Multiply(ex.Amount).
 			Downscale(defaultCurrencyConversionAccuracy)
+		a2.Currency = ex.To
 		p2.Advances[i] = &a2
 	}
 	return &p2
