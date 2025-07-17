@@ -128,6 +128,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Lines,
 			validation.Each(
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
+				validation.By(validateInvoiceLine),
 				validation.Skip,
 			),
 			validation.Skip,
@@ -144,6 +145,35 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Length(0, 1),
 			validation.Skip,
 		),
+	)
+}
+
+func validateInvoiceLine(val any) error {
+	line, _ := val.(*bill.Line)
+	if line == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Sum, num.ZeroOrPositive),
+		validation.Field(&line.Total, num.ZeroOrPositive),
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateInvoiceLineDiscount),
+				validation.Skip,
+			),
+		),
+	)
+}
+
+func validateInvoiceLineDiscount(val any) error {
+	disc, _ := val.(*bill.LineDiscount)
+	if disc == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(disc,
+		validation.Field(&disc.Amount, num.ZeroOrPositive),
 	)
 }
 
