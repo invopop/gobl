@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.220.4] - 2025-07-17
+
 ### Added
 
 - `es`: tax identity codes for nationals will be zero padded.
