@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixes
 
-- `bill`: Correcting `ConvertInto` to handle local currency values.
+- `bill`: Correcting `ConvertInto` to handle item level currency values.
 
 ## [v0.220.3] - 2025-07-15
 
