@@ -125,9 +125,8 @@ func TestInvoiceConvertInto(t *testing.T) {
 				{
 					Quantity: num.MakeAmount(10, 0),
 					Item: &org.Item{
-						Name:     "Test Item",
-						Currency: currency.EUR,
-						Price:    num.NewAmount(10000, 2),
+						Name:  "Test Item",
+						Price: num.NewAmount(10000, 2),
 					},
 					Taxes: tax.Set{
 						{
@@ -173,11 +172,85 @@ func TestInvoiceConvertInto(t *testing.T) {
 		i2, err := i.ConvertInto(currency.USD)
 		assert.NoError(t, err)
 		require.NotNil(t, i2)
-		assert.Equal(t, currency.USD, i2.Currency)
 		assert.Equal(t, "671.16", i2.Payment.Advances[0].Amount.String())
 		assert.Equal(t, "1064.00", i2.Totals.Sum.String())
 		assert.Equal(t, "1342.32", i2.Totals.Payable.String())
 		assert.Equal(t, "671.16", i2.Totals.Due.String())
+	})
+
+	t.Run("Conversion with Item Currency set", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:     "Test Item",
+					Currency: currency.EUR,
+					Price:    num.NewAmount(12050, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateStandard,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		assert.NoError(t, err)
+		require.NotNil(t, i2)
+		assert.Equal(t, "134.96", i2.Totals.Payable.String())
+		assert.Equal(t, "USD", i2.Currency.String())
+		assert.Equal(t, "USD", i2.Lines[0].Item.Currency.String())
+		assert.Equal(t, "134.9600", i2.Lines[0].Item.Price.String())
+		assert.Len(t, i2.Lines[0].Item.AltPrices, 1)
+		assert.Equal(t, "EUR", i2.Lines[0].Item.AltPrices[0].Currency.String())
+		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
+
+	})
+
+	t.Run("Conversion with Item Currency not set", func(t *testing.T) {
+		lines := []*bill.Line{
+			{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(12050, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Rate:     tax.RateStandard,
+					},
+				},
+			},
+		}
+		inv := baseInvoice(t, lines...)
+
+		inv.ExchangeRates = append(inv.ExchangeRates, &currency.ExchangeRate{
+			From:   currency.EUR,
+			To:     currency.USD,
+			Amount: num.MakeAmount(112, 2),
+		})
+
+		i2, err := inv.ConvertInto(currency.USD)
+		assert.NoError(t, err)
+		require.NotNil(t, i2)
+		assert.Equal(t, "134.96", i2.Totals.Payable.String())
+		assert.Equal(t, "USD", i2.Currency.String())
+		assert.Empty(t, i2.Lines[0].Item.Currency)
+		assert.Equal(t, "134.9600", i2.Lines[0].Item.Price.String())
+		assert.Len(t, i2.Lines[0].Item.AltPrices, 1)
+		assert.Equal(t, "EUR", i2.Lines[0].Item.AltPrices[0].Currency.String())
+		assert.Equal(t, "120.50", i2.Lines[0].Item.AltPrices[0].Value.String())
+
 	})
 
 }
