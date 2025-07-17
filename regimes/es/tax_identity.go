@@ -2,36 +2,32 @@ package es
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
 
-// TaxCodeType represents the types of tax code which are issued
-// in Spain. The same general format with variations is used for
-// national individuals, foreigners, and legal organizations.
-type TaxCodeType string
-
-// Supported tax code types, from code itself.
+// Tax Identity keys that may be determined from the code.
 const (
-	NationalTaxCode     TaxCodeType = "N"
-	ForeignTaxCode      TaxCodeType = "X"
-	OrganizationTaxCode TaxCodeType = "B"
-	OtherTaxCode        TaxCodeType = "O"
-	UnknownTaxCode      TaxCodeType = "NA"
+	TaxIdentityNational  cbc.Key = "national"
+	TaxIdentityForeigner cbc.Key = "foreigner"
+	TaxIdentityOrg       cbc.Key = "org"
+	TaxIdentityOther     cbc.Key = "other"
 )
 
 // tax ID standard tables
 const (
-	taxCodeCheckLetters       = "TRWAGMYFPDXBNJZSQVHLCKE"
-	taxCodeForeignTypeLetters = "XYZ"
-	taxCodeOtherTypeLetters   = "KLM"
-	taxCodeOrgTypeLetters     = "ABCDEFGHJNPQRSUVW"
-	taxCodeOrgCheckLetters    = "JABCDEFGHI"
+	taxCodeCheckLetters         = "TRWAGMYFPDXBNJZSQVHLCKE"
+	taxCodeForeignerTypeLetters = "XYZ"
+	taxCodeOtherTypeLetters     = "KLM"
+	taxCodeOrgTypeLetters       = "ABCDEFGHJNPQRSUVW"
+	taxCodeOrgCheckLetters      = "JABCDEFGHI"
 )
 
 const (
@@ -40,20 +36,51 @@ const (
 	taxCodeMatchCheck  = "check"
 )
 
-// Standard simplified errors messages
-var (
-	ErrTaxCodeNoMatch      = errors.New("no match")
-	ErrTaxCodeUnknownType  = errors.New("unknown type")
-	ErrTaxCodeInvalidCheck = errors.New("check letter is invalid")
-)
-
 // Known combinations of codes
 var (
-	taxCodeNationalRegexp = regexp.MustCompile(`^(?P<number>[0-9]{8})(?P<check>[` + taxCodeCheckLetters + `])$`)                                                  //nolint:goconst
-	taxCodeForeignRegexp  = regexp.MustCompile(`^(?P<type>[` + taxCodeForeignTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[` + taxCodeCheckLetters + `])$`)     //nolint:goconst
-	taxCodeOtherRegexp    = regexp.MustCompile(`^(?P<type>[` + taxCodeOtherTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`) //nolint:goconst
-	taxCodeOrgRegexp      = regexp.MustCompile(`^(?P<type>[` + taxCodeOrgTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)   //nolint:goconst
+	taxCodeNumber          = regexp.MustCompile(`^[0-9]`)
+	taxCodeNationalRegexp  = regexp.MustCompile(`^(?P<number>[0-9]{8})(?P<check>[` + taxCodeCheckLetters + `])$`)                                                  //nolint:goconst
+	taxCodeForeignerRegexp = regexp.MustCompile(`^(?P<type>[` + taxCodeForeignerTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[` + taxCodeCheckLetters + `])$`)   //nolint:goconst
+	taxCodeOtherRegexp     = regexp.MustCompile(`^(?P<type>[` + taxCodeOtherTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`) //nolint:goconst
+	taxCodeOrgRegexp       = regexp.MustCompile(`^(?P<type>[` + taxCodeOrgTypeLetters + `])(?P<number>[0-9]{7})(?P<check>[0-9` + taxCodeOrgCheckLetters + `])$`)   //nolint:goconst
 )
+
+var (
+	errTaxIdentityCodeInvalid         = errors.New("invalid")
+	errTaxIdentityCodeInvalidChecksum = errors.New("invalid check digit")
+)
+
+// normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
+// uppercase. It'll also remove the "ES" part at beginning if present such as required
+// for EU VIES system which is redundant and not used in the validation process.
+func normalizeTaxIdentity(tID *tax.Identity) {
+	tax.NormalizeIdentity(tID)
+	if taxCodeNumber.MatchString(tID.Code.String()) {
+		tID.Code = cbc.Code(fmt.Sprintf("%09s", tID.Code.String()))
+	}
+}
+
+// TaxIdentityKey determines the type of tax code and returns the appropriate key.
+// An empty key will be return if the code is not recognized. This will only
+// work correctly if the tax identity has been normalized.
+func TaxIdentityKey(tID *tax.Identity) cbc.Key {
+	if tID == nil || tID.Code == "" || tID.Country != l10n.ES.Tax() {
+		return cbc.KeyEmpty
+	}
+	code := tID.Code.String()
+	switch {
+	case taxCodeOrgRegexp.MatchString(code):
+		return TaxIdentityOrg
+	case taxCodeNationalRegexp.MatchString(code):
+		return TaxIdentityNational
+	case taxCodeForeignerRegexp.MatchString(code):
+		return TaxIdentityForeigner
+	case taxCodeOtherRegexp.MatchString(code):
+		return TaxIdentityOther
+	default:
+		return cbc.KeyEmpty
+	}
+}
 
 // validateTaxIdentity looks at the provided identity's code,
 // determines the type, and performs the calculations
@@ -62,106 +89,72 @@ var (
 // and thus only contains upper-case letters and numbers with
 // no white space.
 func validateTaxIdentity(tID *tax.Identity) error {
-	return validation.ValidateStruct(tID,
-		validation.Field(&tID.Code,
-			validation.By(validateTaxCode),
-		),
-	)
+	if tID == nil || tID.Code == cbc.CodeEmpty {
+		return nil // nothing to validate
+	}
+	if err := validateTaxIdentityCode(tID); err != nil {
+		return validation.Errors{
+			"code": err,
+		}
+	}
+	return nil
 }
 
-func validateTaxCode(value interface{}) error {
-	code, ok := value.(cbc.Code)
-	if !ok {
-		return nil
-	}
-	if code == "" {
-		return nil
-	}
-	typ, err := DetermineTaxCodeType(code)
-	if typ == UnknownTaxCode {
-		return ErrTaxCodeUnknownType
-	}
-	return err
-}
-
-// normalizeTaxIdentity removes any whitespace or separation characters and ensures all letters are
-// uppercase. It'll also remove the "ES" part at beginning if present such as required
-// for EU VIES system which is redundant and not used in the validation process.
-func normalizeTaxIdentity(tID *tax.Identity) {
-	tax.NormalizeIdentity(tID)
-	// Remove the Zone
-	tID.Zone = "" //nolint:staticcheck
-}
-
-// DetermineTaxCodeType takes a valid code and determines the type. If the code
-// is not valid, the `UnknownTaxCode` type will be returned.
-func DetermineTaxCodeType(code cbc.Code) (TaxCodeType, error) {
-	switch {
-	case taxCodeOrgRegexp.MatchString(string(code)):
-		return OrganizationTaxCode, verifyOrgCode(code)
-	case taxCodeNationalRegexp.MatchString(string(code)):
-		return NationalTaxCode, verifyNationalCode(code)
-	case taxCodeForeignRegexp.MatchString(string(code)):
-		return ForeignTaxCode, verifyForeignCode(code)
-	case taxCodeOtherRegexp.MatchString(string(code)):
-		return OtherTaxCode, verifyOtherCode(code)
+func validateTaxIdentityCode(tID *tax.Identity) error {
+	switch TaxIdentityKey(tID) {
+	case TaxIdentityNational:
+		return verifyNationalCode(tID.Code)
+	case TaxIdentityForeigner:
+		return verifyForeignCode(tID.Code)
+	case TaxIdentityOrg:
+		return verifyOrgCode(tID.Code)
+	case TaxIdentityOther:
+		return verifyOtherCode(tID.Code)
 	default:
-		return UnknownTaxCode, nil
+		return errTaxIdentityCodeInvalid
 	}
 }
 
 func verifyNationalCode(code cbc.Code) error {
-	m, err := extractMatches(taxCodeNationalRegexp, code)
-	if err != nil {
-		return err
-	}
+	m := extractMatches(taxCodeNationalRegexp, code)
 
 	if m[taxCodeMatchNumber] == "00000000" {
 		// exception case
-		return ErrTaxCodeInvalidCheck
+		return errTaxIdentityCodeInvalid
 	}
 
 	n, _ := strconv.Atoi(m[taxCodeMatchNumber])
 	if []rune(taxCodeCheckLetters)[n%23] != []rune(m[taxCodeMatchCheck])[0] {
-		return ErrTaxCodeInvalidCheck
+		return errTaxIdentityCodeInvalidChecksum
 	}
 
 	return nil // success
 }
 
 func verifyForeignCode(code cbc.Code) error {
-	m, err := extractMatches(taxCodeForeignRegexp, code)
-	if err != nil {
-		return err
-	}
+	m := extractMatches(taxCodeForeignerRegexp, code)
 
 	// Extract index from type letters
-	ti := strings.Index(taxCodeForeignTypeLetters, m[taxCodeMatchType])
+	ti := strings.Index(taxCodeForeignerTypeLetters, m[taxCodeMatchType])
 	ft := strconv.Itoa(ti)
 
 	fs := ft + m[taxCodeMatchNumber]
 	ci, _ := strconv.Atoi(fs)
 
 	if []rune(taxCodeCheckLetters)[ci%23] != []rune(m[taxCodeMatchCheck])[0] {
-		return ErrTaxCodeInvalidCheck
+		return errTaxIdentityCodeInvalidChecksum
 	}
 
 	return nil // success
 }
 
 func verifyOrgCode(code cbc.Code) error {
-	m, err := extractMatches(taxCodeOrgRegexp, code)
-	if err != nil {
-		return err
-	}
+	m := extractMatches(taxCodeOrgRegexp, code)
 	return verifyOrgCodeMatches(m)
 }
 
 func verifyOtherCode(code cbc.Code) error {
-	m, err := extractMatches(taxCodeOtherRegexp, code)
-	if err != nil {
-		return err
-	}
+	m := extractMatches(taxCodeOtherRegexp, code)
 	return verifyOrgCodeMatches(m)
 }
 
@@ -201,7 +194,7 @@ func verifyOrgCodeMatches(m map[string]string) error {
 
 	// compare
 	if cdc != cdi {
-		return ErrTaxCodeInvalidCheck
+		return errTaxIdentityCodeInvalidChecksum
 	}
 
 	return nil
@@ -209,18 +202,13 @@ func verifyOrgCodeMatches(m map[string]string) error {
 
 // regex handling is a bit long winded, this helper makes it easier to extract
 // named matches.
-func extractMatches(regex *regexp.Regexp, code cbc.Code) (map[string]string, error) {
+func extractMatches(regex *regexp.Regexp, code cbc.Code) map[string]string {
 	m := regex.FindStringSubmatch(code.String())
-	if len(m) == 0 {
-		return nil, ErrTaxCodeNoMatch
-	}
-
 	r := make(map[string]string)
 	for i, n := range regex.SubexpNames() {
 		if i != 0 && n != "" {
 			r[n] = m[i]
 		}
 	}
-
-	return r, nil
+	return r
 }
