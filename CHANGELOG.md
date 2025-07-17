@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - `es`: refactored tax identity code checks for easier re-use, removed old specific errors and replaces `DetermineTaxCodeType` method with `TaxIdentityKey`.
+- `es`: removed old tax identity zone check.
 
 ## [v0.220.3] - 2025-07-15
 
