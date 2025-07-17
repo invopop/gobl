@@ -61,7 +61,7 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 }
 
 // TaxIdentityKey determines the type of tax code and returns the appropriate key.
-// An empty key will be return if the code is not recognized. This will only
+// An empty key will be returned if the code is not recognized. This will only
 // work correctly if the tax identity has been normalized.
 func TaxIdentityKey(tID *tax.Identity) cbc.Key {
 	if tID == nil || tID.Code == "" || tID.Country != l10n.ES.Tax() {
