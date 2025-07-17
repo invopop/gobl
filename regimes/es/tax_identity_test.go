@@ -35,6 +35,14 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			Code:     " ES-93 471 790-C ",
 			Expected: "93471790C",
 		},
+		{
+			Code:     "3157928M", // short, should zero pad
+			Expected: "03157928M",
+		},
+		{
+			Code:     "15S", // King Felipe VI
+			Expected: "00000015S",
+		},
 	}
 	for _, ts := range tests {
 		tID := &tax.Identity{Country: "ES", Code: ts.Code}
@@ -43,146 +51,175 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 	}
 }
 
-func TestNormalizeTaxIdentityZone(t *testing.T) {
-	r := es.New()
-	tID := &tax.Identity{Country: "ES", Code: "93471790C", Zone: "XX"}
-	r.NormalizeObject(tID)
-	assert.Empty(t, tID.Zone) //nolint:staticcheck
+func TestTaxIdentityKey(t *testing.T) {
+	tests := []struct {
+		Code     cbc.Code
+		Expected cbc.Key
+	}{
+		{
+			Code:     "93471790C",
+			Expected: es.TaxIdentityNational,
+		},
+		{
+			Code:     "X5102754C",
+			Expected: es.TaxIdentityForeigner,
+		},
+		{
+			Code:     "A58818501",
+			Expected: es.TaxIdentityOrg,
+		},
+		{
+			Code:     "K9514336H",
+			Expected: es.TaxIdentityOther,
+		},
+		{
+			Code:     "XXX",
+			Expected: cbc.KeyEmpty,
+		},
+		{
+			Code:     "",
+			Expected: cbc.KeyEmpty,
+		},
+	}
+	for _, ts := range tests {
+		tID := &tax.Identity{Country: "ES", Code: ts.Code}
+		assert.Equal(t, ts.Expected, es.TaxIdentityKey(tID))
+	}
 }
 
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		Code     cbc.Code
-		Expected error
+		Expected string
 	}{
 		// *** EMPTY ***
 		{
 			Code:     "",
-			Expected: nil,
+			Expected: "",
 		},
 		// *** NATIONAL ***
 		{
 			Code:     "93471790C",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "43596386R",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "00000010X",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "93471790A",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "00000000A",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid format",
 		},
 		{
 			Code:     "0111111C",
-			Expected: es.ErrTaxCodeUnknownType,
+			Expected: "invalid format",
 		},
 		// *** FOREIGN ***
 		{
 			Code:     "X5102754C",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "Z8327649K",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "Y4174455S",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "X5102755C",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "X111111C",
-			Expected: es.ErrTaxCodeUnknownType,
+			Expected: "invalid format",
 		},
 		// **** Org ****
 		{
 			Code:     "A58818501",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "B65410011",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "V7565938C",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "V75659383",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "F0605378I",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "Q2238877A",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "D40022956",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "A5881850B",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "B65410010",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "V75659382",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "V7565938B",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "F06053787",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "Q22388770",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "D4002295J",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
-			Code:     "00000000A",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Code:     "00000001A",
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "B0111111",
-			Expected: es.ErrTaxCodeUnknownType,
+			Expected: "invalid format",
 		},
 		// *** Other ***
 		{
 			Code:     "K9514336H",
-			Expected: nil,
+			Expected: "",
 		},
 		{
 			Code:     "K95143363",
-			Expected: es.ErrTaxCodeInvalidCheck,
+			Expected: "invalid check digit",
 		},
 		{
 			Code:     "X111111C",
-			Expected: es.ErrTaxCodeUnknownType,
+			Expected: "invalid format",
 		},
 	}
 	r := es.New()
@@ -190,12 +227,10 @@ func TestValidateTaxIdentity(t *testing.T) {
 		t.Run(string(ts.Code), func(t *testing.T) {
 			tID := &tax.Identity{Country: "ES", Code: ts.Code}
 			err := r.ValidateObject(tID)
-			if ts.Expected == nil {
+			if ts.Expected == "" {
 				assert.NoError(t, err)
 			} else {
-				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), ts.Expected.Error())
-				}
+				assert.ErrorContains(t, err, "code: "+ts.Expected)
 			}
 		})
 	}

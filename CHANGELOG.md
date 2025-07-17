@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es`: tax identity codes for nationals will be zero padded.
+
+### Changed
+
+- `es`: refactored tax identity code checks for easier re-use, removed old specific errors and replaces `DetermineTaxCodeType` method with `TaxIdentityKey`.
+- `es`: removed old tax identity zone check.
+
 ### Fixes
 
 - `bill`: Correcting `ConvertInto` to handle item level currency values.

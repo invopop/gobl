@@ -28,17 +28,7 @@ func TestTaxIdentity(t *testing.T) {
 	}
 	err = tID.Validate()
 	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "code: unknown type")
-	}
-
-	tID = &tax.Identity{
-		Country: "ES",
-		Code:    "X3157928M",
-		Zone:    "XX",
-	}
-	err = tID.Validate()
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "zone: must be blank.")
+		assert.Contains(t, err.Error(), "code: invalid")
 	}
 
 	tID = &tax.Identity{
@@ -105,7 +95,7 @@ func TestParseIdentity(t *testing.T) {
 	assert.Equal(t, tID.String(), "ESX3157928M")
 
 	_, err = tax.ParseIdentity("ESX3157928MMM")
-	assert.ErrorContains(t, err, "code: unknown type")
+	assert.ErrorContains(t, err, "code: invalid")
 
 	_, err = tax.ParseIdentity("E")
 	assert.ErrorContains(t, err, "invalid tax identity code")
