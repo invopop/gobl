@@ -46,7 +46,7 @@ var (
 )
 
 var (
-	errTaxIdentityCodeInvalid         = errors.New("invalid")
+	errTaxIdentityCodeInvalidFormat   = errors.New("invalid format")
 	errTaxIdentityCodeInvalidChecksum = errors.New("invalid check digit")
 )
 
@@ -111,7 +111,7 @@ func validateTaxIdentityCode(tID *tax.Identity) error {
 	case TaxIdentityOther:
 		return verifyOtherCode(tID.Code)
 	default:
-		return errTaxIdentityCodeInvalid
+		return errTaxIdentityCodeInvalidFormat
 	}
 }
 
@@ -120,7 +120,7 @@ func verifyNationalCode(code cbc.Code) error {
 
 	if m[taxCodeMatchNumber] == "00000000" {
 		// exception case
-		return errTaxIdentityCodeInvalid
+		return errTaxIdentityCodeInvalidFormat
 	}
 
 	n, _ := strconv.Atoi(m[taxCodeMatchNumber])

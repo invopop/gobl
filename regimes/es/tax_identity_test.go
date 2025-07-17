@@ -116,11 +116,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			Code:     "00000000A",
-			Expected: "invalid",
+			Expected: "invalid format",
 		},
 		{
 			Code:     "0111111C",
-			Expected: "invalid",
+			Expected: "invalid format",
 		},
 		// *** FOREIGN ***
 		{
@@ -141,7 +141,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			Code:     "X111111C",
-			Expected: "invalid",
+			Expected: "invalid format",
 		},
 		// **** Org ****
 		{
@@ -206,7 +206,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			Code:     "B0111111",
-			Expected: "invalid",
+			Expected: "invalid format",
 		},
 		// *** Other ***
 		{
@@ -219,7 +219,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		},
 		{
 			Code:     "X111111C",
-			Expected: "invalid",
+			Expected: "invalid format",
 		},
 	}
 	r := es.New()
