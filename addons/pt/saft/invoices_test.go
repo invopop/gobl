@@ -514,3 +514,29 @@ func TestInvoiceLineDiscountValidation(t *testing.T) {
 		require.NoError(t, addon.Validator(inv))
 	})
 }
+
+func TestInvoiceTotalsValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("valid payable amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable: num.MakeAmount(100, 2),
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("negative payable amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable: num.MakeAmount(-10, 2),
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "totals: (payable: must be no less than 0")
+	})
+
+	t.Run("nil totals", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = nil
+		require.NoError(t, addon.Validator(inv))
+	})
+}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
@@ -53,6 +54,7 @@ func validatePayment(pmt *bill.Payment) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&pmt.Total, num.ZeroOrPositive),
 	)
 }
 

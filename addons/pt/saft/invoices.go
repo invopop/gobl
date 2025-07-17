@@ -216,6 +216,7 @@ func validateInvoiceTotals(inv *bill.Invoice) validation.RuleFunc {
 		}
 
 		return validation.ValidateStruct(tot,
+			validation.Field(&tot.Payable, num.ZeroOrPositive),
 			validation.Field(&tot.Due,
 				validation.When(
 					isInvoiceReceipt(inv),

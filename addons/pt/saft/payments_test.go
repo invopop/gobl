@@ -335,3 +335,25 @@ func TestPaymentNormalization(t *testing.T) {
 		assert.Equal(t, saft.SourceBillingIntegrated, pmt.Ext[saft.ExtKeySourceBilling])
 	})
 }
+
+func TestPaymentTotalValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("valid total amount", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.MakeAmount(100, 2)
+		assert.NoError(t, addon.Validator(pmt))
+	})
+
+	t.Run("negative total amount", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.MakeAmount(-10, 2)
+		assert.ErrorContains(t, addon.Validator(pmt), "total: must be no less than 0")
+	})
+
+	t.Run("nil total", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.Amount{}
+		assert.NoError(t, addon.Validator(pmt))
+	})
+}
