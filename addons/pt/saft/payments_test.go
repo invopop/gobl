@@ -171,6 +171,16 @@ func TestPaymentValidation(t *testing.T) {
 		assert.NoError(t, addon.Validator(pmt))
 	})
 
+	t.Run("missing line tax exemption", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Lines[0].Tax.Categories[0].Rates[0].Ext[saft.ExtKeyTaxRate] = saft.TaxRateExempt
+
+		assert.ErrorContains(t, addon.Validator(pmt), "pt-saft-exemption: required")
+
+		pmt.Lines[0].Tax.Categories[0].Rates[0].Ext[saft.ExtKeyExemption] = "M01"
+		assert.NoError(t, addon.Validator(pmt))
+	})
+
 	t.Run("nil tax category", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Lines[0].Tax.Categories = append(pmt.Lines[0].Tax.Categories, nil)
@@ -207,5 +217,27 @@ func TestPaymentNormalization(t *testing.T) {
 		pmt.SetTags("vat-cash")
 		addon.Normalizer(pmt)
 		assert.Equal(t, "RC", pmt.Ext[saft.ExtKeyPaymentType].String())
+	})
+}
+
+func TestPaymentTotalValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("valid total amount", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.MakeAmount(100, 2)
+		assert.NoError(t, addon.Validator(pmt))
+	})
+
+	t.Run("negative total amount", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.MakeAmount(-10, 2)
+		assert.ErrorContains(t, addon.Validator(pmt), "total: must be no less than 0")
+	})
+
+	t.Run("nil total", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.Amount{}
+		assert.NoError(t, addon.Validator(pmt))
 	})
 }

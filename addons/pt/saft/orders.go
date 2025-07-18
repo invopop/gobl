@@ -26,6 +26,10 @@ func validateOrder(ord *bill.Order) error {
 			validateCodeFormat(ord.Series, dt),
 			validation.Skip,
 		),
+		validation.Field(&ord.ValueDate,
+			validation.Required,
+			validation.Skip,
+		),
 		validation.Field(&ord.Lines,
 			validation.Each(
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
@@ -78,6 +82,15 @@ func validateOrderTaxExt(val any) error {
 }
 
 func normalizeOrder(ord *bill.Order) {
+	if ord == nil {
+		return
+	}
+
+	normalizeOrderTax(ord)
+	normalizeOrderValueDate(ord)
+}
+
+func normalizeOrderTax(ord *bill.Order) {
 	if ord.Tax == nil {
 		ord.Tax = new(bill.Tax)
 	}
@@ -95,4 +108,13 @@ func normalizeOrder(ord *bill.Order) {
 			ord.Tax.Ext[ExtKeyWorkType] = WorkTypeBudgets
 		}
 	}
+}
+
+func normalizeOrderValueDate(ord *bill.Order) {
+	ord.ValueDate = determineValueDate(
+		ord.RegimeDef(),
+		&ord.IssueDate,
+		ord.OperationDate,
+		ord.ValueDate,
+	)
 }

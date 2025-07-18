@@ -7,7 +7,10 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -32,6 +35,58 @@ var invoiceWorkTypes = []cbc.Code{
 	WorkTypeConsignmentCredit,
 }
 
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+	normalizeInvoiceAdvances(inv)
+	normalizeInvoiceValueDate(inv)
+}
+
+func normalizeInvoiceAdvances(inv *bill.Invoice) {
+	if inv.Payment == nil {
+		return
+	}
+
+	// Set the issue date as the default date for advances
+	for _, adv := range inv.Payment.Advances {
+		if adv.Date == nil {
+			date := inv.IssueDate
+			adv.Date = &date
+		}
+	}
+}
+
+func normalizeInvoiceValueDate(inv *bill.Invoice) {
+	inv.ValueDate = determineValueDate(
+		inv.RegimeDef(),
+		&inv.IssueDate,
+		inv.OperationDate,
+		inv.ValueDate,
+	)
+}
+
+func determineValueDate(rd *tax.RegimeDef, idate, odate, vdate *cal.Date) *cal.Date {
+	if vdate != nil {
+		return vdate
+	}
+
+	if odate != nil {
+		return odate
+	}
+
+	if idate.IsZero() && rd != nil {
+		// This normalization runs before the default issue date is set,
+		// so we need to set the default value date to same default if the
+		// issue date is not set yet.
+		loc := rd.TimeLocation()
+		today := cal.TodayIn(loc)
+		return &today
+	}
+
+	return idate
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	dt := invoiceDocType(inv)
 
@@ -48,14 +103,111 @@ func validateInvoice(inv *bill.Invoice) error {
 			validateCodeFormat(inv.Series, dt),
 			validation.Skip,
 		),
+		validation.Field(&inv.ValueDate,
+			validation.Required,
+			validation.Skip,
+		),
 		validation.Field(&inv.Lines,
 			validation.Each(
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
+				validation.By(validateInvoiceLine),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Payment,
+			validation.By(validateInvoicePayment),
+			validation.Skip,
+		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals(inv)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Preceding,
+			validation.Length(0, 1),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceLine(val any) error {
+	line, _ := val.(*bill.Line)
+	if line == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Sum, num.ZeroOrPositive),
+		validation.Field(&line.Total, num.ZeroOrPositive),
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateInvoiceLineDiscount),
+				validation.Skip,
+			),
+		),
+	)
+}
+
+func validateInvoiceLineDiscount(val any) error {
+	disc, _ := val.(*bill.LineDiscount)
+	if disc == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(disc,
+		validation.Field(&disc.Amount, num.ZeroOrPositive),
+	)
+}
+
+func validateInvoicePayment(val any) error {
+	pay, _ := val.(*bill.PaymentDetails)
+	if pay == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(pay,
+		validation.Field(&pay.Advances,
+			validation.Each(
+				validation.By(validatePaymentAdvance),
 				validation.Skip,
 			),
 			validation.Skip,
 		),
 	)
+}
+
+func validatePaymentAdvance(val any) error {
+	adv, _ := val.(*pay.Advance)
+	if adv == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(adv,
+		validation.Field(&adv.Date,
+			validation.Required,
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceTotals(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		tot, _ := val.(*bill.Totals)
+		if tot == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(tot,
+			validation.Field(&tot.Payable, num.ZeroOrPositive),
+			validation.Field(&tot.Due,
+				validation.When(
+					isInvoiceReceipt(inv),
+					num.Equals(num.AmountZero),
+				),
+				validation.Skip,
+			),
+		)
+	}
 }
 
 func invoiceDocType(inv *bill.Invoice) cbc.Code {
@@ -166,4 +318,8 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
+}
+
+func isInvoiceReceipt(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
 }
