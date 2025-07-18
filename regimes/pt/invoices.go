@@ -141,6 +141,10 @@ func validateInvoicePayment(inv *bill.Invoice) validation.RuleFunc {
 				),
 				validation.Skip,
 			),
+			validation.Field(&pay.Terms,
+				validation.By(validateInvoiceTerms(inv)),
+				validation.Skip,
+			),
 		)
 	}
 }
@@ -155,6 +159,41 @@ func validateInvoiceAdvance(inv *bill.Invoice) validation.RuleFunc {
 		return validation.ValidateStruct(adv,
 			validation.Field(&adv.Date,
 				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceTerms(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		terms, _ := val.(*pay.Terms)
+		if terms == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(terms,
+			validation.Field(&terms.DueDates,
+				validation.Each(
+					validation.By(validateInvoiceDueDate(inv)),
+					validation.Skip,
+				),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceDueDate(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		dd, _ := val.(*pay.DueDate)
+		if dd == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(dd,
+			validation.Field(&dd.Date,
+				cal.DateAfter(inv.IssueDate),
 				validation.Skip,
 			),
 		)

@@ -172,6 +172,64 @@ func TestInvoicePaymentValidation(t *testing.T) {
 		}
 		require.NoError(t, reg.Validator(inv))
 	})
+
+	t.Run("empty terms", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("due date with past date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date: cal.NewDate(2022, 12, 31),
+					},
+				},
+			},
+		}
+		assert.ErrorContains(t, reg.Validator(inv), "due_dates: (0: (date: too early")
+	})
+
+	t.Run("due date with current date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date: cal.NewDate(2023, 1, 1),
+					},
+				},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("due date with future date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date: cal.NewDate(2023, 1, 2),
+					},
+				},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("nil due date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{nil},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
 }
 
 func TestInvoicePrecedingValidation(t *testing.T) {
