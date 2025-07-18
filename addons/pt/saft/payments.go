@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -176,12 +175,7 @@ func validateLineTaxRate(val any) error {
 		return nil
 	}
 
-	return validation.ValidateStruct(r,
-		validation.Field(&r.Ext,
-			tax.ExtensionsRequire(ExtKeyTaxRate, pt.ExtKeyRegion),
-			validation.Skip,
-		),
-	)
+	return validation.ValidateStruct(r, validateVATExt(&r.Ext))
 }
 
 func normalizePayment(pmt *bill.Payment) {
