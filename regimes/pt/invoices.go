@@ -80,6 +80,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoicePayment(inv)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals),
+			validation.Skip,
+		),
 	)
 }
 
@@ -214,4 +218,29 @@ func validatePreceding(inv *bill.Invoice) validation.RuleFunc {
 			),
 		)
 	}
+}
+
+func validateInvoiceTotals(val any) error {
+	tot, _ := val.(*bill.Totals)
+	if tot == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(tot,
+		validation.Field(&tot.Advances,
+			num.Max(tot.Payable.Subtract(numOrZero(tot.Due))),
+			validation.Skip,
+		),
+		validation.Field(&tot.Due,
+			num.Max(tot.Payable.Subtract(numOrZero(tot.Advances))),
+			validation.Skip,
+		),
+	)
+}
+
+func numOrZero(a *num.Amount) num.Amount {
+	if a == nil {
+		return num.AmountZero
+	}
+	return *a
 }

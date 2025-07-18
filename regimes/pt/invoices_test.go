@@ -298,3 +298,44 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 		require.NoError(t, reg.Validator(inv))
 	})
 }
+
+func TestInvoiceTotalsValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("payable amount less than due and advances", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable:  num.MakeAmount(1000, 2),
+			Advances: num.NewAmount(501, 2),
+			Due:      num.NewAmount(500, 2),
+		}
+		assert.ErrorContains(t, reg.Validator(inv), "advance: must be no greater than 5.00")
+		assert.ErrorContains(t, reg.Validator(inv), "due: must be no greater than 4.99")
+	})
+
+	t.Run("payable amount equals due and advances", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable:  num.MakeAmount(1000, 2),
+			Advances: num.NewAmount(500, 2),
+			Due:      num.NewAmount(500, 2),
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("payable amount greater than due and advances", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable:  num.MakeAmount(1000, 2),
+			Advances: num.NewAmount(499, 2),
+			Due:      num.NewAmount(500, 2),
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("nil totals", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = nil
+		require.NoError(t, reg.Validator(inv))
+	})
+}
