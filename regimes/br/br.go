@@ -23,6 +23,9 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Brazil",
 			i18n.PT: "Brasil",
 		},
+		Description: i18n.String{
+			i18n.EN: "Tax identification in Brazil is provided either through a CNPJ for businesses or a CPF for individuals. Both types are valid for the issuance of NFS-e (electronic service invoices).",
+		},
 		TimeZone:   "America/Sao_Paulo",
 		Validator:  Validate,
 		Normalizer: Normalize,
