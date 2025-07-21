@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `pt-saft-v1`: restore generic notes for M99 and M19 exemption codes for backwards compatibility.
+
 ## [v0.220.4] - 2025-07-17
 
 ### Added

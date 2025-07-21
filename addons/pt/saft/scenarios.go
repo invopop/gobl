@@ -201,7 +201,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "", // Outras isenções – must be provided by the user
+				Text: "Outras isenções", // default text, to be overridden by the user
 			},
 		},
 		{
@@ -327,7 +327,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "", // Não sujeito ou não tributado – must be provided by the user
+				Text: "Não sujeito ou não tributado", // default text, to be overridden by the user
 			},
 		},
 	},
