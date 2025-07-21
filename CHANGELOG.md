@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `br`: tax identity validation for CPF code.
+
 ## [v0.220.5] - 2025-07-21
 
 ### Changed
