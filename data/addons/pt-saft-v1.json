@@ -917,7 +917,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": ""
+            "text": "Outras isenções"
           }
         },
         {
@@ -1043,7 +1043,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": ""
+            "text": "Não sujeito ou não tributado"
           }
         }
       ]
