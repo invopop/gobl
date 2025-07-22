@@ -139,3 +139,25 @@ func TestRateDefValue(t *testing.T) {
 		assert.Equal(t, "10.0%", rdv.Percent.String())
 	})
 }
+
+func TestRegimeDefNormalizers(t *testing.T) {
+	t.Run("nil regime", func(t *testing.T) {
+		var r *tax.RegimeDef
+		assert.Nil(t, r.Normalizers())
+	})
+
+	t.Run("with normalizer", func(t *testing.T) {
+		r := &tax.RegimeDef{
+			Normalizer: func(_ any) {
+				// nothing here
+			},
+		}
+		assert.NotNil(t, r.Normalizers())
+		assert.Len(t, r.Normalizers(), 1)
+	})
+
+	t.Run("without normalizer", func(t *testing.T) {
+		r := &tax.RegimeDef{}
+		assert.Nil(t, r.Normalizers())
+	})
+}

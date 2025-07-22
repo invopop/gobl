@@ -200,6 +200,15 @@ func (r *RegimeDef) WithContext(ctx context.Context) context.Context {
 	return ctx
 }
 
+// Normalizers returns the normalizers for this regime, if any,
+// handling any potential for nil pointers.
+func (r *RegimeDef) Normalizers() Normalizers {
+	if r == nil || r.Normalizer == nil {
+		return nil
+	}
+	return Normalizers{r.Normalizer}
+}
+
 // RegimeDefFromContext returns the regime from the given context, or nil.
 func RegimeDefFromContext(ctx context.Context) *RegimeDef {
 	r, ok := ctx.Value(keyRegime).(*RegimeDef)
