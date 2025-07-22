@@ -102,7 +102,7 @@ func TestPartyNormalize(t *testing.T) {
 			Name:   "Invopop",
 		}
 		assert.NotPanics(t, func() {
-			party.Calculate()
+			assert.NoError(t, party.Calculate())
 		})
 	})
 }
