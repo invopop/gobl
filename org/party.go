@@ -58,7 +58,7 @@ func (p *Party) Calculate() error {
 }
 
 func (p *Party) normalizers() tax.Normalizers {
-	if r := p.RegimeDef(); r != nil {
+	if r := p.RegimeDef(); r != nil && r.Normalizer != nil {
 		return tax.Normalizers{r.Normalizer}
 	}
 	return nil
