@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `org.Party`: avoid panic when regime's normalizer is not present
+- `br`: set missing normalizer in regime definition
+
 ## [v0.220.5] - 2025-07-21
 
 ### Changed
