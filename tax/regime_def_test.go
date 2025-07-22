@@ -148,7 +148,7 @@ func TestRegimeDefNormalizers(t *testing.T) {
 
 	t.Run("with normalizer", func(t *testing.T) {
 		r := &tax.RegimeDef{
-			Normalizer: func(doc any) {
+			Normalizer: func(_ any) {
 				// nothing here
 			},
 		}
