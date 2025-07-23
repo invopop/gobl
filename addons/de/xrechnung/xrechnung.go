@@ -11,6 +11,7 @@ import (
 )
 
 // BR-DE-14 - set percent in convertor as this rule requires it, even if it is 0. BT-119
+// BR-DE-15 - This rule only applies to public institutions so we cannot check it.
 // BR-DE-16 - covered by tax ID being required. BT-31
 // BR-DE-18 - references format of payment.terms.details. BT-20
 // BR-DE-20 - partialy covered by gobl validation of IBAN format. BT-84

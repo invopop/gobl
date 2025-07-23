@@ -132,9 +132,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 			},
 		},
-		Ordering: &bill.Ordering{
-			Code: "1234567890",
-		},
 	}
 	return inv
 }
@@ -223,38 +220,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
 		assert.ErrorContains(t, err, "either party.emails or party.people[0].emails is required")
-	})
-
-	// Test ordering scenarios
-	t.Run("ordering with code only", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{
-			Code: "1234567890",
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
-	t.Run("ordering with identities only", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{
-			Identities: []*org.Identity{
-				{
-					Key:  "order-number",
-					Code: "1234567890",
-				},
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
-	t.Run("ordering missing both code and identities", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		assert.ErrorContains(t, err, "either ordering code or identities with codes are required")
 	})
 
 	// Test delivery scenarios

@@ -60,11 +60,6 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateDelivery),
 			validation.Skip,
 		),
-		validation.Field(&inv.Ordering,
-			validation.Required,
-			validation.By(validateOrdering),
-			validation.Skip,
-		),
 	)
 }
 
@@ -94,20 +89,6 @@ func validateDelivery(val any) error {
 			validation.Skip,
 		),
 	)
-}
-
-func validateOrdering(val any) error {
-	ordering, ok := val.(*bill.Ordering)
-	if !ok || ordering == nil {
-		return nil
-	}
-
-	// BR-DE-15
-	if len(ordering.Identities) == 0 && ordering.Code == "" {
-		return validation.NewError("BR-DE-15", "either ordering code or identities with codes are required")
-	}
-
-	return nil
 }
 
 func validatePayment(val any) error {
