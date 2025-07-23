@@ -16,7 +16,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateStandard,
 		}
-		normalizeTaxCombo(tc, true)
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
@@ -27,7 +27,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateSuperReduced,
 		}
-		normalizeTaxCombo(tc, true)
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
@@ -35,9 +35,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("exempt export", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagExport),
+			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagEEA),
 		}
-		normalizeTaxCombo(tc, true)
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
 	})
@@ -47,7 +47,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateExempt.With(tax.TagExport),
 		}
-		normalizeTaxCombo(tc, false)
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
 	})
@@ -59,7 +59,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Percent:   num.NewPercentage(210, 3),
 			Surcharge: num.NewPercentage(50, 3),
 		}
-		normalizeTaxCombo(tc, true)
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "18", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
 	})
@@ -70,7 +70,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateStandard,
 		}
-		normalizeTaxCombo(tc, true)
+		normalizeTaxCombo(tc)
 		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
 	})
 
@@ -82,7 +82,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 				ExtKeyRegime: "03",
 			},
 		}
-		normalizeTaxCombo(tc, true)
+		normalizeTaxCombo(tc)
 		assert.Equal(t, "03", tc.Ext.Get(ExtKeyRegime).String())
 	})
 }

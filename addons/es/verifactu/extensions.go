@@ -274,10 +274,12 @@ var extensions = []*cbc.Definition{
 				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
 				L10 list.
 
-				There are 2 scenarios where exempt extensions can be automatically assigned:
+				Automatic mapping of tax rates to exemption codes:
 
-				- When the operation is an export and the customer has a non-Spanish NIF-VAT identity but a EU VAT number: E2.
-				- When the operation is an export and the customer has a non-EU VAT number: E5.
+				| Tax Rate                | Operation Class |
+				|-------------------------|-----------------|
+				| ~exempt+export~         | ~E2~            |
+				| ~exempt+export+eea~     | ~E5~            |
 
 				The rest of the exemptions will need to be determined and applied on a
 				case-by-case basis.

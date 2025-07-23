@@ -76,19 +76,6 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 
 	normalizeInvoicePartyIdentity(inv.Customer)
-
-	for _, line := range inv.Lines {
-		if line.Taxes == nil {
-			continue
-		}
-		for _, tax := range line.Taxes {
-			isEuropeanCustomer := false
-			if inv.Customer != nil && inv.Customer.TaxID != nil {
-				isEuropeanCustomer = inv.Customer.TaxID.InEU(inv.IssueDate)
-			}
-			normalizeTaxCombo(tax, isEuropeanCustomer)
-		}
-	}
 }
 
 func normalizeInvoicePartyIdentity(cus *org.Party) {
