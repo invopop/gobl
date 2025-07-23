@@ -32,7 +32,6 @@ const (
 	TagPartial       cbc.Key = "partial"
 	TagB2G           cbc.Key = "b2g"
 	TagExport        cbc.Key = "export"
-	TagForeignVAT    cbc.Key = "foreign-vat"
 
 	// European Economic Area, used with exports
 	TagEEA cbc.Key = "eea"

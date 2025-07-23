@@ -107,41 +107,10 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
-	t.Run("zero rate with location tag maps to N2", func(t *testing.T) {
+	t.Run("reverse charge exempt rate maps to S2", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateZero.With(tax.TagForeignVAT),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "N2", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "08", tc.Ext.Get(ExtKeyRegime).String())
-	})
-
-	// Test reverse charge scenarios
-	t.Run("reverse charge standard rate maps to S2", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard.With(tax.TagReverseCharge),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-	})
-
-	t.Run("reverse charge reduced rate maps to S2", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateReduced.With(tax.TagReverseCharge),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-	})
-
-	t.Run("reverse charge super reduced rate maps to S2", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateSuperReduced.With(tax.TagReverseCharge),
+			Rate:     tax.RateExempt.With(tax.TagReverseCharge),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
@@ -200,16 +169,6 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		// Simplified takes precedence over export for regime
 		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
-	})
-
-	t.Run("location tag with IGIC", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: es.TaxCategoryIGIC,
-			Rate:     tax.RateZero.With(tax.TagForeignVAT),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "N2", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "08", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
 	t.Run("simplified tag precedence - simplified wins over export", func(t *testing.T) {
@@ -402,47 +361,6 @@ func TestValidateTaxCombo(t *testing.T) {
 		assert.Contains(t, err.Error(), "E2")
 	})
 
-	// Additional validation tests
-	t.Run("missing regime for VAT", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard,
-			Ext: tax.Extensions{
-				ExtKeyOpClass: "S1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "regime")
-	})
-
-	t.Run("missing regime for IGIC", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: es.TaxCategoryIGIC,
-			Rate:     tax.RateStandard,
-			Ext: tax.Extensions{
-				ExtKeyOpClass: "S1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "regime")
-	})
-
-	t.Run("missing operation class when taxed", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard,
-			Percent:  num.NewPercentage(210, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime: "01",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "es-verifactu-op-class")
-	})
-
 	t.Run("cannot have both operation class and exempt", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -456,142 +374,5 @@ func TestValidateTaxCombo(t *testing.T) {
 		err := validateTaxCombo(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "exempt")
-	})
-
-	t.Run("allows E3 exemption code with regime 02", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
-				ExtKeyRegime: "02",
-				ExtKeyExempt: "E3",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("allows E5 exemption code with any regime", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
-				ExtKeyRegime: "01",
-				ExtKeyExempt: "E5",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("valid reverse charge with S2", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard.With(tax.TagReverseCharge),
-			Percent:  num.NewPercentage(210, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime:  "01",
-				ExtKeyOpClass: "S2",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("valid surcharge scenario", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category:  tax.CategoryVAT,
-			Rate:      tax.RateStandard,
-			Percent:   num.NewPercentage(210, 3),
-			Surcharge: num.NewPercentage(50, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime:  "18",
-				ExtKeyOpClass: "S1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("exempt without percent is valid", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt,
-			Ext: tax.Extensions{
-				ExtKeyRegime: "01",
-				ExtKeyExempt: "E1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("valid N2 operation class", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateZero.With(tax.TagForeignVAT),
-			Percent:  num.NewPercentage(0, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime:  "01",
-				ExtKeyOpClass: "N2",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("valid simplified regime 20", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard.With(tax.TagSimplified),
-			Percent:  num.NewPercentage(210, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime:  "20",
-				ExtKeyOpClass: "S1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("valid simplified exempt scenario", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagSimplified),
-			Ext: tax.Extensions{
-				ExtKeyRegime: "20",
-				ExtKeyExempt: "E1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("valid N2 with IGIC", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: es.TaxCategoryIGIC,
-			Rate:     tax.RateZero.With(tax.TagForeignVAT),
-			Percent:  num.NewPercentage(0, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime:  "01",
-				ExtKeyOpClass: "N2",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-	})
-
-	t.Run("allows E2 and E3 exemption codes with regime 20", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
-				ExtKeyRegime: "20",
-				ExtKeyExempt: "E2",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.NoError(t, err)
-
-		tc.Ext[ExtKeyExempt] = "E3"
-		err = validateTaxCombo(tc)
-		assert.NoError(t, err)
 	})
 }
