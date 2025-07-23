@@ -13,15 +13,20 @@ var taxCategoryOpClassMap = tax.Extensions{
 	tax.RateReduced:      "S1",
 	tax.RateSuperReduced: "S1",
 	tax.RateZero:         "S1",
-	tax.RateExempt:       "N1", // General exemption, no tax applies
 	tax.RateExempt.With(tax.TagReverseCharge): "S2",
-	tax.RateExempt.With(tax.TagExport):        "N2",
+}
+
+var taxCategoryExemptMap = tax.Extensions{
+	tax.RateExempt:                                      "E1",
+	tax.RateExempt.With(tax.TagExport):                  "E2",
+	tax.RateExempt.With(tax.TagExport).With(tax.TagEEA): "E5",
 }
 
 func normalizeTaxCombo(tc *tax.Combo) {
 	if tc.Country != "" && tc.Country != l10n.ES.Tax() {
 		return
 	}
+
 	switch tc.Category {
 	case tax.CategoryVAT, es.TaxCategoryIGIC:
 		ext := make(tax.Extensions)
@@ -30,9 +35,15 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		if !tc.Ext.Has(ExtKeyRegime) {
 			// Set default tax regime to "01" (General regime operation)
 			ext[ExtKeyRegime] = "01"
+			// If the operation is an export, set the regime to "02" (Export operation)
 			if tc.Rate.Has(tax.TagExport) {
 				ext[ExtKeyRegime] = "02"
 			}
+			// If the operation is a simplified operation, set the regime to "20" (Simplified operation)
+			if tc.Rate.Has(tax.TagSimplified) {
+				ext[ExtKeyRegime] = "20"
+			}
+			// If the operation is a surcharge, set the regime to "18" (Surcharge operation)
 			if tc.Surcharge != nil {
 				ext[ExtKeyRegime] = "18"
 			}
@@ -41,6 +52,10 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		if !tc.Rate.IsEmpty() {
 			if v := taxCategoryOpClassMap.Get(tc.Rate); v != "" {
 				ext[ExtKeyOpClass] = v
+			}
+
+			if v := taxCategoryExemptMap.Get(tc.Rate); v != "" {
+				ext[ExtKeyExempt] = v
 			}
 		}
 
