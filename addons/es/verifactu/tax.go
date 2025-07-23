@@ -13,15 +13,13 @@ var taxCategoryOpClassMap = tax.Extensions{
 	tax.RateReduced:      "S1",
 	tax.RateSuperReduced: "S1",
 	tax.RateZero:         "S1",
-	tax.RateExempt:       "N1", // General exemption, no tax applies
-	tax.RateExempt.With(tax.TagReverseCharge): "S2",
-	tax.RateExempt.With(tax.TagExport):        "N2",
 }
 
-func normalizeTaxCombo(tc *tax.Combo) {
+func normalizeTaxCombo(tc *tax.Combo, isEuropeanCustomer bool) {
 	if tc.Country != "" && tc.Country != l10n.ES.Tax() {
 		return
 	}
+
 	switch tc.Category {
 	case tax.CategoryVAT, es.TaxCategoryIGIC:
 		ext := make(tax.Extensions)
@@ -41,6 +39,14 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		if !tc.Rate.IsEmpty() {
 			if v := taxCategoryOpClassMap.Get(tc.Rate); v != "" {
 				ext[ExtKeyOpClass] = v
+			}
+
+			if tc.Rate == tax.RateExempt.With(tax.TagExport) {
+				if isEuropeanCustomer {
+					ext[ExtKeyExempt] = "E2"
+				} else {
+					ext[ExtKeyExempt] = "E5"
+				}
 			}
 		}
 
