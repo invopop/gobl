@@ -35,12 +35,15 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		if !tc.Ext.Has(ExtKeyRegime) {
 			// Set default tax regime to "01" (General regime operation)
 			ext[ExtKeyRegime] = "01"
+			// If the operation is an export, set the regime to "02" (Export operation)
 			if tc.Rate.Has(tax.TagExport) {
 				ext[ExtKeyRegime] = "02"
 			}
+			// If the operation is a simplified operation, set the regime to "20" (Simplified operation)
 			if tc.Rate.Has(tax.TagSimplified) {
 				ext[ExtKeyRegime] = "20"
 			}
+			// If the operation is a surcharge, set the regime to "18" (Surcharge operation)
 			if tc.Surcharge != nil {
 				ext[ExtKeyRegime] = "18"
 			}

@@ -220,12 +220,7 @@ var extensions = []*cbc.Definition{
 				| ~reduced~                         | ~S1~            |
 				| ~super-reduced~                   | ~S1~            |
 				| ~zero~                            | ~S1~            |
-				| ~standard+reverse-charge~         | ~S2~            |
-				| ~reduced+reverse-charge~          | ~S2~            |
-				| ~super-reduced+reverse-charge~    | ~S2~            |
-				| ~zero+foreign-vat~                | ~N2~            |
-
-				S2 should be set for domestic or specific operations where there is a reverse charge of VAT (the customer in Spain assumes the VAT payment). For exports, use exemption codes.
+				| ~exempt+reverse-charge~           | ~S2~            |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 
@@ -285,9 +280,6 @@ var extensions = []*cbc.Definition{
 				| ~exempt~                | ~E1~           |
 				| ~exempt+export~         | ~E2~           |
 				| ~exempt+export+eea~     | ~E5~           |
-
-				The rest of the exemptions will need to be determined and applied on a
-				case-by-case basis.
 			`),
 		},
 		Values: []*cbc.Definition{

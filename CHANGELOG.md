@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `es-verifactu-v1`: modify tax scenarios for exempt operations
+
+
 ## [v0.220.5] - 2025-07-21
 
 ### Changed
