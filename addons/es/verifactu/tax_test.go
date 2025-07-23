@@ -39,7 +39,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc, true)
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
 	})
 
 	t.Run("exempt export with non-EU customer", func(t *testing.T) {
@@ -49,7 +49,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc, false)
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
 	})
 
 	t.Run("surcharge", func(t *testing.T) {
