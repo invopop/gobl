@@ -214,12 +214,16 @@ var extensions = []*cbc.Definition{
 
 				Automatic mapping of tax rates to operation classes:
 
-				| Tax Rate                | Operation Class |
-				|-------------------------|-----------------|
-				| ~standard~              | ~S1~            |
-				| ~reduced~               | ~S1~            |
-				| ~super-reduced~         | ~S1~            |
-				| ~zero~                  | ~S1~            |
+				| Tax Rate                          | Operation Class |
+				|-----------------------------------|-----------------|
+				| ~standard~                        | ~S1~            |
+				| ~reduced~                         | ~S1~            |
+				| ~super-reduced~                   | ~S1~            |
+				| ~zero~                            | ~S1~            |
+				| ~standard+reverse-charge~         | ~S2~            |
+				| ~reduced+reverse-charge~          | ~S2~            |
+				| ~super-reduced+reverse-charge~    | ~S2~            |
+				| ~zero+foreign-vat~                | ~N2~            |
 
 				S2 should be set for domestic or specific operations where there is a reverse charge of VAT (the customer in Spain assumes the VAT payment). For exports, use exemption codes.
 
@@ -276,10 +280,11 @@ var extensions = []*cbc.Definition{
 
 				Automatic mapping of tax rates to exemption codes:
 
-				| Tax Rate                | Operation Class |
-				|-------------------------|-----------------|
-				| ~exempt+export~         | ~E2~            |
-				| ~exempt+export+eea~     | ~E5~            |
+				| Tax Rate                | Exemption Code |
+				|-------------------------|----------------|
+				| ~exempt~                | ~E1~           |
+				| ~exempt+export~         | ~E2~           |
+				| ~exempt+export+eea~     | ~E5~           |
 
 				The rest of the exemptions will need to be determined and applied on a
 				case-by-case basis.
@@ -351,6 +356,8 @@ var extensions = []*cbc.Definition{
 				|---------------------------|-------------|
 				| Rate ~standard~			| ~01~        |
 				| Rate has ~export~			| ~02~        |
+				| Rate has ~foreign-vat~	| ~08~        |
+				| Rate has ~simplified~	    | ~20~        |
 				| Has surcharge				| ~18~        |
 			`),
 		},
