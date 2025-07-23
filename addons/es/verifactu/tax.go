@@ -43,9 +43,9 @@ func normalizeTaxCombo(tc *tax.Combo, isEuropeanCustomer bool) {
 
 			if tc.Rate == tax.RateExempt.With(tax.TagExport) {
 				if isEuropeanCustomer {
-					ext[ExtKeyExempt] = "E2"
-				} else {
 					ext[ExtKeyExempt] = "E5"
+				} else {
+					ext[ExtKeyExempt] = "E2"
 				}
 			}
 		}

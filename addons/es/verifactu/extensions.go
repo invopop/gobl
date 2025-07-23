@@ -279,9 +279,8 @@ var extensions = []*cbc.Definition{
 				- When the operation is an export and the customer has a non-Spanish NIF-VAT identity but a EU VAT number: E2.
 				- When the operation is an export and the customer has a non-EU VAT number: E5.
 
-				No attempt will be made by GOBL to automatically map tax rates to exemption
-				reason codes, they will need to be determined and applied on a case-by-case
-				basis.
+				The rest of the exemptions will need to be determined and applied on a
+				case-by-case basis.
 			`),
 		},
 		Values: []*cbc.Definition{
