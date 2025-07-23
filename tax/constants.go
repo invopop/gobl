@@ -22,12 +22,13 @@ const (
 	RateOther        cbc.Key = "other"
 )
 
-// Standard tax tags
+// Standard tax tags that can be used to indicate special circumstances.
 const (
 	TagSimplified    cbc.Key = "simplified"
 	TagReverseCharge cbc.Key = "reverse-charge"
 	TagCustomerRates cbc.Key = "customer-rates"
 	TagSelfBilled    cbc.Key = "self-billed"
+	TagReplacement   cbc.Key = "replacement"
 	TagPartial       cbc.Key = "partial"
 	TagB2G           cbc.Key = "b2g"
 	TagExport        cbc.Key = "export"

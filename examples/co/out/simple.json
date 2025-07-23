@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "357deb2dcd17078e7c7e229f91a82370970925fa533e5fad4251abdca7402681"
+			"val": "924fb567ccde2a0340b5d9c2d488dbf8884d159f7fb15e44c219e35788d15081"
 		}
 	},
 	"doc": {
@@ -34,6 +34,7 @@
 				}
 			],
 			"ext": {
+				"co-dian-fiscal-responsibility": "O-23",
 				"co-dian-municipality": "11001"
 			}
 		},
@@ -62,6 +63,7 @@
 				}
 			],
 			"ext": {
+				"co-dian-fiscal-responsibility": "O-15",
 				"co-dian-municipality": "11001"
 			}
 		},

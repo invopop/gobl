@@ -325,7 +325,7 @@ func (inv *Invoice) Normalize(normalizers tax.Normalizers) {
 }
 
 func (inv *Invoice) supportedTags() []cbc.Key {
-	var ts *tax.TagSet
+	ts := defaultInvoiceTags
 	if r := inv.RegimeDef(); r != nil {
 		ts = ts.Merge(tax.TagSetForSchema(r.Tags, ShortSchemaInvoice))
 	}
@@ -454,6 +454,7 @@ func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 	}
 	inv.Regime.JSONSchemaExtend(js)
 	inv.Addons.JSONSchemaExtend(js)
+	inv.Tags.JSONSchemaExtendWithDefs(js, defaultInvoiceTags.List)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

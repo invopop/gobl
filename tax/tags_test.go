@@ -1,13 +1,17 @@
 package tax_test
 
 import (
+	"encoding/json"
 	"testing"
 
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTagSetForSchema(t *testing.T) {
@@ -158,4 +162,29 @@ func TestTaxSetKeys(t *testing.T) {
 		},
 	}
 	assert.Equal(t, ts1.Keys(), []cbc.Key{"test1", "test2"})
+}
+
+func TestTagsJSONSchemaEmbedWithDefs(t *testing.T) {
+	eg := `{
+		"properties": {
+			"$tags": {
+				"items": {
+            		"$ref": "https://gobl.org/draft-0/cbc/key",
+					"type": "array",
+					"title": "Tags"
+				}
+			}
+		}
+	}`
+	js := new(jsonschema.Schema)
+	require.NoError(t, json.Unmarshal([]byte(eg), js))
+
+	ts := tax.Tags{}
+	ts.JSONSchemaExtendWithDefs(js, bill.DefaultInvoiceTags().List)
+
+	prop, ok := js.Properties.Get("$tags")
+	require.True(t, ok)
+	assert.Equal(t, 6, len(prop.Items.AnyOf), "should have 5 tags plus 1 catch-all")
+	assert.Equal(t, "simplified", prop.Items.AnyOf[0].Const)
+	assert.Equal(t, "Any", prop.Items.AnyOf[5].Title)
 }

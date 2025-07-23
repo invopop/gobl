@@ -40,9 +40,6 @@ func New() *tax.RegimeDef {
 			`),
 		},
 		TimeZone: "Europe/Paris",
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

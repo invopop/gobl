@@ -41,7 +41,7 @@ func New() *tax.RegimeDef {
 		PaymentMeansKeys: paymentMeansKeyDefinitions, // pay.go
 		Extensions:       extensionKeys,              // extensions.go
 		Tags: []*tax.TagSet{
-			bill.InvoiceTags().Merge(invoiceTags),
+			invoiceTags,
 		},
 		Scenarios:  scenarios, // scenarios.go
 		Validator:  Validate,

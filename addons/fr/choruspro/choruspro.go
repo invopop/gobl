@@ -33,18 +33,18 @@ func newAddon() *tax.AddonDef {
 		Description: i18n.String{
 			i18n.EN: here.Doc(`
 				Support for the French Chorus Pro platform for B2G (Business-to-Government) electronic invoicing.
-				This addon provides the necessary structures and validations to ensure compliance with the 
+				This addon provides the necessary structures and validations to ensure compliance with the
 				Chorus Pro specifications.
 
 				It requires the EN16931 addon as it expands on the European standard with French-specific
 				requirements for public sector invoicing.
 			`),
 			i18n.FR: here.Doc(`
-				Support pour la plateforme française Chorus Pro pour la facturation électronique B2G 
-				(Business-to-Government). Cet addon fournit les structures et validations nécessaires 
+				Support pour la plateforme française Chorus Pro pour la facturation électronique B2G
+				(Business-to-Government). Cet addon fournit les structures et validations nécessaires
 				pour assurer la conformité avec les spécifications Chorus Pro.
 
-				Il nécessite l'addon EN16931 car il étend le standard européen avec des exigences 
+				Il nécessite l'addon EN16931 car il étend le standard européen avec des exigences
 				spécifiques françaises pour la facturation du secteur public.
 			`),
 		},
@@ -77,6 +77,8 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
+	case *bill.Line:
+		normalizeBillLine(obj)
 	case *org.Party:
 		normalizeOrgParty(obj)
 	}

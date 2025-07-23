@@ -1,11 +1,14 @@
 package saft_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -65,4 +68,31 @@ func TestInvoice(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
 	})
+}
+
+func TestExemptions(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+	require.NotNil(t, addon)
+
+	exmpts := cbc.GetKeyDefinition(saft.ExtKeyExemption, addon.Extensions)
+	require.NotNil(t, exmpts)
+
+	for _, ex := range exmpts.Values {
+		tn := fmt.Sprintf("Note for %s exemption code", ex.Code)
+		t.Run(tn, func(t *testing.T) {
+			inv := validInvoice()
+			inv.Lines[0].Taxes[0].Rate = tax.RateExempt
+			inv.Lines[0].Taxes[0].Ext = tax.Extensions{
+				saft.ExtKeyExemption: ex.Code,
+			}
+			require.NoError(t, inv.Calculate())
+
+			if assert.Len(t, inv.Notes, 1) {
+				assert.Equal(t, org.NoteKeyLegal, inv.Notes[0].Key)
+				assert.Equal(t, ex.Code, inv.Notes[0].Code)
+				assert.Equal(t, saft.ExtKeyExemption, inv.Notes[0].Src)
+				assert.LessOrEqual(t, len(inv.Notes[0].Text), 60, "for use in SAF-T, length must be 60 characters or less")
+			}
+		})
+	}
 }

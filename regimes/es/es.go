@@ -59,7 +59,7 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone: "Europe/Madrid",
 		Tags: []*tax.TagSet{
-			bill.InvoiceTags().Merge(invoiceTags),
+			invoiceTags,
 		},
 		Identities: identityDefinitions,
 		Categories: taxCategories,

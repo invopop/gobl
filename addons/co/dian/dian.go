@@ -44,8 +44,11 @@ func newAddon() *tax.AddonDef {
 	}
 }
 
-func normalize(_ any) {
-	// no normalizations yet
+func normalize(doc any) {
+	switch obj := doc.(type) {
+	case *bill.Invoice:
+		normalizeInvoice(obj)
+	}
 }
 
 func validate(doc any) error {

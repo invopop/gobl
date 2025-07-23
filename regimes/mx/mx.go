@@ -41,12 +41,9 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Mexico",
 			i18n.ES: "México",
 		},
-		TimeZone:   "America/Mexico_City",
-		Validator:  Validate,
-		Normalizer: Normalize,
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
+		TimeZone:    "America/Mexico_City",
+		Validator:   Validate,
+		Normalizer:  Normalize,
 		Categories:  taxCategories,
 		Corrections: correctionDefinitions,
 	}

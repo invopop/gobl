@@ -159,6 +159,16 @@ func IdentityForKey(in []*Identity, key ...cbc.Key) *Identity {
 	return nil
 }
 
+// IdentityForExtKey helps return the identity with the first matching extension key.
+func IdentityForExtKey(in []*Identity, key cbc.Key) *Identity {
+	for _, v := range in {
+		if v.Ext.Get(key) != cbc.CodeEmpty {
+			return v
+		}
+	}
+	return nil
+}
+
 // AddIdentity makes it easier to add a new identity to a list and replace an
 // existing value with a matching type.
 func AddIdentity(in []*Identity, i *Identity) []*Identity {

@@ -25,9 +25,6 @@ func New() *tax.RegimeDef {
 			i18n.DE: "Deutschland",
 		},
 		TimeZone: "Europe/Berlin",
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

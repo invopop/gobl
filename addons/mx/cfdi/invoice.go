@@ -222,6 +222,7 @@ func validateInvoiceLineItem(tags tax.Tags) validation.RuleFunc {
 			return nil
 		}
 		return validation.ValidateStruct(item,
+			validation.Field(&item.Price, num.Positive),
 			validation.Field(&item.Ref,
 				validation.When(
 					tags.HasTags(TagGlobal),

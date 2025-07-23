@@ -24,9 +24,6 @@ func New() *tax.RegimeDef {
 			i18n.AR: "الإمارات العربية المتحدة",
 		},
 		TimeZone: "Asia/Dubai",
-		Tags: []*tax.TagSet{
-			bill.InvoiceTags(),
-		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

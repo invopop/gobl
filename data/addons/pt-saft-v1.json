@@ -194,182 +194,196 @@
           "code": "M01",
           "name": {
             "en": "Article 16, No. 6 of the VAT code",
-            "pt": "Artigo 16.°, n.° 6 do CIVA"
+            "pt": "Artigo 16.º, n.º 6 do CIVA"
           }
         },
         {
           "code": "M02",
           "name": {
-            "en": "Article 6 of the Decree-Law 198/90 of 19th June",
-            "pt": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
+            "en": "Article 6 of Decree-Law No. 198/90 of 19th June",
+            "pt": "Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho"
           }
         },
         {
           "code": "M04",
           "name": {
-            "en": "Exempt pursuant to article 13 of the VAT code",
-            "pt": "Isento artigo 13.° do CIVA"
+            "en": "Exempt pursuant to Article 13 of the VAT code",
+            "pt": "Isento artigo 13.º do CIVA"
           }
         },
         {
           "code": "M05",
           "name": {
-            "en": "Exempt pursuant to article 14 of the VAT code",
-            "pt": "Isento artigo 14.° do CIVA"
+            "en": "Exempt pursuant to Article 14 of the VAT code",
+            "pt": "Isento artigo 14.º do CIVA"
           }
         },
         {
           "code": "M06",
           "name": {
-            "en": "Exempt pursuant to article 15 of the VAT code",
-            "pt": "Isento artigo 15.° do CIVA"
+            "en": "Exempt pursuant to Article 15 of the VAT code",
+            "pt": "Isento artigo 15.º do CIVA"
           }
         },
         {
           "code": "M07",
           "name": {
-            "en": "Exempt pursuant to article 9 of the VAT code",
-            "pt": "Isento artigo 9.° do CIVA"
+            "en": "Exempt pursuant to Article 9 of the VAT code",
+            "pt": "Isento artigo 9.º do CIVA"
           }
         },
         {
           "code": "M09",
           "name": {
-            "en": "VAT - does not confer right to deduct / Article 62 paragraph b) of the VAT code",
-            "pt": "IVA - não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
+            "en": "VAT - does not confer right to deduction / Article 62 paragraph b) of the VAT code",
+            "pt": "IVA - não confere direito a dedução / Artigo 62.º alínea b) do CIVA"
           }
         },
         {
           "code": "M10",
           "name": {
             "en": "VAT - exemption scheme / Article 57 of the VAT code",
-            "pt": "IVA - regime de isenção / Artigo 57.° do CIVA"
+            "pt": "IVA - regime de isenção / Artigo 57.º do CIVA"
           }
         },
         {
           "code": "M11",
           "name": {
             "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
-            "pt": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
+            "pt": "Regime particular do tabaco / Decreto-Lei n.º 346/85, de 23 de agosto"
           }
         },
         {
           "code": "M12",
           "name": {
             "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
-            "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
+            "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.º 221/85, de 3 de julho"
           }
         },
         {
           "code": "M13",
           "name": {
             "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
+            "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
           "code": "M14",
           "name": {
             "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
+            "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
           "code": "M15",
           "name": {
             "en": "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
+            "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
           "code": "M16",
           "name": {
             "en": "Exempt pursuant to Article 14 of the RITI",
-            "pt": "Isento artigo 14.° do RITI"
+            "pt": "Isento artigo 14.º do RITI"
           }
         },
         {
           "code": "M19",
           "name": {
-            "en": "Other exemptions - Temporary exemptions determined by specific legislation",
-            "pt": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
+            "en": "Other exemptions",
+            "pt": "Outras isenções"
           }
         },
         {
           "code": "M20",
           "name": {
             "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
-            "pt": "IVA - regime forfetário / Artigo 59.°-D n.°2 do CIVA"
+            "pt": "IVA - regime forfetário / Artigo 59.º-D n.º 2 do CIVA"
           }
         },
         {
           "code": "M21",
           "name": {
-            "en": "VAT - does not confer right to deduct (or similar) - Article 72 No. 4 of the VAT code",
-            "pt": "IVA - não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
+            "en": "VAT - does not confer right to deduction (or similar) / Article 72 No. 4 of the VAT code",
+            "pt": "IVA - não confere direito à dedução (ou expressão similar) / Artigo 72.º n.º 4 do CIVA"
           }
         },
         {
           "code": "M25",
           "name": {
-            "en": "Consignment goods - Article 38 No. 1 paragraph a) of the VAT code",
-            "pt": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
+            "en": "Consignment goods / Article 38 No. 1 paragraph a) of the VAT code",
+            "pt": "Mercadoria à consignação / Artigo 38.º n.º 1 alínea a) do CIVA"
+          }
+        },
+        {
+          "code": "M26",
+          "name": {
+            "en": "VAT exemption with right to deduction in food basket / Law No. 17/2023 of 14th April",
+            "pt": "Isenção de IVA com direito à dedução no cabaz alimentar / Lei n.º 17/2023, de 14 de abril"
           }
         },
         {
           "code": "M30",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea i) do CIVA"
+            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea i) do CIVA"
           }
         },
         {
           "code": "M31",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea j) do CIVA"
+            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea j) do CIVA"
           }
         },
         {
           "code": "M32",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea I) do CIVA"
+            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea l) do CIVA"
           }
         },
         {
           "code": "M33",
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.° n.° 1 alínea m) do CIVA"
+            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea m) do CIVA"
+          }
+        },
+        {
+          "code": "M34",
+          "name": {
+            "en": "VAT - reverse charge / Article 2 No. 1 paragraph n) of the VAT code",
+            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea n) do CIVA"
           }
         },
         {
           "code": "M40",
           "name": {
             "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
-            "pt": "IVA - autoliquidação / Artigo 6.° n.° 6 alínea a) do CIVA, a contrário"
+            "pt": "IVA - autoliquidação / Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
           }
         },
         {
           "code": "M41",
           "name": {
             "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
-            "pt": "IVA - autoliquidação / Artigo 8.° n.° 3 do RITI"
+            "pt": "IVA - autoliquidação / Artigo 8.º n.º 3 do RITI"
           }
         },
         {
           "code": "M42",
           "name": {
-            "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29 January",
-            "pt": "IVA - autoliquidação / Decreto-Lei n.° 21/2007, de 29 de janeiro"
+            "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29th January",
+            "pt": "IVA - autoliquidação / Decreto-Lei n.º 21/2007, de 29 de janeiro"
           }
         },
         {
           "code": "M43",
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
-            "pt": "IVA - autoliquidação / Decreto-Lei n.° 362/99, de 16 de setembro"
+            "pt": "IVA - autoliquidação / Decreto-Lei n.º 362/99, de 16 de setembro"
           }
         },
         {
@@ -777,7 +791,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Artigo 16.°, n.° 6 do CIVA"
+            "text": "Artigo 16.º, n.º 6, alíneas a) a d) do CIVA"
           }
         },
         {
@@ -786,7 +800,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho"
+            "text": "Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho"
           }
         },
         {
@@ -795,7 +809,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Exempt / Isento artigo 13.° do CIVA"
+            "text": "Artigo 13.º do CIVA"
           }
         },
         {
@@ -804,7 +818,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Exempt / Isento artigo 14.° do CIVA"
+            "text": "Artigo 14.º do CIVA"
           }
         },
         {
@@ -813,7 +827,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Exempt / Isento artigo 15.° do CIVA"
+            "text": "Artigo 15.º do CIVA"
           }
         },
         {
@@ -822,7 +836,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Exempt / Isento artigo 9.° do CIVA"
+            "text": "Artigo 9.º do CIVA"
           }
         },
         {
@@ -831,7 +845,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Não confere direito a dedução / Artigo 62.° alínea b) do CIVA"
+            "text": "Artigo 62.º alínea b) do CIVA"
           }
         },
         {
@@ -840,7 +854,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime de isenção / Artigo 57.° do CIVA"
+            "text": "Artigo 57.º do CIVA"
           }
         },
         {
@@ -849,7 +863,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto"
+            "text": "Decreto-Lei n.º 346/85, de 23 de agosto"
           }
         },
         {
@@ -858,7 +872,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho"
+            "text": "Decreto-Lei n.º 221/85, de 3 de julho"
           }
         },
         {
@@ -867,7 +881,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro"
+            "text": "Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
@@ -876,7 +890,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro"
+            "text": "Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
@@ -885,7 +899,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro"
+            "text": "Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
@@ -894,7 +908,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Exempt / Isento artigo 14.° do RITI"
+            "text": "Artigo 14.º do RITI"
           }
         },
         {
@@ -903,7 +917,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Outras isenções - Isenções temporárias determinadas em diploma próprio"
+            "text": "Outras isenções"
           }
         },
         {
@@ -912,7 +926,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Regime forfetário / Artigo 59.°-D n.°2 do CIVA"
+            "text": "Artigo 59.º-D n.º 2 do CIVA"
           }
         },
         {
@@ -921,7 +935,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA"
+            "text": "Artigo 72.º n.º 4 do CIVA"
           }
         },
         {
@@ -930,7 +944,16 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA"
+            "text": "Artigo 38.º n.º 1 alínea a) do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-saft-exemption",
+          "ext_code": "M26",
+          "note": {
+            "key": "legal",
+            "src": "pt-saft-exemption",
+            "text": "Lei n.º 17/2023, de 14 de abril"
           }
         },
         {
@@ -939,7 +962,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea i) do Código do IVA"
+            "text": "Artigo 2.º n.º 1 alínea i) do CIVA"
           }
         },
         {
@@ -948,7 +971,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea j) do Código do IVA"
+            "text": "Artigo 2.º n.º 1 alínea j) do CIVA"
           }
         },
         {
@@ -957,7 +980,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea I) do Código do IVA"
+            "text": "Artigo 2.º n.º 1 alínea l) do CIVA"
           }
         },
         {
@@ -966,7 +989,16 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea m) do Código do IVA"
+            "text": "Artigo 2.º n.º 1 alínea m) do CIVA"
+          }
+        },
+        {
+          "ext_key": "pt-saft-exemption",
+          "ext_code": "M34",
+          "note": {
+            "key": "legal",
+            "src": "pt-saft-exemption",
+            "text": "Artigo 2.º n.º 1 alínea n) do CIVA"
           }
         },
         {
@@ -975,7 +1007,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / Autoliquidação - Artigo 6.º n.º 6 alínea a) do Código do IVA, a contrário"
+            "text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
           }
         },
         {
@@ -984,7 +1016,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / Autoliquidação - Artigo 8.º n.º 3 do RITI"
+            "text": "Artigo 8.º n.º 3 do RITI"
           }
         },
         {
@@ -993,7 +1025,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / Autoliquidação - Decreto-Lei n.º 21/2007, de 29 de janeiro"
+            "text": "Decreto-Lei n.º 21/2007, de 29 de janeiro"
           }
         },
         {
@@ -1002,7 +1034,7 @@
           "note": {
             "key": "legal",
             "src": "pt-saft-exemption",
-            "text": "Reverse charge / Autoliquidação - Decreto-Lei n.° 362/99, de 16 de setembro"
+            "text": "Decreto-Lei n.º 362/99, de 16 de setembro"
           }
         },
         {

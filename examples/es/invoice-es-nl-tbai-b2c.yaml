@@ -10,7 +10,6 @@ code: "0002"
 supplier:
   tax_id:
     country: "ES"
-    zone: "BI"
     code: "B98602642" # random
   name: "Provide One S.L."
   emails:
