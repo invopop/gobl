@@ -43,3 +43,16 @@ func validatePayInstructions(instr *pay.Instructions) error {
 		),
 	)
 }
+
+func validatePayTerms(terms *pay.Terms) error {
+	if terms == nil {
+		return nil
+	}
+
+	// BR-CO-25 Either DueDates or Detail must be provided
+	if len(terms.DueDates) == 0 && terms.Detail == "" {
+		return validation.NewError("BR-CO-25", "either due_dates or detail must be provided.")
+	}
+
+	return nil
+}

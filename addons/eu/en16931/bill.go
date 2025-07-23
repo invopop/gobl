@@ -89,6 +89,14 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Required, // BR-16 - at least one line
 			validation.Skip,
 		),
+		validation.Field(&inv.Payment,
+			validation.When(
+				//BR-CO-25
+				inv.Totals != nil && ((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) || !inv.Totals.Payable.IsZero()),
+				validation.Required,
+			),
+			validation.Skip,
+		),
 	)
 }
 
@@ -100,6 +108,77 @@ func validateBillInvoiceTax(value any) error {
 	return validation.ValidateStruct(tx,
 		validation.Field(&tx.Ext,
 			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLine(line *bill.Line) error {
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateBillLineDiscount),
+			),
+			validation.Skip,
+		),
+		validation.Field(&line.Charges,
+			validation.Each(
+				validation.By(validateBillLineCharge),
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLineCharge(value any) error {
+	// BR-44
+	charge, ok := value.(*bill.LineCharge)
+	if !ok || charge == nil {
+		return nil
+	}
+	if charge.Reason == "" && !charge.Ext.Has(untdid.ExtKeyCharge) {
+		return validation.NewError("BR-44", "either a reason or a charge type extension is required")
+	}
+	return nil
+}
+
+func validateBillLineDiscount(value any) error {
+	// BR-41
+	discount, ok := value.(*bill.LineDiscount)
+	if !ok || discount == nil {
+		return nil
+	}
+	if discount.Reason == "" && !discount.Ext.Has(untdid.ExtKeyAllowance) {
+		return validation.NewError("BR-41", "either a reason or an allowance type extension is required")
+	}
+	return nil
+}
+
+func validateBillCharge(charge *bill.Charge) error {
+	// BR-36
+	if charge.Reason == "" && (charge.Ext == nil || charge.Ext[untdid.ExtKeyCharge] == "") {
+		return validation.NewError("BR-36", "either a reason or a charge type extension is required")
+	}
+	return nil
+}
+
+func validateBillDiscount(discount *bill.Discount) error {
+	// BR-33
+	if discount.Reason == "" && (discount.Ext == nil || discount.Ext[untdid.ExtKeyAllowance] == "") {
+		return validation.NewError("BR-33", "either a reason or an allowance type extension is required")
+	}
+	return nil
+}
+
+func validateBillPayment(payment *bill.PaymentDetails) error {
+	if payment == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(payment,
+		validation.Field(&payment.Terms,
+			validation.Required,
 			validation.Skip,
 		),
 	)
