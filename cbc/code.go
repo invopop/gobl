@@ -97,6 +97,15 @@ func (c Code) String() string {
 	return string(c)
 }
 
+// IsValidLuhnChecksum returns true if the code is a valid Luhn checksum.
+//
+// Only the numerical part of the code is used for the check. Any non-numerical
+// characters are removed prior.
+func (c Code) IsValidLuhnChecksum() bool {
+	digitsOnly := NormalizeNumericalCode(c).String()
+	return ValidateLuhn(digitsOnly)
+}
+
 // In returns true if the code's value matches one of those
 // in the provided list.
 func (c Code) In(ary ...Code) bool {
