@@ -220,7 +220,7 @@ var extensions = []*cbc.Definition{
 				| ~reduced~                         | ~S1~            |
 				| ~super-reduced~                   | ~S1~            |
 				| ~zero~                            | ~S1~            |
-				| ~exempt+reverse-charge~           | ~S2~            |
+				| ~reverse-charge~                  | ~S2~            |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 
@@ -348,8 +348,6 @@ var extensions = []*cbc.Definition{
 				|---------------------------|-------------|
 				| Rate ~standard~			| ~01~        |
 				| Rate has ~export~			| ~02~        |
-				| Rate has ~foreign-vat~	| ~08~        |
-				| Rate has ~simplified~	    | ~20~        |
 				| Has surcharge				| ~18~        |
 			`),
 		},

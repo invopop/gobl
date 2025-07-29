@@ -107,91 +107,23 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
-	t.Run("reverse charge exempt rate maps to S2", func(t *testing.T) {
+	t.Run("reverse charge maps to S2", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagReverseCharge),
+			Rate:     tax.TagReverseCharge,
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
-
-	// Test simplified regime scenarios
-	t.Run("simplified tag sets regime to 20", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard.With(tax.TagSimplified),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
-	})
-
-	t.Run("simplified with reduced rate", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateReduced.With(tax.TagSimplified),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
-	})
-
-	t.Run("simplified with zero rate", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateZero.With(tax.TagSimplified),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
-		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
-	})
-
-	t.Run("simplified with exempt", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagSimplified),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "E1", tc.Ext.Get(ExtKeyExempt).String())
-		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
-	})
-
-	t.Run("simplified export with EEA", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagEEA).With(tax.TagSimplified),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
-		// Simplified takes precedence over export for regime
-		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
-	})
-
-	t.Run("simplified tag precedence - simplified wins over export", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagSimplified),
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
-		// Simplified should set regime to 20, overriding export's 02
-		assert.Equal(t, "20", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
-	})
-
-	t.Run("surcharge takes precedence over simplified", func(t *testing.T) {
+	t.Run("surcharge takes precedence over general regime", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category:  tax.CategoryVAT,
-			Rate:      tax.RateStandard.With(tax.TagSimplified),
+			Rate:      tax.RateStandard,
 			Surcharge: num.NewPercentage(50, 3),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
-		// Surcharge should set regime to 18, not simplified's 20
 		assert.Equal(t, "18", tc.Ext.Get(ExtKeyRegime).String())
 	})
 

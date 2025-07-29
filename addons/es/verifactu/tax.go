@@ -13,7 +13,7 @@ var taxCategoryOpClassMap = tax.Extensions{
 	tax.RateReduced:      "S1",
 	tax.RateSuperReduced: "S1",
 	tax.RateZero:         "S1",
-	tax.RateExempt.With(tax.TagReverseCharge): "S2",
+	tax.TagReverseCharge: "S2",
 }
 
 var taxCategoryExemptMap = tax.Extensions{
@@ -39,12 +39,8 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			if tc.Rate.Has(tax.TagExport) {
 				ext[ExtKeyRegime] = "02"
 			}
-			// If the operation is a simplified operation, set the regime to "20" (Simplified operation)
-			if tc.Rate.Has(tax.TagSimplified) {
-				ext[ExtKeyRegime] = "20"
-			}
-			// If the operation is a surcharge, set the regime to "18" (Surcharge operation)
-			if tc.Surcharge != nil {
+			// If the operation is a surcharge and the category is VAT, set the regime to "18" (Surcharge operation)
+			if tc.Surcharge != nil && tc.Category == tax.CategoryVAT {
 				ext[ExtKeyRegime] = "18"
 			}
 		}
