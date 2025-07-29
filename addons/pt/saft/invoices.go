@@ -102,10 +102,7 @@ func validateTax(val any) error {
 				t.Ext[ExtKeySourceBilling] != SourceBillingProduced,
 				tax.ExtensionsRequire(ExtKeySourceRef),
 			),
-			validation.When(
-				t.Ext[ExtKeySourceBilling] == SourceBillingManual,
-				validation.By(validateSourceRef),
-			),
+			validation.By(validateSourceRef),
 			validation.Skip,
 		),
 	)
@@ -141,6 +138,11 @@ func validateDocType(val any) error {
 func validateSourceRef(val any) error {
 	ext, _ := val.(tax.Extensions)
 	if ext == nil {
+		return nil
+	}
+
+	if ext[ExtKeySourceBilling] != SourceBillingManual {
+		// source ref format only validated for manual documents
 		return nil
 	}
 

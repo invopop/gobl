@@ -206,10 +206,32 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 func TestSourceRefFormatValidation(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
 
+	t.Run("missing source ref", func(t *testing.T) {
+		inv := validInvoice()
+		delete(inv.Tax.Ext, saft.ExtKeySourceRef)
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("missing invoice type", func(t *testing.T) {
+		inv := validInvoice()
+		delete(inv.Tax.Ext, saft.ExtKeyInvoiceType)
+		inv.Tax.Ext[saft.ExtKeyWorkType] = saft.WorkTypeProforma
+		inv.Series = "PF SERIES-A"
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("integrated document", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingIntegrated
+		inv.Tax.Ext[saft.ExtKeySourceRef] = "FTR abc/00001"
+		require.NoError(t, addon.Validator(inv))
+	})
+
 	tests := []struct {
 		ref string
 		err string
 	}{
+		{"", ""},
 		{"FTM abc/00001", ""},
 		{"FTD FT SERIESA/123", ""},
 		{"FTR abc/00001", "must be in valid format"},
