@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "05da66aa13310f7ea5a0be1fd9b326b45492424705c25c630b35ddb1cbcf4e46"
+			"val": "029b6cdb3cccd570669f21d0b97a6e74b69a23a5b22a4194746b0366e30c11fc"
 		}
 	},
 	"doc": {
@@ -44,6 +44,11 @@
 					]
 				}
 			],
+			"inboxes": [
+				{
+					"email": "billing@example.com"
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -65,6 +70,11 @@
 				"country": "DE",
 				"code": "282741168"
 			},
+			"inboxes": [
+				{
+					"email": "billing@example.com"
+				}
+			],
 			"addresses": [
 				{
 					"num": "25",

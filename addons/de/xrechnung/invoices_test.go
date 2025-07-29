@@ -32,6 +32,12 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Country: "DE",
 				Code:    "505898911",
 			},
+			Inboxes: []*org.Inbox{
+				{
+					Scheme: "0204",
+					Code:   "505898911",
+				},
+			},
 			People: []*org.Person{
 				{
 					Name: &org.Name{
@@ -74,6 +80,11 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			TaxID: &tax.Identity{
 				Country: "DE",
 				Code:    "449674701",
+			},
+			Inboxes: []*org.Inbox{
+				{
+					Email: "billing@sample.com",
+				},
 			},
 			People: []*org.Person{
 				{
@@ -225,36 +236,12 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "either party.emails or party.people[0].emails is required")
 	})
 
-	// Test ordering scenarios
-	t.Run("ordering with code only", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{
-			Code: "1234567890",
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
-	t.Run("ordering with identities only", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Ordering = &bill.Ordering{
-			Identities: []*org.Identity{
-				{
-					Key:  "order-number",
-					Code: "1234567890",
-				},
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
-	})
-
 	t.Run("ordering missing both code and identities", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Ordering = &bill.Ordering{}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		assert.ErrorContains(t, err, "either ordering code or identities with codes are required")
+		assert.ErrorContains(t, err, "code: cannot be blank.")
 	})
 
 	// Test delivery scenarios

@@ -90,7 +90,22 @@ func validateDelivery(val any) error {
 	return validation.ValidateStruct(delivery,
 		validation.Field(&delivery.Receiver,
 			validation.Required,
-			validation.By(validateCustomer),
+			validation.By(validateReceiver),
+			validation.Skip,
+		),
+	)
+}
+
+func validateReceiver(val any) error {
+	receiver, ok := val.(*org.Party)
+	if !ok || receiver == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(receiver,
+		validation.Field(&receiver.Addresses,
+			validation.Required,
+			validation.By(validateAddresses),
 			validation.Skip,
 		),
 	)
@@ -103,11 +118,12 @@ func validateOrdering(val any) error {
 	}
 
 	// BR-DE-15
-	if len(ordering.Identities) == 0 && ordering.Code == "" {
-		return validation.NewError("BR-DE-15", "either ordering code or identities with codes are required")
-	}
-
-	return nil
+	return validation.ValidateStruct(ordering,
+		validation.Field(&ordering.Code,
+			validation.Required,
+			validation.Skip,
+		),
+	)
 }
 
 func validatePayment(val any) error {
@@ -162,6 +178,11 @@ func validateSupplier(val any) error {
 			),
 			validation.Skip,
 		),
+		// PEPPOL-EN16931-R020
+		validation.Field(&party.Inboxes,
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }
 
@@ -174,6 +195,11 @@ func validateCustomer(val any) error {
 		validation.Field(&party.Addresses,
 			validation.Required,
 			validation.By(validateAddresses),
+			validation.Skip,
+		),
+		// PEPPOL-EN16931-R010
+		validation.Field(&party.Inboxes,
+			validation.Required,
 			validation.Skip,
 		),
 	)

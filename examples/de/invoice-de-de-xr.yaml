@@ -12,6 +12,8 @@ supplier:
     country: "DE"
     code: "111111125" # random
   name: "Provide One GmbH"
+  inboxes:
+    - email: "billing@example.com"
   people:
     - name:
         given: "John"
@@ -27,12 +29,13 @@ supplier:
   telephones:
     - num: "+49100200300"
 
-
 customer:
   tax_id:
     country: "DE"
     code: "282741168"
   name: "Sample Consumer"
+  inboxes:
+    - email: "billing@example.com"
   emails:
     - addr: "email@sample.com"
   addresses:
@@ -56,9 +59,9 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
-        
+
 ordering:
-    code: "12345"
+  code: "12345"
 
 payment:
   instructions:

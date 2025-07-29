@@ -14,6 +14,9 @@ supplier:
     country: "DE"
     code: "111111125" # random
   name: "Provide One GmbH"
+  inboxes:
+    - scheme: "0204"
+      code: "992-90009-96"
   people:
     - name:
         given: "John"
@@ -36,6 +39,9 @@ customer:
   name: "Provide One S.L."
   emails:
     - addr: "billing@example.com"
+  inboxes:
+    - scheme: "9942"
+      code: "B98602642"
   addresses:
     - num: "42"
       street: "Calle Pradillo"

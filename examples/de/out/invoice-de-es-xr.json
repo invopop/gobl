@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "95c50a66cb8723271d33f22bf0992e89668ada1fb2f9c00475b294d8f53a4c9e"
+			"val": "099aebc2662c0977a5ecda68f06faefd2b3cac7f4a6db659a22c6e85e94a8f07"
 		}
 	},
 	"doc": {
@@ -42,6 +42,12 @@
 					}
 				}
 			],
+			"inboxes": [
+				{
+					"scheme": "0204",
+					"code": "992-90009-96"
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -68,6 +74,12 @@
 				"country": "ES",
 				"code": "B98602642"
 			},
+			"inboxes": [
+				{
+					"scheme": "9942",
+					"code": "B98602642"
+				}
+			],
 			"addresses": [
 				{
 					"num": "42",
