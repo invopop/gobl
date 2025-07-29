@@ -104,13 +104,41 @@ func TestInvoiceValidation(t *testing.T) {
 	})
 }
 
+func TestSupplierValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("nil supplier", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier = nil
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("missing tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		assert.ErrorContains(t, reg.Validator(inv), "supplier: (tax_id: cannot be blank")
+	})
+}
+
 func TestLineValidation(t *testing.T) {
 	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("nil line", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines = append(inv.Lines, nil)
+		require.NoError(t, reg.Validator(inv))
+	})
 
 	t.Run("negative quantity", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
 		assert.ErrorContains(t, reg.Validator(inv), "lines: (0: (quantity: must be no less than 0.).)")
+	})
+
+	t.Run("nil item", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item = nil
+		require.NoError(t, reg.Validator(inv))
 	})
 
 	t.Run("negative price", func(t *testing.T) {
@@ -329,6 +357,14 @@ func TestInvoiceTotalsValidation(t *testing.T) {
 			Payable:  num.MakeAmount(1000, 2),
 			Advances: num.NewAmount(499, 2),
 			Due:      num.NewAmount(500, 2),
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("no due or advances", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable: num.MakeAmount(1000, 2),
 		}
 		require.NoError(t, reg.Validator(inv))
 	})
