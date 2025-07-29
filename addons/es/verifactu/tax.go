@@ -46,12 +46,16 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		}
 
 		if !tc.Rate.IsEmpty() {
+			// Assign operation class if applicable
 			if v := taxCategoryOpClassMap.Get(tc.Rate); v != "" {
 				ext[ExtKeyOpClass] = v
 			}
 
-			if v := taxCategoryExemptMap.Get(tc.Rate); v != "" {
-				ext[ExtKeyExempt] = v
+			// Assign exempt code only if no operation class is present
+			if !ext.Has(ExtKeyOpClass) {
+				if v := taxCategoryExemptMap.Get(tc.Rate); v != "" {
+					ext[ExtKeyExempt] = v
+				}
 			}
 		}
 
