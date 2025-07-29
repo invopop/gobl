@@ -54,7 +54,7 @@ func validateInvoice(inv *bill.Invoice) error {
 
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Tax,
-			validation.By(validateTax),
+			validation.By(validateTax(dt)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Series,
@@ -85,27 +85,29 @@ func invoiceDocType(inv *bill.Invoice) cbc.Code {
 	return inv.Tax.Ext[ExtKeyWorkType]
 }
 
-func validateTax(val any) error {
-	t, _ := val.(*bill.Tax)
-	if t == nil {
-		// If no tax is given, init a blank one so that we can return meaningful
-		// validation errors. The blank tax object is not assigned to the invoice
-		// and so the original document doesn't actually change.
-		t = new(bill.Tax)
-	}
+func validateTax(docType cbc.Code) validation.RuleFunc {
+	return func(val any) error {
+		t, _ := val.(*bill.Tax)
+		if t == nil {
+			// If no tax is given, init a blank one so that we can return meaningful
+			// validation errors. The blank tax object is not assigned to the invoice
+			// and so the original document doesn't actually change.
+			t = new(bill.Tax)
+		}
 
-	return validation.ValidateStruct(t,
-		validation.Field(&t.Ext,
-			validation.By(validateDocType),
-			tax.ExtensionsRequire(ExtKeySourceBilling),
-			validation.When(
-				t.Ext[ExtKeySourceBilling] != SourceBillingProduced,
-				tax.ExtensionsRequire(ExtKeySourceRef),
+		return validation.ValidateStruct(t,
+			validation.Field(&t.Ext,
+				validation.By(validateDocType),
+				tax.ExtensionsRequire(ExtKeySourceBilling),
+				validation.When(
+					t.Ext[ExtKeySourceBilling] != SourceBillingProduced,
+					tax.ExtensionsRequire(ExtKeySourceRef),
+				),
+				validation.By(validateSourceRef(docType)),
+				validation.Skip,
 			),
-			validation.By(validateSourceRef),
-			validation.Skip,
-		),
-	)
+		)
+	}
 }
 
 func validateDocType(val any) error {
@@ -135,35 +137,36 @@ func validateDocType(val any) error {
 	return nil
 }
 
-func validateSourceRef(val any) error {
-	ext, _ := val.(tax.Extensions)
-	if ext == nil {
+func validateSourceRef(docType cbc.Code) validation.RuleFunc {
+	return func(val any) error {
+		ext, _ := val.(tax.Extensions)
+		if ext == nil {
+			return nil
+		}
+
+		if ext[ExtKeySourceBilling] != SourceBillingManual {
+			// source ref format only validated for manual documents
+			return nil
+		}
+
+		ref := ext[ExtKeySourceRef].String()
+		if ref == "" || docType == "" {
+			return nil
+		}
+
+		matches := sourceRefRegexp.FindStringSubmatch(ref)
+		if len(matches) == 0 {
+			return errors.New("must be in valid format")
+		}
+		if matches[1] != docType.String() {
+			return fmt.Errorf("must start with the document type '%s' not '%s'", docType, matches[1])
+		}
+		if matches[2] != "" && matches[2] != docType.String() {
+			return fmt.Errorf("must refer to an original document '%s' not '%s'", docType, matches[2])
+		}
+
 		return nil
 	}
-
-	if ext[ExtKeySourceBilling] != SourceBillingManual {
-		// source ref format only validated for manual documents
-		return nil
-	}
-
-	ref := ext[ExtKeySourceRef].String()
-	docType := ext[ExtKeyInvoiceType].String()
-	if ref == "" || docType == "" {
-		return nil
-	}
-
-	matches := sourceRefRegexp.FindStringSubmatch(ref)
-	if len(matches) == 0 {
-		return errors.New("must be in valid format")
-	}
-	if matches[1] != docType {
-		return fmt.Errorf("must start with the document type '%s' not '%s'", docType, matches[1])
-	}
-	if matches[2] != "" && matches[2] != docType {
-		return fmt.Errorf("must refer to an original document '%s' not '%s'", docType, matches[2])
-	}
-
-	return nil
 }
 
 // validateSeriesFormat validates the format of the series to meet the requirements of the

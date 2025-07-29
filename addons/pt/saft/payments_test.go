@@ -13,6 +13,7 @@ import (
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func validPayment() *bill.Payment {
@@ -32,7 +33,8 @@ func validPayment() *bill.Payment {
 			},
 		},
 		Ext: tax.Extensions{
-			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
+			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
+			saft.ExtKeySourceBilling: saft.SourceBillingProduced,
 		},
 		Series:    "RG SERIES-A",
 		Code:      "123",
@@ -171,6 +173,47 @@ func TestPaymentValidation(t *testing.T) {
 		assert.NoError(t, addon.Validator(pmt))
 	})
 
+	t.Run("missing source billing", func(t *testing.T) {
+		pmt := validPayment()
+		delete(pmt.Ext, saft.ExtKeySourceBilling)
+		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-billing: required")
+	})
+
+	t.Run("source billing produced - no source doc ref required", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Ext = tax.Extensions{
+			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
+			saft.ExtKeySourceBilling: saft.SourceBillingProduced,
+		}
+		require.NoError(t, addon.Validator(pmt))
+	})
+
+	t.Run("source billing integrated - source doc ref required", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Ext = tax.Extensions{
+			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
+			saft.ExtKeySourceBilling: saft.SourceBillingIntegrated,
+		}
+		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-ref: required")
+
+		// Add source doc ref - should pass
+		pmt.Ext[saft.ExtKeySourceRef] = "RGM abc/00001"
+		require.NoError(t, addon.Validator(pmt))
+	})
+
+	t.Run("source billing manual - source doc ref required", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Ext = tax.Extensions{
+			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
+			saft.ExtKeySourceBilling: saft.SourceBillingManual,
+		}
+		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-ref: required")
+
+		// Add source doc ref - should pass
+		pmt.Ext[saft.ExtKeySourceRef] = "RGD RG SERIESA/123"
+		require.NoError(t, addon.Validator(pmt))
+	})
+
 	t.Run("nil tax category", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Lines[0].Tax.Categories = append(pmt.Lines[0].Tax.Categories, nil)
@@ -192,6 +235,61 @@ func TestPaymentValidation(t *testing.T) {
 
 }
 
+func TestPaymentSourceRefFormatValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("missing source ref", func(t *testing.T) {
+		pmt := validPayment()
+		delete(pmt.Ext, saft.ExtKeySourceRef)
+		require.NoError(t, addon.Validator(pmt))
+	})
+
+	t.Run("missing payment type", func(t *testing.T) {
+		pmt := validPayment()
+		delete(pmt.Ext, saft.ExtKeyPaymentType)
+		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-payment-type: required")
+	})
+
+	t.Run("integrated document", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingIntegrated
+		pmt.Ext[saft.ExtKeySourceRef] = "RGR abc/00001"
+		require.NoError(t, addon.Validator(pmt))
+	})
+
+	tests := []struct {
+		ref string
+		err string
+	}{
+		{"", ""},
+		{"RGM abc/00001", ""},
+		{"RGD RG SERIESA/123", ""},
+		{"RGR abc/00001", "must be in valid format"},
+		{"RGM a/bc/00001", "must be in valid format"},
+		{"RGDA RG abc/00001", "must be in valid format"},
+		{"ABC abc/00001", "must be in valid format"},
+		{"RGM RG abc/00001", "must be in valid format"},
+		{"FRM abc/00001", "must start with the document type 'RG' not 'FR'"},
+		{"FRD RG SERIESA/123", "must start with the document type 'RG' not 'FR'"},
+		{"RGD FR SERIESA/123", "must refer to an original document 'RG' not 'FR'"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.ref, func(t *testing.T) {
+			pmt := validPayment()
+			pmt.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingManual
+			pmt.Ext[saft.ExtKeySourceRef] = cbc.Code(test.ref)
+
+			err := addon.Validator(pmt)
+			if test.err == "" {
+				assert.NoError(t, err)
+			} else {
+				assert.ErrorContains(t, err, test.err)
+			}
+		})
+	}
+}
+
 func TestPaymentNormalization(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
 
@@ -207,5 +305,33 @@ func TestPaymentNormalization(t *testing.T) {
 		pmt.SetTags("vat-cash")
 		addon.Normalizer(pmt)
 		assert.Equal(t, "RC", pmt.Ext[saft.ExtKeyPaymentType].String())
+	})
+
+	t.Run("normalize payment with nil extensions", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Ext = nil
+
+		addon.Normalizer(pmt)
+
+		require.NotNil(t, pmt.Ext)
+		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext[saft.ExtKeySourceBilling])
+	})
+
+	t.Run("normalize payment with missing source billing", func(t *testing.T) {
+		pmt := validPayment()
+		delete(pmt.Ext, saft.ExtKeySourceBilling)
+
+		addon.Normalizer(pmt)
+
+		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext[saft.ExtKeySourceBilling])
+	})
+
+	t.Run("normalize payment with existing source billing", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingIntegrated
+
+		addon.Normalizer(pmt)
+
+		assert.Equal(t, saft.SourceBillingIntegrated, pmt.Ext[saft.ExtKeySourceBilling])
 	})
 }
