@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1d7284735c9e0c95ec790de9f3e7a7ce239134999b39ead2d9f0d15459fd23db"
+			"val": "9f64363bb956808a19e6f0500fc5b9cb0f1389958ecae84cf313e3c2d7bf38ed"
 		}
 	},
 	"doc": {
@@ -25,7 +25,8 @@
 		],
 		"tax": {
 			"ext": {
-				"pt-saft-invoice-type": "NC"
+				"pt-saft-invoice-type": "NC",
+				"pt-saft-source-billing": "P"
 			}
 		},
 		"supplier": {

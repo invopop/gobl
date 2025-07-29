@@ -1,6 +1,7 @@
 package saft
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"slices"
@@ -14,22 +15,38 @@ import (
 
 // Series and code patterns
 const (
-	fullCodePattern = "^[^ ]+ [^/^ ]+/[0-9]+$" // extracted from the SAFT-PT XSD to validate the code when the series is not present (e.g. "FT SERIES-A/123")
-	seriesPattern   = "^[^ ]+ [^/^ ]+$"        // based on the fullCodePattern, to validate the series when present (e.g. "FT SERIES-A")
-	codePattern     = "^[0-9]+$"               // based on the fullCodePattern, to validate the code when the series is present (e.g. "123")
+	fullCodePattern  = "^[^ ]+ [^/^ ]+/[0-9]+$" // extracted from the SAFT-PT XSD to validate the code when the series is not present (e.g. "FT SERIES-A/123")
+	seriesPattern    = "^[^ ]+ [^/^ ]+$"        // based on the fullCodePattern, to validate the series when present (e.g. "FT SERIES-A")
+	codePattern      = "^[0-9]+$"               // based on the fullCodePattern, to validate the code when the series is present (e.g. "123")
+	sourceRefPattern = "^([^ ]+)(?:M|D ([^ ]+)) [^/^ ]+/[$0-9]+$"
 )
 
 // Series and code regexps
 var (
-	fullCodeRegexp = regexp.MustCompile(fullCodePattern)
-	seriesRegexp   = regexp.MustCompile(seriesPattern)
-	codeRegexp     = regexp.MustCompile(codePattern)
+	fullCodeRegexp  = regexp.MustCompile(fullCodePattern)
+	seriesRegexp    = regexp.MustCompile(seriesPattern)
+	codeRegexp      = regexp.MustCompile(codePattern)
+	sourceRefRegexp = regexp.MustCompile(sourceRefPattern)
 )
 
 var invoiceWorkTypes = []cbc.Code{
 	WorkTypeProforma,
 	WorkTypeConsignmentInv,
 	WorkTypeConsignmentCredit,
+}
+
+func normalizeInvoice(inv *bill.Invoice) {
+	if inv.Tax == nil {
+		inv.Tax = new(bill.Tax)
+	}
+
+	if inv.Tax.Ext == nil {
+		inv.Tax.Ext = make(tax.Extensions)
+	}
+
+	if !inv.Tax.Ext.Has(ExtKeySourceBilling) {
+		inv.Tax.Ext[ExtKeySourceBilling] = SourceBillingProduced
+	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {
@@ -79,13 +96,22 @@ func validateTax(val any) error {
 
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Ext,
-			validation.By(validateTaxExt),
+			validation.By(validateDocType),
+			tax.ExtensionsRequire(ExtKeySourceBilling),
+			validation.When(
+				t.Ext[ExtKeySourceBilling] != SourceBillingProduced,
+				tax.ExtensionsRequire(ExtKeySourceRef),
+			),
+			validation.When(
+				t.Ext[ExtKeySourceBilling] == SourceBillingManual,
+				validation.By(validateSourceRef),
+			),
 			validation.Skip,
 		),
 	)
 }
 
-func validateTaxExt(val any) error {
+func validateDocType(val any) error {
 	ext, _ := val.(tax.Extensions)
 	if ext == nil {
 		ext = make(tax.Extensions) // Empty temporary map to return meaningful errors
@@ -107,6 +133,32 @@ func validateTaxExt(val any) error {
 				ExtKeyWorkType.String(): fmt.Errorf("value '%s' invalid", wt),
 			}
 		}
+	}
+
+	return nil
+}
+
+func validateSourceRef(val any) error {
+	ext, _ := val.(tax.Extensions)
+	if ext == nil {
+		return nil
+	}
+
+	ref := ext[ExtKeySourceRef].String()
+	docType := ext[ExtKeyInvoiceType].String()
+	if ref == "" || docType == "" {
+		return nil
+	}
+
+	matches := sourceRefRegexp.FindStringSubmatch(ref)
+	if len(matches) == 0 {
+		return errors.New("must be in valid format")
+	}
+	if matches[1] != docType {
+		return fmt.Errorf("must start with the document type '%s' not '%s'", docType, matches[1])
+	}
+	if matches[2] != "" && matches[2] != docType {
+		return fmt.Errorf("must refer to an original document '%s' not '%s'", docType, matches[2])
 	}
 
 	return nil
