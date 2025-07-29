@@ -1,0 +1,122 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "d8b8e918368923585e4acba7659599e679c5191c396059d64ad78efeab6deedb"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a1",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "005",
+		"issue_date": "2025-07-29",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "French Customer SARL",
+			"tax_id": {
+				"country": "FR",
+				"code": "39356000000"
+			},
+			"addresses": [
+				{
+					"num": "123",
+					"street": "Rue de la Paix",
+					"locality": "Paris",
+					"code": "75001",
+					"country": "FR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Exported goods",
+					"price": "100.00",
+					"unit": "piece"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt+export+eea",
+						"ext": {
+							"es-verifactu-exempt": "E5",
+							"es-verifactu-regime": "02"
+						}
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt+export+eea",
+								"ext": {
+									"es-verifactu-exempt": "E5",
+									"es-verifactu-regime": "02"
+								},
+								"base": "1000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1000.00",
+			"payable": "1000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoice with exempt export eea ßoperation (E5)"
+			}
+		]
+	}
+}

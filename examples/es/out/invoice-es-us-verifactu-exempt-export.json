@@ -1,0 +1,123 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "669aefc01d52b5cb09430c76749802132a49475f57bcdee45721569170a0ff2c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a1",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "005",
+		"issue_date": "2025-07-29",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "American Business Corp.",
+			"tax_id": {
+				"country": "US",
+				"code": "123456789"
+			},
+			"addresses": [
+				{
+					"num": "456",
+					"street": "Main Street",
+					"locality": "New York",
+					"region": "NY",
+					"code": "10001",
+					"country": "US"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Exported goods",
+					"price": "100.00",
+					"unit": "piece"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt+export",
+						"ext": {
+							"es-verifactu-exempt": "E2",
+							"es-verifactu-regime": "02"
+						}
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt+export",
+								"ext": {
+									"es-verifactu-exempt": "E2",
+									"es-verifactu-regime": "02"
+								},
+								"base": "1000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1000.00",
+			"payable": "1000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoice with exempt export operation (E2)"
+			}
+		]
+	}
+}

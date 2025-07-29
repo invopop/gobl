@@ -214,15 +214,13 @@ var extensions = []*cbc.Definition{
 
 				Automatic mapping of tax rates to operation classes:
 
-				| Tax Rate                | Operation Class |
-				|-------------------------|-----------------|
-				| ~standard~              | ~S1~            |
-				| ~reduced~               | ~S1~            |
-				| ~super-reduced~         | ~S1~            |
-				| ~zero~                  | ~S1~            |
-				| ~exempt~                | ~N1~            |
-				| ~exempt+reverse-charge~ | ~S2~            |
-				| ~exempt+export~         | ~N2~            |
+				| Tax Rate                          | Operation Class |
+				|-----------------------------------|-----------------|
+				| ~standard~                        | ~S1~            |
+				| ~reduced~                         | ~S1~            |
+				| ~super-reduced~                   | ~S1~            |
+				| ~zero~                            | ~S1~            |
+				| ~exempt+reverse-charge~           | ~S2~            |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 
@@ -275,9 +273,13 @@ var extensions = []*cbc.Definition{
 				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
 				L10 list.
 
-				No attempt will be made by GOBL to automatically map tax rates to exemption
-				reason codes, they will need to be determined and applied on a case-by-case
-				basis.
+				Automatic mapping of tax rates to exemption codes:
+
+				| Tax Rate                | Exemption Code |
+				|-------------------------|----------------|
+				| ~exempt~                | ~E1~           |
+				| ~exempt+export~         | ~E2~           |
+				| ~exempt+export+eea~     | ~E5~           |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -291,8 +293,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "E2",
 				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
-					i18n.ES: "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes.",
+					i18n.EN: "Exempt: pursuant to Article 21. Exemptions in exports of goods outside the EU.",
+					i18n.ES: "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes fuera de la UE.",
 				},
 			},
 			{

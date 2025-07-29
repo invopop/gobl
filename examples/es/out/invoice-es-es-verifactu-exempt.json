@@ -1,0 +1,113 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "cdcd1872521cecaedb73be553aa06f6d0450c25580071ca19908efc87b4f8d06"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-verifactu-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a1",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "005",
+		"issue_date": "2025-07-29",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-verifactu-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "ES",
+				"code": "54387763P"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Exempt operation",
+					"price": "100.00",
+					"unit": "piece"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"es-verifactu-exempt": "E1",
+							"es-verifactu-regime": "01"
+						}
+					}
+				],
+				"total": "1000.00"
+			}
+		],
+		"totals": {
+			"sum": "1000.00",
+			"total": "1000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"ext": {
+									"es-verifactu-exempt": "E1",
+									"es-verifactu-regime": "01"
+								},
+								"base": "1000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "1000.00",
+			"payable": "1000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Invoice with exempt operation (E1)"
+			}
+		]
+	}
+}

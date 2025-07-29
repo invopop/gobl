@@ -1,0 +1,49 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a1"
+currency: "EUR"
+issue_date: "2025-07-29"
+series: "SAMPLE"
+code: "005"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "US"
+    code: "123456789"
+  name: "American Business Corp."
+  addresses:
+    - num: "456"
+      street: "Main Street"
+      locality: "New York"
+      region: "NY"
+      code: "10001"
+      country: "US"
+
+lines:
+  - quantity: 10
+    item:
+      name: "Exported goods"
+      price: "100.00"
+      unit: "piece"
+    taxes:
+      - cat: VAT
+        rate: exempt+export
+
+notes:
+  - key: "general"
+    text: "Invoice with exempt export operation (E2)" 

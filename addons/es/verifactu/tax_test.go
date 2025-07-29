@@ -32,24 +32,26 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 	})
 
-	t.Run("exempt", func(t *testing.T) {
+	t.Run("exempt export", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt,
+			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagEEA),
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "N1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
 	})
-	t.Run("exempt export", func(t *testing.T) {
+
+	t.Run("exempt export with non-EU customer", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Rate:     tax.RateExempt.With(tax.TagExport),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "N2", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
 	})
+
 	t.Run("surcharge", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category:  tax.CategoryVAT,
@@ -82,6 +84,127 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "03", tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	// Test all tax rate mappings to operation classes
+	t.Run("reduced rate maps to S1", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateReduced,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	t.Run("zero rate maps to S1", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateZero,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	t.Run("reverse charge maps to S2", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateExempt.With(tax.TagReverseCharge),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+	})
+	t.Run("surcharge takes precedence over general regime", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category:  tax.CategoryVAT,
+			Rate:      tax.RateStandard,
+			Surcharge: num.NewPercentage(50, 3),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "18", tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	// Test exempt scenarios
+	t.Run("basic exempt maps to E1", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateExempt,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "E1", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
+	})
+
+	// Test IGIC category
+	t.Run("IGIC category with standard rate", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIGIC,
+			Rate:     tax.RateStandard,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	t.Run("IGIC category with exempt", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIGIC,
+			Rate:     tax.RateExempt,
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "E1", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
+	})
+
+	t.Run("IGIC with export and EEA", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: es.TaxCategoryIGIC,
+			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagEEA),
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
+	})
+
+	// Test that operation class overrides exempt
+	t.Run("operation class removes exempt", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateStandard,
+			Ext: tax.Extensions{
+				ExtKeyExempt: "E1", // This should be removed
+			},
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyExempt).String())
+	})
+
+	// Test non-VAT/IGIC categories are ignored
+	t.Run("non-VAT category ignored", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryGST,
+			Rate:     tax.RateStandard,
+		}
+		normalizeTaxCombo(tc)
+		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyRegime).String())
+	})
+
+	t.Run("empty rate with VAT category", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			// Rate field not set (empty)
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyExempt).String())
 	})
 }
 
@@ -168,5 +291,20 @@ func TestValidateTaxCombo(t *testing.T) {
 		err := validateTaxCombo(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "E2")
+	})
+
+	t.Run("cannot have both operation class and exempt", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateStandard,
+			Ext: tax.Extensions{
+				ExtKeyRegime:  "01",
+				ExtKeyOpClass: "S1",
+				ExtKeyExempt:  "E1",
+			},
+		}
+		err := validateTaxCombo(tc)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "exempt")
 	})
 }
