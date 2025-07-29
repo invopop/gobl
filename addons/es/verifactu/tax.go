@@ -13,7 +13,7 @@ var taxCategoryOpClassMap = tax.Extensions{
 	tax.RateReduced:      "S1",
 	tax.RateSuperReduced: "S1",
 	tax.RateZero:         "S1",
-	tax.TagReverseCharge: "S2",
+	tax.RateExempt.With(tax.TagReverseCharge): "S2",
 }
 
 var taxCategoryExemptMap = tax.Extensions{

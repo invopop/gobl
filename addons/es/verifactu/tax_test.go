@@ -110,7 +110,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 	t.Run("reverse charge maps to S2", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.TagReverseCharge,
+			Rate:     tax.RateExempt.With(tax.TagReverseCharge),
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyOpClass).String())
