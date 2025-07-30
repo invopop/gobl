@@ -47,6 +47,7 @@ func normalizeInvoice(inv *bill.Invoice) {
 	normalizeInvoiceAdvances(inv)
 	normalizeInvoiceValueDate(inv)
 }
+
 func normalizeInvoiceTax(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
