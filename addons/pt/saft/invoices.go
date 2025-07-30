@@ -70,40 +70,17 @@ func normalizeInvoiceAdvances(inv *bill.Invoice) {
 	// Set the issue date as the default date for advances
 	for _, adv := range inv.Payment.Advances {
 		if adv.Date == nil {
-			date := inv.IssueDate
-			adv.Date = &date
+			adv.Date = issueDate(inv)
 		}
 	}
 }
 
 func normalizeInvoiceValueDate(inv *bill.Invoice) {
 	inv.ValueDate = determineValueDate(
-		inv.RegimeDef(),
-		&inv.IssueDate,
+		issueDate(inv),
 		inv.OperationDate,
 		inv.ValueDate,
 	)
-}
-
-func determineValueDate(rd *tax.RegimeDef, idate, odate, vdate *cal.Date) *cal.Date {
-	if vdate != nil {
-		return vdate
-	}
-
-	if odate != nil {
-		return odate
-	}
-
-	if idate.IsZero() && rd != nil {
-		// This normalization runs before the default issue date is set,
-		// so we need to set the default value date to same default if the
-		// issue date is not set yet.
-		loc := rd.TimeLocation()
-		today := cal.TodayIn(loc)
-		return &today
-	}
-
-	return idate
 }
 
 func validateInvoice(inv *bill.Invoice) error {
@@ -381,4 +358,29 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 
 func isInvoiceReceipt(inv *bill.Invoice) bool {
 	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
+}
+
+func determineValueDate(idate, odate, vdate *cal.Date) *cal.Date {
+	if vdate != nil {
+		return vdate
+	}
+	if odate != nil {
+		return odate
+	}
+	return idate
+}
+
+func issueDate(inv *bill.Invoice) *cal.Date {
+	return dateOrToday(&inv.IssueDate, inv.Regime)
+}
+
+func dateOrToday(date *cal.Date, reg tax.Regime) *cal.Date {
+	if date != nil && !date.IsZero() {
+		return date
+	}
+
+	rd := reg.RegimeDef()
+	loc := rd.TimeLocation()
+	today := cal.TodayIn(loc)
+	return &today
 }

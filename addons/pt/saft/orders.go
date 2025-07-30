@@ -112,8 +112,7 @@ func normalizeOrderTax(ord *bill.Order) {
 
 func normalizeOrderValueDate(ord *bill.Order) {
 	ord.ValueDate = determineValueDate(
-		ord.RegimeDef(),
-		&ord.IssueDate,
+		dateOrToday(&ord.IssueDate, ord.Regime),
 		ord.OperationDate,
 		ord.ValueDate,
 	)

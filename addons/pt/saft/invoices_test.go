@@ -406,8 +406,7 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{
 			Advances: []*pay.Advance{
 				{
-					Date:   nil,
-					Amount: num.MakeAmount(50, 0),
+					Date: nil,
 				},
 			},
 		}
@@ -415,6 +414,26 @@ func TestInvoicePaymentNormalization(t *testing.T) {
 		addon.Normalizer(inv)
 
 		assert.Equal(t, &inv.IssueDate, inv.Payment.Advances[0].Date)
+	})
+
+	t.Run("no issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.Date{}
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date: nil,
+				},
+			},
+		}
+
+		addon.Normalizer(inv)
+
+		loc, err := time.LoadLocation("Europe/Lisbon")
+		require.NoError(t, err)
+
+		today := cal.TodayIn(loc)
+		assert.Equal(t, &today, inv.Payment.Advances[0].Date)
 	})
 
 	t.Run("nil payment details", func(t *testing.T) {
