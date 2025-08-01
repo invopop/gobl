@@ -53,6 +53,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Charges,
 			validation.Each(
+
 				validation.By(validateCharge),
 				validation.Skip,
 			),
@@ -179,7 +180,7 @@ func validateItem(val any) error {
 
 func validateCharge(val any) error {
 	charge, _ := val.(*bill.Charge)
-	if charge == nil {
+	if charge == nil || !charge.Key.Has(KeyFundContribution) {
 		return nil
 	}
 
@@ -189,10 +190,8 @@ func validateCharge(val any) error {
 			validation.Skip,
 		),
 		validation.Field(&charge.Ext,
-			validation.When(charge.Key.Has(KeyFundContribution),
-				tax.ExtensionsRequire(ExtKeyFundType),
-				validation.Skip,
-			),
+			tax.ExtensionsRequire(ExtKeyFundType),
+			validation.Skip,
 		),
 		validation.Field(&charge.Taxes,
 			tax.SetHasCategory(tax.CategoryVAT),

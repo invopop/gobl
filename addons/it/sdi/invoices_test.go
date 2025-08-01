@@ -268,6 +268,18 @@ func TestTaxValidation(t *testing.T) {
 
 func TestChargesValidation(t *testing.T) {
 	ad := tax.AddonForKey(sdi.V1)
+
+	t.Run("Charges with no key", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Percent: num.NewPercentage(10, 2),
+			},
+		}
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
+		assert.NoError(t, err)
+	})
 	t.Run("Charges missing extension", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Charges = []*bill.Charge{
@@ -343,7 +355,6 @@ func TestChargesValidation(t *testing.T) {
 			{
 				Key:    sdi.KeyFundContribution,
 				Amount: num.MakeAmount(100, 2),
-
 				Ext: tax.Extensions{
 					sdi.ExtKeyFundType: "TC04",
 				},
