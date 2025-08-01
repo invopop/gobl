@@ -266,6 +266,96 @@ func TestTaxValidation(t *testing.T) {
 	})
 }
 
+func TestChargesValidation(t *testing.T) {
+	ad := tax.AddonForKey(sdi.V1)
+	t.Run("Charges missing extension", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Key:     sdi.KeyFundContribution,
+				Percent: num.NewPercentage(10, 2),
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     "standard",
+					},
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
+		assert.ErrorContains(t, err, "it-sdi-fund-type: required.")
+	})
+
+	t.Run("Charges with valid extension", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Key:     sdi.KeyFundContribution,
+				Percent: num.NewPercentage(10, 2),
+				Taxes: tax.Set{
+					{
+						Category: tax.CategoryVAT,
+						Rate:     "exempt",
+					},
+				},
+				Ext: tax.Extensions{
+					sdi.ExtKeyFundType: "TC04",
+				},
+			},
+		}
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Nil charge", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{
+			nil,
+		}
+		ad.Normalizer(inv)
+		err := ad.Validator(inv)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Charges exempt with missing taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Key:     sdi.KeyFundContribution,
+				Percent: num.NewPercentage(10, 2),
+
+				Ext: tax.Extensions{
+					sdi.ExtKeyFundType: "TC04",
+				},
+			},
+		}
+		err := inv.Calculate()
+		assert.NoError(t, err)
+		err = inv.Validate()
+		assert.ErrorContains(t, err, "taxes: missing category VAT")
+	})
+
+	t.Run("Charges exempt with missing percentage", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Charges = []*bill.Charge{
+			{
+				Key:    sdi.KeyFundContribution,
+				Amount: num.MakeAmount(100, 2),
+
+				Ext: tax.Extensions{
+					sdi.ExtKeyFundType: "TC04",
+				},
+			},
+		}
+		err := inv.Calculate()
+		assert.NoError(t, err)
+		err = inv.Validate()
+		assert.ErrorContains(t, err, "taxes: missing category VAT")
+	})
+}
+
 func TestPaymentValidation(t *testing.T) {
 
 	t.Run("payment advances", func(t *testing.T) {

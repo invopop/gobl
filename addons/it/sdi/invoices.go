@@ -51,6 +51,13 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Charges,
+			validation.Each(
+				validation.By(validateCharge),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
 		validation.Field(&inv.Payment,
 			validation.By(validateInvoicePaymentDetails),
 			validation.Skip,
@@ -170,19 +177,28 @@ func validateItem(val any) error {
 	)
 }
 
-// validateLatin1String ensures that the item name only contains characters
-// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
-func validateLatin1String(val any) error {
-	name, _ := val.(string)
-
-	for _, r := range name {
-		// Check if the character is outside Latin and Latin-1 range
-		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
-		if r > 255 {
-			return errors.New("contains characters outside of Latin and Latin-1 range")
-		}
+func validateCharge(val any) error {
+	charge, _ := val.(*bill.Charge)
+	if charge == nil {
+		return nil
 	}
-	return nil
+
+	return validation.ValidateStruct(charge,
+		validation.Field(&charge.Percent,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&charge.Ext,
+			validation.When(charge.Key.Has(KeyFundContribution),
+				tax.ExtensionsRequire(ExtKeyFundType),
+				validation.Skip,
+			),
+		),
+		validation.Field(&charge.Taxes,
+			tax.SetHasCategory(tax.CategoryVAT),
+			validation.Skip,
+		),
+	)
 }
 
 func validateInvoicePaymentDetails(val any) error {
@@ -237,6 +253,21 @@ func validateAddress(value interface{}) error {
 			),
 		),
 	)
+}
+
+// validateLatin1String ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateLatin1String(val any) error {
+	name, _ := val.(string)
+
+	for _, r := range name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("contains characters outside of Latin and Latin-1 range")
+		}
+	}
+	return nil
 }
 
 func validateInvoiceSupplierRegistration(value interface{}) error {
