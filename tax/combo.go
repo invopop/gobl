@@ -99,9 +99,12 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 			c.Key = KeyIntraCommunity
 			c.Rate = cbc.KeyEmpty
 		default:
-			// Make no further assumptions about the key
-			if strings.HasPrefix(c.Rate.String(), "standard") {
-				c.Rate = cbc.Key(RateGeneral.String() + strings.TrimPrefix(c.Rate.String(), "standard"))
+			// Make no further assumptions about the key, but try to replace standard
+			// rate with general.
+			if c.Rate == KeyStandard {
+				c.Rate = RateGeneral
+			} else if found, ok := strings.CutPrefix(c.Rate.String(), "standard+"); ok {
+				c.Rate = cbc.Key(RateGeneral.String() + "+" + found)
 			}
 		}
 
@@ -140,7 +143,8 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {
 		c.Key = KeyStandard
 	}
 
-	// If there is a key definition, determine if there should be any percentages
+	// If there is an associated key definition that does not expect percentages,
+	// clear them to avoid unexpected output.
 	if kd := cd.KeyDef(c.Key); kd != nil && kd.NoPercent {
 		c.Percent = nil
 		c.Surcharge = nil
@@ -202,10 +206,8 @@ func (c *Combo) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
-	if c.Rate == cbc.KeyEmpty {
-		if len(aux.Tags) > 0 {
-			c.Rate = aux.Tags[0]
-		}
+	if c.Rate == cbc.KeyEmpty && len(aux.Tags) > 0 {
+		c.Rate = aux.Tags[0]
 	}
 	return nil
 }

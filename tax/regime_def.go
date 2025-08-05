@@ -264,7 +264,7 @@ func (r *inCategoryRule) Validate(value any) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("'%v' not defined in '%v' category for key '%s'", rate, r.cat, r.key)
+	return fmt.Errorf("'%s' not defined in '%s' category for key '%s'", rate, r.cat, r.key)
 }
 
 // InCategoryRates is used to provide a validation rule that will

@@ -31,6 +31,15 @@ func TestComboNormalize(t *testing.T) {
 		assert.Equal(t, c.Category, tax.CategoryVAT)
 		assert.Equal(t, c.Rate, tax.RateGeneral)
 	})
+	t.Run("migrate standard with extension rate to general", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: "VAT",
+			Rate:     "standard+eqs",
+		}
+		c.Normalize(nil)
+		assert.Equal(t, c.Category, tax.CategoryVAT)
+		assert.Equal(t, c.Rate.String(), "general+eqs")
+	})
 	t.Run("migrate zero rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: "VAT",

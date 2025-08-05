@@ -54,7 +54,7 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 }
 
 func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
-	// First, prepare all tax combos using the country, tags, and date
+	// First, prepare all tax combos using the country and date
 	for _, tl := range taxLines {
 		for _, combo := range tl.taxes {
 			if err := combo.calculate(tc.Country, tc.Date); err != nil {
