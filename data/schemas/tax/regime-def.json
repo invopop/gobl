@@ -30,13 +30,21 @@
           "title": "Retained",
           "description": "Retained when true implies that the tax amount will be retained\nby the buyer on behalf of the supplier, and thus subtracted from\nthe invoice taxable base total. Typically used for taxes related to\nincome."
         },
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/KeyDef"
+          },
+          "type": "array",
+          "title": "Keys",
+          "description": "Specific tax definitions inside this category."
+        },
         "rates": {
           "items": {
             "$ref": "#/$defs/RateDef"
           },
           "type": "array",
           "title": "Rates",
-          "description": "Specific tax definitions inside this category. Order is important."
+          "description": "Rates defines the set of rates that can be used with this category."
         },
         "extensions": {
           "items": {
@@ -132,12 +140,46 @@
       "type": "array",
       "description": "CorrectionSet defines a set of correction definitions for a selection of schemas."
     },
-    "RateDef": {
+    "KeyDef": {
       "properties": {
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
           "description": "Key identifies this rate within the system"
+        },
+        "name": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Name",
+          "description": "Human name of the rate set"
+        },
+        "desc": {
+          "$ref": "https://gobl.org/draft-0/i18n/string",
+          "title": "Description",
+          "description": "Useful description of the rate."
+        },
+        "no_percent": {
+          "type": "boolean",
+          "title": "No Percent",
+          "description": "NoPercent when true implies that the rate when used in a tax Combo should\nnot define a percent value."
+        }
+      },
+      "type": "object",
+      "description": "KeyDef defines a key that can be used inside a tax category."
+    },
+    "RateDef": {
+      "properties": {
+        "rate": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Rate",
+          "description": "Rate defines the key for which this rate applies."
+        },
+        "keys": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/cbc/key"
+          },
+          "type": "array",
+          "title": "Keys",
+          "description": "Keys identifies the set of tax keys defined in the category that this\nrate can be used with."
         },
         "name": {
           "$ref": "https://gobl.org/draft-0/i18n/string",
@@ -148,11 +190,6 @@
           "$ref": "https://gobl.org/draft-0/i18n/string",
           "title": "Description",
           "description": "Useful description of the rate."
-        },
-        "exempt": {
-          "type": "boolean",
-          "title": "Exempt",
-          "description": "Exempt when true implies that the rate when used in a tax Combo should\nnot define a percent value."
         },
         "values": {
           "items": {
@@ -175,25 +212,17 @@
       },
       "type": "object",
       "required": [
-        "key",
+        "rate",
         "name"
       ],
       "description": "RateDef defines a single rate inside a category"
     },
     "RateValueDef": {
       "properties": {
-        "tags": {
-          "items": {
-            "$ref": "https://gobl.org/draft-0/cbc/key"
-          },
-          "type": "array",
-          "title": "Tags",
-          "description": "Only apply this rate if one of the tags is present in the invoice."
-        },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",
           "title": "Extensions",
-          "description": "Ext map of keys that can be used to filter to determine if the rate applies."
+          "description": "Only apply this rate if one of the tags is present in the invoice.\nTags []cbc.Key `json:\"tags,omitempty\" jsonschema:\"title=Tags\"`\nExt map of keys that can be used to filter to determine if the rate applies."
         },
         "since": {
           "$ref": "https://gobl.org/draft-0/cal/date",

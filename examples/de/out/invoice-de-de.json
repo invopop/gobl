@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "02225106bf1fb373bc48663ad9eec3d50861d313616b8b392e66cdafab047c66"
+			"val": "f86d81e081eca893da6285b68c789f5339c9dee7834e65959ef6aaa8edb9e391"
 		}
 	},
 	"doc": {
@@ -86,7 +86,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "19%",
 						"ext": {
 							"untdid-tax-category": "S"

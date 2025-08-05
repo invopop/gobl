@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ae7602e940963dfcb49f8efdc1f4ef616ee62e096a3c3c73ce69d89880dde786"
+			"val": "1d5bcbc289a4683009eb4609bbf1bf773c4a2e5b2792571ee0ee711f3edce34b"
 		}
 	},
 	"doc": {
@@ -56,10 +56,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "exempt",
 						"ext": {
 							"pt-region": "PT",
-							"pt-saft-exemption": "M40",
+							"pt-saft-exemption": "M07",
 							"pt-saft-tax-rate": "ISE"
 						}
 					}
@@ -81,10 +81,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "exempt",
 						"ext": {
 							"pt-region": "PT",
-							"pt-saft-exemption": "M40",
+							"pt-saft-exemption": "M07",
 							"pt-saft-tax-rate": "ISE"
 						}
 					}
@@ -104,7 +104,7 @@
 								"key": "exempt",
 								"ext": {
 									"pt-region": "PT",
-									"pt-saft-exemption": "M40",
+									"pt-saft-exemption": "M07",
 									"pt-saft-tax-rate": "ISE"
 								},
 								"base": "340.00",
@@ -123,9 +123,9 @@
 		"notes": [
 			{
 				"key": "legal",
-				"code": "M40",
+				"code": "M07",
 				"src": "pt-saft-exemption",
-				"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+				"text": "Artigo 9.º do CIVA"
 			}
 		]
 	}

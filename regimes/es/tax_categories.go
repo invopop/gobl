@@ -2,6 +2,7 @@ package es
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/pkg/here"
@@ -32,21 +33,11 @@ var taxCategories = []*tax.CategoryDef{
 				to its local needs.
 			`),
 		},
+		Keys: tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateZero,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-					i18n.ES: "Tipo Cero",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
-					},
-				},
-			},
-			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
 					i18n.EN: "Standard Rate",
 					i18n.ES: "Tipo General",
@@ -71,7 +62,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateStandard.With(TaxRateEquivalence),
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral.With(TaxRateEquivalence),
 				Name: i18n.String{
 					i18n.EN: "Standard Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo General + Recargo de Equivalencia",
@@ -90,7 +82,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Tipo Reducido",
@@ -115,7 +108,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced.With(TaxRateEquivalence),
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced.With(TaxRateEquivalence),
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo Reducido + Recargo de Equivalencia",
@@ -134,7 +128,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSuperReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Super-Reduced Rate",
 					i18n.ES: "Tipo Superreducido",
@@ -151,7 +146,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSuperReduced.With(TaxRateEquivalence),
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced.With(TaxRateEquivalence),
 				Name: i18n.String{
 					i18n.EN: "Super-Reduced Rate + Equivalence Surcharge",
 					i18n.ES: "Tipo Superreducido + Recargo de Equivalencia",
@@ -162,14 +158,6 @@ var taxCategories = []*tax.CategoryDef{
 						Percent:   num.MakePercentage(40, 3),
 						Surcharge: num.NewPercentage(5, 3),
 					},
-				},
-			},
-			{
-				Key:    tax.RateExempt,
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.ES: "Exenta",
 				},
 			},
 		},
@@ -192,7 +180,7 @@ var taxCategories = []*tax.CategoryDef{
 		// This is a subset of the possible rates.
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateZero,
+				Rate: tax.RateZero,
 				Name: i18n.String{
 					i18n.EN: "Zero Rate",
 					i18n.ES: "Tipo Cero",
@@ -204,9 +192,9 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateStandard,
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 					i18n.ES: "Tipo General",
 				},
 				Values: []*tax.RateValueDef{
@@ -216,7 +204,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.ES: "Tipo Reducido",
@@ -266,7 +254,7 @@ var taxCategories = []*tax.CategoryDef{
 		},
 		Rates: []*tax.RateDef{
 			{
-				Key: TaxRatePro,
+				Rate: TaxRatePro,
 				Name: i18n.String{
 					i18n.EN: "Professional Rate",
 					i18n.ES: "Profesionales",
@@ -291,7 +279,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: TaxRateProStart,
+				Rate: TaxRateProStart,
 				Name: i18n.String{
 					i18n.EN: "Professional Starting Rate",
 					i18n.ES: "Profesionales Inicio",
@@ -304,7 +292,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: TaxRateCapital,
+				Rate: TaxRateCapital,
 				Name: i18n.String{
 					i18n.EN: "Rental or Interest Capital",
 					i18n.ES: "Alquileres o Intereses de Capital",
@@ -317,7 +305,7 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: TaxRateModules,
+				Rate: TaxRateModules,
 				Name: i18n.String{
 					i18n.EN: "Modules Rate",
 					i18n.ES: "Tipo Modulos",

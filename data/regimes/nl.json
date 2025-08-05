@@ -44,24 +44,64 @@
         "en": "Value Added Tax",
         "nl": "Belasting Toegevoegde Waarde"
       },
-      "rates": [
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate",
-            "nl": "0%-tarief"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard Rate",
-            "nl": "Standaardtarief"
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "nl": "Algemeen Tarief"
           },
           "values": [
             {
@@ -70,7 +110,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "nl": "Gereduceerd Tarief"

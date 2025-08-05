@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ff5dda136dd374c760a71962572a7a4e6064787782daf9e47321a6f30620903a"
+			"val": "0a5d0909b06a47d5b6ee376eba5fe6adaef48a603d0a604511b2ab7440626ec1"
 		}
 	},
 	"doc": {
@@ -58,13 +58,15 @@
 				"sum": "200.00",
 				"taxes": [
 					{
-						"cat": "VAT",
 						"country": "ES",
-						"rate": "standard",
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
 							"pt-region": "ES",
-							"pt-saft-tax-rate": "OUT"
+							"pt-saft-exemption": "M99",
+							"pt-saft-tax-rate": "ISE"
 						}
 					}
 				],
@@ -84,7 +86,8 @@
 								"country": "ES",
 								"ext": {
 									"pt-region": "ES",
-									"pt-saft-tax-rate": "OUT"
+									"pt-saft-exemption": "M99",
+									"pt-saft-tax-rate": "ISE"
 								},
 								"base": "200.00",
 								"percent": "21.0%",
@@ -99,6 +102,14 @@
 			"tax": "42.00",
 			"total_with_tax": "242.00",
 			"payable": "242.00"
-		}
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"code": "M99",
+				"src": "pt-saft-exemption",
+				"text": "Não sujeito ou não tributado"
+			}
+		]
 	}
 }

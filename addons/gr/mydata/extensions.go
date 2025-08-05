@@ -607,10 +607,11 @@ var extensions = []*cbc.Definition{
 				Greece invoices can be exempt of VAT for different causes and the tax authority
 				require a specific cause code to be provided.
 
-				In a GOBL invoice, the ~rate~ of a line's tax need to be set to ~exempt~, and
-				the ~ext~ map's ~gr-mydata-exemption~ property needs to be set.
-				
-				For example:
+				GOBL will try to automatically map the tax combo ~key~ to an appropriate exemption
+				code, but given the number of options you will no doubt need to consult with
+				a tax professional to determine the correct code for your case.
+
+				Example usage:
 
 				~~~js
 				"lines": [
@@ -625,9 +626,9 @@ var extensions = []*cbc.Definition{
 						"taxes": [
 							{
 								"cat": "VAT",
-								"rate": "exempt",
+								"key": "exempt",
 								"ext": {
-									"gr-mydata-exemption": "30"
+									"gr-mydata-exemption": "3"
 								}
 							}
 						],
@@ -635,6 +636,10 @@ var extensions = []*cbc.Definition{
 					}
 				]
 				~~~
+
+				Note that descriptions provided in the ~gr-mydata-exemption~ extension are
+				generated using AI and may not be 100% accurate. Always consult with a tax
+				professional to ensure you're choosing the correct code.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -644,6 +649,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 3 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 3 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Transactions outside the scope of Greek VAT per basic scope rules."),
 			},
 			{
 				Code: "2",
@@ -651,6 +657,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 5 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 5 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Supplies where place of taxation is outside Greece under territorial rules."),
 			},
 			{
 				Code: "3",
@@ -658,6 +665,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 13 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 13 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Exempt activities in public interest (e.g., medical, education) as defined in Art. 13."),
 			},
 			{
 				Code: "4",
@@ -665,6 +673,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 14 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 14 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Exemptions by place-of-supply provisions (services taxed abroad / not taxable in GR)."),
 			},
 			{
 				Code: "5",
@@ -672,6 +681,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 16 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 16 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Exempt supplies by/for certain bodies or specific non-taxable events under Art. 16."),
 			},
 			{
 				Code: "6",
@@ -679,6 +689,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 19 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 19 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Special exempt cases enumerated in Art. 19 (no VAT due)."),
 			},
 			{
 				Code: "7",
@@ -686,6 +697,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 22 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 22 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Exempt sectors (e.g., betting/lotteries etc.) under Art. 22."),
 			},
 			{
 				Code: "8",
@@ -693,6 +705,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 24 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 24 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Exports outside the EU; seller exports goods—no Greek VAT."),
 			},
 			{
 				Code: "9",
@@ -700,6 +713,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 25 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 25 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Related export-like exemptions (international transport etc.)."),
 			},
 			{
 				Code: "10",
@@ -707,6 +721,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 26 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 26 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Transport-related/export-linked exempt operations."),
 			},
 			{
 				Code: "11",
@@ -714,6 +729,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 27 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 27 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Supplies to seagoing vessels/aviation etc. treated at 0%."),
 			},
 			{
 				Code: "12",
@@ -721,6 +737,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 27 - Seagoing Vessels of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 27 - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Ship-related supplies explicitly covered—zero-rated."),
 			},
 			{
 				Code: "13",
@@ -728,6 +745,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 27.1.γ - Seagoing Vessels of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 27.1.γ - Πλοία Ανοικτής Θαλάσσης του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Specific vessel categories in Art. 27.1(c) – zero-rated."),
 			},
 			{
 				Code: "14",
@@ -735,6 +753,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 28 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 28 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Export / international transport-style exemptions under Art. 28."),
 			},
 			{
 				Code: "15",
@@ -742,6 +761,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 39 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 39 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Small-enterprise exemption regime (no VAT charged)."),
 			},
 			{
 				Code: "16",
@@ -749,6 +769,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 39a of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 39α του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Other domestic exemption schemes (e.g., special regimes) – no VAT."),
 			},
 			{
 				Code: "17",
@@ -756,6 +777,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 40 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 40 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Specific exempt circumstances (no VAT due) per Art. 40."),
 			},
 			{
 				Code: "18",
@@ -763,6 +785,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 41 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 41 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Additional exempt cases listed in Art. 41."),
 			},
 			{
 				Code: "19",
@@ -770,6 +793,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 47 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 47 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Other exemptions (e.g., special cases pre-OSS) – no VAT."),
 			},
 			{
 				Code: "20",
@@ -777,6 +801,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "VAT included - article 43 of the VAT code",
 					i18n.EL: "ΦΠΑ εμπεριεχόμενος - άρθρο 43 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Use when the regime says VAT is included in the price (no separate VAT shown)."),
 			},
 			{
 				Code: "21",
@@ -784,6 +809,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "VAT included - article 44 of the VAT code",
 					i18n.EL: "ΦΠΑ εμπεριεχόμενος - άρθρο 44 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Same concept—standard-rated treatment embedded."),
 			},
 			{
 				Code: "22",
@@ -791,6 +817,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "VAT included - article 45 of the VAT code",
 					i18n.EL: "ΦΠΑ εμπεριεχόμενος - άρθρο 45 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Same concept—standard-rated / margin-type."),
 			},
 			{
 				Code: "23",
@@ -798,6 +825,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "VAT included - article 46 of the VAT code",
 					i18n.EL: "ΦΠΑ εμπεριεχόμενος - άρθρο 46 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Same concept—standard-rated / margin-type."),
 			},
 			{
 				Code: "24",
@@ -805,6 +833,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - article 6 of the VAT code",
 					i18n.EL: "Χωρίς ΦΠΑ - άρθρο 6 του Κώδικα ΦΠΑ",
 				},
+				Desc: i18n.NewString("Out-of-territory/ place-of-supply situations (not taxed in GR)."),
 			},
 			{
 				Code: "25",
@@ -812,6 +841,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - ΠΟΛ.1029/1995",
 					i18n.EL: "Χωρίς ΦΠΑ - ΠΟΛ.1029/1995",
 				},
+				Desc: i18n.NewString("Documented domestic exemption by circular—no VAT."),
 			},
 			{
 				Code: "26",
@@ -819,6 +849,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - ΠΟΛ.1167/2015",
 					i18n.EL: "Χωρίς ΦΠΑ - ΠΟΛ.1167/2015",
 				},
+				Desc: i18n.NewString("Documented domestic exemption by circular—no VAT."),
 			},
 			{
 				Code: "27",
@@ -826,6 +857,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - Other VAT exceptions",
 					i18n.EL: "Λοιπές Εξαιρέσεις ΦΠΑ",
 				},
+				Desc: i18n.NewString("Any other Greek-law exemption (domestic)—no VAT."),
 			},
 			{
 				Code: "28",
@@ -833,6 +865,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - Article 24 (b) (1) of the VAT Code (Tax Free)",
 					i18n.EL: "Χωρίς ΦΠΑ – άρθρο 24 περ. β' παρ.1 του Κώδικα ΦΠΑ, (Tax Free)",
 				},
+				Desc: i18n.NewString("Tax-free shop / export retail (travellers) – treated as export."),
 			},
 			{
 				Code: "29",
@@ -840,6 +873,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - Article 47b of the VAT Code (OSS non-EU scheme)",
 					i18n.EL: "Χωρίς ΦΠΑ – άρθρο 47β, του Κώδικα ΦΠΑ (OSS μη ενωσιακό καθεστώς)",
 				},
+				Desc: i18n.NewString("B2C supplies reported via non-Union OSS - outside GR VAT scope."),
 			},
 			{
 				Code: "30",
@@ -847,6 +881,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Without VAT - Article 47c of the VAT Code (OSS EU scheme)",
 					i18n.EL: "Χωρίς ΦΠΑ – άρθρο 47γ, του Κώδικα ΦΠΑ (OSS ενωσιακό καθεστώς)",
 				},
+				Desc: i18n.NewString("B2C intra-EU supplies reported via Union OSS – outside GR VAT scope."),
 			},
 			{
 				Code: "31",
@@ -854,6 +889,7 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Excluding VAT - Article 47d of the VAT Code (IOSS)",
 					i18n.EL: "Χωρίς ΦΠΑ – άρθρο 47δ του Κώδικα ΦΠΑ (IOSS)",
 				},
+				Desc: i18n.NewString("Low-value imports reported via IOSS – outside GR VAT scope."),
 			},
 		},
 	},

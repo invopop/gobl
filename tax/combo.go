@@ -3,11 +3,13 @@ package tax
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -15,17 +17,18 @@ import (
 // and retained attributes will be determined automatically from the Rate key if set
 // during calculation.
 type Combo struct {
-	// Tax category code from those available inside a region.
-	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
 	// Country code override when issuing with taxes applied from different countries.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
-	// Rate within a category to apply.
+	// Tax category code from those available inside a region.
+	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
+	// Key helps determine the tax situation within the category.
+	Key cbc.Key `json:"key,omitempty"`
+	// Rate within a category and for a given key to apply.
 	Rate cbc.Key `json:"rate,omitempty" jsonschema:"title=Rate"`
-	// Percent defines the percentage set manually or determined from the rate
-	// key (calculated if rate present). A nil percent implies that this tax combo
-	// is **exempt** from tax.
+	// Percent defines the percentage set manually or determined from the
+	// key. A nil percent implies that this tax combo is either exempt or not-subject.
 	Percent *num.Percentage `json:"percent,omitempty" jsonschema:"title=Percent" jsonschema_extras:"calculated=true"`
-	// Some countries require an additional surcharge (calculated if rate present).
+	// Some countries require an additional surcharge (may be determined if key present).
 	Surcharge *num.Percentage `json:"surcharge,omitempty" jsonschema:"title=Surcharge" jsonschema_extras:"calculated=true"`
 	// Local codes that apply for a given rate or percentage that need to be identified and validated.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
@@ -50,10 +53,15 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			r.InCategories(),
 		),
-		validation.Field(&c.Rate,
-			r.InCategoryRates(c.Category),
+		validation.Field(&c.Key,
+			r.InCategoryKeys(c.Category),
 		),
-		validation.Field(&c.Percent),
+		validation.Field(&c.Rate,
+			r.InCategoryRates(c.Category, c.Key),
+		),
+		validation.Field(&c.Percent,
+			r.RequiresPercent(c.Category, c.Key),
+		),
 		validation.Field(&c.Surcharge, validation.When(
 			c.Percent == nil,
 			validation.Nil.Error("required with percent"),
@@ -67,11 +75,49 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 	if c == nil {
 		return
 	}
+
+	switch c.Category {
+	case CategoryVAT:
+		switch c.Rate {
+		case KeyZero:
+			c.Key = KeyZero
+			c.Rate = cbc.KeyEmpty
+			if c.Percent == nil {
+				c.Percent = num.NewPercentage(0, 2)
+			}
+		case KeyExempt:
+			c.Key = KeyExempt
+			c.Rate = cbc.KeyEmpty
+		case KeyExempt.With("reverse-charge"):
+			c.Key = KeyReverseCharge
+			c.Rate = cbc.KeyEmpty
+			c.Percent = nil
+		case KeyExempt.With("export"):
+			c.Key = KeyExport
+			c.Rate = cbc.KeyEmpty
+		case KeyExempt.With("eea"), KeyExempt.With("export").With("eea"):
+			c.Key = KeyIntraCommunity
+			c.Rate = cbc.KeyEmpty
+		default:
+			// Make no further assumptions about the key
+			if strings.HasPrefix(c.Rate.String(), "standard") {
+				c.Rate = cbc.Key(RateGeneral.String() + strings.TrimPrefix(c.Rate.String(), "standard"))
+			}
+		}
+
+		if c.Key == cbc.KeyEmpty {
+			// Special case for zero percent which has no additional rates
+			if c.Percent != nil && c.Percent.IsZero() {
+				c.Key = KeyZero
+			}
+		}
+	}
+
 	c.Ext = CleanExtensions(c.Ext)
 	normalizers.Each(c)
 }
 
-func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.Date) error {
+func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {
 	if c.Country == country {
 		c.Country = ""
 	} else if c.Country != "" {
@@ -79,62 +125,45 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, tags []cbc.Key, date cal.
 	}
 
 	r := RegimeDefFor(country.Code())
-	if r == nil {
-		// if the tax regime is not yet defined, don't try to perform
-		// any extra calculations.
+	cd := r.CategoryDef(c.Category) // may provide global category
+	if r != nil && cd == nil {
+		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
+	} else if cd == nil {
+		return nil // no category, nothing to do
+	}
+
+	c.retained = cd.Retained
+
+	// If there are keys defined for the category, but the combo does not
+	// have a key, then we will use the standard key.
+	if len(cd.Keys) > 0 && c.Key == cbc.KeyEmpty {
+		c.Key = KeyStandard
+	}
+
+	// If there is a key definition, determine if there should be any percentages
+	if kd := cd.KeyDef(c.Key); kd != nil && kd.NoPercent {
+		c.Percent = nil
+		c.Surcharge = nil
 		return nil
 	}
 
-	return c.calculateForRegime(r, tags, date)
-}
-
-func (c *Combo) calculateForRegime(r *RegimeDef, tags []cbc.Key, date cal.Date) error {
-	category := r.CategoryDef(c.Category)
-	if category == nil {
-		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
-	}
-	c.retained = category.Retained
-
-	if err := c.prepareRate(category, tags, date); err != nil {
-		return err
-	}
-
-	// Run the regime's normalisations, but only if this is not
-	// a country-specific combo.
-	//if c.Country == "" {
-	//	r.NormalizeObject(c)
-	//}
-
-	return nil
+	return c.prepareRate(cd, date)
 }
 
 // prepare updates the Combo object's Percent and Retained properties using the base totals
 // as a source of additional data for making decisions.
-func (c *Combo) prepareRate(category *CategoryDef, tags []cbc.Key, date cal.Date) error {
-	// If there is no rate for the combo, there isn't much else we can do.
+func (c *Combo) prepareRate(cd *CategoryDef, date cal.Date) error {
+	// If there is no rate for the combo, there isn't much else we can prepare.
 	if c.Rate == cbc.KeyEmpty {
 		return nil
 	}
 
-	rate := category.RateDef(c.Rate)
+	rate := cd.RateDef(c.Key, c.Rate)
 	if rate == nil {
-		return ErrInvalidRate.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
-	}
-
-	// Copy over the predefined extensions from the rate to the combo.
-	if c.Country == "" && len(rate.Ext) > 0 {
-		if c.Ext == nil {
-			c.Ext = make(Extensions)
+		if c.Key == cbc.KeyEmpty {
+			return ErrInvalid.WithMessage("'%s' rate not defined in category '%s'", c.Rate.String(), c.Category.String())
 		}
-		for k, v := range rate.Ext {
-			c.Ext[k] = v
-		}
-	}
-
-	if rate.Exempt {
-		c.Percent = nil
-		c.Surcharge = nil
-		return nil
+		return ErrInvalid.WithMessage("'%s' rate not defined for key '%s' in category '%s'", c.Rate.String(), c.Key.String(), c.Category.String())
 	}
 
 	// if there are no rate values, don't attempt to prepare anything else.
@@ -142,7 +171,7 @@ func (c *Combo) prepareRate(category *CategoryDef, tags []cbc.Key, date cal.Date
 		return nil
 	}
 
-	value := rate.Value(date, tags, c.Ext)
+	value := rate.Value(date, c.Ext)
 	if value == nil {
 		return ErrInvalidDate.WithMessage("rate value unavailable for '%s' in '%s' on '%s'", c.Rate.String(), c.Category.String(), date.String())
 	}
@@ -160,9 +189,8 @@ func (c *Combo) prepareRate(category *CategoryDef, tags []cbc.Key, date cal.Date
 	return nil
 }
 
-// UnmarshalJSON is a temporary migration helper that will move the
-// first of the "tags" array used in earlier versions of GOBL into
-// the rate field.
+// UnmarshalJSON is a migration helper that will prepare the Combo's
+// key from either the old tags or rate fields.
 func (c *Combo) UnmarshalJSON(data []byte) error {
 	type Alias Combo
 	aux := struct {
@@ -174,8 +202,44 @@ func (c *Combo) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
-	if len(aux.Tags) > 0 && c.Rate == cbc.KeyEmpty {
-		c.Rate = aux.Tags[0]
+	if c.Rate == cbc.KeyEmpty {
+		if len(aux.Tags) > 0 {
+			c.Rate = aux.Tags[0]
+		}
 	}
 	return nil
+}
+
+// JSONSchemaExtend will extend the JSON schema for the Combo object with
+// global tax category keys.
+func (c Combo) JSONSchemaExtend(s *jsonschema.Schema) {
+	for _, cd := range globalCategories {
+		s.AnyOf = append(s.AnyOf, c.jsonSchemaBuildCategory(cd))
+	}
+}
+
+func (Combo) jsonSchemaBuildCategory(cd *CategoryDef) *jsonschema.Schema {
+	// Build the JSON schema for the category definition.
+	s := new(jsonschema.Schema)
+	s.If = &jsonschema.Schema{
+		Properties: jsonschema.NewProperties(),
+	}
+	s.If.Properties.Set("cat", &jsonschema.Schema{
+		Const: cd.Code.String(),
+	})
+	oneOf := make([]*jsonschema.Schema, len(cd.Keys)+1)
+	for i, kd := range cd.Keys {
+		oneOf[i] = &jsonschema.Schema{
+			Const: kd.Key.String(),
+			Title: kd.Name.String(),
+		}
+	}
+	// Add the key definitions to the schema
+	s.Then = &jsonschema.Schema{
+		Properties: jsonschema.NewProperties(),
+	}
+	s.Then.Properties.Set("key", &jsonschema.Schema{
+		OneOf: oneOf,
+	})
+	return s
 }

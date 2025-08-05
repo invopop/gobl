@@ -73,7 +73,7 @@ func New() *tax.RegimeDef {
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
@@ -84,7 +84,7 @@ func Validate(doc interface{}) error {
 }
 
 // Normalize will perform any regime specific normalizations on the data.
-func Normalize(doc interface{}) {
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)

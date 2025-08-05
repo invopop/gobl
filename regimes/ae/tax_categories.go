@@ -30,27 +30,13 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateZero,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-					i18n.AR: "معدل صفر",
-				},
-				Description: i18n.String{
-					i18n.EN: "A VAT rate of 0% applicable to specific exports, designated areas, and essential services.",
-					i18n.AR: "نسبة ضريبة قيمة مضافة 0٪ تطبق على الصادرات المحددة والمناطق المعينة والخدمات الأساسية.",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
-					},
-				},
-			},
-			{
-				Key: tax.RateStandard,
-				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 					i18n.AR: "معدل قياسي",
 				},
 				Description: i18n.String{
@@ -62,18 +48,6 @@ var taxCategories = []*tax.CategoryDef{
 						Since:   cal.NewDate(2018, 1, 1),
 						Percent: num.MakePercentage(5, 2),
 					},
-				},
-			},
-			{
-				Key: tax.RateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.AR: "معفى",
-				},
-				Exempt: true,
-				Description: i18n.String{
-					i18n.EN: "Certain goods and services, such as financial services and residential real estate, are exempt from VAT.",
-					i18n.AR: "بعض السلع والخدمات، مثل الخدمات المالية والعقارات السكنية، معفاة من ضريبة القيمة المضافة.",
 				},
 			},
 		},

@@ -367,6 +367,20 @@ func TestExtensionsHas(t *testing.T) {
 	assert.False(t, em.Has("invalid"))
 }
 
+func TestExtensionsValues(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		assert.Empty(t, em.Values())
+	})
+	t.Run("with values", func(t *testing.T) {
+		em := tax.Extensions{
+			"key1": "value1",
+			"key2": "value2",
+		}
+		assert.ElementsMatch(t, []cbc.Code{"value1", "value2"}, em.Values())
+	})
+}
+
 func TestExtensionsEquals(t *testing.T) {
 	tests := []struct {
 		name string
@@ -558,5 +572,76 @@ func TestExtensionGet(t *testing.T) {
 			"key": "value",
 		}
 		assert.Equal(t, "value", em.Get("key+foo").String())
+	})
+}
+
+func TestExtensionsSet(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.Set("key", "value")
+		assert.Equal(t, tax.Extensions{"key": "value"}, em)
+	})
+
+	t.Run("with existing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.Set("key", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value2"}, em)
+	})
+
+	t.Run("with new value", func(t *testing.T) {
+		em := tax.Extensions{}
+		em.Set("key", "value1")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+}
+
+func TestExtensionsSetIfEmpty(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.SetIfEmpty("key", "value")
+		assert.Equal(t, tax.Extensions{"key": "value"}, em)
+	})
+
+	t.Run("with existing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.SetIfEmpty("key", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+
+	t.Run("with new value", func(t *testing.T) {
+		em := tax.Extensions{}
+		em.SetIfEmpty("key", "value1")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+}
+
+func TestExtensionsSetOneOf(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.SetOneOf("key", "value1", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+
+	t.Run("with existing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.SetOneOf("key", "value2", "value3")
+		assert.Equal(t, tax.Extensions{"key": "value2"}, em)
+	})
+	t.Run("with existing value and output", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em = em.SetOneOf("key", "value2", "value3")
+		assert.Equal(t, tax.Extensions{"key": "value2"}, em)
+	})
+
+	t.Run("with existing secondary value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value3"}
+		em = em.SetOneOf("key", "value2", "value3")
+		assert.Equal(t, tax.Extensions{"key": "value3"}, em)
+	})
+
+	t.Run("with no existing value", func(t *testing.T) {
+		em := tax.Extensions{}
+		em = em.SetOneOf("key", "value1", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
 	})
 }
