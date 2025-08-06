@@ -14,6 +14,9 @@ import (
 const (
 	// V1 for SDI's FatturaPA verions 1.x
 	V1 cbc.Key = "it-sdi-v1"
+
+	// KeyFundContribution is the key for the Fund Contribution charge
+	KeyFundContribution cbc.Key = "fund-contribution"
 )
 
 func init() {
