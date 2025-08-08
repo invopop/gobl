@@ -74,6 +74,17 @@ func TestSetValidation(t *testing.T) {
 			err: "0: (percent: required for 'standard' in 'VAT'.).",
 		},
 		{
+			desc: "exempt rate with percent",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Key:      tax.KeyExempt,
+					Percent:  num.NewPercentage(5, 3),
+				},
+			},
+			err: "0: (percent: must be nil for 'exempt' in 'VAT'.)",
+		},
+		{
 			desc: "duplicate",
 			set: tax.Set{
 				{

@@ -49,19 +49,19 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			}
 		case tax.KeyOutsideScope:
 			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExemption, "1", "2", "4", "24", "29", "30", "31").
+				SetOneOf(ExtKeyExemption, "1", "2", "24", "29", "30", "31").
 				Set(ExtKeyVATRate, taxVATRateExempt)
 		case tax.KeyExempt:
 			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExemption, "3", "5", "6",
-					"7", "11", "12", "13", "15", "17",
+				SetOneOf(ExtKeyExemption, "7", "3", "4", "5", "6",
+					"7", "9", "10", "11", "12", "13", "15", "17",
 					"18", "19", "20", "21", "22", "23", "25",
 					"26", "27",
 				).
 				Set(ExtKeyVATRate, taxVATRateExempt)
 		case tax.KeyExport:
 			tc.Ext = tc.Ext.
-				SetOneOf(ExtKeyExemption, "8", "9", "10", "28").
+				SetOneOf(ExtKeyExemption, "8", "28").
 				Set(ExtKeyVATRate, taxVATRateExempt)
 		case tax.KeyIntraCommunity:
 			tc.Ext = tc.Ext.
@@ -80,12 +80,12 @@ func normalizeTaxComboKey(tc *tax.Combo) {
 		return
 	}
 	switch tc.Ext.Get(ExtKeyExemption) {
-	case "1", "2", "4", "24", "29", "30", "31":
+	case "1", "2", "24", "29", "30", "31":
 		tc.Key = tax.KeyOutsideScope
-	case "3", "5", "6", "7", "11", "12", "13", "15", "17",
+	case "3", "4", "5", "6", "7", "9", "10", "11", "12", "13", "15", "17",
 		"18", "19", "20", "21", "22", "23", "25", "26", "27":
 		tc.Key = tax.KeyExempt
-	case "8", "9", "10", "28":
+	case "8", "28":
 		tc.Key = tax.KeyExport
 	case "14":
 		tc.Key = tax.KeyIntraCommunity

@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -48,6 +49,19 @@ func TestRegimeGetCurrency(t *testing.T) {
 	})
 }
 
+func TestRegimeDefScenarioSet(t *testing.T) {
+	t.Run("with scenario", func(t *testing.T) {
+		r := es.New()
+		ss := r.ScenarioSet("bill/invoice")
+		assert.NotNil(t, ss)
+	})
+	t.Run("without scenario", func(t *testing.T) {
+		r := es.New()
+		ss := r.ScenarioSet("unknown")
+		assert.Nil(t, ss)
+	})
+}
+
 func TestRegimeDefGetCountry(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var r *tax.RegimeDef
@@ -81,6 +95,19 @@ func TestRegimeInCategoryRates(t *testing.T) {
 	rate := cbc.Key("general")
 	err := validation.Validate(rate, r.InCategoryRates(tax.CategoryVAT, tax.KeyStandard))
 	assert.ErrorContains(t, err, "must be blank when regime is undefine")
+}
+
+func TestRegimeInCategoryRule(t *testing.T) {
+	t.Run("no rates", func(t *testing.T) {
+		r := es.New()
+		err := validation.Validate(tax.RateGeneral, r.InCategoryRates(es.TaxCategoryIPSI, cbc.KeyEmpty))
+		assert.ErrorContains(t, err, "must be blank for category 'IPSI' with no key")
+	})
+	t.Run("invalid rate", func(t *testing.T) {
+		r := es.New()
+		err := validation.Validate(cbc.Key("foo"), r.InCategoryRates(tax.CategoryVAT, tax.KeyStandard))
+		assert.ErrorContains(t, err, "'foo' not defined in 'VAT' category for key 'standard'")
+	})
 }
 
 func TestRegimeDefValidateObject(t *testing.T) {

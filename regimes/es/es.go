@@ -59,16 +59,16 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone: "Europe/Madrid",
 		Tags: []*tax.TagSet{
-			invoiceTags,
+			invoiceTags(),
 		},
-		Identities: identityDefinitions,
-		Categories: taxCategories,
+		Identities: identityDefinitions(),
+		Categories: taxCategories(),
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
+			invoiceScenarios(),
 		},
-		Corrections: correctionDefinitions,
+		Corrections: correctionDefinitions(),
 	}
 }
 

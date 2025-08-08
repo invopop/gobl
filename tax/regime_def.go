@@ -256,9 +256,6 @@ func (r *inCategoryRule) Validate(value any) error {
 	if !ok || rate == cbc.KeyEmpty {
 		return nil
 	}
-	if len(r.rates) == 0 {
-		return nil
-	}
 	for _, k := range r.rates {
 		if rate.Has(k) {
 			return nil

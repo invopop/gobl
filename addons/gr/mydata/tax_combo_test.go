@@ -76,7 +76,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Key:      tax.KeyExempt,
 		}
 		ad.Normalizer(tc)
-		assert.Equal(t, "3", tc.Ext.Get(mydata.ExtKeyExemption).String())
+		assert.Equal(t, "7", tc.Ext.Get(mydata.ExtKeyExemption).String())
 		assert.Equal(t, "exempt", tc.Key.String())
 	})
 
@@ -92,12 +92,12 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			assert.Equal(t, code, tc.Ext.Get(mydata.ExtKeyExemption))
 			assert.Equal(t, cbc.Code("7"), tc.Ext.Get(mydata.ExtKeyVATRate))
 			switch code {
-			case "1", "2", "4", "24", "29", "30", "31":
+			case "1", "2", "24", "29", "30", "31":
 				assert.Equal(t, tax.KeyOutsideScope, tc.Key)
-			case "3", "5", "6", "7", "11", "12", "13", "15", "17",
+			case "3", "4", "5", "6", "7", "9", "10", "11", "12", "13", "15", "17",
 				"18", "19", "20", "21", "22", "23", "25", "26", "27":
 				assert.Equal(t, tax.KeyExempt, tc.Key)
-			case "8", "9", "10", "28":
+			case "8", "28":
 				assert.Equal(t, tax.KeyExport, tc.Key)
 			case "14":
 				assert.Equal(t, tax.KeyIntraCommunity, tc.Key)
