@@ -1,6 +1,7 @@
 package tax_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
@@ -9,7 +10,9 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
@@ -593,6 +596,12 @@ func TestExtensionsSet(t *testing.T) {
 		em.Set("key", "value1")
 		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
 	})
+
+	t.Run("with empty value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.Set("key", "")
+		assert.Empty(t, em)
+	})
 }
 
 func TestExtensionsSetIfEmpty(t *testing.T) {
@@ -644,4 +653,45 @@ func TestExtensionsSetOneOf(t *testing.T) {
 		em = em.SetOneOf("key", "value1", "value2")
 		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
 	})
+}
+
+func TestExtensionsDelete(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.Delete("key")
+		assert.Nil(t, em)
+	})
+
+	t.Run("with value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value"}
+		em = em.Delete("key")
+		assert.Empty(t, em)
+	})
+
+	t.Run("with missing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value"}
+		em = em.Delete("missing")
+		assert.Equal(t, tax.Extensions{"key": "value"}, em)
+	})
+}
+
+func TestJSONSchemaExtend(t *testing.T) {
+	in := here.Doc(`
+		{
+			"additionalProperties": {
+				"^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+					"$ref": "https://gobl.org/draft-0/cbc/code"
+				}
+			},
+			"type": "object",
+			"description": "Extensions is a map of extension keys to values."
+		}
+	`)
+	schema := new(jsonschema.Schema)
+	assert.NoError(t, json.Unmarshal([]byte(in), schema))
+	assert.NotNil(t, schema.AdditionalProperties)
+	var es tax.Extensions
+	es.JSONSchemaExtend(schema)
+	assert.Nil(t, schema.AdditionalProperties)
+	assert.NotEmpty(t, schema.PatternProperties)
 }
