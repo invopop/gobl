@@ -14,9 +14,9 @@ type Error cbc.Key
 // Standard list of tax errors
 const (
 	ErrMissingRegime        Error = "missing-regime"
+	ErrInvalid              Error = "invalid"
 	ErrInvalidCategory      Error = "invalid-category"
 	ErrInvalidTag           Error = "invalid-tag"
-	ErrInvalidRate          Error = "invalid-rate"
 	ErrInvalidDate          Error = "invalid-date"
 	ErrInvalidPricesInclude Error = "invalid-prices-include"
 )

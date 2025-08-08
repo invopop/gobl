@@ -52,3 +52,4 @@ lines:
       price: "90.00"
     taxes:
       - cat: VAT
+        key: "exempt"

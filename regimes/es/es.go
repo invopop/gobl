@@ -59,21 +59,21 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone: "Europe/Madrid",
 		Tags: []*tax.TagSet{
-			invoiceTags,
+			invoiceTags(),
 		},
-		Identities: identityDefinitions,
-		Categories: taxCategories,
+		Identities: identityDefinitions(),
+		Categories: taxCategories(),
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios,
+			invoiceScenarios(),
 		},
-		Corrections: correctionDefinitions,
+		Corrections: correctionDefinitions(),
 	}
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
@@ -84,7 +84,7 @@ func Validate(doc interface{}) error {
 }
 
 // Normalize will perform any regime specific normalizations on the data.
-func Normalize(doc interface{}) {
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)

@@ -13,9 +13,11 @@ var InvoiceCorrectionTypes = []cbc.Key{
 	bill.InvoiceTypeDebitNote,
 }
 
-var correctionDefinitions = []*tax.CorrectionDefinition{
-	{
-		Schema: bill.ShortSchemaInvoice,
-		Types:  InvoiceCorrectionTypes,
-	},
+func correctionDefinitions() []*tax.CorrectionDefinition {
+	return []*tax.CorrectionDefinition{
+		{
+			Schema: bill.ShortSchemaInvoice,
+			Types:  InvoiceCorrectionTypes,
+		},
+	}
 }

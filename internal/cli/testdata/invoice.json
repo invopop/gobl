@@ -1,16 +1,17 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$regime": "ES",
   "uuid": "750f4fc0-b2e5-4c6d-9157-d31c6b96ff33",
-  "code": "SAMPLE-001",
   "type": "standard",
-  "currency": "EUR",
+  "code": "SAMPLE-001",
   "issue_date": "2022-02-01",
+  "currency": "EUR",
   "supplier": {
+    "name": "MªF. Services",
     "tax_id": {
       "country": "ES",
       "code": "58384285G"
     },
-    "name": "MªF. Services",
     "people": [
       {
         "name": {
@@ -37,11 +38,11 @@
     ]
   },
   "customer": {
+    "name": "Sample Consumer",
     "tax_id": {
       "country": "ES",
       "code": "54387763P"
-    },
-    "name": "Sample Consumer"
+    }
   },
   "lines": [
     {
@@ -55,15 +56,16 @@
       "sum": "1800.00",
       "discounts": [
         {
+          "reason": "Special discount",
           "percent": "10%",
-          "amount": "180.00",
-          "reason": "Special discount"
+          "amount": "180.00"
         }
       ],
       "taxes": [
         {
           "cat": "VAT",
-          "rate": "standard",
+          "key": "standard",
+          "rate": "general",
           "percent": "21.0%"
         },
         {
@@ -103,7 +105,6 @@
               "amount": "340.20"
             }
           ],
-          "base": "1620.00",
           "amount": "340.20"
         },
         {
@@ -116,14 +117,15 @@
               "amount": "243.00"
             }
           ],
-          "base": "1620.00",
           "amount": "243.00"
         }
       ],
-      "sum": "97.20"
+      "sum": "340.20",
+      "retained": "243.00"
     },
-    "tax": "97.20",
-    "total_with_tax": "1717.20",
+    "tax": "340.20",
+    "total_with_tax": "1960.20",
+    "retained_tax": "243.00",
     "payable": "1717.20"
   }
 }

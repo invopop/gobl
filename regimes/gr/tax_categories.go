@@ -39,11 +39,13 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard rate",
+					i18n.EN: "General rate",
 					i18n.EL: "Κανονικός συντελεστής",
 				},
 				Values: []*tax.RateValueDef{
@@ -53,7 +55,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced rate",
 					i18n.EL: "Μειωμένος συντελεστής",
@@ -65,7 +68,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSuperReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Super-reduced rate",
 					i18n.EL: "Υπερμειωμένος συντελεστής",
@@ -77,7 +81,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateStandard.With(TaxRateIsland),
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral.With(TaxRateIsland),
 				Name: i18n.String{
 					i18n.EN: "Standard rate (Island)",
 					i18n.EL: "Κανονικός συντελεστής (Νησί)",
@@ -89,7 +94,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced.With(TaxRateIsland),
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral.With(TaxRateIsland),
 				Name: i18n.String{
 					i18n.EN: "Reduced rate (Island)",
 					i18n.EL: "Μειωμένος συντελεστής (Νησί)",
@@ -101,7 +107,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSuperReduced.With(TaxRateIsland),
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced.With(TaxRateIsland),
 				Name: i18n.String{
 					i18n.EN: "Super-reduced rate (Island)",
 					i18n.EL: "Υπερμειωμένος συντελεστής (Νησί)",
@@ -110,14 +117,6 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Percent: num.MakePercentage(4, 2),
 					},
-				},
-			},
-			{
-				Key:    tax.RateExempt,
-				Exempt: true,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.EL: "Απαλλαγή",
 				},
 			},
 		},

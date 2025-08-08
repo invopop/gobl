@@ -48,22 +48,63 @@
         "en": "Value Added Tax",
         "fr": "Taxe sur la Valeur Ajoutée"
       },
-      "rates": [
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard rate",
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate",
             "fr": "Taux normal"
           },
           "desc": {
@@ -78,7 +119,10 @@
           ]
         },
         {
-          "key": "intermediate",
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Intermediate rate",
             "fr": "Taux intermédiaire"
@@ -95,7 +139,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced rate",
             "fr": "Taux réduit"
@@ -112,10 +159,13 @@
           ]
         },
         {
-          "key": "special",
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
-            "en": "Special rate",
-            "fr": "Taux particulier"
+            "en": "Super reduced rate",
+            "fr": "Taux super réduit"
           },
           "desc": {
             "en": "Reserved for medicines reimbursable by social security, sales of live animals for slaughter and charcuterie to non-taxable persons, the television license fee, certain shows and press publications registered with the Joint Commission for Publications and Press Agencies.",

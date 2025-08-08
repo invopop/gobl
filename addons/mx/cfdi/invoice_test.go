@@ -68,7 +68,7 @@ func validInvoice() *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 			},
@@ -470,7 +470,7 @@ func TestInvoiceLineItemValidation(t *testing.T) {
 		{
 			name: "nil",
 			item: nil,
-			err:  "lines: (0: (item: cannot be blank.).",
+			err:  "item: cannot be blank",
 		},
 		{
 			// see below for specific global tag tests

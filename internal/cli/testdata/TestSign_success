@@ -40,8 +40,8 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "percent": "21.0%",
-                        "rate": "standard"
+                        "key": "standard",
+                        "percent": "21.0%"
                     },
                     {
                         "cat": "IRPF",
@@ -62,8 +62,8 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "percent": "21.0%",
-                        "rate": "standard"
+                        "key": "standard",
+                        "percent": "21.0%"
                     }
                 ],
                 "total": "1000.00"
@@ -79,8 +79,8 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "percent": "0.0%",
-                        "rate": "zero"
+                        "key": "zero",
+                        "percent": "0.0%"
                     }
                 ],
                 "total": "172.50"
@@ -179,7 +179,6 @@
                             {
                                 "amount": "600.00",
                                 "base": "4000.00",
-                                "key": "pro",
                                 "percent": "15.0%"
                             }
                         ],
@@ -198,11 +197,11 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "74fb4fa32e076fe1b5da2d649a1925aa0d50b9ec57a9656e7030845e6f73eee5"
+            "val": "fede5dfd7193d5c252d9363156f1f175869ee60a9599073dad5e8c1ce06e2175"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     },
     "sigs": [
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6Ijc0ZmI0ZmEzMmUwNzZmZTFiNWRhMmQ2NDlhMTkyNWFhMGQ1MGI5ZWM1N2E5NjU2ZTcwMzA4NDVlNmY3M2VlZTUifX0.XObh9DVwnMfxupXE5XJ_N2AOUaHUXBlhh1gP2KkJVjLREGUwfMjoY9W2YXjpwuC_jcTq2NPzJPaDSPrVAM_CzQ"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiOWQ4ZWFmZDUtNzdiZS0xMWVjLWI0ODUtNTQwNWRiOWEzZTQ5IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImZlZGU1ZGZkNzE5M2Q1YzI1MmQ5MzYzMTU2ZjFmMTc1ODY5ZWU2MGE5NTk5MDczZGFkNWU4YzFjZTA2ZTIxNzUifX0.KAH2uqCUB0yn7OGHr_H8ccJY784JEwIA34RRx_ywN1GaISwrN5-iWRAOoV78bxZ4alG_USCnFfYdpUdIjNuTwA"
     ]
 }

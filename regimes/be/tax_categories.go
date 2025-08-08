@@ -29,14 +29,16 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
-					i18n.NL: "Standaardtarief",
-					i18n.FR: "Taux standard",
-					i18n.DE: "Standardsatz",
+					i18n.EN: "General Rate",
+					i18n.NL: "Algemeen tarief",
+					i18n.FR: "Taux normal",
+					i18n.DE: "Allgemeiner Satz",
 				},
 				Values: []*tax.RateValueDef{
 					{
@@ -46,7 +48,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateIntermediate,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate Rate",
 					i18n.NL: "Tussentarief",
@@ -61,7 +64,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.NL: "Verlaagd Tarief",
@@ -72,17 +76,6 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Since:   cal.NewDate(2011, 1, 4),
 						Percent: num.MakePercentage(60, 3),
-					},
-				},
-			},
-			{
-				Key: tax.RateZero,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
 					},
 				},
 			},

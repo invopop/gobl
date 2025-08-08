@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fd03d73a5f1d5622214be36bdd7e2c4ae4640289ea028f214901d8057ad7dc07"
+			"val": "af51b852185ffc7213334541c36ead37ebdc5499a0f2fad875d78dc663b6e920"
 		}
 	},
 	"doc": {
@@ -77,9 +77,10 @@
 				],
 				"taxes": [
 					{
-						"cat": "VAT",
 						"country": "NL",
-						"rate": "standard",
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
 							"es-tbai-product": "services"
