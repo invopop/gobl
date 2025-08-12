@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.220.6] - 2025-08-12
+
 ### Changed
 
 - `org.Party`: avoid panic when regime's normalizer is not present
