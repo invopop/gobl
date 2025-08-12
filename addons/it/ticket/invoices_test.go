@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/addons/it/ticket"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -48,7 +49,7 @@ func exampleStandardInvoice(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -152,7 +153,7 @@ func TestInvoiceLineTaxes(t *testing.T) {
 		require.EqualError(t, err, "lines: (2: (taxes: missing category VAT.).).")
 	})
 
-	t.Run("item with no Rate and missing Ext", func(t *testing.T) {
+	t.Run("item with no tax rate nor key", func(t *testing.T) {
 		inv := exampleStandardInvoice(t)
 		inv.Lines = append(inv.Lines, &bill.Line{
 			Quantity: num.MakeAmount(10, 0),
@@ -168,7 +169,102 @@ func TestInvoiceLineTaxes(t *testing.T) {
 		})
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.EqualError(t, err, "lines: (2: (taxes: (0: (ext: (it-ticket-exempt: required.).).).).).")
+		require.ErrorContains(t, err, "lines: (2: (taxes: (0: (percent: required for 'standard' in 'VAT'.).).).)")
+	})
+
+	t.Run("normalization when exempt key provided", func(t *testing.T) {
+		list := []struct {
+			Code        cbc.Code
+			ExpectedKey cbc.Key
+		}{
+			{
+				Code:        "N1",
+				ExpectedKey: tax.KeyOutsideScope,
+			},
+			{
+				Code:        "N2",
+				ExpectedKey: tax.KeyOutsideScope,
+			},
+			{
+				Code:        "N3",
+				ExpectedKey: tax.KeyExport,
+			},
+			{
+				Code:        "N4",
+				ExpectedKey: tax.KeyExempt,
+			},
+			{
+				Code:        "N5",
+				ExpectedKey: tax.KeyExempt,
+			},
+			{
+				Code:        "N6",
+				ExpectedKey: tax.KeyReverseCharge,
+			},
+		}
+		for _, row := range list {
+			inv := exampleStandardInvoice(t)
+			inv.Lines = append(inv.Lines, &bill.Line{
+				Quantity: num.MakeAmount(10, 0),
+				Item: &org.Item{
+					Name:  "Test Item 2",
+					Price: num.NewAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: "VAT",
+						Ext: tax.Extensions{
+							ticket.ExtKeyExempt: row.Code,
+						},
+					},
+				},
+			})
+			require.NoError(t, inv.Calculate())
+			assert.Equal(t, row.ExpectedKey, inv.Lines[2].Taxes[0].Key)
+			assert.Equal(t, row.Code, inv.Lines[2].Taxes[0].Ext.Get(ticket.ExtKeyExempt))
+			assert.NoError(t, inv.Validate())
+		}
+	})
+
+	t.Run("item with zero percent", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Lines = append(inv.Lines, &bill.Line{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "Test Item 2",
+				Price: num.NewAmount(10000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: "VAT",
+					Percent:  num.NewPercentage(0, 2),
+				},
+			},
+		})
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, tax.KeyZero, inv.Lines[2].Taxes[0].Key)
+	})
+
+	t.Run("sale with foreign tax combo country", func(t *testing.T) {
+		inv := exampleStandardInvoice(t)
+		inv.Lines[1] = &bill.Line{
+			Quantity: num.MakeAmount(10, 0),
+			Item: &org.Item{
+				Name:  "Test Item 2",
+				Price: num.NewAmount(10000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Country:  "FR",
+					Category: "VAT",
+					Rate:     "general",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "FR", inv.Lines[1].Taxes[0].Country.String())
+		assert.Equal(t, tax.KeyStandard, inv.Lines[1].Taxes[0].Key)
+		assert.Equal(t, "N2", inv.Lines[1].Taxes[0].Ext.Get(ticket.ExtKeyExempt).String())
 	})
 
 	t.Run("item with Invalid Percentage", func(t *testing.T) {

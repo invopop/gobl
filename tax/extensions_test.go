@@ -1,6 +1,7 @@
 package tax_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/addons/es/tbai"
@@ -9,7 +10,9 @@ import (
 	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
 )
@@ -367,6 +370,20 @@ func TestExtensionsHas(t *testing.T) {
 	assert.False(t, em.Has("invalid"))
 }
 
+func TestExtensionsValues(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		assert.Empty(t, em.Values())
+	})
+	t.Run("with values", func(t *testing.T) {
+		em := tax.Extensions{
+			"key1": "value1",
+			"key2": "value2",
+		}
+		assert.ElementsMatch(t, []cbc.Code{"value1", "value2"}, em.Values())
+	})
+}
+
 func TestExtensionsEquals(t *testing.T) {
 	tests := []struct {
 		name string
@@ -559,4 +576,122 @@ func TestExtensionGet(t *testing.T) {
 		}
 		assert.Equal(t, "value", em.Get("key+foo").String())
 	})
+}
+
+func TestExtensionsSet(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.Set("key", "value")
+		assert.Equal(t, tax.Extensions{"key": "value"}, em)
+	})
+
+	t.Run("with existing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.Set("key", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value2"}, em)
+	})
+
+	t.Run("with new value", func(t *testing.T) {
+		em := tax.Extensions{}
+		em.Set("key", "value1")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+
+	t.Run("with empty value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.Set("key", "")
+		assert.Empty(t, em)
+	})
+}
+
+func TestExtensionsSetIfEmpty(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.SetIfEmpty("key", "value")
+		assert.Equal(t, tax.Extensions{"key": "value"}, em)
+	})
+
+	t.Run("with existing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.SetIfEmpty("key", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+
+	t.Run("with new value", func(t *testing.T) {
+		em := tax.Extensions{}
+		em.SetIfEmpty("key", "value1")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+}
+
+func TestExtensionsSetOneOf(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.SetOneOf("key", "value1", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+
+	t.Run("with existing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em.SetOneOf("key", "value2", "value3")
+		assert.Equal(t, tax.Extensions{"key": "value2"}, em)
+	})
+	t.Run("with existing value and output", func(t *testing.T) {
+		em := tax.Extensions{"key": "value1"}
+		em = em.SetOneOf("key", "value2", "value3")
+		assert.Equal(t, tax.Extensions{"key": "value2"}, em)
+	})
+
+	t.Run("with existing secondary value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value3"}
+		em = em.SetOneOf("key", "value2", "value3")
+		assert.Equal(t, tax.Extensions{"key": "value3"}, em)
+	})
+
+	t.Run("with no existing value", func(t *testing.T) {
+		em := tax.Extensions{}
+		em = em.SetOneOf("key", "value1", "value2")
+		assert.Equal(t, tax.Extensions{"key": "value1"}, em)
+	})
+}
+
+func TestExtensionsDelete(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		var em tax.Extensions
+		em = em.Delete("key")
+		assert.Nil(t, em)
+	})
+
+	t.Run("with value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value"}
+		em = em.Delete("key")
+		assert.Empty(t, em)
+	})
+
+	t.Run("with missing value", func(t *testing.T) {
+		em := tax.Extensions{"key": "value"}
+		em = em.Delete("missing")
+		assert.Equal(t, tax.Extensions{"key": "value"}, em)
+	})
+}
+
+func TestJSONSchemaExtend(t *testing.T) {
+	in := here.Doc(`
+		{
+			"additionalProperties": {
+				"^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$": {
+					"$ref": "https://gobl.org/draft-0/cbc/code"
+				}
+			},
+			"type": "object",
+			"description": "Extensions is a map of extension keys to values."
+		}
+	`)
+	schema := new(jsonschema.Schema)
+	assert.NoError(t, json.Unmarshal([]byte(in), schema))
+	assert.NotNil(t, schema.AdditionalProperties)
+	var es tax.Extensions
+	es.JSONSchemaExtend(schema)
+	assert.Nil(t, schema.AdditionalProperties)
+	assert.NotEmpty(t, schema.PatternProperties)
 }

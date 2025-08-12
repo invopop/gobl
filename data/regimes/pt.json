@@ -1565,11 +1565,63 @@
         "en": "Value Added Tax",
         "pt": "Imposto sobre o Valor Acrescentado"
       },
-      "rates": [
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard Rate",
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
             "pt": "Tipo Geral"
           },
           "values": [
@@ -1594,7 +1646,10 @@
           ]
         },
         {
-          "key": "intermediate",
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Intermediate Rate",
             "pt": "Taxa Intermédia"
@@ -1621,7 +1676,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "pt": "Taxa Reduzida"
@@ -1655,15 +1713,10 @@
           ]
         },
         {
-          "key": "exempt",
-          "name": {
-            "en": "Exempt",
-            "pt": "Isento"
-          },
-          "exempt": true
-        },
-        {
-          "key": "other",
+          "rate": "other",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Other",
             "pt": "Outro"

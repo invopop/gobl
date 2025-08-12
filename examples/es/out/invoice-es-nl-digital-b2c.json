@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1c315a855ea6df7b7df5f6645d5c63552ca9cd58f14d6c11db7c3ff03ad12b9f"
+			"val": "aeb11d20fa84296edfb7c785dff0c8e36134174a9fe16d4676801ecd6153bb3e"
 		}
 	},
 	"doc": {
@@ -58,9 +58,10 @@
 				"sum": "1000.00",
 				"taxes": [
 					{
-						"cat": "VAT",
 						"country": "NL",
-						"rate": "standard",
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
 						"percent": "21.0%"
 					}
 				],

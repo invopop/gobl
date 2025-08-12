@@ -40,8 +40,9 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "21.0%",
-                        "rate": "standard"
+                        "rate": "general"
                     },
                     {
                         "cat": "IRPF",
@@ -62,8 +63,9 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "21.0%",
-                        "rate": "standard"
+                        "rate": "general"
                     }
                 ],
                 "total": "1000.00"
@@ -79,6 +81,7 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "10.0%",
                         "rate": "reduced"
                     }
@@ -167,7 +170,7 @@
                             {
                                 "amount": "17.25",
                                 "base": "172.50",
-                                "key": "reduced",
+                                "key": "standard",
                                 "percent": "10.0%"
                             }
                         ]
@@ -179,7 +182,6 @@
                             {
                                 "amount": "600.00",
                                 "base": "4000.00",
-                                "key": "pro",
                                 "percent": "15.0%"
                             }
                         ],
@@ -198,7 +200,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "1593c504f24ec88c710766129b542be7a3ab75f4477f0e76abc1a674790a6655"
+            "val": "0742b917767edb76115dbff5d62810cd2b93e9a250d1d9177f9fc0587bfc3d02"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

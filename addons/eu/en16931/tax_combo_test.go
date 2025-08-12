@@ -18,7 +18,7 @@ func TestTaxComboNormalization(t *testing.T) {
 		p := num.MakePercentage(19, 2)
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard,
+			Key:      tax.KeyStandard,
 			Percent:  &p,
 		}
 		ad.Normalizer(c)
@@ -29,7 +29,7 @@ func TestTaxComboNormalization(t *testing.T) {
 	t.Run("unkown rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     cbc.Key("unknown"),
+			Key:      cbc.Key("unknown"),
 			Percent:  num.NewPercentage(19, 2),
 		}
 		ad.Normalizer(c)
@@ -54,12 +54,21 @@ func TestTaxComboNormalization(t *testing.T) {
 		assert.Equal(t, "M", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Equal(t, "7%", c.Percent.String())
 	})
+	t.Run("exempt", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, "E", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
 	t.Run("missing rate, without percent", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 		}
 		ad.Normalizer(c)
-		assert.Equal(t, "E", c.Ext[untdid.ExtKeyTaxCategory].String())
+		// this will raise validation error later
+		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 
 	t.Run("missing rate, with percent", func(t *testing.T) {
@@ -74,10 +83,21 @@ func TestTaxComboNormalization(t *testing.T) {
 	t.Run("missing rate, with zero percent", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
+			Key:      tax.KeyZero,
 			Percent:  num.NewPercentage(0, 3),
 		}
 		ad.Normalizer(c)
 		assert.Equal(t, "Z", c.Ext[untdid.ExtKeyTaxCategory].String())
+	})
+
+	t.Run("sales tax", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryGST,
+			Percent:  num.NewPercentage(19, 2),
+		}
+		ad.Normalizer(c)
+		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Equal(t, "19%", c.Percent.String())
 	})
 }
 
@@ -86,7 +106,7 @@ func TestTaxComboValidation(t *testing.T) {
 	t.Run("standard VAT rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard,
+			Key:      tax.KeyStandard,
 			Percent:  num.NewPercentage(19, 2),
 		}
 		ad.Normalizer(c)
@@ -98,7 +118,7 @@ func TestTaxComboValidation(t *testing.T) {
 	t.Run("exempt reverse charge", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagReverseCharge),
+			Key:      tax.KeyReverseCharge,
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
@@ -106,10 +126,10 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.Nil(t, c.Percent)
 	})
 
-	t.Run("exempt export EEA", func(t *testing.T) {
+	t.Run("intra-community", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagExport).With(tax.TagEEA),
+			Key:      tax.KeyIntraCommunity,
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
@@ -117,18 +137,28 @@ func TestTaxComboValidation(t *testing.T) {
 		assert.Nil(t, c.Percent)
 	})
 
-	t.Run("exempt export", func(t *testing.T) {
+	t.Run("export", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateExempt.With(tax.TagExport),
+			Key:      tax.KeyExport,
 		}
 		ad.Normalizer(c)
 		assert.NoError(t, ad.Validator(c))
 		assert.Equal(t, "G", c.Ext[untdid.ExtKeyTaxCategory].String())
 		assert.Nil(t, c.Percent)
 	})
+	t.Run("outside-scope", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyOutsideScope,
+		}
+		ad.Normalizer(c)
+		assert.NoError(t, ad.Validator(c))
+		assert.Equal(t, "O", c.Ext[untdid.ExtKeyTaxCategory].String())
+		assert.Nil(t, c.Percent)
+	})
 
-	t.Run("IPSI mismatch", func(t *testing.T) {
+	t.Run("VAT and IPSI mismatch", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(7, 2),
@@ -138,7 +168,8 @@ func TestTaxComboValidation(t *testing.T) {
 		}
 		ad.Normalizer(c)
 		err := ad.Validator(c)
-		assert.ErrorContains(t, err, "ext: (untdid-tax-category: invalid value.)")
+		assert.NoError(t, err)
+		assert.Equal(t, "S", c.Ext[untdid.ExtKeyTaxCategory].String())
 	})
 
 	t.Run("nil", func(t *testing.T) {

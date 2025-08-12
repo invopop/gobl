@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "506a18400ed6bda4911f98eb7f8dd94d9328c3d3420257e7fee9beed40c042a1"
+			"val": "0cc374a7e915069167bd207c101a01a855fdbb94559ac843c560bd926a7c3020"
 		}
 	},
 	"doc": {
@@ -56,6 +56,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "standard",
 						"rate": "reduced",
 						"percent": "4.0%",
 						"ext": {
@@ -81,6 +82,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "standard",
 						"rate": "reduced",
 						"percent": "4.0%",
 						"ext": {
@@ -101,7 +103,7 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "reduced",
+								"key": "standard",
 								"ext": {
 									"pt-region": "PT-MA",
 									"pt-saft-tax-rate": "RED"

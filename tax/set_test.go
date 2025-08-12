@@ -24,7 +24,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Key:      "standard",
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
@@ -40,7 +40,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Key:      "standard",
 					Percent:  num.NewPercentage(20, 3),
 				},
 				{
@@ -56,22 +56,45 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Country:  "NL",
-					Rate:     "standard",
+					Key:      "standard",
+					Percent:  num.NewPercentage(20, 3),
 				},
 			},
 			err: nil,
+		},
+		{
+			desc: "other country no percent",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Country:  "NL",
+					Key:      "standard",
+				},
+			},
+			err: "0: (percent: required for 'standard' in 'VAT'.).",
+		},
+		{
+			desc: "exempt rate with percent",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Key:      tax.KeyExempt,
+					Percent:  num.NewPercentage(5, 3),
+				},
+			},
+			err: "0: (percent: must be nil for 'exempt' in 'VAT'.)",
 		},
 		{
 			desc: "duplicate",
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Key:      "standard",
 					Percent:  num.NewPercentage(20, 3),
 				},
 				{
 					Category: "VAT",
-					Rate:     "reduced",
+					Key:      "reduced",
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
@@ -91,7 +114,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     tax.RateExempt,
+					Key:      tax.KeyExempt,
 				},
 			},
 			err: nil, // this is okay
@@ -112,18 +135,19 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Percent:  num.NewPercentage(20, 3),
-					Rate:     cbc.Key("invalid-tag"),
+					Key:      cbc.Key("invalid-tag"),
 				},
 			},
-			err: "rate: 'invalid-tag' not defined in 'VAT' category",
+			err: "0: (key: must be a valid value.).",
 		},
 		{
 			desc: "rate with extension",
 			set: tax.Set{
 				{
 					Category: "VAT",
+					Key:      "standard",
 					Percent:  num.NewPercentage(20, 3),
-					Rate:     tax.RateExempt.With(tax.TagReverseCharge),
+					Rate:     tax.RateGeneral.With("eqs"),
 				},
 			},
 			err: nil,
@@ -143,7 +167,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     tax.RateExempt,
+					Key:      tax.KeyExempt,
 					Ext: tax.Extensions{
 						tbai.ExtKeyExemption: "E1",
 					},
@@ -168,7 +192,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     tax.RateExempt,
+					Key:      tax.KeyExempt,
 					Ext: tax.Extensions{
 						"foo": "E1",
 					},
@@ -181,7 +205,7 @@ func TestSetValidation(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     tax.RateExempt,
+					Key:      tax.KeyExempt,
 					Ext: tax.Extensions{
 						tbai.ExtKeyProduct: "services",
 					},
@@ -221,21 +245,21 @@ func TestSetEquals(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Key:      "standard",
 				},
 				{
 					Category: "IRPF",
-					Rate:     "pro",
+					Key:      "pro",
 				},
 			},
 			set2: tax.Set{
 				{
 					Category: "IRPF",
-					Rate:     "pro",
+					Key:      "pro",
 				},
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Key:      "standard",
 				},
 			},
 			res: true,
@@ -245,13 +269,13 @@ func TestSetEquals(t *testing.T) {
 			set: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Key:      "standard",
 				},
 			},
 			set2: tax.Set{
 				{
 					Category: "IRPF",
-					Rate:     "pro",
+					Key:      "pro",
 				},
 			},
 			res: false,
@@ -270,27 +294,27 @@ func TestSetRate(t *testing.T) {
 	s := tax.Set{
 		{
 			Category: "VAT",
-			Rate:     "standard",
+			Key:      "standard",
 		},
 		{
 			Category: "IRPF",
-			Rate:     "pro",
+			Key:      "pro",
 		},
 	}
-	assert.Equal(t, s.Rate("VAT"), cbc.Key("standard"))
-	assert.Equal(t, s.Rate("IRPF"), cbc.Key("pro"))
-	assert.Empty(t, s.Rate("FOO"))
+	assert.Equal(t, s.Key("VAT"), cbc.Key("standard"))
+	assert.Equal(t, s.Key("IRPF"), cbc.Key("pro"))
+	assert.Empty(t, s.Key("FOO"))
 }
 
 func TestSetGet(t *testing.T) {
 	s := tax.Set{
 		{
 			Category: "VAT",
-			Rate:     "standard",
+			Key:      "standard",
 		},
 		{
 			Category: "IRPF",
-			Rate:     "pro",
+			Key:      "pro",
 		},
 	}
 	assert.NotNil(t, s.Get(cbc.Code("VAT")))
@@ -304,11 +328,11 @@ func TestCleanSet(t *testing.T) {
 	s = tax.Set{
 		{
 			Category: "VAT",
-			Rate:     "standard",
+			Key:      "standard",
 		},
 		{
 			Category: "IRPF",
-			Rate:     "pro",
+			Key:      "pro",
 		},
 	}
 	s = tax.CleanSet(s)
@@ -318,7 +342,7 @@ func TestCleanSet(t *testing.T) {
 	s = tax.Set{
 		{
 			Category: "VAT",
-			Rate:     "standard",
+			Key:      "standard",
 		},
 		nil,
 	}
@@ -338,11 +362,11 @@ func TestSetHasCategory(t *testing.T) {
 	s := tax.Set{
 		{
 			Category: "VAT",
-			Rate:     "standard",
+			Key:      "standard",
 		},
 		{
 			Category: "IRPF",
-			Rate:     "pro",
+			Key:      "pro",
 		},
 	}
 	t.Run("has VAT", func(t *testing.T) {

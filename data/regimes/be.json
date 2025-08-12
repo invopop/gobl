@@ -41,14 +41,66 @@
       "title": {
         "en": "Value Added Tax"
       },
-      "rates": [
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "de": "Standardsatz",
-            "en": "Standard Rate",
-            "fr": "Taux standard",
-            "nl": "Standaardtarief"
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Allgemeiner Satz",
+            "en": "General Rate",
+            "fr": "Taux normal",
+            "nl": "Algemeen tarief"
           },
           "values": [
             {
@@ -58,7 +110,10 @@
           ]
         },
         {
-          "key": "intermediate",
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "de": "Mittlerer Satz",
             "en": "Intermediate Rate",
@@ -73,7 +128,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "de": "Ermäßigter Satz",
             "en": "Reduced Rate",
@@ -84,17 +142,6 @@
             {
               "since": "2011-01-04",
               "percent": "6.0%"
-            }
-          ]
-        },
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
             }
           ]
         }

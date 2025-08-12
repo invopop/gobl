@@ -33,8 +33,9 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "21.0%",
-                        "rate": "standard"
+                        "rate": "general"
                     },
                     {
                         "cat": "IRPF",
@@ -133,12 +134,12 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "16f7b730d902b1d3d3638bf0aa9ca806274182fa7f6233c15b81bae112ead567"
+            "val": "5bac1f8a6b2a33dfb441b7ab9affd63fc60789a135b149fa57f24110e191b969"
         },
         "uuid": "4905f174-0384-11ed-9fa6-b24117999d50"
     },
     "sigs": [
         "eyJhbGciOiJFUzI1NiIsImtpZCI6IjBhMjg2MDAwLTM2MGEtNGU2Ni04MWFhLTU2ZDQ0YmI4ZjEwNyJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImY0NmQ0ZmFmMDUyYzhlMzhhOTBmNDY1OWZkYTU1ZTBmMzlhZDE5MTBkNjAxNGU2ODc1NmE2YTVhZmQ0YWIzY2YifX0.Pv6PCi-IYWPlzPwVC826Z6hy0Gc7OXi6-LNrOsbJPc1YDoUhpyr-mswpnI0Mkp8qdtk7v_lVKCHw3EOqHE-JPg",
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjE2ZjdiNzMwZDkwMmIxZDNkMzYzOGJmMGFhOWNhODA2Mjc0MTgyZmE3ZjYyMzNjMTViODFiYWUxMTJlYWQ1NjcifX0.XkPznGIrs5JLLH530qmhDm3lSNVUDQ_avh5d3N-pKNfQKWA5vIb45L28C1derxGgXyZyy9sHmzPODCUtJys_BA"
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImI3Y2VlNjBmLTIwNGUtNDM4Yi1hODhmLTAyMWQyOGFmNjk5MSJ9.eyJ1dWlkIjoiNDkwNWYxNzQtMDM4NC0xMWVkLTlmYTYtYjI0MTE3OTk5ZDUwIiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjViYWMxZjhhNmIyYTMzZGZiNDQxYjdhYjlhZmZkNjNmYzYwNzg5YTEzNWIxNDlmYTU3ZjI0MTEwZTE5MWI5NjkifX0.7X3w_n31WOC0t2ZE8qaByfkieeJ2JiFFNuDYarUBD2IlK4onq9wjvSJPdHzHqBjZkxVHyTrx_HsPAPwkP-6_vg"
     ]
 }

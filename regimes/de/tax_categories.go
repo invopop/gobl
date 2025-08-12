@@ -32,24 +32,14 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateZero,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-					i18n.DE: "Nullsatz",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
-					},
-				},
-			},
-			{
-				Key: tax.RateStandard,
-				Name: i18n.String{
-					i18n.EN: "Standard rate",
-					i18n.DE: "Standardsteuersatz",
+					i18n.EN: "General rate",
+					i18n.DE: "Allgemeiner Steuersatz",
 				},
 				Description: i18n.String{
 					i18n.EN: "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided.",
@@ -76,7 +66,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced rate",
 					i18n.DE: "Verminderter Steuersatz",
@@ -102,18 +93,6 @@ var taxCategories = []*tax.CategoryDef{
 						Since:   cal.NewDate(1993, 1, 1),
 						Percent: num.MakePercentage(5, 2),
 					},
-				},
-			},
-			{
-				Key: tax.RateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.DE: "Befreit",
-				},
-				Exempt: true,
-				Description: i18n.String{
-					i18n.EN: "Certain goods and services are exempt from VAT.",
-					i18n.DE: "Bestimmte Waren und Dienstleistungen sind von der Umsatzsteuer befreit.",
 				},
 			},
 		},

@@ -2,6 +2,7 @@ package pt
 
 import (
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
@@ -20,11 +21,13 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.PT: "Imposto sobre o Valor Acrescentado",
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 					i18n.PT: "Tipo Geral",
 				},
 				Values: []*tax.RateValueDef{
@@ -49,7 +52,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateIntermediate,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate Rate",
 					i18n.PT: "Taxa Intermédia", //nolint:misspell
@@ -76,7 +80,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 					i18n.PT: "Taxa Reduzida",
@@ -110,15 +115,9 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.PT: "Isento",
-				},
-				Exempt: true,
-			},
-			{
-				Key: tax.RateOther,
+				// Other is a special case for rates that are not defined.
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateOther,
 				Name: i18n.String{
 					i18n.EN: "Other",
 					i18n.PT: "Outro",

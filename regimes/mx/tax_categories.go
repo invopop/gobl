@@ -35,11 +35,13 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.ES: "Impuesto al Valor Agregado",
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 					i18n.ES: "Tasa General",
 				},
 				Values: []*tax.RateValueDef{
@@ -49,7 +51,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced (Border) Rate",
 					i18n.ES: "Tasa Reducida (Fronteriza)",
@@ -59,26 +62,6 @@ var taxCategories = []*tax.CategoryDef{
 						Percent: num.MakePercentage(80, 3),
 					},
 				},
-			},
-			{
-				Key: tax.RateZero,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-					i18n.ES: "Tasa Cero",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
-					},
-				},
-			},
-			{
-				Key: TaxRateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.ES: "Exenta",
-				},
-				Exempt: true,
 			},
 		},
 	},

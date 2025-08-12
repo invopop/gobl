@@ -77,7 +77,8 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"rate": "standard",
+					"key": "standard",
+					"rate": "general",
 					"percent": "21.0%"
 				},
 				{
@@ -99,7 +100,8 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"rate": "standard",
+					"key": "standard",
+					"rate": "general",
 					"percent": "21.0%"
 				}
 			],
@@ -116,8 +118,8 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"rate": "zero",
-					"percent": "0.0%"
+					"key": "zero",
+					"percent": "0%"
 				}
 			],
 			"total": "172.50"
@@ -164,7 +166,7 @@
 						{
 							"key": "zero",
 							"base": "172.50",
-							"percent": "0.0%",
+							"percent": "0%",
 							"amount": "0.00"
 						}
 					],
@@ -175,7 +177,6 @@
 					"retained": true,
 					"rates": [
 						{
-							"key": "pro",
 							"base": "4000.00",
 							"percent": "15.0%",
 							"amount": "600.00"

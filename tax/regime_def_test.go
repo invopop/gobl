@@ -4,13 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
-	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 	"github.com/stretchr/testify/assert"
@@ -51,6 +49,19 @@ func TestRegimeGetCurrency(t *testing.T) {
 	})
 }
 
+func TestRegimeDefScenarioSet(t *testing.T) {
+	t.Run("with scenario", func(t *testing.T) {
+		r := es.New()
+		ss := r.ScenarioSet("bill/invoice")
+		assert.NotNil(t, ss)
+	})
+	t.Run("without scenario", func(t *testing.T) {
+		r := es.New()
+		ss := r.ScenarioSet("unknown")
+		assert.Nil(t, ss)
+	})
+}
+
 func TestRegimeDefGetCountry(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		var r *tax.RegimeDef
@@ -81,9 +92,22 @@ func TestRegimeGetRoundingRule(t *testing.T) {
 
 func TestRegimeInCategoryRates(t *testing.T) {
 	var r *tax.RegimeDef // nil regime
-	rate := cbc.Key("standard")
-	err := validation.Validate(rate, r.InCategoryRates(tax.CategoryVAT))
+	rate := cbc.Key("general")
+	err := validation.Validate(rate, r.InCategoryRates(tax.CategoryVAT, tax.KeyStandard))
 	assert.ErrorContains(t, err, "must be blank when regime is undefine")
+}
+
+func TestRegimeInCategoryRule(t *testing.T) {
+	t.Run("no rates", func(t *testing.T) {
+		r := es.New()
+		err := validation.Validate(tax.RateGeneral, r.InCategoryRates(es.TaxCategoryIPSI, cbc.KeyEmpty))
+		assert.ErrorContains(t, err, "must be blank for category 'IPSI' with no key")
+	})
+	t.Run("invalid rate", func(t *testing.T) {
+		r := es.New()
+		err := validation.Validate(cbc.Key("foo"), r.InCategoryRates(tax.CategoryVAT, tax.KeyStandard))
+		assert.ErrorContains(t, err, "'foo' not defined in 'VAT' category for key 'standard'")
+	})
 }
 
 func TestRegimeDefValidateObject(t *testing.T) {
@@ -109,34 +133,16 @@ func TestRegimeDefNormalizeObject(t *testing.T) {
 }
 
 func TestRegimeDefCategoryDef(t *testing.T) {
-	t.Run("nil regime", func(t *testing.T) {
+	t.Run("nil regime for known category", func(t *testing.T) {
 		var r *tax.RegimeDef
-		assert.Nil(t, r.CategoryDef(tax.CategoryVAT))
+		cd := r.CategoryDef(tax.CategoryVAT)
+		assert.NotNil(t, cd)
+		assert.Equal(t, tax.CategoryVAT, cd.Code)
 	})
-}
-
-func TestRateDefValue(t *testing.T) {
-	t.Run("with tags", func(t *testing.T) {
-		rd := &tax.RateDef{
-			Key:    tax.RateStandard,
-			Name:   i18n.NewString("Standard"),
-			Exempt: false,
-			Values: []*tax.RateValueDef{
-				{
-					Tags:    []cbc.Key{"special"},
-					Percent: num.MakePercentage(100, 3),
-					Since:   cal.NewDate(2025, 1, 1),
-				},
-				{
-					Percent: num.MakePercentage(200, 3),
-					Since:   cal.NewDate(2025, 1, 1),
-				},
-			},
-		}
-		rdv := rd.Value(cal.MakeDate(2025, 1, 10), nil, nil)
-		assert.Equal(t, "20.0%", rdv.Percent.String())
-		rdv = rd.Value(cal.MakeDate(2025, 1, 10), []cbc.Key{"special"}, nil)
-		assert.Equal(t, "10.0%", rdv.Percent.String())
+	t.Run("nil regime for unknown category", func(t *testing.T) {
+		var r *tax.RegimeDef
+		cd := r.CategoryDef(cbc.Code("UNKNOWN"))
+		assert.Nil(t, cd)
 	})
 }
 

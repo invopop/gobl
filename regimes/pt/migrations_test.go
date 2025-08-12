@@ -23,7 +23,7 @@ func TestTaxRateMigration(t *testing.T) {
 	require.NoError(t, err)
 
 	t0 := inv.Lines[0].Taxes[0]
-	assert.Equal(t, tax.RateExempt, t0.Rate)
+	assert.Equal(t, tax.KeyExempt, t0.Key)
 	assert.Equal(t, cbc.Code("M01"), t0.Ext[saft.ExtKeyExemption])
 
 	// Valid new rate
@@ -35,7 +35,7 @@ func TestTaxRateMigration(t *testing.T) {
 	require.NoError(t, err)
 
 	t0 = inv.Lines[0].Taxes[0]
-	assert.Equal(t, tax.RateExempt, t0.Rate)
+	assert.Equal(t, tax.KeyExempt, t0.Key)
 	assert.Equal(t, cbc.Code("M02"), t0.Ext[saft.ExtKeyExemption])
 }
 
@@ -83,18 +83,6 @@ func TestTaxZoneMigration(t *testing.T) {
 				},
 			},
 			region: "PT",
-		},
-		{
-			name: "No tax ID set",
-			supplier: &org.Party{
-				TaxID: nil,
-			},
-			region: "",
-		},
-		{
-			name:     "No supplier set",
-			supplier: nil,
-			region:   "",
 		},
 	}
 

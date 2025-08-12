@@ -54,28 +54,64 @@
         "ar": "ضريبة القيمة المضافة",
         "en": "Value Added Tax"
       },
-      "rates": [
-        {
-          "key": "zero",
-          "name": {
-            "ar": "معدل صفر",
-            "en": "Zero Rate"
-          },
-          "desc": {
-            "ar": "نسبة ضريبة قيمة مضافة 0٪ تطبق على الصادرات المحددة والمناطق المعينة والخدمات الأساسية.",
-            "en": "A VAT rate of 0% applicable to specific exports, designated areas, and essential services."
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
+      "keys": [
         {
           "key": "standard",
           "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
             "ar": "معدل قياسي",
-            "en": "Standard Rate"
+            "en": "General Rate"
           },
           "desc": {
             "ar": "ينطبق على معظم السلع والخدمات ما لم ينص على خلاف ذلك.",
@@ -87,18 +123,6 @@
               "percent": "5%"
             }
           ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "ar": "معفى",
-            "en": "Exempt"
-          },
-          "desc": {
-            "ar": "بعض السلع والخدمات، مثل الخدمات المالية والعقارات السكنية، معفاة من ضريبة القيمة المضافة.",
-            "en": "Certain goods and services, such as financial services and residential real estate, are exempt from VAT."
-          },
-          "exempt": true
         }
       ],
       "sources": [

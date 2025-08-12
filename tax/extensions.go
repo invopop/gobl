@@ -106,6 +106,56 @@ func (em Extensions) Validate() error {
 	return nil
 }
 
+// Set will update the extension map with the provided key and value, and
+// return the updated map. If the map is nil, it will be created. If the
+// provided code is empty, the key will be removed from the map.
+func (em Extensions) Set(key cbc.Key, code cbc.Code) Extensions {
+	if em == nil {
+		em = make(Extensions)
+	}
+	if code == cbc.CodeEmpty {
+		delete(em, key)
+		return em
+	}
+	em[key] = code
+	return em
+}
+
+// SetOneOf sets the value to the first code provided, unless it is already
+// set as one of the other codes in the list, and return the updated map.
+// If the map is nil, it will be created.
+func (em Extensions) SetOneOf(key cbc.Key, code cbc.Code, codes ...cbc.Code) Extensions {
+	if em == nil {
+		em = make(Extensions)
+	}
+	cur, ok := em[key]
+	if !ok || !cur.In(codes...) {
+		em[key] = code
+	}
+	return em
+}
+
+// SetIfEmpty sets the value for the key only if it is not already set.
+func (em Extensions) SetIfEmpty(key cbc.Key, code cbc.Code) Extensions {
+	if em == nil {
+		em = make(Extensions)
+	}
+	if _, ok := em[key]; !ok {
+		em[key] = code
+	}
+	return em
+}
+
+// Delete safely removes the key from the extensions map. Returns the
+// extension for chaining.
+func (em Extensions) Delete(k cbc.Key) Extensions {
+	if em == nil {
+		return nil
+	}
+	delete(em, k)
+	return em
+}
+
 // Get returns the value for the provided key or an empty string if not found
 // or the extensions map is nil. If the key is composed of sub-keys and
 // no precise match is found, the key will be split until one of the sub
@@ -192,6 +242,19 @@ func (em Extensions) Lookup(val cbc.Code) cbc.Key {
 		}
 	}
 	return cbc.KeyEmpty
+}
+
+// Values provides an array of all the accepted codes for the extensions
+// defined.
+func (em Extensions) Values() []cbc.Code {
+	if len(em) == 0 {
+		return nil
+	}
+	values := make([]cbc.Code, 0, len(em))
+	for _, v := range em {
+		values = append(values, v)
+	}
+	return values
 }
 
 // CleanExtensions will try to clean the extension map removing empty values
