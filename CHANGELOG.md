@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `br`: added retained taxes CSLL, INSS and IRRF
+
 ## [v0.220.6] - 2025-08-12
 
 ### Changed
