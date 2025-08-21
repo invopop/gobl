@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `br`: added retained taxes CSLL, INSS and IRRF
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
 
 ## [v0.220.6] - 2025-08-12
 
