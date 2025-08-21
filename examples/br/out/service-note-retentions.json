@@ -1,0 +1,213 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "fc0ee9fb7df69e5224594364e90e257ea2ce2845784dc336ec385722023fd965"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "BR",
+		"uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
+		"type": "standard",
+		"series": "FL",
+		"code": "1",
+		"issue_date": "2024-11-15",
+		"currency": "BRL",
+		"supplier": {
+			"name": "Tech Solutions Consultoria Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "72072141621"
+			},
+			"identities": [
+				{
+					"key": "br-nfse-municipal-reg",
+					"code": "12345678901234"
+				},
+				{
+					"key": "br-nfse-national-reg",
+					"code": "98765432109876"
+				}
+			],
+			"addresses": [
+				{
+					"num": "150",
+					"street": "Rua das Flores",
+					"street_extra": "Sala 301",
+					"locality": "Vila Madalena",
+					"region": "São Paulo",
+					"state": "SP",
+					"code": "05433-000",
+					"country": "BR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "joao.santos@gmail.com"
+				}
+			],
+			"ext": {
+				"br-nfse-fiscal-incentive": "1",
+				"br-nfse-municipality": "3550308",
+				"br-nfse-simples": "1",
+				"br-nfse-special-regime": "4"
+			}
+		},
+		"customer": {
+			"name": "Inovação Digital Ltda.",
+			"tax_id": {
+				"country": "BR",
+				"code": "80723400000164"
+			},
+			"addresses": [
+				{
+					"num": "200",
+					"street": "Avenida Paulista",
+					"street_extra": "Andar 15",
+					"locality": "Bela Vista",
+					"region": "São Paulo",
+					"state": "SP",
+					"code": "01310-100",
+					"country": "BR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "40",
+				"item": {
+					"name": "Software Development Services",
+					"price": "150.00",
+					"ext": {
+						"br-nfse-cnae": "62.01-5-01",
+						"br-nfse-service": "02658"
+					}
+				},
+				"sum": "6000.00",
+				"taxes": [
+					{
+						"cat": "ISS",
+						"percent": "5%",
+						"ext": {
+							"br-nfse-iss-liability": "1"
+						}
+					},
+					{
+						"cat": "PIS",
+						"percent": "0.65%"
+					},
+					{
+						"cat": "COFINS",
+						"percent": "3%"
+					},
+					{
+						"cat": "CSLL",
+						"percent": "1%"
+					},
+					{
+						"cat": "INSS",
+						"percent": "11%"
+					},
+					{
+						"cat": "IRRF",
+						"percent": "1.5%"
+					}
+				],
+				"total": "6000.00"
+			}
+		],
+		"totals": {
+			"sum": "6000.00",
+			"total": "6000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "ISS",
+						"informative": true,
+						"rates": [
+							{
+								"ext": {
+									"br-nfse-iss-liability": "1"
+								},
+								"base": "6000.00",
+								"percent": "5%",
+								"amount": "300.00"
+							}
+						],
+						"amount": "300.00"
+					},
+					{
+						"code": "PIS",
+						"retained": true,
+						"rates": [
+							{
+								"base": "6000.00",
+								"percent": "0.65%",
+								"amount": "39.00"
+							}
+						],
+						"amount": "39.00"
+					},
+					{
+						"code": "COFINS",
+						"retained": true,
+						"rates": [
+							{
+								"base": "6000.00",
+								"percent": "3%",
+								"amount": "180.00"
+							}
+						],
+						"amount": "180.00"
+					},
+					{
+						"code": "CSLL",
+						"retained": true,
+						"rates": [
+							{
+								"base": "6000.00",
+								"percent": "1%",
+								"amount": "60.00"
+							}
+						],
+						"amount": "60.00"
+					},
+					{
+						"code": "INSS",
+						"retained": true,
+						"rates": [
+							{
+								"base": "6000.00",
+								"percent": "11%",
+								"amount": "660.00"
+							}
+						],
+						"amount": "660.00"
+					},
+					{
+						"code": "IRRF",
+						"retained": true,
+						"rates": [
+							{
+								"base": "6000.00",
+								"percent": "1.5%",
+								"amount": "90.00"
+							}
+						],
+						"amount": "90.00"
+					}
+				],
+				"sum": "0.00",
+				"retained": "1029.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "6000.00",
+			"retained_tax": "1029.00",
+			"payable": "4971.00"
+		}
+	}
+}

@@ -13,6 +13,9 @@ const (
 	TaxCategoryIPI    cbc.Code = "IPI"
 	TaxCategoryPIS    cbc.Code = "PIS"
 	TaxCategoryCOFINS cbc.Code = "COFINS"
+	TaxCategoryCSLL   cbc.Code = "CSLL"
+	TaxCategoryINSS   cbc.Code = "INSS"
+	TaxCategoryIRRF   cbc.Code = "IRRF"
 )
 
 var taxCategories = []*tax.CategoryDef{
@@ -86,6 +89,51 @@ var taxCategories = []*tax.CategoryDef{
 		Title: i18n.String{
 			i18n.EN: "Contribution for the Financing of Social Security",
 			i18n.PT: "Contribuição para o Financiamento da Seguridade Social",
+		},
+		Retained: true,
+	},
+	//
+	// Social Contribution on Net Profit (CSLL)
+	//
+	{
+		Code: TaxCategoryCSLL,
+		Name: i18n.String{
+			i18n.EN: "CSLL",
+			i18n.PT: "CSLL",
+		},
+		Title: i18n.String{
+			i18n.EN: "Social Contribution on Net Profit",
+			i18n.PT: "Contribuição Social sobre o Lucro Líquido",
+		},
+		Retained: true,
+	},
+	//
+	// National Social Security Institute (INSS)
+	//
+	{
+		Code: TaxCategoryINSS,
+		Name: i18n.String{
+			i18n.EN: "INSS",
+			i18n.PT: "INSS",
+		},
+		Title: i18n.String{
+			i18n.EN: "National Social Security Institute Withholding",
+			i18n.PT: "Retenção do Instituto Nacional do Seguro Social",
+		},
+		Retained: true,
+	},
+	//
+	// Income Tax Withheld at Source (IRRF)
+	//
+	{
+		Code: TaxCategoryIRRF,
+		Name: i18n.String{
+			i18n.EN: "IRRF",
+			i18n.PT: "IRRF",
+		},
+		Title: i18n.String{
+			i18n.EN: "Income Tax Withheld at Source",
+			i18n.PT: "Imposto de Renda Retido na Fonte",
 		},
 		Retained: true,
 	},

@@ -76,6 +76,42 @@
         "pt": "Contribuição para o Financiamento da Seguridade Social"
       },
       "retained": true
+    },
+    {
+      "code": "CSLL",
+      "name": {
+        "en": "CSLL",
+        "pt": "CSLL"
+      },
+      "title": {
+        "en": "Social Contribution on Net Profit",
+        "pt": "Contribuição Social sobre o Lucro Líquido"
+      },
+      "retained": true
+    },
+    {
+      "code": "INSS",
+      "name": {
+        "en": "INSS",
+        "pt": "INSS"
+      },
+      "title": {
+        "en": "National Social Security Institute Withholding",
+        "pt": "Retenção do Instituto Nacional do Seguro Social"
+      },
+      "retained": true
+    },
+    {
+      "code": "IRRF",
+      "name": {
+        "en": "IRRF",
+        "pt": "IRRF"
+      },
+      "title": {
+        "en": "Income Tax Withheld at Source",
+        "pt": "Imposto de Renda Retido na Fonte"
+      },
+      "retained": true
     }
   ]
 }
