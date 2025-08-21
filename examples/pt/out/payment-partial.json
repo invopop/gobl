@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "faf5ba70f30bf9063ec2daf456eaae08da6364372577754c10840c39762ebb6d"
+			"val": "ef27a5f3384f9b04cb005f3608e1d1e9cb6f38ed6918384d5b0c622e51add1b7"
 		}
 	},
 	"doc": {
@@ -28,7 +28,7 @@
 		"currency": "EUR",
 		"ext": {
 			"pt-saft-payment-type": "RG",
-			"pt-saft-source-billing": "P"
+			"pt-saft-source": "P"
 		},
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",

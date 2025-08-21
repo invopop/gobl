@@ -115,7 +115,7 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing source billing", func(t *testing.T) {
 		inv := validInvoice()
 		delete(inv.Tax.Ext, saft.ExtKeySource)
-		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-source-billing: required.).).")
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-source: required.).).")
 	})
 
 	t.Run("source billing produced - no source doc ref required", func(t *testing.T) {

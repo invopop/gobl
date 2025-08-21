@@ -176,7 +176,7 @@ func TestPaymentValidation(t *testing.T) {
 	t.Run("missing source billing", func(t *testing.T) {
 		pmt := validPayment()
 		delete(pmt.Ext, saft.ExtKeySource)
-		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-billing: required")
+		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source: required")
 	})
 
 	t.Run("source billing produced - no source doc ref required", func(t *testing.T) {
