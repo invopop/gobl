@@ -679,32 +679,44 @@
       ]
     },
     {
-      "key": "pt-saft-source-billing",
+      "key": "pt-saft-source",
       "name": {
         "en": "Document Source",
         "pt": "Origem do documento"
       },
       "desc": {
-        "en": "SAF-T's `SourceBilling` (Origem do documento) field specifies the source of the document in the\naccounting system. GOBL provides the `pt-saft-source-billing` extension to set this value in\nyour documents. By default, GOBL will set this to \"P\" (produced in the application).\n\nThe table below shows the supported source billing codes:\n\n| Code | Name                                    | Description                                    |\n| ---- | --------------------------------------- | ---------------------------------------------- |\n| `P`  | Document produced in the application     | Document generated within the current system   |\n| `I`  | Integrated document from another app     | Document integrated from another application   |\n| `M`  | Document from recovery or issued manually | Document recovered from backup or issued manually |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-source-billing\": \"P\"\n\t},\n\t// ...\n}\n```"
+        "en": "SAF-T's `SourceBilling` (Origem do documento) field specifies the source of the document.\nGOBL provides the `pt-saft-source-billing` extension to set this value in your documents.\nBy default, GOBL will set this extension to \"P\" (Produced).\n\nThe table below shows the supported source billing codes:\n\n| Code | Name       | Description                                         |\n| ---- | ---------- | --------------------------------------------------- |\n| `P`  | Produced   | Document produced by the application                |\n| `I`  | Integrated | Integrated document produced by another application |\n| `M`  | Manual     | Document from recovery or issued manually           |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-source-billing\": \"P\"\n\t},\n\t// ...\n}\n```"
       },
       "values": [
         {
           "code": "P",
           "name": {
-            "en": "Document produced in the application",
+            "en": "Produced",
+            "pt": "Produzido"
+          },
+          "desc": {
+            "en": "Document produced by the application",
             "pt": "Documento produzido na aplicação"
           }
         },
         {
           "code": "I",
           "name": {
-            "en": "Integrated document produced in another application",
+            "en": "Integrated",
+            "pt": "Integrado"
+          },
+          "desc": {
+            "en": "Integrated document produced by another application",
             "pt": "Documento integrado e produzido noutra aplicação"
           }
         },
         {
           "code": "M",
           "name": {
+            "en": "Manual",
+            "pt": "Manual"
+          },
+          "desc": {
             "en": "Document from recovery or issued manually",
             "pt": "Documento proveniente de recuperação ou de emissão manual"
           }

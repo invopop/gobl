@@ -33,8 +33,8 @@ func validPayment() *bill.Payment {
 			},
 		},
 		Ext: tax.Extensions{
-			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
-			saft.ExtKeySourceBilling: saft.SourceBillingProduced,
+			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
+			saft.ExtKeySource:      saft.SourceBillingProduced,
 		},
 		Series:    "RG SERIES-A",
 		Code:      "123",
@@ -175,15 +175,15 @@ func TestPaymentValidation(t *testing.T) {
 
 	t.Run("missing source billing", func(t *testing.T) {
 		pmt := validPayment()
-		delete(pmt.Ext, saft.ExtKeySourceBilling)
-		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-billing: required")
+		delete(pmt.Ext, saft.ExtKeySource)
+		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source: required")
 	})
 
 	t.Run("source billing produced - no source doc ref required", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = tax.Extensions{
-			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
-			saft.ExtKeySourceBilling: saft.SourceBillingProduced,
+			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
+			saft.ExtKeySource:      saft.SourceBillingProduced,
 		}
 		require.NoError(t, addon.Validator(pmt))
 	})
@@ -191,8 +191,8 @@ func TestPaymentValidation(t *testing.T) {
 	t.Run("source billing integrated - source doc ref required", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = tax.Extensions{
-			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
-			saft.ExtKeySourceBilling: saft.SourceBillingIntegrated,
+			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
+			saft.ExtKeySource:      saft.SourceBillingIntegrated,
 		}
 		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-ref: required")
 
@@ -204,8 +204,8 @@ func TestPaymentValidation(t *testing.T) {
 	t.Run("source billing manual - source doc ref required", func(t *testing.T) {
 		pmt := validPayment()
 		pmt.Ext = tax.Extensions{
-			saft.ExtKeyPaymentType:   saft.PaymentTypeOther,
-			saft.ExtKeySourceBilling: saft.SourceBillingManual,
+			saft.ExtKeyPaymentType: saft.PaymentTypeOther,
+			saft.ExtKeySource:      saft.SourceBillingManual,
 		}
 		assert.ErrorContains(t, addon.Validator(pmt), "ext: (pt-saft-source-ref: required")
 
@@ -262,7 +262,7 @@ func TestPaymentSourceRefFormatValidation(t *testing.T) {
 
 	t.Run("integrated document", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingIntegrated
+		pmt.Ext[saft.ExtKeySource] = saft.SourceBillingIntegrated
 		pmt.Ext[saft.ExtKeySourceRef] = "RGR abc/00001"
 		require.NoError(t, addon.Validator(pmt))
 	})
@@ -287,7 +287,7 @@ func TestPaymentSourceRefFormatValidation(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.ref, func(t *testing.T) {
 			pmt := validPayment()
-			pmt.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingManual
+			pmt.Ext[saft.ExtKeySource] = saft.SourceBillingManual
 			pmt.Ext[saft.ExtKeySourceRef] = cbc.Code(test.ref)
 
 			err := addon.Validator(pmt)
@@ -324,25 +324,25 @@ func TestPaymentNormalization(t *testing.T) {
 		addon.Normalizer(pmt)
 
 		require.NotNil(t, pmt.Ext)
-		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext[saft.ExtKeySourceBilling])
+		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext[saft.ExtKeySource])
 	})
 
 	t.Run("normalize payment with missing source billing", func(t *testing.T) {
 		pmt := validPayment()
-		delete(pmt.Ext, saft.ExtKeySourceBilling)
+		delete(pmt.Ext, saft.ExtKeySource)
 
 		addon.Normalizer(pmt)
 
-		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext[saft.ExtKeySourceBilling])
+		assert.Equal(t, saft.SourceBillingProduced, pmt.Ext[saft.ExtKeySource])
 	})
 
 	t.Run("normalize payment with existing source billing", func(t *testing.T) {
 		pmt := validPayment()
-		pmt.Ext[saft.ExtKeySourceBilling] = saft.SourceBillingIntegrated
+		pmt.Ext[saft.ExtKeySource] = saft.SourceBillingIntegrated
 
 		addon.Normalizer(pmt)
 
-		assert.Equal(t, saft.SourceBillingIntegrated, pmt.Ext[saft.ExtKeySourceBilling])
+		assert.Equal(t, saft.SourceBillingIntegrated, pmt.Ext[saft.ExtKeySource])
 	})
 }
 
