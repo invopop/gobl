@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-## Added
+### Added
 
 - `br`: added retained taxes CSLL, INSS and IRRF
 - `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
