@@ -4,6 +4,9 @@
     "en": "Brazil",
     "pt": "Brasil"
   },
+  "description": {
+    "en": "Tax identification in Brazil is provided either through a CNPJ for businesses or a CPF for individuals. Both types are valid for the issuance of NFS-e (electronic service invoices)."
+  },
   "time_zone": "America/Sao_Paulo",
   "country": "BR",
   "currency": "BRL",
@@ -25,7 +28,8 @@
       "title": {
         "en": "Municipal Service Tax",
         "pt": "Imposto Sobre Serviços"
-      }
+      },
+      "informative": true
     },
     {
       "code": "ICMS",
