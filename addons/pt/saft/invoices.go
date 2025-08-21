@@ -44,8 +44,8 @@ func normalizeInvoice(inv *bill.Invoice) {
 		inv.Tax.Ext = make(tax.Extensions)
 	}
 
-	if !inv.Tax.Ext.Has(ExtKeySourceBilling) {
-		inv.Tax.Ext[ExtKeySourceBilling] = SourceBillingProduced
+	if !inv.Tax.Ext.Has(ExtKeySource) {
+		inv.Tax.Ext[ExtKeySource] = SourceBillingProduced
 	}
 }
 
@@ -98,9 +98,9 @@ func validateTax(docType cbc.Code) validation.RuleFunc {
 		return validation.ValidateStruct(t,
 			validation.Field(&t.Ext,
 				validation.By(validateDocType),
-				tax.ExtensionsRequire(ExtKeySourceBilling),
+				tax.ExtensionsRequire(ExtKeySource),
 				validation.When(
-					t.Ext[ExtKeySourceBilling] != SourceBillingProduced,
+					t.Ext[ExtKeySource] != SourceBillingProduced,
 					tax.ExtensionsRequire(ExtKeySourceRef),
 				),
 				validation.By(validateSourceRef(docType)),
@@ -144,7 +144,7 @@ func validateSourceRef(docType cbc.Code) validation.RuleFunc {
 			return nil
 		}
 
-		if ext[ExtKeySourceBilling] != SourceBillingManual {
+		if ext[ExtKeySource] != SourceBillingManual {
 			// source ref format only validated for manual documents
 			return nil
 		}

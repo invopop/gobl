@@ -30,9 +30,9 @@ func validatePayment(pmt *bill.Payment) error {
 		),
 		validation.Field(&pmt.Ext,
 			tax.ExtensionsRequire(ExtKeyPaymentType),
-			tax.ExtensionsRequire(ExtKeySourceBilling),
+			tax.ExtensionsRequire(ExtKeySource),
 			validation.When(
-				pmt.Ext[ExtKeySourceBilling] != SourceBillingProduced,
+				pmt.Ext[ExtKeySource] != SourceBillingProduced,
 				tax.ExtensionsRequire(ExtKeySourceRef),
 			),
 			validation.By(validateSourceRef(dt)),
@@ -194,7 +194,7 @@ func normalizePayment(pmt *bill.Payment) {
 		pmt.Ext[ExtKeyPaymentType] = PaymentTypeOther
 	}
 
-	if !pmt.Ext.Has(ExtKeySourceBilling) {
-		pmt.Ext[ExtKeySourceBilling] = SourceBillingProduced
+	if !pmt.Ext.Has(ExtKeySource) {
+		pmt.Ext[ExtKeySource] = SourceBillingProduced
 	}
 }
