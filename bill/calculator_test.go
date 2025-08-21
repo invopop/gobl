@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -212,6 +213,32 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "15.00", inv.Totals.RetainedTax.String())
 		assert.Equal(t, "106.00", inv.Totals.Payable.String())
 		assert.Equal(t, "53.00", inv.Totals.Due.String())
+	})
+
+	t.Run("with informative tax", func(t *testing.T) {
+		inv := baseInvoice(t, &bill.Line{
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "test item 1",
+				Price: num.NewAmount(10000, 2),
+			},
+			Taxes: tax.Set{
+				{
+					Category: br.TaxCategoryISS,
+					Percent:  num.NewPercentage(50, 2),
+				},
+			},
+		})
+		inv.Supplier.TaxID.Country = "BR"
+		require.NoError(t, inv.Calculate())
+
+		assert.Equal(t, "0.00", inv.Totals.Tax.String())
+		assert.Equal(t, "100.00", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "100.00", inv.Totals.Payable.String())
+		if iss := inv.Totals.Taxes.Category(br.TaxCategoryISS); assert.NotNil(t, iss) {
+			assert.Equal(t, "50.00", iss.Amount.String())
+			assert.True(t, iss.Informative)
+		}
 	})
 }
 
