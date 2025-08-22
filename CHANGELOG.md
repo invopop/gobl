@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 
+### Changed
+
+- `pt-saft-v1`: moved exemption notes to line-level and added validations
+
 ## [v0.220.6] - 2025-08-12
 
 ### Changed

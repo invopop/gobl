@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "274dea16149a16ed1fdba32275f8572a85e6dabe659c6fe368da2d3cf04e5c5f"
+			"val": "cd56e13fc17d0323b8cb1c52f915e4eb58d21430108433ea92527b5ef449e11c"
 		}
 	},
 	"doc": {
@@ -66,7 +66,15 @@
 						}
 					}
 				],
-				"total": "100.00"
+				"total": "100.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M40",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+					}
+				]
 			},
 			{
 				"i": 2,
@@ -91,7 +99,15 @@
 						}
 					}
 				],
-				"total": "240.00"
+				"total": "240.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M40",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+					}
+				]
 			}
 		],
 		"totals": {
@@ -121,14 +137,6 @@
 			"tax": "0.00",
 			"total_with_tax": "340.00",
 			"payable": "340.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"code": "M40",
-				"src": "pt-saft-exemption",
-				"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
-			}
-		]
+		}
 	}
 }
