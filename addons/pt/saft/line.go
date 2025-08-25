@@ -62,30 +62,32 @@ func validateLine(line *bill.Line) error {
 func validateLineNotes(line *bill.Line) validation.RuleFunc {
 	return func(val any) error {
 		notes, _ := val.([]*org.Note) //nolint:errcheck
-
 		ec := lineTaxExemptionCode(line)
-		count := 0
-		for i, n := range notes {
-			if isExemptionNote(n) {
-				if ec == "" {
-					return fmt.Errorf("(%d: unexpected exemption note)", i)
-				}
-				if count > 0 {
-					return fmt.Errorf("(%d: too many exemption notes)", i)
-				}
-				if ec != n.Code {
-					return fmt.Errorf("(%d: note code %s must match extension %s)", i, n.Code, ec)
-				}
-				count++
-			}
-		}
-
-		if ec != "" && count == 0 {
-			return fmt.Errorf("missing exemption note for code %s", ec)
-		}
-
-		return nil
+		return validateExemptionNotes(notes, ec)
 	}
+}
+func validateExemptionNotes(notes []*org.Note, ec cbc.Code) error {
+	count := 0
+	for i, n := range notes {
+		if isExemptionNote(n) {
+			if ec == "" {
+				return fmt.Errorf("(%d: unexpected exemption note)", i)
+			}
+			if count > 0 {
+				return fmt.Errorf("(%d: too many exemption notes)", i)
+			}
+			if ec != n.Code {
+				return fmt.Errorf("(%d: note code %s must match extension %s)", i, n.Code, ec)
+			}
+			count++
+		}
+	}
+
+	if ec != "" && count == 0 {
+		return fmt.Errorf("missing exemption note for code %s", ec)
+	}
+
+	return nil
 }
 
 func hasExemptionNote(notes []*org.Note) bool {

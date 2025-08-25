@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -23,6 +24,10 @@ func validatePaymentLine(pl *bill.PaymentLine) error {
 		validation.Field(&pl.Tax,
 			validation.By(validatePaymentLineTax),
 			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&pl.Notes,
+			validation.By(validatePaymentLineNotes(pl)),
 			validation.Skip,
 		),
 	)
@@ -92,4 +97,32 @@ func validateLineTaxRate(val any) error {
 	}
 
 	return validation.ValidateStruct(r, validateVATExt(&r.Ext))
+}
+
+func validatePaymentLineNotes(pl *bill.PaymentLine) validation.RuleFunc {
+	return func(val any) error {
+		notes, _ := val.([]*org.Note) //nolint:errcheck
+		ec := paymentLineTaxExemptionCode(pl)
+		return validateExemptionNotes(notes, ec)
+	}
+}
+
+func paymentLineTaxExemptionCode(pl *bill.PaymentLine) cbc.Code {
+	if pl.Tax == nil {
+		return ""
+	}
+
+	vat := pl.Tax.Category(tax.CategoryVAT)
+	if vat == nil || len(vat.Rates) == 0 {
+		return ""
+	}
+
+	// Since there's a validation that only allows one rate per line,
+	// we can safely check the first rate
+	rate := vat.Rates[0]
+	if rate == nil {
+		return ""
+	}
+
+	return rate.Ext.Get(ExtKeyExemption)
 }
