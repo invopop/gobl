@@ -82,6 +82,8 @@ func normalize(doc any) {
 		normalizeDelivery(obj)
 	case *bill.Invoice:
 		normalizeInvoice(obj)
+	case *bill.Line:
+		normalizeLine(obj)
 	}
 }
 
@@ -101,6 +103,10 @@ func validate(doc any) error {
 		return validateItem(obj)
 	case *org.Note:
 		return validateNote(obj)
+	case *bill.Line:
+		return validateLine(obj)
+	case *bill.PaymentLine:
+		return validatePaymentLine(obj)
 	}
 	return nil
 }

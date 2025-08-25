@@ -177,15 +177,31 @@
         "pt": "Código do motivo de isenção de imposto"
       },
       "desc": {
-        "en": "AT's `TaxExemptionCode` (Código do motivo de isenção de imposto) is a code that\nspecifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag\nis used in a tax combo, the `ext` map's `pt-exemption-code` property is required.\n\nFor example, you could define an invoice line exempt of tax as follows:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service exempt of tax\",\n\t\t\t\t\"price\": \"25.00\"\n\t\t\t},\n\t\t\t\"tax\": [\n\t\t\t\t{\n\t\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\t\"rate\": \"exempt\",\n\t\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\t\"pt-saft-tax-rate\": \"ISE\",\n\t\t\t\t\t\t\t\"pt-saft-exemption\": \"M19\"\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n```"
+        "en": "The SAF-T's `TaxExemptionCode` (Código do motivo de isencção de imposto) is a code that\nspecifies the reason the VAT tax is exempt in a Portuguese invoice. When the `exempt` tag\nis used in a tax combo, the `ext` map's `pt-saft-exemption` property is required.\n\nThe SAF-T's `TaxExemptionReason` (Motivo da isenção de imposto) is a text that justifies\nthe exemption referencing the relevant legislation. In GOBL, this is provided with a\nspecial line-level `note`.\n\nBy default, if no note is provided, GOBL will automatically assign a default one\nconsistent with the exemption code. However, note that default texts are generic and not\nalways sufficiently precise to comply with the regulations. The invoice issuer should be\ngiven the option to provide a custom note with the appropriate descriptive text.\n\nFor example, you could define an invoice line exempt of tax with the exemption code and\nthe reason as follows:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"lines\": [\n\t\t{\n\t\t\t// ...\n\t\t\"item\": {\n\t\t\t\t\"name\": \"Some service exempt of tax\",\n\t\t\t\t\"price\": \"25.00\"\n\t\t\t},\n\t\t\t\"tax\": [\n\t\t\t\t{\n\t\t\t\t\t\t\"cat\": \"VAT\",\n\t\t\t\t\t\t\"rate\": \"exempt\",\n\t\t\t\t\t\t\"ext\": {\n\t\t\t\t\t\t\t\"pt-saft-tax-rate\": \"ISE\",\n\t\t\t\t\t\t\t\"pt-saft-exemption\": \"M40\"\n\t\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t]\n\t\t},\n\t\t\"notes\": [\n\t\t\t{\n\t\t\t\t\"key\": \"legal\",\n\t\t\t\t\"code\": \"M40\",\n\t\t\t\t\"src\": \"pt-saft-exemption\",\n\t\t\t\t\"text\": \"Artigo 6.º n.º 6 alínea a) do CIVA, a contrário\"\n\t\t\t}\n\t\t]\n\t]\n}\n```"
       },
       "sources": [
         {
           "title": {
-            "en": "Códigos de motivo de isenção",
-            "pt": "AT Tax Exemption Codes"
+            "en": "AT Tax Exemption Codes",
+            "pt": "Códigos de motivo de isenção"
           },
           "url": "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Tabela_Codigos_Motivo_Isencao.pdf",
+          "content_type": "application/pdf"
+        },
+        {
+          "title": {
+            "en": "Art. 2.2.14 of Despacho nº8632/2014",
+            "pt": "Art. 2.2.14 do Despacho nº8632/2014"
+          },
+          "url": "https://files.diariodarepublica.pt/2s/2014/07/126000000/1725517261.pdf",
+          "content_type": "application/pdf"
+        },
+        {
+          "title": {
+            "en": "Field 4.4.19.7 of Portaria nº302/2016",
+            "pt": "Campo 4.4.19.7 da Portaria nº302/2016"
+          },
+          "url": "https://files.diariodarepublica.pt/1s/2016/12/23100/0427304379.pdf",
           "content_type": "application/pdf"
         }
       ],
@@ -193,8 +209,8 @@
         {
           "code": "M01",
           "name": {
-            "en": "Article 16, No. 6 of the VAT code",
-            "pt": "Artigo 16.º, n.º 6 do CIVA"
+            "en": "Article 16, No. 6, paragraphs a) to d) of the VAT code",
+            "pt": "Artigo 16.º, n.º 6, alíneas a) a d) do CIVA"
           }
         },
         {
@@ -207,85 +223,85 @@
         {
           "code": "M04",
           "name": {
-            "en": "Exempt pursuant to Article 13 of the VAT code",
-            "pt": "Isento artigo 13.º do CIVA"
+            "en": "Article 13 of the VAT code",
+            "pt": "Artigo 13.º do CIVA"
           }
         },
         {
           "code": "M05",
           "name": {
-            "en": "Exempt pursuant to Article 14 of the VAT code",
-            "pt": "Isento artigo 14.º do CIVA"
+            "en": "Article 14 of the VAT code",
+            "pt": "Artigo 14.º do CIVA"
           }
         },
         {
           "code": "M06",
           "name": {
-            "en": "Exempt pursuant to Article 15 of the VAT code",
-            "pt": "Isento artigo 15.º do CIVA"
+            "en": "Article 15 of the VAT code",
+            "pt": "Artigo 15.º do CIVA"
           }
         },
         {
           "code": "M07",
           "name": {
-            "en": "Exempt pursuant to Article 9 of the VAT code",
-            "pt": "Isento artigo 9.º do CIVA"
+            "en": "Article 9 of the VAT code",
+            "pt": "Artigo 9.º do CIVA"
           }
         },
         {
           "code": "M09",
           "name": {
-            "en": "VAT - does not confer right to deduction / Article 62 paragraph b) of the VAT code",
-            "pt": "IVA - não confere direito a dedução / Artigo 62.º alínea b) do CIVA"
+            "en": "Article 62 paragraph b) of the VAT code",
+            "pt": "Artigo 62.º alínea b) do CIVA"
           }
         },
         {
           "code": "M10",
           "name": {
-            "en": "VAT - exemption scheme / Article 57 of the VAT code",
-            "pt": "IVA - regime de isenção / Artigo 57.º do CIVA"
+            "en": "Article 57 of the VAT code",
+            "pt": "Artigo 57.º do CIVA"
           }
         },
         {
           "code": "M11",
           "name": {
-            "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
-            "pt": "Regime particular do tabaco / Decreto-Lei n.º 346/85, de 23 de agosto"
+            "en": "Decree-Law No. 346/85 of 23rd August",
+            "pt": "Decreto-Lei n.º 346/85, de 23 de agosto"
           }
         },
         {
           "code": "M12",
           "name": {
-            "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
-            "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.º 221/85, de 3 de julho"
+            "en": "Decree-Law No. 221/85 of 3rd July",
+            "pt": "Decreto-Lei n.º 221/85, de 3 de julho"
           }
         },
         {
           "code": "M13",
           "name": {
-            "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.º 199/96, de 18 de outubro"
+            "en": "Decree-Law No. 199/96 of 18th October",
+            "pt": "Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
           "code": "M14",
           "name": {
-            "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.º 199/96, de 18 de outubro"
+            "en": "Decree-Law No. 199/96 of 18th October",
+            "pt": "Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
           "code": "M15",
           "name": {
-            "en": "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
-            "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.º 199/96, de 18 de outubro"
+            "en": "Decree-Law No. 199/96 of 18th October",
+            "pt": "Decreto-Lei n.º 199/96, de 18 de outubro"
           }
         },
         {
           "code": "M16",
           "name": {
-            "en": "Exempt pursuant to Article 14 of the RITI",
-            "pt": "Isento artigo 14.º do RITI"
+            "en": "Article 14 of the RITI",
+            "pt": "Artigo 14.º do RITI"
           }
         },
         {
@@ -298,92 +314,92 @@
         {
           "code": "M20",
           "name": {
-            "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
-            "pt": "IVA - regime forfetário / Artigo 59.º-D n.º 2 do CIVA"
+            "en": "Article 59-D No. 2 of the VAT code",
+            "pt": "Artigo 59.º-D n.º 2 do CIVA"
           }
         },
         {
           "code": "M21",
           "name": {
-            "en": "VAT - does not confer right to deduction (or similar) / Article 72 No. 4 of the VAT code",
-            "pt": "IVA - não confere direito à dedução (ou expressão similar) / Artigo 72.º n.º 4 do CIVA"
+            "en": "Article 72 No. 4 of the VAT code",
+            "pt": "Artigo 72.º n.º 4 do CIVA"
           }
         },
         {
           "code": "M25",
           "name": {
-            "en": "Consignment goods / Article 38 No. 1 paragraph a) of the VAT code",
-            "pt": "Mercadoria à consignação / Artigo 38.º n.º 1 alínea a) do CIVA"
+            "en": "Article 38 No. 1 paragraph a) of the VAT code",
+            "pt": "Artigo 38.º n.º 1 alínea a) do CIVA"
           }
         },
         {
           "code": "M26",
           "name": {
-            "en": "VAT exemption with right to deduction in food basket / Law No. 17/2023 of 14th April",
-            "pt": "Isenção de IVA com direito à dedução no cabaz alimentar / Lei n.º 17/2023, de 14 de abril"
+            "en": "Law No. 17/2023 of 14th April",
+            "pt": "Lei n.º 17/2023, de 14 de abril"
           }
         },
         {
           "code": "M30",
           "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea i) do CIVA"
+            "en": "Article 2 No. 1 paragraph i) of the VAT code",
+            "pt": "Artigo 2.º n.º 1 alínea i) do CIVA"
           }
         },
         {
           "code": "M31",
           "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea j) do CIVA"
+            "en": "Article 2 No. 1 paragraph j) of the VAT code",
+            "pt": "Artigo 2.º n.º 1 alínea j) do CIVA"
           }
         },
         {
           "code": "M32",
           "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea l) do CIVA"
+            "en": "Article 2 No. 1 paragraph l) of the VAT code",
+            "pt": "Artigo 2.º n.º 1 alínea l) do CIVA"
           }
         },
         {
           "code": "M33",
           "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea m) do CIVA"
+            "en": "Article 2 No. 1 paragraph m) of the VAT code",
+            "pt": "Artigo 2.º n.º 1 alínea m) do CIVA"
           }
         },
         {
           "code": "M34",
           "name": {
-            "en": "VAT - reverse charge / Article 2 No. 1 paragraph n) of the VAT code",
-            "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea n) do CIVA"
+            "en": "Article 2 No. 1 paragraph n) of the VAT code",
+            "pt": "Artigo 2.º n.º 1 alínea n) do CIVA"
           }
         },
         {
           "code": "M40",
           "name": {
-            "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
-            "pt": "IVA - autoliquidação / Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+            "en": "Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
+            "pt": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
           }
         },
         {
           "code": "M41",
           "name": {
-            "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
-            "pt": "IVA - autoliquidação / Artigo 8.º n.º 3 do RITI"
+            "en": "Article 8 No. 3 of the RITI",
+            "pt": "Artigo 8.º n.º 3 do RITI"
           }
         },
         {
           "code": "M42",
           "name": {
-            "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29th January",
-            "pt": "IVA - autoliquidação / Decreto-Lei n.º 21/2007, de 29 de janeiro"
+            "en": "Decree-Law No. 21/2007 of 29th January",
+            "pt": "Decreto-Lei n.º 21/2007, de 29 de janeiro"
           }
         },
         {
           "code": "M43",
           "name": {
-            "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
-            "pt": "IVA - autoliquidação / Decreto-Lei n.º 362/99, de 16 de setembro"
+            "en": "Decree-Law No. 362/99 of 16th September",
+            "pt": "Decreto-Lei n.º 362/99, de 16 de setembro"
           }
         },
         {
@@ -838,267 +854,6 @@
           ],
           "ext": {
             "pt-saft-work-type": "PF"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M01",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 16.º, n.º 6, alíneas a) a d) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M02",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M04",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 13.º do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M05",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 14.º do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M06",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 15.º do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M07",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 9.º do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M09",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 62.º alínea b) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M10",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 57.º do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M11",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 346/85, de 23 de agosto"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M12",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 221/85, de 3 de julho"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M13",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 199/96, de 18 de outubro"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M14",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 199/96, de 18 de outubro"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M15",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 199/96, de 18 de outubro"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M16",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 14.º do RITI"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M19",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Outras isenções"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M20",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 59.º-D n.º 2 do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M21",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 72.º n.º 4 do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M25",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 38.º n.º 1 alínea a) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M26",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Lei n.º 17/2023, de 14 de abril"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M30",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 2.º n.º 1 alínea i) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M31",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 2.º n.º 1 alínea j) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M32",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 2.º n.º 1 alínea l) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M33",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 2.º n.º 1 alínea m) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M34",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 2.º n.º 1 alínea n) do CIVA"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M40",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M41",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Artigo 8.º n.º 3 do RITI"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M42",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 21/2007, de 29 de janeiro"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M43",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Decreto-Lei n.º 362/99, de 16 de setembro"
-          }
-        },
-        {
-          "ext_key": "pt-saft-exemption",
-          "ext_code": "M99",
-          "note": {
-            "key": "legal",
-            "src": "pt-saft-exemption",
-            "text": "Não sujeito ou não tributado"
           }
         }
       ]
