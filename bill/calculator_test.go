@@ -215,28 +215,86 @@ func TestCalculate(t *testing.T) {
 		assert.Equal(t, "53.00", inv.Totals.Due.String())
 	})
 
-	t.Run("with informative tax", func(t *testing.T) {
+	t.Run("with multiple informative taxes", func(t *testing.T) {
+		inv := baseInvoice(t,
+			&bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "test item 1",
+					Price: num.NewAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: br.TaxCategoryISS,
+						Percent:  num.NewPercentage(50, 3),
+					},
+				},
+			},
+			&bill.Line{
+				Quantity: num.MakeAmount(1, 0),
+				Item: &org.Item{
+					Name:  "test item 2",
+					Price: num.NewAmount(10000, 2),
+				},
+				Taxes: tax.Set{
+					{
+						Category: br.TaxCategoryISS,
+						Percent:  num.NewPercentage(30, 3),
+					},
+				},
+			},
+		)
+		inv.Supplier.TaxID.Country = "BR"
+		inv.Tax.PricesInclude = ""
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "0.00", inv.Totals.Tax.String())
+		assert.Equal(t, "200.00", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "200.00", inv.Totals.Payable.String())
+		if iss := inv.Totals.Taxes.Category(br.TaxCategoryISS); assert.NotNil(t, iss) {
+			assert.Equal(t, "8.00", iss.Amount.String())
+			assert.Equal(t, "5.00", iss.Rates[0].Amount.String())
+			assert.Equal(t, "100.00", iss.Rates[0].Base.String())
+			assert.Equal(t, "3.00", iss.Rates[1].Amount.String())
+			assert.Equal(t, "100.00", iss.Rates[1].Base.String())
+			assert.True(t, iss.Informative)
+		}
+	})
+
+	t.Run("with informative tax and prices include other tax", func(t *testing.T) {
 		inv := baseInvoice(t, &bill.Line{
 			Quantity: num.MakeAmount(1, 0),
 			Item: &org.Item{
 				Name:  "test item 1",
-				Price: num.NewAmount(10000, 2),
+				Price: num.NewAmount(12100, 2),
 			},
 			Taxes: tax.Set{
+				// In the real world, ISS and ICMS cannot be applied
+				// together. This is just a test for a hypothetical future
+				// scenario combining a tax included in the price with an
+				// informative tax.
+				{
+					Category: br.TaxCategoryICMS,
+					Percent:  num.NewPercentage(21, 2),
+				},
 				{
 					Category: br.TaxCategoryISS,
-					Percent:  num.NewPercentage(50, 2),
+					Percent:  num.NewPercentage(50, 3),
 				},
 			},
 		})
 		inv.Supplier.TaxID.Country = "BR"
+		inv.Tax.PricesInclude = br.TaxCategoryICMS
 		require.NoError(t, inv.Calculate())
 
-		assert.Equal(t, "0.00", inv.Totals.Tax.String())
-		assert.Equal(t, "100.00", inv.Totals.TotalWithTax.String())
-		assert.Equal(t, "100.00", inv.Totals.Payable.String())
+		assert.Equal(t, "21.00", inv.Totals.Tax.String())
+		assert.Equal(t, "121.00", inv.Totals.TotalWithTax.String())
+		assert.Equal(t, "121.00", inv.Totals.Payable.String())
 		if iss := inv.Totals.Taxes.Category(br.TaxCategoryISS); assert.NotNil(t, iss) {
-			assert.Equal(t, "50.00", iss.Amount.String())
+			// Informative taxes must be calculated over the totals without the
+			// included taxes.
+			assert.Equal(t, "5.00", iss.Amount.String())
+			assert.Equal(t, "5.00", iss.Rates[0].Amount.String())
+			assert.Equal(t, "100.00", iss.Rates[0].Base.String())
 			assert.True(t, iss.Informative)
 		}
 	})

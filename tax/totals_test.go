@@ -653,7 +653,7 @@ func TestTotalCalculate(t *testing.T) {
 		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
 	})
 
-	t.Run("basic with informative tax", func(t *testing.T) {
+	t.Run("basic with multiple informative taxes", func(t *testing.T) {
 		tt := &tax.Total{
 			Categories: []*tax.CategoryTotal{
 				{
@@ -673,13 +673,19 @@ func TestTotalCalculate(t *testing.T) {
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(50, 3),
 						},
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(30, 3),
+						},
 					},
 				},
 			},
 		}
 		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
 		assert.Equal(t, int64(2100), tt.Sum.Value()) // Informative tax with surcharge should not affect Sum
-		assert.Equal(t, int64(500), tt.Category("ISS").Amount.Value())
 		assert.True(t, tt.Category("ISS").Informative)
+		assert.Equal(t, int64(800), tt.Category("ISS").Amount.Value())
+		assert.Equal(t, "5.00", tt.Category("ISS").Rates[0].Amount.String())
+		assert.Equal(t, "3.00", tt.Category("ISS").Rates[1].Amount.String())
 	})
 }
