@@ -32,6 +32,8 @@ type Combo struct {
 
 	// Copied from the category definition, implies this tax combo is retained
 	retained bool `json:"-"`
+	// Copied from the category definition, implies this tax combo is informative
+	informative bool `json:"-"`
 }
 
 // ValidateWithContext ensures the Combo has the correct details.
@@ -94,6 +96,7 @@ func (c *Combo) calculateForRegime(r *RegimeDef, tags []cbc.Key, date cal.Date) 
 		return ErrInvalidCategory.WithMessage("'%s' not defined in regime", c.Category.String())
 	}
 	c.retained = category.Retained
+	c.informative = category.Informative
 
 	if err := c.prepareRate(category, tags, date); err != nil {
 		return err

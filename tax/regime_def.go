@@ -115,6 +115,12 @@ type CategoryDef struct {
 	// income.
 	Retained bool `json:"retained,omitempty" jsonschema:"title=Retained"`
 
+	// Informative when true implies that the tax amount will be calculated
+	// and reported but will not affect the invoice totals. Typically used
+	// for taxes that are embedded in the base amount or don't impact the
+	// final payable amount.
+	Informative bool `json:"informative,omitempty" jsonschema:"title=Informative"`
+
 	// Specific tax definitions inside this category. Order is important.
 	Rates []*RateDef `json:"rates,omitempty" jsonschema:"title=Rates"`
 
@@ -402,6 +408,9 @@ func (c *CategoryDef) ValidateWithContext(ctx context.Context) error {
 			validation.Each(cbc.InKeyDefs(r.Extensions)),
 		),
 		validation.Field(&c.Map),
+		validation.Field(&c.Retained, validation.When(c.Informative,
+			validation.In(false).Error("cannot be true when informative is true"),
+		)),
 	)
 	return err
 }

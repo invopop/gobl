@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "af9d35c9a4920dbe01cfd7f0d6f50f9c3c835f6c80039c709c53812ebab85428"
+			"val": "fc0ee9fb7df69e5224594364e90e257ea2ce2845784dc336ec385722023fd965"
 		}
 	},
 	"doc": {
@@ -127,6 +127,7 @@
 				"categories": [
 					{
 						"code": "ISS",
+						"informative": true,
 						"rates": [
 							{
 								"ext": {
@@ -200,13 +201,13 @@
 						"amount": "90.00"
 					}
 				],
-				"sum": "300.00",
+				"sum": "0.00",
 				"retained": "1029.00"
 			},
-			"tax": "300.00",
-			"total_with_tax": "6300.00",
+			"tax": "0.00",
+			"total_with_tax": "6000.00",
 			"retained_tax": "1029.00",
-			"payable": "5271.00"
+			"payable": "4971.00"
 		}
 	}
 }

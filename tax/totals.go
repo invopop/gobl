@@ -9,11 +9,12 @@ import (
 
 // CategoryTotal groups together all rates inside a given category.
 type CategoryTotal struct {
-	Code      cbc.Code     `json:"code" jsonschema:"title=Code"`
-	Retained  bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
-	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
-	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
-	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+	Code        cbc.Code     `json:"code" jsonschema:"title=Code"`
+	Retained    bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
+	Informative bool         `json:"informative,omitempty" jsonschema:"title=Informative"`
+	Rates       []*RateTotal `json:"rates" jsonschema:"title=Rates"`
+	Amount      num.Amount   `json:"amount" jsonschema:"title=Amount"`
+	Surcharge   *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 }
 
 // RateTotal contains a sum of all the tax rates in the document with
@@ -63,6 +64,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Amount = zero
 	ct.Retained = c.retained
+	ct.Informative = c.informative
 	return ct
 }
 
@@ -358,6 +360,10 @@ func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
 	for _, ct := range t.Categories {
 		t.calculateBaseCategoryTotal(ct, zero, rr)
 
+		if ct.Informative {
+			// Informative taxes don't affect Sum or Retained
+			continue
+		}
 		if ct.Retained {
 			if t.Retained == nil {
 				t.Retained = &zero
