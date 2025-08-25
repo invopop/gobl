@@ -32,6 +32,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Municipal Service Tax",
 			i18n.PT: "Imposto Sobre Serviços",
 		},
+		Retained:    false,
 		Informative: true,
 	},
 	//
@@ -47,6 +48,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "State value-added tax",
 			i18n.PT: "Imposto sobre Circulação de Mercadorias e Serviços",
 		},
+		Retained: false,
 	},
 	//
 	// Federal value-added Tax (IPI)
@@ -61,6 +63,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Federal value-added Tax",
 			i18n.PT: "Imposto sobre Produtos Industrializados",
 		},
+		Retained: false,
 	},
 	//
 	// Social Integration Program (PIS)
