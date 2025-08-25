@@ -105,6 +105,8 @@ func validate(doc any) error {
 		return validateNote(obj)
 	case *bill.Line:
 		return validateLine(obj)
+	case *bill.PaymentLine:
+		return validatePaymentLine(obj)
 	}
 	return nil
 }
