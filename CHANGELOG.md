@@ -6,11 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-<<<<<<< HEAD
-### Added
-
-- `examples`: Add example for Belgium, specifically for PEPPOL.
-=======
 ## [v0.220.5] - 2025-07-21
 
 ### Changed
@@ -116,7 +111,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: Simple `Normalize` method support.
 
 ## [v0.217.0] - 2025-06-02
->>>>>>> main
 
 ### Changed
 
