@@ -96,6 +96,113 @@ func TestTotalNegate(t *testing.T) {
 	assert.Equal(t, int64(-2100), tt2.Category("VAT").Rates[0].Amount.Value())
 }
 
+func TestTotalCategory(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			_ = tt.Category("VAT")
+		})
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		tt := &tax.Total{}
+		assert.Nil(t, tt.Category("VAT"))
+	})
+
+	t.Run("basic", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+			},
+		}
+		cat := tt.Category("VAT")
+		assert.NotNil(t, cat)
+		assert.Equal(t, tax.CategoryVAT, cat.Code)
+		assert.Len(t, cat.Rates, 1)
+	})
+}
+
+func TestTotalExchange(t *testing.T) {
+	er := &currency.ExchangeRate{
+		From:   currency.EUR,
+		To:     currency.USD,
+		Amount: num.MakeAmount(120, 2), // 1 EUR = 1.20 USD
+	}
+
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			tt.Exchange(er, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("basic example", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code:     tax.CategoryVAT,
+					Retained: false,
+					Rates: []*tax.RateTotal{
+						{
+							Key:     tax.RateStandard,
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+							Amount:  num.MakeAmount(2100, 2),
+						},
+					},
+					Amount: num.MakeAmount(2100, 2),
+				},
+			},
+			Sum: num.MakeAmount(2100, 2),
+		}
+		tt.Exchange(er, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(2520), tt.Sum.Value())
+		assert.Equal(t, int64(2520), tt.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(2520), tt.Category("VAT").Rates[0].Amount.Value())
+	})
+}
+
+func TestTotalScale(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tt *tax.Total
+		assert.NotPanics(t, func() {
+			tt.Scale(num.MakeAmount(5, 2), currency.EUR, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("empty", func(t *testing.T) {
+		tt := &tax.Total{}
+		assert.NotPanics(t, func() {
+			tt.Scale(num.MakeAmount(5, 2), currency.EUR, tax.RoundingRulePrecise)
+		})
+	})
+	t.Run("basic", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+			},
+		}
+		tt.Scale(num.MakeAmount(50, 2), currency.EUR, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(1050), tt.Sum.Value())
+		assert.Equal(t, int64(1050), tt.Category("VAT").Amount.Value())
+		assert.Equal(t, int64(1050), tt.Category("VAT").Rates[0].Amount.Value())
+	})
+}
+
 func TestTotalMerge(t *testing.T) {
 	t.Run("basic merge", func(t *testing.T) {
 		tt := &tax.Total{

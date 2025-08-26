@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/schema"
@@ -30,7 +31,7 @@ type Identity struct {
 
 	// Scheme is an optional field that may be used to override the tax regime's
 	// default tax scheme. Many electronic formats such as UBL or CII define an
-	// equivalent field.
+	// equivalent field. Examples: `VAT`, `GST`, `ST`, etc.
 	Scheme cbc.Code `json:"scheme,omitempty" jsonschema:"title=Scheme"`
 
 	// Type is set according to the requirements of each regime, some have a single
@@ -162,6 +163,12 @@ func (id *Identity) Validate() error {
 		return r.ValidateObject(id)
 	}
 	return nil
+}
+
+// InEU checks if the tax identity is from a country that is part of the EU on
+// the given date.
+func (id *Identity) InEU(date cal.Date) bool {
+	return l10n.Union(l10n.EU).HasMemberOn(date, id.Country.Code())
 }
 
 func (v validateTaxID) Validate(value interface{}) error {

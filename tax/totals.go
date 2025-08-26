@@ -14,8 +14,6 @@ type CategoryTotal struct {
 	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
 	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
 	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
-
-	amount num.Amount // internal amount with greater accuracy
 }
 
 // RateTotal contains a sum of all the tax rates in the document with
@@ -58,23 +56,12 @@ type Total struct {
 	Retained *num.Amount `json:"retained,omitempty" jsonschema:"title=Retained"`
 }
 
-// PreciseAmount contains the intermediary amount generated from the calculator
-// with the original precision. This is useful when a Category Total needs
-// to be used for further calculations, such as when an invoice includes taxes.
-func (ct *CategoryTotal) PreciseAmount() num.Amount {
-	if !ct.amount.IsZero() {
-		return ct.amount
-	}
-	return ct.Amount
-}
-
 // newCategoryTotal prepares a category total calculation.
 func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct := new(CategoryTotal)
 	ct.Code = c.Category
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Amount = zero
-	ct.amount = zero
 	ct.Retained = c.retained
 	return ct
 }
@@ -102,6 +89,9 @@ func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 
 // Category provides the category total for the matching code.
 func (t *Total) Category(code cbc.Code) *CategoryTotal {
+	if t == nil {
+		return nil
+	}
 	for _, ct := range t.Categories {
 		if ct.Code == code {
 			return ct
@@ -172,7 +162,6 @@ func (t *Total) Negate() *Total {
 	nt := t.Clone()
 	for _, ct := range nt.Categories {
 		ct.Amount = ct.Amount.Negate()
-		ct.amount = ct.amount.Negate()
 		for _, rt := range ct.Rates {
 			rt.Base = rt.Base.Negate()
 			rt.Amount = rt.Amount.Negate()
@@ -221,7 +210,6 @@ func (t *Total) Clone() *Total {
 		nt.Categories[i].Code = ct.Code
 		nt.Categories[i].Retained = ct.Retained
 		nt.Categories[i].Amount = ct.Amount
-		nt.Categories[i].amount = ct.amount
 		nt.Categories[i].Surcharge = ct.Surcharge
 		nt.Categories[i].Rates = make([]*RateTotal, len(ct.Rates))
 		for j, rt := range ct.Rates {
@@ -267,7 +255,6 @@ func (t *Total) Merge(t2 *Total) *Total {
 			catTotal.Code = ct.Code
 			catTotal.Retained = ct.Retained
 			catTotal.Amount = ct.Amount
-			catTotal.amount = ct.amount
 			catTotal.Surcharge = ct.Surcharge
 			catTotal.Rates = append(catTotal.Rates, ct.Rates...)
 			nt.Categories = append(nt.Categories, catTotal)
@@ -321,6 +308,38 @@ func (t *Total) Merge(t2 *Total) *Total {
 	nt.Sum = nt.Sum.Add(t2.Sum)
 
 	return nt
+}
+
+// Scale will recalculate the taxable bases and amounts by multiplying them
+// by the provided factor. This is used in scenarios where the total represents
+// a percentage or portion of the original amount.
+func (t *Total) Scale(factor num.Amount, cur currency.Code, rr cbc.Key) {
+	if factor.IsZero() || t == nil {
+		return
+	}
+	for _, ct := range t.Categories {
+		for _, rt := range ct.Rates {
+			rt.Base = rt.Base.Multiply(factor)
+		}
+	}
+	t.Calculate(cur, rr)
+}
+
+// Exchange will recalculate the total with the same values, but in a different
+// currency. This is used in scenarios where tax totals are embedded into
+// sub-documents and need to be combined.
+// If either the rate ot total is nil, nothing will be done. The rounding rule
+// will be used for re-calculations.
+func (t *Total) Exchange(rate *currency.ExchangeRate, rr cbc.Key) {
+	if rate == nil || t == nil {
+		return
+	}
+	for _, ct := range t.Categories {
+		for _, rt := range ct.Rates {
+			rt.Base = rate.Convert(rt.Base)
+		}
+	}
+	t.Calculate(rate.To, rr)
 }
 
 // Calculate will go through all the categories and rates to calculate the final
@@ -406,7 +425,6 @@ func (t *Total) Round(zero num.Amount) {
 				rt.Surcharge.Amount = rt.Surcharge.Amount.Rescale(zero.Exp())
 			}
 		}
-		ct.amount = ct.Amount
 		ct.Amount = ct.Amount.Rescale(zero.Exp())
 		if ct.Surcharge != nil {
 			*ct.Surcharge = ct.Surcharge.Rescale(zero.Exp())

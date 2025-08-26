@@ -219,3 +219,49 @@ func TestTaxJSONSchemaExtend(t *testing.T) {
 	assert.Equal(t, "precise", prop.OneOf[0].Const)
 	assert.Equal(t, "currency", prop.OneOf[1].Const)
 }
+
+func TestTaxGetExt(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tx *bill.Tax
+		assert.Empty(t, tx.GetExt("any-ext"))
+	})
+	t.Run("empty", func(t *testing.T) {
+		tx := &bill.Tax{}
+		assert.Empty(t, tx.GetExt("any-ext"))
+	})
+	t.Run("with extensions", func(t *testing.T) {
+		tx := &bill.Tax{
+			Ext: tax.Extensions{
+				"vat-cat":  "standard",
+				"vat-rate": "21.0%",
+			},
+		}
+		assert.Equal(t, "standard", tx.GetExt("vat-cat").String())
+		assert.Equal(t, "21.0%", tx.GetExt("vat-rate").String())
+		assert.Empty(t, tx.GetExt("non-existent"))
+		assert.Empty(t, tx.GetExt(""))
+	})
+}
+
+func TestTaxHasExt(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tx *bill.Tax
+		assert.False(t, tx.HasExt("any-ext"))
+	})
+	t.Run("empty", func(t *testing.T) {
+		tx := &bill.Tax{}
+		assert.False(t, tx.HasExt("any-ext"))
+	})
+	t.Run("with extensions", func(t *testing.T) {
+		tx := &bill.Tax{
+			Ext: tax.Extensions{
+				"vat-cat":  "standard",
+				"vat-rate": "21.0%",
+			},
+		}
+		assert.True(t, tx.HasExt("vat-cat"))
+		assert.True(t, tx.HasExt("vat-rate"))
+		assert.False(t, tx.HasExt("non-existent"))
+		assert.False(t, tx.HasExt(""))
+	})
+}

@@ -174,6 +174,11 @@ func TestScenarioSetSummary(t *testing.T) {
 		assert.Equal(t, "normal", sum.Ext["xx-test"].String())
 		assert.Equal(t, "This is a note 3", sum.Notes[1].Text)
 	})
+	t.Run("extension keys", func(t *testing.T) {
+		keys := ss.ExtensionKeys()
+		require.Len(t, keys, 1)
+		assert.Contains(t, keys, cbc.Key("xx-test"))
+	})
 }
 
 func scenariosInvoiceExample() *bill.Invoice {

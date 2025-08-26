@@ -1,0 +1,48 @@
+$schema: https://gobl.org/draft-0/bill/payment
+$addons: ["pt-saft-v1"]
+uuid: "d7388b17-d35f-4f2e-a33e-9bca2fae9089"
+type: receipt
+method:
+  key: credit-transfer
+  detail: "Transferência bancária"
+series: "RG SAMPLE"
+code: "1"
+issue_date: "2025-01-30"
+currency: EUR
+supplier:
+  uuid: 9de7584f-ea5c-42a7-b159-5e4c6a280a5c
+  tax_id:
+    country: PT
+    code: "545259045"
+  name: Hotelzinho
+  addresses:
+    - street: Rua do Hotelzinho
+      code: 1000-000
+      locality: Lisboa
+customer:
+  name: Maria Santos Silva
+  tax_id:
+    country: PT
+    code: "514329874"
+  addresses:
+    - street: Rua da Maria
+      code: 1000-000
+      locality: Lisboa
+lines:
+  - document:
+      issue_date: "2025-01-15"
+      series: "FT SAMPLE"
+      code: "1"
+      tax:
+        categories:
+          - code: VAT
+            rates:
+              - key: standard
+                base: "100.00"
+                percent: "23.0%"
+                ext:
+                  pt-region: PT
+                  pt-saft-tax-rate: NOR
+      payable: "123.00"
+    advances: "25.00"
+    amount: "50.00"

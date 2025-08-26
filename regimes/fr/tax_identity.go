@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -26,15 +25,13 @@ func normalizeTaxIdentity(tID *tax.Identity) {
 	tax.NormalizeIdentity(tID)
 
 	str := tID.Code.String()
-	// Check if we have a SIREN so we can try and normalize with the
-	// check digit.
-	if len(str) == 9 {
-		if err := validateSIRENTaxCode(tID.Code); err != nil {
-			return
-		}
-		chk := calculateVATCheckDigit(str)
-		tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
+	// Check if we have a valid SIREN so we can try and
+	// normalize with the check digit.
+	if err := validateSIRENTaxCode(tID.Code); err != nil {
+		return
 	}
+	chk := calculateVATCheckDigit(str)
+	tID.Code = cbc.Code(fmt.Sprintf("%s%s", chk, str))
 }
 
 // validateTaxIdentity checks to ensure the SIRET code looks okay.
@@ -87,10 +84,32 @@ func validateSIRENTaxCode(value interface{}) error {
 
 	base := str[:8]
 	chk := str[8:]
-	v := common.ComputeLuhnCheckDigit(base)
+	v := computeLuhnCheckDigit(base)
 	if chk != v {
 		return errors.New("checksum mismatch")
 	}
 
 	return nil
+}
+
+// TODO: refactor this into a shareable method.
+func computeLuhnCheckDigit(number string) string {
+	sum := 0
+	pos := 0
+
+	for i := len(number) - 1; i >= 0; i-- {
+		digit := int(number[i] - '0')
+
+		if pos%2 == 0 {
+			digit *= 2
+			if digit > 9 {
+				digit -= 9
+			}
+		}
+
+		sum += digit
+		pos++
+	}
+
+	return strconv.FormatInt(int64((10-(sum%10))%10), 10)
 }

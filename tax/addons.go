@@ -163,7 +163,7 @@ func (ad *AddonDef) WithContext(ctx context.Context) context.Context {
 	if ad == nil {
 		return ctx
 	}
-	ctx = contextWithValidator(ctx, ad.Validator)
+	ctx = ContextWithValidator(ctx, ad.Validator)
 	return ctx
 }
 

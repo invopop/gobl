@@ -3,7 +3,6 @@ package bill
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -123,12 +122,9 @@ type Payment struct {
 	// to other documents and alternative parties involved in the order-to-delivery process.
 	Ordering *Ordering `json:"ordering,omitempty" jsonschema:"title=Ordering"`
 
-	// Summary of the taxes applied to the payment for tax regimes that require
-	// this information to be communicated.
-	Tax *tax.Total `json:"tax,omitempty" jsonschema:"title=Tax"`
 	// Total amount to be paid in this payment, either positive or negative according to the
-	// line types and totals.
-	Total num.Amount `json:"total" jsonschema:"title=Total"`
+	// line types and totals. Calculated automatically.
+	Total num.Amount `json:"total" jsonschema:"title=Total,calculated=true"`
 
 	// Unstructured information that is relevant to the payment, such as correction or additional
 	// legal details.
@@ -189,8 +185,7 @@ func (pmt *Payment) ValidateWithContext(ctx context.Context) error {
 			validation.Each(validation.NotNil),
 		),
 		validation.Field(&pmt.Ordering),
-		validation.Field(&pmt.Tax),
-		validation.Field(&pmt.Total, validation.Required),
+		validation.Field(&pmt.Total), // Totals may be zero or negative
 		validation.Field(&pmt.Notes,
 			validation.Each(validation.NotNil),
 		),
@@ -238,7 +233,6 @@ func (pmt *Payment) Normalize(normalizers tax.Normalizers) {
 	normalizers.Each(pmt)
 
 	tax.Normalize(normalizers, pmt.Method)
-	tax.Normalize(normalizers, pmt.Tax)
 	tax.Normalize(normalizers, pmt.Supplier)
 	tax.Normalize(normalizers, pmt.Customer)
 	tax.Normalize(normalizers, pmt.Preceding)
@@ -258,10 +252,8 @@ func (pmt *Payment) normalizers() tax.Normalizers {
 }
 
 func (pmt *Payment) calculate() error {
-	var tt *tax.Total
-	var total *num.Amount
-
 	r := pmt.RegimeDef()
+	rr := r.GetRoundingRule()
 
 	// Set the issue date and time
 	tz := r.TimeLocation()
@@ -285,40 +277,26 @@ func (pmt *Payment) calculate() error {
 		}
 	}
 
+	var total *num.Amount
 	for i, l := range pmt.Lines {
 		if l == nil {
 			continue
 		}
 		l.Index = i + 1
-		if err := l.calculate(pmt.Currency, pmt.ExchangeRates); err != nil {
+
+		if err := l.calculate(pmt.ExchangeRates, pmt.Currency, rr); err != nil {
 			return validation.Errors{
 				"lines": validation.Errors{
-					strconv.Itoa(i): err,
+					fmt.Sprintf("%d", l.Index): err,
 				},
 			}
 		}
 
-		var lt *tax.Total
-		if l.Document != nil {
-			cur := l.Document.Currency
-			if cur == currency.CodeEmpty {
-				cur = pmt.Currency
-			}
-			l.Document.Calculate(cur, r.GetRoundingRule())
-			lt = l.Document.Tax.Clone()
-
-			// Merge the line document taxes
-			if l.Document.Tax != nil {
-				if tt == nil {
-					tt = lt
-				} else {
-					tt = tt.Merge(lt)
-				}
-			}
+		// Add the totals
+		a := l.Amount
+		if l.Refund {
+			a = a.Negate()
 		}
-
-		// Finally add the totals
-		a := l.Total
 		if total == nil {
 			total = &a
 		} else {
@@ -326,7 +304,6 @@ func (pmt *Payment) calculate() error {
 			total = &nt
 		}
 	}
-	pmt.Tax = tt
 	if total != nil {
 		pmt.Total = *total
 	}

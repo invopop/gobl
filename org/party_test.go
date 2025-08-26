@@ -79,6 +79,19 @@ func TestPartyNormalize(t *testing.T) {
 		assert.Equal(t, "DE", party.GetRegime().String())
 		assert.Equal(t, "123/456/78901", party.Identities[0].Code.String())
 	})
+
+	t.Run("with telephone", func(t *testing.T) {
+		party := org.Party{
+			Name: "Invopop",
+			Telephones: []*org.Telephone{
+				{
+					Number: " +49 123 4567890 ",
+				},
+			},
+		}
+		party.Normalize(nil)
+		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
+	})
 }
 
 func TestPartyAddressNill(t *testing.T) {

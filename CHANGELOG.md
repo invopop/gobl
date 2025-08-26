@@ -6,14 +6,122 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ### Added
 
 - `examples`: Add example for Belgium, specifically for PEPPOL.
+=======
+## [v0.220.5] - 2025-07-21
+
+### Changed
+
+- `pt-saft-v1`: restore generic notes for M99 and M19 exemption codes for backwards compatibility.
+
+## [v0.220.4] - 2025-07-17
+
+### Added
+
+- `es`: tax identity codes for nationals will be zero padded.
+
+### Changed
+
+- `es`: refactored tax identity code checks for easier re-use, removed old specific errors and replaces `DetermineTaxCodeType` method with `TaxIdentityKey`.
+- `es`: removed old tax identity zone check.
+
+### Fixes
+
+- `bill`: Correcting `ConvertInto` to handle item level currency values.
+
+## [v0.220.3] - 2025-07-15
+
+### Added
+
+- `tax`: `Identity#InEU` method for checking if Identity is in the EU on a specific date.
+
+### Changed
+
+- `es-verifactu-v1`: refining copy related to identity handling.
+
+## [v0.220.2] - 2025-07-14
+
+### Added
+
+- `co-dian-v2`: added `co-dian-fiscal-responsibility` extension for suppliers and customers
+
+### Changed
+
+- `es-verifactu-v1`:
+  - Refining customer validation to support Tax ID or identity with extension.
+  - New `replacement` tag to use when simplified invoices are replaced with a complete version.
+  - Setting credit-note default document type to `R1` if not set in correction process.
+  - Improved extension documentation and usage.
+
+## [v0.220.1] - 2025-07-09
+
+### Fixes
+
+- `tax`: Correcting `$tags` JSON Schema properties from OneOf to AnyOf.
+
+## [v0.220.0] - 2025-07-09
+
+### Added
+
+- `bill`: `Ordering` now includes an `issuer` field.
+- `es/verifactu`: Support for `es-verifactu-simplified-art7273` and `es-verifactu-issuer-type` extensions.
+
+### Changed
+
+- `bill`: All invoices will now have a default set of `$tags` that can be used.
+
+## [v0.219.0] - 2025-07-08
+
+### Changed
+
+- `es-verifactu-v1`: `[]*org.Note` validation will check the note's length if `key=general`
+- `pt-saft-v1`: adapted and additional validations for the new `bill.Payment` structure
+- `pt-saft-v1`: updated `pt-exemption-code` extension list and related scenarios to use the texts complaint with the regulations.
+- `fr-choruspro`: `bill.Line` `quantity` field will now be normalized to four decimal places.
+
+### Added
+
+- `mx-cfdi-v4`: Validate price greater than 0.
+- `it-sdi-v1`: Validate names and addresses contain only latin characters as required by SDI.
+- `it-sdi-v1`: Payment means now support `online` key as a card payment.
+- `org`: `Unit` additional standard units.
+- `es/verifactu`: map identity keys for specific codes.
+- `org`: `Person`: new `key`, `addresses`, and `identities` properties.
+
+## [v0.218.0] - 2025-06-12
+
+### Changed
+
+- `bill`: `PaymentLine` will recalculate tax totals based on proportional amounts paid per-line, alongside the total advances and amount due.
+- `bill`: `PaymentLine` removed the `debit` and `credit` fields which were confusing, especially alongside the advances. Please now use the `refund` flag.
+- `bill`: `Payment` will check the line document's currency and require an exchange rate if different from the document's.
+- `bill`: `Payment` `tax` field is no longer supported, we assume convertors will deal with tax for each payment line.
+- `fr`: Removed unnecessary length check when validating the SIREN.
+
+### Added
+
+- `bill`: `PaymentLine` includes a `refund` boolean to indicate flow of funds, and impacts the `Payment`'s total potentially making it negative.
+- `org`: `DocumentRef` now includes a `payable` property.
+- `bill`: `PaymentLine` includes `description`, `installment`, `payable`, `advances`, `due`, and `tax` properties.
+- `mx-cfdi-v4`: Define payment method in document.
+- `fr-choruspro-v1`: Created addon for Chorus Pro to handle invoice types and identity schemes
+
+## [v0.217.1] - 2025-06-02
+
+### Fixed
+
+- `tax`: Simple `Normalize` method support.
+
+## [v0.217.0] - 2025-06-02
+>>>>>>> main
 
 ### Changed
 
 - `mx`: updated examples to use postcodes in the central timezone (most common)
-- `cbc`: Allow `,` (comma) as separator.
+- `cbc`: Code: allow `,` (comma) as separator.
 - `org`: Telephone normalized and format restrictions removed.
 
 ### Fixed

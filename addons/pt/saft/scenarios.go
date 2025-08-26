@@ -61,13 +61,21 @@ var invoiceScenarios = &tax.ScenarioSet{
 		},
 
 		// Extension texts
+
+		// The following scenarios append a note with the applicable regulations
+		// for any tax exemption used in the document. These texts are compliant
+		// with art. 2.2.14 of Despacho nº8632/2014 (for printed invoices) and
+		// point 4.4.19.7 of Portaria nº302/2016 (for SAF-T files).
+		//
+		// Codes below with a blank text are cases where the user must provide the
+		// applicable regulation manually.
 		{
 			ExtKey:  ExtKeyExemption,
 			ExtCode: "M01",
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Artigo 16.°, n.° 6 do CIVA",
+				Text: "Artigo 16.º, n.º 6, alíneas a) a d) do CIVA",
 			},
 		},
 		{
@@ -76,7 +84,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Artigo 6.° do Decreto-Lei n.° 198/90, de 19 de junho",
+				Text: "Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho",
 			},
 		},
 		{
@@ -85,7 +93,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Exempt / Isento artigo 13.° do CIVA",
+				Text: "Artigo 13.º do CIVA",
 			},
 		},
 		{
@@ -94,7 +102,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Exempt / Isento artigo 14.° do CIVA",
+				Text: "Artigo 14.º do CIVA",
 			},
 		},
 		{
@@ -103,7 +111,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Exempt / Isento artigo 15.° do CIVA",
+				Text: "Artigo 15.º do CIVA",
 			},
 		},
 		{
@@ -112,7 +120,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Exempt / Isento artigo 9.° do CIVA",
+				Text: "Artigo 9.º do CIVA",
 			},
 		},
 		{
@@ -121,7 +129,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Não confere direito a dedução / Artigo 62.° alínea b) do CIVA",
+				Text: "Artigo 62.º alínea b) do CIVA",
 			},
 		},
 		{
@@ -130,7 +138,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime de isenção / Artigo 57.° do CIVA",
+				Text: "Artigo 57.º do CIVA",
 			},
 		},
 		{
@@ -139,7 +147,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime particular do tabaco / Decreto-Lei n.° 346/85, de 23 de agosto",
+				Text: "Decreto-Lei n.º 346/85, de 23 de agosto",
 			},
 		},
 		{
@@ -148,7 +156,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.° 221/85, de 3 de julho",
+				Text: "Decreto-Lei n.º 221/85, de 3 de julho",
 			},
 		},
 		{
@@ -157,7 +165,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.° 199/96, de 18 de outubro",
+				Text: "Decreto-Lei n.º 199/96, de 18 de outubro",
 			},
 		},
 		{
@@ -166,7 +174,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.° 199/96, de 18 de outubro",
+				Text: "Decreto-Lei n.º 199/96, de 18 de outubro",
 			},
 		},
 		{
@@ -175,7 +183,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.° 199/96, de 18 de outubro",
+				Text: "Decreto-Lei n.º 199/96, de 18 de outubro",
 			},
 		},
 		{
@@ -184,7 +192,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Exempt / Isento artigo 14.° do RITI",
+				Text: "Artigo 14.º do RITI",
 			},
 		},
 		{
@@ -193,7 +201,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Outras isenções - Isenções temporárias determinadas em diploma próprio",
+				Text: "Outras isenções", // default text, to be overridden by the user
 			},
 		},
 		{
@@ -202,7 +210,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Regime forfetário / Artigo 59.°-D n.°2 do CIVA",
+				Text: "Artigo 59.º-D n.º 2 do CIVA",
 			},
 		},
 		{
@@ -211,7 +219,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Não confere direito à dedução (ou expressão similar) - Artigo 72.° n.° 4 do CIVA",
+				Text: "Artigo 72.º n.º 4 do CIVA",
 			},
 		},
 		{
@@ -220,7 +228,16 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Mercadorias à consignação - Artigo 38.° n.° 1 alínea a) do CIVA",
+				Text: "Artigo 38.º n.º 1 alínea a) do CIVA",
+			},
+		},
+		{
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M26",
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
+				Src:  ExtKeyExemption,
+				Text: "Lei n.º 17/2023, de 14 de abril",
 			},
 		},
 		{
@@ -229,7 +246,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea i) do Código do IVA",
+				Text: "Artigo 2.º n.º 1 alínea i) do CIVA",
 			},
 		},
 		{
@@ -238,7 +255,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea j) do Código do IVA",
+				Text: "Artigo 2.º n.º 1 alínea j) do CIVA",
 			},
 		},
 		{
@@ -247,7 +264,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea I) do Código do IVA",
+				Text: "Artigo 2.º n.º 1 alínea l) do CIVA",
 			},
 		},
 		{
@@ -256,7 +273,16 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / autoliquidação - Artigo 2.° n.° 1 alínea m) do Código do IVA",
+				Text: "Artigo 2.º n.º 1 alínea m) do CIVA",
+			},
+		},
+		{
+			ExtKey:  ExtKeyExemption,
+			ExtCode: "M34",
+			Note: &tax.ScenarioNote{
+				Key:  org.NoteKeyLegal,
+				Src:  ExtKeyExemption,
+				Text: "Artigo 2.º n.º 1 alínea n) do CIVA",
 			},
 		},
 		{
@@ -265,7 +291,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / Autoliquidação - Artigo 6.º n.º 6 alínea a) do Código do IVA, a contrário",
+				Text: "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
 			},
 		},
 		{
@@ -274,7 +300,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / Autoliquidação - Artigo 8.º n.º 3 do RITI",
+				Text: "Artigo 8.º n.º 3 do RITI",
 			},
 		},
 		{
@@ -283,7 +309,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / Autoliquidação - Decreto-Lei n.º 21/2007, de 29 de janeiro",
+				Text: "Decreto-Lei n.º 21/2007, de 29 de janeiro",
 			},
 		},
 		{
@@ -292,7 +318,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Reverse charge / Autoliquidação - Decreto-Lei n.° 362/99, de 16 de setembro",
+				Text: "Decreto-Lei n.º 362/99, de 16 de setembro",
 			},
 		},
 		{
@@ -301,7 +327,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 			Note: &tax.ScenarioNote{
 				Key:  org.NoteKeyLegal,
 				Src:  ExtKeyExemption,
-				Text: "Não sujeito ou não tributado",
+				Text: "Não sujeito ou não tributado", // default text, to be overridden by the user
 			},
 		},
 	},

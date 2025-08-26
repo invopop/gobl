@@ -36,6 +36,10 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 			Expected: "44391838042",
 		},
 		{
+			Code:     "391838043",
+			Expected: "391838043",
+		},
+		{
 			Code:     " INV-ALID ",
 			Expected: "INVALID",
 		},

@@ -2,24 +2,44 @@
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "es-verifactu-v1",
   "name": {
-    "en": "Spain Verifactu V1"
+    "en": "Spain VERI*FACTU V1"
   },
+  "sources": [
+    {
+      "title": {
+        "en": "VERI*FACTU error response code list"
+      },
+      "url": "https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties"
+    }
+  ],
   "extensions": [
     {
       "key": "es-verifactu-doc-type",
       "name": {
-        "en": "Verifactu Invoice Type Code - L2",
-        "es": "Código de Tipo de Factura de Verifactu - L2"
+        "en": "Invoice Type Code",
+        "es": "Código de Tipo de Factura"
       },
       "desc": {
-        "en": "Invoice type code used to identify the type of invoice being sent.\nSource: VeriFactu Ministerial Order:\n * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138"
+        "en": "Code used to identify the type of invoice being sent. This will be\ndetermined automatically by GOBL during normalization according\nto the scenario definitions.\n\nThe codes `R2`, `R3`, and `R4` are not covered by GOBL's scenarios\nand will need to be set manually if needed.\n\nValues correspond to L2 list."
       },
+      "sources": [
+        {
+          "title": {
+            "en": "Verifactu Ministerial Order",
+            "es": "Orden Ministerial de Verifactu"
+          },
+          "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138"
+        }
+      ],
       "values": [
         {
           "code": "F1",
           "name": {
             "en": "Invoice (Article 6, 7.2 and 7.3 of RD 1619/2012)",
             "es": "Factura (Art. 6, 7.2 y 7.3 del RD 1619/2012)"
+          },
+          "desc": {
+            "en": "For regular invoices."
           }
         },
         {
@@ -27,6 +47,9 @@
           "name": {
             "en": "Simplified invoice (Article 6.1.d) of RD 1619/2012)",
             "es": "Factura Simplificada (Art. 6.1.d) del RD 1619/2012)"
+          },
+          "desc": {
+            "en": "To use for B2C invoices where details about the customer are not\nnormally required."
           }
         },
         {
@@ -41,6 +64,9 @@
           "name": {
             "en": "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
             "es": "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA"
+          },
+          "desc": {
+            "en": "Use this code when correcting most commercial invoices due to cancellations\nor discounts. This is currently set as the default buy may be overridden if\nneeded."
           }
         },
         {
@@ -48,6 +74,9 @@
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.3",
             "es": "Factura rectificativa: artículo 80.3"
+          },
+          "desc": {
+            "en": "To use for customer declared insolvency proceedings when a court\nis involved."
           }
         },
         {
@@ -55,6 +84,9 @@
           "name": {
             "en": "Rectified invoice: error based on law and Article 80.4",
             "es": "Factura rectificativa: artículo 80.4"
+          },
+          "desc": {
+            "en": "For unpaid invoices that are not declared as related to insolvency\nand related to bad debt after a 6 or 12 month waiting period."
           }
         },
         {
@@ -62,6 +94,9 @@
           "name": {
             "en": "Rectified invoice: Other",
             "es": "Factura rectificativa: Resto"
+          },
+          "desc": {
+            "en": "Legal or court-imposed corrections that do not fall under any of\nthe other corrective reasons."
           }
         },
         {
@@ -69,6 +104,9 @@
           "name": {
             "en": "Rectified invoice: simplified invoices",
             "es": "Factura rectificativa: facturas simplificadas"
+          },
+          "desc": {
+            "en": "Always used when correcting simplified or B2C invoices."
           }
         }
       ]
@@ -76,11 +114,11 @@
     {
       "key": "es-verifactu-correction-type",
       "name": {
-        "en": "Verifactu Correction Type Code - L3",
-        "es": "Código de Tipo de Corrección de Verifactu - L3"
+        "en": "Verifactu Correction Type Code",
+        "es": "Código de Tipo de Corrección de Verifactu"
       },
       "desc": {
-        "en": "Correction type code used to identify the type of correction being made.\nThis value will be determined automatically according to the invoice type.\nCorrective invoices will be marked as \"S\", while credit and debit notes as \"I\"."
+        "en": "Correction type code used to identify the type of correction being\nmade. Values map to L3 list.\n\nCode is determined automatically according to the invoice type:\n\n| Invoice Type\t\t| Code |\n|-------------------|------|\n| `corrective`\t\t| `S`  |\n| `credit-note`\t\t| `I`  |\n| `debit-note`\t\t| `I`  |"
       },
       "values": [
         {
@@ -102,11 +140,11 @@
     {
       "key": "es-verifactu-op-class",
       "name": {
-        "en": "Verifactu Operation Classification/Exemption Code - L9",
-        "es": "Código de Clasificación/Exención de Impuesto de Verifactu - L9"
+        "en": "Subject and Not Exempt Operation Class Code",
+        "es": "Clave de la Operación Sujeta y no Exenta o de la Operación no Sujeta."
       },
       "desc": {
-        "en": "Operation classification code used to identify if taxes should be applied to the line.\nSource: VeriFactu Ministerial Order:\n * https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138\nFor details on how best to use and apply these and other codes, see the\nAEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
+        "en": "Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.\n\nVERI*FACTU distinguishes between \"subject\" and \"exempt\" operations, while GOBL treats \"exempt\" as simply having no tax percentage. This difference can make mapping between systems complex.\n\nGOBL will attempt to automatically assign operation class codes based on tax rates, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.\n\nAutomatic mapping of tax rates to operation classes:\n\n| Tax Rate                | Operation Class |\n|-------------------------|-----------------|\n| `standard`              | `S1`            |\n| `reduced`               | `S1`            |\n| `super-reduced`         | `S1`            |\n| `zero`                  | `S1`            |\n| `exempt`                | `N1`            |\n| `exempt+reverse-charge` | `S2`            |\n| `exempt+export`         | `N2`            |\n\nThis extension maps to the `CalificacionOperacion` field and must not be used together with the `es-verifactu-exempt` extension. Values correspond to the L9 list.\n\nFor further guidance on applying these codes, refer to the AEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
       },
       "values": [
         {
@@ -142,11 +180,11 @@
     {
       "key": "es-verifactu-exempt",
       "name": {
-        "en": "Verifactu Exemption Code - L10",
-        "es": "Código de Exención de Impuesto de Verifactu - L10"
+        "en": "Verifactu Exemption Code",
+        "es": "Código de Exención de Impuesto de Verifactu"
       },
       "desc": {
-        "en": "Exemption code used to explain why the operation is exempt from taxes."
+        "en": "Exemption code used to explain why the operation is exempt from taxes.\n\nThis extension maps to the field `OperacionExenta`, and **cannot** be provided\nalongside the `es-verifactu-op-class` extension. Values correspond to the\nL10 list.\n\nNo attempt will be made by GOBL to automatically map tax rates to exemption\nreason codes, they will need to be determined and applied on a case-by-case\nbasis."
       },
       "values": [
         {
@@ -196,11 +234,11 @@
     {
       "key": "es-verifactu-regime",
       "name": {
-        "en": "VAT/IGIC Regime Code - L8A/B",
-        "es": "Código de Régimen de IVA/IGIC - L8A/B"
+        "en": "VAT/IGIC Regime Code",
+        "es": "Código de Régimen de IVA/IGIC"
       },
       "desc": {
-        "en": "Identify the type of VAT or IGIC regime applied to the operation. This list combines lists L8A which include values for VAT, and L8B for IGIC."
+        "en": "Identify the type of VAT or IGIC regime applied to the operation. This list combines\nlists L8A which include values for VAT, and L8B for IGIC.\n\nMaps to the field `ClaveRegimen`, and is required for all VAT and IGIC operations.\nValues correspond to L8A (VAT) and L8B (IGIC) lists.\n\nThe regime code must be assigned for each tax combo. If no regime code is provided,\nGOBL will try to assign a code from the following tax combo contexts:\n\n| Combo Context\t\t\t\t| Regime Code |\n|---------------------------|-------------|\n| Rate `standard`\t\t\t| `01`        |\n| Rate has `export`\t\t\t| `02`        |\n| Has surcharge\t\t\t\t| `18`        |"
       },
       "values": [
         {
@@ -323,6 +361,129 @@
           }
         }
       ]
+    },
+    {
+      "key": "es-verifactu-identity-type",
+      "name": {
+        "en": "Identity Type Code",
+        "es": "Código de Tipo de Identidad"
+      },
+      "desc": {
+        "en": "Identity code used to identify the type of identity document used by the customer\ndefined in the L7 list.\n\nThe regular Party Tax Identity is preferred over using a specific identity type\ncode, and will be mapped automatically as follows:\n\n- Spanish Tax IDs will be mapped to the `NIF` field.\n- EU Tax IDs will be mapped to the `IDOtro` field with code `02`.\n- Non-EU Tax IDs will be mapped to the `IDOtro` field with code `04`.\n\nVERI*FACTU will perform validation on both Spanish and EU Tax IDs, so it is important\nto provide the correct details.\n\nThe following identity `key` values will be mapped automatically to an extension by the \naddon for the following keys:\n\n- `passport`: `03`\n- `foreign`: `04`\n- `resident`: `05`\n- `other`: `06`\n\nThe `07` \"not registered in census\" code is not mapped automatically, but\ncan be provided directly if needed.\n\nExample identity of a UK passport:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\"\n\t\t}\n\t]\n}\n```\n\nWill be normalized to:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-verifactu-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```"
+      },
+      "values": [
+        {
+          "code": "02",
+          "name": {
+            "en": "NIF-VAT Identity (VIES)",
+            "es": "NIF-VAT (VIES)"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Passport",
+            "es": "Pasaporte"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Foreign Identity Document",
+            "es": "Documento de Identidad Extranjero"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Residential Certificate",
+            "es": "Certificado Residencia"
+          }
+        },
+        {
+          "code": "06",
+          "name": {
+            "en": "Other Identity Document",
+            "es": "Otro Documento Probatorio"
+          }
+        },
+        {
+          "code": "07",
+          "name": {
+            "en": "Not registered in census",
+            "es": "No censado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-simplified-art7273",
+      "name": {
+        "en": "Simplified Invoice Art. 7.2 and 7.3, RD 1619/2012",
+        "es": "Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012"
+      },
+      "desc": {
+        "en": "This extensions covers a specific use-case when the customer specifically\nrequests that the invoice includes their fiscal details, but they are\nnot registered for tax.\n\nMaps to the `FacturaSimplificadaArt7273` field in Verifactu documents.\n\nCan only be true when the invoice type (`TipoFactura`) is one of: `F1`,\n`F3`, `R1`, `R2`, `R3`, or `R4`."
+      },
+      "values": [
+        {
+          "code": "S",
+          "name": {
+            "en": "Yes",
+            "es": "Sí"
+          }
+        },
+        {
+          "code": "N",
+          "name": {
+            "en": "No",
+            "es": "No"
+          }
+        }
+      ]
+    },
+    {
+      "key": "es-verifactu-issuer-type",
+      "name": {
+        "en": "Issuer Type Code",
+        "es": "Emitida por Tercero o Destinatario"
+      },
+      "desc": {
+        "en": "Indicates whether the invoice is issued by a third party or by the customer\nthemselves.\n\nMapped to the field `EmitidaPorTerceroODestinatario` in Verifactu documents,\nwith list L6.\n\nThe `self-billed` tag will automatically be set this extension in the invoice\nto `D`.\n\nIf the `issuer` field is set in the invoice's ordering section, then this\nextension will be set to `T`."
+      },
+      "values": [
+        {
+          "code": "T",
+          "name": {
+            "en": "Issued by Third Party",
+            "es": "Emitida por Tercero"
+          }
+        },
+        {
+          "code": "D",
+          "name": {
+            "en": "Issued by Customer",
+            "es": "Emitida por Destinatario"
+          }
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "replacement",
+          "name": {
+            "en": "Replacement Invoice",
+            "es": "Factura de Sustitución"
+          },
+          "desc": {
+            "en": "Used under special circumstances to indicate that this invoice replaces a previously\nissued simplified invoice. The previous document was correct, but the replacement is\nnecessary to provide tax details of the customer."
+          }
+        }
+      ]
     }
   ],
   "scenarios": [
@@ -330,6 +491,13 @@
       "schema": "bill/invoice",
       "list": [
         {
+          "name": {
+            "en": "Standard Invoice",
+            "es": "Factura Estándar"
+          },
+          "desc": {
+            "en": "Standard invoice used for B2B transactions, where the complete fiscal details of the customer\nare available."
+          },
           "type": [
             "standard"
           ],
@@ -338,6 +506,13 @@
           }
         },
         {
+          "name": {
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada"
+          },
+          "desc": {
+            "en": "Used for B2C transactions when the client details are not available."
+          },
           "type": [
             "standard"
           ],
@@ -346,6 +521,44 @@
           ],
           "ext": {
             "es-verifactu-doc-type": "F2"
+          }
+        },
+        {
+          "name": {
+            "en": "Replacement Invoice",
+            "es": "Factura Emitida en Sustitución"
+          },
+          "desc": {
+            "en": "Used under special circumstances to indicate that this invoice replaces a previously\nissued simplified invoice. The previous document was correct, but the replacement is\nnecessary to provide tax details of the customer."
+          },
+          "type": [
+            "standard"
+          ],
+          "tags": [
+            "replacement"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "F3"
+          }
+        },
+        {
+          "name": {
+            "en": "Simplified Corrective Invoice",
+            "es": "Factura Simplificada Correctiva"
+          },
+          "desc": {
+            "en": "This scenario covers when a simplified invoice is being corrected either\nwith a credit or debit note, or a corrective replacement invoice.\n\nIn VERI*FACTU, only the document type `R5` is supported for corrective\ninvoices."
+          },
+          "type": [
+            "corrective",
+            "credit-note",
+            "debit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "es-verifactu-doc-type": "R5"
           }
         }
       ]

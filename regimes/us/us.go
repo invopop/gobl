@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -29,9 +28,6 @@ func New() *tax.RegimeDef {
 		},
 		TimeZone:  "America/Chicago", // Around the middle
 		Validator: Validate,
-		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
-		},
 		Categories: []*tax.CategoryDef{
 			//
 			// Sales Tax

@@ -41,4 +41,4 @@ lines:
             rates:
               - base: "1630.00"
                 percent: "21.0%"
-    debit: "1972.30"
+    amount: "1972.30"

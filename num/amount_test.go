@@ -50,6 +50,26 @@ func TestAmountSubtract(t *testing.T) {
 	}
 }
 
+func TestAmountSub(t *testing.T) {
+	// Use table driven tests to test multiple scenarios
+	tests := []struct {
+		a, b, e num.Amount
+	}{
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 3), num.MakeAmount(100, 2)},
+		{num.MakeAmount(200, 2), num.MakeAmount(1000, 2), num.MakeAmount(-800, 2)},
+		{num.MakeAmount(299, 3), num.MakeAmount(1000, 2), num.MakeAmount(-9701, 3)},
+		{num.MakeAmount(2000, 2), num.MakeAmount(-1000, 2), num.MakeAmount(3000, 2)},
+		{num.MakeAmount(1890000, 2), num.MakeAmount(1890002, 2), num.MakeAmount(-2, 2)},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v - %v = %v", test.a.String(), test.b.String(), test.e.String()), func(t *testing.T) {
+			r := test.a.Sub(test.b)
+			assert.True(t, r.Equals(test.e))
+			assert.Equal(t, test.e.String(), r.String())
+		})
+	}
+}
+
 func TestAmountCompare(t *testing.T) {
 	a := num.MakeAmount(1000, 2)
 	b := num.MakeAmount(2000, 2)

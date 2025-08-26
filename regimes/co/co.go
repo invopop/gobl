@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -23,10 +22,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Colombia",
 			i18n.ES: "Colombia",
 		},
-		TimeZone: "America/Bogota",
-		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
-		},
+		TimeZone:   "America/Bogota",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Corrections: []*tax.CorrectionDefinition{

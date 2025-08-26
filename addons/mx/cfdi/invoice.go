@@ -13,13 +13,8 @@ import (
 
 func normalizeInvoice(inv *bill.Invoice) {
 	normalizeInvoiceIssueDateAndTime(inv)
-	normalizeParty(inv.Supplier)
-	normalizeParty(inv.Customer)
 	if inv.Tags.HasTags(TagGlobal) {
 		inv.Customer = nil
-	}
-	for _, line := range inv.Lines {
-		normalizeItem(line.Item)
 	}
 }
 
@@ -115,6 +110,7 @@ func validateInvoiceTax(tags tax.Tags, preceding []*org.DocumentRef) validation.
 				tax.ExtensionsRequire(
 					ExtKeyDocType,
 					ExtKeyIssuePlace,
+					ExtKeyPaymentMethod,
 				),
 				validation.When(
 					tags.HasTags(TagGlobal),
@@ -226,6 +222,7 @@ func validateInvoiceLineItem(tags tax.Tags) validation.RuleFunc {
 			return nil
 		}
 		return validation.ValidateStruct(item,
+			validation.Field(&item.Price, num.Positive),
 			validation.Field(&item.Ref,
 				validation.When(
 					tags.HasTags(TagGlobal),

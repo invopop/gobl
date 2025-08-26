@@ -27,5 +27,31 @@ var invoiceScenarios = &tax.ScenarioSet{
 				ExtKeyRelType: "01",
 			},
 		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote},
+			Filter: func(in any) bool {
+				inv, ok := in.(*bill.Invoice)
+				if !ok {
+					return false
+				}
+				return inv.Totals.Paid()
+			},
+			Ext: tax.Extensions{
+				ExtKeyPaymentMethod: ExtCodePaymentMethodPUE, // Pago en una sola exhibición
+			},
+		},
+		{
+			Types: []cbc.Key{bill.InvoiceTypeStandard, bill.InvoiceTypeCreditNote},
+			Filter: func(in any) bool {
+				inv, ok := in.(*bill.Invoice)
+				if !ok {
+					return false
+				}
+				return !inv.Totals.Paid()
+			},
+			Ext: tax.Extensions{
+				ExtKeyPaymentMethod: ExtCodePaymentMethodPPD, // Pago en parcialidades o diferido
+			},
+		},
 	},
 }

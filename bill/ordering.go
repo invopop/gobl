@@ -25,6 +25,9 @@ type Ordering struct {
 	Buyer *org.Party `json:"buyer,omitempty" jsonschema:"title=Buyer"`
 	// Seller is the party liable to pay taxes on the transaction if not the same as the supplier.
 	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
+	// Issuer represents a third party responsible for issuing the invoice, but is not
+	// responsible for tax. Some tax regimes and formats require this field.
+	Issuer *org.Party `json:"issuer,omitempty" jsonschema:"title=Issuer"`
 	// Projects this invoice refers to.
 	Projects []*org.DocumentRef `json:"projects,omitempty" jsonschema:"title=Projects"`
 	// The identification of contracts.
@@ -59,6 +62,7 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, o.Tender)
 	tax.Normalize(normalizers, o.Buyer)
 	tax.Normalize(normalizers, o.Seller)
+	tax.Normalize(normalizers, o.Issuer)
 }
 
 // Validate the ordering details.
@@ -76,5 +80,6 @@ func (o *Ordering) Validate() error {
 		validation.Field(&o.Tender),
 		validation.Field(&o.Buyer),
 		validation.Field(&o.Seller),
+		validation.Field(&o.Issuer),
 	)
 }

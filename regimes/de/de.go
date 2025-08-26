@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -26,9 +25,6 @@ func New() *tax.RegimeDef {
 			i18n.DE: "Deutschland",
 		},
 		TimeZone: "Europe/Berlin",
-		Tags: []*tax.TagSet{
-			common.InvoiceTags(),
-		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios,
 		},

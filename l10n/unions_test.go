@@ -15,6 +15,14 @@ func TestUnions(t *testing.T) {
 	assert.Nil(t, l10n.Unions().Code(l10n.Code("X")))
 }
 
+func TestUnion(t *testing.T) {
+	u := l10n.Union(l10n.EU)
+	assert.NotNil(t, u)
+	assert.Equal(t, l10n.EU, u.Code)
+	assert.Equal(t, "European Union", u.Name)
+	assert.Equal(t, 28, len(u.Members))
+}
+
 func TestUnionMember(t *testing.T) {
 	u := l10n.Unions().Code(l10n.EU)
 	assert.True(t, u.HasMember(l10n.DE))
