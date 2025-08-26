@@ -977,7 +977,7 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				SAF-T's ~SourceBilling~ (Origem do documento) field specifies the source of the document.
-				GOBL provides the ~pt-saft-source-billing~ extension to set this value in your documents.
+				GOBL provides the ~pt-saft-source~ extension to set this value in your documents.
 				By default, GOBL will set this extension to "P" (Produced).
 
 				The table below shows the supported source billing codes:
@@ -995,7 +995,7 @@ var extensions = []*cbc.Definition{
 					"$schema": "https://gobl.org/draft-0/bill/invoice",
 					// ...
 					"ext": {
-						"pt-saft-source-billing": "P"
+						"pt-saft-source": "P"
 					},
 					// ...
 				}
@@ -1049,7 +1049,7 @@ var extensions = []*cbc.Definition{
 				GOBL provides the ~pt-saft-source-ref~ extension to provide the full reference to a document
 				integrated from another system, recovered or issued manually.
 
-				This extension is required when the document source (~pt-saft-source-billing~ extension) is
+				This extension is required when the document source (~pt-saft-source~ extension) is
 				"M" (manual) or "I" (integrated). It must contain the complete document reference to be appended
 				to the SAF-T's ~HashControl~ field as stipulated by Despacho n.o 8632/2014.
 
@@ -1060,7 +1060,7 @@ var extensions = []*cbc.Definition{
 					"$schema": "https://gobl.org/draft-0/bill/invoice",
 					// ...
 					"ext": {
-						"pt-saft-source-billing": "M",
+						"pt-saft-source": "M",
 						"pt-saft-source-ref": "FTM abc/00001"
 					},
 					// ...
@@ -1074,7 +1074,7 @@ var extensions = []*cbc.Definition{
 					"$schema": "https://gobl.org/draft-0/bill/invoice",
 					// ...
 					"ext": {
-						"pt-saft-source-billing": "M",
+						"pt-saft-source": "M",
 						"pt-saft-source-ref": "FTD FT SERIESA/123"
 					},
 					// ...
