@@ -174,18 +174,29 @@ func (pmt *Payment) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			currency.CanConvertInto(pmt.ExchangeRates, r.GetCurrency()),
 		),
-		validation.Field(&pmt.ExchangeRates),
+		validation.Field(&pmt.ExchangeRates,
+			validation.Each(validation.NotNil),
+		),
 		validation.Field(&pmt.Ext),
-		validation.Field(&pmt.Preceding),
+		validation.Field(&pmt.Preceding,
+			validation.Each(validation.NotNil),
+		),
 		validation.Field(&pmt.Supplier, validation.Required),
 		validation.Field(&pmt.Customer),
 		validation.Field(&pmt.Payee),
-		validation.Field(&pmt.Lines, validation.Required),
+		validation.Field(&pmt.Lines,
+			validation.Required,
+			validation.Each(validation.NotNil),
+		),
 		validation.Field(&pmt.Ordering),
 		validation.Field(&pmt.Tax),
 		validation.Field(&pmt.Total, validation.Required),
-		validation.Field(&pmt.Notes),
-		validation.Field(&pmt.Complements),
+		validation.Field(&pmt.Notes,
+			validation.Each(validation.NotNil),
+		),
+		validation.Field(&pmt.Complements,
+			validation.Each(validation.NotNil),
+		),
 		validation.Field(&pmt.Meta),
 	)
 }
@@ -275,6 +286,9 @@ func (pmt *Payment) calculate() error {
 	}
 
 	for i, l := range pmt.Lines {
+		if l == nil {
+			continue
+		}
 		l.Index = i + 1
 		if err := l.calculate(pmt.Currency, pmt.ExchangeRates); err != nil {
 			return validation.Errors{

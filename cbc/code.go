@@ -16,12 +16,12 @@ const (
 )
 
 // Code represents a string used to uniquely identify the data we're looking
-// at. We use "code" instead of "id", to reenforce the fact that codes should
+// at. We use "code" instead of "id", to re-enforce the fact that codes should
 // be more easily set and used by humans within definitions than IDs or UUIDs.
-// Codes are standardised so that when validated they must contain between
-// 1 and 32 inclusive english alphabet letters or numbers with optional
+// Codes are standardized so that when validated they must contain between
+// 1 and 64 inclusive english alphabet letters or numbers with optional
 // periods (`.`), dashes (`-`), underscores (`_`), forward slashes (`/`),
-// colons (`:`) or spaces (` `) to separate blocks.
+// colons (`:`), commas (`,`), or spaces (` `) to separate blocks.
 // Each block must only be separated by a single symbol.
 //
 // The objective is to have a code that is easy to read and understand, while
@@ -34,15 +34,16 @@ type CodeMap map[Key]Code
 
 // Basic code constants.
 var (
-	CodePattern              = `^[A-Za-z0-9]+([\.\-\/ _\:]?[A-Za-z0-9]+)*$`
+	CodeSeparators           = `\.\-\:/,_ `
+	CodePattern              = `^[A-Za-z0-9]+([` + CodeSeparators + `]?[A-Za-z0-9]+)*$`
 	CodePatternRegexp        = regexp.MustCompile(CodePattern)
 	CodeMinLength     uint64 = 1
-	CodeMaxLength     uint64 = 32
+	CodeMaxLength     uint64 = 64
 )
 
 var (
-	codeSeparatorRegexp         = regexp.MustCompile(`([\.\-\/ _\:])[^A-Za-z0-9]+`)
-	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9\.\-\/ _\:]`)
+	codeSeparatorRegexp         = regexp.MustCompile(`([` + CodeSeparators + `])[^A-Za-z0-9]+`)
+	codeInvalidCharsRegexp      = regexp.MustCompile(`[^A-Za-z0-9` + CodeSeparators + `]+`)
 	codeNonAlphanumericalRegexp = regexp.MustCompile(`[^A-Z\d]`)
 	codeNonNumericalRegexp      = regexp.MustCompile(`[^\d]`)
 )
