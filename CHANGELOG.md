@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `br`: added retained taxes CSLL, INSS and IRRF
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `pt`: added comprehensive validations to regime
+- `pt-saft-v1`: added comprehensive validations to addon
 
 ## [v0.220.6] - 2025-08-12
 
