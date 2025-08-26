@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "64c9da3b65a01437226a5fd24b7769c0b88ea0b2a3301a7efe10b2cdaa87757b"
+			"val": "ef27a5f3384f9b04cb005f3608e1d1e9cb6f38ed6918384d5b0c622e51add1b7"
 		}
 	},
 	"doc": {
@@ -27,7 +27,8 @@
 		"issue_date": "2025-01-30",
 		"currency": "EUR",
 		"ext": {
-			"pt-saft-payment-type": "RG"
+			"pt-saft-payment-type": "RG",
+			"pt-saft-source": "P"
 		},
 		"supplier": {
 			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",

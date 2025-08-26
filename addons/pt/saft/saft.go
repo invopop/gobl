@@ -80,6 +80,8 @@ func normalize(doc any) {
 		normalizeOrder(obj)
 	case *bill.Delivery:
 		normalizeDelivery(obj)
+	case *bill.Invoice:
+		normalizeInvoice(obj)
 	}
 }
 
