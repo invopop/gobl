@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "78f91a2c5deb1a6bb88c4f1630d69130c69f1a0a3118f4246a8ac2a2e2963361"
+			"val": "8b2291476800e2dc20abc71ebf0d7eda5a951ef2c0b62c64dbb80cd945bd3b5e"
 		}
 	},
 	"doc": {
@@ -31,6 +31,13 @@
 				"country": "BE",
 				"code": "0735585741"
 			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "9925",
+					"code": "0735585741"
+				}
+			],
 			"addresses": [
 				{
 					"num": "12",
@@ -52,7 +59,13 @@
 			"tax_id": {
 				"country": "BE",
 				"code": "0699912507"
-			}
+			},
+			"inboxes": [
+				{
+					"scheme": "9925",
+					"code": "0699912507"
+				}
+			]
 		},
 		"lines": [
 			{

@@ -1,85 +1,95 @@
 {
-    "$schema": "https://gobl.org/draft-0/bill/invoice",
-    "uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
-    "$regime": "BE",
-    "$addons": [
-            "eu-en16931-v2017"
-    ],
-    "type": "standard",
-    "series": "S2025",
-    "code": "001",
-    "issue_date": "2025-05-20",
-    "currency": "EUR",
-    "tax": {
-        "prices_include": "VAT"
-    },
-    "supplier": {
-        "name": "Provide One BV",
-        "tax_id": {
-            "country": "BE",
-            "code": "0735585741"
-        },
-        "addresses": [
-            {
-                "num": "12",
-                "street": "Rue de la Loi",
-                "locality": "Bruxelles",
-                "region": "Bruxelles",
-                "code": "1040",
-                "country": "BE"
-            }
-        ],
-        "emails": [
-            {
-                "addr": "billing@example.com"
-            }
-        ]
-    },
-    "customer": {
-        "name": "Sample Consumer",
-        "tax_id": {
-            "country": "BE",
-            "code": "0699912507"
-        }
-    },
-    "lines": [
-        {
-            "i": 1,
-            "quantity": "20",
-            "item": {
-                "name": "Development services",
-                "price": "90.00",
-                "unit": "h"
-            },
-            "discounts": [
-                {
-                    "reason": "Special discount",
-                    "percent": "10%",
-                    "amount": "180.00"
-                }
-            ],
-            "taxes": [
-                {
-                    "cat": "VAT",
-                    "rate": "standard",
-                    "percent": "21.0%"
-                }
-            ]
-        },
-        {
-            "i": 2,
-            "quantity": "1",
-            "item": {
-                "name": "Promotional cookies",
-                "price": "10.00"
-            },
-            "taxes": [
-                {
-                    "cat": "VAT",
-                    "rate": "reduced",
-                    "percent": "6.0%"
-                }
-            ]
-        }
-    ]
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
+	"$regime": "BE",
+	"$addons": ["eu-en16931-v2017"],
+	"type": "standard",
+	"series": "S2025",
+	"code": "001",
+	"issue_date": "2025-05-20",
+	"currency": "EUR",
+	"tax": {
+		"prices_include": "VAT"
+	},
+	"supplier": {
+		"name": "Provide One BV",
+		"tax_id": {
+			"country": "BE",
+			"code": "0735585741"
+		},
+		"inboxes": [
+			{
+				"key": "peppol",
+				"code": "9925:0735585741"
+			}
+		],
+		"addresses": [
+			{
+				"num": "12",
+				"street": "Rue de la Loi",
+				"locality": "Bruxelles",
+				"region": "Bruxelles",
+				"code": "1040",
+				"country": "BE"
+			}
+		],
+		"emails": [
+			{
+				"addr": "billing@example.com"
+			}
+		]
+	},
+	"customer": {
+		"name": "Sample Consumer",
+		"tax_id": {
+			"country": "BE",
+			"code": "0699912507"
+		},
+		"inboxes": [
+			{
+				"scheme": "9925",
+				"code": "0699912507"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "20",
+			"item": {
+				"name": "Development services",
+				"price": "90.00",
+				"unit": "h"
+			},
+			"discounts": [
+				{
+					"reason": "Special discount",
+					"percent": "10%",
+					"amount": "180.00"
+				}
+			],
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "standard",
+					"percent": "21.0%"
+				}
+			]
+		},
+		{
+			"i": 2,
+			"quantity": "1",
+			"item": {
+				"name": "Promotional cookies",
+				"price": "10.00"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "reduced",
+					"percent": "6.0%"
+				}
+			]
+		}
+	]
 }
