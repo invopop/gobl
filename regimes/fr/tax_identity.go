@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	taxCodeVATRegexp   = regexp.MustCompile(`^\d{11}$`)
+	taxCodeVATRegexp = regexp.MustCompile(`^[A-Z0-9]{2}\d{9}$`)
 	taxCodeSIRENRegexp = regexp.MustCompile(`^\d{9}$`)
 )
 
