@@ -79,6 +79,9 @@ func (tc *TotalCalculator) removeIncludedTaxes(taxLines []*taxLine) error {
 			if c.retained {
 				return ErrInvalidPricesInclude.WithMessage("cannot include retained category '%s'", tc.Includes.String())
 			}
+			if c.informative {
+				return ErrInvalidPricesInclude.WithMessage("cannot include informative category '%s'", tc.Includes.String())
+			}
 			if c.Percent == nil {
 				// no taxes, skip
 				continue

@@ -28,7 +28,8 @@
       "title": {
         "en": "Municipal Service Tax",
         "pt": "Imposto Sobre Serviços"
-      }
+      },
+      "informative": true
     },
     {
       "code": "ICMS",
