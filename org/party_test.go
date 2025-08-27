@@ -92,6 +92,19 @@ func TestPartyNormalize(t *testing.T) {
 		party.Normalize(nil)
 		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
 	})
+
+	t.Run("for regime without normalizer", func(t *testing.T) {
+		rd := tax.RegimeDefFor("US")
+		require.Nil(t, rd.Normalizer) // Ensure the regime has no normalizer
+
+		party := org.Party{
+			Regime: tax.WithRegime("US"),
+			Name:   "Invopop",
+		}
+		assert.NotPanics(t, func() {
+			assert.NoError(t, party.Calculate())
+		})
+	})
 }
 
 func TestPartyAddressNill(t *testing.T) {

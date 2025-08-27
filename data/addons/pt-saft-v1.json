@@ -679,6 +679,61 @@
       ]
     },
     {
+      "key": "pt-saft-source",
+      "name": {
+        "en": "Document Source",
+        "pt": "Origem do documento"
+      },
+      "desc": {
+        "en": "SAF-T's `SourceBilling` (Origem do documento) field specifies the source of the document.\nGOBL provides the `pt-saft-source` extension to set this value in your documents.\nBy default, GOBL will set this extension to \"P\" (Produced).\n\nThe table below shows the supported source billing codes:\n\n| Code | Name       | Description                                         |\n| ---- | ---------- | --------------------------------------------------- |\n| `P`  | Produced   | Document produced by the application                |\n| `I`  | Integrated | Integrated document produced by another application |\n| `M`  | Manual     | Document from recovery or issued manually           |\n\nExample:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-source\": \"P\"\n\t},\n\t// ...\n}\n```"
+      },
+      "values": [
+        {
+          "code": "P",
+          "name": {
+            "en": "Produced",
+            "pt": "Produzido"
+          },
+          "desc": {
+            "en": "Document produced by the application",
+            "pt": "Documento produzido na aplicação"
+          }
+        },
+        {
+          "code": "I",
+          "name": {
+            "en": "Integrated",
+            "pt": "Integrado"
+          },
+          "desc": {
+            "en": "Integrated document produced by another application",
+            "pt": "Documento integrado e produzido noutra aplicação"
+          }
+        },
+        {
+          "code": "M",
+          "name": {
+            "en": "Manual",
+            "pt": "Manual"
+          },
+          "desc": {
+            "en": "Document from recovery or issued manually",
+            "pt": "Documento proveniente de recuperação ou de emissão manual"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pt-saft-source-ref",
+      "name": {
+        "en": "Source Document Reference",
+        "pt": "Referência do documento de origem"
+      },
+      "desc": {
+        "en": "GOBL provides the `pt-saft-source-ref` extension to provide the full reference to a document\nintegrated from another system, recovered or issued manually.\n\nThis extension is required when the document source (`pt-saft-source` extension) is\n\"M\" (manual) or \"I\" (integrated). It must contain the complete document reference to be appended\nto the SAF-T's `HashControl` field as stipulated by Despacho n.o 8632/2014.\n\nExample with a manual document:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-source\": \"M\",\n\t\t\"pt-saft-source-ref\": \"FTM abc/00001\"\n\t},\n\t// ...\n}\n```\n\nExample with a recovered document:\n\n```js\n{\n\t\"$schema\": \"https://gobl.org/draft-0/bill/invoice\",\n\t// ...\n\t\"ext\": {\n\t\t\"pt-saft-source\": \"M\",\n\t\t\"pt-saft-source-ref\": \"FTD FT SERIESA/123\"\n\t},\n\t// ...\n}\n```"
+      }
+    },
+    {
       "key": "pt-saft-movement-type",
       "name": {
         "en": "Movement Type",

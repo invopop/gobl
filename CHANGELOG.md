@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `br`: added retained taxes CSLL, INSS and IRRF
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+
+## [v0.220.6] - 2025-08-12
+
+### Changed
+
+- `org.Party`: avoid panic when regime's normalizer is not present
+- `br`: set missing normalizer in regime definition
+- `tax`: `Normalizers()` method in `RegimeDef`
+
+### Added
+
+- `br`: tax identity validation for CPF code.
+
 ## [v0.220.5] - 2025-07-21
 
 ### Changed
