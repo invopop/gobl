@@ -8,8 +8,6 @@ import (
 )
 
 // Local tax category definitions which are not considered standard.
-// There is a 6th retained tax type, RT06 "Other contributions", which is
-// currently not supported.
 const (
 	// https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
 	TaxCategoryIRPEF    cbc.Code = "IRPEF"
