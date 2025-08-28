@@ -63,6 +63,8 @@ func validate(doc any) error {
 		return validatePayAdvance(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *bill.Charge:
+		return validateCharge(obj)
 	}
 	return nil
 }

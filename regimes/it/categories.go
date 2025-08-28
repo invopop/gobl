@@ -17,6 +17,7 @@ const (
 	TaxCategoryINPS     cbc.Code = "INPS"
 	TaxCategoryENASARCO cbc.Code = "ENASARCO"
 	TaxCategoryENPAM    cbc.Code = "ENPAM"
+	TaxCategoryOTHER    cbc.Code = "OTHER"
 )
 
 // Keys used for meta data from external sources.
@@ -183,6 +184,21 @@ var categories = []*tax.CategoryDef{
 		},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT05",
+		},
+	},
+	{
+		Code:     TaxCategoryOTHER,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "Other Contributions",
+			i18n.IT: "Altri Contributi",
+		},
+		Title: i18n.String{
+			i18n.EN: "Other Contributions",
+			i18n.IT: "Altri Contributi",
+		},
+		Map: cbc.CodeMap{
+			KeyFatturaPATipoRitenuta: "RT06",
 		},
 	},
 }

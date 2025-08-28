@@ -51,12 +51,8 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Charges,
-			validation.Each(
-
-				validation.By(validateCharge),
-				validation.Skip,
-			),
+		validation.Field(&inv.Ordering,
+			validation.By(validateInvoiceOrdering(inv.HasTags(TagDeferred))),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
@@ -211,6 +207,39 @@ func validateInvoicePaymentDetails(val any) error {
 				(p.Terms != nil && len(p.Terms.DueDates) > 0),
 				validation.Required.Error("cannot be blank when terms with due dates are present"),
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceOrdering(hasTag bool) validation.RuleFunc {
+	return func(value any) error {
+		o, _ := value.(*bill.Ordering)
+		if o == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(o,
+			validation.Field(&o.Despatch,
+				validation.When(
+					!hasTag,
+					validation.Nil.Error("can only be set when invoice has deferred tag"),
+				).Else(
+					validation.Each(validation.By(validateDespatch))),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateDespatch(value any) error {
+	d, ok := value.(*org.DocumentRef)
+	if !ok || d == nil {
+		return nil
+	}
+	return validation.ValidateStruct(d,
+		validation.Field(&d.IssueDate,
+			validation.Required,
 			validation.Skip,
 		),
 	)
