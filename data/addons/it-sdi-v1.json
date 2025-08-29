@@ -920,6 +920,169 @@
           }
         }
       ]
+    },
+    {
+      "key": "it-sdi-fund-type",
+      "name": {
+        "en": "Fund Type",
+        "it": "Tipo Cassa"
+      },
+      "values": [
+        {
+          "code": "TC01",
+          "name": {
+            "en": "National Pension and Welfare Fund for Lawyers and Solicitors",
+            "it": "Cassa nazionale di previdenza e assistenza forense"
+          }
+        },
+        {
+          "code": "TC02",
+          "name": {
+            "en": "Pension fund for accountants",
+            "it": "Cassa di previdenza dottori commercialisti"
+          }
+        },
+        {
+          "code": "TC03",
+          "name": {
+            "en": "Pension and welfare fund for surveyors",
+            "it": "Cassa di previdenza e assistenza geometri"
+          }
+        },
+        {
+          "code": "TC04",
+          "name": {
+            "en": "National pension and welfare fund for self-employed engineers and architects",
+            "it": "Cassa nazionale di previdenza e assistenza per gli ingegneri e gli architetti liberi professionisti"
+          }
+        },
+        {
+          "code": "TC05",
+          "name": {
+            "en": "National fund for solicitors",
+            "it": "Cassa nazionale del notariato"
+          }
+        },
+        {
+          "code": "TC06",
+          "name": {
+            "en": "National pension and welfare fund for bookkeepers and commercial experts",
+            "it": "Cassa nazionale di previdenza e assistenza ragionieri e periti commerciali"
+          }
+        },
+        {
+          "code": "TC07",
+          "name": {
+            "en": "National welfare board for sales agents and representatives (ENASARCO)",
+            "it": "Ente nazionale assistenza agenti e rappresentanti di commercio (ENASARCO)"
+          }
+        },
+        {
+          "code": "TC08",
+          "name": {
+            "en": "National pension and welfare board for employment consultants (ENPACL)",
+            "it": "Ente nazionale di previdenza e assistenza consulenti del lavoro (ENPACL)"
+          }
+        },
+        {
+          "code": "TC09",
+          "name": {
+            "en": "National pension and welfare board for doctors (ENPAM)",
+            "it": "Ente nazionale di previdenza e assistenza medici (ENPAM)"
+          }
+        },
+        {
+          "code": "TC10",
+          "name": {
+            "en": "National pension and welfare board for pharmacists (ENPAF)",
+            "it": "Ente nazionale di previdenza e assistenza farmacisti (ENPAF)"
+          }
+        },
+        {
+          "code": "TC11",
+          "name": {
+            "en": "National pension and welfare board for veterinary physicians (ENPAV)",
+            "it": "Ente nazionale di previdenza e assistenza veterinari (ENPAV)"
+          }
+        },
+        {
+          "code": "TC12",
+          "name": {
+            "en": "National pension and welfare board for agricultural employees (ENPAIA)",
+            "it": "Ente nazionale di previdenza e assistenza per i periti industriali e i periti industriali laureati (ENPAIA)"
+          }
+        },
+        {
+          "code": "TC13",
+          "name": {
+            "en": "Pension fund for employees of shipping companies and maritime agencies",
+            "it": "Cassa di previdenza per l'assicurazione degli impiegati presso le aziende di navigazione ed i consorzi di armatori per il lavoro portuale"
+          }
+        },
+        {
+          "code": "TC14",
+          "name": {
+            "en": "National pension institute for Italian journalists (INPGI)",
+            "it": "Istituto nazionale di previdenza dei giornalisti italiani (INPGI)"
+          }
+        },
+        {
+          "code": "TC15",
+          "name": {
+            "en": "National welfare board for orphans of Italian doctors (ONAOSI)",
+            "it": "Opera nazionale per l'assistenza degli orfani dei sanitari italiani (ONAOSI)"
+          }
+        },
+        {
+          "code": "TC16",
+          "name": {
+            "en": "Autonomous supplementary welfare fund for Italian journalists (CASAGIT)",
+            "it": "Cassa autonoma di assistenza integrativa dei giornalisti italiani (CASAGIT)"
+          }
+        },
+        {
+          "code": "TC17",
+          "name": {
+            "en": "Pension board for industrial experts and graduate industrial experts (EPPI)",
+            "it": "Ente di previdenza periti industriali e periti industriali laureati (EPPI)"
+          }
+        },
+        {
+          "code": "TC18",
+          "name": {
+            "en": "National multi-category pension and welfare board (EPAP)",
+            "it": "Ente di previdenza e assistenza pluricategoriale (EPAP)"
+          }
+        },
+        {
+          "code": "TC19",
+          "name": {
+            "en": "National pension and welfare board for biologists (ENPAB)",
+            "it": "Ente nazionale di previdenza e assistenza biologi (ENPAB)"
+          }
+        },
+        {
+          "code": "TC20",
+          "name": {
+            "en": "National pension and welfare board for the nursing profession (ENPAPI)",
+            "it": "Ente nazionale di previdenza e assistenza professione infermieristica (ENPAPI)"
+          }
+        },
+        {
+          "code": "TC21",
+          "name": {
+            "en": "National pension and welfare board for psychologists (ENPAP)",
+            "it": "Ente nazionale di previdenza e assistenza psicologi (ENPAP)"
+          }
+        },
+        {
+          "code": "TC22",
+          "name": {
+            "en": "National Social Security Institute (INPS)",
+            "it": "Istituto nazionale della previdenza sociale (INPS)"
+          }
+        }
+      ]
     }
   ],
   "tags": [
