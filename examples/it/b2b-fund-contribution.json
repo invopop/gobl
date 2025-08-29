@@ -1,0 +1,109 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "IT",
+	"$addons": ["it-sdi-v1"],
+	"uuid": "0198f526-41e0-7000-b86e-80e06b5922cb",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "002",
+	"issue_date": "2025-08-21",
+	"currency": "EUR",
+	"supplier": {
+		"name": "ALPHA SRL",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"num": "102",
+				"street": "Via California",
+				"locality": "Palermo",
+				"region": "PA",
+				"code": "33213",
+				"country": "IT"
+			}
+		],
+		"registration": {
+			"capital": "50000.00",
+			"currency": "EUR",
+			"office": "RM",
+			"entry": "123456"
+		}
+	},
+	"customer": {
+		"name": "Mela S.r.l.",
+		"tax_id": {
+			"country": "IT",
+			"code": "13029381004"
+		},
+		"inboxes": [
+			{
+				"key": "codice-destinatario",
+				"code": "M5UXCR5"
+			}
+		],
+		"addresses": [
+			{
+				"num": "23",
+				"street": "Via dei Mille",
+				"locality": "Firenze",
+				"region": "FI",
+				"code": "00100",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1",
+			"period": {
+				"start": "2025-08-17",
+				"end": "2025-08-19"
+			},
+			"item": {
+				"name": "IT environment support setup",
+				"price": "1600.00"
+			},
+			"sum": "1600.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "standard"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
+				}
+			]
+		}
+	],
+	"charges": [
+		{
+			"i": 1,
+			"key": "fund-contribution",
+			"percent": "4%",
+			"amount": "64.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "standard"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
+				}
+			],
+			"ext": {
+				"it-sdi-fund-type": "TC22"
+			}
+		}
+	]
+}
