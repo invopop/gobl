@@ -199,6 +199,21 @@
       "map": {
         "fatturapa-tipo-ritenuta": "RT05"
       }
+    },
+    {
+      "code": "OTHER",
+      "name": {
+        "en": "Other Contributions",
+        "it": "Altri Contributi"
+      },
+      "title": {
+        "en": "Other Contributions",
+        "it": "Altri Contributi"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT06"
+      }
     }
   ]
 }

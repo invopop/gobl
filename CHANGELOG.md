@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `br`: added retained taxes CSLL, INSS and IRRF
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
+- `it`: added new tax category for `OTHER` to handle code `RT06` for retained taxes
 
 ## [v0.220.6] - 2025-08-12
 
