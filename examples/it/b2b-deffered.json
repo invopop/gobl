@@ -1,0 +1,104 @@
+{
+	"$schema": "https://gobl.org/draft-0/bill/invoice",
+	"$regime": "IT",
+	"$addons": ["it-sdi-v1"],
+	"$tags": ["deferred"],
+	"uuid": "0190caea-c344-7afa-a530-252b67108175",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "002",
+	"issue_date": "2025-08-21",
+	"currency": "EUR",
+	"supplier": {
+		"name": "Mattoni & Cementi S.r.l.",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"num": "102",
+				"street": "Via dei Mattoni",
+				"locality": "Palermo",
+				"region": "PA",
+				"code": "90100",
+				"country": "IT"
+			}
+		],
+		"registration": {
+			"currency": "EUR",
+			"office": "RM",
+			"entry": "123456"
+		}
+	},
+	"customer": {
+		"name": "Edilizia Firenze S.r.l.",
+		"tax_id": {
+			"country": "IT",
+			"code": "13029381004"
+		},
+		"inboxes": [
+			{
+				"key": "it-sdi-code",
+				"code": "M5UXCR5"
+			}
+		],
+		"addresses": [
+			{
+				"num": "23",
+				"street": "Via dei Cantieri",
+				"locality": "Firenze",
+				"region": "FI",
+				"code": "50100",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1000",
+			"item": {
+				"name": "Mattoni Rossi",
+				"price": "0.50"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "standard",
+					"percent": "22.0%"
+				}
+			]
+		},
+		{
+			"i": 2,
+			"quantity": "50",
+			"item": {
+				"name": "Sacchi di Cemento 25kg",
+				"price": "6.00"
+			},
+			"taxes": [
+				{
+					"cat": "VAT",
+					"rate": "standard",
+					"percent": "22.0%"
+				}
+			]
+		}
+	],
+	"ordering": {
+		"despatch": [
+			{
+				"issue_date": "2025-08-15",
+				"code": "DDT1234",
+				"lines": [1]
+			},
+			{
+				"issue_date": "2025-08-12",
+				"series": "DDT",
+				"code": "2345",
+				"lines": [2]
+			}
+		]
+	}
+}
