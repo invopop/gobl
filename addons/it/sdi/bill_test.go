@@ -630,6 +630,22 @@ func TestOrderingValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
+	t.Run("despatch with deferred tag and valid additional data", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code:      "12345",
+					IssueDate: cal.NewDate(2022, 1, 1),
+					Reason:    "Partial shipment",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 	t.Run("despatch with deferred tag but missing code", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(sdi.TagDeferred)
@@ -724,19 +740,5 @@ func TestOrderingValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-	})
-}
-
-func TestDespatchValidation(t *testing.T) {
-	ad := tax.AddonForKey(sdi.V1)
-
-	t.Run("valid despatch document", func(t *testing.T) {
-		d := &org.DocumentRef{
-			Code:      "12345",
-			IssueDate: cal.NewDate(2022, 1, 1),
-		}
-		ad.Normalizer(d)
-		err := ad.Validator(d)
-		assert.NoError(t, err)
 	})
 }
