@@ -128,7 +128,6 @@ func calculate(doc billable) error {
 		Currency: doc.getCurrency(),
 		Rounding: rr,
 		Country:  r.GetCountry(),
-		Tags:     doc.GetTags(),
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,

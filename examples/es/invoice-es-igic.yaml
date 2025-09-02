@@ -42,7 +42,7 @@ lines:
           - amount: "0.00"
       taxes:
           - cat: IGIC
-            rate: standard
+            rate: general
     - quantity: 1
       item:
           name: "Financial service"

@@ -12,8 +12,15 @@ import (
 )
 
 var (
-	taxCodeVATRegexp   = regexp.MustCompile(`^\d{11}$`)
+	taxCodeVATRegexp   = regexp.MustCompile(`^[A-Z\d]{2}\d{9}$`)
+	taxCodeWithLetters = regexp.MustCompile(`[A-Z]`)
 	taxCodeSIRENRegexp = regexp.MustCompile(`^\d{9}$`)
+)
+
+const (
+	// Special exception case for La Poste which doesn't use the same
+	// Luhn check. Source: https://fr.wikipedia.org/wiki/Formule_de_Luhn
+	taxCodeSIRENLaPoste = "356000000"
 )
 
 // normalizeTaxIdentity normalizes the SIREN code, if there are any errors,
@@ -52,11 +59,19 @@ func validateVATTaxCode(value interface{}) error {
 		return errors.New("invalid format")
 	}
 
-	// Extract the last nine digits as an integer.
-	siren := str[2:] // extract last nine digits
-	chk := calculateVATCheckDigit(siren)
-	expectStr := str[:2] // compare with first two digits
-	if chk != expectStr {
+	chk := str[:2]   // first 2
+	siren := str[2:] // last 9
+	if taxCodeWithLetters.MatchString(chk) {
+		// Skip checksum check for VAT codes with letters which
+		// may be provided for Government agencies.
+		return nil
+	}
+	if siren == taxCodeSIRENLaPoste {
+		// Skip format and Luhn checks for La Poste.
+		return nil
+	}
+
+	if calculateVATCheckDigit(siren) != chk {
 		return errors.New("checksum mismatch")
 	}
 
@@ -71,13 +86,12 @@ func calculateVATCheckDigit(str string) string {
 	return fmt.Sprintf("%02d", total)
 }
 
-func validateSIRENTaxCode(value interface{}) error {
+func validateSIRENTaxCode(value any) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil
 	}
 	str := code.String()
-
 	if !taxCodeSIRENRegexp.MatchString(str) {
 		return errors.New("invalid format")
 	}

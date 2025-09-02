@@ -32,22 +32,13 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateZero,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
-					},
-				},
-			},
-			{
-				Key: tax.RateStandard,
-				Name: i18n.String{
-					i18n.EN: "Standard rate",
+					i18n.EN: "General rate",
 					i18n.FR: "Taux normal",
 				},
 				Description: i18n.String{
@@ -62,7 +53,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateIntermediate,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate rate",
 					i18n.FR: "Taux intermédiaire",
@@ -79,7 +71,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced rate",
 					i18n.FR: "Taux réduit",
@@ -96,10 +89,11 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSpecial,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced,
 				Name: i18n.String{
-					i18n.EN: "Special rate",
-					i18n.FR: "Taux particulier",
+					i18n.EN: "Super reduced rate",
+					i18n.FR: "Taux super réduit",
 				},
 				Description: i18n.String{
 					i18n.EN: "Reserved for medicines reimbursable by social security, sales of live animals for slaughter and charcuterie to non-taxable persons, the television license fee, certain shows and press publications registered with the Joint Commission for Publications and Press Agencies.",

@@ -32,7 +32,8 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Municipal Service Tax",
 			i18n.PT: "Imposto Sobre Serviços",
 		},
-		Retained: false,
+		Retained:    false,
+		Informative: true,
 	},
 	//
 	// State value-added tax (ICMS)

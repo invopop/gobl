@@ -34,7 +34,7 @@ func TestInvoiceRegimeCurrency(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     tax.RateStandard,
+					Rate:     tax.RateGeneral,
 				},
 			},
 		},
@@ -975,7 +975,7 @@ func TestInvoiceCalculate(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -1043,7 +1043,7 @@ func TestCalculateInverted(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -1269,7 +1269,7 @@ func baseInvoiceWithLines(t *testing.T) *bill.Invoice {
 			Taxes: tax.Set{
 				{
 					Category: "VAT",
-					Rate:     "standard",
+					Rate:     "general",
 				},
 			},
 		},

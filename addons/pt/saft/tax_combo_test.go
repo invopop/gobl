@@ -18,7 +18,7 @@ func TestTaxComboNormalize(t *testing.T) {
 	t.Run("standard", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Rate:     tax.RateStandard,
+			Rate:     tax.RateGeneral,
 		}
 		ad.Normalizer(combo)
 		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
@@ -70,7 +70,8 @@ func TestTaxComboNormalize(t *testing.T) {
 			},
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "OUT", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "M99", combo.Ext[saft.ExtKeyExemption].String())
 	})
 }
 
@@ -144,13 +145,4 @@ func TestTaxComboValidate(t *testing.T) {
 		err := ad.Validator(combo)
 		assert.NoError(t, err)
 	})
-}
-
-func TestTaxRateKeyMap(t *testing.T) {
-	m := saft.TaxRateExtensions()
-	assert.Equal(t, tax.RateReduced, m.Lookup("RED"))
-	assert.Equal(t, tax.RateIntermediate, m.Lookup("INT"))
-	assert.Equal(t, tax.RateStandard, m.Lookup("NOR"))
-	assert.Equal(t, tax.RateExempt, m.Lookup("ISE"))
-	assert.Equal(t, tax.RateOther, m.Lookup("OUT"))
 }

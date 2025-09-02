@@ -30,8 +30,9 @@
             "taxes": [
                 {
                     "cat": "VAT",
+                    "key": "standard",
                     "percent": "21.0%",
-                    "rate": "standard"
+                    "rate": "general"
                 },
                 {
                     "cat": "IRPF",
