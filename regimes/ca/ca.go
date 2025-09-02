@@ -65,7 +65,7 @@ func New() *tax.RegimeDef {
 				Retained: false,
 				Rates: []*tax.RateDef{
 					{
-						Key: tax.RateZero,
+						Rate: tax.RateZero,
 						Name: i18n.String{
 							i18n.EN: "Zero Rate",
 						},
@@ -79,9 +79,9 @@ func New() *tax.RegimeDef {
 						},
 					},
 					{
-						Key: tax.RateStandard,
+						Rate: tax.RateGeneral,
 						Name: i18n.String{
-							i18n.EN: "Standard rate",
+							i18n.EN: "General rate",
 						},
 						Description: i18n.String{
 							i18n.EN: "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided.",

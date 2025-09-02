@@ -46,7 +46,7 @@
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
-          "description": "Optional rate key is required when grouping."
+          "description": "Tax key if supported by the category."
         },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",

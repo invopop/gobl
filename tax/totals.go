@@ -21,7 +21,7 @@ type CategoryTotal struct {
 // a matching category and rate. The Key is optional as we may be using
 // the percentage to group rates.
 type RateTotal struct {
-	// Optional rate key is required when grouping.
+	// Tax key if supported by the category.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Country code override when issuing with taxes applied from different countries,
 	// it'd be very strange to mix rates from different countries, but in theory
@@ -71,7 +71,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 // newRateTotal returns a rate total.
 func newRateTotal(c *Combo, zero num.Amount) *RateTotal {
 	rt := new(RateTotal)
-	rt.Key = c.Rate        // may be empty!
+	rt.Key = c.Key         // may be empty!
 	rt.Country = c.Country // usually empty
 	rt.Ext = c.Ext         // may be empty!
 	if c.Percent != nil {

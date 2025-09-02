@@ -329,7 +329,7 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: tax.CategoryVAT,
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 			},
@@ -348,7 +348,7 @@ func TestRemoveIncludedTaxes(t *testing.T) {
 				Taxes: tax.Set{
 					{
 						Category: tax.CategoryVAT,
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 			},

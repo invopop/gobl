@@ -29,11 +29,13 @@ var taxCategories = []*tax.CategoryDef{
 			},
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 				},
 				Description: i18n.String{
 					i18n.EN: "Applies to most goods and services.",
@@ -46,7 +48,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateIntermediate,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateIntermediate,
 				Name: i18n.String{
 					i18n.EN: "Intermediate Rate",
 				},
@@ -61,7 +64,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "Reduced Rate",
 				},

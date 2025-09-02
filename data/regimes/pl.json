@@ -319,11 +319,63 @@
         "en": "Value Added Tax",
         "pl": "Podatek od Wartości Dodanej"
       },
-      "rates": [
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard Rate",
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
             "pl": "Stawka Podstawowa"
           },
           "values": [
@@ -338,7 +390,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "First Reduced Rate",
             "pl": "Stawka Obniżona Pierwsza"
@@ -355,7 +410,10 @@
           ]
         },
         {
-          "key": "super-reduced",
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Second Reduced Rate",
             "pl": "Stawka Obniżona Druga"
@@ -370,33 +428,6 @@
               "percent": "3.0%"
             }
           ]
-        },
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate",
-            "pl": "Stawka Zerowa"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "en": "Exempt",
-            "pl": "Zwolnione"
-          },
-          "exempt": true
-        },
-        {
-          "key": "special",
-          "name": {
-            "en": "Special Rate",
-            "pl": "Stawka Specjalna"
-          }
         }
       ],
       "extensions": [
