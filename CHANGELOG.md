@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.300.0-rc1] - 2025-09-02
+
 **IMPORTANT**: Significant refactor of tax combo handling with the addition of tax "keys" that help identify the sub-classification of a tax, specifically VAT, ensuring that they can be correctly mapped.
 
 Unmarshalling JSON GOBL documents will be migrated automatically to the new structure, including any rate tags or addon extensions, but consuming may require changes if using the tax combo `rate` property.
