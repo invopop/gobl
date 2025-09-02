@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "24b8131e19c332262a8d8afe0bddfaadc7213f841d377fdcfeca8526641cddba"
+			"val": "a73e71d2e5ddd666d6e2a88e2144ad3d08bbe1bbdd765869d63a1e95999bc3d9"
 		}
 	},
 	"doc": {
@@ -89,10 +89,11 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard+island",
+						"key": "standard",
+						"rate": "general+island",
 						"percent": "17%",
 						"ext": {
-							"gr-mydata-vat-rate": "4"
+							"gr-mydata-vat-rate": "7"
 						}
 					}
 				],
@@ -116,9 +117,9 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard+island",
+								"key": "standard",
 								"ext": {
-									"gr-mydata-vat-rate": "4"
+									"gr-mydata-vat-rate": "7"
 								},
 								"base": "1620.00",
 								"percent": "17%",

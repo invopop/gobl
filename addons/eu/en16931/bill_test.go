@@ -107,7 +107,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: tax.CategoryVAT,
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 			},

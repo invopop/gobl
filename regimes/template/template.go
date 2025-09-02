@@ -5,7 +5,7 @@
 package template
 
 import (
-	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/l10n"
@@ -32,9 +32,9 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			common.InvoiceTags(),
 		},
-		Identities: identityTypeDefinitions, // org_identities.go
-		Categories: taxCategories,          // tax_categories.go
-		Scenarios:  scenarios,              // scenarios.go
+		Identities: identityTypeDefinitions(), // org_identities.go
+		Categories: taxCategories(),           // tax_categories.go
+		Scenarios:  scenarios(),               // scenarios.go
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,

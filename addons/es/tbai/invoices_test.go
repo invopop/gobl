@@ -190,7 +190,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "exempt",
+						Key:      "exempt",
 						Ext: tax.Extensions{
 							tbai.ExtKeyExemption: "E1",
 						},

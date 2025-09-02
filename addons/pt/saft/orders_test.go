@@ -120,7 +120,7 @@ func validOrder() *bill.Order {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Key:      "standard",
 					},
 				},
 			},

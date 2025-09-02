@@ -156,13 +156,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F1")
 	})
-	t.Run("without exemption reason", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes[0].Rate = ""
-		inv.Lines[0].Taxes[0].Percent = num.NewPercentage(21, 2)
-		inv.Lines[0].Taxes[0].Ext = nil
-		assertValidationError(t, inv, "es-verifactu-op-class: required")
-	})
 	t.Run("standard invoice without customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer = nil
@@ -403,12 +396,6 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 						Rate:     "standard",
 					},
 				},
-			},
-		},
-		Notes: []*org.Note{
-			{
-				Key:  org.NoteKeyGeneral,
-				Text: "This is a test invoice",
 			},
 		},
 	}

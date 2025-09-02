@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "aa18ac47930e42bcebda770e74266cff3fb70b6da6b58c06d61e2622469be026"
+			"val": "ba7c0dadc9dc7f8f819f2d8da8e906e1ad835225e901508d306e6dac1670d216"
 		}
 	},
 	"doc": {
@@ -99,7 +99,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "22.0%"
 					},
 					{
@@ -124,9 +125,9 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "exempt",
 						"ext": {
-							"it-sdi-exempt": "N1"
+							"it-sdi-exempt": "N4"
 						}
 					}
 				],
@@ -158,7 +159,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-exempt": "N1"
+									"it-sdi-exempt": "N4"
 								},
 								"base": "100.00",
 								"amount": "0.00"
