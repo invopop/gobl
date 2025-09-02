@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/regimes/pt"
@@ -1028,7 +1029,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 			errContent: "invalid-date: rate value unavailable for 'pro' in 'IRPF' on '2005-01-01'",
 		},
 		{
-			desc: "with invalid tax included",
+			desc: "with retained tax included",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -1042,7 +1043,23 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 			taxIncluded: es.TaxCategoryIRPF,
 			err:         tax.ErrInvalidPricesInclude,
-			errContent:  "cannot include retained",
+			errContent:  "cannot include retained category 'IRPF'",
+		},
+		{
+			desc:    "with informative tax included",
+			country: "BR",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: br.TaxCategoryISS,
+						},
+					},
+				},
+			},
+			taxIncluded: br.TaxCategoryISS,
+			err:         tax.ErrInvalidPricesInclude,
+			errContent:  "cannot include informative category 'ISS'",
 		},
 		{
 			desc: "tax included with exempt key",

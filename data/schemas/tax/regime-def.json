@@ -30,6 +30,11 @@
           "title": "Retained",
           "description": "Retained when true implies that the tax amount will be retained\nby the buyer on behalf of the supplier, and thus subtracted from\nthe invoice taxable base total. Typically used for taxes related to\nincome."
         },
+        "informative": {
+          "type": "boolean",
+          "title": "Informative",
+          "description": "Informative when true implies that the tax amount will be calculated\nand reported but will not affect the invoice totals. Typically used\nfor taxes that are embedded in the base amount or don't impact the\nfinal payable amount."
+        },
         "keys": {
           "items": {
             "$ref": "#/$defs/KeyDef"

@@ -35,6 +35,8 @@ type Combo struct {
 
 	// Copied from the category definition, implies this tax combo is retained
 	retained bool `json:"-"`
+	// Copied from the category definition, implies this tax combo is informative
+	informative bool `json:"-"`
 }
 
 // ValidateWithContext ensures the Combo has the correct details.
@@ -136,6 +138,7 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {
 	}
 
 	c.retained = cd.Retained
+	c.informative = cd.Informative
 
 	// If there are keys defined for the category, but the combo does not
 	// have a key, then we will use the standard key.

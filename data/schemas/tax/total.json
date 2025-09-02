@@ -13,6 +13,10 @@
           "type": "boolean",
           "title": "Retained"
         },
+        "informative": {
+          "type": "boolean",
+          "title": "Informative"
+        },
         "rates": {
           "items": {
             "$ref": "#/$defs/RateTotal"

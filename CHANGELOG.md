@@ -14,6 +14,8 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 - `tax`: `Combo` now includes a `key` field with VAT values taken from the EN16931. We've tried to normalize all common use-cases from the `rate` field, so no changes should be required.
 - `br`: added retained taxes CSLL, INSS and IRRF
+- `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
+- `br`: made ISS an informative tax
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
 
 ### Changed
