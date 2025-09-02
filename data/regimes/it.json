@@ -242,14 +242,14 @@
       }
     },
     {
-      "code": "OTHER",
+      "code": "CP",
       "name": {
-        "en": "Other Contributions",
-        "it": "Altri Contributi"
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
       },
       "title": {
-        "en": "Other Contributions",
-        "it": "Altri Contributi"
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
       },
       "retained": true,
       "map": {

@@ -15,7 +15,7 @@ const (
 	TaxCategoryINPS     cbc.Code = "INPS"
 	TaxCategoryENASARCO cbc.Code = "ENASARCO"
 	TaxCategoryENPAM    cbc.Code = "ENPAM"
-	TaxCategoryOTHER    cbc.Code = "OTHER"
+	TaxCategoryCP       cbc.Code = "CP" // altro contributo previdenziale (other social security contribution)
 )
 
 // Keys used for meta data from external sources.
@@ -170,15 +170,15 @@ var categories = []*tax.CategoryDef{
 		},
 	},
 	{
-		Code:     TaxCategoryOTHER,
+		Code:     TaxCategoryCP,
 		Retained: true,
 		Name: i18n.String{
-			i18n.EN: "Other Contributions",
-			i18n.IT: "Altri Contributi",
+			i18n.EN: "Other Social Security Contributions",
+			i18n.IT: "Altro Contributo Previdenziale",
 		},
 		Title: i18n.String{
-			i18n.EN: "Other Contributions",
-			i18n.IT: "Altri Contributi",
+			i18n.EN: "Other Social Security Contributions",
+			i18n.IT: "Altro Contributo Previdenziale",
 		},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT06",
