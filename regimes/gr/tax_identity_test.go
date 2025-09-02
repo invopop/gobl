@@ -10,6 +10,13 @@ import (
 )
 
 func TestNormalizeTaxIdentity(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tID *tax.Identity
+		assert.NotPanics(t, func() {
+			gr.Normalize(tID)
+		})
+	})
+
 	tests := []struct {
 		name string
 		code cbc.Code
