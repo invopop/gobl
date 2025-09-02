@@ -17,6 +17,8 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 - `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
 - `br`: made ISS an informative tax
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
+- `it`: added new tax category for `OTHER` to handle code `RT06` for retained taxes
 
 ### Fixed
 

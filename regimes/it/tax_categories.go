@@ -8,8 +8,6 @@ import (
 )
 
 // Local tax category definitions which are not considered standard.
-// There is a 6th retained tax type, RT06 "Other contributions", which is
-// currently not supported.
 const (
 	// https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
 	TaxCategoryIRPEF    cbc.Code = "IRPEF"
@@ -17,6 +15,7 @@ const (
 	TaxCategoryINPS     cbc.Code = "INPS"
 	TaxCategoryENASARCO cbc.Code = "ENASARCO"
 	TaxCategoryENPAM    cbc.Code = "ENPAM"
+	TaxCategoryCP       cbc.Code = "CP" // altro contributo previdenziale (other social security contribution)
 )
 
 // Keys used for meta data from external sources.
@@ -168,6 +167,21 @@ var categories = []*tax.CategoryDef{
 		},
 		Map: cbc.CodeMap{
 			KeyFatturaPATipoRitenuta: "RT05",
+		},
+	},
+	{
+		Code:     TaxCategoryCP,
+		Retained: true,
+		Name: i18n.String{
+			i18n.EN: "Other Social Security Contributions",
+			i18n.IT: "Altro Contributo Previdenziale",
+		},
+		Title: i18n.String{
+			i18n.EN: "Other Social Security Contributions",
+			i18n.IT: "Altro Contributo Previdenziale",
+		},
+		Map: cbc.CodeMap{
+			KeyFatturaPATipoRitenuta: "RT06",
 		},
 	},
 }

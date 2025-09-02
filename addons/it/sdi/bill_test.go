@@ -266,6 +266,93 @@ func TestTaxValidation(t *testing.T) {
 	})
 }
 
+func TestChargesValidation(t *testing.T) {
+	ad := tax.AddonForKey(sdi.V1)
+
+	t.Run("charge with no key", func(t *testing.T) {
+		c := &bill.Charge{
+			Percent: num.NewPercentage(10, 2),
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.NoError(t, err)
+	})
+
+	t.Run("fund contribution charge missing extension", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:     sdi.KeyFundContribution,
+			Percent: num.NewPercentage(10, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+				},
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.ErrorContains(t, err, "ext: (it-sdi-fund-type: required.)")
+	})
+
+	t.Run("fund contribution charge with valid extension", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:     sdi.KeyFundContribution,
+			Percent: num.NewPercentage(10, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "exempt",
+				},
+			},
+			Ext: tax.Extensions{
+				sdi.ExtKeyFundType: "TC04",
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.NoError(t, err)
+	})
+
+	t.Run("nil charge", func(t *testing.T) {
+		var c *bill.Charge
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.NoError(t, err)
+	})
+
+	t.Run("fund contribution charge with missing taxes", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:     sdi.KeyFundContribution,
+			Percent: num.NewPercentage(10, 2),
+			Ext: tax.Extensions{
+				sdi.ExtKeyFundType: "TC04",
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.ErrorContains(t, err, "missing category VAT.")
+	})
+
+	t.Run("fund contribution charge with missing percentage", func(t *testing.T) {
+		c := &bill.Charge{
+			Key:    sdi.KeyFundContribution,
+			Amount: num.MakeAmount(100, 2),
+			Taxes: tax.Set{
+				{
+					Category: tax.CategoryVAT,
+					Rate:     "standard",
+				},
+			},
+			Ext: tax.Extensions{
+				sdi.ExtKeyFundType: "TC04",
+			},
+		}
+		ad.Normalizer(c)
+		err := ad.Validator(c)
+		assert.ErrorContains(t, err, "percent: cannot be blank")
+	})
+}
+
 func TestPaymentValidation(t *testing.T) {
 
 	t.Run("payment advances", func(t *testing.T) {
@@ -508,6 +595,150 @@ func TestInvoiceLineValidation(t *testing.T) {
 		inv.Lines[0].Item.Name = "Test Item €"
 		ad.Normalizer(inv)
 		err := ad.Validator(inv)
-		require.EqualError(t, err, "lines: (0: (item: (name: contains characters outside of Latin and Latin-1 range.).).).")
+		require.ErrorContains(t, err, "name: contains characters outside of Latin and Latin-1 range.")
+	})
+}
+
+func TestOrderingValidation(t *testing.T) {
+	t.Run("despatch without deferred tag", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code:      "12345",
+					IssueDate: cal.NewDate(2022, 1, 1),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "can only be set when invoice has deferred tag.")
+	})
+
+	t.Run("despatch with deferred tag and valid data", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code:      "12345",
+					IssueDate: cal.NewDate(2022, 1, 1),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("despatch with deferred tag and valid additional data", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code:      "12345",
+					IssueDate: cal.NewDate(2022, 1, 1),
+					Reason:    "Partial shipment",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("despatch with deferred tag but missing code", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					IssueDate: cal.NewDate(2022, 1, 1),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "code: cannot be blank.")
+	})
+
+	t.Run("despatch with deferred tag but missing issue date", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code: "12345",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "issue_date: cannot be blank.")
+	})
+
+	t.Run("multiple despatch documents with deferred tag", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code:      "12345",
+					IssueDate: cal.NewDate(2022, 1, 1),
+				},
+				{
+					Code:      "67890",
+					IssueDate: cal.NewDate(2022, 1, 2),
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("multiple despatch with one invalid", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				{
+					Code:      "12345",
+					IssueDate: cal.NewDate(2022, 1, 1),
+				},
+				{
+					Code: "67890",
+					// Missing IssueDate
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "issue_date: cannot be blank.")
+	})
+
+	t.Run("nil despatch document", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(sdi.TagDeferred)
+		inv.Ordering = &bill.Ordering{
+			Despatch: []*org.DocumentRef{
+				nil,
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("ordering without despatch", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Code: "ORDER-123",
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("no ordering", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
 	})
 }

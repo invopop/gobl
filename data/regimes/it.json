@@ -240,6 +240,21 @@
       "map": {
         "fatturapa-tipo-ritenuta": "RT05"
       }
+    },
+    {
+      "code": "CP",
+      "name": {
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
+      },
+      "title": {
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT06"
+      }
     }
   ]
 }
