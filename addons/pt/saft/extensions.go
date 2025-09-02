@@ -12,6 +12,8 @@ const (
 	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
 	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
+	ExtKeySource       cbc.Key = "pt-saft-source"
+	ExtKeySourceRef    cbc.Key = "pt-saft-source-ref"
 
 	// Document types extensions
 	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
@@ -69,6 +71,13 @@ const (
 
 	PaymentTypeCash  cbc.Code = "RC"
 	PaymentTypeOther cbc.Code = "RG"
+)
+
+// SourceBilling values
+const (
+	SourceBillingProduced   cbc.Code = "P"
+	SourceBillingIntegrated cbc.Code = "I"
+	SourceBillingManual     cbc.Code = "M"
 )
 
 var extensions = []*cbc.Definition{
@@ -1143,6 +1152,121 @@ var extensions = []*cbc.Definition{
 					i18n.PT: "Títulos de compensação extrassalarial",
 				},
 			},
+		},
+	},
+	{
+		Key: ExtKeySource,
+		Name: i18n.String{
+			i18n.EN: "Document Source",
+			i18n.PT: "Origem do documento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~SourceBilling~ (Origem do documento) field specifies the source of the document.
+				GOBL provides the ~pt-saft-source~ extension to set this value in your documents.
+				By default, GOBL will set this extension to "P" (Produced).
+
+				The table below shows the supported source billing codes:
+
+				| Code | Name       | Description                                         |
+				| ---- | ---------- | --------------------------------------------------- |
+				| ~P~  | Produced   | Document produced by the application                |
+				| ~I~  | Integrated | Integrated document produced by another application |
+				| ~M~  | Manual     | Document from recovery or issued manually           |
+
+				Example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"ext": {
+						"pt-saft-source": "P"
+					},
+					// ...
+				}
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: SourceBillingProduced,
+				Name: i18n.String{
+					i18n.EN: "Produced",
+					i18n.PT: "Produzido",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Document produced by the application",
+					i18n.PT: "Documento produzido na aplicação",
+				},
+			},
+			{
+				Code: SourceBillingIntegrated,
+				Name: i18n.String{
+					i18n.EN: "Integrated",
+					i18n.PT: "Integrado",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Integrated document produced by another application",
+					i18n.PT: "Documento integrado e produzido noutra aplicação",
+				},
+			},
+			{
+				Code: SourceBillingManual,
+				Name: i18n.String{
+					i18n.EN: "Manual",
+					i18n.PT: "Manual",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Document from recovery or issued manually",
+					i18n.PT: "Documento proveniente de recuperação ou de emissão manual",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySourceRef,
+		Name: i18n.String{
+			i18n.EN: "Source Document Reference",
+			i18n.PT: "Referência do documento de origem",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				GOBL provides the ~pt-saft-source-ref~ extension to provide the full reference to a document
+				integrated from another system, recovered or issued manually.
+
+				This extension is required when the document source (~pt-saft-source~ extension) is
+				"M" (manual) or "I" (integrated). It must contain the complete document reference to be appended
+				to the SAF-T's ~HashControl~ field as stipulated by Despacho n.o 8632/2014.
+
+				Example with a manual document:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"ext": {
+						"pt-saft-source": "M",
+						"pt-saft-source-ref": "FTM abc/00001"
+					},
+					// ...
+				}
+				~~~
+
+				Example with a recovered document:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"ext": {
+						"pt-saft-source": "M",
+						"pt-saft-source-ref": "FTD FT SERIESA/123"
+					},
+					// ...
+				}
+				~~~
+			`),
 		},
 	},
 	{

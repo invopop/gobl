@@ -13,13 +13,24 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 ### Added
 
 - `tax`: `Combo` now includes a `key` field with VAT values taken from the EN16931. We've tried to normalize all common use-cases from the `rate` field, so no changes should be required.
+- `br`: added retained taxes CSLL, INSS and IRRF
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
 
 ### Changed
 
 - `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
+
+## [v0.220.6] - 2025-08-12
+
+### Changed
+
 - `org.Party`: avoid panic when regime's normalizer is not present
 - `br`: set missing normalizer in regime definition
 - `tax`: `Normalizers()` method in `RegimeDef`
+
+### Added
+
+- `br`: tax identity validation for CPF code.
 
 ## [v0.220.5] - 2025-07-21
 
