@@ -22,6 +22,7 @@ func validInvoice() *bill.Invoice {
 		Tax: &bill.Tax{
 			Ext: tax.Extensions{
 				saft.ExtKeyInvoiceType: saft.InvoiceTypeStandard,
+				saft.ExtKeySource:      saft.SourceBillingProduced,
 			},
 		},
 		Supplier: &org.Party{
@@ -48,7 +49,7 @@ func validInvoice() *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 			},
@@ -90,6 +91,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Series = "PF SERIES-A"
 		inv.Tax.Ext = tax.Extensions{
 			saft.ExtKeyWorkType: saft.WorkTypeProforma,
+			saft.ExtKeySource:   saft.SourceBillingProduced,
 		}
 		require.NoError(t, addon.Validator(inv))
 	})
@@ -108,6 +110,47 @@ func TestInvoiceValidation(t *testing.T) {
 
 		inv.Lines[0].Taxes = nil
 		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (taxes: missing category VAT")
+	})
+
+	t.Run("missing source billing", func(t *testing.T) {
+		inv := validInvoice()
+		delete(inv.Tax.Ext, saft.ExtKeySource)
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-source: required.).).")
+	})
+
+	t.Run("source billing produced - no source doc ref required", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeyInvoiceType: saft.InvoiceTypeStandard,
+			saft.ExtKeySource:      saft.SourceBillingProduced,
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("source billing integrated - source doc ref required", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeyInvoiceType: saft.InvoiceTypeStandard,
+			saft.ExtKeySource:      saft.SourceBillingIntegrated,
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-source-ref: required.).).")
+
+		// Add source doc ref - should pass
+		inv.Tax.Ext[saft.ExtKeySourceRef] = "FTM abc/00001"
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("source billing manual - source doc ref required", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeyInvoiceType: saft.InvoiceTypeStandard,
+			saft.ExtKeySource:      saft.SourceBillingManual,
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "tax: (ext: (pt-saft-source-ref: required.).).")
+
+		// Add source doc ref - should pass
+		inv.Tax.Ext[saft.ExtKeySourceRef] = "FTD FT SERIESA/123"
+		require.NoError(t, addon.Validator(inv))
 	})
 }
 
@@ -158,4 +201,104 @@ func TestInvoiceSeriesValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSourceRefFormatValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("missing source ref", func(t *testing.T) {
+		inv := validInvoice()
+		delete(inv.Tax.Ext, saft.ExtKeySourceRef)
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("missing invoice type", func(t *testing.T) {
+		inv := validInvoice()
+		delete(inv.Tax.Ext, saft.ExtKeyInvoiceType)
+		inv.Tax.Ext[saft.ExtKeyWorkType] = saft.WorkTypeProforma
+		inv.Series = "PF SERIES-A"
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("integrated document", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax.Ext[saft.ExtKeySource] = saft.SourceBillingIntegrated
+		inv.Tax.Ext[saft.ExtKeySourceRef] = "FTR abc/00001"
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	tests := []struct {
+		ref string
+		err string
+	}{
+		{"", ""},
+		{"FTM abc/00001", ""},
+		{"FTD FT SERIESA/123", ""},
+		{"FTR abc/00001", "must be in valid format"},
+		{"FTM a/bc/00001", "must be in valid format"},
+		{"FTDA FT abc/00001", "must be in valid format"},
+		{"ABC abc/00001", "must be in valid format"},
+		{"FTM FT abc/00001", "must be in valid format"},
+		{"FRM abc/00001", "must start with the document type 'FT' not 'FR'"},
+		{"FRD FT SERIESA/123", "must start with the document type 'FT' not 'FR'"},
+		{"FTD FR SERIESA/123", "must refer to an original document 'FT' not 'FR'"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.ref, func(t *testing.T) {
+			inv := validInvoice()
+			inv.Tax.Ext[saft.ExtKeySource] = saft.SourceBillingManual
+			inv.Tax.Ext[saft.ExtKeySourceRef] = cbc.Code(test.ref)
+
+			err := addon.Validator(inv)
+			if test.err == "" {
+				assert.NoError(t, err)
+			} else {
+				assert.ErrorContains(t, err, test.err)
+			}
+		})
+	}
+}
+
+func TestInvoiceNormalization(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("normalize invoice with nil tax", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = nil
+
+		addon.Normalizer(inv)
+
+		require.NotNil(t, inv.Tax)
+		require.NotNil(t, inv.Tax.Ext)
+		assert.Equal(t, saft.SourceBillingProduced, inv.Tax.Ext[saft.ExtKeySource])
+	})
+
+	t.Run("normalize invoice with nil tax extensions", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax = &bill.Tax{}
+
+		addon.Normalizer(inv)
+
+		require.NotNil(t, inv.Tax.Ext)
+		assert.Equal(t, saft.SourceBillingProduced, inv.Tax.Ext[saft.ExtKeySource])
+	})
+
+	t.Run("normalize invoice with missing source billing", func(t *testing.T) {
+		inv := validInvoice()
+		delete(inv.Tax.Ext, saft.ExtKeySource)
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, saft.SourceBillingProduced, inv.Tax.Ext[saft.ExtKeySource])
+	})
+
+	t.Run("normalize invoice with existing source billing", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Tax.Ext[saft.ExtKeySource] = saft.SourceBillingIntegrated
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, saft.SourceBillingIntegrated, inv.Tax.Ext[saft.ExtKeySource])
+	})
 }

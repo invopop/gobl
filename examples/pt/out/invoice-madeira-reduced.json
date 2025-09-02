@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "506a18400ed6bda4911f98eb7f8dd94d9328c3d3420257e7fee9beed40c042a1"
+			"val": "98bc32683e7fd56db8395fd81dec8b47523349207be3ae2c0136876f503268e2"
 		}
 	},
 	"doc": {
@@ -19,7 +19,8 @@
 		"currency": "EUR",
 		"tax": {
 			"ext": {
-				"pt-saft-invoice-type": "FT"
+				"pt-saft-invoice-type": "FT",
+				"pt-saft-source": "P"
 			}
 		},
 		"supplier": {
@@ -56,6 +57,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "standard",
 						"rate": "reduced",
 						"percent": "4.0%",
 						"ext": {
@@ -81,6 +83,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "standard",
 						"rate": "reduced",
 						"percent": "4.0%",
 						"ext": {
@@ -101,7 +104,7 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "reduced",
+								"key": "standard",
 								"ext": {
 									"pt-region": "PT-MA",
 									"pt-saft-tax-rate": "RED"

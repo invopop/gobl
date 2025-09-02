@@ -14,20 +14,22 @@ const (
 	IdentityTypeTemplate cbc.Code = "Template" // Find official international keys
 )
 
-var identityTypeDefinitions = []*cbc.Definition{
-	{
-		Code: IdentityTypeTemplate,
-		Name: i18n.String{
-			i18n.EN: "Template",
-			// Add official local name here.
-			// i18n.XX: "Template",
+func identityTypeDefinitions() []*cbc.Definition {
+	return []*cbc.Definition{
+		{
+			Code: IdentityTypeTemplate,
+			Name: i18n.String{
+				i18n.EN: "Template",
+				// Add official local name here.
+				// i18n.XX: "Template",
+			},
+			Desc: i18n.String{
+				i18n.EN: "A template identity description",
+				// Add official local description here.
+				// i18n.XX: "A template identity description",
+			},
 		},
-		Desc: i18n.String{
-			i18n.EN: "A template identity description",
-			// Add official local description here.
-			// i18n.XX: "A template identity description",
-		},
-	},
+	}
 }
 
 // normalizeOrgIdentity performs normalization specific to the regime.

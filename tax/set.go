@@ -43,7 +43,7 @@ func (s Set) ValidateWithContext(ctx context.Context) error {
 				fmt.Sprintf("%d", i): err,
 			}
 		}
-		combos[c.Category] = c.Rate
+		combos[c.Category] = c.Key
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func (s Set) Equals(s2 Set) bool {
 	for _, a := range s {
 		match := false
 		for _, b := range s2 {
-			if a.Category == b.Category && a.Rate == b.Rate && a.Country == b.Country {
+			if a.Category == b.Category && a.Key == b.Key && a.Country == b.Country {
 				match = true
 			}
 		}
@@ -76,11 +76,11 @@ func (s Set) Get(cat cbc.Code) *Combo {
 	return nil
 }
 
-// Rate returns the rate from the matching category, if set.
-func (s Set) Rate(cat cbc.Code) cbc.Key {
+// Key returns the key from the matching category, if set.
+func (s Set) Key(cat cbc.Code) cbc.Key {
 	for _, c := range s {
 		if c.Category == cat {
-			return c.Rate
+			return c.Key
 		}
 	}
 	return ""

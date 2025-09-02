@@ -90,8 +90,29 @@ Add this to your `settings.json` file:
 GOBL is structured in multiple layers, and choosing the right place for your contribution is important. Consider these four main layers:
 
 1. **GOBL Core**: The foundational packages (e.g., `bill`, `cbc`, `tax`, etc.). Changes here are reviewed carefully, as they affect the entire ecosystem and must align with best practices.
-2. **Tax Regimes**: Subdirectories within the `regimes` package, each implementing country-specific tax rules, rates, and validation logic. See [`regimes/README.md`](regimes/README.md) for details.
+2. **Tax Regimes**: Subdirectories within the `regimes` package, each implementing country-specific tax rules, rates, and validation logic. See the following sections for details on adding regimes.
 3. **Addons**: Extensions that handle specialized formats or unique normalization/validation rules. Addons may define extension codes to support reliable conversion of GOBL documents.
 4. **External Applications**: Business logic that doesn't fit within GOBL itself, typically because it involves relationships between documents or relies on persistent storage.
 
 If you're unsure where your change belongs, feel free to open an issue or discussion for guidance.
+
+## Adding a new regime
+
+All new features should come with tests. For example, `tax_identities.go` must have a `tax_identities_test.go` file.
+
+- Duplicate the existing [`template`](./regimes/template/) directory and rename it to the 2-letter country code (regime code).
+- Try to include detailed descriptions and examples throughout regimes to help developers use the regime and prepare their own documents.
+- Update the necessary files and code as needed.
+  - Rename `template.go` to `<tax_country_code>.go`
+    - `New` function should instantiate a [`*tax.RegimeDef`](tax/regime_def.go).
+    - `Normalize` and `Validate` functions should take care of each possible element that is specific to the regime.
+  - `tax_categories.go`
+  - `tax_identity.go`
+- Use methods to create object instances when building regimes to prevent accidental overriding of data.
+- Optionally, add the following files:
+  - `scenarios.go`
+  - `corrections.go`
+  - `org_parties.go`
+  - `org_identities.go`
+- Add the new regime to the `regimes/regimes.go` file.
+- Add the new regime to the `regimes/regimes_test.go` file.
