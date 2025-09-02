@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -81,6 +82,7 @@ func TestTaxComboValidate(t *testing.T) {
 			Category: tax.CategoryVAT,
 			Percent:  num.NewPercentage(230, 3),
 			Ext: tax.Extensions{
+				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "NOR",
 			},
 		}
@@ -91,6 +93,9 @@ func TestTaxComboValidate(t *testing.T) {
 	t.Run("missing rate", func(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				pt.ExtKeyRegion: "PT",
+			},
 		}
 		err := ad.Validator(combo)
 		assert.ErrorContains(t, err, "ext: (pt-saft-tax-rate: required.)")
@@ -100,6 +105,9 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Country:  l10n.EL.Tax(),
+			Ext: tax.Extensions{
+				pt.ExtKeyRegion: "PT",
+			},
 		}
 		err := ad.Validator(combo)
 		assert.ErrorContains(t, err, "ext: (pt-saft-tax-rate: required.)")
@@ -109,6 +117,7 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Ext: tax.Extensions{
+				pt.ExtKeyRegion:      "PT",
 				saft.ExtKeyTaxRate:   "ISE",
 				saft.ExtKeyExemption: "M01",
 			},
@@ -121,6 +130,7 @@ func TestTaxComboValidate(t *testing.T) {
 		combo := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Ext: tax.Extensions{
+				pt.ExtKeyRegion:    "PT",
 				saft.ExtKeyTaxRate: "ISE",
 			},
 		}

@@ -2,6 +2,7 @@ package saft
 
 import (
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -95,16 +96,18 @@ func validateTaxCombo(val any) error {
 	}
 	switch c.Category {
 	case tax.CategoryVAT:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				tax.ExtensionsRequire(ExtKeyTaxRate),
-				validation.When(
-					c.Percent == nil,
-					tax.ExtensionsRequire(ExtKeyExemption),
-				),
-				validation.Skip,
-			),
-		)
+		return validation.ValidateStruct(c, validateVATExt(&c.Ext))
 	}
 	return nil
+}
+
+func validateVATExt(ext *tax.Extensions) *validation.FieldRules {
+	return validation.Field(ext,
+		tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
+		validation.When(
+			(*ext)[ExtKeyTaxRate] == TaxRateExempt,
+			tax.ExtensionsRequire(ExtKeyExemption),
+		),
+		validation.Skip,
+	)
 }

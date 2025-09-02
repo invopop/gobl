@@ -2,6 +2,7 @@ package saft_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
@@ -47,10 +48,23 @@ func TestOrderValidation(t *testing.T) {
 		ord.Lines[0].Taxes = nil
 		assert.ErrorContains(t, addon.Validator(ord), "lines: (0: (taxes: missing category VAT")
 	})
+
+	t.Run("missing value date", func(t *testing.T) {
+		ord := validOrder()
+		ord.ValueDate = nil
+		assert.ErrorContains(t, addon.Validator(ord), "value_date: cannot be blank")
+	})
 }
 
 func TestOrderNormalization(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("nil order", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			var inv *bill.Order
+			addon.Normalizer(inv)
+		})
+	})
 
 	t.Run("purchase order type", func(t *testing.T) {
 		ord := &bill.Order{
@@ -84,6 +98,42 @@ func TestOrderNormalization(t *testing.T) {
 		addon.Normalizer(ord)
 		assert.Equal(t, saft.WorkTypeOther, ord.Tax.Ext[saft.ExtKeyWorkType])
 	})
+
+	t.Run("sets default value date from issue date", func(t *testing.T) {
+		ord := validOrder()
+		ord.ValueDate = nil
+		addon.Normalizer(ord)
+		assert.Equal(t, &ord.IssueDate, ord.ValueDate)
+	})
+
+	t.Run("sets default value date from operation date", func(t *testing.T) {
+		ord := validOrder()
+		ord.OperationDate = cal.NewDate(2024, 12, 2)
+		ord.ValueDate = nil
+		addon.Normalizer(ord)
+		assert.Equal(t, ord.OperationDate, ord.ValueDate)
+	})
+
+	t.Run("keeps existing value date", func(t *testing.T) {
+		ord := validOrder()
+		ord.ValueDate = cal.NewDate(2024, 12, 2)
+		addon.Normalizer(ord)
+		assert.Equal(t, cal.NewDate(2024, 12, 2), ord.ValueDate)
+	})
+
+	t.Run("sets today as value date when no issue date is set", func(t *testing.T) {
+		ord := validOrder()
+		ord.IssueDate = cal.Date{}
+		ord.ValueDate = nil
+
+		addon.Normalizer(ord)
+
+		loc, err := time.LoadLocation("Europe/Lisbon")
+		require.NoError(t, err)
+		today := cal.TodayIn(loc)
+		assert.Equal(t, &today, ord.ValueDate)
+	})
+
 }
 
 func validOrder() *bill.Order {
@@ -110,6 +160,7 @@ func validOrder() *bill.Order {
 		Code:      "123",
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2023, 1, 1),
+		ValueDate: cal.NewDate(2022, 12, 31),
 		Lines: []*bill.Line{
 			{
 				Quantity: num.MakeAmount(1, 0),

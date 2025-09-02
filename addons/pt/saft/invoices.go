@@ -8,7 +8,10 @@ import (
 	"strings"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -36,6 +39,16 @@ var invoiceWorkTypes = []cbc.Code{
 }
 
 func normalizeInvoice(inv *bill.Invoice) {
+	if inv == nil {
+		return
+	}
+
+	normalizeInvoiceTax(inv)
+	normalizeInvoiceAdvances(inv)
+	normalizeInvoiceValueDate(inv)
+}
+
+func normalizeInvoiceTax(inv *bill.Invoice) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
 	}
@@ -47,6 +60,27 @@ func normalizeInvoice(inv *bill.Invoice) {
 	if !inv.Tax.Ext.Has(ExtKeySource) {
 		inv.Tax.Ext[ExtKeySource] = SourceBillingProduced
 	}
+}
+
+func normalizeInvoiceAdvances(inv *bill.Invoice) {
+	if inv.Payment == nil {
+		return
+	}
+
+	// Set the issue date as the default date for advances
+	for _, adv := range inv.Payment.Advances {
+		if adv.Date == nil {
+			adv.Date = issueDate(inv)
+		}
+	}
+}
+
+func normalizeInvoiceValueDate(inv *bill.Invoice) {
+	inv.ValueDate = determineValueDate(
+		issueDate(inv),
+		inv.OperationDate,
+		inv.ValueDate,
+	)
 }
 
 func validateInvoice(inv *bill.Invoice) error {
@@ -65,14 +99,111 @@ func validateInvoice(inv *bill.Invoice) error {
 			validateCodeFormat(inv.Series, dt),
 			validation.Skip,
 		),
+		validation.Field(&inv.ValueDate,
+			validation.Required,
+			validation.Skip,
+		),
 		validation.Field(&inv.Lines,
 			validation.Each(
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
+				validation.By(validateInvoiceLine),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Payment,
+			validation.By(validateInvoicePayment),
+			validation.Skip,
+		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals(inv)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Preceding,
+			validation.Length(0, 1),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceLine(val any) error {
+	line, _ := val.(*bill.Line)
+	if line == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Sum, num.ZeroOrPositive),
+		validation.Field(&line.Total, num.ZeroOrPositive),
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateInvoiceLineDiscount),
+				validation.Skip,
+			),
+		),
+	)
+}
+
+func validateInvoiceLineDiscount(val any) error {
+	disc, _ := val.(*bill.LineDiscount)
+	if disc == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(disc,
+		validation.Field(&disc.Amount, num.ZeroOrPositive),
+	)
+}
+
+func validateInvoicePayment(val any) error {
+	pay, _ := val.(*bill.PaymentDetails)
+	if pay == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(pay,
+		validation.Field(&pay.Advances,
+			validation.Each(
+				validation.By(validatePaymentAdvance),
 				validation.Skip,
 			),
 			validation.Skip,
 		),
 	)
+}
+
+func validatePaymentAdvance(val any) error {
+	adv, _ := val.(*pay.Advance)
+	if adv == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(adv,
+		validation.Field(&adv.Date,
+			validation.Required,
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceTotals(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		tot, _ := val.(*bill.Totals)
+		if tot == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(tot,
+			validation.Field(&tot.Payable, num.ZeroOrPositive),
+			validation.Field(&tot.Due,
+				validation.When(
+					isInvoiceReceipt(inv),
+					num.Equals(num.AmountZero),
+				),
+				validation.Skip,
+			),
+		)
+	}
 }
 
 func invoiceDocType(inv *bill.Invoice) cbc.Code {
@@ -223,4 +354,33 @@ func validateCodeFormat(series cbc.Code, docType cbc.Code) validation.Rule {
 		}
 		return nil
 	})
+}
+
+func isInvoiceReceipt(inv *bill.Invoice) bool {
+	return invoiceDocType(inv) == InvoiceTypeInvoiceReceipt
+}
+
+func determineValueDate(idate, odate, vdate *cal.Date) *cal.Date {
+	if vdate != nil {
+		return vdate
+	}
+	if odate != nil {
+		return odate
+	}
+	return idate
+}
+
+func issueDate(inv *bill.Invoice) *cal.Date {
+	return dateOrToday(&inv.IssueDate, inv.Regime)
+}
+
+func dateOrToday(date *cal.Date, reg tax.Regime) *cal.Date {
+	if date != nil && !date.IsZero() {
+		return date
+	}
+
+	rd := reg.RegimeDef()
+	loc := rd.TimeLocation()
+	today := cal.TodayIn(loc)
+	return &today
 }
