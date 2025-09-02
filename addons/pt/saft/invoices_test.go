@@ -49,7 +49,7 @@ func validInvoice() *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 			},

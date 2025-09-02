@@ -14,7 +14,6 @@ type TotalCalculator struct {
 	Country  l10n.TaxCountryCode
 	Rounding cbc.Key
 	Currency currency.Code
-	Tags     []cbc.Key
 	Date     cal.Date
 	Lines    []TaxableLine
 	Includes cbc.Code // Tax included in price
@@ -55,10 +54,10 @@ func (tc *TotalCalculator) Calculate(t *Total) error {
 }
 
 func (tc *TotalCalculator) prepareLines(taxLines []*taxLine) error {
-	// First, prepare all tax combos using the country, tags, and date
+	// First, prepare all tax combos using the country and date
 	for _, tl := range taxLines {
 		for _, combo := range tl.taxes {
-			if err := combo.calculate(tc.Country, tc.Tags, tc.Date); err != nil {
+			if err := combo.calculate(tc.Country, tc.Date); err != nil {
 				return err
 			}
 			// always add 2 decimal places for all tax calculations

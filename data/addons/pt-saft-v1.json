@@ -195,6 +195,9 @@
           "name": {
             "en": "Article 16, No. 6 of the VAT code",
             "pt": "Artigo 16.º, n.º 6 do CIVA"
+          },
+          "desc": {
+            "en": "Amounts invoiced as being received on behalf of the purchaser\n— e.g. agency sales or third-party collections; supplier records\nfunds in “accounts of third parties”, no VAT is added by the\nsupplier."
           }
         },
         {
@@ -202,6 +205,9 @@
           "name": {
             "en": "Article 6 of Decree-Law No. 198/90 of 19th June",
             "pt": "Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho"
+          },
+          "desc": {
+            "en": "B2B deliveries above €1,000 from a domestic supplier to a\ntaxable person in Portugal who exports in the same state — VAT\nzero-rated when export is immediate."
           }
         },
         {
@@ -209,6 +215,9 @@
           "name": {
             "en": "Exempt pursuant to Article 13 of the VAT code",
             "pt": "Isento artigo 13.º do CIVA"
+          },
+          "desc": {
+            "en": "Certain types of importation or re-importation expressly exempt\nunder Portuguese VAT rules."
           }
         },
         {
@@ -216,6 +225,9 @@
           "name": {
             "en": "Exempt pursuant to Article 14 of the VAT code",
             "pt": "Isento artigo 14.º do CIVA"
+          },
+          "desc": {
+            "en": "Exports, deemed exports or international transport services\nprovided from Portugal — zero-rated for VAT."
           }
         },
         {
@@ -223,6 +235,9 @@
           "name": {
             "en": "Exempt pursuant to Article 15 of the VAT code",
             "pt": "Isento artigo 15.º do CIVA"
+          },
+          "desc": {
+            "en": "Goods or services under suspension regimes (e.g. transhipment,\nprocessing), or special transitional exemption schemes."
           }
         },
         {
@@ -230,6 +245,9 @@
           "name": {
             "en": "Exempt pursuant to Article 9 of the VAT code",
             "pt": "Isento artigo 9.º do CIVA"
+          },
+          "desc": {
+            "en": "Activities such as health, education, culture, insurance,\nrentals, or authorized lotteries — exempt goods and services, but\nwithout VAT recovery rights."
           }
         },
         {
@@ -237,6 +255,9 @@
           "name": {
             "en": "VAT - does not confer right to deduction / Article 62 paragraph b) of the VAT code",
             "pt": "IVA - não confere direito a dedução / Artigo 62.º alínea b) do CIVA"
+          },
+          "desc": {
+            "en": "Retailers under the “small trader regime” (volume below threshold)\nwho cannot recover VAT on inputs. The VAT is not levied, but the\ntaxpayer has no deduction rights."
           }
         },
         {
@@ -244,6 +265,9 @@
           "name": {
             "en": "VAT - exemption scheme / Article 57 of the VAT code",
             "pt": "IVA - regime de isenção / Artigo 57.º do CIVA"
+          },
+          "desc": {
+            "en": "Flat-rate VAT scheme for small taxpayers (typically individuals\nwith turnover below €15,000 in the preceding year). Exemption\napplies, albeit with a limited VAT recovery regime."
           }
         },
         {
@@ -251,6 +275,9 @@
           "name": {
             "en": "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
             "pt": "Regime particular do tabaco / Decreto-Lei n.º 346/85, de 23 de agosto"
+          },
+          "desc": {
+            "en": "Suppliers or resellers of manufactured tobacco or matches taxed\nunder the special tobacco tax regime — VAT is either not due or\ntreated under excise rules."
           }
         },
         {
@@ -258,6 +285,9 @@
           "name": {
             "en": "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
             "pt": "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.º 221/85, de 3 de julho"
+          },
+          "desc": {
+            "en": "Travel agencies selling tours in their own name (even when\nbooking services from others) are taxed only on their margin, not\non the full amount."
           }
         },
         {
@@ -265,6 +295,9 @@
           "name": {
             "en": "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.º 199/96, de 18 de outubro"
+          },
+          "desc": {
+            "en": "Resale of used goods under the margin scheme — VAT applies solely\nto the profit margin."
           }
         },
         {
@@ -272,6 +305,9 @@
           "name": {
             "en": "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.º 199/96, de 18 de outubro"
+          },
+          "desc": {
+            "en": "Art pieces sold under the margin taxation rule — VAT calculated\nonly on the dealer's margin."
           }
         },
         {
@@ -279,6 +315,9 @@
           "name": {
             "en": "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
             "pt": "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.º 199/96, de 18 de outubro"
+          },
+          "desc": {
+            "en": "Antiques or collectibles treated under a margin-based VAT regime,\nmeaning VAT on margin only."
           }
         },
         {
@@ -286,6 +325,9 @@
           "name": {
             "en": "Exempt pursuant to Article 14 of the RITI",
             "pt": "Isento artigo 14.º do RITI"
+          },
+          "desc": {
+            "en": "Standard rule for intra-EU goods transfers (Normal\nintra-Community supplies) — zero-VAT, no import VAT regime;\nrecipient accounts for VAT via VAT return."
           }
         },
         {
@@ -293,6 +335,9 @@
           "name": {
             "en": "Other exemptions",
             "pt": "Outras isenções"
+          },
+          "desc": {
+            "en": "Temporary, sector-specific or exceptional exemptions established\nby specific legislation (e.g. emergency relief)."
           }
         },
         {
@@ -300,6 +345,9 @@
           "name": {
             "en": "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
             "pt": "IVA - regime forfetário / Artigo 59.º-D n.º 2 do CIVA"
+          },
+          "desc": {
+            "en": "Flat-rate VAT exemption for certain agricultural activities under\nthe “forfetário” scheme (simplified turnover-based regime)."
           }
         },
         {
@@ -307,6 +355,9 @@
           "name": {
             "en": "VAT - does not confer right to deduction (or similar) / Article 72 No. 4 of the VAT code",
             "pt": "IVA - não confere direito à dedução (ou expressão similar) / Artigo 72.º n.º 4 do CIVA"
+          },
+          "desc": {
+            "en": "Fuel resellers operating on behalf of distributors cannot deduct\nVAT they incur — vendor issues invoice at 0%, no VAT recovery by\nreseller."
           }
         },
         {
@@ -314,6 +365,9 @@
           "name": {
             "en": "Consignment goods / Article 38 No. 1 paragraph a) of the VAT code",
             "pt": "Mercadoria à consignação / Artigo 38.º n.º 1 alínea a) do CIVA"
+          },
+          "desc": {
+            "en": "Consignment stock sales — consignor issues invoice to consignee,\nbut goods remain under consignment; VAT is not yet due until\nfinal sale."
           }
         },
         {
@@ -321,6 +375,9 @@
           "name": {
             "en": "VAT exemption with right to deduction in food basket / Law No. 17/2023 of 14th April",
             "pt": "Isenção de IVA com direito à dedução no cabaz alimentar / Lei n.º 17/2023, de 14 de abril"
+          },
+          "desc": {
+            "en": "“IVA Zero” food-basket scheme allowed VAT exemption with right to\ndeduction. Active 18 Apr 2023 to 4 Jan 2024, now expired. "
           }
         },
         {
@@ -328,6 +385,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea i) do CIVA"
+          },
+          "desc": {
+            "en": "Reverse-charge on purchase of waste, scrap or recyclable materials\nlisted in Annex E of VAT Code — purchaser self-accounts VAT."
           }
         },
         {
@@ -335,6 +395,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea j) do CIVA"
+          },
+          "desc": {
+            "en": "Reverse-charge for construction or civil-works services under\nsubcontracting; client self-accounts VAT."
           }
         },
         {
@@ -342,6 +405,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea l) do CIVA"
+          },
+          "desc": {
+            "en": "Reverse-charge on services involving emission rights, certified\nreductions or reduction units (environmental credits)."
           }
         },
         {
@@ -349,6 +415,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea m) do CIVA"
+          },
+          "desc": {
+            "en": "Reverse-charge on raw cork, wood, pine-cones with shell — \npurchaser accounts for VAT."
           }
         },
         {
@@ -356,6 +425,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 2 No. 1 paragraph n) of the VAT code",
             "pt": "IVA - autoliquidação / Artigo 2.º n.º 1 alínea n) do CIVA"
+          },
+          "desc": {
+            "en": "Reverse-charge on electricity sold for self-consumption (≤1MW\ncapacity); the supplier issues invoice at 0% VAT."
           }
         },
         {
@@ -363,6 +435,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
             "pt": "IVA - autoliquidação / Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+          },
+          "desc": {
+            "en": "Reverse-charge for cross-border B2B services from suppliers\nwithout a fixed establishment in Portugal — Portuguese client\nself-accounts."
           }
         },
         {
@@ -370,6 +445,9 @@
           "name": {
             "en": "VAT - reverse charge / Article 8 No. 3 of the RITI",
             "pt": "IVA - autoliquidação / Artigo 8.º n.º 3 do RITI"
+          },
+          "desc": {
+            "en": "Reverse-charge for intracommunity triangular transactions (RITI\nart. 8.3) — recipient (third party) must self-liquidate VAT."
           }
         },
         {
@@ -377,6 +455,9 @@
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 21/2007 of 29th January",
             "pt": "IVA - autoliquidação / Decreto-Lei n.º 21/2007, de 29 de janeiro"
+          },
+          "desc": {
+            "en": "When supplier renounces to VAT exemption on a real-estate sale,\nthe buyer must self-account VAT."
           }
         },
         {
@@ -384,6 +465,9 @@
           "name": {
             "en": "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
             "pt": "IVA - autoliquidação / Decreto-Lei n.º 362/99, de 16 de setembro"
+          },
+          "desc": {
+            "en": "Reverse-charge on investment gold transactions that are not\nVAT-exempt under special gold regulations; buyer reports VAT."
           }
         },
         {
@@ -391,6 +475,9 @@
           "name": {
             "en": "Not subject to tax or not taxed",
             "pt": "Não sujeito ou não tributado"
+          },
+          "desc": {
+            "en": "Other cases where VAT is legally not due — e.g. not subject due\nto CIVA articles 2, 3, or 4 (outside scope of VAT)."
           }
         }
       ]

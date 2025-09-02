@@ -27,7 +27,7 @@
       },
       "rates": [
         {
-          "key": "zero",
+          "rate": "zero",
           "name": {
             "en": "Zero Rate"
           },
@@ -41,9 +41,9 @@
           ]
         },
         {
-          "key": "standard",
+          "rate": "general",
           "name": {
-            "en": "Standard rate"
+            "en": "General rate"
           },
           "desc": {
             "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."

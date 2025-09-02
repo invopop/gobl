@@ -40,8 +40,9 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "21.0%",
-                        "rate": "standard"
+                        "rate": "general"
                     },
                     {
                         "cat": "IRPF",
@@ -62,8 +63,9 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "21.0%",
-                        "rate": "standard"
+                        "rate": "general"
                     }
                 ],
                 "total": "1000.00"
@@ -79,8 +81,8 @@
                 "taxes": [
                     {
                         "cat": "VAT",
-                        "percent": "0.0%",
-                        "rate": "zero"
+                        "key": "zero",
+                        "percent": "0%"
                     }
                 ],
                 "total": "172.50"
@@ -168,7 +170,7 @@
                                 "amount": "0.00",
                                 "base": "172.50",
                                 "key": "zero",
-                                "percent": "0.0%"
+                                "percent": "0%"
                             }
                         ]
                     },
@@ -179,7 +181,6 @@
                             {
                                 "amount": "600.00",
                                 "base": "4000.00",
-                                "key": "pro",
                                 "percent": "15.0%"
                             }
                         ],
@@ -198,7 +199,7 @@
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "2ec684ff0fd75a056376a834140421ca28cd4c8e242f4b9174b46832a60dfcf6"
+            "val": "2dae7ba5bc51585b660265d5cb8b16493d1166e276383907d6bf89fd7f2d6bcb"
         },
         "uuid": "9d8eafd5-77be-11ec-b485-5405db9a3e49"
     }

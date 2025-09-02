@@ -89,6 +89,7 @@
         "taxes": [
           {
             "cat": "VAT",
+            "key": "standard",
             "percent": "21%"
           },
           {
@@ -109,6 +110,7 @@
         "taxes": [
           {
             "cat": "VAT",
+            "key": "standard",
             "percent": "21%"
           }
         ],
@@ -125,7 +127,7 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "zero",
+            "key": "zero",
             "percent": "0%"
           }
         ],

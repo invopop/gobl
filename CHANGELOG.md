@@ -6,12 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+**IMPORTANT**: Significant refactor of tax combo handling with the addition of tax "keys" that help identify the sub-classification of a tax, specifically VAT, ensuring that they can be correctly mapped.
+
+Unmarshalling JSON GOBL documents will be migrated automatically to the new structure, including any rate tags or addon extensions, but consuming may require changes if using the tax combo `rate` property.
+
 ### Added
 
+- `tax`: `Combo` now includes a `key` field with VAT values taken from the EN16931. We've tried to normalize all common use-cases from the `rate` field, so no changes should be required.
 - `br`: added retained taxes CSLL, INSS and IRRF
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
 - `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
 - `it`: added new tax category for `OTHER` to handle code `RT06` for retained taxes
+
+### Changed
+
+- `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
 
 ## [v0.220.6] - 2025-08-12
 

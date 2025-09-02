@@ -15,9 +15,16 @@ import (
 // that can be re-used more easily.
 type Key string
 
+// Key Pattern constants for validation and parsing.
+const (
+	KeyPattern           = `^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$`
+	KeyPatternWord       = `([a-z]([a-z0-9-]*[a-z0-9])?)`
+	KeyPatternExtensions = `(\+` + KeyPatternWord + `)`
+	KeyPatternWordOnly   = `^` + KeyPatternWord + `$`
+	KeyPatternFull       = `^` + KeyPatternWord + KeyPatternExtensions + `*$`
+)
+
 var (
-	// KeyPattern describes what should keys look like
-	KeyPattern = `^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$`
 	// KeyValidationRegexp is used for key validation
 	KeyValidationRegexp = regexp.MustCompile(KeyPattern)
 	// KeySeparator is used to separate keys join using the "With"
