@@ -497,7 +497,7 @@
             "en": "Without VAT - article 3 of the VAT code"
           },
           "desc": {
-            "en": "Transactions outside the scope of Greek VAT per basic scope rules."
+            "en": "Outside the scope of VAT per Art. 3 (transaction not within the VAT “object”)."
           }
         },
         {
@@ -507,7 +507,7 @@
             "en": "Without VAT - article 5 of the VAT code"
           },
           "desc": {
-            "en": "Supplies where place of taxation is outside Greece under territorial rules."
+            "en": "Outside Greek VAT due to the legal cases in Art. 5 (e.g., not treated as a taxable supply under that article)."
           }
         },
         {
@@ -517,7 +517,7 @@
             "en": "Without VAT - article 13 of the VAT code"
           },
           "desc": {
-            "en": "Exempt activities in public interest (e.g., medical, education) as defined in Art. 13."
+            "en": "Use when the transaction is exempt under Art. 13 (as defined in Greek VAT Code)."
           }
         },
         {
@@ -527,7 +527,7 @@
             "en": "Without VAT - article 14 of the VAT code"
           },
           "desc": {
-            "en": "Exemptions by place-of-supply provisions (services taxed abroad / not taxable in GR)."
+            "en": "Use when Art. 14 grants an exemption (specific cases set in law)."
           }
         },
         {
@@ -537,7 +537,7 @@
             "en": "Without VAT - article 16 of the VAT code"
           },
           "desc": {
-            "en": "Exempt supplies by/for certain bodies or specific non-taxable events under Art. 16."
+            "en": "Use for the specific non-taxable/exempt cases referenced in Art. 16."
           }
         },
         {
@@ -547,7 +547,7 @@
             "en": "Without VAT - article 19 of the VAT code"
           },
           "desc": {
-            "en": "Special exempt cases enumerated in Art. 19 (no VAT due)."
+            "en": "Exempt cases per Art. 19 (e.g., special valuation/administrative rules that make the item non-taxable)."
           }
         },
         {
@@ -557,7 +557,7 @@
             "en": "Without VAT - article 22 of the VAT code"
           },
           "desc": {
-            "en": "Exempt sectors (e.g., betting/lotteries etc.) under Art. 22."
+            "en": "Classic VAT-exempt activities (healthcare, education, culture, financial/insurance, rentals, etc.)."
           }
         },
         {
@@ -567,7 +567,7 @@
             "en": "Without VAT - article 24 of the VAT code"
           },
           "desc": {
-            "en": "Exports outside the EU; seller exports goods—no Greek VAT."
+            "en": "Exports of goods outside the EU (exempt with right to deduct)."
           }
         },
         {
@@ -577,7 +577,7 @@
             "en": "Without VAT - article 25 of the VAT code"
           },
           "desc": {
-            "en": "Related export-like exemptions (international transport etc.)."
+            "en": "Free zones/warehousing / international transport‐related exemptions covered by Art. 25."
           }
         },
         {
@@ -587,7 +587,7 @@
             "en": "Without VAT - article 26 of the VAT code"
           },
           "desc": {
-            "en": "Transport-related/export-linked exempt operations."
+            "en": "Exemption per Art. 26 (misc. cases defined in law)."
           }
         },
         {
@@ -597,7 +597,7 @@
             "en": "Without VAT - article 27 of the VAT code"
           },
           "desc": {
-            "en": "Supplies to seagoing vessels/aviation etc. treated at 0%."
+            "en": "Supplies relating to vessels/aircraft and similar Art. 27 exemptions."
           }
         },
         {
@@ -607,7 +607,7 @@
             "en": "Without VAT - article 27 - Seagoing Vessels of the VAT code"
           },
           "desc": {
-            "en": "Ship-related supplies explicitly covered—zero-rated."
+            "en": "Supplies for qualifying seagoing vessels (navigation on high seas) – exempt with right to deduct."
           }
         },
         {
@@ -617,7 +617,7 @@
             "en": "Without VAT - article 27.1.γ - Seagoing Vessels of the VAT code"
           },
           "desc": {
-            "en": "Specific vessel categories in Art. 27.1(c) – zero-rated."
+            "en": "Specific seagoing-vessel case under Art. 27(1)(c)."
           }
         },
         {
@@ -627,7 +627,7 @@
             "en": "Without VAT - article 28 of the VAT code"
           },
           "desc": {
-            "en": "Export / international transport-style exemptions under Art. 28."
+            "en": "Intra-Community supply of goods (B2B, goods dispatched to another EU MS)."
           }
         },
         {
@@ -637,7 +637,7 @@
             "en": "Without VAT - article 39 of the VAT code"
           },
           "desc": {
-            "en": "Small-enterprise exemption regime (no VAT charged)."
+            "en": "Small-business exemption regime."
           }
         },
         {
@@ -647,7 +647,7 @@
             "en": "Without VAT - article 39a of the VAT code"
           },
           "desc": {
-            "en": "Other domestic exemption schemes (e.g., special regimes) – no VAT."
+            "en": "Domestic reverse charge (e.g., mobiles/tablets/consoles, scrap, etc.)."
           }
         },
         {
@@ -657,7 +657,7 @@
             "en": "Without VAT - article 40 of the VAT code"
           },
           "desc": {
-            "en": "Specific exempt circumstances (no VAT due) per Art. 40."
+            "en": "Flat-rate (lump-sum) special scheme: no output VAT charged."
           }
         },
         {
@@ -667,7 +667,7 @@
             "en": "Without VAT - article 41 of the VAT code"
           },
           "desc": {
-            "en": "Additional exempt cases listed in Art. 41."
+            "en": "Farmers’ special scheme (no VAT charged; compensation scheme applies)."
           }
         },
         {
@@ -677,7 +677,7 @@
             "en": "Without VAT - article 47 of the VAT code"
           },
           "desc": {
-            "en": "Other exemptions (e.g., special cases pre-OSS) – no VAT."
+            "en": "Investment gold special regime (generally exempt, option to tax possible)."
           }
         },
         {
@@ -687,7 +687,7 @@
             "en": "VAT included - article 43 of the VAT code"
           },
           "desc": {
-            "en": "Use when the regime says VAT is included in the price (no separate VAT shown)."
+            "en": "Travel Agents’ Margin Scheme (TOMS) – VAT is on the margin."
           }
         },
         {
@@ -697,7 +697,7 @@
             "en": "VAT included - article 44 of the VAT code"
           },
           "desc": {
-            "en": "Same concept—standard-rated treatment embedded."
+            "en": "Margin scheme – second-hand goods."
           }
         },
         {
@@ -707,7 +707,7 @@
             "en": "VAT included - article 45 of the VAT code"
           },
           "desc": {
-            "en": "Same concept—standard-rated / margin-type."
+            "en": "Margin scheme – works of art."
           }
         },
         {
@@ -717,7 +717,7 @@
             "en": "VAT included - article 46 of the VAT code"
           },
           "desc": {
-            "en": "Same concept—standard-rated / margin-type."
+            "en": "Margin scheme – collectors’ items \u0026 antiques."
           }
         },
         {
@@ -727,7 +727,7 @@
             "en": "Without VAT - article 6 of the VAT code"
           },
           "desc": {
-            "en": "Out-of-territory/ place-of-supply situations (not taxed in GR)."
+            "en": "Out-of-scope/“excluding VAT” per Art. 6 (place-of-supply style exclusions)."
           }
         },
         {
@@ -737,7 +737,7 @@
             "en": "Without VAT - ΠΟΛ.1029/1995"
           },
           "desc": {
-            "en": "Documented domestic exemption by circular—no VAT."
+            "en": "Exemption per Circular ΠΟΛ.1029/1995 (narrow administrative exemption)."
           }
         },
         {
@@ -747,7 +747,7 @@
             "en": "Without VAT - ΠΟΛ.1167/2015"
           },
           "desc": {
-            "en": "Documented domestic exemption by circular—no VAT."
+            "en": "Exemption per Circular ΠΟΛ.1167/2015 (narrow administrative exemption)."
           }
         },
         {
@@ -757,7 +757,7 @@
             "en": "Without VAT - Other VAT exceptions"
           },
           "desc": {
-            "en": "Any other Greek-law exemption (domestic)—no VAT."
+            "en": "Catch-all for other statutory exemptions not listed above."
           }
         },
         {
@@ -767,7 +767,7 @@
             "en": "Without VAT - Article 24 (b) (1) of the VAT Code (Tax Free)"
           },
           "desc": {
-            "en": "Tax-free shop / export retail (travellers) – treated as export."
+            "en": "Retail “tax-free shopping” to third-country travelers."
           }
         },
         {
@@ -777,7 +777,7 @@
             "en": "Without VAT - Article 47b of the VAT Code (OSS non-EU scheme)"
           },
           "desc": {
-            "en": "B2C supplies reported via non-Union OSS - outside GR VAT scope."
+            "en": "Non-Union OSS services to EU consumers — VAT due in MS of consumption, not Greece."
           }
         },
         {
@@ -787,7 +787,7 @@
             "en": "Without VAT - Article 47c of the VAT Code (OSS EU scheme)"
           },
           "desc": {
-            "en": "B2C intra-EU supplies reported via Union OSS – outside GR VAT scope."
+            "en": "Union OSS (intra-EU B2C distance sales) — VAT due in MS of consumption."
           }
         },
         {
@@ -797,7 +797,7 @@
             "en": "Excluding VAT - Article 47d of the VAT Code (IOSS)"
           },
           "desc": {
-            "en": "Low-value imports reported via IOSS – outside GR VAT scope."
+            "en": "IOSS for low-value imports — VAT accounted via IOSS in MS of consumption."
           }
         }
       ]
