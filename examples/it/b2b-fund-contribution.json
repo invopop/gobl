@@ -70,7 +70,7 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"rate": "standard"
+					"rate": "general"
 				},
 				{
 					"cat": "IRPEF",
@@ -91,7 +91,7 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"rate": "standard"
+					"rate": "general"
 				},
 				{
 					"cat": "IRPEF",
