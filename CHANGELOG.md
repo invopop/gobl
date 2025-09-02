@@ -18,6 +18,10 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 - `br`: made ISS an informative tax
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
 
+### Fixed
+
+- `fr`: handle exception cases in Tax Identity Codes.
+
 ### Changed
 
 - `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
