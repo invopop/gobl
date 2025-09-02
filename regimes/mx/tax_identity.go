@@ -64,10 +64,26 @@ func NormalizeTaxIdentity(tID *tax.Identity) {
 }
 
 // NormalizeTaxCode normalizes a tax code for SAT using the special
-// rules it requires.
+// rules it requires. We need a more complex logic here because the
+// company RFC can start with "MX". e.g. MXG70123123Z
 func NormalizeTaxCode(code cbc.Code) cbc.Code {
 	c := strings.ToUpper(code.String())
 	c = TaxCodeBadCharsRegexp.ReplaceAllString(c, "")
+
+	// If the code looks valid, return it
+	if typ := DetermineTaxCodeType(cbc.Code(c)); !typ.IsEmpty() {
+		return cbc.Code(c)
+	}
+
+	// If the code doesn't look valid, try to trim the country code prefix
+	codeTrimmed := strings.TrimPrefix(c, "MX")
+
+	// If the trimmed code looks valid, return it
+	if typ := DetermineTaxCodeType(cbc.Code(codeTrimmed)); !typ.IsEmpty() {
+		return cbc.Code(codeTrimmed)
+	}
+
+	// If the trimmed code doesn't look valid, return the original code
 	return cbc.Code(c)
 }
 
