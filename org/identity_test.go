@@ -85,7 +85,7 @@ func TestIdentityNormalize(t *testing.T) {
 	t.Run("with nil", func(t *testing.T) {
 		var id *org.Identity
 		assert.NotPanics(t, func() {
-			id.Normalize(nil)
+			id.Normalize()
 		})
 	})
 	t.Run("missing extensions", func(t *testing.T) {
@@ -94,7 +94,7 @@ func TestIdentityNormalize(t *testing.T) {
 			Code: "BAR",
 			Ext:  tax.Extensions{},
 		}
-		id.Normalize(nil)
+		id.Normalize()
 		assert.Equal(t, "FOO", id.Type.String())
 		assert.Nil(t, id.Ext)
 	})
@@ -105,7 +105,7 @@ func TestIdentityNormalize(t *testing.T) {
 				iso.ExtKeySchemeID: "0004",
 			},
 		}
-		id.Normalize(nil)
+		id.Normalize()
 		assert.Equal(t, "BAR", id.Code.String())
 		assert.Equal(t, "0004", id.Ext[iso.ExtKeySchemeID].String())
 	})

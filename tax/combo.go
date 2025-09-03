@@ -232,7 +232,7 @@ func (Combo) jsonSchemaBuildCategory(cd *CategoryDef) *jsonschema.Schema {
 	s.If.Properties.Set("cat", &jsonschema.Schema{
 		Const: cd.Code.String(),
 	})
-	oneOf := make([]*jsonschema.Schema, len(cd.Keys)+1)
+	oneOf := make([]*jsonschema.Schema, len(cd.Keys))
 	for i, kd := range cd.Keys {
 		oneOf[i] = &jsonschema.Schema{
 			Const: kd.Key.String(),

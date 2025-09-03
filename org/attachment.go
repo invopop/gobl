@@ -55,6 +55,20 @@ type Attachment struct {
 	Data []byte `json:"data,omitempty" jsonschema:"title=Data"`
 }
 
+// Normalize will try to clean the attachment information.
+func (a *Attachment) Normalize(normalizers tax.Normalizers) {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.Code = cbc.NormalizeCode(a.Code)
+	a.Name = cbc.NormalizeString(a.Name)
+	a.Description = cbc.NormalizeString(a.Description)
+	a.URL = cbc.NormalizeString(a.URL)
+	a.MIME = cbc.NormalizeString(a.MIME)
+	normalizers.Each(a)
+}
+
 // Validate checks that the attachment looks okay.
 func (a *Attachment) Validate() error {
 	return a.ValidateWithContext(context.Background())

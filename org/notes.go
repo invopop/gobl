@@ -224,14 +224,14 @@ type Note struct {
 }
 
 // Normalize will perform basic normalization on the Note.
-func (n *Note) Normalize(normalizers tax.Normalizers) {
+func (n *Note) Normalize() {
 	if n == nil {
 		return
 	}
 	uuid.Normalize(&n.UUID)
 	n.Code = cbc.NormalizeCode(n.Code)
+	n.Text = cbc.NormalizeString(n.Text)
 	n.Ext = tax.CleanExtensions(n.Ext)
-	normalizers.Each(n)
 }
 
 // Validate checks that the note looks okay.
