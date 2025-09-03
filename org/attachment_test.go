@@ -18,7 +18,7 @@ func TestAttachmentNormalize(t *testing.T) {
 			MIME:        "  application/pdf  ",
 			Data:        []byte(" keep "),
 		}
-		a.Normalize(nil)
+		a.Normalize()
 
 		assert.Equal(t, "ABC", a.Code.String())
 		assert.Equal(t, "test.txt", a.Name)
@@ -30,7 +30,7 @@ func TestAttachmentNormalize(t *testing.T) {
 	t.Run("nil receiver no panic", func(t *testing.T) {
 		var a *org.Attachment
 		assert.NotPanics(t, func() {
-			a.Normalize(nil)
+			a.Normalize()
 		})
 	})
 
@@ -41,7 +41,7 @@ func TestAttachmentNormalize(t *testing.T) {
 			Description: "   ",
 			MIME:        "   ",
 		}
-		a.Normalize(nil)
+		a.Normalize()
 		assert.Equal(t, "name", a.Name)
 		assert.Equal(t, "", a.URL)
 		assert.Equal(t, "", a.Description)

@@ -56,7 +56,7 @@ type Attachment struct {
 }
 
 // Normalize will try to clean the attachment information.
-func (a *Attachment) Normalize(normalizers tax.Normalizers) {
+func (a *Attachment) Normalize() {
 	if a == nil {
 		return
 	}
@@ -66,7 +66,6 @@ func (a *Attachment) Normalize(normalizers tax.Normalizers) {
 	a.Description = cbc.NormalizeString(a.Description)
 	a.URL = cbc.NormalizeString(a.URL)
 	a.MIME = cbc.NormalizeString(a.MIME)
-	normalizers.Each(a)
 }
 
 // Validate checks that the attachment looks okay.
