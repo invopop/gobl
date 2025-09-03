@@ -19,6 +19,11 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 - `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
 - `br`: made ISS an informative tax
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `se`: added Sweden regime.
+
+### Changed
+
+- `l10n`: add `CountriesMap` for easier access to country information.
 
 ### Fixed
 
