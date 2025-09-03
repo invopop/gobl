@@ -110,10 +110,16 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 			}
 		}
 
-		if c.Key == cbc.KeyEmpty {
+		switch c.Key {
+		case cbc.KeyEmpty:
 			// Special case for zero percent which has no additional rates
 			if c.Percent != nil && c.Percent.IsZero() {
 				c.Key = KeyZero
+			}
+		case KeyZero:
+			if c.Percent == nil {
+				zp := num.PercentageZero
+				c.Percent = &zp
 			}
 		}
 	}
