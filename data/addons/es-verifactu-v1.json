@@ -187,7 +187,7 @@
             "es": "Operación No Sujeta por Reglas de localización"
           },
           "desc": {
-            "en": "Use when the operation is **not subject to VAT due to its place of supply** (e.g. services provided to non‑EU B2B customers that are deemed outside Spanish VAT by location rules). This will be the default case when VAT is not subject."
+            "en": "Use when the operation is **not subject to VAT due to its place of supply** (e.g. services provided to non‑EU B2B customers that are deemed outside Spanish VAT by location rules)."
           }
         }
       ]
