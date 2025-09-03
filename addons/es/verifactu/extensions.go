@@ -222,7 +222,7 @@ var extensions = []*cbc.Definition{
 				| ~S1~            | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
 				| ~S2~            | ~reverse-charge~                |
 				| ~N1~            | ~outside-scope~ |
-				| ~N2~            | No key, applied when ~country~ is not ~ES~ |
+				| ~N2~            | ~outside-scope~ (default) |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 

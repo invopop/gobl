@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `mx`: handle tax id country code normalization
+- `mx`: normalize codes with `MX` code at the beginning
+- `es-verifactu-v1`: correct `N2` operation code scenario
 
 
 ## [v0.300.0-rc1] - 2025-09-02
