@@ -21,6 +21,18 @@ func TestTaxIdentityNormalization(t *testing.T) {
 			Expected: "GHI70123123Z",
 		},
 		{
+			Code:     "MXGHI70123123Z",
+			Expected: "GHI70123123Z",
+		},
+		{
+			Code:     "MXMXI70123123Z",
+			Expected: "MXI70123123Z",
+		},
+		{
+			Code:     "MXI70123123Z",
+			Expected: "MXI70123123Z",
+		},
+		{
 			Code:     " GHI 701231 23Z ",
 			Expected: "GHI70123123Z",
 		},

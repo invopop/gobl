@@ -22,7 +22,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			// Assume this is a not subject to VAT
 			tc.Ext = tc.Ext.
 				Set(ExtKeyOpClass, "N2").
-				SetOneOf(ExtKeyRegime, "02", "17").
+				SetOneOf(ExtKeyRegime, "01", "17").
 				Delete(ExtKeyExempt)
 			return
 		}
@@ -50,8 +50,11 @@ func normalizeTaxCombo(tc *tax.Combo) {
 				Set(ExtKeyOpClass, "S2").
 				Delete(ExtKeyExempt)
 		case tax.KeyOutsideScope:
+			// Default to N2 (not subject due to place of supply rules) since this is most common
+			// when providing services to non-EU customers. N1 can be used for other cases where
+			// the operation falls outside VAT scope in Spain (e.g. company transfers).
 			tc.Ext = tc.Ext.
-				Set(ExtKeyOpClass, "N1").
+				SetOneOf(ExtKeyOpClass, "N2", "N1").
 				Delete(ExtKeyExempt)
 		case tax.KeyExempt:
 			tc.Ext = tc.Ext.
@@ -115,7 +118,7 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	switch tc.Ext.Get(ExtKeyOpClass) {
 	case "S2":
 		tc.Key = tax.KeyReverseCharge
-	case "N1":
+	case "N1", "N2":
 		tc.Key = tax.KeyOutsideScope
 	}
 	if tc.Key.IsEmpty() {

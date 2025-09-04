@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `mx`: normalize codes with `MX` code at the beginning
+- `es-verifactu-v1`: correct `N2` operation code scenario
+
 ### Changed
 
 - `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
