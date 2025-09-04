@@ -17,10 +17,10 @@ import (
 // and retained attributes will be determined automatically from the Rate key if set
 // during calculation.
 type Combo struct {
-	// Country code override when issuing with taxes applied from different countries.
-	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Tax category code from those available inside a region.
 	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
+	// Country code override when issuing with taxes applied from different countries.
+	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Key helps determine the tax situation within the category.
 	Key cbc.Key `json:"key,omitempty"`
 	// Rate within a category and for a given key to apply.
@@ -55,6 +55,7 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			r.InCategories(),
 		),
+		validation.Field(&c.Country),
 		validation.Field(&c.Key,
 			r.InCategoryKeys(c.Category),
 		),

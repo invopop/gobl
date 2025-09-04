@@ -59,8 +59,8 @@
 				"sum": "200.00",
 				"taxes": [
 					{
-						"country": "ES",
 						"cat": "VAT",
+						"country": "ES",
 						"key": "standard",
 						"rate": "general",
 						"percent": "21.0%",
@@ -83,8 +83,8 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
 								"country": "ES",
+								"key": "standard",
 								"ext": {
 									"pt-region": "ES",
 									"pt-saft-exemption": "M99",
