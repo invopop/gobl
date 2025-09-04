@@ -51,6 +51,14 @@ func TestComboNormalize(t *testing.T) {
 		assert.Equal(t, c.Percent.String(), "0%")
 		assert.Empty(t, c.Rate)
 	})
+	t.Run("assign zero percent", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: "VAT",
+			Key:      tax.KeyZero,
+		}
+		c.Normalize(nil)
+		assert.Equal(t, "0%", c.Percent.String())
+	})
 	t.Run("migrate exempt rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: "VAT",

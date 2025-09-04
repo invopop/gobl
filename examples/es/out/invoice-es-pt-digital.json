@@ -66,8 +66,8 @@
 				"sum": "200.00",
 				"taxes": [
 					{
-						"country": "PT",
 						"cat": "VAT",
+						"country": "PT",
 						"key": "standard",
 						"rate": "general",
 						"percent": "23.0%"
@@ -85,8 +85,8 @@
 				"sum": "375.00",
 				"taxes": [
 					{
-						"country": "PT",
 						"cat": "VAT",
+						"country": "PT",
 						"key": "standard",
 						"rate": "general",
 						"percent": "23.0%"
@@ -104,8 +104,8 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
 								"country": "PT",
+								"key": "standard",
 								"base": "575.00",
 								"percent": "23.0%",
 								"amount": "132.25"

@@ -77,8 +77,8 @@
 				],
 				"taxes": [
 					{
-						"country": "NL",
 						"cat": "VAT",
+						"country": "NL",
 						"key": "standard",
 						"rate": "general",
 						"percent": "21.0%",
@@ -99,8 +99,8 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
 								"country": "NL",
+								"key": "standard",
 								"ext": {
 									"es-tbai-product": "services"
 								},
