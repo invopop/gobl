@@ -44,8 +44,7 @@
                   {
                     "const": "outside-scope",
                     "title": "Outside scope"
-                  },
-                  null
+                  }
                 ]
               }
             }
