@@ -21,6 +21,16 @@ type Email struct {
 	Meta cbc.Meta `json:"meta,omitempty" jsonschema:"title=Meta"`
 }
 
+// Normalize will try to clean the email object.
+func (e *Email) Normalize() {
+	if e == nil {
+		return
+	}
+	uuid.Normalize(&e.UUID)
+	e.Label = cbc.NormalizeString(e.Label)
+	e.Address = cbc.NormalizeString(e.Address)
+}
+
 // Validate ensures email address looks valid.
 func (e *Email) Validate() error {
 	return e.ValidateWithContext(context.Background())

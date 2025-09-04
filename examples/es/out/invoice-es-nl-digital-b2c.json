@@ -58,8 +58,8 @@
 				"sum": "1000.00",
 				"taxes": [
 					{
-						"country": "NL",
 						"cat": "VAT",
+						"country": "NL",
 						"key": "standard",
 						"rate": "general",
 						"percent": "21.0%"
@@ -77,8 +77,8 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
 								"country": "NL",
+								"key": "standard",
 								"base": "1000.00",
 								"percent": "21.0%",
 								"amount": "210.00"

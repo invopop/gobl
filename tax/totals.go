@@ -21,12 +21,12 @@ type CategoryTotal struct {
 // a matching category and rate. The Key is optional as we may be using
 // the percentage to group rates.
 type RateTotal struct {
-	// Tax key if supported by the category.
-	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Country code override when issuing with taxes applied from different countries,
 	// it'd be very strange to mix rates from different countries, but in theory
 	// this would be possible.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
+	// Tax key if supported by the category.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// If the rate is defined with extensions, they'll be used to group by also.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Base amount that the percentage is applied to.
