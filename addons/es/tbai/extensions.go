@@ -9,7 +9,7 @@ import (
 // Extension keys for TicketBAI
 const (
 	ExtKeyRegion     cbc.Key = "es-tbai-region"
-	ExtKeyExemption  cbc.Key = "es-tbai-exemption"
+	ExtKeyExempt     cbc.Key = "es-tbai-exemption"
 	ExtKeyProduct    cbc.Key = "es-tbai-product"
 	ExtKeyCorrection cbc.Key = "es-tbai-correction"
 )
@@ -94,7 +94,7 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyExemption,
+		Key: ExtKeyExempt,
 		Name: i18n.String{
 			i18n.EN: "TicketBAI Exemption code",
 			i18n.ES: "Código de Exención de TicketBAI",

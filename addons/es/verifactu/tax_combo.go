@@ -1,18 +1,10 @@
 package verifactu
 
 import (
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
-)
-
-// Additional extension keys for rates.
-const (
-	TaxRateTransport  cbc.Key = "transport"
-	TaxRateTriangular cbc.Key = "triangular"
-	TaxRateOther      cbc.Key = "other"
 )
 
 func normalizeTaxCombo(tc *tax.Combo) {
