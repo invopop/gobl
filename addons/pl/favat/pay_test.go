@@ -11,7 +11,7 @@ import (
 
 func TestPaymentMeansExtensions(t *testing.T) {
 	ext := favat.PaymentMeansExtensions()
-	assert.Equal(t, "01", ext.Get(pay.MeansKeyCash).String())
+	assert.Equal(t, "1", ext.Get(pay.MeansKeyCash).String())
 }
 
 func TestNormalizePayInstructions(t *testing.T) {
@@ -66,6 +66,7 @@ func TestValidatePay(t *testing.T) {
 		adv := &pay.Advance{
 			Key: pay.MeansKeyOnline.With(favat.MeansKeyLoan),
 		}
+		ad.Normalizer(adv)
 		err := ad.Validator(adv)
 		assert.NoError(t, err)
 	})
@@ -81,6 +82,7 @@ func TestValidatePay(t *testing.T) {
 		instr := &pay.Instructions{
 			Key: pay.MeansKeyOnline.With(favat.MeansKeyLoan),
 		}
+		ad.Normalizer(instr)
 		err := ad.Validator(instr)
 		assert.NoError(t, err)
 	})

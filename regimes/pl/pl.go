@@ -21,8 +21,7 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Poland",
 			i18n.PL: "Polska",
 		},
-		TimeZone: "Europe/Warsaw",
-		// ChargeKeys:       chargeKeyDefinitions,       // charges.go
+		TimeZone:   "Europe/Warsaw",
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories, // tax_categories.go
@@ -30,7 +29,7 @@ func New() *tax.RegimeDef {
 }
 
 // Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
+func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
@@ -39,7 +38,7 @@ func Validate(doc interface{}) error {
 }
 
 // Normalize will perform any regime specific normalizations.
-func Normalize(doc interface{}) {
+func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)

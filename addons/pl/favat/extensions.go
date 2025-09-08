@@ -10,8 +10,8 @@ const (
 	ExtKeyVATZero       cbc.Key = "pl-favat-vat-zero"
 	ExtKeyVATSpecial    cbc.Key = "pl-favat-vat-special"
 	ExtKeyEffectiveDate cbc.Key = "pl-favat-effective-date"
-	ExtKeyPaymentMeans  cbc.Key = "pl-favat-forma-platnosci" // for mapping to TFormaPlatnosci's codes
-	ExtKeyInvoiceType   cbc.Key = "pl-favat-rodzaj-faktury"  // for mapping to TRodzajFaktury's codes
+	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means" // for mapping to TFormaPlatnosci's codes
+	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"  // for mapping to TRodzajFaktury's codes
 )
 
 var extensionKeys = []*cbc.Definition{
