@@ -291,7 +291,7 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				The SAF-T's ~TaxExemptionCode~ (Código do motivo de isencção de imposto) is a code that
+				The SAF-T's ~TaxExemptionCode~ (Código do motivo de isenção de imposto) is a code that
 				specifies the reason the VAT tax is exempt in a Portuguese invoice. When the ~exempt~ tag
 				is used in a tax combo, the ~ext~ map's ~pt-saft-exemption~ property is required.
 
