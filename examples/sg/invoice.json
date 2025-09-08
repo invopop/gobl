@@ -1,0 +1,49 @@
+{
+    "$schema": "https://gobl.org/draft-0/bill/invoice",
+    "$regime": "SG",
+    "uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+    "code": "1234",
+    "currency": "SGD",
+    "issue_date": "2024-01-15",
+    "supplier": {
+      "name": "EXAMPLE SUPPLIER",
+      "tax_id": {
+        "country": "SG",
+        "code": "201312345A"
+      },
+      "addresses": [
+        {
+          "street": "Example street 123",
+          "locality": "Singapore",
+          "country": "SG"
+        }
+      ]
+    },
+    "customer": {
+      "name": "EXAMPLE CUSTOMER",
+      "addresses": [
+        {
+          "street": "Example street 321",
+          "locality": "Singapore",
+          "country": "SG"
+        }
+      ]
+    },
+    "lines": [
+      {
+        "quantity": "1",
+        "item": {
+          "name": "Useful service",
+          "price": "200000.00"
+        },
+        "taxes": [
+          {
+            "cat": "GST",
+            "rate": "general"
+          }
+        ]
+      }
+    ]
+    
+  }
+  

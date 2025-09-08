@@ -1,0 +1,79 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "569af629119e4464130801276554ec93096f3459273408c4f3fe72e45edaa610"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "SG",
+		"$tags": [
+			"receipt"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "1234",
+		"issue_date": "2024-01-15",
+		"currency": "SGD",
+		"tax": {},
+		"supplier": {
+			"name": "EXAMPLE SUPPLIER",
+			"tax_id": {
+				"country": "SG",
+				"code": "201312345A"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Useful service",
+					"price": "200000.00"
+				},
+				"sum": "200000.00",
+				"taxes": [
+					{
+						"cat": "GST",
+						"rate": "general",
+						"percent": "9%"
+					}
+				],
+				"total": "200000.00"
+			}
+		],
+		"totals": {
+			"sum": "200000.00",
+			"total": "200000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "GST",
+						"rates": [
+							{
+								"base": "200000.00",
+								"percent": "9%",
+								"amount": "18000.00"
+							}
+						],
+						"amount": "18000.00"
+					}
+				],
+				"sum": "18000.00"
+			},
+			"tax": "18000.00",
+			"total_with_tax": "218000.00",
+			"payable": "218000.00"
+		},
+		"notes": [
+			{
+				"key": "legal",
+				"src": "receipt",
+				"text": "Price Payable includes GST"
+			}
+		]
+	}
+}
