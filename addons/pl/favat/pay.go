@@ -26,6 +26,12 @@ var paymentMeansKeyMap = tax.Extensions{
 	pay.MeansKeyOther.With(MeansKeyMobile): "7", // Mobile / Mobilna
 }
 
+// PaymentMeansExtensions returns the mapping of payment means to their
+// extension values used by FA_VAT.
+func PaymentMeansExtensions() tax.Extensions {
+	return paymentMeansKeyMap
+}
+
 func normalizePayInstructions(instr *pay.Instructions) {
 	if instr == nil {
 		return
@@ -61,18 +67,6 @@ func validatePayInstructions(i *pay.Instructions) error {
 	return validation.ValidateStruct(i,
 		validation.Field(&i.Ext,
 			tax.ExtensionsRequire(ExtKeyPaymentMeans),
-			validation.Skip,
-		),
-	)
-}
-
-func validatePayTerms(terms *pay.Terms) error {
-	if terms == nil {
-		return nil
-	}
-	return validation.ValidateStruct(terms,
-		validation.Field(&terms.Notes,
-			validation.Length(0, 1000),
 			validation.Skip,
 		),
 	)

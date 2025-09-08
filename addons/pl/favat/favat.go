@@ -61,8 +61,6 @@ func validate(doc any) error {
 		return validatePayInstructions(obj)
 	case *pay.Advance:
 		return validatePayAdvance(obj)
-	case *pay.Terms:
-		return validatePayTerms(obj)
 	}
 	return nil
 }
