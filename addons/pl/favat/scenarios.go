@@ -1,4 +1,4 @@
-package pl
+package favat
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -40,7 +40,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Podstawowa",
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "VAT",
+				ExtKeyInvoiceType: "VAT",
 			},
 		},
 		{
@@ -51,7 +51,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: `Faktura Zaliczkowa`,
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "ZAL",
+				ExtKeyInvoiceType: "ZAL",
 			},
 		},
 		{
@@ -62,7 +62,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Rozliczeniowa",
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "ROZ",
+				ExtKeyInvoiceType: "ROZ",
 			},
 		},
 		{
@@ -73,7 +73,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura Uproszczona",
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "UPR",
+				ExtKeyInvoiceType: "UPR",
 			},
 		},
 		{
@@ -83,7 +83,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura korygująca",
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "KOR",
+				ExtKeyInvoiceType: "KOR",
 			},
 		},
 		{
@@ -94,7 +94,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: `Faktura korygująca fakturę zaliczkową`,
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "KOR_ZAL",
+				ExtKeyInvoiceType: "KOR_ZAL",
 			},
 		},
 		{
@@ -105,7 +105,7 @@ var invoiceScenarios = &tax.ScenarioSet{
 				i18n.PL: "Faktura korygująca fakturę rozliczeniową",
 			},
 			Codes: cbc.CodeMap{
-				KeyFAVATInvoiceType: "KOR_ROZ",
+				ExtKeyInvoiceType: "KOR_ROZ",
 			},
 		},
 	},
