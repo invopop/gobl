@@ -56,13 +56,21 @@ func TestInvoice(t *testing.T) {
 
 	t.Run("exempt", func(t *testing.T) {
 		inv := validInvoice()
-		inv.Lines[0].Taxes[0].Rate = tax.RateExempt
+		tc := inv.Lines[0].Taxes[0]
+		tc.Key = tax.KeyExempt
+		tc.Rate = ""
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "ISE", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
-		assert.ErrorContains(t, inv.Validate(), "lines: (0: (taxes: (0: (ext: (pt-saft-exemption: required.).).).).)")
+		assert.Equal(t, "M07", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
 
+		// Allow override
 		inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption] = "M04"
 		require.NoError(t, inv.Calculate())
-		assert.NoError(t, inv.Validate())
+		assert.Equal(t, "M07", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
+
+		// Allow override
+		inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption] = "M01"
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "M01", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
 	})
 }

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "21f2bb5d933bd6a8cf777b2dfd2ccd9aedbe1e5a5d3d9467e976dbecc2f8a351"
+			"val": "807606b1a691329b3d6a70dd85e1d6f45f09dd25171eb61ea1dd2042401149c9"
 		}
 	},
 	"doc": {
@@ -76,7 +76,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "exempt",
 						"ext": {
 							"es-tbai-exemption": "E1",
 							"es-tbai-product": "services"

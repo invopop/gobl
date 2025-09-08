@@ -165,7 +165,7 @@ func validateInvoiceLineTax(value any) error {
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
 			validation.When(
-				obj.Rate == tax.RateExempt,
+				obj.Key == tax.KeyExempt,
 				tax.ExtensionsRequire(ExtKeyExemption),
 			),
 			validation.Skip,

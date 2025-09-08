@@ -44,7 +44,7 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateStandard,
+					Rate:     tax.RateGeneral,
 					Percent:  num.NewPercentage(210, 3),
 				},
 			},
@@ -59,7 +59,6 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},
@@ -88,7 +87,6 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},
@@ -123,7 +121,6 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},
@@ -144,7 +141,6 @@ func TestLineNormalization(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "INVALID",
 					},
@@ -176,7 +172,6 @@ func TestLineValidation(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},
@@ -199,7 +194,6 @@ func TestLineValidation(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},
@@ -230,7 +224,6 @@ func TestLineValidation(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},
@@ -254,7 +247,6 @@ func TestLineValidation(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: tax.CategoryVAT,
-					Rate:     tax.RateExempt,
 					Ext: tax.Extensions{
 						saft.ExtKeyExemption: "M04",
 					},

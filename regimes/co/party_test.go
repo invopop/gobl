@@ -11,15 +11,24 @@ import (
 )
 
 func TestNormalizeParty(t *testing.T) {
-	p := &org.Party{
-		Name: "Test Party",
-		TaxID: &tax.Identity{
-			Country: "CO",
-			Code:    "412615332",
-			Zone:    "11001",
-		},
-	}
-	co.Normalize(p)
-	assert.Empty(t, p.TaxID.Zone) //nolint:staticcheck
-	assert.Equal(t, p.Ext[dian.ExtKeyMunicipality].String(), "11001")
+	t.Run("nil", func(t *testing.T) {
+		var p *org.Party
+		assert.NotPanics(t, func() {
+			co.Normalize(p)
+		})
+	})
+
+	t.Run("basic", func(t *testing.T) {
+		p := &org.Party{
+			Name: "Test Party",
+			TaxID: &tax.Identity{
+				Country: "CO",
+				Code:    "412615332",
+				Zone:    "11001",
+			},
+		}
+		co.Normalize(p)
+		assert.Empty(t, p.TaxID.Zone) //nolint:staticcheck
+		assert.Equal(t, p.Ext[dian.ExtKeyMunicipality].String(), "11001")
+	})
 }

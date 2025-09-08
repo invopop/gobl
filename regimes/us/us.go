@@ -26,8 +26,7 @@ func New() *tax.RegimeDef {
 		Name: i18n.String{
 			i18n.EN: "United States of America",
 		},
-		TimeZone:  "America/Chicago", // Around the middle
-		Validator: Validate,
+		TimeZone: "America/Chicago", // Around the middle
 		Categories: []*tax.CategoryDef{
 			//
 			// Sales Tax
@@ -54,13 +53,4 @@ func New() *tax.RegimeDef {
 			},
 		},
 	}
-}
-
-// Validate checks the document type and determines if it can be validated.
-func Validate(doc interface{}) error {
-	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateInvoice(obj)
-	}
-	return nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/regimes/pt"
@@ -54,7 +55,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -68,7 +69,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
@@ -88,7 +89,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Country:  "ES",
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -102,7 +103,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
@@ -136,6 +137,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
@@ -155,7 +157,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						{
 							Category: tax.CategoryVAT,
 							Country:  "PT",
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -170,7 +172,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Country: "PT",
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(230, 3),
 								Amount:  num.MakeAmount(2300, 2),
@@ -180,6 +182,57 @@ func TestTotalBySumCalculate(t *testing.T) {
 					},
 				},
 				Sum: num.MakeAmount(2300, 2),
+			},
+		},
+		{
+			desc: "rate not defined for key in category",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Country:  "ES",
+							Key:      tax.KeyStandard,
+							Rate:     "foo",
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			taxIncluded: "",
+			err:         tax.ErrInvalid,
+			errContent:  "invalid: 'foo' rate not defined for key 'standard' in category 'VAT'",
+		},
+		{
+			desc: "remove percent and surcharge if no percent",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: tax.CategoryVAT,
+							Key:      tax.KeyExempt,
+							Percent:  num.NewPercentage(0, 2),
+						},
+					},
+					amount: num.MakeAmount(10000, 2),
+				},
+			},
+			want: &tax.Total{
+				Categories: []*tax.CategoryTotal{
+					{
+						Code:     tax.CategoryVAT,
+						Retained: false,
+						Rates: []*tax.RateTotal{
+							{
+								Key:    tax.KeyExempt,
+								Base:   num.MakeAmount(10000, 2),
+								Amount: num.MakeAmount(0, 2),
+							},
+						},
+						Amount: num.MakeAmount(0, 2),
+					},
+				},
+				Sum: num.MakeAmount(0, 2),
 			},
 		},
 		{
@@ -205,6 +258,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Rates: []*tax.RateTotal{
 							{
 								Country: "JP",
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(190, 3),
 								Amount:  num.MakeAmount(1900, 2),
@@ -223,7 +277,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateExempt,
+							Key:      tax.KeyExempt,
 							Ext: tax.Extensions{
 								tbai.ExtKeyExemption: "E1",
 							},
@@ -240,7 +294,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key: tax.RateExempt,
+								Key: tax.KeyExempt,
 								Ext: tax.Extensions{
 									tbai.ExtKeyExemption: "E1",
 								},
@@ -262,7 +316,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateExempt,
+							Key:      tax.KeyExempt,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -285,13 +339,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateExempt,
+								Key:     tax.KeyExempt,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: nil,
 								Amount:  num.MakeAmount(0, 2),
 							},
 							{
-								Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1000, 2),
@@ -310,7 +364,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateExempt,
+							Key:      tax.KeyExempt,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -319,7 +373,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateExempt,
+							Key:      tax.KeyExempt,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -333,7 +387,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateExempt,
+								Key:     tax.KeyExempt,
 								Base:    num.MakeAmount(20000, 2),
 								Percent: nil,
 								Amount:  num.MakeAmount(0, 2),
@@ -353,7 +407,8 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Key:      tax.KeyStandard,
+							Rate:     tax.RateGeneral,
 							Ext: tax.Extensions{
 								pt.ExtKeyRegion:    "PT-AC",
 								saft.ExtKeyTaxRate: "NOR",
@@ -371,7 +426,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(160, 3),
 								Amount:  num.MakeAmount(1600, 2),
@@ -408,7 +463,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								// Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
@@ -427,7 +482,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 							Percent:  num.NewPercentage(20, 2),
 						},
 					},
@@ -442,7 +497,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
@@ -461,7 +516,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -470,7 +525,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(15000, 2),
@@ -484,7 +539,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(25000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(5250, 2),
@@ -503,7 +558,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard.With(es.TaxRateEquivalence),
+							Rate:     tax.RateGeneral.With(es.TaxRateEquivalence),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -512,7 +567,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard.With(es.TaxRateEquivalence),
+							Rate:     tax.RateGeneral.With(es.TaxRateEquivalence),
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -521,7 +576,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(15000, 2),
@@ -535,7 +590,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard.With(es.TaxRateEquivalence),
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(20000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(4200, 2),
@@ -545,7 +600,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 								},
 							},
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(15000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(3150, 2),
@@ -588,6 +643,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(25000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(5250, 2),
@@ -606,7 +662,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -629,13 +685,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 							{
-								Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(15000, 2),
 								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1500, 2),
@@ -677,13 +733,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								// Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 							{
-								// Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(15000, 2),
 								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1500, 2),
@@ -702,7 +758,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -725,13 +781,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(8264, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(1736, 2),
 							},
 							{
-								Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(13636, 2),
 								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1364, 2),
@@ -773,11 +829,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(8264, 2),
 								Percent: num.NewPercentage(21, 2),
 								Amount:  num.MakeAmount(1736, 2),
 							},
 							{
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(13636, 2),
 								Percent: num.NewPercentage(10, 2),
 								Amount:  num.MakeAmount(1364, 2),
@@ -796,7 +854,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 						{
 							Category: es.TaxCategoryIRPF,
@@ -823,13 +881,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(2100, 2),
 							},
 							{
-								Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(15000, 2),
 								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1500, 2),
@@ -842,7 +900,6 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     es.TaxRatePro,
 								Base:    num.MakeAmount(10000, 2),
 								Percent: num.NewPercentage(150, 3),
 								Amount:  num.MakeAmount(1500, 2),
@@ -863,7 +920,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 						{
 							Category: es.TaxCategoryIRPF,
@@ -890,13 +947,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(8264, 2),
 								Percent: num.NewPercentage(210, 3),
 								Amount:  num.MakeAmount(1736, 2),
 							},
 							{
-								Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(13636, 2),
 								Percent: num.NewPercentage(100, 3),
 								Amount:  num.MakeAmount(1364, 2),
@@ -909,7 +966,6 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: true,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     es.TaxRatePro,
 								Base:    num.MakeAmount(8264, 2),
 								Percent: num.NewPercentage(150, 3),
 								Amount:  num.MakeAmount(1240, 2),
@@ -929,7 +985,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: cbc.Code("FOO"),
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
@@ -945,14 +1001,14 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: es.TaxCategoryIRPF,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(10000, 2),
 				},
 			},
-			err:        tax.ErrInvalidRate,
-			errContent: "invalid-rate: 'standard' rate not defined in category 'IRPF'",
+			err:        tax.ErrInvalid,
+			errContent: "invalid: 'general' rate not defined in category 'IRPF'",
 		},
 
 		{
@@ -973,7 +1029,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 			errContent: "invalid-date: rate value unavailable for 'pro' in 'IRPF' on '2005-01-01'",
 		},
 		{
-			desc: "with invalid tax included",
+			desc: "with retained tax included",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
@@ -987,16 +1043,32 @@ func TestTotalBySumCalculate(t *testing.T) {
 			},
 			taxIncluded: es.TaxCategoryIRPF,
 			err:         tax.ErrInvalidPricesInclude,
-			errContent:  "cannot include retained",
+			errContent:  "cannot include retained category 'IRPF'",
 		},
 		{
-			desc: "tax included with exempt rate",
+			desc:    "with informative tax included",
+			country: "BR",
+			lines: []tax.TaxableLine{
+				&taxableLine{
+					taxes: tax.Set{
+						{
+							Category: br.TaxCategoryISS,
+						},
+					},
+				},
+			},
+			taxIncluded: br.TaxCategoryISS,
+			err:         tax.ErrInvalidPricesInclude,
+			errContent:  "cannot include informative category 'ISS'",
+		},
+		{
+			desc: "tax included with exempt key",
 			lines: []tax.TaxableLine{
 				&taxableLine{
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateExempt,
+							Key:      tax.KeyExempt,
 							Ext: tax.Extensions{
 								tbai.ExtKeyExemption: "E1",
 							},
@@ -1012,7 +1084,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Code: tax.CategoryVAT,
 						Rates: []*tax.RateTotal{
 							{
-								Key: tax.RateExempt,
+								Key: tax.KeyExempt,
 								Ext: tax.Extensions{
 									tbai.ExtKeyExemption: "E1",
 								},
@@ -1059,6 +1131,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Code: tax.CategoryVAT,
 						Rates: []*tax.RateTotal{
 							{
+								Key: tax.KeyStandard,
 								Ext: tax.Extensions{
 									tbai.ExtKeyExemption: "E1",
 								},
@@ -1088,7 +1161,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateExempt,
+							Key:      tax.KeyExempt,
 							Ext: tax.Extensions{
 								tbai.ExtKeyExemption: "E2",
 							},
@@ -1104,12 +1177,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Code: tax.CategoryVAT,
 						Rates: []*tax.RateTotal{
 							{
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(8264, 2),
 								Percent: num.NewPercentage(21, 2),
 								Amount:  num.MakeAmount(1736, 2),
 							},
 							{
-								Key: tax.RateExempt,
+								Key: tax.KeyExempt,
 								Ext: tax.Extensions{
 									tbai.ExtKeyExemption: "E2",
 								},
@@ -1131,7 +1205,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Key:      tax.KeyStandard,
 							Percent:  num.NewPercentage(220, 3),
 						},
 						{
@@ -1167,7 +1241,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Code: tax.CategoryVAT,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(20000, 2),
 								Percent: num.NewPercentage(220, 3),
 								Amount:  num.MakeAmount(4400, 2),
@@ -1212,7 +1286,7 @@ func TestTotalBySumCalculate(t *testing.T) {
 					taxes: tax.Set{
 						{
 							Category: tax.CategoryVAT,
-							Rate:     tax.RateStandard,
+							Rate:     tax.RateGeneral,
 						},
 					},
 					amount: num.MakeAmount(942, 2),
@@ -1234,13 +1308,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 						Retained: false,
 						Rates: []*tax.RateTotal{
 							{
-								Key:     tax.RateStandard,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(942, 2),
 								Percent: num.NewPercentage(24, 2),
 								Amount:  num.MakeAmount(226, 2),
 							},
 							{
-								Key:     tax.RateReduced,
+								Key:     tax.KeyStandard,
 								Base:    num.MakeAmount(942, 2),
 								Percent: num.NewPercentage(13, 2),
 								Amount:  num.MakeAmount(122, 2),
@@ -1266,7 +1340,6 @@ func TestTotalBySumCalculate(t *testing.T) {
 			}
 			tc := &tax.TotalCalculator{
 				Country:  country,
-				Tags:     test.tags,
 				Currency: currency.EUR,
 				Rounding: test.rounding,
 				Date:     d,
@@ -1277,11 +1350,13 @@ func TestTotalBySumCalculate(t *testing.T) {
 			err := tc.Calculate(tot)
 			if test.err != nil && assert.Error(t, err) {
 				assert.ErrorIs(t, err, test.err)
+			} else {
+				require.NoError(t, err)
+			}
+			if test.errContent != "" {
+				assert.ErrorContains(t, err, test.errContent)
 			}
 			tot.Round(currency.EUR.Def().Zero())
-			if test.errContent != "" && assert.Error(t, err) {
-				assert.Contains(t, err.Error(), test.errContent)
-			}
 			if test.want != nil {
 				want, err := json.Marshal(test.want)
 				require.NoError(t, err)

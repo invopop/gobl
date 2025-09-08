@@ -73,7 +73,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -480,7 +480,7 @@ func TestInvoiceLineValidation(t *testing.T) {
 			Taxes: tax.Set{
 				{
 					Category: "GST",
-					Rate:     "standard",
+					Key:      "standard",
 				},
 			},
 		})
