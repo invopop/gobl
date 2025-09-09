@@ -1,4 +1,4 @@
-package pl
+package favat
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -7,14 +7,16 @@ import (
 
 // Regime extension codes for local electronic formats.
 const (
-	ExtKeyKSeFVATZero       = "pl-ksef-vat-zero"
-	ExtKeyKSeFVATSpecial    = "pl-ksef-vat-special"
-	ExtKeyKSeFEffectiveDate = "pl-ksef-effective-date"
+	ExtKeyVATZero       cbc.Key = "pl-favat-vat-zero"
+	ExtKeyVATSpecial    cbc.Key = "pl-favat-vat-special"
+	ExtKeyEffectiveDate cbc.Key = "pl-favat-effective-date"
+	ExtKeyPaymentMeans  cbc.Key = "pl-favat-payment-means" // for mapping to TFormaPlatnosci's codes
+	ExtKeyInvoiceType   cbc.Key = "pl-favat-invoice-type"  // for mapping to TRodzajFaktury's codes
 )
 
 var extensionKeys = []*cbc.Definition{
 	{
-		Key: ExtKeyKSeFVATSpecial,
+		Key: ExtKeyVATSpecial,
 		Name: i18n.String{
 			i18n.EN: "Special VAT Extensions for KSeF",
 			i18n.PL: "Rozszerzenia specjalne dla KSeF",
@@ -34,7 +36,7 @@ var extensionKeys = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyKSeFVATZero,
+		Key: ExtKeyVATZero,
 		Name: i18n.String{
 			i18n.EN: "Zero VAT Extensions for KSeF",
 		},
@@ -66,7 +68,7 @@ var extensionKeys = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyKSeFEffectiveDate,
+		Key: ExtKeyEffectiveDate,
 		Name: i18n.String{
 			i18n.EN: "Effective date code.",
 			i18n.PL: "Kod daty wejścia w życie.",

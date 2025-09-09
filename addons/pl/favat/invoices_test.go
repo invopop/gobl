@@ -1,15 +1,15 @@
-package pl_test
+package favat_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/pl/favat"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/pl"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,6 +17,8 @@ import (
 
 func creditNote() *bill.Invoice {
 	inv := &bill.Invoice{
+		Regime:    tax.WithRegime("PL"),
+		Addons:    tax.WithAddons(favat.V2),
 		Currency:  currency.PLN,
 		Code:      "TEST",
 		Type:      bill.InvoiceTypeCreditNote,
@@ -26,7 +28,7 @@ func creditNote() *bill.Invoice {
 				Code:      "TEST",
 				IssueDate: cal.NewDate(2022, 12, 27),
 				Ext: tax.Extensions{
-					pl.ExtKeyKSeFEffectiveDate: "1",
+					favat.ExtKeyEffectiveDate: "1",
 				},
 			},
 		},
@@ -74,7 +76,7 @@ func TestBasicCreditNoteValidation(t *testing.T) {
 	require.NoError(t, err)
 	err = inv.Validate()
 	assert.NoError(t, err)
-	assert.Equal(t, inv.Preceding[0].Ext[pl.ExtKeyKSeFEffectiveDate], cbc.Code("1"))
+	assert.Equal(t, inv.Preceding[0].Ext[favat.ExtKeyEffectiveDate], cbc.Code("1"))
 
 	inv.Preceding[0].Ext["foo"] = "bar"
 	err = inv.Validate()
