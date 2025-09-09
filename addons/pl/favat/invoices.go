@@ -1,4 +1,4 @@
-package pl
+package favat
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -89,7 +89,7 @@ func (v *invoiceValidator) preceding(value interface{}) error {
 	}
 	return validation.ValidateStruct(obj,
 		validation.Field(&obj.Ext,
-			tax.ExtensionsRequire(ExtKeyKSeFEffectiveDate),
+			tax.ExtensionsRequire(ExtKeyEffectiveDate),
 		),
 		validation.Field(&obj.Reason, validation.Required),
 	)
