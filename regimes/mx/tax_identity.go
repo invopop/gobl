@@ -63,11 +63,22 @@ func NormalizeTaxIdentity(tID *tax.Identity) {
 	tID.Code = NormalizeTaxCode(tID.Code)
 }
 
-// NormalizeTaxCode normalizes a tax code for SAT using the special
-// rules it requires.
+// NormalizeTaxCode normalizes a tax code according to SAT rules.
+// It handles special cases where company tax codes (RFC) may include an "MX" prefix.
+// For example, a valid company code could be "MXG70123123Z". The function attempts
+// to validate both with and without the "MX" prefix.
 func NormalizeTaxCode(code cbc.Code) cbc.Code {
 	c := strings.ToUpper(code.String())
 	c = TaxCodeBadCharsRegexp.ReplaceAllString(c, "")
+
+	codeTrimmed := strings.TrimPrefix(c, "MX")
+
+	// If the trimmed code looks valid, return it
+	if typ := DetermineTaxCodeType(cbc.Code(codeTrimmed)); !typ.IsEmpty() {
+		return cbc.Code(codeTrimmed)
+	}
+
+	// If the trimmed code doesn't look valid, return the original code
 	return cbc.Code(c)
 }
 
