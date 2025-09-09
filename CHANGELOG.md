@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.300.0-rc2] - 2025-09-09
+
+### Added
+
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `pt`: added comprehensive validations to regime
+- `pt-saft-v1`: added comprehensive validations to addon
+
 ### Fixed
 
 - `mx`: normalize codes with `MX` code at the beginning
@@ -16,7 +24,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
 - `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
 - `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
-
 
 ## [v0.300.0-rc1] - 2025-09-02
 
@@ -30,9 +37,6 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 - `br`: added retained taxes CSLL, INSS and IRRF
 - `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
 - `br`: made ISS an informative tax
-- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
-- `pt`: added comprehensive validations to regime
-- `pt-saft-v1`: added comprehensive validations to addon
 
 ### Fixed
 
