@@ -8,6 +8,12 @@ import (
 )
 
 func TestTelephoneNormalizeAndValidate(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tel *org.Telephone
+		assert.NotPanics(t, func() {
+			tel.Normalize()
+		})
+	})
 	t.Run("basic normalization", func(t *testing.T) {
 		tel := &org.Telephone{
 			Number: "  +123 456 7890  ",

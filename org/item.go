@@ -62,8 +62,11 @@ func (i *Item) Normalize(normalizers tax.Normalizers) {
 	if i == nil {
 		return
 	}
+	i.Name = cbc.NormalizeString(i.Name)
+	i.Description = cbc.NormalizeString(i.Description)
 	i.Ref = cbc.NormalizeCode(i.Ref)
 	i.Ext = tax.CleanExtensions(i.Ext)
+
 	normalizers.Each(i)
 	tax.Normalize(normalizers, i.Identities)
 }

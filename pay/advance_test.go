@@ -23,13 +23,13 @@ func TestAdvanceNormalize(t *testing.T) {
 			"random": "",
 		},
 	}
-	a.Normalize(nil)
+	a.Normalize()
 	assert.Empty(t, a.UUID)
 	assert.Empty(t, a.Ext)
 
 	a = nil
 	assert.NotPanics(t, func() {
-		a.Normalize(nil)
+		a.Normalize()
 	})
 
 }

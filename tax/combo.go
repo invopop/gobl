@@ -17,10 +17,10 @@ import (
 // and retained attributes will be determined automatically from the Rate key if set
 // during calculation.
 type Combo struct {
-	// Country code override when issuing with taxes applied from different countries.
-	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Tax category code from those available inside a region.
 	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
+	// Country code override when issuing with taxes applied from different countries.
+	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Key helps determine the tax situation within the category.
 	Key cbc.Key `json:"key,omitempty"`
 	// Rate within a category and for a given key to apply.
@@ -55,6 +55,7 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			r.InCategories(),
 		),
+		validation.Field(&c.Country),
 		validation.Field(&c.Key,
 			r.InCategoryKeys(c.Category),
 		),
@@ -88,7 +89,9 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 				c.Percent = num.NewPercentage(0, 2)
 			}
 		case KeyExempt:
-			c.Key = KeyExempt
+			// don't make any assumptions about the key as 'exempt' is too generic,
+			// assume it is provided alongside a specific extension code in most cases.
+			c.Key = cbc.KeyEmpty
 			c.Rate = cbc.KeyEmpty
 		case KeyExempt.With("reverse-charge"):
 			c.Key = KeyReverseCharge
@@ -110,10 +113,16 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 			}
 		}
 
-		if c.Key == cbc.KeyEmpty {
+		switch c.Key {
+		case cbc.KeyEmpty:
 			// Special case for zero percent which has no additional rates
 			if c.Percent != nil && c.Percent.IsZero() {
 				c.Key = KeyZero
+			}
+		case KeyZero:
+			if c.Percent == nil {
+				zp := num.PercentageZero
+				c.Percent = &zp
 			}
 		}
 	}
@@ -232,7 +241,7 @@ func (Combo) jsonSchemaBuildCategory(cd *CategoryDef) *jsonschema.Schema {
 	s.If.Properties.Set("cat", &jsonschema.Schema{
 		Const: cd.Code.String(),
 	})
-	oneOf := make([]*jsonschema.Schema, len(cd.Keys)+1)
+	oneOf := make([]*jsonschema.Schema, len(cd.Keys))
 	for i, kd := range cd.Keys {
 		oneOf[i] = &jsonschema.Schema{
 			Const: kd.Key.String(),

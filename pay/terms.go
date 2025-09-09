@@ -88,12 +88,13 @@ type DueDate struct {
 }
 
 // Normalize will try to normalize the payment terms.
-func (t *Terms) Normalize(normalizers tax.Normalizers) {
+func (t *Terms) Normalize() {
 	if t == nil {
 		return
 	}
+	t.Detail = cbc.NormalizeString(t.Detail)
+	t.Notes = cbc.NormalizeString(t.Notes)
 	t.Ext = tax.CleanExtensions(t.Ext)
-	normalizers.Each(t)
 }
 
 // UNTDID4279 returns the UNTDID 4279 code associated with the terms key.

@@ -60,13 +60,16 @@ type Identity struct {
 }
 
 // Normalize will try to clean the identity's data.
-func (i *Identity) Normalize(normalizers tax.Normalizers) {
+func (i *Identity) Normalize() {
 	if i == nil {
 		return
 	}
 	uuid.Normalize(&i.UUID)
+	i.Label = cbc.NormalizeString(i.Label)
+	i.Type = cbc.NormalizeCode(i.Type)
+	i.Code = cbc.NormalizeCode(i.Code)
+	i.Description = cbc.NormalizeString(i.Description)
 	i.Ext = tax.CleanExtensions(i.Ext)
-	normalizers.Each(i)
 }
 
 // Validate ensures the identity looks valid.

@@ -57,6 +57,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					Country:  "NL",
 					Key:      "standard",
+					Rate:     "general",
 					Percent:  num.NewPercentage(20, 3),
 				},
 			},
@@ -68,10 +69,9 @@ func TestSetValidation(t *testing.T) {
 				{
 					Category: "VAT",
 					Country:  "NL",
-					Key:      "standard",
 				},
 			},
-			err: "0: (percent: required for 'standard' in 'VAT'.).",
+			err: "0: (percent: cannot be blank.).",
 		},
 		{
 			desc: "exempt rate with percent",
@@ -101,13 +101,32 @@ func TestSetValidation(t *testing.T) {
 			err: "duplicated",
 		},
 		{
-			desc: "missing percentage",
+			desc: "VAT missing percentage",
 			set: tax.Set{
 				{
 					Category: "VAT",
 				},
 			},
-			err: nil, // no percent implies exempt
+			err: "0: (percent: cannot be blank.)",
+		},
+		{
+			desc: "VAT missing percentage with key",
+			set: tax.Set{
+				{
+					Category: "VAT",
+					Key:      "standard",
+				},
+			},
+			err: "0: (percent: required for 'standard' in 'VAT'.).",
+		},
+		{
+			desc: "IRPF missing percentage",
+			set: tax.Set{
+				{
+					Category: "IRPF",
+				},
+			},
+			err: "0: (percent: cannot be blank.)",
 		},
 		{
 			desc: "missing percentage with exempt rate",
@@ -163,29 +182,31 @@ func TestSetValidation(t *testing.T) {
 			err: "surcharge: required with percent.",
 		},
 		{
-			desc: "exempt rate with reason",
+			desc: "exempt key with reason",
 			set: tax.Set{
 				{
 					Category: "VAT",
 					Key:      tax.KeyExempt,
 					Ext: tax.Extensions{
-						tbai.ExtKeyExemption: "E1",
+						tbai.ExtKeyExempt: "E1",
 					},
 				},
 			},
 			err: nil,
 		},
 		{
-			desc: "exempt, no rate, with extension",
+			desc: "exempt, no key, with extension",
 			set: tax.Set{
 				{
 					Category: "VAT",
+					// The correct key would be set
+					// here automatically in normalization.
 					Ext: tax.Extensions{
-						tbai.ExtKeyExemption: "E1",
+						tbai.ExtKeyExempt: "E1",
 					},
 				},
 			},
-			err: nil,
+			err: "0: (percent: cannot be blank.).",
 		},
 		{
 			desc: "exempt rate with invalid reason",
