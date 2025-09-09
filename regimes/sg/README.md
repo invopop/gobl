@@ -10,6 +10,23 @@ Find example SG GOBL files in the [`examples`](../../examples/sg) (uncalculated 
 
 Singapore offers a simple GST model with a standard rate along with a few exceptions. It also offers a few methods for invoicing which will be described further down. Singapore also uses a wide variaty of TIN alternatives as their GST registration number. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
 
+For GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:
+
+1. The supply must be made in Singapore
+2. The supply is a taxable supply
+3. The supply is made by a taxable person
+4. The supply is made in the course of furhtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions
+
+GST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:
+
+1. Importation of investment precious metals
+2. Importation of goods that are specifically given GST reliefs5 under the GST
+Act
+3. Importation of goods into Zero-GST/Licensed warehouses administered by
+Singapore Customs 
+4. Importation of goods by GST-registered businesses that are under Major
+Exporter Scheme or other approved schemes.
+
 ---
 
 ## Rates
@@ -17,6 +34,8 @@ Singapore offers a simple GST model with a standard rate along with a few except
 1. Standard rate of **9%**. (Since 01/01/2024)
 2. Zero-rate which applies to international services and export of goods.
 3. Exempt Supplies which include financial services, sale and lease of residential properties, digital payment tokens, and the import of investment precious metals.
+4. Out-of-scope supplies refer to supplies which are outside the scope of the GST
+Act. Some examples are salaries paid to employees for their services or supplies where the place of supply is outside of Singapore.
 
 *Other tax rates such as 50% discount on selling price for second hand goods are not covered yet*
 
@@ -25,6 +44,19 @@ Singapore offers a simple GST model with a standard rate along with a few except
 There are three main methods for invoicing which will be described below. Other methods like credit notes and reverse billing have to follow the structure of a normal Tax Invoice.
 
 ### Tax Invoice
+
+A tax invoice need not be issued for the making of zero-rated supplies, exempt
+supplies, deemed supplies or to non-GST registered customers. However, if
+you choose to issue a tax invoice for your zero-rated supplies, you need to
+indicate all the information that is required on a tax invoice and that GST is
+charged at 0%. 
+
+A tax invoice must not be issued if:
+- You are not registered for GST
+- You are selling goods using the Gross Margin Scheme (GMS)
+- You are the supplier in a self-billing arrangement where your customer
+issues the tax invoice
+
 
 This invoice, reference in GOBL by the use of the tax tag "standard" represents a basic Invoice. This Invoice has to meet certain requirements:
 
@@ -42,7 +74,7 @@ This invoice, reference in GOBL by the use of the tax tag "standard" represents 
 
 ### Simplified Tax Invoice
 
-This invoice is referenced by the tax tag "simplified". This invoice can only be used when the total amount (inclusive of GST) is less than $1000. This invoice has less requirements:
+This invoice is referenced by the tax tag "simplified". This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD. This invoice has less requirements:
 
 1. Suplier name, address and GST registration number;
 2. An identifying number, e.g. invoice number.
@@ -51,18 +83,48 @@ This invoice is referenced by the tax tag "simplified". This invoice can only be
 5. The total amount payable including tax.
 6. The word “Price Payable includes GST”.
 
-### Reciept
+### Receipt
 
-This type of invoice can be issued to a non-GST registered costumer. This invoice requires the following:
+This type of invoice can be issued to a non-GST registered costumer. A receipt must be serially printed and must show the following:
 
-1. Suplier name, address and GST registration number;
+1. Suplier name and GST registration number;
 2. The date of issue of the invoice.
 3. The total amount payable including tax.
 4. The word “Price Payable includes GST”.
 
-### GST Registration Number
+We will use a new tag "receipt", as some validations are different. For instance, the address of the supplier is not needed for receipts but yes for tax invoices.
+
+### Credit Note
+A credit note is issued to correct a mistake or to give a credit to your customer. A credit note must include:
+
+1. An identifying number e.g. a serial number
+2. Date of issue
+3. Your name, address and GST registration number
+4. Your customer's name and address
+5. Reason for the credit, e.g. "returned goods"
+6. Detailed description to identify the goods and services that credit is allowed for
+7. Quantity and amount credited for each description
+8. Total amount credited, excluding tax
+9. Rate and amount of tax credited
+10. Total amount credited, including tax
+11. Number and date of the original tax invoice
+
+### Debit Note
+You should only issue a debit note to request for payment for transactions where no GST is charged (e.g. internal billings within the same company), or to suppliers from whom credit is due. **Not used for correcting an invoice**
+
+### Self-billing
+Self-billing is a billing arrangement between a GST-registered supplier and a GST-registered customer, where the customer, instead of the supplier, prepares the supplier's tax invoice/ customer accounting tax invoice and sends a copy to the supplier.
+
+## GST Registration Number
 
 There are multiple possiblities when it comes to GST reg nums. They can be a Unique Entity Number (UEN) which refers to business, they can be a National Registration Identity Card (NRIC) number or a Foreign Identification Number which refer to people, and they can be a unique GST reg num emmited by IRAS. Each code has its own validation rules along which have been implemented. Each type of code is still a valid GST registration number and must be included in all invoices.
+
+### Schemes
+In Singapore there are some schemes that allow reduced rates:
+
+- **Discounted Sale Price Scheme**: When you sell a second-hand or used vehicle using this scheme, you can charge GST on 50% of the selling price.
+- **Gross Margin Scheme**: GST is accounted for on the gross margin (i.e. selling price less purchase price) instead of full value of the goods supplied.
+
 
 ### References
 

@@ -12,7 +12,7 @@ func validateInvoice(inv *bill.Invoice) error {
 		validation.Field(&inv.Supplier,
 			validation.When(
 				inv.HasTags(TagInvoiceReceipt),
-				validation.By(validateRecieptSupplier),
+				validation.By(validateReceiptSupplier),
 				validation.Skip,
 			).Else(
 				validation.By(validateInvoiceSupplier),
@@ -48,7 +48,7 @@ func validateInvoiceSupplier(value any) error {
 	)
 }
 
-func validateRecieptSupplier(value any) error {
+func validateReceiptSupplier(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {
 		return nil
@@ -58,6 +58,9 @@ func validateRecieptSupplier(value any) error {
 			validation.Required,
 			tax.RequireIdentityCode,
 			validation.Skip,
+		),
+		validation.Field(&p.Name,
+			validation.Required,
 		),
 	)
 }

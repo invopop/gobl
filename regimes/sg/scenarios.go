@@ -43,8 +43,7 @@ func invoiceScenarios() *tax.ScenarioSet {
 					Text: "This supply is subject to reverse charge. GST to be accounted for by the recipient.",
 				},
 			},
-
-			// Simplified Tax Invoice or Reciept
+			// Simplified Tax Invoice
 			{
 				Tags: []cbc.Key{tax.TagSimplified},
 				Note: &tax.ScenarioNote{
@@ -53,12 +52,22 @@ func invoiceScenarios() *tax.ScenarioSet {
 					Text: "Price Payable includes GST",
 				},
 			},
+			// Receipt
 			{
 				Tags: []cbc.Key{TagInvoiceReceipt},
 				Note: &tax.ScenarioNote{
 					Key:  org.NoteKeyLegal,
 					Src:  TagInvoiceReceipt,
 					Text: "Price Payable includes GST",
+				},
+			},
+			// Self-billed
+			{
+				Tags: []cbc.Key{tax.TagSelfBilled},
+				Note: &tax.ScenarioNote{
+					Key:  org.NoteKeyLegal,
+					Src:  tax.TagSelfBilled,
+					Text: "Self-billed",
 				},
 			},
 		},
