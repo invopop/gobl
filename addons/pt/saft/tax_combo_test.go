@@ -70,8 +70,8 @@ func TestTaxComboNormalize(t *testing.T) {
 			},
 		}
 		ad.Normalizer(combo)
-		assert.Equal(t, "ISE", combo.Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M99", combo.Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "OUT", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.False(t, combo.Ext.Has(saft.ExtKeyExemption))
 	})
 }
 

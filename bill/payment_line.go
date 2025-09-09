@@ -68,7 +68,7 @@ func (pl *PaymentLine) ValidateWithContext(ctx context.Context) error {
 			mx = mx.Sub(*pl.Advances)
 		}
 	}
-	return validation.ValidateStructWithContext(ctx, pl,
+	return tax.ValidateStructWithContext(ctx, pl,
 		validation.Field(&pl.Document),
 		validation.Field(&pl.Installment, validation.Min(1), validation.Max(999)),
 		validation.Field(&pl.Payable,

@@ -41,6 +41,7 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 ### Changed
 
 - `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
+- `pt-saft-v1`: moved exemption notes to line-level and added validations
 
 ## [v0.220.6] - 2025-08-12
 

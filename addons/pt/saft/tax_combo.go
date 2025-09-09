@@ -24,8 +24,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	case tax.CategoryVAT:
 		if tc.Country != "" && tc.Country != l10n.PT.Tax() {
 			tc.Ext = tc.Ext.
-				Set(ExtKeyTaxRate, TaxRateExempt).
-				Set(ExtKeyExemption, "M99") // outside of scope for PT
+				Set(ExtKeyTaxRate, TaxRateOther)
 			return
 		}
 
