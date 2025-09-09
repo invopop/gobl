@@ -181,18 +181,6 @@ func taxCategories() []*tax.CategoryDef {
 			// This is a subset of the possible rates.
 			Rates: []*tax.RateDef{
 				{
-					Rate: tax.RateZero,
-					Name: i18n.String{
-						i18n.EN: "Zero Rate",
-						i18n.ES: "Tipo Cero",
-					},
-					Values: []*tax.RateValueDef{
-						{
-							Percent: num.MakePercentage(0, 3),
-						},
-					},
-				},
-				{
 					Rate: tax.RateGeneral,
 					Name: i18n.String{
 						i18n.EN: "General Rate",

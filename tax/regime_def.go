@@ -319,6 +319,9 @@ func (r *RegimeDef) RequiresPercent(cat cbc.Code, key cbc.Key) validation.Rule {
 		if cd == nil {
 			return nil // nothing to lookup
 		}
+		if key == cbc.KeyEmpty && p == nil {
+			return validation.ErrRequired
+		}
 		kd := cd.KeyDef(key)
 		if kd == nil {
 			return nil // no key definition, no percent required
