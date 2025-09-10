@@ -34,15 +34,6 @@ func invoiceScenarios() *tax.ScenarioSet {
 	return &tax.ScenarioSet{
 		Schema: bill.ShortSchemaInvoice,
 		List: []*tax.Scenario{
-			// Reverse Charges
-			{
-				Tags: []cbc.Key{tax.TagReverseCharge},
-				Note: &tax.ScenarioNote{
-					Key:  org.NoteKeyLegal,
-					Src:  tax.TagReverseCharge,
-					Text: "This supply is subject to reverse charge. GST to be accounted for by the recipient.",
-				},
-			},
 			// Simplified Tax Invoice
 			{
 				Tags: []cbc.Key{tax.TagSimplified},

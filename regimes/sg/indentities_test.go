@@ -37,6 +37,7 @@ func TestValidateIdentity(t *testing.T) {
 		{name: "invalid GST long", code: "M91234567XA", err: true},
 		{name: "invalid GST no M", code: "912345678X", err: true},
 		{name: "invalid GST no end letter", code: "M912345678", err: true},
+		{name: "Empty code", code: "", err: false},
 	}
 
 	for _, tt := range tests {

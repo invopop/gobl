@@ -105,3 +105,9 @@ func TestInvalidInvoice(t *testing.T) {
 	inv.Supplier.Addresses = nil
 	require.Error(t, inv.Validate())
 }
+
+func TestNilSupplier(t *testing.T) {
+	inv := validInvoice()
+	inv.Supplier = nil
+	require.Error(t, inv.Validate())
+}

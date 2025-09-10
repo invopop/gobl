@@ -53,7 +53,7 @@ func validateIdentity(id *org.Identity) error {
 	)
 }
 
-func validateGSTNumber(value interface{}) error {
+func validateGSTNumber(value any) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil

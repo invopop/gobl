@@ -23,6 +23,7 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
 		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
 		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
+		{name: "Empty code", code: "", err: false},
 	}
 
 	for _, tt := range tests {

@@ -33,7 +33,7 @@ func validateTaxIdentity(tID *tax.Identity) error {
 	)
 }
 
-func validateTaxCode(value interface{}) error {
+func validateTaxCode(value any) error {
 	code, ok := value.(cbc.Code)
 	if !ok || code == "" {
 		return nil
