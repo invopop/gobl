@@ -8,7 +8,7 @@ Find example SG GOBL files in the [`examples`](../../examples/sg) (uncalculated 
 
 ## Overview of GST
 
-Singapore offers a simple GST model with a standard rate along with a few exceptions. It also offers a few methods for invoicing which will be described further down. Singapore also uses a wide variaty of TIN alternatives as their GST registration number. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
+Singapore offers a simple GST model with a standard rate along with a few exceptions. It also offers a few methods for invoicing which will be described further down. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
 
 For GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:
 
@@ -115,11 +115,17 @@ You should only issue a debit note to request for payment for transactions where
 ### Self-billing
 Self-billing is a billing arrangement between a GST-registered supplier and a GST-registered customer, where the customer, instead of the supplier, prepares the supplier's tax invoice/ customer accounting tax invoice and sends a copy to the supplier.
 
-## GST Registration Number
+## Singapore tax IDs
+Suppliers in Singapore may use several official tax identification numbers on invoices, depending on their entity type and tax status:
 
-There are multiple possiblities when it comes to GST reg nums. They can be a Unique Entity Number (UEN) which refers to business, they can be a National Registration Identity Card (NRIC) number or a Foreign Identification Number which refer to people, and they can be a unique GST reg num emmited by IRAS. Each code has its own validation rules along which have been implemented. Each type of code is still a valid GST registration number and must be included in all invoices.
+- **Unique Entity Number (UEN)**: All registered business entities in Singapore, not specific to GST. Every GST-registered business has a UEN, but UEN itself is the company’s main ID, not a GST number. 
+- **GST Registration number**: Any business entity that is registered for GST with IRAS. Overseas suppliers who register for GST also receive one. GST-registered suppliers are required to print their GST Registration Number on every tax invoice and receipt issued.
 
-### Schemes
+This means that if a company is GST registered, the invoice must include both numbers. When issuing an invoice to a Singaporean company, you would only need to include the UEN of that company. Therefore, in GOBL, the UEN will be included as tax id and GST registration number as an identity. 
+
+There exist other tax IDs in Singapore like the NRIC or FIN, but they are used mainly for personal identification, and not mandated on invoices.
+
+## Schemes
 In Singapore there are some schemes that allow reduced rates:
 
 - **Discounted Sale Price Scheme**: When you sell a second-hand or used vehicle using this scheme, you can charge GST on 50% of the selling price.

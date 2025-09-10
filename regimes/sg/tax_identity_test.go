@@ -11,33 +11,31 @@ import (
 
 func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
-		name     string
-		code     string
-		expected bool
+		name string
+		code string
+		err  bool
 	}{
-		{name: "UEN (ROC)", code: "199912345A", expected: true},
-		{name: "UEN (ROB)", code: "123456789A", expected: true},
-		{name: "UEN (Others)", code: "T12AB1234A", expected: true},
-		{name: "NIRC/FIN", code: "S1234567A", expected: true},
-		{name: "GST", code: "AB1234567A", expected: true},
-		{name: "Invalid short", code: "1234567A", expected: false},
-		{name: "Invalid long", code: "A123456789", expected: false},
-		{name: "Invalid UEN (ROC)", code: "2199123456", expected: false},
-		{name: "Invalid UEN (ROB)", code: "12345678A", expected: false},
-		{name: "Invalid UEN (Others)", code: "T12A1234A", expected: false},
-		{name: "Invalid NIRC/FIN", code: "S123456A", expected: false},
-		{name: "Invalid GST", code: "A1234567A", expected: false},
+		{name: "UEN (ROC)", code: "199912345A", err: false},
+		{name: "UEN (ROB)", code: "12345678A", err: false},
+		{name: "UEN (Others)", code: "T12AB1234A", err: false},
+		{name: "NIRC/FIN", code: "S1234567A", err: true},
+		{name: "Invalid short", code: "1234567A", err: true},
+		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
+		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
+		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
 	}
 
 	for _, tt := range tests {
-		tID := &tax.Identity{
-			Code: cbc.Code(tt.code),
-		}
-		err := sg.Validate(tID)
-		if tt.expected {
-			assert.NoError(t, err)
-		} else {
-			assert.Error(t, err)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			tID := &tax.Identity{
+				Code: cbc.Code(tt.code),
+			}
+			err := sg.Validate(tID)
+			if tt.err {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }
