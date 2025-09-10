@@ -6,61 +6,11 @@
   "time_zone": "Asia/Singapore",
   "country": "SG",
   "currency": "SGD",
+  "tax_scheme": "GST",
   "tags": [
     {
       "schema": "bill/invoice",
       "list": [
-        {
-          "key": "simplified",
-          "name": {
-            "de": "Vereinfachte Rechnung",
-            "en": "Simplified Invoice",
-            "es": "Factura Simplificada",
-            "it": "Fattura Semplificata"
-          },
-          "desc": {
-            "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
-            "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
-            "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
-            "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
-          }
-        },
-        {
-          "key": "reverse-charge",
-          "name": {
-            "de": "Umkehr der Steuerschuld",
-            "en": "Reverse Charge",
-            "es": "Inversión del Sujeto Pasivo",
-            "it": "Inversione del soggetto passivo"
-          }
-        },
-        {
-          "key": "self-billed",
-          "name": {
-            "de": "Rechnung durch den Leistungsempfänger",
-            "en": "Self-billed",
-            "es": "Facturación por el destinatario",
-            "it": "Autofattura"
-          }
-        },
-        {
-          "key": "customer-rates",
-          "name": {
-            "de": "Kundensätze",
-            "en": "Customer rates",
-            "es": "Tarifas aplicables al destinatario",
-            "it": "Aliquote applicabili al destinatario"
-          }
-        },
-        {
-          "key": "partial",
-          "name": {
-            "de": "Teilweise",
-            "en": "Partial",
-            "es": "Parcial",
-            "it": "Parziale"
-          }
-        },
         {
           "key": "receipt",
           "name": {
@@ -68,6 +18,14 @@
           }
         }
       ]
+    }
+  ],
+  "identities": [
+    {
+      "key": "sg-gst-number",
+      "name": {
+        "en": "GST Registration Number"
+      }
     }
   ],
   "scenarios": [
@@ -103,6 +61,16 @@
             "src": "receipt",
             "text": "Price Payable includes GST"
           }
+        },
+        {
+          "tags": [
+            "self-billed"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "self-billed",
+            "text": "Self-billed"
+          }
         }
       ]
     }
@@ -126,7 +94,7 @@
       },
       "rates": [
         {
-          "key": "zero",
+          "rate": "zero",
           "name": {
             "en": "Zero Rate"
           },
@@ -140,7 +108,7 @@
           ]
         },
         {
-          "key": "standard",
+          "rate": "general",
           "name": {
             "en": "Standard rate"
           },
@@ -151,18 +119,28 @@
             {
               "since": "2024-01-01",
               "percent": "9%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "8%"
+            },
+            {
+              "since": "2007-07-01",
+              "percent": "7%"
+            },
+            {
+              "since": "2004-01-01",
+              "percent": "5%"
+            },
+            {
+              "since": "2003-01-01",
+              "percent": "4%"
+            },
+            {
+              "since": "1994-04-01",
+              "percent": "3%"
             }
           ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "en": "Exempt"
-          },
-          "desc": {
-            "en": "Certain goods and services are exempt from GST: this includes financial services, sale and lease of residential properties, digital payment tokens, and the import of investment precious metals."
-          },
-          "exempt": true
         }
       ],
       "sources": [
