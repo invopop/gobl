@@ -4,31 +4,6 @@ This document provides an overview of the tax regime in Singapore
 
 Find example SG GOBL files in the [`examples`](../../examples/sg) (uncalculated documents) and [`examples/out`](../../examples/sg/out) (calculated envelopes) subdirectories.
 
----
-
-## Overview of GST
-
-Singapore offers a simple GST model with a standard rate along with a few exceptions. It also offers a few methods for invoicing which will be described further down. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
-
-For GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:
-
-1. The supply must be made in Singapore
-2. The supply is a taxable supply
-3. The supply is made by a taxable person
-4. The supply is made in the course of furhtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions
-
-GST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:
-
-1. Importation of investment precious metals
-2. Importation of goods that are specifically given GST reliefs5 under the GST
-Act
-3. Importation of goods into Zero-GST/Licensed warehouses administered by
-Singapore Customs 
-4. Importation of goods by GST-registered businesses that are under Major
-Exporter Scheme or other approved schemes.
-
----
-
 ## Rates
 
 1. Standard rate of **9%**. (Since 01/01/2024)
@@ -86,7 +61,7 @@ This type of invoice can be issued to a non-GST registered costumer. A receipt m
 3. The total amount payable including tax.
 4. The word “Price Payable includes GST”.
 
-We will use a new tag "receipt", as the address of the supplier is not needed for receipts but it is for tax invoices. This would require separate validations.
+## Correction method
 
 ### Credit Note
 A credit note is issued to correct a mistake or to give a credit to your customer. A credit note must include:
@@ -105,9 +80,6 @@ A credit note is issued to correct a mistake or to give a credit to your custome
 
 ### Debit Note
 You should only issue a debit note to request for payment for transactions where no GST is charged (e.g. internal billings within the same company), or to suppliers from whom credit is due. **Not used for correcting an invoice**
-
-### Self-billing
-Self-billing is a billing arrangement between a GST-registered supplier and a GST-registered customer, where the customer, instead of the supplier, prepares the supplier's tax invoice/ customer accounting tax invoice and sends a copy to the supplier.
 
 ## Singapore tax IDs
 Suppliers in Singapore may use several official tax identification numbers on invoices, depending on their entity type and tax status:

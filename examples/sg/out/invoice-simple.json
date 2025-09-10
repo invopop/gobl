@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "79fec91a3b085b73df998a250c5b7d35f274f774332a33811bae87a6d5e61b83"
+			"val": "7c8d1dc215150ee6604d085400e369a762a501c88c04c35701e52d5f42b5ea8d"
 		}
 	},
 	"doc": {
@@ -45,6 +45,7 @@
 				"taxes": [
 					{
 						"cat": "GST",
+						"key": "standard",
 						"rate": "general",
 						"percent": "9%"
 					}
@@ -61,6 +62,7 @@
 						"code": "GST",
 						"rates": [
 							{
+								"key": "standard",
 								"base": "200000.00",
 								"percent": "9%",
 								"amount": "18000.00"

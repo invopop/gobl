@@ -3,6 +3,9 @@
   "name": {
     "en": "Singapore"
   },
+  "description": {
+    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furhtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals\n2. Importation of goods that are specifically given GST reliefs5 under the GST\nAct\n3. Importation of goods into Zero-GST/Licensed warehouses administered by\nSingapore Customs \n4. Importation of goods by GST-registered businesses that are under Major\nExporter Scheme or other approved schemes."
+  },
   "time_zone": "Asia/Singapore",
   "country": "SG",
   "currency": "SGD",
@@ -15,6 +18,9 @@
           "key": "receipt",
           "name": {
             "en": "Receipt"
+          },
+          "desc": {
+            "en": "This type of invoice can be issued to a non-GST registered customer:\n\n\t\t\t\t\t\t\t1. Supplier name and GST registration number;\n\t\t\t\t\t\t\t2. The date of issue of the invoice.\n\t\t\t\t\t\t\t3. The total amount payable including tax.\n\t\t\t\t\t\t\t4. The word 'Price Payable includes GST'."
           }
         }
       ]
@@ -25,6 +31,9 @@
       "key": "sg-gst-number",
       "name": {
         "en": "GST Registration Number"
+      },
+      "desc": {
+        "en": "GST Registration Number is a number given to any business entity that is registered for GST with IRAS. Overseas suppliers who register for GST also receive one. GST-registered suppliers are required to print their GST Registration Number on every tax invoice and receipt issued. In most cases GST registration number is the same as the UEN."
       }
     }
   ],
@@ -33,16 +42,22 @@
       "schema": "bill/invoice",
       "list": [
         {
+          "desc": {
+            "en": "Reverse charge in Singapore applies mainly when a GST-registered business in Singapore imports services or digital services from overseas suppliers. Some examples include:\n\n\t\t\t\t\t\t\t- Advertising services from overseas platforms.\n\t\t\t\t\t\t\t- Consultancy, professional, or technical services from foreign providers.\n\t\t\t\t\t\t\t- Digital services such as software or streaming services supplied from overseas."
+          },
           "tags": [
             "reverse-charge"
           ],
           "note": {
             "key": "legal",
             "src": "reverse-charge",
-            "text": "This supply is subject to reverse charge. GST to be accounted for by the recipient."
+            "text": "Reverse Charge"
           }
         },
         {
+          "desc": {
+            "en": "This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD and must include:\n\n\t\t\t\t\t\t\t1. Supplier name, address and GST registration number;\n\t\t\t\t\t\t\t2. An identifying number, e.g. invoice number.\n\t\t\t\t\t\t\t3. The date of issue of the invoice.\n\t\t\t\t\t\t\t4. Description of the goods or services supplied.\n\t\t\t\t\t\t\t5. The total amount payable including tax.\n\t\t\t\t\t\t\t6. The word \"Price Payable includes GST\"."
+          },
           "tags": [
             "simplified"
           ],
@@ -53,6 +68,9 @@
           }
         },
         {
+          "desc": {
+            "en": "This type of invoice can be issued to a non-GST registered customer:\n\n\t\t\t\t\t\t\t1. Supplier name and GST registration number;\n\t\t\t\t\t\t\t2. The date of issue of the invoice.\n\t\t\t\t\t\t\t3. The total amount payable including tax.\n\t\t\t\t\t\t\t4. The word \"Price Payable includes GST\"."
+          },
           "tags": [
             "receipt"
           ],
@@ -63,6 +81,9 @@
           }
         },
         {
+          "desc": {
+            "en": "Self-billing is a billing arrangement between a GST-registered supplier and a GST-registered customer, where the customer, instead of the supplier, prepares the supplier's tax invoice/ customer accounting tax invoice and sends a copy to the supplier."
+          },
           "tags": [
             "self-billed"
           ],
@@ -92,28 +113,45 @@
       "title": {
         "en": "Goods and Services Tax"
       },
-      "rates": [
+      "keys": [
         {
-          "rate": "zero",
+          "key": "standard",
           "name": {
-            "en": "Zero Rate"
-          },
-          "desc": {
-            "en": "Zero-rated supplies are goods and services that are taxable at 0%: this referes to international services and export of goods."
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
+            "en": "Standard"
+          }
         },
         {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
           "rate": "general",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Standard rate"
           },
           "desc": {
-            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."
+            "en": "GST-registered businesses are required to charge and account for GST at 9% on all sales of goods and services in Singapore unless the sale can be zero-rated or exempted under the GST law."
           },
           "values": [
             {
@@ -148,7 +186,7 @@
           "title": {
             "en": "Goods and Services Tax (GST)"
           },
-          "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/"
+          "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/basics-of-gst/current-gst-rates"
         }
       ]
     }

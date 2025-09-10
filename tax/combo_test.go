@@ -149,9 +149,17 @@ func TestComboJSONSchemaExtend(t *testing.T) {
 		c.JSONSchemaExtend(s)
 
 		assert.NotEmpty(t, s.AnyOf)
-		require.Len(t, s.AnyOf, 1)
-		p, ok := s.AnyOf[0].If.Properties.Get("cat")
-		require.True(t, ok)
-		assert.Equal(t, p.Const, "VAT")
+		require.Len(t, s.AnyOf, 2) // Now we have both VAT and GST global categories
+
+		// Check that we have both VAT and GST categories
+		categories := make([]string, 0, 2)
+		for _, anyOf := range s.AnyOf {
+			p, ok := anyOf.If.Properties.Get("cat")
+			require.True(t, ok)
+			categories = append(categories, p.Const.(string))
+		}
+
+		assert.Contains(t, categories, "VAT")
+		assert.Contains(t, categories, "GST")
 	})
 }

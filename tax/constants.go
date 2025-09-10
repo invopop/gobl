@@ -97,6 +97,36 @@ var globalCategories = []*CategoryDef{
 			},
 		},
 	},
+	{
+		Code: CategoryGST,
+		Name: i18n.String{
+			i18n.EN: "GST",
+		},
+		Title: i18n.String{
+			i18n.EN: "Goods and Services Tax",
+		},
+		Retained: false,
+		Keys: []*KeyDef{
+			{
+				Key:  KeyStandard,
+				Name: i18n.NewString("Standard"),
+			},
+			{
+				Key:  KeyZero,
+				Name: i18n.NewString("Zero"),
+			},
+			{
+				Key:       KeyExempt,
+				Name:      i18n.NewString("Exempt"),
+				NoPercent: true,
+			},
+			{
+				Key:       KeyOutsideScope,
+				Name:      i18n.NewString("Outside scope"),
+				NoPercent: true,
+			},
+		},
+	},
 }
 
 // GlobalVAT returns a global VAT category definition that can be use in other regimes.
@@ -104,10 +134,21 @@ func GlobalVAT() *CategoryDef {
 	return Category(CategoryVAT)
 }
 
+// GlobalGST returns a global GST category definition that can be use in other regimes.
+func GlobalGST() *CategoryDef {
+	return Category(CategoryGST)
+}
+
 // GlobalVATKeys returns the keys that are defined for the global VAT category, which can
 // be re-used in other regimes subject to VAT.
 func GlobalVATKeys() []*KeyDef {
 	return GlobalVAT().Keys
+}
+
+// GlobalGSTKeys returns the keys that are defined for the global GST category, which can
+// be re-used in other regimes subject to GST.
+func GlobalGSTKeys() []*KeyDef {
+	return GlobalGST().Keys
 }
 
 // Category returns a global category definition by its code.

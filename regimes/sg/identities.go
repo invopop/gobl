@@ -27,6 +27,9 @@ var identityDefinitions = []*cbc.Definition{
 		Name: i18n.String{
 			i18n.EN: "GST Registration Number",
 		},
+		Desc: i18n.String{
+			i18n.EN: "GST Registration Number is a number given to any business entity that is registered for GST with IRAS. Overseas suppliers who register for GST also receive one. GST-registered suppliers are required to print their GST Registration Number on every tax invoice and receipt issued. In most cases GST registration number is the same as the UEN.",
+		},
 	},
 }
 

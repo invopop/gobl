@@ -45,7 +45,8 @@
         "taxes": [
           {
             "cat": "GST",
-            "rate": "general"
+            "rate": "general",
+            "key": "standard"
           }
         ]
       }

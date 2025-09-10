@@ -24,33 +24,20 @@ func taxCategories() []*tax.CategoryDef {
 					Title: i18n.String{
 						i18n.EN: "Goods and Services Tax (GST)",
 					},
-					URL: "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/",
+					URL: "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/basics-of-gst/current-gst-rates",
 				},
 			},
 			Retained: false,
+			Keys:     tax.GlobalGSTKeys(),
 			Rates: []*tax.RateDef{
 				{
-					Rate: tax.RateZero,
-					Name: i18n.String{
-						i18n.EN: "Zero Rate",
-					},
-					Description: i18n.String{
-						i18n.EN: "Zero-rated supplies are goods and services that are taxable at 0%: this referes to international services and export of goods.",
-					},
-
-					Values: []*tax.RateValueDef{
-						{
-							Percent: num.MakePercentage(0, 3),
-						},
-					},
-				},
-				{
+					Keys: []cbc.Key{tax.KeyStandard},
 					Rate: tax.RateGeneral,
 					Name: i18n.String{
 						i18n.EN: "Standard rate",
 					},
 					Description: i18n.String{
-						i18n.EN: "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided.",
+						i18n.EN: "GST-registered businesses are required to charge and account for GST at 9% on all sales of goods and services in Singapore unless the sale can be zero-rated or exempted under the GST law.",
 					},
 					Values: []*tax.RateValueDef{
 						{

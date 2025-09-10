@@ -27,6 +27,26 @@ func New() *tax.RegimeDef {
 		Tags: []*tax.TagSet{
 			invoiceTags(),
 		},
+		Description: i18n.String{
+			i18n.EN: `Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
+
+For GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:
+
+1. The supply must be made in Singapore
+2. The supply is a taxable supply
+3. The supply is made by a taxable person
+4. The supply is made in the course of furhtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions
+
+GST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:
+
+1. Importation of investment precious metals
+2. Importation of goods that are specifically given GST reliefs5 under the GST
+Act
+3. Importation of goods into Zero-GST/Licensed warehouses administered by
+Singapore Customs 
+4. Importation of goods by GST-registered businesses that are under Major
+Exporter Scheme or other approved schemes.`,
+		},
 		Scenarios: []*tax.ScenarioSet{
 			invoiceScenarios(),
 		},
