@@ -16,9 +16,11 @@ import (
 // Reference: https://mytax.iras.gov.sg/ESVWeb/default.aspx?target=GSTListingSearch
 
 const (
+	// IdentityKeyGSTNumber represents the GST registration number issued to GST registered businesses in Singapore.
 	IdentityKeyGSTNumber cbc.Key = "sg-gst-number"
 )
 
+// GSTNumberRegexPattern is the regex pattern for the GST registration number.
 var GSTNumberRegexPattern = regexp.MustCompile(`^[M][A-Z0-9]\d{7}[A-Z]$`)
 
 var identityDefinitions = []*cbc.Definition{

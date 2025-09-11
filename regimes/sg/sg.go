@@ -35,7 +35,7 @@ For GST to be chargeable on a supply of goods and services, the following four c
 1. The supply must be made in Singapore
 2. The supply is a taxable supply
 3. The supply is made by a taxable person
-4. The supply is made in the course of furhtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions
+4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions
 
 GST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:
 

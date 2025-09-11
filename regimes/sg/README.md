@@ -45,7 +45,7 @@ issues the tax invoice
 
 This invoice is referenced by the tax tag "simplified". This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD. This invoice has less requirements:
 
-1. Suplier name, address and GST registration number;
+1. Supplier name, address and GST registration number;
 2. An identifying number, e.g. invoice number.
 3. The date of issue of the invoice.
 4. Description of the goods or services supplied.
@@ -54,9 +54,9 @@ This invoice is referenced by the tax tag "simplified". This invoice can only be
 
 ### Receipt
 
-This type of invoice can be issued to a non-GST registered costumer. A receipt must be serially printed and must show the following:
+This type of invoice can be issued to a non-GST registered customer. A receipt must be serially printed and must show the following:
 
-1. Suplier name and GST registration number;
+1. Supplier name and GST registration number;
 2. The date of issue of the invoice.
 3. The total amount payable including tax.
 4. The word “Price Payable includes GST”.
