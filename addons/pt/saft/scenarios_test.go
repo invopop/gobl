@@ -54,6 +54,30 @@ func TestInvoice(t *testing.T) {
 		assert.NoError(t, inv.Validate())
 	})
 
+	t.Run("exempt with addon added later", func(t *testing.T) {
+		// This tests covers a typical use-case whereby a document is
+		// created without addons but with the extensions to be used later.
+		inv := validInvoice()
+		inv.Addons = tax.Addons{}
+		tc := inv.Lines[0].Taxes[0]
+		tc.Key = ""
+		tc.Rate = tax.KeyExempt
+		tc.Ext = tc.Ext.Set(saft.ExtKeyExemption, "M40")
+
+		require.NoError(t, inv.Calculate())
+
+		assert.Empty(t, tc.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "exempt", tc.Key.String())
+		assert.Equal(t, "M40", tc.Ext[saft.ExtKeyExemption].String())
+
+		// Add the addon and re-calculate
+		inv.Addons = tax.WithAddons(saft.V1)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "ISE", tc.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "reverse-charge", tc.Key.String())
+		assert.Equal(t, "M40", tc.Ext[saft.ExtKeyExemption].String())
+	})
+
 	t.Run("exempt", func(t *testing.T) {
 		inv := validInvoice()
 		tc := inv.Lines[0].Taxes[0]
