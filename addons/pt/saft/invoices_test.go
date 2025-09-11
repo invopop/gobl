@@ -3,6 +3,7 @@ package saft_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/invopop/gobl/addons/pt/saft"
 	"github.com/invopop/gobl/bill"
@@ -10,6 +11,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -39,6 +41,7 @@ func validInvoice() *bill.Invoice {
 		Code:      "123",
 		Currency:  "EUR",
 		IssueDate: cal.MakeDate(2023, 1, 1),
+		ValueDate: cal.NewDate(2022, 12, 31),
 		Lines: []*bill.Line{
 			{
 				Quantity: num.MakeAmount(1, 0),
@@ -150,7 +153,32 @@ func TestInvoiceValidation(t *testing.T) {
 
 		// Add source doc ref - should pass
 		inv.Tax.Ext[saft.ExtKeySourceRef] = "FTD FT SERIESA/123"
+	})
+
+	t.Run("unpaid invoice-receipt", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Series = "FR SERIES-A"
+		inv.Tax.Ext = tax.Extensions{
+			saft.ExtKeySource:      saft.SourceBillingProduced,
+			saft.ExtKeyInvoiceType: saft.InvoiceTypeInvoiceReceipt,
+		}
+		inv.Totals = &bill.Totals{
+			Due: num.NewAmount(10, 2), // Some payment due
+		}
+
+		assert.ErrorContains(t, addon.Validator(inv), "totals: (due: must be equal to 0")
+
+		inv.Totals.Due = num.NewAmount(0, 2) // Zero payment due
 		require.NoError(t, addon.Validator(inv))
+
+		inv.Totals.Due = nil // No payment due
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("missing value date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = nil
+		assert.ErrorContains(t, addon.Validator(inv), "value_date: cannot be blank")
 	})
 }
 
@@ -300,5 +328,234 @@ func TestInvoiceNormalization(t *testing.T) {
 		addon.Normalizer(inv)
 
 		assert.Equal(t, saft.SourceBillingIntegrated, inv.Tax.Ext[saft.ExtKeySource])
+	})
+
+	t.Run("nil invoice", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			var inv *bill.Invoice
+			addon.Normalizer(inv)
+		})
+	})
+
+	t.Run("sets default value date from issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = nil
+		addon.Normalizer(inv)
+		assert.Equal(t, &inv.IssueDate, inv.ValueDate)
+	})
+
+	t.Run("sets default value date from operation date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2022, 12, 30)
+		inv.ValueDate = nil
+		addon.Normalizer(inv)
+		assert.Equal(t, inv.OperationDate, inv.ValueDate)
+	})
+
+	t.Run("keeps existing value date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2022, 12, 30)
+		addon.Normalizer(inv)
+		assert.Equal(t, cal.NewDate(2022, 12, 30), inv.ValueDate)
+	})
+
+	t.Run("sets today as value date when no issue date is set", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.Date{}
+		inv.ValueDate = nil
+
+		addon.Normalizer(inv)
+
+		loc, err := time.LoadLocation("Europe/Lisbon")
+		require.NoError(t, err)
+		today := cal.TodayIn(loc)
+		assert.Equal(t, &today, inv.ValueDate)
+	})
+}
+
+func TestInvoicePaymentValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("advance with nil date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date:   nil,
+					Amount: num.MakeAmount(50, 0),
+				},
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "advances: (0: (date: cannot be blank")
+	})
+
+	t.Run("nil advance", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{nil},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+}
+
+func TestInvoicePaymentNormalization(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("set default advance date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date: nil,
+				},
+			},
+		}
+
+		addon.Normalizer(inv)
+
+		assert.Equal(t, &inv.IssueDate, inv.Payment.Advances[0].Date)
+	})
+
+	t.Run("no issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.IssueDate = cal.Date{}
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date: nil,
+				},
+			},
+		}
+
+		addon.Normalizer(inv)
+
+		loc, err := time.LoadLocation("Europe/Lisbon")
+		require.NoError(t, err)
+
+		today := cal.TodayIn(loc)
+		assert.Equal(t, &today, inv.Payment.Advances[0].Date)
+	})
+
+	t.Run("nil payment details", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = nil
+
+		addon.Normalizer(inv)
+
+		assert.Nil(t, inv.Payment)
+	})
+}
+
+func TestInvoicePrecedingValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("nil preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = nil
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("valid preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("several preceding documents", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+			{
+				Code:      "INV/2",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "preceding: the length must be no more than 1")
+	})
+}
+
+func TestInvoiceLineValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("negative sum", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Sum = num.NewAmount(-10, 2)
+		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (sum: must be no less than 0")
+	})
+
+	t.Run("negative total", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Total = num.NewAmount(-10, 2)
+		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (total: must be no less than 0")
+	})
+
+	t.Run("nil line", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines = []*bill.Line{nil}
+		require.NoError(t, addon.Validator(inv))
+	})
+}
+
+func TestInvoiceLineDiscountValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("valid discount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Discounts = []*bill.LineDiscount{
+			{
+				Amount: num.MakeAmount(10, 2),
+			},
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("negative discount amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Discounts = []*bill.LineDiscount{
+			{
+				Amount: num.MakeAmount(-10, 2),
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (discounts: (0: (amount: must be no less than 0")
+	})
+
+	t.Run("nil discount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Discounts = []*bill.LineDiscount{nil}
+		require.NoError(t, addon.Validator(inv))
+	})
+}
+
+func TestInvoiceTotalsValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("valid payable amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable: num.MakeAmount(100, 2),
+		}
+		require.NoError(t, addon.Validator(inv))
+	})
+
+	t.Run("negative payable amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Payable: num.MakeAmount(-10, 2),
+		}
+		assert.ErrorContains(t, addon.Validator(inv), "totals: (payable: must be no less than 0")
+	})
+
+	t.Run("nil totals", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = nil
+		require.NoError(t, addon.Validator(inv))
 	})
 }

@@ -93,6 +93,20 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, "N2", tc.Ext.Get(ExtKeyOpClass).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
+	})
+
+	t.Run("outside scope N1", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyOutsideScope,
+			Ext: tax.Extensions{
+				ExtKeyOpClass: "N1",
+			},
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "N1", tc.Ext.Get(ExtKeyOpClass).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
 	})

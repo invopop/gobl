@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "11b277c2f83d9806b44d7a5e73abbf82a9a26a1d22e4f48777696153ab644a17"
+			"val": "f1021733bd08e6253265bae4d70da9108f556a9d5dc29774099e9c5053bb3116"
 		}
 	},
 	"doc": {
@@ -16,6 +16,7 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -65,7 +66,15 @@
 						}
 					}
 				],
-				"total": "100.00"
+				"total": "100.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M07",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 9.º do CIVA"
+					}
+				]
 			},
 			{
 				"i": 2,
@@ -90,7 +99,15 @@
 						}
 					}
 				],
-				"total": "240.00"
+				"total": "240.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M07",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 9.º do CIVA"
+					}
+				]
 			}
 		],
 		"totals": {
@@ -120,14 +137,6 @@
 			"tax": "0.00",
 			"total_with_tax": "340.00",
 			"payable": "340.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"code": "M07",
-				"src": "pt-saft-exemption",
-				"text": "Artigo 9.º do CIVA"
-			}
-		]
+		}
 	}
 }

@@ -188,7 +188,7 @@ func TestSetValidation(t *testing.T) {
 					Category: "VAT",
 					Key:      tax.KeyExempt,
 					Ext: tax.Extensions{
-						tbai.ExtKeyExemption: "E1",
+						tbai.ExtKeyExempt: "E1",
 					},
 				},
 			},
@@ -202,7 +202,7 @@ func TestSetValidation(t *testing.T) {
 					// The correct key would be set
 					// here automatically in normalization.
 					Ext: tax.Extensions{
-						tbai.ExtKeyExemption: "E1",
+						tbai.ExtKeyExempt: "E1",
 					},
 				},
 			},
