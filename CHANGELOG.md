@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `sg`: Singaporean regime
+- `tax`: `keys` for GST
+
+
 ## [v0.300.0-rc2] - 2025-09-09
 
 ### Added
