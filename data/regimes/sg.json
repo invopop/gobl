@@ -4,7 +4,7 @@
     "en": "Singapore"
   },
   "description": {
-    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furhtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals\n2. Importation of goods that are specifically given GST reliefs5 under the GST\nAct\n3. Importation of goods into Zero-GST/Licensed warehouses administered by\nSingapore Customs \n4. Importation of goods by GST-registered businesses that are under Major\nExporter Scheme or other approved schemes."
+    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals\n2. Importation of goods that are specifically given GST reliefs5 under the GST\nAct\n3. Importation of goods into Zero-GST/Licensed warehouses administered by\nSingapore Customs \n4. Importation of goods by GST-registered businesses that are under Major\nExporter Scheme or other approved schemes."
   },
   "time_zone": "Asia/Singapore",
   "country": "SG",
@@ -20,7 +20,7 @@
             "en": "Receipt"
           },
           "desc": {
-            "en": "This type of invoice can be issued to a non-GST registered customer:\n\n\t\t\t\t\t\t\t1. Supplier name and GST registration number;\n\t\t\t\t\t\t\t2. The date of issue of the invoice.\n\t\t\t\t\t\t\t3. The total amount payable including tax.\n\t\t\t\t\t\t\t4. The word 'Price Payable includes GST'."
+            "en": "This type of invoice can be issued to a non-GST registered customer:\n\n1. Supplier name and GST registration number;\n2. The date of issue of the invoice.\n3. The total amount payable including tax.\n4. The word 'Price Payable includes GST'."
           }
         }
       ]
@@ -43,7 +43,7 @@
       "list": [
         {
           "desc": {
-            "en": "Reverse charge in Singapore applies mainly when a GST-registered business in Singapore imports services or digital services from overseas suppliers. Some examples include:\n\n\t\t\t\t\t\t\t- Advertising services from overseas platforms.\n\t\t\t\t\t\t\t- Consultancy, professional, or technical services from foreign providers.\n\t\t\t\t\t\t\t- Digital services such as software or streaming services supplied from overseas."
+            "en": "Reverse charge in Singapore applies mainly when a GST-registered business in Singapore imports services or digital services from overseas suppliers. Some examples include:\n\n- Advertising services from overseas platforms.\n- Consultancy, professional, or technical services from foreign providers.\n- Digital services such as software or streaming services supplied from overseas."
           },
           "tags": [
             "reverse-charge"
@@ -56,7 +56,7 @@
         },
         {
           "desc": {
-            "en": "This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD and must include:\n\n\t\t\t\t\t\t\t1. Supplier name, address and GST registration number;\n\t\t\t\t\t\t\t2. An identifying number, e.g. invoice number.\n\t\t\t\t\t\t\t3. The date of issue of the invoice.\n\t\t\t\t\t\t\t4. Description of the goods or services supplied.\n\t\t\t\t\t\t\t5. The total amount payable including tax.\n\t\t\t\t\t\t\t6. The word \"Price Payable includes GST\"."
+            "en": "This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD and must include:\n\n1. Supplier name, address and GST registration number;\n2. An identifying number, e.g. invoice number.\n3. The date of issue of the invoice.\n4. Description of the goods or services supplied.\n5. The total amount payable including tax.\n6. The word \"Price Payable includes GST\"."
           },
           "tags": [
             "simplified"
@@ -69,7 +69,7 @@
         },
         {
           "desc": {
-            "en": "This type of invoice can be issued to a non-GST registered customer:\n\n\t\t\t\t\t\t\t1. Supplier name and GST registration number;\n\t\t\t\t\t\t\t2. The date of issue of the invoice.\n\t\t\t\t\t\t\t3. The total amount payable including tax.\n\t\t\t\t\t\t\t4. The word \"Price Payable includes GST\"."
+            "en": "This type of invoice can be issued to a non-GST registered customer:\n\n1. Supplier name and GST registration number;\n2. The date of issue of the invoice.\n3. The total amount payable including tax.\n4. The word \"Price Payable includes GST\"."
           },
           "tags": [
             "receipt"

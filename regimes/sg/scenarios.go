@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -26,12 +27,12 @@ func invoiceTags() *tax.TagSet {
 					i18n.EN: "Receipt",
 				},
 				Desc: i18n.String{
-					i18n.EN: `This type of invoice can be issued to a non-GST registered customer:
+					i18n.EN: here.Doc(`This type of invoice can be issued to a non-GST registered customer:
 
 							1. Supplier name and GST registration number;
 							2. The date of issue of the invoice.
 							3. The total amount payable including tax.
-							4. The word 'Price Payable includes GST'.`,
+							4. The word 'Price Payable includes GST'.`),
 				},
 			},
 		},
@@ -51,11 +52,11 @@ func invoiceScenarios() *tax.ScenarioSet {
 					Text: "Reverse Charge",
 				},
 				Desc: i18n.String{
-					i18n.EN: `Reverse charge in Singapore applies mainly when a GST-registered business in Singapore imports services or digital services from overseas suppliers. Some examples include:
+					i18n.EN: here.Doc(`Reverse charge in Singapore applies mainly when a GST-registered business in Singapore imports services or digital services from overseas suppliers. Some examples include:
 
 							- Advertising services from overseas platforms.
 							- Consultancy, professional, or technical services from foreign providers.
-							- Digital services such as software or streaming services supplied from overseas.`,
+							- Digital services such as software or streaming services supplied from overseas.`),
 				},
 			},
 			// Simplified Tax Invoice
@@ -67,14 +68,14 @@ func invoiceScenarios() *tax.ScenarioSet {
 					Text: "Price Payable includes GST",
 				},
 				Desc: i18n.String{
-					i18n.EN: `This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD and must include:
+					i18n.EN: here.Doc(`This invoice can only be used when the total amount (inclusive of GST) is less than 1000 SGD and must include:
 
 							1. Supplier name, address and GST registration number;
 							2. An identifying number, e.g. invoice number.
 							3. The date of issue of the invoice.
 							4. Description of the goods or services supplied.
 							5. The total amount payable including tax.
-							6. The word "Price Payable includes GST".`,
+							6. The word "Price Payable includes GST".`),
 				},
 			},
 			// Receipt
@@ -86,12 +87,12 @@ func invoiceScenarios() *tax.ScenarioSet {
 					Text: "Price Payable includes GST",
 				},
 				Desc: i18n.String{
-					i18n.EN: `This type of invoice can be issued to a non-GST registered customer:
+					i18n.EN: here.Doc(`This type of invoice can be issued to a non-GST registered customer:
 
 							1. Supplier name and GST registration number;
 							2. The date of issue of the invoice.
 							3. The total amount payable including tax.
-							4. The word "Price Payable includes GST".`,
+							4. The word "Price Payable includes GST".`),
 				},
 			},
 			// Self-billed
