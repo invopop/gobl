@@ -124,7 +124,7 @@
             "standard"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "VAT"
+            "pl-favat-invoice-type": "VAT"
           }
         },
         {
@@ -139,7 +139,7 @@
             "partial"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "ZAL"
+            "pl-favat-invoice-type": "ZAL"
           }
         },
         {
@@ -154,7 +154,7 @@
             "settlement"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "ROZ"
+            "pl-favat-invoice-type": "ROZ"
           }
         },
         {
@@ -169,7 +169,7 @@
             "simplified"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "UPR"
+            "pl-favat-invoice-type": "UPR"
           }
         },
         {
@@ -181,7 +181,7 @@
             "credit-note"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "KOR"
+            "pl-favat-invoice-type": "KOR"
           }
         },
         {
@@ -196,7 +196,7 @@
             "partial"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "KOR_ZAL"
+            "pl-favat-invoice-type": "KOR_ZAL"
           }
         },
         {
@@ -211,7 +211,7 @@
             "settlement"
           ],
           "codes": {
-            "pl-favat-rodzaj-faktury": "KOR_ROZ"
+            "pl-favat-invoice-type": "KOR_ROZ"
           }
         }
       ]

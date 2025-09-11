@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.300.0] - 2025-09-11
+
 ### Fixed
 
 - `tax`: Combo `exempt` rate will be migrated to `key`. Addons need to handle specific migrations.
