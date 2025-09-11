@@ -60,17 +60,20 @@ func TestInvoice(t *testing.T) {
 		tc.Key = tax.KeyExempt
 		tc.Rate = ""
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "ISE", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
-		assert.Equal(t, "M07", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "ISE", tc.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "M07", tc.Ext[saft.ExtKeyExemption].String())
 
-		// Allow override
-		inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption] = "M04"
+		// Allow override as this is "exempt"
+		tc.Ext[saft.ExtKeyExemption] = "M04"
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "M07", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "export", tc.Key.String())
+		assert.Equal(t, "M04", tc.Ext[saft.ExtKeyExemption].String())
 
-		// Allow override
-		inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption] = "M01"
+		// Do not allow override from "export" back to "exempt", but
+		// force the code back to default "M05"
+		tc.Ext[saft.ExtKeyExemption] = "M01"
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "M01", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
+		assert.Equal(t, "export", tc.Key.String())
+		assert.Equal(t, "M05", tc.Ext[saft.ExtKeyExemption].String())
 	})
 }

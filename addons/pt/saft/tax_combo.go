@@ -34,7 +34,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		case tax.KeyStandard:
 			c, ok := taxRateMap[tc.Rate]
 			if ok {
-				tc.Ext = tc.Ext.Set(ExtKeyTaxRate, c)
+				tc.Ext = tc.Ext.
+					Delete(ExtKeyExemption).
+					Set(ExtKeyTaxRate, c)
 			}
 		case tax.KeyReverseCharge:
 			tc.Ext = tc.Ext.
@@ -67,7 +69,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 }
 
 func prepareTaxComboKey(tc *tax.Combo) {
-	if !tc.Key.IsEmpty() {
+	// We need to do reverse mappings for the exempt key in order to cope
+	// with earlier usage of the "exempt" rate which was too generic.
+	if !tc.Key.IsEmpty() && tc.Key != tax.KeyExempt {
 		return
 	}
 	switch tc.Ext.Get(ExtKeyExemption) {
@@ -84,7 +88,9 @@ func prepareTaxComboKey(tc *tax.Combo) {
 		"M26":
 		tc.Key = tax.KeyExempt
 	default:
-		tc.Key = tax.KeyStandard
+		if tc.Key.IsEmpty() {
+			tc.Key = tax.KeyStandard
+		}
 	}
 }
 
