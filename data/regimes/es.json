@@ -413,18 +413,6 @@
       },
       "rates": [
         {
-          "rate": "zero",
-          "name": {
-            "en": "Zero Rate",
-            "es": "Tipo Cero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
-        {
           "rate": "general",
           "name": {
             "en": "General Rate",

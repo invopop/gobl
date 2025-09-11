@@ -10,9 +10,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
 
+
+## [v0.300.0-rc2] - 2025-09-09
+
+### Added
+
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `pt`: added comprehensive validations to regime
+- `pt-saft-v1`: added comprehensive validations to addon
+
+### Fixed
+
+- `mx`: normalize codes with `MX` code at the beginning
+- `es-verifactu-v1`: correct `N2` operation code scenario
+
 ### Changed
 
 - `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
+- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
+- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
 
 ## [v0.300.0-rc1] - 2025-09-02
 
@@ -26,7 +42,6 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 - `br`: added retained taxes CSLL, INSS and IRRF
 - `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
 - `br`: made ISS an informative tax
-- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
 
 ### Fixed
 
@@ -35,6 +50,7 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 ### Changed
 
 - `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
+- `pt-saft-v1`: moved exemption notes to line-level and added validations
 
 ## [v0.220.6] - 2025-08-12
 
