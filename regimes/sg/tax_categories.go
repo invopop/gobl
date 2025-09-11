@@ -34,7 +34,7 @@ func taxCategories() []*tax.CategoryDef {
 					Keys: []cbc.Key{tax.KeyStandard},
 					Rate: tax.RateGeneral,
 					Name: i18n.String{
-						i18n.EN: "Standard rate",
+						i18n.EN: "General rate",
 					},
 					Description: i18n.String{
 						i18n.EN: "GST-registered businesses are required to charge and account for GST at 9% on all sales of goods and services in Singapore unless the sale can be zero-rated or exempted under the GST law.",

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 - `sg`: Singaporean regime
+- `tax`: `keys` for GST
 
 ### Changed
 

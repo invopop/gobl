@@ -66,6 +66,18 @@ func TestValidInvoice(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
+func TestValidInvoiceWithGST(t *testing.T) {
+	inv := validInvoice()
+	inv.Supplier.Identities = []*org.Identity{
+		{
+			Key:  sg.IdentityKeyGSTNumber,
+			Code: "M91234567X",
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	require.NoError(t, inv.Validate())
+}
+
 func TestValidReceiptInvoice(t *testing.T) {
 	inv := validInvoice()
 	inv.SetTags(sg.TagInvoiceReceipt)
