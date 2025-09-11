@@ -89,9 +89,9 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 				c.Percent = num.NewPercentage(0, 2)
 			}
 		case KeyExempt:
-			// don't make any assumptions about the key as 'exempt' is too generic,
-			// assume it is provided alongside a specific extension code in most cases.
-			c.Key = cbc.KeyEmpty
+			// This can cause problems with backwards compatibility as the "exempt"
+			// rate was used too widely. Addons will need to try and account for this.
+			c.Key = KeyExempt
 			c.Rate = cbc.KeyEmpty
 		case KeyExempt.With("reverse-charge"):
 			c.Key = KeyReverseCharge

@@ -59,17 +59,17 @@ func TestComboNormalize(t *testing.T) {
 		c.Normalize(nil)
 		assert.Equal(t, "0%", c.Percent.String())
 	})
-	t.Run("remove exempt rate", func(t *testing.T) {
+	t.Run("migrate exempt rate", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: "VAT",
 			Rate:     "exempt",
 		}
 		c.Normalize(nil)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
-		assert.Empty(t, c.Key)
+		assert.Equal(t, tax.KeyExempt, c.Key)
 		assert.Empty(t, c.Rate)
 	})
-	t.Run("remove exempt rate and key", func(t *testing.T) {
+	t.Run("remove exempt rate and keep key", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: "VAT",
 			Key:      tax.KeyExempt,
@@ -77,7 +77,7 @@ func TestComboNormalize(t *testing.T) {
 		}
 		c.Normalize(nil)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
-		assert.Empty(t, c.Key)
+		assert.Equal(t, tax.KeyExempt, c.Key)
 		assert.Empty(t, c.Rate)
 	})
 	t.Run("migrate exempt+reverse-charge rate", func(t *testing.T) {

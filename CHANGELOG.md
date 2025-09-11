@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `tax`: Combo `exempt` rate will be migrated to `key`. Addons need to handle specific migrations.
+- `pt-saft-v1`: fixed `exempt` rate handling.
+- `it-sdi-v1`: fixed `exempt` rate handling. 
+
 ## [v0.300.0-rc2] - 2025-09-09
 
 ### Added
