@@ -59,15 +59,48 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Nil(t, tc)
 	})
 
-	t.Run("standard", func(t *testing.T) {
+	t.Run("standard - general", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyStandard,
+			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(4, 2),
 		}
 		ad.Normalizer(tc)
 		assert.Equal(t, "4%", tc.Percent.String())
 		assert.Equal(t, "standard", tc.Key.String())
+		assert.Equal(t, "general", tc.Rate.String())
+		assert.Equal(t, "1", tc.Ext.Get(mydata.ExtKeyVATRate).String())
+	})
+
+	t.Run("standard - reduced", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateReduced,
+			Percent:  num.NewPercentage(4, 2),
+		}
+		ad.Normalizer(tc)
+		assert.Equal(t, "4%", tc.Percent.String())
+		assert.Equal(t, "standard", tc.Key.String())
+		assert.Equal(t, "reduced", tc.Rate.String())
+		assert.Equal(t, "2", tc.Ext.Get(mydata.ExtKeyVATRate).String())
+	})
+
+	t.Run("standard - with exempt", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyStandard,
+			Rate:     tax.RateReduced,
+			Percent:  num.NewPercentage(4, 2),
+			Ext:      tax.Extensions{mydata.ExtKeyExemption: "3"},
+		}
+		ad.Normalizer(tc)
+		assert.Equal(t, "4%", tc.Percent.String())
+		assert.Equal(t, "standard", tc.Key.String())
+		assert.Equal(t, "reduced", tc.Rate.String())
+		assert.Equal(t, "2", tc.Ext.Get(mydata.ExtKeyVATRate).String())
+		assert.Empty(t, tc.Ext.Get(mydata.ExtKeyExemption).String())
 	})
 
 	t.Run("exempt", func(t *testing.T) {
