@@ -295,16 +295,14 @@ var extensions = []*cbc.Definition{
 				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
 				L10 list.
 
-				The follow mappings will be made automatically by GOBL during normalization:
+				The follow mappings will be made automatically by GOBL during normalization.
 
-				| Exemption Code | Tax Key |
-				|----------------|---------|
-				| ~E1~           | ~exempt~ |
-				| ~E2~           | ~export~ |
-				| ~E3~           | ~export+transport~ |
-				| ~E4~           | ~export+triangular~ |
-				| ~E5~           | ~intra-community~ |
-				| ~E6~           | ~exempt+other~ |
+				| Tax Key           | Exemption Codes            |
+				|-------------------|----------------------------|
+				| ~exempt~          | ~E1~ (default), ~E6~       |
+				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
+				| ~intra-community~ | ~E5~                       |
+				| ~exempt~          | ~E6~                       |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -401,8 +399,8 @@ var extensions = []*cbc.Definition{
 
 				| Combo Context				| Regime Code |
 				|---------------------------|-------------|
-				| Rate ~standard~			| ~01~        |
-				| Rate has ~export~			| ~02~        |
+				| Key ~standard~			| ~01~        |
+				| Key ~export~			    | ~02~        |
 				| Has surcharge				| ~18~        |
 			`),
 		},

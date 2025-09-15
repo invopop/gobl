@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `es`: IGIC now uses VAT keys.
+
 ## [v0.300.1] - 2025-09-12
 
 ### Fixed
