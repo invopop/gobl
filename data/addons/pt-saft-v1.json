@@ -393,7 +393,7 @@
             "pt": "Lei n.º 17/2023, de 14 de abril"
           },
           "desc": {
-            "en": "“IVA Zero” food-basket scheme allowed VAT exemption with right to\ndeduction. Active 18 Apr 2023 to 4 Jan 2024, now expired. "
+            "en": "“IVA Zero” food-basket scheme allowed VAT exemption with right to\ndeduction. Active 18 Apr 2023 to 4 Jan 2024, now expired."
           }
         },
         {
@@ -433,7 +433,7 @@
             "pt": "Artigo 2.º n.º 1 alínea m) do CIVA"
           },
           "desc": {
-            "en": "Reverse-charge on raw cork, wood, pine-cones with shell — \npurchaser accounts for VAT."
+            "en": "Reverse-charge on raw cork, wood, pine-cones with shell —\npurchaser accounts for VAT."
           }
         },
         {
@@ -484,6 +484,36 @@
           },
           "desc": {
             "en": "Reverse-charge on investment gold transactions that are not\nVAT-exempt under special gold regulations; buyer reports VAT."
+          }
+        },
+        {
+          "code": "M44",
+          "name": {
+            "en": "Article 6.º of the CIVA – Specific rules",
+            "pt": "Artigo 6.º do CIVA – Regras específicas"
+          },
+          "desc": {
+            "en": "To be used in operations not localized in Portugal due to the\nexception rules in numbers 7 and following of article 6.º of the\nVAT Code."
+          }
+        },
+        {
+          "code": "M45",
+          "name": {
+            "en": "Artigo 58.º-A do CIVA",
+            "pt": "Article 58.º-A of the CIVA"
+          },
+          "desc": {
+            "en": "To be used in operations located in another Member State of the\nEuropean Union that are exempt from VAT there, by virtue of the\nsupplier of goods or provider of services having adhered to the\nCross-Border Exemption Regime for operations carried out in that\nMember State. Without prejudice to the provisions of\nCircular-Letter no. 25 065, of 08.04.2025, for better\nidentification and separation of these operations, the mention\n\"IVA - regime transfronteiriço de isenção\" must be used."
+          }
+        },
+        {
+          "code": "M46",
+          "name": {
+            "en": "Decree-Law No. 19/2017, of February 14",
+            "pt": "Decreto-lei n.º 19/2017, de 14 de fevereiro"
+          },
+          "desc": {
+            "en": "To be used by the seller in issuing invoices for operations where\nthe exemption has been applied to the transfer of goods to be\ntransported in the personal luggage of travelers without domicile\nor establishment in the European Union, under the terms of the\naforementioned decree-law."
           }
         },
         {

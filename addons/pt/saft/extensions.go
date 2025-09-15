@@ -626,7 +626,7 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
 						“IVA Zero” food-basket scheme allowed VAT exemption with right to
-						deduction. Active 18 Apr 2023 to 4 Jan 2024, now expired. 
+						deduction. Active 18 Apr 2023 to 4 Jan 2024, now expired.
 					`),
 				},
 			},
@@ -677,7 +677,7 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Reverse-charge on raw cork, wood, pine-cones with shell — 
+						Reverse-charge on raw cork, wood, pine-cones with shell —
 						purchaser accounts for VAT.
 					`),
 				},
@@ -745,6 +745,55 @@ var extensions = []*cbc.Definition{
 					i18n.EN: here.Doc(`
 						Reverse-charge on investment gold transactions that are not
 						VAT-exempt under special gold regulations; buyer reports VAT.
+					`),
+				},
+			},
+			{
+				Code: "M44",
+				Name: i18n.String{
+					i18n.EN: "Article 6.º of the CIVA – Specific rules",
+					i18n.PT: "Artigo 6.º do CIVA – Regras específicas",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To be used in operations not localized in Portugal due to the
+						exception rules in numbers 7 and following of article 6.º of the
+						VAT Code.
+					`),
+				},
+			},
+			{
+				Code: "M45",
+				Name: i18n.String{
+					i18n.EN: "Artigo 58.º-A do CIVA",
+					i18n.PT: "Article 58.º-A of the CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To be used in operations located in another Member State of the
+						European Union that are exempt from VAT there, by virtue of the
+						supplier of goods or provider of services having adhered to the
+						Cross-Border Exemption Regime for operations carried out in that
+						Member State. Without prejudice to the provisions of
+						Circular-Letter no. 25 065, of 08.04.2025, for better
+						identification and separation of these operations, the mention
+						"IVA - regime transfronteiriço de isenção" must be used.
+					`),
+				},
+			},
+			{
+				Code: "M46",
+				Name: i18n.String{
+					i18n.EN: "Decree-Law No. 19/2017, of February 14",
+					i18n.PT: "Decreto-lei n.º 19/2017, de 14 de fevereiro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To be used by the seller in issuing invoices for operations where
+						the exemption has been applied to the transfer of goods to be
+						transported in the personal luggage of travelers without domicile
+						or establishment in the European Union, under the terms of the
+						aforementioned decree-law.
 					`),
 				},
 			},
