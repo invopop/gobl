@@ -302,7 +302,6 @@ var extensions = []*cbc.Definition{
 				| ~exempt~          | ~E1~ (default), ~E6~       |
 				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
 				| ~intra-community~ | ~E5~                       |
-				| ~exempt~          | ~E6~                       |
 			`),
 		},
 		Values: []*cbc.Definition{
