@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `org`: `Item` - `images` field for storing links to images of the item.
+
 ### Fixed
 
 - `es`: IGIC now uses VAT keys.
