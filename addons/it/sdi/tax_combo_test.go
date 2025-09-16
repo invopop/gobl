@@ -58,4 +58,15 @@ func TestNormalizeTaxC(t *testing.T) {
 		}
 	})
 
+	t.Run("check exempt handling", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyExempt,
+			Ext:      tax.Extensions{sdi.ExtKeyExempt: "N3.2"},
+		}
+		ad.Normalizer(tc)
+		assert.Equal(t, "N3.2", tc.Ext.Get(sdi.ExtKeyExempt).String())
+		assert.Equal(t, tax.KeyIntraCommunity, tc.Key)
+	})
+
 }
