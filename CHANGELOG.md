@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+
+- `es-verifactu-v1`: removed preceding validations for credit notes and `F3` invoice type
+
 ## [v0.300.1] - 2025-09-12
 
 ### Fixed

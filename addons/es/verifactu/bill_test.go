@@ -217,32 +217,29 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
 	})
 
-	t.Run("correction invoice requires preceding", func(t *testing.T) {
+	t.Run("corrective invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		assertValidationError(t, inv, "preceding: cannot be blank")
 	})
-	t.Run("correction invoice nil preceding", func(t *testing.T) {
+	t.Run("corrective invoice nil preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{nil}
 		require.NoError(t, inv.Calculate())
 		ad := tax.AddonForKey(verifactu.V1)
 		assert.NoError(t, ad.Validator(inv))
 	})
 
-	t.Run("credit-note invoice preceding requires issue date", func(t *testing.T) {
+	t.Run("credit note needs no preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Preceding = []*org.DocumentRef{
-			{
-				Code: "123",
-			},
-		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		ad := tax.AddonForKey(verifactu.V1)
+		assert.NoError(t, ad.Validator(inv))
 	})
 
-	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+	t.Run("corrective invoice preceding requires issue date and tax", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{
@@ -253,7 +250,7 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
 
-	t.Run("correction invoice with preceding", func(t *testing.T) {
+	t.Run("corrective invoice with preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
 		d := cal.MakeDate(2024, 1, 1)
@@ -293,7 +290,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags("replacement")
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, inv.Validate(), "preceding: details of invoice being replaced must be included")
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("replacement with preceding", func(t *testing.T) {
