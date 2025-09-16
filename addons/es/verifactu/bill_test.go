@@ -252,7 +252,7 @@ func TestInvoiceValidation(t *testing.T) {
 
 	t.Run("corrective invoice with preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		d := cal.MakeDate(2024, 1, 1)
 		inv.Preceding = []*org.DocumentRef{
 			{
