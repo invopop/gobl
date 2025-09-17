@@ -270,4 +270,52 @@ func TestLineValidation(t *testing.T) {
 		err := addon.Validator(line)
 		assert.ErrorContains(t, err, "notes: (1: too many exemption notes)")
 	})
+
+	t.Run("negative sum", func(t *testing.T) {
+		line := &bill.Line{
+			Sum: num.NewAmount(-10, 2),
+		}
+		assert.ErrorContains(t, addon.Validator(line), "sum: must be no less than 0")
+	})
+
+	t.Run("negative total", func(t *testing.T) {
+		line := &bill.Line{
+			Total: num.NewAmount(-10, 2),
+		}
+		assert.ErrorContains(t, addon.Validator(line), "total: must be no less than 0")
+	})
+
+	t.Run("nil line", func(t *testing.T) {
+		line := bill.Line{}
+		require.NoError(t, addon.Validator(line))
+	})
+
+	t.Run("valid discount", func(t *testing.T) {
+		line := &bill.Line{
+			Discounts: []*bill.LineDiscount{
+				{
+					Amount: num.MakeAmount(10, 2),
+				},
+			},
+		}
+		require.NoError(t, addon.Validator(line))
+	})
+
+	t.Run("negative discount amount", func(t *testing.T) {
+		line := &bill.Line{
+			Discounts: []*bill.LineDiscount{
+				{
+					Amount: num.MakeAmount(-10, 2),
+				},
+			},
+		}
+		assert.ErrorContains(t, addon.Validator(line), "discounts: (0: (amount: must be no less than 0")
+	})
+
+	t.Run("nil discount", func(t *testing.T) {
+		line := &bill.Line{
+			Discounts: []*bill.LineDiscount{nil},
+		}
+		require.NoError(t, addon.Validator(line))
+	})
 }
