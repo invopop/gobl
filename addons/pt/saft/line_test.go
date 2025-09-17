@@ -162,41 +162,39 @@ func TestLineValidation(t *testing.T) {
 		assert.NoError(t, addon.Validator(line))
 	})
 
-	t.Run("line with no notes", func(t *testing.T) {
-		line := new(bill.Line)
+	t.Run("valid line", func(t *testing.T) {
+		line := validLine()
 		assert.NoError(t, addon.Validator(line))
 	})
 
 	t.Run("line with valid exemption note", func(t *testing.T) {
-		line := &bill.Line{
-			Taxes: tax.Set{
-				{
-					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
-						saft.ExtKeyExemption: "M04",
-					},
+		line := validLine()
+		line.Taxes = tax.Set{
+			{
+				Category: tax.CategoryVAT,
+				Ext: tax.Extensions{
+					saft.ExtKeyExemption: "M04",
 				},
 			},
-			Notes: []*org.Note{
-				{
-					Key:  org.NoteKeyLegal,
-					Src:  saft.ExtKeyExemption,
-					Code: "M04",
-					Text: "Artigo 13.º do CIVA",
-				},
+		}
+		line.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLegal,
+				Src:  saft.ExtKeyExemption,
+				Code: "M04",
+				Text: "Artigo 13.º do CIVA",
 			},
 		}
 		assert.NoError(t, addon.Validator(line))
 	})
 
 	t.Run("line missing exemption note", func(t *testing.T) {
-		line := &bill.Line{
-			Taxes: tax.Set{
-				{
-					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
-						saft.ExtKeyExemption: "M04",
-					},
+		line := validLine()
+		line.Taxes = tax.Set{
+			{
+				Category: tax.CategoryVAT,
+				Ext: tax.Extensions{
+					saft.ExtKeyExemption: "M04",
 				},
 			},
 		}
@@ -205,14 +203,13 @@ func TestLineValidation(t *testing.T) {
 	})
 
 	t.Run("line with unexpected exemption note", func(t *testing.T) {
-		line := &bill.Line{
-			Notes: []*org.Note{
-				{
-					Key:  org.NoteKeyLegal,
-					Src:  saft.ExtKeyExemption,
-					Code: "M04",
-					Text: "Artigo 13.º do CIVA",
-				},
+		line := validLine()
+		line.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLegal,
+				Src:  saft.ExtKeyExemption,
+				Code: "M04",
+				Text: "Artigo 13.º do CIVA",
 			},
 		}
 		err := addon.Validator(line)
@@ -220,22 +217,21 @@ func TestLineValidation(t *testing.T) {
 	})
 
 	t.Run("line with mismatched exemption note code", func(t *testing.T) {
-		line := &bill.Line{
-			Taxes: tax.Set{
-				{
-					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
-						saft.ExtKeyExemption: "M04",
-					},
+		line := validLine()
+		line.Taxes = tax.Set{
+			{
+				Category: tax.CategoryVAT,
+				Ext: tax.Extensions{
+					saft.ExtKeyExemption: "M04",
 				},
 			},
-			Notes: []*org.Note{
-				{
-					Key:  org.NoteKeyLegal,
-					Src:  saft.ExtKeyExemption,
-					Code: "M01", // Different code than extension
-					Text: "Artigo 13.º do CIVA",
-				},
+		}
+		line.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLegal,
+				Src:  saft.ExtKeyExemption,
+				Code: "M01", // Different code than extension
+				Text: "Artigo 13.º do CIVA",
 			},
 		}
 		err := addon.Validator(line)
@@ -243,28 +239,27 @@ func TestLineValidation(t *testing.T) {
 	})
 
 	t.Run("line with too many exemption notes", func(t *testing.T) {
-		line := &bill.Line{
-			Taxes: tax.Set{
-				{
-					Category: tax.CategoryVAT,
-					Ext: tax.Extensions{
-						saft.ExtKeyExemption: "M04",
-					},
+		line := validLine()
+		line.Taxes = tax.Set{
+			{
+				Category: tax.CategoryVAT,
+				Ext: tax.Extensions{
+					saft.ExtKeyExemption: "M04",
 				},
 			},
-			Notes: []*org.Note{
-				{
-					Key:  org.NoteKeyLegal,
-					Src:  saft.ExtKeyExemption,
-					Code: "M04",
-					Text: "Artigo 13.º do CIVA",
-				},
-				{
-					Key:  org.NoteKeyLegal,
-					Src:  saft.ExtKeyExemption,
-					Code: "M04",
-					Text: "Duplicate exemption note",
-				},
+		}
+		line.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLegal,
+				Src:  saft.ExtKeyExemption,
+				Code: "M04",
+				Text: "Artigo 13.º do CIVA",
+			},
+			{
+				Key:  org.NoteKeyLegal,
+				Src:  saft.ExtKeyExemption,
+				Code: "M04",
+				Text: "Duplicate exemption note",
 			},
 		}
 		err := addon.Validator(line)
@@ -272,50 +267,56 @@ func TestLineValidation(t *testing.T) {
 	})
 
 	t.Run("negative sum", func(t *testing.T) {
-		line := &bill.Line{
-			Sum: num.NewAmount(-10, 2),
-		}
+		line := validLine()
+		line.Sum = num.NewAmount(-10, 2)
 		assert.ErrorContains(t, addon.Validator(line), "sum: must be no less than 0")
 	})
 
 	t.Run("negative total", func(t *testing.T) {
-		line := &bill.Line{
-			Total: num.NewAmount(-10, 2),
-		}
+		line := validLine()
+		line.Total = num.NewAmount(-10, 2)
 		assert.ErrorContains(t, addon.Validator(line), "total: must be no less than 0")
 	})
 
-	t.Run("nil line", func(t *testing.T) {
-		line := bill.Line{}
-		require.NoError(t, addon.Validator(line))
-	})
-
 	t.Run("valid discount", func(t *testing.T) {
-		line := &bill.Line{
-			Discounts: []*bill.LineDiscount{
-				{
-					Amount: num.MakeAmount(10, 2),
-				},
+		line := validLine()
+		line.Discounts = []*bill.LineDiscount{
+			{
+				Amount: num.MakeAmount(10, 2),
 			},
 		}
 		require.NoError(t, addon.Validator(line))
 	})
 
 	t.Run("negative discount amount", func(t *testing.T) {
-		line := &bill.Line{
-			Discounts: []*bill.LineDiscount{
-				{
-					Amount: num.MakeAmount(-10, 2),
-				},
+		line := validLine()
+		line.Discounts = []*bill.LineDiscount{
+			{
+				Amount: num.MakeAmount(-10, 2),
 			},
 		}
 		assert.ErrorContains(t, addon.Validator(line), "discounts: (0: (amount: must be no less than 0")
 	})
 
 	t.Run("nil discount", func(t *testing.T) {
-		line := &bill.Line{
-			Discounts: []*bill.LineDiscount{nil},
-		}
+		line := validLine()
+		line.Discounts = []*bill.LineDiscount{nil}
 		require.NoError(t, addon.Validator(line))
 	})
+
+	t.Run("negative quantity", func(t *testing.T) {
+		line := validLine()
+		line.Quantity = num.MakeAmount(-10, 0)
+		assert.ErrorContains(t, addon.Validator(line), "quantity: must be greater than 0")
+	})
+
+	t.Run("zero quantity", func(t *testing.T) {
+		line := validLine()
+		line.Quantity = num.AmountZero
+		assert.ErrorContains(t, addon.Validator(line), "quantity: must be greater than 0")
+	})
+}
+
+func validLine() *bill.Line {
+	return &bill.Line{Quantity: num.MakeAmount(1, 0)}
 }

@@ -53,6 +53,7 @@ func validateLine(line *bill.Line) error {
 	}
 
 	return validation.ValidateStruct(line,
+		validation.Field(&line.Quantity, num.Positive),
 		validation.Field(&line.Sum, num.ZeroOrPositive),
 		validation.Field(&line.Total, num.ZeroOrPositive),
 		validation.Field(&line.Discounts,
