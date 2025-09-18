@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.300.2] - 2025-09-18
+
 ### Added
 
 - `org`: `Item` - `images` field for storing links to images of the item.
