@@ -35,7 +35,7 @@ type Item struct {
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Detailed description of the item.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
-	// Images associated with the item
+	// Images associated with the item.
 	Images []*Image `json:"images,omitempty" jsonschema:"title=Images"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
