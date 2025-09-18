@@ -59,7 +59,7 @@ func validateLine(line *bill.Line) error {
 		validation.Field(&line.Total, num.ZeroOrPositive),
 		validation.Field(&line.Discounts,
 			validation.Each(
-				validation.By(validateInvoiceLineDiscount),
+				validation.By(validateBillLineDiscount),
 				validation.Skip,
 			),
 		),
@@ -70,7 +70,7 @@ func validateLine(line *bill.Line) error {
 	)
 }
 
-func validateInvoiceLineDiscount(val any) error {
+func validateBillLineDiscount(val any) error {
 	disc, _ := val.(*bill.LineDiscount)
 	if disc == nil {
 		return nil
