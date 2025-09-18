@@ -85,7 +85,7 @@ func validateTaxCombo(val any) error {
 			),
 		)
 	// ensure retained taxes have the required extension
-	case it.TaxCategoryIRPEF, it.TaxCategoryIRES, it.TaxCategoryINPS, it.TaxCategoryENPAM, it.TaxCategoryENASARCO:
+	case it.TaxCategoryIRPEF, it.TaxCategoryIRES, it.TaxCategoryINPS, it.TaxCategoryENPAM, it.TaxCategoryENASARCO, it.TaxCategoryCP:
 		return validation.ValidateStruct(c,
 			validation.Field(&c.Ext,
 				tax.ExtensionsRequire(ExtKeyRetained),
