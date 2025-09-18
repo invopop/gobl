@@ -3,6 +3,7 @@ package saft
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
@@ -99,6 +100,9 @@ func validateExemptionNotes(notes []*org.Note, ec cbc.Code) error {
 			}
 			if ec != n.Code {
 				return fmt.Errorf("(%d: note code %s must match extension %s)", i, n.Code, ec)
+			}
+			if len(strings.TrimSpace(n.Text)) < 5 {
+				return fmt.Errorf("(%d: note text must be at least 5 characters long)", i)
 			}
 			count++
 		}
