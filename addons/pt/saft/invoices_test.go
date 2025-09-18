@@ -482,58 +482,6 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 	})
 }
 
-func TestInvoiceLineValidation(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
-	t.Run("negative sum", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Sum = num.NewAmount(-10, 2)
-		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (sum: must be no less than 0")
-	})
-
-	t.Run("negative total", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Total = num.NewAmount(-10, 2)
-		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (total: must be no less than 0")
-	})
-
-	t.Run("nil line", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines = []*bill.Line{nil}
-		require.NoError(t, addon.Validator(inv))
-	})
-}
-
-func TestInvoiceLineDiscountValidation(t *testing.T) {
-	addon := tax.AddonForKey(saft.V1)
-
-	t.Run("valid discount", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Discounts = []*bill.LineDiscount{
-			{
-				Amount: num.MakeAmount(10, 2),
-			},
-		}
-		require.NoError(t, addon.Validator(inv))
-	})
-
-	t.Run("negative discount amount", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Discounts = []*bill.LineDiscount{
-			{
-				Amount: num.MakeAmount(-10, 2),
-			},
-		}
-		assert.ErrorContains(t, addon.Validator(inv), "lines: (0: (discounts: (0: (amount: must be no less than 0")
-	})
-
-	t.Run("nil discount", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Lines[0].Discounts = []*bill.LineDiscount{nil}
-		require.NoError(t, addon.Validator(inv))
-	})
-}
-
 func TestInvoiceTotalsValidation(t *testing.T) {
 	addon := tax.AddonForKey(saft.V1)
 

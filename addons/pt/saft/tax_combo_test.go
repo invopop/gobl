@@ -182,6 +182,30 @@ func TestTaxComboNormalize(t *testing.T) {
 		assert.Equal(t, tax.KeyExempt, combo.Key)
 	})
 
+	t.Run("rate missing but extension present", func(t *testing.T) {
+		combo := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				saft.ExtKeyTaxRate: "INT",
+			},
+		}
+		ad.Normalizer(combo)
+		assert.Equal(t, "INT", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, tax.RateIntermediate, combo.Rate)
+	})
+
+	t.Run("rate and extension mismatching", func(t *testing.T) {
+		combo := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+			Ext: tax.Extensions{
+				saft.ExtKeyTaxRate: "INT",
+			},
+		}
+		ad.Normalizer(combo)
+		assert.Equal(t, "NOR", combo.Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, tax.RateGeneral, combo.Rate)
+	})
 }
 
 func TestTaxComboValidate(t *testing.T) {
@@ -254,4 +278,5 @@ func TestTaxComboValidate(t *testing.T) {
 		err := ad.Validator(combo)
 		assert.NoError(t, err)
 	})
+
 }
