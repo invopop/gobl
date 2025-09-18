@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `org`: `Item` - `images` field for storing links to images of the item.
+- `pt-saft-v1`: positive quantity validation
+- `pt-saft-v1`: tax rate normalization to prevent rate extension and percent mismatches
+- `pt-saft-v1`: exemption note text length validation
 
 ### Removed
 

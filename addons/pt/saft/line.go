@@ -3,10 +3,12 @@ package saft
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -52,10 +54,30 @@ func validateLine(line *bill.Line) error {
 	}
 
 	return validation.ValidateStruct(line,
+		validation.Field(&line.Quantity, num.Positive),
+		validation.Field(&line.Sum, num.ZeroOrPositive),
+		validation.Field(&line.Total, num.ZeroOrPositive),
+		validation.Field(&line.Discounts,
+			validation.Each(
+				validation.By(validateBillLineDiscount),
+				validation.Skip,
+			),
+		),
 		validation.Field(&line.Notes,
 			validation.By(validateLineNotes(line)),
 			validation.Skip,
 		),
+	)
+}
+
+func validateBillLineDiscount(val any) error {
+	disc, _ := val.(*bill.LineDiscount)
+	if disc == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(disc,
+		validation.Field(&disc.Amount, num.ZeroOrPositive),
 	)
 }
 
@@ -78,6 +100,9 @@ func validateExemptionNotes(notes []*org.Note, ec cbc.Code) error {
 			}
 			if ec != n.Code {
 				return fmt.Errorf("(%d: note code %s must match extension %s)", i, n.Code, ec)
+			}
+			if len(strings.TrimSpace(n.Text)) < 5 {
+				return fmt.Errorf("(%d: note text must be at least 5 characters long)", i)
 			}
 			count++
 		}
