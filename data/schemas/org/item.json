@@ -45,7 +45,7 @@
           },
           "type": "array",
           "title": "Images",
-          "description": "Images associated with the item"
+          "description": "Images associated with the item."
         },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
