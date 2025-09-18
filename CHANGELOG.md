@@ -11,14 +11,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `org`: `Item` - `images` field for storing links to images of the item.
-<<<<<<< HEAD
 - `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
 - `it`: added new tax category for `CP` to handle code `RT06` for retained taxes
-=======
 - `pt-saft-v1`: positive quantity validation
 - `pt-saft-v1`: tax rate normalization to prevent rate extension and percent mismatches
 - `pt-saft-v1`: exemption note text length validation
->>>>>>> main
 
 ### Removed
 
