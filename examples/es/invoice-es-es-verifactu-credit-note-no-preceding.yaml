@@ -1,0 +1,57 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+type: "credit-note"
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852a0"
+currency: "EUR"
+issue_date: "2025-07-10"
+series: "SAMPLE-F"
+code: "004"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642" # random
+  name: "Provide One S.L."
+  emails:
+    - addr: "billing@example.com"
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Sample Consumer"
+  addresses:
+    - num: "1"
+      street: "Calle de la Libertad"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28001"
+      country: "ES"
+
+lines:
+  - quantity: 20
+    item:
+      name: "Development services"
+      price: "90.00"
+      unit: "h"
+    discounts:
+      - percent: "10%"
+        reason: "Special discount"
+      - amount: "0.00"
+    taxes:
+      - cat: VAT
+        rate: standard
+  - quantity: 1
+    item:
+      name: "Financial service"
+      price: "10.00"
+    taxes:
+      - cat: VAT
+        rate: zero
