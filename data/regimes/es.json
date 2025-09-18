@@ -411,9 +411,61 @@
         "en": "Canary Island General Indirect Tax",
         "es": "Impuesto General Indirecto Canario"
       },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
       "rates": [
         {
           "rate": "general",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "General Rate",
             "es": "Tipo General"
@@ -426,6 +478,9 @@
         },
         {
           "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "es": "Tipo Reducido"
