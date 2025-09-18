@@ -28,6 +28,7 @@ func TestTaxRateMigration(t *testing.T) {
 
 	// Valid new rate
 	inv = validInvoice()
+	inv.SetAddons(saft.V1)
 	inv.Lines[0].Taxes[0].Rate = "exempt"
 	inv.Lines[0].Taxes[0].Ext = tax.Extensions{saft.ExtKeyExemption: "M02"}
 

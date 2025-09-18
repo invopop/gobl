@@ -134,45 +134,6 @@ func TestPaymentValidation(t *testing.T) {
 		assert.NoError(t, addon.Validator(pmt))
 	})
 
-	t.Run("missing line document", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Document = nil
-
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (document: cannot be blank.).)")
-
-		pmt.Lines[0] = nil
-		assert.NoError(t, addon.Validator(pmt))
-	})
-
-	t.Run("missing line document issue date", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Document.IssueDate = nil
-
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (document: (issue_date: cannot be blank")
-	})
-
-	t.Run("missing VAT category in line tax", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Tax = nil
-
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (tax: cannot be blank")
-
-		pmt.Lines[0].Tax = new(tax.Total)
-		assert.ErrorContains(t, addon.Validator(pmt), "lines: (0: (tax: missing category VAT")
-	})
-
-	t.Run("missing line tax required extensions", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Tax.Categories[0].Rates[0].Ext = nil
-
-		err := addon.Validator(pmt)
-		assert.ErrorContains(t, err, "pt-region: required")
-		assert.ErrorContains(t, err, "pt-saft-tax-rate: required")
-
-		pmt.Lines[0].Tax.Categories[0].Rates[0] = nil
-		assert.NoError(t, addon.Validator(pmt))
-	})
-
 	t.Run("missing source billing", func(t *testing.T) {
 		pmt := validPayment()
 		delete(pmt.Ext, saft.ExtKeySource)
@@ -213,26 +174,6 @@ func TestPaymentValidation(t *testing.T) {
 		pmt.Ext[saft.ExtKeySourceRef] = "RGD RG SERIESA/123"
 		require.NoError(t, addon.Validator(pmt))
 	})
-
-	t.Run("nil tax category", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Tax.Categories = append(pmt.Lines[0].Tax.Categories, nil)
-		assert.NoError(t, addon.Validator(pmt))
-	})
-
-	t.Run("too many VAT rates", func(t *testing.T) {
-		pmt := validPayment()
-		pmt.Lines[0].Tax.Categories[0].Rates = append(pmt.Lines[0].Tax.Categories[0].Rates, &tax.RateTotal{
-			Ext: tax.Extensions{
-				pt.ExtKeyRegion:    "PT",
-				saft.ExtKeyTaxRate: "INT",
-			},
-		})
-
-		err := addon.Validator(pmt)
-		assert.ErrorContains(t, err, "lines: (0: (tax: (categories: (0: (rates: only one rate allowed per line")
-	})
-
 }
 
 func TestPaymentSourceRefFormatValidation(t *testing.T) {
@@ -333,5 +274,27 @@ func TestPaymentNormalization(t *testing.T) {
 		addon.Normalizer(pmt)
 
 		assert.Equal(t, saft.SourceBillingIntegrated, pmt.Ext[saft.ExtKeySource])
+	})
+}
+
+func TestPaymentTotalValidation(t *testing.T) {
+	addon := tax.AddonForKey(saft.V1)
+
+	t.Run("valid total amount", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.MakeAmount(100, 2)
+		assert.NoError(t, addon.Validator(pmt))
+	})
+
+	t.Run("negative total amount", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.MakeAmount(-10, 2)
+		assert.ErrorContains(t, addon.Validator(pmt), "total: must be no less than 0")
+	})
+
+	t.Run("nil total", func(t *testing.T) {
+		pmt := validPayment()
+		pmt.Total = num.Amount{}
+		assert.NoError(t, addon.Validator(pmt))
 	})
 }

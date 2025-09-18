@@ -2,6 +2,7 @@ package saft
 
 import (
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -23,8 +24,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 	case tax.CategoryVAT:
 		if tc.Country != "" && tc.Country != l10n.PT.Tax() {
 			tc.Ext = tc.Ext.
-				Set(ExtKeyTaxRate, TaxRateExempt).
-				Set(ExtKeyExemption, "M99") // outside of scope for PT
+				Set(ExtKeyTaxRate, TaxRateOther)
 			return
 		}
 
@@ -34,7 +34,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		case tax.KeyStandard:
 			c, ok := taxRateMap[tc.Rate]
 			if ok {
-				tc.Ext = tc.Ext.Set(ExtKeyTaxRate, c)
+				tc.Ext = tc.Ext.
+					Delete(ExtKeyExemption).
+					Set(ExtKeyTaxRate, c)
 			}
 		case tax.KeyReverseCharge:
 			tc.Ext = tc.Ext.
@@ -67,7 +69,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 }
 
 func prepareTaxComboKey(tc *tax.Combo) {
-	if !tc.Key.IsEmpty() {
+	// We need to do reverse mappings for the exempt key in order to cope
+	// with earlier usage of the "exempt" rate which was too generic.
+	if !tc.Key.IsEmpty() && tc.Key != tax.KeyExempt {
 		return
 	}
 	switch tc.Ext.Get(ExtKeyExemption) {
@@ -84,7 +88,9 @@ func prepareTaxComboKey(tc *tax.Combo) {
 		"M26":
 		tc.Key = tax.KeyExempt
 	default:
-		tc.Key = tax.KeyStandard
+		if tc.Key.IsEmpty() {
+			tc.Key = tax.KeyStandard
+		}
 	}
 }
 
@@ -95,16 +101,18 @@ func validateTaxCombo(val any) error {
 	}
 	switch c.Category {
 	case tax.CategoryVAT:
-		return validation.ValidateStruct(c,
-			validation.Field(&c.Ext,
-				tax.ExtensionsRequire(ExtKeyTaxRate),
-				validation.When(
-					c.Percent == nil,
-					tax.ExtensionsRequire(ExtKeyExemption),
-				),
-				validation.Skip,
-			),
-		)
+		return validation.ValidateStruct(c, validateVATExt(&c.Ext))
 	}
 	return nil
+}
+
+func validateVATExt(ext *tax.Extensions) *validation.FieldRules {
+	return validation.Field(ext,
+		tax.ExtensionsRequire(pt.ExtKeyRegion, ExtKeyTaxRate),
+		validation.When(
+			(*ext)[ExtKeyTaxRate] == TaxRateExempt,
+			tax.ExtensionsRequire(ExtKeyExemption),
+		),
+		validation.Skip,
+	)
 }

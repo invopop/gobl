@@ -17,10 +17,10 @@ import (
 // and retained attributes will be determined automatically from the Rate key if set
 // during calculation.
 type Combo struct {
-	// Country code override when issuing with taxes applied from different countries.
-	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Tax category code from those available inside a region.
 	Category cbc.Code `json:"cat" jsonschema:"title=Category"`
+	// Country code override when issuing with taxes applied from different countries.
+	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
 	// Key helps determine the tax situation within the category.
 	Key cbc.Key `json:"key,omitempty"`
 	// Rate within a category and for a given key to apply.
@@ -35,6 +35,8 @@ type Combo struct {
 
 	// Copied from the category definition, implies this tax combo is retained
 	retained bool `json:"-"`
+	// Copied from the category definition, implies this tax combo is informative
+	informative bool `json:"-"`
 }
 
 // ValidateWithContext ensures the Combo has the correct details.
@@ -53,6 +55,7 @@ func (c *Combo) ValidateWithContext(ctx context.Context) error {
 			validation.Required,
 			r.InCategories(),
 		),
+		validation.Field(&c.Country),
 		validation.Field(&c.Key,
 			r.InCategoryKeys(c.Category),
 		),
@@ -86,6 +89,8 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 				c.Percent = num.NewPercentage(0, 2)
 			}
 		case KeyExempt:
+			// This can cause problems with backwards compatibility as the "exempt"
+			// rate was used too widely. Addons will need to try and account for this.
 			c.Key = KeyExempt
 			c.Rate = cbc.KeyEmpty
 		case KeyExempt.With("reverse-charge"):
@@ -108,10 +113,16 @@ func (c *Combo) Normalize(normalizers Normalizers) {
 			}
 		}
 
-		if c.Key == cbc.KeyEmpty {
+		switch c.Key {
+		case cbc.KeyEmpty:
 			// Special case for zero percent which has no additional rates
 			if c.Percent != nil && c.Percent.IsZero() {
 				c.Key = KeyZero
+			}
+		case KeyZero:
+			if c.Percent == nil {
+				zp := num.PercentageZero
+				c.Percent = &zp
 			}
 		}
 	}
@@ -136,6 +147,7 @@ func (c *Combo) calculate(country l10n.TaxCountryCode, date cal.Date) error {
 	}
 
 	c.retained = cd.Retained
+	c.informative = cd.Informative
 
 	// If there are keys defined for the category, but the combo does not
 	// have a key, then we will use the standard key.
@@ -229,7 +241,7 @@ func (Combo) jsonSchemaBuildCategory(cd *CategoryDef) *jsonschema.Schema {
 	s.If.Properties.Set("cat", &jsonschema.Schema{
 		Const: cd.Code.String(),
 	})
-	oneOf := make([]*jsonschema.Schema, len(cd.Keys)+1)
+	oneOf := make([]*jsonschema.Schema, len(cd.Keys))
 	for i, kd := range cd.Keys {
 		oneOf[i] = &jsonschema.Schema{
 			Const: kd.Key.String(),

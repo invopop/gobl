@@ -36,6 +36,8 @@ func normalizeTaxCombo(tc *tax.Combo) {
 			tc.Ext = tc.Ext.
 				Set(ExtKeyExemption, c).
 				Set(ExtKeyVATRate, taxVATRateExempt)
+			tc.Key = tax.KeyOutsideScope
+			return
 		}
 
 		normalizeTaxComboKey(tc)
@@ -44,9 +46,9 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		case tax.KeyStandard, tax.KeyZero:
 			if k, ok := taxComboRateMapVAT[tc.Rate]; ok {
 				tc.Ext = tc.Ext.
-					Set(ExtKeyVATRate, k).
-					Set(ExtKeyVATRate, taxVATRateExempt)
+					Set(ExtKeyVATRate, k)
 			}
+			tc.Ext = tc.Ext.Delete(ExtKeyExemption)
 		case tax.KeyOutsideScope:
 			tc.Ext = tc.Ext.
 				SetOneOf(ExtKeyExemption, "1", "2", "24", "29", "30", "31").

@@ -44,7 +44,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 }
 
 func normalizeTaxComboKey(tc *tax.Combo) {
-	if tc.Key != "" {
+	if tc.Key != "" && tc.Key != tax.KeyExempt {
 		return
 	}
 	switch tc.Ext.Get(ExtKeyExempt) {
@@ -61,8 +61,10 @@ func normalizeTaxComboKey(tc *tax.Combo) {
 	case "N3.2":
 		tc.Key = tax.KeyIntraCommunity
 	case cbc.CodeEmpty:
-		// Assume standard, zero rate will have been normalized already
-		tc.Key = tax.KeyStandard
+		if tc.Key == cbc.KeyEmpty {
+			// Assume standard, zero rate will have been normalized already
+			tc.Key = tax.KeyStandard
+		}
 	}
 }
 
