@@ -29,6 +29,7 @@ func normalizeTaxCombo(tc *tax.Combo) {
 		}
 
 		prepareTaxComboKey(tc)
+		prepareTaxComboRate(tc)
 
 		switch tc.Key {
 		case tax.KeyStandard:
@@ -90,6 +91,27 @@ func prepareTaxComboKey(tc *tax.Combo) {
 	default:
 		if tc.Key.IsEmpty() {
 			tc.Key = tax.KeyStandard
+		}
+	}
+}
+
+func prepareTaxComboRate(tc *tax.Combo) {
+	// Set the tax rate based on the SAF-T tax rate extension. This ensures there will
+	// be no mismatch between the percent and the SAF-T tax rate.
+	if tc.Rate != "" {
+		// Rate already present, no need to change it. If there's a mismatch with
+		// the extension or the percent, subsequent calculations will resolve it.
+		return
+	}
+	code := tc.Ext.Get(ExtKeyTaxRate)
+	if code == "" {
+		// No tax rate extension, we can't infer any rate
+		return
+	}
+	for r, c := range taxRateMap {
+		if c == code {
+			tc.Rate = r
+			return
 		}
 	}
 }
