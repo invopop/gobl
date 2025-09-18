@@ -187,4 +187,23 @@ func TestChargeTotals(t *testing.T) {
 		assert.Equal(t, "50.1234", ls[0].Base.String(), "should maintain original precision")
 		assert.Equal(t, "10.02", ls[0].Amount.String())
 	})
+
+	t.Run("with zero percent charge and inconsistent amount", func(t *testing.T) {
+		ls := []*Charge{
+			{
+				Reason:  "Zero percent charge",
+				Percent: num.NewPercentage(0, 2),
+				Amount:  num.MakeAmount(10, 2),
+			},
+		}
+		base := num.MakeAmount(10000, 2)
+		calculateCharges(ls, currency.EUR, base, tax.RoundingRulePrecise)
+		sum := calculateChargeSum(ls, currency.EUR)
+		require.NotNil(t, sum)
+		assert.Equal(t, "0%", ls[0].Percent.String())
+		assert.Equal(t, "0.00", ls[0].Amount.String())
+		assert.Equal(t, "0.00", sum.String())
+		roundCharges(ls, currency.EUR)
+		assert.Equal(t, "0.00", ls[0].Amount.String())
+	})
 }

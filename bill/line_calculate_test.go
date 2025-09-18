@@ -570,4 +570,62 @@ func TestLineCalculate(t *testing.T) {
 		assert.Equal(t, "37.77", lines[0].Sum.String())
 		assert.Equal(t, "39.77", lines[0].Total.String())
 	})
+
+	t.Run("lines with zero percent discount and inconsistent amount", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Discounts: []*LineDiscount{
+					{
+						Percent: num.NewPercentage(0, 2),
+						Amount:  num.MakeAmount(10, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "37.7700", sum.String())
+		assert.Equal(t, "0.0000", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "37.7700", lines[0].Sum.String())
+		assert.Equal(t, "37.7700", lines[0].Total.String())
+		roundLines(lines)
+		assert.Equal(t, "0.00", lines[0].Discounts[0].Amount.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
+		assert.Equal(t, "37.77", lines[0].Total.String())
+	})
+
+	t.Run("lines with zero percent charge and inconsistent amount", func(t *testing.T) {
+		lines := []*Line{
+			{
+				Quantity: num.MakeAmount(3, 0),
+				Item: &org.Item{
+					Name:  "Test Item",
+					Price: num.NewAmount(1259, 2),
+				},
+				Charges: []*LineCharge{
+					{
+						Percent: num.NewPercentage(0, 2),
+						Amount:  num.MakeAmount(10, 2),
+					},
+				},
+			},
+		}
+		err := calculateLines(lines, currency.EUR, nil, tax.RoundingRulePrecise)
+		assert.NoError(t, err)
+		sum := calculateLineSum(lines, currency.EUR)
+		assert.Equal(t, "37.7700", sum.String())
+		assert.Equal(t, "0.0000", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "37.7700", lines[0].Sum.String())
+		assert.Equal(t, "37.7700", lines[0].Total.String())
+		roundLines(lines)
+		assert.Equal(t, "0.00", lines[0].Charges[0].Amount.String())
+		assert.Equal(t, "37.77", lines[0].Sum.String())
+		assert.Equal(t, "37.77", lines[0].Total.String())
+	})
 }

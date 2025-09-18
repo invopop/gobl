@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- `es`: IGIC now uses VAT keys.
+- `es`: IGIC now uses VAT keys
+- `bill`: fixed zero-percent handling in charges and discounts
 
 ## [v0.300.1] - 2025-09-12
 
