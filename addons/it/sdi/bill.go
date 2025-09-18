@@ -52,7 +52,8 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Ordering,
-			validation.By(validateInvoiceOrdering(inv.HasTags(TagDeferred))),
+			// Need to access tagas so we pass the invoice directly
+			validation.By(validateInvoiceOrdering(inv)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
@@ -212,7 +213,7 @@ func validateInvoicePaymentDetails(val any) error {
 	)
 }
 
-func validateInvoiceOrdering(hasTag bool) validation.RuleFunc {
+func validateInvoiceOrdering(inv *bill.Invoice) validation.RuleFunc {
 	return func(value any) error {
 		o, _ := value.(*bill.Ordering)
 		if o == nil {
@@ -222,10 +223,10 @@ func validateInvoiceOrdering(hasTag bool) validation.RuleFunc {
 		return validation.ValidateStruct(o,
 			validation.Field(&o.Despatch,
 				validation.When(
-					!hasTag,
-					validation.Nil.Error("can only be set when invoice has deferred tag"),
+					inv.HasTags(TagDeferred),
+					validation.Each(validation.By(validateDespatch)),
 				).Else(
-					validation.Each(validation.By(validateDespatch))),
+					validation.Nil.Error("can only be set when invoice has deferred tag")),
 				validation.Skip,
 			),
 		)
