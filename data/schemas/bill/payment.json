@@ -17,6 +17,10 @@
               "title": "Austria"
             },
             {
+              "const": "AU",
+              "title": "Australia"
+            },
+            {
               "const": "BE",
               "title": "Belgium"
             },
