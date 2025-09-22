@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `au`: Australian regime
+
 ## [v0.300.2] - 2025-09-18
 
 ### Added
