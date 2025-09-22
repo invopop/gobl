@@ -2,7 +2,6 @@ package verifactu_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -355,31 +354,31 @@ func TestInvoiceValidation(t *testing.T) {
 }
 
 func TestForbiddenCharactersValidation(t *testing.T) {
-	t.Run(fmt.Sprintf("supplier name with forbidden char ="), func(t *testing.T) {
+	t.Run("supplier name with forbidden char =", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Name = "Test Supplier ="
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.ErrorContains(t, err, fmt.Sprintf("contains forbidden character: ="))
+		require.ErrorContains(t, err, "contains forbidden character: =")
 	})
 
-	t.Run(fmt.Sprintf("supplier name with forbidden char '"), func(t *testing.T) {
+	t.Run("supplier name with forbidden char '", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Supplier.Name = "Test Supplier '"
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.ErrorContains(t, err, fmt.Sprintf("contains forbidden character: '"))
+		require.ErrorContains(t, err, "contains forbidden character: '")
 	})
 
-	t.Run(fmt.Sprintf("customer name with forbidden char >"), func(t *testing.T) {
+	t.Run("customer name with forbidden char >", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Customer.Name = "Test Customer >"
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.ErrorContains(t, err, fmt.Sprintf("contains forbidden character: >"))
+		require.ErrorContains(t, err, "contains forbidden character: >")
 	})
 
-	t.Run(fmt.Sprintf("ordering issuer name with forbidden char <"), func(t *testing.T) {
+	t.Run("ordering issuer name with forbidden char <", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Ordering = &bill.Ordering{
 			Issuer: &org.Party{
@@ -392,10 +391,10 @@ func TestForbiddenCharactersValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.ErrorContains(t, err, fmt.Sprintf("contains forbidden character: <"))
+		require.ErrorContains(t, err, "contains forbidden character: <")
 	})
 
-	t.Run(fmt.Sprintf("note text with forbidden char \""), func(t *testing.T) {
+	t.Run("note text with forbidden char \"", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Notes = []*org.Note{
 			{
@@ -405,7 +404,7 @@ func TestForbiddenCharactersValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.ErrorContains(t, err, fmt.Sprintf("contains forbidden character: \""))
+		require.ErrorContains(t, err, "contains forbidden character: \"")
 	})
 
 	t.Run("valid names without forbidden characters pass validation", func(t *testing.T) {
