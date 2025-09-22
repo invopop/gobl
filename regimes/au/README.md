@@ -67,3 +67,41 @@ For more details, refer to the [ABN validation guide](https://abr.business.gov.a
 ### ABN Verification
 
 ABNs can be verified through the [ABN Lookup service](https://abr.business.gov.au/) provided by the Australian Business Register.
+
+## Tax Invoice Requirements
+
+Australian tax law has specific requirements for tax invoices depending on the invoice amount, sale type, and GST registration status.
+
+### When to Provide a Tax Invoice
+
+- **Customer request**: If a customer asks for a tax invoice, you must provide one within **28 days**
+- **Exception**: No requirement to provide tax invoices for sales of **$82.50 or less** (including GST)
+
+### Supplier Requirements
+
+- **ABN mandatory**: All suppliers must have a valid Australian Business Number (ABN)
+- **GST registration**: Suppliers with annual turnover of $75,000+ must be GST registered
+- **Tax invoice obligation**: GST-registered suppliers must provide tax invoices when requested
+
+### Sales Under $1,000
+
+Tax invoices for taxable sales of **less than $1,000** must include enough information to clearly determine these **7 essential details**:
+
+1. **Document identification**: Clearly marked as a "tax invoice"
+2. **Seller's identity**: Business name or individual name
+3. **Seller's ABN**: Valid Australian Business Number
+4. **Issue date**: Date the invoice was issued
+5. **Item description**: Brief description including quantity (if applicable) and price
+6. **GST amount**: Either shown separately or as "Total price includes GST" (when GST is exactly 1/11 of total)
+7. **Taxable extent**: Clear indication of which items are taxable sales
+
+**Customer identity is optional** for sales under $1,000.
+
+### Sales of $1,000 or More
+
+Tax invoices for sales of **$1,000 or more** must include all the requirements for smaller sales, **plus**:
+
+- **Customer identity**: Buyer's name or ABN is **mandatory**
+
+For more detailed requirements, see the [ATO Tax Invoice Guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices).
+
