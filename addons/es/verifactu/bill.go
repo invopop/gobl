@@ -294,10 +294,7 @@ func validateNote(val any) error {
 
 // validateNoForbiddenChars validates that a string doesn't contain any of the forbidden characters: < > " ' =
 func validateNoForbiddenChars(val any) error {
-	str, ok := val.(string)
-	if !ok {
-		return nil
-	}
+	str, _ := val.(string)
 
 	for _, char := range str {
 		for _, forbidden := range forbiddenChars {
