@@ -175,7 +175,7 @@ func calculateCharges(lines []*Charge, cur currency.Code, sum num.Amount, rr cbc
 			continue
 		}
 		l.Index = i + 1
-		if l.Percent != nil && !l.Percent.IsZero() {
+		if l.Percent != nil {
 			base := sum
 			if l.Base != nil {
 				base = l.Base.RescaleUp(zero.Exp() + linePrecisionExtra)
