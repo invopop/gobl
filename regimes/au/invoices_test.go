@@ -13,8 +13,8 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Series:   "TEST",
-		Code:     "0002",
+		Series: "TEST",
+		Code:   "0002",
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
