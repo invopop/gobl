@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -13,8 +14,9 @@ import (
 
 func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
-		Series: "TEST",
-		Code:   "0002",
+		Series:   "TEST",
+		Code:     "0002",
+		Currency: currency.AUD,
 		Supplier: &org.Party{
 			Name: "Test Supplier",
 			TaxID: &tax.Identity{
@@ -85,4 +87,14 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		assert.ErrorContains(t, inv.Validate(), "supplier: (tax_id: (code: cannot be blank.).)")
 	})
+
+	t.Run("invoice with zero price", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Price = num.NewAmount(0, 2)
+		inv.Customer.Name = ""
+		inv.Customer.TaxID = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
 }

@@ -9,7 +9,57 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTaxIdentityValidation(t *testing.T) {
+func TestNormalizeTaxIdentity(t *testing.T) {
+	var tID *tax.Identity
+	assert.NotPanics(t, func() {
+		au.Normalize(tID)
+	}, "nil tax identity")
+
+	tests := []struct {
+		Code     cbc.Code
+		Expected cbc.Code
+	}{
+		{
+			Code:     "51 824 753 556",
+			Expected: "51824753556",
+		},
+		{
+			Code:     "51-824-753-556",
+			Expected: "51824753556",
+		},
+		{
+			Code:     " 51824753556 ",
+			Expected: "51824753556",
+		},
+		{
+			Code:     "51.824.753.556",
+			Expected: "51824753556",
+		},
+		{
+			Code:     "51_824_753_556",
+			Expected: "51824753556",
+		},
+		{
+			Code:     "51 824-753.556",
+			Expected: "51824753556",
+		},
+		{
+			Code:     "53004085616",
+			Expected: "53004085616",
+		},
+		{
+			Code:     "",
+			Expected: "",
+		},
+	}
+	for _, ts := range tests {
+		tID := &tax.Identity{Country: "AU", Code: ts.Code}
+		au.Normalize(tID)
+		assert.Equal(t, ts.Expected, tID.Code)
+	}
+}
+
+func TestValidateTaxIdentity(t *testing.T) {
 	tests := []struct {
 		name string
 		code cbc.Code
