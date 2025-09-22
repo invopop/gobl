@@ -68,11 +68,6 @@ func validateInvoiceCustomer(inv *bill.Invoice) validation.RuleFunc {
 // For invoices $1,000 AUD or more, customer identity or ABN is required
 // Source: https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices
 func requiresCustomerIdentity(inv *bill.Invoice) bool {
-	if inv == nil || inv.Totals == nil {
-		return false
-	}
-
-	// $1,000 AUD threshold
 	threshold := num.MakeAmount(100000, 2)
 
 	if !inv.Totals.TotalWithTax.IsZero() {
