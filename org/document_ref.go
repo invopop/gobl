@@ -67,9 +67,9 @@ func (dr *DocumentRef) Normalize(normalizers tax.Normalizers) {
 	dr.URL = cbc.NormalizeString(dr.URL)
 	dr.Ext = tax.CleanExtensions(dr.Ext)
 
-	normalizers.Each(dr)
 	tax.Normalize(normalizers, dr.Identities)
 	tax.Normalize(normalizers, dr.Tax)
+	normalizers.Each(dr)
 }
 
 // Calculate will ensure the tax total is recalculated according to the
