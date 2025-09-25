@@ -254,8 +254,6 @@ func (ord *Order) Normalize(normalizers tax.Normalizers) {
 	ord.Series = cbc.NormalizeCode(ord.Series)
 	ord.Code = cbc.NormalizeCode(ord.Code)
 
-	normalizers.Each(ord)
-
 	tax.Normalize(normalizers, ord.Tax)
 	tax.Normalize(normalizers, ord.Supplier)
 	tax.Normalize(normalizers, ord.Customer)
@@ -267,6 +265,8 @@ func (ord *Order) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, ord.Charges)
 	tax.Normalize(normalizers, ord.Payment)
 	tax.Normalize(normalizers, ord.Delivery)
+
+	normalizers.Each(ord)
 }
 
 func (ord *Order) normalizers() tax.Normalizers {
