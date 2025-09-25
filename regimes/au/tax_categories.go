@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// Tax categories specific for Australia.
 const (
 	TaxCategoryWET cbc.Code = "WET" // Wine Equalisation Tax
 	TaxCategoryLCT cbc.Code = "LCT" // Luxury Car Tax
