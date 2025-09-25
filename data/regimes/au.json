@@ -1,0 +1,221 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Australia"
+  },
+  "time_zone": "Australia/Sydney",
+  "country": "AU",
+  "currency": "AUD",
+  "tax_scheme": "GST",
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "zero",
+          "name": {
+            "en": "Zero Rate"
+          },
+          "desc": {
+            "en": "Some supplies are zero-rated under the GST, mainly: most basic food, some education courses and materials, some medical and health services, menstrual products, medical aids and medicines, some childcare and religious services, water and sewerage services, precious metals, exports, sales of businesses as going concerns, cars for people with disabilities (when requirements are met), farmland, international transport, and eligible emissions units."
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate"
+          },
+          "desc": {
+            "en": "For the majority of sales of goods and services: it applies to all products or services for which no other rate is expressly provided."
+          },
+          "values": [
+            {
+              "since": "2000-07-01",
+              "percent": "100%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Australian Taxation Office - GST"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst"
+        },
+        {
+          "title": {
+            "en": "Australian Taxation Office - GST-free sales"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to/gst-free-sales"
+        }
+      ]
+    },
+    {
+      "code": "WET",
+      "name": {
+        "en": "WET"
+      },
+      "title": {
+        "en": "Wine Equalisation Tax"
+      },
+      "desc": {
+        "en": "A tax of 29% of the wholesale value of wine. Generally only payable if you are registered or required to be registered for GST. Designed to be paid on the last wholesale sale of wine, usually between wholesaler and retailer."
+      },
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General WET Rate"
+          },
+          "desc": {
+            "en": "Applied to the wholesale value of wine."
+          },
+          "values": [
+            {
+              "percent": "29.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Australian Taxation Office - Wine Equalisation Tax"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/wine-equalisation-tax"
+        }
+      ]
+    },
+    {
+      "code": "LCT",
+      "name": {
+        "en": "LCT"
+      },
+      "title": {
+        "en": "Luxury Car Tax"
+      },
+      "desc": {
+        "en": "A tax on cars that have a GST-inclusive value above the LCT threshold. Imposed at 33% on the amount above the luxury car threshold."
+      },
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General LCT Rate"
+          },
+          "desc": {
+            "en": "Applied to the amount above the luxury car threshold."
+          },
+          "values": [
+            {
+              "percent": "33.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Australian Taxation Office - Luxury Car Tax"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax"
+        }
+      ]
+    }
+  ]
+}
