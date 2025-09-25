@@ -8,6 +8,11 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+const (
+	TaxCategoryWET cbc.Code = "WET" // Wine Equalisation Tax
+	TaxCategoryLCT cbc.Code = "LCT" // Luxury Car Tax
+)
+
 var taxCategories = []*tax.CategoryDef{
 	{
 		Code: tax.CategoryGST,
@@ -61,6 +66,86 @@ var taxCategories = []*tax.CategoryDef{
 					{
 						Since:   cal.NewDate(2000, 7, 1),
 						Percent: num.MakePercentage(100, 2),
+					},
+				},
+			},
+		},
+	},
+
+	// Wine Equalisation Tax (WET)
+	{
+		Code: TaxCategoryWET,
+		Name: i18n.String{
+			i18n.EN: "WET",
+		},
+		Title: i18n.String{
+			i18n.EN: "Wine Equalisation Tax",
+		},
+		Description: &i18n.String{
+			i18n.EN: "A tax of 29% of the wholesale value of wine. Generally only payable if you are registered or required to be registered for GST. Designed to be paid on the last wholesale sale of wine, usually between wholesaler and retailer.",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Australian Taxation Office - Wine Equalisation Tax",
+				},
+				URL: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/wine-equalisation-tax",
+			},
+		},
+		Retained: false,
+		Rates: []*tax.RateDef{
+			{
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
+				Name: i18n.String{
+					i18n.EN: "General WET Rate",
+				},
+				Description: i18n.String{
+					i18n.EN: "Applied to the wholesale value of wine.",
+				},
+				Values: []*tax.RateValueDef{
+					{
+						Percent: num.MakePercentage(290, 3),
+					},
+				},
+			},
+		},
+	},
+
+	// Luxury Car Tax (LCT)
+	{
+		Code: TaxCategoryLCT,
+		Name: i18n.String{
+			i18n.EN: "LCT",
+		},
+		Title: i18n.String{
+			i18n.EN: "Luxury Car Tax",
+		},
+		Description: &i18n.String{
+			i18n.EN: "A tax on cars that have a GST-inclusive value above the LCT threshold. Imposed at 33% on the amount above the luxury car threshold.",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Australian Taxation Office - Luxury Car Tax",
+				},
+				URL: "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax",
+			},
+		},
+		Retained: false,
+		Rates: []*tax.RateDef{
+			{
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
+				Name: i18n.String{
+					i18n.EN: "General LCT Rate",
+				},
+				Description: i18n.String{
+					i18n.EN: "Applied to the amount above the luxury car threshold.",
+				},
+				Values: []*tax.RateValueDef{
+					{
+						Percent: num.MakePercentage(330, 3),
 					},
 				},
 			},

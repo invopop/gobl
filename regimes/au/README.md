@@ -2,14 +2,39 @@
 
 This document provides an overview of the tax regime in Australia.
 
-## Goods and Services Tax (GST)
+## Tax Categories
+
+Australia operates several tax categories for different types of goods and services:
+
+### Goods and Services Tax (GST)
 
 Australia operates a single-rate GST system with two main categories:
 
 - **Standard Rate (10%)**: Applies to most goods and services in Australia since July 1, 2000.
 - **GST-Free (0%)**: Applies to essential goods and services, exports, and specific exempt categories.
 
-Unlike many countries with multiple VAT rates, Australia maintains a simplified single standard rate structure.
+Unlike many countries with multiple VAT rates, Australia maintains a simplified single standard rate structure. For more details, refer to the [Australian Taxation Office GST guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst).
+
+### Wine Equalisation Tax (WET)
+
+WET is a tax of **29%** of the wholesale value of wine:
+
+- Generally only payable if you are registered or required to be registered for GST
+- Designed to be paid on the last wholesale sale of wine (usually between wholesaler and retailer)
+- May apply in other circumstances such as cellar door sales or tastings where there hasn't been a wholesale sale
+- Also payable on imports of wine (whether or not you are registered for GST)
+
+For more details, refer to the [Australian Taxation Office Wine Equalisation Tax guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/wine-equalisation-tax).
+
+### Luxury Car Tax (LCT)
+
+LCT is a tax on cars that have a GST-inclusive value above the LCT threshold:
+
+- Imposed at the rate of **33%** on the amount above the luxury car threshold
+- Paid by businesses that sell or import luxury cars (dealers), and by individuals who import luxury cars
+- Registration required if you operate a business that sells luxury cars or are an endorsed public institution purchasing luxury cars for public display
+
+For more details, refer to the [Australian Taxation Office Luxury Car Tax guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax).
 
 ## GST Registration Requirements
 
@@ -19,9 +44,7 @@ Businesses in Australia must register for GST based on their annual turnover:
 - **Non-Profit Organizations**: Must register if their annual turnover is **AUD $150,000** or more.
 - **Voluntary Registration**: Businesses below these thresholds may choose to register voluntarily.
 
-Registered businesses receive an Australian Business Number (ABN) which serves as their tax identification.
-
-For more information, visit the [Australian Taxation Office website](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst).
+Registered businesses receive an Australian Business Number (ABN) which serves as their tax identification. For more information, visit the [Australian Taxation Office GST registration guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst).
 
 ## GST-Free Supplies
 
@@ -42,7 +65,7 @@ GST-free supplies include a wide range of essential goods and services:
 - International transport services
 - Eligible emissions units
 
-For a comprehensive list, see the [ATO GST-free sales guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to/gst-free-sales).
+For a comprehensive list, see the the [Australian Taxation Office GST-free sales guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to/gst-free-sales).
 
 ## Australian Business Number (ABN)
 
@@ -103,5 +126,4 @@ Tax invoices for sales of **$1,000 or more** must include all the requirements f
 
 - **Customer identity**: Buyer's name or ABN is **mandatory**
 
-For more detailed requirements, see the [ATO Tax Invoice Guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices).
-
+For more detailed requirements, see the [Australian Taxation Office tax invoice guide](https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/tax-invoices).

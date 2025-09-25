@@ -138,6 +138,84 @@
           "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/gst/when-to-charge-gst-and-when-not-to/gst-free-sales"
         }
       ]
+    },
+    {
+      "code": "WET",
+      "name": {
+        "en": "WET"
+      },
+      "title": {
+        "en": "Wine Equalisation Tax"
+      },
+      "desc": {
+        "en": "A tax of 29% of the wholesale value of wine. Generally only payable if you are registered or required to be registered for GST. Designed to be paid on the last wholesale sale of wine, usually between wholesaler and retailer."
+      },
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General WET Rate"
+          },
+          "desc": {
+            "en": "Applied to the wholesale value of wine."
+          },
+          "values": [
+            {
+              "percent": "29.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Australian Taxation Office - Wine Equalisation Tax"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/wine-equalisation-tax"
+        }
+      ]
+    },
+    {
+      "code": "LCT",
+      "name": {
+        "en": "LCT"
+      },
+      "title": {
+        "en": "Luxury Car Tax"
+      },
+      "desc": {
+        "en": "A tax on cars that have a GST-inclusive value above the LCT threshold. Imposed at 33% on the amount above the luxury car threshold."
+      },
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General LCT Rate"
+          },
+          "desc": {
+            "en": "Applied to the amount above the luxury car threshold."
+          },
+          "values": [
+            {
+              "percent": "33.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Australian Taxation Office - Luxury Car Tax"
+          },
+          "url": "https://www.ato.gov.au/businesses-and-organisations/gst-excise-and-indirect-taxes/luxury-car-tax"
+        }
+      ]
     }
   ]
 }
