@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "27c1dbefd5b15f59b250f950e70bd5f116e339b1296b380844b86cc77f0a6061"
+			"val": "9ae93ce1b601c0bb9ed566db62d8f0503837f9f0d0560ecdf20ee319e3d726fc"
 		}
 	},
 	"doc": {
@@ -12,9 +12,6 @@
 		"$regime": "PT",
 		"$addons": [
 			"pt-saft-v1"
-		],
-		"$tags": [
-			"reverse-charge"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
