@@ -1258,6 +1258,21 @@ func TestInvoiceTagsValidation(t *testing.T) {
 	assert.ErrorContains(t, err, "$tags: (0: 'invalid-tag' undefined.).")
 }
 
+func TestInvoiceBypassTag(t *testing.T) {
+	inv := baseInvoiceWithLines(t)
+	assert.NoError(t, inv.Calculate())
+
+	assert.Equal(t, "100.00", inv.Lines[0].Item.Price.String())
+	assert.Equal(t, "1000.00", inv.Totals.Sum.String())
+
+	inv.SetTags(tax.TagBypass)
+	inv.Lines[0].Item.Price = num.NewAmount(10002, 2)
+	require.NoError(t, inv.Calculate())
+
+	assert.Equal(t, "100.02", inv.Lines[0].Item.Price.String())
+	assert.Equal(t, "1000.00", inv.Totals.Sum.String())
+}
+
 func baseInvoiceWithLines(t *testing.T) *bill.Invoice {
 	inv := baseInvoice(t,
 		&bill.Line{
