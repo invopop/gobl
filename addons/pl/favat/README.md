@@ -1,8 +1,8 @@
-# 🇵🇱 GOBL Polish Tax Regime
+# 🇵🇱 GOBL Polish KSeF FA_VAT Addon
 
-Poland uses the FA_VAT format for their e-invoicing system.
+Poland uses the FA_VAT format for their e-invoicing system managed by KSeF.
 
-Find example PL GOBL files in the [`examples`](../../examples/pl) (uncalculated documents) and [`examples/out`](../../examples/pl/out) (calculated envelopes) subdirectories.
+**IMPORTANT**: This addon is currently a work in progress, expect changes.
 
 ## Public Documentation
 

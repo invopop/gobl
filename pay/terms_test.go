@@ -66,14 +66,14 @@ func TestTermsNormalize(t *testing.T) {
 				"random": "",
 			},
 		}
-		pt.Normalize(nil)
+		pt.Normalize()
 		assert.Empty(t, pt.Ext)
 		assert.Equal(t, "undefined", pt.Key.String())
 	})
 	t.Run("nil", func(t *testing.T) {
 		var pt *pay.Terms
 		assert.NotPanics(t, func() {
-			pt.Normalize(nil)
+			pt.Normalize()
 		})
 	})
 }

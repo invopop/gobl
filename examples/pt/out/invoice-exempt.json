@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "ae7602e940963dfcb49f8efdc1f4ef616ee62e096a3c3c73ce69d89880dde786"
+			"val": "f1021733bd08e6253265bae4d70da9108f556a9d5dc29774099e9c5053bb3116"
 		}
 	},
 	"doc": {
@@ -16,10 +16,12 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
-				"pt-saft-invoice-type": "FT"
+				"pt-saft-invoice-type": "FT",
+				"pt-saft-source": "P"
 			}
 		},
 		"supplier": {
@@ -56,15 +58,23 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "exempt",
 						"ext": {
 							"pt-region": "PT",
-							"pt-saft-exemption": "M40",
+							"pt-saft-exemption": "M07",
 							"pt-saft-tax-rate": "ISE"
 						}
 					}
 				],
-				"total": "100.00"
+				"total": "100.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M07",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 9.º do CIVA"
+					}
+				]
 			},
 			{
 				"i": 2,
@@ -81,15 +91,23 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "exempt",
 						"ext": {
 							"pt-region": "PT",
-							"pt-saft-exemption": "M40",
+							"pt-saft-exemption": "M07",
 							"pt-saft-tax-rate": "ISE"
 						}
 					}
 				],
-				"total": "240.00"
+				"total": "240.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M07",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 9.º do CIVA"
+					}
+				]
 			}
 		],
 		"totals": {
@@ -104,7 +122,7 @@
 								"key": "exempt",
 								"ext": {
 									"pt-region": "PT",
-									"pt-saft-exemption": "M40",
+									"pt-saft-exemption": "M07",
 									"pt-saft-tax-rate": "ISE"
 								},
 								"base": "340.00",
@@ -119,14 +137,6 @@
 			"tax": "0.00",
 			"total_with_tax": "340.00",
 			"payable": "340.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"code": "M40",
-				"src": "pt-saft-exemption",
-				"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
-			}
-		]
+		}
 	}
 }

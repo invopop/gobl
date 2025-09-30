@@ -90,15 +90,20 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "F3",
 				Name: i18n.String{
-					i18n.EN: "Invoice issued as a replacement for simplified invoices that have been billed and declared.",
-					i18n.ES: "Factura emitida en sustitución de facturas simplificadas facturadas y declaradas.",
+					i18n.EN: "Invoice issued as replacement of simplified invoice",
+					i18n.ES: "Factura emitida en sustitución de facturas simplificadas",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						To use when a simplified invoice is replaced by a regular invoice.
+					`),
 				},
 			},
 			{
 				Code: "R1",
 				Name: i18n.String{
-					i18n.EN: "Rectified invoice: error based on law and Article 80 One, Two and Six LIVA",
-					i18n.ES: "Factura rectificativa: error fundado en derecho y Art. 80 Uno, Dos y Seis LIVA",
+					i18n.EN: "Rectified invoice: articles 80.1, 80.2, and 80.6",
+					i18n.ES: "Factura rectificativa: art. 80 Uno, Dos y Seis LIVA",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
@@ -111,8 +116,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "R2",
 				Name: i18n.String{
+					i18n.EN: "Rectified invoice: article 80.3",
 					i18n.ES: "Factura rectificativa: artículo 80.3",
-					i18n.EN: "Rectified invoice: error based on law and Article 80.3",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
@@ -124,8 +129,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "R3",
 				Name: i18n.String{
+					i18n.EN: "Rectified invoice: article 80.4",
 					i18n.ES: "Factura rectificativa: artículo 80.4",
-					i18n.EN: "Rectified invoice: error based on law and Article 80.4",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
@@ -137,8 +142,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "R4",
 				Name: i18n.String{
-					i18n.ES: "Factura rectificativa: Resto",
-					i18n.EN: "Rectified invoice: Other",
+					i18n.EN: "Rectified invoice: other",
+					i18n.ES: "Factura rectificativa: resto",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
@@ -208,21 +213,16 @@ var extensions = []*cbc.Definition{
 			i18n.EN: here.Doc(`
 				Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.
 
-				VERI*FACTU distinguishes between "subject" and "exempt" operations, while GOBL treats "exempt" as simply having no tax percentage. This difference can make mapping between systems complex.
+				GOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.
 
-				GOBL will attempt to automatically assign operation class codes based on tax rates, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.
+				Automatic mapping of tax combo keys to operation classes:
 
-				Automatic mapping of tax rates to operation classes:
-
-				| Tax Rate                | Operation Class |
-				|-------------------------|-----------------|
-				| ~standard~              | ~S1~            |
-				| ~reduced~               | ~S1~            |
-				| ~super-reduced~         | ~S1~            |
-				| ~zero~                  | ~S1~            |
-				| ~exempt~                | ~N1~            |
-				| ~exempt+reverse-charge~ | ~S2~            |
-				| ~exempt+export~         | ~N2~            |
+				| Operation Class | Tax Key                |
+				|-----------------|-------------------------|
+				| ~S1~            | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
+				| ~S2~            | ~reverse-charge~                |
+				| ~N1~            | ~outside-scope~ |
+				| ~N2~            | ~outside-scope~ (default) |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 
@@ -237,12 +237,22 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Subject and Not Exempt - Without reverse charge",
 					i18n.ES: "Operación Sujeta y No exenta - Sin inversión del sujeto pasivo",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						General sales with VAT percent.
+					`),
+				},
 			},
 			{
 				Code: "S2",
 				Name: i18n.String{
 					i18n.EN: "Subject and Not Exempt - With reverse charge",
 					i18n.ES: "Operación Sujeta y No exenta - Con Inversión del sujeto pasivo",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use when the supply is **subject to VAT**, VAT is **not charged by the supplier**, but the **buyer** must self-account under an applicable **reverse-charge regime**. Percent present as zero.
+					`),
 				},
 			},
 			{
@@ -251,12 +261,22 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Not Subject - Articles 7, 14, others",
 					i18n.ES: "Operación No Sujeta artículo 7, 14, otros",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use when the operations fall **outside the VAT scope** under Spanish VAT law (e.g. transfers of companies, certain exchanges of goods, contributions of goods, internal operations of public entities, ...). VAT is **not chargeable** or declared.
+					`),
+				},
 			},
 			{
 				Code: "N2",
 				Name: i18n.String{
 					i18n.EN: "Not Subject - Due to location rules",
 					i18n.ES: "Operación No Sujeta por Reglas de localización",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use when the operation is **not subject to VAT due to its place of supply** (e.g. services provided to non‑EU B2B customers that are deemed outside Spanish VAT by location rules).
+					`),
 				},
 			},
 		},
@@ -275,9 +295,13 @@ var extensions = []*cbc.Definition{
 				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
 				L10 list.
 
-				No attempt will be made by GOBL to automatically map tax rates to exemption
-				reason codes, they will need to be determined and applied on a case-by-case
-				basis.
+				The follow mappings will be made automatically by GOBL during normalization.
+
+				| Tax Key           | Exemption Codes            |
+				|-------------------|----------------------------|
+				| ~exempt~          | ~E1~ (default), ~E6~       |
+				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
+				| ~intra-community~ | ~E5~                       |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -287,12 +311,22 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Exempt: pursuant to Article 20. Exemptions in internal operations.",
 					i18n.ES: "Exenta: por el artículo 20. Exenciones en operaciones interiores.",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **domestic VAT-exempt operations**: healthcare by medical professionals, education by authorised centres, social assistance, certain cultural services, financial and insurance services, letting of dwellings, etc.
+					`),
+				},
 			},
 			{
 				Code: "E2",
 				Name: i18n.String{
 					i18n.EN: "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
 					i18n.ES: "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes.",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **exports of goods outside the EU** (including the tax-free travellers regime where the sale is exported) and services directly related to those exports, under the conditions of the article.
+					`),
 				},
 			},
 			{
@@ -301,12 +335,22 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
 					i18n.ES: "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones.",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **operations assimilated to exports**, e.g., supplies/repairs/charter of qualifying ships or aircraft, avituallamiento (provisioning) of such vessels, and certain services directly connected with international transport.
+					`),
+				},
 			},
 			{
 				Code: "E4",
 				Name: i18n.String{
 					i18n.EN: "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
 					i18n.ES: "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones.",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for operations linked to **free zones, customs/duty-free warehouses and other customs or fiscal regimes** (e.g., depósitos francos, depósito temporal, perfeccionamiento activo/pasivo, depósito distinto del aduanero), while the goods remain under those regimes.
+					`),
 				},
 			},
 			{
@@ -315,12 +359,22 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
 					i18n.ES: "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro.",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **intra-Community supplies of goods** from Spain to another EU Member State when the buyer is VAT-identified in another Member State and the goods are shipped there
+					`),
+				},
 			},
 			{
 				Code: "E6",
 				Name: i18n.String{
 					i18n.EN: "Exempt: pursuant to other reasons",
 					i18n.ES: "Exenta: por otra causa",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use when the operation is exempt for a reason not covered by Articles 20–25, and a lawful exemption applies (catch-all “Exenta por otros”). Document the legal basis on the invoice text.
+					`),
 				},
 			},
 		},
@@ -344,8 +398,8 @@ var extensions = []*cbc.Definition{
 
 				| Combo Context				| Regime Code |
 				|---------------------------|-------------|
-				| Rate ~standard~			| ~01~        |
-				| Rate has ~export~			| ~02~        |
+				| Key ~standard~			| ~01~        |
+				| Key ~export~			    | ~02~        |
 				| Has surcharge				| ~18~        |
 			`),
 		},

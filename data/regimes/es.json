@@ -212,21 +212,61 @@
       "desc": {
         "en": "Known in Spanish as \"Impuesto sobre el Valor Añadido\" (IVA), is a consumption tax\napplied to the purchase of goods and services. It's a tax on the value added at\neach stage of production or distribution. Spain, as a member of the European Union,\nfollows the EU's VAT Directive, but with specific rates and exemptions tailored\nto its local needs."
       },
-      "rates": [
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
         {
           "key": "zero",
           "name": {
-            "en": "Zero Rate",
-            "es": "Tipo Cero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
+            "en": "Zero"
+          }
         },
         {
-          "key": "standard",
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Standard Rate",
             "es": "Tipo General"
@@ -251,7 +291,10 @@
           ]
         },
         {
-          "key": "standard+eqs",
+          "rate": "general+eqs",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Standard Rate + Equivalence Surcharge",
             "es": "Tipo General + Recargo de Equivalencia"
@@ -270,7 +313,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "es": "Tipo Reducido"
@@ -295,7 +341,10 @@
           ]
         },
         {
-          "key": "reduced+eqs",
+          "rate": "reduced+eqs",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate + Equivalence Surcharge",
             "es": "Tipo Reducido + Recargo de Equivalencia"
@@ -314,7 +363,10 @@
           ]
         },
         {
-          "key": "super-reduced",
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Super-Reduced Rate",
             "es": "Tipo Superreducido"
@@ -331,7 +383,10 @@
           ]
         },
         {
-          "key": "super-reduced+eqs",
+          "rate": "super-reduced+eqs",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Super-Reduced Rate + Equivalence Surcharge",
             "es": "Tipo Superreducido + Recargo de Equivalencia"
@@ -343,14 +398,6 @@
               "surcharge": "0.5%"
             }
           ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "en": "Exempt",
-            "es": "Exenta"
-          },
-          "exempt": true
         }
       ]
     },
@@ -364,23 +411,63 @@
         "en": "Canary Island General Indirect Tax",
         "es": "Impuesto General Indirecto Canario"
       },
-      "rates": [
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate",
-            "es": "Tipo Cero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard Rate",
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
             "es": "Tipo General"
           },
           "values": [
@@ -390,7 +477,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "es": "Tipo Reducido"
@@ -427,7 +517,7 @@
       "retained": true,
       "rates": [
         {
-          "key": "pro",
+          "rate": "pro",
           "name": {
             "en": "Professional Rate",
             "es": "Profesionales"
@@ -452,7 +542,7 @@
           ]
         },
         {
-          "key": "pro-start",
+          "rate": "pro-start",
           "name": {
             "en": "Professional Starting Rate",
             "es": "Profesionales Inicio"
@@ -465,7 +555,7 @@
           ]
         },
         {
-          "key": "capital",
+          "rate": "capital",
           "name": {
             "en": "Rental or Interest Capital",
             "es": "Alquileres o Intereses de Capital"
@@ -478,7 +568,7 @@
           ]
         },
         {
-          "key": "modules",
+          "rate": "modules",
           "name": {
             "en": "Modules Rate",
             "es": "Tipo Modulos"

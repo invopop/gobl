@@ -86,13 +86,14 @@ type Online struct {
 }
 
 // Normalize will try to normalize the instructions.
-func (i *Instructions) Normalize(normalizers tax.Normalizers) {
+func (i *Instructions) Normalize() {
 	if i == nil {
 		return
 	}
 	i.Ref = cbc.NormalizeCode(i.Ref)
+	i.Detail = cbc.NormalizeString(i.Detail)
+	i.Notes = cbc.NormalizeString(i.Notes)
 	i.Ext = tax.CleanExtensions(i.Ext)
-	normalizers.Each(i)
 }
 
 // Validate ensures the Online method details look correct.

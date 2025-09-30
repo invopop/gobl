@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "5d6d6423d5895dbb2c8ca93b5d85fc1df8b57e414b2f0303e496e48614850f05"
+			"val": "98745c7a3bf51f45d55ccb9733c3b6aac62c277c7cdc0fbe1a7a24ab15d56802"
 		}
 	},
 	"doc": {
@@ -68,7 +68,8 @@
 					{
 						"cat": "VAT",
 						"country": "PT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "23.0%"
 					}
 				],
@@ -86,7 +87,8 @@
 					{
 						"cat": "VAT",
 						"country": "PT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "23.0%"
 					}
 				],
@@ -102,8 +104,8 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "standard",
 								"country": "PT",
+								"key": "standard",
 								"base": "575.00",
 								"percent": "23.0%",
 								"amount": "132.25"

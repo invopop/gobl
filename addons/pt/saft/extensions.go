@@ -12,6 +12,8 @@ const (
 	ExtKeyTaxRate      cbc.Key = "pt-saft-tax-rate"
 	ExtKeyProductType  cbc.Key = "pt-saft-product-type"
 	ExtKeyPaymentMeans cbc.Key = "pt-saft-payment-means"
+	ExtKeySource       cbc.Key = "pt-saft-source"
+	ExtKeySourceRef    cbc.Key = "pt-saft-source-ref"
 
 	// Document types extensions
 	ExtKeyInvoiceType  cbc.Key = "pt-saft-invoice-type"
@@ -69,6 +71,13 @@ const (
 
 	PaymentTypeCash  cbc.Code = "RC"
 	PaymentTypeOther cbc.Code = "RG"
+)
+
+// SourceBilling values
+const (
+	SourceBillingProduced   cbc.Code = "P"
+	SourceBillingIntegrated cbc.Code = "I"
+	SourceBillingManual     cbc.Code = "M"
 )
 
 var extensions = []*cbc.Definition{
@@ -282,11 +291,21 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				AT's ~TaxExemptionCode~ (Código do motivo de isenção de imposto) is a code that
+				The SAF-T's ~TaxExemptionCode~ (Código do motivo de isenção de imposto) is a code that
 				specifies the reason the VAT tax is exempt in a Portuguese invoice. When the ~exempt~ tag
-				is used in a tax combo, the ~ext~ map's ~pt-exemption-code~ property is required.
+				is used in a tax combo, the ~ext~ map's ~pt-saft-exemption~ property is required.
 
-				For example, you could define an invoice line exempt of tax as follows:
+				The SAF-T's ~TaxExemptionReason~ (Motivo da isenção de imposto) is a text that justifies
+				the exemption referencing the relevant legislation. In GOBL, this is provided with a
+				special line-level ~note~.
+
+				By default, if no note is provided, GOBL will automatically assign a default one
+				consistent with the exemption code. However, note that default texts are generic and not
+				always sufficiently precise to comply with the regulations. The invoice issuer should be
+				given the option to provide a custom note with the appropriate descriptive text.
+
+				For example, you could define an invoice line exempt of tax with the exemption code and
+				the reason as follows:
 
 				~~~js
 				{
@@ -305,11 +324,19 @@ var extensions = []*cbc.Definition{
 										"rate": "exempt",
 										"ext": {
 											"pt-saft-tax-rate": "ISE",
-											"pt-saft-exemption": "M19"
+											"pt-saft-exemption": "M40"
 										}
 								}
 							]
-						}
+						},
+						"notes": [
+							{
+								"key": "legal",
+								"code": "M40",
+								"src": "pt-saft-exemption",
+								"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+							}
+						]
 					]
 				}
 				~~~
@@ -318,19 +345,46 @@ var extensions = []*cbc.Definition{
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
-					i18n.PT: "AT Tax Exemption Codes",
-					i18n.EN: "Códigos de motivo de isenção",
+					i18n.EN: "AT Tax Exemption Codes",
+					i18n.PT: "Códigos de motivo de isenção",
 				},
 				URL:         "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Tabela_Codigos_Motivo_Isencao.pdf",
 				ContentType: "application/pdf",
 			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Art. 2.2.14 of Despacho nº8632/2014",
+					i18n.PT: "Art. 2.2.14 do Despacho nº8632/2014",
+				},
+				URL:         "https://files.diariodarepublica.pt/2s/2014/07/126000000/1725517261.pdf",
+				ContentType: "application/pdf",
+			},
+			{
+				Title: i18n.String{
+					i18n.EN: "Field 4.4.19.7 of Portaria nº302/2016",
+					i18n.PT: "Campo 4.4.19.7 da Portaria nº302/2016",
+				},
+				URL:         "https://files.diariodarepublica.pt/1s/2016/12/23100/0427304379.pdf",
+				ContentType: "application/pdf",
+			},
 		},
 		Values: []*cbc.Definition{
+			// Names adapted to meet the requirements of art. 2.2.14 of
+			// Despacho nº8632/2014 (for printed invoices) and campo 4.4.19.7
+			// of Portaria nº302/2016 (for SAF-T files).
 			{
 				Code: "M01",
 				Name: i18n.String{
-					i18n.EN: "Article 16, No. 6 of the VAT code",
-					i18n.PT: "Artigo 16.º, n.º 6 do CIVA",
+					i18n.EN: "Article 16, No. 6, paragraphs a) to d) of the VAT code",
+					i18n.PT: "Artigo 16.º, n.º 6, alíneas a) a d) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Amounts invoiced as being received on behalf of the purchaser
+						— e.g. agency sales or third-party collections; supplier records
+						funds in “accounts of third parties”, no VAT is added by the
+						supplier.
+					`),
 				},
 			},
 			{
@@ -339,89 +393,174 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Article 6 of Decree-Law No. 198/90 of 19th June",
 					i18n.PT: "Artigo 6.º do Decreto-Lei n.º 198/90, de 19 de junho",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						B2B deliveries above €1,000 from a domestic supplier to a
+						taxable person in Portugal who exports in the same state — VAT
+						zero-rated when export is immediate.
+					`),
+				},
 			},
 			{
 				Code: "M04",
 				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 13 of the VAT code",
-					i18n.PT: "Isento artigo 13.º do CIVA",
+					i18n.EN: "Article 13 of the VAT code",
+					i18n.PT: "Artigo 13.º do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Certain types of importation or re-importation expressly exempt
+						under Portuguese VAT rules.
+					`),
 				},
 			},
 			{
 				Code: "M05",
 				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 14 of the VAT code",
-					i18n.PT: "Isento artigo 14.º do CIVA",
+					i18n.EN: "Article 14 of the VAT code",
+					i18n.PT: "Artigo 14.º do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Exports, deemed exports or international transport services
+						provided from Portugal — zero-rated for VAT.
+					`),
 				},
 			},
 			{
 				Code: "M06",
 				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 15 of the VAT code",
-					i18n.PT: "Isento artigo 15.º do CIVA",
+					i18n.EN: "Article 15 of the VAT code",
+					i18n.PT: "Artigo 15.º do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Goods or services under suspension regimes (e.g. transhipment,
+						processing), or special transitional exemption schemes.
+					`),
 				},
 			},
 			{
 				Code: "M07",
 				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 9 of the VAT code",
-					i18n.PT: "Isento artigo 9.º do CIVA",
+					i18n.EN: "Article 9 of the VAT code",
+					i18n.PT: "Artigo 9.º do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Activities such as health, education, culture, insurance,
+						rentals, or authorized lotteries — exempt goods and services, but
+						without VAT recovery rights.
+					`),
 				},
 			},
 			{
 				Code: "M09",
 				Name: i18n.String{
-					i18n.EN: "VAT - does not confer right to deduction / Article 62 paragraph b) of the VAT code",
-					i18n.PT: "IVA - não confere direito a dedução / Artigo 62.º alínea b) do CIVA",
+					i18n.EN: "Article 62 paragraph b) of the VAT code",
+					i18n.PT: "Artigo 62.º alínea b) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Retailers under the “small trader regime” (volume below threshold)
+						who cannot recover VAT on inputs. The VAT is not levied, but the
+						taxpayer has no deduction rights.
+					`),
 				},
 			},
 			{
 				Code: "M10",
 				Name: i18n.String{
-					i18n.EN: "VAT - exemption scheme / Article 57 of the VAT code",
-					i18n.PT: "IVA - regime de isenção / Artigo 57.º do CIVA",
+					i18n.EN: "Article 57 of the VAT code",
+					i18n.PT: "Artigo 57.º do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Flat-rate VAT scheme for small taxpayers (typically individuals
+						with turnover below €15,000 in the preceding year). Exemption
+						applies, albeit with a limited VAT recovery regime.
+					`),
 				},
 			},
 			{
 				Code: "M11",
 				Name: i18n.String{
-					i18n.EN: "Special scheme for tobacco / Decree-Law No. 346/85 of 23rd August",
-					i18n.PT: "Regime particular do tabaco / Decreto-Lei n.º 346/85, de 23 de agosto",
+					i18n.EN: "Decree-Law No. 346/85 of 23rd August",
+					i18n.PT: "Decreto-Lei n.º 346/85, de 23 de agosto",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Suppliers or resellers of manufactured tobacco or matches taxed
+						under the special tobacco tax regime — VAT is either not due or
+						treated under excise rules.
+					`),
 				},
 			},
 			{
 				Code: "M12",
 				Name: i18n.String{
-					i18n.EN: "Margin scheme - Travel agencies / Decree-Law No. 221/85 of 3rd July",
-					i18n.PT: "Regime da margem de lucro - Agências de viagens / Decreto-Lei n.º 221/85, de 3 de julho",
+					i18n.EN: "Decree-Law No. 221/85 of 3rd July",
+					i18n.PT: "Decreto-Lei n.º 221/85, de 3 de julho",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Travel agencies selling tours in their own name (even when
+						booking services from others) are taxed only on their margin, not
+						on the full amount.
+					`),
 				},
 			},
 			{
 				Code: "M13",
 				Name: i18n.String{
-					i18n.EN: "Margin scheme - Second-hand goods / Decree-Law No. 199/96 of 18th October",
-					i18n.PT: "Regime da margem de lucro - Bens em segunda mão / Decreto-Lei n.º 199/96, de 18 de outubro",
+					i18n.EN: "Decree-Law No. 199/96 of 18th October",
+					i18n.PT: "Decreto-Lei n.º 199/96, de 18 de outubro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Resale of used goods under the margin scheme — VAT applies solely
+						to the profit margin.
+					`),
 				},
 			},
 			{
 				Code: "M14",
 				Name: i18n.String{
-					i18n.EN: "Margin scheme - Works of art / Decree-Law No. 199/96 of 18th October",
-					i18n.PT: "Regime da margem de lucro - Objetos de arte / Decreto-Lei n.º 199/96, de 18 de outubro",
+					i18n.EN: "Decree-Law No. 199/96 of 18th October",
+					i18n.PT: "Decreto-Lei n.º 199/96, de 18 de outubro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Art pieces sold under the margin taxation rule — VAT calculated
+						only on the dealer's margin.
+					`),
 				},
 			},
 			{
 				Code: "M15",
 				Name: i18n.String{
-					i18n.EN: "Margin scheme - Collector's items and antiques / Decree-Law No. 199/96 of 18th October",
-					i18n.PT: "Regime da margem de lucro - Objetos de coleção e antiguidades / Decreto-Lei n.º 199/96, de 18 de outubro",
+					i18n.EN: "Decree-Law No. 199/96 of 18th October",
+					i18n.PT: "Decreto-Lei n.º 199/96, de 18 de outubro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Antiques or collectibles treated under a margin-based VAT regime,
+						meaning VAT on margin only.
+					`),
 				},
 			},
 			{
 				Code: "M16",
 				Name: i18n.String{
-					i18n.EN: "Exempt pursuant to Article 14 of the RITI",
-					i18n.PT: "Isento artigo 14.º do RITI",
+					i18n.EN: "Article 14 of the RITI",
+					i18n.PT: "Artigo 14.º do RITI",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Standard rule for intra-EU goods transfers (Normal
+						intra-Community supplies) — zero-VAT, no import VAT regime;
+						recipient accounts for VAT via VAT return.
+					`),
 				},
 			},
 			{
@@ -430,96 +569,183 @@ var extensions = []*cbc.Definition{
 					i18n.EN: "Other exemptions",
 					i18n.PT: "Outras isenções",
 				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Temporary, sector-specific or exceptional exemptions established
+						by specific legislation (e.g. emergency relief).
+					`),
+				},
 			},
 			{
 				Code: "M20",
 				Name: i18n.String{
-					i18n.EN: "VAT - flat-rate scheme / Article 59-D No. 2 of the VAT code",
-					i18n.PT: "IVA - regime forfetário / Artigo 59.º-D n.º 2 do CIVA",
+					i18n.EN: "Article 59-D No. 2 of the VAT code",
+					i18n.PT: "Artigo 59.º-D n.º 2 do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Flat-rate VAT exemption for certain agricultural activities under
+						the “forfetário” scheme (simplified turnover-based regime).
+					`),
 				},
 			},
 			{
 				Code: "M21",
 				Name: i18n.String{
-					i18n.EN: "VAT - does not confer right to deduction (or similar) / Article 72 No. 4 of the VAT code",
-					i18n.PT: "IVA - não confere direito à dedução (ou expressão similar) / Artigo 72.º n.º 4 do CIVA",
+					i18n.EN: "Article 72 No. 4 of the VAT code",
+					i18n.PT: "Artigo 72.º n.º 4 do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Fuel resellers operating on behalf of distributors cannot deduct
+						VAT they incur — vendor issues invoice at 0%, no VAT recovery by
+						reseller.
+					`),
 				},
 			},
 			{
 				Code: "M25",
 				Name: i18n.String{
-					i18n.EN: "Consignment goods / Article 38 No. 1 paragraph a) of the VAT code",
-					i18n.PT: "Mercadoria à consignação / Artigo 38.º n.º 1 alínea a) do CIVA",
+					i18n.EN: "Article 38 No. 1 paragraph a) of the VAT code",
+					i18n.PT: "Artigo 38.º n.º 1 alínea a) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Consignment stock sales — consignor issues invoice to consignee,
+						but goods remain under consignment; VAT is not yet due until
+						final sale.
+					`),
 				},
 			},
 			{
 				Code: "M26",
 				Name: i18n.String{
-					i18n.EN: "VAT exemption with right to deduction in food basket / Law No. 17/2023 of 14th April",
-					i18n.PT: "Isenção de IVA com direito à dedução no cabaz alimentar / Lei n.º 17/2023, de 14 de abril",
+					i18n.EN: "Law No. 17/2023 of 14th April",
+					i18n.PT: "Lei n.º 17/2023, de 14 de abril",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						“IVA Zero” food-basket scheme allowed VAT exemption with right to
+						deduction. Active 18 Apr 2023 to 4 Jan 2024, now expired. 
+					`),
 				},
 			},
 			{
 				Code: "M30",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph i) of the VAT code",
-					i18n.PT: "IVA - autoliquidação / Artigo 2.º n.º 1 alínea i) do CIVA",
+					i18n.EN: "Article 2 No. 1 paragraph i) of the VAT code",
+					i18n.PT: "Artigo 2.º n.º 1 alínea i) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge on purchase of waste, scrap or recyclable materials
+						listed in Annex E of VAT Code — purchaser self-accounts VAT.
+					`),
 				},
 			},
 			{
 				Code: "M31",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph j) of the VAT code",
-					i18n.PT: "IVA - autoliquidação / Artigo 2.º n.º 1 alínea j) do CIVA",
+					i18n.EN: "Article 2 No. 1 paragraph j) of the VAT code",
+					i18n.PT: "Artigo 2.º n.º 1 alínea j) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge for construction or civil-works services under
+						subcontracting; client self-accounts VAT.
+					`),
 				},
 			},
 			{
 				Code: "M32",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph l) of the VAT code",
-					i18n.PT: "IVA - autoliquidação / Artigo 2.º n.º 1 alínea l) do CIVA",
+					i18n.EN: "Article 2 No. 1 paragraph l) of the VAT code",
+					i18n.PT: "Artigo 2.º n.º 1 alínea l) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge on services involving emission rights, certified
+						reductions or reduction units (environmental credits).
+					`),
 				},
 			},
 			{
 				Code: "M33",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph m) of the VAT code",
-					i18n.PT: "IVA - autoliquidação / Artigo 2.º n.º 1 alínea m) do CIVA",
+					i18n.EN: "Article 2 No. 1 paragraph m) of the VAT code",
+					i18n.PT: "Artigo 2.º n.º 1 alínea m) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge on raw cork, wood, pine-cones with shell — 
+						purchaser accounts for VAT.
+					`),
 				},
 			},
 			{
 				Code: "M34",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 2 No. 1 paragraph n) of the VAT code",
-					i18n.PT: "IVA - autoliquidação / Artigo 2.º n.º 1 alínea n) do CIVA",
+					i18n.EN: "Article 2 No. 1 paragraph n) of the VAT code",
+					i18n.PT: "Artigo 2.º n.º 1 alínea n) do CIVA",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge on electricity sold for self-consumption (≤1MW
+						capacity); the supplier issues invoice at 0% VAT.
+					`),
 				},
 			},
 			{
 				Code: "M40",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
-					i18n.PT: "IVA - autoliquidação / Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
+					i18n.EN: "Article 6 No. 6 paragraph a) of the VAT code, to the contrary",
+					i18n.PT: "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge for cross-border B2B services from suppliers
+						without a fixed establishment in Portugal — Portuguese client
+						self-accounts.
+					`),
 				},
 			},
 			{
 				Code: "M41",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Article 8 No. 3 of the RITI",
-					i18n.PT: "IVA - autoliquidação / Artigo 8.º n.º 3 do RITI",
+					i18n.EN: "Article 8 No. 3 of the RITI",
+					i18n.PT: "Artigo 8.º n.º 3 do RITI",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge for intracommunity triangular transactions (RITI
+						art. 8.3) — recipient (third party) must self-liquidate VAT.
+					`),
 				},
 			},
 			{
 				Code: "M42",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Decree-Law No. 21/2007 of 29th January",
-					i18n.PT: "IVA - autoliquidação / Decreto-Lei n.º 21/2007, de 29 de janeiro",
+					i18n.EN: "Decree-Law No. 21/2007 of 29th January",
+					i18n.PT: "Decreto-Lei n.º 21/2007, de 29 de janeiro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						When supplier renounces to VAT exemption on a real-estate sale,
+						the buyer must self-account VAT.
+					`),
 				},
 			},
 			{
 				Code: "M43",
 				Name: i18n.String{
-					i18n.EN: "VAT - reverse charge / Decree-Law No. 362/99 of 16th September",
-					i18n.PT: "IVA - autoliquidação / Decreto-Lei n.º 362/99, de 16 de setembro",
+					i18n.EN: "Decree-Law No. 362/99 of 16th September",
+					i18n.PT: "Decreto-Lei n.º 362/99, de 16 de setembro",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Reverse-charge on investment gold transactions that are not
+						VAT-exempt under special gold regulations; buyer reports VAT.
+					`),
 				},
 			},
 			{
@@ -527,6 +753,12 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Not subject to tax or not taxed",
 					i18n.PT: "Não sujeito ou não tributado",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Other cases where VAT is legally not due — e.g. not subject due
+						to CIVA articles 2, 3, or 4 (outside scope of VAT).
+					`),
 				},
 			},
 		},
@@ -957,6 +1189,121 @@ var extensions = []*cbc.Definition{
 					i18n.PT: "Títulos de compensação extrassalarial",
 				},
 			},
+		},
+	},
+	{
+		Key: ExtKeySource,
+		Name: i18n.String{
+			i18n.EN: "Document Source",
+			i18n.PT: "Origem do documento",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				SAF-T's ~SourceBilling~ (Origem do documento) field specifies the source of the document.
+				GOBL provides the ~pt-saft-source~ extension to set this value in your documents.
+				By default, GOBL will set this extension to "P" (Produced).
+
+				The table below shows the supported source billing codes:
+
+				| Code | Name       | Description                                         |
+				| ---- | ---------- | --------------------------------------------------- |
+				| ~P~  | Produced   | Document produced by the application                |
+				| ~I~  | Integrated | Integrated document produced by another application |
+				| ~M~  | Manual     | Document from recovery or issued manually           |
+
+				Example:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"ext": {
+						"pt-saft-source": "P"
+					},
+					// ...
+				}
+				~~~
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: SourceBillingProduced,
+				Name: i18n.String{
+					i18n.EN: "Produced",
+					i18n.PT: "Produzido",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Document produced by the application",
+					i18n.PT: "Documento produzido na aplicação",
+				},
+			},
+			{
+				Code: SourceBillingIntegrated,
+				Name: i18n.String{
+					i18n.EN: "Integrated",
+					i18n.PT: "Integrado",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Integrated document produced by another application",
+					i18n.PT: "Documento integrado e produzido noutra aplicação",
+				},
+			},
+			{
+				Code: SourceBillingManual,
+				Name: i18n.String{
+					i18n.EN: "Manual",
+					i18n.PT: "Manual",
+				},
+				Desc: i18n.String{
+					i18n.EN: "Document from recovery or issued manually",
+					i18n.PT: "Documento proveniente de recuperação ou de emissão manual",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeySourceRef,
+		Name: i18n.String{
+			i18n.EN: "Source Document Reference",
+			i18n.PT: "Referência do documento de origem",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				GOBL provides the ~pt-saft-source-ref~ extension to provide the full reference to a document
+				integrated from another system, recovered or issued manually.
+
+				This extension is required when the document source (~pt-saft-source~ extension) is
+				"M" (manual) or "I" (integrated). It must contain the complete document reference to be appended
+				to the SAF-T's ~HashControl~ field as stipulated by Despacho n.o 8632/2014.
+
+				Example with a manual document:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"ext": {
+						"pt-saft-source": "M",
+						"pt-saft-source-ref": "FTM abc/00001"
+					},
+					// ...
+				}
+				~~~
+
+				Example with a recovered document:
+
+				~~~js
+				{
+					"$schema": "https://gobl.org/draft-0/bill/invoice",
+					// ...
+					"ext": {
+						"pt-saft-source": "M",
+						"pt-saft-source-ref": "FTD FT SERIESA/123"
+					},
+					// ...
+				}
+				~~~
+			`),
 		},
 	},
 	{

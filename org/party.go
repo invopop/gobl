@@ -58,10 +58,7 @@ func (p *Party) Calculate() error {
 }
 
 func (p *Party) normalizers() tax.Normalizers {
-	if r := p.RegimeDef(); r != nil {
-		return tax.Normalizers{r.Normalizer}
-	}
-	return nil
+	return p.RegimeDef().Normalizers()
 }
 
 // Normalize will try to normalize the party's data.
@@ -71,6 +68,10 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 	}
 
 	uuid.Normalize(&p.UUID)
+	p.Label = cbc.NormalizeString(p.Label)
+	p.Name = cbc.NormalizeString(p.Name)
+	p.Alias = cbc.NormalizeString(p.Alias)
+
 	p.Ext = tax.CleanExtensions(p.Ext)
 
 	if p.TaxID != nil {
@@ -79,6 +80,7 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 	}
 
 	normalizers.Each(p)
+	tax.Normalize(normalizers, p.People)
 	tax.Normalize(normalizers, p.Identities)
 	tax.Normalize(normalizers, p.Inboxes)
 	tax.Normalize(normalizers, p.Addresses)

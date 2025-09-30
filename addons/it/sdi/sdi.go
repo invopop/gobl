@@ -14,6 +14,9 @@ import (
 const (
 	// V1 for SDI's FatturaPA verions 1.x
 	V1 cbc.Key = "it-sdi-v1"
+
+	// KeyFundContribution is the key for the Fund Contribution charge
+	KeyFundContribution cbc.Key = "fund-contribution"
 )
 
 func init() {
@@ -47,6 +50,8 @@ func normalize(doc any) {
 		normalizePayAdvance(obj)
 	case *org.Address:
 		normalizeAddress(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }
 
@@ -60,6 +65,8 @@ func validate(doc any) error {
 		return validatePayAdvance(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *bill.Charge:
+		return validateCharge(obj)
 	}
 	return nil
 }

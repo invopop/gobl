@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "149e6af80d5c26cfbb59a92afbe220809232faa51fb0c842d2386343c3447fe8"
+			"val": "ef8f6ddd68184349952ec6c9b4805d1149edc47d0df4fa0cf6140687da642e65"
 		}
 	},
 	"doc": {
@@ -18,9 +18,11 @@
 		"series": "PF SERIES-A",
 		"code": "123",
 		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
+				"pt-saft-source": "P",
 				"pt-saft-work-type": "PF"
 			}
 		},
@@ -57,7 +59,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "23.0%",
 						"ext": {
 							"pt-region": "PT",

@@ -53,24 +53,14 @@ func New() *tax.RegimeDef {
 					i18n.NL: "Belasting Toegevoegde Waarde",
 				},
 				Retained: false,
+				Keys:     tax.GlobalVATKeys(),
 				Rates: []*tax.RateDef{
 					{
-						Key: tax.RateZero,
+						Keys: []cbc.Key{tax.KeyStandard},
+						Rate: tax.RateGeneral,
 						Name: i18n.String{
-							i18n.EN: "Zero Rate",
-							i18n.NL: `0%-tarief`,
-						},
-						Values: []*tax.RateValueDef{
-							{
-								Percent: num.MakePercentage(0, 3),
-							},
-						},
-					},
-					{
-						Key: tax.RateStandard,
-						Name: i18n.String{
-							i18n.EN: "Standard Rate",
-							i18n.NL: "Standaardtarief",
+							i18n.EN: "General Rate",
+							i18n.NL: "Algemeen Tarief",
 						},
 						Values: []*tax.RateValueDef{
 							{
@@ -79,7 +69,8 @@ func New() *tax.RegimeDef {
 						},
 					},
 					{
-						Key: tax.RateReduced,
+						Keys: []cbc.Key{tax.KeyStandard},
+						Rate: tax.RateReduced,
 						Name: i18n.String{
 							i18n.EN: "Reduced Rate",
 							i18n.NL: "Gereduceerd Tarief",

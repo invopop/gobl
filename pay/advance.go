@@ -49,13 +49,14 @@ type Advance struct {
 }
 
 // Normalize will try to normalize the advance's data.
-func (a *Advance) Normalize(normalizers tax.Normalizers) {
+func (a *Advance) Normalize() {
 	if a == nil {
 		return
 	}
 	uuid.Normalize(&a.UUID)
+	a.Ref = cbc.NormalizeString(a.Ref)
+	a.Description = cbc.NormalizeString(a.Description)
 	a.Ext = tax.CleanExtensions(a.Ext)
-	normalizers.Each(a)
 }
 
 // Validate checks the advance looks okay

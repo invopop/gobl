@@ -30,11 +30,63 @@
         "en": "Value Added Tax",
         "es": "Impuesto al Valor Agregado"
       },
-      "rates": [
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard Rate",
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
             "es": "Tasa General"
           },
           "values": [
@@ -44,7 +96,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced (Border) Rate",
             "es": "Tasa Reducida (Fronteriza)"
@@ -54,26 +109,6 @@
               "percent": "8.0%"
             }
           ]
-        },
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate",
-            "es": "Tasa Cero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "en": "Exempt",
-            "es": "Exenta"
-          },
-          "exempt": true
         }
       ]
     },

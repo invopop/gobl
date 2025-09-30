@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "85c460e11711e78fc4f95cf2d83ae709cdd75c1f015223d339ced294e857cc1f"
+			"val": "973c0edb03e3ae05bf236fb7701d476b0e88f16c46e8f2eb3ebbb827d396c3e5"
 		}
 	},
 	"doc": {
@@ -88,6 +88,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "standard",
 						"percent": "20%",
 						"ext": {
 							"untdid-tax-category": "S"
@@ -108,6 +109,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "exempt",
 						"ext": {
 							"cef-vatex": "VATEX-EU-79-C",
 							"untdid-tax-category": "E"
@@ -137,6 +139,7 @@
 						"code": "VAT",
 						"rates": [
 							{
+								"key": "standard",
 								"ext": {
 									"untdid-tax-category": "S"
 								},
@@ -145,6 +148,7 @@
 								"amount": "324.00"
 							},
 							{
+								"key": "exempt",
 								"ext": {
 									"cef-vatex": "VATEX-EU-79-C",
 									"untdid-tax-category": "E"

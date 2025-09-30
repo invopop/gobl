@@ -51,6 +51,11 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Ordering,
+			// Need to access tagas so we pass the invoice directly
+			validation.By(validateInvoiceOrdering(inv)),
+			validation.Skip,
+		),
 		validation.Field(&inv.Payment,
 			validation.By(validateInvoicePaymentDetails),
 			validation.Skip,
@@ -170,19 +175,26 @@ func validateItem(val any) error {
 	)
 }
 
-// validateLatin1String ensures that the item name only contains characters
-// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
-func validateLatin1String(val any) error {
-	name, _ := val.(string)
-
-	for _, r := range name {
-		// Check if the character is outside Latin and Latin-1 range
-		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
-		if r > 255 {
-			return errors.New("contains characters outside of Latin and Latin-1 range")
-		}
+func validateCharge(val any) error {
+	charge, _ := val.(*bill.Charge)
+	if charge == nil || !charge.Key.Has(KeyFundContribution) {
+		return nil
 	}
-	return nil
+
+	return validation.ValidateStruct(charge,
+		validation.Field(&charge.Percent,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&charge.Ext,
+			tax.ExtensionsRequire(ExtKeyFundType),
+			validation.Skip,
+		),
+		validation.Field(&charge.Taxes,
+			tax.SetHasCategory(tax.CategoryVAT),
+			validation.Skip,
+		),
+	)
 }
 
 func validateInvoicePaymentDetails(val any) error {
@@ -196,6 +208,39 @@ func validateInvoicePaymentDetails(val any) error {
 				(p.Terms != nil && len(p.Terms.DueDates) > 0),
 				validation.Required.Error("cannot be blank when terms with due dates are present"),
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceOrdering(inv *bill.Invoice) validation.RuleFunc {
+	return func(value any) error {
+		o, _ := value.(*bill.Ordering)
+		if o == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(o,
+			validation.Field(&o.Despatch,
+				validation.When(
+					inv.HasTags(TagDeferred),
+					validation.Each(validation.By(validateDespatch)),
+				).Else(
+					validation.Nil.Error("can only be set when invoice has deferred tag")),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateDespatch(value any) error {
+	d, ok := value.(*org.DocumentRef)
+	if !ok || d == nil {
+		return nil
+	}
+	return validation.ValidateStruct(d,
+		validation.Field(&d.IssueDate,
+			validation.Required,
 			validation.Skip,
 		),
 	)
@@ -258,6 +303,21 @@ func validateAddress(value interface{}) error {
 			validation.Skip,
 		),
 	)
+}
+
+// validateLatin1String ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateLatin1String(val any) error {
+	name, _ := val.(string)
+
+	for _, r := range name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("contains characters outside of Latin and Latin-1 range")
+		}
+	}
+	return nil
 }
 
 func validateInvoiceSupplierRegistration(value interface{}) error {

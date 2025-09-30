@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1d7284735c9e0c95ec790de9f3e7a7ce239134999b39ead2d9f0d15459fd23db"
+			"val": "3519e4d2d73b0efed29bb165ff790df3f72938eff3182208fcbfb7b978368a92"
 		}
 	},
 	"doc": {
@@ -16,6 +16,7 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "credit-note",
 		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
 		"currency": "EUR",
 		"preceding": [
 			{
@@ -25,7 +26,8 @@
 		],
 		"tax": {
 			"ext": {
-				"pt-saft-invoice-type": "NC"
+				"pt-saft-invoice-type": "NC",
+				"pt-saft-source": "P"
 			}
 		},
 		"supplier": {
@@ -62,7 +64,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "23.0%",
 						"ext": {
 							"pt-region": "PT",

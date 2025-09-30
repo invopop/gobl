@@ -16,6 +16,7 @@ const (
 	ExtKeyRetained     cbc.Key = "it-sdi-retained"
 	ExtKeyPaymentMeans cbc.Key = "it-sdi-payment-means"
 	ExtKeyVATLiability cbc.Key = "it-sdi-vat-liability"
+	ExtKeyFundType     cbc.Key = "it-sdi-fund-type"
 )
 
 var extensions = []*cbc.Definition{
@@ -891,6 +892,169 @@ var extensions = []*cbc.Definition{
 				Name: i18n.String{
 					i18n.EN: "Split Payment",
 					i18n.IT: "Scissione dei pagamenti",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyFundType,
+		Name: i18n.String{
+			i18n.EN: "Fund Type",
+			i18n.IT: "Tipo Cassa",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "TC01",
+				Name: i18n.String{
+					i18n.EN: "National Pension and Welfare Fund for Lawyers and Solicitors",
+					i18n.IT: "Cassa nazionale di previdenza e assistenza forense",
+				},
+			},
+			{
+				Code: "TC02",
+				Name: i18n.String{
+					i18n.EN: "Pension fund for accountants",
+					i18n.IT: "Cassa di previdenza dottori commercialisti",
+				},
+			},
+			{
+				Code: "TC03",
+				Name: i18n.String{
+					i18n.EN: "Pension and welfare fund for surveyors",
+					i18n.IT: "Cassa di previdenza e assistenza geometri",
+				},
+			},
+			{
+				Code: "TC04",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare fund for self-employed engineers and architects",
+					i18n.IT: "Cassa nazionale di previdenza e assistenza per gli ingegneri e gli architetti liberi professionisti",
+				},
+			},
+			{
+				Code: "TC05",
+				Name: i18n.String{
+					i18n.EN: "National fund for solicitors",
+					i18n.IT: "Cassa nazionale del notariato",
+				},
+			},
+			{
+				Code: "TC06",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare fund for bookkeepers and commercial experts",
+					i18n.IT: "Cassa nazionale di previdenza e assistenza ragionieri e periti commerciali",
+				},
+			},
+			{
+				Code: "TC07",
+				Name: i18n.String{
+					i18n.EN: "National welfare board for sales agents and representatives (ENASARCO)",
+					i18n.IT: "Ente nazionale assistenza agenti e rappresentanti di commercio (ENASARCO)",
+				},
+			},
+			{
+				Code: "TC08",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for employment consultants (ENPACL)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza consulenti del lavoro (ENPACL)",
+				},
+			},
+			{
+				Code: "TC09",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for doctors (ENPAM)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza medici (ENPAM)",
+				},
+			},
+			{
+				Code: "TC10",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for pharmacists (ENPAF)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza farmacisti (ENPAF)",
+				},
+			},
+			{
+				Code: "TC11",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for veterinary physicians (ENPAV)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza veterinari (ENPAV)",
+				},
+			},
+			{
+				Code: "TC12",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for agricultural employees (ENPAIA)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza per i periti industriali e i periti industriali laureati (ENPAIA)",
+				},
+			},
+			{
+				Code: "TC13",
+				Name: i18n.String{
+					i18n.EN: "Pension fund for employees of shipping companies and maritime agencies",
+					i18n.IT: "Cassa di previdenza per l'assicurazione degli impiegati presso le aziende di navigazione ed i consorzi di armatori per il lavoro portuale",
+				},
+			},
+			{
+				Code: "TC14",
+				Name: i18n.String{
+					i18n.EN: "National pension institute for Italian journalists (INPGI)",
+					i18n.IT: "Istituto nazionale di previdenza dei giornalisti italiani (INPGI)",
+				},
+			},
+			{
+				Code: "TC15",
+				Name: i18n.String{
+					i18n.EN: "National welfare board for orphans of Italian doctors (ONAOSI)",
+					i18n.IT: "Opera nazionale per l'assistenza degli orfani dei sanitari italiani (ONAOSI)",
+				},
+			},
+			{
+				Code: "TC16",
+				Name: i18n.String{
+					i18n.EN: "Autonomous supplementary welfare fund for Italian journalists (CASAGIT)",
+					i18n.IT: "Cassa autonoma di assistenza integrativa dei giornalisti italiani (CASAGIT)",
+				},
+			},
+			{
+				Code: "TC17",
+				Name: i18n.String{
+					i18n.EN: "Pension board for industrial experts and graduate industrial experts (EPPI)",
+					i18n.IT: "Ente di previdenza periti industriali e periti industriali laureati (EPPI)",
+				},
+			},
+			{
+				Code: "TC18",
+				Name: i18n.String{
+					i18n.EN: "National multi-category pension and welfare board (EPAP)",
+					i18n.IT: "Ente di previdenza e assistenza pluricategoriale (EPAP)",
+				},
+			},
+			{
+				Code: "TC19",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for biologists (ENPAB)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza biologi (ENPAB)",
+				},
+			},
+			{
+				Code: "TC20",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for the nursing profession (ENPAPI)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza professione infermieristica (ENPAPI)",
+				},
+			},
+			{
+				Code: "TC21",
+				Name: i18n.String{
+					i18n.EN: "National pension and welfare board for psychologists (ENPAP)",
+					i18n.IT: "Ente nazionale di previdenza e assistenza psicologi (ENPAP)",
+				},
+			},
+			{
+				Code: "TC22",
+				Name: i18n.String{
+					i18n.EN: "National Social Security Institute (INPS)",
+					i18n.IT: "Istituto nazionale della previdenza sociale (INPS)",
 				},
 			},
 		},

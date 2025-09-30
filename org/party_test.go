@@ -24,6 +24,12 @@ func TestEmailValidation(t *testing.T) {
 }
 
 func TestPartyNormalize(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var p *org.Party
+		assert.NotPanics(t, func() {
+			p.Normalize(nil)
+		})
+	})
 	t.Run("for known regime", func(t *testing.T) {
 		party := org.Party{
 			Name: "Invopop",
@@ -91,6 +97,19 @@ func TestPartyNormalize(t *testing.T) {
 		}
 		party.Normalize(nil)
 		assert.Equal(t, "+49 123 4567890", party.Telephones[0].Number)
+	})
+
+	t.Run("for regime without normalizer", func(t *testing.T) {
+		rd := tax.RegimeDefFor("US")
+		require.Nil(t, rd.Normalizer) // Ensure the regime has no normalizer
+
+		party := org.Party{
+			Regime: tax.WithRegime("US"),
+			Name:   "Invopop",
+		}
+		assert.NotPanics(t, func() {
+			assert.NoError(t, party.Calculate())
+		})
 	})
 }
 

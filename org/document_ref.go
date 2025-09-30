@@ -60,9 +60,13 @@ func (dr *DocumentRef) Normalize(normalizers tax.Normalizers) {
 	if dr == nil {
 		return
 	}
-	dr.Ext = tax.CleanExtensions(dr.Ext)
+	uuid.Normalize(&dr.UUID)
 	dr.Series = cbc.NormalizeCode(dr.Series)
 	dr.Code = cbc.NormalizeCode(dr.Code)
+	dr.Reason = cbc.NormalizeString(dr.Reason)
+	dr.URL = cbc.NormalizeString(dr.URL)
+	dr.Ext = tax.CleanExtensions(dr.Ext)
+
 	normalizers.Each(dr)
 	tax.Normalize(normalizers, dr.Identities)
 	tax.Normalize(normalizers, dr.Tax)

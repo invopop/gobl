@@ -21,7 +21,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.SetTags(tax.TagSimplified)
 		require.NoError(t, i.Calculate())
-		assert.Len(t, i.Notes, 1)
+		assert.Len(t, i.Notes, 0)
 		assert.Equal(t, i.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
 	})
 
@@ -29,7 +29,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 		i := testInvoiceStandard(t)
 		require.NoError(t, i.Correct(bill.Credit, bill.WithExtension(verifactu.ExtKeyDocType, "R1")))
 		// require.NoError(t, i.Calculate())
-		assert.Len(t, i.Notes, 1)
+		assert.Len(t, i.Notes, 0)
 		assert.Equal(t, i.Tax.Ext[verifactu.ExtKeyDocType].String(), "R1")
 		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyCorrectionType).String(), "I")
 	})
@@ -37,7 +37,7 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	t.Run("corrective", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		require.NoError(t, i.Correct(bill.Corrective, bill.WithExtension(verifactu.ExtKeyDocType, "R2")))
-		assert.Len(t, i.Notes, 1)
+		assert.Len(t, i.Notes, 0)
 		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyDocType).String(), "R2")
 		assert.Equal(t, i.Tax.Ext.Get(verifactu.ExtKeyCorrectionType).String(), "S")
 	})

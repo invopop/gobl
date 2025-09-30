@@ -26,15 +26,13 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.PL: "Podatek od Wartości Dodanej",
 		},
 		Retained: false,
-		Extensions: []cbc.Key{
-			ExtKeyKSeFVATZero,
-			ExtKeyKSeFVATSpecial,
-		},
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 					i18n.PL: "Stawka Podstawowa",
 				},
 				Values: []*tax.RateValueDef{
@@ -49,7 +47,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "First Reduced Rate",
 					i18n.PL: "Stawka Obniżona Pierwsza",
@@ -66,7 +65,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSuperReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Second Reduced Rate",
 					i18n.PL: "Stawka Obniżona Druga",
@@ -82,36 +82,15 @@ var taxCategories = []*tax.CategoryDef{
 					},
 				},
 			},
-			{
-				Key: tax.RateZero,
-				Name: i18n.String{
-					i18n.EN: "Zero Rate",
-					i18n.PL: "Stawka Zerowa",
-				},
-				Values: []*tax.RateValueDef{
-					{
-						Percent: num.MakePercentage(0, 3),
+			/*
+					 * Still working on refactoring these...
+				{
+					Key: tax.RateSpecial,
+					Name: i18n.String{
+						i18n.EN: "Special Rate",
+						i18n.PL: "Stawka Specjalna",
 					},
 				},
-			},
-			{
-				Key: tax.RateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.PL: "Zwolnione",
-				},
-				Exempt: true,
-			},
-			{
-				Key: tax.RateSpecial,
-				Name: i18n.String{
-					i18n.EN: "Special Rate",
-					i18n.PL: "Stawka Specjalna",
-				},
-			},
-
-			/*
-				 * Still working on refactoring these...
 				{
 					Key: TaxRateNotPursuant,
 					Name: i18n.String{

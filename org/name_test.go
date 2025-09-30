@@ -4,8 +4,35 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/org"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestNameNormalize(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var n *org.Name
+		assert.NotPanics(t, func() {
+			n.Normalize()
+		})
+	})
+	n := &org.Name{
+		Alias:    "  john doe  ",
+		Prefix:   "  Mr.  ",
+		Given:    "  John  ",
+		Middle:   "  Quincy  ",
+		Surname:  "  Doe  ",
+		Surname2: "  Smith  ",
+		Suffix:   "  Jr.  ",
+	}
+	n.Normalize()
+	require.Equal(t, "john doe", n.Alias)
+	require.Equal(t, "Mr.", n.Prefix)
+	require.Equal(t, "John", n.Given)
+	require.Equal(t, "Quincy", n.Middle)
+	require.Equal(t, "Doe", n.Surname)
+	require.Equal(t, "Smith", n.Surname2)
+	require.Equal(t, "Jr.", n.Suffix)
+}
 
 func TestNameValidation(t *testing.T) {
 	tests := []struct {
