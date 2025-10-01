@@ -79,13 +79,14 @@ func (p *Party) Normalize(normalizers tax.Normalizers) {
 		p.TaxID.Normalize()
 	}
 
-	normalizers.Each(p)
 	tax.Normalize(normalizers, p.People)
 	tax.Normalize(normalizers, p.Identities)
 	tax.Normalize(normalizers, p.Inboxes)
 	tax.Normalize(normalizers, p.Addresses)
 	tax.Normalize(normalizers, p.Telephones)
 	tax.Normalize(normalizers, p.Emails)
+
+	normalizers.Each(p)
 }
 
 // Validate is used to check the party's data meets minimum expectations.

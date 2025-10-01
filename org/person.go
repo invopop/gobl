@@ -46,13 +46,13 @@ func (p *Person) Normalize(normalizers tax.Normalizers) {
 	p.Label = cbc.NormalizeString(p.Label)
 	p.Role = cbc.NormalizeString(p.Role)
 
-	normalizers.Each(p)
 	tax.Normalize(normalizers, p.Name)
 	tax.Normalize(normalizers, p.Identities)
 	tax.Normalize(normalizers, p.Addresses)
 	tax.Normalize(normalizers, p.Emails)
 	tax.Normalize(normalizers, p.Telephones)
 	tax.Normalize(normalizers, p.Avatars)
+	normalizers.Each(p)
 }
 
 // Validate validates the person.

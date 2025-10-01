@@ -371,6 +371,22 @@ func TestInvoiceNormalization(t *testing.T) {
 		today := cal.TodayIn(loc)
 		assert.Equal(t, &today, inv.ValueDate)
 	})
+	t.Run("normalize invoice with reverse charge", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Taxes[0] = &tax.Combo{
+			Category: tax.CategoryVAT,
+			Key:      tax.KeyReverseCharge,
+		}
+		inv.Normalize(tax.ExtractNormalizers(inv))
+		assert.Equal(t, tax.KeyReverseCharge, inv.Lines[0].Taxes[0].Key)
+		assert.Equal(t, "ISE", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyTaxRate].String())
+		assert.Equal(t, "M40", inv.Lines[0].Taxes[0].Ext[saft.ExtKeyExemption].String())
+		require.Len(t, inv.Lines[0].Notes, 1)
+		assert.Equal(t, org.NoteKeyLegal, inv.Lines[0].Notes[0].Key)
+		assert.Equal(t, "M40", inv.Lines[0].Notes[0].Code.String())
+		assert.Equal(t, saft.ExtKeyExemption, inv.Lines[0].Notes[0].Src)
+		assert.Equal(t, "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário", inv.Lines[0].Notes[0].Text)
+	})
 }
 
 func TestInvoicePaymentValidation(t *testing.T) {
