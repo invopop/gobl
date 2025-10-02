@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7c8d1dc215150ee6604d085400e369a762a501c88c04c35701e52d5f42b5ea8d"
+			"val": "e2240ad7bef4e9eac7ac3bee35a3119e120c8d8f6b2c40017cd491771a021030"
 		}
 	},
 	"doc": {
@@ -76,13 +76,6 @@
 			"tax": "18000.00",
 			"total_with_tax": "218000.00",
 			"payable": "218000.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "simplified",
-				"text": "Price Payable includes GST"
-			}
-		]
+		}
 	}
 }

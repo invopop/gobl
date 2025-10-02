@@ -10,50 +10,20 @@ import (
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Supplier,
-			validation.When(
-				inv.HasTags(TagInvoiceReceipt),
-				validation.By(validateReceiptSupplier),
-				validation.Skip,
-			).Else(
-				validation.By(validateInvoiceSupplier),
-				validation.Skip,
-			),
-		),
-		validation.Field(&inv.Customer,
-			validation.When(
-				inv.HasTags(TagInvoiceReceipt) || inv.HasTags(tax.TagSimplified),
-				validation.Skip,
-			).Else(validation.Required),
-		),
-	)
-}
-
-func validateInvoiceSupplier(value any) error {
-	p, ok := value.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.TaxID,
-			validation.Required,
-			tax.RequireIdentityCode,
+			validation.By(validateSupplier),
 			validation.Skip,
 		),
-		validation.Field(&p.Name,
-			validation.Required,
-		),
-		validation.Field(&p.Addresses,
-			validation.Required,
-		),
 	)
 }
 
-func validateReceiptSupplier(value any) error {
+func validateSupplier(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {
 		return nil
 	}
 	return validation.ValidateStruct(p,
+		// In Singapore, all invoices must have a tax ID and name of the issuer,
+		// there are no exceptions to this rule.
 		validation.Field(&p.TaxID,
 			validation.Required,
 			tax.RequireIdentityCode,

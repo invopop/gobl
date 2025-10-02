@@ -4,21 +4,17 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6a7553112d9dd194a9527c9c1544251cb8a9b10e68fff25a4cf63e5dedf2bd2f"
+			"val": "6137fe1dff83bf55a48085f255bbc8059b2f9e3d4f1082483fa1a89a582cd00b"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "SG",
-		"$tags": [
-			"receipt"
-		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "1234",
 		"issue_date": "2024-01-15",
 		"currency": "SGD",
-		"tax": {},
 		"supplier": {
 			"name": "EXAMPLE SUPPLIER",
 			"tax_id": {
@@ -69,13 +65,6 @@
 			"tax": "18000.00",
 			"total_with_tax": "218000.00",
 			"payable": "218000.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "receipt",
-				"text": "Price Payable includes GST"
-			}
-		]
+		}
 	}
 }

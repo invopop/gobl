@@ -10,7 +10,6 @@ import (
 	"github.com/invopop/gobl/regimes/sg"
 	"github.com/invopop/gobl/tax"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -78,48 +77,20 @@ func TestValidInvoiceWithGST(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
-func TestValidReceiptInvoice(t *testing.T) {
-	inv := validInvoice()
-	inv.SetTags(sg.TagInvoiceReceipt)
-	inv.Customer = nil
-	inv.Supplier.Addresses = nil
-
-	require.NoError(t, inv.Calculate())
-	assert.Len(t, inv.Notes, 1)
-	assert.Equal(t, inv.Notes[0].Src, sg.TagInvoiceReceipt)
-	assert.Equal(t, inv.Notes[0].Text, "Price Payable includes GST")
-	require.NoError(t, inv.Validate())
-
-}
-
-func TestValidSimplifiedInvoice(t *testing.T) {
-	inv := validInvoice()
-	inv.SetTags(tax.TagSimplified)
-	inv.Customer = nil
-
-	require.NoError(t, inv.Calculate())
-	assert.Len(t, inv.Notes, 1)
-	assert.Equal(t, inv.Notes[0].Src, tax.TagSimplified)
-	assert.Equal(t, inv.Notes[0].Text, "Price Payable includes GST")
-	require.NoError(t, inv.Validate())
-}
-
-func TestInvalidInvoice(t *testing.T) {
-	inv := validInvoice()
-	inv.Supplier.TaxID.Code = "1234567A"
-	require.Error(t, inv.Validate())
-
-	inv = validInvoice()
-	inv.Customer = nil
-	require.Error(t, inv.Validate())
-
-	inv = validInvoice()
-	inv.Supplier.Addresses = nil
-	require.Error(t, inv.Validate())
-}
-
 func TestNilSupplier(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier = nil
+	require.Error(t, inv.Validate())
+}
+
+func TestMissingSupplierTaxID(t *testing.T) {
+	inv := validInvoice()
+	inv.Supplier.TaxID = nil
+	require.Error(t, inv.Validate())
+}
+
+func TestMissingSupplierName(t *testing.T) {
+	inv := validInvoice()
+	inv.Supplier.Name = ""
 	require.Error(t, inv.Validate())
 }

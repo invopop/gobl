@@ -25,9 +25,6 @@ func New() *tax.RegimeDef {
 			i18n.EN: "Singapore",
 		},
 		TimeZone: "Asia/Singapore",
-		Tags: []*tax.TagSet{
-			invoiceTags(),
-		},
 		Description: i18n.String{
 			i18n.EN: here.Doc(`Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))
 
@@ -47,9 +44,6 @@ Act
 Singapore Customs 
 4. Importation of goods by GST-registered businesses that are under Major
 Exporter Scheme or other approved schemes.`),
-		},
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios(),
 		},
 		Identities: identityDefinitions, // identities.go
 		Corrections: []*tax.CorrectionDefinition{

@@ -5,9 +5,6 @@
     "code": "1234",
     "currency": "SGD",
     "issue_date": "2024-01-15",
-    "tax": {
-        "tags": ["receipt"]
-      },
     "supplier": {
       "name": "EXAMPLE SUPPLIER",
       "tax_id": {
