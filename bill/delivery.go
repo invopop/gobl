@@ -286,8 +286,6 @@ func (dlv *Delivery) Normalize(normalizers tax.Normalizers) {
 	dlv.Series = cbc.NormalizeCode(dlv.Series)
 	dlv.Code = cbc.NormalizeCode(dlv.Code)
 
-	normalizers.Each(dlv)
-
 	tax.Normalize(normalizers, dlv.Tax)
 	tax.Normalize(normalizers, dlv.Supplier)
 	tax.Normalize(normalizers, dlv.Customer)
@@ -297,6 +295,7 @@ func (dlv *Delivery) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, dlv.Lines)
 	tax.Normalize(normalizers, dlv.Discounts)
 	tax.Normalize(normalizers, dlv.Charges)
+	normalizers.Each(dlv)
 }
 
 // normalizers returns the normalizers for the delivery.

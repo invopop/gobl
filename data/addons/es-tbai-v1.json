@@ -45,7 +45,7 @@
         "es": "Clave de Producto TicketBAI"
       },
       "desc": {
-        "en": "Product keys are used by TicketBAI to differentiate between -exported- goods\nand services. It may be useful to classify all products regardless of wether\nthey are exported or not.\n\nThere is an additional exception case for goods that are resold without modification\nwhen the supplier is in the simplified tax regime. For must purposes this special\ncase can be ignored."
+        "en": "Product keys are used by TicketBAI to differentiate between -exported- goods\nand services. It may be useful to classify all products regardless of wether\nthey are exported or not.\n\nThere is an additional exception case for goods that are resold without modification\nwhen the supplier is in the simplified tax regime. For must purposes this special\ncase can be ignored.\n\nIf no product key is provided, the default is \"services\"."
       },
       "values": [
         {
@@ -78,7 +78,7 @@
         "es": "Código de Exención de TicketBAI"
       },
       "desc": {
-        "en": "Codes used by TicketBAI for both \"exempt\", \"not-subject\", and reverse\ncharge transactions. In the TicketBAI format these are separated,\nbut in order to simplify GOBL and be more closely aligned with\nother countries we've combined them into one."
+        "en": "Codes used by TicketBAI for both \"exempt\", \"not-subject\", and reverse\ncharge transactions. In the TicketBAI format these are separated,\nbut in order to simplify GOBL and be more closely aligned with\nother countries we've combined them into one.\n\nThe follow mappings will be made automatically by GOBL during normalization.\n\n| Tax Key           | Exemption Codes            |\n|-------------------|----------------------------|\n| `exempt`          | `E1` (default), `E6`       |\n| `export`          | `E2` (default), `E3`, `E4` |\n| `intra-community` | `E5`                       |\n| `reverse-charge`  | `S2`                       |\n| `outside-scope`   | `OT`, `RL`, `VT`, `IE`     |"
       },
       "values": [
         {

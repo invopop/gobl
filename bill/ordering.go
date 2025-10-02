@@ -51,7 +51,6 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 	}
 	o.Code = cbc.NormalizeCode(o.Code)
 	o.Cost = cbc.NormalizeCode(o.Cost)
-	normalizers.Each(o)
 	tax.Normalize(normalizers, o.Identities)
 	tax.Normalize(normalizers, o.Projects)
 	tax.Normalize(normalizers, o.Contracts)
@@ -63,6 +62,7 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, o.Buyer)
 	tax.Normalize(normalizers, o.Seller)
 	tax.Normalize(normalizers, o.Issuer)
+	normalizers.Each(o)
 }
 
 // Validate the ordering details.

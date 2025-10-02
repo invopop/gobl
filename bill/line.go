@@ -185,7 +185,6 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	l.Taxes = tax.CleanSet(l.Taxes)
 	l.Discounts = CleanLineDiscounts(l.Discounts)
 	l.Charges = CleanLineCharges(l.Charges)
-	normalizers.Each(l)
 	tax.Normalize(normalizers, l.Identifier)
 	tax.Normalize(normalizers, l.Taxes)
 	tax.Normalize(normalizers, l.Item)
@@ -193,6 +192,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, l.Discounts)
 	tax.Normalize(normalizers, l.Charges)
 	tax.Normalize(normalizers, l.Substituted)
+	normalizers.Each(l)
 }
 
 // Normalize performs normalization on the subline and embedded objects using the
@@ -200,11 +200,11 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 func (sl *SubLine) Normalize(normalizers tax.Normalizers) {
 	sl.Discounts = CleanLineDiscounts(sl.Discounts)
 	sl.Charges = CleanLineCharges(sl.Charges)
-	normalizers.Each(sl)
 	tax.Normalize(normalizers, sl.Identifier)
 	tax.Normalize(normalizers, sl.Item)
 	tax.Normalize(normalizers, sl.Discounts)
 	tax.Normalize(normalizers, sl.Charges)
+	normalizers.Each(sl)
 }
 
 func removeLineIncludedTaxes(line *Line, cat cbc.Code) *Line {

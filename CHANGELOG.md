@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `de-xrechnung-v3`: Add missing validation from CIUS.
 - `fr`: Add identity validation and normalization.
 - `it-sdi-v1`: Modify address validation to accept postbox.
+- `bill`: support for `bypass` tag, to prevent billing total calculations.
+- Updated normalizer ordering so that inside fields/objects are processed before the parent object
+
+### Removed
+
+- `pt`: migrations for Zone, no longer needed
 
 ## [v0.300.2] - 2025-09-18
 
