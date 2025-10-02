@@ -10,9 +10,6 @@ import (
 	"github.com/invopop/validation"
 )
 
-// forbiddenChars contains characters that are not allowed in certain string fields
-var forbiddenChars = []rune{'<', '>', '"', '\'', '='}
-
 var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	{
 		Schema: bill.ShortSchemaInvoice,
@@ -125,20 +122,12 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
-		validation.Field(&inv.Supplier,
-			validation.By(validateInvoiceSupplier),
-			validation.Skip,
-		),
 		validation.Field(&inv.Customer,
 			validation.When(
 				!inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // not simplified
 				validation.Required,
 			),
 			validation.By(validateInvoiceCustomer),
-			validation.Skip,
-		),
-		validation.Field(&inv.Ordering,
-			validation.By(validateInvoiceOrdering),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
@@ -151,19 +140,6 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.By(validateNote),
 				validation.Skip,
 			),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceSupplier(val any) error {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
-		validation.Field(&p.Name,
-			validation.By(validateNoForbiddenChars),
 			validation.Skip,
 		),
 	)
@@ -185,32 +161,6 @@ func validateInvoiceCustomer(val any) error {
 			tax.RequireIdentityCode,
 			validation.Skip,
 		),
-		validation.Field(&p.Name,
-			validation.By(validateNoForbiddenChars),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceOrdering(val any) error {
-	o, ok := val.(*bill.Ordering)
-	if !ok || o == nil {
-		return nil
-	}
-	return validation.ValidateStruct(o,
-		validation.Field(&o.Issuer,
-			validation.By(validateInvoiceOrderingIssuer),
-			validation.Skip,
-		),
-	)
-}
-
-func validateInvoiceOrderingIssuer(val any) error {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	return validation.ValidateStruct(p,
 		validation.Field(&p.Name,
 			validation.By(validateNoForbiddenChars),
 			validation.Skip,
@@ -290,19 +240,4 @@ func validateNote(val any) error {
 			validation.Skip,
 		),
 	)
-}
-
-// validateNoForbiddenChars validates that a string doesn't contain any of the forbidden characters: < > " ' =
-func validateNoForbiddenChars(val any) error {
-	str, _ := val.(string)
-
-	for _, char := range str {
-		for _, forbidden := range forbiddenChars {
-			if char == forbidden {
-				return fmt.Errorf("contains forbidden character: %c", char)
-			}
-		}
-	}
-
-	return nil
 }
