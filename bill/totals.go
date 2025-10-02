@@ -41,11 +41,11 @@ type Totals struct {
 // ValidateWithContext checks the totals calculated for the invoice.
 func (t *Totals) ValidateWithContext(ctx context.Context) error {
 	return validation.ValidateStructWithContext(ctx, t,
-		validation.Field(&t.Sum, validation.Required),
+		validation.Field(&t.Sum),
 		validation.Field(&t.Discount),
 		validation.Field(&t.Charge),
 		validation.Field(&t.TaxIncluded),
-		validation.Field(&t.Total, validation.Required),
+		validation.Field(&t.Total),
 		validation.Field(&t.Taxes),
 		validation.Field(&t.Tax),
 		validation.Field(&t.TotalWithTax),
