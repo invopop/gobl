@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Changed
+
+- `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
+- `de-xrechnung-v3`: Add missing validation from CIUS.
+- `fr`: Add identity validation and normalization.
+- `it-sdi-v1`: Modify address validation to accept postbox.
+
 ## [v0.300.2] - 2025-09-18
 
 ### Added
@@ -98,9 +105,6 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 ### Changed
 
-- `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
-- `de-xrechnung-v3`: Add missing validation from CIUS.
-- `fr`: Add identity validation and normalization.
 - `pt-saft-v1`: restore generic notes for M99 and M19 exemption codes for backwards compatibility.
 
 ## [v0.220.4] - 2025-07-17
@@ -176,10 +180,6 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 - `org`: `Unit` additional standard units.
 - `es/verifactu`: map identity keys for specific codes.
 - `org`: `Person`: new `key`, `addresses`, and `identities` properties.
-
-### Changed
-
-- `it-sdi-v1`: Modify address validation to accept postbox.
 
 ## [v0.218.0] - 2025-06-12
 
