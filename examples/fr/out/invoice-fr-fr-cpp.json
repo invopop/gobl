@@ -4,17 +4,17 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f86d81e081eca893da6285b68c789f5339c9dee7834e65959ef6aaa8edb9e391"
+			"val": "fd7609df14e4f991a170f69b269372901c7d133bf1d023588ddf33caae490226"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"$regime": "DE",
+		"$regime": "FR",
 		"$addons": [
 			"eu-en16931-v2017",
-			"de-xrechnung-v3"
+			"fr-facturx-v1"
 		],
-		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"uuid": "01961f64-4934-7715-8abc-42be69de5ca3",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
@@ -26,18 +26,19 @@
 			}
 		},
 		"supplier": {
-			"name": "Provide One GmbH",
+			"name": "Provide One Inc.",
 			"tax_id": {
-				"country": "DE",
-				"code": "111111125"
+				"country": "FR",
+				"code": "39356000000"
 			},
 			"addresses": [
 				{
-					"num": "16",
-					"street": "Dietmar-Hopp-Allee",
-					"locality": "Walldorf",
-					"code": "69190",
-					"country": "DE"
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
 				}
 			],
 			"emails": [
@@ -49,15 +50,22 @@
 		"customer": {
 			"name": "Sample Consumer",
 			"tax_id": {
-				"country": "DE",
-				"code": "282741168"
+				"country": "FR",
+				"code": "44732829320"
 			},
+			"identities": [
+				{
+					"type": "SIREN",
+					"code": "732829320"
+				}
+			],
 			"addresses": [
 				{
-					"num": "25",
-					"street": "Werner-Heisenberg-Allee",
-					"locality": "München",
-					"code": "80939"
+					"num": "1",
+					"street": "Rue Sundacsakn",
+					"locality": "Saint-Germain-En-Laye",
+					"code": "75050",
+					"country": "FR"
 				}
 			],
 			"emails": [
@@ -86,9 +94,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "standard",
-						"rate": "general",
-						"percent": "19%",
+						"rate": "standard",
+						"percent": "20%",
 						"ext": {
 							"untdid-tax-category": "S"
 						}
@@ -98,16 +105,18 @@
 			}
 		],
 		"payment": {
-			"instructions": {
-				"key": "credit-transfer+sepa",
-				"credit_transfer": [
+			"terms": {
+				"due_dates": [
 					{
-						"iban": "DE89370400440532013000",
-						"name": "Random Bank Co."
+						"date": "2022-02-01",
+						"amount": "1944.00"
 					}
-				],
+				]
+			},
+			"instructions": {
+				"key": "card",
 				"ext": {
-					"untdid-payment-means": "58"
+					"untdid-payment-means": "48"
 				}
 			}
 		},
@@ -125,18 +134,18 @@
 									"untdid-tax-category": "S"
 								},
 								"base": "1620.00",
-								"percent": "19%",
-								"amount": "307.80"
+								"percent": "20%",
+								"amount": "324.00"
 							}
 						],
-						"amount": "307.80"
+						"amount": "324.00"
 					}
 				],
-				"sum": "307.80"
+				"sum": "324.00"
 			},
-			"tax": "307.80",
-			"total_with_tax": "1927.80",
-			"payable": "1927.80"
+			"tax": "324.00",
+			"total_with_tax": "1944.00",
+			"payable": "1944.00"
 		}
 	}
 }
