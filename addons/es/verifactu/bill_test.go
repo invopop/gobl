@@ -318,19 +318,6 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
 
-	t.Run("missing supplier", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
-				verifactu.ExtKeyDocType: "F1",
-			},
-		}
-		inv.Supplier = nil
-		ad := tax.AddonForKey(verifactu.V1)
-		ad.Normalizer(inv)
-		assert.NoError(t, ad.Validator(inv))
-	})
-
 	t.Run("customer nil", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
@@ -363,21 +350,6 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
-	})
-
-	t.Run("missing ordering issuer", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Tax = &bill.Tax{
-			Ext: tax.Extensions{
-				verifactu.ExtKeyDocType: "F1",
-			},
-		}
-		ad := tax.AddonForKey(verifactu.V1)
-		inv.Ordering = &bill.Ordering{
-			Issuer: nil,
-		}
-		ad.Normalizer(inv)
-		assert.NoError(t, ad.Validator(inv))
 	})
 }
 

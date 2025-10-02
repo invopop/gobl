@@ -161,10 +161,6 @@ func validateInvoiceCustomer(val any) error {
 			tax.RequireIdentityCode,
 			validation.Skip,
 		),
-		validation.Field(&p.Name,
-			validation.By(validateNoForbiddenChars),
-			validation.Skip,
-		),
 	)
 }
 
