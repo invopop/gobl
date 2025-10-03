@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `it-sdi-v1`: added validation for name and persons so that at least one is set.
 - `eu-en16931-v2017`: Add missing scenario for self billing credit notes.
 - `es-verifactu-v1`: validation to prevent forbidden characters in names.
 

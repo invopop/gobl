@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -122,6 +123,10 @@ func validateCustomer(value interface{}) error {
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.Name,
 			validation.By(validateLatin1String),
+			validation.When(
+				(customer.TaxID != nil && customer.TaxID.Code != cbc.CodeEmpty) || customer.People == nil,
+				validation.Required,
+			),
 			validation.Skip,
 		),
 		validation.Field(&customer.TaxID,
@@ -141,6 +146,13 @@ func validateCustomer(value interface{}) error {
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
 				org.RequireIdentityKey(it.IdentityKeyFiscalCode),
+			),
+			validation.Skip,
+		),
+		validation.Field(&customer.People,
+			validation.When(
+				(customer.Name == ""),
+				validation.Required,
 			),
 			validation.Skip,
 		),
