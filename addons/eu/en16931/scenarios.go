@@ -89,7 +89,7 @@ var scenarios = []*tax.ScenarioSet{
 					tax.TagSelfBilled,
 				},
 				Ext: tax.Extensions{
-					untdid.ExtKeyDocumentType: "261s",
+					untdid.ExtKeyDocumentType: "261",
 				},
 			},
 		},
