@@ -73,6 +73,17 @@
           "ext": {
             "untdid-document-type": "389"
           }
+        },
+        {
+          "type": [
+            "credit-note"
+          ],
+          "tags": [
+            "self-billed"
+          ],
+          "ext": {
+            "untdid-document-type": "261s"
+          }
         }
       ]
     }

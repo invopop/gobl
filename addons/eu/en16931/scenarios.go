@@ -80,6 +80,7 @@ var scenarios = []*tax.ScenarioSet{
 					untdid.ExtKeyDocumentType: "389",
 				},
 			},
+			// https://docs.peppol.eu/poacc/self-billing/3.0/
 			{
 				Types: []cbc.Key{
 					bill.InvoiceTypeCreditNote,
