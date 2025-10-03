@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `eu-en16931-v2017`: Add missing scenario for self billing credit notes.
+
 ### Changed
 
 - `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
