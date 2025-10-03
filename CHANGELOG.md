@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `pt`: migrations for Zone, no longer needed
 
+### Fixed
+
+- `pt-saft`: minimum exemption note length corrected to 6 characters
+
 ## [v0.300.2] - 2025-09-18
 
 ### Added
