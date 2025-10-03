@@ -14,7 +14,7 @@ func validateNote(note *org.Note) error {
 		validation.Field(&note.Text,
 			validation.When(
 				note.Key == org.NoteKeyLegal && note.Src == ExtKeyExemption,
-				validation.Length(0, 60),
+				validation.Length(6, 60),
 				validation.Skip,
 			),
 			validation.Skip,
