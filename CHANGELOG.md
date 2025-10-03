@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `it-sdi-v1`: added validation for name and persons so that at least one is set.
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
 
 ### Changed
 
