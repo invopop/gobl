@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.301.0] - 2025-10-03
+
 ### Added
 
 - `it-sdi-v1`: added validation for name and persons so that at least one is set.
@@ -18,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `de-xrechnung-v3`: Add missing validation from CIUS.
 - `fr`: Add identity validation and normalization.
 - `it-sdi-v1`: Modify address validation to accept postbox.
-- `bill`: support for `bypass` tag, to prevent billing total calculations.
+- `bill`: support for `bypass` tag, to prevent billing total calculations (experimental).
 - Updated normalizer ordering so that inside fields/objects are processed before the parent object
 
 ### Removed
