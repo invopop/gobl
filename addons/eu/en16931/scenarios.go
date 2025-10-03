@@ -80,6 +80,17 @@ var scenarios = []*tax.ScenarioSet{
 					untdid.ExtKeyDocumentType: "389",
 				},
 			},
+			{
+				Types: []cbc.Key{
+					bill.InvoiceTypeCreditNote,
+				},
+				Tags: []cbc.Key{
+					tax.TagSelfBilled,
+				},
+				Ext: tax.Extensions{
+					untdid.ExtKeyDocumentType: "261s",
+				},
+			},
 		},
 	},
 }
