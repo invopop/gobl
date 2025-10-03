@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `it-sdi-v1`: added validation for name and persons so that at least one is set.
+
 ### Changed
 
 - `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
