@@ -255,7 +255,6 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("missing customer name", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		// Test with Chinese characters (outside Latin-1 range)
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -264,7 +263,6 @@ func TestCustomerValidation(t *testing.T) {
 
 	t.Run("missing customer people with identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		// Test with Chinese characters (outside Latin-1 range)
 		inv.Customer.TaxID.Code = ""
 		inv.Customer.Name = ""
 		inv.Customer.Identities = append(inv.Customer.Identities, id)
