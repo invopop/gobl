@@ -4,24 +4,27 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bc85ca039a1cc05b9d5b761ccf4f149be1f7516211f680396c3e3320f6ca6f1b"
+			"val": "e4fa017a668c5313836f211c4428c61588cb0a3695767c9648b17b4a3e093a32"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "ES",
 		"$addons": [
-			"eu-en16931-v2017"
+			"es-facturae-v3"
+		],
+		"$tags": [
+			"bypass"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
-		"series": "SAMPLE",
-		"code": "004",
-		"issue_date": "2024-12-04",
+		"code": "SAMPLE-001",
+		"issue_date": "2022-02-01",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
-				"untdid-document-type": "380"
+				"es-facturae-doc-type": "FC",
+				"es-facturae-invoice-class": "OO"
 			}
 		},
 		"supplier": {
@@ -30,12 +33,6 @@
 				"country": "ES",
 				"code": "B98602642"
 			},
-			"inboxes": [
-				{
-					"scheme": "9920",
-					"code": "B98602642"
-				}
-			],
 			"addresses": [
 				{
 					"num": "42",
@@ -57,28 +54,16 @@
 			"tax_id": {
 				"country": "ES",
 				"code": "54387763P"
-			},
-			"inboxes": [
-				{
-					"scheme": "9920",
-					"code": "54387763P"
-				}
-			],
-			"addresses": [
-				{
-					"num": "41",
-					"street": "Calle Pradillo",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "28002",
-					"country": "ES"
-				}
-			]
+			}
 		},
 		"lines": [
 			{
 				"i": 1,
 				"quantity": "20",
+				"identifier": {
+					"label": "Subscription",
+					"code": "SUB1234-ABC"
+				},
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
@@ -97,23 +82,32 @@
 						"cat": "VAT",
 						"key": "standard",
 						"rate": "general",
-						"percent": "21.0%",
-						"ext": {
-							"untdid-tax-category": "S"
-						}
+						"percent": "21.0%"
 					}
 				],
 				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Financial service",
+					"price": "10.00"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%"
+					}
+				],
+				"total": "10.00"
 			}
 		],
-		"payment": {
-			"terms": {
-				"detail": "Please pay within 10 days"
-			}
-		},
 		"totals": {
-			"sum": "1620.00",
-			"total": "1620.00",
+			"sum": "1630.00",
+			"total": "1630.00",
 			"taxes": {
 				"categories": [
 					{
@@ -121,12 +115,15 @@
 						"rates": [
 							{
 								"key": "standard",
-								"ext": {
-									"untdid-tax-category": "S"
-								},
-								"base": "1620.00",
+								"base": "1620.10",
 								"percent": "21.0%",
-								"amount": "340.20"
+								"amount": "340.10"
+							},
+							{
+								"key": "zero",
+								"base": "10.00",
+								"percent": "0%",
+								"amount": "0.00"
 							}
 						],
 						"amount": "340.20"
@@ -135,14 +132,8 @@
 				"sum": "340.20"
 			},
 			"tax": "340.20",
-			"total_with_tax": "1960.20",
-			"payable": "1960.20"
-		},
-		"notes": [
-			{
-				"key": "general",
-				"text": "Random invoice"
-			}
-		]
+			"total_with_tax": "1970.20",
+			"payable": "1970.20"
+		}
 	}
 }

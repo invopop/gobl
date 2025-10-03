@@ -69,9 +69,9 @@ func (i *Item) Normalize(normalizers tax.Normalizers) {
 	i.Ref = cbc.NormalizeCode(i.Ref)
 	i.Ext = tax.CleanExtensions(i.Ext)
 
-	normalizers.Each(i)
 	tax.Normalize(normalizers, i.Identities)
 	tax.Normalize(normalizers, i.Images)
+	normalizers.Each(i)
 }
 
 // ValidateWithContext checks that the Item looks okay inside the provided context.

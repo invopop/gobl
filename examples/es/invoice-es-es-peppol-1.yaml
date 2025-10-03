@@ -32,6 +32,13 @@ customer:
   inboxes:
     - scheme: "9920"
       code: "54387763P"
+  addresses:
+    - num: "41"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
 
 lines:
   - quantity: 20
@@ -46,6 +53,10 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
+
+payment:
+  terms:
+    detail: "Please pay within 10 days"
 
 notes:
   - key: "general"

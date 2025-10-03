@@ -17,7 +17,9 @@ func validatePaymentInstructions(value interface{}) error {
 			validation.When(
 				instr.Key.Has(pay.MeansKeyCreditTransfer),
 				validation.Required,
-				validation.Each(validation.By(validateCreditTransfer)),
+				validation.Each(
+					validation.By(validateCreditTransfer),
+				),
 			),
 			validation.Skip,
 		),

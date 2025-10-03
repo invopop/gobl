@@ -184,7 +184,7 @@ func TestTagsJSONSchemaEmbedWithDefs(t *testing.T) {
 
 	prop, ok := js.Properties.Get("$tags")
 	require.True(t, ok)
-	assert.Equal(t, 6, len(prop.Items.AnyOf), "should have 5 tags plus 1 catch-all")
+	assert.Equal(t, 7, len(prop.Items.AnyOf), "should have 6 tags plus 1 catch-all")
 	assert.Equal(t, "simplified", prop.Items.AnyOf[0].Const)
-	assert.Equal(t, "Any", prop.Items.AnyOf[5].Title)
+	assert.Equal(t, "Any", prop.Items.AnyOf[6].Title)
 }

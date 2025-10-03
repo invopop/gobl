@@ -114,8 +114,8 @@ func (m *Charge) Normalize(normalizers tax.Normalizers) {
 	m.Code = cbc.NormalizeCode(m.Code)
 	m.Taxes = tax.CleanSet(m.Taxes)
 	m.Ext = tax.CleanExtensions(m.Ext)
-	normalizers.Each(m)
 	tax.Normalize(normalizers, m.Taxes)
+	normalizers.Each(m)
 }
 
 // ValidateWithContext checks the charge's fields.

@@ -78,7 +78,6 @@ func Validate(doc any) error {
 func Normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		migrateTaxIDZoneToLines(obj)
 		migrateInvoiceRates(obj)
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
