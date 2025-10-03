@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+
 ### Changed
 
 - `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.

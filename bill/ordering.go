@@ -1,6 +1,8 @@
 package bill
 
 import (
+	"context"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -67,7 +69,12 @@ func (o *Ordering) Normalize(normalizers tax.Normalizers) {
 
 // Validate the ordering details.
 func (o *Ordering) Validate() error {
-	return validation.ValidateStruct(o,
+	return o.ValidateWithContext(context.Background())
+}
+
+// ValidateWithContext the ordering details with context.
+func (o *Ordering) ValidateWithContext(ctx context.Context) error {
+	return tax.ValidateStructWithContext(ctx, o,
 		validation.Field(&o.Code),
 		validation.Field(&o.Identities),
 		validation.Field(&o.Cost),
