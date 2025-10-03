@@ -16,7 +16,7 @@ var taxCategories = []*tax.CategoryDef{
 		Code: tax.CategoryVAT,
 		Name: i18n.String{
 			i18n.EN: "VAT",
-			i18n.DE: "MwSt",
+			i18n.DE: "USt",
 		},
 		Title: i18n.String{
 			i18n.EN: "Value Added Tax",
