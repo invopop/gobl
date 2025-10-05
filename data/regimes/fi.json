@@ -1,0 +1,203 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Finland",
+    "fi": "Suomi"
+  },
+  "time_zone": "Europe/Helsinki",
+  "country": "FI",
+  "currency": "EUR",
+  "tax_scheme": "VAT",
+  "tags": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "key": "simplified",
+          "name": {
+            "de": "Vereinfachte Rechnung",
+            "en": "Simplified Invoice",
+            "es": "Factura Simplificada",
+            "it": "Fattura Semplificata"
+          },
+          "desc": {
+            "de": "Wird für B2C-Transaktionen verwendet, wenn die Kundendaten nicht verfügbar sind. Bitte wenden Sie sich an die örtlichen Behörden, um die Grenzwerte zu ermitteln.",
+            "en": "Used for B2C transactions when the client details are not available, check with local authorities for limits.",
+            "es": "Usado para transacciones B2C cuando los detalles del cliente no están disponibles, consulte con las autoridades locales para los límites.",
+            "it": "Utilizzato per le transazioni B2C quando i dettagli del cliente non sono disponibili, controllare con le autorità locali per i limiti."
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "de": "Umkehr der Steuerschuld",
+            "en": "Reverse Charge",
+            "es": "Inversión del Sujeto Pasivo",
+            "it": "Inversione del soggetto passivo"
+          }
+        },
+        {
+          "key": "self-billed",
+          "name": {
+            "de": "Rechnung durch den Leistungsempfänger",
+            "en": "Self-billed",
+            "es": "Facturación por el destinatario",
+            "it": "Autofattura"
+          }
+        },
+        {
+          "key": "customer-rates",
+          "name": {
+            "de": "Kundensätze",
+            "en": "Customer rates",
+            "es": "Tarifas aplicables al destinatario",
+            "it": "Aliquote applicabili al destinatario"
+          }
+        },
+        {
+          "key": "partial",
+          "name": {
+            "de": "Teilweise",
+            "en": "Partial",
+            "es": "Parcial",
+            "it": "Parziale"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "fi": "ALV"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "fi": "Arvonlisävero"
+      },
+      "desc": {
+        "en": "Known in Finnish as \"Arvonlisävero\" (ALV), this is a consumption tax applied to\nthe purchase of goods and services. As a member of the European Union, Finland\nfollows the EU VAT Directive, with a standard rate and reduced rates tailored to\nspecific goods and services."
+      },
+      "rates": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard Rate",
+            "fi": "Yleinen verokanta"
+          },
+          "values": [
+            {
+              "since": "2024-09-01",
+              "percent": "25.5%"
+            },
+            {
+              "since": "2013-01-01",
+              "percent": "24.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "23.0%"
+            },
+            {
+              "since": "1994-06-01",
+              "percent": "22.0%"
+            }
+          ]
+        },
+        {
+          "key": "reduced",
+          "name": {
+            "en": "Reduced Rate 1",
+            "fi": "Alennettu verokanta 1"
+          },
+          "values": [
+            {
+              "since": "2023-01-01",
+              "percent": "14.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "13.0%"
+            },
+            {
+              "since": "2009-10-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "1998-01-01",
+              "percent": "17.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "12.0%"
+            },
+            {
+              "since": "1994-06-01",
+              "percent": "6.0%"
+            }
+          ]
+        },
+        {
+          "key": "super-reduced",
+          "name": {
+            "en": "Reduced Rate 2",
+            "fi": "Alennettu verokanta 2"
+          },
+          "values": [
+            {
+              "since": "2023-01-01",
+              "percent": "10.0%"
+            },
+            {
+              "since": "2010-07-01",
+              "percent": "9.0%"
+            },
+            {
+              "since": "1998-01-01",
+              "percent": "8.0%"
+            },
+            {
+              "since": "1995-01-01",
+              "percent": "6.0%"
+            },
+            {
+              "since": "1994-06-01",
+              "percent": "5.0%"
+            }
+          ]
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero Rate",
+            "fi": "Nollaverokanta"
+          },
+          "values": [
+            {
+              "percent": "0.0%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
