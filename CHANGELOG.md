@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `eu-en16931-v2017`: fixed issue with payment details when due is zero
+
 ## [v0.301.0] - 2025-10-03
 
 ### Added
