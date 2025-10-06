@@ -171,12 +171,6 @@ func validateBillDiscount(discount *bill.Discount) error {
 	return nil
 }
 
-func isDue(inv *bill.Invoice) bool {
-	return inv.Totals != nil &&
-		((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) ||
-			(inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
-}
-
 func validateBillPayment(value any) error {
 	payment, ok := value.(*bill.PaymentDetails)
 	if !ok || payment == nil {
@@ -187,4 +181,10 @@ func validateBillPayment(value any) error {
 			validation.Required.Error("BR-CO-25: payment terms are required when amount is due"),
 		),
 	)
+}
+
+func isDue(inv *bill.Invoice) bool {
+	return inv.Totals != nil &&
+		((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) ||
+			(inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
 }
