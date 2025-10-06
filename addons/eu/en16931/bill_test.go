@@ -458,7 +458,7 @@ func TestValidateBillPayment(t *testing.T) {
 		assert.ErrorContains(t, err, "payment details are required when amount is due")
 	})
 
-	t.Run("with due ammount zero", func(t *testing.T) {
+	t.Run("with due amount zero", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		advances := []*pay.Advance{
 			{
