@@ -441,14 +441,65 @@ func TestValidateBillPayment(t *testing.T) {
 	})
 
 	t.Run("without terms", func(t *testing.T) {
-		p := &bill.PaymentDetails{}
-		err := ad.Validator(p)
-		assert.ErrorContains(t, err, "terms: cannot be blank")
+		inv := testInvoiceStandard(t)
+		inv.Payment.Terms = nil
+		err := inv.Calculate()
+		require.NoError(t, err)
+		err = inv.Validate()
+		assert.ErrorContains(t, err, "BR-CO-25: payment terms are required when amount is due")
 	})
 
 	t.Run("with nil payment details", func(t *testing.T) {
-		var p *bill.PaymentDetails
-		err := ad.Validator(p)
+		inv := testInvoiceStandard(t)
+		inv.Payment = nil
+		err := inv.Calculate()
+		require.NoError(t, err)
+		err = inv.Validate()
+		assert.ErrorContains(t, err, "payment details are required when amount is due")
+	})
+
+	t.Run("with due ammount zero", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		advances := []*pay.Advance{
+			{
+				Percent:     num.NewPercentage(100, 2),
+				Description: "Advance payment",
+			},
+		}
+		inv.Payment.Advances = advances
+		inv.Payment.Terms = nil
+
+		err := inv.Calculate()
+		require.NoError(t, err)
+		err = inv.Validate()
 		assert.NoError(t, err)
 	})
+
+	t.Run("with payment details but no terms when due", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Payment = &bill.PaymentDetails{} // payment details exist but no terms
+		err := inv.Calculate()
+		require.NoError(t, err)
+		err = inv.Validate()
+		assert.ErrorContains(t, err, "BR-CO-25: payment terms are required when amount is due")
+	})
+
+	t.Run("no payment details and no amount due", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Add advance payment to make due amount zero
+		advances := []*pay.Advance{
+			{
+				Percent:     num.NewPercentage(100, 2),
+				Description: "Full advance payment",
+			},
+		}
+		inv.Payment = &bill.PaymentDetails{Advances: advances}
+		err := inv.Calculate()
+		require.NoError(t, err)
+		// Remove payment details after calculation
+		inv.Payment = nil
+		err = inv.Validate()
+		assert.NoError(t, err) // Should pass because no amount is due
+	})
+
 }

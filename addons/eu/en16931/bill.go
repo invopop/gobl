@@ -90,11 +90,7 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
-			validation.When(
-				//BR-CO-25
-				inv.Totals != nil && ((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) || !inv.Totals.Payable.IsZero()),
-				validation.Required,
-			),
+			validation.By(validateBillPayment(inv)),
 			validation.Skip,
 		),
 	)
@@ -171,15 +167,27 @@ func validateBillDiscount(discount *bill.Discount) error {
 	return nil
 }
 
-func validateBillPayment(payment *bill.PaymentDetails) error {
-	if payment == nil {
-		return nil
-	}
+func validateBillPayment(inv *bill.Invoice) func(value any) error {
+	//BR-CO-25
+	due := inv.Totals != nil && ((inv.Totals.Due != nil && !inv.Totals.Due.IsZero()) || (inv.Totals.Due == nil && !inv.Totals.Payable.IsZero()))
 
-	return validation.ValidateStruct(payment,
-		validation.Field(&payment.Terms,
-			validation.Required,
-			validation.Skip,
-		),
-	)
+	return func(value any) error {
+		payment, ok := value.(*bill.PaymentDetails)
+		if !ok || payment == nil {
+			if due {
+				return validation.NewError("BR-CO-25", "payment details are required when amount is due")
+			}
+			return nil
+		}
+
+		return validation.ValidateStruct(payment,
+			validation.Field(&payment.Terms,
+				validation.When(
+					due,
+					validation.Required.Error("BR-CO-25: payment terms are required when amount is due"),
+				),
+				validation.Skip,
+			),
+		)
+	}
 }
