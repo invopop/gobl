@@ -3,6 +3,7 @@ package sdi
 import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
@@ -56,6 +57,7 @@ func normalizeTaxComboKey(tc *tax.Combo) {
 	}
 	switch tc.Ext.Get(ExtKeyExempt) {
 	case "N1":
+		tc.Percent = &num.PercentageZero
 		tc.Key = tax.KeyZero
 	case "N2.1", "N2.2", "N7":
 		tc.Key = tax.KeyOutsideScope

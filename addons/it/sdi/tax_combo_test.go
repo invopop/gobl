@@ -54,6 +54,10 @@ func TestNormalizeTaxCombo(t *testing.T) {
 				ad.Normalizer(tc)
 				assert.Equal(t, code, tc.Ext.Get(sdi.ExtKeyExempt), "extension should be set correctly")
 				assert.NotEmpty(t, tc.Key, "key should be set based on extension")
+				if tc.Key == tax.KeyZero {
+					assert.NotNil(t, tc.Percent, "percent should be set for zero key")
+					assert.Equal(t, int64(0), tc.Percent.Value())
+				}
 			})
 		}
 	})
