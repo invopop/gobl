@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNormalizeTaxC(t *testing.T) {
+func TestNormalizeTaxCombo(t *testing.T) {
 	ad := tax.AddonForKey(sdi.V1)
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
