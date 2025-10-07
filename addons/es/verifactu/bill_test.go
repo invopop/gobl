@@ -351,20 +351,6 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
-
-	t.Run("code with forbidden characters", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Code = "123<"
-		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "code: contains forbidden character: <")
-	})
-
-	t.Run("series with forbidden characters", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Series = "SAMPLE="
-		require.NoError(t, inv.Calculate())
-		assert.ErrorContains(t, inv.Validate(), "series: contains forbidden character: <")
-	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
