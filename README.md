@@ -13,6 +13,7 @@ Released under the Apache 2.0 [LICENSE](https://github.com/invopop/gobl/blob/mai
 [![GoDoc](https://godoc.org/github.com/invopop/gobl?status.svg)](https://godoc.org/github.com/invopop/gobl)
 ![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/invopop/gobl)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 [Official GOBL documentation site](https://docs.gobl.org).
 
