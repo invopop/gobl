@@ -110,6 +110,14 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Series,
+			validation.By(validateNoForbiddenChars),
+			validation.Skip,
+		),
+		validation.Field(&inv.Code,
+			validation.By(validateNoForbiddenChars),
+			validation.Skip,
+		),
 		validation.Field(&inv.Preceding,
 			validation.When(
 				// When an invoice is a "sustitutiva", the taxes from the preceding invoice must be included.
@@ -231,9 +239,26 @@ func validateNote(val any) error {
 	}
 	return validation.ValidateStruct(note,
 		validation.Field(&note.Text,
-			validation.By(validateNoForbiddenChars),
 			validation.Length(0, 500),
 			validation.Skip,
 		),
 	)
+}
+
+// forbiddenChars contains characters that are not allowed in invoice number in verifactu
+var forbiddenChars = []rune{'<', '>', '"', '\'', '='}
+
+// validateNoForbiddenChars validates that a string doesn't contain any of the forbidden characters: < > " ' =
+func validateNoForbiddenChars(val any) error {
+	str, _ := val.(string)
+
+	for _, char := range str {
+		for _, forbidden := range forbiddenChars {
+			if char == forbidden {
+				return fmt.Errorf("contains forbidden character: %c", char)
+			}
+		}
+	}
+
+	return nil
 }
