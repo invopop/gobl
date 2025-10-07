@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `es-verifactu-v1`: validation to prevent forbidden characters in names. Validation only in invoice series and code.
+- `es-verifactu-v1`: validation to prevent forbidden characters in names
 
 ## [v0.301.0] - 2025-10-03
 
