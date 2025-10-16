@@ -172,7 +172,7 @@ func validateBillLineDiscount(value any) error {
 			),
 			validation.Skip,
 		),
-		validation.Field(discount.Ext,
+		validation.Field(&discount.Ext,
 			validation.When(
 				discount.Reason == "",
 				validation.Required.Error("either a reason or an allowance type extension is required (BR-41)"),

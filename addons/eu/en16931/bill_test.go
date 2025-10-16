@@ -446,7 +446,7 @@ func TestValidateBillPayment(t *testing.T) {
 		err := inv.Calculate()
 		require.NoError(t, err)
 		err = inv.Validate()
-		assert.ErrorContains(t, err, "BR-CO-25: payment terms are required when amount is due")
+		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
 	})
 
 	t.Run("with nil payment details", func(t *testing.T) {
@@ -481,7 +481,7 @@ func TestValidateBillPayment(t *testing.T) {
 		err := inv.Calculate()
 		require.NoError(t, err)
 		err = inv.Validate()
-		assert.ErrorContains(t, err, "BR-CO-25: payment terms are required when amount is due")
+		assert.ErrorContains(t, err, " payment terms are required when amount is due (BR-CO-25)")
 	})
 
 	t.Run("no payment details and no amount due", func(t *testing.T) {
