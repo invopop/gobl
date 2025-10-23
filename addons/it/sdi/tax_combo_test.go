@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNormalizeTaxC(t *testing.T) {
+func TestNormalizeTaxCombo(t *testing.T) {
 	ad := tax.AddonForKey(sdi.V1)
 	t.Run("nil", func(t *testing.T) {
 		var tc *tax.Combo
@@ -54,6 +54,10 @@ func TestNormalizeTaxC(t *testing.T) {
 				ad.Normalizer(tc)
 				assert.Equal(t, code, tc.Ext.Get(sdi.ExtKeyExempt), "extension should be set correctly")
 				assert.NotEmpty(t, tc.Key, "key should be set based on extension")
+				if tc.Key == tax.KeyZero {
+					assert.NotNil(t, tc.Percent, "percent should be set for zero key")
+					assert.Equal(t, int64(0), tc.Percent.Value())
+				}
 			})
 		}
 	})
