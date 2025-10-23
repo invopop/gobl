@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2560365c20697c2f03c5725af3b592d42ee2470080aa93ea4eb80274fbbc4c14"
+			"val": "05fc3556cc9d92c99a6463c81e60f6433c63fcab6e617e32043a1fbcb8b6d257"
 		}
 	},
 	"doc": {
@@ -112,6 +112,11 @@
 				"total": "1620.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			}
+		},
 		"totals": {
 			"sum": "1620.00",
 			"total": "1620.00",

@@ -6,12 +6,21 @@ currency: "EUR"
 issue_date: "2022-02-01"
 series: "SAMPLE"
 code: "001"
-
+tax:
+  tags:
+    - reverse-charge
 supplier:
   tax_id:
     country: "DE"
     code: "111111125" # random
   name: "Provide One GmbH"
+  inboxes:
+    - scheme: "0204"
+      code: "992-90009-96"
+  people:
+    - name:
+        given: "John"
+        surname: "Doe"
   emails:
     - addr: "billing@example.com"
   addresses:
@@ -20,20 +29,28 @@ supplier:
       locality: "Walldorf"
       code: "69190"
       country: "DE"
+  telephones:
+    - num: "+49100200300"
 
 customer:
   tax_id:
-    country: "DE"
-    code: "282741168"
-  name: "Sample Consumer"
+    country: "ES"
+    code: "B98602642"
+  name: "Provide One S.L."
   emails:
-    - addr: "email@sample.com"
+    - addr: "billing@example.com"
+  inboxes:
+    - scheme: "9942"
+      code: "B98602642"
   addresses:
-    - num: "25"
-      street: "Werner-Heisenberg-Allee"
-      locality: "München"
-      code: "80939"
-      country": "DE"
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+  telephones:
+    - num: "+34100200300"
 
 lines:
   - quantity: 20
@@ -46,7 +63,7 @@ lines:
         reason: "Special discount"
     taxes:
       - cat: VAT
-        rate: standard
+        rate: exempt+reverse-charge
 
 payment:
   instructions:
@@ -54,3 +71,10 @@ payment:
     credit_transfer:
       - iban: "DE89370400440532013000"
         name: "Random Bank Co."
+  terms:
+    due_dates:
+      - date: "2022-02-01"
+        amount: "1620.00"
+
+ordering:
+  code: "12345"

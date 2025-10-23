@@ -6,14 +6,59 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-
 ### Added
+
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
 
+### Changed
+
+- `it-sdi-v1`: Updated mapping of exemption (natura) codes to reflect CIUS mapping guide.
+
+## [v0.301.0] - 2025-10-03
+
+### Added
+
+- `it-sdi-v1`: added validation for name and persons so that at least one is set.
+- `eu-en16931-v2017`: Add missing scenario for self billing credit notes.
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+
+### Changed
+
+- `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
+- `de-xrechnung-v3`: Add missing validation from CIUS.
+- `fr`: Add identity validation and normalization.
+- `it-sdi-v1`: Modify address validation to accept postbox.
+- `bill`: support for `bypass` tag, to prevent billing total calculations (experimental).
+- Updated normalizer ordering so that inside fields/objects are processed before the parent object
+
+### Removed
+
+- `pt`: migrations for Zone, no longer needed
+
 ### Fixed
 
-- `es`: IGIC now uses VAT keys.
+- `pt-saft`: minimum exemption note length corrected to 6 characters
+
+## [v0.300.2] - 2025-09-18
+
+### Added
+
+- `org`: `Item` - `images` field for storing links to images of the item.
+- `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
+- `it`: added new tax category for `CP` to handle code `RT06` for retained taxes
+- `pt-saft-v1`: positive quantity validation
+- `pt-saft-v1`: tax rate normalization to prevent rate extension and percent mismatches
+- `pt-saft-v1`: exemption note text length validation
+
+### Removed
+
+- `es-verifactu-v1`: removed preceding validations for credit notes and `F3` invoice type
+
+### Fixed
+
+- `es`: IGIC now uses VAT keys
+- `bill`: fixed zero-percent handling in charges and discounts
 
 ## [v0.300.1] - 2025-09-12
 

@@ -44,6 +44,7 @@ const (
 	TagSelfBilled    cbc.Key = "self-billed"
 	TagReplacement   cbc.Key = "replacement"
 	TagPartial       cbc.Key = "partial"
+	TagBypass        cbc.Key = "bypass"
 	TagB2G           cbc.Key = "b2g"
 	TagExport        cbc.Key = "export"
 	TagEEA           cbc.Key = "eea" // European Economic Area

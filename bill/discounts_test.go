@@ -210,4 +210,23 @@ func TestDiscountTotals(t *testing.T) {
 		assert.Equal(t, "50.1234", ls[0].Base.String(), "maintain original precision")
 		assert.Equal(t, "10.02", ls[0].Amount.String())
 	})
+
+	t.Run("with zero percent discount and inconsistent amount", func(t *testing.T) {
+		ls := []*Discount{
+			{
+				Reason:  "Zero percent discount",
+				Percent: num.NewPercentage(0, 2),
+				Amount:  num.MakeAmount(10, 2),
+			},
+		}
+		base := num.MakeAmount(10000, 2)
+		calculateDiscounts(ls, currency.EUR, base, tax.RoundingRulePrecise)
+		sum := calculateDiscountSum(ls, currency.EUR)
+		require.NotNil(t, sum)
+		assert.Equal(t, "0%", ls[0].Percent.String())
+		assert.Equal(t, "0.00", ls[0].Amount.String())
+		assert.Equal(t, "0.00", sum.String())
+		roundDiscounts(ls, currency.EUR)
+		assert.Equal(t, "0.00", ls[0].Amount.String())
+	})
 }

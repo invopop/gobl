@@ -6,7 +6,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -113,13 +112,9 @@ func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Preceding,
 			validation.When(
-				inv.Type.In(es.InvoiceCorrectionTypes...),
+				// When an invoice is a "sustitutiva", the taxes from the preceding invoice must be included.
+				inv.Type.In(bill.InvoiceTypeCorrective),
 				validation.Required,
-			),
-			validation.When(
-				// Replacement invoices must have a reference to preceding doc.
-				inv.Tax.GetExt(ExtKeyDocType).In("F3"),
-				validation.Required.Error("details of invoice being replaced must be included"),
 			),
 			validation.Each(
 				validation.By(validateInvoicePreceding(inv)),
@@ -236,6 +231,7 @@ func validateNote(val any) error {
 	}
 	return validation.ValidateStruct(note,
 		validation.Field(&note.Text,
+			validation.By(validateNoForbiddenChars),
 			validation.Length(0, 500),
 			validation.Skip,
 		),

@@ -217,32 +217,29 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
 	})
 
-	t.Run("correction invoice requires preceding", func(t *testing.T) {
+	t.Run("corrective invoice requires preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		assertValidationError(t, inv, "preceding: cannot be blank")
 	})
-	t.Run("correction invoice nil preceding", func(t *testing.T) {
+	t.Run("corrective invoice nil preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{nil}
 		require.NoError(t, inv.Calculate())
 		ad := tax.AddonForKey(verifactu.V1)
 		assert.NoError(t, ad.Validator(inv))
 	})
 
-	t.Run("credit-note invoice preceding requires issue date", func(t *testing.T) {
+	t.Run("credit note needs no preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCreditNote
-		inv.Preceding = []*org.DocumentRef{
-			{
-				Code: "123",
-			},
-		}
-		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank.).")
+		require.NoError(t, inv.Calculate())
+		ad := tax.AddonForKey(verifactu.V1)
+		assert.NoError(t, ad.Validator(inv))
 	})
 
-	t.Run("correction invoice preceding requires issue date and tax", func(t *testing.T) {
+	t.Run("corrective invoice preceding requires issue date and tax", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Type = bill.InvoiceTypeCorrective
 		inv.Preceding = []*org.DocumentRef{
@@ -253,9 +250,9 @@ func TestInvoiceValidation(t *testing.T) {
 		assertValidationError(t, inv, "preceding: (0: (issue_date: cannot be blank; tax: cannot be blank.).")
 	})
 
-	t.Run("correction invoice with preceding", func(t *testing.T) {
+	t.Run("corrective invoice with preceding", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
-		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Type = bill.InvoiceTypeCorrective
 		d := cal.MakeDate(2024, 1, 1)
 		inv.Preceding = []*org.DocumentRef{
 			{
@@ -293,7 +290,7 @@ func TestInvoiceValidation(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags("replacement")
 		require.NoError(t, inv.Calculate())
-		require.ErrorContains(t, inv.Validate(), "preceding: details of invoice being replaced must be included")
+		require.NoError(t, inv.Validate())
 	})
 
 	t.Run("replacement with preceding", func(t *testing.T) {
@@ -349,6 +346,96 @@ func TestInvoiceValidation(t *testing.T) {
 			{
 				Key:  org.IdentityKeyPassport,
 				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+}
+
+func TestForbiddenCharactersValidation(t *testing.T) {
+	t.Run("supplier name with forbidden char =", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Name = "Test Supplier ="
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "contains forbidden character: =")
+	})
+
+	t.Run("supplier name with forbidden char '", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Name = "Test Supplier '"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "contains forbidden character: '")
+	})
+
+	t.Run("customer name with forbidden char >", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Name = "Test Customer >"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "contains forbidden character: >")
+	})
+
+	t.Run("ordering issuer name with forbidden char <", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Test Issuer <",
+				TaxID: &tax.Identity{
+					Country: "ES",
+					Code:    "B98602642",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "contains forbidden character: <")
+	})
+
+	t.Run("note text with forbidden char \"", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyGeneral,
+				Text: "Test note \"",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "contains forbidden character: \"")
+	})
+
+	t.Run("valid names without forbidden characters pass validation", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Name = "Valid Supplier Name 123"
+		inv.Customer.Name = "Valid Customer Name 456"
+		inv.Ordering = &bill.Ordering{
+			Issuer: &org.Party{
+				Name: "Valid Issuer Name 789",
+				TaxID: &tax.Identity{
+					Country: "ES",
+					Code:    "B98602642",
+				},
+			},
+		}
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyGeneral,
+				Text: "Valid note text with numbers 123 and symbols !@#$%^&*()_+-{}[]|\\:;.,?/~`",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("non-general note with forbidden characters is ignored", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Notes = []*org.Note{
+			{
+				Key:  org.NoteKeyLoading,
+				Text: "Loading note with forbidden chars: < > \" ' =",
 			},
 		}
 		require.NoError(t, inv.Calculate())

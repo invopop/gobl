@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -49,6 +50,11 @@ func validateInvoice(inv *bill.Invoice) error {
 				bill.RequireLineTaxCategory(tax.CategoryVAT),
 				validation.Skip,
 			),
+			validation.Skip,
+		),
+		validation.Field(&inv.Ordering,
+			// Need to access tagas so we pass the invoice directly
+			validation.By(validateInvoiceOrdering(inv)),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
@@ -117,6 +123,10 @@ func validateCustomer(value interface{}) error {
 	return validation.ValidateStruct(customer,
 		validation.Field(&customer.Name,
 			validation.By(validateLatin1String),
+			validation.When(
+				(customer.TaxID != nil && customer.TaxID.Code != cbc.CodeEmpty) || customer.People == nil,
+				validation.Required,
+			),
 			validation.Skip,
 		),
 		validation.Field(&customer.TaxID,
@@ -136,6 +146,13 @@ func validateCustomer(value interface{}) error {
 			validation.When(
 				isItalianParty(customer) && !hasTaxIDCode(customer),
 				org.RequireIdentityKey(it.IdentityKeyFiscalCode),
+			),
+			validation.Skip,
+		),
+		validation.Field(&customer.People,
+			validation.When(
+				(customer.Name == ""),
+				validation.Required,
 			),
 			validation.Skip,
 		),
@@ -170,19 +187,26 @@ func validateItem(val any) error {
 	)
 }
 
-// validateLatin1String ensures that the item name only contains characters
-// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
-func validateLatin1String(val any) error {
-	name, _ := val.(string)
-
-	for _, r := range name {
-		// Check if the character is outside Latin and Latin-1 range
-		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
-		if r > 255 {
-			return errors.New("contains characters outside of Latin and Latin-1 range")
-		}
+func validateCharge(val any) error {
+	charge, _ := val.(*bill.Charge)
+	if charge == nil || !charge.Key.Has(KeyFundContribution) {
+		return nil
 	}
-	return nil
+
+	return validation.ValidateStruct(charge,
+		validation.Field(&charge.Percent,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&charge.Ext,
+			tax.ExtensionsRequire(ExtKeyFundType),
+			validation.Skip,
+		),
+		validation.Field(&charge.Taxes,
+			tax.SetHasCategory(tax.CategoryVAT),
+			validation.Skip,
+		),
+	)
 }
 
 func validateInvoicePaymentDetails(val any) error {
@@ -196,6 +220,39 @@ func validateInvoicePaymentDetails(val any) error {
 				(p.Terms != nil && len(p.Terms.DueDates) > 0),
 				validation.Required.Error("cannot be blank when terms with due dates are present"),
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceOrdering(inv *bill.Invoice) validation.RuleFunc {
+	return func(value any) error {
+		o, _ := value.(*bill.Ordering)
+		if o == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(o,
+			validation.Field(&o.Despatch,
+				validation.When(
+					inv.HasTags(TagDeferred),
+					validation.Each(validation.By(validateDespatch)),
+				).Else(
+					validation.Nil.Error("can only be set when invoice has deferred tag")),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateDespatch(value any) error {
+	d, ok := value.(*org.DocumentRef)
+	if !ok || d == nil {
+		return nil
+	}
+	return validation.ValidateStruct(d,
+		validation.Field(&d.IssueDate,
+			validation.Required,
 			validation.Skip,
 		),
 	)
@@ -227,16 +284,52 @@ func validateAddress(value interface{}) error {
 	}
 	// Post code and street in addition to the locality are required in Italian invoices.
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Street, validation.Required, validation.By(validateLatin1String)),
-		validation.Field(&v.Country, validation.Required),
-		validation.Field(&v.Locality, validation.Required, validation.By(validateLatin1String)),
+		validation.Field(&v.Street,
+			validation.When(v.PostOfficeBox == "",
+				validation.Required.Error("either street or post office box must be set"),
+			),
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
+		validation.Field(&v.PostOfficeBox,
+			validation.When(v.Street == "",
+				validation.Required.Error("either street or post office box must be set"),
+			),
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
+		validation.Field(&v.Country,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&v.Locality,
+			validation.Required,
+			validation.By(validateLatin1String),
+			validation.Skip,
+		),
 		validation.Field(&v.Code,
 			validation.When(v.Country.In("IT"),
 				validation.Required,
 				validation.Match(regexp.MustCompile(`^\d{5}$`)),
 			),
+			validation.Skip,
 		),
 	)
+}
+
+// validateLatin1String ensures that the item name only contains characters
+// from Latin and Latin-1 range (ASCII 0-127 and extended Latin-1 128-255).
+func validateLatin1String(val any) error {
+	name, _ := val.(string)
+
+	for _, r := range name {
+		// Check if the character is outside Latin and Latin-1 range
+		// Latin and Latin-1 includes ASCII (0-127) and extended Latin-1 (128-255)
+		if r > 255 {
+			return errors.New("contains characters outside of Latin and Latin-1 range")
+		}
+	}
+	return nil
 }
 
 func validateInvoiceSupplierRegistration(value interface{}) error {
@@ -245,7 +338,13 @@ func validateInvoiceSupplierRegistration(value interface{}) error {
 		return nil
 	}
 	return validation.ValidateStruct(v,
-		validation.Field(&v.Entry, validation.Required),
-		validation.Field(&v.Office, validation.Required),
+		validation.Field(&v.Entry,
+			validation.Required,
+			validation.Skip,
+		),
+		validation.Field(&v.Office,
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }

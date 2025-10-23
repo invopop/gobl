@@ -27,6 +27,11 @@ func validInvoice() *bill.Invoice {
 				Country: "DE",
 				Code:    "44732829320",
 			},
+			Addresses: []*org.Address{
+				{
+					Country: "DE",
+				},
+			},
 		},
 		Customer: &org.Party{
 			Name: "Test Customer",
@@ -38,6 +43,11 @@ func validInvoice() *bill.Invoice {
 				{
 					Type: fr.IdentityTypeSIRET,
 					Code: "39183804212345",
+				},
+			},
+			Addresses: []*org.Address{
+				{
+					Country: "FR",
 				},
 			},
 		},
@@ -55,6 +65,11 @@ func validInvoice() *bill.Invoice {
 						Rate:     "general",
 					},
 				},
+			},
+		},
+		Payment: &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				Detail: "Please pay in 10 days",
 			},
 		},
 	}

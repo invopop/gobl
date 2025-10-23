@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e58f5b8fe8d5c6a911d8aa8de50781c013a3f4e1f349400382931bec34f5462f"
+			"val": "6c9b6bbd5a50be82eaee29d5879b5db508d1afc535fc6ca30d701af5c2c2bd8a"
 		}
 	},
 	"doc": {
@@ -13,9 +13,6 @@
 		"$addons": [
 			"eu-en16931-v2017",
 			"de-xrechnung-v3"
-		],
-		"$tags": [
-			"reverse-charge"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
@@ -34,6 +31,24 @@
 				"country": "DE",
 				"code": "111111125"
 			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					},
+					"emails": [
+						{
+							"addr": "billing@example.com"
+						}
+					]
+				}
+			],
+			"inboxes": [
+				{
+					"email": "billing@example.com"
+				}
+			],
 			"addresses": [
 				{
 					"num": "16",
@@ -43,31 +58,40 @@
 					"country": "DE"
 				}
 			],
-			"emails": [
+			"telephones": [
 				{
-					"addr": "billing@example.com"
+					"num": "+49100200300"
 				}
 			]
 		},
 		"customer": {
-			"name": "Provide One S.L.",
+			"name": "Sample Consumer",
 			"tax_id": {
-				"country": "ES",
-				"code": "B98602642"
+				"country": "DE",
+				"code": "282741168"
 			},
+			"inboxes": [
+				{
+					"email": "billing@example.com"
+				}
+			],
 			"addresses": [
 				{
-					"num": "42",
-					"street": "Calle Pradillo",
-					"locality": "Madrid",
-					"region": "Madrid",
-					"code": "28002",
-					"country": "ES"
+					"num": "25",
+					"street": "Werner-Heisenberg-Allee",
+					"locality": "München",
+					"code": "80939",
+					"country": "DE"
 				}
 			],
 			"emails": [
 				{
-					"addr": "billing@example.com"
+					"addr": "email@sample.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "+49100200300"
 				}
 			]
 		},
@@ -91,16 +115,24 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "reverse-charge",
+						"key": "standard",
+						"rate": "general",
+						"percent": "19%",
 						"ext": {
-							"untdid-tax-category": "AE"
+							"untdid-tax-category": "S"
 						}
 					}
 				],
 				"total": "1620.00"
 			}
 		],
+		"ordering": {
+			"code": "12345"
+		},
 		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			},
 			"instructions": {
 				"key": "credit-transfer+sepa",
 				"credit_transfer": [
@@ -123,29 +155,23 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "reverse-charge",
+								"key": "standard",
 								"ext": {
-									"untdid-tax-category": "AE"
+									"untdid-tax-category": "S"
 								},
 								"base": "1620.00",
-								"amount": "0.00"
+								"percent": "19%",
+								"amount": "307.80"
 							}
 						],
-						"amount": "0.00"
+						"amount": "307.80"
 					}
 				],
-				"sum": "0.00"
+				"sum": "307.80"
 			},
-			"tax": "0.00",
-			"total_with_tax": "1620.00",
-			"payable": "1620.00"
-		},
-		"notes": [
-			{
-				"key": "legal",
-				"src": "reverse-charge",
-				"text": "Reverse Charge / Umkehr der Steuerschuld."
-			}
-		]
+			"tax": "307.80",
+			"total_with_tax": "1927.80",
+			"payable": "1927.80"
+		}
 	}
 }

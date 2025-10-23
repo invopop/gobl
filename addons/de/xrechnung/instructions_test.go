@@ -30,6 +30,9 @@ func TestValidateInvoice(t *testing.T) {
 					},
 				},
 			},
+			Terms: &pay.Terms{
+				Detail: "Filler detail for en16931",
+			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
@@ -46,6 +49,9 @@ func TestValidateInvoice(t *testing.T) {
 					},
 				},
 			},
+			Terms: &pay.Terms{
+				Detail: "Filler detail for en16931",
+			},
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -58,6 +64,9 @@ func TestValidateInvoice(t *testing.T) {
 			Instructions: &pay.Instructions{
 				Key:  pay.MeansKeyCard,
 				Card: &pay.Card{},
+			},
+			Terms: &pay.Terms{
+				Detail: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -75,6 +84,9 @@ func TestValidateInvoice(t *testing.T) {
 					Account:  "DE89370400440532013000",
 				},
 			},
+			Terms: &pay.Terms{
+				Detail: "Filler detail for en16931",
+			},
 		}
 		require.NoError(t, inv.Calculate())
 		assert.NoError(t, inv.Validate())
@@ -90,6 +102,9 @@ func TestValidateInvoice(t *testing.T) {
 					Account:  "DE89370400440532013000",
 				},
 			},
+			Terms: &pay.Terms{
+				Detail: "Filler detail for en16931",
+			},
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -101,6 +116,9 @@ func TestValidateInvoice(t *testing.T) {
 		inv.Payment = &bill.PaymentDetails{
 			Instructions: &pay.Instructions{
 				Key: cbc.Key("invalid-key"),
+			},
+			Terms: &pay.Terms{
+				Detail: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
