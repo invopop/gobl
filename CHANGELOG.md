@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-verifactu-v1`: validation to prevent forbidden characters in names
 
+### Changed
+
+- `it-sdi-v1`: Updated mapping of exemption (natura) codes to reflect CIUS mapping guide.
+
 ## [v0.301.0] - 2025-10-03
 
 ### Added
