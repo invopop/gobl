@@ -15,7 +15,7 @@ func TestIdentityNormalization(t *testing.T) {
 
 	t.Run("normalize GST number", func(t *testing.T) {
 		id := &org.Identity{
-			Key:  sg.IdentityKeyGSTNumber,
+			Type: sg.IdentityTypeUEN,
 			Code: "SG.M91234 56 .7X",
 		}
 		r.NormalizeObject(id)
@@ -23,27 +23,34 @@ func TestIdentityNormalization(t *testing.T) {
 	})
 }
 
-func TestValidateIdentity(t *testing.T) {
+func TestValidateUENIdentity(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var id *org.Identity
+		err := sg.Validate(id)
+		assert.NoError(t, err)
+	})
+
 	tests := []struct {
 		name string
-		code cbc.Code
+		code string
 		err  bool
 	}{
-		{name: "company GST", code: "M91234567X", err: false},
-		{name: "sole proprietorship GST", code: "MR2345678A", err: false},
-		{name: "overseas vendor GST", code: "MB2345678A", err: false},
-		{name: "overseas vendor GST 2", code: "MX2345678A", err: false},
-		{name: "invalid GST short", code: "M91234567", err: true},
-		{name: "invalid GST long", code: "M91234567XA", err: true},
-		{name: "invalid GST no M", code: "912345678X", err: true},
-		{name: "invalid GST no end letter", code: "M912345678", err: true},
+		{name: "UEN (ROC)", code: "199912345A", err: false},
+		{name: "UEN (ROB)", code: "12345678A", err: false},
+		{name: "UEN (Others)", code: "T12AB1234A", err: false},
+		{name: "NIRC/FIN", code: "S1234567A", err: true},
+		{name: "Invalid short", code: "1234567A", err: true},
+		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
+		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
+		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
+		{name: "Empty code", code: "", err: true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			id := &org.Identity{
-				Key:  sg.IdentityKeyGSTNumber,
-				Code: tt.code,
+				Type: sg.IdentityTypeUEN,
+				Code: cbc.Code(tt.code),
 			}
 			err := sg.Validate(id)
 			if tt.err {

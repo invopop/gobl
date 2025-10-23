@@ -17,7 +17,7 @@ func validInvoice() *bill.Invoice {
 	return &bill.Invoice{
 		Supplier: &org.Party{
 			TaxID: &tax.Identity{
-				Code:    "199912345A",
+				Code:    "M91234567X",
 				Country: "SG",
 			},
 			Name: "Test Supplier",
@@ -65,12 +65,12 @@ func TestValidInvoice(t *testing.T) {
 	require.NoError(t, inv.Validate())
 }
 
-func TestValidInvoiceWithGST(t *testing.T) {
+func TestValidInvoiceWithUEN(t *testing.T) {
 	inv := validInvoice()
 	inv.Supplier.Identities = []*org.Identity{
 		{
-			Key:  sg.IdentityKeyGSTNumber,
-			Code: "M91234567X",
+			Type: sg.IdentityTypeUEN,
+			Code: "199912345A",
 		},
 	}
 	require.NoError(t, inv.Calculate())
