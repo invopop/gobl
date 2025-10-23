@@ -15,8 +15,12 @@ import (
 // Singapore’s tax authority does not publish a public checksum algorithm for UEN or GST numbers.
 // Indeed, IRAS directs users to verify UENs via the official portal
 
-// RegexGSTCode is the regex pattern for the GST registration number.
-var RegexGSTCode = regexp.MustCompile(`^[M][A-Z0-9]\d{7}[A-Z]$`)
+// regexpsGSTCode uses the UEN identities as a base and adds the GST format used
+// for international companies.
+var regexpsGSTCode = append(
+	regexpsUENIdentities,
+	regexp.MustCompile(`^M[A-Z0-9]\d{7}[A-Z]$`),
+)
 
 // validateTaxIdentity checks to ensure the NIT code looks okay.
 func validateTaxIdentity(tID *tax.Identity) error {
@@ -37,7 +41,14 @@ func validateTaxCode(value any) error {
 		return nil
 	}
 	val := code.String()
-	if !RegexGSTCode.MatchString(val) {
+	match := false
+	for _, re := range regexpsGSTCode {
+		if re.MatchString(val) {
+			match = true
+			break
+		}
+	}
+	if !match {
 		return errors.New("invalid format")
 	}
 	return nil

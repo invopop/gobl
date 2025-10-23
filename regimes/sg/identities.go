@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	taxCodeRegexps = []*regexp.Regexp{
+	regexpsUENIdentities = []*regexp.Regexp{
 		regexp.MustCompile(`^(19[0-9]{2}|20[0-9]{2})\d{5}[A-Z]$`), // UEN (ROC)
 		regexp.MustCompile(`^\d{8}[A-Z]$`),                        // UEN (ROB)
 		regexp.MustCompile(`^[TS]\d{2}[A-Z]{2}\d{4}[A-Z]$`),       // UEN (Others)
@@ -37,7 +37,10 @@ var identityDefinitions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Unique Entity Number (UEN) is a number given to any business entity that is registered for GST with IRAS. Overseas suppliers who register for GST also receive one. GST-registered suppliers are required to print their UEN on every tax invoice and receipt issued.
+				The Unique Entity Number (UEN) is a standard identification number
+				issued to entities (businesses and local companies) in Singapore.
+				It is used for all interactions with government agencies. The same
+				UEN is normally used as the GST registration number, but not always.
 			`),
 		},
 	},
@@ -72,7 +75,7 @@ func validateUEN(value any) error {
 	}
 	val := code.String()
 	match := false
-	for _, re := range taxCodeRegexps {
+	for _, re := range regexpsUENIdentities {
 		if re.MatchString(val) {
 			match = true
 			break

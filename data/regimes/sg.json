@@ -4,7 +4,7 @@
     "en": "Singapore"
   },
   "description": {
-    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals\n2. Importation of goods that are specifically given GST reliefs5 under the GST\nAct\n3. Importation of goods into Zero-GST/Licensed warehouses administered by\nSingapore Customs \n4. Importation of goods by GST-registered businesses that are under Major\nExporter Scheme or other approved schemes."
+    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals.\n2. Importation of goods that are specifically given GST reliefs5 under the GST Act.\n3. Importation of goods into Zero-GST/Licensed warehouses administered by Singapore Customs.\n4. Importation of goods by GST-registered businesses that are under Major Exporter Scheme or other approved schemes."
   },
   "time_zone": "Asia/Singapore",
   "country": "SG",
@@ -12,12 +12,12 @@
   "tax_scheme": "GST",
   "identities": [
     {
-      "key": "sg-gst-number",
+      "code": "UEN",
       "name": {
-        "en": "GST Registration Number"
+        "en": "Unique Entity Number (UEN)"
       },
       "desc": {
-        "en": "GST Registration Number is a number given to any business entity that is registered for GST with IRAS. Overseas suppliers who register for GST also receive one. GST-registered suppliers are required to print their GST Registration Number on every tax invoice and receipt issued. In most cases GST registration number is the same as the UEN."
+        "en": "The Unique Entity Number (UEN) is a standard identification number\nissued to entities (businesses and local companies) in Singapore.\nIt is used for all interactions with government agencies. The same\nUEN is normally used as the GST registration number, but not always."
       }
     }
   ],

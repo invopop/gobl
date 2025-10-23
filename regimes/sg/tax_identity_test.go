@@ -23,6 +23,15 @@ func TestValidateIdentity(t *testing.T) {
 		{name: "invalid GST long", code: "M91234567XA", err: true},
 		{name: "invalid GST no M", code: "912345678X", err: true},
 		{name: "invalid GST no end letter", code: "M912345678", err: true},
+		// UEN identities also
+		{name: "UEN (ROC)", code: "199912345A", err: false},
+		{name: "UEN (ROB)", code: "12345678A", err: false},
+		{name: "UEN (Others)", code: "T12AB1234A", err: false},
+		{name: "NIRC/FIN", code: "S1234567A", err: true},
+		{name: "Invalid short", code: "1234567A", err: true},
+		{name: "Invalid UEN (ROC)", code: "2199123456", err: true},
+		{name: "Invalid UEN (ROB)", code: "1234567A", err: true},
+		{name: "Invalid UEN (Others)", code: "T12A1234A", err: true},
 	}
 
 	for _, tt := range tests {
