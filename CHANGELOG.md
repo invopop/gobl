@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `eu-en16931-v2017`: fixed issue with payment details when due is zero
 
+### Changed
+
+- `it-sdi-v1`: Updated mapping of exemption (natura) codes to reflect CIUS mapping guide.
+
 ## [v0.301.0] - 2025-10-03
 
 ### Added
