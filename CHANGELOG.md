@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Fixed
+
+- `eu-en16931-v2017`: fixed issue with payment details when due is zero
+
 ### Removed
 
 - `es-verifactu-v1`: validation to prevent forbidden characters in names

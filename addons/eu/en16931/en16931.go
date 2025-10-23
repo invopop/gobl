@@ -79,8 +79,6 @@ func validate(doc any) error {
 		return validateBillInvoice(obj)
 	case *bill.Line:
 		return validateBillLine(obj)
-	case *bill.PaymentDetails:
-		return validateBillPayment(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
 	case *bill.Discount:
