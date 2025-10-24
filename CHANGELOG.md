@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `sg`: Singaporean regime
+- `tax`: `keys` for GST
+
 ### Fixed
 
 - `eu-en16931-v2017`: fixed issue with payment details when due is zero
@@ -62,7 +67,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es`: IGIC now uses VAT keys
 - `bill`: fixed zero-percent handling in charges and discounts
-
 
 ## [v0.300.1] - 2025-09-12
 
