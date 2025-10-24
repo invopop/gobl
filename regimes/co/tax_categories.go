@@ -100,6 +100,21 @@ var taxCategories = []*tax.CategoryDef{
 		Rates:    []*tax.RateDef{},
 	},
 	//
+	// INC - national
+	//
+	{
+		Code: TaxCategoryINC,
+		Name: i18n.String{
+			i18n.ES: "INC",
+		},
+		Title: i18n.String{
+			i18n.EN: "National Consumption Tax",
+			i18n.ES: "Impuesto Nacional al Consumo",
+		},
+		Retained: false,
+		Rates:    []*tax.RateDef{},
+	},
+	//
 	// ReteIVA
 	//
 	{
