@@ -231,7 +231,6 @@ func validateNote(val any) error {
 	}
 	return validation.ValidateStruct(note,
 		validation.Field(&note.Text,
-			validation.By(validateNoForbiddenChars),
 			validation.Length(0, 500),
 			validation.Skip,
 		),
