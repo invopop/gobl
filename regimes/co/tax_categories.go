@@ -10,9 +10,9 @@ import (
 
 // Local tax categories.
 const (
-	TaxCategoryIC        cbc.Code = "IC"  // Impuesto Consumo
-	TaxCategoryICA       cbc.Code = "ICA" // Impuesto de Industria y Comercio
-	TaxCategoryINC       cbc.Code = "INC"
+	TaxCategoryIC        cbc.Code = "IC"   // Impuesto Consumo
+	TaxCategoryICA       cbc.Code = "ICA"  // Impuesto de Industria y Comercio
+	TaxCategoryINC       cbc.Code = "INC"  // Impuesto Nacional al Consumo
 	TaxCategoryReteIVA   cbc.Code = "RVAT" // ReteIVA
 	TaxCategoryReteRenta cbc.Code = "RR"   // ReteRenta
 	TaxCategoryReteICA   cbc.Code = "RICA" // ReteICA
