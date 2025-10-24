@@ -10,9 +10,9 @@ import (
 
 // Local tax categories.
 const (
-	TaxCategoryIC        cbc.Code = "IC"  // Impuesto Consumo
-	TaxCategoryICA       cbc.Code = "ICA" // Impuesto de Industria y Comercio
-	TaxCategoryINC       cbc.Code = "INC"
+	TaxCategoryIC        cbc.Code = "IC"   // Impuesto Consumo
+	TaxCategoryICA       cbc.Code = "ICA"  // Impuesto de Industria y Comercio
+	TaxCategoryINC       cbc.Code = "INC"  // Impuesto Nacional al Consumo
 	TaxCategoryReteIVA   cbc.Code = "RVAT" // ReteIVA
 	TaxCategoryReteRenta cbc.Code = "RR"   // ReteRenta
 	TaxCategoryReteICA   cbc.Code = "RICA" // ReteICA
@@ -95,6 +95,21 @@ var taxCategories = []*tax.CategoryDef{
 		Title: i18n.String{
 			i18n.EN: "Industry and Commerce Tax",
 			i18n.ES: "Impuesto de Industria y Comercio",
+		},
+		Retained: false,
+		Rates:    []*tax.RateDef{},
+	},
+	//
+	// INC - national
+	//
+	{
+		Code: TaxCategoryINC,
+		Name: i18n.String{
+			i18n.ES: "INC",
+		},
+		Title: i18n.String{
+			i18n.EN: "National Consumption Tax",
+			i18n.ES: "Impuesto Nacional al Consumo",
 		},
 		Retained: false,
 		Rates:    []*tax.RateDef{},
