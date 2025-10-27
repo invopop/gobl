@@ -18,7 +18,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `es-verifactu-v1`: validation to prevent forbidden characters in names
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+- `org`: `Attachment.data` field removed in favour of URL, it doesn't make sense to embed Base64 inside JSON documents, which may in turn be embedded inside other documents.
 
 ### Changed
 
