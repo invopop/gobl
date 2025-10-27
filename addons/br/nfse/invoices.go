@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -55,7 +56,7 @@ func validateSupplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Identities,
-			org.RequireIdentityKey(IdentityKeyMunicipalReg),
+			org.RequireIdentityKey(br.IdentityKeyMunicipalReg),
 			validation.Skip,
 		),
 		validation.Field(&obj.Name, validation.Required),
@@ -69,9 +70,9 @@ func validateSupplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequire(
-				ExtKeySimples,
-				ExtKeyMunicipality,
-				ExtKeyFiscalIncentive,
+				br.ExtKeySimples,
+				br.ExtKeyMunicipality,
+				br.ExtKeyFiscalIncentive,
 			),
 			validation.Skip,
 		),
@@ -98,10 +99,10 @@ func normalizeSupplier(sup *org.Party) {
 		return
 	}
 
-	if !sup.Ext.Has(ExtKeyFiscalIncentive) {
+	if !sup.Ext.Has(br.ExtKeyFiscalIncentive) {
 		if sup.Ext == nil {
 			sup.Ext = make(tax.Extensions)
 		}
-		sup.Ext[ExtKeyFiscalIncentive] = FiscalIncentiveDefault
+		sup.Ext[br.ExtKeyFiscalIncentive] = FiscalIncentiveDefault
 	}
 }

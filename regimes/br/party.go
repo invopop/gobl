@@ -51,6 +51,25 @@ func validateAddress(party *org.Party) validation.RuleFunc {
 	}
 }
 
+func normalizeParty(p *org.Party) {
+	if p == nil || p.Ext == nil {
+		return
+	}
+
+	// migrate old addon extension keys to the regime
+	for oldKey, newKey := range map[cbc.Key]cbc.Key{
+		"br-nfse-fiscal-incentive": ExtKeyFiscalIncentive,
+		"br-nfse-municipality":     ExtKeyMunicipality,
+		"br-nfse-simples":          ExtKeySimples,
+		"br-nfse-special-regime":   ExtKeySpecialRegime,
+	} {
+		if value, exists := p.Ext[oldKey]; exists {
+			p.Ext[newKey] = value
+			delete(p.Ext, oldKey)
+		}
+	}
+}
+
 func isBrazilianAddress(party *org.Party, addr *org.Address) bool {
 	if addr.Country != "" {
 		return addr.Country == l10n.BR.ISO()

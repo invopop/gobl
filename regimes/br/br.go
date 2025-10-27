@@ -30,6 +30,8 @@ func New() *tax.RegimeDef {
 		Validator:  Validate,
 		Normalizer: Normalize,
 		Categories: taxCategories,
+		Identities: identities,
+		Extensions: extensions,
 		Corrections: []*tax.CorrectionDefinition{
 			{
 				Schema: bill.ShortSchemaInvoice,
@@ -59,5 +61,9 @@ func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		tax.NormalizeIdentity(obj)
+	case *org.Identity:
+		normalizeIdentity(obj)
+	case *org.Party:
+		normalizeParty(obj)
 	}
 }

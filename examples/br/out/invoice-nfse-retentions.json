@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "fc0ee9fb7df69e5224594364e90e257ea2ce2845784dc336ec385722023fd965"
+			"val": "46751781f08740c7ae5e043b4a202e0e478ff8f492402a997be24af02382e41a"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "BR",
+		"$addons": [
+			"br-nfse-v1"
+		],
 		"uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
 		"type": "standard",
 		"series": "FL",
@@ -24,11 +27,11 @@
 			},
 			"identities": [
 				{
-					"key": "br-nfse-municipal-reg",
+					"key": "br-municipal-reg",
 					"code": "12345678901234"
 				},
 				{
-					"key": "br-nfse-national-reg",
+					"key": "br-state-reg",
 					"code": "98765432109876"
 				}
 			],
@@ -50,10 +53,10 @@
 				}
 			],
 			"ext": {
-				"br-nfse-fiscal-incentive": "1",
-				"br-nfse-municipality": "3550308",
-				"br-nfse-simples": "1",
-				"br-nfse-special-regime": "4"
+				"br-fiscal-incentive": "1",
+				"br-municipality": "3550308",
+				"br-simples": "1",
+				"br-special-regime": "4"
 			}
 		},
 		"customer": {
@@ -97,11 +100,11 @@
 						}
 					},
 					{
-						"cat": "PIS",
+						"cat": "PISRet",
 						"percent": "0.65%"
 					},
 					{
-						"cat": "COFINS",
+						"cat": "COFINSRet",
 						"percent": "3%"
 					},
 					{
@@ -141,7 +144,7 @@
 						"amount": "300.00"
 					},
 					{
-						"code": "PIS",
+						"code": "PISRet",
 						"retained": true,
 						"rates": [
 							{
@@ -153,7 +156,7 @@
 						"amount": "39.00"
 					},
 					{
-						"code": "COFINS",
+						"code": "COFINSRet",
 						"retained": true,
 						"rates": [
 							{

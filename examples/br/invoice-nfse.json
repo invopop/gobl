@@ -1,5 +1,8 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": [
+    "br-nfse-v1"
+  ],
   "uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
   "series": "SAMPLE",
   "code": "1",
@@ -13,11 +16,11 @@
     },
     "identities": [
       {
-        "key": "br-nfse-municipal-reg",
+        "key": "br-municipal-reg",
         "code": "45678901234567"
       },
       {
-        "key": "br-nfse-national-reg",
+        "key": "br-state-reg",
         "code": "12345012345678"
       }
     ],
@@ -39,10 +42,10 @@
       }
     ],
     "ext": {
-      "br-nfse-municipality": "3304557",
-      "br-nfse-fiscal-incentive": "1",
-      "br-nfse-simples": "1",
-      "br-nfse-special-regime": "4"
+      "br-municipality": "3304557",
+      "br-fiscal-incentive": "1",
+      "br-simples": "1",
+      "br-special-regime": "4"
     }
   },
   "customer": {

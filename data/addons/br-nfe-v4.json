@@ -1,0 +1,309 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/addon-def",
+  "key": "br-nfe-v4",
+  "name": {
+    "en": "Brazil NF-e 4.00"
+  },
+  "extensions": [
+    {
+      "key": "br-nfe-model",
+      "name": {
+        "en": "Fiscal Document Model Code",
+        "pt": "Código do Modelo do Documento Fiscal"
+      },
+      "desc": {
+        "en": "Code used to identify the fiscal document model. It will be\ndetermined automatically by GOBL during normalization according to\nthe scenario definitions."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "55",
+          "name": {
+            "en": "NF-e"
+          },
+          "desc": {
+            "en": "For B2B tranfer of goods and certain intra-state\nservices."
+          }
+        },
+        {
+          "code": "65",
+          "name": {
+            "en": "NFC-e"
+          },
+          "desc": {
+            "en": "For B2C (retail) transfer of goods and certain\nintra-state services."
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-presence",
+      "name": {
+        "en": "Buyer Presence Indicator",
+        "pt": "Indicador de Presença do Comprador"
+      },
+      "desc": {
+        "en": "Indicator of the buyer's presence at the commercial establishment\nat the time of the operation. This field is used to classify the\ntype of commercial transaction according to Brazilian tax regulations."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "0",
+          "name": {
+            "en": "Not applicable",
+            "pt": "Não se aplica"
+          }
+        },
+        {
+          "code": "1",
+          "name": {
+            "en": "In-person operation",
+            "pt": "Operação presencial"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Non-in-person operation, via Internet",
+            "pt": "Operação não presencial, pela Internet"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Non-in-person operation, Tele-service",
+            "pt": "Operação não presencial, Teleatendimento"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "NFC-e in operation with home delivery",
+            "pt": "NFC-e em operação com entrega a domicílio"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "In-person operation, outside establishment",
+            "pt": "Operação presencial, fora do estabelecimento"
+          }
+        },
+        {
+          "code": "9",
+          "name": {
+            "en": "Non-in-person operation, others",
+            "pt": "Operação não presencial, outros"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-payment-means",
+      "name": {
+        "en": "Payment Method",
+        "pt": "Meio de Pagamento"
+      },
+      "desc": {
+        "en": "Code used to identify the payment method used for the transaction.",
+        "pt": "Código utilizado para identificar o meio de pagamento utilizado na transação."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "01",
+          "name": {
+            "en": "Cash",
+            "pt": "Dinheiro"
+          }
+        },
+        {
+          "code": "02",
+          "name": {
+            "en": "Check",
+            "pt": "Cheque"
+          }
+        },
+        {
+          "code": "03",
+          "name": {
+            "en": "Credit Card",
+            "pt": "Cartão de Crédito"
+          }
+        },
+        {
+          "code": "04",
+          "name": {
+            "en": "Debit Card",
+            "pt": "Cartão de Débito"
+          }
+        },
+        {
+          "code": "05",
+          "name": {
+            "en": "Store Credit",
+            "pt": "Crédito Loja"
+          }
+        },
+        {
+          "code": "10",
+          "name": {
+            "en": "Food Voucher",
+            "pt": "Vale Alimentação"
+          }
+        },
+        {
+          "code": "11",
+          "name": {
+            "en": "Meal Voucher",
+            "pt": "Vale Refeição"
+          }
+        },
+        {
+          "code": "12",
+          "name": {
+            "en": "Gift Voucher",
+            "pt": "Vale Presente"
+          }
+        },
+        {
+          "code": "13",
+          "name": {
+            "en": "Fuel Voucher",
+            "pt": "Vale Combustível"
+          }
+        },
+        {
+          "code": "15",
+          "name": {
+            "en": "Bank Slip (Boleto)",
+            "pt": "Boleto Bancário"
+          }
+        },
+        {
+          "code": "16",
+          "name": {
+            "en": "Bank Deposit",
+            "pt": "Depósito Bancário"
+          }
+        },
+        {
+          "code": "17",
+          "name": {
+            "en": "Instant Payment (PIX)",
+            "pt": "Pagamento Instantâneo (PIX)"
+          }
+        },
+        {
+          "code": "18",
+          "name": {
+            "en": "Bank Transfer, Digital Wallet",
+            "pt": "Transferência bancária, Carteira Digital"
+          }
+        },
+        {
+          "code": "19",
+          "name": {
+            "en": "Loyalty Program, Cashback, Virtual Credit",
+            "pt": "Programa de fidelidade, Cashback, Crédito Virtual"
+          }
+        },
+        {
+          "code": "90",
+          "name": {
+            "en": "No Payment",
+            "pt": "Sem pagamento"
+          }
+        },
+        {
+          "code": "99",
+          "name": {
+            "en": "Others",
+            "pt": "Outros"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "ext": {
+            "br-nfe-model": "55"
+          }
+        },
+        {
+          "type": [
+            "standard",
+            "credit-note",
+            "debit-note"
+          ],
+          "tags": [
+            "simplified"
+          ],
+          "ext": {
+            "br-nfe-model": "65"
+          }
+        }
+      ]
+    }
+  ],
+  "identities": [
+    {
+      "key": "gtin",
+      "name": {
+        "en": "Product's GTIN (Global Trade Item Number)",
+        "pt": "GTIN (Global Trade Item Number) do produto"
+      }
+    },
+    {
+      "key": "gtin+taxable",
+      "name": {
+        "en": "Taxable item's GTIN (Global Trade Item Number)",
+        "pt": "GTIN (Global Trade Item Number) da unidade tributável"
+      }
+    },
+    {
+      "key": "ncm",
+      "name": {
+        "en": "Product's NCM (Mercosur Common Nomenclature) code",
+        "pt": "Código NCM (Nomenclatura Comum do Mercosul) do produto"
+      }
+    }
+  ],
+  "corrections": null
+}

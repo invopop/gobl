@@ -10,6 +10,163 @@
   "time_zone": "America/Sao_Paulo",
   "country": "BR",
   "currency": "BRL",
+  "extensions": [
+    {
+      "key": "br-fiscal-incentive",
+      "name": {
+        "en": "Fiscal Incentive",
+        "pt": "Incentivo Fiscal"
+      },
+      "desc": {
+        "en": "Indicates whether a party benefits from a fiscal incentive.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-68)"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Has incentive",
+            "pt": "Possui incentivo"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Does not have incentive",
+            "pt": "Não possui incentivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-municipality",
+      "name": {
+        "en": "IGBE Municipality Code",
+        "pt": "Código do Município do IBGE"
+      },
+      "desc": {
+        "en": "The municipality code as defined by the IGBE (Brazilian Institute of Geography and\nStatistics).\n\nList of codes from the IGBE:\n\n* https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+      },
+      "pattern": "^\\d{7}$"
+    },
+    {
+      "key": "br-simples",
+      "name": {
+        "en": "Opting for \"Simples Nacional\" regime",
+        "pt": "Optante pelo Simples Nacional"
+      },
+      "desc": {
+        "en": "Indicates whether a party is opting for the \"Simples Nacional\" (Regime Especial\nUnificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e\nEmpresas de Pequeno Porte) tax regime\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-67)"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Opt-in",
+            "pt": "Optante"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Opt-out",
+            "pt": "Não optante"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-special-regime",
+      "name": {
+        "en": "Special Tax Regime",
+        "pt": "Regime Especial de Tributação"
+      },
+      "desc": {
+        "en": "Indicates a special tax regime that a party is subject to.\n\nList of codes from the national NFSe ABRASF (v2.04) model:\n\n* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download\n(Section 10.2, Field B-66)"
+      },
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Municipal micro-enterprise",
+            "pt": "Microempresa municipal"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Estimated",
+            "pt": "Estimativa"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Professional Society",
+            "pt": "Sociedade de profissionais"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Cooperative",
+            "pt": "Cooperativa"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Single micro-entrepreneur (MEI)",
+            "pt": "Microempreendedor individual (MEI)"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Micro-enterprise or Small Business (ME EPP)",
+            "pt": "Microempresa ou Empresa de Pequeno Porte (ME EPP)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-cfop",
+      "name": {
+        "en": "CFOP (Fiscal Operations and Services Code)",
+        "pt": "CFOP (Código Fiscal de Operações e Prestações)"
+      },
+      "desc": {
+        "en": "Four-digit code that classifies the nature of goods movements and service\nprovisions for ICMS purposes in Brazil. The first digit indicates the\noperation origin/destination (1–3 for entries; 5–7 for exits), and the\nremaining digits identify the specific type of operation.",
+        "pt": "Código de quatro dígitos que classifica a natureza das operações de\ncirculação de mercadorias e das prestações de serviços para fins de ICMS.\nO primeiro dígito indica a origem/destino da operação (1–3 para entradas;\n5–7 para saídas) e os demais identificam o tipo específico de operação."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "CFOP - Fiscal Operations and Services Codes (SEFAZ-PE)",
+            "pt": "CFOP - Código Fiscal de Operações e Prestações (SEFAZ-PE)"
+          },
+          "url": "https://www.sefaz.pe.gov.br/legislacao/tributaria/documents/legislacao/tabelas/cfop.htm",
+          "content_type": "text/html"
+        }
+      ],
+      "pattern": "^[1-7]\\d{3}$"
+    }
+  ],
+  "identities": [
+    {
+      "key": "br-municipal-reg",
+      "name": {
+        "en": "Company Municipal Registration",
+        "pt": "Inscrição Municipal da Empresa"
+      }
+    },
+    {
+      "key": "br-state-reg",
+      "name": {
+        "en": "Company State Registration",
+        "pt": "Inscrição Estadual da Empresa"
+      }
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",
@@ -40,7 +197,8 @@
       "title": {
         "en": "State value-added tax",
         "pt": "Imposto sobre Circulação de Mercadorias e Serviços"
-      }
+      },
+      "informative": true
     },
     {
       "code": "IPI",
@@ -63,6 +221,18 @@
         "en": "Social Integration Program",
         "pt": "Programa de Integração Social"
       },
+      "informative": true
+    },
+    {
+      "code": "PISRet",
+      "name": {
+        "en": "PIS (Retained)",
+        "pt": "PIS (Retido)"
+      },
+      "title": {
+        "en": "Social Integration Program Retained",
+        "pt": "Programa de Integração Social Retido"
+      },
       "retained": true
     },
     {
@@ -74,6 +244,18 @@
       "title": {
         "en": "Contribution for the Financing of Social Security",
         "pt": "Contribuição para o Financiamento da Seguridade Social"
+      },
+      "informative": true
+    },
+    {
+      "code": "COFINSRet",
+      "name": {
+        "en": "COFINS (Retained)",
+        "pt": "COFINS (Retido)"
+      },
+      "title": {
+        "en": "Contribution for the Financing of Social Security Retained",
+        "pt": "Contribuição para o Financiamento da Seguridade Social Retido"
       },
       "retained": true
     },
