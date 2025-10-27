@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
+- `bill`: `Line` with `seller` property, to be used in Mexico.
 
 ### Fixed
 
