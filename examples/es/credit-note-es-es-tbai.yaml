@@ -8,7 +8,8 @@ code: "012"
 type: "credit-note"
 
 preceding:
-  - type: "standard"
+  - schema: "https://gobl.org/draft-0/bill/invoice"
+    type: "standard"
     series: "SAMPLE"
     code: "085"
     issue_date: "2022-01-10"
