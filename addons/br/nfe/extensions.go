@@ -63,7 +63,7 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						For B2B tranfer of goods and certain intra-state
+						For B2B transfer of goods and certain intra-state
 						services.
 					`),
 				},
