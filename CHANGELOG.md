@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `co`: Add new INC tax defenition.
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
 - `bill`: `Line` with `seller` property, to be used in Mexico.
