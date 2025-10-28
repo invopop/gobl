@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
 - `bill`: `Line` with `seller` property, to be used in Mexico.
+- `org`: `DocumentRef` supports the `schema` field.
 
 ### Fixed
 
@@ -18,7 +19,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `es-verifactu-v1`: validation to prevent forbidden characters in names
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to use.
 
 ### Changed
 
