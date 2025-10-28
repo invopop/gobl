@@ -3,6 +3,7 @@
 package nfse
 
 import (
+	"github.com/invopop/gobl/addons/br/dfe"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -24,6 +25,9 @@ func newAddon() *tax.AddonDef {
 		Key: V1,
 		Name: i18n.String{
 			i18n.EN: "Brazil NFS-e 1.X",
+		},
+		Requires: []cbc.Key{
+			dfe.V1,
 		},
 		Extensions: extensions,
 		Validator:  validate,

@@ -9,6 +9,7 @@ package addons
 
 import (
 	// Import all the addons to ensure they're ready to use.
+	_ "github.com/invopop/gobl/addons/br/dfe"
 	_ "github.com/invopop/gobl/addons/br/nfe"
 	_ "github.com/invopop/gobl/addons/br/nfse"
 	_ "github.com/invopop/gobl/addons/co/dian"

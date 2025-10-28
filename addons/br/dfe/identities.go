@@ -1,4 +1,4 @@
-package br
+package dfe
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -8,8 +8,8 @@ import (
 
 // Identity keys
 const (
-	IdentityKeyMunicipalReg = "br-municipal-reg"
-	IdentityKeyStateReg     = "br-state-reg"
+	IdentityKeyMunicipalReg = "br-dfe-municipal-reg"
+	IdentityKeyStateReg     = "br-dfe-state-reg"
 )
 
 var identities = []*cbc.Definition{
@@ -34,11 +34,13 @@ func normalizeIdentity(i *org.Identity) {
 		return
 	}
 
-	// migrate old addon keys to the regime
-	switch i.Key {
-	case "br-nfse-municipal-reg":
-		i.Key = IdentityKeyMunicipalReg
-	case "br-nfse-national-reg":
-		i.Key = IdentityKeyStateReg
+	// migrate legacy addon keys
+	for oldKey, newKey := range map[cbc.Key]cbc.Key{
+		"br-nfse-municipal-reg": IdentityKeyMunicipalReg,
+		"br-nfse-national-reg":  IdentityKeyStateReg,
+	} {
+		if i.Key == oldKey {
+			i.Key = newKey
+		}
 	}
 }

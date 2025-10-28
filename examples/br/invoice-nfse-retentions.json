@@ -16,11 +16,11 @@
     },
     "identities": [
       {
-        "key": "br-municipal-reg",
+        "key": "br-dfe-municipal-reg",
         "code": "12345678901234"
       },
       {
-        "key": "br-state-reg",
+        "key": "br-dfe-state-reg",
         "code": "98765432109876"
       }
     ],
@@ -42,10 +42,10 @@
       }
     ],
     "ext": {
-      "br-municipality": "3550308",
-      "br-fiscal-incentive": "1",
-      "br-simples": "1",
-      "br-special-regime": "4"
+      "br-dfe-municipality": "3550308",
+      "br-dfe-fiscal-incentive": "1",
+      "br-dfe-simples": "1",
+      "br-dfe-special-regime": "4"
     }
   },
   "customer": {

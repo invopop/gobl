@@ -1,4 +1,4 @@
-package br
+package dfe
 
 import (
 	"github.com/invopop/gobl/cbc"
@@ -8,11 +8,11 @@ import (
 
 // Brazilian extension keys for fiscal documents
 const (
-	ExtKeyFiscalIncentive = "br-fiscal-incentive"
-	ExtKeyMunicipality    = "br-municipality"
-	ExtKeySimples         = "br-simples"
-	ExtKeySpecialRegime   = "br-special-regime"
-	ExtKeyCFOP            = "br-cfop"
+	ExtKeyFiscalIncentive = "br-dfe-fiscal-incentive"
+	ExtKeyMunicipality    = "br-dfe-municipality"
+	ExtKeySimples         = "br-dfe-simples"
+	ExtKeySpecialRegime   = "br-dfe-special-regime"
+	ExtKeyCFOP            = "br-dfe-cfop"
 )
 
 var extensions = []*cbc.Definition{

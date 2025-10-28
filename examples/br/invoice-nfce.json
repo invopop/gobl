@@ -24,7 +24,7 @@
     },
     "identities": [
       {
-        "key": "br-state-reg",
+        "key": "br-dfe-state-reg",
         "code": "35503304557308"
       }
     ],
@@ -46,7 +46,7 @@
       }
     ],
     "ext": {
-      "br-municipality": "3304557"
+      "br-dfe-municipality": "3304557"
     }
   },
   "lines": [

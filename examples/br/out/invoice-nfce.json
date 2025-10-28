@@ -4,13 +4,14 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "3e2c77e7a4694420a7835cf4763815e154b7b27b1d42b01d3f20c66219fc22cd"
+			"val": "1c91a4a276c81b506f7490c566e36317b0bf077fef0a8c68bd481170659bf487"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "BR",
 		"$addons": [
+			"br-dfe-v1",
 			"br-nfe-v4"
 		],
 		"$tags": [
@@ -36,7 +37,7 @@
 			},
 			"identities": [
 				{
-					"key": "br-state-reg",
+					"key": "br-dfe-state-reg",
 					"code": "35503304557308"
 				}
 			],
@@ -58,7 +59,7 @@
 				}
 			],
 			"ext": {
-				"br-municipality": "3304557"
+				"br-dfe-municipality": "3304557"
 			}
 		},
 		"lines": [

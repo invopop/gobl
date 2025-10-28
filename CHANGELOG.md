@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
 - `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
+- `br-dfe-v1`: added base addon for all fiscal documents in Brazil
 
 ### Fixed
 

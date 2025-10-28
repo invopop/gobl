@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/invopop/gobl/addons/br/dfe"
 	"github.com/invopop/gobl/addons/br/nfe"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
@@ -229,17 +229,17 @@ func TestSupplierValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.Identities = nil
 		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "identities: missing key 'br-state-reg'")
+		assert.ErrorContains(t, err, "identities: missing key 'br-dfe-state-reg'")
 
 		inv.Supplier.Identities = []*org.Identity{
 			{
-				Key:  br.IdentityKeyStateReg,
+				Key:  dfe.IdentityKeyStateReg,
 				Code: "35503304557308",
 			},
 		}
 		err = addon.Validator(inv)
 		if err != nil {
-			assert.NotContains(t, err.Error(), "identities: missing key 'br-state-reg'")
+			assert.NotContains(t, err.Error(), "identities: missing key 'br-dfe-state-reg'")
 		}
 	})
 
@@ -264,14 +264,14 @@ func TestSupplierValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Supplier.Ext = nil
 		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "br-municipality: required")
+		assert.ErrorContains(t, err, "br-dfe-municipality: required")
 
 		inv.Supplier.Ext = tax.Extensions{
-			br.ExtKeyMunicipality: "3304557",
+			dfe.ExtKeyMunicipality: "3304557",
 		}
 		err = addon.Validator(inv)
 		if err != nil {
-			assert.NotContains(t, err.Error(), "br-municipality: required")
+			assert.NotContains(t, err.Error(), "br-dfe-municipality: required")
 		}
 	})
 
@@ -335,7 +335,7 @@ func TestCustomerValidation(t *testing.T) {
 				},
 			},
 			Ext: tax.Extensions{
-				br.ExtKeyMunicipality: "3550308",
+				dfe.ExtKeyMunicipality: "3550308",
 			},
 		}
 		err = addon.Validator(inv)
@@ -398,10 +398,10 @@ func TestCustomerValidation(t *testing.T) {
 		inv := validInvoice()
 		inv.Customer.Ext = nil
 		err := addon.Validator(inv)
-		assert.ErrorContains(t, err, "br-municipality: required")
+		assert.ErrorContains(t, err, "br-dfe-municipality: required")
 
 		inv.Customer.Ext = tax.Extensions{
-			br.ExtKeyMunicipality: "3550308",
+			dfe.ExtKeyMunicipality: "3550308",
 		}
 		err = addon.Validator(inv)
 		assert.NoError(t, err)
@@ -456,7 +456,7 @@ func validInvoice() *bill.Invoice {
 			},
 			Identities: []*org.Identity{
 				{
-					Key:  br.IdentityKeyStateReg,
+					Key:  dfe.IdentityKeyStateReg,
 					Code: "35503304557308",
 				},
 			},
@@ -470,7 +470,7 @@ func validInvoice() *bill.Invoice {
 				},
 			},
 			Ext: tax.Extensions{
-				br.ExtKeyMunicipality: "3304557",
+				dfe.ExtKeyMunicipality: "3304557",
 			},
 		},
 		Tax: &bill.Tax{
@@ -493,7 +493,7 @@ func validInvoice() *bill.Invoice {
 				},
 			},
 			Ext: tax.Extensions{
-				br.ExtKeyMunicipality: "3550308",
+				dfe.ExtKeyMunicipality: "3550308",
 			},
 		},
 		Notes: []*org.Note{

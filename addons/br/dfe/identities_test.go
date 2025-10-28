@@ -1,18 +1,21 @@
-package br_test
+package dfe_test
 
 import (
 	"testing"
 
+	"github.com/invopop/gobl/addons/br/dfe"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/br"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNormalizeIdentities(t *testing.T) {
+	addon := tax.AddonForKey(dfe.V1)
+
 	t.Run("nil identity", func(t *testing.T) {
 		var ident *org.Identity
-		br.Normalize(ident)
+		addon.Normalizer(ident)
 		assert.Nil(t, ident)
 	})
 
@@ -21,8 +24,8 @@ func TestNormalizeIdentities(t *testing.T) {
 			Key:  "br-nfse-municipal-reg",
 			Code: "1234567890",
 		}
-		br.Normalize(ident)
-		assert.Equal(t, cbc.Key("br-municipal-reg"), ident.Key)
+		addon.Normalizer(ident)
+		assert.Equal(t, cbc.Key("br-dfe-municipal-reg"), ident.Key)
 		assert.Equal(t, cbc.Code("1234567890"), ident.Code)
 	})
 
@@ -31,8 +34,8 @@ func TestNormalizeIdentities(t *testing.T) {
 			Key:  "br-nfse-national-reg",
 			Code: "1234567890",
 		}
-		br.Normalize(ident)
-		assert.Equal(t, cbc.Key("br-state-reg"), ident.Key)
+		addon.Normalizer(ident)
+		assert.Equal(t, cbc.Key("br-dfe-state-reg"), ident.Key)
 		assert.Equal(t, cbc.Code("1234567890"), ident.Code)
 	})
 }
