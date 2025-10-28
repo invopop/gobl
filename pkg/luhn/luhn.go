@@ -1,3 +1,5 @@
+// Package luhn provides utilities for working with the Luhn algorithm for
+// validating identification numbers.
 package luhn
 
 import (
