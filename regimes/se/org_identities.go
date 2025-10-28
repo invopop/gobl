@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pkg/luhn"
 	"github.com/invopop/validation"
 )
 
@@ -72,7 +73,9 @@ var identityTypeDefinitions = []*cbc.Definition{
 //
 // If too many or too few numbers are present, it does nothing.
 func normalizeOrgIdentity(id *org.Identity) {
-	// No need for nil check, as the identity type is validated before this function is called
+	if id == nil {
+		return
+	}
 	switch id.Type {
 	case IdentityTypeOrgNr:
 		// Organization numbers should be numeric only, with no separators
@@ -140,8 +143,6 @@ func normalizeOrgIdentity(id *org.Identity) {
 //
 // If the organization type is not valid, it returns nil.
 func validateOrgIdentity(id *org.Identity) error {
-	// No need for nil check, as the identity type is validated before this function is called
-
 	return validation.ValidateStruct(id,
 		validation.Field(&id.Code,
 			validation.By(func(value any) error {
@@ -160,31 +161,21 @@ func validateOrgIdentityCode(value any, id *org.Identity) error {
 
 	// Normalize to digits only for type check
 	digitsOnly := cbc.NormalizeNumericalCode(code).String()
-	// PERF: check if this is faster:
-	// digitsOnly := ""
-	// for _, c := range code.String() {
-	//  if c >= '0' && c <= '9' {
-	//    digitsOnly += string(c)
-	//  }
-	// }
 
 	switch id.Type {
 	case IdentityTypeOrgNr:
 		if !orgNrRegex.MatchString(digitsOnly) {
 			return errors.New("invalid organization number format")
 		}
-
 	case IdentityTypePersonNr, IdentityTypeCoordinationNr:
 		if !individualNrRegex.MatchString(code.String()) {
 			return errors.New("invalid person or coordination number format")
 		}
-
 	default:
 		return nil
 	}
-
-	if !code.IsValidLuhnChecksum() {
-		return errors.New("invalid identification number checksum")
+	if !luhn.Check(cbc.Code(digitsOnly)) {
+		return errors.New("invalid checksum")
 	}
 	return nil
 }

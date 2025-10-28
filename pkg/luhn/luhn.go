@@ -1,32 +1,34 @@
-package cbc
+package luhn
 
 import (
 	"regexp"
+
+	"github.com/invopop/gobl/cbc"
 )
 
 var nonNumberRegExp = regexp.MustCompile(`[^\d]+`)
 
-// ValidateLuhn checks if a string of digits passes the Luhn algorithm validation.
+// Check if the code containing digits passes the Luhn algorithm validation.
 //
-// `number` must contain only numeric characters.
+// `code` must contain only numeric characters.
 //
 // [Source]
 //
 // [Source]: https://github.com/luhnmod10/go
-func ValidateLuhn(number string) bool {
-	if number == "" || nonNumberRegExp.MatchString(number) {
+func Check(code cbc.Code) bool {
+	if code == cbc.CodeEmpty || nonNumberRegExp.MatchString(string(code)) {
 		return false
 	}
 
 	var checksum int
 
-	numberLen := len(number)
+	numberLen := len(code)
 	for i := numberLen - 1; i >= 0; i -= 2 {
-		n := number[i] - '0'
+		n := code[i] - '0'
 		checksum += int(n)
 	}
 	for i := numberLen - 2; i >= 0; i -= 2 {
-		n := number[i] - '0'
+		n := code[i] - '0'
 		n *= 2
 		if n > 9 {
 			n -= 9

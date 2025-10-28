@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pkg/luhn"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -51,7 +52,7 @@ func validateTaxCode(value any) error {
 		return errors.New("invalid characters, expected numeric")
 	}
 	// The code prior to the check digit must be Luhn-valid.
-	if !(code[:10]).IsValidLuhnChecksum() {
+	if !luhn.Check(code[:10]) {
 		return errors.New("invalid identification number checksum")
 	}
 	return nil

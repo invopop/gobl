@@ -13,7 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `keys` for GST
 - `bill`: `Line` with `seller` property, to be used in Mexico.
 - `org`: `DocumentRef` supports the `schema` field.
-- `se`: added Sweden regime.
+- `se`: Sweden regime.
+- `luhn`: package for handling luhn Mod10 calculations.
 
 ### Fixed
 
@@ -130,7 +131,7 @@ Unmarshalling JSON GOBL documents will be migrated automatically to the new stru
 
 - `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
 - `pt-saft-v1`: moved exemption notes to line-level and added validations
->>>>>>> main
+  > > > > > > > main
 
 ## [v0.220.6] - 2025-08-12
 

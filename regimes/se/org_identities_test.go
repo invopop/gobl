@@ -74,19 +74,19 @@ func TestOrgIdentityValidate(t *testing.T) {
 		{name: "Organization number too short", typeCode: se.IdentityTypeOrgNr, input: "123456789", err: "invalid organization number format"},
 		{name: "Organization number too long", typeCode: se.IdentityTypeOrgNr, input: "12345678901", err: "invalid organization number format"},
 		{name: "Organization number with letters", typeCode: se.IdentityTypeOrgNr, input: "123456789A", err: "invalid organization number format"},
-		{name: "Organization number with invalid check digit", typeCode: se.IdentityTypeOrgNr, input: "5560360794", err: "invalid identification number checksum"},
+		{name: "Organization number with invalid check digit", typeCode: se.IdentityTypeOrgNr, input: "5560360794", err: "code: invalid checksum"},
 
 		{name: "Person number without separator", typeCode: se.IdentityTypePersonNr, input: "8001010019", err: "invalid person or coordination number format"},
 		{name: "Person number too short", typeCode: se.IdentityTypePersonNr, input: "800101-001", err: "invalid person or coordination number format"},
 		{name: "Person number too long", typeCode: se.IdentityTypePersonNr, input: "800101-00177", err: "invalid person or coordination number format"},
 		{name: "Person number with letters", typeCode: se.IdentityTypePersonNr, input: "800101-001A", err: "invalid person or coordination number format"},
-		{name: "Person number with invalid check digit", typeCode: se.IdentityTypePersonNr, input: "800101-0018", err: "invalid identification number checksum"},
+		{name: "Person number with invalid check digit", typeCode: se.IdentityTypePersonNr, input: "800101-0018", err: "code: invalid checksum"},
 
 		{name: "Coordination number without separator", typeCode: se.IdentityTypeCoordinationNr, input: "8001610017", err: "invalid person or coordination number format"},
 		{name: "Coordination number too short", typeCode: se.IdentityTypeCoordinationNr, input: "800161-001", err: "invalid person or coordination number format"},
 		{name: "Coordination number too long", typeCode: se.IdentityTypeCoordinationNr, input: "800161-00177", err: "invalid person or coordination number format"},
 		{name: "Coordination number with letters", typeCode: se.IdentityTypeCoordinationNr, input: "800161-001A", err: "invalid person or coordination number format"},
-		{name: "Coordination number with invalid check digit", typeCode: se.IdentityTypeCoordinationNr, input: "800161-0018", err: "invalid identification number checksum"},
+		{name: "Coordination number with invalid check digit", typeCode: se.IdentityTypeCoordinationNr, input: "800161-0018", err: "code: invalid checksum"},
 	}
 
 	for _, tt := range tests {

@@ -40,7 +40,7 @@ func New() *tax.RegimeDef {
 func Validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
-		return validateInvoice(obj)
+		return validateBillInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
 	case *org.Identity:

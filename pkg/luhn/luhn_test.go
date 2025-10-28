@@ -1,15 +1,16 @@
-package cbc_test
+package luhn_test
 
 import (
 	"testing"
 
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pkg/luhn"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateLuhn(t *testing.T) {
+func TestCheck(t *testing.T) {
 	t.Parallel()
-	validNumbers := []string{
+	validNumbers := []cbc.Code{
 		"0",  // Single digit 0 is valid
 		"18", // 1×2 = 2, 2+8 = 10, 10 mod 10 = 0
 		"26", // 2×2 = 4, 4+6 = 10, 10 mod 10 = 0
@@ -24,7 +25,7 @@ func TestValidateLuhn(t *testing.T) {
 		"4111111111111111", // Valid credit card number
 	}
 
-	invalidNumbers := []string{
+	invalidNumbers := []cbc.Code{
 		"1",                // 1 is not valid
 		"19",               // 1×2 = 2, 2+9 = 11, 11 mod 10 = 1
 		"123",              // 1×2 = 2, 2+2+3 = 7, 7 mod 10 = 7
@@ -35,17 +36,17 @@ func TestValidateLuhn(t *testing.T) {
 	}
 
 	for _, number := range validNumbers {
-		t.Run("Valid: "+number, func(t *testing.T) {
+		t.Run("Valid: "+number.String(), func(t *testing.T) {
 			t.Parallel()
-			result := cbc.ValidateLuhn(number)
+			result := luhn.Check(number)
 			assert.True(t, result, "Should be valid: %s", number)
 		})
 	}
 
 	for _, number := range invalidNumbers {
-		t.Run("Invalid: "+number, func(t *testing.T) {
+		t.Run("Invalid: "+number.String(), func(t *testing.T) {
 			t.Parallel()
-			result := cbc.ValidateLuhn(number)
+			result := luhn.Check(number)
 			assert.False(t, result, "Should be invalid: %s", number)
 		})
 	}

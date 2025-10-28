@@ -3,6 +3,7 @@ package se_test
 import (
 	"testing"
 
+	_ "github.com/invopop/gobl" // ensure all loaded
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -18,6 +19,7 @@ import (
 func testInvoiceStandard(t *testing.T) *bill.Invoice {
 	t.Helper()
 	i := &bill.Invoice{
+		Regime:   tax.WithRegime("SE"),
 		Series:   "TEST",
 		Code:     "0002",
 		Currency: currency.SEK,
@@ -131,7 +133,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing supplier", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Supplier = nil
 		require.NoError(t, inv.Calculate())
 		require.Error(t, inv.Validate())
@@ -140,7 +141,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing customer", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
 		require.Error(t, inv.Validate())
@@ -149,7 +149,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing supplier tax ID", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Supplier.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -159,7 +158,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing customer tax ID", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Customer.TaxID = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
@@ -168,7 +166,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing supplier name", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Supplier.Name = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -178,7 +175,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing customer name", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Customer.Name = ""
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -188,7 +184,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing supplier address", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Supplier.Addresses = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -198,7 +193,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing customer address", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Customer.Addresses = nil
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
@@ -208,7 +202,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing supplier identity", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Supplier.Identities = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
@@ -220,7 +213,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("missing customer identity", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Customer.Identities = nil
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
@@ -229,19 +221,26 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("invalid supplier identity", func(t *testing.T) {
+	t.Run("missing supplier identity", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
 		inv.Supplier.Identities[0].Type = "A"
 		require.NoError(t, inv.Calculate())
-		require.Error(t, inv.Validate())
+		require.NoError(t, inv.Validate())
 	})
 
-	t.Run("invalid customer identity", func(t *testing.T) {
+	t.Run("customer with only identity", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceStandard(t)
-		inv.SetRegime("SE")
+		inv.Customer.TaxID.Code = ""
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("missing customer identity", func(t *testing.T) {
+		t.Parallel()
+		inv := testInvoiceStandard(t)
+		inv.Customer.TaxID.Code = ""
 		inv.Customer.Identities[0].Type = "A"
 		require.NoError(t, inv.Calculate())
 		require.Error(t, inv.Validate())
@@ -250,7 +249,6 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("simplified invoice", func(t *testing.T) {
 		t.Parallel()
 		inv := testInvoiceSimplified(t)
-		inv.SetRegime("SE")
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})

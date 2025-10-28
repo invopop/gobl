@@ -97,13 +97,14 @@ func (c Code) String() string {
 	return string(c)
 }
 
-// IsValidLuhnChecksum returns true if the code is a valid Luhn checksum.
-//
-// Only the numerical part of the code is used for the check. Any non-numerical
-// characters are removed prior.
-func (c Code) IsValidLuhnChecksum() bool {
-	digitsOnly := NormalizeNumericalCode(c).String()
-	return ValidateLuhn(digitsOnly)
+// CodeStrings is a convenience method to convert a list of codes
+// into a list of strings.
+func CodeStrings(codes []Code) []string {
+	l := make([]string, len(codes))
+	for i, v := range codes {
+		l[i] = v.String()
+	}
+	return l
 }
 
 // In returns true if the code's value matches one of those
