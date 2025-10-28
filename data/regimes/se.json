@@ -1,0 +1,215 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Sweden",
+    "se": "Sverige"
+  },
+  "time_zone": "Europe/Stockholm",
+  "country": "SE",
+  "currency": "SEK",
+  "tax_scheme": "VAT",
+  "identities": [
+    {
+      "code": "ON",
+      "name": {
+        "en": "Organization Number",
+        "se": "Organisationsnummer"
+      },
+      "desc": {
+        "en": "Swedish company registration number.",
+        "se": "Svenskt företagsregistreringsnummer."
+      }
+    },
+    {
+      "code": "PN",
+      "name": {
+        "en": "Person Number",
+        "se": "Personnummer"
+      },
+      "desc": {
+        "en": "Swedish personal registration number.",
+        "se": "Svenskt personnummer."
+      }
+    },
+    {
+      "code": "CN",
+      "name": {
+        "en": "Coordination Number",
+        "se": "Samordningsnummer"
+      },
+      "desc": {
+        "en": "Swedish coordination number.",
+        "se": "Svenskt samordningsnummer."
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "schema": "bill/invoice",
+      "list": [
+        {
+          "tags": [
+            "reverse-charge"
+          ],
+          "note": {
+            "key": "legal",
+            "src": "reverse-charge",
+            "text": "Reverse charge: Customer to account for VAT to the relevant tax authority."
+          }
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "se": "Moms"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "se": "Moms"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "se": "Normalskattesats"
+          },
+          "values": [
+            {
+              "since": "1990-01-01",
+              "percent": "25.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "First Reduced Rate",
+            "se": "Första reducerade skattesatsen"
+          },
+          "values": [
+            {
+              "since": "1996-01-01",
+              "percent": "12.0%"
+            }
+          ]
+        },
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Second Reduced Rate",
+            "se": "Andra reducerade skattesatsen"
+          },
+          "values": [
+            {
+              "since": "1996-01-01",
+              "percent": "6.0%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Swedish Tax Agency - VAT rates and VAT exemption"
+          },
+          "url": "https://www.skatteverket.se/servicelankar/otherlanguages/inenglishengelska/businessesandemployers/startingandrunningaswedishbusiness/declaringtaxesbusinesses/vat/vatratesandvatexemption.4.676f4884175c97df419255d.html",
+          "at": "2025-04-25T00:00:00"
+        },
+        {
+          "title": {
+            "se": "Skatteverket - Momssatser och undantag från moms"
+          },
+          "url": "https://www4.skatteverket.se/rattsligvagledning/394966.html",
+          "at": "2025-04-25T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Standard rate",
+            "se": "Normalskattesats"
+          },
+          "url": "https://www4.skatteverket.se/rattsligvagledning/edition/2025.4/429414.html",
+          "at": "2025-04-25T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Tax rate 12 percent",
+            "se": "Skattesats 12 procent"
+          },
+          "url": "https://www4.skatteverket.se/rattsligvagledning/edition/2025.4/394978.html",
+          "at": "2025-04-25T00:00:00"
+        },
+        {
+          "title": {
+            "en": "Tax rate 6 percent",
+            "se": "Skattesats 6 procent"
+          },
+          "url": "https://www4.skatteverket.se/rattsligvagledning/edition/2025.4/394984.html",
+          "at": "2025-04-25T00:00:00"
+        }
+      ]
+    }
+  ]
+}

@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `keys` for GST
 - `bill`: `Line` with `seller` property, to be used in Mexico.
 - `org`: `DocumentRef` supports the `schema` field.
+- `se`: Sweden regime.
+- `luhn`: package for handling luhn Mod10 calculations.
 
 ### Fixed
 
@@ -91,6 +93,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+
+### Changed
+
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 
