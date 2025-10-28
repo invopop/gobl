@@ -78,7 +78,7 @@ func (a *Attachment) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&a.URL, is.URL, validation.Required),
 		validation.Field(&a.Digest),
 		validation.Field(&a.MIME,
-			// MIME types as defined by EN 16931-1:2017
+			// MIME types as defined by EN 16931-1:2017 to be used as attachments.
 			validation.In(
 				"application/pdf",
 				"image/jpeg",
