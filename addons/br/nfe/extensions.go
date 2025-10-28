@@ -11,6 +11,7 @@ const (
 	ExtKeyModel        = "br-nfe-model"
 	ExtKeyPresence     = "br-nfe-presence"
 	ExtKeyPaymentMeans = "br-nfe-payment-means"
+	ExtKeyCFOP         = "br-nfe-cfop"
 )
 
 // Model Codes
@@ -294,5 +295,37 @@ var extensions = []*cbc.Definition{
 				},
 			},
 		},
+	},
+	{
+		Key: ExtKeyCFOP,
+		Name: i18n.String{
+			i18n.EN: "CFOP (Fiscal Operations and Services Code)",
+			i18n.PT: "CFOP (Código Fiscal de Operações e Prestações)",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "CFOP - Fiscal Operations and Services Codes (SEFAZ-PE)",
+					i18n.PT: "CFOP - Código Fiscal de Operações e Prestações (SEFAZ-PE)",
+				},
+				URL:         "https://www.sefaz.pe.gov.br/legislacao/tributaria/documents/legislacao/tabelas/cfop.htm",
+				ContentType: "text/html",
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Four-digit code that classifies the nature of goods movements and service
+				provisions for ICMS purposes in Brazil. The first digit indicates the
+				operation origin/destination (1–3 for entries; 5–7 for exits), and the
+				remaining digits identify the specific type of operation.
+			`),
+			i18n.PT: here.Doc(`
+				Código de quatro dígitos que classifica a natureza das operações de
+				circulação de mercadorias e das prestações de serviços para fins de ICMS.
+				O primeiro dígito indica a origem/destino da operação (1–3 para entradas;
+				5–7 para saídas) e os demais identificam o tipo específico de operação.
+			`),
+		},
+		Pattern: `^[1-7]\d{3}$`,
 	},
 }

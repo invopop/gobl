@@ -12,7 +12,6 @@ const (
 	ExtKeyMunicipality    = "br-dfe-municipality"
 	ExtKeySimples         = "br-dfe-simples"
 	ExtKeySpecialRegime   = "br-dfe-special-regime"
-	ExtKeyCFOP            = "br-dfe-cfop"
 )
 
 var extensions = []*cbc.Definition{
@@ -41,29 +40,38 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Indicates whether a party benefits from a fiscal incentive.
-
-				List of codes from the national NFSe ABRASF (v2.04) model:
-
-				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
-				(Section 10.2, Field B-68)
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+					i18n.PT: "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)",
+				},
+				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
+			},
 		},
 	},
 	{
 		Key: ExtKeyMunicipality,
 		Name: i18n.String{
-			i18n.EN: "IGBE Municipality Code",
+			i18n.EN: "IBGE Municipality Code",
 			i18n.PT: "Código do Município do IBGE",
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				The municipality code as defined by the IGBE (Brazilian Institute of Geography and
+				The municipality code as defined by the IBGE (Brazilian Institute of Geography and
 				Statistics).
-
-				List of codes from the IGBE:
-
-				* https://www.ibge.gov.br/explica/codigos-dos-municipios.php
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "IBGE - Municipalities Codes",
+					i18n.PT: "IBGE - Códigos dos Municípios",
+				},
+				URL: "https://www.ibge.gov.br/explica/codigos-dos-municipios.php",
+			},
 		},
 		Pattern: `^\d{7}$`,
 	},
@@ -94,12 +102,16 @@ var extensions = []*cbc.Definition{
 				Indicates whether a party is opting for the "Simples Nacional" (Regime Especial
 				Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e
 				Empresas de Pequeno Porte) tax regime
-
-				List of codes from the national NFSe ABRASF (v2.04) model:
-
-				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
-				(Section 10.2, Field B-67)
 			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+					i18n.PT: "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)",
+				},
+				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
+			},
 		},
 	},
 	{
@@ -155,44 +167,16 @@ var extensions = []*cbc.Definition{
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
 				Indicates a special tax regime that a party is subject to.
-
-				List of codes from the national NFSe ABRASF (v2.04) model:
-
-				* https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download
-				(Section 10.2, Field B-66)
 			`),
-		},
-	},
-	{
-		Key: ExtKeyCFOP,
-		Name: i18n.String{
-			i18n.EN: "CFOP (Fiscal Operations and Services Code)",
-			i18n.PT: "CFOP (Código Fiscal de Operações e Prestações)",
 		},
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
-					i18n.EN: "CFOP - Fiscal Operations and Services Codes (SEFAZ-PE)",
-					i18n.PT: "CFOP - Código Fiscal de Operações e Prestações (SEFAZ-PE)",
+					i18n.EN: "NFS-e ABRASF Taxpayer Guidance Manual (v2.04)",
+					i18n.PT: "NFS-e ABRASF Manual de Orientação do Contribuinte (v2.04)",
 				},
-				URL:         "https://www.sefaz.pe.gov.br/legislacao/tributaria/documents/legislacao/tabelas/cfop.htm",
-				ContentType: "text/html",
+				URL: "https://abrasf.org.br/biblioteca/arquivos-publicos/nfs-e-manual-de-orientacao-do-contribuinte-2-04/download",
 			},
 		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Four-digit code that classifies the nature of goods movements and service
-				provisions for ICMS purposes in Brazil. The first digit indicates the
-				operation origin/destination (1–3 for entries; 5–7 for exits), and the
-				remaining digits identify the specific type of operation.
-			`),
-			i18n.PT: here.Doc(`
-				Código de quatro dígitos que classifica a natureza das operações de
-				circulação de mercadorias e das prestações de serviços para fins de ICMS.
-				O primeiro dígito indica a origem/destino da operação (1–3 para entradas;
-				5–7 para saídas) e os demais identificam o tipo específico de operação.
-			`),
-		},
-		Pattern: `^[1-7]\d{3}$`,
 	},
 }
