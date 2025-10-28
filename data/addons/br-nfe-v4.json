@@ -1,6 +1,9 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "br-nfe-v4",
+  "requires": [
+    "br-dfe-v1"
+  ],
   "name": {
     "en": "Brazil NF-e 4.00"
   },
@@ -250,6 +253,28 @@
           }
         }
       ]
+    },
+    {
+      "key": "br-nfe-cfop",
+      "name": {
+        "en": "CFOP (Fiscal Operations and Services Code)",
+        "pt": "CFOP (Código Fiscal de Operações e Prestações)"
+      },
+      "desc": {
+        "en": "Four-digit code that classifies the nature of goods movements and service\nprovisions for ICMS purposes in Brazil. The first digit indicates the\noperation origin/destination (1–3 for entries; 5–7 for exits), and the\nremaining digits identify the specific type of operation.",
+        "pt": "Código de quatro dígitos que classifica a natureza das operações de\ncirculação de mercadorias e das prestações de serviços para fins de ICMS.\nO primeiro dígito indica a origem/destino da operação (1–3 para entradas;\n5–7 para saídas) e os demais identificam o tipo específico de operação."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "CFOP - Fiscal Operations and Services Codes (SEFAZ-PE)",
+            "pt": "CFOP - Código Fiscal de Operações e Prestações (SEFAZ-PE)"
+          },
+          "url": "https://www.sefaz.pe.gov.br/legislacao/tributaria/documents/legislacao/tabelas/cfop.htm",
+          "content_type": "text/html"
+        }
+      ],
+      "pattern": "^[1-7]\\d{3}$"
     }
   ],
   "scenarios": [

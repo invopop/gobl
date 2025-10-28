@@ -96,6 +96,10 @@
             "$ref": "https://gobl.org/draft-0/cbc/key",
             "oneOf": [
               {
+                "const": "br-dfe-v1",
+                "title": "Brazilian Electronic Fiscal Documents"
+              },
+              {
                 "const": "br-nfe-v4",
                 "title": "Brazil NF-e 4.00"
               },

@@ -1,6 +1,9 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "br-nfse-v1",
+  "requires": [
+    "br-dfe-v1"
+  ],
   "name": {
     "en": "Brazil NFS-e 1.X"
   },
