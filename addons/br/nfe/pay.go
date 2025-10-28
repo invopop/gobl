@@ -23,7 +23,11 @@ var paymentMeansKeyMap = tax.Extensions{
 }
 
 func normalizePayInstructions(instr *pay.Instructions) {
-	if instr == nil || (instr.Ext != nil && instr.Key == pay.MeansKeyOther) {
+	if instr == nil {
+		return
+	}
+	if instr.Ext.Has(ExtKeyPaymentMeans) && instr.Key == pay.MeansKeyOther {
+		// `other` key does not override the extension
 		return
 	}
 	if code := paymentMeansKeyMap[instr.Key]; code != "" {
@@ -34,7 +38,11 @@ func normalizePayInstructions(instr *pay.Instructions) {
 }
 
 func normalizePayAdvance(adv *pay.Advance) {
-	if adv == nil || (adv.Ext != nil && adv.Key == pay.MeansKeyOther) {
+	if adv == nil {
+		return
+	}
+	if adv.Ext.Has(ExtKeyPaymentMeans) && adv.Key == pay.MeansKeyOther {
+		// `other` key does not override the extension already set
 		return
 	}
 	if code := paymentMeansKeyMap[adv.Key]; code != "" {
