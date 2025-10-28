@@ -16,7 +16,6 @@ func TestAttachmentNormalize(t *testing.T) {
 			Description: "  some description \n",
 			URL:         "  https://example.com/doc.pdf  ",
 			MIME:        "  application/pdf  ",
-			Data:        []byte(" keep "),
 		}
 		a.Normalize()
 
@@ -61,19 +60,7 @@ func TestAttachmentValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("both URL and data", func(t *testing.T) {
-		a := &org.Attachment{
-			Key:  "key",
-			Code: "ABC",
-			Name: "test.txt",
-			URL:  "https://example.com/test.txt",
-			Data: []byte("test"),
-		}
-		err := a.Validate()
-		assert.ErrorContains(t, err, "data: must be blank with url")
-	})
-
-	t.Run("missing URL and data", func(t *testing.T) {
+	t.Run("missing URL", func(t *testing.T) {
 		a := &org.Attachment{
 			Key:  "key",
 			Code: "ABC",

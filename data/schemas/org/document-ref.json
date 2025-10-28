@@ -11,10 +11,15 @@
           "title": "UUID",
           "description": "Universally Unique Identifier."
         },
+        "schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Schema of the referenced document if different from that of the parent."
+        },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Type",
-          "description": "Type of the document referenced."
+          "description": "Type of the document referenced according to the defined schema or that of the\nparent document."
         },
         "issue_date": {
           "$ref": "https://gobl.org/draft-0/cal/date",
