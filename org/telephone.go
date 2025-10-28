@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -25,6 +26,11 @@ func (t *Telephone) Validate() error {
 
 // Normalize will try to remove any unnecessary whitespace from the telephone number.
 func (t *Telephone) Normalize() {
+	if t == nil {
+		return
+	}
+	uuid.Normalize(&t.UUID)
+	t.Label = cbc.NormalizeString(t.Label)
 	t.Number = strings.TrimSpace(t.Number)
 }
 

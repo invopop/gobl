@@ -44,7 +44,7 @@ type Inbox struct {
 }
 
 // Normalize will try to clean the inbox's data.
-func (i *Inbox) Normalize(normalizers tax.Normalizers) {
+func (i *Inbox) Normalize() {
 	if i == nil {
 		return
 	}
@@ -57,6 +57,7 @@ func (i *Inbox) Normalize(normalizers tax.Normalizers) {
 		i.URL = code
 		i.Code = ""
 	}
+	i.Label = cbc.NormalizeString(i.Label)
 	i.Scheme = cbc.NormalizeAlphanumericalCode(i.Scheme)
 	i.Code = cbc.NormalizeCode(i.Code)
 
@@ -71,8 +72,6 @@ func (i *Inbox) Normalize(normalizers tax.Normalizers) {
 			}
 		}
 	}
-
-	normalizers.Each(i)
 }
 
 // Validate ensures the inbox's fields look good.

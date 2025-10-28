@@ -60,6 +60,8 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good 1", code: "39356000000"},
 		{name: "good 2", code: "44732829320"},
 		{name: "good 3", code: "44391838042"},
+		{name: "good with letters", code: "0L433754066"}, // Special cases.
+		{name: "good La Poste", code: "11356000000"},     // "11" invented
 		{
 			name: "empty",
 			code: "",

@@ -4,6 +4,86 @@
   "$ref": "#/$defs/Set",
   "$defs": {
     "Combo": {
+      "anyOf": [
+        {
+          "if": {
+            "properties": {
+              "cat": {
+                "const": "VAT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "key": {
+                "oneOf": [
+                  {
+                    "const": "standard",
+                    "title": "Standard"
+                  },
+                  {
+                    "const": "zero",
+                    "title": "Zero"
+                  },
+                  {
+                    "const": "reverse-charge",
+                    "title": "Reverse charge"
+                  },
+                  {
+                    "const": "exempt",
+                    "title": "Exempt"
+                  },
+                  {
+                    "const": "export",
+                    "title": "Export"
+                  },
+                  {
+                    "const": "intra-community",
+                    "title": "Intra-community"
+                  },
+                  {
+                    "const": "outside-scope",
+                    "title": "Outside scope"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "cat": {
+                "const": "GST"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "key": {
+                "oneOf": [
+                  {
+                    "const": "standard",
+                    "title": "Standard"
+                  },
+                  {
+                    "const": "zero",
+                    "title": "Zero"
+                  },
+                  {
+                    "const": "exempt",
+                    "title": "Exempt"
+                  },
+                  {
+                    "const": "outside-scope",
+                    "title": "Outside scope"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "cat": {
           "$ref": "https://gobl.org/draft-0/cbc/code",
@@ -15,21 +95,25 @@
           "title": "Country",
           "description": "Country code override when issuing with taxes applied from different countries."
         },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "description": "Key helps determine the tax situation within the category."
+        },
         "rate": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Rate",
-          "description": "Rate within a category to apply."
+          "description": "Rate within a category and for a given key to apply."
         },
         "percent": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Percent",
-          "description": "Percent defines the percentage set manually or determined from the rate\nkey (calculated if rate present). A nil percent implies that this tax combo\nis **exempt** from tax.",
+          "description": "Percent defines the percentage set manually or determined from the\nkey. A nil percent implies that this tax combo is either exempt or not-subject.",
           "calculated": true
         },
         "surcharge": {
           "$ref": "https://gobl.org/draft-0/num/percentage",
           "title": "Surcharge",
-          "description": "Some countries require an additional surcharge (calculated if rate present).",
+          "description": "Some countries require an additional surcharge (may be determined if key present).",
           "calculated": true
         },
         "ext": {

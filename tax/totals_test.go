@@ -38,7 +38,7 @@ func TestTotalClone(t *testing.T) {
 				Retained: false,
 				Rates: []*tax.RateTotal{
 					{
-						Key:     tax.RateStandard,
+						Key:     tax.KeyStandard,
 						Base:    num.MakeAmount(10000, 2),
 						Percent: num.NewPercentage(210, 3),
 						Amount:  num.MakeAmount(2100, 2),
@@ -81,7 +81,7 @@ func TestTotalNegate(t *testing.T) {
 				Retained: false,
 				Rates: []*tax.RateTotal{
 					{
-						Key:     tax.RateStandard,
+						Key:     tax.KeyStandard,
 						Base:    num.MakeAmount(10000, 2),
 						Percent: num.NewPercentage(210, 3),
 						Amount:  num.MakeAmount(2100, 2),
@@ -151,7 +151,7 @@ func TestTotalExchange(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -212,7 +212,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -230,7 +230,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -252,7 +252,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -270,7 +270,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -331,7 +331,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -363,7 +363,7 @@ func TestTotalMerge(t *testing.T) {
 		assert.Equal(t, int64(4200), tt3.Sum.Value())
 		assert.Equal(t, int64(4200), tt3.Category("VAT").Amount.Value())
 		assert.Equal(t, int64(4200), tt3.Category("VAT").Rates[0].Amount.Value())
-		assert.Equal(t, tax.RateStandard, tt3.Category("VAT").Rates[0].Key)
+		assert.Equal(t, tax.KeyStandard, tt3.Category("VAT").Rates[0].Key)
 	})
 	t.Run("merge with different rate percents", func(t *testing.T) {
 		tt := &tax.Total{
@@ -373,7 +373,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -415,7 +415,7 @@ func TestTotalMerge(t *testing.T) {
 					Retained: false,
 					Rates: []*tax.RateTotal{
 						{
-							Key:     tax.RateStandard,
+							Key:     tax.KeyStandard,
 							Base:    num.MakeAmount(10000, 2),
 							Percent: num.NewPercentage(210, 3),
 							Amount:  num.MakeAmount(2100, 2),
@@ -651,5 +651,41 @@ func TestTotalCalculate(t *testing.T) {
 		assert.Equal(t, int64(2100), tt.Category(tax.CategoryVAT).Rates[0].Amount.Value())
 		assert.Equal(t, "15.00", tt.Category("IRPF").Rates[0].Amount.String())
 		assert.Equal(t, int64(100), tt.Category(tax.CategoryVAT).Surcharge.Value())
+	})
+
+	t.Run("basic with multiple informative taxes", func(t *testing.T) {
+		tt := &tax.Total{
+			Categories: []*tax.CategoryTotal{
+				{
+					Code: tax.CategoryVAT,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(210, 3),
+						},
+					},
+				},
+				{
+					Code:        "ISS",
+					Informative: true,
+					Rates: []*tax.RateTotal{
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(50, 3),
+						},
+						{
+							Base:    num.MakeAmount(10000, 2),
+							Percent: num.NewPercentage(30, 3),
+						},
+					},
+				},
+			},
+		}
+		tt.Calculate(currency.EUR, tax.RoundingRulePrecise)
+		assert.Equal(t, int64(2100), tt.Sum.Value()) // Informative tax with surcharge should not affect Sum
+		assert.True(t, tt.Category("ISS").Informative)
+		assert.Equal(t, int64(800), tt.Category("ISS").Amount.Value())
+		assert.Equal(t, "5.00", tt.Category("ISS").Rates[0].Amount.String())
+		assert.Equal(t, "3.00", tt.Category("ISS").Rates[1].Amount.String())
 	})
 }

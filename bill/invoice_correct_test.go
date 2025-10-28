@@ -272,7 +272,7 @@ func testInvoiceESForCorrection(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -319,7 +319,7 @@ func testInvoicePTForCorrection(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -363,7 +363,7 @@ func testInvoiceFRForCorrection(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{
@@ -411,7 +411,7 @@ func testInvoiceCOForCorrection(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "standard",
+						Rate:     "general",
 					},
 				},
 				Discounts: []*bill.LineDiscount{

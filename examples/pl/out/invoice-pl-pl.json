@@ -4,12 +4,15 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "94023439920bcf9ba944bb415cecd2bc6396b3d68adf8a543df70e8225e596fc"
+			"val": "1f15a1047e2d937a4e3200b30e6269661a98ac9030b5653fa6fb8be59abd67cf"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "PL",
+		"$addons": [
+			"pl-favat-v2"
+		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"code": "SAMPLE-001",
@@ -67,7 +70,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "23.0%"
 					}
 				],
@@ -85,6 +89,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
+						"key": "standard",
 						"rate": "reduced",
 						"percent": "8.0%"
 					}
@@ -107,7 +112,7 @@
 								"amount": "414.00"
 							},
 							{
-								"key": "reduced",
+								"key": "standard",
 								"base": "10.00",
 								"percent": "8.0%",
 								"amount": "0.80"

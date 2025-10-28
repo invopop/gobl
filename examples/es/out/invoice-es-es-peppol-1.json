@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "9abedc90f2cfc65d55da078bc88dc5ed78d8260f3e858af4194d79ee0bc5aeec"
+			"val": "bc85ca039a1cc05b9d5b761ccf4f149be1f7516211f680396c3e3320f6ca6f1b"
 		}
 	},
 	"doc": {
@@ -63,6 +63,16 @@
 					"scheme": "9920",
 					"code": "54387763P"
 				}
+			],
+			"addresses": [
+				{
+					"num": "41",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
 			]
 		},
 		"lines": [
@@ -85,7 +95,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
 							"untdid-tax-category": "S"
@@ -95,6 +106,11 @@
 				"total": "1620.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			}
+		},
 		"totals": {
 			"sum": "1620.00",
 			"total": "1620.00",

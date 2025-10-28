@@ -8,13 +8,129 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `br`: added retained taxes CSLL, INSS and IRRF
-- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+- `co`: Add new INC tax defenition.
+- `sg`: Singaporean regime
+- `tax`: `keys` for GST
+- `bill`: `Line` with `seller` property, to be used in Mexico.
+- `org`: `DocumentRef` supports the `schema` field.
 - `se`: added Sweden regime.
+
+### Fixed
+
+- `eu-en16931-v2017`: fixed issue with payment details when due is zero
+
+### Removed
+
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to use.
 
 ### Changed
 
-- `l10n`: add `CountriesMap` for easier access to country information.
+- `it-sdi-v1`: Updated mapping of exemption (natura) codes to reflect CIUS mapping guide.
+
+## [v0.301.0] - 2025-10-03
+
+### Added
+
+- `it-sdi-v1`: added validation for name and persons so that at least one is set.
+- `eu-en16931-v2017`: Add missing scenario for self billing credit notes.
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+
+### Changed
+
+- `eu-en16931-v2017`: Add missing Business Rules with labels at implementation level.
+- `de-xrechnung-v3`: Add missing validation from CIUS.
+- `fr`: Add identity validation and normalization.
+- `it-sdi-v1`: Modify address validation to accept postbox.
+- `bill`: support for `bypass` tag, to prevent billing total calculations (experimental).
+- Updated normalizer ordering so that inside fields/objects are processed before the parent object
+
+### Removed
+
+- `pt`: migrations for Zone, no longer needed
+
+### Fixed
+
+- `pt-saft`: minimum exemption note length corrected to 6 characters
+
+## [v0.300.2] - 2025-09-18
+
+### Added
+
+- `org`: `Item` - `images` field for storing links to images of the item.
+- `it-sdi-v1`: added fund contributions via charges and validation for despatch (delivery documents)
+- `it`: added new tax category for `CP` to handle code `RT06` for retained taxes
+- `pt-saft-v1`: positive quantity validation
+- `pt-saft-v1`: tax rate normalization to prevent rate extension and percent mismatches
+- `pt-saft-v1`: exemption note text length validation
+
+### Removed
+
+- `es-verifactu-v1`: removed preceding validations for credit notes and `F3` invoice type
+
+### Fixed
+
+- `es`: IGIC now uses VAT keys
+- `bill`: fixed zero-percent handling in charges and discounts
+
+## [v0.300.1] - 2025-09-12
+
+### Fixed
+
+- `gr-mydata-v1`: Fix incorrect VAT rate mapping.
+
+## [v0.300.0] - 2025-09-11
+
+### Fixed
+
+- `tax`: Combo `exempt` rate will be migrated to `key`. Addons need to handle specific migrations.
+- `pt-saft-v1`: fixed `exempt` rate handling.
+- `it-sdi-v1`: fixed `exempt` rate handling.
+
+## [v0.300.0-rc2] - 2025-09-09
+
+### Added
+
+- `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+
+### Changed
+
+- `pt`: added comprehensive validations to regime
+- `pt-saft-v1`: added comprehensive validations to addon
+
+### Fixed
+
+- `mx`: normalize codes with `MX` code at the beginning
+- `es-verifactu-v1`: correct `N2` operation code scenario
+
+### Changed
+
+- `cbc`: new `NormalizeString` method to help clean texts used throughout GOBL to trim whitespace and remove invalid or nil UTF-8 characters.
+- `tax`: `Combo`: removing migration of `exempt` `rate` field to `key`, so as not to make assumptions about manually assigned extensions.
+- `pl`: moved to new addon `pl-favat-v2` - only basic implementation at this time to remove restrictions on regime, expect more changes in future.
+
+## [v0.300.0-rc1] - 2025-09-02
+
+**IMPORTANT**: Significant refactor of tax combo handling with the addition of tax "keys" that help identify the sub-classification of a tax, specifically VAT, ensuring that they can be correctly mapped.
+
+Unmarshalling JSON GOBL documents will be migrated automatically to the new structure, including any rate tags or addon extensions, but consuming may require changes if using the tax combo `rate` property.
+
+### Added
+
+- `tax`: `Combo` now includes a `key` field with VAT values taken from the EN16931. We've tried to normalize all common use-cases from the `rate` field, so no changes should be required.
+- `br`: added retained taxes CSLL, INSS and IRRF
+- `tax`: added support for `informative` tax categories that will be calculated and reported but will not affect the invoice totals.
+- `br`: made ISS an informative tax
+
+### Fixed
+
+- `fr`: handle exception cases in Tax Identity Codes.
+
+### Changed
+
+- `tax`: renamed `standard` rate to `general` to more closely reflect usage and differentiate from new `standard` key using the `Combo`.
+- `pt-saft-v1`: moved exemption notes to line-level and added validations
+>>>>>>> main
 
 ## [v0.220.6] - 2025-08-12
 

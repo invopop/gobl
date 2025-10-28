@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "05bb3a5c469d338a9dbc0057401e2b941b594d91c1f814dbda1feda9fea7ee84"
+			"val": "05fc3556cc9d92c99a6463c81e60f6433c63fcab6e617e32043a1fbcb8b6d257"
 		}
 	},
 	"doc": {
@@ -101,7 +101,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "20%",
 						"ext": {
 							"untdid-tax-category": "S"
@@ -111,6 +112,11 @@
 				"total": "1620.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"detail": "Please pay within 10 days"
+			}
+		},
 		"totals": {
 			"sum": "1620.00",
 			"total": "1620.00",

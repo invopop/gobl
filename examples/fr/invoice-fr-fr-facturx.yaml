@@ -33,7 +33,7 @@ customer:
       street: "Rue Sundacsakn"
       locality: "Saint-Germain-En-Laye"
       code: "75050"
-      country": "FR"
+      country: "FR"
 
 lines:
   - quantity: 20
@@ -52,3 +52,12 @@ lines:
       price: "90.00"
     taxes:
       - cat: VAT
+        key: "exempt"
+        ext:
+          cef-vatex: "VATEX-EU-79-C"
+
+payment:
+  instructions:
+    key: "card"
+  terms:
+    detail: "Please pay within 10 days"

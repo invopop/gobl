@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e4b79d1885c94a3d643b6c234ef7a6251bde4464bd6ee906e47523249c555e06"
+			"val": "1d3a9b385deb70a11e0e38920cd96c5fd3cb5c41317c1aeaa40b59eba61f0924"
 		}
 	},
 	"doc": {
@@ -21,6 +21,7 @@
 		"currency": "EUR",
 		"preceding": [
 			{
+				"schema": "https://gobl.org/draft-0/bill/invoice",
 				"type": "standard",
 				"issue_date": "2022-01-10",
 				"series": "SAMPLE",
@@ -102,7 +103,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "21.0%"
 					}
 				],
@@ -122,8 +124,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "zero",
-						"percent": "0.0%"
+						"key": "zero",
+						"percent": "0%"
 					}
 				],
 				"total": "10.00"
@@ -146,7 +148,7 @@
 							{
 								"key": "zero",
 								"base": "10.00",
-								"percent": "0.0%",
+								"percent": "0%",
 								"amount": "0.00"
 							}
 						],

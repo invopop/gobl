@@ -54,21 +54,61 @@
         "en": "Value Added Tax",
         "it": "Imposta sul Valore Aggiunto"
       },
-      "rates": [
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
         {
           "key": "zero",
           "name": {
-            "en": "Zero Rate",
-            "it": "Aliquota Zero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
+            "en": "Zero"
+          }
         },
         {
-          "key": "super-reduced",
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "super-reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Minimum Rate",
             "it": "Aliquota Minima"
@@ -80,7 +120,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "it": "Aliquota Ridotta"
@@ -92,7 +135,10 @@
           ]
         },
         {
-          "key": "intermediate",
+          "rate": "intermediate",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Intermediate Rate",
             "it": "Aliquota Intermedia"
@@ -104,9 +150,12 @@
           ]
         },
         {
-          "key": "standard",
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
           "name": {
-            "en": "Ordinary Rate",
+            "en": "General Rate",
             "it": "Aliquota Ordinaria"
           },
           "values": [
@@ -114,14 +163,6 @@
               "percent": "22.0%"
             }
           ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "en": "Exempt",
-            "it": "Esente"
-          },
-          "exempt": true
         }
       ]
     },
@@ -198,6 +239,21 @@
       "retained": true,
       "map": {
         "fatturapa-tipo-ritenuta": "RT05"
+      }
+    },
+    {
+      "code": "CP",
+      "name": {
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
+      },
+      "title": {
+        "en": "Other Social Security Contributions",
+        "it": "Altro Contributo Previdenziale"
+      },
+      "retained": true,
+      "map": {
+        "fatturapa-tipo-ritenuta": "RT06"
       }
     }
   ]

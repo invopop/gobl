@@ -57,6 +57,11 @@ func calculate(doc billable) error {
 	}
 	cur := doc.getCurrency()
 
+	if doc.HasTags(tax.TagBypass) {
+		// Stop all further calculations
+		return nil
+	}
+
 	t := doc.getTotals()
 	// Prepare the totals we'll need with amounts based on currency
 	if t == nil {
@@ -128,7 +133,6 @@ func calculate(doc billable) error {
 		Currency: doc.getCurrency(),
 		Rounding: rr,
 		Country:  r.GetCountry(),
-		Tags:     doc.GetTags(),
 		Date:     *date,
 		Lines:    tls,
 		Includes: pit,

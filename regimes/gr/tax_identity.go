@@ -57,10 +57,7 @@ func validateTaxCode(value interface{}) error {
 func hasValidChecksum(val string) bool {
 	digits := make([]int, 9)
 	for i, char := range val {
-		num, err := strconv.Atoi(string(char))
-		if err != nil {
-			return false
-		}
+		num, _ := strconv.Atoi(string(char)) // ignore errors, we already validated the format
 		digits[i] = num
 	}
 

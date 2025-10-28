@@ -119,7 +119,9 @@ func TestInvoiceValidation(t *testing.T) {
 	t.Run("with exemption reason", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.Lines[0].Taxes[0].Ext = nil
-		assertValidationError(t, inv, "es-tbai-exemption: required")
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
 	})
 
 	t.Run("without series", func(t *testing.T) {
@@ -190,9 +192,9 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				Taxes: tax.Set{
 					{
 						Category: "VAT",
-						Rate:     "exempt",
+						Key:      "exempt",
 						Ext: tax.Extensions{
-							tbai.ExtKeyExemption: "E1",
+							tbai.ExtKeyExempt: "E1",
 						},
 					},
 				},

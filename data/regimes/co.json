@@ -27,24 +27,64 @@
         "en": "Value Added Tax",
         "es": "Impuesto al Valor Agregado"
       },
-      "rates": [
-        {
-          "key": "zero",
-          "name": {
-            "en": "Zero Rate",
-            "es": "Cero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "en": "Standard Rate",
-            "es": "Estándar"
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "General"
           },
           "values": [
             {
@@ -58,7 +98,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "en": "Reduced Rate",
             "es": "Reducido"
@@ -90,6 +133,16 @@
       "title": {
         "en": "Industry and Commerce Tax",
         "es": "Impuesto de Industria y Comercio"
+      }
+    },
+    {
+      "code": "INC",
+      "name": {
+        "es": "INC"
+      },
+      "title": {
+        "en": "National Consumption Tax",
+        "es": "Impuesto Nacional al Consumo"
       }
     },
     {

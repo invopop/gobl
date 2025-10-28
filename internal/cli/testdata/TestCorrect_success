@@ -32,8 +32,9 @@
                 "taxes": [
                     {
                         "cat": "VAT",
+                        "key": "standard",
                         "percent": "21.0%",
-                        "rate": "standard"
+                        "rate": "general"
                     },
                     {
                         "cat": "IRPF",
@@ -138,13 +139,13 @@
             "total_with_tax": "1960.20"
         },
         "type": "credit-note",
-        "uuid": "019666e0-3e71-77ce-9238-dcabb446abf4"
+        "uuid": "019879c5-2c4f-7c5b-92fd-f9fabeb6a5f0"
     },
     "head": {
         "dig": {
             "alg": "sha256",
-            "val": "85d9fb506e078a473901bd3b9de2e06d6851a02cf0e0229a9eb4ad8056b3334d"
+            "val": "f2d6b931311899240d67a1b5c12eaf0c34c735c58c3846a810c9e07549c1573f"
         },
-        "uuid": "019666e0-3e71-77c3-8d51-5961593fd49a"
+        "uuid": "019879c5-2c4f-7c53-bcdd-25428e2fc82f"
     }
 }

@@ -35,6 +35,8 @@ type Item struct {
 	Identities []*Identity `json:"identities,omitempty" jsonschema:"title=Identities"`
 	// Detailed description of the item.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
+	// Images associated with the item.
+	Images []*Image `json:"images,omitempty" jsonschema:"title=Images"`
 	// Currency used for the item's price.
 	Currency currency.Code `json:"currency,omitempty" jsonschema:"title=Currency"`
 	// Base price of a single unit to be sold.
@@ -62,10 +64,14 @@ func (i *Item) Normalize(normalizers tax.Normalizers) {
 	if i == nil {
 		return
 	}
+	i.Name = cbc.NormalizeString(i.Name)
+	i.Description = cbc.NormalizeString(i.Description)
 	i.Ref = cbc.NormalizeCode(i.Ref)
 	i.Ext = tax.CleanExtensions(i.Ext)
-	normalizers.Each(i)
+
 	tax.Normalize(normalizers, i.Identities)
+	tax.Normalize(normalizers, i.Images)
+	normalizers.Each(i)
 }
 
 // ValidateWithContext checks that the Item looks okay inside the provided context.
@@ -75,6 +81,8 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&i.Ref),
 		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),
+		validation.Field(&i.Description),
+		validation.Field(&i.Images),
 		validation.Field(&i.Identities),
 		validation.Field(&i.Currency),
 		validation.Field(&i.Price),

@@ -17,14 +17,14 @@ func TestNoteNormalize(t *testing.T) {
 	t.Run("accepts nil", func(t *testing.T) {
 		var n *org.Note
 		assert.NotPanics(t, func() {
-			n.Normalize(nil)
+			n.Normalize()
 		})
 	})
 
 	t.Run("accepts empty", func(t *testing.T) {
 		n := &org.Note{}
 		assert.NotPanics(t, func() {
-			n.Normalize(nil)
+			n.Normalize()
 		})
 	})
 
@@ -36,7 +36,7 @@ func TestNoteNormalize(t *testing.T) {
 				"untidid-text-subject": "AAI",
 			},
 		}
-		n.Normalize(nil)
+		n.Normalize()
 		assert.Equal(t, "AAI", n.Ext.Get("untidid-text-subject").String())
 	})
 
@@ -48,7 +48,7 @@ func TestNoteNormalize(t *testing.T) {
 				"missing": "",
 			},
 		}
-		n.Normalize(nil)
+		n.Normalize()
 		assert.Equal(t, "FOO", n.Code.String())
 		assert.Empty(t, n.Ext)
 	})

@@ -36,11 +36,11 @@ lines:
       unit: "day"
     taxes:
       - cat: VAT
-        rate: exempt
+        key: outside-scope
   - quantity: 50
     item:
       name: "Branded Mugs"
       price: "7.50"
     taxes:
       - cat: VAT
-        rate: exempt
+        key: export

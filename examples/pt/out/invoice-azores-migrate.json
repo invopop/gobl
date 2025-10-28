@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e23e1687cc2231505434e6fa52d3052d1e2a6407effc3d9ee43a94e62f34cef5"
+			"val": "1fe7ff3870c40bc4e757f6442596dddf7d005d3c6f1ca29c8279490f6c72554b"
 		}
 	},
 	"doc": {
@@ -16,6 +16,7 @@
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
 		"type": "standard",
 		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
 		"currency": "EUR",
 		"tax": {
 			"ext": {
@@ -57,7 +58,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "16.0%",
 						"ext": {
 							"pt-region": "PT-AC",

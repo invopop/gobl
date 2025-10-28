@@ -20,11 +20,13 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.SE: "Moms",
 		},
 		Retained: false,
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
-				Key: tax.RateStandard,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateGeneral,
 				Name: i18n.String{
-					i18n.EN: "Standard Rate",
+					i18n.EN: "General Rate",
 					i18n.SE: "Normalskattesats",
 				},
 				Values: []*tax.RateValueDef{
@@ -35,7 +37,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateReduced,
 				Name: i18n.String{
 					i18n.EN: "First Reduced Rate",
 					i18n.SE: "Första reducerade skattesatsen",
@@ -48,7 +51,8 @@ var taxCategories = []*tax.CategoryDef{
 				},
 			},
 			{
-				Key: tax.RateSuperReduced,
+				Keys: []cbc.Key{tax.KeyStandard},
+				Rate: tax.RateSuperReduced,
 				Name: i18n.String{
 					i18n.EN: "Second Reduced Rate",
 					i18n.SE: "Andra reducerade skattesatsen",
@@ -59,14 +63,6 @@ var taxCategories = []*tax.CategoryDef{
 						Since:   cal.NewDate(1996, 1, 1),
 					},
 				},
-			},
-			{
-				Key: tax.RateExempt,
-				Name: i18n.String{
-					i18n.EN: "Exempt",
-					i18n.SE: "Momsfri",
-				},
-				Exempt: true,
 			},
 		},
 		Sources: []*cbc.Source{

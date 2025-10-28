@@ -46,12 +46,6 @@
           "type": "string",
           "title": "MIME Type",
           "description": "MIME type of the attachment."
-        },
-        "data": {
-          "type": "string",
-          "contentEncoding": "base64",
-          "title": "Data",
-          "description": "Data is the base64 encoded data of the attachment directly embedded\ninside the GOBL document. This should only be used when the URL cannot\nbe used as it can dramatically increase the size of the JSON\ndocument, thus effecting usability and performance."
         }
       },
       "type": "object",

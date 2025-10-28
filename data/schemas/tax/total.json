@@ -13,6 +13,10 @@
           "type": "boolean",
           "title": "Retained"
         },
+        "informative": {
+          "type": "boolean",
+          "title": "Informative"
+        },
         "rates": {
           "items": {
             "$ref": "#/$defs/RateTotal"
@@ -39,15 +43,15 @@
     },
     "RateTotal": {
       "properties": {
-        "key": {
-          "$ref": "https://gobl.org/draft-0/cbc/key",
-          "title": "Key",
-          "description": "Optional rate key is required when grouping."
-        },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/tax-country-code",
           "title": "Country",
           "description": "Country code override when issuing with taxes applied from different countries,\nit'd be very strange to mix rates from different countries, but in theory\nthis would be possible."
+        },
+        "key": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "title": "Key",
+          "description": "Tax key if supported by the category."
         },
         "ext": {
           "$ref": "https://gobl.org/draft-0/tax/extensions",

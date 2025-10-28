@@ -39,6 +39,14 @@
           "title": "Description",
           "description": "Detailed description of the item."
         },
+        "images": {
+          "items": {
+            "$ref": "https://gobl.org/draft-0/org/image"
+          },
+          "type": "array",
+          "title": "Images",
+          "description": "Images associated with the item."
+        },
         "currency": {
           "$ref": "https://gobl.org/draft-0/currency/code",
           "title": "Currency",

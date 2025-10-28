@@ -3,6 +3,7 @@ package org
 import (
 	"context"
 
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -18,6 +19,17 @@ type Website struct {
 	Title string `json:"title,omitempty" jsonschema:"title=Title"`
 	// URL for the website.
 	URL string `json:"url" jsonschema:"title=URL,format=uri"`
+}
+
+// Normalize will try to remove any unnecessary whitespace from the website fields.
+func (w *Website) Normalize() {
+	if w == nil {
+		return
+	}
+	uuid.Normalize(&w.UUID)
+	w.Label = cbc.NormalizeString(w.Label)
+	w.Title = cbc.NormalizeString(w.Title)
+	w.URL = cbc.NormalizeString(w.URL)
 }
 
 // Validate checks the website objects URL to ensure it looks correct.

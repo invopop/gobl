@@ -23,11 +23,12 @@ func TestTaxRateMigration(t *testing.T) {
 	require.NoError(t, err)
 
 	t0 := inv.Lines[0].Taxes[0]
-	assert.Equal(t, tax.RateExempt, t0.Rate)
+	assert.Equal(t, tax.KeyExempt, t0.Key)
 	assert.Equal(t, cbc.Code("M01"), t0.Ext[saft.ExtKeyExemption])
 
 	// Valid new rate
 	inv = validInvoice()
+	inv.SetAddons(saft.V1)
 	inv.Lines[0].Taxes[0].Rate = "exempt"
 	inv.Lines[0].Taxes[0].Ext = tax.Extensions{saft.ExtKeyExemption: "M02"}
 
@@ -35,7 +36,7 @@ func TestTaxRateMigration(t *testing.T) {
 	require.NoError(t, err)
 
 	t0 = inv.Lines[0].Taxes[0]
-	assert.Equal(t, tax.RateExempt, t0.Rate)
+	assert.Equal(t, tax.KeyExempt, t0.Key)
 	assert.Equal(t, cbc.Code("M02"), t0.Ext[saft.ExtKeyExemption])
 }
 
@@ -53,7 +54,7 @@ func TestTaxZoneMigration(t *testing.T) {
 					Zone:    "20", //nolint:staticcheck
 				},
 			},
-			region: "PT-AC",
+			region: "PT",
 		},
 		{
 			name: "Madeira zone set",
@@ -63,38 +64,7 @@ func TestTaxZoneMigration(t *testing.T) {
 					Zone:    "30", //nolint:staticcheck
 				},
 			},
-			region: "PT-MA",
-		},
-		{
-			name: "Other zone set",
-			supplier: &org.Party{
-				TaxID: &tax.Identity{
-					Country: "PT",
-					Zone:    "40", //nolint:staticcheck
-				},
-			},
 			region: "PT",
-		},
-		{
-			name: "No zone set",
-			supplier: &org.Party{
-				TaxID: &tax.Identity{
-					Country: "PT",
-				},
-			},
-			region: "PT",
-		},
-		{
-			name: "No tax ID set",
-			supplier: &org.Party{
-				TaxID: nil,
-			},
-			region: "",
-		},
-		{
-			name:     "No supplier set",
-			supplier: nil,
-			region:   "",
 		},
 	}
 

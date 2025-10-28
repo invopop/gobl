@@ -100,6 +100,11 @@ func validateOrgParty(p *org.Party) error {
 			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
 			validation.Skip,
 		),
+		//BR-8 & BR-10
+		validation.Field(&p.Addresses,
+			validation.Required,
+			validation.Skip,
+		),
 	)
 }
 
@@ -115,6 +120,16 @@ func validateOrgInbox(i *org.Inbox) error {
 			validation.When(i.Scheme != cbc.CodeEmpty,
 				validation.Required.Error("cannot be blank with scheme"),
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateOrgAddress(a *org.Address) error {
+	return validation.ValidateStruct(a,
+		// Most addresses in EN16931 need a country: BR-9, BR-11, BR-20, BR-57
+		validation.Field(&a.Country,
+			validation.Required,
 			validation.Skip,
 		),
 	)

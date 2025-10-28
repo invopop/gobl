@@ -46,31 +46,71 @@
     {
       "code": "VAT",
       "name": {
-        "de": "MwSt",
+        "de": "USt",
         "en": "VAT"
       },
       "title": {
         "de": "Mehrwertsteuer",
         "en": "Value Added Tax"
       },
-      "rates": [
-        {
-          "key": "zero",
-          "name": {
-            "de": "Nullsatz",
-            "en": "Zero Rate"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
+      "keys": [
         {
           "key": "standard",
           "name": {
-            "de": "Standardsteuersatz",
-            "en": "Standard rate"
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "de": "Allgemeiner Steuersatz",
+            "en": "General rate"
           },
           "desc": {
             "de": "Für den Großteil der Verkäufe von Waren und Dienstleistungen gilt: Dies gilt für alle Produkte oder Dienstleistungen, für die ausdrücklich kein anderer Satz festgelegt ist.",
@@ -96,7 +136,10 @@
           ]
         },
         {
-          "key": "reduced",
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
           "name": {
             "de": "Verminderter Steuersatz",
             "en": "Reduced rate"
@@ -123,18 +166,6 @@
               "percent": "5%"
             }
           ]
-        },
-        {
-          "key": "exempt",
-          "name": {
-            "de": "Befreit",
-            "en": "Exempt"
-          },
-          "desc": {
-            "de": "Bestimmte Waren und Dienstleistungen sind von der Umsatzsteuer befreit.",
-            "en": "Certain goods and services are exempt from VAT."
-          },
-          "exempt": true
         }
       ],
       "sources": [

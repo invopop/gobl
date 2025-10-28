@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4dde30dddc3c585d881c399680842e7167a5619457fc27cf84ca48c22b41af45"
+			"val": "e77e147b6547d8069582589d3314a6810c8da38c3e6f3e36c0082cf601280242"
 		}
 	},
 	"doc": {
@@ -107,7 +107,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "20%",
 						"ext": {
 							"untdid-tax-category": "S"
@@ -118,13 +119,22 @@
 			}
 		],
 		"payment": {
+			"terms": {
+				"detail": "Pay before delivery"
+			},
 			"advances": [
 				{
 					"description": "Paid in full",
 					"percent": "100%",
 					"amount": "1944.00"
 				}
-			]
+			],
+			"instructions": {
+				"key": "card",
+				"ext": {
+					"untdid-payment-means": "48"
+				}
+			}
 		},
 		"totals": {
 			"sum": "1620.00",
