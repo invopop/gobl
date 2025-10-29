@@ -8,8 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `co`: Add new INC tax defenition.
 - `sg`: Singaporean regime
 - `tax`: `keys` for GST
+- `bill`: `Line` with `seller` property, to be used in Mexico.
+- `org`: `DocumentRef` supports the `schema` field.
+- `se`: Sweden regime.
+- `luhn`: package for handling luhn Mod10 calculations.
 - `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
 
 ### Fixed
@@ -18,7 +23,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `es-verifactu-v1`: validation to prevent forbidden characters in names
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to use.
 
 ### Changed
 
@@ -88,6 +94,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+
+### Changed
+
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 

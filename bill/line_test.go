@@ -215,6 +215,42 @@ func TestLineNormalize(t *testing.T) {
 	})
 }
 
+func TestLineValidationWithSeller(t *testing.T) {
+	t.Run("with seller", func(t *testing.T) {
+		line := &Line{
+			Index:    1,
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(1000, 2),
+			},
+			Seller: &org.Party{
+				Name: "Seller Name",
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
+		require.NoError(t, validation.Validate(line))
+	})
+	t.Run("with invalid seller", func(t *testing.T) {
+		line := &Line{
+			Index:    1,
+			Quantity: num.MakeAmount(1, 0),
+			Item: &org.Item{
+				Name:  "Test Item",
+				Price: num.NewAmount(1000, 2),
+			},
+			Seller: &org.Party{
+				TaxID: &tax.Identity{
+					Country: "ES",
+					Code:    "12345",
+				},
+			},
+		}
+		require.NoError(t, calculateLine(line, currency.EUR, nil, tax.RoundingRulePrecise))
+		require.ErrorContains(t, validation.Validate(line), "seller: (tax_id: (code: invalid format.).)")
+	})
+}
+
 func TestLineRemoveIncludedTaxes(t *testing.T) {
 	t.Run("basic with VAT", func(t *testing.T) {
 		line := &Line{

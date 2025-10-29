@@ -98,8 +98,8 @@ func (i *Identity) ValidateWithContext(ctx context.Context) error {
 
 // RequireIdentityType provides a validation rule that will determine if at least one
 // of the identities defined includes one with the defined type.
-func RequireIdentityType(typ cbc.Code) validation.Rule {
-	return validateIdentitySet{typ: typ}
+func RequireIdentityType(typ ...cbc.Code) validation.Rule {
+	return validateIdentitySet{typs: typ}
 }
 
 // RequireIdentityKey provides a validation rule that will determine if at least one
@@ -109,7 +109,7 @@ func RequireIdentityKey(key ...cbc.Key) validation.Rule {
 }
 
 type validateIdentitySet struct {
-	typ  cbc.Code
+	typs []cbc.Code
 	keys []cbc.Key
 }
 
@@ -123,22 +123,21 @@ func (v validateIdentitySet) Validate(value interface{}) error {
 			return nil
 		}
 	}
-
 	return fmt.Errorf("missing %s", v)
 }
 
 func (v validateIdentitySet) matches(row *Identity) bool {
-	return (v.typ == cbc.CodeEmpty || row.Type == v.typ) &&
+	return (len(v.typs) == 0 || row.Type.In(v.typs...)) &&
 		(len(v.keys) == 0 || row.Key.In(v.keys...))
 }
 
 func (v validateIdentitySet) String() string {
 	var parts []string
-	if v.typ != cbc.CodeEmpty {
-		parts = append(parts, fmt.Sprintf("type '%s'", v.typ))
+	if len(v.typs) != 0 {
+		parts = append(parts, fmt.Sprintf("type '%s'", strings.Join(cbc.CodeStrings(v.typs), "', '")))
 	}
 	if len(v.keys) != 0 {
-		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), ", ")))
+		parts = append(parts, fmt.Sprintf("key '%s'", strings.Join(cbc.KeyStrings(v.keys), "', '")))
 	}
 	return strings.Join(parts, ", ")
 }

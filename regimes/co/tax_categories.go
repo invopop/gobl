@@ -9,10 +9,14 @@ import (
 )
 
 // Local tax categories.
+// In Colombia, the Impuesto Nacional al Consumo (INC) is a national tax managed by the central government,
+// applied to services like restaurants, mobile phone plans, certain vehicles, and new real estate (Estatuto Tributario, Arts. 512-1 to 512-13).
+// In contrast, the Impuesto al Consumo (IC) is a regional (departmental or municipal) tax applied to specific products
+// such as alcoholic beverages, cigarettes, and fuels, managed locally by departments or municipalities (Ley 223 de 1995, Arts. 188-209).
 const (
-	TaxCategoryIC        cbc.Code = "IC"  // Impuesto Consumo
-	TaxCategoryICA       cbc.Code = "ICA" // Impuesto de Industria y Comercio
-	TaxCategoryINC       cbc.Code = "INC"
+	TaxCategoryIC        cbc.Code = "IC"   // Impuesto Consumo
+	TaxCategoryICA       cbc.Code = "ICA"  // Impuesto de Industria y Comercio
+	TaxCategoryINC       cbc.Code = "INC"  // Impuesto Nacional al Consumo
 	TaxCategoryReteIVA   cbc.Code = "RVAT" // ReteIVA
 	TaxCategoryReteRenta cbc.Code = "RR"   // ReteRenta
 	TaxCategoryReteICA   cbc.Code = "RICA" // ReteICA
@@ -95,6 +99,21 @@ var taxCategories = []*tax.CategoryDef{
 		Title: i18n.String{
 			i18n.EN: "Industry and Commerce Tax",
 			i18n.ES: "Impuesto de Industria y Comercio",
+		},
+		Retained: false,
+		Rates:    []*tax.RateDef{},
+	},
+	//
+	// INC - national
+	//
+	{
+		Code: TaxCategoryINC,
+		Name: i18n.String{
+			i18n.ES: "INC",
+		},
+		Title: i18n.String{
+			i18n.EN: "National Consumption Tax",
+			i18n.ES: "Impuesto Nacional al Consumo",
 		},
 		Retained: false,
 		Rates:    []*tax.RateDef{},
