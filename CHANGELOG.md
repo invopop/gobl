@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.302.0] - 2025-10-29
+
 ### Added
 
 - `co`: Add new INC tax defenition.
@@ -13,7 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `keys` for GST
 - `bill`: `Line` with `seller` property, to be used in Mexico.
 - `org`: `DocumentRef` supports the `schema` field.
-- `se`: Sweden regime.
+- `se`: Swedish regime.
 - `luhn`: package for handling luhn Mod10 calculations.
 - `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
 - `regimes/ie`: Irish regime.
