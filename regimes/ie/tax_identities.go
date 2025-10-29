@@ -18,7 +18,7 @@ var (
 	// Old format: 1 digit, 1 letter/symbol (+, *), 5 digits, 1 letter
 	taxCodeOldFormatRegexp = regexp.MustCompile(`^(\d)([A-Z+*])(\d{5})([A-Z])$`)
 	// New format: 7 digits, 1 or 2 letters
-	taxCodeNewFormatRegexp = regexp.MustCompile(`^(\d{7})([A-Z]{1,2})$`)
+	taxCodeNewFormatRegexp = regexp.MustCompile(`^(\d{7})([A-W][AH]?)$`)
 	// Check characters for modulus 23
 	taxCodeCheckChars = "WABCDEFGHIJKLMNOPQRSTUV"
 )
