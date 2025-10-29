@@ -509,17 +509,6 @@ const (
 	XU Code = "XU" // United Kingdom except Northern Ireland
 )
 
-// CountriesMap provides a map of country definitions including
-// the official ISO country code, the name in English, the country's
-// top-level-domain name, and if this is an extension or not.
-func CountriesMap() map[Code]*CountryDef {
-	m := make(map[Code]*CountryDef)
-	for _, c := range countries {
-		m[c.Code] = c
-	}
-	return m
-}
-
 // Countries provides an array of country definitions including
 // the official ISO country code, the name in English, the country's
 // top-level-domain name, and if this is an extension or not.
