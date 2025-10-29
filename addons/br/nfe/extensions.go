@@ -8,10 +8,13 @@ import (
 
 // NF-e Extension Keys
 const (
-	ExtKeyModel        = "br-nfe-model"
-	ExtKeyPresence     = "br-nfe-presence"
-	ExtKeyPaymentMeans = "br-nfe-payment-means"
-	ExtKeyCFOP         = "br-nfe-cfop"
+	ExtKeyModel           = "br-nfe-model"
+	ExtKeyPresence        = "br-nfe-presence"
+	ExtKeyPaymentMeans    = "br-nfe-payment-means"
+	ExtKeyCFOP            = "br-nfe-cfop"
+	ExtKeyFiscalIncentive = "br-nfe-fiscal-incentive"
+	ExtKeyRegime          = "br-nfe-regime"
+	ExtKeySpecialRegime   = "br-nfe-special-regime"
 )
 
 // Model Codes
@@ -327,5 +330,154 @@ var extensions = []*cbc.Definition{
 			`),
 		},
 		Pattern: `^[1-7]\d{3}$`,
+	},
+	{
+		Key: ExtKeyFiscalIncentive,
+		Name: i18n.String{
+			i18n.EN: "Fiscal Incentive Indicator",
+			i18n.PT: "Indicador de Incentivo Fiscal",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Has incentive",
+					i18n.PT: "Possui incentivo",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Does not have incentive",
+					i18n.PT: "Não possui incentivo",
+				},
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates whether a party benefits from a fiscal incentive.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+					i18n.PT: "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+				ContentType: "application/pdf",
+			},
+		},
+	},
+	{
+		Key: ExtKeyRegime,
+		Name: i18n.String{
+			i18n.EN: "Tax Regime Code",
+			i18n.PT: "Código de Regime Tributário",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Simples Nacional",
+					i18n.PT: "Simples Nacional",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Simples Nacional, Excess",
+					i18n.PT: "Simples Nacional, Excesso",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Normal",
+					i18n.PT: "Normal",
+				},
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates the tax regime that a party is subject to.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+					i18n.PT: "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+				ContentType: "application/pdf",
+			},
+		},
+	},
+	{
+		Key: ExtKeySpecialRegime,
+		Name: i18n.String{
+			i18n.EN: "Special Tax Regime Code",
+			i18n.PT: "Código do Regime Especial de Tributação",
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "1",
+				Name: i18n.String{
+					i18n.EN: "Municipal micro-enterprise",
+					i18n.PT: "Microempresa municipal",
+				},
+			},
+			{
+				Code: "2",
+				Name: i18n.String{
+					i18n.EN: "Estimated",
+					i18n.PT: "Estimativa",
+				},
+			},
+			{
+				Code: "3",
+				Name: i18n.String{
+					i18n.EN: "Professional Society",
+					i18n.PT: "Sociedade de profissionais",
+				},
+			},
+			{
+				Code: "4",
+				Name: i18n.String{
+					i18n.EN: "Cooperative",
+					i18n.PT: "Cooperativa",
+				},
+			},
+			{
+				Code: "5",
+				Name: i18n.String{
+					i18n.EN: "Single micro-entrepreneur (MEI)",
+					i18n.PT: "Microempreendedor individual (MEI)",
+				},
+			},
+			{
+				Code: "6",
+				Name: i18n.String{
+					i18n.EN: "Micro-enterprise or Small Business (ME EPP)",
+					i18n.PT: "Microempresa ou Empresa de Pequeno Porte (ME EPP).",
+				},
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Indicates a special tax regime that a party is subject to.
+			`),
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+					i18n.PT: "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e",
+				},
+				URL:         "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+				ContentType: "application/pdf",
+			},
+		},
 	},
 }

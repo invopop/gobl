@@ -1,9 +1,6 @@
 {
   "$schema": "https://gobl.org/draft-0/tax/addon-def",
   "key": "br-nfe-v4",
-  "requires": [
-    "br-dfe-v1"
-  ],
   "name": {
     "en": "Brazil NF-e 4.00"
   },
@@ -34,7 +31,7 @@
             "en": "NF-e"
           },
           "desc": {
-            "en": "For B2B tranfer of goods and certain intra-state\nservices."
+            "en": "For B2B transfer of goods and certain intra-state\nservices."
           }
         },
         {
@@ -275,6 +272,149 @@
         }
       ],
       "pattern": "^[1-7]\\d{3}$"
+    },
+    {
+      "key": "br-nfe-fiscal-incentive",
+      "name": {
+        "en": "Fiscal Incentive Indicator",
+        "pt": "Indicador de Incentivo Fiscal"
+      },
+      "desc": {
+        "en": "Indicates whether a party benefits from a fiscal incentive."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Has incentive",
+            "pt": "Possui incentivo"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Does not have incentive",
+            "pt": "Não possui incentivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-regime",
+      "name": {
+        "en": "Tax Regime Code",
+        "pt": "Código de Regime Tributário"
+      },
+      "desc": {
+        "en": "Indicates the tax regime that a party is subject to."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Simples Nacional",
+            "pt": "Simples Nacional"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Simples Nacional, Excess",
+            "pt": "Simples Nacional, Excesso"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Normal",
+            "pt": "Normal"
+          }
+        }
+      ]
+    },
+    {
+      "key": "br-nfe-special-regime",
+      "name": {
+        "en": "Special Tax Regime Code",
+        "pt": "Código do Regime Especial de Tributação"
+      },
+      "desc": {
+        "en": "Indicates a special tax regime that a party is subject to."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "Taxpayer Guidance Manual v7.0 - Annex I – Layout and Validation Rules for NF-e and NFC-e",
+            "pt": "Manual de Orientação ao Contribuinte v7.0 - Anexo I – Leiaute e Regras de Validação da NF-e e da NFC-e"
+          },
+          "url": "https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=J%20I%20v4eN00E=",
+          "content_type": "application/pdf"
+        }
+      ],
+      "values": [
+        {
+          "code": "1",
+          "name": {
+            "en": "Municipal micro-enterprise",
+            "pt": "Microempresa municipal"
+          }
+        },
+        {
+          "code": "2",
+          "name": {
+            "en": "Estimated",
+            "pt": "Estimativa"
+          }
+        },
+        {
+          "code": "3",
+          "name": {
+            "en": "Professional Society",
+            "pt": "Sociedade de profissionais"
+          }
+        },
+        {
+          "code": "4",
+          "name": {
+            "en": "Cooperative",
+            "pt": "Cooperativa"
+          }
+        },
+        {
+          "code": "5",
+          "name": {
+            "en": "Single micro-entrepreneur (MEI)",
+            "pt": "Microempreendedor individual (MEI)"
+          }
+        },
+        {
+          "code": "6",
+          "name": {
+            "en": "Micro-enterprise or Small Business (ME EPP)",
+            "pt": "Microempresa ou Empresa de Pequeno Porte (ME EPP)."
+          }
+        }
+      ]
     }
   ],
   "scenarios": [
@@ -308,6 +448,13 @@
     }
   ],
   "identities": [
+    {
+      "key": "br-nfe-state-reg",
+      "name": {
+        "en": "Company State Registration",
+        "pt": "Inscrição Estadual da Empresa"
+      }
+    },
     {
       "key": "gtin",
       "name": {

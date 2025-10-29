@@ -10,6 +10,28 @@
   "time_zone": "America/Sao_Paulo",
   "country": "BR",
   "currency": "BRL",
+  "extensions": [
+    {
+      "key": "br-ibge-municipality",
+      "name": {
+        "en": "IBGE Municipality Code",
+        "pt": "Código do Município do IBGE"
+      },
+      "desc": {
+        "en": "The municipality code as defined by the IBGE (Brazilian Institute of Geography and\nStatistics)."
+      },
+      "sources": [
+        {
+          "title": {
+            "en": "IBGE - Municipalities Codes",
+            "pt": "IBGE - Códigos dos Municípios"
+          },
+          "url": "https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+        }
+      ],
+      "pattern": "^\\d{7}$"
+    }
+  ],
   "corrections": [
     {
       "schema": "bill/invoice",

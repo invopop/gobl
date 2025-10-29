@@ -6,12 +6,27 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Identity keys
+// Party identity keys
+const (
+	IdentityKeyStateReg = "br-nfe-state-reg"
+)
+
+// Item identity keys
 const (
 	IdentityKeyTaxable = "taxable"
 )
 
 var identities = []*cbc.Definition{
+	// Party identities
+	{
+		Key: IdentityKeyStateReg,
+		Name: i18n.String{
+			i18n.EN: "Company State Registration",
+			i18n.PT: "Inscrição Estadual da Empresa",
+		},
+	},
+
+	// Item identities
 	{
 		Key: org.IdentityKeyGTIN,
 		Name: i18n.String{

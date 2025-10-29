@@ -45,7 +45,7 @@
       ]
     },
     {
-      "key": "br-dfe-municipality",
+      "key": "br-ibge-municipality",
       "name": {
         "en": "IBGE Municipality Code",
         "pt": "Código do Município do IBGE"
@@ -166,14 +166,14 @@
   "scenarios": null,
   "identities": [
     {
-      "key": "br-dfe-municipal-reg",
+      "key": "br-nfse-municipal-reg",
       "name": {
         "en": "Company Municipal Registration",
         "pt": "Inscrição Municipal da Empresa"
       }
     },
     {
-      "key": "br-dfe-state-reg",
+      "key": "br-nfse-state-reg",
       "name": {
         "en": "Company State Registration",
         "pt": "Inscrição Estadual da Empresa"

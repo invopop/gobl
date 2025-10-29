@@ -3,7 +3,6 @@
 package nfe
 
 import (
-	"github.com/invopop/gobl/addons/br/dfe"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
@@ -25,9 +24,6 @@ func newAddon() *tax.AddonDef {
 		Key: V4,
 		Name: i18n.String{
 			i18n.EN: "Brazil NF-e 4.00",
-		},
-		Requires: []cbc.Key{
-			dfe.V1,
 		},
 		Validator:  validate,
 		Normalizer: normalize,

@@ -3,9 +3,9 @@ package nfse
 import (
 	"regexp"
 
-	"github.com/invopop/gobl/addons/br/dfe"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -56,7 +56,7 @@ func validateSupplier(value interface{}) error {
 			validation.Skip,
 		),
 		validation.Field(&obj.Identities,
-			org.RequireIdentityKey(dfe.IdentityKeyMunicipalReg),
+			org.RequireIdentityKey(IdentityKeyMunicipalReg),
 			validation.Skip,
 		),
 		validation.Field(&obj.Name, validation.Required),
@@ -70,9 +70,9 @@ func validateSupplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequire(
-				dfe.ExtKeySimples,
-				dfe.ExtKeyMunicipality,
-				dfe.ExtKeyFiscalIncentive,
+				br.ExtKeyMunicipality,
+				ExtKeySimples,
+				ExtKeyFiscalIncentive,
 			),
 			validation.Skip,
 		),
@@ -99,10 +99,10 @@ func normalizeSupplier(sup *org.Party) {
 		return
 	}
 
-	if !sup.Ext.Has(dfe.ExtKeyFiscalIncentive) {
+	if !sup.Ext.Has(ExtKeyFiscalIncentive) {
 		if sup.Ext == nil {
 			sup.Ext = make(tax.Extensions)
 		}
-		sup.Ext[dfe.ExtKeyFiscalIncentive] = FiscalIncentiveDefault
+		sup.Ext[ExtKeyFiscalIncentive] = FiscalIncentiveDefault
 	}
 }

@@ -3,7 +3,6 @@ package nfse_test
 import (
 	"testing"
 
-	"github.com/invopop/gobl/addons/br/dfe"
 	"github.com/invopop/gobl/addons/br/nfse"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
@@ -152,16 +151,16 @@ func TestSuppliersValidation(t *testing.T) {
 		}
 		err := addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "identities: missing key 'br-dfe-municipal-reg';")
+			assert.Contains(t, err.Error(), "identities: missing key 'br-nfse-municipal-reg';")
 		}
 
 		sup.Identities = append(sup.Identities, &org.Identity{
-			Key:  dfe.IdentityKeyMunicipalReg,
+			Key:  nfse.IdentityKeyMunicipalReg,
 			Code: "12345678",
 		})
 		err = addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "identities: missing key 'br-dfe-municipal-reg';")
+			assert.NotContains(t, err.Error(), "identities: missing key 'br-nfse-municipal-reg';")
 		}
 	})
 
@@ -209,21 +208,21 @@ func TestSuppliersValidation(t *testing.T) {
 		}
 		err := addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "br-dfe-simples: required")
-			assert.Contains(t, err.Error(), "br-dfe-municipality: required")
-			assert.Contains(t, err.Error(), "br-dfe-fiscal-incentive: required")
+			assert.Contains(t, err.Error(), "br-nfse-simples: required")
+			assert.Contains(t, err.Error(), "br-ibge-municipality: required")
+			assert.Contains(t, err.Error(), "br-nfse-fiscal-incentive: required")
 		}
 
 		sup.Ext = tax.Extensions{
-			dfe.ExtKeySimples:         "1",
-			dfe.ExtKeyMunicipality:    "12345678",
-			dfe.ExtKeyFiscalIncentive: "2",
+			nfse.ExtKeySimples:         "1",
+			"br-ibge-municipality":     "12345678",
+			nfse.ExtKeyFiscalIncentive: "2",
 		}
 		err = addon.Validator(inv)
 		if assert.Error(t, err) {
-			assert.NotContains(t, err.Error(), "br-dfe-simples: required")
-			assert.NotContains(t, err.Error(), "br-dfe-municipality: required")
-			assert.NotContains(t, err.Error(), "br-dfe-fiscal-incentive: required")
+			assert.NotContains(t, err.Error(), "br-nfse-simples: required")
+			assert.NotContains(t, err.Error(), "br-ibge-municipality: required")
+			assert.NotContains(t, err.Error(), "br-nfse-fiscal-incentive: required")
 		}
 	})
 }
@@ -249,7 +248,7 @@ func TestSuppliersNormalization(t *testing.T) {
 			name: "does not override fiscal incentive",
 			supplier: &org.Party{
 				Ext: tax.Extensions{
-					dfe.ExtKeyFiscalIncentive: "1",
+					nfse.ExtKeyFiscalIncentive: "1",
 				},
 			},
 			out: "1",
@@ -262,7 +261,7 @@ func TestSuppliersNormalization(t *testing.T) {
 			if ts.supplier == nil {
 				assert.Nil(t, inv.Supplier)
 			} else {
-				assert.Equal(t, ts.out, inv.Supplier.Ext[dfe.ExtKeyFiscalIncentive])
+				assert.Equal(t, ts.out, inv.Supplier.Ext[nfse.ExtKeyFiscalIncentive])
 			}
 		})
 	}
