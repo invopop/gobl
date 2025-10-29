@@ -68,7 +68,7 @@ func validateOldFormat(matches []string) error {
 	fiveDigits := matches[3]
 	checkChar := matches[4]
 
-	// Calculate checksum: 8*0 + 7*c3 + 6*c4 + 5*c5 + 4*c6 + 3*c7 + 2*c1
+	// Calculate checksum: 7*c3 + 6*c4 + 5*c5 + 4*c6 + 3*c7 + 2*c1
 	// where c1=firstDigit and c3-c7 are the five digits
 	c1, _ := strconv.Atoi(firstDigit)
 	c3, _ := strconv.Atoi(string(fiveDigits[0]))
@@ -77,7 +77,7 @@ func validateOldFormat(matches []string) error {
 	c6, _ := strconv.Atoi(string(fiveDigits[3]))
 	c7, _ := strconv.Atoi(string(fiveDigits[4]))
 
-	sum := 8*0 + 7*c3 + 6*c4 + 5*c5 + 4*c6 + 3*c7 + 2*c1
+	sum := 7*c3 + 6*c4 + 5*c5 + 4*c6 + 3*c7 + 2*c1
 	r := sum % 23
 
 	expectedChar := string(taxCodeCheckChars[r])
