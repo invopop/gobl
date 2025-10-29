@@ -190,9 +190,7 @@ func TestSupplierValidation(t *testing.T) {
 
 		inv.Supplier.Name = "Test Company"
 		err = addon.Validator(inv)
-		if err != nil {
-			assert.NotContains(t, err.Error(), "name: cannot be blank")
-		}
+		assert.NoError(t, err)
 	})
 
 	t.Run("validates supplier addresses required", func(t *testing.T) {
@@ -219,9 +217,7 @@ func TestSupplierValidation(t *testing.T) {
 			},
 		}
 		err = addon.Validator(inv)
-		if err != nil {
-			assert.NotContains(t, err.Error(), "addresses: cannot be blank")
-		}
+		assert.NoError(t, err)
 	})
 
 	t.Run("validates supplier state registration identity", func(t *testing.T) {
@@ -237,9 +233,7 @@ func TestSupplierValidation(t *testing.T) {
 			},
 		}
 		err = addon.Validator(inv)
-		if err != nil {
-			assert.NotContains(t, err.Error(), "identities: missing key 'br-nfse-state-reg'")
-		}
+		assert.NoError(t, err)
 	})
 
 	t.Run("validates supplier tax ID required", func(t *testing.T) {
@@ -254,9 +248,7 @@ func TestSupplierValidation(t *testing.T) {
 
 		inv.Supplier.TaxID.Code = "55263640000186"
 		err = addon.Validator(inv)
-		if err != nil {
-			assert.NotContains(t, err.Error(), "tax_id: (code: cannot be blank")
-		}
+		assert.NoError(t, err)
 	})
 
 	t.Run("validates supplier municipality extension when addresses exist", func(t *testing.T) {
@@ -269,9 +261,7 @@ func TestSupplierValidation(t *testing.T) {
 			"br-ibge-municipality": "3304557",
 		}
 		err = addon.Validator(inv)
-		if err != nil {
-			assert.NotContains(t, err.Error(), "br-ibge-municipality: required")
-		}
+		assert.NoError(t, err)
 	})
 
 	t.Run("validates supplier address fields", func(t *testing.T) {
