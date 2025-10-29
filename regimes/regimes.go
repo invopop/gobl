@@ -17,6 +17,7 @@ import (
 	_ "github.com/invopop/gobl/regimes/fr"
 	_ "github.com/invopop/gobl/regimes/gb"
 	_ "github.com/invopop/gobl/regimes/gr"
+	_ "github.com/invopop/gobl/regimes/ie"
 	_ "github.com/invopop/gobl/regimes/in"
 	_ "github.com/invopop/gobl/regimes/it"
 	_ "github.com/invopop/gobl/regimes/mx"

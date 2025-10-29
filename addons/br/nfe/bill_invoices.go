@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -91,7 +92,7 @@ func validateParty(value any) error {
 		),
 		validation.Field(&p.Ext,
 			validation.When(len(p.Addresses) > 0,
-				tax.ExtensionsRequire("br-ibge-municipality"),
+				tax.ExtensionsRequire(br.ExtKeyMunicipality),
 			),
 			validation.Skip,
 		),

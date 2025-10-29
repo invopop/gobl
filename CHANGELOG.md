@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `se`: Sweden regime.
 - `luhn`: package for handling luhn Mod10 calculations.
 - `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
+- `regimes/ie`: Irish regime.
 
 ### Fixed
 
