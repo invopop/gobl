@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `it-sdi-v1`: Add italian phone number validation and normalization
+
 ## [v0.302.0] - 2025-10-29
 
 ### Added
