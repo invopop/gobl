@@ -1,5 +1,5 @@
-// Package se provides a regime definition for Sweden.
-package se
+// Package ie provides a regime definition for Ireland.
+package ie
 
 import (
 	"github.com/invopop/gobl/bill"
@@ -14,18 +14,17 @@ func init() {
 	tax.RegisterRegimeDef(New())
 }
 
-// New instantiates a new Swedish regime.
+// New instantiates a new Irish regime.
 func New() *tax.RegimeDef {
 	return &tax.RegimeDef{
-		Country:   l10n.SE.Tax(),
-		Currency:  currency.SEK,
+		Country:   l10n.IE.Tax(),
+		Currency:  currency.EUR,
 		TaxScheme: tax.CategoryVAT,
 		Name: i18n.String{
-			i18n.EN: "Sweden",
-			i18n.SE: "Sverige",
+			i18n.EN: "Ireland",
+			i18n.GA: "Éire",
 		},
-		TimeZone:   "Europe/Stockholm",
-		Identities: identityTypeDefinitions,
+		TimeZone:   "Europe/Dublin",
 		Categories: taxCategories,
 		Scenarios: []*tax.ScenarioSet{
 			bill.InvoiceScenarios(),
@@ -38,12 +37,8 @@ func New() *tax.RegimeDef {
 // Validate checks the document type and determines if it can be validated.
 func Validate(doc any) error {
 	switch obj := doc.(type) {
-	case *bill.Invoice:
-		return validateBillInvoice(obj)
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *org.Identity:
-		return validateOrgIdentity(obj)
 	}
 	return nil
 }
@@ -56,4 +51,9 @@ func Normalize(doc any) {
 	case *org.Identity:
 		normalizeOrgIdentity(obj)
 	}
+}
+
+// normalizeOrgIdentity performs normalization on org identities.
+func normalizeOrgIdentity(id *org.Identity) {
+	// Placeholder for org identity normalization if needed in the future
 }
