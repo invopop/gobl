@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `org`: `DocumentRef` supports the `schema` field.
 - `se`: Sweden regime.
 - `luhn`: package for handling luhn Mod10 calculations.
+- `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
 - `regimes/ie`: Irish regime.
 
 ### Fixed

@@ -330,41 +330,26 @@ func TestInvoicePrecedingValidation(t *testing.T) {
 func TestInvoiceTotalsValidation(t *testing.T) {
 	reg := tax.RegimeDefFor(l10n.PT)
 
-	t.Run("payable amount less than due and advances", func(t *testing.T) {
+	t.Run("negative due amount", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Totals = &bill.Totals{
-			Payable:  num.MakeAmount(1000, 2),
-			Advances: num.NewAmount(501, 2),
-			Due:      num.NewAmount(500, 2),
+			Due: num.NewAmount(-1, 2),
 		}
-		assert.ErrorContains(t, reg.Validator(inv), "advance: must be no greater than 5.00")
-		assert.ErrorContains(t, reg.Validator(inv), "due: must be no greater than 4.99")
+		assert.ErrorContains(t, reg.Validator(inv), "due: must be no less than 0.")
 	})
 
-	t.Run("payable amount equals due and advances", func(t *testing.T) {
+	t.Run("zero due amount", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Totals = &bill.Totals{
-			Payable:  num.MakeAmount(1000, 2),
-			Advances: num.NewAmount(500, 2),
-			Due:      num.NewAmount(500, 2),
+			Due: num.NewAmount(0, 2),
 		}
 		require.NoError(t, reg.Validator(inv))
 	})
 
-	t.Run("payable amount greater than due and advances", func(t *testing.T) {
+	t.Run("positive due amount", func(t *testing.T) {
 		inv := validInvoice()
 		inv.Totals = &bill.Totals{
-			Payable:  num.MakeAmount(1000, 2),
-			Advances: num.NewAmount(499, 2),
-			Due:      num.NewAmount(500, 2),
-		}
-		require.NoError(t, reg.Validator(inv))
-	})
-
-	t.Run("no due or advances", func(t *testing.T) {
-		inv := validInvoice()
-		inv.Totals = &bill.Totals{
-			Payable: num.MakeAmount(1000, 2),
+			Due: num.NewAmount(1, 2),
 		}
 		require.NoError(t, reg.Validator(inv))
 	})
