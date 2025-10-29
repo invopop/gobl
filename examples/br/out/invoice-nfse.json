@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "a05aeae5dedcb458eec05ac66ee6fcf77354abd586b382eedaa4d12cac8c83a6"
+			"val": "fc074421080af53f9eb1c38b80c1517d982b9d89741567c80e20d369ec3ed4b7"
 		}
 	},
 	"doc": {
@@ -29,10 +29,6 @@
 				{
 					"key": "br-nfse-municipal-reg",
 					"code": "45678901234567"
-				},
-				{
-					"key": "br-nfse-state-reg",
-					"code": "12345012345678"
 				}
 			],
 			"addresses": [
