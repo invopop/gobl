@@ -17,8 +17,8 @@ func TestNormalizeTaxIdentity(t *testing.T) {
 		Code:    "36.28-739L",
 	}
 	regime.Normalizer(tID)
-	// Since there are no specific normalization rules for IE tax identities,
-	// we just ensure that the identity remains unchanged after normalization.
+	// Normalization removes separator characters like dots and dashes from the tax identity code,
+	// as implemented by tax.NormalizeIdentity().
 	assert.Equal(t, "3628739L", tID.Code.String())
 }
 
