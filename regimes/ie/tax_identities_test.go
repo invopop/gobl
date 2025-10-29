@@ -10,6 +10,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestNormalizeTaxIdentity(t *testing.T) {
+	regime := ie.New()
+	tID := &tax.Identity{
+		Country: regime.Country,
+		Code:    "36.28-739L",
+	}
+	regime.Normalizer(tID)
+	// Since there are no specific normalization rules for IE tax identities,
+	// we just ensure that the identity remains unchanged after normalization.
+	assert.Equal(t, "3628739L", tID.Code.String())
+}
+
 func TestValidateTaxIdentity(t *testing.T) {
 	regime := ie.New()
 
