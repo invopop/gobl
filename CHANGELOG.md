@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.302.1] - 2025-10-31
+
+### Fixed
+
+- `l10n`: union will now check alternative country codes: fixes issue with GR and EL codes in the EU.
+
 ## [v0.302.0] - 2025-10-29
 
 ### Added

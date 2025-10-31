@@ -28,6 +28,10 @@ func TestUnionMember(t *testing.T) {
 	assert.True(t, u.HasMember(l10n.DE))
 	assert.False(t, u.HasMember(l10n.US))
 
+	// and the greek case with alt code
+	assert.True(t, u.HasMember(l10n.GR))
+	assert.True(t, u.HasMember(l10n.EL))
+
 	d1a := cal.MakeDate(1973, 1, 1) // happy times
 	assert.True(t, u.HasMemberOn(d1a, l10n.GB))
 	d1b := cal.MakeDate(2020, 1, 31) // end of happy times
