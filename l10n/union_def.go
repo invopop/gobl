@@ -59,8 +59,10 @@ func (ud *UnionDef) HasMember(c Code) bool {
 // at a specific point in time.
 func (ud *UnionDef) HasMemberOn(date cal.Date, c Code) bool {
 	for _, m := range ud.Members {
-		if m.Code == c && m.On(date) {
-			return true
+		if m.Code == c || m.AltCode == c {
+			if m.On(date) {
+				return true
+			}
 		}
 	}
 	return false

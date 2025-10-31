@@ -49,6 +49,39 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "cat": {
+                "const": "GST"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "key": {
+                "oneOf": [
+                  {
+                    "const": "standard",
+                    "title": "Standard"
+                  },
+                  {
+                    "const": "zero",
+                    "title": "Zero"
+                  },
+                  {
+                    "const": "exempt",
+                    "title": "Exempt"
+                  },
+                  {
+                    "const": "outside-scope",
+                    "title": "Outside scope"
+                  }
+                ]
+              }
+            }
+          }
         }
       ],
       "properties": {

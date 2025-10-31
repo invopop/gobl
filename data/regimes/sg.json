@@ -1,0 +1,119 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Singapore"
+  },
+  "description": {
+    "en": "Singapore offers a simple GST model with a standard rate along with a few exceptions. GST is handled by the Inland Revenue Authority of Singapore ([IRAS](https://www.iras.gov.sg/taxes/goods-services-tax-(gst)))\n\nFor GST to be chargeable on a supply of goods and services, the following four conditions must be satisfied:\n\n1. The supply must be made in Singapore\n2. The supply is a taxable supply\n3. The supply is made by a taxable person\n4. The supply is made in the course of furtherance of any business carried on by the taxable person, i.e, GST is not chargeable on personal transactions\n\nGST is chargeable on all imported goods (whether for domestic consumption, sale, or re-export), regardless of whether the importer is GST-registered or not. The importer is required to take up the appropriate import permit and pay GST upon importation of the goods into Singapore. Import GST is not chargeable under the following circumstances:\n\n1. Importation of investment precious metals.\n2. Importation of goods that are specifically given GST reliefs5 under the GST Act.\n3. Importation of goods into Zero-GST/Licensed warehouses administered by Singapore Customs.\n4. Importation of goods by GST-registered businesses that are under Major Exporter Scheme or other approved schemes."
+  },
+  "time_zone": "Asia/Singapore",
+  "country": "SG",
+  "currency": "SGD",
+  "tax_scheme": "GST",
+  "identities": [
+    {
+      "code": "UEN",
+      "name": {
+        "en": "Unique Entity Number (UEN)"
+      },
+      "desc": {
+        "en": "The Unique Entity Number (UEN) is a standard identification number\nissued to entities (businesses and local companies) in Singapore.\nIt is used for all interactions with government agencies. The same\nUEN is normally used as the GST registration number, but not always."
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "GST",
+      "name": {
+        "en": "GST"
+      },
+      "title": {
+        "en": "Goods and Services Tax"
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General rate"
+          },
+          "desc": {
+            "en": "GST-registered businesses are required to charge and account for GST at 9% on all sales of goods and services in Singapore unless the sale can be zero-rated or exempted under the GST law."
+          },
+          "values": [
+            {
+              "since": "2024-01-01",
+              "percent": "9%"
+            },
+            {
+              "since": "2023-01-01",
+              "percent": "8%"
+            },
+            {
+              "since": "2007-07-01",
+              "percent": "7%"
+            },
+            {
+              "since": "2004-01-01",
+              "percent": "5%"
+            },
+            {
+              "since": "2003-01-01",
+              "percent": "4%"
+            },
+            {
+              "since": "1994-04-01",
+              "percent": "3%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "Goods and Services Tax (GST)"
+          },
+          "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/basics-of-gst/current-gst-rates"
+        }
+      ]
+    }
+  ]
+}

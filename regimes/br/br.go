@@ -29,6 +29,7 @@ func New() *tax.RegimeDef {
 		TimeZone:   "America/Sao_Paulo",
 		Validator:  Validate,
 		Normalizer: Normalize,
+		Extensions: extensions,
 		Categories: taxCategories,
 		Corrections: []*tax.CorrectionDefinition{
 			{

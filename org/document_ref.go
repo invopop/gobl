@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/head"
 	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
 	"github.com/invopop/validation"
@@ -17,7 +18,10 @@ import (
 // DocumentRef is used to describe an existing document or a specific part of it's contents.
 type DocumentRef struct {
 	uuid.Identify
-	// Type of the document referenced.
+	// Schema of the referenced document if different from that of the parent.
+	Schema schema.ID `json:"schema,omitempty" jsonschema:"title=Schema"`
+	// Type of the document referenced according to the defined schema or that of the
+	// parent document.
 	Type cbc.Key `json:"type,omitempty" jsonschema:"title=Type"`
 	// IssueDate reflects the date the document was issued.
 	IssueDate *cal.Date `json:"issue_date,omitempty" jsonschema:"title=Issue Date"`
@@ -93,6 +97,7 @@ func (dr *DocumentRef) Validate() error {
 func (dr *DocumentRef) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, dr,
 		validation.Field(&dr.UUID),
+		validation.Field(&dr.Schema),
 		validation.Field(&dr.Type),
 		validation.Field(&dr.IssueDate, cal.DateNotZero()),
 		validation.Field(&dr.Series),

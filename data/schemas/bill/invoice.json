@@ -57,6 +57,10 @@
               "title": "United Kingdom"
             },
             {
+              "const": "IE",
+              "title": "Ireland"
+            },
+            {
               "const": "IN",
               "title": "India"
             },
@@ -81,6 +85,14 @@
               "title": "Portugal"
             },
             {
+              "const": "SE",
+              "title": "Sweden"
+            },
+            {
+              "const": "SG",
+              "title": "Singapore"
+            },
+            {
               "const": "US",
               "title": "United States of America"
             }
@@ -91,6 +103,10 @@
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key",
             "oneOf": [
+              {
+                "const": "br-nfe-v4",
+                "title": "Brazil NF-e 4.00"
+              },
               {
                 "const": "br-nfse-v1",
                 "title": "Brazil NFS-e 1.X"

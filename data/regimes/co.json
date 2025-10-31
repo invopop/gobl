@@ -136,6 +136,16 @@
       }
     },
     {
+      "code": "INC",
+      "name": {
+        "es": "INC"
+      },
+      "title": {
+        "en": "National Consumption Tax",
+        "es": "Impuesto Nacional al Consumo"
+      }
+    },
+    {
       "code": "RVAT",
       "name": {
         "es": "ReteIVA"

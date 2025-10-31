@@ -1,5 +1,8 @@
 {
   "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": [
+    "br-nfse-v1"
+  ],
   "uuid": "0193305c-a7be-730d-b552-2093f0df2df8",
   "series": "FL",
   "code": "1",
@@ -15,10 +18,6 @@
       {
         "key": "br-nfse-municipal-reg",
         "code": "12345678901234"
-      },
-      {
-        "key": "br-nfse-national-reg",
-        "code": "98765432109876"
       }
     ],
     "addresses": [
@@ -39,7 +38,7 @@
       }
     ],
     "ext": {
-      "br-nfse-municipality": "3550308",
+      "br-ibge-municipality": "3550308",
       "br-nfse-fiscal-incentive": "1",
       "br-nfse-simples": "1",
       "br-nfse-special-regime": "4"
@@ -85,11 +84,11 @@
           }
         },
         {
-          "cat": "PIS",
+          "cat": "PISRet",
           "percent": "0.65%"
         },
         {
-          "cat": "COFINS",
+          "cat": "COFINSRet",
           "percent": "3%"
         },
         {

@@ -97,6 +97,16 @@ func (c Code) String() string {
 	return string(c)
 }
 
+// CodeStrings is a convenience method to convert a list of codes
+// into a list of strings.
+func CodeStrings(codes []Code) []string {
+	l := make([]string, len(codes))
+	for i, v := range codes {
+		l[i] = v.String()
+	}
+	return l
+}
+
 // In returns true if the code's value matches one of those
 // in the provided list.
 func (c Code) In(ary ...Code) bool {

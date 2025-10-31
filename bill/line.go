@@ -51,6 +51,11 @@ type Line struct {
 	// This is for purely informative purposes, and will not be used for calculations.
 	Substituted []*SubLine `json:"substituted,omitempty" jsonschema:"title=Substituted"`
 
+	// Seller of the item if different from the supplier or ordering seller. This can be
+	// useful for marketplace or drop-ship scenarios in locations that require the
+	// original seller to be indicated.
+	Seller *org.Party `json:"seller,omitempty" jsonschema:"title=Seller"`
+
 	// Set of specific notes for this line that may be required for
 	// clarification.
 	Notes []*org.Note `json:"notes,omitempty" jsonschema:"title=Notes"`
@@ -142,6 +147,7 @@ func (l *Line) ValidateWithContext(ctx context.Context) error {
 			),
 		),
 		validation.Field(&l.Substituted),
+		validation.Field(&l.Seller),
 		validation.Field(&l.Notes),
 	)
 }
@@ -192,6 +198,7 @@ func (l *Line) Normalize(normalizers tax.Normalizers) {
 	tax.Normalize(normalizers, l.Discounts)
 	tax.Normalize(normalizers, l.Charges)
 	tax.Normalize(normalizers, l.Substituted)
+	tax.Normalize(normalizers, l.Seller)
 	normalizers.Each(l)
 }
 

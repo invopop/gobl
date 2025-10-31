@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/br"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -69,8 +70,8 @@ func validateSupplier(value interface{}) error {
 		),
 		validation.Field(&obj.Ext,
 			tax.ExtensionsRequire(
+				br.ExtKeyMunicipality,
 				ExtKeySimples,
-				ExtKeyMunicipality,
 				ExtKeyFiscalIncentive,
 			),
 			validation.Skip,

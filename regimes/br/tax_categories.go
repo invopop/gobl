@@ -8,14 +8,16 @@ import (
 
 // Tax categories specific for Brazil.
 const (
-	TaxCategoryISS    cbc.Code = "ISS"
-	TaxCategoryICMS   cbc.Code = "ICMS"
-	TaxCategoryIPI    cbc.Code = "IPI"
-	TaxCategoryPIS    cbc.Code = "PIS"
-	TaxCategoryCOFINS cbc.Code = "COFINS"
-	TaxCategoryCSLL   cbc.Code = "CSLL"
-	TaxCategoryINSS   cbc.Code = "INSS"
-	TaxCategoryIRRF   cbc.Code = "IRRF"
+	TaxCategoryISS       cbc.Code = "ISS"
+	TaxCategoryICMS      cbc.Code = "ICMS"
+	TaxCategoryIPI       cbc.Code = "IPI"
+	TaxCategoryPIS       cbc.Code = "PIS"
+	TaxCategoryPISRet    cbc.Code = "PISRet"
+	TaxCategoryCOFINS    cbc.Code = "COFINS"
+	TaxCategoryCOFINSRet cbc.Code = "COFINSRet"
+	TaxCategoryCSLL      cbc.Code = "CSLL"
+	TaxCategoryINSS      cbc.Code = "INSS"
+	TaxCategoryIRRF      cbc.Code = "IRRF"
 )
 
 var taxCategories = []*tax.CategoryDef{
@@ -48,7 +50,8 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "State value-added tax",
 			i18n.PT: "Imposto sobre Circulação de Mercadorias e Serviços",
 		},
-		Retained: false,
+		Retained:    false,
+		Informative: true,
 	},
 	//
 	// Federal value-added Tax (IPI)
@@ -78,6 +81,19 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.EN: "Social Integration Program",
 			i18n.PT: "Programa de Integração Social",
 		},
+		Retained:    false,
+		Informative: true,
+	},
+	{
+		Code: TaxCategoryPISRet,
+		Name: i18n.String{
+			i18n.EN: "PIS (Retained)",
+			i18n.PT: "PIS (Retido)",
+		},
+		Title: i18n.String{
+			i18n.EN: "Social Integration Program Retained",
+			i18n.PT: "Programa de Integração Social Retido",
+		},
 		Retained: true,
 	},
 	//
@@ -92,6 +108,18 @@ var taxCategories = []*tax.CategoryDef{
 		Title: i18n.String{
 			i18n.EN: "Contribution for the Financing of Social Security",
 			i18n.PT: "Contribuição para o Financiamento da Seguridade Social",
+		},
+		Informative: true,
+	},
+	{
+		Code: TaxCategoryCOFINSRet,
+		Name: i18n.String{
+			i18n.EN: "COFINS (Retained)",
+			i18n.PT: "COFINS (Retido)",
+		},
+		Title: i18n.String{
+			i18n.EN: "Contribution for the Financing of Social Security Retained",
+			i18n.PT: "Contribuição para o Financiamento da Seguridade Social Retido",
 		},
 		Retained: true,
 	},

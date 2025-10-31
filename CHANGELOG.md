@@ -6,6 +6,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.302.1] - 2025-10-31
+
+### Fixed
+
+- `l10n`: union will now check alternative country codes: fixes issue with GR and EL codes in the EU.
+
+## [v0.302.0] - 2025-10-29
+
+### Added
+
+- `co`: Add new INC tax defenition.
+- `sg`: Singaporean regime
+- `tax`: `keys` for GST
+- `bill`: `Line` with `seller` property, to be used in Mexico.
+- `org`: `DocumentRef` supports the `schema` field.
+- `se`: Swedish regime.
+- `luhn`: package for handling luhn Mod10 calculations.
+- `br-nfe-v4`: added Brazil NF-e addon for NF-e and NFC-e documents
+- `regimes/ie`: Irish regime.
+
+### Fixed
+
+- `eu-en16931-v2017`: fixed issue with payment details when due is zero
+
+### Removed
+
+- `es-verifactu-v1`: validation to prevent forbidden characters in names.
+- `org`: `Attachment.data` field removed in favour of URL. We don't believe that embedding binary data inside a JSON object is aligned with the objectives of GOBL to be lightweight and easy to use.
+
+### Changed
+
+- `it-sdi-v1`: Updated mapping of exemption (natura) codes to reflect CIUS mapping guide.
+
 ## [v0.301.0] - 2025-10-03
 
 ### Added
@@ -51,7 +84,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `es`: IGIC now uses VAT keys
 - `bill`: fixed zero-percent handling in charges and discounts
 
-
 ## [v0.300.1] - 2025-09-12
 
 ### Fixed
@@ -71,6 +103,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `pt-saft-v1`: added extensions to handle integration of documents (other systems, manually issued or recovered)
+
+### Changed
+
 - `pt`: added comprehensive validations to regime
 - `pt-saft-v1`: added comprehensive validations to addon
 
