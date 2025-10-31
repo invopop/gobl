@@ -113,6 +113,23 @@ func taxCategories() []*tax.CategoryDef {
 						},
 					},
 				},
+				{
+					Keys: []cbc.Key{tax.KeyExempt},
+					Rate: tax.RateZero,
+					Name: i18n.String{
+						i18n.EN: "Exempt",
+						i18n.ES: "Exento",
+					},
+					Values: []*tax.RateValueDef{
+						{
+							// VAT exempt
+							// Reference: AFIP - Law 23.349 Article 7
+							// Applies to: books, educational services, medical services,
+							// financial services, insurance, interest on loans, etc.
+							Percent: num.MakePercentage(0, 3),
+						},
+					},
+				},
 			},
 		},
 

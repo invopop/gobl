@@ -8,15 +8,13 @@ Argentina uses a complex tax system with multiple tax categories including VAT (
 
 Based on existing regimes, you must build the Argentina regime in `/regimes/ar/`. Take as reference other regimes for other countries, to know what to build, what to do research on and the format. The common files are:
 
-### Core Files
+### Regime files
 
 1. **`ar.go`** - Main regime definition file
 2. **`tax_categories.go`** - Tax category definitions and rates
 3. **`tax_identity.go`** - Tax ID validation and normalization
 4. **`tax_identity_test.go`** - Tests for tax ID validation
 5. **`README.md`** - Argentina-specific documentation (this file)
-
-### Extra files to go deeper
 
 6. **`scenarios.go`** - Tax scenarios and special regimes
 7. **`scenarios_test.go`** - Tests for scenarios
