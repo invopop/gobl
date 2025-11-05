@@ -19,7 +19,7 @@ import (
 
 var (
 	taxCodeRegexps = []*regexp.Regexp{
-		regexp.MustCompile(`^[10]?\d{9}$`),
+		regexp.MustCompile(`^[01]?\d{9}$`),
 	}
 )
 
