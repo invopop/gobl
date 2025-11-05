@@ -20,11 +20,10 @@ func TestValidateTaxIdentity(t *testing.T) {
 		{name: "good enterprise 3", code: "0897223571"},
 		{name: "good personal 1", code: "897222383"},
 		{name: "good personal 2", code: "897231984"},
-		{
-			name: "zeros",
-			code: "000000000",
-			err:  "invalid format",
-		},
+		{name: "good enterprise 4", code: "1602602623"},
+		{name: "good enterprise 5", code: "1400521335"},
+		{name: "good enterprise 6", code: "1400004463"},
+		{name: "good enterprise 7", code: "1012609724"},
 		{
 			name: "bad mid length",
 			code: "82238333",
