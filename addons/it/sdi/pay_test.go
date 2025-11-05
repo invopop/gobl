@@ -167,4 +167,17 @@ func TestPayInstructionsValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	require.NoError(t, err)
+
+	// Nil credit transfer in slice - should pass
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				nil,
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	require.NoError(t, err)
 }
