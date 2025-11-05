@@ -49,6 +49,11 @@ func TestValidateTaxIdentity(t *testing.T) {
 			code: "0413172885",
 			err:  "checksum mismatch",
 		},
+		{
+			name: "bad checksum",
+			code: "1013172885",
+			err:  "checksum mismatch",
+		},
 	}
 
 	for _, tt := range tests {
