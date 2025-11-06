@@ -6,7 +6,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// Correction types recognized in Argentina according to AFIP regulations.
+// Correction types recognized in Argentina according to ARCA regulations.
 //
 // In Argentina, credit notes (notas de crédito) and debit notes (notas de débito)
 // are used to adjust previously issued invoices. These must be linked to the original

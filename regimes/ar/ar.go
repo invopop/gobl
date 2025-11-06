@@ -2,7 +2,6 @@
 package ar
 
 import (
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
@@ -22,20 +21,13 @@ func New() *tax.RegimeDef {
 			i18n.ES: "Argentina",
 		},
 		Description: i18n.String{
-			i18n.EN: "The Argentine tax system is administered by AFIP (Administración Federal de Ingresos Públicos). Tax identification in Argentina is provided through CUIT (Clave Única de Identificación Tributaria) for businesses and individuals, CUIL (Clave Única de Identificación Laboral) for employees, or CDI (Clave de Identificación) for foreign residents.",
+			i18n.EN: "The Argentine tax system is administered by ARCA (Agencia de Recaudación y Control Aduanero). Tax identification in Argentina is provided through CUIT (Clave Única de Identificación Tributaria) for businesses and individuals.",
 		},
 		TimeZone:    "America/Argentina/Buenos_Aires",
 		Validator:   Validate,
 		Normalizer:  Normalize,
-		Identities:  identityDefinitions(),
 		Categories:  taxCategories(),
 		Corrections: correctionDefinitions(),
-		Tags: []*tax.TagSet{
-			invoiceTags(),
-		},
-		Scenarios: []*tax.ScenarioSet{
-			invoiceScenarios(),
-		},
 	}
 }
 
@@ -44,8 +36,6 @@ func Validate(doc interface{}) error {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		return validateTaxIdentity(obj)
-	case *bill.Invoice:
-		return invoiceValidator(obj)
 	}
 	return nil
 }
@@ -55,7 +45,5 @@ func Normalize(doc interface{}) {
 	switch obj := doc.(type) {
 	case *tax.Identity:
 		normalizeTaxIdentity(obj)
-	case *bill.Invoice:
-		normalizeInvoice(obj)
 	}
 }
