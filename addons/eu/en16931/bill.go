@@ -3,6 +3,7 @@ package en16931
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/catalogues/untdid"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -89,6 +90,14 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Required, // BR-16 - at least one line
 			validation.Skip,
 		),
+		validation.Field(&inv.Supplier,
+			validation.By(validateParty),
+			validation.Skip,
+		),
+		validation.Field(&inv.Customer,
+			validation.By(validateParty),
+			validation.Skip,
+		),
 		validation.Field(&inv.Payment,
 			validation.When(
 				isDue(inv),
@@ -108,6 +117,21 @@ func validateBillInvoiceTax(value any) error {
 	return validation.ValidateStruct(tx,
 		validation.Field(&tx.Ext,
 			tax.ExtensionsRequire(untdid.ExtKeyDocumentType),
+			validation.Skip,
+		),
+	)
+}
+
+func validateParty(value any) error {
+	p, ok := value.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+
+	//BR-8 & BR-10
+	return validation.ValidateStruct(p,
+		validation.Field(&p.Addresses,
+			validation.Required,
 			validation.Skip,
 		),
 	)

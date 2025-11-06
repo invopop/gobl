@@ -119,13 +119,7 @@ func TestOrgAttachmentValidation(t *testing.T) {
 func TestOrgPartyValidate(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("no inboxes", func(t *testing.T) {
-		p := &org.Party{
-			Addresses: []*org.Address{
-				{
-					Country: "FR",
-				},
-			},
-		}
+		p := &org.Party{}
 		assert.NoError(t, ad.Validator(p))
 	})
 
@@ -135,11 +129,6 @@ func TestOrgPartyValidate(t *testing.T) {
 				{
 					Scheme: "scheme1",
 					Code:   "code1",
-				},
-			},
-			Addresses: []*org.Address{
-				{
-					Country: "FR",
 				},
 			},
 		}
@@ -158,17 +147,8 @@ func TestOrgPartyValidate(t *testing.T) {
 					Code:   "code2",
 				},
 			},
-			Addresses: []*org.Address{
-				{
-					Country: "FR",
-				},
-			},
 		}
 		assert.ErrorContains(t, ad.Validator(p), "inboxes: cannot have more than one inbox (BT-34, BT-49).")
-	})
-	t.Run("missing addresses", func(t *testing.T) {
-		p := &org.Party{}
-		assert.ErrorContains(t, ad.Validator(p), "addresses: cannot be blank.")
 	})
 }
 
