@@ -112,8 +112,8 @@ func validateSupplier(value interface{}) error {
 		),
 		validation.Field(&supplier.Telephones,
 			validation.When(
-				isItalianParty(supplier) && len(supplier.Telephones) > 0,
-				validation.Each(validation.By(validateTelephone)),
+				isItalianParty(supplier),
+				validation.Each(validation.By(validateItalianTelephone)),
 			),
 			validation.Skip,
 		),
@@ -274,14 +274,13 @@ func validateDespatch(value any) error {
 	)
 }
 
-func validateTelephone(value any) error {
+func validateItalianTelephone(value any) error {
 	t, ok := value.(*org.Telephone)
 	if !ok {
 		return nil
 	}
 	return validation.ValidateStruct(t,
 		validation.Field(&t.Number,
-			validation.Required,
 			validation.Length(5, 12),
 			validation.Skip,
 		),
