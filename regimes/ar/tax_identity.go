@@ -28,7 +28,7 @@ import (
 //
 // Common prefixes:
 //   - 20: Male individual (CUIL)
-//   - 23: Male individual with check digit conflict resolution
+//   - 23: Individual with check digit conflict resolution
 //   - 27: Female individual (CUIL)
 //   - 30: Company/Legal entity (CUIT)
 //   - 33: Company with check digit conflict resolution

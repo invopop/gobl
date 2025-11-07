@@ -31,6 +31,7 @@ const (
 	RateIntermediate cbc.Key = "intermediate"
 	RateReduced      cbc.Key = "reduced"
 	RateSuperReduced cbc.Key = "super-reduced"
+	RateIncreased    cbc.Key = "increased"
 	RateSpecial      cbc.Key = "special"
 	RateOther        cbc.Key = "other"
 )
