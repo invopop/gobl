@@ -1,6 +1,6 @@
 # 🇦🇷 GOBL Argentina Tax Regime
 
-Argentina's tax regime implementation for GOBL, supporting the Argentine tax system administered by AFIP (Administración Federal de Ingresos Públicos).
+Argentina's tax regime implementation for GOBL, supporting the Argentine tax system administered by ARCA (Agencia de Recaudación y Control Aduanero).
 
 ## Overview
 
