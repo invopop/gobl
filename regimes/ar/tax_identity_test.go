@@ -80,6 +80,33 @@ func TestTaxIdentityValidation(t *testing.T) {
 			code: "27123456781", // Wrong check digit
 			err:  "verification digit mismatch",
 		},
+
+		// Invalid - invalid prefix
+		{
+			name: "invalid prefix - 10",
+			code: "10123456789",
+			err:  "invalid prefix",
+		},
+		{
+			name: "invalid prefix - 40",
+			code: "40123456789",
+			err:  "invalid prefix",
+		},
+		{
+			name: "invalid prefix - 99",
+			code: "99123456789",
+			err:  "invalid prefix",
+		},
+
+		// Valid - special check digit cases
+		{
+			name: "valid CUIT - check digit 0 (remainder 0, expected 11)",
+			code: "20000000060", // sum=22, remainder=0, check digit becomes 0
+		},
+		{
+			name: "valid CUIT - check digit 9 (remainder 1, expected 10)",
+			code: "20000000019", // sum=12, remainder=1, check digit becomes 9
+		},
 	}
 
 	for _, tt := range tests {
@@ -141,6 +168,13 @@ func TestTaxIdentityNormalization(t *testing.T) {
 
 func TestEmptyTaxIdentity(t *testing.T) {
 	tID := &tax.Identity{Country: "AR"}
+	err := ar.Validate(tID)
+	assert.NoError(t, err)
+}
+
+func TestTaxIdentityWithEmptyCode(t *testing.T) {
+	// Test explicitly empty code string
+	tID := &tax.Identity{Country: "AR", Code: ""}
 	err := ar.Validate(tID)
 	assert.NoError(t, err)
 }

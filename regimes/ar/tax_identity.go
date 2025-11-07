@@ -3,7 +3,6 @@ package ar
 import (
 	"errors"
 	"slices"
-	"strconv"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/tax"
@@ -86,10 +85,7 @@ func validateCUITCUILChecksum(code string) error {
 	// Calculate the sum
 	sum := 0
 	for i := 0; i < 10; i++ {
-		digit, err := strconv.Atoi(string(code[i]))
-		if err != nil {
-			return errors.New("must contain only digits")
-		}
+		digit := int(code[i] - '0')
 		sum += digit * multipliers[i]
 	}
 
@@ -98,17 +94,15 @@ func validateCUITCUILChecksum(code string) error {
 	expectedCheckDigit := 11 - remainder
 
 	// Special cases for check digit
-	if expectedCheckDigit == 11 {
+	switch expectedCheckDigit {
+	case 11:
 		expectedCheckDigit = 0
-	} else if expectedCheckDigit == 10 {
+	case 10:
 		expectedCheckDigit = 9
 	}
 
 	// Get actual check digit (last digit)
-	actualCheckDigit, err := strconv.Atoi(string(code[10]))
-	if err != nil {
-		return errors.New("must contain only digits")
-	}
+	actualCheckDigit := int(code[10] - '0')
 
 	// Verify check digit matches
 	if actualCheckDigit != expectedCheckDigit {
