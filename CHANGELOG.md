@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `ar`: Argentine regime
+
 ## [v0.302.1] - 2025-10-31
 
 ### Fixed

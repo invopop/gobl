@@ -5,316 +5,11 @@
     "es": "Argentina"
   },
   "description": {
-    "en": "The Argentine tax system is administered by AFIP (Administración Federal de Ingresos Públicos). Tax identification in Argentina is provided through CUIT (Clave Única de Identificación Tributaria) for businesses and individuals, CUIL (Clave Única de Identificación Laboral) for employees, or CDI (Clave de Identificación) for foreign residents."
+    "en": "The Argentine tax system is administered by ARCA (Agencia de Recaudación y Control Aduanero). Tax identification in Argentina is provided through CUIT (Clave Única de Identificación Tributaria) for businesses and individuals."
   },
   "time_zone": "America/Argentina/Buenos_Aires",
   "country": "AR",
   "currency": "ARS",
-  "tags": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "key": "invoice-type-a",
-          "name": {
-            "en": "Invoice Type A",
-            "es": "Factura Tipo A"
-          },
-          "desc": {
-            "en": "Invoice issued by Responsable Inscripto to another Responsable Inscripto. VAT is detailed separately, indicating the net amount and corresponding tax.",
-            "es": "Factura emitida por Responsable Inscripto a otro Responsable Inscripto. El IVA se discrimina por separado, indicando el monto neto y el impuesto correspondiente."
-          }
-        },
-        {
-          "key": "invoice-type-b",
-          "name": {
-            "en": "Invoice Type B",
-            "es": "Factura Tipo B"
-          },
-          "desc": {
-            "en": "Invoice issued by Responsable Inscripto to final consumers, monotributistas, or exempt entities. VAT is included in the total but not separately detailed.",
-            "es": "Factura emitida por Responsable Inscripto a consumidores finales, monotributistas o exentos. El IVA está incluido en el total pero no discriminado."
-          }
-        },
-        {
-          "key": "invoice-type-c",
-          "name": {
-            "en": "Invoice Type C",
-            "es": "Factura Tipo C"
-          },
-          "desc": {
-            "en": "Invoice issued by monotributista or VAT-exempt entities. No VAT is charged or detailed.",
-            "es": "Factura emitida por monotributista o sujeto exento de IVA. No se cobra ni discrimina IVA."
-          }
-        },
-        {
-          "key": "invoice-type-e",
-          "name": {
-            "en": "Invoice Type E",
-            "es": "Factura Tipo E"
-          },
-          "desc": {
-            "en": "Export invoice. Issued for export operations of goods or services. VAT rate is typically 0%.",
-            "es": "Factura de exportación. Se emite para operaciones de exportación de bienes o servicios. La alícuota de IVA es típicamente 0%."
-          }
-        },
-        {
-          "key": "invoice-type-m",
-          "name": {
-            "en": "Invoice Type M",
-            "es": "Factura Tipo M"
-          },
-          "desc": {
-            "en": "Invoice issued by monotributista. Simplified invoice format for small taxpayers under the Monotributo regime.",
-            "es": "Factura emitida por monotributista. Formato de factura simplificado para pequeños contribuyentes bajo el régimen de Monotributo."
-          }
-        },
-        {
-          "key": "responsable-inscripto",
-          "name": {
-            "en": "Registered Taxpayer",
-            "es": "Responsable Inscripto"
-          },
-          "desc": {
-            "en": "Taxpayer registered for VAT and Income Tax. Must charge VAT on sales and can claim VAT credits on purchases.",
-            "es": "Contribuyente inscripto en IVA e Impuesto a las Ganancias. Debe cobrar IVA en las ventas y puede computar crédito fiscal en las compras."
-          }
-        },
-        {
-          "key": "monotributo",
-          "name": {
-            "en": "Monotributo",
-            "es": "Monotributo"
-          },
-          "desc": {
-            "en": "Simplified tax regime for small businesses. Unifies VAT, Income Tax, and social security contributions into a single monthly payment.",
-            "es": "Régimen simplificado para pequeños contribuyentes. Unifica IVA, Impuesto a las Ganancias y aportes previsionales en un único pago mensual."
-          }
-        },
-        {
-          "key": "exento",
-          "name": {
-            "en": "VAT Exempt",
-            "es": "Exento de IVA"
-          },
-          "desc": {
-            "en": "Entity exempt from VAT. Does not charge VAT on sales and cannot claim VAT credits on purchases.",
-            "es": "Sujeto exento de IVA. No cobra IVA en las ventas y no puede computar crédito fiscal en las compras."
-          }
-        },
-        {
-          "key": "consumidor-final",
-          "name": {
-            "en": "Final Consumer",
-            "es": "Consumidor Final"
-          },
-          "desc": {
-            "en": "End consumer who does not require tax identification. Purchases include VAT but cannot claim tax credits.",
-            "es": "Consumidor final que no requiere identificación tributaria. Las compras incluyen IVA pero no puede computar crédito fiscal."
-          }
-        },
-        {
-          "key": "no-responsable",
-          "name": {
-            "en": "Not Responsible",
-            "es": "No Responsable"
-          },
-          "desc": {
-            "en": "Entity not responsible for VAT collection. Typically applies to certain public entities or special cases.",
-            "es": "Sujeto no responsable de la percepción de IVA. Típicamente aplica a ciertos entes públicos o casos especiales."
-          }
-        },
-        {
-          "key": "export-services",
-          "name": {
-            "en": "Export of Services",
-            "es": "Exportación de Servicios"
-          },
-          "desc": {
-            "en": "Services provided to foreign entities or individuals. Typically subject to 0% VAT rate.",
-            "es": "Servicios prestados a entidades o personas del exterior. Típicamente sujetos a alícuota de IVA del 0%."
-          }
-        },
-        {
-          "key": "export-goods",
-          "name": {
-            "en": "Export of Goods",
-            "es": "Exportación de Bienes"
-          },
-          "desc": {
-            "en": "Goods exported outside Argentina. Subject to 0% VAT rate.",
-            "es": "Bienes exportados fuera de Argentina. Sujetos a alícuota de IVA del 0%."
-          }
-        },
-        {
-          "key": "simplified",
-          "name": {
-            "en": "Simplified Invoice",
-            "es": "Factura Simplificada"
-          },
-          "desc": {
-            "en": "Simplified invoice format. Used for small transactions or when full customer details are not available.",
-            "es": "Formato de factura simplificada. Se utiliza para transacciones pequeñas o cuando no se dispone de todos los datos del cliente."
-          }
-        },
-        {
-          "key": "reverse-charge",
-          "name": {
-            "en": "Reverse Charge",
-            "es": "Inversión del Sujeto Pasivo"
-          },
-          "desc": {
-            "en": "The customer is responsible for VAT payment instead of the supplier. Applies in specific circumstances defined by AFIP.",
-            "es": "El cliente es responsable del pago del IVA en lugar del proveedor. Se aplica en circunstancias específicas definidas por AFIP."
-          }
-        }
-      ]
-    }
-  ],
-  "identities": [
-    {
-      "key": "passport",
-      "name": {
-        "en": "Passport",
-        "es": "Pasaporte"
-      }
-    },
-    {
-      "key": "foreign",
-      "name": {
-        "en": "Foreign National ID",
-        "es": "Documento de Identidad Extranjero"
-      }
-    },
-    {
-      "key": "resident",
-      "name": {
-        "en": "Residential Permit",
-        "es": "Certificado de Residencia"
-      }
-    },
-    {
-      "key": "dni",
-      "name": {
-        "en": "National Identity Document",
-        "es": "Documento Nacional de Identidad (DNI)"
-      }
-    },
-    {
-      "key": "other",
-      "name": {
-        "en": "Other identification document",
-        "es": "Otro documento de identificación"
-      }
-    }
-  ],
-  "scenarios": [
-    {
-      "schema": "bill/invoice",
-      "list": [
-        {
-          "tags": [
-            "invoice-type-a"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "invoice-type-a",
-            "text": "Factura Tipo A - Emitida por Responsable Inscripto. IVA discriminado. / Invoice Type A - Issued by Registered Taxpayer. VAT itemized."
-          }
-        },
-        {
-          "tags": [
-            "invoice-type-b"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "invoice-type-b",
-            "text": "Factura Tipo B - Emitida por Responsable Inscripto a Consumidor Final o Monotributista. / Invoice Type B - Issued by Registered Taxpayer to Final Consumer or Monotributo."
-          }
-        },
-        {
-          "tags": [
-            "invoice-type-c"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "invoice-type-c",
-            "text": "Factura Tipo C - Emitida por Monotributista o Sujeto Exento. Sin discriminación de IVA. / Invoice Type C - Issued by Monotributo or Exempt Entity. VAT not itemized."
-          }
-        },
-        {
-          "tags": [
-            "invoice-type-e"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "invoice-type-e",
-            "text": "Factura Tipo E - Operación de Exportación. Alícuota de IVA 0%. / Invoice Type E - Export Operation. VAT rate 0%."
-          }
-        },
-        {
-          "tags": [
-            "export-services"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "export-services",
-            "text": "Exportación de Servicios - Operación exenta de IVA conforme al Artículo 43 de la Ley 23.349. / Export of Services - VAT exempt operation pursuant to Article 43 of Law 23.349."
-          }
-        },
-        {
-          "tags": [
-            "export-goods"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "export-goods",
-            "text": "Exportación de Bienes - Operación exenta de IVA conforme al Artículo 43 de la Ley 23.349. / Export of Goods - VAT exempt operation pursuant to Article 43 of Law 23.349."
-          }
-        },
-        {
-          "tags": [
-            "monotributo"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "monotributo",
-            "text": "Monotributo - Régimen Simplificado para Pequeños Contribuyentes (RS). Comprobante no válido como crédito fiscal. / Monotributo - Simplified Regime for Small Taxpayers. Document not valid as tax credit."
-          }
-        },
-        {
-          "tags": [
-            "exento"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "exento",
-            "text": "IVA Exento - Operación exenta del Impuesto al Valor Agregado. / VAT Exempt - Operation exempt from Value Added Tax."
-          }
-        },
-        {
-          "tags": [
-            "reverse-charge"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "reverse-charge",
-            "text": "Inversión del Sujeto Pasivo - El cliente es responsable del pago del IVA. / Reverse Charge - Customer is responsible for VAT payment."
-          }
-        },
-        {
-          "tags": [
-            "simplified"
-          ],
-          "note": {
-            "key": "legal",
-            "src": "simplified",
-            "text": "Factura Simplificada - Comprobante simplificado conforme a normativa AFIP. / Simplified Invoice - Simplified document according to AFIP regulations."
-          }
-        }
-      ]
-    }
-  ],
   "corrections": [
     {
       "schema": "bill/invoice",
@@ -389,6 +84,26 @@
       ],
       "rates": [
         {
+          "rate": "increased",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Increased Rate",
+            "es": "Alícuota Incrementada"
+          },
+          "desc": {
+            "en": "Applies to the sale of gas, electricity and water regulated by meter and other services stated in the points 4, 5 and 6 of the inciso e) of the article 3.",
+            "es": "Se aplica para las ventas de gas, energía eléctrica y aguas reguladas por medidor y demás prestaciones comprendidas en los puntos 4, 5 y 6, del inciso e) del artículo 3°."
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "27.0%"
+            }
+          ]
+        },
+        {
           "rate": "general",
           "keys": [
             "standard"
@@ -413,104 +128,26 @@
             "en": "Reduced Rate",
             "es": "Alícuota Reducida"
           },
+          "desc": {
+            "en": "Applies to the sale of construction work, medicine, public transportation, livestock and agricultural products for food, etc.",
+            "es": "Se aplica para las ventas de trabajo de construcción, medicina, transporte público, ganado y productos agrícolas para alimentos, etc."
+          },
           "values": [
             {
               "since": "1995-04-01",
               "percent": "10.5%"
             }
           ]
-        },
+        }
+      ],
+      "sources": [
         {
-          "rate": "super-reduced",
-          "keys": [
-            "standard"
-          ],
-          "name": {
-            "en": "Super-Reduced Rate",
-            "es": "Alícuota Diferencial"
+          "title": {
+            "en": "VAT law - Article 28"
           },
-          "values": [
-            {
-              "since": "2001-05-01",
-              "percent": "2.5%"
-            }
-          ]
-        },
-        {
-          "rate": "zero",
-          "keys": [
-            "zero"
-          ],
-          "name": {
-            "en": "Zero Rate",
-            "es": "Tasa Cero"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
-        },
-        {
-          "rate": "zero",
-          "keys": [
-            "exempt"
-          ],
-          "name": {
-            "en": "Exempt",
-            "es": "Exento"
-          },
-          "values": [
-            {
-              "percent": "0.0%"
-            }
-          ]
+          "url": "https://biblioteca.arca.gob.ar/cuadroslegislativos/getAdjunto.aspx?i=7833"
         }
       ]
-    },
-    {
-      "code": "RIVA",
-      "name": {
-        "en": "Retained VAT",
-        "es": "IVA Retenido"
-      },
-      "title": {
-        "en": "Retained Value Added Tax",
-        "es": "Impuesto al Valor Agregado Retenido"
-      },
-      "desc": {
-        "en": "VAT retention scheme where the purchasing party withholds a percentage of VAT\nfrom the payment and deposits it directly with AFIP. The retention percentage\nvaries based on the supplier's tax classification and registration status."
-      },
-      "retained": true
-    },
-    {
-      "code": "RG",
-      "name": {
-        "en": "Income Tax Withholding",
-        "es": "Retención de Ganancias"
-      },
-      "title": {
-        "en": "Withholding of Income Tax",
-        "es": "Retención del Impuesto a las Ganancias"
-      },
-      "desc": {
-        "en": "Income tax withholding applied to payments for services and other taxable income.\nThe withholding percentage varies based on the type of service and the recipient's\ntax classification. Common rates range from 0.5% to 35%."
-      },
-      "retained": true
-    },
-    {
-      "code": "IB",
-      "name": {
-        "en": "Gross Income Tax",
-        "es": "Ingresos Brutos"
-      },
-      "title": {
-        "en": "Gross Income Tax",
-        "es": "Impuesto sobre los Ingresos Brutos"
-      },
-      "desc": {
-        "en": "Provincial tax levied on gross income from economic activities. Each Argentine\nprovince sets its own rates and regulations. Common rates range from 1% to 5%\ndepending on the province and type of activity."
-      }
     }
   ]
 }
