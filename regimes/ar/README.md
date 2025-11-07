@@ -57,7 +57,6 @@ VAT rates in Argentina:
 - Rates range from 0.5% to 35% depending on service type
 - Reference: AFIP RG 830/2000, RG 4003/2017
 - Sources:
-  - [AFIP Withholding Guide](https://www.afip.gob.ar/genericos/guiavirtual/directorio_subcategoria_nivel3.aspx?id_nivel1=563id_nivel2%3D607&id_nivel3=686)
   - [Withholding Calculator](https://servicioscf.afip.gob.ar/calc-rg830/)
 
 **Ingresos Brutos (Gross Income Tax)**
