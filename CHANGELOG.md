@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
+- `eu-en16931-v2017`: Remove address constraint for all parties, keep for Supplier and Customer.
 - `be`: Update regex to account for new VAT numbers starting with 1.
 
 ## [v0.302.1] - 2025-10-31
