@@ -22,7 +22,7 @@ func New() *tax.RegimeDef {
 			i18n.ES: "Argentina",
 		},
 		Description: i18n.String{
-			i18n.EN: "The Argentine tax system is administered by ARCA (Agencia de Recaudación y Control Aduanero). Tax identification in Argentina is provided through CUIT (Clave Única de Identificación Tributaria) for businesses and individuals.",
+			i18n.EN: "Argentina's tax system is administered by ARCA (Agencia de Recaudación y Control Aduanero), which oversees the collection of IVA (Impuesto al Valor Agregado), the country's value-added tax. Taxpayers are identified using CUIT (Clave Única de Identificación Tributaria) numbers, which serve as unique tax identifiers for both individuals and businesses.",
 		},
 		TimeZone:    "America/Argentina/Buenos_Aires",
 		Validator:   Validate,
