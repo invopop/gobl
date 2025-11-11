@@ -1,7 +1,7 @@
 # GOBL
 
 <img src="https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg#gh-light-mode-only" width="181" height="219" alt="GOBL Logo">
-<img src="https://github.com/invopop/gobl/blob/main/gobl_logo_black_rgb.svg#gh-dark-mode-only" width="181" height="219" alt="GOBL Logo">
+<img src="https://github.com/invopop/gobl/blob/main/gobl_logo_white_rgb.svg#gh-dark-mode-only" width="181" height="219" alt="GOBL Logo">
 
 Go Business Language. Core library, schemas, and CLI.
 
