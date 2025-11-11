@@ -76,6 +76,23 @@ func TestTermsNormalize(t *testing.T) {
 			pt.Normalize()
 		})
 	})
+	t.Run("detail to notes", func(t *testing.T) {
+		pt := &pay.Terms{
+			Detail: "These are the terms details.",
+		}
+		pt.Normalize()
+		assert.Equal(t, "These are the terms details.", pt.Notes)
+		assert.Empty(t, pt.Detail)
+	})
+	t.Run("keep detail if note already present", func(t *testing.T) {
+		pt := &pay.Terms{
+			Detail: "These are the terms details.",
+			Notes:  "Existing notes.",
+		}
+		pt.Normalize()
+		assert.Equal(t, "Existing notes.", pt.Notes)
+		assert.Equal(t, "These are the terms details.", pt.Detail)
+	})
 }
 
 func TestTermsCalculateDues(t *testing.T) {

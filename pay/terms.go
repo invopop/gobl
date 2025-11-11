@@ -17,7 +17,7 @@ import (
 type Terms struct {
 	// Type of terms to be applied.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Text detail of the chosen payment terms.
+	// Text detail of the chosen payment terms (Deprecated).
 	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Set of dates for agreed payments.
 	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates"`
@@ -92,6 +92,12 @@ func (t *Terms) Normalize() {
 	if t == nil {
 		return
 	}
+
+	if t.Detail != "" && t.Notes == "" {
+		t.Notes = t.Detail
+		t.Detail = ""
+	}
+
 	t.Detail = cbc.NormalizeString(t.Detail)
 	t.Notes = cbc.NormalizeString(t.Notes)
 	t.Ext = tax.CleanExtensions(t.Ext)
