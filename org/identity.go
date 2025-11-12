@@ -29,6 +29,7 @@ const (
 	IdentityKeyResident  cbc.Key = "resident"  // Resident ID card number
 	IdentityKeyISBN      cbc.Key = "isbn"      // International Standard Book Number
 	IdentityKeyHSN       cbc.Key = "hsn"       // Harmonized System of Nomenclature
+	IdentityKeyGLN       cbc.Key = "gln"       // GS1 Global Location Number
 	IdentityKeyGTIN      cbc.Key = "gtin"      // GS1 Global Trade Item Number
 	IdentityKeyEAN       cbc.Key = "ean"       // European Article Number
 	IdentityKeyUPC       cbc.Key = "upc"       // UPC (Universal Product Code)
