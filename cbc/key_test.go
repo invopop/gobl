@@ -41,7 +41,20 @@ func TestKey(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestStringsToKeys(t *testing.T) {
+	t.Run("basic", func(t *testing.T) {
+		list := []string{
+			"key1",
+			"key2",
+			"key3"
+		}
+		out := cbc.StringsToKeys(list)
+		assert.Equal(t, cbc.Key("key1"), out[0])
+		assert.Equal(t, cbc.Key("key2"), out[1])
+		assert.Equal(t, cbc.Key("key3"), out[2])
+	})
 }
 
 func TestKeyHas(t *testing.T) {
