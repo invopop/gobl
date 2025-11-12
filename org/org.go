@@ -24,3 +24,7 @@ func init() {
 		Attachment{},
 	)
 }
+
+const (
+	ShortSchemaParty = "org/party"
+)
