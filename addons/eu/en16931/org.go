@@ -119,11 +119,6 @@ func validateOrgParty(p *org.Party) error {
 			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
 			validation.Skip,
 		),
-		//BR-8 & BR-10
-		validation.Field(&p.Addresses,
-			validation.Required,
-			validation.Skip,
-		),
 	)
 }
 
