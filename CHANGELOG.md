@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Removed
 
-- `pay`: Deprecated terms.Detail in favour of terms.Notes
+- `pay`: Removed terms.Detail in favour of terms.Notes
 
 ### Fixed
 
