@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `org`: `Identity` now has `gln` as a possible Key.
 - `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
+- `ar`: Argentine regime
 
 ## [v0.302.1] - 2025-10-31
 
