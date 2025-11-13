@@ -36,6 +36,27 @@ func newAddon() *tax.AddonDef {
 
 				We strongly recommend checking the output and specifically the extension codes
 				used to ensure that any assumptions do not need be adjusted.
+
+				## Tax Code Extension Mappings
+
+				The following tables show how GOBL tax keys/categories are mapped to UNTDID 5305 tax category codes:
+
+				### VAT
+
+				| GOBL Tax Key | UNTDID 5305 Code | Description |
+				|--------------|------------------|-------------|
+				| standard | S | Standard rate |
+				| zero | Z | Zero rated goods |
+				| exempt | E | Exempt from tax |
+				| reverse-charge | AE | VAT Reverse Charge |
+				| intra-community | K | Intra-community supply |
+				| export | G | Export outside the EU |
+				| outside-scope | O | Not subject to VAT |
+
+				### Other
+
+				For Spanish special territories, **IGIC** (Canary Islands) maps to code **L** and **IPSI** (Ceuta and Melilla) maps to code **M**.
+				Any other tax category defaults to UNTDID 5305 code **O** (Outside Scope).
 			`),
 		},
 		Scenarios:  scenarios,
