@@ -9,9 +9,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-const (
-	RateIncreased = "increased"
-)
+// RateIncreased is the key for the increased rate in Argentina.
+const RateIncreased = "increased"
 
 func taxCategories() []*tax.CategoryDef {
 	return []*tax.CategoryDef{
