@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `ar`: Argentine regime
 
+### Fixed
+
+- `be`: Update regex to account for new VAT numbers starting with 1.
+
+
 ## [v0.302.1] - 2025-10-31
 
 ### Fixed

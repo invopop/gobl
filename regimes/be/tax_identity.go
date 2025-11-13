@@ -15,11 +15,11 @@ import (
 
 // Belgium tax codes are split between personal and enterprise tax IDs:
 // - Personal IDs are 9 characters long.
-// - Enterprise IDs are 10 characters long and must always start with a `0`.
+// - Enterprise IDs are 10 characters long and must always start with a `0` or a `1`.
 
 var (
 	taxCodeRegexps = []*regexp.Regexp{
-		regexp.MustCompile(`^0?\d{9}$`),
+		regexp.MustCompile(`^[01]?\d{9}$`),
 	}
 )
 
@@ -58,14 +58,8 @@ func commercialCheck(val string) error {
 		val = "0" + val
 	}
 
-	// check second digit
-	num := int(val[1] - '0')
-	if num == 0 {
-		return errors.New("invalid format")
-	}
-
 	str := val[:8]
-	num, _ = strconv.Atoi(str) //nolint:errcheck
+	num, _ := strconv.Atoi(str) //nolint:errcheck
 
 	chk := 97 - math.Mod(float64(num), 97)
 
