@@ -1,6 +1,7 @@
 package pay_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/invopop/gobl/cal"
@@ -78,20 +79,55 @@ func TestTermsNormalize(t *testing.T) {
 	})
 	t.Run("detail to notes", func(t *testing.T) {
 		pt := &pay.Terms{
-			Detail: "These are the terms details.",
+			Notes: "These are the terms details.",
 		}
 		pt.Normalize()
 		assert.Equal(t, "These are the terms details.", pt.Notes)
-		assert.Empty(t, pt.Detail)
 	})
-	t.Run("keep detail if note already present", func(t *testing.T) {
+	t.Run("keep notes", func(t *testing.T) {
 		pt := &pay.Terms{
-			Detail: "These are the terms details.",
-			Notes:  "Existing notes.",
+			Notes: "Existing notes.",
 		}
 		pt.Normalize()
 		assert.Equal(t, "Existing notes.", pt.Notes)
-		assert.Equal(t, "These are the terms details.", pt.Detail)
+	})
+}
+
+func TestTermsUnmarshalJSON(t *testing.T) {
+	t.Run("unmarshal detail to notes", func(t *testing.T) {
+		jsonData := []byte(`{"key":"instant","detail":"These are the payment details"}`)
+		var terms pay.Terms
+		err := json.Unmarshal(jsonData, &terms)
+		require.NoError(t, err)
+		assert.Equal(t, "These are the payment details", terms.Notes)
+		assert.Equal(t, pay.TermKeyInstant, terms.Key)
+	})
+
+	t.Run("unmarshal with notes takes precedence", func(t *testing.T) {
+		jsonData := []byte(`{"key":"instant","detail":"Detail text","notes":"Notes text"}`)
+		var terms pay.Terms
+		err := json.Unmarshal(jsonData, &terms)
+		require.NoError(t, err)
+		assert.Equal(t, "Notes text. Detail text", terms.Notes)
+		assert.Equal(t, pay.TermKeyInstant, terms.Key)
+	})
+
+	t.Run("unmarshal without detail or notes", func(t *testing.T) {
+		jsonData := []byte(`{"key":"instant"}`)
+		var terms pay.Terms
+		err := json.Unmarshal(jsonData, &terms)
+		require.NoError(t, err)
+		assert.Empty(t, terms.Notes)
+		assert.Equal(t, pay.TermKeyInstant, terms.Key)
+	})
+
+	t.Run("unmarshal with only notes", func(t *testing.T) {
+		jsonData := []byte(`{"key":"instant","notes":"Just notes"}`)
+		var terms pay.Terms
+		err := json.Unmarshal(jsonData, &terms)
+		require.NoError(t, err)
+		assert.Equal(t, "Just notes", terms.Notes)
+		assert.Equal(t, pay.TermKeyInstant, terms.Key)
 	})
 }
 
