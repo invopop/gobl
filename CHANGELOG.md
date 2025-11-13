@@ -6,10 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-### Added
-
-- `org`: Added ShortSchemaParty constant
-
 ### Fixed
 
 - `be`: Update regex to account for new VAT numbers starting with 1.
