@@ -9,6 +9,10 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+const (
+	RateIncreased = "increased"
+)
+
 func taxCategories() []*tax.CategoryDef {
 	return []*tax.CategoryDef{
 		//
@@ -45,7 +49,7 @@ func taxCategories() []*tax.CategoryDef {
 			Rates: []*tax.RateDef{
 				{
 					Keys: []cbc.Key{tax.KeyStandard},
-					Rate: tax.RateIncreased,
+					Rate: RateIncreased,
 					Name: i18n.String{
 						i18n.EN: "Increased Rate",
 						i18n.ES: "Alícuota Incrementada",
