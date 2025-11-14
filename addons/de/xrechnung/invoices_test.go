@@ -118,7 +118,7 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 				},
 			},
 			Terms: &pay.Terms{
-				Detail: "Please pay within 10 days",
+				Notes: "Please pay within 10 days",
 			},
 		},
 		Lines: []*bill.Line{

@@ -45,14 +45,20 @@ func validatePayInstructions(instr *pay.Instructions) error {
 }
 
 func validatePayTerms(terms *pay.Terms) error {
-	if terms == nil {
-		return nil
-	}
-
-	// BR-CO-25 Either DueDates or Detail must be provided
-	if len(terms.DueDates) == 0 && terms.Detail == "" {
-		return validation.NewError("BR-CO-25", "either due_dates or detail must be provided.")
-	}
-
-	return nil
+	return validation.ValidateStruct(terms,
+		validation.Field(&terms.Notes,
+			validation.When(
+				len(terms.DueDates) == 0,
+				validation.Required.Error("either due_dates or notes must be provided (BR-CO-25)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&terms.DueDates,
+			validation.When(
+				terms.Notes == "",
+				validation.Required.Error("either due_dates or notes must be provided (BR-CO-25)"),
+			),
+			validation.Skip,
+		),
+	)
 }

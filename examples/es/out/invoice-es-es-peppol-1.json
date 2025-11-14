@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "bc85ca039a1cc05b9d5b761ccf4f149be1f7516211f680396c3e3320f6ca6f1b"
+			"val": "95539855cf9e6feb8546065691f5d85273b13f4099c85d01c07625d43ff73abd"
 		}
 	},
 	"doc": {
@@ -108,7 +108,7 @@
 		],
 		"payment": {
 			"terms": {
-				"detail": "Please pay within 10 days"
+				"notes": "Please pay within 10 days"
 			}
 		},
 		"totals": {

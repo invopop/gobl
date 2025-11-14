@@ -69,7 +69,7 @@ func validInvoice() *bill.Invoice {
 		},
 		Payment: &bill.PaymentDetails{
 			Terms: &pay.Terms{
-				Detail: "Please pay in 10 days",
+				Notes: "Please pay in 10 days",
 			},
 		},
 	}

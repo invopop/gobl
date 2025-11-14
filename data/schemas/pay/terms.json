@@ -100,7 +100,7 @@
         "detail": {
           "type": "string",
           "title": "Detail",
-          "description": "Text detail of the chosen payment terms."
+          "description": "Text detail of the chosen payment terms (Deprecated)."
         },
         "due_dates": {
           "items": {
