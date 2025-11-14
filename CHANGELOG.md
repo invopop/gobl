@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `it-sdi-v1`: Add validation for IBANs.
+
 ### Fixed
 
 - `be`: Update regex to account for new VAT numbers starting with 1.

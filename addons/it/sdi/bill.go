@@ -187,7 +187,7 @@ func validateItem(val any) error {
 	)
 }
 
-func validateCharge(val any) error {
+func validateBillCharge(val any) error {
 	charge, _ := val.(*bill.Charge)
 	if charge == nil || !charge.Key.Has(KeyFundContribution) {
 		return nil

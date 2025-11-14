@@ -90,4 +90,94 @@ func TestPayInstructionsValidation(t *testing.T) {
 	require.NoError(t, inv.Calculate())
 	err = inv.Validate()
 	assert.ErrorContains(t, err, "payment: (instructions: (ext: (it-sdi-payment-means: required.).).)")
+
+	// Valid IBAN - 27 characters (minimum)
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				{
+					IBAN: "IT60X0542811101000000123456",
+				},
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	require.NoError(t, err)
+
+	// Valid IBAN - 34 characters (maximum)
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				{
+					IBAN: "IT60X0542811101000000123456ABCDEFG",
+				},
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	require.NoError(t, err)
+
+	// Invalid IBAN - too short (26 characters)
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				{
+					IBAN: "IT60X054281110100000012345",
+				},
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.ErrorContains(t, err, "iban: the length must be between 27 and 34")
+
+	// Invalid IBAN - too long (35 characters)
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				{
+					IBAN: "IT60X0542811101000000123456ABCDEFGH",
+				},
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	assert.ErrorContains(t, err, "iban: the length must be between 27 and 34")
+
+	// Empty IBAN with other fields set - should pass
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				{
+					IBAN: "",
+					BIC:  "ABCDITMM",
+					Name: "Test Bank",
+				},
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	require.NoError(t, err)
+
+	// Nil credit transfer in slice - should pass
+	inv.Payment = &bill.PaymentDetails{
+		Instructions: &pay.Instructions{
+			Key: pay.MeansKeyCreditTransfer,
+			CreditTransfer: []*pay.CreditTransfer{
+				nil,
+			},
+		},
+	}
+	require.NoError(t, inv.Calculate())
+	err = inv.Validate()
+	require.NoError(t, err)
 }
