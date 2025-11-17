@@ -10,12 +10,18 @@ import (
 // Local tax category definitions which are not considered standard.
 const (
 	// https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef
-	TaxCategoryIRPEF    cbc.Code = "IRPEF"
-	TaxCategoryIRES     cbc.Code = "IRES"
-	TaxCategoryINPS     cbc.Code = "INPS"
+	// RT01
+	TaxCategoryIRPEF cbc.Code = "IRPEF"
+	// RT02
+	TaxCategoryIRES cbc.Code = "IRES"
+	// RT03
+	TaxCategoryINPS cbc.Code = "INPS"
+	// RT04
 	TaxCategoryENASARCO cbc.Code = "ENASARCO"
-	TaxCategoryENPAM    cbc.Code = "ENPAM"
-	TaxCategoryCP       cbc.Code = "CP" // altro contributo previdenziale (other social security contribution)
+	// RT05
+	TaxCategoryENPAM cbc.Code = "ENPAM"
+	// RT06
+	TaxCategoryCP cbc.Code = "CP" // altro contributo previdenziale (other social security contribution)
 )
 
 // Keys used for meta data from external sources.
