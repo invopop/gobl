@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `it-sdi-v1`: Add validation for IBANs.
+
 ### Removed
 
 - `pay`: Removed terms.Detail in favour of terms.Notes
