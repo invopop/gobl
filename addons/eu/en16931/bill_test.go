@@ -42,6 +42,33 @@ func TestInvoiceValidation(t *testing.T) {
 		err := ad.Validator(inv)
 		assert.ErrorContains(t, err, "tax: (ext: (untdid-document-type: required.).)")
 	})
+	t.Run("supplier and customer with addresses", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
+	t.Run("supplier with no address", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Addresses = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "addresses: cannot be blank")
+	})
+	t.Run("customer with no address", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer.Addresses = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "addresses: cannot be blank")
+	})
+	t.Run("nil customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Customer = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.NoError(t, err)
+	})
 }
 
 func testInvoiceStandard(t *testing.T) *bill.Invoice {

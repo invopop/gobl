@@ -1,0 +1,134 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "ff24f2a1fb6ec29eedf70a5d2e43b8fd71cb3094609dbe5f23d7068aa2be1cd0"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"code": "0001-00000123",
+		"issue_date": "2025-01-15",
+		"currency": "ARS",
+		"supplier": {
+			"name": "Proveedor Ejemplo S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Corrientes 1234",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1043",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ventas@proveedorejemplo.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Comercial S.R.L.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30987654321"
+			},
+			"addresses": [
+				{
+					"street": "Av. Santa Fe 2500",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1123",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@clientecomercial.com.ar"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Servicios de consultoría",
+					"price": "50000.00"
+				},
+				"sum": "500000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "500000.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Desarrollo de software",
+					"price": "100000.00"
+				},
+				"sum": "500000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%"
+					}
+				],
+				"total": "500000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-02-15",
+						"amount": "1210000.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1000000.00",
+			"total": "1000000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1000000.00",
+								"percent": "21.0%",
+								"amount": "210000.00"
+							}
+						],
+						"amount": "210000.00"
+					}
+				],
+				"sum": "210000.00"
+			},
+			"tax": "210000.00",
+			"total_with_tax": "1210000.00",
+			"payable": "1210000.00"
+		}
+	}
+}

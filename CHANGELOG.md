@@ -6,8 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+
+- `pay`: Removed terms.Detail in favour of terms.Notes
+
+### Fixed
+
+- `eu-en16931-v2017`: Remove address constraint for all parties, keep for Supplier and Customer.
+- `be`: Update regex to account for new VAT numbers starting with 1.
+
 ### Added
+
+- `org`: `Identity` now has `gln` as a possible Key.
+- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
+- `ar`: Argentine regime
 - `it-sdi-v1`: Add Italian phone number validation and normalization
+
+## [v0.302.1] - 2025-10-31
+
+### Fixed
+
+- `l10n`: union will now check alternative country codes: fixes issue with GR and EL codes in the EU.
 
 ## [v0.302.0] - 2025-10-29
 

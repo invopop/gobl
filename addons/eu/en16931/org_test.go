@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/eu/en16931"
+	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -59,6 +60,45 @@ func TestOrgItemNormalize(t *testing.T) {
 		}
 		ad.Normalizer(item)
 		assert.Equal(t, org.UnitHour, item.Unit)
+	})
+}
+
+func TestOrgIdentityNormalize(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("accepts nil", func(t *testing.T) {
+		var id *org.Identity
+		assert.NotPanics(t, func() {
+			ad.Normalizer(id)
+		})
+	})
+	t.Run("accepts empty", func(t *testing.T) {
+		id := &org.Identity{}
+		assert.NotPanics(t, func() {
+			ad.Normalizer(id)
+		})
+	})
+	t.Run("normalizes key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "gln",
+			Code: "1234567890123",
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "gln", id.Key.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+	t.Run("overrides key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "gln",
+			Code: "1234567890123",
+			Ext: tax.Extensions{
+				iso.ExtKeySchemeID: "9999",
+			},
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "gln", id.Key.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
 }
 
@@ -119,13 +159,7 @@ func TestOrgAttachmentValidation(t *testing.T) {
 func TestOrgPartyValidate(t *testing.T) {
 	ad := tax.AddonForKey(en16931.V2017)
 	t.Run("no inboxes", func(t *testing.T) {
-		p := &org.Party{
-			Addresses: []*org.Address{
-				{
-					Country: "FR",
-				},
-			},
-		}
+		p := &org.Party{}
 		assert.NoError(t, ad.Validator(p))
 	})
 
@@ -135,11 +169,6 @@ func TestOrgPartyValidate(t *testing.T) {
 				{
 					Scheme: "scheme1",
 					Code:   "code1",
-				},
-			},
-			Addresses: []*org.Address{
-				{
-					Country: "FR",
 				},
 			},
 		}
@@ -158,17 +187,8 @@ func TestOrgPartyValidate(t *testing.T) {
 					Code:   "code2",
 				},
 			},
-			Addresses: []*org.Address{
-				{
-					Country: "FR",
-				},
-			},
 		}
 		assert.ErrorContains(t, ad.Validator(p), "inboxes: cannot have more than one inbox (BT-34, BT-49).")
-	})
-	t.Run("missing addresses", func(t *testing.T) {
-		p := &org.Party{}
-		assert.ErrorContains(t, ad.Validator(p), "addresses: cannot be blank.")
 	})
 }
 

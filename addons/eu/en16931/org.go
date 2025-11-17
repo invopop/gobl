@@ -3,6 +3,7 @@ package en16931
 import (
 	"regexp"
 
+	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
@@ -10,7 +11,7 @@ import (
 	"github.com/invopop/validation"
 )
 
-// Map of GOBL keys to the corresponding UNTDID 4451 code.
+// Map of GOBL Note keys to the corresponding UNTDID 4451 code.
 var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyGoods:          "AAA",
 	org.NoteKeyPayment:        "PMT",
@@ -40,6 +41,12 @@ var orgNoteTextSubjectMap = map[cbc.Key]cbc.Code{
 	org.NoteKeyOther:          "ZZZ",
 }
 
+// Map of GOBL Identity keys to the corresponding ISO/IEC 6523 code.
+var orgIdentitySchemeMap = map[cbc.Key]cbc.Code{
+	org.IdentityKeyGLN:  "0088",
+	org.IdentityKeyGTIN: "0160",
+}
+
 var (
 	orgInboxRegexpSchemeCode = regexp.MustCompile(`(\d{4}):.*`)
 )
@@ -64,6 +71,18 @@ func normalizeOrgItem(item *org.Item) {
 	}
 	if item.Unit == org.UnitEmpty {
 		item.Unit = org.UnitOne
+	}
+}
+
+func normalizeOrgIdentity(i *org.Identity) {
+	if i == nil || i.Key == cbc.KeyEmpty {
+		return
+	}
+
+	if scheme, ok := orgIdentitySchemeMap[i.Key]; ok {
+		i.Ext = i.Ext.Merge(tax.Extensions{
+			iso.ExtKeySchemeID: scheme,
+		})
 	}
 }
 
@@ -98,11 +117,6 @@ func validateOrgParty(p *org.Party) error {
 	return validation.ValidateStruct(p,
 		validation.Field(&p.Inboxes,
 			validation.Length(0, 1).Error("cannot have more than one inbox (BT-34, BT-49)"),
-			validation.Skip,
-		),
-		//BR-8 & BR-10
-		validation.Field(&p.Addresses,
-			validation.Required,
 			validation.Skip,
 		),
 	)
