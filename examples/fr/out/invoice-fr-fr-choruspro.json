@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "e77e147b6547d8069582589d3314a6810c8da38c3e6f3e36c0082cf601280242"
+			"val": "b37ea2fa078f1676fb48638d32331698e4f719f703740c0f246dd51d8f146803"
 		}
 	},
 	"doc": {
@@ -120,7 +120,7 @@
 		],
 		"payment": {
 			"terms": {
-				"detail": "Pay before delivery"
+				"notes": "Pay before delivery"
 			},
 			"advances": [
 				{

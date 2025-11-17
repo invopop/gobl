@@ -76,12 +76,14 @@ func TestPayTerms(t *testing.T) {
 			DueDates: []*pay.DueDate{},
 		}
 		err := ad.Validator(p)
-		assert.ErrorContains(t, err, "either due_dates or detail must be provided.")
+		assert.ErrorContains(t, err, "either due_dates or notes must be provided")
 	})
 
-	t.Run("with ni terms", func(t *testing.T) {
-		var p *pay.Terms
+	t.Run("with empty notes", func(t *testing.T) {
+		p := &pay.Terms{
+			Notes: "",
+		}
 		err := ad.Validator(p)
-		assert.NoError(t, err)
+		assert.ErrorContains(t, err, "either due_dates or notes must be provided")
 	})
 }

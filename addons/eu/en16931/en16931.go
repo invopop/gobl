@@ -64,6 +64,8 @@ func normalize(doc any) {
 		normalizeOrgNote(obj)
 	case *org.Item:
 		normalizeOrgItem(obj)
+	case *org.Identity:
+		normalizeOrgIdentity(obj)
 	case *org.Inbox:
 		normalizeOrgInbox(obj)
 	}

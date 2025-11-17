@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl/addons/eu/en16931"
+	"github.com/invopop/gobl/catalogues/iso"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -59,6 +60,45 @@ func TestOrgItemNormalize(t *testing.T) {
 		}
 		ad.Normalizer(item)
 		assert.Equal(t, org.UnitHour, item.Unit)
+	})
+}
+
+func TestOrgIdentityNormalize(t *testing.T) {
+	ad := tax.AddonForKey(en16931.V2017)
+	t.Run("accepts nil", func(t *testing.T) {
+		var id *org.Identity
+		assert.NotPanics(t, func() {
+			ad.Normalizer(id)
+		})
+	})
+	t.Run("accepts empty", func(t *testing.T) {
+		id := &org.Identity{}
+		assert.NotPanics(t, func() {
+			ad.Normalizer(id)
+		})
+	})
+	t.Run("normalizes key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "gln",
+			Code: "1234567890123",
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "gln", id.Key.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
+	})
+	t.Run("overrides key", func(t *testing.T) {
+		id := &org.Identity{
+			Key:  "gln",
+			Code: "1234567890123",
+			Ext: tax.Extensions{
+				iso.ExtKeySchemeID: "9999",
+			},
+		}
+		ad.Normalizer(id)
+		assert.Equal(t, "gln", id.Key.String())
+		assert.Equal(t, "1234567890123", id.Code.String())
+		assert.Equal(t, "0088", id.Ext.Get(iso.ExtKeySchemeID).String())
 	})
 }
 
