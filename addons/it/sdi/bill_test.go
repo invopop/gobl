@@ -111,6 +111,38 @@ func TestInvoiceNormalization(t *testing.T) {
 		ad.Normalizer(inv)
 		assert.Equal(t, "RF01", inv.Supplier.Ext[sdi.ExtKeyFiscalRegime].String())
 	})
+
+	t.Run("strip +39 from italian supplier telephone", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "+39333123456"}}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Supplier.Telephones, 1)
+		assert.Equal(t, "333123456", inv.Supplier.Telephones[0].Number)
+	})
+
+	t.Run("non-italian supplier telephone not normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID.Country = "FR"
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "+39333123456"}}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Supplier.Telephones, 1)
+		assert.Equal(t, "+39333123456", inv.Supplier.Telephones[0].Number)
+	})
+
+	t.Run("no telephones nothing happens", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = nil
+		ad.Normalizer(inv)
+		assert.Nil(t, inv.Supplier.Telephones)
+	})
+
+	t.Run("italian supplier telephone without +39 prefix not normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "333123456"}}
+		ad.Normalizer(inv)
+		require.Len(t, inv.Supplier.Telephones, 1)
+		assert.Equal(t, "333123456", inv.Supplier.Telephones[0].Number)
+	})
 }
 
 func TestSupplierValidation(t *testing.T) {
@@ -271,6 +303,76 @@ func TestCustomerValidation(t *testing.T) {
 		assert.ErrorContains(t, err, "customer: (name: cannot be blank; people: cannot be blank.).")
 	})
 
+}
+
+func TestSupplierTelephoneValidation(t *testing.T) {
+	t.Run("valid italian supplier telephone", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "A1B2C3"}}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("invalid italian supplier telephone too short", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "1234"}}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (telephones: (0: (num: the length must be between 5 and 12")
+	})
+
+	t.Run("valid italian supplier telephone with symbols", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "+39333123456"}}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("valid italian number, because normalized", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "+393331234567"}}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+		assert.Equal(t, "3331234567", inv.Supplier.Telephones[0].Number)
+	})
+
+	t.Run("invalid italian supplier telephone too long", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "1233312345678"}}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (telephones: (0: (num: the length must be between 5 and 12")
+	})
+
+	t.Run("missing italian supplier telephones", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// No telephones set
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("non-italian supplier telephone not validated", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.TaxID.Country = "FR"
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "1234"}} // Too short, but should be ignored
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
+
+	t.Run("italian supplier telephone too short without prefix", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = []*org.Telephone{{Number: "1234"}}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "supplier: (telephones: (0: (num: the length must be between 5 and 12")
+	})
+
+	t.Run("no telephones nothing validated", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Supplier.Telephones = nil
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, inv.Validate())
+	})
 }
 
 func TestTaxValidation(t *testing.T) {
