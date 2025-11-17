@@ -1,0 +1,152 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "9ae93ce1b601c0bb9ed566db62d8f0503837f9f0d0560ecdf20ee319e3d726fc"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "PT",
+		"$addons": [
+			"pt-saft-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"issue_date": "2023-01-30",
+		"value_date": "2023-01-30",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"pt-saft-invoice-type": "FT",
+				"pt-saft-source": "P"
+			}
+		},
+		"supplier": {
+			"uuid": "9de7584f-ea5c-42a7-b159-5e4c6a280a5c",
+			"name": "Hotelzinho",
+			"tax_id": {
+				"country": "PT",
+				"code": "545259045"
+			},
+			"addresses": [
+				{
+					"street": "Rua do Hotelzinho",
+					"locality": "Lisboa",
+					"code": "1000-000"
+				}
+			]
+		},
+		"customer": {
+			"name": "English Customer",
+			"tax_id": {
+				"country": "GB",
+				"code": "000472631"
+			},
+			"addresses": [
+				{
+					"street": "123 Main St",
+					"locality": "London"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Noite em quarto duplo",
+					"price": "100.00",
+					"unit": "one",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge",
+						"ext": {
+							"pt-region": "PT",
+							"pt-saft-exemption": "M40",
+							"pt-saft-tax-rate": "ISE"
+						}
+					}
+				],
+				"total": "100.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M40",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+					}
+				]
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "Noite em quarto triplo",
+					"price": "120.00",
+					"unit": "one",
+					"ext": {
+						"pt-saft-product-type": "S"
+					}
+				},
+				"sum": "240.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "reverse-charge",
+						"ext": {
+							"pt-region": "PT",
+							"pt-saft-exemption": "M40",
+							"pt-saft-tax-rate": "ISE"
+						}
+					}
+				],
+				"total": "240.00",
+				"notes": [
+					{
+						"key": "legal",
+						"code": "M40",
+						"src": "pt-saft-exemption",
+						"text": "Artigo 6.º n.º 6 alínea a) do CIVA, a contrário"
+					}
+				]
+			}
+		],
+		"totals": {
+			"sum": "340.00",
+			"total": "340.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "reverse-charge",
+								"ext": {
+									"pt-region": "PT",
+									"pt-saft-exemption": "M40",
+									"pt-saft-tax-rate": "ISE"
+								},
+								"base": "340.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "340.00",
+			"payable": "340.00"
+		}
+	}
+}

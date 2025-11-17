@@ -9,23 +9,24 @@ import (
 
 // CategoryTotal groups together all rates inside a given category.
 type CategoryTotal struct {
-	Code      cbc.Code     `json:"code" jsonschema:"title=Code"`
-	Retained  bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
-	Rates     []*RateTotal `json:"rates" jsonschema:"title=Rates"`
-	Amount    num.Amount   `json:"amount" jsonschema:"title=Amount"`
-	Surcharge *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
+	Code        cbc.Code     `json:"code" jsonschema:"title=Code"`
+	Retained    bool         `json:"retained,omitempty" jsonschema:"title=Retained"`
+	Informative bool         `json:"informative,omitempty" jsonschema:"title=Informative"`
+	Rates       []*RateTotal `json:"rates" jsonschema:"title=Rates"`
+	Amount      num.Amount   `json:"amount" jsonschema:"title=Amount"`
+	Surcharge   *num.Amount  `json:"surcharge,omitempty" jsonschema:"title=Surcharge"`
 }
 
 // RateTotal contains a sum of all the tax rates in the document with
 // a matching category and rate. The Key is optional as we may be using
 // the percentage to group rates.
 type RateTotal struct {
-	// Tax key if supported by the category.
-	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// Country code override when issuing with taxes applied from different countries,
 	// it'd be very strange to mix rates from different countries, but in theory
 	// this would be possible.
 	Country l10n.TaxCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
+	// Tax key if supported by the category.
+	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// If the rate is defined with extensions, they'll be used to group by also.
 	Ext Extensions `json:"ext,omitempty" jsonschema:"title=Extensions"`
 	// Base amount that the percentage is applied to.
@@ -63,6 +64,7 @@ func newCategoryTotal(c *Combo, zero num.Amount) *CategoryTotal {
 	ct.Rates = make([]*RateTotal, 0)
 	ct.Amount = zero
 	ct.Retained = c.retained
+	ct.Informative = c.informative
 	return ct
 }
 
@@ -358,6 +360,10 @@ func (t *Total) calculateFinalSum(zero num.Amount, rr cbc.Key) {
 	for _, ct := range t.Categories {
 		t.calculateBaseCategoryTotal(ct, zero, rr)
 
+		if ct.Informative {
+			// Informative taxes don't affect Sum or Retained
+			continue
+		}
 		if ct.Retained {
 			if t.Retained == nil {
 				t.Retained = &zero

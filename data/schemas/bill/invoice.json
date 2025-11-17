@@ -13,6 +13,10 @@
               "title": "United Arab Emirates"
             },
             {
+              "const": "AR",
+              "title": "Argentina"
+            },
+            {
               "const": "AT",
               "title": "Austria"
             },
@@ -57,6 +61,10 @@
               "title": "United Kingdom"
             },
             {
+              "const": "IE",
+              "title": "Ireland"
+            },
+            {
               "const": "IN",
               "title": "India"
             },
@@ -81,6 +89,14 @@
               "title": "Portugal"
             },
             {
+              "const": "SE",
+              "title": "Sweden"
+            },
+            {
+              "const": "SG",
+              "title": "Singapore"
+            },
+            {
               "const": "US",
               "title": "United States of America"
             }
@@ -91,6 +107,10 @@
           "items": {
             "$ref": "https://gobl.org/draft-0/cbc/key",
             "oneOf": [
+              {
+                "const": "br-nfe-v4",
+                "title": "Brazil NF-e 4.00"
+              },
               {
                 "const": "br-nfse-v1",
                 "title": "Brazil NFS-e 1.X"
@@ -148,6 +168,10 @@
                 "title": "Mexican SAT CFDI v4.X"
               },
               {
+                "const": "pl-favat-v2",
+                "title": "Polish KSeF FA_VAT v2.x"
+              },
+              {
                 "const": "pt-saft-v1",
                 "title": "Portugal SAF-T"
               }
@@ -180,6 +204,10 @@
               {
                 "const": "partial",
                 "title": "Partial"
+              },
+              {
+                "const": "bypass",
+                "title": "Bypass"
               },
               {
                 "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",

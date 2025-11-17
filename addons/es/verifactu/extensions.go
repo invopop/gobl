@@ -222,7 +222,7 @@ var extensions = []*cbc.Definition{
 				| ~S1~            | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
 				| ~S2~            | ~reverse-charge~                |
 				| ~N1~            | ~outside-scope~ |
-				| ~N2~            | No key, applied when ~country~ is not ~ES~ |
+				| ~N2~            | ~outside-scope~ (default) |
 
 				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-verifactu-exempt~ extension. Values correspond to the L9 list.
 
@@ -295,16 +295,13 @@ var extensions = []*cbc.Definition{
 				alongside the ~es-verifactu-op-class~ extension. Values correspond to the
 				L10 list.
 
-				The follow mappings will be made automatically by GOBL during normalization:
+				The follow mappings will be made automatically by GOBL during normalization.
 
-				| Exemption Code | Tax Key |
-				|----------------|---------|
-				| ~E1~           | ~exempt~ |
-				| ~E2~           | ~export~ |
-				| ~E3~           | ~export+transport~ |
-				| ~E4~           | ~export+triangular~ |
-				| ~E5~           | ~intra-community~ |
-				| ~E6~           | ~exempt+other~ |
+				| Tax Key           | Exemption Codes            |
+				|-------------------|----------------------------|
+				| ~exempt~          | ~E1~ (default), ~E6~       |
+				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
+				| ~intra-community~ | ~E5~                       |
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -401,8 +398,8 @@ var extensions = []*cbc.Definition{
 
 				| Combo Context				| Regime Code |
 				|---------------------------|-------------|
-				| Rate ~standard~			| ~01~        |
-				| Rate has ~export~			| ~02~        |
+				| Key ~standard~			| ~01~        |
+				| Key ~export~			    | ~02~        |
 				| Has surcharge				| ~18~        |
 			`),
 		},

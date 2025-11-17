@@ -51,15 +51,13 @@ func TestComboNormalize(t *testing.T) {
 		assert.Equal(t, c.Percent.String(), "0%")
 		assert.Empty(t, c.Rate)
 	})
-	t.Run("migrate exempt rate", func(t *testing.T) {
+	t.Run("assign zero percent", func(t *testing.T) {
 		c := &tax.Combo{
 			Category: "VAT",
-			Rate:     "exempt",
+			Key:      tax.KeyZero,
 		}
 		c.Normalize(nil)
-		assert.Equal(t, c.Category, tax.CategoryVAT)
-		assert.Equal(t, c.Key, tax.KeyExempt)
-		assert.Empty(t, c.Rate)
+		assert.Equal(t, "0%", c.Percent.String())
 	})
 	t.Run("migrate exempt rate", func(t *testing.T) {
 		c := &tax.Combo{
@@ -68,7 +66,18 @@ func TestComboNormalize(t *testing.T) {
 		}
 		c.Normalize(nil)
 		assert.Equal(t, c.Category, tax.CategoryVAT)
-		assert.Equal(t, c.Key, tax.KeyExempt)
+		assert.Equal(t, tax.KeyExempt, c.Key)
+		assert.Empty(t, c.Rate)
+	})
+	t.Run("remove exempt rate and keep key", func(t *testing.T) {
+		c := &tax.Combo{
+			Category: "VAT",
+			Key:      tax.KeyExempt,
+			Rate:     "exempt",
+		}
+		c.Normalize(nil)
+		assert.Equal(t, c.Category, tax.CategoryVAT)
+		assert.Equal(t, tax.KeyExempt, c.Key)
 		assert.Empty(t, c.Rate)
 	})
 	t.Run("migrate exempt+reverse-charge rate", func(t *testing.T) {
@@ -141,9 +150,17 @@ func TestComboJSONSchemaExtend(t *testing.T) {
 		c.JSONSchemaExtend(s)
 
 		assert.NotEmpty(t, s.AnyOf)
-		require.Len(t, s.AnyOf, 1)
-		p, ok := s.AnyOf[0].If.Properties.Get("cat")
-		require.True(t, ok)
-		assert.Equal(t, p.Const, "VAT")
+		require.Len(t, s.AnyOf, 2) // Now we have both VAT and GST global categories
+
+		// Check that we have both VAT and GST categories
+		categories := make([]string, 0, 2)
+		for _, anyOf := range s.AnyOf {
+			p, ok := anyOf.If.Properties.Get("cat")
+			require.True(t, ok)
+			categories = append(categories, p.Const.(string))
+		}
+
+		assert.Contains(t, categories, "VAT")
+		assert.Contains(t, categories, "GST")
 	})
 }

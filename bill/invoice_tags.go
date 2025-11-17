@@ -87,6 +87,22 @@ var defaultInvoiceTags = &tax.TagSet{
 				`),
 			},
 		},
+
+		// Special bypass tag used to skip calculations on the document.
+		{
+			Key: tax.TagBypass,
+			Name: i18n.String{
+				i18n.EN: "Bypass",
+			},
+			Desc: i18n.String{
+				i18n.EN: here.Doc(`
+					The bypass tag is used for special circumstances where calculations on billing documents should
+					be skipped. Normalization and validation will still occur, but no automatic tax or total calculations
+					will be performed. This is useful for correcting documents or when importing historical data where
+					the original calculations need to be preserved.
+				`),
+			},
+		},
 	},
 }
 

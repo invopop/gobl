@@ -363,6 +363,20 @@ func TestCode_Validate(t *testing.T) {
 	}
 }
 
+func TestCodeStrings(t *testing.T) {
+	codes := []cbc.Code{
+		"FOO",
+		"BAR",
+		"DOM",
+	}
+	want := []string{
+		"FOO",
+		"BAR",
+		"DOM",
+	}
+	assert.Equal(t, want, cbc.CodeStrings(codes))
+}
+
 func TestCodeMap(t *testing.T) {
 	cm := cbc.CodeMap{
 		"foo": cbc.Code("01"),

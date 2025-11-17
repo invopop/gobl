@@ -9,7 +9,7 @@ import (
 // Extension keys for TicketBAI
 const (
 	ExtKeyRegion     cbc.Key = "es-tbai-region"
-	ExtKeyExemption  cbc.Key = "es-tbai-exemption"
+	ExtKeyExempt     cbc.Key = "es-tbai-exemption"
 	ExtKeyProduct    cbc.Key = "es-tbai-product"
 	ExtKeyCorrection cbc.Key = "es-tbai-correction"
 )
@@ -67,6 +67,8 @@ var extensions = []*cbc.Definition{
 				There is an additional exception case for goods that are resold without modification
 				when the supplier is in the simplified tax regime. For must purposes this special
 				case can be ignored.
+
+				If no product key is provided, the default is "services".
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -94,7 +96,7 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyExemption,
+		Key: ExtKeyExempt,
 		Name: i18n.String{
 			i18n.EN: "TicketBAI Exemption code",
 			i18n.ES: "Código de Exención de TicketBAI",
@@ -105,6 +107,16 @@ var extensions = []*cbc.Definition{
 				charge transactions. In the TicketBAI format these are separated,
 				but in order to simplify GOBL and be more closely aligned with
 				other countries we've combined them into one.
+
+				The follow mappings will be made automatically by GOBL during normalization.
+
+				| Tax Key           | Exemption Codes            |
+				|-------------------|----------------------------|
+				| ~exempt~          | ~E1~ (default), ~E6~       |
+				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
+				| ~intra-community~ | ~E5~                       |
+				| ~reverse-charge~  | ~S2~                       |
+				| ~outside-scope~   | ~OT~, ~RL~, ~VT~, ~IE~     |
 			`),
 		},
 		Values: []*cbc.Definition{

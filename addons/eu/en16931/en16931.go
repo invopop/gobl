@@ -35,7 +35,7 @@ func newAddon() *tax.AddonDef {
 				ensure that it is compliant and easily convertible to other formats.
 
 				We strongly recommend checking the output and specifically the extension codes
-				used to ensure that any assumptions do not need be adjusted. 
+				used to ensure that any assumptions do not need be adjusted.
 			`),
 		},
 		Scenarios:  scenarios,
@@ -64,6 +64,8 @@ func normalize(doc any) {
 		normalizeOrgNote(obj)
 	case *org.Item:
 		normalizeOrgItem(obj)
+	case *org.Identity:
+		normalizeOrgIdentity(obj)
 	case *org.Inbox:
 		normalizeOrgInbox(obj)
 	}
@@ -73,10 +75,18 @@ func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *pay.Instructions:
 		return validatePayInstructions(obj)
+	case *pay.Terms:
+		return validatePayTerms(obj)
 	case *bill.Invoice:
 		return validateBillInvoice(obj)
+	case *bill.Line:
+		return validateBillLine(obj)
 	case *tax.Combo:
 		return validateTaxCombo(obj)
+	case *bill.Discount:
+		return validateBillDiscount(obj)
+	case *bill.Charge:
+		return validateBillCharge(obj)
 	case *org.Item:
 		return validateOrgItem(obj)
 	case *org.Attachment:
@@ -85,6 +95,8 @@ func validate(doc any) error {
 		return validateOrgParty(obj)
 	case *org.Inbox:
 		return validateOrgInbox(obj)
+	case *org.Address:
+		return validateOrgAddress(obj)
 	}
 	return nil
 }

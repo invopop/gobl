@@ -9,6 +9,7 @@ package addons
 
 import (
 	// Import all the addons to ensure they're ready to use.
+	_ "github.com/invopop/gobl/addons/br/nfe"
 	_ "github.com/invopop/gobl/addons/br/nfse"
 	_ "github.com/invopop/gobl/addons/co/dian"
 	_ "github.com/invopop/gobl/addons/de/xrechnung"
@@ -23,5 +24,6 @@ import (
 	_ "github.com/invopop/gobl/addons/it/sdi"
 	_ "github.com/invopop/gobl/addons/it/ticket"
 	_ "github.com/invopop/gobl/addons/mx/cfdi"
+	_ "github.com/invopop/gobl/addons/pl/favat"
 	_ "github.com/invopop/gobl/addons/pt/saft"
 )

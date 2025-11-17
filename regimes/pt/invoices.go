@@ -2,10 +2,12 @@ package pt
 
 import (
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -28,17 +30,7 @@ var invoiceTags = &tax.TagSet{
 	},
 }
 
-type invoiceValidator struct {
-	inv *bill.Invoice
-}
-
 func validateInvoice(inv *bill.Invoice) error {
-	v := &invoiceValidator{inv: inv}
-	return v.validate()
-}
-
-func (v *invoiceValidator) validate() error {
-	inv := v.inv
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Type,
 			validation.In(
@@ -57,24 +49,45 @@ func (v *invoiceValidator) validate() error {
 					bill.InvoiceTypeDebitNote,
 				),
 				validation.Required,
+				validation.Skip,
+			),
+			validation.Each(
+				validation.By(validatePreceding(inv)),
+				validation.Skip,
 			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(v.supplier),
+			validation.By(validateSupplier),
+			validation.Skip,
+		),
+		validation.Field(&inv.ValueDate,
+			cal.DateBefore(inv.IssueDate),
+			validation.Skip,
+		),
+		validation.Field(&inv.OperationDate,
+			cal.DateBefore(inv.IssueDate),
 			validation.Skip,
 		),
 		validation.Field(&inv.Lines,
 			validation.Each(
-				validation.By(v.line),
-				validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
+				validation.By(validateInvoiceLine),
+				validation.Skip,
 			),
-			validation.Skip, // Prevents each line's `ValidateWithContext` function from being called again.
+			validation.Skip,
+		),
+		validation.Field(&inv.Payment,
+			validation.By(validateInvoicePayment(inv)),
+			validation.Skip,
+		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals),
+			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) supplier(val any) error {
+func validateSupplier(val any) error {
 	obj, _ := val.(*org.Party)
 	if obj == nil {
 		return nil
@@ -88,8 +101,8 @@ func (v *invoiceValidator) supplier(val any) error {
 	)
 }
 
-func (v *invoiceValidator) line(value interface{}) error {
-	line, _ := value.(*bill.Line)
+func validateInvoiceLine(val any) error {
+	line, _ := val.(*bill.Line)
 	if line == nil {
 		return nil
 	}
@@ -99,20 +112,124 @@ func (v *invoiceValidator) line(value interface{}) error {
 			num.Min(num.MakeAmount(0, 0)),
 		),
 		validation.Field(&line.Item,
-			validation.By(v.item),
+			validation.By(validateItem),
 			validation.Skip,
 		),
 	)
 }
 
-func (v *invoiceValidator) item(value interface{}) error {
-	item, _ := value.(*org.Item)
+func validateItem(val any) error {
+	item, _ := val.(*org.Item)
 	if item == nil {
 		return nil
 	}
 	return validation.ValidateStruct(item,
 		validation.Field(&item.Price,
 			num.Min(num.MakeAmount(0, 0)),
+		),
+	)
+}
+
+func validateInvoicePayment(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		pay, _ := val.(*bill.PaymentDetails)
+		if pay == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(pay,
+			validation.Field(&pay.Advances,
+				validation.Each(
+					validation.By(validateInvoiceAdvance(inv)),
+					validation.Skip,
+				),
+				validation.Skip,
+			),
+			validation.Field(&pay.Terms,
+				validation.By(validateInvoiceTerms(inv)),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceAdvance(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		adv, _ := val.(*pay.Advance)
+		if adv == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(adv,
+			validation.Field(&adv.Date,
+				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceTerms(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		terms, _ := val.(*pay.Terms)
+		if terms == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(terms,
+			validation.Field(&terms.DueDates,
+				validation.Each(
+					validation.By(validateInvoiceDueDate(inv)),
+					validation.Skip,
+				),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceDueDate(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		dd, _ := val.(*pay.DueDate)
+		if dd == nil {
+			return nil
+		}
+
+		return validation.ValidateStruct(dd,
+			validation.Field(&dd.Date,
+				cal.DateAfter(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validatePreceding(inv *bill.Invoice) validation.RuleFunc {
+	return func(val any) error {
+		ref, ok := val.(*org.DocumentRef)
+		if !ok {
+			return nil
+		}
+
+		return validation.ValidateStruct(ref,
+			validation.Field(&ref.IssueDate,
+				cal.DateBefore(inv.IssueDate),
+				validation.Skip,
+			),
+		)
+	}
+}
+
+func validateInvoiceTotals(val any) error {
+	tot, _ := val.(*bill.Totals)
+	if tot == nil {
+		return nil
+	}
+
+	return validation.ValidateStruct(tot,
+		validation.Field(&tot.Due,
+			num.ZeroOrPositive,
+			validation.Skip,
 		),
 	)
 }

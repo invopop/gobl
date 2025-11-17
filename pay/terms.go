@@ -2,6 +2,8 @@ package pay
 
 import (
 	"context"
+	"encoding/json"
+	"strings"
 
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
@@ -17,8 +19,6 @@ import (
 type Terms struct {
 	// Type of terms to be applied.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
-	// Text detail of the chosen payment terms.
-	Detail string `json:"detail,omitempty" jsonschema:"title=Detail"`
 	// Set of dates for agreed payments.
 	DueDates []*DueDate `json:"due_dates,omitempty" jsonschema:"title=Due Dates"`
 	// Description of the conditions for payment.
@@ -78,6 +78,32 @@ var TermKeyDefinitions = []TermKeyDef{
 	{TermKeyUndefined, "Undefined", "Not yet defined", "16"},
 }
 
+// UnmarshalJSON handles backwards compatibility for the deprecated "detail" field.
+func (t *Terms) UnmarshalJSON(data []byte) error {
+	type Alias Terms
+	aux := struct {
+		*Alias
+		Detail string `json:"detail,omitempty"`
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	// Map detail to notes if detail is present
+	if aux.Detail != "" {
+		if t.Notes != "" {
+			t.Notes = strings.TrimSpace(t.Notes)
+			t.Notes, _ = strings.CutSuffix(t.Notes, ".")
+			t.Notes += ". " + aux.Detail
+		} else {
+			t.Notes = aux.Detail
+		}
+
+	}
+	return nil
+}
+
 // DueDate contains an amount that should be paid by the given date.
 type DueDate struct {
 	Date     *cal.Date       `json:"date" jsonschema:"title=Date,description=When the payment is due."`
@@ -88,12 +114,13 @@ type DueDate struct {
 }
 
 // Normalize will try to normalize the payment terms.
-func (t *Terms) Normalize(normalizers tax.Normalizers) {
+func (t *Terms) Normalize() {
 	if t == nil {
 		return
 	}
+
+	t.Notes = cbc.NormalizeString(t.Notes)
 	t.Ext = tax.CleanExtensions(t.Ext)
-	normalizers.Each(t)
 }
 
 // UNTDID4279 returns the UNTDID 4279 code associated with the terms key.

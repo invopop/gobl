@@ -178,21 +178,15 @@ func taxCategories() []*tax.CategoryDef {
 				i18n.EN: "Canary Island General Indirect Tax",
 				i18n.ES: "Impuesto General Indirecto Canario",
 			},
-			// This is a subset of the possible rates.
+			// Use the same global VAT keys as IGIC is effectively a local VAT, unlike
+			// IPSI which has more in common with a sales tax.
+			Keys: tax.GlobalVATKeys(),
+			// This is a subset of the possible rates, notably the "increased" rates applied on luxury
+			// items and some professional services are not included here. Users are recommended to include whatever
+			// percentage applies to their situation directly in the invoice.
 			Rates: []*tax.RateDef{
 				{
-					Rate: tax.RateZero,
-					Name: i18n.String{
-						i18n.EN: "Zero Rate",
-						i18n.ES: "Tipo Cero",
-					},
-					Values: []*tax.RateValueDef{
-						{
-							Percent: num.MakePercentage(0, 3),
-						},
-					},
-				},
-				{
+					Keys: []cbc.Key{tax.KeyStandard},
 					Rate: tax.RateGeneral,
 					Name: i18n.String{
 						i18n.EN: "General Rate",
@@ -205,6 +199,7 @@ func taxCategories() []*tax.CategoryDef {
 					},
 				},
 				{
+					Keys: []cbc.Key{tax.KeyStandard},
 					Rate: tax.RateReduced,
 					Name: i18n.String{
 						i18n.EN: "Reduced Rate",

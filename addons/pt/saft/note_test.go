@@ -18,17 +18,38 @@ func TestNoteValidation(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("invalid exemption note", func(t *testing.T) {
+	t.Run("invalid exemption note - too long", func(t *testing.T) {
 		note := &org.Note{
 			Key:  org.NoteKeyLegal,
 			Src:  saft.ExtKeyExemption,
 			Text: "1234567890123456789012345678901234567890123456789012345678901", // 61 chars
 		}
 		err := addon.Validator(note)
-		assert.ErrorContains(t, err, "text: the length must be no more than 60")
+		assert.ErrorContains(t, err, "text: the length must be between 6 and 60")
 	})
 
-	t.Run("valid exemption note", func(t *testing.T) {
+	t.Run("invalid exemption note - too short", func(t *testing.T) {
+		note := &org.Note{
+			Key:  org.NoteKeyLegal,
+			Src:  saft.ExtKeyExemption,
+			Text: "12345",
+		}
+		err := addon.Validator(note)
+		assert.ErrorContains(t, err, "text: the length must be between 6 and 60")
+	})
+
+	t.Run("valid exemption note - min length", func(t *testing.T) {
+		note := &org.Note{
+			Key:  org.NoteKeyLegal,
+			Src:  saft.ExtKeyExemption,
+			Text: "123456",
+		}
+
+		err := addon.Validator(note)
+		assert.NoError(t, err)
+	})
+
+	t.Run("valid exemption note - max length", func(t *testing.T) {
 		note := &org.Note{
 			Key:  org.NoteKeyLegal,
 			Src:  saft.ExtKeyExemption,

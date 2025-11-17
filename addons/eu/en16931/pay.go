@@ -43,3 +43,22 @@ func validatePayInstructions(instr *pay.Instructions) error {
 		),
 	)
 }
+
+func validatePayTerms(terms *pay.Terms) error {
+	return validation.ValidateStruct(terms,
+		validation.Field(&terms.Notes,
+			validation.When(
+				len(terms.DueDates) == 0,
+				validation.Required.Error("either due_dates or notes must be provided (BR-CO-25)"),
+			),
+			validation.Skip,
+		),
+		validation.Field(&terms.DueDates,
+			validation.When(
+				terms.Notes == "",
+				validation.Required.Error("either due_dates or notes must be provided (BR-CO-25)"),
+			),
+			validation.Skip,
+		),
+	)
+}

@@ -6,6 +6,7 @@ import (
 	// Import all the regime definitions which will automatically
 	// add themselves to the tax regime register.
 	_ "github.com/invopop/gobl/regimes/ae"
+	_ "github.com/invopop/gobl/regimes/ar"
 	_ "github.com/invopop/gobl/regimes/at"
 	_ "github.com/invopop/gobl/regimes/be"
 	_ "github.com/invopop/gobl/regimes/br"
@@ -17,11 +18,14 @@ import (
 	_ "github.com/invopop/gobl/regimes/fr"
 	_ "github.com/invopop/gobl/regimes/gb"
 	_ "github.com/invopop/gobl/regimes/gr"
+	_ "github.com/invopop/gobl/regimes/ie"
 	_ "github.com/invopop/gobl/regimes/in"
 	_ "github.com/invopop/gobl/regimes/it"
 	_ "github.com/invopop/gobl/regimes/mx"
 	_ "github.com/invopop/gobl/regimes/nl"
 	_ "github.com/invopop/gobl/regimes/pl"
 	_ "github.com/invopop/gobl/regimes/pt"
+	_ "github.com/invopop/gobl/regimes/se"
+	_ "github.com/invopop/gobl/regimes/sg"
 	_ "github.com/invopop/gobl/regimes/us"
 )

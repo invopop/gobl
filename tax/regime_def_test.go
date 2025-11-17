@@ -1,8 +1,13 @@
 package tax_test
 
 import (
+	"context"
 	"testing"
 	"time"
+
+	"github.com/invopop/gobl/i18n"
+	_ "github.com/invopop/gobl/regimes"
+	"github.com/invopop/gobl/regimes/pt"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
@@ -166,4 +171,64 @@ func TestRegimeDefNormalizers(t *testing.T) {
 		r := &tax.RegimeDef{}
 		assert.Nil(t, r.Normalizers())
 	})
+}
+
+func TestCategoryDefValidations(t *testing.T) {
+	r := tax.RegimeDefFor("PT")
+	ctx := r.WithContext(context.Background())
+
+	t.Run("valid", func(t *testing.T) {
+		c := baseCategoryDef()
+		err := c.ValidateWithContext(ctx)
+		require.NoError(t, err)
+	})
+
+	t.Run("informative", func(t *testing.T) {
+		c := baseCategoryDef()
+		c.Informative = true
+
+		err := c.ValidateWithContext(ctx)
+		require.NoError(t, err)
+	})
+
+	t.Run("retained", func(t *testing.T) {
+		c := baseCategoryDef()
+		c.Retained = true
+
+		err := c.ValidateWithContext(ctx)
+		require.NoError(t, err)
+	})
+
+	t.Run("informative and retained", func(t *testing.T) {
+		c := baseCategoryDef()
+		c.Informative = true
+		c.Retained = true
+
+		err := c.ValidateWithContext(ctx)
+		assert.ErrorContains(t, err, "cannot be true when informative is true")
+	})
+
+	t.Run("with valid extensions", func(t *testing.T) {
+		c := baseCategoryDef()
+		c.Extensions = []cbc.Key{pt.ExtKeyRegion}
+
+		err := c.ValidateWithContext(ctx)
+		require.NoError(t, err)
+	})
+
+	t.Run("with invalid extensions", func(t *testing.T) {
+		c := baseCategoryDef()
+		c.Extensions = []cbc.Key{"INVALID"}
+
+		err := c.ValidateWithContext(ctx)
+		assert.ErrorContains(t, err, "must be a valid value")
+	})
+}
+
+func baseCategoryDef() *tax.CategoryDef {
+	return &tax.CategoryDef{
+		Code:  "TEST",
+		Name:  i18n.NewString("TEST"),
+		Title: i18n.NewString("Test tax"),
+	}
 }

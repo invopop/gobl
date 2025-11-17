@@ -1,6 +1,7 @@
 package en16931
 
 import (
+	"github.com/invopop/gobl/catalogues/cef"
 	"github.com/invopop/gobl/catalogues/untdid"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/es"
@@ -76,6 +77,11 @@ func validateTaxCombo(tc *tax.Combo) error {
 			validation.When(
 				!tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
 				tax.ExtensionsHasCodes(untdid.ExtKeyTaxCategory, TaxCategoryOutsideScope),
+			),
+			validation.When(
+				tc.Ext[untdid.ExtKeyTaxCategory] == TaxCategoryExempt,
+				// we enforce BT-121 to simplify future xml validation. BR-E-10
+				tax.ExtensionsRequire(cef.ExtKeyVATEX),
 			),
 			validation.Skip,
 		),

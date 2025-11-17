@@ -62,3 +62,7 @@ payment:
   advances:
     - percent: "100%"
       description: "Paid in full"
+  instructions:
+    key: "card"
+  terms:
+    detail: "Pay before delivery"

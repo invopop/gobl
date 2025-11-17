@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "356a6377d728668205d329239d2189f0a400fa5268980cc9a606409a5bcceb21"
+			"val": "eb81d7742abeb5271d123a384a3b90378a69c6e7e84fc8eb41de798508da503a"
 		}
 	},
 	"doc": {
@@ -97,7 +97,7 @@
 						"rate": "general",
 						"percent": "24%",
 						"ext": {
-							"gr-mydata-vat-rate": "7"
+							"gr-mydata-vat-rate": "1"
 						}
 					}
 				],
@@ -147,7 +147,7 @@
 							{
 								"key": "standard",
 								"ext": {
-									"gr-mydata-vat-rate": "7"
+									"gr-mydata-vat-rate": "1"
 								},
 								"base": "1620.00",
 								"percent": "24%",

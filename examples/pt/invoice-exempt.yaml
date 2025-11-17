@@ -25,7 +25,7 @@ lines:
       - cat: VAT
         rate: exempt
         ext:
-          pt-exemption-code: "M40"
+          pt-exemption-code: "M07"
   - quantity: 2
     item:
       name: Noite em quarto triplo
@@ -34,4 +34,4 @@ lines:
       - cat: VAT
         rate: exempt
         ext:
-          pt-exemption-code: "M40"
+          pt-exemption-code: "M07"

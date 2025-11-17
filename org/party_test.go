@@ -24,6 +24,12 @@ func TestEmailValidation(t *testing.T) {
 }
 
 func TestPartyNormalize(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var p *org.Party
+		assert.NotPanics(t, func() {
+			p.Normalize(nil)
+		})
+	})
 	t.Run("for known regime", func(t *testing.T) {
 		party := org.Party{
 			Name: "Invopop",

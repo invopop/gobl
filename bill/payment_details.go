@@ -27,11 +27,11 @@ func (p *PaymentDetails) Normalize(normalizers tax.Normalizers) {
 	if p == nil {
 		return
 	}
-	normalizers.Each(p)
 	tax.Normalize(normalizers, p.Payee)
 	tax.Normalize(normalizers, p.Terms)
 	tax.Normalize(normalizers, p.Advances)
 	tax.Normalize(normalizers, p.Instructions)
+	normalizers.Each(p)
 }
 
 // ValidateWithContext checks to make sure the payment data looks good

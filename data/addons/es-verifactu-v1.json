@@ -147,7 +147,7 @@
         "es": "Clave de la Operación Sujeta y no Exenta o de la Operación no Sujeta."
       },
       "desc": {
-        "en": "Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.\n\nGOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.\n\nAutomatic mapping of tax combo keys to operation classes:\n\n| Operation Class | Tax Key                |\n|-----------------|-------------------------|\n| `S1`            | `standard`, `reduced`, `super-reduced`, `zero` |\n| `S2`            | `reverse-charge`                |\n| `N1`            | `outside-scope` |\n| `N2`            | No key, applied when `country` is not `ES` |\n\nThis extension maps to the `CalificacionOperacion` field and must not be used together with the `es-verifactu-exempt` extension. Values correspond to the L9 list.\n\nFor further guidance on applying these codes, refer to the AEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
+        "en": "Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.\n\nGOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.\n\nAutomatic mapping of tax combo keys to operation classes:\n\n| Operation Class | Tax Key                |\n|-----------------|-------------------------|\n| `S1`            | `standard`, `reduced`, `super-reduced`, `zero` |\n| `S2`            | `reverse-charge`                |\n| `N1`            | `outside-scope` |\n| `N2`            | `outside-scope` (default) |\n\nThis extension maps to the `CalificacionOperacion` field and must not be used together with the `es-verifactu-exempt` extension. Values correspond to the L9 list.\n\nFor further guidance on applying these codes, refer to the AEAT FAQ:\n * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD"
       },
       "values": [
         {
@@ -199,7 +199,7 @@
         "es": "Código de Exención de Impuesto de Verifactu"
       },
       "desc": {
-        "en": "Exemption code used to explain why the operation is exempt from taxes.\n\nThis extension maps to the field `OperacionExenta`, and **cannot** be provided\nalongside the `es-verifactu-op-class` extension. Values correspond to the\nL10 list.\n\nThe follow mappings will be made automatically by GOBL during normalization:\n\n| Exemption Code | Tax Key |\n|----------------|---------|\n| `E1`           | `exempt` |\n| `E2`           | `export` |\n| `E3`           | `export+transport` |\n| `E4`           | `export+triangular` |\n| `E5`           | `intra-community` |\n| `E6`           | `exempt+other` |"
+        "en": "Exemption code used to explain why the operation is exempt from taxes.\n\nThis extension maps to the field `OperacionExenta`, and **cannot** be provided\nalongside the `es-verifactu-op-class` extension. Values correspond to the\nL10 list.\n\nThe follow mappings will be made automatically by GOBL during normalization.\n\n| Tax Key           | Exemption Codes            |\n|-------------------|----------------------------|\n| `exempt`          | `E1` (default), `E6`       |\n| `export`          | `E2` (default), `E3`, `E4` |\n| `intra-community` | `E5`                       |"
       },
       "values": [
         {
@@ -271,7 +271,7 @@
         "es": "Código de Régimen de IVA/IGIC"
       },
       "desc": {
-        "en": "Identify the type of VAT or IGIC regime applied to the operation. This list combines\nlists L8A which include values for VAT, and L8B for IGIC.\n\nMaps to the field `ClaveRegimen`, and is required for all VAT and IGIC operations.\nValues correspond to L8A (VAT) and L8B (IGIC) lists.\n\nThe regime code must be assigned for each tax combo. If no regime code is provided,\nGOBL will try to assign a code from the following tax combo contexts:\n\n| Combo Context\t\t\t\t| Regime Code |\n|---------------------------|-------------|\n| Rate `standard`\t\t\t| `01`        |\n| Rate has `export`\t\t\t| `02`        |\n| Has surcharge\t\t\t\t| `18`        |"
+        "en": "Identify the type of VAT or IGIC regime applied to the operation. This list combines\nlists L8A which include values for VAT, and L8B for IGIC.\n\nMaps to the field `ClaveRegimen`, and is required for all VAT and IGIC operations.\nValues correspond to L8A (VAT) and L8B (IGIC) lists.\n\nThe regime code must be assigned for each tax combo. If no regime code is provided,\nGOBL will try to assign a code from the following tax combo contexts:\n\n| Combo Context\t\t\t\t| Regime Code |\n|---------------------------|-------------|\n| Key `standard`\t\t\t| `01`        |\n| Key `export`\t\t\t    | `02`        |\n| Has surcharge\t\t\t\t| `18`        |"
       },
       "values": [
         {

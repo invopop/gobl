@@ -47,6 +47,8 @@ func normalize(doc any) {
 		normalizeInvoice(obj)
 	case *org.Item:
 		normalizeOrgItem(obj)
+	case *tax.Combo:
+		normalizeTaxCombo(obj)
 	}
 }
 

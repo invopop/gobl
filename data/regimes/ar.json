@@ -1,0 +1,153 @@
+{
+  "$schema": "https://gobl.org/draft-0/tax/regime-def",
+  "name": {
+    "en": "Argentina",
+    "es": "Argentina"
+  },
+  "description": {
+    "en": "Argentina's tax system is administered by ARCA (Agencia de Recaudación y Control Aduanero), which oversees the collection of IVA (Impuesto al Valor Agregado), the country's value-added tax.\n\nTaxpayers are identified using three main types of tax identification numbers: CUIT (Clave Única de Identificación Tributaria) - 11 digits (XX-XXXXXXXX-X) used by companies and legal entities with prefixes 30, 33 (conflict resolution), and 34 (foreign entities); CUIL (Clave Única de Identificación Laboral) - 11 digits (XX-XXXXXXXX-X) used by individuals and employees with prefixes 20 (males), 27 (females), and 23 (conflict resolution); and CDI (Clave de Identificación) for foreign residents without CUIT/CUIL (not validated).\n\nIVA rates include 27% increased rate for gas, water and telecom services, 21% general rate for most goods and services, and 10.5% reduced rate for essential goods such as construction, medicine, transportation, and food products.\n\nArgentina applies several retention taxes: IVA Retenido (Retained VAT) with variable rates based on taxpayer category and registration status (reference: AFIP RG 2854/2010 and modifications); Ganancias (Income Tax Withholding) applied to payments for services with rates ranging from 0.5% to 35% depending on service type (reference: AFIP RG 830/2000, RG 4003/2017); and Ingresos Brutos (Gross Income Tax), a provincial tax with rates set by each jurisdiction, typically 1% to 5% depending on province and activity.\n\nElectronic invoicing through ARCA's system is required for most transactions. Electronic invoices must include CAE/CAI (Código de Autorización Electrónico - Electronic Authorization Code) and Point of Sale (Punto de Venta) for invoice numbering.\n\nCommon invoice types include Tipo A (issued by Responsable Inscripto to another Responsable Inscripto), Tipo B (issued by Responsable Inscripto to Monotributista or final consumer), Tipo C (issued by Monotributista or exempt entities), Tipo E (export invoices), and Credit Notes (Notas de Crédito - corrective documents).\n\nArgentina has different tax regime classifications: Responsable Inscripto (registered taxpayer with full IVA obligations), Monotributo (simplified tax regime for small businesses), Exento (exempt from IVA), No Responsable (not responsible for IVA collection), and Consumidor Final (final consumer - no tax ID required)."
+  },
+  "time_zone": "America/Argentina/Buenos_Aires",
+  "country": "AR",
+  "currency": "ARS",
+  "corrections": [
+    {
+      "schema": "bill/invoice",
+      "types": [
+        "credit-note",
+        "debit-note"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "code": "VAT",
+      "name": {
+        "en": "VAT",
+        "es": "IVA"
+      },
+      "title": {
+        "en": "Value Added Tax",
+        "es": "Impuesto al Valor Agregado"
+      },
+      "desc": {
+        "en": "Known in Spanish as \"Impuesto al Valor Agregado\" (IVA), Argentina's VAT is a\nconsumption tax applied to the sale of goods and services. The standard rate is 21%,\nwith reduced rates of 10.5% for certain essential goods and services, and 0% for\nexports and specific categories."
+      },
+      "keys": [
+        {
+          "key": "standard",
+          "name": {
+            "en": "Standard"
+          }
+        },
+        {
+          "key": "zero",
+          "name": {
+            "en": "Zero"
+          }
+        },
+        {
+          "key": "reverse-charge",
+          "name": {
+            "en": "Reverse charge"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "exempt",
+          "name": {
+            "en": "Exempt"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "export",
+          "name": {
+            "en": "Export"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "intra-community",
+          "name": {
+            "en": "Intra-community"
+          },
+          "no_percent": true
+        },
+        {
+          "key": "outside-scope",
+          "name": {
+            "en": "Outside scope"
+          },
+          "no_percent": true
+        }
+      ],
+      "rates": [
+        {
+          "rate": "increased",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Increased Rate",
+            "es": "Alícuota Incrementada"
+          },
+          "desc": {
+            "en": "Applies to the sale of gas, electricity and water regulated by meter and other services stated in the points 4, 5 and 6 of the inciso e) of the article 3.",
+            "es": "Se aplica para las ventas de gas, energía eléctrica y aguas reguladas por medidor y demás prestaciones comprendidas en los puntos 4, 5 y 6, del inciso e) del artículo 3°."
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "27.0%"
+            }
+          ]
+        },
+        {
+          "rate": "general",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "General Rate",
+            "es": "Alícuota General"
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "21.0%"
+            }
+          ]
+        },
+        {
+          "rate": "reduced",
+          "keys": [
+            "standard"
+          ],
+          "name": {
+            "en": "Reduced Rate",
+            "es": "Alícuota Reducida"
+          },
+          "desc": {
+            "en": "Applies to the sale of construction work, medicine, public transportation, livestock and agricultural products for food, etc.",
+            "es": "Se aplica para las ventas de trabajo de construcción, medicina, transporte público, ganado y productos agrícolas para alimentos, etc."
+          },
+          "values": [
+            {
+              "since": "1995-04-01",
+              "percent": "10.5%"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "title": {
+            "en": "VAT law - Article 28"
+          },
+          "url": "https://biblioteca.arca.gob.ar/cuadroslegislativos/getAdjunto.aspx?i=7833"
+        }
+      ]
+    }
+  ]
+}

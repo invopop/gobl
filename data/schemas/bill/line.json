@@ -96,6 +96,11 @@
           "title": "Substituted",
           "description": "List of substituted lines. Useful for deliveries or corrective documents in order\nto indicate to the recipient which of the requested lines are being replaced.\nThis is for purely informative purposes, and will not be used for calculations."
         },
+        "seller": {
+          "$ref": "https://gobl.org/draft-0/org/party",
+          "title": "Seller",
+          "description": "Seller of the item if different from the supplier or ordering seller. This can be\nuseful for marketplace or drop-ship scenarios in locations that require the\noriginal seller to be indicated."
+        },
         "notes": {
           "items": {
             "$ref": "https://gobl.org/draft-0/org/note"

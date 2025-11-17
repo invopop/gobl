@@ -5,8 +5,10 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/pt"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -47,32 +49,314 @@ func validInvoice() *bill.Invoice {
 }
 
 func TestValidInvoice(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
 	inv := validInvoice()
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, reg.Validator(inv))
 }
 
 func TestValidSimplifiedInvoice(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
 	inv := validInvoice()
 	inv.SetTags(tax.TagSimplified, pt.TagInvoiceReceipt)
 	inv.Customer = nil
-	require.NoError(t, inv.Calculate())
-	require.NoError(t, inv.Validate())
+	require.NoError(t, reg.Validator(inv))
+}
+
+func TestInvoiceValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("value date after issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2023, 1, 2)
+		assert.ErrorContains(t, reg.Validator(inv), "value_date: too late")
+	})
+
+	t.Run("value date on issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2023, 1, 1)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("value date before issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.ValueDate = cal.NewDate(2022, 12, 31)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("operation date after issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2023, 1, 2)
+		assert.ErrorContains(t, reg.Validator(inv), "op_date: too late")
+	})
+
+	t.Run("operation date on issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2023, 1, 1)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("operation date before issue date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.OperationDate = cal.NewDate(2022, 12, 31)
+		require.NoError(t, reg.Validator(inv))
+	})
+}
+
+func TestSupplierValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("nil supplier", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier = nil
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("missing tax ID", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Supplier.TaxID = nil
+		assert.ErrorContains(t, reg.Validator(inv), "supplier: (tax_id: cannot be blank")
+	})
 }
 
 func TestLineValidation(t *testing.T) {
-	inv := validInvoice()
-	inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (quantity: must be no less than 0.).)")
+	reg := tax.RegimeDefFor(l10n.PT)
 
-	inv = validInvoice()
-	inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
-	assertValidationError(t, inv, "lines: (0: (item: (price: must be no less than 0.).).)")
+	t.Run("nil line", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines = append(inv.Lines, nil)
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("negative quantity", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Quantity = num.MakeAmount(-1, 0)
+		assert.ErrorContains(t, reg.Validator(inv), "lines: (0: (quantity: must be no less than 0.).)")
+	})
+
+	t.Run("nil item", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item = nil
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("negative price", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Lines[0].Item.Price = num.NewAmount(-1, 0)
+		assert.ErrorContains(t, reg.Validator(inv), "lines: (0: (item: (price: must be no less than 0.).).)")
+	})
 }
 
-func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
-	require.NoError(t, inv.Calculate())
-	err := inv.Validate()
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), expected)
+func TestInvoicePaymentValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("empty advances", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("advance with past date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date: cal.NewDate(2022, 12, 31),
+				},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("advance with current date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date: cal.NewDate(2023, 1, 1),
+				},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("advance with future date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{
+				{
+					Date: cal.NewDate(2023, 1, 2),
+				},
+			},
+		}
+		assert.ErrorContains(t, reg.Validator(inv), "advances: (0: (date: too late")
+	})
+
+	t.Run("nil advance", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Advances: []*pay.Advance{nil},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("empty terms", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("due date with past date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date: cal.NewDate(2022, 12, 31),
+					},
+				},
+			},
+		}
+		assert.ErrorContains(t, reg.Validator(inv), "due_dates: (0: (date: too early")
+	})
+
+	t.Run("due date with current date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date: cal.NewDate(2023, 1, 1),
+					},
+				},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("due date with future date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{
+					{
+						Date: cal.NewDate(2023, 1, 2),
+					},
+				},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("nil due date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				DueDates: []*pay.DueDate{nil},
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+}
+
+func TestInvoicePrecedingValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("empty preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = nil
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("empty preceding with credit note", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = nil
+		assert.ErrorContains(t, reg.Validator(inv), "preceding: cannot be blank")
+	})
+
+	t.Run("preceding document with no date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: nil,
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("preceding document with pastdate", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2022, 12, 31),
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("preceding document with same date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2023, 1, 1),
+			},
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("preceding document with future date", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Code:      "INV/1",
+				IssueDate: cal.NewDate(2023, 1, 2),
+			},
+		}
+		assert.ErrorContains(t, reg.Validator(inv), "preceding: (0: (issue_date: too late")
+	})
+
+	t.Run("nil preceding", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Preceding = []*org.DocumentRef{nil}
+		require.NoError(t, reg.Validator(inv))
+	})
+}
+
+func TestInvoiceTotalsValidation(t *testing.T) {
+	reg := tax.RegimeDefFor(l10n.PT)
+
+	t.Run("negative due amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Due: num.NewAmount(-1, 2),
+		}
+		assert.ErrorContains(t, reg.Validator(inv), "due: must be no less than 0.")
+	})
+
+	t.Run("zero due amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Due: num.NewAmount(0, 2),
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("positive due amount", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = &bill.Totals{
+			Due: num.NewAmount(1, 2),
+		}
+		require.NoError(t, reg.Validator(inv))
+	})
+
+	t.Run("nil totals", func(t *testing.T) {
+		inv := validInvoice()
+		inv.Totals = nil
+		require.NoError(t, reg.Validator(inv))
+	})
 }

@@ -26,11 +26,7 @@ var taxCategories = []*tax.CategoryDef{
 			i18n.PL: "Podatek od Wartości Dodanej",
 		},
 		Retained: false,
-		Extensions: []cbc.Key{
-			ExtKeyKSeFVATZero,
-			ExtKeyKSeFVATSpecial,
-		},
-		Keys: tax.GlobalVATKeys(),
+		Keys:     tax.GlobalVATKeys(),
 		Rates: []*tax.RateDef{
 			{
 				Keys: []cbc.Key{tax.KeyStandard},

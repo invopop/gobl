@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "0483f1dc98ed41dc51160cc4aa4e956713e5a6ec40a2039bd0513ea0abf1325f"
+			"val": "95539855cf9e6feb8546065691f5d85273b13f4099c85d01c07625d43ff73abd"
 		}
 	},
 	"doc": {
@@ -63,6 +63,16 @@
 					"scheme": "9920",
 					"code": "54387763P"
 				}
+			],
+			"addresses": [
+				{
+					"num": "41",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
 			]
 		},
 		"lines": [
@@ -96,6 +106,11 @@
 				"total": "1620.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"notes": "Please pay within 10 days"
+			}
+		},
 		"totals": {
 			"sum": "1620.00",
 			"total": "1620.00",

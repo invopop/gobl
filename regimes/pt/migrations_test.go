@@ -28,6 +28,7 @@ func TestTaxRateMigration(t *testing.T) {
 
 	// Valid new rate
 	inv = validInvoice()
+	inv.SetAddons(saft.V1)
 	inv.Lines[0].Taxes[0].Rate = "exempt"
 	inv.Lines[0].Taxes[0].Ext = tax.Extensions{saft.ExtKeyExemption: "M02"}
 
@@ -53,7 +54,7 @@ func TestTaxZoneMigration(t *testing.T) {
 					Zone:    "20", //nolint:staticcheck
 				},
 			},
-			region: "PT-AC",
+			region: "PT",
 		},
 		{
 			name: "Madeira zone set",
@@ -61,25 +62,6 @@ func TestTaxZoneMigration(t *testing.T) {
 				TaxID: &tax.Identity{
 					Country: "PT",
 					Zone:    "30", //nolint:staticcheck
-				},
-			},
-			region: "PT-MA",
-		},
-		{
-			name: "Other zone set",
-			supplier: &org.Party{
-				TaxID: &tax.Identity{
-					Country: "PT",
-					Zone:    "40", //nolint:staticcheck
-				},
-			},
-			region: "PT",
-		},
-		{
-			name: "No zone set",
-			supplier: &org.Party{
-				TaxID: &tax.Identity{
-					Country: "PT",
 				},
 			},
 			region: "PT",

@@ -47,12 +47,19 @@ type Attachment struct {
 
 	// MIME type of the attachment.
 	MIME string `json:"mime,omitempty" jsonschema:"title=MIME Type"`
+}
 
-	// Data is the base64 encoded data of the attachment directly embedded
-	// inside the GOBL document. This should only be used when the URL cannot
-	// be used as it can dramatically increase the size of the JSON
-	// document, thus effecting usability and performance.
-	Data []byte `json:"data,omitempty" jsonschema:"title=Data"`
+// Normalize will try to clean the attachment information.
+func (a *Attachment) Normalize() {
+	if a == nil {
+		return
+	}
+	uuid.Normalize(&a.UUID)
+	a.Code = cbc.NormalizeCode(a.Code)
+	a.Name = cbc.NormalizeString(a.Name)
+	a.Description = cbc.NormalizeString(a.Description)
+	a.URL = cbc.NormalizeString(a.URL)
+	a.MIME = cbc.NormalizeString(a.MIME)
 }
 
 // Validate checks that the attachment looks okay.
@@ -68,29 +75,17 @@ func (a *Attachment) ValidateWithContext(ctx context.Context) error {
 		validation.Field(&a.Code),
 		validation.Field(&a.Name, validation.Required),
 		validation.Field(&a.Description),
-		validation.Field(&a.URL,
-			is.URL,
-			validation.When(
-				len(a.Data) == 0,
-				validation.Required,
-			),
-		),
-		validation.Field(&a.Data,
-			validation.When(
-				len(a.URL) > 0,
-				validation.Empty.Error("must be blank with url"),
-			),
-		),
+		validation.Field(&a.URL, is.URL, validation.Required),
 		validation.Field(&a.Digest),
 		validation.Field(&a.MIME,
-			// MIME types as defined by EN 16931-1:2017
+			// MIME types as defined by EN 16931-1:2017 to be used as attachments.
 			validation.In(
 				"application/pdf",
 				"image/jpeg",
 				"image/png",
 				"test/csv",
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-				"applicaiton/vnd.oasis.opendocument.spreadsheet",
+				"application/vnd.oasis.opendocument.spreadsheet",
 			),
 		),
 	)

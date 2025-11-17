@@ -6,10 +6,18 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/pkg/here"
 	"github.com/invopop/gobl/tax"
 )
+
+// BR-DE-14 - set percent in convertor as this rule requires it, even if it is 0. BT-119
+// BR-DE-16 - covered by tax ID being required. BT-31
+// BR-DE-18 - references format of payment.terms.details. BT-20
+// BR-DE-20 - partialy covered by gobl validation of IBAN format. BT-84
+// BR-DE-21 - look at BT-24 mapping of gobl. BT-24
+// BR-DE-22 - refers to attachments. BG-24
+// BR-DE-27 - handled by gobl validation of phone number. BT-42
+// BR-DE-28 - handled by gobl validation of email address. BT-43
 
 const (
 	// V3 is the key for the XRechnung version 3.x
@@ -47,8 +55,6 @@ func validate(doc any) error {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		return validateInvoice(obj)
-	case *pay.Instructions:
-		return validatePaymentInstructions(obj)
 	}
 	return nil
 }
