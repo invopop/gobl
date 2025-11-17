@@ -31,7 +31,7 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 			Terms: &pay.Terms{
-				Detail: "Filler detail for en16931",
+				Notes: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -50,7 +50,7 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 			Terms: &pay.Terms{
-				Detail: "Filler detail for en16931",
+				Notes: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -66,7 +66,7 @@ func TestValidateInvoice(t *testing.T) {
 				Card: &pay.Card{},
 			},
 			Terms: &pay.Terms{
-				Detail: "Filler detail for en16931",
+				Notes: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -85,7 +85,7 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 			Terms: &pay.Terms{
-				Detail: "Filler detail for en16931",
+				Notes: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -103,7 +103,7 @@ func TestValidateInvoice(t *testing.T) {
 				},
 			},
 			Terms: &pay.Terms{
-				Detail: "Filler detail for en16931",
+				Notes: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())
@@ -118,7 +118,7 @@ func TestValidateInvoice(t *testing.T) {
 				Key: cbc.Key("invalid-key"),
 			},
 			Terms: &pay.Terms{
-				Detail: "Filler detail for en16931",
+				Notes: "Filler detail for en16931",
 			},
 		}
 		require.NoError(t, inv.Calculate())

@@ -66,6 +66,16 @@ func KeyStrings(keys []Key) []string {
 	return l
 }
 
+// StringsToKeys is a convenience method to convert a list of strings
+// into a list of keys.
+func StringsToKeys(strs []string) []Key {
+	l := make([]Key, len(strs))
+	for i, v := range strs {
+		l[i] = Key(v)
+	}
+	return l
+}
+
 // With provides a new key that combines another joining them together
 // with a `+` symbol.
 func (k Key) With(ke Key) Key {

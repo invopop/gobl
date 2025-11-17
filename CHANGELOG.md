@@ -10,9 +10,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `it-sdi-v1`: Add validation for IBANs.
 
+### Removed
+
+- `pay`: Removed terms.Detail in favour of terms.Notes
+
 ### Fixed
 
 - `be`: Update regex to account for new VAT numbers starting with 1.
+
+### Added
+
+- `org`: `Identity` now has `gln` as a possible Key.
+- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
+- `ar`: Argentine regime
 
 ## [v0.302.1] - 2025-10-31
 
