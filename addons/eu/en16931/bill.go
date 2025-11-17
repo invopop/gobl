@@ -91,11 +91,11 @@ func validateBillInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 		validation.Field(&inv.Supplier,
-			validation.By(validateParty),
+			validation.By(validateBillInvoiceParty),
 			validation.Skip,
 		),
 		validation.Field(&inv.Customer,
-			validation.By(validateParty),
+			validation.By(validateBillInvoiceParty),
 			validation.Skip,
 		),
 		validation.Field(&inv.Payment,
@@ -122,7 +122,7 @@ func validateBillInvoiceTax(value any) error {
 	)
 }
 
-func validateParty(value any) error {
+func validateBillInvoiceParty(value any) error {
 	p, ok := value.(*org.Party)
 	if !ok || p == nil {
 		return nil
