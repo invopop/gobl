@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Removed
+
+- `pay`: Removed terms.Detail in favour of terms.Notes
+
 ### Fixed
 
 - `be`: Update regex to account for new VAT numbers starting with 1.

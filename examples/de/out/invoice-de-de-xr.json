@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "6c9b6bbd5a50be82eaee29d5879b5db508d1afc535fc6ca30d701af5c2c2bd8a"
+			"val": "bec7f88e94b60b48d3241a6d03511e785ef571f641fdf9b2e7e411ad6779b55a"
 		}
 	},
 	"doc": {
@@ -131,7 +131,7 @@
 		},
 		"payment": {
 			"terms": {
-				"detail": "Please pay within 10 days"
+				"notes": "Please pay within 10 days"
 			},
 			"instructions": {
 				"key": "credit-transfer+sepa",
