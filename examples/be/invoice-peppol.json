@@ -20,7 +20,7 @@
 		"inboxes": [
 			{
 				"key": "peppol",
-				"code": "9925:0735585741"
+				"code": "0208:0735585741"
 			}
 		],
 		"addresses": [
@@ -47,10 +47,26 @@
 		},
 		"inboxes": [
 			{
-				"scheme": "9925",
+				"key": "peppol",
+				"scheme": "0208",
 				"code": "0699912507"
 			}
+		],
+		"addresses": [
+			{
+				"country": "BE"
+			}
 		]
+	},
+	"payment": {
+		"terms": {
+			"due_dates": [
+				{
+					"date": "2025-05-30",
+					"percent": "100%"
+				}
+			]
+		}
 	},
 	"lines": [
 		{

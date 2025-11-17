@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "2c6e85f4c2af2fee8874d420a7e9f0d9cfbbd0b9a8fad8703476b2cc71682cb6"
+			"val": "4a42079b97e09f37134a4f9782278408eb9331c088a0b6bc24d3feca8fa794ab"
 		}
 	},
 	"doc": {
@@ -34,7 +34,7 @@
 			"inboxes": [
 				{
 					"key": "peppol",
-					"scheme": "9925",
+					"scheme": "0208",
 					"code": "0735585741"
 				}
 			],
@@ -62,8 +62,14 @@
 			},
 			"inboxes": [
 				{
-					"scheme": "9925",
+					"key": "peppol",
+					"scheme": "0208",
 					"code": "0699912507"
+				}
+			],
+			"addresses": [
+				{
+					"country": "BE"
 				}
 			]
 		},
@@ -120,6 +126,17 @@
 				"total": "10.00"
 			}
 		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-05-30",
+						"amount": "1630.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
 		"totals": {
 			"sum": "1630.00",
 			"tax_included": "281.72",
