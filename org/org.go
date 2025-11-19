@@ -25,6 +25,8 @@ func init() {
 	)
 }
 
+// ShortSchemaParty is the short schema name for Party
 const (
 	ShortSchemaParty = "org/party"
+	ShortSchemaItem  = "org/item"
 )

@@ -26,6 +26,15 @@ func normalizeSupplier(party *org.Party) {
 		}
 		party.Ext[ExtKeyFiscalRegime] = "RF01" // Ordinary regime is default
 	}
+
+	// Normalize Italian supplier telephone numbers by stripping '+39' prefix
+	if isItalianParty(party) && len(party.Telephones) > 0 {
+		for _, tel := range party.Telephones {
+			if tel != nil && len(tel.Number) >= 3 && tel.Number[:3] == "+39" {
+				tel.Number = tel.Number[3:]
+			}
+		}
+	}
 }
 
 func validateInvoice(inv *bill.Invoice) error {
@@ -99,6 +108,13 @@ func validateSupplier(value interface{}) error {
 		validation.Field(&supplier.Addresses,
 			validation.Required,
 			validation.Each(validation.By(validateAddress)),
+			validation.Skip,
+		),
+		validation.Field(&supplier.Telephones,
+			validation.When(
+				isItalianParty(supplier),
+				validation.Each(validation.By(validateItalianTelephone)),
+			),
 			validation.Skip,
 		),
 		validation.Field(&supplier.Registration,
@@ -187,7 +203,7 @@ func validateItem(val any) error {
 	)
 }
 
-func validateCharge(val any) error {
+func validateBillCharge(val any) error {
 	charge, _ := val.(*bill.Charge)
 	if charge == nil || !charge.Key.Has(KeyFundContribution) {
 		return nil
@@ -253,6 +269,19 @@ func validateDespatch(value any) error {
 	return validation.ValidateStruct(d,
 		validation.Field(&d.IssueDate,
 			validation.Required,
+			validation.Skip,
+		),
+	)
+}
+
+func validateItalianTelephone(value any) error {
+	t, ok := value.(*org.Telephone)
+	if !ok {
+		return nil
+	}
+	return validation.ValidateStruct(t,
+		validation.Field(&t.Number,
+			validation.Length(5, 12),
 			validation.Skip,
 		),
 	)

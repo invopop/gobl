@@ -1,0 +1,178 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "4a42079b97e09f37134a4f9782278408eb9331c088a0b6bc24d3feca8fa794ab"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "BE",
+		"$addons": [
+			"eu-en16931-v2017"
+		],
+		"uuid": "0193305c-a7be-730d-b552-2093f0df2df7",
+		"type": "standard",
+		"series": "S2025",
+		"code": "001",
+		"issue_date": "2025-05-20",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"untdid-document-type": "380"
+			}
+		},
+		"supplier": {
+			"name": "Provide One BV",
+			"tax_id": {
+				"country": "BE",
+				"code": "0735585741"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0208",
+					"code": "0735585741"
+				}
+			],
+			"addresses": [
+				{
+					"num": "12",
+					"street": "Rue de la Loi",
+					"locality": "Bruxelles",
+					"region": "Bruxelles",
+					"code": "1040",
+					"country": "BE"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Sample Consumer",
+			"tax_id": {
+				"country": "BE",
+				"code": "0699912507"
+			},
+			"inboxes": [
+				{
+					"key": "peppol",
+					"scheme": "0208",
+					"code": "0699912507"
+				}
+			],
+			"addresses": [
+				{
+					"country": "BE"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"reason": "Special discount",
+						"percent": "10%",
+						"amount": "180.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Promotional cookies",
+					"price": "10.00",
+					"unit": "one"
+				},
+				"sum": "10.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "6.0%",
+						"ext": {
+							"untdid-tax-category": "S"
+						}
+					}
+				],
+				"total": "10.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-05-30",
+						"amount": "1630.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1630.00",
+			"tax_included": "281.72",
+			"total": "1348.28",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "1338.84",
+								"percent": "21.0%",
+								"amount": "281.16"
+							},
+							{
+								"key": "standard",
+								"ext": {
+									"untdid-tax-category": "S"
+								},
+								"base": "9.43",
+								"percent": "6.0%",
+								"amount": "0.57"
+							}
+						],
+						"amount": "281.72"
+					}
+				],
+				"sum": "281.72"
+			},
+			"tax": "281.72",
+			"total_with_tax": "1630.00",
+			"payable": "1630.00"
+		}
+	}
+}

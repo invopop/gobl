@@ -6,12 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.303.0] - 2025-11-17
+
 ### Added
 
-- `org`: Added ShortSchemaParty constant
+- `it-sdi-v1`: Add validation for IBANs.
+
+### Removed
+
+- `pay`: Removed terms.Detail in favour of terms.Notes
 
 ### Fixed
 
+- `eu-en16931-v2017`: Remove address constraint for all parties, keep for Supplier and Customer.
 - `be`: Update regex to account for new VAT numbers starting with 1.
 
 ### Added
@@ -19,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `org`: `Identity` now has `gln` as a possible Key.
 - `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
 - `ar`: Argentine regime
+- `it-sdi-v1`: Add Italian phone number validation and normalization
 
 ## [v0.302.1] - 2025-10-31
 
