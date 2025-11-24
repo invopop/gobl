@@ -126,8 +126,8 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.When(
 				!inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // not simplified
 				validation.Required,
+				validation.By(validateInvoiceCustomer),
 			),
-			validation.By(validateInvoiceCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,

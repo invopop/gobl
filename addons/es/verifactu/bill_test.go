@@ -351,6 +351,46 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
+	t.Run("simplified invoice with customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
+	})
+	t.Run("simplified substitution with customer without tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Type = bill.InvoiceTypeCorrective
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
+		d := cal.MakeDate(2024, 1, 1)
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "ABC",
+				Code:      "122",
+				IssueDate: &d,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(21, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
