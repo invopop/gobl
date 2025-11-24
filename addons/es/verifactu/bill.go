@@ -128,6 +128,10 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Required,
 				validation.By(validateInvoiceCustomer),
 			),
+			validation.When(
+				inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // simplified
+				validation.By(validateInvoiceCustomerSimplified),
+			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
@@ -162,6 +166,17 @@ func validateInvoiceCustomer(val any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateInvoiceCustomerSimplified(val any) error {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+	if p.TaxID != nil || len(p.Identities) > 0 {
+		return fmt.Errorf("F2 and R5 invoices cannot have a customer. If you want to fill customer details for a simplified invoice use other type and add the extension %s", ExtKeySimplifiedArt7273)
+	}
+	return nil
 }
 
 var docTypesStandard = []cbc.Code{ // Standard invoices

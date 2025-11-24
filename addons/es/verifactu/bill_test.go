@@ -210,6 +210,9 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 
 		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax(), bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
+		// R5 invoices cannot have customer with tax ID or identities
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = nil
 		require.NoError(t, inv.Validate())
 		// Should always set the doc type to R5, even if trying to override as the simplified
 		// tag has priority.
@@ -390,6 +393,61 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
+	})
+	t.Run("simplified invoice F2 cannot have customer with tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		// Customer has tax ID - should fail
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
+		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
+	})
+	t.Run("simplified substitution R5 cannot have customer with tax ID", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Type = bill.InvoiceTypeCorrective
+		d := cal.MakeDate(2024, 1, 1)
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series:    "ABC",
+				Code:      "122",
+				IssueDate: &d,
+				Tax: &tax.Total{
+					Categories: []*tax.CategoryTotal{
+						{
+							Code: "VAT",
+							Rates: []*tax.RateTotal{
+								{
+									Base:    num.MakeAmount(10000, 2),
+									Percent: num.NewPercentage(21, 2),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+		// Customer has tax ID - should fail
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
+		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
+	})
+	t.Run("simplified invoice F2 cannot have customer with identity", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSimplified)
+		inv.Customer.TaxID = nil
+		inv.Customer.Identities = []*org.Identity{
+			{
+				Key:  org.IdentityKeyPassport,
+				Code: "AA123456",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
+		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
 	})
 }
 
