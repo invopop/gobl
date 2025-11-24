@@ -178,7 +178,7 @@ func validateInvoiceCustomerSimplified(val any) error {
 		return nil
 	}
 	if p.TaxID != nil || len(p.Identities) > 0 {
-		return fmt.Errorf("F2 and R5 invoices cannot have a customer. If you want to fill customer details for a simplified invoice use other type and add the extension %s", ExtKeySimplifiedArt7273)
+		return fmt.Errorf("F2 and R5 invoices cannot have a customer with tax ID or identities. If you want to fill customer details for a simplified invoice, use other type and add the extension %s", ExtKeySimplifiedArt7273)
 	}
 	return nil
 }
