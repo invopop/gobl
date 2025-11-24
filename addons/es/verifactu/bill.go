@@ -139,6 +139,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceTax(inv.Type)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals),
+			validation.Skip,
+		),
 		validation.Field(&inv.Notes,
 			validation.Each(
 				validation.By(validateNote),
@@ -237,6 +241,31 @@ func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
 			),
 		)
 	}
+}
+
+func validateInvoiceTotals(val any) error {
+	totals, ok := val.(*bill.Totals)
+	if !ok || totals == nil {
+		return nil
+	}
+	if totals.Taxes == nil || len(totals.Taxes.Categories) == 0 {
+		return fmt.Errorf("lines must have at least one tax category")
+	}
+
+	// Check if there is at least one non-retained tax
+	hasNonRetainedTax := false
+	for _, cat := range totals.Taxes.Categories {
+		if !cat.Retained {
+			hasNonRetainedTax = true
+			break
+		}
+	}
+
+	if !hasNonRetainedTax {
+		return fmt.Errorf("lines must have at least one non-retained tax")
+	}
+
+	return nil
 }
 
 func validateNote(val any) error {

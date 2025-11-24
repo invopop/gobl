@@ -449,6 +449,50 @@ func TestInvoiceValidation(t *testing.T) {
 		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
 		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
 	})
+
+	t.Run("invoice with no taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = nil
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "lines must have at least one tax category")
+	})
+
+	t.Run("invoice with only retained taxes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Replace VAT with IRPF (retained tax)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "IRPF",
+				Rate:     "pro",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "lines must have at least one non-retained tax")
+	})
+
+	t.Run("invoice with VAT passes validation", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("invoice with both VAT and IRPF passes validation", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+			{
+				Category: "IRPF",
+				Rate:     "pro",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
