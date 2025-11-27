@@ -1,0 +1,163 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "7b7de531c83e4ad3343bd17e0ba6d5983e1f5c645b67029bb323d96359df2b90"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "ES",
+		"$addons": [
+			"es-sii-v1"
+		],
+		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a0",
+		"type": "standard",
+		"series": "EXPORT",
+		"code": "N2-001",
+		"issue_date": "2024-12-04",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"es-sii-doc-type": "F1"
+			}
+		},
+		"supplier": {
+			"name": "Provide One S.L.",
+			"tax_id": {
+				"country": "ES",
+				"code": "B98602642"
+			},
+			"addresses": [
+				{
+					"num": "42",
+					"street": "Calle Pradillo",
+					"locality": "Madrid",
+					"region": "Madrid",
+					"code": "28002",
+					"country": "ES"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "Global Tech Solutions Inc.",
+			"tax_id": {
+				"country": "US",
+				"code": "1234567890"
+			},
+			"addresses": [
+				{
+					"street": "123 Main Street",
+					"locality": "New York",
+					"region": "NY",
+					"code": "10001",
+					"country": "US"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "10",
+				"item": {
+					"name": "Software development services",
+					"price": "150.00",
+					"unit": "h"
+				},
+				"sum": "1500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "outside-scope",
+						"ext": {
+							"es-sii-not-subject": "N2",
+							"es-sii-regime": "01"
+						}
+					}
+				],
+				"total": "1500.00"
+			},
+			{
+				"i": 2,
+				"quantity": "5",
+				"item": {
+					"name": "Technical consulting",
+					"price": "200.00",
+					"unit": "day"
+				},
+				"sum": "1000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "outside-scope",
+						"ext": {
+							"es-sii-not-subject": "N2",
+							"es-sii-regime": "01"
+						}
+					}
+				],
+				"total": "1000.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Project management",
+					"price": "500.00"
+				},
+				"sum": "500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "outside-scope",
+						"ext": {
+							"es-sii-not-subject": "N2",
+							"es-sii-regime": "01"
+						}
+					}
+				],
+				"total": "500.00"
+			}
+		],
+		"totals": {
+			"sum": "3000.00",
+			"total": "3000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "outside-scope",
+								"ext": {
+									"es-sii-not-subject": "N2",
+									"es-sii-regime": "01"
+								},
+								"base": "3000.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "3000.00",
+			"payable": "3000.00"
+		},
+		"notes": [
+			{
+				"key": "general",
+				"text": "Services provided to customer outside the European Union - outside scope of Spanish VAT"
+			}
+		]
+	}
+}
