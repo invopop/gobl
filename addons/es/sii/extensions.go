@@ -9,16 +9,18 @@ import (
 // Extension keys for SII
 const (
 	ExtKeyDocType           cbc.Key = "es-sii-doc-type"
-	ExtKeyOpClass           cbc.Key = "es-sii-op-class"
 	ExtKeyCorrectionType    cbc.Key = "es-sii-correction-type"
+	ExtKeyNotExempt         cbc.Key = "es-sii-not-exempt"
+	ExtKeyNotSubject        cbc.Key = "es-sii-not-subject"
 	ExtKeyExempt            cbc.Key = "es-sii-exempt"
 	ExtKeyRegime            cbc.Key = "es-sii-regime"
 	ExtKeyIdentityType      cbc.Key = "es-sii-identity-type"
 	ExtKeySimplifiedArt7273 cbc.Key = "es-sii-simplified-art7273"
-	ExtKeyIssuerType        cbc.Key = "es-sii-issuer-type"
+	ExtKeyNonSupplierIssuer cbc.Key = "es-sii-non-supplier-issuer"
+	ExtKeyProduct           cbc.Key = "es-sii-product"
 )
 
-// Identity Type Codes - limited subset assigned to identities.
+// Identity Type Codes
 const (
 	ExtCodeIdentityTypeVAT      cbc.Code = "02" // NIF-VAT identity
 	ExtCodeIdentityTypePassport cbc.Code = "03" // Passport
@@ -27,38 +29,38 @@ const (
 	ExtCodeIdentityTypeOther    cbc.Code = "06" // Other Identity Document
 )
 
-// Issuer Type Codes
+// Product Type Codes
 const (
-	ExtCodeIssuerTypeThirdParty cbc.Code = "T" // Issued by Third Party
-	ExtCodeIssuerTypeCustomer   cbc.Code = "D" // Issued by Customer
+	ExtCodeProductGoods    cbc.Code = "goods"    // Delivery of goods
+	ExtCodeProductServices cbc.Code = "services" // Provision of services
 )
 
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyDocType,
 		Name: i18n.String{
-			i18n.EN: "Invoice Type Code",
-			i18n.ES: "Código de Tipo de Factura",
+			i18n.EN: "Invoice Type",
+			i18n.ES: "Tipo de Factura",
 		},
 		Sources: []*cbc.Source{
 			{
 				Title: i18n.String{
-					i18n.EN: "SII Ministerial Order",
-					i18n.ES: "Orden Ministerial de SII",
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
 				},
-				URL: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-22138",
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
 			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Code used to identify the type of invoice being sent. This will be
-				determined automatically by GOBL during normalization according
-				to the scenario definitions.
+				Code used to identify the type of invoice being sent or received. This will be determined
+				automatically by GOBL during normalization according to the scenario definitions.
 
-				The codes ~R2~, ~R3~, and ~R4~ are not covered by GOBL's scenarios
-				and will need to be set manually if needed.
+				The following codes are not covered by GOBL's scenarios and will need to be set manually if
+				needed: ~F4~, ~F5~, ~F6~, ~R2~, ~R3~, ~R4~, ~AJ~, ~LC~.
 
-				Values correspond to L2 list.
+				Maps to the ~TipoFactura~ field. Values correspond to the L2_EMI (issued invoices) and
+				L2_RECI (received invoices) lists.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -82,8 +84,8 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						To use for B2C invoices where details about the customer are not
-						normally required.
+						To use for B2C invoices where details about the customer are not normally
+						required.
 					`),
 				},
 			},
@@ -96,6 +98,43 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
 						To use when a simplified invoice is replaced by a regular invoice.
+					`),
+				},
+			},
+			{
+				Code: "F4",
+				Name: i18n.String{
+					i18n.EN: "Summary entry of invoices",
+					i18n.ES: "Asiento resumen de facturas",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Summary entry grouping multiple invoices.
+					`),
+				},
+			},
+			{
+				Code: "F5",
+				Name: i18n.String{
+					i18n.EN: "Imports (DUA)",
+					i18n.ES: "Importaciones (DUA)",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						For import operations using the Single Administrative Document (DUA). Only
+						applicable to received invoices (L2_RECI).
+					`),
+				},
+			},
+			{
+				Code: "F6",
+				Name: i18n.String{
+					i18n.EN: "Accounting justifications",
+					i18n.ES: "Justificantes contables",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						For accounting justifications. Only applicable to received invoices.
 					`),
 				},
 			},
@@ -121,8 +160,8 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						To use for customer declared insolvency proceedings when a court
-						is involved.
+						To use for customer declared insolvency proceedings when a court is
+						involved.
 					`),
 				},
 			},
@@ -134,8 +173,8 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						For unpaid invoices that are not declared as related to insolvency
-						and related to bad debt after a 6 or 12 month waiting period.
+						For unpaid invoices that are not declared as related to insolvency and
+						related to bad debt after a 6 or 12 month waiting period.
 					`),
 				},
 			},
@@ -147,8 +186,8 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Legal or court-imposed corrections that do not fall under any of
-						the other corrective reasons.
+						Legal or court-imposed corrections that do not fall under any of the other
+						corrective reasons.
 					`),
 				},
 			},
@@ -164,26 +203,61 @@ var extensions = []*cbc.Definition{
 					`),
 				},
 			},
+			{
+				Code: "AJ",
+				Name: i18n.String{
+					i18n.EN: "Profit margin adjustment",
+					i18n.ES: "Ajuste del margen de beneficio",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						For profit margin adjustments. Only applicable to issued invoices (L2_EMI).
+					`),
+				},
+			},
+			{
+				Code: "LC",
+				Name: i18n.String{
+					i18n.EN: "Customs - Complementary settlement",
+					i18n.ES: "Aduanas - Liquidación complementaria",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						For complementary customs settlements. Only applicable to received invoices
+						(L2_RECI).
+					`),
+				},
+			},
 		},
 	},
 	{
 		Key: ExtKeyCorrectionType,
 		Name: i18n.String{
-			i18n.EN: "SII Correction Type Code",
-			i18n.ES: "Código de Tipo de Corrección de SII",
+			i18n.EN: "Corrective Invoice Type",
+			i18n.ES: "Tipo de Factura Rectificativa",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Correction type code used to identify the type of correction being
-				made. Values map to L3 list.
+				Correction type code used to identify the type of correction being made.
 
 				Code is determined automatically according to the invoice type:
 
-				| Invoice Type		| Code |
-				|-------------------|------|
-				| ~corrective~		| ~S~  |
-				| ~credit-note~		| ~I~  |
-				| ~debit-note~		| ~I~  |
+				| Invoice Type  | Code |
+				| ------------- | ---- |
+				| ~corrective~  | ~S~  |
+				| ~credit-note~ | ~I~  |
+				| ~debit-note~  | ~I~  |
+
+				Maps to the ~TipoRectificativa~ field. Values correspond to the L5 list.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -204,57 +278,239 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyOpClass,
+		Key: ExtKeyExempt,
 		Name: i18n.String{
-			i18n.EN: "Subject and Not Exempt Operation Class Code",
-			i18n.ES: "Clave de la Operación Sujeta y no Exenta o de la Operación no Sujeta.",
+			i18n.EN: "Exemption Reason",
+			i18n.ES: "Causa de Exención",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Classification code for operations that are subject to tax and not exempt, or for operations not subject to tax.
+				Exemption code used to explain why the operation is exempt from taxes.
 
-				GOBL will attempt to automatically assign operation class codes based on tax key, but if your workflow requires more control, you may prefer to let users select the appropriate operation class and exemption code for each case.
+				The follow mappings will be made automatically by GOBL during normalization:
 
-				Automatic mapping of tax combo keys to operation classes:
+				| Tax Key           | Exemption Codes            |
+				|-------------------|----------------------------|
+				| ~exempt~          | ~E1~ (default), ~E6~       |
+				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
+				| ~intra-community~ | ~E5~                       |
 
-				| Operation Class | Tax Key                |
-				|-----------------|-------------------------|
-				| ~S1~            | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
-				| ~S2~            | ~reverse-charge~                |
-				| ~N1~            | ~outside-scope~ |
-				| ~N2~            | ~outside-scope~ (default) |
+				Maps to the field ~CausaExencion~. Values correspond to the L9 list.
 
-				This extension maps to the ~CalificacionOperacion~ field and must not be used together with the ~es-sii-exempt~ extension. Values correspond to the L9 list.
+				Note: This extension is **mutually exclusive** with ~es-sii-not-exempt~ and ~es-sii-not-subject~.
+				Only one of these three extensions can be used for a given tax combo.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: "E1",
+				Name: i18n.String{
+					i18n.EN: "Exempt pursuant to Art. 20 (internal operations).",
+					i18n.ES: "Exenta por el art. 20 (operaciones interiores).",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **domestic VAT-exempt operations**: healthcare by medical
+						professionals, education by authorised centres, social assistance, certain
+						cultural services, financial and insurance services, letting of dwellings,
+						etc.
+					`),
+				},
+			},
+			{
+				Code: "E2",
+				Name: i18n.String{
+					i18n.EN: "Exempt pursuant to Art. 21 (exports of goods).",
+					i18n.ES: "Exenta por el art. 21 (exportaciones de bienes).",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **exports of goods outside the EU** (including the tax-free
+						travellers regime where the sale is exported) and services directly related
+						to those exports, under the conditions of the article.
+					`),
+				},
+			},
+			{
+				Code: "E3",
+				Name: i18n.String{
+					i18n.EN: "Exempt pursuant to Art. 22 (operations asimilated to exports).",
+					i18n.ES: "Exenta por el art. 22 (operaciones asimiladas a las exportaciones).",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **operations assimilated to exports**, e.g.,
+						supplies/repairs/charter of qualifying ships or aircraft, avituallamiento
+						(provisioning) of such vessels, and certain services directly connected with
+						international transport.
+					`),
+				},
+			},
+			{
+				Code: "E4",
+				Name: i18n.String{
+					i18n.EN: "Exempt pursuant to Art. 23 and 24 (temporary deposit, customs and fiscal regimes, and other situations).",
+					i18n.ES: "Exenta por los art. 23 y 24 (situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones).",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for operations linked to **free zones, customs/duty-free warehouses and
+						other customs or fiscal regimes** (e.g., depósitos francos, depósito
+						temporal, perfeccionamiento activo/pasivo, depósito distinto del aduanero),
+						while the goods remain under those regimes.
+					`),
+				},
+			},
+			{
+				Code: "E5",
+				Name: i18n.String{
+					i18n.EN: "Exempt pursuant to Art. 25 (delivery of goods destined to another Member State).",
+					i18n.ES: "Exenta por el art. 25 (entregas de bienes destinados a otro Estado miembro).",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for **intra-Community supplies of goods** from Spain to another EU
+						Member State when the buyer is VAT-identified in another Member State and
+						the goods are shipped there.
+					`),
+				},
+			},
+			{
+				Code: "E6",
+				Name: i18n.String{
+					i18n.EN: "Exempt pursuant to other reasons",
+					i18n.ES: "Exenta por otra causa",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use when the operation is exempt for a reason not covered by Articles 20–25,
+						and a lawful exemption applies (catch-all "Exenta por otros"). Document the
+						legal basis on the invoice text.
+					`),
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyNotExempt,
+		Name: i18n.String{
+			i18n.EN: "Type of Operation Subject and Not Exempt",
+			i18n.ES: "Tipo de Operación Sujeta y No Exenta",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Type of operation subject and not exempt for the differentiation of reverse charge.
 
-				For further guidance on applying these codes, refer to the AEAT FAQ:
-				 * https://sede.agenciatributaria.gob.es/Sede/impuestos-tasas/iva/iva-libros-registro-iva-traves-aeat/preguntas-frecuentes/3-libro-registro-facturas-expedidas.html?faqId=b5556c3d02bc9510VgnVCM100000dc381e0aRCRD
-				`),
+				GOBL will attempt to automatically assign operation type codes based on tax key:
+
+				| Operation Type | Tax Key                                        |
+				| -------------- | ---------------------------------------------- |
+				| ~S1~           | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
+				| ~S2~           | ~reverse-charge~                               |
+
+				Maps to the ~TipoNoExenta~ field. Values correspond to the L7 list.
+
+				Note: This extension is **mutually exclusive** with ~es-sii-exempt~ and ~es-sii-not-subject~.
+				Only one of these three extensions can be used for a given tax combo.
+			`),
 		},
 		Values: []*cbc.Definition{
 			{
 				Code: "S1",
 				Name: i18n.String{
-					i18n.EN: "Subject and Not Exempt - Without reverse charge",
-					i18n.ES: "Operación Sujeta y No exenta - Sin inversión del sujeto pasivo",
+					i18n.EN: "Non-exempt - Without reverse charge",
+					i18n.ES: "No exenta - Sin inversión sujeto pasivo",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						General sales with VAT percent.
+						Use for operations that are subject to tax and not exempt, without reverse charge.
 					`),
 				},
 			},
 			{
 				Code: "S2",
 				Name: i18n.String{
-					i18n.EN: "Subject and Not Exempt - With reverse charge",
-					i18n.ES: "Operación Sujeta y No exenta - Con Inversión del sujeto pasivo",
+					i18n.EN: "Non-exempt - With reverse charge",
+					i18n.ES: "No exenta - Con Inversión sujeto pasivo",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Use when the supply is **subject to VAT**, VAT is **not charged by the supplier**, but the **buyer** must self-account under an applicable **reverse-charge regime**. Percent present as zero.
+						Use for operations that are subject to tax and not exempt, with reverse charge.
 					`),
 				},
 			},
+			{
+				Code: "S3",
+				Name: i18n.String{
+					i18n.EN: "Non-exempt - Without reverse charge and with reverse charge",
+					i18n.ES: "No exenta - Sin inversión sujeto pasivo y con Inversión sujeto pasivo",
+				},
+				Desc: i18n.String{
+					i18n.EN: here.Doc(`
+						Use for operations that are subject to tax and not exempt, containing both operations
+						without reverse charge and operations with reverse charge.
+					`),
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyNotSubject,
+		Name: i18n.String{
+			i18n.EN: "Type of Operation Not Subject",
+			i18n.ES: "Tipo de Operación No Sujeta",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Type of operation not subject to VAT.
+
+				This extension is used to determine which tax amount field should be reported in the SII
+				payload:
+
+				- ~N1~ will set the ~ImportePorArticulos7_14_Otros~ field.
+				- ~N2~ will set the ~ImporteTAIReglasLocalizacion~ field.
+
+				GOBL will attempt to automatically assign operation type codes based on tax key:
+
+				| Operation Type | Tax Key                   |
+				| -------------- | ------------------------- |
+				| ~N1~           | ~outside-scope~           |
+				| ~N2~           | ~outside-scope~ (default) |
+
+				Doesn't map directly to any field. Used internally to determine how to report the tax amount.
+
+				Note: This extension is **mutually exclusive** with ~es-sii-exempt~ and ~es-sii-not-exempt~.
+				Only one of these three extensions can be used for a given tax combo.
+			`),
+		},
+		Values: []*cbc.Definition{
 			{
 				Code: "N1",
 				Name: i18n.String{
@@ -263,7 +519,10 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Use when the operations fall **outside the VAT scope** under Spanish VAT law (e.g. transfers of companies, certain exchanges of goods, contributions of goods, internal operations of public entities, ...). VAT is **not chargeable** or declared.
+						Use when the operations fall **outside the VAT scope** under Spanish VAT law
+						(e.g. transfers of companies, certain exchanges of goods, contributions of
+						goods, internal operations of public entities, ...). VAT is **not
+						chargeable** or declared.
 					`),
 				},
 			},
@@ -275,105 +534,9 @@ var extensions = []*cbc.Definition{
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Use when the operation is **not subject to VAT due to its place of supply** (e.g. services provided to non‑EU B2B customers that are deemed outside Spanish VAT by location rules).
-					`),
-				},
-			},
-		},
-	},
-	{
-		Key: ExtKeyExempt,
-		Name: i18n.String{
-			i18n.EN: "SII Exemption Code",
-			i18n.ES: "Código de Exención de Impuesto de SII",
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Exemption code used to explain why the operation is exempt from taxes.
-
-				This extension maps to the field ~OperacionExenta~, and **cannot** be provided
-				alongside the ~es-sii-op-class~ extension. Values correspond to the
-				L10 list.
-
-				The follow mappings will be made automatically by GOBL during normalization.
-
-				| Tax Key           | Exemption Codes            |
-				|-------------------|----------------------------|
-				| ~exempt~          | ~E1~ (default), ~E6~       |
-				| ~export~          | ~E2~ (default), ~E3~, ~E4~ |
-				| ~intra-community~ | ~E5~                       |
-			`),
-		},
-		Values: []*cbc.Definition{
-			{
-				Code: "E1",
-				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 20. Exemptions in internal operations.",
-					i18n.ES: "Exenta: por el artículo 20. Exenciones en operaciones interiores.",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for **domestic VAT-exempt operations**: healthcare by medical professionals, education by authorised centres, social assistance, certain cultural services, financial and insurance services, letting of dwellings, etc.
-					`),
-				},
-			},
-			{
-				Code: "E2",
-				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 21. Exemptions in exports of goods.",
-					i18n.ES: "Exenta: por el artículo 21. Exenciones en las exportaciones de bienes.",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for **exports of goods outside the EU** (including the tax-free travellers regime where the sale is exported) and services directly related to those exports, under the conditions of the article.
-					`),
-				},
-			},
-			{
-				Code: "E3",
-				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 22. Exemptions in operations asimilated to exports.",
-					i18n.ES: "Exenta: por el artículo 22. Exenciones en las operaciones asimiladas a las exportaciones.",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for **operations assimilated to exports**, e.g., supplies/repairs/charter of qualifying ships or aircraft, avituallamiento (provisioning) of such vessels, and certain services directly connected with international transport.
-					`),
-				},
-			},
-			{
-				Code: "E4",
-				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Articles 23 and 24. Exemptions related to temporary deposit, customs and fiscal regimes, and other situations.",
-					i18n.ES: "Exenta: por el artículos 23 y 24. Exenciones relativas a las situaciones de depósito temporal, regímenes aduaneros y fiscales, y otras situaciones.",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for operations linked to **free zones, customs/duty-free warehouses and other customs or fiscal regimes** (e.g., depósitos francos, depósito temporal, perfeccionamiento activo/pasivo, depósito distinto del aduanero), while the goods remain under those regimes.
-					`),
-				},
-			},
-			{
-				Code: "E5",
-				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to Article 25. Exemptions in the delivery of goods destined to another Member State.",
-					i18n.ES: "Exenta: por el artículo 25. Exenciones en las entregas de bienes destinados a otro Estado miembro.",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for **intra-Community supplies of goods** from Spain to another EU Member State when the buyer is VAT-identified in another Member State and the goods are shipped there
-					`),
-				},
-			},
-			{
-				Code: "E6",
-				Name: i18n.String{
-					i18n.EN: "Exempt: pursuant to other reasons",
-					i18n.ES: "Exenta: por otra causa",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use when the operation is exempt for a reason not covered by Articles 20–25, and a lawful exemption applies (catch-all "Exenta por otros"). Document the legal basis on the invoice text.
+						Use when the operation is **not subject to VAT due to its place of supply**
+						(e.g. services provided to non‑EU B2B customers that are deemed outside
+						Spanish VAT by location rules).
 					`),
 				},
 			},
@@ -382,25 +545,32 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyRegime,
 		Name: i18n.String{
-			i18n.EN: "VAT/IGIC Regime Code",
-			i18n.ES: "Código de Régimen de IVA/IGIC",
+			i18n.EN: "Special Regime or Relevance Key",
+			i18n.ES: "Clave de Régimen Especial o Trascendencia",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Identify the type of VAT or IGIC regime applied to the operation. This list combines
-				lists L8A which include values for VAT, and L8B for IGIC.
+				Identify the regime applied to the operation.
 
-				Maps to the field ~ClaveRegimen~, and is required for all VAT and IGIC operations.
-				Values correspond to L8A (VAT) and L8B (IGIC) lists.
+				The regime key must be assigned for each tax combo. If no regime key is provided, GOBL will
+				try to assign a code from the following tax combo contexts:
 
-				The regime code must be assigned for each tax combo. If no regime code is provided,
-				GOBL will try to assign a code from the following tax combo contexts:
+				| Combo Context  | Regime Code |
+				| -------------- | ----------- |
+				| Key ~standard~ | ~01~        |
+				| Key ~export~   | ~02~        |
 
-				| Combo Context				| Regime Code |
-				|---------------------------|-------------|
-				| Key ~standard~			| ~01~        |
-				| Key ~export~			    | ~02~        |
-				| Has surcharge				| ~18~        |
+				Maps to the field ~ClaveRegimenEspecialOTrascendencia~. Values correspond to the L3.1
+				(issued invoices) and L3.2 (received invoices) lists.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -414,8 +584,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "02",
 				Name: i18n.String{
-					i18n.EN: "Export",
-					i18n.ES: "Exportación",
+					i18n.EN: "Export (L3.1) / Operations for which businesses pay compensation in acquisitions from individuals under the special regime for agriculture, livestock, and fishing (L3.2)",
+					i18n.ES: "Exportación (L3.1) / Operaciones por las que los empresarios satisfacen compensaciones en las adquisiciones a personas acogidas al Régimen especial de la agricultura, ganadería y pesca (L3.2)",
 				},
 			},
 			{
@@ -456,8 +626,8 @@ var extensions = []*cbc.Definition{
 			{
 				Code: "08",
 				Name: i18n.String{
-					i18n.EN: "Operations subject to a different regime",
-					i18n.ES: "Operaciones sujetas a un régimen diferente",
+					i18n.EN: "Operations subject to IPSI / IGIC (Tax on Production, Services and Imports / Canary Islands General Indirect Tax)",
+					i18n.ES: "Operaciones sujetas al IPSI / IGIC (Impuesto sobre la Producción, los Servicios y la Importación / Impuesto General Indirecto Canario)",
 				},
 			},
 			{
@@ -482,10 +652,24 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
+				Code: "12",
+				Name: i18n.String{
+					i18n.EN: "Business premises rental operations not subject to withholding",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio no sujetos a retención",
+				},
+			},
+			{
+				Code: "13",
+				Name: i18n.String{
+					i18n.EN: "Business premises rental operations subject and not subject to withholding (L3.1) / Invoice corresponding to an import (reported without being associated with a DUA) (L3.2)",
+					i18n.ES: "Operaciones de arrendamiento de local de negocio sujetas y no sujetas a retención (L3.1) / Factura correspondiente a una importación (informada sin asociar a un DUA) (L3.2)",
+				},
+			},
+			{
 				Code: "14",
 				Name: i18n.String{
-					i18n.EN: "Invoice with pending VAT/IGIC accrual in work certifications for Public Administration",
-					i18n.ES: "Factura con IVA/IGIC pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública",
+					i18n.EN: "Invoice with pending VAT/IGIC accrual in work certifications for Public Administration (L3.1) / First half of 2017 and other invoices prior to inclusion in the SII (L3.2)",
+					i18n.ES: "Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública (L3.1) / Primer semestre 2017 y otras facturas anteriores a la inclusión en el SII (L3.2)",
 				},
 			},
 			{
@@ -496,31 +680,17 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
+				Code: "16",
+				Name: i18n.String{
+					i18n.EN: "First half of 2017 and other invoices prior to inclusion in the SII",
+					i18n.ES: "Primer semestre 2017 y otras facturas anteriores a la inclusión en el SII",
+				},
+			},
+			{
 				Code: "17",
 				Name: i18n.String{
-					i18n.EN: "Operation under OSS and IOSS regimes (VAT) / Special regime for retail traders. (IGIC)",
-					i18n.ES: "Operación acogida a alguno de los regímenes previstos en el capítulo XI del título IX (OSS e IOSS, IVA) / Régimen especial de comerciante minorista. (IGIC)",
-				},
-			},
-			{
-				Code: "18",
-				Name: i18n.String{
-					i18n.EN: "Equivalence surcharge (VAT) / Special regime for small traders or retailers (IGIC)",
-					i18n.ES: "Recargo de equivalencia (IVA) / Régimen especial del pequeño comerciante o minorista (IGIC)",
-				},
-			},
-			{
-				Code: "19",
-				Name: i18n.String{
-					i18n.EN: "Operations included in the Special Regime for Agriculture, Livestock and Fisheries",
-					i18n.ES: "Operaciones de actividades incluidas en el Régimen Especial de Agricultura, Ganadería y Pesca (REAGYP)",
-				},
-			},
-			{
-				Code: "20",
-				Name: i18n.String{
-					i18n.EN: "Simplified regime (VAT only)",
-					i18n.ES: "Régimen simplificado (IVA only)",
+					i18n.EN: "Operation covered by one of the regimes provided for in Chapter XI of Title IX (OSS and IOSS)",
+					i18n.ES: "Operación acogida a alguno de los regímenes previstos en el Capítulo XI del Título IX (OSS e IOSS)",
 				},
 			},
 		},
@@ -528,34 +698,44 @@ var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyIdentityType,
 		Name: i18n.String{
-			i18n.EN: "Identity Type Code",
-			i18n.ES: "Código de Tipo de Identidad",
+			i18n.EN: "Identification Type",
+			i18n.ES: "Tipos de Identificación",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Identity code used to identify the type of identity document used by the customer
-				defined in the L7 list.
+				Identity code used to identify the type of identity document used by the customer.
 
-				The regular Party Tax Identity is preferred over using a specific identity type
-				code, and will be mapped automatically as follows:
+				The regular Party Tax Identity is preferred over using a specific identity type code, and
+				will be mapped automatically as follows:
 
 				- Spanish Tax IDs will be mapped to the ~NIF~ field.
-				- EU Tax IDs will be mapped to the ~IDOtro~ field with code ~02~.
-				- Non-EU Tax IDs will be mapped to the ~IDOtro~ field with code ~04~.
+				- EU Tax IDs will be mapped to the ~IDOtro\IDType~ field with code ~02~.
+				- Non-EU Tax IDs will be mapped to the ~IDOtro\IDType~ field with code ~04~.
 
-				SII will perform validation on both Spanish and EU Tax IDs, so it is important
-				to provide the correct details.
+				SII will perform validation on both Spanish and EU Tax IDs, so it is important to provide
+				the correct details.
 
 				The following identity ~key~ values will be mapped automatically to an extension by the
-				addon for the following keys:
+				addon:
 
-				- ~passport~: ~03~
-				- ~foreign~: ~04~
-				- ~resident~: ~05~
-				- ~other~: ~06~
+				| Identity Key | Code |
+				|--------------|------|
+				| ~passport~   | ~03~ |
+				| ~foreign~    | ~04~ |
+				| ~resident~  | ~05~ |
+				| ~other~      | ~06~ |
 
-				The ~07~ "not registered in census" code is not mapped automatically, but
-				can be provided directly if needed.
+				The ~07~ "not registered in census" code is not mapped automatically, but can be provided
+				directly if needed.
 
 				Example identity of a UK passport:
 
@@ -587,6 +767,8 @@ var extensions = []*cbc.Definition{
 					]
 				}
 				~~~
+
+				Maps to the field ~IDOtro\IDType~. Values correspond to the L4 list.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -642,16 +824,24 @@ var extensions = []*cbc.Definition{
 			i18n.EN: "Simplified Invoice Art. 7.2 and 7.3, RD 1619/2012",
 			i18n.ES: "Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012",
 		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
+		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				This extensions covers a specific use-case when the customer specifically
-				requests that the invoice includes their fiscal details, but they are
-				not registered for tax.
+				This extensions covers a specific use-case when the customer specifically requests that the
+				invoice includes their fiscal details, but they are not registered for tax.
 
-				Maps to the ~FacturaSimplificadaArt7273~ field in SII documents.
+				Can only be true when the invoice type (~TipoFactura~) is one of: ~F1~, ~F3~, ~R1~, ~R2~,
+				~R3~, or ~R4~.
 
-				Can only be true when the invoice type (~TipoFactura~) is one of: ~F1~,
-				~F3~, ~R1~, ~R2~, ~R3~, or ~R4~.
+				Maps to the ~FacturaSimplificadaArticulos7.2_7.3~ field. Values correspond to the L26 list.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -672,42 +862,88 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyIssuerType,
+		Key: ExtKeyNonSupplierIssuer,
 		Name: i18n.String{
-			i18n.EN: "Issuer Type Code",
+			i18n.EN: "Issued by Third Party or Recepient",
 			i18n.ES: "Emitida por Tercero o Destinatario",
+		},
+		Sources: []*cbc.Source{
+			{
+				Title: i18n.String{
+					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
+					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
+				},
+				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
+			},
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				Indicates whether the invoice is issued by a third party or by the customer
-				themselves.
+				Indicates whether the invoice is issued by a third party or by the customer themselves.
 
-				Mapped to the field ~EmitidaPorTerceroODestinatario~ in SII documents,
-				with list L6.
+				The default value is ~N~ (No).
 
-				The ~self-billed~ tag will automatically be set this extension in the invoice
-				to ~D~.
+				The ~self-billed~ tag will automatically be set this extension in the invoice to ~S~ (Yes).
 
-				If the ~issuer~ field is set in the invoice's ordering section, then this
-				extension will be set to ~T~.
+				If the ~issuer~ field is set in the invoice's ordering section, then this extension will be
+				set to ~S~ (Yes) too.
+
+				Maps to the field ~EmitidaPorTercerosODestinatarios~. Values correspond to the L10 list.
 			`),
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: ExtCodeIssuerTypeThirdParty,
+				Code: "S",
 				Name: i18n.String{
-					i18n.EN: "Issued by Third Party",
-					i18n.ES: "Emitida por Tercero",
+					i18n.EN: "Yes",
+					i18n.ES: "Sí",
 				},
 			},
 			{
-				Code: ExtCodeIssuerTypeCustomer,
+				Code: "N",
 				Name: i18n.String{
-					i18n.EN: "Issued by Customer",
-					i18n.ES: "Emitida por Destinatario",
+					i18n.EN: "No",
+					i18n.ES: "No",
+				},
+			},
+		},
+	},
+	{
+		Key: ExtKeyProduct,
+		Name: i18n.String{
+			i18n.EN: "Product Type",
+			i18n.ES: "Tipo de Producto",
+		},
+		Desc: i18n.String{
+			i18n.EN: here.Doc(`
+				Product type code used to differentiate between goods and services for the purpose of
+				reporting breakdowns in the SII format.
+
+				This extension is used to determine the type of operation breakdown when generating the SII
+				report. When provided, the value will be used to generate the ~DesgloseTipoOperacion~ field,
+				selecting between ~PrestacionServices~ (provision of services) or ~Entrega~ (delivery of
+				goods).
+
+				This extension is optional; if not provided, the breakdown will use ~DesgloseFactura~ instead
+				of ~DesgloseTipoOperacion~.
+
+				Doesn't map directly to any field. Used internally to structure the breakdown data.
+			`),
+		},
+		Values: []*cbc.Definition{
+			{
+				Code: ExtCodeProductGoods,
+				Name: i18n.String{
+					i18n.EN: "Delivery of goods",
+					i18n.ES: "Entrega de bienes",
+				},
+			},
+			{
+				Code: ExtCodeProductServices,
+				Name: i18n.String{
+					i18n.EN: "Provision of services",
+					i18n.ES: "Prestación de servicios",
 				},
 			},
 		},
 	},
 }
-
