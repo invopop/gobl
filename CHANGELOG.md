@@ -6,10 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `tax`: `Tags.RemoveTags()` method for removing tags from a list.
+- `es-verifactu-v1`: Validate tax breakdown requires at least one non-retained tax category.
+
+### Changed
+
+- `es-verifactu-v1`: Simplified invoices with customer tax_id or identities are automatically converted to regular invoices with `es-verifactu-simplified-art7273` extension.
+
+### Fixed
+
+- `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
+
 ## [v0.303.0] - 2025-11-17
 
 ### Added
 
+- `org`: `Identity` now has `gln` as a possible Key.
+- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
+- `ar`: Argentine regime
+- `it-sdi-v1`: Add Italian phone number validation and normalization
 - `it-sdi-v1`: Add validation for IBANs.
 
 ### Removed
@@ -20,13 +37,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `eu-en16931-v2017`: Remove address constraint for all parties, keep for Supplier and Customer.
 - `be`: Update regex to account for new VAT numbers starting with 1.
-
-### Added
-
-- `org`: `Identity` now has `gln` as a possible Key.
-- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
-- `ar`: Argentine regime
-- `it-sdi-v1`: Add Italian phone number validation and normalization
 
 ## [v0.302.1] - 2025-10-31
 
