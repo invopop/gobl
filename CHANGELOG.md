@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `bill`: Add replicate logic to payments, orders and deliveries.
+
+### Changed
+
+- `bill`: Refactor replicate logic to rely on calculations to set default values.
+
 ## [v0.303.0] - 2025-11-17
 
 ### Added
