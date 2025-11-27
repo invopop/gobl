@@ -22,7 +22,7 @@ func newAddon() *tax.AddonDef {
 	return &tax.AddonDef{
 		Key: V1,
 		Name: i18n.String{
-			i18n.EN: "Spain SII V1",
+			i18n.EN: "Spain SII V1.x",
 		},
 		Sources: []*cbc.Source{
 			{
