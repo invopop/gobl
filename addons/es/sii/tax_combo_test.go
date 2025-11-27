@@ -167,6 +167,18 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, tax.KeyReverseCharge, tc.Key)
 	})
+	t.Run("with standard", func(t *testing.T) {
+		tc := &tax.Combo{
+			Category: tax.CategoryVAT,
+			Ext: tax.Extensions{
+				ExtKeyNotExempt: "S1",
+			},
+		}
+		normalizeTaxCombo(tc)
+		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyNotExempt).String())
+		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Equal(t, tax.KeyStandard, tc.Key)
+	})
 	t.Run("with outside-scope", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
@@ -434,5 +446,20 @@ func TestValidateTaxCombo(t *testing.T) {
 		}
 		err := validateTaxCombo(tc)
 		assert.NoError(t, err)
+	})
+}
+
+func TestExtensionsRequireOneOf(t *testing.T) {
+	t.Run("empty extensions returns nil", func(t *testing.T) {
+		rule := extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyExempt)
+		err := rule.Validate(nil)
+		assert.NoError(t, err, "empty extensions should return nil")
+	})
+
+	t.Run("empty map extensions returns nil", func(t *testing.T) {
+		rule := extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyExempt)
+		emptyExt := make(tax.Extensions)
+		err := rule.Validate(emptyExt)
+		assert.NoError(t, err, "empty map extensions should return nil")
 	})
 }
