@@ -75,6 +75,31 @@ func normalizeInvoice(inv *bill.Invoice) {
 	}
 
 	normalizeInvoicePartyIdentity(inv.Customer)
+
+	normalizeSimplifiedWithCustomer(inv)
+}
+
+func normalizeSimplifiedWithCustomer(inv *bill.Invoice) {
+	if !inv.HasTags(tax.TagSimplified) {
+		return
+	}
+
+	cus := inv.Customer
+	if cus == nil {
+		return
+	}
+	if cus.TaxID == nil && len(cus.Identities) == 0 {
+		return
+	}
+
+	// Customer has details on a simplified invoice.
+	// Remove the simplified tag so scenarios will assign the regular doc type (F1/R1),
+	// and add the SimplifiedArt7273 extension to indicate this is still a simplified
+	// invoice but with customer details per Article 7.2 and 7.3 of RD 1619/2012.
+	inv.RemoveTags(tax.TagSimplified)
+	inv.Tax = inv.Tax.MergeExtensions(tax.Extensions{
+		ExtKeySimplifiedArt7273: "S",
+	})
 }
 
 func normalizeInvoicePartyIdentity(cus *org.Party) {
@@ -128,19 +153,11 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Required,
 				validation.By(validateInvoiceCustomer),
 			),
-			validation.When(
-				inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // simplified
-				validation.By(validateInvoiceCustomerSimplified),
-			),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
 			validation.Required,
 			validation.By(validateInvoiceTax(inv.Type)),
-			validation.Skip,
-		),
-		validation.Field(&inv.Totals,
-			validation.By(validateInvoiceTotals),
 			validation.Skip,
 		),
 		validation.Field(&inv.Notes,
@@ -170,17 +187,6 @@ func validateInvoiceCustomer(val any) error {
 			validation.Skip,
 		),
 	)
-}
-
-func validateInvoiceCustomerSimplified(val any) error {
-	p, ok := val.(*org.Party)
-	if !ok || p == nil {
-		return nil
-	}
-	if p.TaxID != nil || len(p.Identities) > 0 {
-		return fmt.Errorf("F2 and R5 invoices cannot have a customer. If you want to fill customer details for a simplified invoice use other type and add the extension %s", ExtKeySimplifiedArt7273)
-	}
-	return nil
 }
 
 var docTypesStandard = []cbc.Code{ // Standard invoices
@@ -241,31 +247,6 @@ func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
 			),
 		)
 	}
-}
-
-func validateInvoiceTotals(val any) error {
-	totals, ok := val.(*bill.Totals)
-	if !ok || totals == nil {
-		return nil
-	}
-	if totals.Taxes == nil || len(totals.Taxes.Categories) == 0 {
-		return fmt.Errorf("lines must have at least one tax category")
-	}
-
-	// Check if there is at least one non-retained tax
-	hasNonRetainedTax := false
-	for _, cat := range totals.Taxes.Categories {
-		if !cat.Retained {
-			hasNonRetainedTax = true
-			break
-		}
-	}
-
-	if !hasNonRetainedTax {
-		return fmt.Errorf("lines must have at least one non-retained tax")
-	}
-
-	return nil
 }
 
 func validateNote(val any) error {

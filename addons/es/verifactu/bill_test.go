@@ -204,18 +204,17 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
 	})
 
-	t.Run("simplified substitution", func(t *testing.T) {
+	t.Run("simplified substitution without customer", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
+		// Simplified invoice without customer details stays F2
+		inv.Customer = nil
 		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "F2", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
 
-		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax(), bill.WithExtension(verifactu.ExtKeyDocType, "F3")))
-		// R5 invoices cannot have customer with tax ID or identities
-		inv.Customer.TaxID = nil
-		inv.Customer.Identities = nil
+		require.NoError(t, inv.Correct(bill.Corrective, bill.WithCopyTax()))
 		require.NoError(t, inv.Validate())
-		// Should always set the doc type to R5, even if trying to override as the simplified
-		// tag has priority.
+		// Should get R5 for simplified corrective
 		assert.Equal(t, "R5", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
 		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeyCorrectionType].String())
 	})
@@ -394,16 +393,16 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
 	})
-	t.Run("simplified invoice F2 cannot have customer with tax ID", func(t *testing.T) {
+	t.Run("simplified invoice F2 with customer tax ID normalizes to F1", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
-		// Customer has tax ID - should fail
+		// Customer has tax ID - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
-		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, "F1", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
+		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
 	})
-	t.Run("simplified substitution R5 cannot have customer with tax ID", func(t *testing.T) {
+	t.Run("simplified substitution R5 with customer tax ID normalizes to R1", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
 		inv.Type = bill.InvoiceTypeCorrective
@@ -428,13 +427,13 @@ func TestInvoiceValidation(t *testing.T) {
 				},
 			},
 		}
-		// Customer has tax ID - should fail
+		// Customer has tax ID - should be normalized to R1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
-		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
+		require.NoError(t, inv.Validate())
+		assert.Equal(t, "R1", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
+		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
 	})
-	t.Run("simplified invoice F2 cannot have customer with identity", func(t *testing.T) {
+	t.Run("simplified invoice F2 with customer identity normalizes to F1", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer.TaxID = nil
@@ -444,55 +443,13 @@ func TestInvoiceValidation(t *testing.T) {
 				Code: "AA123456",
 			},
 		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.ErrorContains(t, err, "F2 and R5 invoices cannot have a customer")
-		require.ErrorContains(t, err, "es-verifactu-simplified-art7273")
-	})
-
-	t.Run("invoice with no taxes", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes = nil
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.ErrorContains(t, err, "lines must have at least one tax category")
-	})
-
-	t.Run("invoice with only retained taxes", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		// Replace VAT with IRPF (retained tax)
-		inv.Lines[0].Taxes = tax.Set{
-			{
-				Category: "IRPF",
-				Rate:     "pro",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		err := inv.Validate()
-		require.ErrorContains(t, err, "lines must have at least one non-retained tax")
-	})
-
-	t.Run("invoice with VAT passes validation", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
+		// Customer has identity - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
+		assert.Equal(t, "F1", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
+		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
 	})
 
-	t.Run("invoice with both VAT and IRPF passes validation", func(t *testing.T) {
-		inv := testInvoiceStandard(t)
-		inv.Lines[0].Taxes = tax.Set{
-			{
-				Category: "VAT",
-				Rate:     "standard",
-			},
-			{
-				Category: "IRPF",
-				Rate:     "pro",
-			},
-		}
-		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

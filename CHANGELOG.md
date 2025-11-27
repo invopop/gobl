@@ -8,11 +8,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- `es-verifactu-v1`: Invoices must include at least one non-retained tax.
+- `tax`: `Tags.RemoveTags()` method for removing tags from a list.
+
+### Changed
+
+- `es-verifactu-v1`: Simplified invoices with customer tax_id or identities are automatically converted to regular invoices with `es-verifactu-simplified-art7273` extension.
 
 ### Fixed
 
-- `es-verifactu-v1`: Simplified invoices (F2 and R5) now reject a tax ID
+- `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
 
 ## [v0.303.0] - 2025-11-17
 
