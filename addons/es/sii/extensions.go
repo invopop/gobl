@@ -426,7 +426,9 @@ var extensions = []*cbc.Definition{
 				| ~S1~           | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
 				| ~S2~           | ~reverse-charge~                               |
 
-				Maps to the ~TipoNoExenta~ field. Values correspond to the L7 list.
+				Maps to the ~TipoNoExenta~ field. Values correspond to the L7 list. The ~S3~ code is not
+				meant to be set manually, it will only be set internally when both ~S1~ and ~S2~ are present
+				in the same invoice.
 
 				Note: This extension is **mutually exclusive** with ~es-sii-exempt~ and ~es-sii-not-subject~.
 				Only one of these three extensions can be used for a given tax combo.

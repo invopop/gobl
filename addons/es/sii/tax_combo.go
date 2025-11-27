@@ -77,16 +77,12 @@ func validateTaxCombo(tc *tax.Combo) error {
 			validation.Required,
 			// Regime is always required for VAT and IGIC
 			tax.ExtensionsRequire(ExtKeyRegime),
+			extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyExempt, ExtKeyNotExempt),
 			validation.When(
 				tc.Percent != nil, // Subject and not exempt
-				tax.ExtensionsRequire(ExtKeyNotExempt),
-				tax.ExtensionsExclude(ExtKeyNotSubject, ExtKeyExempt),
+				extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyNotExempt),
 			),
-			validation.When(
-				tc.Percent == nil, // Exempt or not subject
-				extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyExempt),
-				tax.ExtensionsExclude(ExtKeyNotExempt),
-			),
+			tax.ExtensionsExcludeCodes(ExtKeyNotExempt, "S3"), // S3 can only be set by the converter when both S1 and S2 are present
 			// https://sede.agenciatributaria.gob.es/static_files/Sede/Procedimiento_ayuda/G417/FicherosSuministros/V_1_1/Validaciones_ErroresSII_v1.1.pdf (Page 51, point 11)
 			validation.When(
 				tc.Ext.Get(ExtKeyRegime).In("01"),
