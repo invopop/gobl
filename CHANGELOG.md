@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `tax`: `Tags.RemoveTags()` method for removing tags from a list.
+- `es-verifactu-v1`: Validate tax breakdown requires at least one non-retained tax category.
 
 ### Changed
 

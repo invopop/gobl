@@ -450,6 +450,36 @@ func TestInvoiceValidation(t *testing.T) {
 		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
 	})
 
+	t.Run("invoice with only retained taxes fails", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		// Replace VAT with IRPF (retained tax)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "IRPF",
+				Rate:     "pro",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		require.ErrorContains(t, err, "invoice requires at least one tax category that is not retained (VAT, IGIC, IPSI)")
+	})
+
+	t.Run("invoice with VAT and IRPF passes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Taxes = tax.Set{
+			{
+				Category: "VAT",
+				Rate:     "standard",
+			},
+			{
+				Category: "IRPF",
+				Rate:     "pro",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {

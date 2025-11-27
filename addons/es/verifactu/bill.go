@@ -160,6 +160,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceTax(inv.Type)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Totals,
+			validation.By(validateInvoiceTotals),
+			validation.Skip,
+		),
 		validation.Field(&inv.Notes,
 			validation.Each(
 				validation.By(validateNote),
@@ -247,6 +251,22 @@ func validateInvoicePreceding(inv *bill.Invoice) validation.RuleFunc {
 			),
 		)
 	}
+}
+
+func validateInvoiceTotals(val any) error {
+	totals, ok := val.(*bill.Totals)
+	if !ok || totals == nil || totals.Taxes == nil {
+		return nil
+	}
+	// Verifactu requires at least one tax entry in the Desglose field,
+	// which is built from non-retained tax categories (VAT, IGIC, etc.).
+	// Retained taxes like IRPF are not included in Desglose.
+	for _, cat := range totals.Taxes.Categories {
+		if !cat.Retained {
+			return nil
+		}
+	}
+	return fmt.Errorf("invoice requires at least one tax category that is not retained (VAT, IGIC, IPSI)")
 }
 
 func validateNote(val any) error {
