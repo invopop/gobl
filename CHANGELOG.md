@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-sii-v1`: Added initial Spain SII addon.
+
 ## [v0.303.0] - 2025-11-17
 
 ### Added
