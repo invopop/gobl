@@ -61,22 +61,22 @@ func TestReplicate(t *testing.T) {
 		}
 	})
 
-	tests.Add("nocurr", func(t *testing.T) any {
+	tests.Add("nocurrency", func(t *testing.T) any {
 		return tt{
 			opts: &ReplicateOptions{
 				ParseOptions: &ParseOptions{
-					Input: testFileReader(t, "testdata/nocurr.json"),
+					Input: testFileReader(t, "testdata/nocurrency.json"),
 				},
 			},
 			err: "currency: missing",
 		}
 	})
 
-	tests.Add("nocurr just invoice", func(t *testing.T) any {
+	tests.Add("nocurrency just invoice", func(t *testing.T) any {
 		return tt{
 			opts: &ReplicateOptions{
 				ParseOptions: &ParseOptions{
-					Input: testFileReaderForDoc(t, "testdata/nocurr.json"),
+					Input: testFileReaderForDoc(t, "testdata/nocurrency.json"),
 				},
 			},
 			err: "currency: missing",
