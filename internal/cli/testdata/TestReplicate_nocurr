@@ -1,0 +1,205 @@
+{
+    "$schema": "https://gobl.org/draft-0/envelope",
+    "doc": {
+        "$regime": "ES",
+        "$schema": "https://gobl.org/draft-0/bill/invoice",
+        "currency": "EUR",
+        "customer": {
+            "addresses": [
+                {
+                    "code": "28792",
+                    "country": "ES",
+                    "locality": "Miraflores de la Sierra",
+                    "num": "1629",
+                    "region": "Madrid",
+                    "street": "Calle Diseminado"
+                }
+            ],
+            "emails": [
+                {
+                    "addr": "sam.lown@invopop.com"
+                }
+            ],
+            "name": "Autofiscal S.L.",
+            "tax_id": {
+                "code": "43596386R",
+                "country": "ES"
+            }
+        },
+        "issue_date": "2025-11-27",
+        "lines": [
+            {
+                "i": 1,
+                "item": {
+                    "name": "Development services day rate",
+                    "price": "200.00"
+                },
+                "quantity": "20",
+                "sum": "4000.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "key": "standard",
+                        "percent": "21.0%",
+                        "rate": "general"
+                    },
+                    {
+                        "cat": "IRPF",
+                        "percent": "15.0%",
+                        "rate": "pro"
+                    }
+                ],
+                "total": "4000.00"
+            },
+            {
+                "i": 2,
+                "item": {
+                    "name": "Something random",
+                    "price": "100.00"
+                },
+                "quantity": "10",
+                "sum": "1000.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "key": "standard",
+                        "percent": "21.0%",
+                        "rate": "general"
+                    }
+                ],
+                "total": "1000.00"
+            },
+            {
+                "i": 3,
+                "item": {
+                    "name": "Additional random services",
+                    "price": "34.50"
+                },
+                "quantity": "5",
+                "sum": "172.50",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "key": "zero",
+                        "percent": "0%"
+                    }
+                ],
+                "total": "172.50"
+            },
+            {
+                "i": 4,
+                "item": {
+                    "name": "Impuesto local",
+                    "price": "5.00"
+                },
+                "quantity": "3",
+                "sum": "15.00",
+                "total": "15.00"
+            }
+        ],
+        "payment": {
+            "instructions": {
+                "credit_transfer": [
+                    {
+                        "iban": "ES06 0128 0011 3901 0008 1391",
+                        "name": "Bankinter"
+                    }
+                ],
+                "key": "credit-transfer"
+            },
+            "terms": {
+                "key": "instant"
+            }
+        },
+        "supplier": {
+            "addresses": [
+                {
+                    "code": "28003",
+                    "country": "ES",
+                    "locality": "Madrid",
+                    "num": "10",
+                    "region": "Madrid",
+                    "street": "Calle Mayor"
+                }
+            ],
+            "emails": [
+                {
+                    "addr": "contact@company.com"
+                }
+            ],
+            "name": "Juan Perez",
+            "people": [
+                {
+                    "name": {
+                        "alias": "Paco",
+                        "given": "Francisco",
+                        "surname": "Smith"
+                    }
+                }
+            ],
+            "tax_id": {
+                "code": "93471790C",
+                "country": "ES"
+            },
+            "telephones": [
+                {
+                    "label": "mobile",
+                    "num": "+34644123123"
+                }
+            ]
+        },
+        "totals": {
+            "payable": "5637.50",
+            "retained_tax": "600.00",
+            "sum": "5187.50",
+            "tax": "1050.00",
+            "taxes": {
+                "categories": [
+                    {
+                        "amount": "1050.00",
+                        "code": "VAT",
+                        "rates": [
+                            {
+                                "amount": "1050.00",
+                                "base": "5000.00",
+                                "key": "standard",
+                                "percent": "21.0%"
+                            },
+                            {
+                                "amount": "0.00",
+                                "base": "172.50",
+                                "key": "zero",
+                                "percent": "0%"
+                            }
+                        ]
+                    },
+                    {
+                        "amount": "600.00",
+                        "code": "IRPF",
+                        "rates": [
+                            {
+                                "amount": "600.00",
+                                "base": "4000.00",
+                                "percent": "15.0%"
+                            }
+                        ],
+                        "retained": true
+                    }
+                ],
+                "retained": "600.00",
+                "sum": "1050.00"
+            },
+            "total": "5187.50",
+            "total_with_tax": "6237.50"
+        },
+        "type": "standard",
+        "uuid": "019ac4bd-cb1f-7288-b204-673273fa2d30"
+    },
+    "head": {
+        "dig": {
+            "alg": "sha256",
+            "val": "d398518bb73c0daeb9c9fa9c09efdf410d616d567ac15d2499cd8b34ddaf5dfa"
+        },
+        "uuid": "019ac4bd-cb1f-7284-865a-7b329cd7004d"
+    }
+}
