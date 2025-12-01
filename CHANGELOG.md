@@ -11,10 +11,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `Tags.RemoveTags()` method for removing tags from a list.
 - `es-verifactu-v1`: Validate tax breakdown requires at least one non-retained tax category.
 
-### Changed
-
-- `es-verifactu-v1`: Simplified invoices with customer tax_id or identities are automatically converted to regular invoices with `es-verifactu-simplified-art7273` extension.
-
 ### Fixed
 
 - `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
