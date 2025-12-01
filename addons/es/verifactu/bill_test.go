@@ -393,16 +393,14 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, inv.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")
 	})
-	t.Run("simplified invoice F2 with customer tax ID normalizes to F1", func(t *testing.T) {
+	t.Run("simplified invoice F2 with customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
 		// Customer has tax ID - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		assert.Equal(t, "F1", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
-		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
+		require.ErrorContains(t, inv.Validate(), "customer: (tax_id: must be blank.)")
 	})
-	t.Run("simplified substitution R5 with customer tax ID normalizes to R1", func(t *testing.T) {
+	t.Run("simplified substitution R5 with customer tax ID", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
 		inv.Type = bill.InvoiceTypeCorrective
@@ -429,11 +427,9 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has tax ID - should be normalized to R1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		assert.Equal(t, "R1", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
-		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
+		require.ErrorContains(t, inv.Validate(), "customer: (tax_id: must be blank.)")
 	})
-	t.Run("simplified invoice F2 with customer identity normalizes to F1", func(t *testing.T) {
+	t.Run("simplified invoice F2 with customer identity", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSimplified)
 		inv.Customer.TaxID = nil
@@ -445,9 +441,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		// Customer has identity - should be normalized to F1 with SimplifiedArt7273
 		require.NoError(t, inv.Calculate())
-		require.NoError(t, inv.Validate())
-		assert.Equal(t, "F1", inv.Tax.Ext[verifactu.ExtKeyDocType].String())
-		assert.Equal(t, "S", inv.Tax.Ext[verifactu.ExtKeySimplifiedArt7273].String())
+		require.ErrorContains(t, inv.Validate(), "customer: (identities: (0: (ext: (es-verifactu-identity-type: must be blank.).).).)")
 	})
 
 	t.Run("invoice with only retained taxes fails", func(t *testing.T) {
@@ -461,7 +455,7 @@ func TestInvoiceValidation(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		err := inv.Validate()
-		require.ErrorContains(t, err, "invoice requires at least one tax category that is not retained (VAT, IGIC, IPSI)")
+		require.ErrorContains(t, err, "lines: (0: (taxes: missing category in VAT, IGIC, IPSI.).).")
 	})
 
 	t.Run("invoice with VAT and IRPF passes", func(t *testing.T) {

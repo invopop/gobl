@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "4f185753fc78e1ee8c7f2c59931cc4af1f15a58c068914f65127b41c3f8f8ae8"
+			"val": "840b3933159910f03ea4e1d2d4b5ae573f07a1b7734932addd761b8498203c68"
 		}
 	},
 	"doc": {
@@ -12,6 +12,9 @@
 		"$regime": "ES",
 		"$addons": [
 			"es-verifactu-v1"
+		],
+		"$tags": [
+			"simplified"
 		],
 		"uuid": "3aea7b56-59d8-4beb-90bd-f8f280d852a1",
 		"type": "standard",
@@ -21,8 +24,7 @@
 		"currency": "EUR",
 		"tax": {
 			"ext": {
-				"es-verifactu-doc-type": "F1",
-				"es-verifactu-simplified-art7273": "S"
+				"es-verifactu-doc-type": "F2"
 			}
 		},
 		"supplier": {
@@ -49,10 +51,16 @@
 		},
 		"customer": {
 			"name": "Sample Consumer",
-			"tax_id": {
-				"country": "ES",
-				"code": "54387763P"
-			}
+			"addresses": [
+				{
+					"num": "10",
+					"street": "Avenida Siempre Viva",
+					"locality": "Springfield",
+					"region": "SP",
+					"code": "28080",
+					"country": "ES"
+				}
+			]
 		},
 		"lines": [
 			{
