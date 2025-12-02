@@ -611,7 +611,7 @@
       ]
     },
     {
-      "key": "es-sii-non-supplier-issuer",
+      "key": "es-sii-third-party-issuer",
       "name": {
         "en": "Issued by Third Party or Recepient",
         "es": "Emitida por Tercero o Destinatario"

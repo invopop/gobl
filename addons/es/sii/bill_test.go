@@ -130,7 +130,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		inv := testInvoiceStandard(t)
 		inv.SetTags(tax.TagSelfBilled)
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyNonSupplierIssuer].String())
+		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyThirdPartyIssuer].String())
 	})
 
 	t.Run("with issuer", func(t *testing.T) {
@@ -145,7 +145,7 @@ func TestInvoicePartyNormalization(t *testing.T) {
 			},
 		}
 		require.NoError(t, inv.Calculate())
-		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyNonSupplierIssuer].String())
+		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyThirdPartyIssuer].String())
 	})
 }
 

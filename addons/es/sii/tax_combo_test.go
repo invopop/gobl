@@ -3,7 +3,6 @@ package sii
 import (
 	"testing"
 
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/es"
@@ -19,8 +18,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyNotExempt).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 	t.Run("valid - no key", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -28,8 +28,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyNotExempt).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 
 	t.Run("valid with country", func(t *testing.T) {
@@ -39,9 +40,9 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateSuperReduced,
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyNotExempt).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 
 	t.Run("exempt", func(t *testing.T) {
@@ -52,6 +53,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "E1", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 	t.Run("export", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -61,6 +63,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "E2", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 	t.Run("intra-community", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -70,6 +73,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, "E5", tc.Ext.Get(ExtKeyExempt).String())
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 	t.Run("outside scope", func(t *testing.T) {
 		tc := &tax.Combo{
@@ -78,21 +82,21 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "N2", tc.Ext.Get(ExtKeyNotSubject).String())
+		assert.Equal(t, "location", tc.Ext.Get(ExtKeyOutsideScope).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
 	})
 
-	t.Run("outside scope N1", func(t *testing.T) {
+	t.Run("outside scope other", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Key:      tax.KeyOutsideScope,
 			Ext: tax.Extensions{
-				ExtKeyNotSubject: "N1",
+				ExtKeyOutsideScope: "other",
 			},
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "N1", tc.Ext.Get(ExtKeyNotSubject).String())
+		assert.Equal(t, "other", tc.Ext.Get(ExtKeyOutsideScope).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
 	})
 	t.Run("reverse charge", func(t *testing.T) {
@@ -102,8 +106,8 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		}
 		normalizeTaxCombo(tc)
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyNotExempt).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
+		assert.Empty(t, tc.Ext.Get(ExtKeyOutsideScope))
 	})
 
 	t.Run("foreign country", func(t *testing.T) {
@@ -113,7 +117,7 @@ func TestNormalizeTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, cbc.Code("N2"), tc.Ext.Get(ExtKeyNotSubject))
+		assert.Equal(t, "location", tc.Ext.Get(ExtKeyOutsideScope).String())
 		assert.Empty(t, tc.Ext.Get(ExtKeyExempt))
 	})
 
@@ -154,28 +158,11 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		assert.Equal(t, "02", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, tax.KeyExport, tc.Key)
 	})
-	t.Run("with reverse-charge", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
-				ExtKeyNotExempt: "S2",
-				ExtKeyRegime:    "01",
-			},
-		}
-		normalizeTaxCombo(tc)
-		assert.Equal(t, "S2", tc.Ext.Get(ExtKeyNotExempt).String())
-		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
-		assert.Equal(t, tax.KeyReverseCharge, tc.Key)
-	})
 	t.Run("with standard", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
-				ExtKeyNotExempt: "S1",
-			},
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "S1", tc.Ext.Get(ExtKeyNotExempt).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, tax.KeyStandard, tc.Key)
 	})
@@ -183,12 +170,12 @@ func TestNormalizeTaxCombo(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Ext: tax.Extensions{
-				ExtKeyNotSubject: "N1",
-				ExtKeyRegime:     "01",
+				ExtKeyOutsideScope: "location",
+				ExtKeyRegime:       "01",
 			},
 		}
 		normalizeTaxCombo(tc)
-		assert.Equal(t, "N1", tc.Ext.Get(ExtKeyNotSubject).String())
+		assert.Equal(t, "location", tc.Ext.Get(ExtKeyOutsideScope).String())
 		assert.Equal(t, "01", tc.Ext.Get(ExtKeyRegime).String())
 		assert.Equal(t, tax.KeyOutsideScope, tc.Key)
 	})
@@ -214,8 +201,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(210, 3),
 			Ext: tax.Extensions{
-				ExtKeyNotExempt: "S1",
-				ExtKeyRegime:    "01",
+				ExtKeyRegime: "01",
 			},
 		}
 		err := validateTaxCombo(tc)
@@ -300,42 +286,12 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(210, 3),
 			Ext: tax.Extensions{
-				ExtKeyNotExempt: "S1",
+				ExtKeyProduct: "goods",
 			},
 		}
 		err := validateTaxCombo(tc)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), string(ExtKeyRegime))
-	})
-
-	t.Run("requires not exempt when percent is set", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateGeneral,
-			Percent:  num.NewPercentage(210, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime: "01",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), string(ExtKeyNotExempt))
-	})
-
-	t.Run("excludes not subject when percent is set", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Rate:     tax.RateGeneral,
-			Percent:  num.NewPercentage(210, 3),
-			Ext: tax.Extensions{
-				ExtKeyRegime:     "01",
-				ExtKeyNotExempt:  "S1",
-				ExtKeyNotSubject: "N1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), string(ExtKeyNotSubject))
 	})
 
 	t.Run("excludes exempt when percent is set", func(t *testing.T) {
@@ -344,82 +300,53 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(210, 3),
 			Ext: tax.Extensions{
-				ExtKeyRegime:    "01",
-				ExtKeyNotExempt: "S1",
-				ExtKeyExempt:    "E1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), string(ExtKeyExempt))
-	})
-
-	t.Run("requires one of not subject or exempt when percent is nil", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
 				ExtKeyRegime: "01",
+				ExtKeyExempt: "E1",
 			},
 		}
 		err := validateTaxCombo(tc)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "one of")
-		assert.Contains(t, err.Error(), string(ExtKeyNotSubject))
-		assert.Contains(t, err.Error(), string(ExtKeyExempt))
+		assert.Contains(t, err.Error(), ExtKeyExempt)
 	})
 
-	t.Run("allows only one of not subject or exempt when percent is nil", func(t *testing.T) {
+	t.Run("allows only one of outside scope or exempt", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Ext: tax.Extensions{
-				ExtKeyRegime:     "01",
-				ExtKeyNotSubject: "N1",
-				ExtKeyExempt:     "E1",
+				ExtKeyRegime:       "01",
+				ExtKeyOutsideScope: "location",
+				ExtKeyExempt:       "E1",
 			},
 		}
 		err := validateTaxCombo(tc)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "only one of")
+		assert.Contains(t, err.Error(), ExtKeyExempt)
 	})
 
 	t.Run("valid not subject when percent is nil", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
 			Ext: tax.Extensions{
-				ExtKeyRegime:     "01",
-				ExtKeyNotSubject: "N1",
+				ExtKeyRegime:       "01",
+				ExtKeyOutsideScope: "location",
 			},
 		}
 		err := validateTaxCombo(tc)
 		assert.NoError(t, err)
 	})
 
-	t.Run("excludes not exempt when percent is nil", func(t *testing.T) {
+	t.Run("valid not subject when percent is set", func(t *testing.T) {
 		tc := &tax.Combo{
 			Category: tax.CategoryVAT,
+			Rate:     tax.RateGeneral,
+			Percent:  num.NewPercentage(210, 3),
 			Ext: tax.Extensions{
-				ExtKeyRegime:     "01",
-				ExtKeyNotSubject: "N1",
-				ExtKeyNotExempt:  "S1",
+				ExtKeyRegime:       "01",
+				ExtKeyOutsideScope: "location",
 			},
 		}
 		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), string(ExtKeyNotExempt))
-	})
-
-	t.Run("excludes not exempt when exempt is set and percent is nil", func(t *testing.T) {
-		tc := &tax.Combo{
-			Category: tax.CategoryVAT,
-			Ext: tax.Extensions{
-				ExtKeyRegime:    "01",
-				ExtKeyExempt:    "E1",
-				ExtKeyNotExempt: "S1",
-			},
-		}
-		err := validateTaxCombo(tc)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), string(ExtKeyNotExempt))
+		assert.NoError(t, err)
 	})
 
 	t.Run("valid not exempt with percent", func(t *testing.T) {
@@ -428,8 +355,7 @@ func TestValidateTaxCombo(t *testing.T) {
 			Rate:     tax.RateGeneral,
 			Percent:  num.NewPercentage(210, 3),
 			Ext: tax.Extensions{
-				ExtKeyRegime:    "01",
-				ExtKeyNotExempt: "S1",
+				ExtKeyRegime: "01",
 			},
 		}
 		err := validateTaxCombo(tc)
@@ -446,20 +372,5 @@ func TestValidateTaxCombo(t *testing.T) {
 		}
 		err := validateTaxCombo(tc)
 		assert.NoError(t, err)
-	})
-}
-
-func TestExtensionsRequireOneOf(t *testing.T) {
-	t.Run("empty extensions returns nil", func(t *testing.T) {
-		rule := extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyExempt)
-		err := rule.Validate(nil)
-		assert.NoError(t, err, "empty extensions should return nil")
-	})
-
-	t.Run("empty map extensions returns nil", func(t *testing.T) {
-		rule := extensionsRequireOneOf(ExtKeyNotSubject, ExtKeyExempt)
-		emptyExt := make(tax.Extensions)
-		err := rule.Validate(emptyExt)
-		assert.NoError(t, err, "empty map extensions should return nil")
 	})
 }

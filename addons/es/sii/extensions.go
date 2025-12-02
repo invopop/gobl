@@ -10,13 +10,12 @@ import (
 const (
 	ExtKeyDocType           cbc.Key = "es-sii-doc-type"
 	ExtKeyCorrectionType    cbc.Key = "es-sii-correction-type"
-	ExtKeyNotExempt         cbc.Key = "es-sii-not-exempt"
-	ExtKeyNotSubject        cbc.Key = "es-sii-not-subject"
+	ExtKeyOutsideScope      cbc.Key = "es-sii-outside-scope"
 	ExtKeyExempt            cbc.Key = "es-sii-exempt"
 	ExtKeyRegime            cbc.Key = "es-sii-regime"
 	ExtKeyIdentityType      cbc.Key = "es-sii-identity-type"
 	ExtKeySimplifiedArt7273 cbc.Key = "es-sii-simplified-art7273"
-	ExtKeyNonSupplierIssuer cbc.Key = "es-sii-non-supplier-issuer"
+	ExtKeyThirdPartyIssuer  cbc.Key = "es-sii-third-party-issuer"
 	ExtKeyProduct           cbc.Key = "es-sii-product"
 )
 
@@ -33,6 +32,12 @@ const (
 const (
 	ExtCodeProductGoods    cbc.Code = "goods"    // Delivery of goods
 	ExtCodeProductServices cbc.Code = "services" // Provision of services
+)
+
+// Outside Scope Codes
+const (
+	ExtCodeOutsideScopeOther    cbc.Code = "other"    // Other
+	ExtCodeOutsideScopeLocation cbc.Code = "location" // Location
 )
 
 var extensions = []*cbc.Definition{
@@ -306,8 +311,7 @@ var extensions = []*cbc.Definition{
 
 				Maps to the field ~CausaExencion~. Values correspond to the L9 list.
 
-				Note: This extension is **mutually exclusive** with ~es-sii-not-exempt~ and ~es-sii-not-subject~.
-				Only one of these three extensions can be used for a given tax combo.
+				Note: This extension is **mutually exclusive** with ~es-sii-outside-scope~.
 			`),
 		},
 		Values: []*cbc.Definition{
@@ -401,83 +405,9 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyNotExempt,
+		Key: ExtKeyOutsideScope,
 		Name: i18n.String{
-			i18n.EN: "Type of Operation Subject and Not Exempt",
-			i18n.ES: "Tipo de Operación Sujeta y No Exenta",
-		},
-		Sources: []*cbc.Source{
-			{
-				Title: i18n.String{
-					i18n.EN: "Ministerial Order HFP/417/2017, of May 12th",
-					i18n.ES: "Orden Ministerial HFP/417/2017, de 12 de Mayo",
-				},
-				URL: "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312",
-			},
-		},
-		Desc: i18n.String{
-			i18n.EN: here.Doc(`
-				Type of operation subject and not exempt for the differentiation of reverse charge.
-
-				GOBL will attempt to automatically assign operation type codes based on tax key:
-
-				| Operation Type | Tax Key                                        |
-				| -------------- | ---------------------------------------------- |
-				| ~S1~           | ~standard~, ~reduced~, ~super-reduced~, ~zero~ |
-				| ~S2~           | ~reverse-charge~                               |
-
-				Maps to the ~TipoNoExenta~ field. Values correspond to the L7 list. The ~S3~ code is not
-				meant to be set manually, it will only be set internally when both ~S1~ and ~S2~ are present
-				in the same invoice.
-
-				Note: This extension is **mutually exclusive** with ~es-sii-exempt~ and ~es-sii-not-subject~.
-				Only one of these three extensions can be used for a given tax combo.
-			`),
-		},
-		Values: []*cbc.Definition{
-			{
-				Code: "S1",
-				Name: i18n.String{
-					i18n.EN: "Non-exempt - Without reverse charge",
-					i18n.ES: "No exenta - Sin inversión sujeto pasivo",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for operations that are subject to tax and not exempt, without reverse charge.
-					`),
-				},
-			},
-			{
-				Code: "S2",
-				Name: i18n.String{
-					i18n.EN: "Non-exempt - With reverse charge",
-					i18n.ES: "No exenta - Con Inversión sujeto pasivo",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for operations that are subject to tax and not exempt, with reverse charge.
-					`),
-				},
-			},
-			{
-				Code: "S3",
-				Name: i18n.String{
-					i18n.EN: "Non-exempt - Without reverse charge and with reverse charge",
-					i18n.ES: "No exenta - Sin inversión sujeto pasivo y con Inversión sujeto pasivo",
-				},
-				Desc: i18n.String{
-					i18n.EN: here.Doc(`
-						Use for operations that are subject to tax and not exempt, containing both operations
-						without reverse charge and operations with reverse charge.
-					`),
-				},
-			},
-		},
-	},
-	{
-		Key: ExtKeyNotSubject,
-		Name: i18n.String{
-			i18n.EN: "Type of Operation Not Subject",
+			i18n.EN: "Type of Operation Outside Scope",
 			i18n.ES: "Tipo de Operación No Sujeta",
 		},
 		Sources: []*cbc.Source{
@@ -496,28 +426,27 @@ var extensions = []*cbc.Definition{
 				This extension is used to determine which tax amount field should be reported in the SII
 				payload:
 
-				- ~N1~ will set the ~ImportePorArticulos7_14_Otros~ field.
-				- ~N2~ will set the ~ImporteTAIReglasLocalizacion~ field.
+				- ~other~ will set the ~ImportePorArticulos7_14_Otros~ field.
+				- ~location~ will set the ~ImporteTAIReglasLocalizacion~ field.
 
 				GOBL will attempt to automatically assign operation type codes based on tax key:
 
 				| Operation Type | Tax Key                   |
 				| -------------- | ------------------------- |
-				| ~N1~           | ~outside-scope~           |
-				| ~N2~           | ~outside-scope~ (default) |
+				| ~other~        | ~outside-scope~           |
+				| ~location~     | ~outside-scope~ (default) |
 
 				Doesn't map directly to any field. Used internally to determine how to report the tax amount.
 
-				Note: This extension is **mutually exclusive** with ~es-sii-exempt~ and ~es-sii-not-exempt~.
-				Only one of these three extensions can be used for a given tax combo.
+				Note: This extension is **mutually exclusive** with ~es-sii-exempt~.
 			`),
 		},
 		Values: []*cbc.Definition{
 			{
-				Code: "N1",
+				Code: ExtCodeOutsideScopeOther,
 				Name: i18n.String{
-					i18n.EN: "Not Subject - Articles 7, 14, others",
-					i18n.ES: "Operación No Sujeta artículo 7, 14, otros",
+					i18n.EN: "Outside scope - Articles 7, 14, others",
+					i18n.ES: "Operación No Sujeta por artículo 7, 14, otros",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
@@ -529,16 +458,16 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "N2",
+				Code: ExtCodeOutsideScopeLocation,
 				Name: i18n.String{
-					i18n.EN: "Not Subject - Due to location rules",
+					i18n.EN: "Outside scope - Due to location rules",
 					i18n.ES: "Operación No Sujeta por Reglas de localización",
 				},
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
-						Use when the operation is **not subject to VAT due to its place of supply**
-						(e.g. services provided to non‑EU B2B customers that are deemed outside
-						Spanish VAT by location rules).
+						Use when the operation falls **outside the VAT scope due to its place of
+						supply** (e.g. services provided to non‑EU B2B customers that are deemed
+						outside Spanish VAT by location rules).
 					`),
 				},
 			},
@@ -730,10 +659,10 @@ var extensions = []*cbc.Definition{
 				addon:
 
 				| Identity Key | Code |
-				|--------------|------|
+				| ------------ | ---- |
 				| ~passport~   | ~03~ |
 				| ~foreign~    | ~04~ |
-				| ~resident~  | ~05~ |
+				| ~resident~   | ~05~ |
 				| ~other~      | ~06~ |
 
 				The ~07~ "not registered in census" code is not mapped automatically, but can be provided
@@ -864,9 +793,9 @@ var extensions = []*cbc.Definition{
 		},
 	},
 	{
-		Key: ExtKeyNonSupplierIssuer,
+		Key: ExtKeyThirdPartyIssuer,
 		Name: i18n.String{
-			i18n.EN: "Issued by Third Party or Recepient",
+			i18n.EN: "Issued by Third Party or Recipient",
 			i18n.ES: "Emitida por Tercero o Destinatario",
 		},
 		Sources: []*cbc.Source{
@@ -889,7 +818,7 @@ var extensions = []*cbc.Definition{
 				If the ~issuer~ field is set in the invoice's ordering section, then this extension will be
 				set to ~S~ (Yes) too.
 
-				Maps to the field ~EmitidaPorTercerosODestinatarios~. Values correspond to the L10 list.
+				Maps to the field ~EmitidaPorTercerosODestinatario~. Values correspond to the L10 list.
 			`),
 		},
 		Values: []*cbc.Definition{

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "c9d4812991dc4c585233997bb52494d2e77a217d9071a7f138d6269d36f496e6"
+			"val": "31f1ced950a8823b713fe0597b00d89ee1632f087d2772f36ed082a1458c2e60"
 		}
 	},
 	"doc": {
@@ -25,7 +25,7 @@
 		"tax": {
 			"ext": {
 				"es-sii-doc-type": "F1",
-				"es-sii-non-supplier-issuer": "S"
+				"es-sii-third-party-issuer": "S"
 			}
 		},
 		"supplier": {
@@ -81,7 +81,6 @@
 						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
-							"es-sii-not-exempt": "S1",
 							"es-sii-regime": "01"
 						}
 					}
@@ -102,7 +101,6 @@
 						"key": "zero",
 						"percent": "0%",
 						"ext": {
-							"es-sii-not-exempt": "S1",
 							"es-sii-regime": "01"
 						}
 					}
@@ -121,7 +119,6 @@
 							{
 								"key": "standard",
 								"ext": {
-									"es-sii-not-exempt": "S1",
 									"es-sii-regime": "01"
 								},
 								"base": "1620.00",
@@ -131,7 +128,6 @@
 							{
 								"key": "zero",
 								"ext": {
-									"es-sii-not-exempt": "S1",
 									"es-sii-regime": "01"
 								},
 								"base": "10.00",

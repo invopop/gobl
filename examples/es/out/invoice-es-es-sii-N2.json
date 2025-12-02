@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "7b7de531c83e4ad3343bd17e0ba6d5983e1f5c645b67029bb323d96359df2b90"
+			"val": "964354bf9393d13547508dee58c952f1f94f68c61aba97a1f60a7fdd26cf361e"
 		}
 	},
 	"doc": {
@@ -77,7 +77,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"es-sii-not-subject": "N2",
+							"es-sii-outside-scope": "location",
 							"es-sii-regime": "01"
 						}
 					}
@@ -98,7 +98,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"es-sii-not-subject": "N2",
+							"es-sii-outside-scope": "location",
 							"es-sii-regime": "01"
 						}
 					}
@@ -118,7 +118,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"es-sii-not-subject": "N2",
+							"es-sii-outside-scope": "location",
 							"es-sii-regime": "01"
 						}
 					}
@@ -137,7 +137,7 @@
 							{
 								"key": "outside-scope",
 								"ext": {
-									"es-sii-not-subject": "N2",
+									"es-sii-outside-scope": "location",
 									"es-sii-regime": "01"
 								},
 								"base": "3000.00",
