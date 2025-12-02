@@ -39,6 +39,10 @@ func normalizeSupplier(party *org.Party) {
 
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
+		validation.Field(&inv.Series,
+			validation.By(validateInvoiceNumber(inv)),
+			validation.Skip,
+		),
 		validation.Field(&inv.Tax,
 			validation.Required,
 			validation.By(validateTax),
@@ -71,6 +75,17 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateInvoiceNumber(inv *bill.Invoice) validation.RuleFunc {
+	return func(_ any) error {
+		// series and code are joined with a dash, so max combined length is 19
+		l := len(inv.Series) + len(inv.Code)
+		if l > 19 {
+			return errors.New("series and code combined cannot exceed 19 characters")
+		}
+		return nil
+	}
 }
 
 func validateTax(value any) error {
