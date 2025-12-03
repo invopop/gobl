@@ -101,6 +101,51 @@ func TestInvoiceValidation(t *testing.T) {
 		inv.Tax.Ext = nil
 		require.ErrorContains(t, inv.Validate(), "tax: (ext: (it-sdi-document-type: required; it-sdi-format: required.).)")
 	})
+	t.Run("series and code combined exceeds 19 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Series = "SERIESABC"
+		inv.Code = "12345678901"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "series: series and code combined cannot exceed 19 characters")
+	})
+	t.Run("series and code combined exactly 19 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Series = "SERIES"
+		inv.Code = "1234567890123"
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+	t.Run("series only within 19 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Series = "1234567890123456789"
+		inv.Code = ""
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+	t.Run("series only exceeds 19 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Series = "12345678901234567890"
+		inv.Code = ""
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "series: series and code combined cannot exceed 19 characters")
+	})
+	t.Run("code only within 19 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Series = ""
+		inv.Code = "1234567890123456789"
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+	t.Run("code only exceeds 19 characters", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Series = ""
+		inv.Code = "12345678901234567890"
+		require.NoError(t, inv.Calculate())
+		err := inv.Validate()
+		assert.ErrorContains(t, err, "series: series and code combined cannot exceed 19 characters")
+	})
 }
 
 func TestInvoiceNormalization(t *testing.T) {
