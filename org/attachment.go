@@ -37,8 +37,7 @@ type Attachment struct {
 	// what it contains.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// URL of where to find the attachment. Prefer using this field
-	// over the Data field.
+	// URL of where to find the attachment.
 	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
 
 	// Digest is used to verify the integrity of the attachment
@@ -83,7 +82,7 @@ func (a *Attachment) ValidateWithContext(ctx context.Context) error {
 				"application/pdf",
 				"image/jpeg",
 				"image/png",
-				"test/csv",
+				"text/csv",
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 				"application/vnd.oasis.opendocument.spreadsheet",
 			),
