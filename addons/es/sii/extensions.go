@@ -152,7 +152,7 @@ var extensions = []*cbc.Definition{
 				Desc: i18n.String{
 					i18n.EN: here.Doc(`
 						Use this code when correcting most commercial invoices due to cancellations
-						or discounts. This is currently set as the default buy may be overridden if
+						or discounts. This is currently set as the default but may be overridden if
 						needed.
 					`),
 				},
@@ -766,7 +766,7 @@ var extensions = []*cbc.Definition{
 		},
 		Desc: i18n.String{
 			i18n.EN: here.Doc(`
-				This extensions covers a specific use-case when the customer specifically requests that the
+				This extension covers a specific use-case when the customer specifically requests that the
 				invoice includes their fiscal details, but they are not registered for tax.
 
 				Can only be true when the invoice type (~TipoFactura~) is one of: ~F1~, ~F3~, ~R1~, ~R2~,
@@ -813,7 +813,7 @@ var extensions = []*cbc.Definition{
 
 				The default value is ~N~ (No).
 
-				The ~self-billed~ tag will automatically be set this extension in the invoice to ~S~ (Yes).
+				The ~self-billed~ tag will automatically set this extension in the invoice to ~S~ (Yes).
 
 				If the ~issuer~ field is set in the invoice's ordering section, then this extension will be
 				set to ~S~ (Yes) too.

@@ -99,7 +99,7 @@
             "es": "Factura rectificativa: art. 80 Uno, Dos y Seis LIVA"
           },
           "desc": {
-            "en": "Use this code when correcting most commercial invoices due to cancellations\nor discounts. This is currently set as the default buy may be overridden if\nneeded."
+            "en": "Use this code when correcting most commercial invoices due to cancellations\nor discounts. This is currently set as the default but may be overridden if\nneeded."
           }
         },
         {
@@ -206,7 +206,7 @@
         "es": "Causa de Exención"
       },
       "desc": {
-        "en": "Exemption code used to explain why the operation is exempt from taxes.\n\nThe follow mappings will be made automatically by GOBL during normalization:\n\n| Tax Key           | Exemption Codes            |\n|-------------------|----------------------------|\n| `exempt`          | `E1` (default), `E6`       |\n| `export`          | `E2` (default), `E3`, `E4` |\n| `intra-community` | `E5`                       |\n\nMaps to the field `CausaExencion`. Values correspond to the L9 list.\n\nNote: This extension is **mutually exclusive** with `es-sii-not-exempt` and `es-sii-not-subject`.\nOnly one of these three extensions can be used for a given tax combo."
+        "en": "Exemption code used to explain why the operation is exempt from taxes.\n\nThe follow mappings will be made automatically by GOBL during normalization:\n\n| Tax Key           | Exemption Codes            |\n|-------------------|----------------------------|\n| `exempt`          | `E1` (default), `E6`       |\n| `export`          | `E2` (default), `E3`, `E4` |\n| `intra-community` | `E5`                       |\n\nMaps to the field `CausaExencion`. Values correspond to the L9 list.\n\nNote: This extension is **mutually exclusive** with `es-sii-outside-scope`."
       },
       "sources": [
         {
@@ -281,64 +281,13 @@
       ]
     },
     {
-      "key": "es-sii-not-exempt",
+      "key": "es-sii-outside-scope",
       "name": {
-        "en": "Type of Operation Subject and Not Exempt",
-        "es": "Tipo de Operación Sujeta y No Exenta"
-      },
-      "desc": {
-        "en": "Type of operation subject and not exempt for the differentiation of reverse charge.\n\nGOBL will attempt to automatically assign operation type codes based on tax key:\n\n| Operation Type | Tax Key                                        |\n| -------------- | ---------------------------------------------- |\n| `S1`           | `standard`, `reduced`, `super-reduced`, `zero` |\n| `S2`           | `reverse-charge`                               |\n\nMaps to the `TipoNoExenta` field. Values correspond to the L7 list.\n\nNote: This extension is **mutually exclusive** with `es-sii-exempt` and `es-sii-not-subject`.\nOnly one of these three extensions can be used for a given tax combo."
-      },
-      "sources": [
-        {
-          "title": {
-            "en": "Ministerial Order HFP/417/2017, of May 12th",
-            "es": "Orden Ministerial HFP/417/2017, de 12 de Mayo"
-          },
-          "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2017-5312"
-        }
-      ],
-      "values": [
-        {
-          "code": "S1",
-          "name": {
-            "en": "Non-exempt - Without reverse charge",
-            "es": "No exenta - Sin inversión sujeto pasivo"
-          },
-          "desc": {
-            "en": "Use for operations that are subject to tax and not exempt, without reverse charge."
-          }
-        },
-        {
-          "code": "S2",
-          "name": {
-            "en": "Non-exempt - With reverse charge",
-            "es": "No exenta - Con Inversión sujeto pasivo"
-          },
-          "desc": {
-            "en": "Use for operations that are subject to tax and not exempt, with reverse charge."
-          }
-        },
-        {
-          "code": "S3",
-          "name": {
-            "en": "Non-exempt - Without reverse charge and with reverse charge",
-            "es": "No exenta - Sin inversión sujeto pasivo y con Inversión sujeto pasivo"
-          },
-          "desc": {
-            "en": "Use for operations that are subject to tax and not exempt, containing both operations\nwithout reverse charge and operations with reverse charge."
-          }
-        }
-      ]
-    },
-    {
-      "key": "es-sii-not-subject",
-      "name": {
-        "en": "Type of Operation Not Subject",
+        "en": "Type of Operation Outside Scope",
         "es": "Tipo de Operación No Sujeta"
       },
       "desc": {
-        "en": "Type of operation not subject to VAT.\n\nThis extension is used to determine which tax amount field should be reported in the SII\npayload:\n\n- `N1` will set the `ImportePorArticulos7_14_Otros` field.\n- `N2` will set the `ImporteTAIReglasLocalizacion` field.\n\nGOBL will attempt to automatically assign operation type codes based on tax key:\n\n| Operation Type | Tax Key                   |\n| -------------- | ------------------------- |\n| `N1`           | `outside-scope`           |\n| `N2`           | `outside-scope` (default) |\n\nDoesn't map directly to any field. Used internally to determine how to report the tax amount.\n\nNote: This extension is **mutually exclusive** with `es-sii-exempt` and `es-sii-not-exempt`.\nOnly one of these three extensions can be used for a given tax combo."
+        "en": "Type of operation not subject to VAT.\n\nThis extension is used to determine which tax amount field should be reported in the SII\npayload:\n\n- `other` will set the `ImportePorArticulos7_14_Otros` field.\n- `location` will set the `ImporteTAIReglasLocalizacion` field.\n\nGOBL will attempt to automatically assign operation type codes based on tax key:\n\n| Operation Type | Tax Key                   |\n| -------------- | ------------------------- |\n| `other`        | `outside-scope`           |\n| `location`     | `outside-scope` (default) |\n\nDoesn't map directly to any field. Used internally to determine how to report the tax amount.\n\nNote: This extension is **mutually exclusive** with `es-sii-exempt`."
       },
       "sources": [
         {
@@ -351,23 +300,23 @@
       ],
       "values": [
         {
-          "code": "N1",
+          "code": "other",
           "name": {
-            "en": "Not Subject - Articles 7, 14, others",
-            "es": "Operación No Sujeta artículo 7, 14, otros"
+            "en": "Outside scope - Articles 7, 14, others",
+            "es": "Operación No Sujeta por artículo 7, 14, otros"
           },
           "desc": {
             "en": "Use when the operations fall **outside the VAT scope** under Spanish VAT law\n(e.g. transfers of companies, certain exchanges of goods, contributions of\ngoods, internal operations of public entities, ...). VAT is **not\nchargeable** or declared."
           }
         },
         {
-          "code": "N2",
+          "code": "location",
           "name": {
-            "en": "Not Subject - Due to location rules",
+            "en": "Outside scope - Due to location rules",
             "es": "Operación No Sujeta por Reglas de localización"
           },
           "desc": {
-            "en": "Use when the operation is **not subject to VAT due to its place of supply**\n(e.g. services provided to non‑EU B2B customers that are deemed outside\nSpanish VAT by location rules)."
+            "en": "Use when the operation falls **outside the VAT scope due to its place of\nsupply** (e.g. services provided to non‑EU B2B customers that are deemed\noutside Spanish VAT by location rules)."
           }
         }
       ]
@@ -519,7 +468,7 @@
         "es": "Tipos de Identificación"
       },
       "desc": {
-        "en": "Identity code used to identify the type of identity document used by the customer.\n\nThe regular Party Tax Identity is preferred over using a specific identity type code, and\nwill be mapped automatically as follows:\n\n- Spanish Tax IDs will be mapped to the `NIF` field.\n- EU Tax IDs will be mapped to the `IDOtro\\IDType` field with code `02`.\n- Non-EU Tax IDs will be mapped to the `IDOtro\\IDType` field with code `04`.\n\nSII will perform validation on both Spanish and EU Tax IDs, so it is important to provide\nthe correct details.\n\nThe following identity `key` values will be mapped automatically to an extension by the\naddon:\n\n| Identity Key | Code |\n|--------------|------|\n| `passport`   | `03` |\n| `foreign`    | `04` |\n| `resident`  | `05` |\n| `other`      | `06` |\n\nThe `07` \"not registered in census\" code is not mapped automatically, but can be provided\ndirectly if needed.\n\nExample identity of a UK passport:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\"\n\t\t}\n\t]\n}\n```\n\nWill be normalized to:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-sii-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```\n\nMaps to the field `IDOtro\\IDType`. Values correspond to the L4 list."
+        "en": "Identity code used to identify the type of identity document used by the customer.\n\nThe regular Party Tax Identity is preferred over using a specific identity type code, and\nwill be mapped automatically as follows:\n\n- Spanish Tax IDs will be mapped to the `NIF` field.\n- EU Tax IDs will be mapped to the `IDOtro\\IDType` field with code `02`.\n- Non-EU Tax IDs will be mapped to the `IDOtro\\IDType` field with code `04`.\n\nSII will perform validation on both Spanish and EU Tax IDs, so it is important to provide\nthe correct details.\n\nThe following identity `key` values will be mapped automatically to an extension by the\naddon:\n\n| Identity Key | Code |\n| ------------ | ---- |\n| `passport`   | `03` |\n| `foreign`    | `04` |\n| `resident`   | `05` |\n| `other`      | `06` |\n\nThe `07` \"not registered in census\" code is not mapped automatically, but can be provided\ndirectly if needed.\n\nExample identity of a UK passport:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\"\n\t\t}\n\t]\n}\n```\n\nWill be normalized to:\n\n```\n{\n\t\"identities\": [\n\t\t{\n\t\t\t\"key\": \"passport\",\n\t\t\t\"country\": \"GB\",\n\t\t\t\"code\": \"123456789\",\n\t\t\t\"ext\": {\n\t\t\t\t\"es-sii-identity-type\": \"03\"\n\t\t\t}\n\t\t}\n\t]\n}\n```\n\nMaps to the field `IDOtro\\IDType`. Values correspond to the L4 list."
       },
       "sources": [
         {
@@ -582,7 +531,7 @@
         "es": "Factura Simplificada Articulo 7,2 y 7,3 RD 1619/2012"
       },
       "desc": {
-        "en": "This extensions covers a specific use-case when the customer specifically requests that the\ninvoice includes their fiscal details, but they are not registered for tax.\n\nCan only be true when the invoice type (`TipoFactura`) is one of: `F1`, `F3`, `R1`, `R2`,\n`R3`, or `R4`.\n\nMaps to the `FacturaSimplificadaArticulos7.2_7.3` field. Values correspond to the L26 list."
+        "en": "This extension covers a specific use-case when the customer specifically requests that the\ninvoice includes their fiscal details, but they are not registered for tax.\n\nCan only be true when the invoice type (`TipoFactura`) is one of: `F1`, `F3`, `R1`, `R2`,\n`R3`, or `R4`.\n\nMaps to the `FacturaSimplificadaArticulos7.2_7.3` field. Values correspond to the L26 list."
       },
       "sources": [
         {
@@ -613,11 +562,11 @@
     {
       "key": "es-sii-third-party-issuer",
       "name": {
-        "en": "Issued by Third Party or Recepient",
+        "en": "Issued by Third Party or Recipient",
         "es": "Emitida por Tercero o Destinatario"
       },
       "desc": {
-        "en": "Indicates whether the invoice is issued by a third party or by the customer themselves.\n\nThe default value is `N` (No).\n\nThe `self-billed` tag will automatically be set this extension in the invoice to `S` (Yes).\n\nIf the `issuer` field is set in the invoice's ordering section, then this extension will be\nset to `S` (Yes) too.\n\nMaps to the field `EmitidaPorTercerosODestinatarios`. Values correspond to the L10 list."
+        "en": "Indicates whether the invoice is issued by a third party or by the customer themselves.\n\nThe default value is `N` (No).\n\nThe `self-billed` tag will automatically set this extension in the invoice to `S` (Yes).\n\nIf the `issuer` field is set in the invoice's ordering section, then this extension will be\nset to `S` (Yes) too.\n\nMaps to the field `EmitidaPorTercerosODestinatario`. Values correspond to the L10 list."
       },
       "sources": [
         {
