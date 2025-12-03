@@ -202,12 +202,18 @@
     {
       "code": "VAT",
       "name": {
+        "ca": "IVA",
         "en": "VAT",
-        "es": "IVA"
+        "es": "IVA",
+        "eu": "BEZ",
+        "gl": "IVE"
       },
       "title": {
+        "ca": "Impost sobre el Valor Afegit",
         "en": "Value Added Tax",
-        "es": "Impuesto sobre el Valor Añadido"
+        "es": "Impuesto sobre el Valor Añadido",
+        "eu": "Balio Erantsiaren Zerga",
+        "gl": "Imposto sobre o Valor Engadido"
       },
       "desc": {
         "en": "Known in Spanish as \"Impuesto sobre el Valor Añadido\" (IVA), is a consumption tax\napplied to the purchase of goods and services. It's a tax on the value added at\neach stage of production or distribution. Spain, as a member of the European Union,\nfollows the EU's VAT Directive, but with specific rates and exemptions tailored\nto its local needs."
@@ -268,8 +274,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus general",
             "en": "Standard Rate",
-            "es": "Tipo General"
+            "es": "Tipo General",
+            "eu": "Tasa Orokorra",
+            "gl": "Tipo Xeral"
           },
           "values": [
             {
@@ -296,8 +305,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus general + Recàrrec d'equivalència",
             "en": "Standard Rate + Equivalence Surcharge",
-            "es": "Tipo General + Recargo de Equivalencia"
+            "es": "Tipo General + Recargo de Equivalencia",
+            "eu": "Tasa Orokorra + Baliokidetasun Errekargua",
+            "gl": "Tipo Xeral + Recargo de Equivalencia"
           },
           "values": [
             {
@@ -318,8 +330,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus reduït",
             "en": "Reduced Rate",
-            "es": "Tipo Reducido"
+            "es": "Tipo Reducido",
+            "eu": "Tasa Murriztua",
+            "gl": "Tipo Reducido"
           },
           "values": [
             {
@@ -346,8 +361,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus reduït + Recàrrec d'equivalència",
             "en": "Reduced Rate + Equivalence Surcharge",
-            "es": "Tipo Reducido + Recargo de Equivalencia"
+            "es": "Tipo Reducido + Recargo de Equivalencia",
+            "eu": "Tasa Murriztua + Baliokidetasun Errekargua",
+            "gl": "Tipo Reducido + Recargo de Equivalencia"
           },
           "values": [
             {
@@ -368,8 +386,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus superreduït",
             "en": "Super-Reduced Rate",
-            "es": "Tipo Superreducido"
+            "es": "Tipo Superreducido",
+            "eu": "Tasa Oso Murriztua",
+            "gl": "Tipo Superreducido"
           },
           "values": [
             {
@@ -388,8 +409,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus superreduït + Recàrrec d'equivalència",
             "en": "Super-Reduced Rate + Equivalence Surcharge",
-            "es": "Tipo Superreducido + Recargo de Equivalencia"
+            "es": "Tipo Superreducido + Recargo de Equivalencia",
+            "eu": "Tasa Oso Murriztua + Baliokidetasun Errekargua",
+            "gl": "Tipo Superreducido + Recargo de Equivalencia"
           },
           "values": [
             {
@@ -404,12 +428,18 @@
     {
       "code": "IGIC",
       "name": {
+        "ca": "IGIC",
         "en": "IGIC",
-        "es": "IGIC"
+        "es": "IGIC",
+        "eu": "IGIC",
+        "gl": "IGIC"
       },
       "title": {
+        "ca": "Impost General Indirecte Canari",
         "en": "Canary Island General Indirect Tax",
-        "es": "Impuesto General Indirecto Canario"
+        "es": "Impuesto General Indirecto Canario",
+        "eu": "Kanariar Uharteetako Zerga Orokor Zeharkakoa",
+        "gl": "Imposto Xeral Indirecto Canario"
       },
       "keys": [
         {
@@ -467,8 +497,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus general",
             "en": "General Rate",
-            "es": "Tipo General"
+            "es": "Tipo General",
+            "eu": "Tasa Orokorra",
+            "gl": "Tipo Xeral"
           },
           "values": [
             {
@@ -482,8 +515,11 @@
             "standard"
           ],
           "name": {
+            "ca": "Tipus reduït",
             "en": "Reduced Rate",
-            "es": "Tipo Reducido"
+            "es": "Tipo Reducido",
+            "eu": "Tasa Murriztua",
+            "gl": "Tipo Reducido"
           },
           "values": [
             {
@@ -496,31 +532,46 @@
     {
       "code": "IPSI",
       "name": {
+        "ca": "IPSI",
         "en": "IPSI",
-        "es": "IPSI"
+        "es": "IPSI",
+        "eu": "IPSI",
+        "gl": "IPSI"
       },
       "title": {
+        "ca": "Impost sobre la Producció, els Serveis i la Importació",
         "en": "Production, Services, and Import Tax",
-        "es": "Impuesto sobre la Producción, los Servicios y la Importación"
+        "es": "Impuesto sobre la Producción, los Servicios y la Importación",
+        "eu": "Ekoizpen, Zerbitzu eta Inportazio Zerga",
+        "gl": "Imposto sobre a Produción, os Servizos e a Importación"
       }
     },
     {
       "code": "IRPF",
       "name": {
+        "ca": "IRPF",
         "en": "IRPF",
-        "es": "IRPF"
+        "es": "IRPF",
+        "eu": "IRPF",
+        "gl": "IRPF"
       },
       "title": {
+        "ca": "Impost sobre la renda de les persones físiques.",
         "en": "Personal income tax.",
-        "es": "Impuesto sobre la renta de las personas físicas."
+        "es": "Impuesto sobre la renta de las personas físicas.",
+        "eu": "Pertsona fisikoen errentaren gaineko zerga.",
+        "gl": "Imposto sobre a renda das persoas físicas."
       },
       "retained": true,
       "rates": [
         {
           "rate": "pro",
           "name": {
+            "ca": "Professionals",
             "en": "Professional Rate",
-            "es": "Profesionales"
+            "es": "Profesionales",
+            "eu": "Profesionalak",
+            "gl": "Profesionais"
           },
           "values": [
             {
@@ -544,8 +595,11 @@
         {
           "rate": "pro-start",
           "name": {
+            "ca": "Inici Professionals",
             "en": "Professional Starting Rate",
-            "es": "Profesionales Inicio"
+            "es": "Profesionales Inicio",
+            "eu": "Hasiera Profesionalak",
+            "gl": "Inicio Profesionais"
           },
           "values": [
             {
@@ -557,8 +611,11 @@
         {
           "rate": "capital",
           "name": {
+            "ca": "Lloguers o Interessos de Capital",
             "en": "Rental or Interest Capital",
-            "es": "Alquileres o Intereses de Capital"
+            "es": "Alquileres o Intereses de Capital",
+            "eu": "Errentamenduak edo Kapitalaren Interesak",
+            "gl": "Alugueres ou Intereses de Capital"
           },
           "values": [
             {
@@ -570,8 +627,11 @@
         {
           "rate": "modules",
           "name": {
+            "ca": "Tipus Mòduls",
             "en": "Modules Rate",
-            "es": "Tipo Modulos"
+            "es": "Tipo Modulos",
+            "eu": "Modulu Tasa",
+            "gl": "Tipo Módulos"
           },
           "values": [
             {

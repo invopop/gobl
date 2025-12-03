@@ -1324,13 +1324,12 @@ func TestInvoiceJSONSchemaExtend(t *testing.T) {
 	eg := `{
 		"properties": {
 			"$regime": {
-				"$ref": "https://gobl.org/draft-0/cbc/key",
-				"title": "Regime"
+				"$ref": "https://gobl.org/draft-0/tax/regime-code",
+				"title": "Tax Regime"
 			},
 			"$addons": {
 				"items": {
-            		"$ref": "https://gobl.org/draft-0/cbc/key",
-					"type": "array",
+            		"$ref": "https://gobl.org/draft-0/tax/addon-list",
 					"title": "Addons",
 					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
 				}
@@ -1357,20 +1356,6 @@ func TestInvoiceJSONSchemaExtend(t *testing.T) {
 
 	assert.Equal(t, js.Properties.Len(), 4) // from this example
 
-	t.Run("regime", func(t *testing.T) {
-		prop, ok := js.Properties.Get("$regime")
-		require.True(t, ok)
-		assert.Greater(t, len(prop.OneOf), 1)
-		rd := tax.AllRegimeDefs()[0]
-		assert.Equal(t, rd.Code().String(), prop.OneOf[0].Const)
-	})
-	t.Run("addons", func(t *testing.T) {
-		prop, ok := js.Properties.Get("$addons")
-		require.True(t, ok)
-		assert.Greater(t, len(prop.Items.OneOf), 1)
-		ao := tax.AllAddonDefs()[0]
-		assert.Equal(t, ao.Key.String(), prop.Items.OneOf[0].Const)
-	})
 	t.Run("types", func(t *testing.T) {
 		prop, ok := js.Properties.Get("type")
 		require.True(t, ok)

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/regime-code",
+  "oneOf": [
+    {
+      "const": "AE",
+      "title": "United Arab Emirates"
+    },
+    {
+      "const": "AR",
+      "title": "Argentina"
+    },
+    {
+      "const": "AT",
+      "title": "Austria"
+    },
+    {
+      "const": "BE",
+      "title": "Belgium"
+    },
+    {
+      "const": "BR",
+      "title": "Brazil"
+    },
+    {
+      "const": "CA",
+      "title": "Canada"
+    },
+    {
+      "const": "CH",
+      "title": "Switzerland"
+    },
+    {
+      "const": "CO",
+      "title": "Colombia"
+    },
+    {
+      "const": "DE",
+      "title": "Germany"
+    },
+    {
+      "const": "EL",
+      "title": "Greece"
+    },
+    {
+      "const": "ES",
+      "title": "Spain"
+    },
+    {
+      "const": "FR",
+      "title": "France"
+    },
+    {
+      "const": "GB",
+      "title": "United Kingdom"
+    },
+    {
+      "const": "IE",
+      "title": "Ireland"
+    },
+    {
+      "const": "IN",
+      "title": "India"
+    },
+    {
+      "const": "IT",
+      "title": "Italy"
+    },
+    {
+      "const": "MX",
+      "title": "Mexico"
+    },
+    {
+      "const": "NL",
+      "title": "The Netherlands"
+    },
+    {
+      "const": "PL",
+      "title": "Poland"
+    },
+    {
+      "const": "PT",
+      "title": "Portugal"
+    },
+    {
+      "const": "SE",
+      "title": "Sweden"
+    },
+    {
+      "const": "SG",
+      "title": "Singapore"
+    },
+    {
+      "const": "US",
+      "title": "United States of America"
+    }
+  ],
+  "type": "string"
+}

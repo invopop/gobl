@@ -12,23 +12,23 @@ import (
 
 func TestRegimeJSONSchemaExtend(t *testing.T) {
 	eg := `{
-		"properties": {
-			"$regime": {
-				"$ref": "https://gobl.org/draft-0/cbc/key",
-				"title": "Regime"
-			}
-		}
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
+		"$id": "https://gobl.org/draft-0/tax/regime-code",
+		"type": "string"
 	}`
 	js := new(jsonschema.Schema)
 	require.NoError(t, json.Unmarshal([]byte(eg), js))
 
-	r := tax.Regime{}
-	r.JSONSchemaExtend(js)
+	rc := tax.RegimeCode("")
+	rc.JSONSchemaExtend(js)
 
-	assert.Equal(t, js.Properties.Len(), 1)
-	prop, ok := js.Properties.Get("$regime")
-	require.True(t, ok)
-	assert.Greater(t, len(prop.OneOf), 1)
+	assert.Greater(t, len(js.OneOf), 1)
 	rd := tax.AllRegimeDefs()[0]
-	assert.Equal(t, rd.Code().String(), prop.OneOf[0].Const)
+	assert.Equal(t, rd.Code().String(), js.OneOf[0].Const)
+}
+
+func TestRegimeCode(t *testing.T) {
+	rc := tax.RegimeCode("US")
+	assert.Equal(t, "US", rc.String())
+	assert.Equal(t, "US", rc.Code().String())
 }
