@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -351,6 +352,73 @@ func TestInvoiceValidation(t *testing.T) {
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
+
+	t.Run("lines with same regime", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, testInvoiceLine(t))
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
+		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("lines with different regimes", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, testInvoiceLine(t))
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "01"}
+		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyRegime: "02"}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "es-sii-regime")
+		assert.ErrorContains(t, inv.Validate(), "must be the same in all tax combos")
+	})
+
+	t.Run("lines with product in all tax combos", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, testInvoiceLine(t))
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
+		inv.Lines[1].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("lines with product in some but not all tax combos", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, testInvoiceLine(t))
+		inv.Lines[0].Taxes[0].Ext = tax.Extensions{sii.ExtKeyProduct: sii.ExtCodeProductGoods}
+		inv.Lines[1].Taxes[0].Ext = tax.Extensions{}
+		require.NoError(t, inv.Calculate())
+		assert.ErrorContains(t, inv.Validate(), "es-sii-product")
+		assert.ErrorContains(t, inv.Validate(), "must be present in all tax combos or none")
+	})
+
+	t.Run("lines with non-VAT/IGIC taxes are ignored", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = append(inv.Lines, testInvoiceLine(t))
+		inv.Lines[1].Taxes[0].Ext = tax.Extensions{
+			sii.ExtKeyRegime: "01",
+		}
+		inv.Lines[0].Taxes = append(inv.Lines[0].Taxes, &tax.Combo{
+			Category: es.TaxCategoryIRPF,
+			Rate:     es.TaxRatePro,
+			Ext: tax.Extensions{
+				sii.ExtKeyRegime: "02", // Different regime, but should be ignored
+			},
+		})
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("invoice with no lines", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines = nil
+		inv.Charges = []*bill.Charge{ // We need a charge to make the invoice valid
+			{
+				Amount: num.MakeAmount(10000, 2),
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
 }
 
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
@@ -380,19 +448,24 @@ func testInvoiceStandard(t *testing.T) *bill.Invoice {
 			},
 		},
 		Lines: []*bill.Line{
+			testInvoiceLine(t),
+		},
+	}
+}
+
+func testInvoiceLine(t *testing.T) *bill.Line {
+	t.Helper()
+	return &bill.Line{
+		Quantity: num.MakeAmount(1, 0),
+		Item: &org.Item{
+			Name:  "bogus",
+			Price: num.NewAmount(10000, 2),
+			Unit:  org.UnitPackage,
+		},
+		Taxes: tax.Set{
 			{
-				Quantity: num.MakeAmount(1, 0),
-				Item: &org.Item{
-					Name:  "bogus",
-					Price: num.NewAmount(10000, 2),
-					Unit:  org.UnitPackage,
-				},
-				Taxes: tax.Set{
-					{
-						Category: "VAT",
-						Rate:     "standard",
-					},
-				},
+				Category: "VAT",
+				Rate:     "standard",
 			},
 		},
 	}

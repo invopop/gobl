@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -135,6 +136,10 @@ func validateInvoice(inv *bill.Invoice) error {
 			validation.By(validateInvoiceTax(inv.Type)),
 			validation.Skip,
 		),
+		validation.Field(&inv.Lines,
+			validation.By(validateInvoiceLines),
+			validation.Skip,
+		),
 		validation.Field(&inv.Notes,
 			validation.Each(
 				validation.By(validateNote),
@@ -235,4 +240,33 @@ func validateNote(val any) error {
 			validation.Skip,
 		),
 	)
+}
+
+func validateInvoiceLines(val any) error {
+	lines, _ := val.([]*bill.Line)
+	if lines == nil {
+		return nil
+	}
+
+	var ref *tax.Combo
+	for _, l := range lines {
+		for _, tc := range l.Taxes {
+			if !tc.Category.In(tax.CategoryVAT, es.TaxCategoryIGIC) {
+				continue
+			}
+			if ref == nil {
+				// first tax combo becomes the reference
+				ref = tc
+				continue
+			}
+			if ref.Ext.Has(ExtKeyProduct) != tc.Ext.Has(ExtKeyProduct) {
+				return fmt.Errorf("`%s` must be present in all tax combos or none", ExtKeyProduct)
+			}
+			if ref.Ext.Get(ExtKeyRegime) != tc.Ext.Get(ExtKeyRegime) {
+				return fmt.Errorf("`%s` must be the same in all tax combos", ExtKeyRegime)
+			}
+		}
+	}
+
+	return nil
 }
