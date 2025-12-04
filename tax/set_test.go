@@ -411,3 +411,41 @@ func TestSetHasCategory(t *testing.T) {
 		})
 	})
 }
+
+func TestSetHasOneOf(t *testing.T) {
+	s := tax.Set{
+		{
+			Category: "VAT",
+			Key:      "standard",
+		},
+		{
+			Category: "IRPF",
+			Key:      "pro",
+		},
+	}
+	t.Run("has VAT", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasOneOf("VAT"))
+		assert.NoError(t, err)
+	})
+	t.Run("has multiple", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIRPF))
+		assert.NoError(t, err)
+	})
+	t.Run("missing category", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasOneOf("FOO"))
+		assert.Error(t, err)
+		assert.Equal(t, "missing category in FOO", err.Error())
+	})
+	t.Run("missing category", func(t *testing.T) {
+		err := validation.Validate(s, tax.SetHasOneOf("FOO", "BAR"))
+		assert.Error(t, err)
+		assert.Equal(t, "missing category in FOO, BAR", err.Error())
+	})
+	t.Run("with different type", func(t *testing.T) {
+		var s2 string
+		assert.NotPanics(t, func() {
+			err := validation.Validate(s2, tax.SetHasCategory("FOO"))
+			assert.NoError(t, err)
+		})
+	})
+}

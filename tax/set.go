@@ -3,6 +3,7 @@ package tax
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/validation"
@@ -88,6 +89,7 @@ func (s Set) Key(cat cbc.Code) cbc.Key {
 
 type setValidation struct {
 	categories []cbc.Code
+	oneOf      bool
 }
 
 // SetHasCategory validates that the set contains the given category.
@@ -95,15 +97,29 @@ func SetHasCategory(categories ...cbc.Code) validation.Rule {
 	return &setValidation{categories: categories}
 }
 
-func (sv *setValidation) Validate(value interface{}) error {
+// SetHasOneOf checks that the tax set has at least one of the provided
+// categories.
+func SetHasOneOf(categories ...cbc.Code) validation.Rule {
+	return &setValidation{categories: categories, oneOf: true}
+}
+
+func (sv *setValidation) Validate(value any) error {
 	s, ok := value.(Set)
 	if !ok {
 		return nil
 	}
+	found := false
 	for _, c := range sv.categories {
 		if s.Get(c) == nil {
-			return fmt.Errorf("missing category %s", c.String())
+			if !sv.oneOf {
+				return fmt.Errorf("missing category %s", c.String())
+			}
+		} else {
+			found = true
 		}
+	}
+	if sv.oneOf && !found {
+		return fmt.Errorf("missing category in %s", strings.Join(cbc.CodeStrings(sv.categories), ", "))
 	}
 	return nil
 }

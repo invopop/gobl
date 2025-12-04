@@ -72,6 +72,20 @@ func (ts Tags) HasTags(keys ...cbc.Key) bool {
 	return true
 }
 
+// RemoveTags removes the specified tags from the list.
+func (ts *Tags) RemoveTags(keys ...cbc.Key) {
+	if ts.List == nil {
+		return
+	}
+	nl := make([]cbc.Key, 0, len(ts.List))
+	for _, t := range ts.List {
+		if !t.In(keys...) {
+			nl = append(nl, t)
+		}
+	}
+	ts.List = nl
+}
+
 // Merge will combine the tags from the current set with the tags from the other set,
 // ensuring that any duplicates are not overwritten from the original list.
 func (ts *TagSet) Merge(other *TagSet) *TagSet {
