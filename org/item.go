@@ -10,8 +10,16 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
+)
+
+const (
+	// ItemKeyServices indicates that the item is a service.
+	ItemKeyServices cbc.Key = "services"
+	// ItemKeyGoods indicates that the item is a physical good.
+	ItemKeyGoods cbc.Key = "goods"
 )
 
 // Item is used to describe a single product or service. Minimal usage
@@ -79,7 +87,10 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Ref),
-		validation.Field(&i.Key),
+		validation.Field(&i.Key, validation.In(
+			ItemKeyGoods,
+			ItemKeyServices,
+		)),
 		validation.Field(&i.Name, validation.Required),
 		validation.Field(&i.Description),
 		validation.Field(&i.Images),
@@ -113,4 +124,22 @@ func (v *itemPriceValidator) Validate(value any) error {
 		}
 	}
 	return nil
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
+	prop, ok := js.Properties.Get("key")
+	if ok {
+		prop.OneOf = []*jsonschema.Schema{
+			{
+				Const: ItemKeyGoods,
+				Title: "Goods",
+			},
+			{
+				Const: ItemKeyServices,
+				Title: "Services",
+			},
+		}
+		js.Properties.Set("key", prop)
+	}
 }
