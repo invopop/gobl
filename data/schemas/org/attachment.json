@@ -35,7 +35,7 @@
           "type": "string",
           "format": "uri",
           "title": "URL",
-          "description": "URL of where to find the attachment. Prefer using this field\nover the Data field."
+          "description": "URL of where to find the attachment."
         },
         "digest": {
           "$ref": "https://gobl.org/draft-0/dsig/digest",
