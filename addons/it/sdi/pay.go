@@ -98,23 +98,5 @@ func validatePayInstructions(i *pay.Instructions) error {
 			tax.ExtensionsRequire(ExtKeyPaymentMeans),
 			validation.Skip,
 		),
-		validation.Field(&i.CreditTransfer,
-			validation.Each(validation.By(validatePayCreditTransfer)),
-			validation.Skip,
-		),
-	)
-}
-
-func validatePayCreditTransfer(val any) error {
-	ct, ok := val.(*pay.CreditTransfer)
-	if !ok || ct == nil {
-		return nil
-	}
-
-	return validation.ValidateStruct(ct,
-		validation.Field(&ct.IBAN,
-			validation.Length(27, 34),
-			validation.Skip,
-		),
 	)
 }
