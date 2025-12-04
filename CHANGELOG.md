@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `tax`: `Tags.RemoveTags()` method for removing tags from a list.
 - `es-verifactu-v1`: Bill Lines require at least on of the main tax categories.
+- `org`: `Item` now has strict keys for `services` and `goods`, required by some formats/regimes.
 
 ### Fixed
 

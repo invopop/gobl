@@ -30,6 +30,7 @@ customer:
 lines:
   - quantity: 20
     item:
+      key: "services"
       name: "Development services"
       price: "90.00"
       unit: "h"
@@ -39,9 +40,6 @@ lines:
     taxes:
       - cat: VAT
         rate: standard
-        ext:
-          es-tbai-product: "services"
-          # es-tbai-not-subject: "RL" # set automatically
 
 notes:
   - key: "general"

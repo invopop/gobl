@@ -5,7 +5,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -45,8 +44,8 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
-	case *org.Item:
-		normalizeOrgItem(obj)
+	case *bill.Line:
+		normalizeBillLine(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}

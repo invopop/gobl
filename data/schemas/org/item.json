@@ -18,6 +18,16 @@
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "goods",
+              "title": "Goods"
+            },
+            {
+              "const": "services",
+              "title": "Services"
+            }
+          ],
           "title": "Key",
           "description": "Special key used to classify the item sometimes required by some regimes."
         },
