@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
 
+## Removed
+
+- `it-sdi-v1`: removed IBAN length validation.
+
 ## [v0.303.0] - 2025-11-17
 
 ### Added
