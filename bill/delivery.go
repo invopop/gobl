@@ -426,8 +426,6 @@ func (dlv Delivery) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	dlv.Regime.JSONSchemaExtend(js)
-	dlv.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{
