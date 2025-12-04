@@ -24,7 +24,7 @@
         "name": {
           "type": "string",
           "title": "Name",
-          "description": "Filename of the attachment."
+          "description": "Filename of the attachment, will override name retrieved from URL."
         },
         "description": {
           "type": "string",
@@ -50,7 +50,7 @@
       },
       "type": "object",
       "required": [
-        "name"
+        "url"
       ],
       "description": "An Attachment provides a structure to be used to attach documents inside a GOBL document, either as a reference via a URL, or directly as a base64 encoded string."
     }
