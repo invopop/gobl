@@ -56,6 +56,12 @@ func TestItemValidation(t *testing.T) {
 		i := new(org.Item)
 		assert.ErrorContains(t, i.Validate(), "name: cannot be blank.")
 	})
+	t.Run("without key", func(t *testing.T) {
+		i := &org.Item{
+			Name: "test item",
+		}
+		assert.NoError(t, i.Validate())
+	})
 	t.Run("with key", func(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",
@@ -102,7 +108,7 @@ func TestItemPriceRequired(t *testing.T) {
 func TestItemJSONSchema(t *testing.T) {
 	base := here.Doc(`
 		{
-			"properties": {	
+			"properties": {
 				"key": {
 					"$ref": "https://gobl.org/draft-0/cbc/key",
 					"title": "Key",
