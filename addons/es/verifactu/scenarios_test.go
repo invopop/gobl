@@ -20,6 +20,9 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	t.Run("simplified invoice", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.SetTags(tax.TagSimplified)
+		// Simplified invoices without customer tax id or identities should get F2
+		i.Customer.TaxID = nil
+		i.Customer.Identities = nil
 		require.NoError(t, i.Calculate())
 		assert.Len(t, i.Notes, 0)
 		assert.Equal(t, i.Tax.Ext[verifactu.ExtKeyDocType].String(), "F2")
@@ -52,6 +55,9 @@ func TestInvoiceDocumentScenarios(t *testing.T) {
 	t.Run("simplified corrective invoice", func(t *testing.T) {
 		i := testInvoiceStandard(t)
 		i.SetTags(tax.TagSimplified)
+		// Simplified invoices without customer tax id or identities should get R5 when corrected
+		i.Customer.TaxID = nil
+		i.Customer.Identities = nil
 		require.NoError(t, i.Calculate())
 		require.NoError(t, i.Correct(bill.Corrective))
 		assert.Equal(t, i.Tax.Ext[verifactu.ExtKeyDocType].String(), "R5")

@@ -9,15 +9,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - `bill`: Add replicate logic to payments, orders and deliveries.
+- `tax`: `Tags.RemoveTags()` method for removing tags from a list.
+- `es-verifactu-v1`: Bill Lines require at least one of the main tax categories.
+- `org`: `Item` now defines `services` and `goods` as predefined options, required by some formats/regimes.
 
 ### Changed
 
 - `bill`: Refactor replicate logic to rely on calculations to set default values.
 
+### Fixed
+
+- `es-verifactu-v1`: Simplified invoices no longer require a tax ID.
+
+## Removed
+
+- `org`: `Attachment.Name` field is no longer required.
+- `it-sdi-v1`: removed IBAN length validation.
+
 ## [v0.303.0] - 2025-11-17
 
 ### Added
 
+- `org`: `Identity` now has `gln` as a possible Key.
+- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
+- `ar`: Argentine regime
+- `it-sdi-v1`: Add Italian phone number validation and normalization
 - `it-sdi-v1`: Add validation for IBANs.
 
 ### Removed
@@ -28,13 +44,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - `eu-en16931-v2017`: Remove address constraint for all parties, keep for Supplier and Customer.
 - `be`: Update regex to account for new VAT numbers starting with 1.
-
-### Added
-
-- `org`: `Identity` now has `gln` as a possible Key.
-- `eu-en16931-v2017`: `Identity` normalization adds iso scheme codes extension for certain keys.
-- `ar`: Argentine regime
-- `it-sdi-v1`: Add Italian phone number validation and normalization
 
 ## [v0.302.1] - 2025-10-31
 

@@ -324,8 +324,6 @@ func (pmt Payment) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	pmt.Regime.JSONSchemaExtend(js)
-	pmt.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1d3a9b385deb70a11e0e38920cd96c5fd3cb5c41317c1aeaa40b59eba61f0924"
+			"val": "6bb086d6c0c40c051415d6d3887ff86151b24840a1eaadaf8ddf8d0fe33853c3"
 		}
 	},
 	"doc": {
@@ -87,10 +87,7 @@
 				"item": {
 					"name": "Development services",
 					"price": "90.00",
-					"unit": "h",
-					"ext": {
-						"es-tbai-product": "services"
-					}
+					"unit": "h"
 				},
 				"sum": "1800.00",
 				"discounts": [
@@ -105,7 +102,10 @@
 						"cat": "VAT",
 						"key": "standard",
 						"rate": "general",
-						"percent": "21.0%"
+						"percent": "21.0%",
+						"ext": {
+							"es-tbai-product": "services"
+						}
 					}
 				],
 				"total": "1620.00"
@@ -115,17 +115,17 @@
 				"quantity": "1",
 				"item": {
 					"name": "Financial service",
-					"price": "10.00",
-					"ext": {
-						"es-tbai-product": "services"
-					}
+					"price": "10.00"
 				},
 				"sum": "10.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"key": "zero",
-						"percent": "0%"
+						"percent": "0%",
+						"ext": {
+							"es-tbai-product": "services"
+						}
 					}
 				],
 				"total": "10.00"
@@ -141,12 +141,18 @@
 						"rates": [
 							{
 								"key": "standard",
+								"ext": {
+									"es-tbai-product": "services"
+								},
 								"base": "1620.00",
 								"percent": "21.0%",
 								"amount": "340.20"
 							},
 							{
 								"key": "zero",
+								"ext": {
+									"es-tbai-product": "services"
+								},
 								"base": "10.00",
 								"percent": "0%",
 								"amount": "0.00"

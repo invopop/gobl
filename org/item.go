@@ -10,8 +10,16 @@ import (
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 
 	"github.com/invopop/validation"
+)
+
+const (
+	// ItemKeyServices indicates that the item is a service.
+	ItemKeyServices cbc.Key = "services"
+	// ItemKeyGoods indicates that the item is a physical good.
+	ItemKeyGoods cbc.Key = "goods"
 )
 
 // Item is used to describe a single product or service. Minimal usage
@@ -113,4 +121,25 @@ func (v *itemPriceValidator) Validate(value any) error {
 		}
 	}
 	return nil
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
+	prop, ok := js.Properties.Get("key")
+	if ok {
+		prop.AnyOf = []*jsonschema.Schema{
+			{
+				Const: ItemKeyGoods,
+				Title: "Goods",
+			},
+			{
+				Const: ItemKeyServices,
+				Title: "Services",
+			},
+			{
+				Title:   "Other",
+				Pattern: cbc.KeyPattern,
+			},
+		}
+	}
 }

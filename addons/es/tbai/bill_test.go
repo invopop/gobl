@@ -149,6 +149,34 @@ func TestInvoiceValidation(t *testing.T) {
 	})
 }
 
+func TestBillLineNormalization(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		ad := tax.AddonForKey(tbai.V1)
+		var line *bill.Line
+		assert.NotPanics(t, func() {
+			ad.Normalizer(line)
+		})
+	})
+	t.Run("with standard invoice, set default", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "services", inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct].String())
+	})
+	t.Run("with standard invoice, set override for goods", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Item.Key = org.ItemKeyGoods
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "goods", inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct].String())
+	})
+	t.Run("with standard invoice, set override for resale", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Item.Key = org.ItemKeyGoods
+		inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct] = "resale"
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "resale", inv.Lines[0].Taxes[0].Ext[tbai.ExtKeyProduct].String())
+	})
+}
+
 func assertValidationError(t *testing.T, inv *bill.Invoice, expected string) {
 	t.Helper()
 	require.NoError(t, inv.Calculate())

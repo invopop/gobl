@@ -55,6 +55,23 @@ func TestTagsHasTags(t *testing.T) {
 	assert.False(t, tags.HasTags("tag3"))
 }
 
+func TestTagsRemoveTags(t *testing.T) {
+	var tagsNil tax.Tags
+	tagsNil.RemoveTags("tag1") // should not panic
+	assert.Nil(t, tagsNil.List)
+
+	tags := tax.WithTags("tag1", "tag2", "tag3")
+	tags.RemoveTags("tag2")
+	assert.Equal(t, []cbc.Key{"tag1", "tag3"}, tags.List)
+
+	tags.RemoveTags("tag1", "tag3")
+	assert.Empty(t, tags.List)
+
+	tags = tax.WithTags("tag1", "tag2")
+	tags.RemoveTags("tag4") // non-existent tag
+	assert.Equal(t, []cbc.Key{"tag1", "tag2"}, tags.List)
+}
+
 func TestTagSetMerge(t *testing.T) {
 	ts1 := &tax.TagSet{
 		Schema: "bill/invoice",
