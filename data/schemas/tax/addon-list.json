@@ -32,6 +32,10 @@
             "title": "Spain FacturaE"
           },
           {
+            "const": "es-sii-v1",
+            "title": "Spain SII V1.x"
+          },
+          {
             "const": "es-tbai-v1",
             "title": "Spain TicketBAI"
           },
