@@ -87,10 +87,7 @@ func (i *Item) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.UUID),
 		validation.Field(&i.Ref),
-		validation.Field(&i.Key, validation.In(
-			ItemKeyGoods,
-			ItemKeyServices,
-		)),
+		validation.Field(&i.Key),
 		validation.Field(&i.Name, validation.Required),
 		validation.Field(&i.Description),
 		validation.Field(&i.Images),
@@ -130,7 +127,7 @@ func (v *itemPriceValidator) Validate(value any) error {
 func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 	prop, ok := js.Properties.Get("key")
 	if ok {
-		prop.OneOf = []*jsonschema.Schema{
+		prop.AnyOf = []*jsonschema.Schema{
 			{
 				Const: ItemKeyGoods,
 				Title: "Goods",
@@ -139,7 +136,10 @@ func (Item) JSONSchemaExtend(js *jsonschema.Schema) {
 				Const: ItemKeyServices,
 				Title: "Services",
 			},
+			{
+				Title:   "Other",
+				Pattern: cbc.KeyPattern,
+			},
 		}
-		js.Properties.Set("key", prop)
 	}
 }

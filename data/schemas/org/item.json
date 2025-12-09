@@ -18,7 +18,7 @@
         },
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
-          "oneOf": [
+          "anyOf": [
             {
               "const": "goods",
               "title": "Goods"
@@ -26,6 +26,10 @@
             {
               "const": "services",
               "title": "Services"
+            },
+            {
+              "pattern": "^(?:[a-z]|[a-z0-9][a-z0-9-+]*[a-z0-9])$",
+              "title": "Other"
             }
           ],
           "title": "Key",

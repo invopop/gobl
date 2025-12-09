@@ -72,9 +72,9 @@ func TestItemValidation(t *testing.T) {
 	t.Run("invalid key", func(t *testing.T) {
 		i := &org.Item{
 			Name: "test item",
-			Key:  "invalid-key",
+			Key:  "invalid_key",
 		}
-		assert.ErrorContains(t, i.Validate(), "key: must be a valid value")
+		assert.ErrorContains(t, i.Validate(), "key: must be in a valid format.")
 	})
 }
 
@@ -123,9 +123,9 @@ func TestItemJSONSchema(t *testing.T) {
 
 	prop, ok := js.Properties.Get("key")
 	assert.True(t, ok)
-	assert.Len(t, prop.OneOf, 2)
-	assert.Equal(t, org.ItemKeyGoods, prop.OneOf[0].Const)
-	assert.Equal(t, "Goods", prop.OneOf[0].Title)
-	assert.Equal(t, org.ItemKeyServices, prop.OneOf[1].Const)
-	assert.Equal(t, "Services", prop.OneOf[1].Title)
+	assert.Len(t, prop.AnyOf, 3)
+	assert.Equal(t, org.ItemKeyGoods, prop.AnyOf[0].Const)
+	assert.Equal(t, "Goods", prop.AnyOf[0].Title)
+	assert.Equal(t, org.ItemKeyServices, prop.AnyOf[1].Const)
+	assert.Equal(t, "Services", prop.AnyOf[1].Title)
 }
