@@ -109,6 +109,22 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 	}
 }
 
+func normalizeBillLine(line *bill.Line) {
+	if line == nil || line.Item == nil {
+		return
+	}
+	vt := line.Taxes.Get(tax.CategoryVAT)
+	if vt == nil {
+		return
+	}
+	switch line.Item.Key {
+	case org.ItemKeyGoods:
+		vt.Ext = vt.Ext.Set(ExtKeyProduct, ExtCodeProductGoods)
+	case org.ItemKeyServices:
+		vt.Ext = vt.Ext.Set(ExtKeyProduct, ExtCodeProductServices)
+	}
+}
+
 func validateInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Preceding,

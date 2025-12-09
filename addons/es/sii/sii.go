@@ -61,6 +61,8 @@ func normalize(doc any) {
 	switch obj := doc.(type) {
 	case *bill.Invoice:
 		normalizeInvoice(obj)
+	case *bill.Line:
+		normalizeBillLine(obj)
 	case *tax.Combo:
 		normalizeTaxCombo(obj)
 	}

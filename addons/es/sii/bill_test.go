@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/addons/es/sii"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/es"
@@ -147,6 +148,33 @@ func TestInvoicePartyNormalization(t *testing.T) {
 		}
 		require.NoError(t, inv.Calculate())
 		assert.Equal(t, "S", inv.Tax.Ext[sii.ExtKeyThirdPartyIssuer].String())
+	})
+}
+
+func TestBillLineNormalization(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		ad := tax.AddonForKey(sii.V1)
+		var line *bill.Line
+		assert.NotPanics(t, func() {
+			ad.Normalizer(line)
+		})
+	})
+	t.Run("with standard invoice, no item key", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, cbc.CodeEmpty, inv.Lines[0].Taxes[0].Ext[sii.ExtKeyProduct])
+	})
+	t.Run("with standard invoice, item key is goods", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Item.Key = org.ItemKeyGoods
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, sii.ExtCodeProductGoods, inv.Lines[0].Taxes[0].Ext[sii.ExtKeyProduct])
+	})
+	t.Run("with standard invoice, item key is services", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Item.Key = org.ItemKeyServices
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, sii.ExtCodeProductServices, inv.Lines[0].Taxes[0].Ext[sii.ExtKeyProduct])
 	})
 }
 
