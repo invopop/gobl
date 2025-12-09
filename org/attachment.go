@@ -30,16 +30,15 @@ type Attachment struct {
 	// Code used to identify the payload of the attachment.
 	Code cbc.Code `json:"code,omitempty" jsonschema:"title=Code"`
 
-	// Filename of the attachment.
-	Name string `json:"name" jsonschema:"title=Name"`
+	// Filename of the attachment, will override name retrieved from URL.
+	Name string `json:"name,omitempty" jsonschema:"title=Name"`
 
 	// Details of why the attachment is being included and details on
 	// what it contains.
 	Description string `json:"description,omitempty" jsonschema:"title=Description"`
 
-	// URL of where to find the attachment. Prefer using this field
-	// over the Data field.
-	URL string `json:"url,omitempty" jsonschema:"title=URL,format=uri"`
+	// URL of where to find the attachment.
+	URL string `json:"url" jsonschema:"title=URL,format=uri"`
 
 	// Digest is used to verify the integrity of the attachment
 	// when downloaded from the URL.
@@ -73,7 +72,7 @@ func (a *Attachment) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, a,
 		validation.Field(&a.Key),
 		validation.Field(&a.Code),
-		validation.Field(&a.Name, validation.Required),
+		validation.Field(&a.Name),
 		validation.Field(&a.Description),
 		validation.Field(&a.URL, is.URL, validation.Required),
 		validation.Field(&a.Digest),
@@ -83,7 +82,7 @@ func (a *Attachment) ValidateWithContext(ctx context.Context) error {
 				"application/pdf",
 				"image/jpeg",
 				"image/png",
-				"test/csv",
+				"text/csv",
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 				"application/vnd.oasis.opendocument.spreadsheet",
 			),

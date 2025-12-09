@@ -11,11 +11,14 @@ import (
 	"github.com/invopop/validation"
 )
 
+// AddonList defines the slice of keys to use for addons.
+type AddonList []cbc.Key
+
 // Addons adds functionality to the owner to be able to handle addons.
 type Addons struct {
 	// Addons defines a list of keys used to identify tax addons that apply special
 	// normalization, scenarios, and validation rules to a document.
-	List []cbc.Key `json:"$addons,omitempty" jsonschema:"title=Addons"`
+	List AddonList `json:"$addons,omitempty" jsonschema:"title=Addons"`
 }
 
 // AddonDef is an interface that defines the methods that a tax add-on must implement.
@@ -199,15 +202,12 @@ func (ad *AddonDef) Validate() error {
 }
 
 // JSONSchemaExtend will add the addon options to the JSON list.
-func (as Addons) JSONSchemaExtend(js *jsonschema.Schema) {
-	props := js.Properties
-	if asl, ok := props.Get("$addons"); ok {
-		asl.Items.OneOf = make([]*jsonschema.Schema, len(AllAddonDefs()))
-		for i, ao := range AllAddonDefs() {
-			asl.Items.OneOf[i] = &jsonschema.Schema{
-				Const: ao.Key.String(),
-				Title: ao.Name.String(),
-			}
+func (AddonList) JSONSchemaExtend(js *jsonschema.Schema) {
+	js.Items.OneOf = make([]*jsonschema.Schema, len(AllAddonDefs()))
+	for i, ao := range AllAddonDefs() {
+		js.Items.OneOf[i] = &jsonschema.Schema{
+			Const: ao.Key.String(),
+			Title: ao.Name.String(),
 		}
 	}
 }

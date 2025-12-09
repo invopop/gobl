@@ -397,8 +397,6 @@ func (ord Order) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	ord.Regime.JSONSchemaExtend(js)
-	ord.Addons.JSONSchemaExtend(js)
 	// Recommendations
 	js.Extras = map[string]any{
 		schema.Recommended: []string{

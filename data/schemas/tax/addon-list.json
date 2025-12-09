@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gobl.org/draft-0/tax/addon-list",
+  "$ref": "#/$defs/AddonList",
+  "$defs": {
+    "AddonList": {
+      "items": {
+        "$ref": "https://gobl.org/draft-0/cbc/key",
+        "oneOf": [
+          {
+            "const": "br-nfe-v4",
+            "title": "Brazil NF-e 4.00"
+          },
+          {
+            "const": "br-nfse-v1",
+            "title": "Brazil NFS-e 1.X"
+          },
+          {
+            "const": "co-dian-v2",
+            "title": "Colombia DIAN UBL 2.X"
+          },
+          {
+            "const": "de-xrechnung-v3",
+            "title": "German XRechnung 3.X"
+          },
+          {
+            "const": "de-zugferd-v2",
+            "title": "German ZUGFeRD 2.X"
+          },
+          {
+            "const": "es-facturae-v3",
+            "title": "Spain FacturaE"
+          },
+          {
+            "const": "es-tbai-v1",
+            "title": "Spain TicketBAI"
+          },
+          {
+            "const": "es-verifactu-v1",
+            "title": "Spain VERI*FACTU V1"
+          },
+          {
+            "const": "eu-en16931-v2017",
+            "title": "EN 16931-1:2017"
+          },
+          {
+            "const": "fr-choruspro-v1",
+            "title": "Chorus Pro"
+          },
+          {
+            "const": "fr-facturx-v1",
+            "title": "French Factur-X v1"
+          },
+          {
+            "const": "gr-mydata-v1",
+            "title": "Greece MyData v1.x"
+          },
+          {
+            "const": "it-sdi-v1",
+            "title": "Italy SDI FatturaPA v1.x"
+          },
+          {
+            "const": "it-ticket-v1",
+            "title": "Italy AdE ticket v1.x"
+          },
+          {
+            "const": "mx-cfdi-v4",
+            "title": "Mexican SAT CFDI v4.X"
+          },
+          {
+            "const": "pl-favat-v2",
+            "title": "Polish KSeF FA_VAT v2.x"
+          },
+          {
+            "const": "pt-saft-v1",
+            "title": "Portugal SAF-T"
+          }
+        ]
+      },
+      "type": "array",
+      "description": "AddonList defines the slice of keys to use for addons."
+    }
+  }
+}

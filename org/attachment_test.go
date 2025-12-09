@@ -59,7 +59,13 @@ func TestAttachmentValidation(t *testing.T) {
 		err := a.Validate()
 		assert.NoError(t, err)
 	})
-
+	t.Run("minimum fields", func(t *testing.T) {
+		a := &org.Attachment{
+			URL: "https://example.com/test.txt",
+		}
+		err := a.Validate()
+		assert.NoError(t, err)
+	})
 	t.Run("missing URL", func(t *testing.T) {
 		a := &org.Attachment{
 			Key:  "key",

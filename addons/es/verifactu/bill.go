@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/es"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/validation"
 )
@@ -20,7 +21,7 @@ var invoiceCorrectionDefinitions = tax.CorrectionSet{
 	},
 }
 
-func normalizeInvoice(inv *bill.Invoice) {
+func normalizeBillInvoice(inv *bill.Invoice) {
 	// Try to move any preceding choices to the document level
 	for _, row := range inv.Preceding {
 		if row == nil || len(row.Ext) == 0 {
@@ -108,7 +109,7 @@ func normalizeInvoicePartyIdentity(cus *org.Party) {
 	}
 }
 
-func validateInvoice(inv *bill.Invoice) error {
+func validateBillInvoice(inv *bill.Invoice) error {
 	return validation.ValidateStruct(inv,
 		validation.Field(&inv.Preceding,
 			validation.When(
@@ -124,10 +125,12 @@ func validateInvoice(inv *bill.Invoice) error {
 		),
 		validation.Field(&inv.Customer,
 			validation.When(
-				!inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // not simplified
+				inv.Tax.GetExt(ExtKeyDocType).In("F2", "R5"), // Simplified
+				validation.By(validateInvoiceSimplifiedCustomer),
+			).Else(
 				validation.Required,
+				validation.By(validateInvoiceCustomer),
 			),
-			validation.By(validateInvoiceCustomer),
 			validation.Skip,
 		),
 		validation.Field(&inv.Tax,
@@ -140,6 +143,15 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.By(validateNote),
 				validation.Skip,
 			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateBillLine(line *bill.Line) error {
+	return validation.ValidateStruct(line,
+		validation.Field(&line.Taxes,
+			tax.SetHasOneOf(tax.CategoryVAT, es.TaxCategoryIGIC, es.TaxCategoryIPSI),
 			validation.Skip,
 		),
 	)
@@ -159,6 +171,39 @@ func validateInvoiceCustomer(val any) error {
 			// countries without a specific Tax ID code will have to enter
 			// something here regardless, or issue simplified invoices.
 			tax.RequireIdentityCode,
+			validation.Skip,
+		),
+	)
+}
+
+func validateInvoiceSimplifiedCustomer(val any) error {
+	p, ok := val.(*org.Party)
+	if !ok || p == nil {
+		return nil
+	}
+	return validation.ValidateStruct(p,
+		validation.Field(&p.TaxID,
+			validation.Nil,
+			validation.Skip,
+		),
+		validation.Field(&p.Identities,
+			validation.Each(
+				validation.By(validateOrgIdentitiesForSimplified),
+				validation.Skip,
+			),
+			validation.Skip,
+		),
+	)
+}
+
+func validateOrgIdentitiesForSimplified(obj any) error {
+	id, ok := obj.(*org.Identity)
+	if !ok || id == nil {
+		return nil
+	}
+	return validation.ValidateStruct(id,
+		validation.Field(&id.Ext,
+			tax.ExtensionsExclude(ExtKeyIdentityType),
 			validation.Skip,
 		),
 	)

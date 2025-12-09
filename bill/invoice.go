@@ -452,8 +452,6 @@ func (inv Invoice) JSONSchemaExtend(js *jsonschema.Schema) {
 			}
 		}
 	}
-	inv.Regime.JSONSchemaExtend(js)
-	inv.Addons.JSONSchemaExtend(js)
 	inv.Tags.JSONSchemaExtendWithDefs(js, defaultInvoiceTags.List)
 	// Recommendations
 	js.Extras = map[string]any{

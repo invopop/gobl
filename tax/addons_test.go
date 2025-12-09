@@ -37,9 +37,9 @@ func TestEmbeddingAddons(t *testing.T) {
 	assert.ErrorContains(t, err, "1: addon 'invalid-addon' not registered")
 
 	t.Run("test addon normalization", func(t *testing.T) {
-		ts.Addons.List = []cbc.Key{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
+		ts.Addons.List = tax.AddonList{"mx-cfdi-v4", "mx-cfdi-v4", "de-xrechnung-v3"}
 		_ = tax.ExtractNormalizers(ts)
-		assert.Equal(t, []cbc.Key{"mx-cfdi-v4", "eu-en16931-v2017", "de-xrechnung-v3"}, ts.Addons.List)
+		assert.Equal(t, tax.AddonList{"mx-cfdi-v4", "eu-en16931-v2017", "de-xrechnung-v3"}, ts.Addons.List)
 	})
 }
 
@@ -81,27 +81,19 @@ func TestAddonWithContext(t *testing.T) {
 
 func TestAddonsJSONSchemaEmbed(t *testing.T) {
 	eg := `{
-		"properties": {
-			"$addons": {
-				"items": {
-            		"$ref": "https://gobl.org/draft-0/cbc/key",
-					"type": "array",
-					"title": "Addons",
-					"description": "Addons defines a list of keys used to identify tax addons that apply special\nnormalization, scenarios, and validation rules to a document."
-				}
-			}
-		}
+		"type": "array",
+		"items": {
+			"$ref": "https://gobl.org/draft-0/cbc/key"
+		},
+		"description": "AddonList defines the slice of keys to use for addons."
 	}`
 	js := new(jsonschema.Schema)
 	require.NoError(t, json.Unmarshal([]byte(eg), js))
 
-	as := tax.Addons{}
-	as.JSONSchemaExtend(js)
+	al := tax.AddonList{}
+	al.JSONSchemaExtend(js)
 
-	assert.Equal(t, js.Properties.Len(), 1)
-	prop, ok := js.Properties.Get("$addons")
-	require.True(t, ok)
-	assert.Greater(t, len(prop.Items.OneOf), 1)
+	assert.Greater(t, len(js.Items.OneOf), 1)
 	ao := tax.AllAddonDefs()[0]
-	assert.Equal(t, ao.Key.String(), prop.Items.OneOf[0].Const)
+	assert.Equal(t, ao.Key.String(), js.Items.OneOf[0].Const)
 }

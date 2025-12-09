@@ -12,7 +12,8 @@ import (
 func (inv *Invoice) Replicate() error {
 	inv.UUID = uuid.Empty
 	inv.Code = ""
-	inv.IssueDate = cal.Today()
+	inv.IssueDate = cal.Date{}
+	inv.IssueTime = nil
 	inv.ValueDate = nil
 	inv.OperationDate = nil
 	return nil
