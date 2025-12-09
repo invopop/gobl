@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Removed
 
+- `org`: `Attachment.Name` field is no longer required.
 - `it-sdi-v1`: removed IBAN length validation.
 
 ## [v0.303.0] - 2025-11-17
