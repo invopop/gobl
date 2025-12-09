@@ -8,9 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- `bill`: Add replicate logic to payments, orders and deliveries.
 - `tax`: `Tags.RemoveTags()` method for removing tags from a list.
-- `es-verifactu-v1`: Bill Lines require at least on of the main tax categories.
+- `es-verifactu-v1`: Bill Lines require at least one of the main tax categories.
 - `org`: `Item` now defines `services` and `goods` as predefined options, required by some formats/regimes.
+
+### Changed
+
+- `bill`: Refactor replicate logic to rely on calculations to set default values.
 
 ### Fixed
 
