@@ -18,8 +18,11 @@ on:
             - "version.go"
 
 permissions:
+  deployments: write
   id-token: write  # Required for OIDC
   contents: read
+  actions: write
+  attestations: write
 
 jobs:
     tag-build-publish:
@@ -38,7 +41,7 @@ jobs:
 
             - name: Bump version and push tag
               id: bump
-              uses: anothrNick/github-tag-action@1.52.0
+              uses: anothrNick/github-tag-action@1.75.0
               env:
                   CUSTOM_TAG: ${{ env.GOBL_VERSION }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
