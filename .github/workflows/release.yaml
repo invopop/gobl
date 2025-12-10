@@ -17,6 +17,10 @@ on:
         paths:
             - "version.go"
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
     tag-build-publish:
         name: Tag & Release
@@ -70,17 +74,18 @@ jobs:
             # using the new wasm version in the CDN.
 
             - name: Install Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
               with:
                   node-version: 22.x
+                  registry-url: 'https://registry.npmjs.org'
                   cache: "npm"
                   cache-dependency-path: "./wasm/worker/package-lock.json"
 
-            - name: Run npm install
+            - name: Run npm ci
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
               working-directory: ./wasm/worker
-              run: npm install
+              run: npm ci
 
             - name: Update gobl-worker version
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
@@ -94,8 +99,5 @@ jobs:
 
             - name: Publish gobl-worker to NPM registry
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              uses: JS-DevTools/npm-publish@v1
-              with:
-                  token: ${{ secrets.NPM_TOKEN }}
-                  package: ./wasm/worker/package.json
-                  access: public
+              working-directory: ./wasm/worker
+              run: npm publish
