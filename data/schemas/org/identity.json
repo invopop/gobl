@@ -16,6 +16,21 @@
           "title": "Label",
           "description": "Optional label useful for non-standard identities to give a bit more context."
         },
+        "scope": {
+          "$ref": "https://gobl.org/draft-0/cbc/key",
+          "oneOf": [
+            {
+              "const": "tax",
+              "title": "Tax"
+            },
+            {
+              "const": "legal",
+              "title": "Legal"
+            }
+          ],
+          "title": "Scope",
+          "description": "Scope defines the context in which this identity is meant to be used."
+        },
         "country": {
           "$ref": "https://gobl.org/draft-0/l10n/iso-country-code",
           "title": "Country",
@@ -24,7 +39,7 @@
         "key": {
           "$ref": "https://gobl.org/draft-0/cbc/key",
           "title": "Key",
-          "description": "Uniquely classify this identity using a key instead of a type."
+          "description": "Uniquely classify this identity using a key instead of a Type."
         },
         "type": {
           "$ref": "https://gobl.org/draft-0/cbc/code",

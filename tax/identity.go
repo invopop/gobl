@@ -151,7 +151,7 @@ func (id *Identity) Validate() error {
 			),
 			validation.Match(IdentityCodePatternRegexp),
 		),
-		validation.Field(&id.Scheme, validation.Match(IdentityCodePatternRegexp)),
+		validation.Field(&id.Scheme),
 		validation.Field(&id.Zone, validation.Empty),
 		validation.Field(&id.Type),
 	)
@@ -171,7 +171,7 @@ func (id *Identity) InEU(date cal.Date) bool {
 	return l10n.Union(l10n.EU).HasMemberOn(date, id.Country.Code())
 }
 
-func (v validateTaxID) Validate(value interface{}) error {
+func (v validateTaxID) Validate(value any) error {
 	id, ok := value.(*Identity)
 	if id == nil || !ok {
 		return nil
