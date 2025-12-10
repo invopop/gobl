@@ -29,7 +29,7 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   fetch-depth: "0" # make sure we get all commits!
 
@@ -44,7 +44,6 @@ jobs:
                   CUSTOM_TAG: ${{ env.GOBL_VERSION }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   RELEASE_BRANCHES: main
-                  FORCE_WITHOUT_CHANGES: true
 
             - name: Set up Go
               uses: actions/setup-go@v5
@@ -81,8 +80,10 @@ jobs:
               with:
                   node-version: 22.x
                   registry-url: 'https://registry.npmjs.org'
-                  cache: "npm"
-                  cache-dependency-path: "./wasm/worker/package-lock.json"
+
+            # Ensure npm 11.5.1 or later is installed
+            - name: Update npm
+              run: npm install -g npm@latest
 
             - name: Run npm ci
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
