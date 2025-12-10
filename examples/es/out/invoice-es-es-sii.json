@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "90069976720188fcab3f46016fac910de74eb21bc09aaa684379bee1c842bc56"
+			"val": "e47709ac20291e962bfc8c01a94dd28f4eb87d0c1f59744f1b5d5cfd5446c33e"
 		}
 	},
 	"doc": {
@@ -58,6 +58,7 @@
 				"i": 1,
 				"quantity": "20",
 				"item": {
+					"key": "services",
 					"name": "Development services",
 					"price": "90.00",
 					"unit": "h"
@@ -77,6 +78,7 @@
 						"rate": "general",
 						"percent": "21.0%",
 						"ext": {
+							"es-sii-product": "services",
 							"es-sii-regime": "01"
 						}
 					}
@@ -87,6 +89,7 @@
 				"i": 2,
 				"quantity": "1",
 				"item": {
+					"key": "services",
 					"name": "Financial service",
 					"price": "10.00"
 				},
@@ -97,6 +100,7 @@
 						"key": "zero",
 						"percent": "0%",
 						"ext": {
+							"es-sii-product": "services",
 							"es-sii-regime": "01"
 						}
 					}
@@ -115,6 +119,7 @@
 							{
 								"key": "standard",
 								"ext": {
+									"es-sii-product": "services",
 									"es-sii-regime": "01"
 								},
 								"base": "1620.00",
@@ -124,6 +129,7 @@
 							{
 								"key": "zero",
 								"ext": {
+									"es-sii-product": "services",
 									"es-sii-regime": "01"
 								},
 								"base": "10.00",

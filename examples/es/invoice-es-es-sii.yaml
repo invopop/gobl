@@ -31,6 +31,7 @@ lines:
   - quantity: 20
     item:
       name: "Development services"
+      key: "services"
       price: "90.00"
       unit: "h"
     discounts:
@@ -43,6 +44,7 @@ lines:
   - quantity: 1
     item:
       name: "Financial service"
+      key: "services"
       price: "10.00"
     taxes:
       - cat: VAT
