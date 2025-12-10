@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [v0.304.0] - 2025-12-10
+
 ### Added
 
 - `bill`: Add replicate logic to payments, orders and deliveries.
