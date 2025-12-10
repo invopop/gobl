@@ -44,6 +44,7 @@ jobs:
                   CUSTOM_TAG: ${{ env.GOBL_VERSION }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   RELEASE_BRANCHES: main
+                  FORCE_WITHOUT_CHANGES: true
 
             - name: Set up Go
               uses: actions/setup-go@v5
