@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/gobl/uuid"
+	"github.com/invopop/jsonschema"
 	"github.com/invopop/validation"
 )
 
@@ -39,15 +40,23 @@ const (
 	IdentityKeyOther     cbc.Key = "other"
 )
 
+// Identity scopes that may be used to further classify an identity's intended use.
+const (
+	IdentityScopeTax   cbc.Key = "tax"
+	IdentityScopeLegal cbc.Key = "legal"
+)
+
 // Identity is used to define a code for a specific context. Identities can be used for
 // a variety of purposes, such as identifying a person, organisation, item, or document.
 type Identity struct {
 	uuid.Identify
 	// Optional label useful for non-standard identities to give a bit more context.
 	Label string `json:"label,omitempty" jsonschema:"title=Label"`
+	// Scope defines the context in which this identity is meant to be used.
+	Scope cbc.Key `json:"scope,omitempty" jsonschema:"title=Scope"`
 	// Country from which the identity was issued.
 	Country l10n.ISOCountryCode `json:"country,omitempty" jsonschema:"title=Country"`
-	// Uniquely classify this identity using a key instead of a type.
+	// Uniquely classify this identity using a key instead of a Type.
 	Key cbc.Key `json:"key,omitempty" jsonschema:"title=Key"`
 	// The type of Code being represented and usually specific for
 	// a particular context, country, or tax regime, and cannot be used
@@ -83,6 +92,12 @@ func (i *Identity) Validate() error {
 func (i *Identity) ValidateWithContext(ctx context.Context) error {
 	return tax.ValidateStructWithContext(ctx, i,
 		validation.Field(&i.Label),
+		validation.Field(&i.Scope,
+			validation.In(
+				IdentityScopeTax,
+				IdentityScopeLegal,
+			),
+		),
 		validation.Field(&i.Country),
 		validation.Field(&i.Key),
 		validation.Field(&i.Type,
@@ -186,4 +201,21 @@ func AddIdentity(in []*Identity, i *Identity) []*Identity {
 		}
 	}
 	return append(in, i)
+}
+
+// JSONSchemaExtend adds extra details to the schema.
+func (Identity) JSONSchemaExtend(js *jsonschema.Schema) {
+	prop, ok := js.Properties.Get("scope")
+	if ok {
+		prop.OneOf = []*jsonschema.Schema{
+			{
+				Const: IdentityScopeTax,
+				Title: "Tax",
+			},
+			{
+				Const: IdentityScopeLegal,
+				Title: "Legal",
+			},
+		}
+	}
 }

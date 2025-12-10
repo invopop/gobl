@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - `tax`: `Tags.RemoveTags()` method for removing tags from a list.
 - `es-verifactu-v1`: Bill Lines require at least one of the main tax categories.
 - `org`: `Item` now defines `services` and `goods` as predefined options, required by some formats/regimes.
+- `org`: `Identity` has a `scope` field for defining where an identity should be used, such as for tax or legal purposes.
 - `es-sii-v1`: Added initial Spain SII addon.
 
 ### Changed
