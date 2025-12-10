@@ -19,10 +19,8 @@ on:
             - "version.go"
 
 permissions:
-  deployments: write
   id-token: write  # Required for OIDC
-  contents: read
-  workflows: write
+  contents: write
 
 jobs:
     tag-build-publish:
