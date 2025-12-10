@@ -22,8 +22,7 @@ permissions:
   deployments: write
   id-token: write  # Required for OIDC
   contents: read
-  actions: write
-  attestations: write
+  workflows: write
 
 jobs:
     tag-build-publish:
