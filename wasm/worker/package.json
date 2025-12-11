@@ -5,8 +5,9 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/invopop/gobl.cli.git"
+    "url": "https://github.com/invopop/gobl.git"
   },
+  "homepage": "https://gobl.org",
   "author": {
     "name": "Invopop S.L.",
     "email": "dev@invopop.com",

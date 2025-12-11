@@ -11,11 +11,16 @@
 name: Release
 
 on:
+    workflow_dispatch:
     push:
         branches:
             - main
         paths:
             - "version.go"
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: write
 
 jobs:
     tag-build-publish:
@@ -24,7 +29,7 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   fetch-depth: "0" # make sure we get all commits!
 
@@ -34,7 +39,7 @@ jobs:
 
             - name: Bump version and push tag
               id: bump
-              uses: anothrNick/github-tag-action@1.52.0
+              uses: anothrNick/github-tag-action@1.75.0
               env:
                   CUSTOM_TAG: ${{ env.GOBL_VERSION }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -70,17 +75,20 @@ jobs:
             # using the new wasm version in the CDN.
 
             - name: Install Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
               with:
                   node-version: 22.x
-                  cache: "npm"
-                  cache-dependency-path: "./wasm/worker/package-lock.json"
+                  registry-url: 'https://registry.npmjs.org'
 
-            - name: Run npm install
+            # Ensure npm 11.5.1 or later is installed
+            - name: Update npm
+              run: npm install -g npm@latest
+
+            - name: Run npm ci
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
               working-directory: ./wasm/worker
-              run: npm install
+              run: npm ci
 
             - name: Update gobl-worker version
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
@@ -94,8 +102,5 @@ jobs:
 
             - name: Publish gobl-worker to NPM registry
               if: ${{ steps.bump.new_tag == steps.bump.tag }}
-              uses: JS-DevTools/npm-publish@v1
-              with:
-                  token: ${{ secrets.NPM_TOKEN }}
-                  package: ./wasm/worker/package.json
-                  access: public
+              working-directory: ./wasm/worker
+              run: npm publish
