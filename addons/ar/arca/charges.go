@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/validation"
 )
 
+// Charge keys for Argentina ARCA v4
 const (
 	ChargeKeyNationalTaxes               cbc.Key = "national-taxes"
 	ChargeKeyProvincialTaxes             cbc.Key = "provincial-taxes"

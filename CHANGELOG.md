@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+- `ar-arca-v4`: Added initial Argentina ARCA addon.
+
 ## [v0.304.0] - 2025-12-10
 
 ### Added

@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/i18n"
 )
 
+// Extension keys for Argentina ARCA v4
 const (
 	ExtKeyDocType      cbc.Key = "ar-arca-doc-type"
 	ExtKeyConcept      cbc.Key = "ar-arca-concept"

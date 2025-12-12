@@ -1,3 +1,4 @@
+// Package arca provides the ARCA addon for Argentina.
 package arca
 
 import (
@@ -8,6 +9,7 @@ import (
 )
 
 const (
+	// V4 for ARCA version 4
 	V4 cbc.Key = "ar-arca-v4"
 )
 
