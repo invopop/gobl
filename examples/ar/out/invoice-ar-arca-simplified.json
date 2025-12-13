@@ -1,0 +1,129 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "f22cf2368eef1dbac9667ccd71bb28ff19cee56622c5c374408f059fbda3a469"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "4bea8c67-6ad9-5cfc-a1ce-f9f391e963b1",
+		"type": "standard",
+		"series": "2",
+		"code": "00000456",
+		"issue_date": "2025-01-16",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "006"
+			}
+		},
+		"supplier": {
+			"name": "Electrodomésticos del Sur S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Rivadavia 5000",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1424",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ventas@electrodomesticos.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Juan Pérez",
+			"identities": [
+				{
+					"code": "25123456",
+					"ext": {
+						"ar-arca-identity-type": "96"
+					}
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "5"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"key": "goods",
+					"name": "Heladera Samsung 400L",
+					"price": "850000.00"
+				},
+				"sum": "850000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"ar-arca-vat-rate": "5"
+						}
+					}
+				],
+				"total": "850000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-01-16",
+						"amount": "1028500.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "850000.00",
+			"total": "850000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "5"
+								},
+								"base": "850000.00",
+								"percent": "21.0%",
+								"amount": "178500.00"
+							}
+						],
+						"amount": "178500.00"
+					}
+				],
+				"sum": "178500.00"
+			},
+			"tax": "178500.00",
+			"total_with_tax": "1028500.00",
+			"payable": "1028500.00"
+		}
+	}
+}

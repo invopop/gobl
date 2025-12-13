@@ -1,0 +1,157 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "a9ae4f6630b98dba6fbe2eff538cc39f66bc2057eb5f5fccd8bd2c656b75c8c6"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"uuid": "9a3e310c-bf24-a131-f613-4e4846ae4b8a",
+		"type": "standard",
+		"series": "1",
+		"code": "00000200",
+		"issue_date": "2025-02-01",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "001"
+			}
+		},
+		"supplier": {
+			"name": "Mayorista Nacional S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. 9 de Julio 1500",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1037",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "ventas@mayorista.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Distribuidora Regional S.R.L.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30987654321"
+			},
+			"addresses": [
+				{
+					"street": "Ruta Nacional 9 Km 50",
+					"locality": "Córdoba",
+					"region": "Córdoba",
+					"code": "X5000",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "compras@distribuidora.com.ar"
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "100",
+				"item": {
+					"key": "goods",
+					"name": "Productos alimenticios varios",
+					"price": "5000.00"
+				},
+				"sum": "500000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "reduced",
+						"percent": "10.5%",
+						"ext": {
+							"ar-arca-vat-rate": "4"
+						}
+					}
+				],
+				"total": "500000.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"key": "gross-income-tax",
+				"percent": "3.5%",
+				"amount": "17500.00",
+				"ext": {
+					"ar-arca-tribute-type": "5"
+				}
+			},
+			{
+				"i": 2,
+				"key": "municipal-taxes",
+				"percent": "1%",
+				"amount": "5000.00",
+				"ext": {
+					"ar-arca-tribute-type": "3"
+				}
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-02-28",
+						"amount": "575000.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "500000.00",
+			"charge": "22500.00",
+			"total": "522500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "4"
+								},
+								"base": "500000.00",
+								"percent": "10.5%",
+								"amount": "52500.00"
+							}
+						],
+						"amount": "52500.00"
+					}
+				],
+				"sum": "52500.00"
+			},
+			"tax": "52500.00",
+			"total_with_tax": "575000.00",
+			"payable": "575000.00"
+		}
+	}
+}

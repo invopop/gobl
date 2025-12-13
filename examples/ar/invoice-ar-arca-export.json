@@ -1,0 +1,78 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "7e1c1f9a-9d02-8f1f-d4f1-2c2624ac296e",
+  "currency": "ARS",
+  "issue_date": "2025-01-25",
+  "series": "5",
+  "code": "00000010",
+  "supplier": {
+    "name": "Exportadora Argentina S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Leandro N. Alem 1050",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1001",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "exports@exportadora.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Global Tech Inc.",
+    "tax_id": {
+      "country": "US",
+      "code": "123456789"
+    },
+    "addresses": [
+      {
+        "street": "123 Market Street",
+        "locality": "San Francisco",
+        "region": "California",
+        "code": "94105",
+        "country": "US"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "purchasing@globaltech.com"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "500",
+      "item": {
+        "name": "Premium Leather Goods",
+        "price": "45.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "key": "zero"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-02-25",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}
+

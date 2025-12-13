@@ -1,0 +1,135 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "6859b68bc2a2f6d6c7634c8d1632795b1e57932d18f7f49aa6bd8712383c5ac7"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"uuid": "7e1c1f9a-9d02-8f1f-d4f1-2c2624ac296e",
+		"type": "standard",
+		"series": "5",
+		"code": "00000010",
+		"issue_date": "2025-01-25",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "001"
+			}
+		},
+		"supplier": {
+			"name": "Exportadora Argentina S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Leandro N. Alem 1050",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1001",
+					"country": "AR"
+				}
+			],
+			"emails": [
+				{
+					"addr": "exports@exportadora.com.ar"
+				}
+			]
+		},
+		"customer": {
+			"name": "Global Tech Inc.",
+			"tax_id": {
+				"country": "US",
+				"code": "123456789"
+			},
+			"addresses": [
+				{
+					"street": "123 Market Street",
+					"locality": "San Francisco",
+					"region": "California",
+					"code": "94105",
+					"country": "US"
+				}
+			],
+			"emails": [
+				{
+					"addr": "purchasing@globaltech.com"
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "9"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "500",
+				"item": {
+					"key": "goods",
+					"name": "Premium Leather Goods",
+					"price": "45.00"
+				},
+				"sum": "22500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "zero",
+						"percent": "0%",
+						"ext": {
+							"ar-arca-vat-rate": "3"
+						}
+					}
+				],
+				"total": "22500.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-02-25",
+						"amount": "22500.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "22500.00",
+			"total": "22500.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "zero",
+								"ext": {
+									"ar-arca-vat-rate": "3"
+								},
+								"base": "22500.00",
+								"percent": "0%",
+								"amount": "0.00"
+							}
+						],
+						"amount": "0.00"
+					}
+				],
+				"sum": "0.00"
+			},
+			"tax": "0.00",
+			"total_with_tax": "22500.00",
+			"payable": "22500.00"
+		}
+	}
+}
