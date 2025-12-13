@@ -1,0 +1,138 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "64943d51f192197cc944649b4947236f9c8aed16ae246963d243d824d8ff3635"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"uuid": "6d0b0e89-8cf1-7e0e-c3e0-1b1513fb185d",
+		"type": "debit-note",
+		"series": "1",
+		"code": "00000001",
+		"issue_date": "2025-01-22",
+		"currency": "ARS",
+		"preceding": [
+			{
+				"issue_date": "2025-01-15",
+				"series": "1",
+				"code": "00000123"
+			}
+		],
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "2",
+				"ar-arca-doc-type": "002"
+			}
+		},
+		"supplier": {
+			"name": "Proveedor Ejemplo S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Corrientes 1234",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1043",
+					"country": "AR"
+				}
+			]
+		},
+		"customer": {
+			"name": "Cliente Comercial S.R.L.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30987654321"
+			},
+			"addresses": [
+				{
+					"street": "Av. Santa Fe 2500",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1123",
+					"country": "AR"
+				}
+			],
+			"ext": {
+				"ar-arca-vat-status": "1"
+			}
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Intereses por mora",
+					"price": "25000.00"
+				},
+				"sum": "25000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"ar-arca-vat-rate": "5"
+						}
+					}
+				],
+				"total": "25000.00"
+			}
+		],
+		"ordering": {
+			"period": {
+				"start": "2025-01-01",
+				"end": "2025-01-22"
+			}
+		},
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-01-22",
+						"amount": "30250.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "25000.00",
+			"total": "25000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "5"
+								},
+								"base": "25000.00",
+								"percent": "21.0%",
+								"amount": "5250.00"
+							}
+						],
+						"amount": "5250.00"
+					}
+				],
+				"sum": "5250.00"
+			},
+			"tax": "5250.00",
+			"total_with_tax": "30250.00",
+			"payable": "30250.00"
+		}
+	}
+}

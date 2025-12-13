@@ -1,0 +1,76 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "type": "credit-note",
+  "uuid": "5cfa9d78-7be0-6dfd-b2df-0a0402fa074c",
+  "currency": "ARS",
+  "issue_date": "2025-01-20",
+  "series": "1",
+  "code": "00000001",
+  "supplier": {
+    "name": "Proveedor Ejemplo S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Corrientes 1234",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1043",
+        "country": "AR"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Cliente Comercial S.R.L.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. Santa Fe 2500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1123",
+        "country": "AR"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "2",
+      "item": {
+        "name": "Notebooks Dell Latitude - Devolución",
+        "price": "450000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "preceding": [
+    {
+      "series": "1",
+      "code": "00000123",
+      "issue_date": "2025-01-15"
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-01-20",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}
+

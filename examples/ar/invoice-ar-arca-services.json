@@ -1,0 +1,103 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "8f2d209b-ae13-9020-e502-3d3735ad3a7f",
+  "currency": "ARS",
+  "issue_date": "2025-01-30",
+  "series": "3",
+  "code": "00000789",
+  "supplier": {
+    "name": "Consultora Digital S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. del Libertador 7000",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1429",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "facturacion@consultora.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Empresa Tecnológica S.R.L.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. Callao 1200",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1023",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "pagos@empresatecnologica.com.ar"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "160",
+      "item": {
+        "name": "Desarrollo de software - Horas",
+        "price": "15000.00",
+        "unit": "h",
+        "key": "services"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    },
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Consultoría en arquitectura de sistemas",
+        "price": "500000.00",
+        "key": "services"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "ordering": {
+    "period": {
+      "start": "2025-01-01",
+      "end": "2025-01-31"
+    }
+  },
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-02-15",
+          "amount": "1500000.00"
+        },
+        {
+          "date": "2025-03-15",
+          "amount": "1500000.00"
+        }
+      ]
+    }
+  }
+}
+

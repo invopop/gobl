@@ -1,0 +1,110 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
+		"dig": {
+			"alg": "sha256",
+			"val": "089aa6c2958128dc55ec74c953f4ed444798179c59484d5ceb8ce51b1bb2bd92"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "AR",
+		"$addons": [
+			"ar-arca-v4"
+		],
+		"$tags": [
+			"simplified"
+		],
+		"uuid": "1c5a532e-d146-c353-b835-6a6068ca6d0c",
+		"type": "standard",
+		"series": "2",
+		"code": "00000500",
+		"issue_date": "2025-02-10",
+		"currency": "ARS",
+		"tax": {
+			"ext": {
+				"ar-arca-concept": "1",
+				"ar-arca-doc-type": "006"
+			}
+		},
+		"supplier": {
+			"name": "Supermercado La Esquina S.A.",
+			"tax_id": {
+				"country": "AR",
+				"code": "30712345671"
+			},
+			"addresses": [
+				{
+					"street": "Av. Cabildo 3500",
+					"locality": "Buenos Aires",
+					"region": "Ciudad Autónoma de Buenos Aires",
+					"code": "C1429",
+					"country": "AR"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "5",
+				"item": {
+					"key": "goods",
+					"name": "Productos varios",
+					"price": "15000.00"
+				},
+				"sum": "75000.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "21.0%",
+						"ext": {
+							"ar-arca-vat-rate": "5"
+						}
+					}
+				],
+				"total": "75000.00"
+			}
+		],
+		"payment": {
+			"terms": {
+				"due_dates": [
+					{
+						"date": "2025-02-10",
+						"amount": "90750.00",
+						"percent": "100%"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "75000.00",
+			"total": "75000.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"ext": {
+									"ar-arca-vat-rate": "5"
+								},
+								"base": "75000.00",
+								"percent": "21.0%",
+								"amount": "15750.00"
+							}
+						],
+						"amount": "15750.00"
+					}
+				],
+				"sum": "15750.00"
+			},
+			"tax": "15750.00",
+			"total_with_tax": "90750.00",
+			"payable": "90750.00"
+		}
+	}
+}

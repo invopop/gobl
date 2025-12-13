@@ -1,0 +1,78 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "uuid": "0b4f421d-c035-b242-a724-5f5957bf5c9b",
+  "currency": "ARS",
+  "issue_date": "2025-02-05",
+  "series": "1",
+  "code": "00000250",
+  "supplier": {
+    "name": "Servicios Globales Argentina S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Madero 900",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1106",
+        "country": "AR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "international@serviciosglobales.com.ar"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Empresa Brasileña Ltda.",
+    "tax_id": {
+      "country": "BR",
+      "code": "11222333000181"
+    },
+    "addresses": [
+      {
+        "street": "Av. Paulista 1000",
+        "locality": "São Paulo",
+        "region": "SP",
+        "code": "01310-100",
+        "country": "BR"
+      }
+    ],
+    "emails": [
+      {
+        "addr": "compras@empresabrasilena.com.br"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Licencia de software anual",
+        "price": "2500000.00",
+        "key": "goods"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-03-05",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}
+

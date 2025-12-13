@@ -1,0 +1,81 @@
+{
+  "$schema": "https://gobl.org/draft-0/bill/invoice",
+  "$addons": ["ar-arca-v4"],
+  "type": "debit-note",
+  "uuid": "6d0b0e89-8cf1-7e0e-c3e0-1b1513fb185d",
+  "currency": "ARS",
+  "issue_date": "2025-01-22",
+  "series": "1",
+  "code": "00000001",
+  "supplier": {
+    "name": "Proveedor Ejemplo S.A.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30712345671"
+    },
+    "addresses": [
+      {
+        "street": "Av. Corrientes 1234",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1043",
+        "country": "AR"
+      }
+    ]
+  },
+  "customer": {
+    "name": "Cliente Comercial S.R.L.",
+    "tax_id": {
+      "country": "AR",
+      "code": "30987654321"
+    },
+    "addresses": [
+      {
+        "street": "Av. Santa Fe 2500",
+        "locality": "Buenos Aires",
+        "region": "Ciudad Autónoma de Buenos Aires",
+        "code": "C1123",
+        "country": "AR"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "quantity": "1",
+      "item": {
+        "name": "Intereses por mora",
+        "price": "25000.00"
+      },
+      "taxes": [
+        {
+          "cat": "VAT",
+          "rate": "general"
+        }
+      ]
+    }
+  ],
+  "preceding": [
+    {
+      "series": "1",
+      "code": "00000123",
+      "issue_date": "2025-01-15"
+    }
+  ],
+  "ordering": {
+    "period": {
+      "start": "2025-01-01",
+      "end": "2025-01-22"
+    }
+  },
+  "payment": {
+    "terms": {
+      "due_dates": [
+        {
+          "date": "2025-01-22",
+          "percent": "100%"
+        }
+      ]
+    }
+  }
+}
+
