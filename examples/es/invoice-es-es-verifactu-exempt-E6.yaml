@@ -1,0 +1,49 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852e6"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "FT"
+code: "E6-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Special Services S.L."
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "ES"
+    code: "54387763P"
+  name: "Public Administration"
+  addresses:
+    - num: "10"
+      street: "Avenida Siempre Viva"
+      locality: "Barcelona"
+      region: "Barcelona"
+      code: "08001"
+      country: "ES"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Special exempt service"
+      price: "150.00"
+    taxes:
+      - cat: VAT
+        key: exempt
+        ext:
+          es-verifactu-exempt: "E6"
+
+notes:
+  - key: "general"
+    text: "Exempt for other reasons not covered by Articles 20-25 of LIVA"
+

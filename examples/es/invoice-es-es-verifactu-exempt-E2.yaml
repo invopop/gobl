@@ -1,0 +1,49 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852e2"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "FT"
+code: "E2-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Export Trading S.L."
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "US"
+    code: "1234567890"
+  name: "Global Import Inc."
+  addresses:
+    - street: "123 Main Street"
+      locality: "New York"
+      region: "NY"
+      code: "10001"
+      country: "US"
+
+lines:
+  - quantity: 100
+    item:
+      name: "Spanish olive oil"
+      price: "15.00"
+      unit: "bottle"
+    taxes:
+      - cat: VAT
+        key: export
+        ext:
+          es-verifactu-exempt: "E2"
+
+notes:
+  - key: "general"
+    text: "Export of goods outside the EU - exempt pursuant to Article 21 of LIVA"
+
