@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- `es-verifactu-v1`: Automatic addition of legal notes to line items when exemption codes are present. Notes are added during normalization with Spanish text from extension definitions, matching the exemption code. Validation ensures exemption notes are present when required and match the corresponding exemption codes.
+
 ## [v0.304.0] - 2025-12-10
 
 ### Added
