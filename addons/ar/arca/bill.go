@@ -105,6 +105,10 @@ func validateInvoice(inv *bill.Invoice) error {
 				validation.Required,
 				validation.By(validatePayment),
 			),
+			validation.When(
+				inv.Tax.GetExt(ExtKeyConcept).In("1"),
+				validation.By(validatePaymentNoDueDates),
+			),
 			validation.Skip,
 		),
 	)
@@ -189,5 +193,16 @@ func validatePaymentTerms(val any) error {
 	return validation.ValidateStruct(terms,
 		validation.Field(&terms.DueDates,
 			validation.Required),
+	)
+}
+
+func validatePaymentNoDueDates(val any) error {
+	payment, ok := val.(*bill.PaymentDetails)
+	if !ok || payment == nil || payment.Terms == nil {
+		return nil
+	}
+	return validation.ValidateStruct(payment.Terms,
+		validation.Field(&payment.Terms.DueDates,
+			validation.Empty),
 	)
 }

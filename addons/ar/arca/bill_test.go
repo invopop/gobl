@@ -368,6 +368,30 @@ func TestInvoiceServiceRequirements(t *testing.T) {
 		require.NoError(t, inv.Validate())
 	})
 
+	t.Run("products with payment due dates fails", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Payment = testPayment()
+		assertValidationError(t, inv, "payment: (due_dates: must be blank.).")
+	})
+
+	t.Run("products with payment but no due dates passes", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Payment = &bill.PaymentDetails{
+			Terms: &pay.Terms{
+				Notes: "Payment on delivery",
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("products with empty payment passes", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Payment = &bill.PaymentDetails{}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
 	t.Run("mixed goods and services requires ordering and payment", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Lines = append(inv.Lines, &bill.Line{
