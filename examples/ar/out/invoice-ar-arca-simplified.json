@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "f22cf2368eef1dbac9667ccd71bb28ff19cee56622c5c374408f059fbda3a469"
+			"val": "808dd7129be68a914a360418d608848be5cd8f6824663cffc076ddc887bd336c"
 		}
 	},
 	"doc": {
@@ -87,17 +87,6 @@
 				"total": "850000.00"
 			}
 		],
-		"payment": {
-			"terms": {
-				"due_dates": [
-					{
-						"date": "2025-01-16",
-						"amount": "1028500.00",
-						"percent": "100%"
-					}
-				]
-			}
-		},
 		"totals": {
 			"sum": "850000.00",
 			"total": "850000.00",

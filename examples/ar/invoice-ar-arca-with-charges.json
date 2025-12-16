@@ -73,16 +73,6 @@
       "key": "municipal-taxes",
       "percent": "1%"
     }
-  ],
-  "payment": {
-    "terms": {
-      "due_dates": [
-        {
-          "date": "2025-02-28",
-          "percent": "100%"
-        }
-      ]
-    }
-  }
+  ]
 }
 
