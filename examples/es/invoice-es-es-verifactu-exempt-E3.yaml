@@ -1,0 +1,47 @@
+$schema: "https://gobl.org/draft-0/bill/invoice"
+$addons: ["es-verifactu-v1"]
+uuid: "3aea7b56-59d8-4beb-90bd-f8f280d852e3"
+currency: "EUR"
+issue_date: "2024-12-04"
+series: "FT"
+code: "E3-001"
+
+supplier:
+  tax_id:
+    country: "ES"
+    code: "B98602642"
+  name: "Maritime Services S.L."
+  addresses:
+    - num: "42"
+      street: "Calle Pradillo"
+      locality: "Madrid"
+      region: "Madrid"
+      code: "28002"
+      country: "ES"
+
+customer:
+  tax_id:
+    country: "NL"
+    code: "000099995B57"
+  name: "International Shipping Ltd."
+  addresses:
+    - street: "Port Road"
+      locality: "Amsterdam"
+      code: "1012 AB"
+      country: "NL"
+
+lines:
+  - quantity: 1
+    item:
+      name: "Ship repair services"
+      price: "5000.00"
+    taxes:
+      - cat: VAT
+        key: export
+        ext:
+          es-verifactu-exempt: "E3"
+
+notes:
+  - key: "general"
+    text: "Operations assimilated to exports - ship repair services pursuant to Article 22 of LIVA"
+

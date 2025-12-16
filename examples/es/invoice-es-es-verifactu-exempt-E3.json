@@ -1,0 +1,12 @@
+{
+	"code": 422,
+	"key": "validation",
+	"fields": {
+		"customer": {
+			"tax_id": {
+				"code": "checksum mismatch"
+			}
+		}
+	}
+}
+exit status 1
