@@ -103,7 +103,7 @@ func validateOrgItem(item *org.Item) error {
 			validation.Required.Error("cannot be blank (BR-23)"),
 			validation.Skip,
 		),
-		validation.Field(item.Price,
+		validation.Field(&item.Price,
 			// Must not be negative (BR-27)
 			num.Positive,
 			validation.Skip,
