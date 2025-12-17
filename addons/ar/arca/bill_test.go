@@ -262,6 +262,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeDebitNote
 		inv.Tax.Ext[arca.ExtKeyDocType] = "007"
 		inv.Customer = nil
+		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
@@ -271,6 +272,7 @@ func TestInvoiceCustomerValidation(t *testing.T) {
 		inv.Type = bill.InvoiceTypeCreditNote
 		inv.Tax.Ext[arca.ExtKeyDocType] = "008"
 		inv.Customer = nil
+		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 	})
@@ -417,6 +419,7 @@ func TestCreditNoteValidation(t *testing.T) {
 	t.Run("valid credit note type A", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, "003", inv.Tax.Ext[arca.ExtKeyDocType].String())
@@ -425,6 +428,7 @@ func TestCreditNoteValidation(t *testing.T) {
 	t.Run("valid credit note type B", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, "008", inv.Tax.Ext[arca.ExtKeyDocType].String())
@@ -435,6 +439,7 @@ func TestDebitNoteValidation(t *testing.T) {
 	t.Run("valid debit note type A", func(t *testing.T) {
 		inv := testInvoiceWithGoods(t)
 		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, "002", inv.Tax.Ext[arca.ExtKeyDocType].String())
@@ -443,9 +448,123 @@ func TestDebitNoteValidation(t *testing.T) {
 	t.Run("valid debit note type B", func(t *testing.T) {
 		inv := testInvoiceSimplified(t)
 		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = testPreceding()
 		require.NoError(t, inv.Calculate())
 		require.NoError(t, inv.Validate())
 		assert.Equal(t, "007", inv.Tax.Ext[arca.ExtKeyDocType].String())
+	})
+}
+
+func TestInvoicePrecedingValidation(t *testing.T) {
+	t.Run("credit note requires preceding", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = nil
+		assertValidationError(t, inv, "preceding: cannot be blank")
+	})
+
+	t.Run("debit note requires preceding", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = nil
+		assertValidationError(t, inv, "preceding: cannot be blank")
+	})
+
+	t.Run("standard invoice does not require preceding", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeStandard
+		inv.Preceding = nil
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("credit note with valid preceding passes", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "1",
+				Code:   "100",
+				Ext: tax.Extensions{
+					arca.ExtKeyDocType: "001",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("debit note with valid preceding passes", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "1",
+				Code:   "100",
+				Ext: tax.Extensions{
+					arca.ExtKeyDocType: "001",
+				},
+			},
+		}
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, inv.Validate())
+	})
+
+	t.Run("credit note with preceding missing doc type fails", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "1",
+				Code:   "100",
+			},
+		}
+		assertValidationError(t, inv, "preceding: (0: (ext: (ar-arca-doc-type: required.).).).")
+	})
+
+	t.Run("debit note with preceding missing doc type fails", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeDebitNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "1",
+				Code:   "100",
+			},
+		}
+		assertValidationError(t, inv, "preceding: (0: (ext: (ar-arca-doc-type: required.).).).")
+	})
+
+	t.Run("credit note with multiple preceding validates all", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeCreditNote
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "1",
+				Code:   "100",
+				Ext: tax.Extensions{
+					arca.ExtKeyDocType: "001",
+				},
+			},
+			{
+				Series: "1",
+				Code:   "101",
+				// Missing doc type
+			},
+		}
+		assertValidationError(t, inv, "preceding: (1: (ext: (ar-arca-doc-type: required.).).).")
+	})
+
+	t.Run("standard invoice with preceding validates doc type", func(t *testing.T) {
+		inv := testInvoiceWithGoods(t)
+		inv.Type = bill.InvoiceTypeStandard
+		inv.Preceding = []*org.DocumentRef{
+			{
+				Series: "1",
+				Code:   "100",
+				// Missing doc type
+			},
+		}
+		assertValidationError(t, inv, "preceding: (0: (ext: (ar-arca-doc-type: required.).).).")
 	})
 }
 
@@ -586,6 +705,18 @@ func testPayment() *bill.PaymentDetails {
 					Date:   cal.NewDate(2024, 2, 15),
 					Amount: num.MakeAmount(10000, 2),
 				},
+			},
+		},
+	}
+}
+
+func testPreceding() []*org.DocumentRef {
+	return []*org.DocumentRef{
+		{
+			Series: "1",
+			Code:   "100",
+			Ext: tax.Extensions{
+				arca.ExtKeyDocType: "001",
 			},
 		},
 	}

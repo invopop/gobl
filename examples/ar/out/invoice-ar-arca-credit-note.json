@@ -4,7 +4,7 @@
 		"uuid": "8a51fd30-2a27-11ee-be56-0242ac120002",
 		"dig": {
 			"alg": "sha256",
-			"val": "1b0657c2a39ad25c5e78e32cb3f2c7810bebf4a03db05c7fa3a1af1039662783"
+			"val": "6aca0cc3838ad59cb83e7bfc25b0ef1f37233c81a36a428af7324a95f7406925"
 		}
 	},
 	"doc": {
@@ -23,7 +23,10 @@
 			{
 				"issue_date": "2025-01-15",
 				"series": "1",
-				"code": "00000123"
+				"code": "00000123",
+				"ext": {
+					"ar-arca-doc-type": "001"
+				}
 			}
 		],
 		"tax": {

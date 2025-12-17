@@ -111,6 +111,16 @@ func validateInvoice(inv *bill.Invoice) error {
 			),
 			validation.Skip,
 		),
+		validation.Field(&inv.Preceding,
+			validation.When(
+				inv.Type.In(bill.InvoiceTypeCreditNote, bill.InvoiceTypeDebitNote),
+				validation.Required,
+			),
+			validation.Each(
+				validation.By(validateInvoicePreceding),
+			),
+			validation.Skip,
+		),
 	)
 }
 
@@ -204,5 +214,17 @@ func validatePaymentNoDueDates(val any) error {
 	return validation.ValidateStruct(payment.Terms,
 		validation.Field(&payment.Terms.DueDates,
 			validation.Empty),
+	)
+}
+
+func validateInvoicePreceding(val any) error {
+	preceding, ok := val.(*org.DocumentRef)
+	if !ok || preceding == nil {
+		return nil
+	}
+	return validation.ValidateStruct(preceding,
+		validation.Field(&preceding.Ext,
+			tax.ExtensionsRequire(ExtKeyDocType),
+		),
 	)
 }

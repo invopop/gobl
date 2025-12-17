@@ -19,7 +19,7 @@
         "locality": "Buenos Aires",
         "region": "Ciudad Autónoma de Buenos Aires",
         "code": "C1043",
-        "country": "AR"
+        "country": "AR" 
       }
     ]
   },
@@ -59,7 +59,10 @@
     {
       "series": "1",
       "code": "00000123",
-      "issue_date": "2025-01-15"
+      "issue_date": "2025-01-15",
+      "ext": {
+        "ar-arca-doc-type": "001"
+      }
     }
   ]
 }

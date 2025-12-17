@@ -58,7 +58,10 @@
     {
       "series": "1",
       "code": "00000123",
-      "issue_date": "2025-01-15"
+      "issue_date": "2025-01-15",
+      "ext": {
+        "ar-arca-doc-type": "001"
+      }
     }
   ],
   "ordering": {
