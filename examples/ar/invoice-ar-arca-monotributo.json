@@ -61,7 +61,7 @@
   ],
   "charges": [
     {
-      "key": "national-tax",
+      "key": "national-taxes",
       "percent": "10%",
       "description": "Tributo Nacional"
     }
